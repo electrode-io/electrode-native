@@ -1,0 +1,46 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+    include '**/*.java'
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+uploadArchives {
+  repositories {
+      mavenDeployer {
+          pom.version = '{{{apiVersion}}}-{{{ernPlatformVersion}}}'
+          pom.artifactId = '{{{moduleName}}}'
+          pom.groupId = '{{{namespace}}}'
+          repository(url: "file://" + new File(System.getProperty('user.home'),'.m2/repository').absolutePath)
+      }
+  }
+}
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    lintOptions {
+         abortOnError false
+     }
+}
+
+dependencies {
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:{{{bridgeVersion}}}-{{{ernPlatformVersion}}}'
+}

@@ -1,0 +1,16 @@
+{
+  "origin": {
+    "type": "git",
+    "url": "https://github.com/facebook/react-native.git"
+  },
+  "transform": [
+    {
+      "file": "ReactAndroid/release.gradle",
+      "template": "release.gradle.mustache"
+    }
+  ],
+  "uploadArchives" : {
+    "moduleName": "ReactAndroid"
+  },
+  "root": ""
+}

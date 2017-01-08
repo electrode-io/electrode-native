@@ -1,0 +1,25 @@
+{
+  "origin": {
+    "type": "npm",
+    "scope": "@walmart",
+    "name": "react-native-electrode-bridge"
+  },
+  "transform": [
+    {
+      "file": "android/build.gradle",
+      "template": "project.build.gradle.mustache"
+    },
+    {
+      "file": "android/electrode-reactnative-bridge/build.gradle",
+      "template": "app.build.gradle.mustache"
+    }
+  ],
+  "root": "android",
+  "uploadArchives" : {
+    "moduleName": "electrode-reactnative-bridge"
+  },
+  "pluginHook": {
+    "name": "BridgePlugin",
+    "configurable": false
+  }
+}

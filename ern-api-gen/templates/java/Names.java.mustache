@@ -1,0 +1,10 @@
+package {{{package}}}.api;
+
+public final class Names {
+  {{#events}}
+  public static String {{{constantName}}} = "{{{bridgeMessageName}}}";
+  {{/events}}
+  {{#requests}}
+  public static String {{{constantName}}} = "{{{bridgeMessageName}}}";
+  {{/requests}}
+}

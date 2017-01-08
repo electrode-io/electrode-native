@@ -1,0 +1,20 @@
+{
+  "origin": {
+    "type": "npm",
+    "name": "react-native-code-push"
+  },
+  "transform": [
+      {
+        "file": "android/app/build.gradle",
+        "template": "build.gradle.mustache"
+      }
+  ],
+  "root": "android",
+  "uploadArchives" : {
+    "moduleName": "app"
+  },
+  "pluginHook": {
+    "name": "CodePushPlugin",
+    "configurable": true
+  }
+}

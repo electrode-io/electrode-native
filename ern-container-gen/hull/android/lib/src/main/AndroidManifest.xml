@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.walmartlabs.ern.container">
+    <application>
+      {{#miniApps}}
+       <activity android:name="com.walmartlabs.ern.container.miniapps.{{{pascalCaseName}}}Activity"
+                 android:exported="true">
+       </activity>
+       {{/miniApps}}
+   </application>
+</manifest>

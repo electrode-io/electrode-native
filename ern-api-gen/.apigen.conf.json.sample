@@ -1,0 +1,31 @@
+{
+  "namespace" : "com.walmartlabs.ern",
+  "apiName": "weather",
+  "apiVersion": "1.0.0",
+  "javaDest": "output/java",
+  "jsDest": "output/js",
+  "events": [
+    {
+      "name": "weatherUpdated"
+    },
+    {
+      "name": "weatherUpdatedAtLocation",
+      "payload": {
+        "type": "String",
+        "name": "location"
+      }
+    },
+    {
+      "name": "weatherUpdatedAtPosition",
+      "payload": {
+        "type": "LatLng",
+        "name": "position"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "name": "refreshWeather"
+    }
+  ]
+}

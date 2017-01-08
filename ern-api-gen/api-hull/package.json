@@ -1,0 +1,11 @@
+{
+  "name": "{{#npmScope}}@{{{npmScope}}}/{{/npmScope}}{{{moduleName}}}",
+  "version": "{{{apiVersion}}}",
+  "description": "{{{apiDescripion}}}",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@walmart/react-native-electrode-bridge": "{{{bridgeVersion}}}"
+  }
+}

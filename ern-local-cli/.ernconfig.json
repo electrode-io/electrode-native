@@ -1,0 +1,15 @@
+{
+  "cauldronUrl": "http://localhost:3000",
+  "containerBaseRepo": "git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-container-base.git",
+  "libgen": {
+    "android": {
+      "generator": {
+        "mavenRepositoryUrl":
+        "http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted",
+        "platform": "android",
+        "name": "maven",
+        "platformVersion": "1.2.7"
+      }
+    }
+  }
+}
