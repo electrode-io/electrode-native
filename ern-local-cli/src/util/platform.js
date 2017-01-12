@@ -74,7 +74,7 @@ class Platform {
     }
 
     this.switchPlatformRepositoryToVersion(version);
-    install(false /* shouldSwitchToVersion */);
+    install();
   }
 
   uninstallPlatformVersion(version) {
