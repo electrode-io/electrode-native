@@ -1,0 +1,62 @@
+{
+  "nativeApps": [
+    {
+      "name": "walmart",
+      "platforms": [
+        {
+          "name": "android",
+          "versions": [
+            {
+              "name": "4.1",
+              "isReleased": true,
+              "binary": "cf23df2207d99a74fbe169e3eba035e633b65d94",
+              "nativeDeps": [
+                {
+                  "name": "react-native",
+                  "version": "0.32.0"
+                },
+                {
+                  "name": "react-native-electrode-core",
+                  "version": "0.17.1"
+                }
+              ],
+              "reactNativeApps": [
+                {
+                  "name": "react-native-cart",
+                  "version": "1.0.1",
+                  "isInBinary": true,
+                  "published": 1473807075
+                },
+                {
+                  "name": "react-native-cart",
+                  "version": "1.0.2",
+                  "isInBinary": false,
+                  "published": 1473817076
+                }
+              ]
+            },
+            {
+              "name": "4.2",
+              "isReleased": false,
+              "binary": null,
+              "nativeDeps": [
+                {
+                  "name": "react-native",
+                  "version": "0.33.0"
+                },
+                {
+                  "name": "react-native-electrode-core",
+                  "version": "0.18.0"
+                },
+                {
+                  "name": "react-native-maps",
+                  "version": "0.15.1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

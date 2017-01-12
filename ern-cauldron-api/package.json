@@ -1,0 +1,39 @@
+{
+  "name": "@walmart/ern-cauldron-api",
+  "version": "0.0.1",
+  "description": "The Cauldron !",
+  "repository": {
+    "type": "git",
+    "url": "https://gecgithub01.walmart.com/blemair/cauldron-api"
+  },
+  "bin": {
+    "ern-cauldron-api": "index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "babel-node ./node_modules/.bin/isparta cover _mocha",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-register": "^6.14.0",
+    "hapi": "^15.0.3",
+    "lodash": "^4.15.0",
+    "mkdirp": "^0.5.1",
+    "rmdir": "^1.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-node6": "^11.0.0",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "isparta": "^4.0.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
