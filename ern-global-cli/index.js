@@ -44,7 +44,7 @@ if (!fs.existsSync(ERN_PATH)) {
   execSync(`git clone ${gitRepo} ${ERN_PLATFORM_REPO_PATH}`);
 
   // Create cached versions folder
-  fs.mkdirSync(ERN_CACHE_PATH);
+  fs.mkdirSync(ERN_VERSIONS_CACHE_PATH);
 
   // Call install function
   const install = require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install;
