@@ -4,8 +4,6 @@ import fs from 'fs';
 import _ from 'lodash';
 import { logInfo, logWarn, logError } from './log.js';
 import config from './config.js';
-const install = require('../../../install.js').install;
-const uninstall = require('../../../uninstall.js').uninstall;
 
 const ERN_GIT_REPO_URL = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-platform.git`;
 const ERN_PATH = `${process.env['HOME']}/.ern`;
@@ -34,6 +32,43 @@ class Platform {
 
   get currentPlatformVersionPath() {
     return this.getPlatformVersionPath(this.currentVersion);
+  }
+
+  installPlatform(version) {
+    if (this.isPlatformVersionInstalled(version)) {
+      return logWarn(`Version ${version} of ern platform is already installed`);
+    }
+
+    if (!this.isPlatformVersionAvailable(version)) {
+      // Requested platform version is not available
+      // Let's make sure first that repo is up to date ...
+      this.updatePlatformRepository();
+
+      // .. then recheck
+      if (!this.isPlatformVersionAvailable(version)) {
+        throw new Error(`Version ${version} of ern platform is not available`)
+      }
+    }
+
+    this.switchPlatformRepositoryToVersion(version);
+
+    require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install();
+  }
+
+  //
+  // Uninstall a specific version of the platform
+  uninstallPlatform(version) {
+    if (!this.isPlatformVersionInstalled(version)) {
+      return logWarn(`Version ${version} of ern platform is not installed`);
+    }
+
+    if (this.currentVersion === version) {
+      return logError(`Version ${version} is currently activated. Cannot uninstall`)
+    }
+
+    this.switchPlatformRepositoryToVersion(version);
+
+    require(`${ERN_PLATFORM_REPO_PATH}/uninstall.js`).uninstall();
   }
 
   switchPlatformRepositoryToVersion(version) {
@@ -99,39 +134,6 @@ class Platform {
 
   getDependency(name) {
     return _.find(this.getSupportedPlugins(), d => d.name === name);
-  }
-
-  installPlatform(version) {
-    if (this.isPlatformVersionInstalled(version)) {
-      return logWarn(`Version ${version} of ern platform is already installed`);
-    }
-
-    if (!this.isPlatformVersionAvailable(version)) {
-      // Requested platform version is not available
-      // Let's make sure first that repo is up to date ...
-      this.updatePlatformRepository();
-
-      // .. then recheck
-      if (!this.isPlatformVersionAvailable(version)) {
-        throw new Error(`Version ${version} of ern platform is not available`)
-      }
-    }
-
-    this.switchPlatformRepositoryToVersion(version);
-    install();
-  }
-
-  uninstallPlatform(version) {
-    if (!this.isPlatformVersionInstalled(version)) {
-      return logWarn(`Version ${version} of ern platform is not installed`);
-    }
-
-    if (this.currentVersion === version) {
-      return logError(`Version ${version} is currently activated. Cannot uninstall`)
-    }
-
-    this.switchPlatformRepositoryToVersion(version);
-    uninstall();
   }
 }
 
