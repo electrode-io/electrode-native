@@ -68,6 +68,45 @@ Holds the current platform version number as well as the list of supported plugi
 - [install.js](install.js) and [uninstall.js](uninstall.js)  
 Contains installations/uninstallation steps for this platform version.
 
-#### HOWTO development
+#### Understanding platform versioning
 
-TODO
+Platform repository follows a specific convention for versioning, that the ern client relies on.
+
+Each version is represented by a single digit version number which gets incremented for each new version.  
+Each version is stored in a branch named `v[versionNumber]`, for example `v1`, `v2`, `v3` and so on.  
+Each version is git tagged with a minor additional version number `v1.0`, `v2.0`, `v3.0`.
+
+A new version will follow a `2 weeks release cycle`.   
+A new version might contain new plugins support as well as version updates of already supported plugins but might also contains improvements/fixes to the tools part of the toolchain (ern-container-gen, ern-api-gen, ern-local-cli ...). It might also introduce new tools.
+
+Eventually we might release "critical fix" version updates. This is where the minor versioning with the git tag comes in. For example, if a user using `v2` of the platform finds a big bug in the container that makes it unusable in his context, we might push a fix on the `v2` branches and git tag with `v2.1`. Then the platform update command will allow updating the `v2` version with this fix.  
+Update to version should absolutely not include new dependencies or update dependency versions as it might break binary compatibility with users not running this update or already published apps. It should only fix deemed critical bugs, rendering the platform unusable in a given context.
+We really don't want to do that, so hopefully it will not happen too much.
+
+#### Understanding platform installation & version switching
+
+A user installing the platform for a first time, will have to first globally install the `ern` binary.  
+This is done by running `npm install -g electrode-react-native` (this is the [ern-global-cli](/ern-global-cli) project).
+
+Then, when running `ern` for the first time, and assuming `v3` is the latest version of the platform, `ern-global-cli` will result in the following directory structure creation in the home user directory :
+
+```
+.ern
+ |_ ern-platform (git repo)
+ |_ cache
+ | |_ v3
+ |_ .ernrc
+```
+
+The `ern-platform` contains a `git clone` of `ern-platform` repository.  
+The cache folder contains one folder for each installed version of the platform, containing the installed version. In this case as `v3` was the latest version, `ern` installed this version and created the correct folder.
+The `.ernrc` file holds global platform configuration and also the version of the currently activated/in-use platform.
+
+From there on, when running `ern` command again, it will still go through `ern-global-cli`, but this time, as it will detect that the `.ern` folder already exists in user home directory, it will now call in directly the `ern-local-cli` of the currently in-use version of the platform.  
+To do that, it will look in the `.ernrc` file what is the currently activated version of the platform and will call the `ern-local-cli` present in the cache folder of the right version (in that case, for `v3` it will use `cache/v3/ern-local-cli/index.js`).
+
+When the user wants to list all versions of the platform, `ern-local-cli` will just issue the `git tag` command in the `ern-platform` repo folder and return that info.
+
+When the user wants to install a new (or old) version of the platform, let's say `v4`, `ern-local-cli` will run `git checkout v4` in the `ern-platform` repo and call the `install.js` script found at the root of the repo, which will copy the current repository (on `v4` branch) to a a new `v4` folder in the `cache` folder and will run `yarn install` for all of the tools.
+
+When the user wants to switch from an installed version to another (let's say `v4` to `v3`), the platform `use` command will just update the `.ernrc` file to change the activated version number, then next time `ern` command is run, it will now from which cache version folder to consume `ern-local-cli`.
