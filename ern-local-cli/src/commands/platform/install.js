@@ -9,5 +9,5 @@ exports.desc = 'Install a given ern platform version'
 exports.builder = {}
 
 exports.handler = function (argv) {
-  platform.installPlatformVersion(argv.platformVersion.toString());
+  platform.installPlatform(argv.platformVersion.toString());
 }

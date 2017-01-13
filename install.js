@@ -36,7 +36,7 @@ exports.install = () => {
 
   console.log('=== Starting platform installation');
   execSync(`cp -rf ${ERN_PLATFORM_REPO_PATH} ${PLATFORM_VERSION_PATH}`);
-  console.log('=> Installing cauldron-cli');
+  console.log('=> Installing ern-cauldron-cli');
   process.chdir(`${PLATFORM_VERSION_PATH}/ern-cauldron-cli`);
   execSync(`yarn install`);
   console.log('=> Installing ern-api-gen');

@@ -609,6 +609,11 @@ async function generateAndroidContainerUsingMavenGenerator(
   const TMP_FOLDER_NAME = `${ROOT_DIR}/.tmp`;
   const OUT_FOLDER = `${ROOT_DIR}/out`;
 
+  if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO)
+      && (!fs.existsSync(DEFAULT_MAVEN_REPO))) {
+        shell.mkdir('-p', DEFAULT_MAVEN_REPO);
+  }
+
   try {
     console.log(`Using maven : ${mavenRepositoryUrl}`);
     // Clean up to start fresh

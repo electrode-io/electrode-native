@@ -31,7 +31,7 @@ const ERN_RC_LOCAL_FILE_PATH = `${process.cwd()}/.ernrc`;
 // First run ever of ern (no versions installed at all yet)
 // Create all folders and install/activate current platform version
 if (!fs.existsSync(ERN_PATH)) {
-  // Use default git repo or the one provided as a command line argument to ern
+  // Use default git repo or the one provided as a command line argument to ern.
   let gitRepo = ERN_DEFAULT_GIT_REPO;
   if (process.argv.length >= 3) {
     gitRepo = process.argv[2];
