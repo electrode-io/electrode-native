@@ -1,7 +1,5 @@
 ## Electrode React Native Platform (ern-platform)
 
-### Development Instructions
-
 #### Required prerequisites
 
 **Yarn**
@@ -79,7 +77,7 @@ Each version is git tagged with a minor additional version number `v1.0`, `v2.0`
 A new version will follow a `2 weeks release cycle`.   
 A new version might contain new plugins support as well as version updates of already supported plugins but might also contains improvements/fixes to the tools part of the toolchain (ern-container-gen, ern-api-gen, ern-local-cli ...). It might also introduce new tools.
 
-Eventually we might release "critical fix" version updates. This is where the minor versioning with the git tag comes in. For example, if a user using `v2` of the platform finds a big bug in the container that makes it unusable in his context, we might push a fix on the `v2` branches and git tag with `v2.1`. Then the platform update command will allow updating the `v2` version with this fix.  
+Eventually we might release "critical fix" version updates. This is where the minor versioning with the git tag comes in. For example, if a user using `v2` of the platform finds a big bug in the container that makes it unusable in his context, we might push a fix on the `v2` branch and git tag with `v2.1`. Then the platform update command will allow updating the `v2` version with this fix.  
 Update to version should absolutely not include new dependencies or update dependency versions as it might break binary compatibility with users not running this update or already published apps. It should only fix deemed critical bugs, rendering the platform unusable in a given context.
 We really don't want to do that, so hopefully it will not happen too much.
 
@@ -88,7 +86,7 @@ We really don't want to do that, so hopefully it will not happen too much.
 A user installing the platform for a first time, will have to first globally install the `ern` binary.  
 This is done by running `npm install -g electrode-react-native` (this is the [ern-global-cli](/ern-global-cli) project).
 
-Then, when running `ern` for the first time, and assuming `v3` is the latest version of the platform, `ern-global-cli` will result in the following directory structure creation in the home user directory :
+Then, when running `ern` for the first time, and assuming `v3` is the latest version of the platform, `ern-global-cli` will create in the following directory structure in the home user directory :
 
 ```
 .ern
@@ -98,7 +96,7 @@ Then, when running `ern` for the first time, and assuming `v3` is the latest ver
  |_ .ernrc
 ```
 
-The `ern-platform` contains a `git clone` of `ern-platform` repository.  
+The `ern-platform` folder contains a `git clone` of `ern-platform` repository.  
 The cache folder contains one folder for each installed version of the platform, containing the installed version. In this case as `v3` was the latest version, `ern` installed this version and created the correct folder.
 The `.ernrc` file holds global platform configuration and also the version of the currently activated/in-use platform.
 
@@ -109,4 +107,21 @@ When the user wants to list all versions of the platform, `ern-local-cli` will j
 
 When the user wants to install a new (or old) version of the platform, let's say `v4`, `ern-local-cli` will run `git checkout v4` in the `ern-platform` repo and call the `install.js` script found at the root of the repo, which will copy the current repository (on `v4` branch) to a a new `v4` folder in the `cache` folder and will run `yarn install` for all of the tools.
 
-When the user wants to switch from an installed version to another (let's say `v4` to `v3`), the platform `use` command will just update the `.ernrc` file to change the activated version number, then next time `ern` command is run, it will now from which cache version folder to consume `ern-local-cli`.
+When the user wants to switch from an installed version to another (let's say `v4` to `v3`), the platform `use` command will just update the `.ernrc` file to change the activated version number, then next time `ern` command is run, it will know from which cache version folder to consume `ern-local-cli`.
+
+#### Development instructions
+
+This is a work in progress pretty raw procedure, it does not handle versioning at all. It will surely get fine tuned / simplified over time as we improve the platform.  
+The main goal here is to have as less "development environment" specific code as possible in the platform.  
+
+**[First time steps]**
+1. Make sure you have installed all the prerequisites listed above.
+1. Git clone this repo somewhere on your workstation.
+2. Install the global client through `npm i -g @walmart/electrode-react-native`.
+3. Install platform by running `ern` command in a terminal
+
+**[Dev steps]**
+4. Start the Cauldron service locally (if its not already running) running `ern cauldron start` in a separate terminal window.  
+5. Go to `ern-local-cli` folder where you cloned the repo, and run `npm install` from there.  
+6. From within `ern-local-cli` folder run `npm link`. This will make `ern-cli` binary (representing `ern-local-cli` available globally).
+7. Now, whenever you run `ern-cli` it will bypass global client and directly use your own `ern-local-cli`
