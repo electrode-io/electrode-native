@@ -18,15 +18,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-register": "^6.14.0",
+    "babel-register": "^6.18.0",
     "hapi": "^15.0.3",
     "joi": "^10.1.0",
-    "lodash": "^4.15.0",
+    "lodash": "^4.17.3",
     "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.14.0",
+    "babel-cli": "^6.18.0",
     "babel-preset-node6": "^11.0.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
@@ -35,6 +35,6 @@
     "mocha": "^3.0.2"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=6.9.4"
   }
 }

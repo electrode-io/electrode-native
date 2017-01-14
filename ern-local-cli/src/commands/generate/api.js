@@ -1,5 +1,5 @@
-import generateApi from '@walmart/ern-api-gen';
 import platform from '../../util/platform.js'
+import generateApi from '../../../../ern-api-gen/index.js'
 
 exports.command = 'api [publishToNpm]'
 exports.desc = 'Run api generator'

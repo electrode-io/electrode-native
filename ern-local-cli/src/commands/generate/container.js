@@ -4,7 +4,7 @@ import platform from '../../util/platform.js';
 import explodeNapSelector from '../../util/explodeNapSelector.js';
 import { logError } from '../../util/log.js';
 import ernConfig from '../../util/config.js'
-import generateContainer from '@walmart/ern-container-gen';
+import generateContainer from '../../../../ern-container-gen/index.js';
 
 exports.command = 'container <napSelector> <containerVersion>'
 exports.desc = 'Run the container generator for a specified native application'

@@ -1,4 +1,4 @@
-import CauldronClient from '@walmart/ern-cauldron-cli';
+import CauldronClient from '../../../ern-cauldron-cli/cli.js';
 import ernConfig from './config.js';
 import required from './required.js';
 import spin from './spin.js';
