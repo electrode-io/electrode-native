@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "ern": "index.js"
+    "ern": "start.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-node6": "^11.0.0",
     "chalk": "^1.1.3"
   }
 }

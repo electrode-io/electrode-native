@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const fs = require('fs');
 const child_process = require('child_process');
 const execSync = child_process.execSync;
@@ -67,6 +66,6 @@ else {
   }
 
   const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'));
-  var run = require(`${ERN_VERSIONS_CACHE_PATH}/v${ernRc.platformVersion}/ern-local-cli/distrib/index.js`);
+  var run = require(`${ERN_VERSIONS_CACHE_PATH}/v${ernRc.platformVersion}/ern-local-cli/src/index.js`);
   run.default();
 }
