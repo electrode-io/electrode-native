@@ -36,21 +36,9 @@ exports.install = () => {
 
   console.log('=== Starting platform installation');
   execSync(`cp -rf ${ERN_PLATFORM_REPO_PATH} ${PLATFORM_VERSION_PATH}`);
-  console.log('=> Installing ern-cauldron-api');
-  process.chdir(`${PLATFORM_VERSION_PATH}/ern-cauldron-api`);
+  console.log('=> Installing platform');
+  process.chdir(`${PLATFORM_VERSION_PATH}`);
   execSync(`yarn install`);
-  console.log('=> Installing ern-cauldron-cli');
-  process.chdir(`${PLATFORM_VERSION_PATH}/ern-cauldron-cli`);
-  execSync(`yarn install`);
-  console.log('=> Installing ern-api-gen');
-  process.chdir(`${PLATFORM_VERSION_PATH}/ern-api-gen`);
-  execSync(`yarn install`);
-  console.log('=> Installing ern-container-gen');
-  process.chdir(`${PLATFORM_VERSION_PATH}/ern-container-gen`);
-  execSync(`yarn install`);
-  console.log('=> Installing ern-local-cli');
-  process.chdir(`${PLATFORM_VERSION_PATH}/ern-local-cli`);
-  execSync(`npm install`);
 
   // Remove .git as he takes unnecessary disk space (we don't need it in the cached version folder)
   execSync(`rm -rf ${PLATFORM_VERSION_PATH}/.git`);

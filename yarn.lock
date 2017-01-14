@@ -6,6 +6,20 @@ abbrev@1:
   version "1.0.9"
   resolved "http://npme.walmart.com/abbrev/-/abbrev-1.0.9.tgz#91b4792588a7738c25f35dd6f63752a2f8776135"
 
+accept@2.x.x:
+  version "2.1.3"
+  resolved "http://npme.walmart.com/accept/-/accept-2.1.3.tgz#ab0f5bda4c449bbe926aea607b3522562f5acf86"
+  dependencies:
+    boom "4.x.x"
+    hoek "4.x.x"
+
+ammo@2.x.x:
+  version "2.0.3"
+  resolved "http://npme.walmart.com/ammo/-/ammo-2.0.3.tgz#914bbcf65b043ed0f58a8a9d0196e250ec51e6a7"
+  dependencies:
+    boom "4.x.x"
+    hoek "4.x.x"
+
 ansi-escapes@^1.1.0:
   version "1.4.0"
   resolved "http://npme.walmart.com/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"
@@ -91,6 +105,10 @@ aws-sign2@~0.6.0:
 aws4@^1.2.1:
   version "1.5.0"
   resolved "http://npme.walmart.com/aws4/-/aws4-1.5.0.tgz#0a29ffb79c31c9e712eeb087e8e7a64b4a56d755"
+
+b64@3.x.x:
+  version "3.0.2"
+  resolved "http://npme.walmart.com/b64/-/b64-3.0.2.tgz#7a9d60466adf7b8de114cbdf651a5fdfcc90894d"
 
 babel-cli@^6.18.0:
   version "6.18.0"
@@ -332,6 +350,12 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
+boom@4.x.x:
+  version "4.2.0"
+  resolved "http://npme.walmart.com/boom/-/boom-4.2.0.tgz#c1a74174b11fbba223f6162d4fd8851a1b82a536"
+  dependencies:
+    hoek "4.x.x"
+
 brace-expansion@^1.0.0:
   version "1.1.6"
   resolved "http://npme.walmart.com/brace-expansion/-/brace-expansion-1.1.6.tgz#7197d7eaa9b87e648390ea61fc66c84427420df9"
@@ -355,6 +379,13 @@ builtin-modules@^1.0.0:
   version "1.1.1"
   resolved "http://npme.walmart.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
 
+call@3.x.x:
+  version "3.0.4"
+  resolved "http://npme.walmart.com/call/-/call-3.0.4.tgz#e380f2f2a491330aa79085355f8be080877d559e"
+  dependencies:
+    boom "4.x.x"
+    hoek "4.x.x"
+
 camelcase@^3.0.0:
   version "3.0.0"
   resolved "http://npme.walmart.com/camelcase/-/camelcase-3.0.0.tgz#32fc4b9fcdaf845fcdf7e73bb97cac2261f0ab0a"
@@ -362,6 +393,20 @@ camelcase@^3.0.0:
 caseless@~0.11.0:
   version "0.11.0"
   resolved "http://npme.walmart.com/caseless/-/caseless-0.11.0.tgz#715b96ea9841593cc33067923f5ec60ebda4f7d7"
+
+catbox-memory@2.x.x:
+  version "2.0.4"
+  resolved "http://npme.walmart.com/catbox-memory/-/catbox-memory-2.0.4.tgz#433e255902caf54233d1286429c8f4df14e822d5"
+  dependencies:
+    hoek "4.x.x"
+
+catbox@7.x.x:
+  version "7.1.3"
+  resolved "http://npme.walmart.com/catbox/-/catbox-7.1.3.tgz#9817edec5a921743282addfc9c45ace52847eebb"
+  dependencies:
+    boom "4.x.x"
+    hoek "4.x.x"
+    joi "10.x.x"
 
 chalk@^1.0.0, chalk@^1.1.0, chalk@^1.1.1, chalk@^1.1.3:
   version "1.1.3"
@@ -458,6 +503,12 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "http://npme.walmart.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
 
+content@3.x.x:
+  version "3.0.3"
+  resolved "http://npme.walmart.com/content/-/content-3.0.3.tgz#000f8a01371b95c66afe99be9390fa6cb91aa87a"
+  dependencies:
+    boom "4.x.x"
+
 convert-source-map@^1.1.0:
   version "1.3.0"
   resolved "http://npme.walmart.com/convert-source-map/-/convert-source-map-1.3.0.tgz#e9f3e9c6e2728efc2676696a70eb382f73106a67"
@@ -475,6 +526,12 @@ cryptiles@2.x.x:
   resolved "http://npme.walmart.com/cryptiles/-/cryptiles-2.0.5.tgz#3bdfecdc608147c1c67202fa291e7dca59eaa3b8"
   dependencies:
     boom "2.x.x"
+
+cryptiles@3.x.x:
+  version "3.1.1"
+  resolved "http://npme.walmart.com/cryptiles/-/cryptiles-3.1.1.tgz#86a9203f7367a0e9324bc7555ff0fcf5f81979ee"
+  dependencies:
+    boom "4.x.x"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -762,6 +819,29 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.4:
   version "1.0.1"
   resolved "http://npme.walmart.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
+hapi@^15.0.3:
+  version "15.2.0"
+  resolved "http://npme.walmart.com/hapi/-/hapi-15.2.0.tgz#5704ca2c04b6386c03caf9ee901f1de080316d23"
+  dependencies:
+    accept "2.x.x"
+    ammo "2.x.x"
+    boom "4.x.x"
+    call "3.x.x"
+    catbox "7.x.x"
+    catbox-memory "2.x.x"
+    cryptiles "3.x.x"
+    heavy "4.x.x"
+    hoek "4.x.x"
+    iron "4.x.x"
+    items "2.x.x"
+    joi "9.x.x"
+    mimos "3.x.x"
+    podium "^1.2.x"
+    shot "3.x.x"
+    statehood "5.x.x"
+    subtext "^4.3.x"
+    topo "2.x.x"
+
 har-validator@~2.0.6:
   version "2.0.6"
   resolved "http://npme.walmart.com/har-validator/-/har-validator-2.0.6.tgz#cdcbc08188265ad119b6a5a7c8ab70eecfb5d27d"
@@ -790,9 +870,21 @@ hawk@~3.1.3:
     hoek "2.x.x"
     sntp "1.x.x"
 
+heavy@4.x.x:
+  version "4.0.3"
+  resolved "http://npme.walmart.com/heavy/-/heavy-4.0.3.tgz#976bba118b011b15fe904aa4f292a168bfc6232f"
+  dependencies:
+    boom "4.x.x"
+    hoek "4.x.x"
+    joi "10.x.x"
+
 hoek@2.x.x:
   version "2.16.3"
   resolved "http://npme.walmart.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
+
+hoek@4.x.x:
+  version "4.1.0"
+  resolved "http://npme.walmart.com/hoek/-/hoek-4.1.0.tgz#4a4557460f69842ed463aa00628cc26d2683afa7"
 
 home-or-tmp@^2.0.0:
   version "2.0.0"
@@ -860,6 +952,14 @@ invariant@^2.2.0:
 invert-kv@^1.0.0:
   version "1.0.0"
   resolved "http://npme.walmart.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
+
+iron@4.x.x:
+  version "4.0.4"
+  resolved "http://npme.walmart.com/iron/-/iron-4.0.4.tgz#c1f8cc4c91454194ab8920d9247ba882e528061a"
+  dependencies:
+    boom "4.x.x"
+    cryptiles "3.x.x"
+    hoek "4.x.x"
 
 is-arrayish@^0.2.1:
   version "0.2.1"
@@ -960,9 +1060,17 @@ is-utf8@^0.2.0:
   version "0.2.1"
   resolved "http://npme.walmart.com/is-utf8/-/is-utf8-0.2.1.tgz#4b0da1442104d1b336340e80797e865cf39f7d72"
 
+is@~0.2.6:
+  version "0.2.7"
+  resolved "http://npme.walmart.com/is/-/is-0.2.7.tgz#3b34a2c48f359972f35042849193ae7264b63562"
+
 isarray@1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "http://npme.walmart.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
+
+isemail@2.x.x:
+  version "2.2.1"
+  resolved "http://npme.walmart.com/isemail/-/isemail-2.2.1.tgz#0353d3d9a62951080c262c2aa0a42b8ea8e9e2a6"
 
 isobject@^2.0.0:
   version "2.1.0"
@@ -974,11 +1082,34 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "http://npme.walmart.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
+items@2.x.x:
+  version "2.1.1"
+  resolved "http://npme.walmart.com/items/-/items-2.1.1.tgz#8bd16d9c83b19529de5aea321acaada78364a198"
+
 jodid25519@^1.0.0:
   version "1.0.2"
   resolved "http://npme.walmart.com/jodid25519/-/jodid25519-1.0.2.tgz#06d4912255093419477d425633606e0e90782967"
   dependencies:
     jsbn "~0.1.0"
+
+joi@10.x.x, joi@^10.1.0:
+  version "10.1.0"
+  resolved "http://npme.walmart.com/joi/-/joi-10.1.0.tgz#8c3a87577c159ffeba129a5054f3238f9efd7159"
+  dependencies:
+    hoek "4.x.x"
+    isemail "2.x.x"
+    items "2.x.x"
+    topo "2.x.x"
+
+joi@9.x.x:
+  version "9.2.0"
+  resolved "http://npme.walmart.com/joi/-/joi-9.2.0.tgz#3385ac790192130cbe230e802ec02c9215bbfeda"
+  dependencies:
+    hoek "4.x.x"
+    isemail "2.x.x"
+    items "2.x.x"
+    moment "2.x.x"
+    topo "2.x.x"
 
 js-tokens@^2.0.0:
   version "2.0.0"
@@ -1066,13 +1197,13 @@ micromatch@^2.1.5:
     parse-glob "^3.0.4"
     regex-cache "^0.4.2"
 
+mime-db@1.x.x, mime-db@~1.25.0:
+  version "1.25.0"
+  resolved "http://npme.walmart.com/mime-db/-/mime-db-1.25.0.tgz#c18dbd7c73a5dbf6f44a024dc0d165a1e7b1c392"
+
 mime-db@~1.12.0:
   version "1.12.0"
   resolved "http://npme.walmart.com/mime-db/-/mime-db-1.12.0.tgz#3d0c63180f458eb10d325aaa37d7c58ae312e9d7"
-
-mime-db@~1.25.0:
-  version "1.25.0"
-  resolved "http://npme.walmart.com/mime-db/-/mime-db-1.25.0.tgz#c18dbd7c73a5dbf6f44a024dc0d165a1e7b1c392"
 
 mime-types@^2.1.11, mime-types@^2.1.12, mime-types@~2.1.7:
   version "2.1.13"
@@ -1089,6 +1220,13 @@ mime-types@~2.0.3:
 mime@~1.3.4:
   version "1.3.4"
   resolved "http://npme.walmart.com/mime/-/mime-1.3.4.tgz#115f9e3b6b3daf2959983cb38f149a2d40eb5d53"
+
+mimos@3.x.x:
+  version "3.0.3"
+  resolved "http://npme.walmart.com/mimos/-/mimos-3.0.3.tgz#b9109072ad378c2b72f6a0101c43ddfb2b36641f"
+  dependencies:
+    hoek "4.x.x"
+    mime-db "1.x.x"
 
 "minimatch@2 || 3", minimatch@^3.0.0, minimatch@^3.0.2:
   version "3.0.3"
@@ -1110,6 +1248,10 @@ minimist@^1.2.0:
   dependencies:
     minimist "0.0.8"
 
+moment@2.x.x:
+  version "2.17.1"
+  resolved "http://npme.walmart.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
+
 ms@0.7.1:
   version "0.7.1"
   resolved "http://npme.walmart.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
@@ -1130,6 +1272,13 @@ nan@^2.3.0:
   version "2.5.0"
   resolved "http://npme.walmart.com/nan/-/nan-2.5.0.tgz#aa8f1e34531d807e9e27755b234b4a6ec0c152a8"
 
+nigel@2.x.x:
+  version "2.0.2"
+  resolved "http://npme.walmart.com/nigel/-/nigel-2.0.2.tgz#93a1866fb0c52d87390aa75e2b161f4b5c75e5b1"
+  dependencies:
+    hoek "4.x.x"
+    vise "2.x.x"
+
 node-pre-gyp@^0.6.29:
   version "0.6.32"
   resolved "http://npme.walmart.com/node-pre-gyp/-/node-pre-gyp-0.6.32.tgz#fc452b376e7319b3d255f5f34853ef6fd8fe1fd5"
@@ -1147,6 +1296,19 @@ node-pre-gyp@^0.6.29:
 node-uuid@~1.4.7:
   version "1.4.7"
   resolved "http://npme.walmart.com/node-uuid/-/node-uuid-1.4.7.tgz#6da5a17668c4b3dd59623bda11cf7fa4c1f60a6f"
+
+node.extend@1.0.8:
+  version "1.0.8"
+  resolved "http://npme.walmart.com/node.extend/-/node.extend-1.0.8.tgz#bab04379f7383f4587990c9df07b6a7f65db772b"
+  dependencies:
+    is "~0.2.6"
+    object-keys "~0.4.0"
+
+node.flow@1.2.3:
+  version "1.2.3"
+  resolved "http://npme.walmart.com/node.flow/-/node.flow-1.2.3.tgz#e1c44a82aeca8d78b458a77fb3dc642f2eba2649"
+  dependencies:
+    node.extend "1.0.8"
 
 nopt@~3.0.6:
   version "3.0.6"
@@ -1187,6 +1349,10 @@ oauth-sign@~0.8.1:
 object-assign@^4.1.0:
   version "4.1.0"
   resolved "http://npme.walmart.com/object-assign/-/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
+
+object-keys@~0.4.0:
+  version "0.4.0"
+  resolved "http://npme.walmart.com/object-keys/-/object-keys-0.4.0.tgz#28a6aae7428dd2c3a92f3d95f21335dd204e0336"
 
 object.omit@^2.0.0:
   version "2.0.1"
@@ -1270,6 +1436,16 @@ path-type@^1.0.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
+pez@2.x.x:
+  version "2.1.4"
+  resolved "http://npme.walmart.com/pez/-/pez-2.1.4.tgz#73f822fa62d599d65c4606f490d54d345191bc7c"
+  dependencies:
+    b64 "3.x.x"
+    boom "4.x.x"
+    content "3.x.x"
+    hoek "4.x.x"
+    nigel "2.x.x"
+
 pify@^2.0.0:
   version "2.3.0"
   resolved "http://npme.walmart.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
@@ -1283,6 +1459,14 @@ pinkie-promise@^2.0.0:
 pinkie@^2.0.0:
   version "2.0.4"
   resolved "http://npme.walmart.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
+
+podium@^1.2.x:
+  version "1.2.5"
+  resolved "http://npme.walmart.com/podium/-/podium-1.2.5.tgz#87c566c2f0365bcf0a1ec7602c4d01948cdd2ad5"
+  dependencies:
+    hoek "4.x.x"
+    items "2.x.x"
+    joi "10.x.x"
 
 preserve@^0.2.0:
   version "0.2.0"
@@ -1490,6 +1674,12 @@ rimraf@2, rimraf@~2.5.1, rimraf@~2.5.4:
   dependencies:
     glob "^7.0.5"
 
+rmdir@^1.2.0:
+  version "1.2.0"
+  resolved "http://npme.walmart.com/rmdir/-/rmdir-1.2.0.tgz#4fe0357cb06168c258e73e968093dc4e8a0f3253"
+  dependencies:
+    node.flow "1.2.3"
+
 run-async@^2.2.0:
   version "2.3.0"
   resolved "http://npme.walmart.com/run-async/-/run-async-2.3.0.tgz#0371ab4ae0bdd720d4166d7dfda64ff7a445a6c0"
@@ -1519,6 +1709,13 @@ shelljs@^0.7.5:
     glob "^7.0.0"
     interpret "^1.0.0"
     rechoir "^0.6.2"
+
+shot@3.x.x:
+  version "3.4.0"
+  resolved "http://npme.walmart.com/shot/-/shot-3.4.0.tgz#e7125ee72575ae5218349e933636808d790d4b92"
+  dependencies:
+    hoek "4.x.x"
+    joi "10.x.x"
 
 signal-exit@^3.0.0:
   version "3.0.2"
@@ -1580,6 +1777,17 @@ sshpk@^1.7.0:
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
 
+statehood@5.x.x:
+  version "5.0.1"
+  resolved "http://npme.walmart.com/statehood/-/statehood-5.0.1.tgz#fc13c97b37751c18e70513d2b97e896ac8b73005"
+  dependencies:
+    boom "4.x.x"
+    cryptiles "3.x.x"
+    hoek "4.x.x"
+    iron "4.x.x"
+    items "2.x.x"
+    joi "10.x.x"
+
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
   resolved "http://npme.walmart.com/string-width/-/string-width-1.0.2.tgz#118bdf5b8cdc51a2a7e70d211e07e2b0b9b107d3"
@@ -1611,6 +1819,16 @@ strip-bom@^2.0.0:
 strip-json-comments@~1.0.4:
   version "1.0.4"
   resolved "http://npme.walmart.com/strip-json-comments/-/strip-json-comments-1.0.4.tgz#1e15fbcac97d3ee99bf2d73b4c656b082bbafb91"
+
+subtext@^4.3.x:
+  version "4.3.0"
+  resolved "http://npme.walmart.com/subtext/-/subtext-4.3.0.tgz#dfac90492ec35669fd6e00c6e5d938b06d7ccfbb"
+  dependencies:
+    boom "4.x.x"
+    content "3.x.x"
+    hoek "4.x.x"
+    pez "2.x.x"
+    wreck "10.x.x"
 
 supports-color@^0.2.0:
   version "0.2.0"
@@ -1654,6 +1872,12 @@ tmp@^0.0.29:
 to-fast-properties@^1.0.1:
   version "1.0.2"
   resolved "http://npme.walmart.com/to-fast-properties/-/to-fast-properties-1.0.2.tgz#f3f5c0c3ba7299a7ef99427e44633257ade43320"
+
+topo@2.x.x:
+  version "2.0.2"
+  resolved "http://npme.walmart.com/topo/-/topo-2.0.2.tgz#cd5615752539057c0dc0491a621c3bc6fbe1d182"
+  dependencies:
+    hoek "4.x.x"
 
 tough-cookie@~2.3.0:
   version "2.3.2"
@@ -1716,6 +1940,12 @@ verror@1.3.6:
   dependencies:
     extsprintf "1.0.2"
 
+vise@2.x.x:
+  version "2.0.2"
+  resolved "http://npme.walmart.com/vise/-/vise-2.0.2.tgz#6b08e8fb4cb76e3a50cd6dd0ec37338e811a0d39"
+  dependencies:
+    hoek "4.x.x"
+
 which-module@^1.0.0:
   version "1.0.0"
   resolved "http://npme.walmart.com/which-module/-/which-module-1.0.0.tgz#bba63ca861948994ff307736089e3b96026c2a4f"
@@ -1736,6 +1966,13 @@ wrap-ansi@^2.0.0:
 wrappy@1:
   version "1.0.2"
   resolved "http://npme.walmart.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
+
+wreck@10.x.x:
+  version "10.0.0"
+  resolved "http://npme.walmart.com/wreck/-/wreck-10.0.0.tgz#98ab882f85e16a526332507f101f5a7841162278"
+  dependencies:
+    boom "4.x.x"
+    hoek "4.x.x"
 
 xtend@^4.0.0:
   version "4.0.1"
