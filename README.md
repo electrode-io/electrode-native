@@ -20,6 +20,10 @@ brew install yarn
 
 The platform is running on [node](https://nodejs.org/en/) and has a node engine version requirement of `>=6.9.4` (current LTS version). Please make sure you are running a node engine matching this version requirement (you should use `nvm` if not already, to easily install and switch between node versions).
 
+**Walmart npm**
+
+Due to the fact that node packages are currently walmart scoped, they are stored in our internal enterprise npm repository. If you haven't done so already, you'll need to setup npm accordingly. Please see [this confluence page](https://confluence.walmart.com/display/PGPTOOLS/NPM+and+Nexus) for instructions.  
+
 #### Optional prerequisites
 
 If you need to work on the container generation for Android, you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
@@ -105,23 +109,29 @@ To do that, it will look in the `.ernrc` file what is the currently activated ve
 
 When the user wants to list all versions of the platform, `ern-local-cli` will just issue the `git tag` command in the `ern-platform` repo folder and return that info.
 
-When the user wants to install a new (or old) version of the platform, let's say `v4`, `ern-local-cli` will run `git checkout v4` in the `ern-platform` repo and call the `install.js` script found at the root of the repo, which will copy the current repository (on `v4` branch) to a a new `v4` folder in the `cache` folder and will run `yarn install` for all of the tools.
+When the user wants to install a new (or old) version of the platform, let's say `v4`, `ern-local-cli` will run `git checkout v4` in the `ern-platform` repo and call the `install.js` script found at the root of the repo, which will copy the current repository (on `v4` branch) to a a new `v4` folder in the `cache` folder and will run `yarn install` from within it.
 
 When the user wants to switch from an installed version to another (let's say `v4` to `v3`), the platform `use` command will just update the `.ernrc` file to change the activated version number, then next time `ern` command is run, it will know from which cache version folder to consume `ern-local-cli`.
 
 #### Development instructions
 
-This is a work in progress pretty raw procedure, it does not handle versioning at all. It will surely get fine tuned / simplified over time as we improve the platform.  
-The main goal here is to have as less "development environment" specific code as possible in the platform.  
+This is a work in progress procedure. It will probably get fine tuned over time as we improve the platform.  
+The main goal here is to have as less "development environment" specific code as possible in the platform. The procedure that follows requires zero dev environment variable nor any specific dev environment code in the platform.
 
-**[First time steps]**
+The trick is that this dev setup just adds an imaginary version (`v1000`) to the platform, local to your workstation, with the cache for this version pointing directly to your working folder holding `ern-platform` repository (using a symlink). Through the eyes of the platform, this is just a version like any other one.  
+
 1. Make sure you have installed all the prerequisites listed above.
-1. Git clone this repo somewhere on your workstation.
-2. Install the global client through `npm i -g @walmart/electrode-react-native`.
-3. Install platform by running `ern` command in a terminal
+2. Install the global client through `npm i -g @walmart/electrode-react-native` (this will install the `ern` binary and make it available globally).
+3. Install the platform by running `ern` command in a terminal (this will install the latest version of the platform, whichever it might be).
+4. Git clone this repository somewhere on your workstation (we recommend you fork it first !) and `cd` into it.
+5. Run `yarn install` (to install all dependencies)
+6. Run `npm run setup-dev` (this will create the `v1000` development version properly)
+7. Run `ern cauldron start` in a separate terminal window to launch the cauldron locally (or use `ern platform config` to set a remove cauldron url). If you want to keep the cauldron data after cauldron restart, make sure to run `ern cauldron start` from a dedicated folder as the cauldron db will be stored wherever this command is run from.
 
-**[Dev steps]**
-4. Start the Cauldron service locally (if its not already running) running `ern cauldron start` in a separate terminal window.  
-5. Go to `ern-local-cli` folder where you cloned the repo, and run `npm install` from there.  
-6. From within `ern-local-cli` folder run `npm link`. This will make `ern-cli` binary (representing `ern-local-cli` available globally).
-7. Now, whenever you run `ern-cli` it will bypass global client and directly use your own `ern-local-cli`
+From there on, you are good to go for development. You can switch the current platform version to `v1000` by running `ern platform use 1000`. You can use the platform as if you were a user, trough `ern`, you can install versions, switch to versions, access the cauldron ...  
+Be conscious however that of course if you switch to a version that is not the development one (let's say `v3`), then whenever you'll use `ern` command it will not go through your local repo code. Only when you are on `v1000` will `ern` point to your local repository.
+
+At this point you might want to switch to the current in development version branch (if for example `v4` is the version in development you can `git checkout v4`) and work on your own branch from there. You will then issue PRs to this in-dev version branch. Indeed, `master` always contain the code of the latest released version so we don't work directly on master.
+
+If you want to add a new dependency to a project (`ern-api-gen` or `ern-local-cli` or whatever) or if you want to update a version, please use the `yarn add` and `yarn upgrade` commands in replacement of npm as projects maintain a `yarn.lock` file. You can read more about the usage of these commands [here](https://yarnpkg.com/en/docs/managing-dependencies).
+Also, if you add a new dependency to a project, make sure to also include it in the root [package.json](package.json) file of `ern-platform`.  
