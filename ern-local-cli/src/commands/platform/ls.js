@@ -8,10 +8,6 @@ exports.desc = 'List platform versions'
 exports.builder = {}
 
 exports.handler = function (argv) {
-  // We update the platform repository every time ls command is issued
-  // to be sure that we list all available versions
-  platform.updatePlatformRepository();
-
   console.log(tagOneLine`
     ${chalk.green('[CURRENT]')}
     ${chalk.yellow('[INSTALLED]')}

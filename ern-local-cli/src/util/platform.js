@@ -72,7 +72,7 @@ class Platform {
   }
 
   switchPlatformRepositoryToVersion(version) {
-    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout v${version}`);
+    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout origin/v${version}`);
   }
 
   isPlatformVersionAvailable(version) {
@@ -84,12 +84,13 @@ class Platform {
   }
 
   get versions() {
-    const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git tag`)
+    const branchVersionRe = /heads\/v(\d+)/;
+    const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`)
       .toString()
       .split('\n')
-      .filter(String)
-    const versionsWithoutPrefix = _.map(versions, v => v.replace('v',''));
-    return _.map(versionsWithoutPrefix, v => v.replace('.0', '')); // temp hack
+      .filter(v => branchVersionRe.test(v));
+
+    return _.map(versions, v => branchVersionRe.exec(v)[1]);
   }
 
   get currentVersion() {
