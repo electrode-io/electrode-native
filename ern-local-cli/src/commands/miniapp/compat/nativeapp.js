@@ -1,7 +1,7 @@
-import { compatCheck } from '../../util/compatibility.js'
-import explodeNativeAppSelector from '../../util/explodeNapSelector.js';
+import { compatCheck } from '../../../util/compatibility.js'
+import explodeNativeAppSelector from '../../../util/explodeNapSelector.js';
 
-exports.command = 'compat-nativeapp <napSelector> [verbose]'
+exports.command = 'nativeapp <napSelector> [verbose]'
 exports.desc = 'Check the compatibility of the miniapp with given native app(s)'
 
 exports.builder = function(yargs) {

@@ -1,7 +1,7 @@
 import cauldron from '../../../util/cauldron.js';
 import explodeNapSelector from '../../../util/explodeNapSelector.js';
 
-exports.command = 'dependency <napSelector> <dependency>'
+exports.command = 'dependency <fullNapSelector> <dependency>'
 exports.desc = 'Add a native dependency in the cauldron'
 
 exports.builder = {}
@@ -13,5 +13,5 @@ exports.handler = function (argv) {
       name: explodedNameVersion[1],
       version: explodedNameVersion[2]
     },
-    ...explodeNapSelector(argv.napSelector));
+    ...explodeNapSelector(argv.fullNapSelector));
 }

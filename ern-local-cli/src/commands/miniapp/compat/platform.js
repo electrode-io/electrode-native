@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import chalk from 'chalk';
-import { getLocalNativeDependencies } from '../../util/miniapp.js';
-import platform from '../../util/platform.js';
+import { getLocalNativeDependencies } from '../../../util/miniapp.js';
+import platform from '../../../util/platform.js';
 
-exports.command = 'compat-platform [platformVersion]'
+exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'
 
 exports.builder = function(yargs) {

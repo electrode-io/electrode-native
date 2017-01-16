@@ -2,7 +2,7 @@
 
 **!! Only supports Android/JS generation as of now !!**
 
-This project can be used either as a standalone binary `ern-apigen` that can be launched from the command line, or it can be imported as a node module in another node project ([electrode-react-native](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/electrode-react-native) is using it this way).
+This project can be used either as a standalone binary `ern-apigen` that can be launched from the command line, or it can be imported as a node module in another node project ([ern-local-cli](../ern-local-cli) is consuming it this way).
 
 This project is making use of [mustache](https://mustache.github.io/) for templating needs.
 
@@ -68,70 +68,9 @@ request getCurrentTemperature() : Integer
 Generated code somehow reflect what has been proposed on the wiki :  
 [Messages-API-generation-proposal](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/site/wiki/Messages-API-generation-proposal)
 
+The [sample](./sample) folder let you see what gets generated based on a sample schema. 
 
 ##### Project Structure
 
 `api-hull` folder contains the base skeleton for an API lib, be it for Android/iOS or JS.  
 `templates` folder contains api generation code templates for all platforms.
-
-##### To run it &&|| work on it
-
-1) `git clone` this repo  
-2) Run `npm install`  
-3) Run `npm link` to make `ern-libgen` binary invocable globally  
-4) From within a folder on your machine, create a file named `apigen.schema` and copy/paste the sample schema provided above (representing a somewhat stupid weather api)  
-5) From within the same folder run `ern-libgen` in your terminal
-
-You should then see the following output in your terminal :
-```
-[apigen] == Patching Hull
-[apigen] == Generating API code
-[apigen] Generating react-native-weather-api-generated/android/lib/src/main/java/com/walmartlabs/ern/weather/api/WeatherApiClient.java
-[apigen] Generating react-native-weather-api-generated/android/lib/src/main/java/com/walmartlabs/ern/weather/api/WeatherApi.java
-[apigen] Generating react-native-weather-api-generated/android/lib/src/main/java/com/walmartlabs/ern/weather/api/Names.java
-[apigen] Generating react-native-weather-api-generated/js/apiClient.js
-[apigen] Generating react-native-weather-api-generated/js/api.js
-[apigen] Generating react-native-weather-api-generated/js/messages.js
-[apigen] == Generation completed
-```
-
-Generation of the API module based on the provided schema is complete, it should have created a folder `react-native-weather-api-generated` container the generated NPM module, with the following current tree structure :
-
-
-```
-react-native-weather-api-generated
-├── README.md
-├── android
-│   ├── build.gradle
-│   ├── gradle
-│   │   └── wrapper
-│   │       ├── gradle-wrapper.jar
-│   │       └── gradle-wrapper.properties
-│   ├── gradlew
-│   ├── lib
-│   │   ├── build.gradle
-│   │   └── src
-│   │       └── main
-│   │           ├── AndroidManifest.xml
-│   │           └── java
-│   │               └── com
-│   │                   └── walmartlabs
-│   │                       └── ern
-│   │                           └── weather
-│   │                               ├── api
-│   │                               │   ├── WeatherApi.java
-│   │                               │   ├── WeaherApiClient.java
-│   │                               │   └── Names.java
-│   │                               └── model
-│   │                                   └── LatLng.java
-│   └── settings.gradle
-├── index.js
-├── ios
-│   └── README.md
-├── js
-│   ├── README.md
-│   ├── api.js
-│   ├── apiClient.js
-│   └── messages.js
-└── package.json
-```

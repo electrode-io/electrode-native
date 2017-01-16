@@ -1,257 +1,352 @@
-## electrode-react-native command line tool
+# Electrode React Native (ern) local client
 
-**EXPERIMENTAL - Early stage**
+This command line client is the portal to the platform and all of its tools.  
 
-* Current implementation do not cover all commands included in the following documentation *
+Depending of the user infrastructure and development lifecycle this command line client will be used by different actors. In an environment without any CI platform, all commands of this client might be executed directly on a developer workstation, while in a more structured/larger development environment with a CI platform, some of these commands might get triggered and executed by the CI platform.
 
-As discussed in the introduction, this command line tool gives access to the whole API surface, while adding more powerful commands on top of it (ultimately based on cauldron queries in one way or antoher).
-
-Depending of the client infrastructure and development lifecycle this command line tool will be used by different actors. In an environment without any CI platform, all commands of this tool might be executed directly on a developer workstation, while in a more structure development environment with a CI platform, some of these commands might get triggered and executed by the CI platform.
-
-The electrode-react-native client will offer the following commands / subcommands (as of this writing) :
+## ern commands tree
 
 ```
-├── electrode-react-native
+├── ern
 │   ├── cauldron                    [=== Cauldron client ===]
 │   │   ├── add                     [--- Add stuff to the cauldron --]
-│   │   |   ├── nativeapp           Add a native application
-│   │   |   ├── dependency          Add a native app dependency
 │   │   |   ├── binary              Add a native app binary
+│   │   |   ├── dependency          Add a native app dependency
+│   │   |   ├── miniapp             Add a miniapp to the cauldron
+│   │   |   ├── nativeapp           Add a native application
 │   │   ├── del                     [--- Remove stuff from the cauldron --]
-│   │   |   ├── nativeapp           Remove a native application
 │   │   |   ├── dependency          Remove a native dependency
+│   │   |   ├── nativeapp           Remove a native application
 │   │   ├── get                     [--- Retrieve stuff from the cauldron --]
-│   │   |   ├── nativeapp           Get a native application info
-│   │   |   ├── dependency          Get native dependencies info
 │   │   |   ├── binary              Get the binary of a native app version
-│   ├── run                         [=== Run android/ios native apps ===]
-│   │   ├── android                 Run current react native app on android (standalone)
-│   │   ├── ios                     Run current react native app on ios (standalone)
-│   ├── vm                          [=== React native app environment version management commands ===]
-│   │   ├── ls                      List all currently installed environments
-│   │   ├── install                 Install a specific environment
-│   │   ├── uninstall               Uninstall a specific environment
-│   │   ├── use                     Use a specific environment (switch to it if not current)
-│   ├── publish                     [=== React native app publication commands ===]
-│   │   ├── compat-check            Check for compatibility of current react native app with native apps
-│   │   ├── ota                     Publish the current react native app as an OTA update
-│   │   ├── inapp                   Publish the current react native app in a given in-dev native app (non OTA)
-│   ├── container                   [=== ERN container specific commands ===]
-│   │   ├── version                 Display the version of the container used by this miniapp
-│   │   ├── compat-check            Check compatibility of miniapp with used container version
-│   ├── init                        Create a new react native miniapp
-│   ├── apigen                      Run the api generator
-│   ├── libgen                      Run the library generator
-│   ├── help                        [=== Show this menu ===]
+│   │   |   ├── dependencies        Get native dependencies info
+│   │   |   ├── nativeapp           Get a native application info
+│   │   ├── start                   Start the cauldron service
+│   ├── generate                    [=== Generation related commands ===]
+│   │   ├── api                     Generates an API package using ern-api-gen
+│   │   ├── container               Generates a native container using ern-container-gen
+│   ├── init                        Create a new mini app
+│   ├── miniapp                     [=== MiniApp development related commands ===]
+│   │   ├── compat                  [--- Binary compatibility checking --]
+│   │   |   ├── nativeapp           Check binary compatibility of miniapp with a native app version
+│   │   |   ├── platform            Check binary compatibility of miniapp with a platform version
+│   │   ├── plugins                 [--- Plugins management --]
+│   │   |   ├── add                 Add a plugin to the miniapp
+│   │   |   ├── list                List the plugins used by the miniapp
+│   │   ├── upgrade                 Upgrade the miniapp to a platform version (TBD)
+│   ├── platform                    [=== Platform management ===]
+│   │   ├── config                  Get or set platform configuration value(s)
+│   │   ├── current                 Show the current platform version number
+│   │   ├── install                 Install a platform version
+│   │   ├── ls                      List platform versions
+│   │   ├── plugins                 List platform supported plugins
+│   │   ├── uninstall               Uninstall a platform version
+│   │   ├── use                     Switch to a platform version
+│   ├── help                        Show help
 ```
 
-Note: The `electrode-react-native` command could also be invoked through its alias `ern` for brievity.
+This client depends on [ern-api-gen](../ern-api-gen), [ern-cauldron-cli](../ern-cauldron-cli) and [ern-container-gen](../ern-container-gen) projects.   
 
-This client will also require an associated configuration, which could be stored in a hidden file name named `.electrode-react-native`.
+## commands walkthrough  
 
-## cauldron
+This section will dive into each command.  
 
-Contains command to access and update the Cauldron.  
-Usage of these commands is pretty straightforward as it reflects Cauldron API, documented above.  
-For reference here are examples of all the commands :
+At any time, when using `ern`, if you need help for a command, you use the hyphenated option `--help`.  
+For example `ern generate api --help`.  
+If you forget to pass any mandatory positional arguments to the command, the help will be displayed automatically.  
+
+**napSelector ?**
+
+You will notice that many of the commands are taking a `<napSelector>` argument.  
+`napSelector` is the abbreviation for `native application selector`.   
+It is a string formatted the following way `{nativeAppplicationName}:{platform}:{version}`.  
+It can be either partial (not all placeholders provided), for example `walmart:android` or just `walmart`, or it can be full/complete (all placeholders provided), for example `walmart:ios:7.0.1`.   
+
+Some commands might accept a partial `napSelector` while some other require a full `napSelector` to be provided. Commands accepting only a complete `napSelector` will indicate this in the help of the command by stating `<fullNapSelector>`, whereas commands that don't require a full `napSelector` will just mention `<napSelector>`.  
+
+**required vs optional command arguments**  
+
+Required command arguments must be provided to the command. They are positional, meaning that they come in a specific order. In the command help, required command arguments follow the naming convention `<required>`.  
+Optional command arguments do no need to be provided to the command, they follow the naming convention `[optional]` in the command help and can be provided as hyphenated options.
+
+### cauldron
+
+Contains commands to access and update the Cauldron.  
+For reference here examples of all the commands :
+
+**Add a native application**
+
+`ern cauldron add nativeapp <napSelector> <platformVersion>`  
+
+This commands needs to be run each time a new native application version is started.  
+It accepts a partial `napSelector`, even though most of its usage will rely on a full `napSelector`.
+Platform version also needs to be provided.
 
 ```shell
-> ern cauldron add nativeapp walmart
-> ern cauldron add nativeapp walmart:android
-> ern cauldron add nativeapp walmart:android:4.1
-> ern cauldron add dependency walmart:android:4.1 depA@1.0.0
-> ern cauldron add binary walmart:android:4.1 /path/to/android.apk
+> ern cauldron add nativeapp walmart 3
+> ern cauldron add nativeapp walmart:android 3
+> ern cauldron add nativeapp walmart:android:4.1 3
+```
 
+**Add a native dependency to a native application**
+
+`ern cauldron add dependency <fullNapSelector> <dependency>`  
+
+A `fullNapSelector` needs to be provided for this command, as adding a native dependency can only target a single version of a native app (for now).  
+
+```shell
+> ern cauldron add dependency walmart:android:4.1 depA@1.0.0
+```
+
+**Add a binary to a native application**  
+
+`ern cauldron add binary <fullNapSelector> <path>`  
+
+A `fullNapSelector` needs to be provided for this command, as each version of a native application has its own binary.  
+The `path` should be an absolute/relative path to the binary to add (APK or APP).
+
+```shell
+> ern cauldron add binary walmart:android:4.1 /path/to/android.apk
+```
+
+**Add a miniapp to a native application**
+
+`ern cauldron add miniapp <fullNapSelector>`  
+
+A `fullNapSelector` needs to be provided for this command, as adding a miniapp can only target a single version of a native app (for now).  
+This commands must be run from the root of a miniapp folder, as it will add this miniapp to the cauldron.  
+Later improvement to the command might allow to pass a miniapp name and version as a string instead.  
+
+```shell
+> ern cauldron add miniapp walmart:android:4.1
+```
+
+**Remove a native application**
+
+`ern cauldron del nativeapp <napSelector>`  
+
+This command accepts a partial `napSelector`. If a full `napSelector` is provided, only the specific version of the native application will be removed. However is a partial `napSelector` is provided, for example `walmart:android`, then all versions of the walmart android native application will get removed from the cauldron.  
+
+```shell
 > ern cauldron del nativeapp walmart
 > ern cauldron del nativeapp walmart:android
 > ern cauldron del nativeapp walmart:android:4.1
-> ern cauldron del dependency walmart:android:4.1 depA
+```
 
+**Remove a native dependency**
+
+`ern cauldron del dependency <napSelector> <dependencyName>`  
+
+A `fullNapSelector` needs to be provided for this command, as removing a native dependency can only target a single version of a native app (for now).    
+
+```shell
+> ern cauldron del dependency walmart:android:4.1 depA
+```
+
+**Retrieve cauldron entry for a native application**  
+
+`ern cauldron get nativeapp <napSelector>`  
+
+Retrieves the cauldron data associated to a given native application.  
+A partial `napSelector` can be provided for this command. For example providing `walmart:ios` will retrieve the information for all versions of the walmart ios native application.
+
+```shell
 > ern cauldron get nativeapp walmart
 > ern cauldron get nativeapp walmart:android
 > ern cauldron get nativeapp walmart:android:4.1
-> ern cauldron del dependency walmart:android:4.1
 ```
 
-## native-app
+**Retrieve cauldron entry of dependencies**  
 
-Contains subcommands related to native applications.
+`ern cauldron get dependencies <fullNapSelector>`  
 
-#### publish-binary
-
-**Publishes a native app binary to the cauldron**
-
-**electrode-react-native publish-binary |app| |platform| |version| |binaryfilename|**
-
-This command will publish to the cauldron, a native binary associated to a given native application platform and version.
-
-It could be run either manually by an integration developer working on a current react native application integration within a native host application and generating the native binary on his/her workstation. Or in a more advanced environment it might be triggered by the CI system once a native app build is complete. In both cases, once the native application binary is published, it is immediately available for react native application developers to use.
-
-What is the use of this native application binary ?  
-As a react native application developer, I want to be able to experience & test (manually or with automation) my app within its native host application.
-Therefore, I need a way to easily retrieve the binary of a given application for a specific platform and version.  
-This is somewhat debatable because ultimately the ideal react native application environment should allow the react native application to be run in complete isolation of its host application. That being said, even within this "ideal" environment, the need to run the application within its host application might probably still be needed.
-
-The native app binary will be automatically retrieved (if needed - then cached), whenever a user invokes the `run` subcommand (see below) to launch the native app. If a newest version of a binary is available (very probable if the version worked on is the current development one), the client will automatically download this newest version and let the user know of this update. However, it might be that the newest binary is incompatible with the current react native application. For example, if there is a binary native dependency version mismatch for one of the dependency between the native application and the react native application. In this case the client should also let the user know that this update was not install due to a version mismatch. It is then up to the developer to fix the issue.
-
-Parameter | Mandatory | Description
---------- | ------- | -----------
-app | YES | The name of the native application
-platform | YES | The native application platform
-version | YES | The version of the native application platform
-binaryfilename | YES | The binary filename to be uploaded
-
-> Sample usage
+A `fullNapSelector` needs to be provided for this command, as getting cauldron data for a native dependency can only target a single version of a native app (for now).    
+This command will list all the dependencies used by a given native application version.
 
 ```shell
-> ern native-app publish-binary walmart android 4.1 walmart-dev-debug.apk
+> ern cauldron get dependency walmart:android:4.1
 ```
 
-#### run
+### generate
 
-**Run the native application**
+**api**
 
-**ern run |platform| [--app] [---version] [--local-packager]**
+`ern generate api [publishToNpm]`  
 
-This command will launch the native app in an emulator or physical device. For an emulator, if will offer the user the choice of the avd image to use.
-
-Parameter | Mandatory | Default | Description
---------- | ------- | ------- | -----------
-platform | YES | | The native application platform
-app | NO | * | The name of the native application
-version | NO | list compatible versions | The version of the native app binary to launch
-local-packager | NO | true | Should the local packager be started
-
-> Sample usages
+This command can be used to generate a complete api package, containing JS/iOS/Android code that can be then consumed by native app and/or miniapps.  
+A valid `apigen.schema` must be located in the folder wherever this command is run from.  
+Optionally, the user can ask for the api package to be published to npm after generation, through the optional switch `publishToNpm` (alias `p`). By default, npm auto publication is disabled.
+This command relies on [ern-api-gen](../ern-api-gen). For more details about the generation process and the structure of `apigen.schema`, feel free to go check it out.
 
 ```shell
-> ern run android --local-packager=false
-```
-*This command will retrieve the list of all android native applications compatible with the current react native app, and let the user select the one to use. It will not launch the local packager*
-
-*Internally, this command will query the API to retrieve the app binary (APP or APK) at the given version and then execute necessary commands to launch the binary in an emulator / physical device*  
-
-## vm (The following vm subcommands might be deprecated or replaced by a mecanism based on container base version (see [ern-container-base](https://gecgithub01.walmart.com/blemair/ern-container-base))
-
-**Version manager for react native apps**
-
-This command expose subcommands to allow a react native app developer to switch between react-native applications and versions.  
-The top level versioning unit is the native app platform and version.
-
-Why is there a need of a version management system somehow similar in spirit to [https://github.com/creationix/nvm](nvm) but used to switch between react native app versions ?  
-Well, the use is mostly associated to OTA updates. Indeed, let's consider the following scenario :
-I am a developer on a react native app humbly named `AwesomeReactNativeApp`. This app is now live in three different versions : `1.0.3`, `1.1.2` and `3.1.2`. Our team is currently working on the next `4.0.0` release. The major version number is different for all three versions, as a convention to indicate that these versions are not binary compatible (they rely on different native binary dependencies). Now let's say a bug is found and is present as far back as version `1.0.3`. Luckily for us, because we are using react native, we can use OTA updates to publish bug fixes for our app. The problem however is that we'll need to fix and test (manually or through automation) our bug fix for all currently live versions.  
-Without the help of these commands, as a developer on the app, the workflow would prove to be very painful. If I stay within the same working folder, to fix a version, I would have to manually checkout on git the specific version (hopefully I work with a smart team and we use git tags for versioning), retrieve the associated host app binary for this specific version (otherwise I can't run it in the app) then clean my node_modules folder and launch npm install. Then finally I could make my bug fix, then test it, then rinse and repeat for all versions. I don't know for you, but I wouldn't want to be that guy.
-Making the workflow a bit easier for developers is the motivation behind these commands, so that a developer can easily switch it's environment between different react native applications and versions.
-
-EDIT : Due to the fact that multiple react native apps will be present in a given host native app, this process is a tad more complex. Indeed, if the bundle is served through the local packager running on the developer workstation, it should not only contain the target react native application but also all other react native applications part of the react native application "composite", and the root source JS source file (input of react native packager) should import all apps in this case. It is not very clear at this point how to solve this properly, once figured out, document will be updated accordingly.
-
-*Internally a local hidden folder is used as a cache for all installed versions to avoid penalty of npm installing a given version over and over again*
-
-#### ls
-
-**ern vm ls**
-
-List all the currently installed react native apps.
-
-*Internally this will peek into the cache and list all versions of the app currently contained within the cache*
-
-#### install
-
-**ern vm install |reactnativeapp@version|**
-
-Installs a given react native app environment
-
-> Sample usage
-
-```shell
-electrode-react-native vm install react-native-cart@1.2.3
+> ern generate api --publishToNpm
+> ern generate api -p
+> ern generate api
 ```
 
-*Internally this command will look into the cache if the react native app is present at the given version. If not it will make a round trip to the server to retrieve the necessary and npm install into the cache. If react native app is already present in the cache, there will still be a query sent to the server to make sure that the cache version of the react-native-app is the latest for the given app/platform/version and download the newest one if any*
+**container**
 
-#### uninstall
+`ern generate container <fullNapSelector> <containerVersion>`  
 
-**ern vm uninstall |reactnativeapp@version|**
-
-Uninstall a given react native app environment
-
-> Sample usage
+This command can be used to generate a native application container targeting a specific native application version.  
+A `fullNapSelector` needs to be provided as well as a `containerVersion`, being the version of the generated container.  
+While this command can be run directly by a user, in an enterprise environment, it will most probably be run by a CI platform.  
+This command relies on [ern-container-gen](../ern-container-gen). For more details about the generation process, feel free to go check it out.   
 
 ```shell
-ern vm uninstall react-native-cart@1.2.3
+> ern generate container walmart:android:4.1 1.0.0
 ```
 
-*Internally this command will just delete the necessary in the cache*
+### init
 
-#### use
+`ern init <appName> [platformVersion] [napSelector] [scope]`  
 
-**ern vm use |react-native-app@version|**
+This command can be used to create a new miniapp.  
+`appName` is the only mandatory argument, being the name of the application to create.  
+`platformVersion` (alias `v`) can be provided to create a miniapp at a given platform version. If not provided, the miniapp will be created using the currently activated version of the platform.  
+`napSelector` (alias `s`) can be provided to create a miniapp using the same platform version that is being used by a specific native application. If not provided, the miniapp will be created using the currently activated version of the platform.  
+`platformVersion` and `napSelector` are mutually exclusive.  
+`scope` can be provided to npm scope the package containing the miniapp. By default no scope is used.
 
-Switch the environment to use a given react native app
+The application will be created in a folder named after the `appName` provided, relative to where this command was executed.
 
-> Sample usage
+For now, this command just executes `react-native init` command, using the react-native version supported by the platform version used. It will then pactch the `package.json` of the resulting created app adding the platform version and optionally the scope.
 
 ```shell
-ern vm use react-native-cart@1.2.3
+> ern init MyCoolMiniApp
+> ern init MyCoolMiniApp -s walmart:android:4.1
+> ern init MyCoolMiniApp -v 4 --scope walmart
 ```
 
-*Internally this command will clear the current working folder (only if there is no pending commits) and then will copy the whole content of the cache folder for this specific version to the working folder*
+### miniapp
 
-## publish
+All `miniapp` commands needs to be executed from the root of a miniapp folder.  
 
-Contains sub commands related to react native apps publication.
+**Check binary compatibility of miniapp with a native application version**  
 
-#### compat-check
+`ern miniapp compat nativeapp <napSelector> [verbose]`  
 
-**Runs a binary compatibility check**
-
-**ern publish compat-check [--app] [--platform] [--version] [--verbose]**
-
-Parameter | Mandatory | Default | Description
---------- | ------- | ------- | -----------
-app | NO | * | The native application to check compatibility with
-platform | NO | * | The platform to check compatibility with
-version | NO | * | The version to check compatibility with
-verobse | NO | false | Verbose output (compatibility table)
-
-This command runs a compatibility check to list what native app versions and platforms the current react-native app is deemed binary compatible with.
-
-> Sample usage
+This command will check if the miniapp is binary compatible with a native application version.  
+i.e it will check that all plugins used by the miniapp do exist in the native application version, and also that all versions of these plugins are matching.  
+`napSelector` is a partial one. If `walmart:android` is provided for example, it will check the compatibility will all versions of the walmart android native application.  
+`verbose` is an optional flag to ask for verbose output. If not provided, a single line will indicate compatibility or not with each native application version. If provided, a table with a breakdown of plugins/versions match/mismatch will be displayed for each native application version.  
 
 ```shell
-ern compat-check
+> ern miniapp compat nativeapp walmart:android --verbose
+> ern miniapp compat nativeapp walmart:ios:7.0.1
+```
+
+**Check binary compatibility of miniapp with a platform version**  
+
+`ern miniapp compat platform [platformVersion]`  
+
+This command will check if the miniapp is binary compatible with a platform version.  
+i.e it will check that all plugins used by the miniapp do exist in platform version, and also that all versions of these plugins are matching.  
+`platformVersion` (alias `v`) is optional, if not provided the compatibility check will be done with the currently activated platform version.  
+
+```shell
+> ern miniapp compat platform
+> ern miniapp compat platform -v 3
+```
+
+**Add a plugin to a miniapp**
+
+`ern miniapp plugins add <name>`  
+
+This command will add a plugin to the miniapp. Miniapp developers should rely on this command to install plugins rather than directly through `yarn` or `npm` as this command will ensure that the plugin is supported by the platform version used, but will also make sure to use the correct version of the plugin to match the one supported by platform version.  
+
+```shell
+> ern miniapp plugins add react-native-code-push
+>ern miniapp plugins add @walmart/react-native-electrode-bridge
+```
+
+**List all plugins used by the miniapp**
+
+`ern miniapp plugins list`  
+
+This command will list all the plugins currently used by the miniapp along with their versions.  
+
+```shell
+> ern miniapp plugins list
 ```  
-*Check the binary compatibility of current react native application with all native applications indenpendtely of their platform or version. Output will not show compatibility table (verbose flag not present)*
+
+### platform
+
+**Access and update platform configuration**  
+
+`ern platform config <key> [value]`  
+
+This command grants access to the platform configuration (stored in the `.ernrc` file).  
+It allows to show the value of a given configuration key or set a new value for a given key.  
+For now only `cauldronUrl` key is supported, allowing to get or set the url of the cauldron service.  
+`key` is mandatory. `value` (alias `v`) is optional. If provided, the command will write the value for the corresponding key. If not provided, the command will retrieve and show the current value stored for this key.  
 
 ```shell
-ern compat-check --app=walmart --platform=android --verbose
-```  
-*Check the binary compatibility of current react native application with all versions of walmart android native application. Output will show compatibility table (verbose flag not present)*
+> ern platform config cauldronUrl
+> ern platform config cauldronUrl -v http://localhost:3000
+```
 
-It can be of use at different steps of the development lifecycle, but for the most part it could be run prior to publishing (either in-binary or ota) either manually or by one of the publication subcommands.
+**Display the current activated platform version**  
 
-*Internally, this command will query the API to retrieve all native apps versions and native dependencies.  
-For each native app version, it will then compare the native dependencies listed for the app, with the dependencies in the package.json of the current react-native app*
+`ern platform current`   
 
-## libgen
+**Install a platform version**  
 
-**Generates the native library to be consumed by the host app**
+`ern platform install <platformVersion>`  
 
-**ern libgen |app| |platform| |version| [--verbose]**
-
-Parameter | Mandatory | Default | Description
---------- | ------- | ------- | -----------
-app | YES | * | The native application to check compatibility with
-platform | YES | * | The platform to check compatibility with
-version | YES | * | The version to check compatibility with
-
-This commands runs the library generator for a given native app platform and version.  
-It will query the cauldron to retrieve the list of all react native apps associated to this specific native application platform & version and will then do its magic, creating the bundle and the AAR. Finally it will either publish the AAR locally (maven local) or to a remote maven (configuration of cauldron should contain maven url / credentials). Same principle for iOS with Punic. It will also increment the version of the lib accordingly.
-
-> Sample usage
+This command will install a given platform version (if not already installed) but will not switch to / activate it.  
 
 ```shell
-ern libgen walmart android 4.1
-```  
-*Generate the library for walmart android version 4.1*
+> ern platform install 5
+```
+
+**List platform versions**
+
+`ern platform ls`  
+
+This command will list all platform versions. It will highlight the ones that are installed locally, the ones that are not installed locally as well as the currently activated version.
+
+**List platform supported plugins**
+
+`ern platform plugins [platformVersion]`  
+
+This command will display the list of supported plugins (and their versions) for a platform version.  
+`platformVersion` (alias `v`) is optional. If not provided, the current activated version of the platform will be used.  
+
+```shell
+> ern platform plugins
+> ern platform plugins -v 5
+```
+
+**Uninstall a platform version**
+
+`ern platform uninstall <platformVersion>`  
+
+This command will uninstall a given platform version (if installed).  
+
+```shell
+> ern platform uninstall 5
+```
+
+**Switch to / activate a platform version**  
+
+`ern platform use <platformVersion>`
+
+This command will switch to / activate a given platform version.  
+If the version is not installed, it will automatically install it and then activate it.  
+
+```shell
+> ern platform use 6
+```
+
+## Development info
+
+`ern-local-cli` is tightly bound to the platform. To setup an appropriate development environment, please follow the instructions provided in the README of the [ern-platform](../) repository.  
+
+`ern-local-cli` is powered by [yargs](http://yargs.js.org/) to offer all commands. You should familiarize yourself with yargs essentials.  
+Each command is self contained in a single source file. Each subcommand is represented by a folder.  
+All commands are stored in the [commands](./src/commands) folder.  
+For example the command `ern generate api` will be found in `/src/commands/generate/api.js`.
+
+All the source files are contained in the [src](./src) folder. This folder is breakdown in two subfolders : [commands](./src/commands) containing all commands implementation and [util](./src/util) containing utilities/BL that are used by the commands.  
+As a general guideline, commands should contain as mininum BL as possible, all BL should be encapsulated in the utils.

@@ -13,7 +13,7 @@ let config;
 if (argv['config-path']) {
   config = require(argv['config-path']);
 } else {
-  config = require(`${process.cwd()}/.containergen.conf.json`);
+  config = require(`${process.cwd()}/.containergenrc.conf.json`);
 }
 
 generateContainer(config);

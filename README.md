@@ -89,6 +89,12 @@ Versions will follow a `2 weeks release cycle`.
 
 A new version might contain new plugins support as well as version updates of already supported plugins but might also contains improvements/fixes to the tools part of the toolchain (ern-container-gen, ern-api-gen, ern-local-cli ...). It might also introduce new tools and new commands.  
 
+Given this versioning, if a native application version is using `v3` of the platform let's say, then ANY miniapp or component out there internally or in the wild, having a version that supports platform `v3` will be compatible with the native app and can be very easily integrated in it using the container generator.  
+
+There is however one important thing to note : all supported plugins will be plugins that are PUBLIC. Plugins that are private to a company, not open-sourced in any way shouldn't be added to the list of supported plugins.  
+Companies that wish to use private platform plugins should therefore fork this repository and add/maintain their own supported internal plugins.  
+The good thing is that while miniapps that are created on this internal platform version cannot be redistributed to be integrate in platform native apps, the opposite is true. Meaning that a native app running platform `v1-mycompany` will be able to use any public miniapp/component that is on official platform `v1`. That is, if they don't modify the supported official plugin list for `v1` but just adds their own internal plugins to it.
+
 Eventually we might release "critical fix" version updates. This is where the minor versioning with the git tag comes in. For example, if a user using `v2` of the platform finds a big bug in the container that makes it unusable in his context, we might push a fix on the `v2` branch and git tag with `v2.1`. Then the platform update command will allow updating the `v2` version with this fix.  
 Update to version should absolutely not include new dependencies or update dependency versions as it might break binary compatibility with users not running this update or already published apps. It should only fix bugs that are deemed critical, rendering the platform unusable in a given context.
 We really don't want to do that, so hopefully it will not happen too much.
@@ -123,7 +129,7 @@ When the user wants to switch from an installed version to another (let's say `v
 
 #### Development instructions
 
-This is a work in progress procedure. It will probably get fine tuned over time as we improve the platform.  
+This is a work in progress procedure. It will get fine tuned over time as we improve the platform.  
 The main goal here is to have as less "development environment" specific code as possible in the platform. The following procedure requires absolutely no dev environment variable nor any specific dev environment code in the platform.
 
 The trick is that this dev setup just adds an imaginary version (`v1000`) to the platform, local to your workstation, with the cache for this version pointing directly to your working folder holding `ern-platform` repository (using a symlink). Through the eyes of the platform, this is just a version like any other one.  
@@ -134,7 +140,7 @@ The trick is that this dev setup just adds an imaginary version (`v1000`) to the
 4. Git clone this repository somewhere on your workstation (we recommend you fork it first !) and `cd` into it.
 5. Run `yarn install` (to install all dependencies)
 6. Run `npm run setup-dev` (this will create the `v1000` development version properly)
-7. Run `ern cauldron start` in a separate terminal window to launch the cauldron locally (or use `ern platform config` to set a remove cauldron url). If you want to keep the cauldron data after cauldron restart, make sure to run `ern cauldron start` from a dedicated folder as the cauldron db will be stored wherever this command is run from.
+7. Run `ern cauldron start` in a separate terminal window to launch the cauldron locally (or use `ern platform config` to set a remove cauldron url). If you want to keep the cauldron data after cauldron restart, make sure to run `ern cauldron start` within a dedicated folder as the cauldron database (a json document) will be stored wherever this command is run from.
 
 From there on, you are good to go for development. You can switch the current platform version to `v1000` by running `ern platform use 1000`. You can use the platform as if you were a user, trough `ern`, you can install versions, switch to versions, access the cauldron ...  
 Be conscious however that of course if you switch to a version that is not the development one (let's say `v3`), then whenever you'll use `ern` command it will not go through your local repo code. Only when you are on `v1000` will `ern` point to your local repository.
@@ -142,4 +148,124 @@ Be conscious however that of course if you switch to a version that is not the d
 At this point you might want to switch to the current in development version branch (if for example `v4` is the version in development you can `git checkout v4`) and work on your own branch from there. You will then issue PRs to this in-dev version branch. Indeed, `master` always contain the code of the latest released version so we don't work directly on master.
 
 If you want to add a new dependency to a project (`ern-api-gen` or `ern-local-cli` or whatever) or if you want to update a version, please use the `yarn add` and `yarn upgrade` commands in replacement of npm as projects maintain a `yarn.lock` file. You can read more about the usage of these commands [here](https://yarnpkg.com/en/docs/managing-dependencies).
-Also, if you add a new dependency to a project, make sure to also include it in the root [package.json](package.json) file of `ern-platform`.  
+Also, if you add a new dependency to a project, make sure to also include it in the root [package.json](package.json) file of `ern-platform`.
+
+If you add or remove new commands, or add or remove features to any of the projects, please make sure to update the appropriate README documentation accordingly and include it as part of your PR.
+
+#### TODOS
+
+**Required for demo**
+
+`ern-local-cli`
+
+- [New feature] Add `ern miniapp publish ota` command (ota publish through codepush)
+- [New feature] Add `ern miniapp run ios` command (to run the miniapp in standalone runner on iOS)
+- [New feature] Add `ern miniapp run android` command (to run the miniapp in standalone runner on Android)
+- [Improvement] `ern miniapp init` should trigger standalone runner project generation for Android.
+- [Improvement] `ern miniapp init` should trigger standalone runner project generation for iOS.
+
+`ern-cauldron-api` / `ern-cauldron-cli`
+
+- [Fix] Scoped native dependencies (`@walmart/react-native-electrode-bridge` for example) do not work well with current cauldron (due to the `/` considered as a path segment starter in REST). Should add `scope` to the nativedep/miniapp object in addition of `name` and `version`.
+- [Fix] Adding a miniapp should patch its version if miniapp already in cauldron at a different version
+- [Todo] Host on a dedicated box (local mac mini) for demo purposes.
+
+`ern-api-gen`
+
+- [Improvement] Integrate with `ern-model-gen` for model generation.
+- [Todo] Merge Carlos' code which adds foundation for iOS generation
+- [New feature] Add iOS api code generation
+
+`ern-model-gen`
+
+- Figure out where to store and how to package this project in the platform as it is a platform wart (only project not being developed internally and not a JS project).
+- [New feature] Add iOS model generation
+
+`ern-runner-gen`
+
+- Figure out what needs to be generated / scope it.
+- IOS project generator implementation
+- Android project generator implementation
+
+`ern-container-gen`
+
+- [New feature] Add an iOS generator that can be used in the context of the demo.
+
+`react-native-electrode-bridge`
+
+- [Refactor] Rename to `react-native-electrode-bus`
+- [Todo] Merge Cody's code containing iOS implementation
+
+`Demo - APIs`
+
+- Create the todo api schema and generate the api / publish it for use in the demo native app / miniapps.
+- Create the hello world api schema and generate the api / publish it
+
+`Demo - Miniapps`
+
+- Create initial todo miniapp (demo starter)
+- Create initial helloworld miniapp (demo starter)
+- Create the finished todo miniapp using generated todo api
+- Create the finished hello world miniapp
+
+`Demo - Native application`
+
+- [Android][iOS] Create project containing the two screens (demo starter)
+- [Android][iOS] Use generated container containing both miniapps and apis to implement full complete working demo application (to validate everything works together)
+
+`Demo - Rehearsal`
+
+- Starting with the demo starters projects (native & miniapps), walk through all demo steps until reaching the end of the demo properly.
+
+**Roadmap (not required for demo)**
+
+`ern-platform`
+
+- [Thought] Instead of using a dedicated manifest.json file we might just be better to store all this data in a specific section in the platform package.json (simpler to maintain a single file and all probably more coherent). (Counter arguments ?). If we decide it's a better solution, should be done before v1 release as it would require an update to the global cli.
+
+`ern-local-cli`
+
+- [New feature] Add `ern miniapp upgrade <platformVersion>` command
+- [New feature] Add `ern platform fix <platformVersion>` command
+- [Improvement] Only show banner / help whenever command is invalid/incomplete
+- [Improvement] Show compatibility table (verbose mode) when checking for platform compatibility (for now only done when checking for native app compatibility).
+- [Improvement] Show help whenever a command is mistyped (for now it just shows the banner)
+
+`ern-cauldron-api` / `ern-cauldron-cli`
+
+- [Improvement] Command line should accept an optional argument to specify the port on which to start the cauldron
+- [Fix] Check out thread safety. Db is stored as a local file, what happens if two users try to write to it at the same time ?
+- [Improvement] Consider using a more robust database for storage.
+
+`ern-api-gen`
+
+- [New feature] Support multi-parameter requests.
+
+`ern-model-gen`
+
+- [Improvement] Use JOI schema as JS model validator.
+- [Improvement] Add support for data constraints.
+
+`ern-runner-gen`
+
+- TBD
+
+`ern-container-gen`
+
+- [Refactor] Generators source should be stored in a `generators` folder with one source file per generators
+- [Refactor] Split up main code into more granular modules
+- [Refactor] For each plugin, keep a separate folder per platform/generator (right now all plugins config/templates are stored at the root).
+- [Improvement] For maven generator, most of the templates are to replace single values. Try to detect more automatically and do surgical patching instead of relying on big redundant templates.
+- [Improvement] Add multi bundle support.
+
+`react-native-electrode-bridge`
+
+- TBD
+
+`cross-components`
+
+- [Improvement] Platform manifest should holds additional metadata for supported plugins, being the plugin platform. Some plugins contain cross-platform code (JS/Android/iOS i.e react-native-code-push), while some others only contain JS/iOS or others just native code (react-native-stack-tracer is Android only). For the latest, it's not really a plugin anymore but solely a native dependency. Manifest should be updated, but also the plugins related command of local client, so that it lists the platform supported by the plugin, and don't list the native only plugins.
+
+- [Improvement] Be less strict on the node version required. Not for developers, but for consumers. Use babel to transpile to lower node version (most of the project already have some scripts to transpile).
+
+- [Improvement/Fix] Do not require yarn. strongly recommend usage of it (and suggest to install it in a console message) but fallback to npm if yarn is not installed locally. This require to find a solution for single bundling in container generation. Yarn works out of the box as it flattens dependencies but for npm only solution I found was to run `npm dedupe` which takes dozen of minutes to run.
