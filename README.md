@@ -99,6 +99,9 @@ Eventually we might release "critical fix" version updates that can't wait on a 
 Update to version should absolutely not include new dependencies or update dependency versions as it might break binary compatibility with users not running this update or already published apps. It should only fix bugs that are deemed critical, rendering the platform unusable in a given context.
 We really don't want to do that, so hopefully it will not happen too much.
 
+**Dev info**
+As of now, because we have no versions released yet (we're working on `v1`, I have created/published to a branch a `v0`. Indeed, to properly test initial platform install / version switch / etc ... we need to have at least one version published. We will maintain it needed during dev of `v1`. Once `v1` is published, then we will get rid of this testing env `v0`.
+
 #### Understanding platform installation & version switching
 
 A user installing the platform for a first time, will have to first install the `ern` binary.  
