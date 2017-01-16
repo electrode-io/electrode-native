@@ -129,7 +129,28 @@ When the user wants to switch from an installed version to another (let's say `v
 
 #### Development instructions
 
-In progress
+This is a work in progress procedure. It will get fine tuned over time as we improve the platform.  
+The main goal here is to have as less "development environment" specific code as possible in the platform. The following procedure requires absolutely no dev environment variable nor any specific dev environment code in the platform.
+
+The trick is that the `manifest.json` of master branch declares version 1000. This dev setup just setup the cache for this version to point directly to your working folder holding `ern-platform` repository (using a symlink). Through the eyes of the platform, this is just a version like any other one. It won't be however listed as one of the versions available because the list of available versions is infered from looking at the remote branches. `v1000` is not a remote branch, so the version won't appear. Consider it as a "hiden" version. You can however activate/use it through `ern platfom use 1000`.
+
+1. Make sure you have installed all the prerequisites listed above.
+2. Install the global client through `npm i -g @walmart/electrode-react-native` (this will install the `ern` binary and make it available globally).
+3. Install the platform by running `ern` command in a terminal (this will install the latest version of the platform, whichever it might be).
+4. Git clone this repository somewhere on your workstation (we recommend you fork it first !) and `cd` into it.
+5. Run `yarn install` (to install all dependencies)
+6. Run `npm run setup-dev` (this will create the `v1000` development version properly)
+7. Run `ern cauldron start` in a separate terminal window to launch the cauldron locally (or use `ern platform config` to set a remove cauldron url). If you want to keep the cauldron data after cauldron restart, make sure to run `ern cauldron start` within a dedicated folder as the cauldron database (a json document) will be stored wherever this command is run from.
+
+From there on, you are good to go for development. You can switch the current platform version to `v1000` by running `ern platform use 1000`. You can use the platform as if you were a user, trough `ern`, you can install versions, switch to versions, access the cauldron ...  
+Be conscious however that of course if you switch to a version that is not the development one (let's say `v3`), then whenever you'll use `ern` command it will not go through your local repo code. Only when you are on `v1000` will `ern` point to your local repository.
+
+At this point you might want to switch to the current in development version branch (if for example `v4` is the version in development you can `git checkout v4`) and work on your own branch from there. You will then issue PRs to this in-dev version branch. Indeed, `master` always contain the code of the latest released version so we don't work directly on master.
+
+If you want to add a new dependency to a project (`ern-api-gen` or `ern-local-cli` or whatever) or if you want to update a version, please use the `yarn add` and `yarn upgrade` commands in replacement of npm as projects maintain a `yarn.lock` file. You can read more about the usage of these commands [here](https://yarnpkg.com/en/docs/managing-dependencies).
+Also, if you add a new dependency to a project, make sure to also include it in the root [package.json](package.json) file of `ern-platform`.
+
+If you add or remove new commands, or add or remove features to any of the projects, please make sure to update the appropriate README documentation accordingly and include it as part of your PR.
 
 #### TODOS
 
