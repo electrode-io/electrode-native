@@ -191,7 +191,7 @@ Push updated README directly to master (no PR for this !).
 `ern-runner-gen`
 
 - IOS project generator implementation
-- Android project generator implementation
+- Android project generator implementation [BL] [EMP-193](https://jira.walmart.com/browse/EMP-193)
 
 `ern-container-gen`
 
