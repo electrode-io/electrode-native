@@ -18,10 +18,6 @@ const ERN_RC_GLOBAL_FILE_PATH = `${ERN_PATH}/.ernrc`;
 // Path from where this script is run (wherever the user cloned the repo locally)
 const WORKING_DIR = process.cwd();
 
-// Create a git tag v1000.0 so that the platform can detect this version
-shell.cd(ERN_PLATFORM_REPO_PATH);
-shell.exec('git tag v1000.0');
-
 // Create the cache folder for this version as a symlink to current working folder
 shell.cd(ERN_VERSIONS_CACHE_PATH);
 shell.exec(`ln -s ${WORKING_DIR} v1000`);

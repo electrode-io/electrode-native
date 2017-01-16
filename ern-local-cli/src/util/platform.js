@@ -13,11 +13,6 @@ const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/cache`;
 const moduleRe = /(.*)@(.*)/;
 
 class Platform {
-  updatePlatformRepository() {
-    this.switchPlatformRepositoryToMaster();
-    execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git pull`);
-  }
-
   switchPlatformRepositoryToMaster() {
     execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout master`);
   }
@@ -40,14 +35,7 @@ class Platform {
     }
 
     if (!this.isPlatformVersionAvailable(version)) {
-      // Requested platform version is not available
-      // Let's make sure first that repo is up to date ...
-      this.updatePlatformRepository();
-
-      // .. then recheck
-      if (!this.isPlatformVersionAvailable(version)) {
-        throw new Error(`Version ${version} of ern platform is not available`)
-      }
+      throw new Error(`Version ${version} of ern platform is not available`)
     }
 
     this.switchPlatformRepositoryToVersion(version);

@@ -45,17 +45,20 @@ if (!fs.existsSync(ERN_PATH)) {
   // Clone github repository containing the platform
   execSync(`git clone ${gitRepo} ${ERN_PLATFORM_REPO_PATH}`);
 
+  // Cd into platform repo folder
+  process.chdir(ERN_PLATFORM_REPO_PATH);
+
   // List all available versions from remote
   const branchVersionRe = /heads\/v(\d+)/;
-  const latestVersion = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`);
+  const latestVersion = execSync(`git ls-remote --heads`)
     .toString()
     .split('\n')
     .filter(v => branchVersionRe.test(v))
     .slice(-1)[0];
 
   // Checkout latest branch version
-  const latestVersionNumber = branchVersionRe.exec(latestVersion)[1]);
-  execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git checkout origin/v${latestVersionNumber}`);
+  const latestVersionNumber = branchVersionRe.exec(latestVersion)[1];
+  execSync(`git checkout origin/v${latestVersionNumber}`);
 
   // Call install function
   const install = require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install;
