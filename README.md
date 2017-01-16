@@ -162,6 +162,9 @@ If you add or remove new commands, or add or remove features to any of the proje
 
 **Required for demo**
 
+If you pick up work from this TODO list, please add your initials next to the task and link to the JIRA associated task (you'll need to create a JIRA task beforehand on our [JIRA board](https://jira.walmart.com/browse/EMP)). Remove from this TODO list once complete.   
+Push updated README directly to master (no PR for this !).
+
 `ern-local-cli`
 
 - [New feature] Add `ern miniapp publish ota` command (ota publish through codepush)
@@ -172,19 +175,19 @@ If you add or remove new commands, or add or remove features to any of the proje
 
 `ern-cauldron-api` / `ern-cauldron-cli`
 
-- [Fix] Scoped native dependencies (`@walmart/react-native-electrode-bridge` for example) do not work well with current cauldron (due to the `/` considered as a path segment starter in REST). Should add `scope` to the nativedep/miniapp object in addition of `name` and `version`.
-- [Fix] Adding a miniapp should patch its version if miniapp already in cauldron at a different version
-- [Todo] Host on a dedicated box (local mac mini) for demo purposes.
+- [Fix] Scoped native dependencies (`@walmart/react-native-electrode-bridge` for example) do not work well with current cauldron (due to the `/` considered as a path segment starter in REST). Should add `scope` to the nativedep/miniapp object in addition of `name` and `version`. [BL] [EMP-187](https://jira.walmart.com/browse/EMP-187)
+- [Fix] Adding a miniapp should patch its version if miniapp already in cauldron at a different version [BL] [EMP-188](https://jira.walmart.com/browse/EMP-188)
+- [Todo] Host on a dedicated box (local mac mini) for demo purposes. [BL] [EMP-189](https://jira.walmart.com/browse/EMP-189)
 
 `ern-api-gen`
 
-- [Improvement] Integrate with `ern-model-gen` for model generation.
-- [Todo] Merge Carlos' code which adds foundation for iOS generation
+- [Improvement] Integrate with `ern-model-gen` for model generation. [BL] [EMP-191](https://jira.walmart.com/browse/EMP-191)
+- [Todo] Merge Carlos' code which adds foundation for iOS generation [BL] [EMP-192](https://jira.walmart.com/browse/EMP-192)
 - [New feature] Add iOS api code generation
 
 `ern-model-gen`
 
-- Figure out where to store and how to package this project in the platform as it is a platform wart (only project not being developed internally and not a JS project).
+- Figure out where to store and how to package this project in the platform as it is a platform wart (only project not being developed internally and not a JS project). [BL] [EMP-190](https://jira.walmart.com/browse/EMP-190)
 - [New feature] Add iOS model generation
 
 `ern-runner-gen`
@@ -263,6 +266,9 @@ If you add or remove new commands, or add or remove features to any of the proje
 - [Refactor] For each plugin, keep a separate folder per platform/generator (right now all plugins config/templates are stored at the root).
 - [Improvement] For maven generator, most of the templates are to replace single values. Try to detect more automatically and do surgical patching instead of relying on big redundant templates.
 - [Improvement] Add multi bundle support.
+- [Improvement] Implement caching of bundled miniapp (might not be needed)
+- [Improvement] Mavent generator. Find a better way to handle dependencies build order (react-native neds to be built first, then bridge which depends on it, then apis which depends on bridge ...). For now plugin list defines order but we might face issues later on.
+- [Improvement] Maven generator. Figure out a better way to handle same version of dependency but built with a different react-native version dependency. For now we suffix the maven artifact version with the platform version, but its not ideal.
 
 `react-native-electrode-bridge`
 
