@@ -102,6 +102,9 @@ We really don't want to do that, so hopefully it will not happen too much.
 **Dev info**
 As of now, because we have no versions released yet (we're working on `v1`, I have created/published to a branch a `v0`. Indeed, to properly test initial platform install / version switch / etc ... we need to have at least one version published. We will maintain it needed during dev of `v1`. Once `v1` is published, then we will get rid of this testing env `v0`.
 
+**React Native miniapp/component developer info**
+For the developers of a react native miniapp using the platform, the best approach is to maintain one branch per platform version in their repository. This way, if we consider that the current in dev version of the miniapp is targetting `v4` of the platform but a live version is already running on `v3` for some users, then if developers need to make a bug fix to the live version using `v3`, they can easily switch to the `platform-v3` branch of their app, then switch the platform version to `v3` using `ern plaform use 3`, make their fix, test it and then publish OTA through `ern miniapp publish ota` command.
+
 #### Understanding platform installation & version switching
 
 A user installing the platform for a first time, will have to first install the `ern` binary.  
