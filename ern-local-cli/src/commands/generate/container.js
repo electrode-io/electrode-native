@@ -36,7 +36,7 @@ exports.handler = async function (argv) {
         nativeAppName: explodeNapSelector(argv.fullNapSelector)[0],
         platformPath: platform.currentPlatformVersionPath,
         generator,
-        pluginNames: _.map(plugins, p => p.name),
+        plugins,
         miniapps
       });
 

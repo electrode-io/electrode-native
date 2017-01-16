@@ -111,7 +111,8 @@ let nativeBinariesStore, sourceMapsStore, db, cauldron, ch;
 
 const nativeDependencySchema = Joi.object({
   name: Joi.string().required(),
-  version: Joi.string().required()
+  version: Joi.string().required(),
+  scope: Joi.string().optional()
 });
 
 const nativeDependencyPatchSchema = Joi.object({
@@ -122,6 +123,7 @@ const reactNativeAppSchema = Joi.object({
   name: Joi.string().required(),
   version: Joi.string().required(),
   isInBinary: Joi.boolean().required(),
+  scope: Joi.string().optional(),
   hasSourceMap: Joi.boolean().optional()
 });
 

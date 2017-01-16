@@ -175,7 +175,6 @@ Push updated README directly to master (no PR for this !).
 
 `ern-cauldron-api` / `ern-cauldron-cli`
 
-- [Fix] Scoped native dependencies (`@walmart/react-native-electrode-bridge` for example) do not work well with current cauldron (due to the `/` considered as a path segment starter in REST). Should add `scope` to the nativedep/miniapp object in addition of `name` and `version`. [BL] [EMP-187](https://jira.walmart.com/browse/EMP-187)
 - [Fix] Adding a miniapp should patch its version if miniapp already in cauldron at a different version [BL] [EMP-188](https://jira.walmart.com/browse/EMP-188)
 - [Todo] Host on a dedicated box (local mac mini) for demo purposes. [BL] [EMP-189](https://jira.walmart.com/browse/EMP-189)
 

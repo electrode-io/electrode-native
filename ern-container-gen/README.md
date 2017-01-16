@@ -27,7 +27,7 @@ It potentially supports different generators. For example for Android we have th
 | nativeAppName | The name of the native application | YES |  |
 | platformPath | Path to the currently activated platform version folder | YES | |
 | generator | The generator to use | YES | |
-| pluginNames | An array containing all plugin names (to be included in the lib)| NO | []
+| plugins | An array containing all plugins (to be included in the lib)| NO | []
 | miniApps | An array of mini app objects (name/version) (to be included in the lib ) | NO | []
 
 

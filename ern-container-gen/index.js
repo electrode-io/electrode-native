@@ -516,7 +516,7 @@ async function buildAndPublishContainer(paths) {
   }
 }
 
-function buildPluginListSync(pluginNames, manifest) {
+function buildPluginListSync(plugins, manifest) {
   let result = [];
 
   const manifestPlugins = _.map(
@@ -525,6 +525,7 @@ function buildPluginListSync(pluginNames, manifest) {
       version: npmModuleRe.exec(d)[2],
       versionEx: `${npmModuleRe.exec(d)[2]}-${manifest.platformVersion}`
     }));
+  const pluginNames = _.map(plugins, p => p.name);
   for (const manifestPlugin of manifestPlugins) {
     if (pluginNames.includes(manifestPlugin.name)) {
       result.push(manifestPlugin);
@@ -587,11 +588,11 @@ async function generateAndroidContainer(
   nativeAppName = required('nativeAppName'),
   platformPath = required('platformPath'),
   generator = required('generator'),
-  pluginNames = [],
+  plugins = [],
   miniapps = []) {
   if (generator.name === 'maven') {
     return generateAndroidContainerUsingMavenGenerator(
-      nativeAppName, platformPath, pluginNames, miniapps, generator);
+      nativeAppName, platformPath, plugins, miniapps, generator);
   } else {
     throw new Error(`Android generator ${generator.name} not supported`);
   }
@@ -600,7 +601,7 @@ async function generateAndroidContainer(
 async function generateAndroidContainerUsingMavenGenerator(
     nativeAppName = required('nativeAppName'),
     platformPath = required('platformPath'),
-    pluginNames = [],
+    plugins = [],
     miniapps = [], {
       containerPomVersion,
       mavenRepositoryUrl = DEFAULT_MAVEN_REPO,
@@ -632,7 +633,7 @@ async function generateAndroidContainerUsingMavenGenerator(
     };
 
     const manifest = require(`${platformPath}/manifest.json`);
-    const plugins = buildPluginListSync(pluginNames, manifest);
+    const plugins = buildPluginListSync(plugins, manifest);
     const reactNativeVersion = getReactNativeVersionFromManifest(manifest);
     const mavenRepositoryType = getMavenRepositoryType(mavenRepositoryUrl);
     let gradleMavenRepositoryCode;
@@ -682,7 +683,7 @@ async function generateIosContainer(
   nativeAppName = required('nativeAppName'),
   platformPath = required('platformPath'),
   generator = required('generator'),
-  pluginNames = [],
+  plugins = [],
   miniapps = []) {
     throw new Error(`No iOS generator yet`);
 }
@@ -703,9 +704,9 @@ function required(param) {
 //    containerPomVersion: "1.2.3",
 //    mavenRepositoryUrl = ...
 //  }
-// pluginNames: Array containing all plugin names to be included in the container
+// plugins: Array containing all plugins to be included in the container
 //  ex :
-//  ["react-native", "react-native-code-push"]
+//  [{ name: "react-native", version: "0.40.0"}, {name: "react-native-code-push"}]
 // miniApps: Array of mini apps to be included in the container
 //  ex :
 //  [
@@ -718,7 +719,7 @@ export default async function generateContainer({
     nativeAppName = required('nativeAppName'),
     platformPath = required('platformPath'),
     generator = required('generator'),
-    pluginNames = [],
+    plugins = [],
     miniapps = []
   } = {}) {
   try {
@@ -727,14 +728,14 @@ export default async function generateContainer({
         nativeAppName,
         platformPath,
         generator,
-        pluginNames,
+        plugins,
         miniapps);
     } else if (generator.platform === 'ios') {
       await generateIosContainer(
         nativeAppName,
         platformPath,
         generator,
-        pluginNames,
+        plugins,
         miniapps);
     } else {
       throw new Error(`Platform ${generator.platform} not supported`);

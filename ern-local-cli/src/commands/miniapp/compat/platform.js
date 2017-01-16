@@ -19,8 +19,14 @@ exports.handler = function (argv) {
   const platformDependencies = platform.getSupportedPlugins(argv.platformVersion);
 
   for (const localNativeDep of localNativeDeps) {
+
+    let localNativeDepName = localNativeDep.name;
+    if (localNativeDep.scope) {
+      localNativeDepName = `@${localNativeDep.scope}/${localNativeDep.name}`;
+    }
+
     const containerManifestMatchingDep =
-      _.find(platformDependencies, m => m.name === localNativeDep.name);
+      _.find(platformDependencies, m => m.name === localNativeDepName);
     const localDep = `${localNativeDep.name}@${localNativeDep.version}`;
     if (containerManifestMatchingDep) {
       if (containerManifestMatchingDep.version === localNativeDep.version) {

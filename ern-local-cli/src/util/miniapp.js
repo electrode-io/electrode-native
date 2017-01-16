@@ -11,14 +11,16 @@ import platform from './platform.js';
 import { compatCheck } from './compatibility.js';
 import explodeNapSelector from './explodeNapSelector.js';
 
+const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/;
+
 // Return all native dependencies currently used by the mini-app
 // This method scans the node_modules folder to find any folder containing
 // a build.gradle file (which at least is an indication that the folder contains
 // some android native code.
 // The dependencies are returned as a array of objects
-// Each object represent a native dependency (name and version)
+// Each object represent a native dependency (name/version and optionaly scope)
 // Sample output :
-// [ { name: "react-native", version: "0.39.2" }]
+// [ { name: "react-native", version: "0.39.2", scope: "walmart" }]
 export function getLocalNativeDependencies() {
   let result = [];
 
@@ -49,10 +51,19 @@ export function getLocalNativeDependencies() {
   for (const nativeDependencyName of nativeDependenciesNames) {
     const nativeDepPackageJson = require(
       `${process.cwd()}/node_modules/${nativeDependencyName}/package.json`);
-    result.push({
-      name: nativeDependencyName,
-      version: nativeDepPackageJson.version
-    });
+
+    if (NPM_SCOPED_MODULE_RE.test(nativeDependencyName)) {
+      result.push({
+        name: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2],
+        scope: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[1],
+        version: nativeDepPackageJson.version
+      });
+    } else {
+      result.push({
+        name: nativeDependencyName,
+        version: nativeDepPackageJson.version
+      });
+    }
   }
 
   return result;
@@ -148,9 +159,16 @@ export async function publishInApp(
   try {
     const packageJson = getMiniAppPackageJson();
 
-    const miniAppName = packageJson.name;
-    const miniAppVersion = packageJson.version;
+    let miniAppName, miniAppScope;
 
+    if (NPM_SCOPED_MODULE_RE.test(packageJson.name)) {
+      miniAppScope = NPM_SCOPED_MODULE_RE.exec(packageJson.name)[1];
+      miniAppName = NPM_SCOPED_MODULE_RE.exec(packageJson.name)[2];
+    } else {
+      miniAppName = packageJson.name;
+    }
+
+    const miniAppVersion = packageJson.version;
     const miniAppDesc = `${miniAppName}@${miniAppVersion}`;
     const appDesc = `${appName}:${platformName}:${versionName}`;
 
@@ -197,11 +215,21 @@ export async function publishInApp(
         localNativeDependency, appName, platformName, versionName);
     }
 
-    await cauldron.addReactNativeApp(appName, platformName, versionName, {
-      name: miniAppName,
-      version: miniAppVersion,
-      isInBinary: true
-    });
+    if (miniAppScope) {
+      await cauldron.addReactNativeApp(appName, platformName, versionName, {
+        name: miniAppName,
+        scope: miniAppScope,
+        version: miniAppVersion,
+        isInBinary: true
+      });
+    } else {
+      await cauldron.addReactNativeApp(appName, platformName, versionName, {
+        name: miniAppName,
+        version: miniAppVersion,
+        isInBinary: true
+      });
+    }
+
 
     logInfo(`DONE : ${miniAppDesc} added to ${appDesc}`);
   } catch (e) {
