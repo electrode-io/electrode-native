@@ -190,7 +190,6 @@ Push updated README directly to master (no PR for this !).
 
 `ern-runner-gen`
 
-- Figure out what needs to be generated / scope it.
 - IOS project generator implementation
 - Android project generator implementation
 
