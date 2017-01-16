@@ -182,11 +182,8 @@ export async function publishInApp(
     } catch (e) {
       currentMiniAppEntryIncauldron = [];
     };
-    console.log(currentMiniAppEntryIncauldron)
     const isVersionPresent =
-      _.find(currentMiniAppEntryIncauldron, function(entry) {
-      return entry.version === miniAppVersion;
-    });
+      _.find(currentMiniAppEntryIncauldron, e => e.version === miniAppVersion);
     if (isVersionPresent) {
       throw new Error(`${miniAppDesc} already in binary of ${appDesc}`);
     }

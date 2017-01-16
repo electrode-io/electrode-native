@@ -388,7 +388,7 @@ server.route({
     if (!alreadyExists(version.reactNativeApps, req.payload.name)) {
       version.reactNativeApps.push(req.payload);
     } else { /// consider version update, even if not the case
-      version.reactNativeApps[req.payload.name] = req.payload.version;
+      _.find(version.reactNativeApps, r => r.name === req.payload.name).version = req.payload.version;
     }
     db.commit();
     reply().code(200);
