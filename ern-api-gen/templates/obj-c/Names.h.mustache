@@ -1,0 +1,10 @@
+#import <Foundation/Foundation.h>
+
+@interface Names : NSObject
+  {{#events}}
+  extern NSString *__nonnull const {{{constantName}}};
+  {{/events}}
+  {{#requests}}
+  extern NSString *__nonnull const {{{constantName}}};
+  {{/requests}}
+@end

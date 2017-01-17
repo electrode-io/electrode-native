@@ -18,9 +18,12 @@
     "babel-register": "^6.18.0",
     "chalk": "^1.1.3",
     "fs-readdir-recursive": "https://npme.walmart.com/fs-readdir-recursive/-/fs-readdir-recursive-1.0.0.tgz",
+    "lodash.findkey": "^4.6.0",
     "minimist": "^1.2.0",
     "mustache": "^2.3.0",
-    "shelljs": "^0.7.5"
+    "path": "^0.12.7",
+    "shelljs": "^0.7.5",
+    "xcode": "^0.9.1"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",

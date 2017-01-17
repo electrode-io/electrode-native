@@ -180,10 +180,7 @@ Push updated README directly to master (no PR for this !).
 `ern-api-gen`
 
 - [Improvement] Integrate with `ern-model-gen` for model generation. [BL] [EMP-191](https://jira.walmart.com/browse/EMP-191)
-- [Todo] Merge Carlos' code which adds foundation for iOS generation [BL] [EMP-192](https://jira.walmart.com/browse/EMP-192)
-- [Improvement] Add array support for response payload [BL] [EMP-194](https://jira.walmart.com/browse/EMP-194)
-- [New feature] Add iOS api code generation
-
+- [New feature] Complete iOS api code generation
 
 `ern-model-gen`
 

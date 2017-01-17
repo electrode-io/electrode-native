@@ -1,0 +1,10 @@
+#import "Names.h"
+
+@implementation Names
+  {{#events}}
+  NSString *__nonnull const {{{constantName}}} = @"{{{bridgeMessageName}}}";
+  {{/events}}
+  {{#requests}}
+  NSString *__nonnull const {{{constantName}}} = @"{{{bridgeMessageName}}}";
+  {{/requests}}
+@end
