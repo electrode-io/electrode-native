@@ -181,7 +181,7 @@ Push updated README directly to master (no PR for this !).
 
 - [Improvement] Integrate with `ern-model-gen` for model generation. [BL] [EMP-191](https://jira.walmart.com/browse/EMP-191)
 - [Todo] Merge Carlos' code which adds foundation for iOS generation [BL] [EMP-192](https://jira.walmart.com/browse/EMP-192)
-- [Improvement] Add array support for request/response payload and event paylod
+- [Improvement] Add array support for response payload [BL] [EMP-194](https://jira.walmart.com/browse/EMP-194)
 - [New feature] Add iOS api code generation
 
 
@@ -206,8 +206,8 @@ Push updated README directly to master (no PR for this !).
 
 `Demo - APIs`
 
-- Create the todo api schema and generate the api / publish it for use in the demo native app / miniapps.
-- Create the hello world api schema and generate the api / publish it
+- Create the todo api schema and generate the api / publish it for use in the demo native app / miniapps. [BL] [EMP-195](https://jira.walmart.com/browse/EMP-195)
+- Create the hello world api schema and generate the api / publish it [BL] [EMP-196](https://jira.walmart.com/browse/EMP-196)
 
 `Demo - Miniapps`
 
@@ -248,6 +248,7 @@ Push updated README directly to master (no PR for this !).
 `ern-api-gen`
 
 - [New feature] Support multi-parameter requests.
+- [Improvement] Add array support for request/event payload
 
 `ern-model-gen`
 
