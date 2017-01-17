@@ -175,7 +175,7 @@ Push updated README directly to master (no PR for this !).
 
 `ern-cauldron-api` / `ern-cauldron-cli`
 
-- [Todo] Host on a dedicated box (local mac mini) for demo purposes. [BL] [EMP-189](https://jira.walmart.com/browse/EMP-189)
+*None*
 
 `ern-api-gen`
 
@@ -203,8 +203,7 @@ Push updated README directly to master (no PR for this !).
 
 `Demo - APIs`
 
-- Create the todo api schema and generate the api / publish it for use in the demo native app / miniapps. [BL] [EMP-195](https://jira.walmart.com/browse/EMP-195)
-- Create the hello world api schema and generate the api / publish it [BL] [EMP-196](https://jira.walmart.com/browse/EMP-196)
+- Update APIs to make use of model generator to generate the Todo model (needs to be Parcelable probably on Android). For now APIs are working, using just a String to represent a TODO, which is working fine and is a good working backup solution if model gen is not ready/integrated in due time.
 
 `Demo - Miniapps`
 
