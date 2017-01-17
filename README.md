@@ -215,7 +215,7 @@ Push updated README directly to master (no PR for this !).
 
 `Demo - Native application`
 
-- [Android] Create project containing the two screens (demo starter)
+- [Android] Create project containing the two screens (demo starter) [KS] [EMP-198](https://jira.walmart.com/browse/EMP-198)
 - [iOS] Create project containing the two screens (demo starter) [BM] [EMP-180](https://jira.walmart.com/browse/EMP-180)
 - [Android] Use generated container containing both miniapps and apis to implement full complete working demo application (to validate everything works together)
 - [iOS] Use generated container containing both miniapps and apis to implement full complete working demo application (to validate everything works together)
