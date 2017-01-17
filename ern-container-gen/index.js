@@ -481,9 +481,11 @@ async function bundleMiniApps(miniapps, paths) {
 
     let imports = "";
     for (const miniapp of miniapps) {
-      imports += `import '${miniapp.name}'\n`;
-      log(`yarn add ${miniapp.name}@${miniapp.version}`);
-      await yarnInstall(miniapp.name, miniapp.version);
+      const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
+                                        : miniapp.name;
+      imports += `import '${miniAppName}'\n`;
+      log(`yarn add ${miniAppName}@${miniapp.version}`);
+      await yarnInstall(miniAppName, miniapp.version);
     }
 
     log(`writing index.android.js`);
