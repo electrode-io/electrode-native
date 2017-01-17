@@ -18,6 +18,6 @@ exports.handler = function (argv) {
   }
 
   logInfo(`Installing ${argv.name}@${plugin.version}`);
-  execSync(`npm i ${argv.name}@${plugin.version} --save`);
+  execSync(`yarn add ${argv.name}@${plugin.version}`);
   logInfo(`done.`)
 }
