@@ -45,3 +45,9 @@ export function getCurrentTemperature(dispatchMode = DispatchMode.NATIVE) {
     dispatchMode
   });
 }
+export function getCurrentTemperatures(dispatchMode = DispatchMode.NATIVE) {
+  return electrodeBridge.sendRequest(
+    messages.GET_CURRENT_TEMPERATURES, {
+    dispatchMode
+  });
+}

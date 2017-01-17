@@ -68,9 +68,15 @@ request getCurrentTemperature() : Integer
 Generated code somehow reflect what has been proposed on the wiki :  
 [Messages-API-generation-proposal](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/site/wiki/Messages-API-generation-proposal)
 
-The [sample](./sample) folder let you see what gets generated based on a sample schema. 
+The [sample](./sample) folder let you see what gets generated based on a sample schema.
 
 ##### Project Structure
 
 `api-hull` folder contains the base skeleton for an API lib, be it for Android/iOS or JS.  
 `templates` folder contains api generation code templates for all platforms.
+
+##### Current suggested development procedure
+
+If you need to add new support or modify existing generating code, on Android a good way is to load the sample project in Android Studio and work from there to modify the Android code the way you would like the generated output to be.   
+Then once you are satisfied and you ensure it compiles fine, you can backtrack from there and work on the template itself to produce the desired code.  
+You can then run the generator and make sure produced code is correct by reloading the sample project in Android Studio and launching a new build.

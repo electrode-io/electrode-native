@@ -43,3 +43,9 @@ export function handleGetCurrentTemperatureRequest(handler) {
       return handler();
     });
 }
+export function handleGetCurrentTemperaturesRequest(handler) {
+  electrodeBridge.registerRequestHandler(messages.GET_CURRENT_TEMPERATURES,
+    (requestData) => {
+      return handler();
+    });
+}

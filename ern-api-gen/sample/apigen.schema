@@ -23,3 +23,6 @@ request getTemperatureFor(location: String) : Integer
 
 // Request with no request payload and a response payload
 request getCurrentTemperature() : Integer
+
+// Request with no request payload and a primitive array response payload
+request getCurrentTemperatures() : Integer[]

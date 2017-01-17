@@ -153,6 +153,32 @@ public final class WeatherApiClient {
        }
      });
   }
+  public static void getCurrentTemperatures(
+                                final Response<int[]> response) {
+    getCurrentTemperatures( response, DispatchMode.JS);
+  }
+
+  public static void getCurrentTemperatures(
+                                final Response<int[]> response,
+                                final DispatchMode dispatchMode) {
+    
+     ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_CURRENT_TEMPERATURES)
+                       
+                                      .withDispatchMode(dispatchMode)
+                                      .build();
+
+     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+       @Override
+       public void onSuccess(Bundle bundle) {
+           response.onSuccess(bundle.getIntArray("rsp"));
+       }
+
+       @Override
+       public void onError(String code, String message) {
+           response.onError(code, message);
+       }
+     });
+  }
 
   //====================================================================
   // Bridge initialization

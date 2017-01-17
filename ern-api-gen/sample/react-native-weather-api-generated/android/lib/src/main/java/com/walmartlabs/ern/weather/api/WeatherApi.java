@@ -24,6 +24,7 @@ public final class WeatherApi {
   private static RequestHandlerEx<String,Void> sRefreshWeatherForRequestHandler;
   private static RequestHandlerEx<String,Integer> sGetTemperatureForRequestHandler;
   private static RequestHandler<Integer> sGetCurrentTemperatureRequestHandler;
+  private static RequestHandler<int[]> sGetCurrentTemperaturesRequestHandler;
 
   //====================================================================
   // Request Handlers affectation (Public client surface)
@@ -40,6 +41,9 @@ public final class WeatherApi {
   }
   public static void handleGetCurrentTemperatureRequest(RequestHandler<Integer> handler) {
       sGetCurrentTemperatureRequestHandler = handler;
+  }
+  public static void handleGetCurrentTemperaturesRequest(RequestHandler<int[]> handler) {
+      sGetCurrentTemperaturesRequestHandler = handler;
   }
 
   //====================================================================
@@ -150,6 +154,23 @@ public final class WeatherApi {
                       @Override
                       public void onSuccess(Integer obj) {
                         Bundle bundle = new Bundle(); bundle.putInt("rsp", obj);
+                        requestCompletioner.success(bundle);
+                      }
+
+                      @Override
+                      public void onError(String code, String message) {
+                        requestCompletioner.error(code, message);
+                      }
+                  });
+                }
+              });
+            electrodeBridge.requestRegistrar().registerRequestHandler(Names.GET_CURRENT_TEMPERATURES, new RequestDispatcherImpl.RequestHandler() {
+                @Override
+                public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+                  WeatherApi.sGetCurrentTemperaturesRequestHandler.handleRequest(new Response<int[]>() {
+                      @Override
+                      public void onSuccess(int[] obj) {
+                        Bundle bundle = new Bundle(); bundle.putIntArray("rsp", obj);
                         requestCompletioner.success(bundle);
                       }
 

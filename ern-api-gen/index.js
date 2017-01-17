@@ -28,6 +28,14 @@ const primitiveTypes = [
   "String"
 ]
 
+const androidPrimitiveTypes = [
+  "bool",
+  "int",
+  "double",
+  "float",
+  "string"
+]
+
 //==============================================================================
 // Async wrappers around node fs
 //==============================================================================
@@ -91,6 +99,47 @@ function errorLog(header, err) {
   console.log(chalk.bold.red(`[${header}] Oops something went wrong : ${err}`));
 }
 
+// true if the given type is a type array, false othewise
+function isArrayType(type) {
+  return type.includes('[]');
+}
+
+// return the type backed by the array. for example Integer[] will return Integer
+// and LatLng[] will return LatLng
+function getArrayType(type) {
+  return type.replace('[]', '');
+}
+
+function androidObjTypeToPrimitive(type) {
+  switch (type) {
+    case 'Boolean' : return 'bool';
+    case 'Integer' : return 'int';
+    case 'Double' : return 'double';
+    case 'Float' : return 'float';
+    case 'String' : return 'string';
+  }
+}
+
+function androidPrimitiveTypeToObjType(type) {
+  switch (type) {
+    case 'bool' : return 'Boolean';
+    case 'int' : return 'Integer';
+    case 'double' : return 'Double';
+    case 'float' : return 'Float';
+    case 'string' : return 'String';
+  }
+}
+
+function androidObjTypeArrToPrimitiveArr(type) {
+  switch (type) {
+    case 'Boolean[]' : return 'bool[]';
+    case 'Integer[]' : return 'int[]';
+    case 'Double[]' : return 'double[]';
+    case 'Float[]' : return 'float[]';
+    case 'String[]' : return 'string[]';
+  }
+}
+
 //==============================================================================
 // Generate configuration from a schema file
 //==============================================================================
@@ -122,6 +171,9 @@ request getTemperatureFor(location: String) : Integer
 
 // Request with no request payload and a response payload
 request getCurrentTemperature() : Integer
+
+// Request with no request payload an an array response payload
+request getCurrentTemparatures() : Integer[]
 */
 function generateConfigFromSchemaSync(schemaFilePath) {
   try {
@@ -253,7 +305,12 @@ function generateConfigFromSchemaSync(schemaFilePath) {
         const requestName = requestWReqPWResP.exec(line)[1];
         const requestPayloadName = requestWReqPWResP.exec(line)[2];
         const requestPayloadType = requestWReqPWResP.exec(line)[3];
-        const responsePayloadType = requestWReqPWResP.exec(line)[4];
+        let responsePayloadType = requestWReqPWResP.exec(line)[4];
+
+        if (isArrayType(responsePayloadType)) {
+          responsePayloadType = androidObjTypeArrToPrimitiveArr(responsePayloadType);
+        }
+
         requests.push({
           "name": requestName,
           "payload": {
@@ -274,7 +331,12 @@ function generateConfigFromSchemaSync(schemaFilePath) {
       // }
       else if (requestWoReqPWResP.test(line)) {
         const requestName = requestWoReqPWResP.exec(line)[1];
-        const responsePayloadType = requestWoReqPWResP.exec(line)[2];
+        let responsePayloadType = requestWoReqPWResP.exec(line)[2];
+
+        if (isArrayType(responsePayloadType)) {
+          responsePayloadType = androidObjTypeArrToPrimitiveArr(responsePayloadType);
+        }
+
         requests.push({
           "name": requestName,
           "respPayloadType": responsePayloadType
@@ -560,20 +622,60 @@ export default async function generateApi({
       },
       // JAVA code to use for payload serialization (response payload)
       "responsePayloadSerialization": function() {
-        if (primitiveTypes.includes(this)) {
-          const primType = (this === 'Integer' ? 'Int' : this);
-         return `new Bundle(); bundle.put${primType}("rsp", obj);`;
-        } else {
-         return `obj.toBundle();`;
+        // Array
+        if (isArrayType(this)) {
+          const arrayType = getArrayType(this);
+          // Array of a primitive type
+          if (androidPrimitiveTypes.includes(arrayType)) {
+            let objType = androidPrimitiveTypeToObjType(arrayType);
+            objType = (objType === 'Integer' ? 'Int' : objType);
+            return `new Bundle(); bundle.put${objType}Array("rsp", obj);`;
+          }
+          // Array of a complex object type
+          else {
+            throw new Error("Complex object type arrays are not supported yet");
+          }
+        }
+        // Not Array
+        else {
+          // Primitive type
+          if (primitiveTypes.includes(this)) {
+            const primType = (this === 'Integer' ? 'Int' : this);
+            return `new Bundle(); bundle.put${primType}("rsp", obj);`;
+          }
+          // Complex object type
+          else {
+           return `obj.toBundle();`;
+          }
         }
       },
       // JAVA Code to use for payload deserialization (response payload)
       "responsePayloadDeserialization": function() {
-        if (primitiveTypes.includes(this)) {
-          const primType = (this === 'Integer' ? 'Int' : this);
-         return `bundle.get${primType}("rsp")`;
-        } else {
-         return `${this}.fromBundle(bundle)`;
+        // Array
+        if (isArrayType(this)) {
+          const arrayType = getArrayType(this);
+          // Array of a primitive type
+          if (androidPrimitiveTypes.includes(arrayType)) {
+            let objType = androidPrimitiveTypeToObjType(arrayType);
+            objType = (objType === 'Integer' ? 'Int' : objType);
+            return `bundle.get${objType}Array("rsp")`;
+          }
+          // Array of a complex object type
+          else {
+            throw new Error("Complex object type arrays are not supported yet");
+          }
+        }
+        // Not Array
+        else {
+          // Primitive type
+          if (primitiveTypes.includes(this)) {
+            const primType = (this === 'Integer' ? 'Int' : this);
+            return `bundle.get${primType}("rsp")`;
+          }
+          // Complex object type
+          else {
+           return `${this}.fromBundle(bundle)`;
+          }
         }
       },
       "ernPlatformVersion": '{{{ernPlatformVersion}}}' // crazy hack
