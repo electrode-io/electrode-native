@@ -633,7 +633,7 @@ async function generateAndroidContainerUsingMavenGenerator(
     };
 
     const manifest = require(`${platformPath}/manifest.json`);
-    const plugins = buildPluginListSync(plugins, manifest);
+    const includedPlugins = buildPluginListSync(plugins, manifest);
     const reactNativeVersion = getReactNativeVersionFromManifest(manifest);
     const mavenRepositoryType = getMavenRepositoryType(mavenRepositoryUrl);
     let gradleMavenRepositoryCode;
@@ -666,8 +666,8 @@ async function generateAndroidContainerUsingMavenGenerator(
     }
 
     // Go through all ern-container-gen steps
-    await installPlugins(plugins, paths, reactNativeVersion);
-    await fillContainerHull(plugins, miniapps, paths);
+    await installPlugins(includedPlugins, paths, reactNativeVersion);
+    await fillContainerHull(includedPlugins, miniapps, paths);
     await bundleMiniApps(miniapps, paths);
     await buildAndPublishContainer(paths);
   } catch (e) {
