@@ -22,9 +22,10 @@ public class ElectrodeReactContainer {
     private final boolean isReactNativeDeveloperSupport;
 
     private ElectrodeReactContainer(Application application,
-                                    Config reactContainerConfig,
+                                    Config reactContainerConfig
                             {{#plugins}}
                               {{#configurable}}
+                              ,
                                 {{^last}}
                                     {{name}}.Config {{lcname}}Config,
                                 {{/last}}
@@ -32,6 +33,9 @@ public class ElectrodeReactContainer {
                                     {{name}}.Config {{lcname}}Config) {
                                 {{/last}}
                               {{/configurable}}
+                            {{/plugins}}
+                            {{^plugins}}
+                            ) {
                             {{/plugins}}
         // ReactNative general config
         this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
@@ -76,9 +80,10 @@ public class ElectrodeReactContainer {
 
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
-            @NonNull final Config reactContainerConfig,
+            @NonNull final Config reactContainerConfig
     {{#plugins}}
       {{#configurable}}
+      ,
         {{^last}}
             @NonNull final {{name}}.Config {{lcname}}Config,
         {{/last}}
@@ -87,12 +92,16 @@ public class ElectrodeReactContainer {
         {{/last}}
       {{/configurable}}
     {{/plugins}}
+    {{^plugins}}
+      ) {
+    {{/plugins}}
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
-                    reactContainerConfig,
+                    reactContainerConfig
             {{#plugins}}
               {{#configurable}}
+              ,
                 {{^last}}
                     {{lcname}}Config,
                 {{/last}}
@@ -100,6 +109,9 @@ public class ElectrodeReactContainer {
                     {{lcname}}Config);
                 {{/last}}
               {{/configurable}}
+            {{/plugins}}
+            {{^plugins}}
+              );
             {{/plugins}}
 
             // Load bundle now (engine might offer lazy loading later down the road)
