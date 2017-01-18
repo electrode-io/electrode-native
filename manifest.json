@@ -5,7 +5,7 @@
     "react-native-code-push@1.16.1-beta",
     "react-native-stack-tracer@0.1.2",
     "@walmart/react-native-electrode-bridge@1.1.1",
-    "@walmart/react-native-user-api@0.0.2",
-    "@walmart/react-native-todo-api@0.0.3"
+    "@walmart/react-native-user-api@0.0.3",
+    "@walmart/react-native-todo-api@0.0.4"
   ]
 }

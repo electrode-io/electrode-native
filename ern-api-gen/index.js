@@ -810,51 +810,6 @@ export default async function generateApi({
     log("== Generating API code");
     await generateAllCode(mustacheView);
 
-    //--------------------------------------------------------------------------
-    // Dirty hardcoded stuff
-    // As model generation is not yet included, just use a sample model for now
-    // to validate generated code can properly compile
-    //--------------------------------------------------------------------------
-
-    const sampleJavaModel = `package ${config.namespace}.${config.apiName}.model;
-
-    import android.os.Bundle;
-
-    public class LatLng {
-      private float lat;
-      private float lng;
-
-      public LatLng(float lat, float lng) {
-        this.lat = lat;
-        this.lng = lng;
-      }
-
-      public float getLat() {
-        return this.lat;
-      }
-
-      public float getLng() {
-        return this.lng;
-      }
-
-      public static LatLng fromBundle(Bundle bundle) {
-        return new LatLng(bundle.getFloat("lat"), bundle.getFloat("lng"));
-      }
-
-      public Bundle toBundle() {
-        Bundle result = new Bundle();
-        result.putFloat("lat", this.lat);
-        result.putFloat("lng", this.lng);
-        return result;
-      }
-    }`;
-
-    shell.mkdir(`${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model`);
-    fs.writeFileSync(
-      `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model/LatLng.java`,
-      sampleJavaModel,
-      'utf-8');
-
     log("== Generation complete");
 
     //--------------------------------------------------------------------------
@@ -869,3 +824,49 @@ export default async function generateApi({
     errorLog('generateApiModule', e);
   }
 }
+
+//--------------------------------------------------------------------------
+// Dirty hardcoded stuff
+// As model generation is not yet included, just use a sample model for now
+// to validate generated code can properly compile
+// Keeping it here commented for reference until ern-model-gen is integrated.
+//--------------------------------------------------------------------------
+
+/*const sampleJavaModel = `package ${config.namespace}.${config.apiName}.model;
+
+import android.os.Bundle;
+
+public class LatLng {
+  private float lat;
+  private float lng;
+
+  public LatLng(float lat, float lng) {
+    this.lat = lat;
+    this.lng = lng;
+  }
+
+  public float getLat() {
+    return this.lat;
+  }
+
+  public float getLng() {
+    return this.lng;
+  }
+
+  public static LatLng fromBundle(Bundle bundle) {
+    return new LatLng(bundle.getFloat("lat"), bundle.getFloat("lng"));
+  }
+
+  public Bundle toBundle() {
+    Bundle result = new Bundle();
+    result.putFloat("lat", this.lat);
+    result.putFloat("lng", this.lng);
+    return result;
+  }
+}`;
+
+shell.mkdir(`${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model`);
+fs.writeFileSync(
+  `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model/LatLng.java`,
+  sampleJavaModel,
+  'utf-8');*/
