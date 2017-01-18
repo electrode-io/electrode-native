@@ -33,6 +33,8 @@ Depending of the user infrastructure and development lifecycle this command line
 │   │   ├── plugins                 [--- Plugins management --]
 │   │   |   ├── add                 Add a plugin to the miniapp
 │   │   |   ├── list                List the plugins used by the miniapp
+│   │   ├── run                     [--- Run the miniapp ! --]
+│   │   |   ├── android             Run the miniapp in the android runner
 │   │   ├── upgrade                 Upgrade the miniapp to a platform version (TBD)
 │   ├── platform                    [=== Platform management ===]
 │   │   ├── config                  Get or set platform configuration value(s)
@@ -269,6 +271,10 @@ This command will list all the plugins currently used by the miniapp along with 
 ```shell
 > ern miniapp plugins list
 ```  
+
+**Run the miniapp in Android runner**  
+
+`ern miniapp run android`
 
 ### platform
 

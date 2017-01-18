@@ -87,7 +87,7 @@ async function mustacheRenderToOutputFileUsingTemplateFile(tmplPath, view, outPa
 //==============================================================================
 
 // Given a string returns the same string with its first letter capitalized
-function capitalizeFirstLetter(string) {
+function pacalCase(string) {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 }
 
@@ -614,11 +614,11 @@ export default async function generateApi({
       // == Global ==
       // pascal cased api name. Useful for ex to generate class names starting
       // with the api name (by convention class names are pascal cased)
-      "pascalCaseApiName": `${capitalizeFirstLetter(config.apiName)}`,
+      "pascalCaseApiName": `${pacalCase(config.apiName)}`,
       // == Per event/request ==
       // pascal cased name (event name or request name)
       "pascalCaseName": function() {
-       return capitalizeFirstLetter(this.name);
+       return pacalCase(this.name);
       },
       // == Global ==
       // Return an array of strings being all complex types names used in payloads

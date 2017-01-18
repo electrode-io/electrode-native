@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        applicationId "com.walmartlabs.ern"
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    // Need this to avoid build conflict with jsr version which comes with react-native
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
+    }
+    // Needs this for okio issue (should be more restrictive to only okio)
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+
+dependencies {
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+
+    // Recompile this dependency on every build as it can be updated at any time (snapshot)
+    compile('com.walmartlabs.ern:{{{camelCaseMiniAppName}}}-ern-container:1.0.0-SNAPSHOT') { changing = true }
+}

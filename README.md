@@ -169,8 +169,6 @@ Push updated README directly to master (no PR for this !).
 
 - [New feature] Add `ern miniapp publish ota` command (ota publish through codepush)
 - [New feature] Add `ern miniapp run ios` command (to run the miniapp in standalone runner on iOS)
-- [New feature] Add `ern miniapp run android` command (to run the miniapp in standalone runner on Android)
-- [Improvement] `ern miniapp init` should trigger standalone runner project generation for Android.
 - [Improvement] `ern miniapp init` should trigger standalone runner project generation for iOS.
 
 `ern-cauldron-api` / `ern-cauldron-cli`
@@ -190,7 +188,6 @@ Push updated README directly to master (no PR for this !).
 `ern-runner-gen`
 
 - IOS project generator implementation
-- Android project generator implementation [BL] [EMP-193](https://jira.walmart.com/browse/EMP-193)
 
 `ern-container-gen`
 

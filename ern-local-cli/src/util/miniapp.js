@@ -3,6 +3,7 @@ import fs from 'fs';
 const execSync = child_process.execSync;
 
 import _ from 'lodash';
+import shell from 'shelljs';
 import readDir from 'fs-readdir-recursive';
 import { logInfo, logError } from './log.js';
 import tagOneLine from './tagoneline.js';
@@ -10,6 +11,8 @@ import cauldron from './cauldron.js';
 import platform from './platform.js';
 import { compatCheck } from './compatibility.js';
 import explodeNapSelector from './explodeNapSelector.js';
+import generateRunner from '../../../ern-runner-gen/index.js';
+import { runAndroid } from './android.js';
 
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/;
 
@@ -69,6 +72,20 @@ export function getLocalNativeDependencies() {
   return result;
 }
 
+export async function runInAndroidRunner() {
+  if (!fs.existsSync('node_modules')) {
+    logError(tagOneLine`No node_modules folder present.
+              This command should be run at the root of a mini-app`);
+    return result;
+  }
+
+  await runAndroid({
+    projectPath: `${process.cwd()}/android`,
+    packageName: 'com.walmartlabs.ern'
+  });
+
+}
+
 export async function createMiniApp(appName, {
   platformVersion,
   napSelector,
@@ -111,6 +128,24 @@ export async function createMiniApp(appName, {
     appPackageJson.private = false;
     if (scope) { appPackageJson.name = `@${scope}/${appName}`; }
     fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
+
+    shell.cd(`${process.cwd()}/${appName}`);
+
+    //
+    // Remove react-native generated android project ...
+    logInfo(`Removing react-native Android generate project`);
+    shell.rm('-rf', `android`);
+
+    //
+    // ... and replace it with our own !
+    // Kick-off runner project generator for this miniapp
+    logInfo(`Generating android runner project`);
+    await generateRunner({
+      platformPath: platform.currentPlatformVersionPath,
+      plugins: getLocalNativeDependencies(),
+      miniapp: { name: appName, localPath: process.cwd() },
+      outFolder: `${process.cwd()}/android`
+    })
 
     logInfo(`done.`)
   } catch (e) {

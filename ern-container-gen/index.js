@@ -277,7 +277,7 @@ async function buildAndUploadPluginArchive(pluginUploadArchives) {
 
 // log section messag
 function sectionLog(msg) {
-  console.log(chalk.bold.green(`[container-gen] === ${msg.toUpperCase()} ===`));
+  console.log(chalk.bold.green(`[ern-container-gen] === ${msg.toUpperCase()} ===`));
 }
 
 // log info message with ern-container-gen header and chalk coloring
@@ -478,20 +478,28 @@ async function bundleMiniApps(miniapps, paths) {
   try {
     sectionLog(`Starting mini apps bundling`);
 
-    shell.mkdir('-p', paths.compositeMiniApp);
-    shell.cd(paths.compositeMiniApp);
-
-    let imports = "";
-    for (const miniapp of miniapps) {
-      const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
-                                        : miniapp.name;
-      imports += `import '${miniAppName}'\n`;
-      log(`yarn add ${miniAppName}@${miniapp.version}`);
-      await yarnInstall(miniAppName, miniapp.version);
+    // Specific case where we use container gen to generate
+    // container for runner and we want to bundle the local miniapp
+    if ((miniapps.length === 1) && (miniapps[0].localPath)) {
+      shell.cd(miniapps[0].localPath);
     }
+    // Generic case
+    else {
+      shell.mkdir('-p', paths.compositeMiniApp);
+      shell.cd(paths.compositeMiniApp);
 
-    log(`writing index.android.js`);
-    await writeFile('./index.android.js', imports);
+      let imports = "";
+      for (const miniapp of miniapps) {
+        const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
+                                          : miniapp.name;
+        imports += `import '${miniAppName}'\n`;
+        log(`yarn add ${miniAppName}@${miniapp.version}`);
+        await yarnInstall(miniAppName, miniapp.version);
+      }
+
+      log(`writing index.android.js`);
+      await writeFile('./index.android.js', imports);
+    }
 
     log(`running react-native bundle`);
     await shellExec(
@@ -611,9 +619,10 @@ async function generateAndroidContainerUsingMavenGenerator(
       mavenRepositoryUrl = DEFAULT_MAVEN_REPO,
       namespace = DEFAULT_NAMESPACE
     } = {}) {
-  const TMP_FOLDER = `${ERN_PATH}/containergen/.tmp`;
-  const OUT_FOLDER = `${ROOT_DIR}/containergen/out`;
-  const COMPOSITE_MINIAPP_FOLDER = `${ROOT_DIR}/containergen/CompositeMiniApp`;
+  const WORKING_FOLDER = `${ERN_PATH}/containergen`;
+  const TMP_FOLDER = `${WORKING_FOLDER}/.tmp`;
+  const OUT_FOLDER = `${WORKING_FOLDER}/out`;
+  const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/CompositeMiniApp`;
 
   if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO)
       && (!fs.existsSync(DEFAULT_MAVEN_REPO))) {
