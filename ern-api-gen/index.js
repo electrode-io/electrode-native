@@ -229,7 +229,12 @@ function generateConfigFromSchemaSync(schemaFilePath) {
       if (eventWithPayloadRe.test(line)) {
         const eventName = eventWithPayloadRe.exec(line)[1];
         const eventPayloadName = eventWithPayloadRe.exec(line)[2];
-        const eventPayloadType = eventWithPayloadRe.exec(line)[3];
+        let eventPayloadType = eventWithPayloadRe.exec(line)[3];
+
+        if (isArrayType(eventPayloadType)) {
+          eventPayloadType = androidObjTypeArrToPrimitiveArr(eventPayloadType);
+        }
+
         events.push({
           "name": eventName,
           "payload": {
@@ -677,21 +682,57 @@ export default async function generateApi({
       "payloadDeserialization": function() {
         if (!this.payload) {
          return "null";
-        } else if (primitiveTypes.includes(this.payload.type)) {
-          const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
-         return `bundle.get${primType}("${this.payload.name}")`;
-        } else {
-         return `${this.payload.type}.fromBundle(bundle)`;
+        }
+        // Array
+        if (isArrayType(this.payload.type)) {
+          const arrayType = getArrayType(this.payload.type);
+          // Array of a primitive type
+          if (androidPrimitiveTypes.includes(arrayType)) {
+            let objType = androidPrimitiveTypeToObjType(arrayType);
+            objType = (objType === 'Integer' ? 'Int' : objType);
+            return `bundle.get${objType}Array("${this.payload.name}")`;
+          }
+          // Array of a complex object type
+          else {
+            throw new Error("Complex object type arrays are not supported yet");
+          }
+        }
+        // No array
+        else {
+          if (primitiveTypes.includes(this.payload.type)) {
+            const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
+           return `bundle.get${primType}("${this.payload.name}")`;
+          } else {
+           return `${this.payload.type}.fromBundle(bundle)`;
+          }
         }
       },
       // JAVA code to use for payload serialization (request payload / event payload)
       "payloadSerizalization": function() {
-        if (primitiveTypes.includes(this.payload.type)) {
-         const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
-         return `new Bundle(); bundle.put${primType}("${this.payload.name}",\
-                 ${this.payload.name});`;
-        } else {
-         return `${this.payload.name}.toBundle();`;
+        // Array
+        if (isArrayType(this.payload.type)) {
+          const arrayType = getArrayType(this.payload.type);
+          // Array of a primitive type
+          if (androidPrimitiveTypes.includes(arrayType)) {
+            let objType = androidPrimitiveTypeToObjType(arrayType);
+            objType = (objType === 'Integer' ? 'Int' : objType);
+            return `new Bundle(); bundle.put${objType}Array("${this.payload.name}", \
+                  ${this.payload.name});`;
+          }
+          // Array of a complex object type
+          else {
+            throw new Error("Complex object type arrays are not supported yet");
+          }
+        }
+        // Not Array
+        else {
+          if (primitiveTypes.includes(this.payload.type)) {
+           const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
+           return `new Bundle(); bundle.put${primType}("${this.payload.name}",\
+                   ${this.payload.name});`;
+          } else {
+           return `${this.payload.name}.toBundle();`;
+          }
         }
       },
       // JAVA code to use for payload serialization (response payload)

@@ -182,7 +182,6 @@ Push updated README directly to master (no PR for this !).
 `ern-api-gen`
 
 - [Improvement] Integrate with `ern-model-gen` for model generation. [BL] [EMP-191](https://jira.walmart.com/browse/EMP-191)
-- [Improvement] Add support for array type in event payload.
 - [New feature] Complete iOS api code generation
 
 `ern-model-gen`
@@ -200,8 +199,7 @@ Push updated README directly to master (no PR for this !).
 
 `react-native-electrode-bridge`
 
-- [Refactor] Rename to `react-native-electrode-bus`
-- [Todo] Merge Cody's code containing iOS implementation
+*None*
 
 `Demo - APIs`
 
@@ -272,7 +270,7 @@ Push updated README directly to master (no PR for this !).
 
 `react-native-electrode-bridge`
 
-- TBD
+- [Refactor] Rename to `react-native-electrode-bus`
 
 `cross-components`
 
