@@ -196,7 +196,7 @@ Push updated README directly to master (no PR for this !).
 
 `ern-container-gen`
 
-- [New feature] Add an iOS generator that can be used in the context of the demo.
+- [New feature] Add an iOS generator that can be used in the context of the demo
 
 `react-native-electrode-bridge`
 
@@ -281,3 +281,5 @@ Push updated README directly to master (no PR for this !).
 - [Improvement] Be less strict on the node version required. Not for developers, but for consumers. Use babel to transpile to lower node version (most of the project already have some scripts to transpile).
 
 - [Improvement/Fix] Do not require yarn. strongly recommend usage of it (and suggest to install it in a console message) but fallback to npm if yarn is not installed locally. This require to find a solution for single bundling in container generation. Yarn works out of the box as it flattens dependencies but for npm only solution I found was to run `npm dedupe` which takes dozen of minutes to run.
+
+- [Improvement] Handles source maps correctly. Meaning that they should be generated during bundling somehow and stored in the cauldron. Next step will be to offer a tool to map non symbolicated stack trace to correct symbolicated stack trace using the source map stored in the cauldron (might be integrated later on with Crashlytics but that's another thing)
