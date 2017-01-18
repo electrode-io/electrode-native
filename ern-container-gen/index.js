@@ -22,6 +22,9 @@ const npmModuleRe = /(.*)@(.*)/;
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern';
 const DEFAULT_MAVEN_REPO = `file://${process.env['HOME']}/.m2/repository`;
 
+// Path to ern platform root folder
+const ERN_PATH = `${process.env['HOME']}/.ern`;
+
 //=============================================================================
 // Async wrappers
 //=============================================================================
@@ -475,9 +478,8 @@ async function bundleMiniApps(miniapps, paths) {
   try {
     sectionLog(`Starting mini apps bundling`);
 
-    shell.cd(`${ROOT_DIR}`);
-    shell.mkdir('CompositeMiniApp');
-    shell.cd('CompositeMiniApp');
+    shell.mkdir('-p', paths.compositeMiniApp);
+    shell.cd(paths.compositeMiniApp);
 
     let imports = "";
     for (const miniapp of miniapps) {
@@ -609,8 +611,9 @@ async function generateAndroidContainerUsingMavenGenerator(
       mavenRepositoryUrl = DEFAULT_MAVEN_REPO,
       namespace = DEFAULT_NAMESPACE
     } = {}) {
-  const TMP_FOLDER_NAME = `${ROOT_DIR}/.tmp`;
-  const OUT_FOLDER = `${ROOT_DIR}/out`;
+  const TMP_FOLDER = `${ERN_PATH}/containergen/.tmp`;
+  const OUT_FOLDER = `${ROOT_DIR}/containergen/out`;
+  const COMPOSITE_MINIAPP_FOLDER = `${ROOT_DIR}/containergen/CompositeMiniApp`;
 
   if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO)
       && (!fs.existsSync(DEFAULT_MAVEN_REPO))) {
@@ -620,17 +623,18 @@ async function generateAndroidContainerUsingMavenGenerator(
   try {
     console.log(`Using maven : ${mavenRepositoryUrl}`);
     // Clean up to start fresh
-    shell.rm('-rf', `${ROOT_DIR}/${TMP_FOLDER_NAME}`);
+    shell.rm('-rf', TMP_FOLDER);
     shell.rm('-rf', OUT_FOLDER);
-    shell.rm('-rf', 'CompositeMiniApp');
+    shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER);
 
-    shell.mkdir(TMP_FOLDER_NAME);
+    shell.mkdir('-p', TMP_FOLDER);
 
     const paths = {
       containerHull : `${platformPath}/ern-container-gen/hull`,
       containerPluginsConfig: `${platformPath}/ern-container-gen/plugins`,
       containerTemplates: `${platformPath}/ern-container-gen/templates`,
-      tmpFolder: TMP_FOLDER_NAME,
+      compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
+      tmpFolder: TMP_FOLDER,
       outFolder: OUT_FOLDER
     };
 
