@@ -1,5 +1,6 @@
 import platform from '../../util/platform.js'
 import generateApi from '../../../../ern-api-gen/index.js'
+import { logError } from '../../util/log.js'
 
 exports.command = 'api [publishToNpm]'
 exports.desc = 'Run api generator'
@@ -22,6 +23,7 @@ exports.handler = async function (argv) {
       shouldPublishToNpm: argv.publishToNpm
     });
   } catch(e) {
+    cosnole.log(e);
     logError(`[ern apigen] ${e}`);
   }
 }
