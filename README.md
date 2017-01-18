@@ -35,7 +35,7 @@ If you don't need to work on (or use) Android container generation, do not bothe
 
 In order to work on the platform, you first need to understand how it's structured and the different projects that it is composed of.  
 
-The platform repository is currently composed of 6 different node projects.  
+The platform repository is currently composed of 7 different node projects.  
 If you need more details about these projects, they all have a README, so feel free to take a look.  
 All these projects (apart from `ern-local-cli`) can also be used and distributed as stand-alone projects. They are just kept in this repo for convenience considering their versioning will be aligned with platform versioning.
 
@@ -68,6 +68,10 @@ No projects depends on `ern-global-cli`.
 - [ern-local-cli](/ern-local-cli)  
 The portal to the platform ! Command line client to access all platform features.
 No projects depends on `ern-local-cli`.
+
+- [ern-runner-gen](/ern-runner-gen)  
+Runner native project generator.  
+Generates android/ios native projects that are used to launch the miniapp in a standalone way.
 
 - [manifest.json](manifest.json)  
 Holds the current platform version number as well as the list of supported plugins (and their versions) for this current version of the platform.  
