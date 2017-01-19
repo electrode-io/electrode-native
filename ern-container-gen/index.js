@@ -1,8 +1,12 @@
 // Node
+import child_process from 'child_process';
+const exec = child_process.exec;
 const fs = require('fs');
 const http = require('http');
 // 3rd party
 const shell = require('shelljs');
+import cliSpinner from 'cli-spinner';
+const Spinner = cliSpinner.Spinner;
 const Mustache = require('mustache');
 const chalk = require('chalk');
 const deepAssign = require('deep-assign');
@@ -11,6 +15,7 @@ const semver = require('semver');
 const _ = require('lodash');
 
 let mustacheView = {};
+let _verbose = false;
 let containerBaseManifest;
 
 const ROOT_DIR = shell.pwd();
@@ -167,16 +172,39 @@ async function npmInstall(name, version) {
   }
 }
 
-//
-// YARN install a package given its name and optionally its version
-// name: The name of the package (should include scope if needed)
-// version: The version of the package (optional)
-async function yarnInstall(name, version) {
-  if (version) {
-    return shellExec(`yarn add ${name}@${version}`);
-  } else {
-    return shellExec(`yarn add ${name}`);
-  }
+// Yarn add a given dependency
+async function yarnAdd(name, version) {
+  return new Promise((resolve, reject) => {
+    exec(version ? `yarn add ${name}@${version}` : `yarn add ${name}`,
+      (err, stdout, stderr) => {
+      if (err) {
+        errorLog(err);
+        reject(err);
+      }
+      if (stderr && _verbose) {
+        errorLog(stderr);
+      } if (stdout) {
+        _verbose && log(stdout);
+        resolve(stdout);
+      }
+    });
+  });
+}
+
+async function gitClone(url, branch) {
+  return new Promise((resolve, reject) => {
+    exec(`git clone --branch ${branch} --depth 1 ${url}`,
+      (err, stdout, stderr) => {
+      // Git seems to send stuff to stderr :(
+      if (err) {
+        errorLog(err);
+        reject(err);
+      } else {
+        _verbose && log(stdout ? stdout : stderr);
+        resolve(stdout ? stdout : stderr);
+      }
+    });
+  });
 }
 
 //
@@ -205,15 +233,15 @@ async function downloadPluginSource(pluginOrigin) {
   let downloadPath;
   if (pluginOrigin.type === 'npm') {
     if (pluginOrigin.scope) {
-      await yarnInstall(`${pluginOrigin.scope}/${pluginOrigin.name}`, pluginOrigin.version);
+      await yarnAdd(`${pluginOrigin.scope}/${pluginOrigin.name}`, pluginOrigin.version);
       downloadPath = `node_modules/${pluginOrigin.scope}/${pluginOrigin.name}`;
     } else {
-      await yarnInstall(pluginOrigin.name, pluginOrigin.version);
+      await yarnAdd(pluginOrigin.name, pluginOrigin.version);
       downloadPath = `node_modules/${pluginOrigin.name}`;
     }
   } else if (pluginOrigin.type === 'git') {
     if (pluginOrigin.version) {
-      await shellExec(`git clone --branch ${pluginOrigin.version} --depth 1 ${pluginOrigin.url}`);
+      await gitClone(pluginOrigin.url, pluginOrigin.version);
       downloadPath = gitFolderRe.exec(`${pluginOrigin.url}`)[1];
     }
   }
@@ -260,29 +288,37 @@ async function transformPluginSource(plugin, pluginTemplatesPath, pluginSourcePa
 }
 
 // Build the plugin from source and invoke uploadArchives task to publish plugin
-//
-// pluginUploadArchives: A plugin uploadArchives object
-// Sample plugin uploadArchives object :
-// {
-//  "moduleName": "ReactAndroid",
-// }
-async function buildAndUploadPluginArchive(pluginUploadArchives) {
-  let cmd = `./gradlew ${pluginUploadArchives.moduleName}:uploadArchives `;
-  return shellExec(cmd);
+async function buildAndUploadArchive(moduleName) {
+  let cmd = `./gradlew ${moduleName}:uploadArchives `;
+  return new Promise((resolve, reject) => {
+    exec(cmd,
+      (err, stdout, stderr) => {
+      if (err) {
+        errorLog(err);
+        reject(err);
+      }
+      if (stderr) {
+        log(stderr);
+      } if (stdout) {
+        _verbose && log(stdout);
+        resolve(stdout);
+      }
+    });
+  });
 }
 
 //=============================================================================
 // Misc/general utilities
 //=============================================================================
 
-// log section messag
+// log section message
 function sectionLog(msg) {
-  console.log(chalk.bold.green(`[ern-container-gen] === ${msg.toUpperCase()} ===`));
+  _verbose && console.log(chalk.bold.green(`[ern-container-gen] === ${msg.toUpperCase()} ===`));
 }
 
 // log info message with ern-container-gen header and chalk coloring
 function log(msg) {
-  console.log(chalk.bold.blue(`[ern-container-gen] ${msg}`));
+  _verbose && console.log(chalk.bold.blue(`[ern-container-gen] ${msg}`));
 }
 
 // log error message with ern-container-gen header and chalk coloring
@@ -293,6 +329,26 @@ function errorLog(msg) {
 // Given a string returns the same string with its first letter capitalized
 function capitalizeFirstLetter(string) {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+}
+
+// Show a spinner next to a given message for the duration of a promise
+// spinner will stop as soon as the promise is completed
+//
+// msg: The message to display
+// prom: The promise to wrap. When promise complete, the spinner will stop
+// clean: true if you want the message to disappear once spin stops, false otherwise
+export async function spin(msg, prom, clean = false) {
+  let spinner = new Spinner(msg);
+  spinner.setSpinnerString(18);
+  spinner.start();
+  try {
+    let result = await prom;
+    return result;
+  }
+  finally {
+    spinner.stop(false);
+    process.stdout.write('\n');
+  }
 }
 
 //=============================================================================
@@ -326,8 +382,8 @@ async function installPlugins(plugins, paths, rnVersion) {
       log(`Getting ${plugin.name} plugin config`);
       let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
 
-      log(`Downloading ${plugin.name} plugin source`);
-      let pluginSourcePath = await downloadPluginSource(pluginConfig.origin);
+      let pluginSourcePath = await spin(`Downloading ${plugin.name} plugin source`,
+        downloadPluginSource(pluginConfig.origin));
 
       log(`Applying transformations to ${plugin.name} plugin source`);
       await transformPluginSource(
@@ -338,9 +394,9 @@ async function installPlugins(plugins, paths, rnVersion) {
 
       shell.cd(`${pluginSourcePath}/${pluginConfig.root}`);
 
-      log(`Building ${plugin.name} plugin and uploading archive`);
       await shellExec('chmod +x gradlew');
-      await buildAndUploadPluginArchive(pluginConfig.uploadArchives);
+      await spin(`Building ${plugin.name} plugin and uploading archive`,
+        buildAndUploadArchive(pluginConfig.uploadArchives.moduleName));
     }
 
     sectionLog(`Completed plugins installation`);
@@ -474,6 +530,28 @@ async function fillContainerHull(plugins, miniApps, paths) {
   }
 }
 
+async function reactNativeBundle(paths) {
+  return new Promise((resolve, reject) => {
+    exec(  `react-native bundle \
+          --entry-file=index.android.js \
+          --dev=false --platform=android \
+          --bundle-output=${paths.outFolder}/lib/src/main/assets/index.android.bundle \
+          --assets-dest=${paths.outFolder}/lib/src/main/res`,
+      (err, stdout, stderr) => {
+      if (err) {
+        errorLog(err);
+        reject(err);
+      }
+      if (stderr && _verbose) {
+        errorLog(stderr);
+      } if (stdout) {
+        _verbose && log(stdout);
+        resolve(stdout);
+      }
+    });
+  });
+}
+
 async function bundleMiniApps(miniapps, paths) {
   try {
     sectionLog(`Starting mini apps bundling`);
@@ -493,21 +571,15 @@ async function bundleMiniApps(miniapps, paths) {
         const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
                                           : miniapp.name;
         imports += `import '${miniAppName}'\n`;
-        log(`yarn add ${miniAppName}@${miniapp.version}`);
-        await yarnInstall(miniAppName, miniapp.version);
+        await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`,
+           yarnAdd(miniAppName, miniapp.version));
       }
 
       log(`writing index.android.js`);
       await writeFile('./index.android.js', imports);
     }
 
-    log(`running react-native bundle`);
-    await shellExec(
-      `react-native bundle \
-          --entry-file=index.android.js \
-          --dev=false --platform=android \
-          --bundle-output=${paths.outFolder}/lib/src/main/assets/index.android.bundle \
-          --assets-dest=${paths.outFolder}/lib/src/main/res`);
+    await spin(`Bundling all miniapps`, reactNativeBundle(paths));
 
     sectionLog(`Completed mini apps bundling`);
   } catch(e) {
@@ -520,7 +592,8 @@ async function buildAndPublishContainer(paths) {
     sectionLog(`Starting build and publication of the container`);
 
     shell.cd(`${paths.outFolder}`)
-    await shellExec('./gradlew lib:uploadArchives');
+    await spin(`Building container and uploading archive`,
+      buildAndUploadArchive('lib'));
 
     sectionLog(`Completed build and publication of the container`);
   } catch(e) {
@@ -630,7 +703,11 @@ async function generateAndroidContainerUsingMavenGenerator(
   }
 
   try {
-    console.log(`Using maven : ${mavenRepositoryUrl}`);
+    log(`\n === Using maven generator
+            mavenRepositoryUrl: ${mavenRepositoryUrl}
+            containerPomVersion: ${containerPomVersion}
+            namespace: ${namespace}`);
+
     // Clean up to start fresh
     shell.rm('-rf', TMP_FOLDER);
     shell.rm('-rf', OUT_FOLDER);
@@ -685,6 +762,9 @@ async function generateAndroidContainerUsingMavenGenerator(
     await fillContainerHull(includedPlugins, miniapps, paths);
     await bundleMiniApps(miniapps, paths);
     await buildAndPublishContainer(paths);
+    console.log(`done.`);
+    console.log(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerPomVersion}`);
+    console.log(`To ${mavenRepositoryUrl}`);
   } catch (e) {
     errorLog(`Something went wrong. Aborting ern-container-gen: ${e}`);
   }
@@ -735,9 +815,11 @@ export default async function generateContainer({
     platformPath = required('platformPath'),
     generator = required('generator'),
     plugins = [],
-    miniapps = []
+    miniapps = [],
+    verbose = false
   } = {}) {
   try {
+    _verbose = verbose;
     if (generator.platform === 'android') {
       await generateAndroidContainer(
         nativeAppName,

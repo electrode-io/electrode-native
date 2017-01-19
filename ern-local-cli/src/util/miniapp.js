@@ -89,7 +89,8 @@ export async function runInAndroidRunner() {
 export async function createMiniApp(appName, {
   platformVersion,
   napSelector,
-  scope
+  scope,
+  verbose
 }) {
   try {
     // If appSelector provided, and no forced version of platform is provided
@@ -144,7 +145,8 @@ export async function createMiniApp(appName, {
       platformPath: platform.currentPlatformVersionPath,
       plugins: getLocalNativeDependencies(),
       miniapp: { name: appName, localPath: process.cwd() },
-      outFolder: `${process.cwd()}/android`
+      outFolder: `${process.cwd()}/android`,
+      verbose
     })
 
     logInfo(`done.`)

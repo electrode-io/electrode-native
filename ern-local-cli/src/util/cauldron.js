@@ -1,15 +1,25 @@
 import CauldronClient from '../../../ern-cauldron-cli/cli.js';
 import ernConfig from './config.js';
 import required from './required.js';
-import spin from './spin.js';
+import { spin } from './spin.js';
 import tagOneLine from './tagOneLine.js';
 import { logInfo, logError } from './log.js';
 
+//
+// Helper class to access the cauldron
+// It uses the ern-cauldron-cli client
 class Cauldron {
+
+  // cauldronUrl : The url to the cauldron service
   constructor(cauldronUrl) {
     this.cauldron = new CauldronClient(cauldronUrl);
   }
 
+  // Adds a native application to the Cauldron
+  // ernPlatformVersion : The version of the platform to use for this native app [REQUIRED]
+  // appName : The name of the native application [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios)
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
   async addNativeApp(
     ernPlatformVersion,
     appName,
@@ -51,6 +61,10 @@ class Cauldron {
     }
   }
 
+  // Removes a native application from the Cauldron
+  // appName : The name of the native application [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios)
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
   async removeNativeApp(
     appName,
     platformName,
@@ -85,6 +99,15 @@ class Cauldron {
     }
   }
 
+  // Adds a native dependency to the Cauldron
+  // dependency : The dependency to add (object) [REQUIRED]
+  //   ex : {
+  //    name: "react-native-code-push",
+  //    version: "1.16.1-beta"
+  //   }
+  // appName : The name of the native application [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
   async addNativeDependency(
     dependency,
     appName,
@@ -110,6 +133,11 @@ class Cauldron {
     }
   }
 
+  // Removes a native dependency from the Cauldron
+  // dependencyName : The name of the dependency to remove [REQUIRED]
+  // appName : The name of the native application [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
   async removeNativeDependency(
     dependencyName,
     appName,
@@ -133,6 +161,10 @@ class Cauldron {
     }
   }
 
+  // Gets a native app metadata from the Cauldron
+  // appName : The name of the app [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
   async getNativeApp(
     appName,
     platformName,
@@ -154,6 +186,10 @@ class Cauldron {
     }
   }
 
+  // Gets all native dependencies metadata from the Cauldron for a given native app
+  // appName : The name of the app [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
   async getNativeDependencies(
     appName,
     platformName,
@@ -171,6 +207,11 @@ class Cauldron {
     }
   }
 
+  // Adds a native application binary (APP or APK) to the Cauldron for a given native app
+  // binaryPath : Absolute or relative path to the binary [REQUIRED]
+  // appName : The name of the app [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
   async addNativeBinary(
     binaryPath,
     appName,
@@ -190,6 +231,10 @@ class Cauldron {
     }
   }
 
+  // Retrieves a native app binary (APP or APK) from the Cauldron for a given native app
+  // appName : The name of the app [REQUIRED]
+  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
+  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
   async getNativeBinary(
     appName,
     platformName,
@@ -207,18 +252,23 @@ class Cauldron {
     }
   }
 
+  // Retrieves all native apps metadata from the Cauldron
   async getAllNativeApps() {
     return this.cauldron.getAllNativeApps();
   }
 
+  // Retrieves a specific react native app metadat from the Cauldron
   async getReactNativeApp(appName, platformName, versionName, miniAppName) {
     return this.cauldron.getReactNativeApp(appName, platformName, versionName, miniAppName);
   }
 
+  // Retrieves the metadata of all react native apps that are part of
+  // a given native application
   async getReactNativeApps(appName, platformName, versionName) {
     return this.cauldron.getAllReactNativeApps(appName, platformName, versionName);
   }
 
+  // Add a react native app metadata to a given native application
   async addReactNativeApp(appName, platformName, versionName, app) {
     return spin(tagOneLine`Adding ${app.name}@${app.version} to
                ${appName}:${platformName}:${versionName}`,

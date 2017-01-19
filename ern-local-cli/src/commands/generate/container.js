@@ -9,7 +9,13 @@ import generateContainer from '../../../../ern-container-gen/index.js';
 exports.command = 'container <fullNapSelector> <containerVersion>'
 exports.desc = 'Run the container generator for a specified native application'
 
-exports.builder = {}
+exports.builder = function(yargs) {
+  return yargs
+    .option('verbose', {
+      type: 'bool',
+      describe: 'verbose output'
+    });
+}
 
 exports.handler = async function (argv) {
   try {
@@ -37,7 +43,8 @@ exports.handler = async function (argv) {
         platformPath: platform.currentPlatformVersionPath,
         generator,
         plugins,
-        miniapps
+        miniapps,
+        verbose: argv.verbose
       });
 
     } else {

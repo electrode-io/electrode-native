@@ -96,7 +96,8 @@ export default async function generateRunner({
   platformPath,
   plugins,
   miniapp,
-  outFolder
+  outFolder,
+  verbose
 }) {
   try {
     sectionLog(`Starting runner project generation [Android]`);
@@ -121,7 +122,8 @@ export default async function generateRunner({
       generator,
       platformPath,
       plugins,
-      miniapps: [miniapp]
+      miniapps: [miniapp],
+      verbose
     })
 
     shell.mkdir(outFolder);

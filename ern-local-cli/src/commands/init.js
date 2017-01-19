@@ -16,6 +16,10 @@ exports.builder = function(yargs) {
     .option('scope', {
       describe: 'npm scope to use for this app'
     })
+    .option('verbose', {
+      type: 'bool',
+      describe: 'verbose output'
+    })
     .conflicts('platformVersion', 'napSelector');
 }
 
@@ -23,6 +27,7 @@ exports.handler = async function (argv) {
   createMiniApp(argv.appName, {
     platformVersion: argv.platformVersion,
     napSelector: argv.napSelector,
-    scope: argv.scope
+    scope: argv.scope,
+    verbose: argv.verbose
   });
 }

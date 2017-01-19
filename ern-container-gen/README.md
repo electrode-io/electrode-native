@@ -29,7 +29,7 @@ It potentially supports different generators. For example for Android we have th
 | generator | The generator to use | YES | |
 | plugins | An array containing all plugins (to be included in the lib)| NO | []
 | miniApps | An array of mini app objects (name/version) (to be included in the lib ) | NO | []
-
+| verbose | Verbose output | NO | false
 
 **Maven Generator (Android)**
 

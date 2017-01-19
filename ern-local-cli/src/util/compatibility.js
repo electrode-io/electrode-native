@@ -2,7 +2,7 @@ import _ from 'lodash';
 import chalk from 'chalk';
 import Table from 'cli-table';
 import cauldron from './cauldron.js';
-import spin from './spin.js';
+import { spin } from './spin.js';
 import { getLocalNativeDependencies } from './miniapp.js'
 
 export async function compatCheck(verbose, appName, platformName, versionName) {

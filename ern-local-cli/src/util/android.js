@@ -2,7 +2,7 @@ const child_process = require('child_process');
 const exec = child_process.exec;
 import inquirer from 'inquirer';
 import shell from 'shelljs';
-import spin from './spin.js';
+import { spin } from './spin.js';
 import { logError } from './log.js';
 
 //==============================================================================
@@ -19,6 +19,20 @@ async function delay(ms) {
   });
 }
 
+//==============================================================================
+// Core android stuff
+//==============================================================================
+
+//
+// Build and run a project on Android emulator
+// The `devDebug` variant will be built and launched on an emulator selected by
+// the user (this function prompts the user with a list of available avd to choose from)
+// Assumptions :
+// - devDebug variant exists in the project
+// - activity to launch is named MainActivity
+// Params :
+// - projectPath : Absolute or relative path to the root of the Android projectPath
+// - packageName : name of the package containing the application
 export async function runAndroid({
   projectPath,
   packageName
@@ -31,11 +45,17 @@ export async function runAndroid({
     message: 'Choose Android emulator image',
     choices: avdImageNames
   }]).then(answers => {
-     doRunAndroid(projectPath, packageName, answers.avdImageName);
+     runAndroidUsingAvdImage(projectPath, packageName, answers.avdImageName);
   });
 }
 
-async function doRunAndroid(projectPath, packageName, avdImageName) {
+// Does the job of actually running the app
+// It orchestrates a few tasks to actually get the job done
+// Params :
+// - projectPath : Absolute or relative path to the root of the Android projectPath
+// - packageName : name of the package containing the application
+// - avdImageName : name of the avd image to use (emulator image)
+async function runAndroidUsingAvdImage(projectPath, packageName, avdImageName) {
   exec(`emulator -avd ${avdImageName}`);
   await spin('Waiting for device to start', waitForAndroidDevice());
   await spin('Installing application', installApp(projectPath));
@@ -43,6 +63,18 @@ async function doRunAndroid(projectPath, packageName, avdImageName) {
     launchAndroidActivity(packageName, "MainActivity"));
 }
 
+// Utility method that basically completes whenever the android device is ready
+// It check device readiness every 2 sec (poll way)
+async function waitForAndroidDevice() {
+  let androidBootAnimProp = await androidGetBootAnimProp();
+  while (!androidBootAnimProp.startsWith('stopped')) {
+    await delay(2000);
+    androidBootAnimProp = await androidGetBootAnimProp();
+  }
+}
+
+// Utility method to know when the prop init.svc.bootanim is there
+// which indicates somehow that device is ready to install APK and such
 async function androidGetBootAnimProp() {
   return new Promise((resolve, reject) => {
     exec(`adb wait-for-device shell getprop init.svc.bootanim`,
@@ -57,6 +89,10 @@ async function androidGetBootAnimProp() {
   });
 }
 
+// Build & install application on the device
+// params :
+// - projectPath : Absolute or relative path to the root of the Android project
+// containing the application
 async function installApp(projectPath) {
   return new Promise((resolve, reject) => {
     shell.cd(projectPath);
@@ -72,6 +108,10 @@ async function installApp(projectPath) {
   });
 }
 
+// Utility method to launch a specific activity in a given package
+// Params :
+// - packageName : name of the package containing the application
+// - activityName : name of the Activity to launch
 async function launchAndroidActivity(packageName, activityName) {
   return new Promise((resolve, reject) => {
     exec(`adb shell am start -n ${packageName}/.${activityName}`,
@@ -85,14 +125,7 @@ async function launchAndroidActivity(packageName, activityName) {
   })
 }
 
-async function waitForAndroidDevice() {
-  let androidBootAnimProp = await androidGetBootAnimProp();
-  while (!androidBootAnimProp.startsWith('stopped')) {
-    await delay(2000);
-    androidBootAnimProp = await androidGetBootAnimProp();
-  }
-}
-
+// Utility method to list all available android avd images (emulator images)
 async function getAndroidAvds() {
   return new Promise((resolve, reject) => {
     exec('emulator -list-avds', (err, stdout, stderr) => {
