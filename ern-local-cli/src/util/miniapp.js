@@ -229,11 +229,11 @@ export async function publishInApp(
     const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
     const nativeAppPlatformVersion = nativeApp.ernPlatformVersion;
     const miniAppPlatformVersion = getMiniAppPlatformVersion();
-    if (nativeAppPlatformVersion !== miniAppPlatformVersion) {
+    /*if (nativeAppPlatformVersion !== miniAppPlatformVersion) {
       throw new Error(tagOneLine`Platform versions mismatch :
         [${miniAppName} => ${miniAppPlatformVersion}]
         [${appName}:${platformName}:${versionName} => ${nativeAppPlatformVersion}]`);
-    }
+    }*/
 
     logInfo('Checking compatibility with each native dependency');
     let isCompatible = await compatCheck(
