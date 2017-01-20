@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 require('babel-register');
-require('./start.js');
+require('./src/start.js');
