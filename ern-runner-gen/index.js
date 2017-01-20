@@ -87,12 +87,14 @@ function errorLog(msg) {
 // Main
 //=============================================================================
 
+const CONTAINER_POM_VERSION = '1.0.0-SNAPSHOT';
+
 // Generate the runner project (Android only as of now)
 // platformPath : Path to the ern-platform to use
 // plugins : Array containing all plugins to be included in the generated container
 // miniapp : The miniapp to attach to this runner. Needs to have localPath set !
 // outFolder : Where the generated project will be outputed
-export default async function generateRunner({
+export async function generateRunner({
   platformPath,
   plugins,
   miniapp,
@@ -106,25 +108,17 @@ export default async function generateRunner({
       throw new Error("Miniapp must come with a local path !");
     }
 
-    const generator = {
-      platform: 'android',
-      name: 'maven',
-      containerPomVersion: '1.0.0-SNAPSHOT'
-    };
-
     const view = {
       pascalCaseMiniAppName: pascalCase(miniapp.name),
       camelCaseMiniAppName: camelCase(miniapp.name)
     };
 
-    await generateContainer({
-      nativeAppName: camelCase(miniapp.name),
-      generator,
+    await generateContainerForRunner({
       platformPath,
       plugins,
-      miniapps: [miniapp],
+      miniapp,
       verbose
-    })
+    });
 
     shell.mkdir(outFolder);
     shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outFolder);
@@ -142,8 +136,24 @@ export default async function generateRunner({
   }
 }
 
-/*generateRunner({
-  platformPath: '/Users/blemair/.ern/cache/v1000',
-  plugins: [{ name: 'react-native', version: '0.40.0'}],
-  miniapp: { name: 'RhinocerosTwo', localPath: '/Users/blemair/Code/PlatformDemo/RhinocerosTwo'}
-});*/
+export async function generateContainerForRunner({
+  platformPath,
+  plugins,
+  miniapp,
+  verbose
+}) {
+  const generator = {
+    platform: 'android',
+    name: 'maven',
+    containerPomVersion: CONTAINER_POM_VERSION
+  };
+
+  await generateContainer({
+    nativeAppName: camelCase(miniapp.name),
+    generator,
+    platformPath,
+    plugins,
+    miniapps: [miniapp],
+    verbose
+  })
+}

@@ -122,16 +122,6 @@ function androidObjTypeToPrimitive(type) {
   }
 }
 
-function androidPrimitiveTypeToObjType(type) {
-  switch (type) {
-    case 'bool' : return 'Boolean';
-    case 'int' : return 'Integer';
-    case 'double' : return 'Double';
-    case 'float' : return 'Float';
-    case 'string' : return 'String';
-  }
-}
-
 function androidObjTypeArrToPrimitiveArr(type) {
   switch (type) {
     case 'Boolean[]' : return 'bool[]';
@@ -231,9 +221,9 @@ function generateConfigFromSchemaSync(schemaFilePath) {
         const eventPayloadName = eventWithPayloadRe.exec(line)[2];
         let eventPayloadType = eventWithPayloadRe.exec(line)[3];
 
-        if (isArrayType(eventPayloadType)) {
-          eventPayloadType = androidObjTypeArrToPrimitiveArr(eventPayloadType);
-        }
+        //if (isArrayType(eventPayloadType)) {
+        //  eventPayloadType = androidObjTypeArrToPrimitiveArr(eventPayloadType);
+        //}
 
         events.push({
           "name": eventName,
@@ -314,10 +304,6 @@ function generateConfigFromSchemaSync(schemaFilePath) {
         const requestPayloadType = requestWReqPWResP.exec(line)[3];
         let responsePayloadType = requestWReqPWResP.exec(line)[4];
 
-        if (isArrayType(responsePayloadType)) {
-          responsePayloadType = androidObjTypeArrToPrimitiveArr(responsePayloadType);
-        }
-
         requests.push({
           "name": requestName,
           "payload": {
@@ -339,10 +325,6 @@ function generateConfigFromSchemaSync(schemaFilePath) {
       else if (requestWoReqPWResP.test(line)) {
         const requestName = requestWoReqPWResP.exec(line)[1];
         let responsePayloadType = requestWoReqPWResP.exec(line)[2];
-
-        if (isArrayType(responsePayloadType)) {
-          responsePayloadType = androidObjTypeArrToPrimitiveArr(responsePayloadType);
-        }
 
         requests.push({
           "name": requestName,
@@ -635,7 +617,9 @@ export default async function generateApi({
        let models = new Set();
        // Only look to events as we just support requests with no payload for now
        for (let event of config.events) {
-         if (event.payload && !primitiveTypes.includes(event.payload.type)) {
+         if (event.payload
+           && !isArrayType(event.payload.type)
+           && !primitiveTypes.includes(event.payload.type)) {
            models.add(event.payload.type);
          }
        }
@@ -687,9 +671,8 @@ export default async function generateApi({
         if (isArrayType(this.payload.type)) {
           const arrayType = getArrayType(this.payload.type);
           // Array of a primitive type
-          if (androidPrimitiveTypes.includes(arrayType)) {
-            let objType = androidPrimitiveTypeToObjType(arrayType);
-            objType = (objType === 'Integer' ? 'Int' : objType);
+          if (primitiveTypes.includes(arrayType)) {
+            let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
             return `bundle.get${objType}Array("${this.payload.name}")`;
           }
           // Array of a complex object type
@@ -713,9 +696,8 @@ export default async function generateApi({
         if (isArrayType(this.payload.type)) {
           const arrayType = getArrayType(this.payload.type);
           // Array of a primitive type
-          if (androidPrimitiveTypes.includes(arrayType)) {
-            let objType = androidPrimitiveTypeToObjType(arrayType);
-            objType = (objType === 'Integer' ? 'Int' : objType);
+          if (primitiveTypes.includes(arrayType)) {
+            let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
             return `new Bundle(); bundle.put${objType}Array("${this.payload.name}", \
                   ${this.payload.name});`;
           }
@@ -741,9 +723,8 @@ export default async function generateApi({
         if (isArrayType(this)) {
           const arrayType = getArrayType(this);
           // Array of a primitive type
-          if (androidPrimitiveTypes.includes(arrayType)) {
-            let objType = androidPrimitiveTypeToObjType(arrayType);
-            objType = (objType === 'Integer' ? 'Int' : objType);
+          if (primitiveTypes.includes(arrayType)) {
+            let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
             return `new Bundle(); bundle.put${objType}Array("rsp", obj);`;
           }
           // Array of a complex object type
@@ -770,9 +751,8 @@ export default async function generateApi({
         if (isArrayType(this)) {
           const arrayType = getArrayType(this);
           // Array of a primitive type
-          if (androidPrimitiveTypes.includes(arrayType)) {
-            let objType = androidPrimitiveTypeToObjType(arrayType);
-            objType = (objType === 'Integer' ? 'Int' : objType);
+          if (primitiveTypes.includes(arrayType)) {
+            let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
             return `bundle.get${objType}Array("rsp")`;
           }
           // Array of a complex object type
