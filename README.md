@@ -207,8 +207,8 @@ Push updated README directly to master (no PR for this !).
 
 `Demo - Miniapps`
 
-- Create initial todo miniapp (demo starter)
-- Create initial helloworld miniapp (demo starter)
+- Create initial todo miniapp (demo starter) KS] [EMP-207](https://jira.walmart.com/browse/EMP-207)
+- Create initial helloworld miniapp (demo starter) [KS] [EMP-206](https://jira.walmart.com/browse/EMP-206)
 - Create the finished todo miniapp using generated todo api
 - Create the finished hello world miniapp
 
