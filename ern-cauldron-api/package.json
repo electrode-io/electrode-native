@@ -13,8 +13,8 @@
   "scripts": {
     "test": "node -r babel-register ./node_modules/.bin/isparta cover node_modules/mocha/bin/_mocha",
     "start": "node index.js",
-    "compile": "babel src -d dist ",
-    "preversion":"npm run compile"
+    "compile": "rimraf dist && babel src -d dist ",
+    "preversion": "npm run compile"
   },
   "keywords": [],
   "author": "",
@@ -35,7 +35,8 @@
     "chai-http": "^3.0.0",
     "isparta": "^4.0.0",
     "istanbul": "^0.4.5",
-    "mocha": "^3.0.2"
+    "mocha": "^3.0.2",
+    "rimraf": "^2.5.4"
   },
   "engines": {
     "node": ">=6.9.4"
