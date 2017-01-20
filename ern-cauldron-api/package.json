@@ -11,7 +11,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "test": "babel-node ./node_modules/.bin/isparta cover node_modules/mocha/bin/_mocha",
+    "test": "node -r babel-register ./node_modules/.bin/isparta cover node_modules/mocha/bin/_mocha",
     "start": "node index.js",
     "compile": "babel src -d dist ",
     "preversion":"npm run compile"
