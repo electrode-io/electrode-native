@@ -430,16 +430,6 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
       }
     }
 
-    // last configurable element must be marked as such ... damn !
-    // Not pretty without underscore or lodash
-    let pluginsViewLength = pluginsView.length;
-    for (let i = pluginsViewLength-1; i >= 0; i--) {
-      if (pluginsView[i].configurable === true) {
-        pluginsView[i].last = true;
-        break;
-      }
-    }
-
     mustacheView.plugins = pluginsView;
 
     mustacheView.pluginCompile = [];
@@ -610,7 +600,13 @@ function buildPluginListSync(plugins, manifest) {
       version: npmModuleRe.exec(d)[2],
       versionEx: `${npmModuleRe.exec(d)[2]}-${manifest.platformVersion}`
     }));
-  const pluginNames = _.map(plugins, p => p.name);
+
+  const pluginNames = _.map(plugins, p => {
+    return p.scope ?
+      `@${p.scope}/${p.name}` :
+      p.name;
+  });
+
   for (const manifestPlugin of manifestPlugins) {
     if (pluginNames.includes(manifestPlugin.name)) {
       result.push(manifestPlugin);

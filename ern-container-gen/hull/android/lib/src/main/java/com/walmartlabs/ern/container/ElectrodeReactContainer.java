@@ -25,18 +25,9 @@ public class ElectrodeReactContainer {
                                     Config reactContainerConfig
                             {{#plugins}}
                               {{#configurable}}
-                              ,
-                                {{^last}}
-                                    {{name}}.Config {{lcname}}Config,
-                                {{/last}}
-                                {{#last}}
-                                    {{name}}.Config {{lcname}}Config) {
-                                {{/last}}
+                                ,{{{name}}}.Config {{{lcname}}}Config
                               {{/configurable}}
-                            {{/plugins}}
-                            {{^plugins}}
-                            ) {
-                            {{/plugins}}
+                            {{/plugins}} ) {
         // ReactNative general config
         this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
 
@@ -83,41 +74,23 @@ public class ElectrodeReactContainer {
             @NonNull final Config reactContainerConfig
     {{#plugins}}
       {{#configurable}}
-      ,
-        {{^last}}
-            @NonNull final {{name}}.Config {{lcname}}Config,
-        {{/last}}
-        {{#last}}
-            @NonNull final {{name}}.Config {{lcname}}Config) {
-        {{/last}}
+            ,@NonNull final {{name}}.Config {{lcname}}Config
       {{/configurable}}
-    {{/plugins}}
-    {{^plugins}}
-      ) {
-    {{/plugins}}
+    {{/plugins}} ) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
                     reactContainerConfig
             {{#plugins}}
               {{#configurable}}
-              ,
-                {{^last}}
-                    {{lcname}}Config,
-                {{/last}}
-                {{#last}}
-                    {{lcname}}Config);
-                {{/last}}
+                ,{{lcname}}Config
               {{/configurable}}
-            {{/plugins}}
-            {{^plugins}}
-              );
-            {{/plugins}}
+            {{/plugins}} );
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
-            Log.d(TAG, "ELECTRODE REACT ENGINE INITIALIZED\n" + reactContainerConfig.toString());
+            Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
 
         return sInstance;
