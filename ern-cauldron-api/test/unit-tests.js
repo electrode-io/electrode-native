@@ -1,10 +1,11 @@
 process.env.NODE_ENV = 'test';
 
 import fs from 'fs';
+
 import chai from 'chai';
 const should = chai.should();
 const expect = chai.expect;
-import { server, CauldronHelper, getCauldron, setCauldron } from '../api.js';
+import { server, CauldronHelper, getCauldron, setCauldron } from '../src/api.js';
 
 describe('TestHelpers', () => {
   it('should throw an error if trying to call getCauldron in non test env', (done) => {

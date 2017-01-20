@@ -19,6 +19,7 @@ build
 #
 node_modules/
 npm-debug.log
+*/node_modules
 
 # VSCode
 .vscode
@@ -28,3 +29,7 @@ npm-debug.log
 
 # distrib
 distrib
+
+*/dist
+
+ern-cauldron-api/test/.cauldron-test
