@@ -11,8 +11,10 @@ import cauldron from './cauldron.js';
 import platform from './platform.js';
 import { compatCheck } from './compatibility.js';
 import explodeNapSelector from './explodeNapSelector.js';
-import generateRunner from '../../../ern-runner-gen/index.js';
+import { generateRunner,  generateContainerForRunner } from '../../../ern-runner-gen/index.js';
 import { runAndroid } from './android.js';
+import { spin } from './spin.js';
+import { yarnAdd } from './yarn.js';
 
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/;
 
@@ -84,6 +86,37 @@ export async function runInAndroidRunner() {
     packageName: 'com.walmartlabs.ern'
   });
 
+}
+
+export async function addPluginToMiniApp(pluginName) {
+  const plugin = platform.getDependency(pluginName);
+  if (!plugin) {
+    return logError(`Plugin ${pluginName} is not available in current container version`);
+  }
+
+  await spin(`Installing ${plugin.name}@${plugin.version}`, yarnAdd(plugin));
+
+  await spin(`Regenerating container library for runner`, generateContainerForRunner({
+    platformPath: platform.currentPlatformVersionPath,
+    plugins: getLocalNativeDependencies(),
+    miniapp: { name: getMiniAppName(), localPath: process.cwd() },
+    verbose: false
+  }));
+
+  logInfo(`done.`);
+}
+
+const npmScopeModuleRe = /(@.*)\/(.*)/;
+function getUnscopedModuleName(moduleName) {
+  return npmScopeModuleRe.test(moduleName) ?
+         npmScopeModuleRe.exec(`${moduleName}`)[2]
+      :  moduleName;
+}
+
+function getMiniAppName() {
+  const appPackageJsonPath = `${process.cwd()}/package.json`;
+  const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath));
+  return getUnscopedModuleName(appPackageJson.name);
 }
 
 export async function createMiniApp(appName, {
