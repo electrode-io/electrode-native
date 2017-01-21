@@ -33,3 +33,5 @@ distrib
 */dist
 
 ern-cauldron-api/test/.cauldron-test
+
+*/.cauldron
