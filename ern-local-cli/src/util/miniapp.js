@@ -238,7 +238,7 @@ export async function upgradeMiniAppToPlatformVersion(version) {
   log.info(`Done. You should run npm install again or whatever`)
 }
 
-export async function publishInApp(
+export async function addMiniAppToNativeAppInCauldron(
   appName = required('appName'),
   platformName = required('platformName'),
   versionName = required('versionName')) {
@@ -313,7 +313,7 @@ export async function publishInApp(
       });
     }
   } catch (e) {
-    log.error(`[publishInApp ${e.message}`);
+    log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
   }
 }
 
