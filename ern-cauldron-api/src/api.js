@@ -165,7 +165,7 @@ server.route({
     handler: function (req, reply) {
         if (!alreadyExists(cauldron.nativeApps, req.payload.name)) {
             cauldron.nativeApps.push(req.payload);
-            db.commit();
+            return dbCommit(reply);
         }
         reply().code(200);
     },
@@ -216,7 +216,7 @@ server.route({
 
         if (!alreadyExists(app.platforms, req.payload.name)) {
             app.platforms.push(req.payload);
-            db.commit();
+            return dbCommit(reply);
         }
         reply().code(200);
     },
@@ -262,7 +262,7 @@ server.route({
 
         if (!alreadyExists(platform.versions, req.payload.name)) {
             platform.versions.push(req.payload);
-            db.commit();
+            return dbCommit(reply);
         }
         reply().code(200);
     },
@@ -324,7 +324,7 @@ server.route({
             ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
         if (!alreadyExists(version.nativeDeps, req.payload.name)) {
             version.nativeDeps.push(req.payload);
-            db.commit();
+            return dbCommit(reply);
         }
         reply().code(200);
     },
@@ -391,8 +391,7 @@ server.route({
         } else { /// consider version update, even if not the case
             _.find(version.reactNativeApps, r => r.name === req.payload.name).version = req.payload.version;
         }
-        db.commit();
-        reply().code(200);
+        return dbCommit(reply);
     },
     config: {validate: {payload: reactNativeAppSchema}}
 });
@@ -533,8 +532,9 @@ function buildReactNativeSourceMapFileName(appName, versionName) {
 }
 
 function dbCommit(reply) {
-    db.commit();
-    reply().code(200);
+    db.commit(() =>{
+        reply().code(200)
+    });
 }
 
 //====================================
@@ -545,7 +545,7 @@ export default function start({
     nativeBinariesStorePath = path.join(process.cwd(), '.cauldron/binaries'),
     sourceMapsStorePath = path.join(process.cwd(), './.cauldron/sourcemaps'),
     dbFilePath = path.join(process.cwd(), './.cauldron/db.json')
-} = {}) {
+} = {}, cb) {
     nativeBinariesStore = new FileStore(nativeBinariesStorePath);
     sourceMapsStore = new FileStore(sourceMapsStorePath);
     db = new Db(dbFilePath);
@@ -554,7 +554,9 @@ export default function start({
 
     server.start((err) => {
         console.log(`Cauldron server running at: ${server.info.uri}`);
+        cb && cb(err, server);
     });
+
 }
 
 //module.exports = start;
