@@ -30,8 +30,13 @@ server.connection({port: cauldronServerPort});
 //====================================
 
 export class CauldronHelper {
-    constructor(cauldron) {
-        this._cauldron = cauldron;
+    constructor(db) {
+        this._db = db;
+    }
+
+    //So it gets it from the Filesystem.
+    get _cauldron() {
+        return this._db.cauldron;
     }
 
     getNativeApplication(name) {
@@ -39,11 +44,16 @@ export class CauldronHelper {
     }
 
     removeNativeApplication(name) {
-        return _.remove(this._cauldron.nativeApps, x => x.name === name).length > 0;
+        const ret = _.remove(this._cauldron.nativeApps, x => x.name === name).length > 0;
+        return ret;
     }
 
     getPlatform(appName, platformName) {
-        const app = this.getNativeApplication(appName);
+        return this.getPlatformForApp(this.getNativeApplication(appName), platformName);
+    }
+
+    //So the reference does not change.
+    getPlatformForApp(app, platformName) {
         if (app) {
             return _.find(app.platforms, x => x.name === platformName);
         }
@@ -104,7 +114,7 @@ export class CauldronHelper {
     }
 }
 
-let nativeBinariesStore, sourceMapsStore, db, cauldron, ch;
+let nativeBinariesStore, sourceMapsStore, db, ch;
 
 //====================================
 // JOI validation schemas
@@ -155,6 +165,12 @@ const nativeApplicationSchema = Joi.object({
 // Cauldron API routes
 //====================================
 
+server.ext('onRequest', (request, reply) => {
+    db.begin();
+    reply.continue();
+});
+
+
 //------------------------------------
 // /nativeapps
 //------------------------------------
@@ -163,6 +179,7 @@ server.route({
     method: 'POST',
     path: '/nativeapps',
     handler: function (req, reply) {
+        const {cauldron} = db;
         if (!alreadyExists(cauldron.nativeApps, req.payload.name)) {
             cauldron.nativeApps.push(req.payload);
             return dbCommit(reply);
@@ -176,7 +193,7 @@ server.route({
     method: 'GET',
     path: '/nativeapps',
     handler: function (req, reply) {
-        reply(cauldron.nativeApps).code(200);
+        reply(db.cauldron.nativeApps).code(200);
     }
 });
 
@@ -184,7 +201,7 @@ server.route({
     method: 'DELETE',
     path: '/nativeapps',
     handler: function (req, reply) {
-        cauldron.nativeApps = [];
+        db.cauldron.nativeApps = [];
         dbCommit(reply);
     }
 });
@@ -532,7 +549,7 @@ function buildReactNativeSourceMapFileName(appName, versionName) {
 }
 
 function dbCommit(reply) {
-    db.commit(() =>{
+    db.commit(() => {
         reply().code(200)
     });
 }
@@ -546,33 +563,33 @@ export default function start({
     sourceMapsStorePath = path.join(process.cwd(), './.cauldron/sourcemaps'),
     dbFilePath = path.join(process.cwd(), './.cauldron/db.json')
 } = {}, cb) {
-    nativeBinariesStore = new FileStore(nativeBinariesStorePath);
-    sourceMapsStore = new FileStore(sourceMapsStorePath);
-    db = new Db(dbFilePath);
-    cauldron = db.cauldron;
-    ch = new CauldronHelper(cauldron);
+    return startWithDB(new Db(dbFilePath), new FileStore(nativeBinariesStorePath), new FileStore(sourceMapsStorePath), cb)
+}
 
+export function startWithDB(_db, _nativeBinariesStore, _sourceMapsStore, cb) {
+    nativeBinariesStore = _nativeBinariesStore;
+    sourceMapsStore = _sourceMapsStore;
+    db = _db;
+    ch = new CauldronHelper(db);
     server.start((err) => {
         console.log(`Cauldron server running at: ${server.info.uri}`);
         cb && cb(err, server);
     });
-
 }
 
 //module.exports = start;
 
 export function getCauldron() {
     if (process.env.NODE_ENV === 'test') {
-        return cauldron;
+        return db.cauldron;
     } else {
         throw new Error("Cannot set cauldron in non testing env");
     }
 }
 
-export function setCauldron(value) {
+export function setCauldron(_cauldron) {
     if (process.env.NODE_ENV === 'test') {
-        cauldron = value;
-        ch = new CauldronHelper(cauldron);
+        ch = new CauldronHelper({_cauldron});
     } else {
         throw new Error("Cannot set cauldron in non testing env");
     }
