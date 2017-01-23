@@ -165,6 +165,10 @@ const nativeApplicationSchema = Joi.object({
 // Cauldron API routes
 //====================================
 
+/** So we "begin" a transaction on each request
+ * This fetches new content from the json file.  So
+ * it is never out of sync.
+ */
 server.ext('onRequest', (request, reply) => {
     db.begin();
     reply.continue();

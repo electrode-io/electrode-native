@@ -35,7 +35,8 @@ export default class Db {
     begin() {
         return this._cauldron = json(this._dbPath);
     }
-
+    //Should we add a transaction check here? to ensure that the cauldron is not derefernced
+    // before the transaction begins.   Now, probably never happen.
     get cauldron() {
         return this._cauldron;
     }
