@@ -1,11 +1,12 @@
 import generateContainer from './index.js';
+const log = require('console-log-level')();
 const argv = require('minimist')(process.argv.slice(2));
 
 //
 // This is the target version of the produced maven artifact (Android)
 const containerPomVersion = argv['version'];
 if (!containerPomVersion) {
-  console.log("--version=[version] required");
+  log.error("--version=[version] required");
   process.exit();
 }
 

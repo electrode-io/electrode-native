@@ -1,6 +1,6 @@
 import platform from '../../util/platform.js'
 import generateApi from '../../../../ern-api-gen/index.js'
-import { logError } from '../../util/log.js'
+const log = require('console-log-level')();
 
 exports.command = 'api [publishToNpm]'
 exports.desc = 'Run api generator'
@@ -17,13 +17,12 @@ exports.builder = function(yargs) {
 
 exports.handler = async function (argv) {
   try {
-    const bridgeDep = platform.getDependency('@walmart/react-native-electrode-bridge');
+    const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge');
     generateApi({
       bridgeVersion: `${bridgeDep.version}`,
       shouldPublishToNpm: argv.publishToNpm
     });
   } catch(e) {
-    cosnole.log(e);
-    logError(`[ern apigen] ${e}`);
+    log.error(e);
   }
 }

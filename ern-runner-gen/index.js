@@ -9,6 +9,8 @@ import generateContainer from '../ern-container-gen/index.js';
 
 const workingFolder = process.cwd();
 
+let log;
+
 //=============================================================================
 // fs async wrappers
 //=============================================================================
@@ -16,8 +18,7 @@ const workingFolder = process.cwd();
 async function readFile(filename, enc) {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, enc, (err, res) => {
-      if (err) reject(err);
-      else resolve(res);
+      err ? reject(err) : resolve(res);
     });
   });
 }
@@ -25,8 +26,7 @@ async function readFile(filename, enc) {
 async function writeFile(filename, data) {
   return new Promise((resolve, reject) => {
     fs.writeFile(filename, data, (err, res) => {
-      if (err) reject(err);
-      else resolve(res);
+      err ? reject(err) : resolve(res);
     });
   });
 }
@@ -68,26 +68,11 @@ function camelCase(string) {
     return `${string.charAt(0).toLowerCase()}${string.slice(1)}`;
 }
 
-// log section messag
-function sectionLog(msg) {
-  console.log(chalk.bold.green(`[ern-runner-gen] === ${msg.toUpperCase()} ===`));
-}
-
-// log info message with ern-container-gen header and chalk coloring
-function log(msg) {
-  console.log(chalk.bold.blue(`[ern-runner-gen] ${msg}`));
-}
-
-// log error message with ern-container-gen header and chalk coloring
-function errorLog(msg) {
-  console.log(chalk.bold.red(`[ern-container-gen] ${msg}`));
-}
-
 //=============================================================================
 // Main
 //=============================================================================
 
-const CONTAINER_POM_VERSION = '1.0.0-SNAPSHOT';
+const RUNNER_CONTAINER_POM_VERSION = '1.0.0-SNAPSHOT';
 
 // Generate the runner project (Android only as of now)
 // platformPath : Path to the ern-platform to use
@@ -102,7 +87,10 @@ export async function generateRunner({
   verbose
 }) {
   try {
-    sectionLog(`Starting runner project generation [Android]`);
+    log = require('console-log-level')({
+       prefix: () => '[ern-runner-gen]',
+       level: verbose ? 'info' : 'warn'
+    });
 
     if (!miniapp.localPath) {
       throw new Error("Miniapp must come with a local path !");
@@ -116,8 +104,7 @@ export async function generateRunner({
     await generateContainerForRunner({
       platformPath,
       plugins,
-      miniapp,
-      verbose
+      miniapp
     });
 
     shell.mkdir(outFolder);
@@ -128,10 +115,8 @@ export async function generateRunner({
       await mustacheRenderToOutputFileUsingTemplateFile(
         `${outFolder}/${file}`, view, `${outFolder}/${file}`);
     }
-
-    sectionLog(`Done with runner project generation [Android]`);
   } catch (e) {
-    errorLog("[generateRunner] Something went wrong: " + e);
+    log.error("Something went wrong: " + e);
     throw e;
   }
 }
@@ -142,10 +127,15 @@ export async function generateContainerForRunner({
   miniapp,
   verbose
 }) {
+  log = require('console-log-level')({
+     prefix: () => '[ern-runner-gen]',
+     level: verbose ? 'info' : 'warn'
+  });
+
   const generator = {
     platform: 'android',
     name: 'maven',
-    containerPomVersion: CONTAINER_POM_VERSION
+    containerPomVersion: RUNNER_CONTAINER_POM_VERSION
   };
 
   await generateContainer({
@@ -153,7 +143,6 @@ export async function generateContainerForRunner({
     generator,
     platformPath,
     plugins,
-    miniapps: [miniapp],
-    verbose
+    miniapps: [miniapp]
   })
 }

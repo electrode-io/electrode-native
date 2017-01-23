@@ -5,8 +5,7 @@ const fs = require('fs');
 const http = require('http');
 // 3rd party
 const shell = require('shelljs');
-import cliSpinner from 'cli-spinner';
-const Spinner = cliSpinner.Spinner;
+const Ora = require('ora');
 const Mustache = require('mustache');
 const chalk = require('chalk');
 const deepAssign = require('deep-assign');
@@ -15,7 +14,6 @@ const semver = require('semver');
 const _ = require('lodash');
 
 let mustacheView = {};
-let _verbose = false;
 let containerBaseManifest;
 
 const ROOT_DIR = shell.pwd();
@@ -29,6 +27,8 @@ const DEFAULT_MAVEN_REPO = `file://${process.env['HOME']}/.m2/repository`;
 
 // Path to ern platform root folder
 const ERN_PATH = `${process.env['HOME']}/.ern`;
+
+let log;
 
 //=============================================================================
 // Async wrappers
@@ -56,7 +56,7 @@ async function shellExec(command) {
   return new Promise((resolve, reject) => {
     shell.exec(command, {async:true}, (code, stdout, stderr) => {
       if (code !== 0) {
-        errorLog(stderr);
+        log.error(stderr);
         reject();
       }
       else resolve();
@@ -130,7 +130,7 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
   // we need to patch the build.gradle file accordingly to update
   // birdge dependency compile statement with platform version
   else {
-    log(`No config.json file for ${plugin.name}. Assuming apigen module`);
+    log.info(`No config.json file for ${plugin.name}. Assuming apigen module`);
     result = {
       origin: {
         type: 'npm',
@@ -178,13 +178,15 @@ async function yarnAdd(name, version) {
     exec(version ? `yarn add ${name}@${version}` : `yarn add ${name}`,
       (err, stdout, stderr) => {
       if (err) {
-        errorLog(err);
+        log.error(err);
         reject(err);
       }
-      if (stderr && _verbose) {
-        errorLog(stderr);
+      if (stderr) {
+        if (!stderr.startsWith('warning')) {
+          log.error(stderr);
+        }
       } if (stdout) {
-        _verbose && log(stdout);
+        log.info(stdout);
         resolve(stdout);
       }
     });
@@ -197,10 +199,10 @@ async function gitClone(url, branch) {
       (err, stdout, stderr) => {
       // Git seems to send stuff to stderr :(
       if (err) {
-        errorLog(err);
+        log.error(err);
         reject(err);
       } else {
-        _verbose && log(stdout ? stdout : stderr);
+        log.info(stdout ? stdout : stderr);
         resolve(stdout ? stdout : stderr);
       }
     });
@@ -264,7 +266,7 @@ async function downloadPluginSource(pluginOrigin) {
 // ]
 async function transformPluginSource(plugin, pluginTemplatesPath, pluginSourcePath, pluginTransformArr) {
   for (const pluginTransform of pluginTransformArr) {
-    log(`patching ${pluginSourcePath}/${pluginTransform.file}`);
+    log.info(`patching ${pluginSourcePath}/${pluginTransform.file}`);
     let view = Object.assign({}, mustacheView,
       {
         pluginVersion: plugin.versionEx,
@@ -294,13 +296,13 @@ async function buildAndUploadArchive(moduleName) {
     exec(cmd,
       (err, stdout, stderr) => {
       if (err) {
-        errorLog(err);
+        log.error(err);
         reject(err);
       }
       if (stderr) {
-        log(stderr);
+        log.info(stderr);
       } if (stdout) {
-        _verbose && log(stdout);
+        log.info(stdout);
         resolve(stdout);
       }
     });
@@ -311,43 +313,25 @@ async function buildAndUploadArchive(moduleName) {
 // Misc/general utilities
 //=============================================================================
 
-// log section message
-function sectionLog(msg) {
-  _verbose && console.log(chalk.bold.green(`[ern-container-gen] === ${msg.toUpperCase()} ===`));
-}
-
-// log info message with ern-container-gen header and chalk coloring
-function log(msg) {
-  _verbose && console.log(chalk.bold.blue(`[ern-container-gen] ${msg}`));
-}
-
-// log error message with ern-container-gen header and chalk coloring
-function errorLog(msg) {
-  console.log(chalk.bold.red(`[ern-container-gen] ${msg}`));
-}
-
 // Given a string returns the same string with its first letter capitalized
 function capitalizeFirstLetter(string) {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 }
 
-// Show a spinner next to a given message for the duration of a promise
-// spinner will stop as soon as the promise is completed
-//
-// msg: The message to display
-// prom: The promise to wrap. When promise complete, the spinner will stop
-// clean: true if you want the message to disappear once spin stops, false otherwise
-export async function spin(msg, prom, clean = false) {
-  let spinner = new Spinner(msg);
-  spinner.setSpinnerString(18);
-  spinner.start();
+// promisify ora spinner
+// there is already a promise method on ora spinner, unfortunately it does
+// not return the wrapped promise so that's a bit useless.
+async function spin(msg, prom, options) {
+  const spinner = new Ora(options ? options : msg);
+	spinner.start();
+
   try {
     let result = await prom;
+    spinner.succeed();
     return result;
-  }
-  finally {
-    spinner.stop(false);
-    process.stdout.write('\n');
+  } catch (e) {
+    spinner.fail(e);
+    throw e;
   }
 }
 
@@ -361,31 +345,31 @@ export async function spin(msg, prom, clean = false) {
 // rnVersion: React native version
 async function installPlugins(plugins, paths, rnVersion) {
   try {
-    sectionLog(`Starting plugins installation`);
+    log.info(`[=== Starting plugins installation ===]`);
 
     for (const plugin of plugins) {
       // Specific handling for react-native as it is a particular plugin
       if (plugin.name === 'react-native') {
         if (await isReactNativeVersionPublished(plugin.version)) {
-          log(`Skipping ${plugin.name} [already published]`);
+          log.info(`Skipping ${plugin.name} [already published]`);
           continue;
         }
       } else {
         if (await isPluginPublished(plugin)) {
-            log(`Skipping ${plugin.name}@${plugin.version} [already published]`);
+            log.info(`Skipping ${plugin.name}@${plugin.version} [already published]`);
             continue;
           }
       }
 
       shell.cd(paths.tmpFolder);
 
-      log(`Getting ${plugin.name} plugin config`);
+      log.info(`Getting ${plugin.name} plugin config`);
       let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
 
       let pluginSourcePath = await spin(`Downloading ${plugin.name} plugin source`,
         downloadPluginSource(pluginConfig.origin));
 
-      log(`Applying transformations to ${plugin.name} plugin source`);
+      log.info(`Applying transformations to ${plugin.name} plugin source`);
       await transformPluginSource(
         plugin,
         `${getPluginConfigPath(plugin, paths.containerPluginsConfig)}/templates`,
@@ -395,13 +379,13 @@ async function installPlugins(plugins, paths, rnVersion) {
       shell.cd(`${pluginSourcePath}/${pluginConfig.root}`);
 
       await shellExec('chmod +x gradlew');
-      await spin(`Building ${plugin.name} plugin and uploading archive`,
+      await spin(`Building ${plugin.name} plugin and publishing archive`,
         buildAndUploadArchive(pluginConfig.uploadArchives.moduleName));
     }
 
-    sectionLog(`Completed plugins installation`);
+    log.info(`[=== Completed plugins installation ===]`);
   } catch (e) {
-    errorLog("[installPlugins] Something went wrong: " + e);
+    log.error("[installPlugins] Something went wrong: " + e);
     throw e;
   }
 }
@@ -420,7 +404,7 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
       let pluginConfig = await getPluginConfig(plugin, pluginsConfigPath);
 
       if (pluginConfig.pluginHook) {
-        log(`Hooking ${plugin.name} plugin`);
+        log.info(`Hooking ${plugin.name} plugin`);
         pluginsView.push({
           "name": pluginConfig.pluginHook.name,
           "lcname": pluginConfig.pluginHook.name.charAt(0).toLowerCase() +
@@ -438,56 +422,56 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
       let pluginNameUnscoped = getUnscopedModuleName(plugin.name);
 
       if (plugin.name === "react-native") {
-        log(`Will inject: compile 'com.facebook.react:react-native:${plugin.versionEx}'`);
+        log.info(`Will inject: compile 'com.facebook.react:react-native:${plugin.versionEx}'`);
         mustacheView.pluginCompile.push({
           "compileStatement" : `compile 'com.facebook.react:react-native:${plugin.versionEx}'`
         });
       } else {
-        log(`Will inject: compile '${mustacheView.namespace}:${pluginNameUnscoped}:${plugin.versionEx}'`);
+        log.info(`Will inject: compile '${mustacheView.namespace}:${pluginNameUnscoped}:${plugin.versionEx}'`);
         mustacheView.pluginCompile.push({
           "compileStatement" : `compile '${mustacheView.namespace}:${pluginNameUnscoped}:${plugin.versionEx}'`
         });
       }
     }
   } catch (e) {
-    errorLog("[buildPluginsViews] Something went wrong: " + e);
+    log.error("[buildPluginsViews] Something went wrong: " + e);
     throw e;
   }
 }
 
 async function addPluginHookClasses(plugins, paths) {
   try {
-    sectionLog(`Adding plugin hook classes`);
+    log.info(`[=== Adding plugin hook classes ===]`);
 
     for (const plugin of plugins) {
       let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
       if (pluginConfig.pluginHook) {
-        log(`Adding ${pluginConfig.pluginHook.name}.java`);
+        log.info(`Adding ${pluginConfig.pluginHook.name}.java`);
         shell.cp(`${paths.containerPluginsConfig}/${plugin.name}/${pluginConfig.pluginHook.name}.java`,
                  `${paths.outFolder}/lib/src/main/java/com/walmartlabs/ern/container/plugins/`);
       }
     }
 
-    sectionLog(`Done adding plugin hook classes`);
+    log.info(`[=== Done adding plugin hook classes ===]`);
   } catch (e) {
-    errorLog("[addPluginHookClasses] Something went wrong: " + e);
+    log.error("[addPluginHookClasses] Something went wrong: " + e);
     throw e;
   }
 }
 
 async function fillContainerHull(plugins, miniApps, paths) {
   try {
-    sectionLog(`Starting container hull filling`);
+    log.info(`[=== Starting container hull filling ===]`);
 
     shell.cd(`${ROOT_DIR}`);
 
-    log(`Creating out folder and copying Container Hull to it`);
+    log.info(`Creating out folder and copying Container Hull to it`);
     shell.cp('-R', `${paths.containerHull}/android`, `${paths.outFolder}`);
 
     await buildPluginsViews(plugins, paths.containerPluginsConfig);
     await addPluginHookClasses(plugins, paths);
 
-    log(`Patching hull`);
+    log.info(`Patching hull`);
     const files = readDir(`${paths.outFolder}`, (f) => !f.endsWith('.jar'));
     for (const file of files) {
       await mustacheRenderToOutputFileUsingTemplateFile(
@@ -495,7 +479,7 @@ async function fillContainerHull(plugins, miniApps, paths) {
     }
 
     // Create mini app activities
-    log(`Creating miniapp activities`);
+    log.info(`Creating miniapp activities`);
     for (const miniApp of miniApps) {
       let miniAppName = getUnscopedModuleName(miniApp.name);
       let pascalCaseMiniAppName = capitalizeFirstLetter(miniAppName);
@@ -506,16 +490,16 @@ async function fillContainerHull(plugins, miniApps, paths) {
 
       let activityFileName = `${pascalCaseMiniAppName}Activity.java`;
 
-      log(`Creating ${activityFileName}`);
+      log.info(`Creating ${activityFileName}`);
       await mustacheRenderToOutputFileUsingTemplateFile(
         `${paths.containerTemplates}/android/MiniAppActivity.mustache`,
         tmpMiniAppView,
         `${paths.outFolder}/lib/src/main/java/com/walmartlabs/ern/container/miniapps/${activityFileName}`);
     }
 
-    sectionLog(`Completed container hull filling`);
+    log.info(`[=== Completed container hull filling ===]`);
   } catch (e) {
-    errorLog("[fillContainerHull] Something went wrong: " + e);
+    log.error("[fillContainerHull] Something went wrong: " + e);
     throw e;
   }
 }
@@ -529,13 +513,13 @@ async function reactNativeBundle(paths) {
           --assets-dest=${paths.outFolder}/lib/src/main/res`,
       (err, stdout, stderr) => {
       if (err) {
-        errorLog(err);
+        log.error(err);
         reject(err);
       }
-      if (stderr && _verbose) {
-        errorLog(stderr);
+      if (stderr) {
+        log.error(stderr);
       } if (stdout) {
-        _verbose && log(stdout);
+        log.info(stdout);
         resolve(stdout);
       }
     });
@@ -544,7 +528,7 @@ async function reactNativeBundle(paths) {
 
 async function bundleMiniApps(miniapps, paths) {
   try {
-    sectionLog(`Starting mini apps bundling`);
+    log.info(`[=== Starting mini apps bundling ===]`);
 
     // Specific case where we use container gen to generate
     // container for runner and we want to bundle the local miniapp
@@ -565,29 +549,29 @@ async function bundleMiniApps(miniapps, paths) {
            yarnAdd(miniAppName, miniapp.version));
       }
 
-      log(`writing index.android.js`);
+      log.info(`writing index.android.js`);
       await writeFile('./index.android.js', imports);
     }
 
-    await spin(`Bundling all miniapps`, reactNativeBundle(paths));
+    await spin(`Bundling miniapp(s)`, reactNativeBundle(paths));
 
-    sectionLog(`Completed mini apps bundling`);
+    log.info(`[=== Completed mini apps bundling ===]`);
   } catch(e) {
-      errorLog("[bundleMiniApps] Something went wrong: " + e);
+      log.error("[bundleMiniApps] Something went wrong: " + e);
   }
 }
 
 async function buildAndPublishContainer(paths) {
   try {
-    sectionLog(`Starting build and publication of the container`);
+    log.info(`[=== Starting build and publication of the container ===]`);
 
     shell.cd(`${paths.outFolder}`)
-    await spin(`Building container and uploading archive`,
+    await spin(`Building container and publishing archive`,
       buildAndUploadArchive('lib'));
 
-    sectionLog(`Completed build and publication of the container`);
+    log.info(`[=== Completed build and publication of the container ===]`);
   } catch(e) {
-      errorLog("[buildAndPublishContainer] Something went wrong: " + e);
+      log.error("[buildAndPublishContainer] Something went wrong: " + e);
   }
 }
 
@@ -699,7 +683,7 @@ async function generateAndroidContainerUsingMavenGenerator(
   }
 
   try {
-    log(`\n === Using maven generator
+    log.info(`\n === Using maven generator
             mavenRepositoryUrl: ${mavenRepositoryUrl}
             containerPomVersion: ${containerPomVersion}
             namespace: ${namespace}`);
@@ -758,11 +742,10 @@ async function generateAndroidContainerUsingMavenGenerator(
     await fillContainerHull(includedPlugins, miniapps, paths);
     await bundleMiniApps(miniapps, paths);
     await buildAndPublishContainer(paths);
-    console.log(`done.`);
-    console.log(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerPomVersion}`);
-    console.log(`To ${mavenRepositoryUrl}`);
+    log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerPomVersion}`);
+    log.info(`To ${mavenRepositoryUrl}`);
   } catch (e) {
-    errorLog(`Something went wrong. Aborting ern-container-gen: ${e}`);
+    log.error(`Something went wrong. Aborting ern-container-gen: ${e}`);
   }
 }
 
@@ -815,7 +798,11 @@ export default async function generateContainer({
     verbose = false
   } = {}) {
   try {
-    _verbose = verbose;
+    log = require('console-log-level')({
+       prefix: () => '[ern-container-gen]',
+       level: verbose ? 'info' : 'warn'
+    });
+
     if (generator.platform === 'android') {
       await generateAndroidContainer(
         nativeAppName,
@@ -834,6 +821,6 @@ export default async function generateContainer({
       throw new Error(`Platform ${generator.platform} not supported`);
     }
   } catch (e) {
-    errorLog(`Something went wrong. Aborting ern-container-gen: ${e}`);
+    log.error(`Something went wrong. Aborting ern-container-gen: ${e}`);
   }
 }

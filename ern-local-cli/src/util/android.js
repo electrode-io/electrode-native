@@ -3,7 +3,7 @@ const exec = child_process.exec;
 import inquirer from 'inquirer';
 import shell from 'shelljs';
 import { spin } from './spin.js';
-import { logError } from './log.js';
+const log = require('console-log-level')();
 
 //==============================================================================
 // Misc utilities
@@ -80,7 +80,7 @@ async function androidGetBootAnimProp() {
     exec(`adb wait-for-device shell getprop init.svc.bootanim`,
       (err, stdout, stderr) => {
       if (err || stderr) {
-        logError(err ? err : stderr);
+        log.error(err ? err : stderr);
         reject(err ? err : stderr);
       } else {
         resolve(stdout);
@@ -99,7 +99,7 @@ async function installApp(projectPath) {
     exec(`./gradlew installDebug`,
       (err, stdout, stderr) => {
       if (err || stderr) {
-        logError(err ? err : stderr);
+        log.erro(err ? err : stderr);
         reject(err ? err : stderr);
       } else {
         resolve(stdout);
@@ -147,7 +147,7 @@ async function getAndroidAvds() {
 /*async function runAndroid() {
   let compatibleVersions = [];
   let compatibilityReport =
-    await getCompatibilityReport({ platformName: 'android' });
+    await getNativeAppCompatibilityReport({ platformName: 'android' });
 
   for (const app of compatibilityReport) {
     if (app.compatibility.incompatible.length === 0) {

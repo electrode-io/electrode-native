@@ -1,7 +1,4 @@
-import _ from 'lodash';
-import chalk from 'chalk';
-import { getLocalNativeDependencies } from '../../../util/miniapp.js';
-import platform from '../../../util/platform.js';
+import { platformCompatCheck } from '../../../util/compatibility.js';
 
 exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'
@@ -11,32 +8,13 @@ exports.builder = function(yargs) {
     .option('platformVersion', {
       alias: 'v',
       describe: 'Platform version to check compatibility with'
+    })
+    .option('verbose', {
+      type: 'bool',
+      describe: 'verbose output'
     });
 }
 
 exports.handler = function (argv) {
-  const localNativeDeps = getLocalNativeDependencies();
-  const platformDependencies = platform.getSupportedPlugins(argv.platformVersion);
-
-  for (const localNativeDep of localNativeDeps) {
-
-    let localNativeDepName = localNativeDep.name;
-    if (localNativeDep.scope) {
-      localNativeDepName = `@${localNativeDep.scope}/${localNativeDep.name}`;
-    }
-
-    const containerManifestMatchingDep =
-      _.find(platformDependencies, m => m.name === localNativeDepName);
-    const localDep = `${localNativeDep.name}@${localNativeDep.version}`;
-    if (containerManifestMatchingDep) {
-      if (containerManifestMatchingDep.version === localNativeDep.version) {
-        console.log(chalk.green(`${localDep} [MATCH]`));
-      } else {
-        console.log(chalk.yellow(
-          `${localDep} [v${containerManifestMatchingDep.version} EXPECTED]`));
-      }
-    } else {
-      console.log(chalk.red(`${localDep} [NOT IN CURRENT CONTAINER VERSION]`))
-    }
-  }
+  platformCompatCheck(argv.verbose, argv.platformVersion);
 }

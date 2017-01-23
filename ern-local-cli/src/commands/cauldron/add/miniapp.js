@@ -1,4 +1,4 @@
-import { compatCheck } from '../../../util/compatibility.js'
+import { nativeCompatCheck } from '../../../util/compatibility.js'
 import explodeNativeAppSelector from '../../../util/explodeNapSelector.js';
 import { publishInApp } from '../../../util/miniapp.js';
 

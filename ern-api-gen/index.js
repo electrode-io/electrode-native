@@ -12,6 +12,13 @@ const xcode = require('xcode');
 
 const rootDir = shell.pwd();
 
+const log = require('console-log-level')({
+  prefix(level) {
+    return '[ern-api-gen]'
+  },
+  level: 'info'
+});
+
 // Not pretty but depending of the execution context (direct call to binary
 // v.s using api-gen in a node program) the path might include distrib
 // This is just a temporary work-around, find out a cleaner way
@@ -89,16 +96,6 @@ async function mustacheRenderToOutputFileUsingTemplateFile(tmplPath, view, outPa
 // Given a string returns the same string with its first letter capitalized
 function pacalCase(string) {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
-}
-
-// Log informational message with apigen header and chalk coloring
-function log(msg) {
-  console.log(chalk.bold.blue(`[ern-api-gen] ${msg}`));
-}
-
-// Log error with apigen header and red chalk coloring
-function errorLog(header, err) {
-  console.log(chalk.bold.red(`[${header}] Oops something went wrong : ${err}`));
 }
 
 // true if the given type is a type array, false othewise
@@ -350,7 +347,7 @@ function generateConfigFromSchemaSync(schemaFilePath) {
 
     return config;
   } catch(e) {
-    errorLog('generateConfigFromSchemaSync', e);
+    log.error('generateConfigFromSchemaSync', e);
     throw e;
   }
 }
@@ -362,25 +359,25 @@ async function generateJavaCode(view) {
     const javaOutputPath = view.javaDest ? view.javaDest : 'output/java';
     shell.mkdir('-p', javaOutputPath);
 
-    log(`Generating ${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`);
+    log.info(`Generating ${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`);
     await mustacheRenderToOutputFileUsingTemplateFile(
       `${apiGenDir}/templates/java/ApiClient.java.mustache`,
       view,
       `${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`);
 
-    log(`Generating ${javaOutputPath}/${view.pascalCaseApiName}Api.java`);
+    log.info(`Generating ${javaOutputPath}/${view.pascalCaseApiName}Api.java`);
     await mustacheRenderToOutputFileUsingTemplateFile(
       `${apiGenDir}/templates/java/Api.java.mustache`,
       view,
       `${javaOutputPath}/${view.pascalCaseApiName}Api.java`);
 
-    log(`Generating ${javaOutputPath}/Names.java`);
+    log.info(`Generating ${javaOutputPath}/Names.java`);
     await mustacheRenderToOutputFileUsingTemplateFile(
       `${apiGenDir}/templates/java/Names.java.mustache`,
       view,
       `${javaOutputPath}/Names.java`);
   } catch (e) {
-    errorLog('generateJavaCode', e);
+    log.error('generateJavaCode', e);
     throw e;
   }
 }
@@ -403,37 +400,37 @@ async function generateObjectiveCCode(view) {
     'Names.m'
   ];
 
-  log(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}Api.h`);
+  log.info(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}Api.h`);
   await mustacheRenderToOutputFileUsingTemplateFile(
     `${apiGenDir}/templates/obj-c/Api.h.mustache`,
     view,
     `${objCOutputPath}/API/${headerFiles[0]}`);
 
-  log(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}Api.m`);
+  log.info(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}Api.m`);
   await mustacheRenderToOutputFileUsingTemplateFile(
     `${apiGenDir}/templates/obj-c/Api.m.mustache`,
     view,
     `${objCOutputPath}/API/${sourceFiles[0]}`);
 
-  log(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}ApiClient.h`);
+  log.info(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}ApiClient.h`);
   await mustacheRenderToOutputFileUsingTemplateFile(
     `${apiGenDir}/templates/obj-c/ApiClient.h.mustache`,
     view,
     `${objCOutputPath}/API/${headerFiles[1]}`);
 
-  log(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}ApiClient.m`);
+  log.info(`Generating ${objCOutputPath}/API/${view.pascalCaseApiName}ApiClient.m`);
   await mustacheRenderToOutputFileUsingTemplateFile(
     `${apiGenDir}/templates/obj-c/ApiClient.m.mustache`,
     view,
     `${objCOutputPath}/API/${sourceFiles[1]}`);
 
-  log(`Generating ${objCOutputPath}/API/Names.h`);
+  log.info(`Generating ${objCOutputPath}/API/Names.h`);
   await mustacheRenderToOutputFileUsingTemplateFile(
     `${apiGenDir}/templates/obj-c/Names.h.mustache`,
     view,
     `${objCOutputPath}/API/${headerFiles[2]}`);
 
-  log(`Generating ${objCOutputPath}/API/Names.m`);
+  log.info(`Generating ${objCOutputPath}/API/Names.m`);
   await mustacheRenderToOutputFileUsingTemplateFile(
     `${apiGenDir}/templates/obj-c/Names.m.mustache`,
     view,
@@ -462,25 +459,25 @@ async function generateJSCode(view) {
     const jsOutputPath = view.jsDest ? view.jsDest : 'output/js';
     shell.mkdir('-p', jsOutputPath);
 
-    log(`Generating ${jsOutputPath}/apiClient.js`);
+    log.info(`Generating ${jsOutputPath}/apiClient.js`);
     await mustacheRenderToOutputFileUsingTemplateFile(
       `${apiGenDir}/templates/js/apiClient.js.mustache`,
       view,
       `${jsOutputPath}/apiClient.js`);
 
-    log(`Generating ${jsOutputPath}/api.js`);
+    log.info(`Generating ${jsOutputPath}/api.js`);
     await mustacheRenderToOutputFileUsingTemplateFile(
       `${apiGenDir}/templates/js/api.js.mustache`,
       view,
       `${jsOutputPath}/api.js`);
 
-    log(`Generating ${jsOutputPath}/messages.js`);
+    log.info(`Generating ${jsOutputPath}/messages.js`);
     await mustacheRenderToOutputFileUsingTemplateFile(
       `${apiGenDir}/templates/js/messages.js.mustache`,
       view,
       `${jsOutputPath}/messages.js`);
   } catch (e) {
-    errorLog('generateJSCode', e);
+    log.error('generateJSCode', e);
     throw e;
   }
 }
@@ -493,7 +490,7 @@ async function generateAllCode(view) {
     await generateObjectiveCCode(view);
     await generateJSCode(view);
   } catch (e) {
-    errorLog('generateAllCode', e);
+    log.error('generateAllCode', e);
     throw e;
   }
 }
@@ -513,7 +510,7 @@ async function patchHull(view) {
         `${view.outFolder}/${file}`);
     }
   } catch(e) {
-    errorLog('patchHull', e);
+    log.error('patchHull', e);
     throw e;
   }
 }
@@ -559,7 +556,7 @@ export default async function generateApi({
     } else if (fs.existsSync(`${rootDir}/${defaultConfigFile}`)) {
       config = JSON.parse(fs.readFileSync(`${rootDir}/${defaultConfigFile}`, 'utf-8'));
     } else {
-      errorLog('apigen', 'no config or schema provided or found');
+      log.error('apigen', 'no config or schema provided or found');
     }
 
     config.moduleName = `react-native-${config.apiName}-api`;
@@ -784,24 +781,24 @@ export default async function generateApi({
     //--------------------------------------------------------------------------
 
     // Start by patching the api hull "inplace"
-    log("== Patching Hull");
+    log.info("== Patching Hull");
     await patchHull(mustacheView);
     // Inject all additional generated code
-    log("== Generating API code");
+    log.info("== Generating API code");
     await generateAllCode(mustacheView);
 
-    log("== Generation complete");
+    log.info("== Generation complete");
 
     //--------------------------------------------------------------------------
     // Optionally publish to npm
     //--------------------------------------------------------------------------
     if (shouldPublishToNpm) {
-      log("== Publishing to NPM");
+      log.info("== Publishing to NPM");
       shell.cd(`${outFolder}`);
       execSync(`npm publish`);
     }
   } catch (e) {
-    errorLog('generateApiModule', e);
+    log.error('generateApiModule', e);
   }
 }
 

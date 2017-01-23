@@ -2,7 +2,6 @@ import child_process from 'child_process';
 const execSync = child_process.execSync;
 import fs from 'fs';
 import _ from 'lodash';
-import { logInfo, logWarn, logError } from './log.js';
 import config from './config.js';
 
 const ERN_GIT_REPO_URL = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-platform.git`;
@@ -10,11 +9,17 @@ const ERN_PATH = `${process.env['HOME']}/.ern`;
 const ERN_PLATFORM_REPO_PATH = `${ERN_PATH}/ern-platform`;
 const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/cache`;
 
-const moduleRe = /(.*)@(.*)/;
-
 class Platform {
   switchPlatformRepositoryToMaster() {
     execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout master`);
+  }
+
+  switchPlatformRepositoryToVersion(version) {
+    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout origin/v${version}`);
+  }
+
+  isPlatformVersionAvailable(version) {
+    return this.versions.includes(version);
   }
 
   isPlatformVersionInstalled(version) {
@@ -25,13 +30,17 @@ class Platform {
     return `${ERN_VERSIONS_CACHE_PATH}/v${version}`;
   }
 
+  get latestVersion() {
+    return this.versions.slice(-1)[0];
+  }
+
   get currentPlatformVersionPath() {
     return this.getPlatformVersionPath(this.currentVersion);
   }
 
   installPlatform(version) {
     if (this.isPlatformVersionInstalled(version)) {
-      return logWarn(`Version ${version} of ern platform is already installed`);
+      return log.warn(`Version ${version} of ern platform is already installed`);
     }
 
     if (!this.isPlatformVersionAvailable(version)) {
@@ -43,32 +52,18 @@ class Platform {
     require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install();
   }
 
-  //
-  // Uninstall a specific version of the platform
   uninstallPlatform(version) {
     if (!this.isPlatformVersionInstalled(version)) {
-      return logWarn(`Version ${version} of ern platform is not installed`);
+      return log.warn(`Version ${version} of ern platform is not installed`);
     }
 
     if (this.currentVersion === version) {
-      return logError(`Version ${version} is currently activated. Cannot uninstall`)
+      return log.error(`Version ${version} is currently activated. Cannot uninstall`)
     }
 
     this.switchPlatformRepositoryToVersion(version);
 
     require(`${ERN_PLATFORM_REPO_PATH}/uninstall.js`).uninstall();
-  }
-
-  switchPlatformRepositoryToVersion(version) {
-    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout origin/v${version}`);
-  }
-
-  isPlatformVersionAvailable(version) {
-    return this.versions.includes(version);
-  }
-
-  get latestVersion() {
-    return this.versions.slice(-1)[0];
   }
 
   get versions() {
@@ -87,11 +82,11 @@ class Platform {
 
   switchToVersion(version) {
     if (version === this.currentVersion) {
-      return logInfo(`v${version} is already the version in use`);
+      return log.info(`v${version} is already the version in use`);
     }
 
     if (!this.isPlatformVersionInstalled(version)) {
-      logInfo(`v${version} is not installed yet. Trying to install now`);
+      log.info(`v${version} is not installed yet. Trying to install now`);
       this.installPlatform(version);
     }
 
@@ -102,6 +97,32 @@ class Platform {
     return require(`${this.getPlatformVersionPath(this.currentVersion)}/manifest.json`);
   }
 
+  buildPluginObj(pluginString) {
+    const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/;
+    const unscopedModuleWithVersionRe = /(.+)@(.+)/;
+    const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/;
+
+    if (scopedModuleWithVersionRe.test(pluginString)) {
+      return {
+        scope: scopedModuleWithVersionRe.exec(pluginString)[1],
+        name: scopedModuleWithVersionRe.exec(pluginString)[2],
+        version: scopedModuleWithVersionRe.exec(pluginString)[3]
+      }
+    } else if (unscopedModuleWithVersionRe.test(pluginString)) {
+      return {
+        name: unscopedModuleWithVersionRe.exec(pluginString)[1],
+        version: unscopedModuleWithVersionRe.exec(pluginString)[2]
+      }
+    } else if (scopedModuleWithoutVersionRe.test(pluginString)) {
+      return {
+        scope: scopedModuleWithoutVersionRe.exec(pluginString)[1],
+        name: scopedModuleWithoutVersionRe.exec(pluginString)[2]
+      }
+    } else {
+      return { name: pluginString }
+    }
+  }
+
   getSupportedPlugins(version) {
     let versionBeforeSwitch;
     if (version && (version !== this.currentVersion)) {
@@ -109,10 +130,7 @@ class Platform {
       this.switchToVersion(version);
     }
 
-    const result = _.map(this.manifest.supportedPlugins, (d) => ({
-                    name: moduleRe.exec(d)[1],
-                    version: moduleRe.exec(d)[2]
-                  }));
+    const result = _.map(this.manifest.supportedPlugins, d => this.buildPluginObj(d));
 
     if (versionBeforeSwitch) {
       this.switchToVersion(versionBeforeSwitch);
@@ -121,8 +139,10 @@ class Platform {
     return result;
   }
 
-  getDependency(name) {
-    return _.find(this.getSupportedPlugins(), d => d.name === name);
+  getPlugin(pluginString) {
+    const plugin = this.buildPluginObj(pluginString);
+    return _.find(this.getSupportedPlugins(),
+      d => (d.name === plugin.name) && (d.scope === plugin.scope));
   }
 }
 
