@@ -152,10 +152,9 @@ export async function createMiniApp(appName, {
           ...explodeNapSelector(napSelector));
       platformVersion = nativeApp.ernPlatformVersion;
     }
-    // Otherwise, if no forced platform version provided, use latest platform
-    // manifest version
+    // Otherwise, if no forced platform version provided, use current platform version
     else if (!platformVersion) {
-      platformVersion = platform.latestVersion;
+      platformVersion = platform.currentVersion;
     }
 
     if (platform.currentVersion !== platformVersion) {
