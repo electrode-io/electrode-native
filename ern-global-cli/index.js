@@ -3,6 +3,11 @@ const child_process = require('child_process');
 const execSync = child_process.execSync;
 const chalk = require('chalk');
 
+// Version update notifier
+const updateNotifier = require('update-notifier');
+const pkg = require('./package.json');
+updateNotifier({pkg}).notify();
+
 //
 // Directory structure (stored in user home folder)
 //
