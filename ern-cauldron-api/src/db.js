@@ -23,7 +23,7 @@ export default class Db {
         return this._cauldron = json(this._dbPath);
     }
 
-    commit() {
-        fs.writeFileSync(this._dbPath, JSON.stringify(this._cauldron));
+    commit(cb) {
+        fs.writeFile(this._dbPath, JSON.stringify(this._cauldron), {encoding: 'utf8'}, cb);
     }
 };
