@@ -2,7 +2,7 @@ import _ from 'lodash';
 import cauldron from '../../util/cauldron.js';
 import platform from '../../util/platform.js';
 import explodeNapSelector from '../../util/explodeNapSelector.js';
-import { logError } from '../../util/log.js';
+const log = require('console-log-level')();
 import ernConfig from '../../util/config.js'
 import generateContainer from '../../../../ern-container-gen/index.js';
 
@@ -55,6 +55,6 @@ exports.handler = async function (argv) {
       platform.switchToVersion(versionBeforeSwitch);
     }
   } catch(e) {
-    logError(`[ern libgen] ${e}`);
+    log.error(e);
   }
 }

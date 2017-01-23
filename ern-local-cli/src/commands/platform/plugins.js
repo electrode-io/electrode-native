@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { logInfo } from '../../util/log.js';
+const log = require('console-log-level')();
 import platform from '../../util/platform.js';
 import tagOneLine from '../../util/tagOneLine.js'
 
@@ -16,11 +16,11 @@ exports.builder = function(yargs) {
 
 exports.handler = function (argv) {
   const plugins = platform.getSupportedPlugins(argv.platformVersion);
-  logInfo(
+  log.info(
     tagOneLine`Platform v${argv.platformVersion ? argv.platformVersion : platform.currentVersion}
     suports the following plugins`)
   for (const plugin of plugins) {
-    console.log(
-      `${chalk.yellow(`${plugin.name}`)}@${chalk.magenta(`${plugin.version}`)}`);
+    log.info(
+      `${chalk.yellow(`${plugin.scope? `@${plugin.scope}/`:''}${plugin.name}`)}@${chalk.magenta(`${plugin.version}`)}`);
   }
 }

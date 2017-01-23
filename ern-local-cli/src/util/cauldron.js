@@ -3,7 +3,7 @@ import ernConfig from './config.js';
 import required from './required.js';
 import { spin } from './spin.js';
 import tagOneLine from './tagOneLine.js';
-import { logInfo, logError } from './log.js';
+const log = require('console-log-level')();
 
 //
 // Helper class to access the cauldron
@@ -37,11 +37,10 @@ class Cauldron {
             ernPlatformVersion,
             appName,
             platformName,
-            versionName),
-            false /*clean spin*/);
-      logInfo('done.')
+            versionName));
+      log.info('done.')
     } catch (e) {
-      logError(`[addNativeApp] ${e}`);
+      log.error(`[addNativeApp] ${e}`);
       throw e;
     }
   }
@@ -76,11 +75,10 @@ class Cauldron {
           ${versionName ? `at version ${versionName}` : ''}
           ${platformName ? `for ${platformName} platform` : ''}
           from cauldron`,
-          this._removeNativeApp(appName, platformName, versionName),
-          false /* clean spin */)
-      logInfo('done.')
+          this._removeNativeApp(appName, platformName, versionName))
+      log.info('done.')
     } catch(e) {
-      logError(`[removeNativeApp] ${e}`);
+      log.error(`[removeNativeApp] ${e}`);
       throw e;
     }
   }
@@ -123,12 +121,11 @@ class Cauldron {
         tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
                    to ${appName}:${platformName}:${versionName}`,
                    this.cauldron.addNativeAppDependency(
-                      appName, platformName, versionName, dependency),
-                   false /* clean spin */);
+                      appName, platformName, versionName, dependency));
 
-      logInfo('done.');
+      log.info('done.');
     } catch(e) {
-      logError(`[addNativeDependency] ${e}`);
+      log.error(`[addNativeDependency] ${e}`);
       throw e;
     }
   }
@@ -153,10 +150,9 @@ class Cauldron {
         tagOneLine`Removing dependency ${dependencyName} from
                   ${appName}:${platformName}:${versionName}`,
                   this.cauldron.deleteNativeAppDependency(
-                    appName, platformName, versionName, dependencyName),
-                  false /* clean spin */);
+                    appName, platformName, versionName, dependencyName));
     } catch(e) {
-      logError(`[removeNativeDependency] ${e}`);
+      log.error(`[removeNativeDependency] ${e}`);
       throw e;
     }
   }
@@ -181,7 +177,7 @@ class Cauldron {
         return this.cauldron.getNativeApp(appName);
       }
     } catch(e) {
-      logError(`[getNativeApp] ${e}`);
+      log.error(`[getNativeApp] ${e}`);
       throw e;
     }
   }
@@ -202,7 +198,7 @@ class Cauldron {
       return this.cauldron.getAllNativeAppDependencies(
         appName, platformName, versionName);
     } catch(e) {
-      logError(`[getNativeDependencies] ${e}`);
+      log.error(`[getNativeDependencies] ${e}`);
       throw e;
     }
   }
@@ -226,7 +222,7 @@ class Cauldron {
       return this.cauldron.addNativeAppBinary(
         appName, platformName, versionName, binaryPath);
     } catch(e) {
-      logError(`[addNativeBinary] ${e}`);
+      log.error(`[addNativeBinary] ${e}`);
       throw e;
     }
   }
@@ -247,7 +243,7 @@ class Cauldron {
       return this.cauldron.getNativeAppBinary(
         appName, platformName, versionName);
     } catch(e) {
-      logError(`[getNativeBinary] ${e}`);
+      log.error(`[getNativeBinary] ${e}`);
       throw e;
     }
   }
@@ -272,8 +268,7 @@ class Cauldron {
   async addReactNativeApp(appName, platformName, versionName, app) {
     return spin(tagOneLine`Adding ${app.name}@${app.version} to
                ${appName}:${platformName}:${versionName}`,
-          this.cauldron.addReactNativeApp(appName, platformName, versionName, app),
-          false /*clean spin*/);
+          this.cauldron.addReactNativeApp(appName, platformName, versionName, app));
   }
  }
 

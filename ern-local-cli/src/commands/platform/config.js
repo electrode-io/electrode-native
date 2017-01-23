@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { logInfo } from '../../util/log.js';
+const log = require('console-log-level')();
 import platform from '../../util/platform.js';
 import tagOneLine from '../../util/tagOneLine.js'
 import ernConfig from '../../util/config.js'
@@ -21,6 +21,6 @@ exports.handler = function (argv) {
   if (argv.value) {
     ernConfig.setValue(argv.key, argv.value);
   } else {
-    logInfo(`${argv.key}: ${ernConfig.getValue(argv.key)}`);
+    log.info(`${argv.key}: ${ernConfig.getValue(argv.key)}`);
   }
 }

@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+const log = require('console-log-level')();
 import platform from '../../util/platform.js';
 import tagOneLine from '../../util/tagOneLine.js'
 
@@ -8,19 +9,19 @@ exports.desc = 'List platform versions'
 exports.builder = {}
 
 exports.handler = function (argv) {
-  console.log(tagOneLine`
+  log.info(tagOneLine`
     ${chalk.green('[CURRENT]')}
     ${chalk.yellow('[INSTALLED]')}
     ${chalk.gray('[NOT INSTALLED]')}`);
   for (const version of platform.versions) {
     if (platform.isPlatformVersionInstalled(version)) {
       if (platform.currentVersion === version) {
-        console.log(chalk.green(`-> v${version}`));
+        log.info(chalk.green(`-> v${version}`));
       } else {
-        console.log(chalk.yellow(`v${version}`))
+        log.info(chalk.yellow(`v${version}`))
       }
     } else {
-      console.log(chalk.gray(`v${version}`));
+      log.info(chalk.gray(`v${version}`));
     }
   }
 }

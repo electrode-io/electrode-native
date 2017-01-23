@@ -1,15 +1,17 @@
 import child_process from 'child_process';
 import fs from 'fs';
+const exec = child_process.exec;
 const execSync = child_process.execSync;
 
 import _ from 'lodash';
+import chalk from 'chalk';
 import shell from 'shelljs';
 import readDir from 'fs-readdir-recursive';
-import { logInfo, logError } from './log.js';
+const log = require('console-log-level')();
 import tagOneLine from './tagoneline.js';
 import cauldron from './cauldron.js';
 import platform from './platform.js';
-import { compatCheck } from './compatibility.js';
+import { nativeCompatCheck } from './compatibility.js';
 import explodeNapSelector from './explodeNapSelector.js';
 import { generateRunner,  generateContainerForRunner } from '../../../ern-runner-gen/index.js';
 import { runAndroid } from './android.js';
@@ -30,7 +32,7 @@ export function getLocalNativeDependencies() {
   let result = [];
 
   if (!fs.existsSync('node_modules')) {
-    logError(tagOneLine`No node_modules folder present.
+    log.error(tagOneLine`No node_modules folder present.
               This command should be run at the root of a mini-app`);
     return result;
   }
@@ -76,7 +78,7 @@ export function getLocalNativeDependencies() {
 
 export async function runInAndroidRunner() {
   if (!fs.existsSync('node_modules')) {
-    logError(tagOneLine`No node_modules folder present.
+    log.error(tagOneLine`No node_modules folder present.
               This command should be run at the root of a mini-app`);
     return result;
   }
@@ -88,22 +90,24 @@ export async function runInAndroidRunner() {
 
 }
 
-export async function addPluginToMiniApp(pluginName) {
-  const plugin = platform.getDependency(pluginName);
+export async function addPluginToMiniApp(pluginString) {
+  const plugin = platform.getPlugin(pluginString);
   if (!plugin) {
-    return logError(`Plugin ${pluginName} is not available in current container version`);
+    return log.error(`Plugin ${pluginString} is not available in current container version`);
   }
 
-  await spin(`Installing ${plugin.name}@${plugin.version}`, yarnAdd(plugin));
+  if (plugin.scope) {
+    await spin(`Installing @${plugin.scope}/${plugin.name}@${plugin.version}`, yarnAdd(plugin));
+  } else {
+    await spin(`Installing ${plugin.name}@${plugin.version}`, yarnAdd(plugin));
+  }
 
-  await spin(`Regenerating container library for runner`, generateContainerForRunner({
+  await generateContainerForRunner({
     platformPath: platform.currentPlatformVersionPath,
     plugins: getLocalNativeDependencies(),
     miniapp: { name: getMiniAppName(), localPath: process.cwd() },
     verbose: false
-  }));
-
-  logInfo(`done.`);
+  });
 }
 
 const npmScopeModuleRe = /(@.*)\/(.*)/;
@@ -117,6 +121,20 @@ function getMiniAppName() {
   const appPackageJsonPath = `${process.cwd()}/package.json`;
   const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath));
   return getUnscopedModuleName(appPackageJson.name);
+}
+
+async function reactNativeInit(appName, rnVersion) {
+  return new Promise((resolve, reject) => {
+    exec(`react-native init ${appName} --version react-native@${rnVersion}`,
+      (err, stdout, stderr) => {
+      if (err) {
+        log.error(err);
+        reject(err);
+      } else if (stdout) {
+        resolve(stdout);
+      }
+    });
+  });
 }
 
 export async function createMiniApp(appName, {
@@ -134,28 +152,25 @@ export async function createMiniApp(appName, {
           ...explodeNapSelector(napSelector));
       platformVersion = nativeApp.ernPlatformVersion;
     }
-    // Otherwise, if no forced platform version provided, use latest platform
-    // manifest version
+    // Otherwise, if no forced platform version provided, use current platform version
     else if (!platformVersion) {
-      platformVersion = platform.latestVersion;
+      platformVersion = platform.currentVersion;
     }
 
     if (platform.currentVersion !== platformVersion) {
-      logInfo(`Switching platform to v${platformVersion}`);
       platform.switchToVersion(platformVersion);
     }
 
-    logInfo(`Creating application ${appName} at platform version ${platformVersion}`);
-    const rnVersion = platform.getDependency('react-native').version;
+    log.info(`Creating application ${appName} at platform version ${platformVersion}`);
+    const rnVersion = platform.getPlugin('react-native').version;
 
     //
     // Create application using react-native init command
-    logInfo(`Running react-native init for react-native v${rnVersion}`);
-    execSync(`react-native init ${appName} --version react-native@${rnVersion}`);
+    await spin(`Running react-native init using react-native v${rnVersion}`,
+         reactNativeInit(appName, rnVersion));
 
     //
     // Patch package.json file of application
-    logInfo(`Patching package.json`);
     const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`;
     const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath));
     appPackageJson.ernPlatformVersion = platformVersion;
@@ -167,13 +182,12 @@ export async function createMiniApp(appName, {
 
     //
     // Remove react-native generated android project ...
-    logInfo(`Removing react-native Android generate project`);
     shell.rm('-rf', `android`);
 
     //
     // ... and replace it with our own !
     // Kick-off runner project generator for this miniapp
-    logInfo(`Generating android runner project`);
+    log.info(`Generating runner Android project`);
     await generateRunner({
       platformPath: platform.currentPlatformVersionPath,
       plugins: getLocalNativeDependencies(),
@@ -182,9 +196,9 @@ export async function createMiniApp(appName, {
       verbose
     })
 
-    logInfo(`done.`)
+    log.info(`Done. You can run your app with ${chalk.yellow(`ern miniapp run android`)}`)
   } catch (e) {
-    logError(`[ern init] ${e}`);
+    log.error(`[ern init] ${e}`);
   }
 }
 
@@ -192,11 +206,11 @@ export async function upgradeMiniAppToPlatformVersion(version) {
   const currentMiniAppPlatformVersion = getMiniAppPlatformVersion();
 
   if (currentMiniAppPlatformVersion === version) {
-    return logError(`This miniapp is already using v${version}`);
+    return log.error(`This miniapp is already using v${version}`);
   }
 
   if (currentMiniAppPlatformVersion > version) {
-    return logError(`Downgrading is not supported. Could be. But no.`);
+    return log.error(`Downgrading is not supported. Could be. But no.`);
   }
 
   // Update all modules versions in package.json
@@ -205,11 +219,11 @@ export async function upgradeMiniAppToPlatformVersion(version) {
   const supportedPlugins = platform.getSupportedPlugins(version);
   const plugins = _.intersectionBy(miniAppDependencies, supportedPlugins, 'name');
   for (const plugin of plugins) {
-    let platformPluginVersion = platform.getDependency(plugin.name).version;
+    let platformPluginVersion = platform.getPlugin(plugin.name).version;
     let miniAppPluginVersion = _.find(miniAppDependencies, d => d,name === plugin.name).version;
     if (platformPluginVersion !== miniAppPluginVersion) {
       appPackageJson.dependencies[plugin.name] = platformPluginVersion;
-      logInfo(`Updating ${plugin.name} version from ${miniAppPluginVersion} to ${platformPluginVersion}`)
+      log.info(`Updating ${plugin.name} version from ${miniAppPluginVersion} to ${platformPluginVersion}`)
     }
   }
 
@@ -219,7 +233,7 @@ export async function upgradeMiniAppToPlatformVersion(version) {
   // Write back package.json
   fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
 
-  logInfo(`Done. You should run npm install again or whatever`)
+  log.info(`Done. You should run npm install again or whatever`)
 }
 
 export async function publishInApp(
@@ -242,7 +256,7 @@ export async function publishInApp(
     const miniAppDesc = `${miniAppName}@${miniAppVersion}`;
     const appDesc = `${appName}:${platformName}:${versionName}`;
 
-    logInfo(`Checking if ${miniAppDesc} is not already in binary of ${appDesc}`);
+    log.info(`Checking if ${miniAppDesc} is not already in binary of ${appDesc}`);
     let currentMiniAppEntryIncauldron;
 
     try {
@@ -258,7 +272,7 @@ export async function publishInApp(
       throw new Error(`${miniAppDesc} already in binary of ${appDesc}`);
     }
 
-    logInfo(`Checking that container version match native app version`);
+    log.info(`Checking that container version match native app version`);
     const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
     const nativeAppPlatformVersion = nativeApp.ernPlatformVersion;
     const miniAppPlatformVersion = getMiniAppPlatformVersion();
@@ -268,8 +282,8 @@ export async function publishInApp(
         [${appName}:${platformName}:${versionName} => ${nativeAppPlatformVersion}]`);
     }*/
 
-    logInfo('Checking compatibility with each native dependency');
-    let isCompatible = await compatCheck(
+    log.info('Checking compatibility with each native dependency');
+    let isCompatible = await nativeCompatCheck(
       true, appName, platformName, versionName);
     if (!isCompatible) {
       throw new Error('At least a native dependency is incompatible');
@@ -296,11 +310,8 @@ export async function publishInApp(
         isInBinary: true
       });
     }
-
-
-    logInfo(`DONE : ${miniAppDesc} added to ${appDesc}`);
   } catch (e) {
-    logError(`[publishInApp ${e.message}`);
+    log.error(`[publishInApp ${e.message}`);
   }
 }
 

@@ -1,24 +1,19 @@
-import cliSpinner from 'cli-spinner';
-const Spinner = cliSpinner.Spinner;
+const Ora = require('ora');
+const log = require('console-log-level')();
 
-// Show a spinner next to a given message for the duration of a promise
-// spinner will stop as soon as the promise is completed
-//
-// msg: The message to display
-// prom: The promise to wrap. When promise complete, the spinner will stop
-// clean: true if you want the message to disappear once spin stops, false otherwise
-export async function spin(msg, prom, clean = false) {
-  let spinner = new Spinner(msg);
-  spinner.setSpinnerString(18);
+// promisify ora spinner
+// there is already a promise method on ora spinner, unfortunately it does
+// not return the wrapped promise so that's a bit useless.
+export async function spin(msg, prom, options) {
+  const spinner = new Ora(options ? options : msg);
   spinner.start();
+
   try {
     let result = await prom;
+    spinner.succeed();
     return result;
-  }
-  finally {
-    if (!clean) {
-      console.log('\n');
-    }
-    spinner.stop(clean);
+  } catch (e) {
+    spinner.fail(e);
+    throw e;
   }
 }

@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+const log = require('console-log-level')();
 import { getLocalNativeDependencies } from '../../../util/miniapp.js';
 
 exports.command = 'list'
@@ -10,6 +11,6 @@ exports.handler = function (argv) {
   const plugins = getLocalNativeDependencies();
 
   for (const plugin of plugins) {
-    console.log(`${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`);
+    log.info(`${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`);
   }
 }

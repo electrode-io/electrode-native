@@ -1,11 +1,5 @@
-# Node dependencies
-node_modules
-
 # Cauldron data store
 .cauldron
-
-# npm related
-npm-debug.log
 
 # test coverage folder
 coverage
