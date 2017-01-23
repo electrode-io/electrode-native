@@ -38,6 +38,20 @@ class Platform {
     return this.getPlatformVersionPath(this.currentVersion);
   }
 
+  get currentVersion() {
+    return config.getValue('platformVersion');
+  }
+
+  get versions() {
+    const branchVersionRe = /heads\/v(\d+)/;
+    const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`)
+      .toString()
+      .split('\n')
+      .filter(v => branchVersionRe.test(v));
+
+    return _.map(versions, v => branchVersionRe.exec(v)[1]);
+  }
+
   installPlatform(version) {
     if (this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is already installed`);
@@ -64,20 +78,6 @@ class Platform {
     this.switchPlatformRepositoryToVersion(version);
 
     require(`${ERN_PLATFORM_REPO_PATH}/uninstall.js`).uninstall();
-  }
-
-  get versions() {
-    const branchVersionRe = /heads\/v(\d+)/;
-    const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`)
-      .toString()
-      .split('\n')
-      .filter(v => branchVersionRe.test(v));
-
-    return _.map(versions, v => branchVersionRe.exec(v)[1]);
-  }
-
-  get currentVersion() {
-    return config.getValue('platformVersion');
   }
 
   switchToVersion(version) {

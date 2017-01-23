@@ -77,7 +77,7 @@ async function waitForAndroidDevice() {
 // which indicates somehow that device is ready to install APK and such
 async function androidGetBootAnimProp() {
   return new Promise((resolve, reject) => {
-    exec(`adb wait-for-device shell getprop init.svc.bootanim`,
+    exec(`${androidAdbPath()} wait-for-device shell getprop init.svc.bootanim`,
       (err, stdout, stderr) => {
       if (err || stderr) {
         log.error(err ? err : stderr);
@@ -114,7 +114,7 @@ async function installApp(projectPath) {
 // - activityName : name of the Activity to launch
 async function launchAndroidActivity(packageName, activityName) {
   return new Promise((resolve, reject) => {
-    exec(`adb shell am start -n ${packageName}/.${activityName}`,
+    exec(`${androidAdbPath()} shell am start -n ${packageName}/.${activityName}`,
       (err, stdout, stderr) => {
       if (err || stderr) {
         reject(err ? err : stderr);
@@ -128,7 +128,7 @@ async function launchAndroidActivity(packageName, activityName) {
 // Utility method to list all available android avd images (emulator images)
 async function getAndroidAvds() {
   return new Promise((resolve, reject) => {
-    exec('emulator -list-avds', (err, stdout, stderr) => {
+    exec(`${androidEmulatorPath()} -list-avds`, (err, stdout, stderr) => {
       if (err || stderr) {
         reject(err ? err : stderr);
       } else {
@@ -136,6 +136,18 @@ async function getAndroidAvds() {
       }
     });
   })
+}
+
+function androidAdbPath() {
+  return process.env.ANDROID_HOME
+    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
+    : 'adb';
+}
+
+function androidEmulatorPath() {
+  return process.env.ANDROID_HOME
+    ? `${process.env.ANDROID_HOME}/tools/emulator`
+    : 'emulator';
 }
 
 //==============================================================================
