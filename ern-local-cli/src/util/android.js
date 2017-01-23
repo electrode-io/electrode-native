@@ -99,7 +99,7 @@ async function installApp(projectPath) {
     exec(`./gradlew installDebug`,
       (err, stdout, stderr) => {
       if (err || stderr) {
-        log.erro(err ? err : stderr);
+        log.error(err ? err : stderr);
         reject(err ? err : stderr);
       } else {
         resolve(stdout);

@@ -19,6 +19,7 @@ import { spin } from './spin.js';
 import { yarnAdd } from './yarn.js';
 
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/;
+const WORKING_FOLDER = process.cwd();
 
 // Return all native dependencies currently used by the mini-app
 // This method scans the node_modules folder to find any folder containing
@@ -76,15 +77,36 @@ export function getLocalNativeDependencies() {
   return result;
 }
 
-export async function runInAndroidRunner() {
+
+//return child_process.spawnSync('open', [launchPackagerScript], procConfig);
+export async function runInAndroidRunner(verbose) {
   if (!fs.existsSync('node_modules')) {
     log.error(tagOneLine`No node_modules folder present.
               This command should be run at the root of a mini-app`);
     return result;
   }
 
+  const runnerConfig = {
+    platformPath: platform.currentPlatformVersionPath,
+    plugins: getLocalNativeDependencies(),
+    miniapp: { name: getMiniAppName(), localPath: WORKING_FOLDER },
+    outFolder: `${WORKING_FOLDER}/android`,
+    verbose
+  };
+
+  // Generate initial runner project if it hasn't been created yet
+  if (!fs.existsSync('android')) {
+    log.info(`Generating runner Android project`);
+    await generateRunner(runnerConfig);
+  }
+  // Otherwise just regenerates container library
+  else {
+    log.info(`Re-generating runner container`);
+    await generateContainerForRunner(runnerConfig);
+  }
+
   await runAndroid({
-    projectPath: `${process.cwd()}/android`,
+    projectPath: `${WORKING_FOLDER}/android`,
     packageName: 'com.walmartlabs.ern'
   });
 
@@ -101,13 +123,6 @@ export async function addPluginToMiniApp(pluginString) {
   } else {
     await spin(`Installing ${plugin.name}@${plugin.version}`, yarnAdd(plugin));
   }
-
-  await generateContainerForRunner({
-    platformPath: platform.currentPlatformVersionPath,
-    plugins: getLocalNativeDependencies(),
-    miniapp: { name: getMiniAppName(), localPath: process.cwd() },
-    verbose: false
-  });
 }
 
 const npmScopeModuleRe = /(@.*)\/(.*)/;
@@ -118,7 +133,7 @@ function getUnscopedModuleName(moduleName) {
 }
 
 function getMiniAppName() {
-  const appPackageJsonPath = `${process.cwd()}/package.json`;
+  const appPackageJsonPath = `${WORKING_FOLDER}/package.json`;
   const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath));
   return getUnscopedModuleName(appPackageJson.name);
 }
@@ -182,21 +197,8 @@ export async function createMiniApp(appName, {
 
     //
     // Remove react-native generated android project ...
+    // It will be replaced with our own when user uses `ern miniapp run android` command
     shell.rm('-rf', `android`);
-
-    //
-    // ... and replace it with our own !
-    // Kick-off runner project generator for this miniapp
-    log.info(`Generating runner Android project`);
-    await generateRunner({
-      platformPath: platform.currentPlatformVersionPath,
-      plugins: getLocalNativeDependencies(),
-      miniapp: { name: appName, localPath: process.cwd() },
-      outFolder: `${process.cwd()}/android`,
-      verbose
-    })
-
-    log.info(`Done. You can run your app with ${chalk.yellow(`ern miniapp run android`)}`)
   } catch (e) {
     log.error(`[ern init] ${e}`);
   }
