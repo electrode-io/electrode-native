@@ -8,38 +8,72 @@ import path from 'path'
 import start, {CauldronHelper, getCauldron, setCauldron} from '../src/api.js';
 const expect = chai.expect
 const serverUri = 'http://localhost:3000';
+const testDir = path.join.bind(path, process.cwd(), 'test', '.cauldron-test');
 
 let cauldronHelper;
 
 chai.use(chaiHttp);
+function writeTmp(done) {
+    fs.writeFile('./tmpfile', "abcd".repeat(20000), {flags: 'w'}, done);
+}
+function delFile(source) {
+    try {
+        if (fs.existsSync(source)) {
+            fs.unlinkSync(source)
+        }
+    } catch (e) {
+    }
+}
+function copyFile(source, target, done) {
+    const rd = fs.createReadStream(source);
+    rd.on("error", function (err) {
+        done && done(err);
+        done = null;
+    });
+    const wr = fs.createWriteStream(target);
+    wr.on("error", function (err) {
+        done && done(err);
+        done = null;
+    });
+
+    wr.on("close", function (ex) {
+        done && done();
+    });
+    rd.pipe(wr);
+}
 
 describe('IntegrationTests', () => {
+    let dbFilePath = testDir('db.json');
     before((done) => {
-        start({
-            nativeBinariesStorePath: path.join(process.cwd(), 'test', './.cauldron-test/binaries'),
-            sourceMapsStorePath: path.join(process.cwd(), 'test', './.cauldron-test/sourcemaps'),
-            dbFilePath: path.join(process.cwd(), 'test', './.cauldron-test/db.json')
+        rmdir(testDir(), () => {
+            fs.mkdirSync(testDir());
+
+            copyFile(testDir('..', 'testdb.json'), testDir('db.json'), (e) => {
+                if (e) return done(e);
+                start({
+                    nativeBinariesStorePath: testDir('binaries'),
+                    sourceMapsStorePath: testDir('sourcemaps'),
+                    dbFilePath
+                }, (err, server) => {
+                    if (err) return done(err);
+                    return done();
+                });
+            });
         });
-        done();
     });
 
     beforeEach((done) => {
-        let cauldron = JSON.parse(fs.readFileSync('test/testdb.json'));
+        delFile('./tmpfile')
+        let cauldron = JSON.parse(fs.readFileSync(dbFilePath));
         cauldronHelper = new CauldronHelper(cauldron);
         setCauldron(cauldron);
         done();
     });
 
-    after((done) => {
-        fs.unlinkSync('./tmpfile');
-        rmdir('./.cauldron-test');
-        done();
-    });
-
     describe('POST /nativeapps', () => {
         it('should create a native app', (done) => {
-            chai.request(serverUri)
-                .post('/nativeapps')
+
+            chai.request(serverUri).post('/nativeapps')
                 .send({name: "Sams"})
                 .end((err, res) => {
                     expect(res).to.have.status(200);
@@ -996,40 +1030,39 @@ describe('IntegrationTests', () => {
     });
 
     describe('POST /nativeapps/{app}/platforms/{platform}/versions/{version}/binary', () => {
-        fs.writeFileSync('./tmpfile', "abcd".repeat(20000));
         it('should successfully upload an android binary', (done) => {
-            chai.request(serverUri)
-                .post('/nativeapps/walmart/platforms/android/versions/4.1/binary')
-                .set('Content-Type', 'application/octet-stream')
-                .send(fs.readFileSync('./tmpfile'))
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    let nappVersion = cauldronHelper.getVersion("walmart", "android", "4.1");
-                    expect(nappVersion.binary).to.be.a('string').eql('894aa55a08ddb4e0e94fa50348ddd5fa3ea58a3f');
-                    done();
-                });
+            writeTmp(() => {
+                chai.request(serverUri)
+                    .post('/nativeapps/walmart/platforms/android/versions/4.1/binary')
+                    .set('Content-Type', 'application/octet-stream')
+                    .send(fs.readFileSync('./tmpfile'))
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        let nappVersion = cauldronHelper.getVersion("walmart", "android", "4.1");
+                        expect(nappVersion.binary).to.be.a('string').eql('5c594be4bf2d6d63ac92be8d28915e7632aa7563');
+                        done();
+                    });
+            });
         });
-    });
-
-    describe('POST /nativeapps/{app}/platforms/{platform}/versions/{version}/binary', () => {
-        fs.writeFileSync('./tmpfile', "abcd".repeat(20000));
         it('should successfully upload an ios binary', (done) => {
-            // Create platform/version beforehand
-            chai.request(serverUri)
-                .post('/nativeapps/walmart/platforms')
-                .send({name: "ios", versions: [{name: "5.0", ernPlatformVersion: "1"}]})
-                .end((err, res) => {
-                    chai.request(serverUri)
-                        .post('/nativeapps/walmart/platforms/ios/versions/5.0/binary')
-                        .set('Content-Type', 'application/octet-stream')
-                        .send(fs.readFileSync('./tmpfile'))
-                        .end((err, res) => {
-                            expect(res).to.have.status(200);
-                            let nappVersion = cauldronHelper.getVersion("walmart", "ios", "5.0");
-                            expect(nappVersion.binary).to.be.a('string').eql('894aa55a08ddb4e0e94fa50348ddd5fa3ea58a3f');
-                            done();
-                        });
-                });
+            writeTmp(() => {
+                // Create platform/version beforehand
+                chai.request(serverUri)
+                    .post('/nativeapps/walmart/platforms')
+                    .send({name: "ios", versions: [{name: "5.0", ernPlatformVersion: "1"}]})
+                    .end((err, res) => {
+                        chai.request(serverUri)
+                            .post('/nativeapps/walmart/platforms/ios/versions/5.0/binary')
+                            .set('Content-Type', 'application/octet-stream')
+                            .send(fs.readFileSync('./tmpfile'))
+                            .end((err, res) => {
+                                expect(res).to.have.status(200);
+                                let nappVersion = cauldronHelper.getVersion("walmart", "ios", "5.0");
+                                expect(nappVersion.binary).to.be.a('string').eql('5c594be4bf2d6d63ac92be8d28915e7632aa7563');
+                                done();
+                            });
+                    });
+            });
         });
     });
 
@@ -1078,17 +1111,19 @@ describe('IntegrationTests', () => {
     });
 
     describe('POST /reactnativeapps/{app}/versions/{version}/sourcemap', () => {
-        fs.writeFileSync('./tmpfile', "abcd".repeat(1000));
+
         it('should successfully upload a source map', (done) => {
-            // Create platform/version beforehand
-            chai.request(serverUri)
-                .post('/reactnativeapps/react-native-cart/versions/1.2.3/sourcemap')
-                .set('Content-Type', 'application/octet-stream')
-                .send(fs.readFileSync('./tmpfile'))
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                });
+            writeTmp(() => {
+                // Create platform/version beforehand
+                chai.request(serverUri)
+                    .post('/reactnativeapps/react-native-cart/versions/1.2.3/sourcemap')
+                    .set('Content-Type', 'application/octet-stream')
+                    .send(fs.readFileSync('./tmpfile'))
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        done();
+                    });
+            });
         });
     });
 
