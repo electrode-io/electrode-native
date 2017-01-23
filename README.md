@@ -234,19 +234,16 @@ Push updated README directly to master (no PR for this !).
 - [New feature] Add `ern miniapp upgrade <platformVersion>` command
 - [New feature] Add `ern platform fix <platformVersion>` command
 - [Improvement] Only show banner / help whenever command is invalid/incomplete
-- [Improvement] Show compatibility table (verbose mode) when checking for platform compatibility (for now only done when checking for native app compatibility).
 - [Improvement] Show help whenever a command is mistyped (for now it just shows the banner)
 
 `ern-cauldron-api` / `ern-cauldron-cli`
 
 - [Improvement] Command line should accept an optional argument to specify the port on which to start the cauldron
-- [Fix] Check out thread safety. Db is stored as a local file, what happens if two users try to write to it at the same time ?
 - [Improvement] Consider using a more robust database for storage.
 
 `ern-api-gen`
 
 - [New feature] Support multi-parameter requests.
-- [Improvement] Add array support for request/event payload
 
 `ern-model-gen`
 
@@ -265,7 +262,7 @@ Push updated README directly to master (no PR for this !).
 - [Improvement] For maven generator, most of the templates are to replace single values. Try to detect more automatically and do surgical patching instead of relying on big redundant templates.
 - [Improvement] Add multi bundle support.
 - [Improvement] Implement caching of bundled miniapp (might not be needed)
-- [Improvement] Mavent generator. Find a better way to handle dependencies build order (react-native neds to be built first, then bridge which depends on it, then apis which depends on bridge ...). For now plugin list defines order but we might face issues later on.
+- [Improvement] Maven generator. Find a better way to handle dependencies build order (react-native neds to be built first, then bridge which depends on it, then apis which depends on bridge ...). For now plugin list defines order but we might face issues later on.
 - [Improvement] Maven generator. Figure out a better way to handle same version of dependency but built with a different react-native version dependency. For now we suffix the maven artifact version with the platform version, but its not ideal.
 
 `react-native-electrode-bridge`
