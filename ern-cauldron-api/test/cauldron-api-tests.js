@@ -9,7 +9,7 @@ import path from 'path';
 
 let ch;
 
-describe('CauldronHelper', () => {
+describe('CauldronApi', () => {
     beforeEach((done) => {
         ch = new Api(new Db(path.join(__dirname, 'testdb.json')), null, null);
         ch.begin();
