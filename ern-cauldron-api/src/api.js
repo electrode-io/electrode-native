@@ -1,56 +1,112 @@
-import fs from 'fs';
-import crypto from 'crypto';
-
-import Hapi from 'hapi';
-import Joi from 'joi';
 import Boom from 'boom';
 import _ from 'lodash';
-import path from 'path';
-
-import Db from './db.js';
-import FileStore from './filestore.js'
-
-const DEFAULT_SERVER_PORT = 3000;
-
-const CAULDRONRC_FILE = `${process.cwd()}/.cauldronrc`;
-
-let cauldronServerPort = DEFAULT_SERVER_PORT;
-
-console.log(CAULDRONRC_FILE);
-if (fs.existsSync(CAULDRONRC_FILE)) {
-    const cauldronRc = JSON.parse(fs.readFileSync(CAULDRONRC_FILE));
-    cauldronServerPort = cauldronRc.port;
-}
-
-const server = new Hapi.Server();
-server.connection({port: cauldronServerPort});
+import crypto from 'crypto';
 
 //====================================
 // Cauldron Helper
 //====================================
 
-export class CauldronHelper {
-    constructor(cauldron) {
-        this._cauldron = cauldron;
+function alreadyExists(collection, name, version) {
+    if (!version) {
+        return _.some(collection, x => x.name === name);
+    } else {
+        return _.some(collection, x => (x.name === name) && (x.version === version));
+    }
+}
+
+function buildNativeBinaryFileName(appName, platformName, versionName) {
+    const ext = getNativeBinaryFileExt(platformName);
+    return `${appName}-${platformName}@${versionName}.${ext}`;
+}
+
+function getNativeBinaryFileExt(platformName) {
+    return platformName === 'android' ? 'apk' : 'app';
+}
+
+function buildReactNativeSourceMapFileName(appName, versionName) {
+    return `${appName}@${versionName}.map`;
+}
+
+export default class CauldronApi {
+    constructor(db, binaryStore, sourcemapStore) {
+        this._db = db;
+        this._nativeBinariesStore = binaryStore;
+        this._sourceMapStore = sourcemapStore;
+    }
+
+    //So it gets it from the Filesystem.
+    get _cauldron() {
+        return this._db.cauldron;
+    }
+
+    begin() {
+        this._db.begin();
+    }
+
+    removeAllApps(cb) {
+        this._db.cauldron.nativeApps = [];
+        this._db.commit(cb);
     }
 
     getNativeApplication(name) {
         return _.find(this._cauldron.nativeApps, x => x.name === name);
     }
 
-    removeNativeApplication(name) {
-        return _.remove(this._cauldron.nativeApps, x => x.name === name).length > 0;
+    createNativeApplication(payload, cb) {
+        if (!alreadyExists(this._cauldron.nativeApps, payload.name)) {
+            this._cauldron.nativeApps.push(payload);
+            return this._db.commit(() => cb(null, true));
+        }
+        cb(null, false);
+    }
+
+    removeNativeApplication(name, cb) {
+        const ret = _.remove(this._cauldron.nativeApps, x => x.name === name).length > 0;
+        return this._db.commit(() => cb(null, ret));
     }
 
     getPlatform(appName, platformName) {
-        const app = this.getNativeApplication(appName);
+        return this.getPlatformForApp(this.getNativeApplication(appName), platformName);
+    }
+
+    //So the reference does not change.
+    getPlatformForApp(app, platformName) {
         if (app) {
             return _.find(app.platforms, x => x.name === platformName);
         }
     }
 
-    removePlatform(app, platformName) {
-        return _.remove(app.platforms, x => x.name === platformName).length > 0;
+    createPlatform(appName, payload, cb) {
+        const {app} = this.validateAndGet(appName);
+        if (!alreadyExists(app.platforms, payload.name)) {
+            app.platforms.push(payload);
+            return this._db.commit(() => cb(null, true));
+        }
+        cb(null, false);
+    }
+
+    removePlatform(appName, platformName, cb) {
+        const {app} =this.validateAndGet(appName, platformName);
+        const ret = _.remove(app.platforms, x => x.name === platformName).length > 0;
+        this._db.commit(() => cb(null, ret));
+    }
+
+    createVersion(appName, platformName, payload, cb) {
+        const {platform} = this.validateAndGet(appName, platformName);
+
+        if (!alreadyExists(platform.versions, payload.name)) {
+            platform.versions.push(payload);
+            return this._db.commit(() => cb(null, true));
+        }
+        cb(null, false);
+    }
+
+    updateVersion(appName, platformName, versionName, payload, cb) {
+        const {version} = this.validateAndGet(appName, platformName, versionName);
+        if (payload.isReleased !== undefined) {
+            version.isReleased = payload.isReleased;
+        }
+        this._db.commit(() => cb(null, true));
     }
 
     getVersion(appName, platformName, versionName) {
@@ -60,24 +116,63 @@ export class CauldronHelper {
         }
     }
 
-    removeVersion(platform, versionName) {
-        return _.remove(platform.versions, x => x.name === versionName).length > 0;
+    removeVersion(appName, platformName, versionName, cb) {
+        const {platform} = this.validateAndGet(appName, platformName, versionName);
+        const ret = _.remove(platform.versions, x => x.name === versionName).length > 0;
+        this._db.commit(() => cb(null, ret));
     }
 
     getNativeDependency(nativeAppVersion, nativeDepName) {
         return _.find(nativeAppVersion.nativeDeps, x => x.name === nativeDepName);
     }
 
-    removeNativeDependency(nativeAppVersion, nativeDepName) {
-        return _.remove(nativeAppVersion.nativeDeps, x => x.name === nativeDepName).length > 0;
+    removeNativeDependency(appName, platformName, versionName, nativeDepName, cb) {
+        const {version} =   this.validateAndGet(appName, platformName, versionName);
+        const ret = _.remove(version.nativeDeps, x => x.name === nativeDepName).length > 0;
+        this._db.commit(() => {
+            cb(null, ret);
+        });
     }
 
     getReactNativeApp(nativeAppVersion, appName) {
         return _.filter(nativeAppVersion.reactNativeApps, x => x.name === appName);
     }
 
-    removeReactNativeApp(nativeAppVersion, appName) {
-        return _.remove(nativeAppVersion.reactNativeApps, x => x.name === appName).length > 0;
+    removeReactNativeApp(appName, platformName, versionName, reactnativeappName, cb) {
+        const {version} =this.validateAndGet(appName, platformName, versionName);
+        const ret = _.remove(version.reactNativeApps, x => x.name === reactnativeappName).length > 0;
+        cb(null, ret);
+    }
+
+    createReactNativeApp(appName, platformName, versionName, payload, cb) {
+
+        const {version} =this.validateAndGet(appName, platformName, versionName);
+        if (!alreadyExists(version.reactNativeApps, payload.name)) {
+            version.reactNativeApps.push(payload);
+        } else { /// consider version update, even if not the case
+            _.find(version.reactNativeApps, r => r.name === payload.name).version = payload.version;
+        }
+        this._db.commit(cb);
+    }
+
+    createNativeDep(appName, platformName, versionName, payload, cb) {
+        const {version} = this.validateAndGet(appName, platformName, versionName);
+        if (!alreadyExists(version.nativeDeps, payload.name)) {
+            version.nativeDeps.push(payload);
+            return this._db.commit(() => cb(null, true));
+        }
+        cb(null, false);
+    }
+
+    updateNativeDep(appName, platformName, versionName, nativedepName, payload, cb) {
+        const {version} = this.validateAndGet(appName, platformName, versionName);
+        const nativedep = this.getNativeDependency(version, nativedepName);
+        if (nativedep) {
+            nativedep.version = payload.version ? payload.version : nativedep.version;
+            cb(null, nativedep);
+        } else {
+            cb();
+        }
     }
 
     validateAndGet(appName, platformName, versionName) {
@@ -102,478 +197,44 @@ export class CauldronHelper {
 
         return {app, platform, version};
     }
-}
 
-let nativeBinariesStore, sourceMapsStore, db, cauldron, ch;
-
-//====================================
-// JOI validation schemas
-//====================================
-
-const nativeDependencySchema = Joi.object({
-    name: Joi.string().required(),
-    version: Joi.string().required(),
-    scope: Joi.string().optional()
-});
-
-const nativeDependencyPatchSchema = Joi.object({
-    version: Joi.string().optional()
-});
-
-const reactNativeAppSchema = Joi.object({
-    name: Joi.string().required(),
-    version: Joi.string().required(),
-    isInBinary: Joi.boolean().required(),
-    scope: Joi.string().optional(),
-    hasSourceMap: Joi.boolean().optional()
-});
-
-const nativeApplicationVersionSchema = Joi.object({
-    name: Joi.string().required(),
-    ernPlatformVersion: Joi.string().required(),
-    isReleased: Joi.boolean().optional().default(false),
-    binary: Joi.string().default(null),
-    nativeDeps: Joi.array().items(nativeDependencySchema).default([]),
-    reactNativeApps: Joi.array().items(reactNativeAppSchema).default([])
-});
-
-const nativeAplicationVersionPatchSchema = Joi.object({
-    isReleased: Joi.boolean().optional()
-});
-
-const nativeApplicationPlatformSchema = Joi.object({
-    name: Joi.string().valid(['android', 'ios']),
-    versions: Joi.array().items(nativeApplicationVersionSchema).default([])
-});
-
-const nativeApplicationSchema = Joi.object({
-    name: Joi.string().required(),
-    platforms: Joi.array().items(nativeApplicationPlatformSchema).default([])
-});
-
-//====================================
-// Cauldron API routes
-//====================================
-
-//------------------------------------
-// /nativeapps
-//------------------------------------
-
-server.route({
-    method: 'POST',
-    path: '/nativeapps',
-    handler: function (req, reply) {
-        if (!alreadyExists(cauldron.nativeApps, req.payload.name)) {
-            cauldron.nativeApps.push(req.payload);
-            return dbCommit(reply);
-        }
-        reply().code(200);
-    },
-    config: {validate: {payload: nativeApplicationSchema}}
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps',
-    handler: function (req, reply) {
-        reply(cauldron.nativeApps).code(200);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps',
-    handler: function (req, reply) {
-        cauldron.nativeApps = [];
-        dbCommit(reply);
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}',
-    handler: function (req, reply) {
-        const {app} = ch.validateAndGet(req.params.app);
-        reply(app).code(200);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps/{app}',
-    handler: function (req, reply) {
-        const {app} = ch.validateAndGet(req.params.app);
-        ch.removeNativeApplication(app.name);
-        dbCommit(reply);
-    }
-});
-
-server.route({
-    method: 'POST',
-    path: '/nativeapps/{app}/platforms',
-    handler: function (req, reply) {
-        const {app} = ch.validateAndGet(req.params.app);
-
-        if (!alreadyExists(app.platforms, req.payload.name)) {
-            app.platforms.push(req.payload);
-            return dbCommit(reply);
-        }
-        reply().code(200);
-    },
-    config: {validate: {payload: nativeApplicationPlatformSchema}}
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms',
-    handler: function (req, reply) {
-        const {app} = ch.validateAndGet(req.params.app);
-        reply(app.platforms).code(200);
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}',
-    handler: function (req, reply) {
-        const {app, platform} =
-            ch.validateAndGet(req.params.app, req.params.platform);
-        reply(platform).code(200);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps/{app}/platforms/{platform}',
-    handler: function (req, reply) {
-        const {app, platform} =
-            ch.validateAndGet(req.params.app, req.params.platform);
-        ch.removePlatform(app, platform.name);
-        dbCommit(reply);
-    }
-});
-
-server.route({
-    method: 'POST',
-    path: '/nativeapps/{app}/platforms/{platform}/versions',
-    handler: function (req, reply) {
-        const {app, platform} =
-            ch.validateAndGet(req.params.app, req.params.platform);
-
-        if (!alreadyExists(platform.versions, req.payload.name)) {
-            platform.versions.push(req.payload);
-            return dbCommit(reply);
-        }
-        reply().code(200);
-    },
-    config: {validate: {payload: nativeApplicationVersionSchema}}
-});
-
-server.route({
-    method: 'PATCH',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}',
-    handler: function (req, reply) {
+    createNativeBinary(appName, platformName, versionName, payload, cb) {
         const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-
-        if (req.payload.isReleased !== undefined) {
-            version.isReleased = req.payload.isReleased;
-        }
-
-        reply().code(200);
-    },
-    config: {validate: {payload: nativeAplicationVersionPatchSchema}}
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions',
-    handler: function (req, reply) {
-        const {app, platform} =
-            ch.validateAndGet(req.params.app, req.params.platform);
-        reply(platform.versions).code(200);
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        reply(version).code(200);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        ch.removeVersion(platform, version.name);
-        dbCommit(reply);
-    }
-});
-
-server.route({
-    method: 'POST',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/nativedeps',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        if (!alreadyExists(version.nativeDeps, req.payload.name)) {
-            version.nativeDeps.push(req.payload);
-            return dbCommit(reply);
-        }
-        reply().code(200);
-    },
-    config: {validate: {payload: nativeDependencySchema}}
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/nativedeps',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        reply(version.nativeDeps).code(200);
-    }
-});
-
-server.route({
-    method: 'PATCH',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/nativedeps/{nativedep}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        const nativedep = ch.getNativeDependency(version, req.params.nativedep);
-        if (nativedep) {
-            nativedep.version = req.payload.version ? req.payload.version : nativedep.version;
-            reply(nativedep).code(200)
-        } else {
-            reply().code(404);
-        }
-    },
-    config: {validate: {payload: nativeDependencyPatchSchema}}
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/nativedeps/{nativedep}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        const nativedep = ch.getNativeDependency(version, req.params.nativedep);
-        nativedep ? reply(nativedep).code(200) : reply().code(404);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/nativedeps/{nativedep}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        ch.removeNativeDependency(version, req.params.nativedep)
-            ? dbCommit(reply) : reply().code(404);
-    }
-});
-
-server.route({
-    method: 'POST',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/reactnativeapps',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        if (!alreadyExists(version.reactNativeApps, req.payload.name)) {
-            version.reactNativeApps.push(req.payload);
-        } else { /// consider version update, even if not the case
-            _.find(version.reactNativeApps, r => r.name === req.payload.name).version = req.payload.version;
-        }
-        return dbCommit(reply);
-    },
-    config: {validate: {payload: reactNativeAppSchema}}
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/reactnativeapps',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        reply(version.reactNativeApps).code(200);
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/reactnativeapps/{reactnativeapp}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        const reactNativeApp = ch.getReactNativeApp(version, req.params.reactnativeapp);
-        reactNativeApp.length > 0 ? reply(reactNativeApp).code(200) : reply().code(404);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/reactnativeapps/{reactnativeapp}',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-        ch.removeReactNativeApp(version, req.params.reactnativeapp) ? dbCommit(reply) : reply().code(404);
-    }
-});
-
-server.route({
-    method: 'POST',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/binary',
-    config: {payload: {maxBytes: 52428800}},
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
+            this.validateAndGet(appName, platformName, versionName);
 
         const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
         const shasum = crypto.createHash('sha1');
-        shasum.update(req.payload);
-        nativeBinariesStore.storeFile(filename, req.payload);
+        shasum.update(payload);
+        this._nativeBinariesStore.storeFile(filename, payload);
         version.binary = shasum.digest('hex');
-        return dbCommit(reply);
+        cb(null, version);
     }
-});
 
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/binary',
-    handler: function (req, reply) {
+    getNativeBinary(appName, platformName, versionName, cb) {
+        const {app, platform, version} = this.validateAndGet(appName, platformName, versionName);
+        const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
+        cb(null, this._nativeBinariesStore.getFile(filename)).code(200);
+    }
+
+    removeNativeBinary(appName, platformName, versionName, cb) {
         const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
+            this.validateAndGet(appName, platformName, versionName);
 
         const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
-        reply(nativeBinariesStore.getFile(filename)).code(200);
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/binary/hash',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-
-        version.binary ? reply({hash: version.binary}).code(200) : reply().code(404);
-    }
-});
-
-server.route({
-    method: 'DELETE',
-    path: '/nativeapps/{app}/platforms/{platform}/versions/{version}/binary',
-    handler: function (req, reply) {
-        const {app, platform, version} =
-            ch.validateAndGet(req.params.app, req.params.platform, req.params.version);
-
-        const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
-        nativeBinariesStore.removeFile(filename);
+        this._nativeBinariesStore.removeFile(filename);
         version.binary = null;
-        reply().code(200);
+        cb();
     }
-});
 
-//------------------------------------
-// /reactnativeapps
-//------------------------------------
-
-server.route({
-    method: 'POST',
-    path: '/reactnativeapps/{app}/versions/{version}/sourcemap',
-    config: {payload: {maxBytes: 52428800}},
-    handler: function (req, reply) {
-        const filename = buildReactNativeSourceMapFileName(req.params.app, req.params.version);
-        sourceMapsStore.storeFile(filename, req.payload);
-        reply().code(200);
+    createSourceMap(appName, versionName, payload, cb) {
+        const filename = buildReactNativeSourceMapFileName(appName, versionName);
+        this._sourceMapStore.storeFile(filename, payload);
+        cb();
     }
-});
 
-server.route({
-    method: 'GET',
-    path: '/reactnativeapps/{app}/versions/{version}/sourcemap',
-    handler: function (req, reply) {
-        const filename = buildReactNativeSourceMapFileName(req.params.app, req.params.version);
-        const fileExists = sourceMapsStore.hasFile(filename);
-        fileExists ? reply(sourceMapsStore.getFile(filename, req.payload)).code(200) : reply().code(404);
-    }
-});
-
-//====================================
-// Helper functions
-//====================================
-
-function alreadyExists(collection, name, version) {
-    if (!version) {
-        return _.some(collection, x => x.name === name);
-    } else {
-        return _.some(collection, x => (x.name === name) && (x.version === version));
-    }
-}
-
-function buildNativeBinaryFileName(appName, platformName, versionName) {
-    const ext = getNativeBinaryFileExt(platformName);
-    return `${appName}-${platformName}@${versionName}.${ext}`;
-}
-
-function getNativeBinaryFileExt(platformName) {
-    return platformName === 'android' ? 'apk' : 'app';
-}
-
-function buildReactNativeSourceMapFileName(appName, versionName) {
-    return `${appName}@${versionName}.map`;
-}
-
-function dbCommit(reply) {
-    db.commit(() =>{
-        reply().code(200)
-    });
-}
-
-//====================================
-// HAPI server config / launch
-//====================================
-
-export default function start({
-    nativeBinariesStorePath = path.join(process.cwd(), '.cauldron/binaries'),
-    sourceMapsStorePath = path.join(process.cwd(), './.cauldron/sourcemaps'),
-    dbFilePath = path.join(process.cwd(), './.cauldron/db.json')
-} = {}, cb) {
-    nativeBinariesStore = new FileStore(nativeBinariesStorePath);
-    sourceMapsStore = new FileStore(sourceMapsStorePath);
-    db = new Db(dbFilePath);
-    cauldron = db.cauldron;
-    ch = new CauldronHelper(cauldron);
-
-    server.start((err) => {
-        console.log(`Cauldron server running at: ${server.info.uri}`);
-        cb && cb(err, server);
-    });
-
-}
-
-//module.exports = start;
-
-export function getCauldron() {
-    if (process.env.NODE_ENV === 'test') {
-        return cauldron;
-    } else {
-        throw new Error("Cannot set cauldron in non testing env");
-    }
-}
-
-export function setCauldron(value) {
-    if (process.env.NODE_ENV === 'test') {
-        cauldron = value;
-        ch = new CauldronHelper(cauldron);
-    } else {
-        throw new Error("Cannot set cauldron in non testing env");
+    getSourceMap(appName, versionName, cb) {
+        const filename = buildReactNativeSourceMapFileName(appName, versionName);
+        const fileExists = this._sourceMapStore.hasFile(filename);
+        cb(null, fileExists ? this._sourceMapStore.getFile(filename) : false);
     }
 }

@@ -15,18 +15,29 @@ function json(path) {
 // users. We currently therefore favor safety using synchronous reads/writes.
 export default class Db {
     constructor(dbPath) {
-      if (!fs.existsSync(dbPath)) {
-        mkdirp(path.dirname(dbPath));
-        console.log("-");
-        fs.writeFileSync(dbPath, '{"nativeApps":[], "reactNativeApps":[]}');
-      }
+        if (!fs.existsSync(dbPath)) {
+            mkdirp(path.dirname(dbPath));
+            console.log("-");
+            fs.writeFileSync(dbPath, '{"nativeApps":[], "reactNativeApps":[]}');
+        }
 
-      this._dbPath = dbPath;
-      this._cauldron = json(this._dbPath);
+        this._dbPath = dbPath;
     }
 
-    get cauldron() {
+    /**
+     * We begin the transaction here. If it is a readonly transaction
+     * than no need to call commit.  If it is a read/write transaction,
+     * than call commit(); to ensure it is written to filesystem.
+     *
+     * @returns {*}
+     */
+    begin() {
         return this._cauldron = json(this._dbPath);
+    }
+    //Should we add a transaction check here? to ensure that the cauldron is not derefernced
+    // before the transaction begins.   Now, probably never happen.
+    get cauldron() {
+        return this._cauldron;
     }
 
     commit(cb) {
