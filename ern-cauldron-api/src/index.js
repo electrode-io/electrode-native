@@ -17,23 +17,26 @@ if (fs.existsSync(CAULDRONRC_FILE)) {
     }
 }
 
-const server = new Hapi.Server();
 
-server.connection({
-    port: cauldronServerPort
-});
+export default function (options, cb) {
+    const server = new Hapi.Server();
 
-server.register({
-    register,
-     options: cauldronRc.options
-}, (err) => {
-    if (err) {
-        console.error('Failed to load plugin:', err);
-    }
-});
+    server.connection({
+        port: options.port || cauldronServerPort
+    });
 
-server.start((e) => {
-    console.log(`Cauldron server running at: ${server.info.uri}`);
-});
+    server.register({
+        register,
+        options
+    }, (err) => {
+        if (err) {
+            console.error('Failed to load plugin:', err);
+        }
+    });
 
-export default server;
+
+    server.start((e) => {
+        console.log(`Cauldron server running at: ${server.info.uri}`);
+        cb && cb(e, server);
+    });
+}

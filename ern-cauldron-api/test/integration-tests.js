@@ -3,11 +3,8 @@ process.env.NODE_ENV = 'test';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import rmdir from 'rmdir';
-import Db from '../src/db';
-import {startWithDB, CauldronHelper} from '../src/api.js';
-import Hapi from 'hapi';
+import start from '../src/index.js';
 import fs from 'fs';
-import register from '../src/routes';
 import path from 'path';
 
 
@@ -54,43 +51,33 @@ describe('IntegrationTests', () => {
     beforeEach((done) => {
         delFile('./tmpfile')
         function setup() {
-
-            _server = new Hapi.Server();
-
             rmdir(testDir(), () => {
                 fs.mkdirSync(testDir());
 
                 copyFile(testDir('..', 'testdb.json'), testDir('db.json'), (e) => {
                     if (e) return done(e);
-                    _server.connection({port: 3001});
-                    _server.register({
-                        register,
-                        options: {
-
-                            nativeBinariesStorePath: testDir('binaries'),
-                            sourceMapsStorePath: testDir('sourcemaps'),
-                            dbFilePath: testDir('db.json')
-                        }
-
-                    }, (err) => {
+                    start({
+                        port: 3001,
+                        nativeBinariesStorePath: testDir('binaries'),
+                        sourceMapsStorePath: testDir('sourcemaps'),
+                        dbFilePath: testDir('db.json')
+                    }, (err, server) => {
+                        _server = server;
                         if (err) {
                             console.error('Failed to load plugin:', err);
                         }
-                    });
-                    _server.start((e) => {
-                        if (e)return done(e);
                         cauldronHelper = _server.plugins.cauldron;
                         db = cauldronHelper._db;
                         done();
+
                     });
-
-
                 });
             });
         }
 
         _server ? _server.stop(setup) : setup();
     });
+
     function getCauldron() {
         return cauldronHelper._db.cauldron;
     }
@@ -1215,4 +1202,5 @@ describe('IntegrationTests', () => {
                 });
         });
     });
-});
+})
+;
