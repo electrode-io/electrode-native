@@ -11,6 +11,8 @@ import {
     nativeApplicationSchema
 } from './schemas';
 import Filestore from './filestore'
+
+
 function register(server, {
     nativeBinariesStorePath = path.join(process.cwd(), '.cauldron/binaries'),
     sourceMapsStorePath = path.join(process.cwd(), './.cauldron/sourcemaps'),
