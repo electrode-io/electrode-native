@@ -35,40 +35,49 @@ const ERN_RC_LOCAL_FILE_PATH = `${process.cwd()}/.ernrc`;
 // First run ever of ern (no versions installed at all yet)
 // Create all folders and install/activate current platform version
 if (!fs.existsSync(ERN_PATH)) {
-  // Use default git repo or the one provided as a command line argument to ern.
-  let gitRepo = ERN_DEFAULT_GIT_REPO;
-  if (process.argv.length >= 3) {
-    gitRepo = process.argv[2];
+  try {
+    // Use default git repo or the one provided as a command line argument to ern.
+    let gitRepo = ERN_DEFAULT_GIT_REPO;
+    if (process.argv.length >= 3) {
+      gitRepo = process.argv[2];
+    }
+
+    // Create path platform root folder
+    fs.mkdirSync(ERN_PATH);
+
+    // Create cached versions folder
+    fs.mkdirSync(ERN_VERSIONS_CACHE_PATH);
+
+    // Clone github repository containing the platform
+    execSync(`git clone ${gitRepo} ${ERN_PLATFORM_REPO_PATH}`);
+
+    // Cd into platform repo folder
+    process.chdir(ERN_PLATFORM_REPO_PATH);
+
+    // List all available versions from remote
+    const branchVersionRe = /heads\/v(\d+)/;
+    const latestVersion = execSync(`git ls-remote --heads`)
+      .toString()
+      .split('\n')
+      .filter(v => branchVersionRe.test(v))
+      .slice(-1)[0];
+
+    // Checkout latest branch version
+    const latestVersionNumber = branchVersionRe.exec(latestVersion)[1];
+    execSync(`git checkout origin/v${latestVersionNumber}`);
+
+    // Call install function
+    const install = require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install;
+
+    install();
+  } catch (e) {
+    // If something went wrong, we just clean up everything.
+    // Don't want to create and leave the .ern global folder hanging around
+    // in a bad state
+    console.log(`Something went wrong ! ${e}`);
+    execSync(`rm -rf ${ERN_PATH}`);
   }
 
-  // Create path platform root folder
-  fs.mkdirSync(ERN_PATH);
-
-  // Create cached versions folder
-  fs.mkdirSync(ERN_VERSIONS_CACHE_PATH);
-
-  // Clone github repository containing the platform
-  execSync(`git clone ${gitRepo} ${ERN_PLATFORM_REPO_PATH}`);
-
-  // Cd into platform repo folder
-  process.chdir(ERN_PLATFORM_REPO_PATH);
-
-  // List all available versions from remote
-  const branchVersionRe = /heads\/v(\d+)/;
-  const latestVersion = execSync(`git ls-remote --heads`)
-    .toString()
-    .split('\n')
-    .filter(v => branchVersionRe.test(v))
-    .slice(-1)[0];
-
-  // Checkout latest branch version
-  const latestVersionNumber = branchVersionRe.exec(latestVersion)[1];
-  execSync(`git checkout origin/v${latestVersionNumber}`);
-
-  // Call install function
-  const install = require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install;
-
-  install();
 }
 // Not a first run (at least one version of ern platform is installed)
 // Just select the version of ern currently in use (stored in the .ernrc file)
