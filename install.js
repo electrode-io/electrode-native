@@ -22,7 +22,20 @@ const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/cache`;
 // Path to ern global configuration file
 const ERN_RC_GLOBAL_FILE_PATH = `${ERN_PATH}/.ernrc`;
 
+function isYarnInstalled() {
+  try {
+    execSync('yarn --version')
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 exports.install = () => {
+  if (!isYarnInstalled()) {
+    throw new Error('yarn needs to be installed first !');
+  }
+
   // Platform version (retrieved from the platform manifest)
   const PLATFORM_VERSION =
     JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8')).platformVersion;
