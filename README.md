@@ -27,9 +27,22 @@ Due to the fact that node packages are currently walmart scoped, they are stored
 
 #### Optional prerequisites
 
-If you need to work on the container generation for Android, you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
+**Android**
+
+If you need run your react-native miniapp standalone in Android or need to run the container generator for Android (this should rather be taken care of by a CI server) you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
 Otherwise, easiest way is to just install the latest version of [Android Studio](https://developer.android.com/studio/index.html).
-If you don't need to work on (or use) Android container generation, do not bother.
+
+You'll also need to install the NDK as of now as react-native lib is built during container generation and is relying on Android NDK. The version used by react-native is `r10e` which can downloaded from here [http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip](http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip).  
+You should extract this archive in an `ndk` folder somewhere on your machine (best if to store it next to the `sdk` android folder, located by default in `~/Library/android`).  
+
+Make sure to export these env variables pointing to your `sdk` and `ndk` folders :
+
+```
+export ANDROID_SDK=/Users/your_unix_name/sdk
+export ANDROID_NDK=/Users/your_unix_name/ndk
+```
+
+If you don't need to work on (or use) Android container generation or only intend to run your miniapp standalone on iOS, do not bother.
 
 #### Understanding platform structure
 
