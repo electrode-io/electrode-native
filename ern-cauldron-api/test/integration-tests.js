@@ -1,16 +1,18 @@
 process.env.NODE_ENV = 'test';
 
-import fs from 'fs';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import rmdir from 'rmdir';
-import path from 'path';
 import Db from '../src/db';
-import FileStore from '../src/filestore.js'
 import {startWithDB, CauldronHelper} from '../src/api.js';
+import Hapi from 'hapi';
+import fs from 'fs';
+import register from '../src/routes';
+import path from 'path';
+
 
 const expect = chai.expect;
-const serverUri = 'http://localhost:3000';
+const serverUri = 'http://localhost:3001';
 const testDir = path.join.bind(path, process.cwd(), 'test', '.cauldron-test');
 
 let cauldronHelper;
@@ -52,18 +54,37 @@ describe('IntegrationTests', () => {
     beforeEach((done) => {
         delFile('./tmpfile')
         function setup() {
+
+            _server = new Hapi.Server();
+
             rmdir(testDir(), () => {
                 fs.mkdirSync(testDir());
 
                 copyFile(testDir('..', 'testdb.json'), testDir('db.json'), (e) => {
                     if (e) return done(e);
-                    db = new Db(testDir('db.json'));
-                    cauldronHelper = new CauldronHelper(db);
-                    startWithDB(db, new FileStore(testDir('binaries')), new FileStore(testDir('sourcemaps')), (err, server) => {
-                        if (err) return done(err);
-                        _server = server;
-                        return done();
+                    _server.connection({port: 3001});
+                    _server.register({
+                        register,
+                        options: {
+
+                            nativeBinariesStorePath: testDir('binaries'),
+                            sourceMapsStorePath: testDir('sourcemaps'),
+                            dbFilePath: testDir('db.json')
+                        }
+
+                    }, (err) => {
+                        if (err) {
+                            console.error('Failed to load plugin:', err);
+                        }
                     });
+                    _server.start((e) => {
+                        if (e)return done(e);
+                        cauldronHelper = _server.plugins.cauldron;
+                        db = cauldronHelper._db;
+                        done();
+                    });
+
+
                 });
             });
         }
@@ -71,7 +92,7 @@ describe('IntegrationTests', () => {
         _server ? _server.stop(setup) : setup();
     });
     function getCauldron() {
-        return db.cauldron;
+        return cauldronHelper._db.cauldron;
     }
 
     describe('POST /nativeapps', () => {
@@ -486,6 +507,7 @@ describe('IntegrationTests', () => {
             chai.request(serverUri)
                 .delete('/nativeapps/walmart/platforms/android/versions/4.1')
                 .end((err, res) => {
+                    if (err) return done(err);
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.empty;
                     expect(cauldronHelper.getVersion("walmart", "android", "4.1")).undefined;
@@ -1109,7 +1131,7 @@ describe('IntegrationTests', () => {
                                 if (err) return done(err);
                                 expect(res).to.have.status(200);
                                 expect(res.body).to.be.a('object');
-                                expect(res.body.hash).eql('5c594be4bf2d6d63ac92be8d28915e7632aa7563');
+                                expect(res.body.hash).eql('cf23df2207d99a74fbe169e3eba035e633b65d94');
                                 done();
                             });
                     });

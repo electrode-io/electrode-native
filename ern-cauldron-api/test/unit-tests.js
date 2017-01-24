@@ -1,51 +1,32 @@
 process.env.NODE_ENV = 'test';
 
-import fs from 'fs';
-
 import chai from 'chai';
 const should = chai.should();
 const expect = chai.expect;
-import { server, CauldronHelper, getCauldron, setCauldron } from '../src/api.js';
-
-describe('TestHelpers', () => {
-  it('should throw an error if trying to call getCauldron in non test env', (done) => {
-    const oldEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'prod';
-    getCauldron.should.Throw();
-    process.env.NODE_ENV = oldEnv;
-    done();
-  });
-
-  it('should throw an error if trying to call setCauldron in non test env', (done) => {
-    const oldEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'prod';
-    setCauldron.should.Throw();
-    process.env.NODE_ENV = oldEnv;
-    done();
-  });
-});
-
+import Api from '../src/api';
+import Db from '../src/db';
+import path from 'path';
 
 let ch;
 
 describe('CauldronHelper', () => {
-  beforeEach((done) => {
-   let cauldron = JSON.parse(fs.readFileSync('test/testdb.json'));
-   ch = new CauldronHelper(cauldron);
-   done();
- });
+    beforeEach((done) => {
+        ch = new Api(new Db(path.join(__dirname, 'testdb.json')), null, null);
+        ch.begin();
+        done();
+    });
 
- describe('getPlatform', () => {
-   it('should return undefined if native app name does not exists', (done) => {
-     expect(ch.getPlatform("foo", "android")).to.be.undefined;
-     done();
-   });
- });
+    describe('getPlatform', () => {
+        it('should return undefined if native app name does not exists', (done) => {
+            expect(ch.getPlatform("foo", "android")).to.be.undefined;
+            done();
+        });
+    });
 
- describe('getVersion', () => {
-   it('should return undefined if native app platform does not exists', (done) => {
-     expect(ch.getVersion("walmart", "foo", "4.1")).to.be.undefined;
-     done();
-   });
- });
+    describe('getVersion', () => {
+        it('should return undefined if native app platform does not exists', (done) => {
+            expect(ch.getVersion("walmart", "foo", "4.1")).to.be.undefined;
+            done();
+        });
+    });
 });

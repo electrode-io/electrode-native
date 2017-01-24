@@ -22,7 +22,6 @@ export default class Db {
         }
 
         this._dbPath = dbPath;
-        this._cauldron = json(this._dbPath);
     }
 
     /**
