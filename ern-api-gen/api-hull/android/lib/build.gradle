@@ -17,7 +17,7 @@ uploadArchives {
           pom.version = '{{{apiVersion}}}-{{{ernPlatformVersion}}}'
           pom.artifactId = '{{{moduleName}}}'
           pom.groupId = '{{{namespace}}}'
-          repository(url: "file://" + new File(System.getProperty('user.home'),'.m2/repository').absolutePath)
+          {{{repository}}}
       }
   }
 }

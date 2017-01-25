@@ -770,7 +770,12 @@ export default async function generateApi({
           }
         }
       },
-      "ernPlatformVersion": '{{{ernPlatformVersion}}}' // crazy hack
+      // These are meant to be patched during container generation
+      // so we just put back the same template tag (there seems to be no way
+      // in mustache to "escape" a template string so that it does not get
+      // replaced, so this is a work-around)
+      "ernPlatformVersion": '{{{ernPlatformVersion}}}',
+      "repository": '{{{repository}}}'
     }
 
     // Build composite final mustache view
