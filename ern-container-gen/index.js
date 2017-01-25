@@ -618,21 +618,35 @@ async function isPluginPublished(plugin) {
 }
 
 async function isArtifactInMavenRepo(artifactDescriptor, mavenRepoUrl) {
+  // An artifact follows the format group:name:version
+  // i.e com.walmartlabs.ern:react-native-electrode-bridge:1.0.0
+  // Split it !
   const explodedArtifactDescriptor = artifactDescriptor.split(':');
+  // We replace all '.' in the group with `/`
+  // i.e: com.walmartlabs.ern => com/walmartlabs/ern
+  // As it corresponds to the path where artifact is stored
   explodedArtifactDescriptor[0] = explodedArtifactDescriptor[0].replace(/[.]/g, '/');
-  const partialPathToArtifact = explodedArtifactDescriptor.join('/');
+  // And we join everything together to get full path in the repository
+  // i.e: com.walmartlabs.ern:react-native-electrode-bridge:1.0.0
+  // => com/walmartlabs/ern/react-native-electrode-bridge/1.0.0
+  const pathToArtifactInRepository = explodedArtifactDescriptor.join('/');
   const mavenRepositoryType = getMavenRepositoryType(mavenRepoUrl);
 
   // Remote maven repo
+  // Just do an HTTP GET to the url of the artifact.
+  // If it returns '200' status code, it means the artifact exists, otherwise
+  // it doesn't
   if (mavenRepositoryType === 'http') {
-    const res = await httpGet(`${mavenRepoUrl}/${partialPathToArtifact}`);
+    // Last `/` is important here, otherwise we'll get an HTTP 302 instead of 200
+    // in case the artifact does exists !
+    const res = await httpGet(`${mavenRepoUrl}/${pathToArtifactInRepository}/`);
     return res.statusCode === 200;
   }
-  // Otherwise just assume local storage
+  // Otherwise if local storage just check if folder exists !
   else if (mavenRepositoryType === 'file') {
-    const mavenPath = mavenRepoUrl.replace('file://', '');
-    const exists = fs.existsSync(`${mavenPath}/${partialPathToArtifact}`);
-    return fs.existsSync(`${mavenPath}/${partialPathToArtifact}`);
+    const mavenRepositoryPath = mavenRepoUrl.replace('file://', '');
+    const exists = fs.existsSync(`${mavenRepositoryPath}/${pathToArtifactInRepository}`);
+    return fs.existsSync(`${mavenRepositoryPath}/${pathToArtifactInRepository}`);
   }
 }
 
