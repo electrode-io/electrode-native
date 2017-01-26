@@ -21,6 +21,7 @@ const pluginConfigFileName = 'config.json';
 const gitFolderRe = /.*\/(.*).git/;
 const npmScopeModuleRe = /(@.*)\/(.*)/;
 const npmModuleRe = /(.*)@(.*)/;
+const fileRe = /^file:\/\//;
 
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern';
 const DEFAULT_MAVEN_REPO = `file://${process.env['HOME']}/.m2/repository`;
@@ -693,7 +694,7 @@ async function generateAndroidContainerUsingMavenGenerator(
 
   if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO)
       && (!fs.existsSync(DEFAULT_MAVEN_REPO))) {
-        shell.mkdir('-p', DEFAULT_MAVEN_REPO);
+        shell.mkdir('-p', DEFAULT_MAVEN_REPO.replace(fileRe, ''));
   }
 
   try {

@@ -1,6 +1,5 @@
 import unirest from 'unirest';
 import fs from 'fs';
-import http from 'http';
 
 export default class CauldronClient {
   constructor(url) {
