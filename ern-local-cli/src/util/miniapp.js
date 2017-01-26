@@ -30,13 +30,9 @@ const WORKING_FOLDER = process.cwd();
 // Sample output :
 // [ { name: "react-native", version: "0.39.2", scope: "walmart" }]
 export function getLocalNativeDependencies() {
-  let result = [];
+  throwErrorIfNotWithinMiniAppFolder();
 
-  if (!fs.existsSync('node_modules')) {
-    log.error(tagOneLine`No node_modules folder present.
-              This command should be run at the root of a mini-app`);
-    return result;
-  }
+  let result = [];
 
   const nativeDependenciesNames = new Set();
 
@@ -77,14 +73,9 @@ export function getLocalNativeDependencies() {
   return result;
 }
 
-
 //return child_process.spawnSync('open', [launchPackagerScript], procConfig);
 export async function runInAndroidRunner(verbose) {
-  if (!fs.existsSync('node_modules')) {
-    log.error(tagOneLine`No node_modules folder present.
-              This command should be run at the root of a mini-app`);
-    return result;
-  }
+  throwErrorIfNotWithinMiniAppFolder();
 
   const runnerConfig = {
     platformPath: platform.currentPlatformVersionPath,
@@ -113,6 +104,8 @@ export async function runInAndroidRunner(verbose) {
 }
 
 export async function addPluginToMiniApp(pluginString) {
+  throwErrorIfNotWithinMiniAppFolder();
+
   const plugin = platform.getPlugin(pluginString);
   if (!plugin) {
     return log.error(`Plugin ${pluginString} is not available in current container version`);
@@ -133,8 +126,7 @@ function getUnscopedModuleName(moduleName) {
 }
 
 function getMiniAppName() {
-  const appPackageJsonPath = `${WORKING_FOLDER}/package.json`;
-  const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath));
+  const appPackageJson = getMiniAppPackageJson();
   return getUnscopedModuleName(appPackageJson.name);
 }
 
@@ -330,10 +322,21 @@ function getMiniAppDependenciesAsNameVersionPairs() {
         }));
 }
 
+// Not looking very nice. Well ...
+function throwErrorIfNotWithinMiniAppFolder() {
+  return getMiniAppPackageJson();
+}
+
 function getMiniAppPackageJson() {
-  if (!fs.existsSync(`${process.cwd()}/package.json`)) {
+  const packageJsonPath = `${WORKING_FOLDER}/package.json`;
+  if (!fs.existsSync(packageJsonPath)) {
     throw new Error(tagOneLine`No package.json found.
     This command should be run at the root of a mini-app`);
   }
-  return require(`${process.cwd()}/package.json`);
+  const packageJsonObj = JSON.parse(fs.readFileSync(packageJsonPath));
+  if (!packageJsonObj.ernPlatformVersion) {
+    throw new Error(tagOneLine`No ernPlatformVersion found in package.json.
+    Are you sure you are running this within an electrode miniapp folder ?`);
+  }
+  return packageJsonObj;
 }
