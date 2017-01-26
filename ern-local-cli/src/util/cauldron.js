@@ -2,6 +2,7 @@ import CauldronClient from '../../../ern-cauldron-cli/cli.js';
 import ernConfig from './config.js';
 import required from './required.js';
 import { spin } from './spin.js';
+import platform from './platform.js';
 import tagOneLine from './tagOneLine.js';
 const log = require('console-log-level')();
 
@@ -21,12 +22,11 @@ class Cauldron {
   // platformName : The name of the platform of this application (android or ios)
   // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
   async addNativeApp(
-    ernPlatformVersion,
+    ernPlatformVersion = platform.currentVersion,
     appName,
     platformName,
     versionName) {
     try {
-      required(ernPlatformVersion, 'ernPlatformVersion');
       required(appName, 'appName');
 
       return spin(tagOneLine`Adding ${appName} app
