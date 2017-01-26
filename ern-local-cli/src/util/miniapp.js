@@ -196,21 +196,21 @@ export async function createMiniApp(appName, {
   }
 }
 
-export async function upgradeMiniAppToPlatformVersion(version) {
+export async function upgradeMiniAppToPlatformVersion(versionToUpgradeTo) {
   const currentMiniAppPlatformVersion = getMiniAppPlatformVersion();
 
-  if (currentMiniAppPlatformVersion === version) {
-    return log.error(`This miniapp is already using v${version}`);
+  if (currentMiniAppPlatformVersion === versionToUpgradeTo) {
+    return log.error(`This miniapp is already using v${versionToUpgradeTo}`);
   }
 
-  if (currentMiniAppPlatformVersion > version) {
+  if (currentMiniAppPlatformVersion > versionToUpgradeTo) {
     return log.error(`Downgrading is not supported. Could be. But no.`);
   }
 
   // Update all modules versions in package.json
   const appPackageJson = getMiniAppPackageJson();
   const miniAppDependencies = getMiniAppDependenciesAsNameVersionPairs();
-  const supportedPlugins = platform.getSupportedPlugins(version);
+  const supportedPlugins = platform.getSupportedPlugins(versionToUpgradeTo);
   const plugins = _.intersectionBy(miniAppDependencies, supportedPlugins, 'name');
   for (const plugin of plugins) {
     let platformPluginVersion = platform.getPlugin(plugin.name).version;
@@ -222,7 +222,7 @@ export async function upgradeMiniAppToPlatformVersion(version) {
   }
 
   // Update ernPlatfomVersion in package.json
-  appPackageJson.ernPlatformVersion = version;
+  appPackageJson.ernPlatformVersion = versionToUpgradeTo;
 
   // Write back package.json
   fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
