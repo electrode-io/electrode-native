@@ -16,7 +16,7 @@ import explodeNapSelector from './explodeNapSelector.js';
 import { generateRunner,  generateContainerForRunner } from '../../../ern-runner-gen/index.js';
 import { runAndroid } from './android.js';
 import { spin } from './spin.js';
-import { yarnAdd } from './yarn.js';
+import { yarnAdd, yarnInstall } from './yarn.js';
 
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/;
 const WORKING_FOLDER = process.cwd();
@@ -199,7 +199,9 @@ export async function createMiniApp(appName, {
 export async function upgradeMiniAppToPlatformVersion(versionToUpgradeTo) {
   const currentMiniAppPlatformVersion = getMiniAppPlatformVersion();
 
-  if (currentMiniAppPlatformVersion === versionToUpgradeTo) {
+  if ((currentMiniAppPlatformVersion === versionToUpgradeTo)
+    // Do not enforce if v1000 to help with development (should be temporary)
+    && (versionToUpgradeTo != 1000)) {
     return log.error(`This miniapp is already using v${versionToUpgradeTo}`);
   }
 
@@ -209,15 +211,17 @@ export async function upgradeMiniAppToPlatformVersion(versionToUpgradeTo) {
 
   // Update all modules versions in package.json
   const appPackageJson = getMiniAppPackageJson();
-  const miniAppDependencies = getMiniAppDependenciesAsNameVersionPairs();
   const supportedPlugins = platform.getSupportedPlugins(versionToUpgradeTo);
-  const plugins = _.intersectionBy(miniAppDependencies, supportedPlugins, 'name');
-  for (const plugin of plugins) {
-    let platformPluginVersion = platform.getPlugin(plugin.name).version;
-    let miniAppPluginVersion = _.find(miniAppDependencies, d => d,name === plugin.name).version;
-    if (platformPluginVersion !== miniAppPluginVersion) {
-      appPackageJson.dependencies[plugin.name] = platformPluginVersion;
-      log.info(`Updating ${plugin.name} version from ${miniAppPluginVersion} to ${platformPluginVersion}`)
+
+  for (const supportedPlugin of supportedPlugins) {
+    const nameWithScope = `${supportedPlugin.scope?`@${supportedPlugin.scope}/`:''}${supportedPlugin.name}`;
+    if (appPackageJson.dependencies[nameWithScope]) {
+      const pluginManifestVersion = supportedPlugin.version;
+      const currentPluginVersion = appPackageJson.dependencies[nameWithScope];
+      if (pluginManifestVersion != currentPluginVersion) {
+        log.info(`${nameWithScope} : ${currentPluginVersion} => ${pluginManifestVersion}`);
+        appPackageJson.dependencies[nameWithScope] = pluginManifestVersion;
+      }
     }
   }
 
@@ -225,9 +229,10 @@ export async function upgradeMiniAppToPlatformVersion(versionToUpgradeTo) {
   appPackageJson.ernPlatformVersion = versionToUpgradeTo;
 
   // Write back package.json
+  const appPackageJsonPath = `${WORKING_FOLDER}/package.json`;
   fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
 
-  log.info(`Done. You should run npm install again or whatever`)
+  await spin(`Running yarn install`, yarnInstall());
 }
 
 export async function addMiniAppToNativeAppInCauldron(
@@ -312,14 +317,6 @@ export async function addMiniAppToNativeAppInCauldron(
 export function getMiniAppPlatformVersion() {
   const appPackageJson = getMiniAppPackageJson();
   return appPackageJson.ernPlatformVersion;
-}
-
-function getMiniAppDependenciesAsNameVersionPairs() {
-  const moduleRe = /(.*)@(.*)/;
-  return _.map(getMiniAppPackageJson().dependencies, (d) => ({
-          name: moduleRe.exec(d)[1],
-          version: moduleRe.exec(d)[2]
-        }));
 }
 
 // Not looking very nice. Well ...

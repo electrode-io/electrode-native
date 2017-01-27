@@ -18,6 +18,20 @@ export async function yarnAdd(dependency) {
   });
 }
 
+export async function yarnInstall() {
+  return new Promise((resolve, reject) => {
+    exec(`yarn install`,
+      (err, stdout, stderr) => {
+      if (err) {
+        log.error(err);
+        reject(err);
+      } else {
+        resolve(stdout);
+      }
+    });
+  });
+}
+
 export function isYarnInstalled() {
   try {
     execSync('yarn --version')
