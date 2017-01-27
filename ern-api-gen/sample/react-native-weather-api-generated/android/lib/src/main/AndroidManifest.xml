@@ -1,3 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.walmartlabs.ern">
+    package="com.walmartlabs.ern.weather.api">
 </manifest>

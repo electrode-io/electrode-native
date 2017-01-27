@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequest;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequest.DispatchMode;
 import com.walmartlabs.electrode.reactnative.bridge.EventDispatcherImpl;
@@ -17,8 +16,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 public final class WeatherApiClient {
-
-  private static ElectrodeBridge sElectrodeBridge;
 
   //====================================================================
   // Events listeners for each event name (Private)
@@ -63,7 +60,7 @@ public final class WeatherApiClient {
                                       .withDispatchMode(dispatchMode)
                                       .build();
 
-     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
            response.onSuccess(null);
@@ -83,13 +80,13 @@ public final class WeatherApiClient {
   public static void refreshWeatherFor(final String location,
                                 final Response response,
                                 final DispatchMode dispatchMode) {
-    Bundle bundle = new Bundle(); bundle.putString("location",                 location);
+    Bundle bundle = new Bundle(); bundle.putString("location",                   location);
      ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.REFRESH_WEATHER_FOR)
                        .withData(bundle)
                                       .withDispatchMode(dispatchMode)
                                       .build();
 
-     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
            response.onSuccess(null);
@@ -109,13 +106,13 @@ public final class WeatherApiClient {
   public static void getTemperatureFor(final String location,
                                 final Response<Integer> response,
                                 final DispatchMode dispatchMode) {
-    Bundle bundle = new Bundle(); bundle.putString("location",                 location);
+    Bundle bundle = new Bundle(); bundle.putString("location",                   location);
      ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_TEMPERATURE_FOR)
                        .withData(bundle)
                                       .withDispatchMode(dispatchMode)
                                       .build();
 
-     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
            response.onSuccess(bundle.getInt("rsp"));
@@ -141,7 +138,7 @@ public final class WeatherApiClient {
                                       .withDispatchMode(dispatchMode)
                                       .build();
 
-     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
            response.onSuccess(bundle.getInt("rsp"));
@@ -154,12 +151,12 @@ public final class WeatherApiClient {
      });
   }
   public static void getCurrentTemperatures(
-                                final Response<int[]> response) {
+                                final Response<Integer[]> response) {
     getCurrentTemperatures( response, DispatchMode.JS);
   }
 
   public static void getCurrentTemperatures(
-                                final Response<int[]> response,
+                                final Response<Integer[]> response,
                                 final DispatchMode dispatchMode) {
     
      ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_CURRENT_TEMPERATURES)
@@ -167,7 +164,7 @@ public final class WeatherApiClient {
                                       .withDispatchMode(dispatchMode)
                                       .build();
 
-     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
            response.onSuccess(bundle.getIntArray("rsp"));
@@ -185,41 +182,33 @@ public final class WeatherApiClient {
   //====================================================================
 
   static {
-    ElectrodeBridgeHolder.setOnBridgeReadyListener(
-      new ElectrodeBridgeHolder.OnBridgeReadyListener() {
-        @Override
-        public void onBridgeReady(ElectrodeBridge electrodeBridge) {
-          WeatherApiClient.sElectrodeBridge = electrodeBridge;
+    //====================================================================
+    // Registration of event handlers with bridge
+    //====================================================================
 
-          //====================================================================
-          // Registration of event handlers with bridge
-          //====================================================================
-
-          electrodeBridge.eventRegistrar().registerEventListener(Names.WEATHER_UPDATED, new EventDispatcherImpl.EventListener() {
-                      @Override
-                      public void onEvent(@NonNull Bundle bundle) {
-                       for (EventListener listener : sWeatherUpdatedListeners) {
-                         listener.onEvent(null);
-                       }
-                      }
-                    });
-          electrodeBridge.eventRegistrar().registerEventListener(Names.WEATHER_UDPATED_AT_LOCATION, new EventDispatcherImpl.EventListener() {
-                      @Override
-                      public void onEvent(@NonNull Bundle bundle) {
-                       for (EventListener<String> listener : sWeatherUdpatedAtLocationListeners) {
-                         listener.onEvent(bundle.getString("location"));
-                       }
-                      }
-                    });
-          electrodeBridge.eventRegistrar().registerEventListener(Names.WEATHER_UPDATED_AT_POSITION, new EventDispatcherImpl.EventListener() {
-                      @Override
-                      public void onEvent(@NonNull Bundle bundle) {
-                       for (EventListener<LatLng> listener : sWeatherUpdatedAtPositionListeners) {
-                         listener.onEvent(LatLng.fromBundle(bundle));
-                       }
-                      }
-                    });
-        }
-     });
+    ElectrodeBridge.registerEventListener(Names.WEATHER_UPDATED, new EventDispatcherImpl.EventListener() {
+      @Override
+      public void onEvent(@NonNull Bundle bundle) {
+       for (EventListener listener : sWeatherUpdatedListeners) {
+         listener.onEvent(null);
+       }
+      }
+    });
+    ElectrodeBridge.registerEventListener(Names.WEATHER_UDPATED_AT_LOCATION, new EventDispatcherImpl.EventListener() {
+      @Override
+      public void onEvent(@NonNull Bundle bundle) {
+       for (EventListener<String> listener : sWeatherUdpatedAtLocationListeners) {
+         listener.onEvent(bundle.getString("location"));
+       }
+      }
+    });
+    ElectrodeBridge.registerEventListener(Names.WEATHER_UPDATED_AT_POSITION, new EventDispatcherImpl.EventListener() {
+      @Override
+      public void onEvent(@NonNull Bundle bundle) {
+       for (EventListener<LatLng> listener : sWeatherUpdatedAtPositionListeners) {
+         listener.onEvent(LatLng.fromBundle(bundle));
+       }
+      }
+    });
   }
 }

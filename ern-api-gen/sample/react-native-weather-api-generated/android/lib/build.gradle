@@ -17,7 +17,7 @@ uploadArchives {
           pom.version = '0.0.1-{{{ernPlatformVersion}}}'
           pom.artifactId = 'react-native-weather-api'
           pom.groupId = 'com.walmartlabs.ern'
-          repository(url: "file://" + new File(System.getProperty('user.home'),'.m2/repository').absolutePath)
+          {{{repository}}}
       }
   }
 }
@@ -42,5 +42,5 @@ android {
 }
 
 dependencies {
-    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.0.5-{{{ernPlatformVersion}}}'
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.1.8-{{{ernPlatformVersion}}}'
 }
