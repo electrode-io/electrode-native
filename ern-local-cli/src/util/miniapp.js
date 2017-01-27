@@ -194,7 +194,8 @@ export default class MiniApp {
   async addToNativeAppInCauldron(
     appName = required('appName'),
     platformName = required('platformName'),
-    versionName = required('versionName')) {
+    versionName = required('versionName'),
+    force) {
     try {
       let miniAppName, miniAppScope;
 
@@ -208,43 +209,60 @@ export default class MiniApp {
       const miniAppDesc = `${miniAppName}@${this.version}`;
       const appDesc = `${appName}:${platformName}:${versionName}`;
 
-      log.info(`Checking if ${miniAppDesc} is not already in binary of ${appDesc}`);
-      let currentMiniAppEntryIncauldron;
+      // If this is not a forced add, we run quite some checks beforehand
+      if (!force) {
+        log.info(`Checking if ${miniAppDesc} is not already in binary of ${appDesc}`);
+        let currentMiniAppEntryIncauldron;
 
-      try {
-        currentMiniAppEntryIncauldron =
-          await cauldron.getReactNativeApp(
-            appName, platformName, versionName, miniAppName);
-      } catch (e) {
-        currentMiniAppEntryIncauldron = [];
-      };
-      const isVersionPresent =
-        _.find(currentMiniAppEntryIncauldron, e => e.version === this.version);
-      if (isVersionPresent) {
-        throw new Error(`${miniAppDesc} already in binary of ${appDesc}`);
-      }
+        try {
+          currentMiniAppEntryIncauldron =
+            await cauldron.getReactNativeApp(
+              appName, platformName, versionName, miniAppName);
+        } catch (e) {
+          currentMiniAppEntryIncauldron = [];
+        };
+        const isVersionPresent =
+          _.find(currentMiniAppEntryIncauldron, e => e.version === this.version);
+        if (isVersionPresent) {
+          throw new Error(`${miniAppDesc} already in binary of ${appDesc}`);
+        }
 
-      log.info(`Checking that container version match native app version`);
-      const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
-      const nativeAppPlatformVersion = nativeApp.ernPlatformVersion;
-      const miniAppPlatformVersion = getMiniAppPlatformVersion();
-      /*if (nativeAppPlatformVersion !== miniAppPlatformVersion) {
-        throw new Error(tagOneLine`Platform versions mismatch :
-          [${miniAppName} => ${miniAppPlatformVersion}]
-          [${appName}:${platformName}:${versionName} => ${nativeAppPlatformVersion}]`);
-      }*/
+        log.info(`Checking that container version match native app version`);
+        const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
+        const nativeAppPlatformVersion = nativeApp.ernPlatformVersion;
+        const miniAppPlatformVersion = this.platformVersion;
+        /*if (nativeAppPlatformVersion !== miniAppPlatformVersion) {
+          throw new Error(tagOneLine`Platform versions mismatch :
+            [${miniAppName} => ${miniAppPlatformVersion}]
+            [${appName}:${platformName}:${versionName} => ${nativeAppPlatformVersion}]`);
+        }*/
 
-      log.info('Checking compatibility with each native dependency');
-      let isCompatible = await nativeCompatCheck(
-        true, appName, platformName, versionName);
-      if (!isCompatible) {
-        throw new Error('At least a native dependency is incompatible');
+        log.info('Checking compatibility with each native dependency');
+        let isCompatible = await nativeCompatCheck(
+          true, appName, platformName, versionName);
+        if (!isCompatible) {
+          throw new Error('At least a native dependency is incompatible');
+        }
       }
 
       for (const localNativeDependency of this.nativeDependencies) {
         // optimize : should only be done if new native dep (not already in cauldron)
-        await cauldron.addNativeDependency(
-          localNativeDependency, appName, platformName, versionName);
+        if (!force) {
+          await cauldron.addNativeDependency(
+            localNativeDependency, appName, platformName, versionName);
+        }
+        // Forced add. Update dependency versions in cauldron if needed.
+        else {
+          const nativeDepInCauldron = await cauldron
+            .getNativeDependency(appName, platformName, versionName, localNativeDependency.name);
+          if (nativeDepInCauldron) {
+            await cauldron.updateNativeAppDependency(
+              appName, platformName, versionName, localNativeDependency.name, localNativeDependency.version);
+          } else {
+            await cauldron.addNativeDependency(
+              localNativeDependency, appName, platformName, versionName);
+          }
+        }
       }
 
       if (miniAppScope) {

@@ -76,6 +76,9 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
   let result = [];
   const nativeApps = await cauldron.getAllNativeApps();
 
+  // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
+  const miniAppDependencies = MiniApp.fromCurrentPath().nativeDependencies;
+
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
     if ((!appName) || (nativeApp.name === appName)) {
@@ -88,7 +91,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appPlatform: nativeAppPlatform.name,
                 appVersion: nativeAppVersion.name,
                 appBinary: nativeAppVersion.binary,
-                compatibility: getCompatibility(getLocalNativeDependencies(),
+                compatibility: getCompatibility(miniAppDependencies,
                   nativeAppVersion.nativeDeps)
               });
             }

@@ -149,6 +149,16 @@ export default class CauldronClient {
     });
   }
 
+  updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion) {
+    return new Promise((resolve, reject) => {
+      unirest.patch(`${this.url}/nativeapps/${appName}/platforms/${platformName}/versions/${versionName}/nativedeps/${dependencyName}`)
+      .send({version: newVersion})
+      .end(resp => {
+        resp.error ? reject(resp.error) : resolve();
+      });
+    });
+  }
+
   deleteNativeAppDependency(appName, platformName, versionName, dependencyName) {
     return new Promise((resolve, reject) => {
       unirest.delete(`${this.url}/nativeapps/${appName}/platforms/${platformName}/versions/${versionName}/nativedeps/${dependencyName}`)

@@ -248,6 +248,16 @@ class Cauldron {
     }
   }
 
+  // Get a native dependency from cauldron
+  async getNativeDependency(appName, platformName, versionName, depName) {
+    return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
+  }
+
+  // Update an existing native dependency version
+  async updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion) {
+    return this.cauldron.updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion);
+  }
+
   // Retrieves all native apps metadata from the Cauldron
   async getAllNativeApps() {
     return this.cauldron.getAllNativeApps();
