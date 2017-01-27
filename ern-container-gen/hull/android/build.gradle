@@ -16,6 +16,7 @@ allprojects {
     repositories {
         jcenter()
         mavenLocal()
+        maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
     }
 }
 
