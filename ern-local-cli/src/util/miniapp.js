@@ -154,11 +154,11 @@ export default class MiniApp {
     }
   }
 
-  async upgradeToPlatformVersion(versionToUpgradeTo) {
+  async upgradeToPlatformVersion(versionToUpgradeTo, force) {
     if ((this.platformVersion === versionToUpgradeTo)
       // Do not enforce if v1000 to help with development (should be temporary)
-      && (versionToUpgradeTo != 1000)) {
-      return log.error(`This miniapp is already using v${versionToUpgradeTo}`);
+      && (!force)) {
+      return log.error(`This miniapp is already using v${versionToUpgradeTo}. Use 'f' flag if you want to force upgrade.`);
     }
 
     if (this.platformVersion > versionToUpgradeTo) {
