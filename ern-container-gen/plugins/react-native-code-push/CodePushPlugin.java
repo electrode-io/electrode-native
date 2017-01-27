@@ -4,11 +4,12 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactPackage;
 import com.microsoft.codepush.react.CodePush;
 
 public class CodePushPlugin {
 
-    public void hook(@NonNull Application application ,
+    public ReactPackage hook(@NonNull Application application ,
                      @NonNull ReactInstanceManager.Builder reactInstanceManagerBuilder,
                      @NonNull Config config) {
         CodePush codePush = null;
@@ -28,6 +29,8 @@ public class CodePushPlugin {
         reactInstanceManagerBuilder
                 .setJSBundleFile(CodePush.getJSBundleFile())
                 .addPackage(codePush);
+
+        return codePush;
     }
 
     public static class Config {

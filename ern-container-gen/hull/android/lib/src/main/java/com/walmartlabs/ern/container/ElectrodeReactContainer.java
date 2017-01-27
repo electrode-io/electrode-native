@@ -10,7 +10,14 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.ArrayList;
+
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactPackage;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 {{#plugins}}
@@ -25,6 +32,8 @@ public class ElectrodeReactContainer {
     private static ReactInstanceManager sReactInstanceManager;
 
     private final boolean isReactNativeDeveloperSupport;
+
+    private static List<ReactPackage> sReactPackages = new ArrayList<>();
 
     private ElectrodeReactContainer(Application application,
                                     Config reactContainerConfig
@@ -57,17 +66,32 @@ public class ElectrodeReactContainer {
 
       {{#plugins}}
         {{#configurable}}
-        new {{name}}().hook(application, reactInstanceManagerBuilder, {{lcname}}Config);
+        sReactPackages.add(new {{name}}().hook(application, reactInstanceManagerBuilder, {{lcname}}Config));
         {{/configurable}}
         {{^configurable}}
-        new {{name}}().hook(application, reactInstanceManagerBuilder);
+        sReactPackages.add(new {{name}}().hook(application, reactInstanceManagerBuilder));
         {{/configurable}}
       {{/plugins}}
     }
 
     public synchronized static ReactInstanceManager getReactInstanceManager() {
         if (null == sReactInstanceManager) {
-            sReactInstanceManager = reactInstanceManagerBuilder.build();
+          sReactInstanceManager = reactInstanceManagerBuilder.build();
+          sReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+            @Override
+            public void onReactContextInitialized(ReactContext context) {
+              for (ReactPackage instance : sReactPackages) {
+                try {
+                  Method onReactNativeInitialized =
+                    instance.getClass().getMethod("onReactNativeInitialized");
+                  onReactNativeInitialized.invoke(instance);
+                }
+                catch (NoSuchMethodException e) {}
+                catch (IllegalAccessException e) {}
+                catch (InvocationTargetException e) {}
+              }
+            }
+          });
         }
 
         return sReactInstanceManager;

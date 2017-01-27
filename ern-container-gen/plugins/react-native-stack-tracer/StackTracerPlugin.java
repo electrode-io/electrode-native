@@ -4,16 +4,19 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactPackage;
 import com.github.aoriani.rnstacktracer.StackTracePackage;
 
 public class StackTracerPlugin {
 
-    public void hook(@NonNull Application application,
+    public ReactPackage hook(@NonNull Application application,
                      @NonNull ReactInstanceManager.Builder reactInstanceManagerBuilder,
                      @NonNull Config config) {
+        StackTracePackage stackTracePackage = new StackTracePackage();
         if (config.isEnabled) {
-            reactInstanceManagerBuilder.addPackage(new StackTracePackage());
+            reactInstanceManagerBuilder.addPackage(stackTracePackage);
         }
+        return stackTracePackage;
     }
 
     public static class Config {

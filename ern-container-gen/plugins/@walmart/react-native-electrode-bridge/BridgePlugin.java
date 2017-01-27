@@ -4,13 +4,16 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactPackage;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgePackage;
 
 public class BridgePlugin {
 
-    public void hook(@NonNull Application application,
+    public ReactPackage hook(@NonNull Application application,
                      @NonNull ReactInstanceManager.Builder reactInstanceManagerBuilder) {
-      reactInstanceManagerBuilder.addPackage(new ElectrodeBridgePackage());
+      ElectrodeBridgePackage electrodeBridgePackage = new ElectrodeBridgePackage();
+      reactInstanceManagerBuilder.addPackage(electrodeBridgePackage);
+      return electrodeBridgePackage;
     }
 
 }
