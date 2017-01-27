@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
 import com.walmartlabs.electrode.reactnative.bridge.RequestDispatcherImpl;
 import com.walmartlabs.electrode.reactnative.bridge.ExistingHandlerException;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandler;
@@ -15,8 +14,6 @@ import {{{package}}}.model.{{{.}}};
 {{/models}}
 
 public final class {{{pascalCaseApiName}}}Api {
-
-  private static ElectrodeBridge sElectrodeBridge;
 
   //====================================================================
   // Request Handlers declaration (Private)
@@ -60,7 +57,7 @@ public final class {{{pascalCaseApiName}}}Api {
 
   public static void {{{name}}}({{{payload.type}}} {{{payload.name}}}, final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
       Bundle bundle = {{{payloadSerizalization}}}
-      sElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.{{{constantName}}})
+      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.{{{constantName}}})
                                      .withDispatchMode(dispatchMode)
                                      .withData(bundle)
                                      .build());
@@ -72,7 +69,7 @@ public final class {{{pascalCaseApiName}}}Api {
   }
 
   public static void {{{name}}}(final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
-      sElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.{{{constantName}}})
+      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.{{{constantName}}})
                                      .withDispatchMode(dispatchMode)
                                      .build());
   }
@@ -84,46 +81,35 @@ public final class {{{pascalCaseApiName}}}Api {
   //====================================================================
 
   static {
-    ElectrodeBridgeHolder.setOnBridgeReadyListener(
-      new ElectrodeBridgeHolder.OnBridgeReadyListener() {
-        @Override
-        public void onBridgeReady(ElectrodeBridge electrodeBridge) {
-          {{{pascalCaseApiName}}}Api.sElectrodeBridge = electrodeBridge;
+    //====================================================================
+    // Registration of request handlers with bridge
+    //====================================================================
 
-          //====================================================================
-          // Registration of request handlers with bridge
-          //====================================================================
+    {{#requests}}
+    ElectrodeBridge.registerRequestHandler(Names.{{{constantName}}}, new RequestDispatcherImpl.RequestHandler() {
+      @Override
+      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+        {{{pascalCaseApiName}}}Api.s{{{pascalCaseName}}}RequestHandler.handleRequest({{#hasPayload}}{{{payloadDeserialization}}},{{/hasPayload}}new Response{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}}{{^respPayloadType}}<Void>{{/respPayloadType}}() {
+            @Override
+            {{#respPayloadType}}
+            public void onSuccess({{{respPayloadType}}} obj) {
+              Bundle bundle = {{{responsePayloadSerialization}}}
+              requestCompletioner.success(bundle);
+            }
+            {{/respPayloadType}}
+            {{^respPayloadType}}
+            public void onSuccess(Void obj) {
+              requestCompletioner.success(null);
+            }
+            {{/respPayloadType}}
 
-          try {
-            {{#requests}}
-            electrodeBridge.requestRegistrar().registerRequestHandler(Names.{{{constantName}}}, new RequestDispatcherImpl.RequestHandler() {
-                @Override
-                public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-                  {{{pascalCaseApiName}}}Api.s{{{pascalCaseName}}}RequestHandler.handleRequest({{#hasPayload}}{{{payloadDeserialization}}},{{/hasPayload}}new Response{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}}{{^respPayloadType}}<Void>{{/respPayloadType}}() {
-                      @Override
-                      {{#respPayloadType}}
-                      public void onSuccess({{{respPayloadType}}} obj) {
-                        Bundle bundle = {{{responsePayloadSerialization}}}
-                        requestCompletioner.success(bundle);
-                      }
-                      {{/respPayloadType}}
-                      {{^respPayloadType}}
-                      public void onSuccess(Void obj) {
-                        requestCompletioner.success(null);
-                      }
-                      {{/respPayloadType}}
-
-                      @Override
-                      public void onError(String code, String message) {
-                        requestCompletioner.error(code, message);
-                      }
-                  });
-                }
-              });
-            {{/requests}}
-          } catch(ExistingHandlerException ex) {
-          }
-        }
-     });
+            @Override
+            public void onError(String code, String message) {
+              requestCompletioner.error(code, message);
+            }
+        });
+      }
+    });
+    {{/requests}}
   }
 }

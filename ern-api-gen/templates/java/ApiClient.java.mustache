@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequest;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequest.DispatchMode;
 import com.walmartlabs.electrode.reactnative.bridge.EventDispatcherImpl;
@@ -19,8 +18,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 public final class {{{pascalCaseApiName}}}ApiClient {
-
-  private static ElectrodeBridge sElectrodeBridge;
 
   //====================================================================
   // Events listeners for each event name (Private)
@@ -60,7 +57,7 @@ public final class {{{pascalCaseApiName}}}ApiClient {
                                       .withDispatchMode(dispatchMode)
                                       .build();
 
-     sElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        {{#respPayloadType}}
        public void onSuccess(Bundle bundle) {
@@ -86,27 +83,19 @@ public final class {{{pascalCaseApiName}}}ApiClient {
   //====================================================================
 
   static {
-    ElectrodeBridgeHolder.setOnBridgeReadyListener(
-      new ElectrodeBridgeHolder.OnBridgeReadyListener() {
-        @Override
-        public void onBridgeReady(ElectrodeBridge electrodeBridge) {
-          {{{pascalCaseApiName}}}ApiClient.sElectrodeBridge = electrodeBridge;
+    //====================================================================
+    // Registration of event handlers with bridge
+    //====================================================================
 
-          //====================================================================
-          // Registration of event handlers with bridge
-          //====================================================================
-
-          {{#events}}
-          electrodeBridge.eventRegistrar().registerEventListener(Names.{{{constantName}}}, new EventDispatcherImpl.EventListener() {
-                      @Override
-                      public void onEvent(@NonNull Bundle bundle) {
-                       for (EventListener{{#hasPayload}}<{{{payload.type}}}>{{/hasPayload}} listener : s{{{pascalCaseName}}}Listeners) {
-                         listener.onEvent({{{payloadDeserialization}}});
-                       }
-                      }
-                    });
-          {{/events}}
-        }
-     });
+    {{#events}}
+    ElectrodeBridge.registerEventListener(Names.{{{constantName}}}, new EventDispatcherImpl.EventListener() {
+      @Override
+      public void onEvent(@NonNull Bundle bundle) {
+       for (EventListener{{#hasPayload}}<{{{payload.type}}}>{{/hasPayload}} listener : s{{{pascalCaseName}}}Listeners) {
+         listener.onEvent({{{payloadDeserialization}}});
+       }
+      }
+    });
+    {{/events}}
   }
 }
