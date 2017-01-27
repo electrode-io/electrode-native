@@ -1,4 +1,4 @@
-import { runInAndroidRunner } from '../../../util/miniapp.js';
+import MiniApp from '../../../util/miniapp.js';
 
 exports.command = 'android'
 exports.desc = 'Run miniapp in android runner project'
@@ -11,6 +11,6 @@ exports.builder = function(yargs) {
   });
 }
 
-exports.handler = function (argv) {
-  runInAndroidRunner(argv.verbose);
+exports.handler = async function (argv) {
+  await MiniApp.fromCurrentPath().runInAndroidRunner(argv.verbose);
 }

@@ -1,4 +1,4 @@
-import { createMiniApp } from '../util/miniapp.js';
+import MiniApp from '../util/miniapp.js';
 
 exports.command = 'init <appName> [platformVersion] [napSelector] [scope]'
 exports.desc = 'Create a new ern application'
@@ -24,7 +24,7 @@ exports.builder = function(yargs) {
 }
 
 exports.handler = async function (argv) {
-  createMiniApp(argv.appName, {
+  await MiniApp.create(argv.appName, {
     platformVersion: argv.platformVersion,
     napSelector: argv.napSelector,
     scope: argv.scope,

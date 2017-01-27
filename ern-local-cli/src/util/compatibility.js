@@ -4,7 +4,7 @@ import Table from 'cli-table';
 const log = require('console-log-level')();
 import cauldron from './cauldron.js';
 import { spin } from './spin.js';
-import { getLocalNativeDependencies } from './miniapp.js'
+import MiniApp from './miniapp.js'
 import platform from './platform.js';
 
 export async function nativeCompatCheck(verbose, appName, platformName, versionName) {
@@ -29,7 +29,7 @@ export async function nativeCompatCheck(verbose, appName, platformName, versionN
 }
 
 export function platformCompatCheck(verbose, platformVersion) {
-  const localNativeDeps = getLocalNativeDependencies();
+  const localNativeDeps = MiniApp.fromCurrentPath().nativeDependencies;
   const platformDependencies = platform.getSupportedPlugins(platformVersion);
 
   const report = getCompatibility(localNativeDeps, platformDependencies);

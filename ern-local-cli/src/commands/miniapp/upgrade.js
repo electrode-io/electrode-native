@@ -1,4 +1,4 @@
-import { upgradeMiniAppToPlatformVersion } from '../../util/miniapp.js';
+import MiniApp from '../../util/miniapp.js';
 
 exports.command = 'upgrade <platformVersion>'
 exports.desc = 'Upgrade the mini app to a specific platform version'
@@ -12,5 +12,6 @@ exports.builder = function(yargs) {
 }
 
 exports.handler = async function (argv) {
-  await upgradeMiniAppToPlatformVersion(argv.platformVersion.toString().replace('v',''));
+  await MiniApp.fromCurrentPath().upgradeToPlatformVersion(
+    argv.platformVersion.toString().replace('v',''));
 }

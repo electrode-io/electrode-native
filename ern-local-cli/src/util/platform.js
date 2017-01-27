@@ -42,6 +42,10 @@ class Platform {
     return config.getValue('platformVersion');
   }
 
+  // Return an array of versions (ex: [1,2,3,4,5])
+  // representing all the available versions of the platform
+  // Doing this by looking at all remote branches of the platform
+  // matching `vX` where x is a number.
   get versions() {
     const branchVersionRe = /heads\/v(\d+)/;
     const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`)
@@ -52,6 +56,9 @@ class Platform {
     return _.map(versions, v => branchVersionRe.exec(v)[1]);
   }
 
+  // Install a given platform version
+  // If version is not installed yet and available it will just checkout
+  // the version branch in the platform repository and call its install script
   installPlatform(version) {
     if (this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is already installed`);
@@ -66,6 +73,10 @@ class Platform {
     require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install();
   }
 
+  // Uninstall a given platform version
+  // If version is installed yet and not the currently activated version it will
+  // just checkout the version branch in the platform repository and call its
+  // uninstall script
   uninstallPlatform(version) {
     if (!this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is not installed`);
@@ -80,6 +91,9 @@ class Platform {
     require(`${ERN_PLATFORM_REPO_PATH}/uninstall.js`).uninstall();
   }
 
+  // Switch to / activate a given version
+  // If the version is not installed yet, it will install it beforehand, then
+  // it will just update the config file with new activated version number
   switchToVersion(version) {
     if (version === this.currentVersion) {
       return log.info(`v${version} is already the version in use`);
@@ -93,10 +107,20 @@ class Platform {
     config.setValue('platformVersion', version);
   }
 
-  get manifest() {
-    return require(`${this.getPlatformVersionPath(this.currentVersion)}/manifest.json`);
+  get currentVersionManifest() {
+    return JSON.parse(fs.readFileSync(`${this.currentPlatformVersionPath}/manifest.json`, 'utf-8'));
   }
 
+  get repositoryManifest() {
+    return JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8'));
+  }
+
+  // Given a string representing the plugin, explode it into an object
+  // Valid input strings samples :
+  // react-native
+  // react-native@0.40
+  // @walmart/react-native
+  // @walmart/react-native@0.40
   buildPluginObj(pluginString) {
     const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/;
     const unscopedModuleWithVersionRe = /(.+)@(.+)/;
@@ -123,25 +147,29 @@ class Platform {
     }
   }
 
+  // Returns the list of supported plugins for a given platform version
+  // If version is currently activated one, it just looks in the current
+  // version manifest.
+  // Otherwise it just switch the platform repository to the given version branch
+  // and then build the array based on the manifest
   getSupportedPlugins(version) {
-    let versionBeforeSwitch;
-    if (version && (version !== this.currentVersion)) {
-      versionBeforeSwitch = this.currentVersion;
-      this.switchToVersion(version);
+    let manifest;
+    if (version === this.currentVersion) {
+      manifest = this.currentVersionManifest;
+    } else {
+      if (!this.isPlatformVersionAvailable(version)) {
+        throw new Error(`Version ${version} does not exists`);
+      }
+      this.switchPlatformRepositoryToVersion(version);
+      manifest = this.repositoryManifest;
     }
 
-    const result = _.map(this.manifest.supportedPlugins, d => this.buildPluginObj(d));
-
-    if (versionBeforeSwitch) {
-      this.switchToVersion(versionBeforeSwitch);
-    }
-
-    return result;
+    return _.map(manifest.supportedPlugins, d => this.buildPluginObj(d));
   }
 
   getPlugin(pluginString) {
     const plugin = this.buildPluginObj(pluginString);
-    return _.find(this.getSupportedPlugins(),
+    return _.find(this.getSupportedPlugins(this.currentVersion),
       d => (d.name === plugin.name) && (d.scope === plugin.scope));
   }
 }
