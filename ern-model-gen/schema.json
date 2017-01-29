@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "root",
+  "name": "Person",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "month": {
+      "type": "number"
+    },
+    "status": {
+      "type": "object",
+      "properties": {
+        "log": {
+          "type": "boolean"
+        },
+        "member": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "member"
+      ]
+    },
+    "position": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lng": {
+          "type": "number"
+        }
+      },
+      "required": []
+    },
+    "birthYear": {
+      "type": "object",
+      "properties": {
+        "month": {
+          "type": "integer"
+        },
+        "year": {
+          "type": "integer",
+          "minimum": 1930,
+          "maximum": 2030
+        }
+      },
+      "required": [
+        "month",
+        "year"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "month"
+  ]
+}
