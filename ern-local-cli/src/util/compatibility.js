@@ -91,6 +91,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appPlatform: nativeAppPlatform.name,
                 appVersion: nativeAppVersion.name,
                 appBinary: nativeAppVersion.binary,
+                isReleased: nativeAppVersion.isReleased,
                 compatibility: getCompatibility(miniAppDependencies,
                   nativeAppVersion.nativeDeps)
               });

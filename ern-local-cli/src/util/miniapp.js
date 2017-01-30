@@ -44,6 +44,68 @@ export default class MiniApp {
     this._packageJson = packageJson;
   }
 
+  static fromCurrentPath() {
+    return new MiniApp(process.cwd());
+  }
+
+  static fromPath(path) {
+    return new MiniApp(path);
+  }
+
+  static async create(appName, {
+    platformVersion,
+    napSelector,
+    scope,
+    verbose
+  }) {
+    try {
+      // If appSelector provided, and no forced version of platform is provided
+      // use same ernPlatformVersion as native app one
+      if (!platformVersion && napSelector) {
+        const nativeApp =
+          await cauldron.getNativeApp(
+            ...explodeNapSelector(napSelector));
+        platformVersion = nativeApp.ernPlatformVersion;
+      }
+      // Otherwise, if no forced platform version provided, use current platform version
+      else if (!platformVersion) {
+        platformVersion = platform.currentVersion;
+      }
+
+      if (platform.currentVersion !== platformVersion) {
+        platform.switchToVersion(platformVersion);
+      }
+
+      log.info(`Creating application ${appName} at platform version ${platformVersion}`);
+      const rnVersion = platform.getPlugin('react-native').version;
+
+      //
+      // Create application using react-native init command
+      await spin(`Running react-native init using react-native v${rnVersion}`,
+           reactNativeInit(appName, rnVersion));
+
+      //
+      // Patch package.json file of application
+      const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`;
+      const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'));
+      appPackageJson.ernPlatformVersion = platformVersion;
+      appPackageJson.private = false;
+      if (scope) { appPackageJson.name = `@${scope}/${appName}`; }
+      fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
+
+      //
+      // Remove react-native generated android project ...
+      // It will be replaced with our own when user uses `ern miniapp run android` command
+      const miniAppPath = `${process.cwd()}/${appName}`;
+      shell.cd(miniAppPath);
+      shell.rm('-rf', `android`);
+
+      return new MiniApp(miniAppPath);
+    } catch (e) {
+      log.error(`[MiniApp.create] ${e}`);
+    }
+  }
+
   get packageJson() {
     return this._packageJson;
   }
@@ -208,10 +270,11 @@ export default class MiniApp {
 
       const miniAppDesc = `${miniAppName}@${this.version}`;
       const appDesc = `${appName}:${platformName}:${versionName}`;
+      const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
 
       // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
-        log.info(`Checking if ${miniAppDesc} is not already in binary of ${appDesc}`);
+        log.info(`Checking if ${miniAppDesc} is not already in ${appDesc}`);
         let currentMiniAppEntryIncauldron;
 
         try {
@@ -228,7 +291,6 @@ export default class MiniApp {
         }
 
         log.info(`Checking that container version match native app version`);
-        const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
         const nativeAppPlatformVersion = nativeApp.ernPlatformVersion;
         const miniAppPlatformVersion = this.platformVersion;
         /*if (nativeAppPlatformVersion !== miniAppPlatformVersion) {
@@ -265,20 +327,17 @@ export default class MiniApp {
         }
       }
 
-      if (miniAppScope) {
-        await cauldron.addReactNativeApp(appName, platformName, versionName, {
-          name: miniAppName,
-          scope: miniAppScope,
-          version: this.version,
-          isInBinary: true
-        });
-      } else {
-        await cauldron.addReactNativeApp(appName, platformName, versionName, {
-          name: miniAppName,
-          version: this.version,
-          isInBinary: true
-        });
-      }
+      const miniApp = Object.assign({
+        name: miniAppName,
+        version: this.version,
+        isInBinary: !nativeApp.isReleased
+      }, miniAppScope ?
+      {
+        scope: miniAppScope
+      } : {});
+
+      await cauldron.addReactNativeApp(appName, platformName, versionName, miniApp);
+
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
     }
@@ -290,67 +349,5 @@ export default class MiniApp {
     return npmScopeModuleRe.test(moduleName) ?
            npmScopeModuleRe.exec(`${moduleName}`)[2]
         :  moduleName;
-  }
-
-  static fromCurrentPath() {
-    return new MiniApp(process.cwd());
-  }
-
-  static fromPath(path) {
-    return new MiniApp(path);
-  }
-
-  static async create(appName, {
-    platformVersion,
-    napSelector,
-    scope,
-    verbose
-  }) {
-    try {
-      // If appSelector provided, and no forced version of platform is provided
-      // use same ernPlatformVersion as native app one
-      if (!platformVersion && napSelector) {
-        const nativeApp =
-          await cauldron.getNativeApp(
-            ...explodeNapSelector(napSelector));
-        platformVersion = nativeApp.ernPlatformVersion;
-      }
-      // Otherwise, if no forced platform version provided, use current platform version
-      else if (!platformVersion) {
-        platformVersion = platform.currentVersion;
-      }
-
-      if (platform.currentVersion !== platformVersion) {
-        platform.switchToVersion(platformVersion);
-      }
-
-      log.info(`Creating application ${appName} at platform version ${platformVersion}`);
-      const rnVersion = platform.getPlugin('react-native').version;
-
-      //
-      // Create application using react-native init command
-      await spin(`Running react-native init using react-native v${rnVersion}`,
-           reactNativeInit(appName, rnVersion));
-
-      //
-      // Patch package.json file of application
-      const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`;
-      const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'));
-      appPackageJson.ernPlatformVersion = platformVersion;
-      appPackageJson.private = false;
-      if (scope) { appPackageJson.name = `@${scope}/${appName}`; }
-      fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
-
-      //
-      // Remove react-native generated android project ...
-      // It will be replaced with our own when user uses `ern miniapp run android` command
-      const miniAppPath = `${process.cwd()}/${appName}`;
-      shell.cd(miniAppPath);
-      shell.rm('-rf', `android`);
-
-      return new MiniApp(miniAppPath);
-    } catch (e) {
-      log.error(`[MiniApp.create] ${e}`);
-    }
   }
 }
