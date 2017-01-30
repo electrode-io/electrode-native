@@ -248,7 +248,7 @@ class Cauldron {
     }
   }
 
-  // Get a native dependency from cauldron
+  // Get a native dependency from the cauldron
   async getNativeDependency(appName, platformName, versionName, depName) {
     return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
   }
@@ -279,6 +279,10 @@ class Cauldron {
     return spin(tagOneLine`Adding ${app.name}@${app.version} to
                ${appName}:${platformName}:${versionName}`,
           this.cauldron.addReactNativeApp(appName, platformName, versionName, app));
+  }
+
+  async updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased) {
+    return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased);
   }
  }
 
