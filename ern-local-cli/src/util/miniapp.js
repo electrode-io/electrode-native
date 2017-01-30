@@ -261,11 +261,13 @@ export default class MiniApp {
     try {
       let miniAppName, miniAppScope;
 
-      if (NPM_SCOPED_MODULE_RE.test(this.name)) {
-        miniAppScope = NPM_SCOPED_MODULE_RE.exec(this.name)[1];
-        miniAppName = NPM_SCOPED_MODULE_RE.exec(this.name)[2];
+      const nameFromPackageJson = this.packageJson.name;
+
+      if (NPM_SCOPED_MODULE_RE.test(nameFromPackageJson)) {
+        miniAppScope = NPM_SCOPED_MODULE_RE.exec(nameFromPackageJson)[1];
+        miniAppName = NPM_SCOPED_MODULE_RE.exec(nameFromPackageJson)[2];
       } else {
-        miniAppName = this.name;
+        miniAppName = nameFromPackageJson;
       }
 
       const miniAppDesc = `${miniAppName}@${this.version}`;
