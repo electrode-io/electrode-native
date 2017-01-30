@@ -42,5 +42,5 @@ android {
 }
 
 dependencies {
-    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.1.8-{{{ernPlatformVersion}}}'
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.1.9-{{{ernPlatformVersion}}}'
 }

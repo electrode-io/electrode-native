@@ -6,6 +6,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/react-native-electrode-bridge": "1.1.8"
+    "@walmart/react-native-electrode-bridge": "1.1.9"
   }
 }
