@@ -1,0 +1,22 @@
+#import <Foundation/Foundation.h>
+
+{{#importTypes}}
+#import "{{.}}.h"
+{{/importTypes}}
+
+@interface {{className}} : NSObject
+
+{{#properties}}
+{{#objectWrapperType}}
+@property (nonatomic, readwrite) {{type}} {{name}};
+{{/objectWrapperType}}
+{{^objectWrapperType}}
+@property (nonatomic, nonnull, strong) {{type}} {{name}};
+{{/objectWrapperType}}
+{{/properties}}
+
++ (instancetype _Nullable) modelFromDictionary: (NSDictionary<NSString *, id> *_Nonnull) dictionary;
+
+- (NSDictionary<NSString *, id>  *_Nonnull) toDictionary;
+
+@end

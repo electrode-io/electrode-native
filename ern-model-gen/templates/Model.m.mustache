@@ -1,0 +1,36 @@
+#import "{{className}}.h"
+
+@implementation {{className}}
+
++ (instancetype _Nullable) modelFromDictionary: (NSDictionary<NSString *, id> *_Nonnull) dictionary {
+  {{className}} *{{name}} = [[{{className}} alloc] init];
+  
+  {{#properties}}
+  {{#objectWrapperType}}
+  {{objectWrapperType}} {{name}}Obj = dictionary[@"{{name}}"];
+  {{type}} {{name}} = [{{name}}Obj {{valueAccessorMessage}}];
+  {{/objectWrapperType}}
+  {{^objectWrapperType}}
+  {{type}} {{name}} = {{#customObject}}[{{className}} modelFromDictionary: {{/customObject}}dictionary[@"{{name}}"]{{#customObject}}]{{/customObject}};
+  {{/objectWrapperType}}
+  {{parent}}.{{name}} = {{name}};
+
+  {{/properties}}
+  
+  return {{name}};
+}
+
+- (NSDictionary<NSString *, id>  *_Nonnull) toDictionary {
+  return @{
+    {{#properties}}
+    {{#objectWrapperType}}
+    @"{{name}}" : {{objectValueWrapperMessage}} [self {{name}}]]{{^lastItem}},{{/lastItem}}
+    {{/objectWrapperType}}
+    {{^objectWrapperType}}
+    @"{{name}}" : {{#customObject}}[{{/customObject}}[self {{name}}]{{#customObject}} toDictionary]{{/customObject}}{{^lastItem}},{{/lastItem}}
+    {{/objectWrapperType}}
+    {{/properties}}
+  };
+}
+
+@end

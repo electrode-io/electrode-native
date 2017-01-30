@@ -25,6 +25,7 @@ Depending of the user infrastructure and development lifecycle this command line
 │   ├── generate                    [=== Generation related commands ===]
 │   │   ├── api                     Generates an API package using ern-api-gen
 │   │   ├── container               Generates a native container using ern-container-gen
+│   │   ├── model                   Generates native models using ern-model-gen
 │   ├── init                        Create a new mini app
 │   ├── miniapp                     [=== MiniApp development related commands ===]
 │   │   ├── compat                  [--- Binary compatibility checking --]
@@ -185,6 +186,13 @@ This command relies on [ern-api-gen](../ern-api-gen). For more details about the
 > ern generate api -p
 > ern generate api
 ```
+
+**model**
+
+`ern generate model`
+
+This command can be used to generate models based on a JSON schema.
+
 
 **container**
 
