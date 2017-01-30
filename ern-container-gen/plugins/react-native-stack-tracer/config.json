@@ -3,24 +3,6 @@
     "type": "git",
     "url": "https://github.com/aoriani/ReactNative-StackTracer.git"
   },
-  "transform": [
-    {
-      "file": "rnstacktracer/build.gradle",
-      "template": "app.build.gradle.mustache"
-    },
-    {
-      "file": "build.gradle",
-      "template": "project.build.gradle.mustache"
-    },
-    {
-      "file": "gradle/wrapper/gradle-wrapper.properties",
-      "template": "gradle-wrapper.properties.mustache"
-    },
-    {
-      "file": "settings.gradle",
-      "template": "settings.gradle.mustache"
-    }
-  ],
   "root": "",
   "uploadArchives" : {
     "moduleName": "rnstacktracer"

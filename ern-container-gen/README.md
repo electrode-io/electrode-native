@@ -48,18 +48,21 @@ It takes the following parameters
 
 #### Current high level Android generation business logic (maven generator)
 
-**Phase 1 : Plugins (third party libs here) publication**
-- For each plugin part of the input :
-  - Check cache to see if the plugin has already been published at this version (and with current react-native version). If not :
-    - Retrieve library source based on config (either from npm or git)
-    - Patch library source (mostly for publication and to make sure react-native version is correct) based on plugin config using mustache provided templates
-    - Build library from source and upload/publish resulting lib as a maven artifact to maven local or remote (whatever mavenRepositoryUrl was provided)
+**Phase 1 : react-native publication**
+- For react-native plugin :
+  - If not already published at this version :
+    - Retrieve react-native source at the correct version from git
+    - Patch react-native source in order to publish it to maven local or specific maven repo url
+    - Build react-native and publish it
 
 **Phase 2 : Container generation**
 - Copy container hull to output folder *hardcoded to ./out for now*
 - Generate `ElectrodeReactContainer.java` file using mustache template and the list of all plugins (and their config)
-- Copy each plugin hooking code (if any) to the plugins folder of the container
-- Update `build.gradle` so that the container lib includes all third party dependencies (each plugin)
+- For each plugin part of the input
+  - Retrieve plugin source based on config (either from npm or git)
+  - Inject plugin source code in container
+  - Copy plugin hooking code (if any) to the plugins folder of the container
+- Update `build.gradle` so that the container lib includes react-native dependency at right version
 - Retrieve every react-native mini app from npm
 - Create a single bundle/resources out of them (easy enough while waiting for multi bundle support)
 - Store generated composite miniapps bundle to `/assets` and generated resources to `/res` in container generated project.

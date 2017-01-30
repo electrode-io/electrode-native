@@ -24,7 +24,7 @@ const npmModuleRe = /(.*)@(.*)/;
 const fileRe = /^file:\/\//;
 
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern';
-const DEFAULT_MAVEN_REPO = `file://${process.env['HOME']}/.m2/repository`;
+const DEFAULT_MAVEN_REPO_URL = `file://${process.env['HOME']}/.m2/repository`;
 
 // Path to ern platform root folder
 const ERN_PATH = `${process.env['HOME']}/.ern`;
@@ -341,52 +341,36 @@ async function spin(msg, prom, options) {
 //=============================================================================
 
 // Build and install all plugins to target maven repository
-// plugins: The list of plugins (names and versions)
+// reactNativePlugin: The react native plugin
 // paths: Paths object
-// rnVersion: React native version
-async function installPlugins(plugins, paths, rnVersion) {
+async function buildAndPublishReactNative(reactNativePlugin, paths) {
   try {
-    log.info(`[=== Starting plugins installation ===]`);
+    log.info(`[=== Starting react-native build and publish ===]`);
 
-    for (const plugin of plugins) {
-      // Specific handling for react-native as it is a particular plugin
-      if (plugin.name === 'react-native') {
-        if (await isReactNativeVersionPublished(plugin.version)) {
-          log.info(`Skipping ${plugin.name} [already published]`);
-          continue;
-        }
-      } else {
-        if (await isPluginPublished(plugin)) {
-            log.info(`Skipping ${plugin.name}@${plugin.version} [already published]`);
-            continue;
-          }
-      }
+    shell.cd(paths.tmpFolder);
 
-      shell.cd(paths.tmpFolder);
+    log.info(`Getting react-native plugin config`);
+    let reactNativePluginConfig = await getPluginConfig(reactNativePlugin, paths.containerPluginsConfig);
 
-      log.info(`Getting ${plugin.name} plugin config`);
-      let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
+    let reactNativePluginSourcePath = await spin(`Downloading react-native source`,
+      downloadPluginSource(reactNativePluginConfig.origin));
 
-      let pluginSourcePath = await spin(`Downloading ${plugin.name} plugin source`,
-        downloadPluginSource(pluginConfig.origin));
+    log.info(`Applying transformations to react-native source`);
+    await transformPluginSource(
+      reactNativePlugin,
+      `${getPluginConfigPath(reactNativePlugin, paths.containerPluginsConfig)}/templates`,
+      reactNativePluginSourcePath,
+      reactNativePluginConfig.transform);
 
-      log.info(`Applying transformations to ${plugin.name} plugin source`);
-      await transformPluginSource(
-        plugin,
-        `${getPluginConfigPath(plugin, paths.containerPluginsConfig)}/templates`,
-        pluginSourcePath,
-        pluginConfig.transform);
+    shell.cd(`${reactNativePluginSourcePath}/${reactNativePluginConfig.root}`);
 
-      shell.cd(`${pluginSourcePath}/${pluginConfig.root}`);
+    await shellExec('chmod +x gradlew');
+    await spin(`Building react-native and publishing archive`,
+      buildAndUploadArchive(reactNativePluginConfig.uploadArchives.moduleName));
 
-      await shellExec('chmod +x gradlew');
-      await spin(`Building ${plugin.name} plugin and publishing archive`,
-        buildAndUploadArchive(pluginConfig.uploadArchives.moduleName));
-    }
-
-    log.info(`[=== Completed plugins installation ===]`);
+    log.info(`[=== Completed react-native build and publish ===]`);
   } catch (e) {
-    log.error("[installPlugins] Something went wrong: " + e);
+    log.error("[buildAndPublishReactNative] Something went wrong: " + e);
     throw e;
   }
 }
@@ -418,21 +402,12 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
     mustacheView.plugins = pluginsView;
 
     mustacheView.pluginCompile = [];
-    for (const plugin of plugins) {
-      // Remove scope from plugin name if it is present
-      let pluginNameUnscoped = getUnscopedModuleName(plugin.name);
-
-      if (plugin.name === "react-native") {
-        log.info(`Will inject: compile 'com.facebook.react:react-native:${plugin.versionEx}'`);
-        mustacheView.pluginCompile.push({
-          "compileStatement" : `compile 'com.facebook.react:react-native:${plugin.versionEx}'`
-        });
-      } else {
-        log.info(`Will inject: compile '${mustacheView.namespace}:${pluginNameUnscoped}:${plugin.versionEx}'`);
-        mustacheView.pluginCompile.push({
-          "compileStatement" : `compile '${mustacheView.namespace}:${pluginNameUnscoped}:${plugin.versionEx}'`
-        });
-      }
+    const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
+    if (reactNativePlugin) {
+      log.info(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.versionEx}'`);
+      mustacheView.pluginCompile.push({
+        "compileStatement" : `compile 'com.facebook.react:react-native:${reactNativePlugin.versionEx}'`
+      });
     }
   } catch (e) {
     log.error("[buildPluginsViews] Something went wrong: " + e);
@@ -477,6 +452,16 @@ async function fillContainerHull(plugins, miniApps, paths) {
     for (const file of files) {
       await mustacheRenderToOutputFileUsingTemplateFile(
         `${paths.outFolder}/${file}`, mustacheView, `${paths.outFolder}/${file}`);
+    }
+
+    for (const plugin of plugins) {
+      if (plugin.name === 'react-native') { continue; }
+      let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
+      shell.cd(`${paths.tmpFolder}`);
+      let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
+        downloadPluginSource(pluginConfig.origin));
+      shell.cd(`${pluginSourcePath}/${pluginConfig.root}`);
+      shell.cp('-R', `${pluginConfig.uploadArchives.moduleName}/src/main/java`, `${paths.outFolder}/lib/src/main`);
     }
 
     // Create mini app activities
@@ -684,7 +669,7 @@ async function generateAndroidContainerUsingMavenGenerator(
     plugins = [],
     miniapps = [], {
       containerPomVersion,
-      mavenRepositoryUrl = DEFAULT_MAVEN_REPO,
+      mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
       namespace = DEFAULT_NAMESPACE
     } = {}) {
   const WORKING_FOLDER = `${ERN_PATH}/containergen`;
@@ -692,9 +677,9 @@ async function generateAndroidContainerUsingMavenGenerator(
   const OUT_FOLDER = `${WORKING_FOLDER}/out`;
   const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/CompositeMiniApp`;
 
-  if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO)
-      && (!fs.existsSync(DEFAULT_MAVEN_REPO))) {
-        shell.mkdir('-p', DEFAULT_MAVEN_REPO.replace(fileRe, ''));
+  if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
+      && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
+        shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''));
   }
 
   try {
@@ -732,7 +717,6 @@ async function generateAndroidContainerUsingMavenGenerator(
        { authentication(userName: mavenUser, password: mavenPassword) }`;
     }
 
-
     let exMiniApps = _.map(miniapps, miniapp => ({
       name: miniapp.name,
       unscopedName: getUnscopedModuleName(miniapp.name),
@@ -753,7 +737,17 @@ async function generateAndroidContainerUsingMavenGenerator(
     }
 
     // Go through all ern-container-gen steps
-    await installPlugins(includedPlugins, paths, reactNativeVersion);
+    const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
+    if (!reactNativePlugin) {
+      throw new Error("react-native was not found in plugins list !");
+    }
+
+    if (await isReactNativeVersionPublished(reactNativePlugin.version)) {
+      log.info(`Skipping react-native build and publish [already published]`);
+    } else {
+        await buildAndPublishReactNative(reactNativePlugin, paths);
+    }
+
     await fillContainerHull(includedPlugins, miniapps, paths);
     await bundleMiniApps(miniapps, paths);
     await buildAndPublishContainer(paths);
