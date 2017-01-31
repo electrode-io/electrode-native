@@ -1,11 +1,63 @@
-package {{{package}}}.model;
-import android.os.Bundle;
+package com.walmartlabs.ern.model;
 
-{{#HasRequired}}
 import android.support.annotation.NonNull;
-{{/HasRequired}}
 import android.support.annotation.Nullable;
 
-public class {{className}} implements Parcelabale {
+public class {{className}} {
+{{#properties}}
+    private final {{javaType}} {{name}};
+{{/properties}}
 
+    private {{className}}(Builder builder) {
+        {{#properties}}
+        this.{{name}} = builder.{{name}};
+        {{/properties}}
+    }
+
+    {{#properties}}
+        {{#isRequired}}
+        @NonNull
+        {{/isRequired}}
+        {{^isRequired}}
+        @Nullable
+        {{/isRequired}}
+        public {{javaType}} get{{className}}() {
+            return {{name}};
+        }
+
+    {{/properties}}
+
+    public static class Builder {
+        {{#properties}}
+        {{#isRequired}}
+        private final {{javaType}} {{name}};
+        {{/isRequired}}
+        {{^isRequired}}
+        private {{javaType}} {{name}};
+        {{/isRequired}}
+        {{/properties}}
+
+        public Builder({{#properties}}{{#isRequired}}@NonNull {{javaType}} {{name}}{{^isLastRequiredItem}}, {{/isLastRequiredItem}}{{/isRequired}}{{/properties}}) {
+            {{#properties}}
+            {{#isRequired}}
+            this.{{name}} = {{name}};
+            {{/isRequired}}
+            {{/properties}}
+        }
+        {{#properties}}
+        {{^isRequired}}
+
+        @NonNull
+        public Builder {{name}}(@Nullable {{javaType}} {{name}}) {
+            this.{{name}} = {{name}};
+            return this;
+        }
+        {{/isRequired}}
+        {{/properties}}
+
+        @NonNull
+        public {{className}} build() {
+            return new {{className}}(this);
+        }
+    }
 }
