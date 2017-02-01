@@ -679,11 +679,18 @@ async function generateAndroidContainerUsingMavenGenerator(
       mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
       namespace = DEFAULT_NAMESPACE
     } = {}) {
+  // Folder from which container gen is run from
   const WORKING_FOLDER = `${ERN_PATH}/containergen`;
+  // Folder from which we download all plugins sources (from npm or git)
   const TMP_FOLDER = `${WORKING_FOLDER}/.tmp`;
+  // Folder where the resulting container project is stored in
   const OUT_FOLDER = `${WORKING_FOLDER}/out`;
+  // Folder from which we assemble the miniapps together / run the bundling
   const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/CompositeMiniApp`;
 
+  // If not maven repository url is provided part of the generator config,
+  // we just default to standard maven local repository location
+  // If folder does not exists yet, we create it
   if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
       && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
         shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''));
@@ -699,22 +706,36 @@ async function generateAndroidContainerUsingMavenGenerator(
     shell.rm('-rf', TMP_FOLDER);
     shell.rm('-rf', OUT_FOLDER);
     shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER);
-
     shell.mkdir('-p', TMP_FOLDER);
 
+    // Contains all interesting folders pathes
     const paths = {
+      // Where the container project hull is stored
       containerHull : `${platformPath}/ern-container-gen/hull`,
+      // Where the container generation configuration of all plugins is stored
       containerPluginsConfig: `${platformPath}/ern-container-gen/plugins`,
+      // Where the templates to be used during container generation are stored
       containerTemplates: `${platformPath}/ern-container-gen/templates`,
+      // Where we assemble the miniapps together
       compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
+      // Where we download plugins
       tmpFolder: TMP_FOLDER,
+      // Where we output final generated container
       outFolder: OUT_FOLDER
     };
 
     const manifest = require(`${platformPath}/manifest.json`);
+
+    // Build the list of plugins to be included in container
     const includedPlugins = buildPluginListSync(plugins, manifest);
+    // Get the react native version to use, based on what is declared on manifest
+    // for this current platform version
     const reactNativeVersion = getReactNativeVersionFromManifest(manifest);
+    // Get maven repository type (file (mavenLocal) or remote url (Nexus repo or other))
     const mavenRepositoryType = getMavenRepositoryType(mavenRepositoryUrl);
+
+    // Build repository statement to be injected in Android build.gradle for
+    // publication target of generated container
     let gradleMavenRepositoryCode;
     if (mavenRepositoryType === 'file') {
       gradleMavenRepositoryCode = `repository(url: "${mavenRepositoryUrl}")`;
@@ -731,6 +752,7 @@ async function generateAndroidContainerUsingMavenGenerator(
       version: miniapp.version
     }));
 
+    // Build our mustache view
     mustacheView = {
       "repository" : gradleMavenRepositoryCode,
       mavenRepositoryUrl,
@@ -743,21 +765,42 @@ async function generateAndroidContainerUsingMavenGenerator(
       miniApps: exMiniApps
     }
 
-    // Go through all ern-container-gen steps
+    // Let's make sure that react-native is included (otherwise there is
+    // something pretty much wrong)
     const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
     if (!reactNativePlugin) {
       throw new Error("react-native was not found in plugins list !");
     }
 
+    // Check if this react-native version is already published to maven.
+    // If that's the case let's not bother with retrieving its source / Building
+    // it and publishing it again as it is a somehwat long process.
     if (await isReactNativeVersionPublished(reactNativePlugin.version)) {
       log.info(`Skipping react-native build and publish [already published]`);
     } else {
         await buildAndPublishReactNative(reactNativePlugin, paths);
     }
 
+    //
+    // Go through all ern-container-gen steps
+
+    // Copy the container hull to output folder and patch it
+    // - Retrieves (download) each plugin from npm or git and inject
+    //   plugin source in container
+    // - Inject configuration code for plugins that expose configuration
+    // - Create activities for MiniApps
+    // - Patch build.gradle for versioning of the container project and
+    //   to specify publication repository target
     await fillContainerHull(includedPlugins, miniapps, paths);
+
+    // Bundle all the miniapps together and store resulting bundle in container
+    // project
     await bundleMiniApps(miniapps, paths);
+
+    // Finally, container hull project is fully generated, now let's just
+    // build it and publish resulting AAR
     await buildAndPublishContainer(paths);
+
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerPomVersion}`);
     log.info(`To ${mavenRepositoryUrl}`);
   } catch (e) {
