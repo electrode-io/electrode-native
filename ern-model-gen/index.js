@@ -6,10 +6,10 @@ import Mustache from "mustache"
 import fs from "fs-extra"
 import chalk from "chalk"
 
-const BUILT_IN_TYPES = [ "NSNumber *", "NSString *", "NSArray *", "BOOL", "id" ]
+const BUILT_IN_OBJC_TYPES = [ "NSNumber *", "NSString *", "NSArray *", "BOOL", "id" ]
 const OUTPUT_DIR = 'output'
 const OUTPUT_DIR_IOS = OUTPUT_DIR + '/ios'
-const OUTPUT_DIR_ANDROID = OUTPUT_DIR  +'/android'
+const OUTPUT_DIR_ANDROID = OUTPUT_DIR  +'/android/com/walmartlabs/ern/model'
 
 async function renderFileFromTemplate({ inputPath = "", outputPath = "", view = {} }) {
   const template = await util.readFile(path.resolve(process.cwd(), inputPath))
@@ -18,19 +18,17 @@ async function renderFileFromTemplate({ inputPath = "", outputPath = "", view = 
 }
 
 async function generateModels(fileContents) {
-  const json = JSON.parse(fileContents)
-  const { name, type, properties } = JSON.parse(fileContents)
-  const rootModel = { [name]: { type, properties } }
-  const views = generateViews({ model: rootModel, parent: null })
+  const { name, type, properties, required } = JSON.parse(fileContents)
+  const rootModel = { [name]: { type, properties, required } }
+  const views = generateViews({ model: rootModel, parent: null})
   await generateOutputDir();
   await generateSourceFromView(...views)
 }
 
 async function generateOutputDir() {
-  util.forceDeleteDir(OUTPUT_DIR);
-  util.createDirIfDoesNotExist(OUTPUT_DIR);
-  util.createDirIfDoesNotExist(OUTPUT_DIR_IOS);
-  util.createDirIfDoesNotExist(OUTPUT_DIR_ANDROID);
+    await util.forceDeleteDir(OUTPUT_DIR);
+    await util.createDirIfDoesNotExist(OUTPUT_DIR_IOS);
+    await util.createDirIfDoesNotExist(OUTPUT_DIR_ANDROID);
 }
 
 async function generateSourceFromView(view) {
@@ -44,6 +42,11 @@ async function generateSourceFromView(view) {
   }
 
   return Promise.all([
+      renderFileFromTemplate({
+          inputPath: "templates/java/Model.java.mustache",
+          outputPath: OUTPUT_DIR_ANDROID + `/${view.className}.java`,
+          view
+      }),
     renderFileFromTemplate({
       inputPath: "templates/Model.h.mustache",
       outputPath: OUTPUT_DIR_IOS + `/${view.className}.h`,
@@ -57,27 +60,33 @@ async function generateSourceFromView(view) {
   ])
 }
 
-function generateViews({ model, parent }) {
-  return Object.keys(model).map((key) => {
+function generateViews({ model, parent, required , propertiesCount = 1}) {
+  var models = Object.keys(model);
+  return models.map((key) => {
     const { type } = model[key]
     let view = {
       name: lowercaseFirstLetter(key),
-      className: capitalizeFirstLetter(key)
+      className: capitalizeFirstLetter(key),
     }
 
     if (type.toLowerCase() === "object") {
       view = {
         ...view,
         type: `${capitalizeFirstLetter(key)} *`,
+        javaType: view.className,
         customObject: true,
         properties: generateViews({
           model: model[key].properties,
-          parent: view.name
-        })
+          parent: view.name,
+          required: model[key].required
+        }),
+        isRequired: (()=> {
+            return findIsRequiredAndUpdateArray(required, view.name);
+        })()
       }
 
       const importTypes = view.properties
-        .filter(({ type }) => !BUILT_IN_TYPES.includes(type))
+        .filter(({ type }) => !BUILT_IN_OBJC_TYPES.includes(type))
         .map(({ name }) => capitalizeFirstLetter(name))
 
       if (importTypes.length > 0) {
@@ -86,30 +95,48 @@ function generateViews({ model, parent }) {
 
     } else {
       view = {
-        ...view,
-        ...valueObjectConversionProperties(type),
-        type: objcTypeForJsonType(type),
-        customObject: false
+          ...view,
+          ...valueObjectConversionProperties(type),
+          type: objcTypeForJsonType(type),
+          javaType: javaTypeForJsonType(type),
+          customObject: false,
+          isRequired: (() => {
+              return findIsRequiredAndUpdateArray(required, view.name);
+          })()
       }
     }
+
+    //Check for the last required and last property inside a property.properties array
+      view = {
+          ...view,
+          isLastRequiredItem:(() => {
+              return (view.isRequired && required.length == 0);
+          })(),
+          lastItem:(() => {
+              return (models.length == 1
+              || propertiesCount == models.length);
+          })()
+      }
+
+      propertiesCount++;
 
     if (parent) {
       view = { ...view, parent }
     }
 
-    if (view.properties) {
-      const [ last, ...props ] = view.properties.reverse()
-      view = {
-        ...view,
-        properties: [
-          ...(props.map((prop) => ({ ...prop, lastItem: false }))),
-          { ...last, lastItem: true }
-        ]
-      }
-    }
-
     return view
   })
+}
+
+function findIsRequiredAndUpdateArray(requiredPropsList, key) {
+    let val = requiredPropsList ? requiredPropsList.includes(key) : false
+    if(val === true){
+        let index = requiredPropsList.indexOf(key)
+        if(index > -1) {
+            requiredPropsList.splice(index, 1);
+        }
+    }
+    return val;
 }
 
 function objcTypeForJsonType(jsonType) {
@@ -123,6 +150,16 @@ function objcTypeForJsonType(jsonType) {
   }
 }
 
+function javaTypeForJsonType(jsonType) {
+    switch (jsonType.toLowerCase()) {
+        case "boolean": return "Boolean"
+        case "string": return "String"
+        case "number": return "Integer"
+        case "integer": return "Integer"
+        case "array": return "List"
+        default: return "Object"
+    }
+}
 function valueObjectConversionProperties(jsonType) {
   switch (jsonType.toLowerCase()) {
     case "boolean": return {

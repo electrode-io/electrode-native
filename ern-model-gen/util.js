@@ -25,21 +25,33 @@ export async function writeFile(path, output) {
 }
 
 export async function forceDeleteDir(path) {
-  if(fs.existsSync(path)) {
-    fs.removeSync(path, function(err, stats){
-        if(err) {
-          console.error('Unable to delete, ' +  path + ': ' + err);
+    return new Promise((resove, reject) => {
+        if (fs.existsSync(path)) {
+            fs.removeSync(path, (err, stats) => {
+                if (err) {
+                    console.error('Unable to delete, ' + path + ': ' + err);
+                    reject(err)
+                    return
+                }
+            });
         }
-    });
-  }
+        resove()
+    })
+
 }
 
 export async function createDirIfDoesNotExist(path) {
-  if(!fs.existsSync(path)) {
-    fs.mkdir(path, function(err, stats) {
-      if(err) {
-        console.error('Unable to create, ' +  path + ': ' + err);
-      }
-    });
-  }
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(path)) {
+            fs.ensureDir(path, (err, res) => {
+                if (err) {
+                    console.error('Unable to create, ' + path + ': ' + err);
+                    reject(err)
+                    return
+                }
+                resolve(res)
+            });
+        }
+    })
+
 }
