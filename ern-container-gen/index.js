@@ -103,13 +103,13 @@ async function mustacheRenderToOutputFileUsingTemplateFile(templateFilename, vie
 //=============================================================================
 
 //
-// Returns the base path of plugin config
+// Returns the base path of a given plugin generation config
 function getPluginConfigPath(plugin, pluginsConfigPath) {
   return `${pluginsConfigPath}/${plugin.name}`;
 }
 
 //
-// Get the config of a given plugin
+// Get the generation config of a given plugin
 // plugin: A plugin object
 // pluginsConfigPath : Path to plugins config
 // Sample plugin object :
@@ -159,18 +159,6 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
   }
 
   return result;
-}
-
-//
-// NPM install a package given its name and optionally its version
-// name: The name of the package (should include scope if needed)
-// version: The version of the package (optional)
-async function npmInstall(name, version) {
-  if (version) {
-    return shellExec(`npm i ${name}@${version}`);
-  } else {
-    return shellExec(`npm i ${name}`);
-  }
 }
 
 // Yarn add a given dependency
@@ -265,6 +253,10 @@ async function downloadPluginSource(pluginOrigin) {
 //    "template": "release.gradle.mustache"
 //  }
 // ]
+//
+// This is only needed as of now for react-native as we patch its gradle
+// file so that we can publish it to the desired maven repo target
+// But might be used for other plugins.
 async function transformPluginSource(plugin, pluginTemplatesPath, pluginSourcePath, pluginTransformArr) {
   for (const pluginTransform of pluginTransformArr) {
     log.info(`patching ${pluginSourcePath}/${pluginTransform.file}`);
@@ -291,6 +283,9 @@ async function transformPluginSource(plugin, pluginTemplatesPath, pluginSourcePa
 }
 
 // Build the plugin from source and invoke uploadArchives task to publish plugin
+// This is only used for react-native and final generated container project
+// All other plugins are not published but their source code is directly injected
+// in the container
 async function buildAndUploadArchive(moduleName) {
   let cmd = `./gradlew ${moduleName}:uploadArchives `;
   return new Promise((resolve, reject) => {
@@ -319,9 +314,9 @@ function capitalizeFirstLetter(string) {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 }
 
-// promisify ora spinner
+// Promisify ora spinner
 // there is already a promise method on ora spinner, unfortunately it does
-// not return the wrapped promise so that's a bit useless.
+// not return the wrapped promise so that's utterly useless !
 async function spin(msg, prom, options) {
   const spinner = new Ora(options ? options : msg);
 	spinner.start();
