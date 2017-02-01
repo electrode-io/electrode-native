@@ -22,30 +22,30 @@ import * as messages from "./messages.js";
 export function handleRefreshWeatherRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.REFRESH_WEATHER,
     (requestData) => {
-      return handler();
+      return handler(requestData);
     });
 }
 export function handleRefreshWeatherForRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.REFRESH_WEATHER_FOR,
     (requestData) => {
-      return handler();
+      return handler(requestData);
     });
 }
 export function handleGetTemperatureForRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_TEMPERATURE_FOR,
     (requestData) => {
-      return handler();
+      return handler(requestData);
     });
 }
 export function handleGetCurrentTemperatureRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_CURRENT_TEMPERATURE,
     (requestData) => {
-      return handler();
+      return handler(requestData);
     });
 }
 export function handleGetCurrentTemperaturesRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_CURRENT_TEMPERATURES,
     (requestData) => {
-      return handler();
+      return handler(requestData);
     });
 }
