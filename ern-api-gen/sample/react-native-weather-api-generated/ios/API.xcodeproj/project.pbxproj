@@ -7,21 +7,21 @@
 	objects = {
 /* Begin PBXBuildFile section */
 		29E96DB91E1FF49A00E9ABFC /* API.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E96DB71E1FF49A00E9ABFC /* API.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7F1CA2F8F43C4DB1827D36B6 /* WeatherApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 7888982B1A5A4BF3BC8A708B /* WeatherApi.m */; };
-		DAD201DD615243CAB10724A5 /* WeatherApiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 77704082D8F14C9E88108826 /* WeatherApiClient.m */; };
-		746A4DD3A6FB4814A333D2C3 /* Names.m in Sources */ = {isa = PBXBuildFile; fileRef = DC9E3B1685C3466D8AD17469 /* Names.m */; };
+		2CA88C77C4D940D1B5100359 /* WeatherApi.m in Sources */ = {isa = PBXBuildFile; fileRef = C1FE94B7CD30469393BF2F32 /* WeatherApi.m */; };
+		D8E7CDDCA9364C66B82DF311 /* WeatherApiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D7B5FAACAC1042EEB0B6FDC9 /* WeatherApiClient.m */; };
+		3481CF36BEDD423B9137C496 /* Names.m in Sources */ = {isa = PBXBuildFile; fileRef = 536E47D33AB24DE3B0C974A5 /* Names.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		29E96DB41E1FF49A00E9ABFC /* API.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = API.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29E96DB71E1FF49A00E9ABFC /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = API.h; sourceTree = "<group>"; };
 		29E96DB81E1FF49A00E9ABFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DDCDB883A4A84C5EB9489F11 /* WeatherApi.h */ = {isa = PBXFileReference; name = "WeatherApi.h"; path = "WeatherApi.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		4C4A9FB48B2941EC968E136A /* WeatherApiClient.h */ = {isa = PBXFileReference; name = "WeatherApiClient.h"; path = "WeatherApiClient.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		EB7A9FC9568A4085B2ECE645 /* Names.h */ = {isa = PBXFileReference; name = "Names.h"; path = "Names.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		7888982B1A5A4BF3BC8A708B /* WeatherApi.m */ = {isa = PBXFileReference; name = "WeatherApi.m"; path = "WeatherApi.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		77704082D8F14C9E88108826 /* WeatherApiClient.m */ = {isa = PBXFileReference; name = "WeatherApiClient.m"; path = "WeatherApiClient.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		DC9E3B1685C3466D8AD17469 /* Names.m */ = {isa = PBXFileReference; name = "Names.m"; path = "Names.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		B69B5157B08A422D89D28338 /* WeatherApi.h */ = {isa = PBXFileReference; name = "WeatherApi.h"; path = "WeatherApi.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		86F645B918D54CE9B05CB1DD /* WeatherApiClient.h */ = {isa = PBXFileReference; name = "WeatherApiClient.h"; path = "WeatherApiClient.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		CE3A20D36F1A463FBABC45E9 /* Names.h */ = {isa = PBXFileReference; name = "Names.h"; path = "Names.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		C1FE94B7CD30469393BF2F32 /* WeatherApi.m */ = {isa = PBXFileReference; name = "WeatherApi.m"; path = "WeatherApi.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		D7B5FAACAC1042EEB0B6FDC9 /* WeatherApiClient.m */ = {isa = PBXFileReference; name = "WeatherApiClient.m"; path = "WeatherApiClient.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		536E47D33AB24DE3B0C974A5 /* Names.m */ = {isa = PBXFileReference; name = "Names.m"; path = "Names.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,12 +56,12 @@
 			children = (
 				29E96DB71E1FF49A00E9ABFC /* API.h */,
 				29E96DB81E1FF49A00E9ABFC /* Info.plist */,
-				DDCDB883A4A84C5EB9489F11 /* WeatherApi.h */,
-				4C4A9FB48B2941EC968E136A /* WeatherApiClient.h */,
-				EB7A9FC9568A4085B2ECE645 /* Names.h */,
-				7888982B1A5A4BF3BC8A708B /* WeatherApi.m */,
-				77704082D8F14C9E88108826 /* WeatherApiClient.m */,
-				DC9E3B1685C3466D8AD17469 /* Names.m */,
+				B69B5157B08A422D89D28338 /* WeatherApi.h */,
+				86F645B918D54CE9B05CB1DD /* WeatherApiClient.h */,
+				CE3A20D36F1A463FBABC45E9 /* Names.h */,
+				C1FE94B7CD30469393BF2F32 /* WeatherApi.m */,
+				D7B5FAACAC1042EEB0B6FDC9 /* WeatherApiClient.m */,
+				536E47D33AB24DE3B0C974A5 /* Names.m */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -145,9 +145,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7F1CA2F8F43C4DB1827D36B6 /* WeatherApi.m in Sources */,
-				DAD201DD615243CAB10724A5 /* WeatherApiClient.m in Sources */,
-				746A4DD3A6FB4814A333D2C3 /* Names.m in Sources */,
+				2CA88C77C4D940D1B5100359 /* WeatherApi.m in Sources */,
+				D8E7CDDCA9364C66B82DF311 /* WeatherApiClient.m in Sources */,
+				3481CF36BEDD423B9137C496 /* Names.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

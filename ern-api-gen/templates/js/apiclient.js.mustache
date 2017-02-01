@@ -18,10 +18,21 @@ export function on{{{pascalCaseName}}}(handler) {
 // Todo : Correctly generate code for request payload / response payload
 // support
 {{#requests}}
+{{#hasPayload}}
+export function {{{name}}}({{{payload.name}}}, dispatchMode = DispatchMode.NATIVE) {
+  return electrodeBridge.sendRequest(
+    messages.{{constantName}}, {
+    data: { {{{payload.name}}} },
+    dispatchMode
+  });
+}
+{{/hasPayload}}
+{{^hasPayload}}
 export function {{{name}}}(dispatchMode = DispatchMode.NATIVE) {
   return electrodeBridge.sendRequest(
     messages.{{constantName}}, {
     dispatchMode
   });
 }
+{{/hasPayload}}
 {{/requests}}

@@ -27,15 +27,17 @@ export function refreshWeather(dispatchMode = DispatchMode.NATIVE) {
     dispatchMode
   });
 }
-export function refreshWeatherFor(dispatchMode = DispatchMode.NATIVE) {
+export function refreshWeatherFor(location, dispatchMode = DispatchMode.NATIVE) {
   return electrodeBridge.sendRequest(
     messages.REFRESH_WEATHER_FOR, {
+    data: { location },
     dispatchMode
   });
 }
-export function getTemperatureFor(dispatchMode = DispatchMode.NATIVE) {
+export function getTemperatureFor(location, dispatchMode = DispatchMode.NATIVE) {
   return electrodeBridge.sendRequest(
     messages.GET_TEMPERATURE_FOR, {
+    data: { location },
     dispatchMode
   });
 }
