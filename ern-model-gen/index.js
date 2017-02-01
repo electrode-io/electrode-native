@@ -124,7 +124,7 @@ function generateViews({ model, parent, required , propertiesCount = 1}) {
       view = { ...view, parent }
     }
 
-    return view
+    return Object.assign({}, view, defaultAndroidViews);
   })
 }
 
@@ -179,6 +179,44 @@ function lowercaseFirstLetter(string) {
   return `${string.charAt(0).toLowerCase()}${string.slice(1)}`;
 }
 
+const defaultAndroidViews = {
+    "parcelableReadGetter": function () {
+        return parcelableReadGetter(this)
+    },
+    "parcelableWriteSetter": function () {
+        return parcelableWriteSetter(this)
+    }
+}
+
+let parcelableReadGetter = (view) => {
+    if (view.customObject) {
+        return 'readParcelable(' + view.className + '.class.getClassLoader())';
+    } else {
+        switch (view.javaType) {
+            case 'Boolean':
+                return 'readInt() != 0';
+            case 'String':
+                return 'readString()';
+            case 'Integer':
+                return 'readInt()';
+        }
+    }
+}
+
+let parcelableWriteSetter = (view) => {
+    if (view.customObject) {
+        return 'writeParcelable(' + view.name + ', flags)';
+    } else {
+        switch (view.javaType) {
+            case 'Boolean':
+                return 'writeInt(' + view.name + ' ? 1 : 0)';
+            case 'String':
+                return 'writeString(' + view.name + ')';
+            case 'Integer':
+                return 'writeInt(' + view.name + ')';
+        }
+    }
+}
 
 export default async function initModelGen() {
   console.log(chalk.blue("Models generation, in progress......."))

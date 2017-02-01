@@ -1,9 +1,11 @@
 package com.walmartlabs.ern.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public class {{className}} {
+public class {{className}} implements Parcelable {
 {{#properties}}
     private final {{javaType}} {{name}};
 {{/properties}}
@@ -13,6 +15,28 @@ public class {{className}} {
         this.{{name}} = builder.{{name}};
         {{/properties}}
     }
+
+    private {{className}}(Parcel in) {
+        {{#properties}}
+        {{name}} = in.{{{parcelableReadGetter}}};
+        {{/properties}}
+    }
+
+    {{#className}}
+    {{#customObject}}
+    public static final Creator<{{className}}> CREATOR = new Creator<{{className}}>() {
+        @Override
+        public {{className}} createFromParcel(Parcel in) {
+            return new {{className}}(in);
+        }
+
+        @Override
+        public {{className}}[] newArray(int size) {
+            return new {{className}}[size];
+        }
+    };
+    {{/customObject}}
+    {{/className}}
 
     {{#properties}}
         {{#isRequired}}
@@ -24,8 +48,20 @@ public class {{className}} {
         public {{javaType}} get{{className}}() {
             return {{name}};
         }
-
     {{/properties}}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        {{#properties}}
+        dest.{{{parcelableWriteSetter}}};
+        {{/properties}}
+    }
+
 
     public static class Builder {
         {{#properties}}
