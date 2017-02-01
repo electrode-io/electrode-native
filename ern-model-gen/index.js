@@ -106,6 +106,13 @@ function generateViews({ model, parent, required , propertiesCount = 1}) {
       }
     }
 
+    if(model[key].description){
+        view = {
+            ...view,
+            description:model[key].description
+        }
+    }
+
     //Check for the last required and last property inside a property.properties array
       view = {
           ...view,
@@ -185,6 +192,9 @@ const defaultAndroidViews = {
     },
     "parcelableWriteSetter": function () {
         return parcelableWriteSetter(this)
+    },
+    "classNameUpperCase": function () {
+        return this.className.toUpperCase();
     }
 }
 

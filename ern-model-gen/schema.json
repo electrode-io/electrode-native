@@ -13,15 +13,19 @@
       "maximum": 100
     },
     "month": {
+      "description":"Month hired",
       "type": "number"
     },
     "status": {
+      "description":"Membership status",
       "type": "object",
       "properties": {
         "log": {
+          "description": "Log ??? ",
           "type": "boolean"
         },
         "member": {
+          "description": "Is the user a Sam's club member",
           "type": "boolean"
         }
       },
