@@ -490,6 +490,10 @@ async function fillContainerHull(plugins, miniApps, paths) {
   }
 }
 
+function clearReactPackagerCache() {
+  shell.rm('-rf', `${process.env['TMPDIR']}/react-*`);
+}
+
 async function reactNativeBundle(paths) {
   return new Promise((resolve, reject) => {
     exec(  `react-native bundle \
@@ -538,6 +542,9 @@ async function bundleMiniApps(miniapps, paths) {
       log.info(`writing index.android.js`);
       await writeFile('./index.android.js', imports);
     }
+
+    // Clear react packager cache beforehand to avoid surprises ...
+    clearReactPackagerCache();
 
     await spin(`Bundling miniapp(s)`, reactNativeBundle(paths));
 
