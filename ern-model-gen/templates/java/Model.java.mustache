@@ -57,6 +57,13 @@ public class {{className}} implements Parcelable {
     {{/className}}
 
     {{#properties}}
+    {{#description}}
+    /**
+    * {{description}}
+    *
+    * @return {{javaType}}
+    */
+    {{/description}}
     {{#isRequired}}
     @NonNull
     {{/isRequired}}
