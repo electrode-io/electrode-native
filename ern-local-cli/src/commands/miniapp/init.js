@@ -1,4 +1,4 @@
-import MiniApp from '../util/miniapp.js';
+import MiniApp from '../../util/miniapp.js';
 
 exports.command = 'init <appName> [platformVersion] [napSelector] [scope]'
 exports.desc = 'Create a new ern application'

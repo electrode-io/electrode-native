@@ -26,8 +26,8 @@ Depending of the user infrastructure and development lifecycle this command line
 │   │   ├── api                     Generates an API package using ern-api-gen
 │   │   ├── container               Generates a native container using ern-container-gen
 │   │   ├── model                   Generates native models using ern-model-gen
-│   ├── init                        Create a new mini app
 │   ├── miniapp                     [=== MiniApp development related commands ===]
+│   │   ├── init                    Creates a new miniapp
 │   │   ├── compat                  [--- Binary compatibility checking --]
 │   │   |   ├── nativeapp           Check binary compatibility of miniapp with a native app version
 │   │   |   ├── platform            Check binary compatibility of miniapp with a platform version
@@ -207,30 +207,31 @@ This command relies on [ern-container-gen](../ern-container-gen). For more detai
 > ern generate container walmart:android:4.1 1.0.0
 ```
 
-### init
+### miniapp
 
-`ern init <appName> [platformVersion] [napSelector] [scope]`  
+All `miniapp` commands needs to be executed from the root of a miniapp folder (except the init command which actually creates the miniapp folder !)
+
+**Creates a new miniapp**
+
+`ern miniapp init <appName> [platformVersion] [napSelector] [scope] [verbose]`  
 
 This command can be used to create a new miniapp.  
 `appName` is the only mandatory argument, being the name of the application to create.  
 `platformVersion` (alias `v`) can be provided to create a miniapp at a given platform version. If not provided, the miniapp will be created using the currently activated version of the platform.  
 `napSelector` (alias `s`) can be provided to create a miniapp using the same platform version that is being used by a specific native application. If not provided, the miniapp will be created using the currently activated version of the platform.  
 `platformVersion` and `napSelector` are mutually exclusive.  
-`scope` can be provided to npm scope the package containing the miniapp. By default no scope is used.
+`scope` can be provided to npm scope the package containing the miniapp. By default no scope is used.  
+`verbose` flag can be specified if verbose logging output is wished during initialization.
 
 The application will be created in a folder named after the `appName` provided, relative to where this command was executed.
 
 For now, this command just executes `react-native init` command, using the react-native version supported by the platform version used. It will then pactch the `package.json` of the resulting created app adding the platform version and optionally the scope.
 
 ```shell
-> ern init MyCoolMiniApp
-> ern init MyCoolMiniApp -s walmart:android:4.1
-> ern init MyCoolMiniApp -v 4 --scope walmart
+> ern miniapp init MyCoolMiniApp
+> ern miniapp init MyCoolMiniApp -s walmart:android:4.1
+> ern miniapp init MyCoolMiniApp -v 4 --scope walmart --verbose'
 ```
-
-### miniapp
-
-All `miniapp` commands needs to be executed from the root of a miniapp folder.  
 
 **Check binary compatibility of miniapp with a native application version**  
 
