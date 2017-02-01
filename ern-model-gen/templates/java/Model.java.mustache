@@ -1,14 +1,32 @@
 package com.walmartlabs.ern.model;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class {{className}} implements Parcelable {
-{{#properties}}
+
+    private static final String KEY_BUNDLE_{{{classNameUpperCase}}} = "{{name}}";
+
+    @Nullable
+    public static {{className}} fromBundle(@Nullable Bundle bundle) {
+        if (bundle == null) {
+            return null;
+        }
+
+        Parcelable parcelable = bundle.getParcelable(KEY_BUNDLE_{{{classNameUpperCase}}});
+        if (parcelable instanceof {{className}}) {
+            return ({{className}}) parcelable;
+        } else {
+            return null;
+        }
+    }
+
+    {{#properties}}
     private final {{javaType}} {{name}};
-{{/properties}}
+    {{/properties}}
 
     private {{className}}(Builder builder) {
         {{#properties}}
@@ -39,15 +57,15 @@ public class {{className}} implements Parcelable {
     {{/className}}
 
     {{#properties}}
-        {{#isRequired}}
-        @NonNull
-        {{/isRequired}}
-        {{^isRequired}}
-        @Nullable
-        {{/isRequired}}
-        public {{javaType}} get{{className}}() {
-            return {{name}};
-        }
+    {{#isRequired}}
+    @NonNull
+    {{/isRequired}}
+    {{^isRequired}}
+    @Nullable
+    {{/isRequired}}
+    public {{javaType}} get{{className}}() {
+        return {{name}};
+    }
 
     {{/properties}}
 
@@ -63,6 +81,12 @@ public class {{className}} implements Parcelable {
         {{/properties}}
     }
 
+    @NonNull
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_BUNDLE_{{{classNameUpperCase}}}, this);
+        return bundle;
+    }
 
     public static class Builder {
         {{#properties}}

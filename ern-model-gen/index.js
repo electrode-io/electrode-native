@@ -185,6 +185,9 @@ const defaultAndroidViews = {
     },
     "parcelableWriteSetter": function () {
         return parcelableWriteSetter(this)
+    },
+    "classNameUpperCase": function () {
+        return this.className.toUpperCase();
     }
 }
 
