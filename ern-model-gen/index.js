@@ -131,7 +131,7 @@ function generateViews({ model, parent, required , propertiesCount = 1}) {
       view = { ...view, parent }
     }
 
-    return Object.assign({}, view, defaultAndroidViews);
+    return Object.assign({}, view, androidViews, defaultViews);
   })
 }
 
@@ -186,13 +186,19 @@ function lowercaseFirstLetter(string) {
   return `${string.charAt(0).toLowerCase()}${string.slice(1)}`;
 }
 
-const defaultAndroidViews = {
+const androidViews = {
     "parcelableReadGetter": function () {
         return parcelableReadGetter(this)
     },
     "parcelableWriteSetter": function () {
         return parcelableWriteSetter(this)
     },
+    "classNameUpperCase": function () {
+        return this.className.toUpperCase();
+    }
+}
+
+const defaultViews = {
     "classNameUpperCase": function () {
         return this.className.toUpperCase();
     }
