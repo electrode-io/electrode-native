@@ -8,4 +8,6 @@
   NSString *__nonnull const GET_TEMPERATURE_FOR = @"com.walmartlabs.ern.weather.get.temperature.for";
   NSString *__nonnull const GET_CURRENT_TEMPERATURE = @"com.walmartlabs.ern.weather.get.current.temperature";
   NSString *__nonnull const GET_CURRENT_LOCATIONS = @"com.walmartlabs.ern.weather.get.current.locations";
+  NSString *__nonnull const GET_LOCATION = @"com.walmartlabs.ern.weather.get.location";
+  NSString *__nonnull const SET_LOCATION = @"com.walmartlabs.ern.weather.set.location";
 @end

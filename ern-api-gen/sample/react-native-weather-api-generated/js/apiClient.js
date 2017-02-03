@@ -50,3 +50,16 @@ export function getCurrentLocations(dispatchMode = DispatchMode.NATIVE) {
     dispatchMode
   });
 }
+export function getLocation(dispatchMode = DispatchMode.NATIVE) {
+  return electrodeBridge.sendRequest(
+    messages.GET_LOCATION, {
+    dispatchMode
+  });
+}
+export function setLocation(location, dispatchMode = DispatchMode.NATIVE) {
+  return electrodeBridge.sendRequest(
+    messages.SET_LOCATION, {
+    data: { location },
+    dispatchMode
+  });
+}

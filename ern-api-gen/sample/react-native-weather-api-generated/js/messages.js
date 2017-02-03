@@ -5,3 +5,5 @@ export const REFRESH_WEATHER_FOR = "com.walmartlabs.ern.weather.refresh.weather.
 export const GET_TEMPERATURE_FOR = "com.walmartlabs.ern.weather.get.temperature.for";
 export const GET_CURRENT_TEMPERATURE = "com.walmartlabs.ern.weather.get.current.temperature";
 export const GET_CURRENT_LOCATIONS = "com.walmartlabs.ern.weather.get.current.locations";
+export const GET_LOCATION = "com.walmartlabs.ern.weather.get.location";
+export const SET_LOCATION = "com.walmartlabs.ern.weather.set.location";

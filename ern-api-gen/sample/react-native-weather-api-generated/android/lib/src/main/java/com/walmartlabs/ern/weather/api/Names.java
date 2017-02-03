@@ -8,4 +8,6 @@ public final class Names {
   public static String GET_TEMPERATURE_FOR = "com.walmartlabs.ern.weather.get.temperature.for";
   public static String GET_CURRENT_TEMPERATURE = "com.walmartlabs.ern.weather.get.current.temperature";
   public static String GET_CURRENT_LOCATIONS = "com.walmartlabs.ern.weather.get.current.locations";
+  public static String GET_LOCATION = "com.walmartlabs.ern.weather.get.location";
+  public static String SET_LOCATION = "com.walmartlabs.ern.weather.set.location";
 }

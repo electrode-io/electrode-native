@@ -46,3 +46,15 @@ export function handleGetCurrentLocationsRequest(handler) {
       return handler(requestData);
     });
 }
+export function handleGetLocationRequest(handler) {
+  electrodeBridge.registerRequestHandler(messages.GET_LOCATION,
+    (requestData) => {
+      return handler(requestData);
+    });
+}
+export function handleSetLocationRequest(handler) {
+  electrodeBridge.registerRequestHandler(messages.SET_LOCATION,
+    (requestData) => {
+      return handler(requestData);
+    });
+}

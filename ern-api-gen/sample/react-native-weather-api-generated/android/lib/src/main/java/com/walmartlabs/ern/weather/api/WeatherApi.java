@@ -9,6 +9,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ExistingHandlerException;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandlerEx;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
+import com.walmartlabs.ern.weather.model.LatLong;
 
 public final class WeatherApi {
 
@@ -21,6 +22,8 @@ public final class WeatherApi {
   private static RequestHandlerEx<String,Integer> sGetTemperatureForRequestHandler;
   private static RequestHandler<Integer> sGetCurrentTemperatureRequestHandler;
   private static RequestHandler<String[]> sGetCurrentLocationsRequestHandler;
+  private static RequestHandler<LatLong> sGetLocationRequestHandler;
+  private static RequestHandlerEx<LatLong,Void> sSetLocationRequestHandler;
 
   //====================================================================
   // Request Handlers affectation (Public client surface)
@@ -40,6 +43,12 @@ public final class WeatherApi {
   }
   public static void handleGetCurrentLocationsRequest(RequestHandler<String[]> handler) {
       sGetCurrentLocationsRequestHandler = handler;
+  }
+  public static void handleGetLocationRequest(RequestHandler<LatLong> handler) {
+      sGetLocationRequestHandler = handler;
+  }
+  public static void handleSetLocationRequest(RequestHandlerEx<LatLong,Void> handler) {
+      sSetLocationRequestHandler = handler;
   }
 
   //====================================================================
@@ -150,6 +159,39 @@ public final class WeatherApi {
             public void onSuccess(String[] obj) {
               Bundle bundle = new Bundle(); bundle.putStringArray("rsp", obj);
               requestCompletioner.success(bundle);
+            }
+
+            @Override
+            public void onError(String code, String message) {
+              requestCompletioner.error(code, message);
+            }
+        });
+      }
+    });
+    ElectrodeBridge.registerRequestHandler(Names.GET_LOCATION, new RequestDispatcherImpl.RequestHandler() {
+      @Override
+      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+        WeatherApi.sGetLocationRequestHandler.handleRequest(new Response<LatLong>() {
+            @Override
+            public void onSuccess(LatLong obj) {
+              Bundle bundle = obj.toBundle();
+              requestCompletioner.success(bundle);
+            }
+
+            @Override
+            public void onError(String code, String message) {
+              requestCompletioner.error(code, message);
+            }
+        });
+      }
+    });
+    ElectrodeBridge.registerRequestHandler(Names.SET_LOCATION, new RequestDispatcherImpl.RequestHandler() {
+      @Override
+      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+        WeatherApi.sSetLocationRequestHandler.handleRequest(LatLong.fromBundle(bundle),new Response<Void>() {
+            @Override
+            public void onSuccess(Void obj) {
+              requestCompletioner.success(null);
             }
 
             @Override

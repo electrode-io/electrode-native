@@ -17,5 +17,11 @@
 - (void) handleGetCurrentLocationsRequest: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler {
 
 }
+- (void) handleGetLocationRequest: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler {
+
+}
+- (void) handleSetLocationRequest: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler {
+
+}
 
 @end
