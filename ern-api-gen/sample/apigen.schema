@@ -23,3 +23,9 @@ request getCurrentTemperature() : Integer
 
 // Request with no request payload and a primitive array response payload
 request getCurrentLocations() : String[]
+
+//Request with a model object payload and an empty response type
+request getLocation() : LatLong
+
+//Request with a model object payload and an empty response type
+request setLocation(location: LatLong)

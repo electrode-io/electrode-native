@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "root",
+  "name": "LatLong",
+  "type": "object",
+  "properties": {
+    "lat": {
+      "type": "number"
+    },
+    "long": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "lat",
+    "long"
+  ]
+}

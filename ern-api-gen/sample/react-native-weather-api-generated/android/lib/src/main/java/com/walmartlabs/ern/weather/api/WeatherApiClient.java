@@ -10,6 +10,7 @@ import com.walmartlabs.electrode.reactnative.bridge.EventDispatcherImpl;
 import com.walmartlabs.electrode.reactnative.bridge.RequestCompletionListener;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.EventListener;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
+import com.walmartlabs.ern.weather.model.LatLong;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -162,6 +163,58 @@ public final class WeatherApiClient {
        @Override
        public void onSuccess(Bundle bundle) {
            response.onSuccess(bundle.getStringArray("rsp"));
+       }
+
+       @Override
+       public void onError(String code, String message) {
+           response.onError(code, message);
+       }
+     });
+  }
+  public static void getLocation(
+                                final Response<LatLong> response) {
+    getLocation( response, DispatchMode.JS);
+  }
+
+  public static void getLocation(
+                                final Response<LatLong> response,
+                                final DispatchMode dispatchMode) {
+    
+     ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_LOCATION)
+                       
+                                      .withDispatchMode(dispatchMode)
+                                      .build();
+
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+       @Override
+       public void onSuccess(Bundle bundle) {
+           response.onSuccess(LatLong.fromBundle(bundle));
+       }
+
+       @Override
+       public void onError(String code, String message) {
+           response.onError(code, message);
+       }
+     });
+  }
+  public static void setLocation(final LatLong location,
+                                final Response response) {
+    setLocation(location, response, DispatchMode.JS);
+  }
+
+  public static void setLocation(final LatLong location,
+                                final Response response,
+                                final DispatchMode dispatchMode) {
+    Bundle bundle = location.toBundle();
+     ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.SET_LOCATION)
+                       .withData(bundle)
+                                      .withDispatchMode(dispatchMode)
+                                      .build();
+
+     ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
+       @Override
+       public void onSuccess(Bundle bundle) {
+           response.onSuccess(null);
        }
 
        @Override

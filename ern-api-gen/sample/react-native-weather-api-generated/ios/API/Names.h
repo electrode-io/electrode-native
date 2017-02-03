@@ -8,4 +8,6 @@
   extern NSString *__nonnull const GET_TEMPERATURE_FOR;
   extern NSString *__nonnull const GET_CURRENT_TEMPERATURE;
   extern NSString *__nonnull const GET_CURRENT_LOCATIONS;
+  extern NSString *__nonnull const GET_LOCATION;
+  extern NSString *__nonnull const SET_LOCATION;
 @end
