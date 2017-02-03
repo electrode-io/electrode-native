@@ -11,9 +11,6 @@ import * as messages from "./messages.js";
   export function weatherUdpatedAtLocation(location, dispatchMode = DispatchMode.NATIVE ) {
     electrodeBridge.emitEvent(messages.WEATHER_UDPATED_AT_LOCATION, {data: { location }, dispatchMode});
   }
-  export function weatherUpdatedAtPosition(position, dispatchMode = DispatchMode.NATIVE ) {
-    electrodeBridge.emitEvent(messages.WEATHER_UPDATED_AT_POSITION, {data: { position }, dispatchMode});
-  }
 
 //====================================================================
 // Request handler registration
@@ -43,8 +40,8 @@ export function handleGetCurrentTemperatureRequest(handler) {
       return handler(requestData);
     });
 }
-export function handleGetCurrentTemperaturesRequest(handler) {
-  electrodeBridge.registerRequestHandler(messages.GET_CURRENT_TEMPERATURES,
+export function handleGetCurrentLocationsRequest(handler) {
+  electrodeBridge.registerRequestHandler(messages.GET_CURRENT_LOCATIONS,
     (requestData) => {
       return handler(requestData);
     });

@@ -10,7 +10,6 @@ import com.walmartlabs.electrode.reactnative.bridge.EventDispatcherImpl;
 import com.walmartlabs.electrode.reactnative.bridge.RequestCompletionListener;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.EventListener;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
-import com.walmartlabs.ern.weather.model.LatLng;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -25,8 +24,6 @@ public final class WeatherApiClient {
           Collections.newSetFromMap(new HashMap<EventListener, Boolean>());
   private static Set<EventListener<String>> sWeatherUdpatedAtLocationListeners =
           Collections.newSetFromMap(new HashMap<EventListener<String>, Boolean>());
-  private static Set<EventListener<LatLng>> sWeatherUpdatedAtPositionListeners =
-          Collections.newSetFromMap(new HashMap<EventListener<LatLng>, Boolean>());
 
   //====================================================================
   // Events listener registration (Public client surface)
@@ -37,9 +34,6 @@ public final class WeatherApiClient {
     }
   public static void onWeatherUdpatedAtLocation(EventListener<String> listener) {
       sWeatherUdpatedAtLocationListeners.add(listener);
-    }
-  public static void onWeatherUpdatedAtPosition(EventListener<LatLng> listener) {
-      sWeatherUpdatedAtPositionListeners.add(listener);
     }
 
   //====================================================================
@@ -150,16 +144,16 @@ public final class WeatherApiClient {
        }
      });
   }
-  public static void getCurrentTemperatures(
-                                final Response<Integer[]> response) {
-    getCurrentTemperatures( response, DispatchMode.JS);
+  public static void getCurrentLocations(
+                                final Response<String[]> response) {
+    getCurrentLocations( response, DispatchMode.JS);
   }
 
-  public static void getCurrentTemperatures(
-                                final Response<Integer[]> response,
+  public static void getCurrentLocations(
+                                final Response<String[]> response,
                                 final DispatchMode dispatchMode) {
     
-     ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_CURRENT_TEMPERATURES)
+     ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_CURRENT_LOCATIONS)
                        
                                       .withDispatchMode(dispatchMode)
                                       .build();
@@ -167,7 +161,7 @@ public final class WeatherApiClient {
      ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
-           response.onSuccess(bundle.getIntArray("rsp"));
+           response.onSuccess(bundle.getStringArray("rsp"));
        }
 
        @Override
@@ -199,14 +193,6 @@ public final class WeatherApiClient {
       public void onEvent(@NonNull Bundle bundle) {
        for (EventListener<String> listener : sWeatherUdpatedAtLocationListeners) {
          listener.onEvent(bundle.getString("location"));
-       }
-      }
-    });
-    ElectrodeBridge.registerEventListener(Names.WEATHER_UPDATED_AT_POSITION, new EventDispatcherImpl.EventListener() {
-      @Override
-      public void onEvent(@NonNull Bundle bundle) {
-       for (EventListener<LatLng> listener : sWeatherUpdatedAtPositionListeners) {
-         listener.onEvent(LatLng.fromBundle(bundle));
        }
       }
     });

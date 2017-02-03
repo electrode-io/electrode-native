@@ -9,7 +9,6 @@ import com.walmartlabs.electrode.reactnative.bridge.ExistingHandlerException;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandlerEx;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
-import com.walmartlabs.ern.weather.model.LatLng;
 
 public final class WeatherApi {
 
@@ -21,7 +20,7 @@ public final class WeatherApi {
   private static RequestHandlerEx<String,Void> sRefreshWeatherForRequestHandler;
   private static RequestHandlerEx<String,Integer> sGetTemperatureForRequestHandler;
   private static RequestHandler<Integer> sGetCurrentTemperatureRequestHandler;
-  private static RequestHandler<Integer[]> sGetCurrentTemperaturesRequestHandler;
+  private static RequestHandler<String[]> sGetCurrentLocationsRequestHandler;
 
   //====================================================================
   // Request Handlers affectation (Public client surface)
@@ -39,8 +38,8 @@ public final class WeatherApi {
   public static void handleGetCurrentTemperatureRequest(RequestHandler<Integer> handler) {
       sGetCurrentTemperatureRequestHandler = handler;
   }
-  public static void handleGetCurrentTemperaturesRequest(RequestHandler<Integer[]> handler) {
-      sGetCurrentTemperaturesRequestHandler = handler;
+  public static void handleGetCurrentLocationsRequest(RequestHandler<String[]> handler) {
+      sGetCurrentLocationsRequestHandler = handler;
   }
 
   //====================================================================
@@ -63,17 +62,6 @@ public final class WeatherApi {
   public static void weatherUdpatedAtLocation(String location, final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
       Bundle bundle = new Bundle(); bundle.putString("location",                   location);
       ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.WEATHER_UDPATED_AT_LOCATION)
-                                     .withDispatchMode(dispatchMode)
-                                     .withData(bundle)
-                                     .build());
-  }
-  public static void weatherUpdatedAtPosition(LatLng position) {
-      weatherUpdatedAtPosition(position, ElectrodeBridgeEvent.DispatchMode.JS);
-  }
-
-  public static void weatherUpdatedAtPosition(LatLng position, final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
-      Bundle bundle = position.toBundle();
-      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.WEATHER_UPDATED_AT_POSITION)
                                      .withDispatchMode(dispatchMode)
                                      .withData(bundle)
                                      .build());
@@ -154,13 +142,13 @@ public final class WeatherApi {
         });
       }
     });
-    ElectrodeBridge.registerRequestHandler(Names.GET_CURRENT_TEMPERATURES, new RequestDispatcherImpl.RequestHandler() {
+    ElectrodeBridge.registerRequestHandler(Names.GET_CURRENT_LOCATIONS, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-        WeatherApi.sGetCurrentTemperaturesRequestHandler.handleRequest(new Response<Integer[]>() {
+        WeatherApi.sGetCurrentLocationsRequestHandler.handleRequest(new Response<String[]>() {
             @Override
-            public void onSuccess(Integer[] obj) {
-              Bundle bundle = new Bundle(); bundle.putIntArray("rsp", obj);
+            public void onSuccess(String[] obj) {
+              Bundle bundle = new Bundle(); bundle.putStringArray("rsp", obj);
               requestCompletioner.success(bundle);
             }
 

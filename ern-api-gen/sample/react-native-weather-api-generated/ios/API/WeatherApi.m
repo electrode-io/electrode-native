@@ -14,7 +14,7 @@
 - (void) handleGetCurrentTemperatureRequest: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler {
 
 }
-- (void) handleGetCurrentTemperaturesRequest: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler {
+- (void) handleGetCurrentLocationsRequest: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler {
 
 }
 
