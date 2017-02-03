@@ -581,9 +581,9 @@ export default async function generateApi({
     // Construct output path + java/js generation paths
     //--------------------------------------------------------------------------
     const outFolder = `${config.moduleName}-generated`;
-    let path = config.namespace.replace(/\./g, '/');
+    let destPath = config.namespace.replace(/\./g, '/');
     config.javaDest =
-    `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/api`;
+    `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/api`;
     config.objCDest = `${outFolder}/ios`;
     config.jsDest = `${outFolder}/js`;
 
@@ -819,9 +819,10 @@ export default async function generateApi({
 
     if(hasModelSchema()){
         initModelGen({
-          javaModelDest: `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model`,
+          javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
           javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
-          objCModelDest: `${outFolder}/ios/MODEL`
+          objCModelDest: `${outFolder}/ios/MODEL`,
+          schemaPath:`${path.resolve(process.cwd(), 'schema.json')}`
         })
     }
 
