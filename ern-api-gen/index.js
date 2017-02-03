@@ -1,3 +1,4 @@
+import initModelGen from "../ern-model-gen/index.js";
 const fs = require('fs');
 const child_process = require('child_process');
 const execSync = child_process.execSync;
@@ -9,6 +10,7 @@ const Mustache = require('mustache');
 const readDir = require('fs-readdir-recursive');
 const shell = require('shelljs');
 const xcode = require('xcode');
+const path = require('path');
 
 const rootDir = shell.pwd();
 
@@ -515,6 +517,19 @@ async function patchHull(view) {
   }
 }
 
+
+function addIfModelObject(models, type) {
+    if (type
+        && !isArrayType(type)
+        && !primitiveTypes.includes(type)) {
+        models.add(type);
+    }
+}
+
+function hasModelSchema() {
+    return fs.existsSync(path.resolve(process.cwd(), 'schema.json'));
+}
+
 //==============================================================================
 // Main entry point
 //==============================================================================
@@ -611,16 +626,21 @@ export default async function generateApi({
       // to generate correct import statements to import model classes
       "models": function() {
        // todo : cache this somehow
-       let models = new Set();
-       // Only look to events as we just support requests with no payload for now
-       for (let event of config.events) {
-         if (event.payload
-           && !isArrayType(event.payload.type)
-           && !primitiveTypes.includes(event.payload.type)) {
-           models.add(event.payload.type);
-         }
-       }
-       return Array.from(models);
+        let models = new Set();
+        for (let property in config) {
+            if (config.hasOwnProperty(property)) {
+                if (property === 'events'
+                    || property === 'requests') {
+                    for (let item of config[property]) {
+                        if(item.payload) {
+                            addIfModelObject(models, item.payload.type)
+                        }
+                        addIfModelObject(models, item.respPayloadType)
+                    }
+                }
+            }
+        }
+        return Array.from(models);
       },
       // == Per event/request ==
       // True if this event has a payload
@@ -796,11 +816,19 @@ export default async function generateApi({
       shell.cd(`${outFolder}`);
       execSync(`npm publish`);
     }
+
+    if(hasModelSchema()){
+        initModelGen({
+          javaModelDest: `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model`,
+          javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
+          objCModelDest: `${outFolder}/ios/MODEL`
+        })
+    }
+
   } catch (e) {
     log.error('generateApiModule', e);
   }
 }
-
 //--------------------------------------------------------------------------
 // Dirty hardcoded stuff
 // As model generation is not yet included, just use a sample model for now
