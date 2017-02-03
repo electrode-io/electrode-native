@@ -14,10 +14,12 @@ artifacts {
 uploadArchives {
   repositories {
       mavenDeployer {
-          pom.version = '0.0.1-{{{ernPlatformVersion}}}'
+          pom.version = '0.0.1'
           pom.artifactId = 'react-native-weather-api'
           pom.groupId = 'com.walmartlabs.ern'
-          {{{repository}}}
+          // TODO : Add target repository template variable if we
+          // want to support publication to maven (if not needed anylonger
+          // just remove this whole uploadArchives block)
       }
   }
 }
@@ -42,5 +44,5 @@ android {
 }
 
 dependencies {
-    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.1.10-{{{ernPlatformVersion}}}'
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.1.10'
 }

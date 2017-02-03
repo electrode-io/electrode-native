@@ -11,9 +11,6 @@ export function onWeatherUpdated(handler) {
 export function onWeatherUdpatedAtLocation(handler) {
   electrodeBridge.registerEventListener(messages.WEATHER_UDPATED_AT_LOCATION, weatherUdpatedAtLocationHandler);
 }
-export function onWeatherUpdatedAtPosition(handler) {
-  electrodeBridge.registerEventListener(messages.WEATHER_UPDATED_AT_POSITION, weatherUpdatedAtPositionHandler);
-}
 
 //====================================================================
 // Requests sending
@@ -47,9 +44,9 @@ export function getCurrentTemperature(dispatchMode = DispatchMode.NATIVE) {
     dispatchMode
   });
 }
-export function getCurrentTemperatures(dispatchMode = DispatchMode.NATIVE) {
+export function getCurrentLocations(dispatchMode = DispatchMode.NATIVE) {
   return electrodeBridge.sendRequest(
-    messages.GET_CURRENT_TEMPERATURES, {
+    messages.GET_CURRENT_LOCATIONS, {
     dispatchMode
   });
 }

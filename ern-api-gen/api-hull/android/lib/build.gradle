@@ -14,10 +14,12 @@ artifacts {
 uploadArchives {
   repositories {
       mavenDeployer {
-          pom.version = '{{{apiVersion}}}-{{{ernPlatformVersion}}}'
+          pom.version = '{{{apiVersion}}}'
           pom.artifactId = '{{{moduleName}}}'
           pom.groupId = '{{{namespace}}}'
-          {{{repository}}}
+          // TODO : Add target repository template variable if we
+          // want to support publication to maven (if not needed anylonger
+          // just remove this whole uploadArchives block)
       }
   }
 }
@@ -42,5 +44,5 @@ android {
 }
 
 dependencies {
-    compile 'com.walmartlabs.ern:react-native-electrode-bridge:{{{bridgeVersion}}}-{{{ernPlatformVersion}}}'
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:{{{bridgeVersion}}}'
 }
