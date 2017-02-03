@@ -2,7 +2,7 @@ import platform from '../../util/platform.js'
 import generateApi from '../../../../ern-api-gen/index.js'
 const log = require('console-log-level')();
 
-exports.command = 'api [publishToNpm]'
+exports.command = 'api [publishToNpm] [modelsSchemaPath]'
 exports.desc = 'Run api generator'
 
 exports.builder = function(yargs) {
@@ -12,15 +12,19 @@ exports.builder = function(yargs) {
     type: 'bool',
     default: false,
     describe: 'Verbose output'
-  });
+  })
+  .option('modelsSchemaPath', {
+    describe: 'Path to the models schema'
+  });;
 }
 
 exports.handler = async function (argv) {
   try {
     const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge');
-    generateApi({
+    await generateApi({
       bridgeVersion: `${bridgeDep.version}`,
-      shouldPublishToNpm: argv.publishToNpm
+      shouldPublishToNpm: argv.publishToNpm,
+      modelsSchemaPath: argv.modelsSchemaPath
     });
   } catch(e) {
     log.error(e);
