@@ -174,12 +174,13 @@ This command will list all the dependencies used by a given native application v
 
 **api**
 
-`ern generate api [publishToNpm]`  
+`ern generate api [publishToNpm] [modelsSchemaPath]`  
 
 This command can be used to generate a complete api package, containing JS/iOS/Android code that can be then consumed by native app and/or miniapps.  
 A valid `apigen.schema` must be located in the folder wherever this command is run from.  
 Optionally, the user can ask for the api package to be published to npm after generation, through the optional switch `publishToNpm` (alias `p`). By default, npm auto publication is disabled.
 This command relies on [ern-api-gen](../ern-api-gen). For more details about the generation process and the structure of `apigen.schema`, feel free to go check it out.
+By default, api gen will look for a models schema name `schema.json`. If you want to specify the path to a custom model file you can use the option `modelsSchemaPath`.
 
 ```shell
 > ern generate api --publishToNpm
@@ -189,9 +190,11 @@ This command relies on [ern-api-gen](../ern-api-gen). For more details about the
 
 **model**
 
-`ern generate model`
+`ern generate model [schemaPath]`
 
 This command can be used to generate models based on a JSON schema.
+
+By default the model generator will look for a models schema file named `schema.json` at the root of where the command is exucted. You can provide your own path to a schema file to be used instead, using the `schemaPath` option.
 
 
 **container**

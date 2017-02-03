@@ -1,4 +1,4 @@
-import initModelGen from "../ern-model-gen/index.js";
+import runModelGen from "../ern-model-gen/index.js";
 const fs = require('fs');
 const child_process = require('child_process');
 const execSync = child_process.execSync;
@@ -541,6 +541,7 @@ export default async function generateApi({
   bridgeVersion,
   schemaFilePath,
   configFilePath,
+  modelsSchemaPath,
   shouldPublishToNpm = false
 } = {}) {
   try {
@@ -818,12 +819,12 @@ export default async function generateApi({
     }
 
     if(hasModelSchema()){
-        initModelGen({
-          javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
-          javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
-          objCModelDest: `${outFolder}/ios/MODEL`,
-          schemaPath:`${path.resolve(process.cwd(), 'schema.json')}`
-        })
+      runModelGen({
+        javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
+        javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
+        objCModelDest: `${outFolder}/ios/MODEL`,
+        schemaPath: argv.modelsSchemaPath
+      })
     }
 
   } catch (e) {

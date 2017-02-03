@@ -1,7 +1,6 @@
 
 import * as util from "./util.js"
 import path from "path"
-import minimist from "minimist"
 import Mustache from "mustache"
 import chalk from "chalk"
 
@@ -256,28 +255,24 @@ const DEFAULT_OUTPUT_DIR = 'output'
 const DEFAULT_OUTPUT_DIR_IOS = DEFAULT_OUTPUT_DIR + '/ios'
 const DEFAULT_OUTPUT_DIR_ANDROID = DEFAULT_OUTPUT_DIR  +'/android/com/walmartlabs/ern/model'
 const DEFAULT_JAVA_PACKAGE = 'com.walmartlabs.ern.model'
+const DEFAULT_SCHEMA_PATH = path.resolve(process.cwd(), 'schema.json')
 
 let objCOutput;
 let javaOutput;
-let javaPkg ;
+let javaPkg;
 
-export default async function initModelGen(module) {
+export default async function runModelGen({
+    javaModelDest = DEFAULT_OUTPUT_DIR_ANDROID,
+    objCModelDest = DEFAULT_OUTPUT_DIR_IOS,
+    javaPackage = DEFAULT_JAVA_PACKAGE,
+    schemaPath = DEFAULT_SCHEMA_PATH
+  } = {}) {
+
+  javaOutput = javaModelDest;
+  objCOutput = objCModelDest;
+  javaPkg = javaPackage;
+
   console.log(chalk.blue("Models generation, in progress......."))
-  const argv = minimist(process.argv.slice(2))
-  const { schema = "schema.json" } = argv
-  let schemaPath;
-
-    if (module) {
-        javaOutput = module.javaModelDest;
-        javaPkg = module.javaPackage;
-        objCOutput = module.objCModelDest;
-        schemaPath = module.schemaPath;
-    } else {
-        javaOutput = DEFAULT_OUTPUT_DIR_ANDROID;
-        javaPkg = DEFAULT_JAVA_PACKAGE;
-        objCOutput = DEFAULT_OUTPUT_DIR_IOS;
-        schemaPath = path.resolve(process.cwd(), schema)
-    }
 
   try {
     const json = await util.readFile(schemaPath)
