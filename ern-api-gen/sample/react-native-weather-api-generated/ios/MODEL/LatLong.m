@@ -8,8 +8,8 @@
   NSNumber * lat = dictionary[@"lat"];
   latLong.lat = lat;
 
-  NSNumber * long = dictionary[@"long"];
-  latLong.long = long;
+  NSNumber * lon = dictionary[@"lon"];
+  latLong.lon = lon;
 
   
   return latLong;
@@ -18,7 +18,7 @@
 - (NSDictionary<NSString *, id>  *_Nonnull) toDictionary {
   return @{
     @"lat" : [self lat],
-    @"long" : [self long]
+    @"lon" : [self lon]
   };
 }
 
