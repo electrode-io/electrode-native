@@ -581,9 +581,9 @@ export default async function generateApi({
     // Construct output path + java/js generation paths
     //--------------------------------------------------------------------------
     const outFolder = `${config.moduleName}-generated`;
-    let path = config.namespace.replace(/\./g, '/');
+    let destPath = config.namespace.replace(/\./g, '/');
     config.javaDest =
-    `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/api`;
+    `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/api`;
     config.objCDest = `${outFolder}/ios`;
     config.jsDest = `${outFolder}/js`;
 
@@ -819,9 +819,10 @@ export default async function generateApi({
 
     if(hasModelSchema()){
         initModelGen({
-          javaModelDest: `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model`,
+          javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
           javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
-          objCModelDest: `${outFolder}/ios/MODEL`
+          objCModelDest: `${outFolder}/ios/MODEL`,
+          schemaPath:`${path.resolve(process.cwd(), 'schema.json')}`
         })
     }
 
@@ -829,48 +830,3 @@ export default async function generateApi({
     log.error('generateApiModule', e);
   }
 }
-//--------------------------------------------------------------------------
-// Dirty hardcoded stuff
-// As model generation is not yet included, just use a sample model for now
-// to validate generated code can properly compile
-// Keeping it here commented for reference until ern-model-gen is integrated.
-//--------------------------------------------------------------------------
-
-/*const sampleJavaModel = `package ${config.namespace}.${config.apiName}.model;
-
-import android.os.Bundle;
-
-public class LatLng {
-  private float lat;
-  private float lng;
-
-  public LatLng(float lat, float lng) {
-    this.lat = lat;
-    this.lng = lng;
-  }
-
-  public float getLat() {
-    return this.lat;
-  }
-
-  public float getLng() {
-    return this.lng;
-  }
-
-  public static LatLng fromBundle(Bundle bundle) {
-    return new LatLng(bundle.getFloat("lat"), bundle.getFloat("lng"));
-  }
-
-  public Bundle toBundle() {
-    Bundle result = new Bundle();
-    result.putFloat("lat", this.lat);
-    result.putFloat("lng", this.lng);
-    return result;
-  }
-}`;
-
-shell.mkdir(`${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model`);
-fs.writeFileSync(
-  `${outFolder}/android/lib/src/main/java/${path}/${config.apiName}/model/LatLng.java`,
-  sampleJavaModel,
-  'utf-8');*/

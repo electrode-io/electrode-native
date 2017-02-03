@@ -265,16 +265,18 @@ export default async function initModelGen(module) {
   console.log(chalk.blue("Models generation, in progress......."))
   const argv = minimist(process.argv.slice(2))
   const { schema = "schema.json" } = argv
-  const schemaPath = path.resolve(process.cwd(), schema)
+  let schemaPath;
 
     if (module) {
         javaOutput = module.javaModelDest;
         javaPkg = module.javaPackage;
         objCOutput = module.objCModelDest;
+        schemaPath = module.schemaPath;
     } else {
         javaOutput = DEFAULT_OUTPUT_DIR_ANDROID;
         javaPkg = DEFAULT_JAVA_PACKAGE;
         objCOutput = DEFAULT_OUTPUT_DIR_IOS;
+        schemaPath = path.resolve(process.cwd(), schema)
     }
 
   try {
