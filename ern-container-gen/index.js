@@ -240,50 +240,8 @@ async function downloadPluginSource(pluginOrigin) {
   return Promise.resolve(`${shell.pwd()}/${downloadPath}`);
 }
 
-// Apply transformation of plugin source based on mustache templates
-//
-// plugin: The plugin
-// pluginTemplatesPath: Absolute path to the plugin templates folder
-// pluginSourcePath: Absolute path to the plugin source folder
-// pluginTransformArr: An array of plugin transform objects
-// Sample plugin transform object :
-// [
-//  {
-//    "file": "ReactAndroid/release.gradle",
-//    "template": "release.gradle.mustache"
-//  }
-// ]
-//
-// This is only needed as of now for react-native as we patch its gradle
-// file so that we can publish it to the desired maven repo target
-// But might be used for other plugins.
-async function transformPluginSource(plugin, pluginTemplatesPath, pluginSourcePath, pluginTransformArr) {
-  for (const pluginTransform of pluginTransformArr) {
-    log.info(`patching ${pluginSourcePath}/${pluginTransform.file}`);
-    let view = Object.assign({}, mustacheView,
-      {
-        pluginVersion: plugin.versionEx,
-        pomGroupId: mustacheView.namespace
-      });
-
-    let result;
-    // Use ext template
-    if (pluginTransform.template) {
-      result = await mustacheRenderUsingTemplateFile(
-          `${pluginTemplatesPath}/${pluginTransform.template}`, view);
-    }
-    // In place template
-    else {
-      result = await mustacheRenderUsingTemplateFile(
-          `${pluginSourcePath}/${pluginTransform.file}`, view);
-    }
-
-    await writeFile(`${pluginSourcePath}/${pluginTransform.file}`, result);
-  }
-}
-
 // Build the plugin from source and invoke uploadArchives task to publish plugin
-// This is only used for react-native and final generated container project
+// This is only used for final generated container project
 // All other plugins are not published but their source code is directly injected
 // in the container
 async function buildAndUploadArchive(moduleName) {
@@ -335,41 +293,6 @@ async function spin(msg, prom, options) {
 // ern-container-gen core logic
 //=============================================================================
 
-// Build and install all plugins to target maven repository
-// reactNativePlugin: The react native plugin
-// paths: Paths object
-async function buildAndPublishReactNative(reactNativePlugin, paths) {
-  try {
-    log.info(`[=== Starting react-native build and publish ===]`);
-
-    shell.cd(paths.tmpFolder);
-
-    log.info(`Getting react-native plugin config`);
-    let reactNativePluginConfig = await getPluginConfig(reactNativePlugin, paths.containerPluginsConfig);
-
-    let reactNativePluginSourcePath = await spin(`Downloading react-native source`,
-      downloadPluginSource(reactNativePluginConfig.origin));
-
-    log.info(`Applying transformations to react-native source`);
-    await transformPluginSource(
-      reactNativePlugin,
-      `${getPluginConfigPath(reactNativePlugin, paths.containerPluginsConfig)}/templates`,
-      reactNativePluginSourcePath,
-      reactNativePluginConfig.transform);
-
-    shell.cd(`${reactNativePluginSourcePath}/${reactNativePluginConfig.root}`);
-
-    await shellExec('chmod +x gradlew');
-    await spin(`Building react-native and publishing archive`,
-      buildAndUploadArchive(reactNativePluginConfig.uploadArchives.moduleName));
-
-    log.info(`[=== Completed react-native build and publish ===]`);
-  } catch (e) {
-    log.error("[buildAndPublishReactNative] Something went wrong: " + e);
-    throw e;
-  }
-}
-
 function getUnscopedModuleName(pluginName) {
   return npmScopeModuleRe.test(pluginName) ?
          npmScopeModuleRe.exec(`${pluginName}`)[2]
@@ -381,6 +304,9 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
     let pluginsView = [];
 
     for (const plugin of plugins) {
+      if (plugin.name === 'react-native') {
+        continue;
+      }
       let pluginConfig = await getPluginConfig(plugin, pluginsConfigPath);
 
       if (pluginConfig.pluginHook) {
@@ -399,9 +325,9 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
     mustacheView.pluginCompile = [];
     const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
     if (reactNativePlugin) {
-      log.info(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.versionEx}'`);
+      log.info(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`);
       mustacheView.pluginCompile.push({
-        "compileStatement" : `compile 'com.facebook.react:react-native:${reactNativePlugin.versionEx}'`
+        "compileStatement" : `compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`
       });
     }
   } catch (e) {
@@ -415,6 +341,9 @@ async function addPluginHookClasses(plugins, paths) {
     log.info(`[=== Adding plugin hook classes ===]`);
 
     for (const plugin of plugins) {
+      if (plugin.name === 'react-native') {
+        continue;
+      }
       let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
       if (pluginConfig.pluginHook) {
         log.info(`Adding ${pluginConfig.pluginHook.name}.java`);
@@ -569,8 +498,7 @@ function buildPluginListSync(plugins, manifest) {
   const manifestPlugins = _.map(
     manifest.supportedPlugins, d => ({
       name: npmModuleRe.exec(d)[1],
-      version: npmModuleRe.exec(d)[2],
-      versionEx: `${npmModuleRe.exec(d)[2]}-${manifest.platformVersion}`
+      version: npmModuleRe.exec(d)[2]
     }));
 
   const pluginNames = _.map(plugins, p => {
@@ -590,19 +518,6 @@ function buildPluginListSync(plugins, manifest) {
 function getReactNativeVersionFromManifest(manifest) {
   const rnDep = _.find(manifest.supportedPlugins, d => d.startsWith('react-native@'));
   return npmModuleRe.exec(rnDep)[2];
-}
-
-async function isReactNativeVersionPublished(version) {
-  return isArtifactInMavenRepo(
-    `com.facebook.react:react-native:${version}-${mustacheView.ernPlatformVersion}`,
-    mustacheView.mavenRepositoryUrl);
-}
-
-async function isPluginPublished(plugin) {
-  const unscopedPluginName = getUnscopedModuleName(plugin.name);
-  return isArtifactInMavenRepo(
-    `${mustacheView.namespace}:${unscopedPluginName}:${plugin.versionEx}`,
-    mustacheView.mavenRepositoryUrl);
 }
 
 async function isArtifactInMavenRepo(artifactDescriptor, mavenRepoUrl) {
@@ -753,7 +668,6 @@ async function generateAndroidContainerUsingMavenGenerator(
       mavenRepositoryUrl,
       namespace,
       reactNativeVersion,
-      reactNativeVersionEx : `${reactNativeVersion}-${manifest.platformVersion}`,
       ernPlatformVersion: manifest.platformVersion,
       containerPomVersion,
       nativeAppName,
@@ -765,15 +679,6 @@ async function generateAndroidContainerUsingMavenGenerator(
     const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
     if (!reactNativePlugin) {
       throw new Error("react-native was not found in plugins list !");
-    }
-
-    // Check if this react-native version is already published to maven.
-    // If that's the case let's not bother with retrieving its source / Building
-    // it and publishing it again as it is a somehwat long process.
-    if (await isReactNativeVersionPublished(reactNativePlugin.version)) {
-      log.info(`Skipping react-native build and publish [already published]`);
-    } else {
-        await buildAndPublishReactNative(reactNativePlugin, paths);
     }
 
     //
