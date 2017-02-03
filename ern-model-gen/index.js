@@ -3,13 +3,24 @@ import * as util from "./util.js"
 import path from "path"
 import minimist from "minimist"
 import Mustache from "mustache"
-import fs from "fs-extra"
 import chalk from "chalk"
 
+const log = require('console-log-level')({
+    prefix(level) {
+        return '[ern-model-gen]'
+    },
+    level: 'info'
+});
+
 const BUILT_IN_OBJC_TYPES = [ "NSNumber *", "NSString *", "NSArray *", "BOOL", "id" ]
-const OUTPUT_DIR = 'output'
-const OUTPUT_DIR_IOS = OUTPUT_DIR + '/ios'
-const OUTPUT_DIR_ANDROID = OUTPUT_DIR  +'/android/com/walmartlabs/ern/model'
+
+/**
+ * Logic borrowed from api-gen
+ *
+ * Not pretty but depending of the execution context (direct call to binary
+ * v.s using model-gen in a node program) the path might include distrib
+ * This is just a temporary work-around, find out a cleaner way */
+const modelGenDir = __dirname.replace('/distrib', '');
 
 async function renderFileFromTemplate({ inputPath = "", outputPath = "", view = {} }) {
   const template = await util.readFile(path.resolve(process.cwd(), inputPath))
@@ -26,9 +37,9 @@ async function generateModels(fileContents) {
 }
 
 async function generateOutputDir() {
-    await util.forceDeleteDir(OUTPUT_DIR);
-    await util.createDirIfDoesNotExist(OUTPUT_DIR_IOS);
-    await util.createDirIfDoesNotExist(OUTPUT_DIR_ANDROID);
+    await util.forceDeleteDir(DEFAULT_OUTPUT_DIR);
+    await util.createDirIfDoesNotExist(objCOutput);
+    await util.createDirIfDoesNotExist(javaOutput);
 }
 
 async function generateSourceFromView(view) {
@@ -41,20 +52,23 @@ async function generateSourceFromView(view) {
     })
   }
 
+  log.info(`Generating ${javaOutput}/${view.className}.java`);
+  log.info(`Generating ${objCOutput}/${view.className}.h`);
+  log.info(`Generating ${objCOutput}/${view.className}.m`);
   return Promise.all([
       renderFileFromTemplate({
-          inputPath: "templates/java/Model.java.mustache",
-          outputPath: OUTPUT_DIR_ANDROID + `/${view.className}.java`,
+          inputPath: `${modelGenDir}/templates/java/Model.java.mustache`,
+          outputPath: `${javaOutput}/${view.className}.java`,
           view
       }),
-    renderFileFromTemplate({
-      inputPath: "templates/Model.h.mustache",
-      outputPath: OUTPUT_DIR_IOS + `/${view.className}.h`,
+     renderFileFromTemplate({
+      inputPath: `${modelGenDir}/templates/Model.h.mustache`,
+      outputPath: `${objCOutput}/${view.className}.h`,
       view
     }),
     renderFileFromTemplate({
-      inputPath: "templates/Model.m.mustache",
-      outputPath: OUTPUT_DIR_IOS + `/${view.className}.m`,
+      inputPath: `${modelGenDir}/templates/Model.m.mustache`,
+      outputPath: `${objCOutput}/${view.className}.m`,
       view
     })
   ])
@@ -195,6 +209,9 @@ const androidViews = {
     },
     "classNameUpperCase": function () {
         return this.className.toUpperCase();
+    },
+    "package": function () {
+        return `${javaPkg}`;
     }
 }
 
@@ -234,11 +251,31 @@ let parcelableWriteSetter = (view) => {
     }
 }
 
-export default async function initModelGen() {
+
+const DEFAULT_OUTPUT_DIR = 'output'
+const DEFAULT_OUTPUT_DIR_IOS = DEFAULT_OUTPUT_DIR + '/ios'
+const DEFAULT_OUTPUT_DIR_ANDROID = DEFAULT_OUTPUT_DIR  +'/android/com/walmartlabs/ern/model'
+const DEFAULT_JAVA_PACKAGE = 'com.walmartlabs.ern.model'
+
+let objCOutput;
+let javaOutput;
+let javaPkg ;
+
+export default async function initModelGen(module) {
   console.log(chalk.blue("Models generation, in progress......."))
   const argv = minimist(process.argv.slice(2))
   const { schema = "schema.json" } = argv
   const schemaPath = path.resolve(process.cwd(), schema)
+
+    if (module) {
+        javaOutput = module.javaModelDest;
+        javaPkg = module.javaPackage;
+        objCOutput = module.objCModelDest;
+    } else {
+        javaOutput = DEFAULT_OUTPUT_DIR_ANDROID;
+        javaPkg = DEFAULT_JAVA_PACKAGE;
+        objCOutput = DEFAULT_OUTPUT_DIR_IOS;
+    }
 
   try {
     const json = await util.readFile(schemaPath)
