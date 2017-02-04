@@ -25,16 +25,16 @@ public class LatLong implements Parcelable {
     }
 
     private final Integer lat;
-    private final Integer long;
+    private final Integer lon;
 
     private LatLong(Builder builder) {
         this.lat = builder.lat;
-        this.long = builder.long;
+        this.lon = builder.lon;
     }
 
     private LatLong(Parcel in) {
         lat = in.readInt();
-        long = in.readInt();
+        lon = in.readInt();
     }
 
     public static final Creator<LatLong> CREATOR = new Creator<LatLong>() {
@@ -54,9 +54,9 @@ public class LatLong implements Parcelable {
         return lat;
     }
 
-    @NonNull
-    public Integer getLong() {
-        return long;
+    @Nullable
+    public Integer getLon() {
+        return lon;
     }
 
 
@@ -68,7 +68,7 @@ public class LatLong implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(lat);
-        dest.writeInt(long);
+        dest.writeInt(lon);
     }
 
     @NonNull
@@ -80,11 +80,16 @@ public class LatLong implements Parcelable {
 
     public static class Builder {
         private final Integer lat;
-        private final Integer long;
+        private Integer lon;
 
-        public Builder(@NonNull Integer lat, @NonNull Integer long) {
+        public Builder(@NonNull Integer lat, ) {
             this.lat = lat;
-            this.long = long;
+        }
+
+        @NonNull
+        public Builder lon(@Nullable Integer lon) {
+            this.lon = lon;
+            return this;
         }
 
         @NonNull

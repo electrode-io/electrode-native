@@ -7,7 +7,7 @@
     "lat": {
       "type": "number"
     },
-    "long": {
+    "lon": {
       "type": "number"
     }
   },
