@@ -1,6 +1,7 @@
 package {{{package}}}.api;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
@@ -89,7 +90,10 @@ public final class {{{pascalCaseApiName}}}Api {
     ElectrodeBridge.registerRequestHandler(Names.{{{constantName}}}, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-        {{{pascalCaseApiName}}}Api.s{{{pascalCaseName}}}RequestHandler.handleRequest({{#hasPayload}}{{{payloadDeserialization}}},{{/hasPayload}}new Response{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}}{{^respPayloadType}}<Void>{{/respPayloadType}}() {
+
+        {{{payloadDeserialization}}}
+
+        {{{pascalCaseApiName}}}Api.s{{{pascalCaseName}}}RequestHandler.handleRequest({{#hasPayload}}payload,{{/hasPayload}}new Response{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}}{{^respPayloadType}}<Void>{{/respPayloadType}}() {
             @Override
             {{#respPayloadType}}
             public void onSuccess({{{respPayloadType}}} obj) {

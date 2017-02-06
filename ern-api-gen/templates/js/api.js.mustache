@@ -23,10 +23,20 @@ import * as messages from "./messages.js";
 //====================================================================
 
 {{#requests}}
+  {{#hasPayload}}
 export function handle{{{pascalCaseName}}}Request(handler) {
   electrodeBridge.registerRequestHandler(messages.{{{constantName}}},
     (requestData) => {
-      return handler(requestData);
+      return handler(requestData.{{{payload.name}}});
     });
 }
+  {{/hasPayload}}
+  {{^hasPayload}}
+export function handle{{{pascalCaseName}}}Request(handler) {
+  electrodeBridge.registerRequestHandler(messages.{{{constantName}}},
+    (requestData) => {
+      return handler();
+    });
+}
+  {{/hasPayload}}
 {{/requests}}

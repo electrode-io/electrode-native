@@ -6,7 +6,7 @@
     "react-native-stack-tracer@0.1.1",
     "@walmart/react-native-electrode-bridge@1.1.10",
     "@walmart/react-native-user-api@0.0.12",
-    "@walmart/react-native-todo-api@0.0.18",
+    "@walmart/react-native-todo-api@0.0.21",
     "@walmart/react-native-navigation-api@0.0.4"
   ]
 }
