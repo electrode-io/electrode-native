@@ -37,16 +37,26 @@ export async function runAndroid({
   projectPath,
   packageName
 }) {
-  const avdImageNames = await getAndroidAvds();
-
-  inquirer.prompt([{
-    type: 'list',
-    name: 'avdImageName',
-    message: 'Choose Android emulator image',
-    choices: avdImageNames
-  }]).then(answers => {
-     runAndroidUsingAvdImage(projectPath, packageName, answers.avdImageName);
-  });
+  const devices = await getDevices();
+  if(devices.length === 1){
+    //If 1 device is running install and launch the application
+    log.info(devices[0].split('\t')[0], ' is running ...');
+    installAndLaunchApp(projectPath, packageName);
+  }
+  else if (devices.length > 1) {
+    log.error('error: more than one device/emulator');
+  }
+  else {
+    const avdImageNames = await getAndroidAvds();
+    inquirer.prompt([{
+      type: 'list',
+      name: 'avdImageName',
+      message: 'Choose Android emulator image',
+      choices: avdImageNames
+    }]).then(answers => {
+       runAndroidUsingAvdImage(projectPath, packageName, answers.avdImageName);
+    });
+  }
 }
 
 // Does the job of actually running the app
@@ -58,6 +68,15 @@ export async function runAndroid({
 async function runAndroidUsingAvdImage(projectPath, packageName, avdImageName) {
   exec(`emulator -avd ${avdImageName}`);
   await spin('Waiting for device to start', waitForAndroidDevice());
+  installAndLaunchApp(projectPath, packageName);
+}
+
+// Does the job of installing and running the app
+// It orchestrates a few tasks to actually get the job done
+// Params :
+// - projectPath : Absolute or relative path to the root of the Android projectPath
+// - packageName : name of the package containing the application
+async function installAndLaunchApp(projectPath, packageName) {
   await spin('Installing application', installApp(projectPath));
   await spin('Launching application',
     launchAndroidActivity(packageName, "MainActivity"));
@@ -133,6 +152,20 @@ async function getAndroidAvds() {
         reject(err ? err : stderr);
       } else {
         resolve(stdout.trim().split('\n'));
+      }
+    });
+  })
+}
+
+//Utility method to query what device instances are connected to the adb server
+async function getDevices() {
+  return new Promise((resolve, reject) => {
+    exec(`${androidAdbPath()} devices`, (err, stdout, stderr) => {
+      if (err || stderr) {
+        reject(err ? err : stderr);
+      } else {
+        const deviceList = stdout.trim().split('\n');
+        resolve(deviceList.splice(1, deviceList.length));
       }
     });
   })
