@@ -84,7 +84,8 @@ export async function generateRunner({
   plugins,
   miniapp,
   outFolder,
-  verbose
+  verbose,
+  headless
 }) {
   try {
     log = require('console-log-level')({
@@ -98,7 +99,8 @@ export async function generateRunner({
 
     const view = {
       pascalCaseMiniAppName: pascalCase(miniapp.name),
-      camelCaseMiniAppName: camelCase(miniapp.name)
+      camelCaseMiniAppName: camelCase(miniapp.name),
+      headless
     };
 
     await generateContainerForRunner({

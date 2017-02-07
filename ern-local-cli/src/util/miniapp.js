@@ -56,7 +56,8 @@ export default class MiniApp {
     platformVersion,
     napSelector,
     scope,
-    verbose
+    verbose,
+    headless
   }) {
     try {
       // If appSelector provided, and no forced version of platform is provided
@@ -89,6 +90,7 @@ export default class MiniApp {
       const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`;
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'));
       appPackageJson.ernPlatformVersion = platformVersion;
+      appPackageJson.ernHeadLess = headless;
       appPackageJson.private = false;
       if (scope) { appPackageJson.name = `@${scope}/${appName}`; }
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
@@ -99,6 +101,17 @@ export default class MiniApp {
       const miniAppPath = `${process.cwd()}/${appName}`;
       shell.cd(miniAppPath);
       shell.rm('-rf', `android`);
+
+      //
+      /// If it's a headless miniapp (no ui), just override index.android.js / index.ios.js
+      // with our own and create index.source.js
+      // Later on it might be done in a better way by retrieving our own structured
+      // project rather than using react-native generated on and patching it !
+      if (headless) {
+        fs.writeFileSync(`${miniAppPath}/index.android.js`, "require('./index.source');", 'utf-8');
+        fs.writeFileSync(`${miniAppPath}/index.ios.js`, "require('./index.source');", 'utf-8');
+        fs.writeFileSync(`${miniAppPath}/index.source.js`, "// Add your implementation here", 'utf-8');
+      }
 
       return new MiniApp(miniAppPath);
     } catch (e) {
@@ -124,6 +137,10 @@ export default class MiniApp {
 
   get platformVersion() {
     return this.packageJson.ernPlatformVersion;
+  }
+
+  get isHeadLess() {
+    return this.packageJson.ernHeadLess;
   }
 
   // Return all native dependencies currently used by the mini-app
@@ -182,7 +199,8 @@ export default class MiniApp {
       plugins: this.nativeDependencies,
       miniapp: { name: this.name, localPath: this.path },
       outFolder: `${this.path}/android`,
-      verbose
+      verbose,
+      headless: this.isHeadLess
     };
 
     // Generate initial runner project if it hasn't been created yet

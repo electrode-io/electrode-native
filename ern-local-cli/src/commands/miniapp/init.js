@@ -20,6 +20,10 @@ exports.builder = function(yargs) {
       type: 'bool',
       describe: 'verbose output'
     })
+    .option('headless', {
+      type: 'bool',
+      describe: 'Creates an headless (without ui) miniapp'
+    })
     .conflicts('platformVersion', 'napSelector');
 }
 
@@ -28,6 +32,7 @@ exports.handler = async function (argv) {
     platformVersion: argv.platformVersion,
     napSelector: argv.napSelector,
     scope: argv.scope,
-    verbose: argv.verbose
+    verbose: argv.verbose,
+    headless: argv.headless
   });
 }

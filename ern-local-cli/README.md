@@ -216,7 +216,7 @@ All `miniapp` commands needs to be executed from the root of a miniapp folder (e
 
 **Creates a new miniapp**
 
-`ern miniapp init <appName> [platformVersion] [napSelector] [scope] [verbose]`  
+`ern miniapp init <appName> [platformVersion] [napSelector] [scope] [verbose] [headless]`  
 
 This command can be used to create a new miniapp.  
 `appName` is the only mandatory argument, being the name of the application to create.  
@@ -224,7 +224,8 @@ This command can be used to create a new miniapp.
 `napSelector` (alias `s`) can be provided to create a miniapp using the same platform version that is being used by a specific native application. If not provided, the miniapp will be created using the currently activated version of the platform.  
 `platformVersion` and `napSelector` are mutually exclusive.  
 `scope` can be provided to npm scope the package containing the miniapp. By default no scope is used.  
-`verbose` flag can be specified if verbose logging output is wished during initialization.
+`verbose` flag can be specified if verbose logging output is wished during initialization.  
+`headless` flag can be specified to create an headless miniapp (i.e a MiniApp without any UI but just logic. In most cases an API implementation).
 
 The application will be created in a folder named after the `appName` provided, relative to where this command was executed.
 
