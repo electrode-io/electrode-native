@@ -360,6 +360,7 @@ export default class MiniApp {
 
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
+        throw e;
     }
   }
 

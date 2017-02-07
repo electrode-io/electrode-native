@@ -36,7 +36,8 @@ Depending of the user infrastructure and development lifecycle this command line
 │   │   |   ├── list                List the plugins used by the miniapp
 │   │   ├── run                     [--- Run the miniapp ! --]
 │   │   |   ├── android             Run the miniapp in the android runner
-│   │   ├── upgrade                 Upgrade the miniapp to a platform version (TBD)
+│   │   ├── upgrade                 Upgrade the miniapp to a platform version
+│   │   ├── publish                 Publish the miniapp in a in-dev app or OTA
 │   ├── platform                    [=== Platform management ===]
 │   │   ├── config                  Get or set platform configuration value(s)
 │   │   ├── current                 Show the current platform version number
@@ -234,7 +235,7 @@ For now, this command just executes `react-native init` command, using the react
 ```shell
 > ern miniapp init MyCoolMiniApp
 > ern miniapp init MyCoolMiniApp -s walmart:android:4.1
-> ern miniapp init MyCoolMiniApp -v 4 --scope walmart --verbose'
+> ern miniapp init MyCoolMiniApp -v 4 --scope walmart --verbose
 ```
 
 **Check binary compatibility of miniapp with a native application version**  
@@ -288,6 +289,28 @@ This command will list all the plugins currently used by the miniapp along with 
 **Run the miniapp in Android runner**  
 
 `ern miniapp run android`
+
+**Publish the miniapp**
+
+`ern miniapp publish [fullNapSelector] [force] [verbose] [containerVersion]`  
+
+```shell
+> ern miniapp publish
+> ern miniapp publish walmart:android:1.0
+> ern miniapp publish walmart:android:1.0 --containerVersion 1.2.3
+> ern miniapp publish walmart:android:1.0 --force --verbose
+```  
+
+The `miniapp publish` command can be used by a miniapp developer or CI platform to publish a miniapp to one or more compatible native application(s) version(s).  
+
+There is two different publication modes, based on the release status of the binary compatible native application version (stored in cauldron) :
+
+- If the targeted native application version is `not yet released` (in-dev, not publish to store yet), then the `publish` command will result in generating a new container (and incrementing it's version) and publishing it, so that it can be consumed by the native app team (and ultimately at some point included in the release of the app to the store).
+- If the targeted native application version is `released` (published to store), then the `publish` command will result in triggering a code push update targeting this native app version.
+
+If `miniapp publish` command is used without any arguments, it starts an interactive session, prompting the user to select from a list of binary compatible native application versions, the ones that he want to publish his miniapp to. We also indicate to the user which native application versions will result in an OTA v.s INAPP publication.
+
+If `miniapp publish` command is used with arguments specifying a fullNapSelector (pointing to a specific native application version), then it will do its job for this version of the native application (if its binary compatible) and will trigger either inapp or ota publication. This mode is more reserved for CI platforms that cannot really enter an interactive terminal session.
 
 ### platform
 
