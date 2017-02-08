@@ -115,13 +115,13 @@ class Platform {
     return JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8'));
   }
 
-  // Given a string representing the plugin, explode it into an object
+  // Given a string representing the dependency, explode it into an object
   // Valid input strings samples :
   // react-native
   // react-native@0.40
   // @walmart/react-native
   // @walmart/react-native@0.40
-  buildPluginObj(pluginString) {
+  buildDependencyObj(pluginString) {
     const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/;
     const unscopedModuleWithVersionRe = /(.+)@(.+)/;
     const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/;
@@ -147,30 +147,64 @@ class Platform {
     }
   }
 
-  // Returns the list of supported plugins for a given platform version
-  // If version is currently activated one, it just looks in the current
-  // version manifest.
-  // Otherwise it just switch the platform repository to the given version branch
-  // and then build the array based on the manifest
-  getSupportedPlugins(version) {
-    let manifest;
-    if (version === this.currentVersion) {
-      manifest = this.currentVersionManifest;
+  // Returns the manifest of a given platform version
+  // If no version is specified, returns the manifest of the currently activated
+  // platform version
+  getManifest(version) {
+    if (!version || (version === this.currentVersion)) {
+      return this.currentVersionManifest;
     } else {
       if (!this.isPlatformVersionAvailable(version)) {
         throw new Error(`Version ${version} does not exists`);
       }
       this.switchPlatformRepositoryToVersion(version);
-      manifest = this.repositoryManifest;
+      return this.repositoryManifest;
     }
+  }
 
-    return _.map(manifest.supportedPlugins, d => this.buildPluginObj(d));
+  // Returns the list of plugins listed in manifest for a given platform version
+  // If version is currently activated one, it just looks in the current
+  // version manifest.
+  // Otherwise it just switch the platform repository to the given version branch
+  // and then build the array based on the manifest
+  getManifestPlugins(version) {
+    const manifest = this.getManifest(version);
+    return _.map(manifest.supportedPlugins, d => this.buildDependencyObj(d));
+  }
+
+  // Returns the list of javascript dependencies listed in manifest for a given
+  // platform version
+  // If version is currently activated one, it just looks in the current
+  // version manifest.
+  // Otherwise it just switch the platform repository to the given version branch
+  // and then build the array based on the manifest
+  getManifestJsDependencies(version) {
+    const manifest = this.getManifest(version);
+    return _.map(manifest.jsDependencies, d => this.buildDependencyObj(d));
+  }
+
+  getManifestPluginsAndJsDependencies(version) {
+    const manifest = this.getManifest(version);
+    const manifestDeps = _.union(manifest.jsDependencies, manifest.supportedPlugins);
+    return _.map(manifestDeps, d => this.buildDependencyObj(d));
   }
 
   getPlugin(pluginString) {
-    const plugin = this.buildPluginObj(pluginString);
-    return _.find(this.getSupportedPlugins(this.currentVersion),
+    const plugin = this.buildDependencyObj(pluginString);
+    return _.find(this.getManifestPlugins(this.currentVersion),
       d => (d.name === plugin.name) && (d.scope === plugin.scope));
+  }
+
+  getJsDependency(dependencyString) {
+    const jsDependency = this.buildDependencyObj(dependencyString);
+    return _.find(this.getManifestJsDependencies(this.currentVersion),
+      d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope));
+  }
+
+  getDependency(dependencyString) {
+    const dependency = this.buildDependencyObj(dependencyString);
+    return  _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
+      d => (d.name === dependency.name) && (d.scope === dependency.scope));
   }
 }
 
