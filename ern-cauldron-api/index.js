@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 require('babel-register');
-require('./src/index.js');
+require('./src/index.js').default({});
