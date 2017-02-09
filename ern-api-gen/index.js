@@ -347,8 +347,8 @@ function generatePackageJson({
             'react-native': reactNativeVersion
         }
     }, null, 2);
-
 }
+
 function generateInitialModel() {
     return JSON.stringify({
         type: "Object",
