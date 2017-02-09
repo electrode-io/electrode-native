@@ -1,4 +1,5 @@
 import runModelGen from "../ern-model-gen/index.js";
+import parseApiSchema from './lib/parseApiSchema';
 const fs = require('fs');
 const child_process = require('child_process');
 const execSync = child_process.execSync;
@@ -11,6 +12,13 @@ const readDir = require('fs-readdir-recursive');
 const shell = require('shelljs');
 const xcode = require('xcode');
 const path = require('path');
+
+const cwd = path.join.bind(path, process.cwd());
+
+const SCHEMA_FILE = 'apigen.schema';
+const CONFIG_FILE = 'apigen.conf.json';
+const PKG_FILE = 'package.json';
+const MODEL_FILE = 'schema.json';
 
 const rootDir = shell.pwd();
 
@@ -26,8 +34,6 @@ const log = require('console-log-level')({
 // This is just a temporary work-around, find out a cleaner way
 const apiGenDir = __dirname.replace('/distrib', '');
 
-const defaultSchemaFile = 'apigen.schema';
-const defaultConfigFile = 'apigenconf.json';
 
 // List of currently schema supported primitive types
 const primitiveTypes = [
@@ -36,7 +42,7 @@ const primitiveTypes = [
     "Double",
     "Float",
     "String"
-]
+];
 
 const androidPrimitiveTypes = [
     "bool",
@@ -44,7 +50,7 @@ const androidPrimitiveTypes = [
     "double",
     "float",
     "string"
-]
+];
 
 /**
  * ==============================================================================
@@ -59,7 +65,9 @@ async function readFile(filename, encoding) {
         });
     });
 }
-
+async function readJSON(filename) {
+    return readFile(filename, 'utf8').then(JSON.parse);
+}
 async function writeFile(filename, data) {
     return new Promise((resolve, reject) => {
         fs.writeFile(filename, data, (err, res) => {
@@ -68,7 +76,9 @@ async function writeFile(filename, data) {
         });
     });
 }
-
+function generateConfigFromSchemaSync(file) {
+    return parseApiSchema(fs.readFileSync(file, 'utf8'));
+}
 /**
  *
  * ==============================================================================
@@ -83,7 +93,12 @@ async function writeFile(filename, data) {
  */
 async function mustacheRenderUsingTemplateFile(tmplPath, view) {
     const template = await readFile(tmplPath, 'utf-8');
-    return Mustache.render(template, view);
+    try {
+        return Mustache.render(template, view);
+    } catch (e) {
+        log.warn(`error rendering ${tmplPath}`, e.message);
+        throw e;
+    }
 }
 
 // Mustache render to an output file using a template file and a view
@@ -121,259 +136,6 @@ function getArrayType(type) {
     return type.replace('[]', '');
 }
 
-function androidObjTypeToPrimitive(type) {
-    switch (type) {
-        case 'Boolean' :
-            return 'bool';
-        case 'Integer' :
-            return 'int';
-        case 'Double' :
-            return 'double';
-        case 'Float' :
-            return 'float';
-        case 'String' :
-            return 'string';
-    }
-}
-
-function androidObjTypeArrToPrimitiveArr(type) {
-    switch (type) {
-        case 'Boolean[]' :
-            return 'bool[]';
-        case 'Integer[]' :
-            return 'int[]';
-        case 'Double[]' :
-            return 'double[]';
-        case 'Float[]' :
-            return 'float[]';
-        case 'String[]' :
-            return 'string[]';
-    }
-}
-
-/***
- *
- * ==============================================================================
- * Generate configuration from a schema file
- * ==============================================================================
- *
- * Sample Schema file (any construct not part of this schema sample is not
- * currently supported by this version of ern-apigen)
- * -----------------------------------
- * namespace com.walmartlabs.ern
- * npmscope walmart
- * apiname dummy
- * apiversion 0.0.5
- *
- * - Event with no payload
- * event weatherUpdated
- *
- * - Event with a primitive type payload
- * event weatherUdpatedAtLocation(location: String)
- *
- *  - Event with complex type payload
- *  event weatherUpdatedAtPosition(position: LatLng)
- *
- *  - Request with no request payload and no response payload
- * request refreshWeather()
- *
- *  - Request with a single request payload and no response payload
- *  request refreshWeatherFor(location: String)
- *
- * - Request with a single request payload and a response payload
- * request getTemperatureFor(location: String) : Integer
- *
- * - Request with no request payload and a response payload
- *  request getCurrentTemperature() : Integer
- *
- * - Request with no request payload an an array response payload
- * request getCurrentTemparatures() : Integer[]
- * -----------------------------------
- */
-function generateConfigFromSchemaSync(schemaFilePath) {
-    try {
-        let config = {};
-        let events = [];
-        let requests = [];
-
-        // Regexes matching global configuration schema statements
-        const namespaceRe = /namespace\s(.*)/;
-        const apinameRe = /apiname\s(.*)/;
-        const apiversionRe = /apiversion\s(.*)/;
-        const npmScopeRe = /npmscope\s(.*)/;
-
-        // Regexes matching events schema statements
-        const eventWithPayloadRe = /event (.+)\({1}(.+):\s(.+)\){1}/;
-        const eventWoPayloadRe = /event ([a-zA-Z]+)/;
-
-        // Regexes matching requests schema statements
-
-        // request without request payload and without response payload
-        const requestWoReqPWoResP = /request\s{1}([a-zA-Z]+)\(\)$/;
-        // request with a request payload and no response payload
-        const requestWReqPWoResP = /request (.+)\({1}(.+):\s(.+)\){1}$/;
-        // request with a request payload and a response payload
-        const requestWReqPWResP = /request (.+)\({1}(.+):\s(.+)\){1}\s:\s(.+)/;
-        // request with no request payload and a reponse payload
-        const requestWoReqPWResP = /request\s{1}([a-zA-Z]+)\(\)\s:\s(.+)/;
-
-        //
-        // Schema to config workhouse
-        const schema = fs.readFileSync(schemaFilePath, 'utf-8');
-        const lines = schema.split('\n');
-
-        // Todo : Quite some duplication going on in the following for block
-        // refactor accordingly to minimize code duplication
-        for (const line of lines) {
-            // Handles statement declaring an event with payload
-            // Sample statement :
-            //   event weatherUpdatedAtPosition(position: LatLng)
-            // Will produce :
-            //  {
-            //    "name": "weatherUpdatedAtPosition",
-            //    "payload": {
-            //      "type": "LatLng",
-            //      "name": "position"
-            //    }
-            //  }
-            if (eventWithPayloadRe.test(line)) {
-                const eventName = eventWithPayloadRe.exec(line)[1];
-                const eventPayloadName = eventWithPayloadRe.exec(line)[2];
-                let eventPayloadType = eventWithPayloadRe.exec(line)[3];
-
-                //if (isArrayType(eventPayloadType)) {
-                //  eventPayloadType = androidObjTypeArrToPrimitiveArr(eventPayloadType);
-                //}
-
-                events.push({
-                    "name": eventName,
-                    "payload": {
-                        "type": eventPayloadType,
-                        "name": eventPayloadName
-                    }
-                });
-            }
-            // Handles statement declaring an event with no payload
-            // Sample statement :
-            //   event weatherUpdated
-            // Will produce :
-            //  {
-            //    "name": "weatherUpdated"
-            //  }
-            else if (eventWoPayloadRe.test(line)) {
-                const eventName = eventWoPayloadRe.exec(line)[1];
-                events.push({
-                    "name": eventName
-                });
-            }
-            // Handles statement declaring a request with no request payload and
-            // no response payload
-            // Sample statement :
-            //   request refreshWeather()
-            // Will produce :
-            //  {
-            //    "name": "refreshWeather"
-            //  }
-            else if (requestWoReqPWoResP.test(line)) {
-                const requestName = requestWoReqPWoResP.exec(line)[1];
-                requests.push({
-                    "name": requestName
-                });
-            }
-            // Handles statement declaring a request with a single request payload
-            // and no response payload
-            // Sample statement :
-            //   request refreshWeatherFor(location: String)
-            // Will produce :
-            // {
-            //   "name": "refreshWeatherFor",
-            //   "payload": {
-            //     "type": "String",
-            //     "name": "location"
-            //   }
-            // }
-            else if (requestWReqPWoResP.test(line)) {
-                const requestName = requestWReqPWoResP.exec(line)[1];
-                const requestPayloadName = requestWReqPWoResP.exec(line)[2];
-                const requestPayloadType = requestWReqPWoResP.exec(line)[3];
-                requests.push({
-                    "name": requestName,
-                    "payload": {
-                        "type": requestPayloadType,
-                        "name": requestPayloadName
-                    }
-                });
-            }
-            // Handles statement declaring a request with a single request payload
-            // and a response payload
-            // Sample statement :
-            //  request getTemperatureFor(location: String) : Integer
-            // Will produce
-            // {
-            //   "name": "getTemperatureFor",
-            //   "payload": {
-            //     "type": "String",
-            //     "name": "location"
-            //   },
-            //   "respPayloadType": "Integer"
-            // }
-            //
-            else if (requestWReqPWResP.test(line)) {
-                const requestName = requestWReqPWResP.exec(line)[1];
-                const requestPayloadName = requestWReqPWResP.exec(line)[2];
-                const requestPayloadType = requestWReqPWResP.exec(line)[3];
-                let responsePayloadType = requestWReqPWResP.exec(line)[4];
-
-                requests.push({
-                    "name": requestName,
-                    "payload": {
-                        "type": requestPayloadType,
-                        "name": requestPayloadName
-                    },
-                    "respPayloadType": responsePayloadType
-                });
-            }
-            // Handles statement declaring a request with no request payload and a
-            // response payload
-            // Sample statement :
-            //  request getCurrentTemperature() : Integer
-            // Will produce
-            // {
-            //   "name": "getCurrentTemperature",
-            //   "respPayloadType": "Integer"
-            // }
-            else if (requestWoReqPWResP.test(line)) {
-                const requestName = requestWoReqPWResP.exec(line)[1];
-                let responsePayloadType = requestWoReqPWResP.exec(line)[2];
-
-                requests.push({
-                    "name": requestName,
-                    "respPayloadType": responsePayloadType
-                });
-            }
-            // Handles global configuration statements
-            else if (namespaceRe.test(line)) {
-                config.namespace = namespaceRe.exec(line)[1];
-            } else if (apinameRe.test(line)) {
-                config.apiName = apinameRe.exec(line)[1];
-            } else if (apiversionRe.test(line)) {
-                config.apiVersion = apiversionRe.exec(line)[1];
-            } else if (npmScopeRe.test(line)) {
-                config.npmScope = npmScopeRe.exec(line)[1];
-            }
-        }
-
-        // Add all events to config
-        config.events = events;
-        // Add all requests to config
-        config.requests = requests;
-
-        return config;
-    } catch (e) {
-        log.error('generateConfigFromSchemaSync', e);
-        throw e;
-    }
-}
 
 /**
  * Generate all Java code
@@ -382,25 +144,25 @@ function generateConfigFromSchemaSync(schemaFilePath) {
 async function generateJavaCode(view) {
     try {
         const javaOutputPath = view.javaDest ? view.javaDest : 'output/java';
-        shell.mkdir('-p', javaOutputPath);
+        shell.mkdir('-p', cwd(javaOutputPath));
 
         log.info(`Generating ${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`);
         await mustacheRenderToOutputFileUsingTemplateFile(
             `${apiGenDir}/templates/java/ApiClient.java.mustache`,
             view,
-            `${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`);
+            cwd(`${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`));
 
         log.info(`Generating ${javaOutputPath}/${view.pascalCaseApiName}Api.java`);
         await mustacheRenderToOutputFileUsingTemplateFile(
             `${apiGenDir}/templates/java/Api.java.mustache`,
             view,
-            `${javaOutputPath}/${view.pascalCaseApiName}Api.java`);
+            cwd(`${javaOutputPath}/${view.pascalCaseApiName}Api.java`));
 
         log.info(`Generating ${javaOutputPath}/Names.java`);
         await mustacheRenderToOutputFileUsingTemplateFile(
             `${apiGenDir}/templates/java/Names.java.mustache`,
             view,
-            `${javaOutputPath}/Names.java`);
+            cwd(`${javaOutputPath}/Names.java`));
     } catch (e) {
         log.error('generateJavaCode', e);
         throw e;
@@ -530,8 +292,11 @@ async function generateAllCode(view) {
  * Patch api hull (global method for JS/Java, might need to be platform splitted)
  * view : The mustache view to use
  */
+const ignoreRe = /node_modules\/|jar$/;
 async function patchHull(view) {
-    const files = readDir(view.outFolder, file => !file.endsWith('.jar'));
+    const files = readDir(view.outFolder).filter(file => {
+        return !ignoreRe.test(file)
+    });
 
     try {
         // Mustache render all files (even those not containing inline templates
@@ -557,10 +322,66 @@ function addIfModelObject(models, type) {
     }
 }
 
-function hasModelSchema() {
-    return fs.existsSync(path.resolve(process.cwd(), 'schema.json'));
+function hasModelSchema(modelsSchemaPath = cwd(MODEL_FILE)) {
+    return fs.existsSync(modelsSchemaPath) && modelsSchemaPath;
 }
+function generatePackageJson({
+    npmScope,
+    moduleName,
+    reactNativeVersion,
+    apiVersion = '1.0.0', apiDescription, apiAuthor, apiLicense, bridgeVersion
+}) {
+    return JSON.stringify({
+        "name": npmScope ? `${npmScope}@${moduleName}` : moduleName,
+        "version": apiVersion,
+        "description": apiDescription,
+        "main": "index.js",
+        "author": apiAuthor,
+        "license": apiLicense,
+        "scripts": {
+            "regen": "ern generate api regen .",
+            "preinstall": "ern generate api regen ."
+        },
+        "dependencies": {
+            "@walmart/react-native-electrode-bridge": bridgeVersion,
+            'react-native': reactNativeVersion
+        }
+    }, null, 2);
 
+}
+function generateInitialModel() {
+    return JSON.stringify({
+        type: "Object",
+        name: "LatLng",
+        properties: {
+            "lat": {
+                "type": "number"
+            },
+            "lng": {
+                "type": "number"
+            },
+            "name": {
+                "type": "string"
+            }
+        }
+    }, null, 2);
+}
+function generateInitialSchema({namespace}) {
+
+    return `namespace ${namespace}
+// Event with no payload
+event weatherUpdated
+
+// Event with a primitive type payload
+event weatherUdpatedAtLocation(location: String)
+
+// Event with complex type payload
+event weatherUpdatedAtPosition(position: LatLng)
+
+// Request with no request payload and no response payload
+request refreshWeather()
+`
+}
 /**
  * ==============================================================================
  * Main entry point
@@ -571,71 +392,168 @@ function hasModelSchema() {
  * configFilePath : path to a config file to be used as input (OPTIONAL)
  * shouldPublishToNpm : true to publish to npm after generation, false otherwise
  */
-export default async function generateApi({
+export default async function generatePackage(options) {
+
+    //--------------------------------------------------------------------------
+    // Get input
+    //--------------------------------------------------------------------------
+    // Two ways to provide needed input to apigen :
+    // - Through a schema file (in that case, a config object will be generated
+    // from the schema)
+    // - Directly giving a config file, skipping schema conversion
+    //
+    // Order of precedence when trying to get input :
+    // - schema from schemaFilePath (provided by apigen method caller)
+    // - config from configFilePath (provided by apigen method caller)
+    // - default schema file
+    // - default config file
+
+    let config = _generateConfig(options);
+    const outFolder = cwd(config.moduleName);
+    if (fs.existsSync(outFolder)) {
+        log.warn(`A directory already exists at ${outFolder}`);
+        process.exit(1);
+    }
+    // Create output folder
+    shell.mkdir(outFolder);
+    await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config));
+    await writeFile(path.join(outFolder, SCHEMA_FILE), generateInitialSchema(config));
+    await writeFile(path.join(outFolder, MODEL_FILE), generateInitialModel(config));
+
+    log.info(`==  Generated project next: 
+        $ cd ${outFolder}
+        $ npm install
+        `);
+}
+
+//generate a configuration.  This looks in the apigen schema
+// and the things passed in.
+function _generateConfig({
+    name,
+    apiName,
+    apiVersion,
+    apiDescripion,
+    apiAuthor,
+    namespace,
+    npmScope,
     bridgeVersion,
-    schemaFilePath,
-    configFilePath,
     modelsSchemaPath,
-    shouldPublishToNpm = false
-} = {}) {
-    try {
-        //--------------------------------------------------------------------------
-        // Get input
-        //--------------------------------------------------------------------------
-        // Two ways to provide needed input to apigen :
-        // - Through a schema file (in that case, a config object will be generated
-        // from the schema)
-        // - Directly giving a config file, skipping schema conversion
-        //
-        // Order of precedence when trying to get input :
-        // - schema from schemaFilePath (provided by apigen method caller)
-        // - config from configFilePath (provided by apigen method caller)
-        // - default schema file
-        // - default config file
+    moduleName,
+    reactNativeVersion,
+    schemaFilePath = cwd(SCHEMA_FILE),
+    configFilePath = cwd(CONFIG_FILE),
 
-        let config;
-        const defaultSchemaFile = 'apigen.schema';
-        const defaultConfigFile = 'apigen.conf.json';
+}) {
+    let simpleName = name;
 
-        if (schemaFilePath) {
-            config = generateConfigFromSchemaSync(schemaFilePath);
-        } else if (configFilePath) {
-            config = JSON.parse(fs.readFileSync(configFilePath, 'utf-8'));
-        } else if (fs.existsSync(`${rootDir}/${defaultSchemaFile}`)) {
-            config = generateConfigFromSchemaSync(`${rootDir}/${defaultSchemaFile}`);
-        } else if (fs.existsSync(`${rootDir}/${defaultConfigFile}`)) {
-            config = JSON.parse(fs.readFileSync(`${rootDir}/${defaultConfigFile}`, 'utf-8'));
-        } else {
-            log.error('apigen', 'no config or schema provided or found');
-        }
+    if (/.*react-native-(.*)-api$/.test(name)) {
+        simpleName = /.*react-native-(.*)-api$/.exec(name).pop();
+    }
 
-        config.moduleName = `react-native-${config.apiName}-api`;
+    let config = {};
+    if (/@/.test(apiName)) {
+        const [all, nScope, nName] =/^(?:([^@]*)@)?(.*)$/.exec(name);
+        if (!apiName) apiName = nName;
+        if (!npmScope) npmScope = nScope;
+    }
+
+    if (fs.existsSync(schemaFilePath)) {
+        Object.assign(config, generateConfigFromSchemaSync(schemaFilePath));
+    } else if (fs.existsSync(configFilePath)) {
+        Object.assign(JSON.parse(fs.readFileSync(configFilePath, 'utf-8')));
+    }
+    if (apiName) {
+        config.apiName = apiName;
+    } else if (!config.apiName) {
+        config.apiName = simpleName;
+    }
+
+    if (namespace) {
+        config.namespace = namespace;
+    }
+    if (!config.namespace) {
+        config.namespace = npmScope ? `com.${npmScope}.${simpleName}.ern` : `com.${simpleName}.ern`
+    }
+    if (apiVersion) {
+        config.apiVersion = apiVersion;
+    }
+    if (apiDescripion) {
+        config.apiDescripion = apiDescripion;
+    }
+    if (npmScope) {
+        config.npmScope = npmScope;
+    }
+    if (moduleName) {
+        config.moduleName = moduleName;
+    } else if (!config.moduleName) {
+        config.moduleName = `react-native-${simpleName}-api`;
+    }
+    if (!config.apiAuthor) {
+        config.apiAuthor = apiAuthor || process.env['EMAIL'] || process.env['USER']
+    }
+    if (!config.apiVersion) {
+        config.apiVersion = '1.0.0';
+    }
+    if (!config.apiDescripion) {
+        config.apiDescripion = `ERN Generated API for ${config.apiName}`;
+    }
+    if (modelsSchemaPath) {
+        config.modelsSchemaPath = modelsSchemaPath;
+    }
+    if (bridgeVersion) {
         config.bridgeVersion = bridgeVersion;
+    }
+    if (reactNativeVersion) {
+        config.reactNativeVersion = reactNativeVersion;
+    }
+    return config;
+}
+
+const rnRe = /react-native-(.*)-api$/;
+
+
+export async function generateCode(options) {
+    log.info('== Regenerating Code')
+
+    const pkg = await readJSON(cwd('package.json'));
+    if (!/react-native-(.*)-api$/.test(pkg.name)) {
+        throw new Error(`Is this an api directory not a valid name try react-native-{name}-api`);
+    }
+    const config = _generateConfig(Object.assign({}, {
+        name: pkg.name,
+        apiVersion: pkg.version,
+        apiDescription: pkg.description,
+        apiAuthor: pkg.author
+    }, options));
+    const outFolder = cwd();
+    try {
+        shell.rm('-rf', path.join(outFolder, 'js'));
+        shell.rm('-rf', path.join(outFolder, 'ios'));
+        shell.rm('-rf', path.join(outFolder, 'android'));
+        shell.rm('-f', path.join(outFolder, 'README.md'));
+        shell.rm('-f', path.join(outFolder, 'index.js'));
+
+        // Copy the api hull (skeleton code with inline templates) to output folder
+        shell.cp('-r', `${apiGenDir}/api-hull/*`, outFolder);
+
 
         //--------------------------------------------------------------------------
         // Construct output path + java/js generation paths
         //--------------------------------------------------------------------------
-        const outFolder = `${config.moduleName}-generated`;
         let destPath = config.namespace.replace(/\./g, '/');
-        config.javaDest =
-            `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/api`;
-        config.objCDest = `${outFolder}/ios`;
-        config.jsDest = `${outFolder}/js`;
+
+        config.javaDest = `android/lib/src/main/java/${destPath}/${config.apiName}/api`;
+        config.objCDest = `ios`;
+        config.jsDest = `js`;
 
         //--------------------------------------------------------------------------
         // Start fresh
         //--------------------------------------------------------------------------
 
-        // Delete potentially pre-existing output folder
-        shell.rm('-rf', outFolder);
-        // Create output folder
-        shell.mkdir(outFolder);
-        // Copy the api hull (skeleton code with inline templates) to output folder
-        shell.cp('-r', `${apiGenDir}/api-hull/*`, outFolder);
 
         //--------------------------------------------------------------------------
         // Mustache view creation
-        //--------------------------------------------------------------------------
+        //-----------------------------------------------------------config.apiName---------------
 
         //
         // Common view (should be usefull stuff for Android/JS/iOS)
@@ -709,61 +627,61 @@ export default async function generateApi({
             // == Global ==
             // Generation output folder
             "outFolder": outFolder
-        }
+        };
 
         //
         // Java specific view
         const javaView = {
-          // JAVA code to use for payload deserialization
-          "payloadDeserialization": function() {
-            if (!this.payload) {
-             return "Object payload = null;";
-            }
-            // Array
-            if (isArrayType(this.payload.type)) {
-              const arrayType = getArrayType(this.payload.type);
-              // Array of a primitive type
-              if (primitiveTypes.includes(arrayType)) {
-                let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
-                return `${this.payload.type} payload = bundle.get${objType}Array("${this.payload.name}");`;
-              }
-              // Array of a complex object type
-              else {
-                return `Parcelable[] p = bundle.getParcelableArray("${this.payload.name}");
+            // JAVA code to use for payload deserialization
+            "payloadDeserialization": function () {
+                if (!this.payload) {
+                    return "Object payload = null;";
+                }
+                // Array
+                if (isArrayType(this.payload.type)) {
+                    const arrayType = getArrayType(this.payload.type);
+                    // Array of a primitive type
+                    if (primitiveTypes.includes(arrayType)) {
+                        let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
+                        return `${this.payload.type} payload = bundle.get${objType}Array("${this.payload.name}");`;
+                    }
+                    // Array of a complex object type
+                    else {
+                        return `Parcelable[] p = bundle.getParcelableArray("${this.payload.name}");
                         ${this.payload.type} payload = new ${arrayType}[p.length];
                         System.arraycopy(p, 0, payload, 0, p.length);`;
-              }
-            }
-            // No array
-            else {
-              if (primitiveTypes.includes(this.payload.type)) {
-                const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
-               return `${this.payload.type} payload = bundle.get${primType}("${this.payload.name}");`;
-              } else {
-               return `${this.payload.type} payload = ${this.payload.type}.fromBundle(bundle);`;
-              }
-            }
-          },
-          // JAVA code to use for payload serialization (request payload / event payload)
-          "payloadSerizalization": function() {
-            // Array
-            if (isArrayType(this.payload.type)) {
-              const arrayType = getArrayType(this.payload.type);
-              // Array of a primitive type
-              if (primitiveTypes.includes(arrayType)) {
-                let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
-                return `new Bundle(); bundle.put${objType}Array("${this.payload.name}", ${this.payload.name});`;
-              }
-              // Array of a complex object type
-              else {
-                return `new Bundle(); bundle.putParcelableArray("${this.payload.name}", ${this.payload.name});`;
-              }
-            }
-            // Not Array
-            else {
-              if (primitiveTypes.includes(this.payload.type)) {
-               const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
-               return `new Bundle(); bundle.put${primType}("${this.payload.name}",\
+                    }
+                }
+                // No array
+                else {
+                    if (primitiveTypes.includes(this.payload.type)) {
+                        const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
+                        return `${this.payload.type} payload = bundle.get${primType}("${this.payload.name}");`;
+                    } else {
+                        return `${this.payload.type} payload = ${this.payload.type}.fromBundle(bundle);`;
+                    }
+                }
+            },
+            // JAVA code to use for payload serialization (request payload / event payload)
+            "payloadSerizalization": function () {
+                // Array
+                if (isArrayType(this.payload.type)) {
+                    const arrayType = getArrayType(this.payload.type);
+                    // Array of a primitive type
+                    if (primitiveTypes.includes(arrayType)) {
+                        let objType = (arrayType === 'Integer' ? 'Int' : arrayType);
+                        return `new Bundle(); bundle.put${objType}Array("${this.payload.name}", ${this.payload.name});`;
+                    }
+                    // Array of a complex object type
+                    else {
+                        return `new Bundle(); bundle.putParcelableArray("${this.payload.name}", ${this.payload.name});`;
+                    }
+                }
+                // Not Array
+                else {
+                    if (primitiveTypes.includes(this.payload.type)) {
+                        const primType = (this.payload.type === 'Integer' ? 'Int' : this.payload.type);
+                        return `new Bundle(); bundle.put${primType}("${this.payload.name}",\
                    ${this.payload.name});`;
                     } else {
                         return `${this.payload.name}.toBundle();`;
@@ -826,7 +744,7 @@ export default async function generateApi({
                     }
                 }
             }
-        }
+        };
 
         // Build composite final mustache view
         const mustacheView = Object.assign({}, config, commonView, javaView);
@@ -837,28 +755,22 @@ export default async function generateApi({
 
         // Start by patching the api hull "inplace"
         log.info("== Patching Hull");
-        await patchHull(mustacheView);
+        await
+            patchHull(mustacheView);
         // Inject all additional generated code
         log.info("== Generating API code");
-        await generateAllCode(mustacheView);
+        await
+            generateAllCode(mustacheView);
 
         log.info("== Generation complete");
 
-        //--------------------------------------------------------------------------
-        // Optionally publish to npm
-        //--------------------------------------------------------------------------
-        if (shouldPublishToNpm) {
-            log.info("== Publishing to NPM");
-            shell.cd(`${outFolder}`);
-            execSync(`npm publish`);
-        }
-
-        if (hasModelSchema()) {
-            runModelGen({
+        const schemaPath = hasModelSchema(config.modelsSchemaPath);
+        if (schemaPath) {
+            await runModelGen({
                 javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
                 javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
                 objCModelDest: `${outFolder}/ios/MODEL`,
-                schemaPath: argv.modelsSchemaPath
+                schemaPath
             })
         }
 

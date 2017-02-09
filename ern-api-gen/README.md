@@ -22,10 +22,7 @@ Base config parameters :
 | Name         | Description       | Required    | Default Value
 |:----------:|:-------------:|:-------------:|:-------------:|
 | namespace | The namespace/groupid to use for generated API| YES |  |
-| npmscope | NPM scope to use for publication | NO | No scope |
-| apiname | The name of the API | YES | |
-| apiversion | The version of the API | YES | |
-| bridgeversion | The version of the bridge to use | YES | | |
+| modelPath | The path to the models to  use | No | | |
 
 As of now the API generator looks for a file named `apigen.schema` in the working folder where the command is launched. The file represents the schema defining the API and is used during generation.
 
@@ -33,10 +30,6 @@ Here is an example of such a schema. Ultimately schema should also contains mess
 
 ```
 namespace com.walmartlabs.ern
-npmscope walmart
-apiname weather
-bridgeversion 1.0.3
-apiversion 0.0.5
 
 // Event with no payload
 event weatherUpdated
