@@ -1,5 +1,5 @@
 import platform from '../../../util/platform.js'
-import {gee} from '../../../../../ern-api-gen/index.js'
+import {generateCode} from '../../../../../ern-api-gen/index.js'
 const log = require('console-log-level')();
 
 exports.command = 'regen';
