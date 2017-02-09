@@ -22,98 +22,103 @@ export async function runContainerGen(
   nativeAppVersion = required(nativeAppVersion, 'nativeAppVersion'),
   version = required(version, 'version'),
   verbose) {
-    try {
-      const nativeApp =
-        await cauldron.getNativeApp(nativeAppName, nativeAppPlatform, nativeAppVersion);
-      const plugins =
-        await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion);
-      const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
-      const miniapps =
-        await cauldron.getReactNativeApps(nativeAppName, nativeAppPlatform, nativeAppVersion);
-      let versionBeforeSwitch;
+  try {
+    const nativeApp =
+      await cauldron.getNativeApp(nativeAppName, nativeAppPlatform, nativeAppVersion);
+    const plugins =
+      await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion);
+    const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
+    const miniapps =
+      await cauldron.getReactNativeApps(nativeAppName, nativeAppPlatform, nativeAppVersion);
+    let versionBeforeSwitch;
 
-      if (platform.currentVersion !== nativeApp.ernPlatformVersion) {
-        versionBeforeSwitch = platform.currentVersion;
-        platform.switchToVersion(nativeApp.ernPlatformVersion);
-      }
-
-      if (nativeAppPlatform === 'android') {
-        let generator = ernConfig.obj.libgen.android.generator;
-        generator.containerPomVersion = version;
-        await generateContainer({
-          nativeAppName,
-          platformPath: platform.currentPlatformVersionPath,
-          generator,
-          plugins,
-          miniapps,
-          verbose
-        });
-
-      } else {
-        throw new Error(`${platformName} not supported yet`);
-      }
-
-      if (versionBeforeSwitch) {
-        platform.switchToVersion(versionBeforeSwitch);
-      }
-    } catch(e) {
-      log.error(e);
+    if (platform.currentVersion !== nativeApp.ernPlatformVersion) {
+      versionBeforeSwitch = platform.currentVersion;
+      platform.switchToVersion(nativeApp.ernPlatformVersion);
     }
+
+    if (nativeAppPlatform === 'android') {
+      let generator = ernConfig.obj.libgen.android.generator;
+      generator.containerPomVersion = version;
+      await generateContainer({
+        nativeAppName,
+        platformPath: platform.currentPlatformVersionPath,
+        generator,
+        plugins,
+        miniapps,
+        verbose
+      });
+
+    } else {
+      throw new Error(`${platformName} not supported yet`);
+    }
+
+    if (versionBeforeSwitch) {
+      platform.switchToVersion(versionBeforeSwitch);
+    }
+  } catch (e) {
+    log.error(e);
+  }
 }
 
 export async function publishMiniApp({ fullNapSelector, verbose, force, containerVersion }) {
-    // No full nap selector was provied
-    // in that case, prompt the user with compatible native application versions
-    // so that he can select one or more to publish miniapp to
-    if (!fullNapSelector) {
-      const compatibilityReport = await getNativeAppCompatibilityReport();
-      const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
-        if (entry.compatibility.compatible.length > 0) {
-          const value = {
-            fullNapSelector: `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`,
-            isReleased : entry.isReleased
-          };
-          const suffix = value.isReleased ?
-          `[OTA] ${emoji.get('rocket')}` : `[IN-APP]`;
-          const name = `${value.fullNapSelector} ${suffix}`;
-          return { name, value }
-        }
-      });
+  // No full nap selector was provied
+  // in that case, prompt the user with compatible native application versions
+  // so that he can select one or more to publish miniapp to
+  if (!fullNapSelector) {
+    const compatibilityReport = await getNativeAppCompatibilityReport();
 
-      inquirer.prompt({
-        type: 'checkbox',
-        name: 'nativeApps',
-        message: 'Select one or more compatible native application version(s)',
-        choices: compatibleVersionsChoices
-      }).then(async (answer) =>  {
-        for (const nativeApp of answer.nativeApps) {
-          if (nativeApp.isReleased) {
-            await publishOta(nativeApp.fullNapSelector, { verbose, force });
-          } else {
-            await publishInApp(nativeApp.fullNapSelector, { containerVersion, verbose, force });
-          }
-        }
-      })
+    const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
+      if (entry.compatibility.incompatible.length === 0) {
+        const value = {
+          fullNapSelector: `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`,
+          isReleased: entry.isReleased
+        };
+        const suffix = value.isReleased ?
+          `[OTA] ${emoji.get('rocket')}` : `[IN-APP]`;
+        const name = `${value.fullNapSelector} ${suffix}`;
+        return { name, value }
+      }
+    }).filter(e => e !== undefined);
+
+    if (compatibleVersionsChoices.length === 0) {
+      return log.error('No compatible native application versions have been found');
     }
-    // full nap selector was provided (mostly for CI use)
-    // do the job !
-    else {
-        // Todo : Check for compat first !
-        // Todo : handle OTA
-        if (!containerVersion) {
-          inquirer.prompt({
-            type: 'input',
-            name: 'containerVersion',
-            message: 'Version of generated container'
-          }).then(async (answer) => {
-            await runContainerGen(
-              ...explodeNativeAppSelector(fullNapSelector), answer.containerVersion, verbose)
-          })
+
+    inquirer.prompt({
+      type: 'checkbox',
+      name: 'nativeApps',
+      message: 'Select one or more compatible native application version(s)',
+      choices: compatibleVersionsChoices
+    }).then(async(answer) => {
+      for (const nativeApp of answer.nativeApps) {
+        if (nativeApp.isReleased) {
+          await publishOta(nativeApp.fullNapSelector, { verbose, force });
         } else {
-          await runContainerGen(
-            ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
+          await publishInApp(nativeApp.fullNapSelector, { containerVersion, verbose, force });
         }
+      }
+    })
+  }
+  // full nap selector was provided (mostly for CI use)
+  // do the job !
+  else {
+    // Todo : Check for compat first !
+    // Todo : handle OTA
+    if (!containerVersion) {
+      inquirer.prompt({
+        type: 'input',
+        name: 'containerVersion',
+        message: 'Version of generated container'
+      }).then(async(answer) => {
+        await runContainerGen(
+          ...explodeNativeAppSelector(fullNapSelector), answer.containerVersion, verbose)
+      })
+    } else {
+      await runContainerGen(
+        ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
     }
+  }
 }
 
 async function publishInApp(fullNapSelector, { containerVersion, verbose, force }) {
@@ -126,7 +131,7 @@ async function publishInApp(fullNapSelector, { containerVersion, verbose, force 
         type: 'input',
         name: 'containerVersion',
         message: 'Version of generated container'
-      }).then(async (answer) => {
+      }).then(async(answer) => {
         await runContainerGen(
           ...explodeNativeAppSelector(fullNapSelector), answer.containerVersion, verbose)
       })

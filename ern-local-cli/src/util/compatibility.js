@@ -33,10 +33,10 @@ export async function checkCompatibilityWithNativeApp(verbose, appName, platform
 //
 // Check compatibility of current miniapp against a given platform version
 export function checkCompatibilityWithPlatform(verbose, platformVersion) {
-  const localNativeDeps = MiniApp.fromCurrentPath().nativeDependencies;
-  const platformDependencies = platform.getManifestPlugins(platformVersion);
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
+  const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion);
 
-  const report = getCompatibility(localNativeDeps, platformDependencies);
+  const report = getCompatibility(miniappDependencies, platformDependencies);
   const isCompatible = report.incompatible.length === 0;
 
   log.info(isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE"));
@@ -85,9 +85,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
   const nativeApps = await cauldron.getAllNativeApps();
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const miniapp = MiniApp.fromCurrentPath();
-  const miniAppNativeDependencies = miniapp.nativeDependencies;
-  const miniAppJsDependencies = miniapp.jsDependencies;
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
   const manifestJsDependencies = platform.getManifestJsDependencies();
 
   // I so love building pyramids !!! :P
@@ -104,7 +102,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appBinary: nativeAppVersion.binary,
                 isReleased: nativeAppVersion.isReleased,
                 compatibility: getCompatibility(
-                  [...miniAppNativeDependencies, ...miniAppJsDependencies],
+                  miniappDependencies,
                   [...nativeAppVersion.nativeDeps, ...manifestJsDependencies])
               });
             }
@@ -170,18 +168,6 @@ export function getCompatibility(localDeps, remoteDeps) {
        (localDepVersion === remoteDep.version)) {
       result.compatible.push(entry);
     }
-  }
-
-  // all other deps are deemed compatible by default if the do not exists
-  // remotely yet
-  const localOnlyNativeDeps =
-    _.differenceBy(localDeps, remoteDeps, 'name');
-
-  for (const localOnlyNativeDep of localOnlyNativeDeps) {
-    const dependencyName = localOnlyNativeDep.name;
-    const localVersion = localOnlyNativeDep.version;
-    let entry = { dependencyName, scope: localOnlyNativeDep.scope, localVersion };
-    result.compatible.push(entry);
   }
 
   return result;

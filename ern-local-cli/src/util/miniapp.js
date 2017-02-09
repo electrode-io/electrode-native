@@ -92,6 +92,7 @@ export default class MiniApp {
       appPackageJson.ernPlatformVersion = platformVersion;
       appPackageJson.ernHeadLess = headless;
       appPackageJson.private = false;
+      appPackageJson.dependencies['react'] = platform.getJsDependency("react").version;
       if (scope) { appPackageJson.name = `@${scope}/${appName}`; }
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
 

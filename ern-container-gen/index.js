@@ -785,7 +785,7 @@ function required(param) {
 //      version: "1.0.0"
 //    }
 //  ]
-export default async function generateContainer({
+export async function generateContainer({
     nativeAppName = required('nativeAppName'),
     platformPath = required('platformPath'),
     generator = required('generator'),

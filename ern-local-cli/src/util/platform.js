@@ -15,6 +15,7 @@ class Platform {
   }
 
   switchPlatformRepositoryToVersion(version) {
+    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} fetch origin`);
     execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout origin/v${version}`);
   }
 
@@ -203,7 +204,7 @@ class Platform {
 
   getDependency(dependencyString) {
     const dependency = this.buildDependencyObj(dependencyString);
-    return  _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
+    return _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
       d => (d.name === dependency.name) && (d.scope === dependency.scope));
   }
 }
