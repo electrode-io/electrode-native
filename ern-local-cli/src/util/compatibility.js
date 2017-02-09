@@ -11,12 +11,12 @@ import platform from './platform.js';
 // Check compatibility of current miniapp against one or multiple native apps
 export async function checkCompatibilityWithNativeApp(verbose, appName, platformName, versionName) {
   let compatReport = await spin("Checking compatibility",
-    getNativeAppCompatibilityReport({appName, platformName, versionName}));
+    getNativeAppCompatibilityReport({ appName, platformName, versionName }));
 
   for (let r of compatReport) {
     const isCompatible = r.compatibility.incompatible.length === 0;
-    log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + " : "
-      + (isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
+    log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + " : " +
+      (isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
 
     if (verbose) {
       logCompatibilityReportTable(r.compatibility);
@@ -50,11 +50,12 @@ export function checkCompatibilityWithPlatform(verbose, platformVersion) {
 // Log compatiblity report to terminal in a fancy table
 export async function logCompatibilityReportTable(report) {
   var table = new Table({
-      head: [ chalk.cyan('Scope'),
-              chalk.cyan('Name'),
-              chalk.cyan('Needed Version'),
-              chalk.cyan('Local Version') ],
-      colWidths: [10, 40, 16, 15]
+    head: [chalk.cyan('Scope'),
+      chalk.cyan('Name'),
+      chalk.cyan('Needed Version'),
+      chalk.cyan('Local Version')
+    ],
+    colWidths: [10, 40, 16, 15]
   });
 
   for (const compatibleEntry of report.compatible) {
@@ -102,8 +103,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appBinary: nativeAppVersion.binary,
                 isReleased: nativeAppVersion.isReleased,
                 compatibility: getCompatibility(
-                  miniappDependencies,
-                  [...nativeAppVersion.nativeDeps, ...manifestJsDependencies])
+                  miniappDependencies, [...nativeAppVersion.nativeDeps, ...manifestJsDependencies])
               });
             }
           }
@@ -159,13 +159,14 @@ export function getCompatibility(localDeps, remoteDeps) {
       dependencyName: remoteDep.name,
       scope: remoteDep.scope,
       localVersion: localDepVersion,
-      remoteVersion: remoteDep.version };
+      remoteVersion: remoteDep.version
+    };
 
     if ((localDepVersion) &&
-       (localDepVersion !== remoteDep.version)) {
-        result.incompatible.push(entry);
+      (localDepVersion !== remoteDep.version)) {
+      result.incompatible.push(entry);
     } else if ((localDepVersion) &&
-       (localDepVersion === remoteDep.version)) {
+      (localDepVersion === remoteDep.version)) {
       result.compatible.push(entry);
     }
   }

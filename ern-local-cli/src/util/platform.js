@@ -20,7 +20,7 @@ class Platform {
   }
 
   isPlatformVersionAvailable(version) {
-    return this.versions.includes(version);
+    return this.versions.includes('' + version);
   }
 
   isPlatformVersionInstalled(version) {
@@ -152,7 +152,7 @@ class Platform {
   // If no version is specified, returns the manifest of the currently activated
   // platform version
   getManifest(version) {
-    if (!version || (version === this.currentVersion)) {
+    if ((!version && version !== 0) || (version === this.currentVersion)) {
       return this.currentVersionManifest;
     } else {
       if (!this.isPlatformVersionAvailable(version)) {
