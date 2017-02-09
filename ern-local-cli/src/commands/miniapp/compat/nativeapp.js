@@ -1,4 +1,4 @@
-import { nativeCompatCheck } from '../../../util/compatibility.js'
+import { checkCompatibilityWithNativeApp } from '../../../util/compatibility.js'
 import explodeNativeAppSelector from '../../../util/explodeNapSelector.js';
 
 exports.command = 'nativeapp <napSelector> [verbose]'
@@ -14,9 +14,9 @@ exports.builder = function(yargs) {
 
 exports.handler = function (argv) {
   if (argv.napSelector) {
-    nativeCompatCheck(argv.verbose,
+    checkCompatibilityWithNativeApp(argv.verbose,
         ...explodeNativeAppSelector(argv.napSelector));
   } else {
-    nativeCompatCheck(argv.verbose);
+    checkCompatibilityWithNativeApp(argv.verbose);
   }
 }

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import inquirer from 'inquirer';
-import { nativeCompatCheck } from '../../../util/compatibility.js'
+import { checkCompatibilityWithNativeApp } from '../../../util/compatibility.js'
 import explodeNativeAppSelector from '../../../util/explodeNapSelector.js';
 import MiniApp from '../../../util/miniapp.js';
 import { getNativeAppCompatibilityReport } from '../../../util/compatibility.js';
@@ -26,12 +26,16 @@ exports.handler = async function (argv) {
   if (!argv.fullNapSelector) {
     const compatibilityReport = await getNativeAppCompatibilityReport();
     const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
-      if (entry.compatibility.compatible.length > 0) {
+      if (entry.compatibility.incompatible.length === 0) {
         const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`;
         const name = entry.isReleased ? `${value} [OTA]` : `${value} [IN-APP]`;
         return { name, value }
       }
-    });
+    }).filter(e => e !== undefined);
+
+    if (compatibleVersionsChoices.length === 0) {
+      return console.log("No compatible native application versions were found :(");
+    }
 
     inquirer.prompt({
       type: 'checkbox',
