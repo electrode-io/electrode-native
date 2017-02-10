@@ -3,6 +3,9 @@ import {expect} from 'chai';
 import fs from 'fs';
 import path from 'path';
 
+const fixtures = path.join.bind(path, __dirname, 'fixtures');
+
+
 function makeTest(schema, match) {
     return () => {
         expect(parseApiSchema(schema, 'parseApiSchema-test')).to.eql(match);
@@ -14,7 +17,7 @@ function makeTestWithFilename(schema, match, filename) {
     };
 }
 
-function makeTestByName(match) {
+function titleTest(match) {
     return function () {
         return makeTest(this.test.title, match)();
     };
@@ -34,15 +37,15 @@ function makeError(schema, message) {
 
 describe('parseApiSchema', function () {
     describe('meta: namespace|apiName|apiVersion|npmScope|modelPath', function () {
-        it('should parse namespace', makeTest(`namespace abc   `, {
+        it(`namespace abc   `, titleTest({
             "events": [],
             "namespace": "abc",
             "requests": []
         }));
-        it('should parse apiVersion', makeTest(`apiVersion 1.0.0
+        it(`apiVersion 1.0.0
 //
 namespace abc //this is a comment
-`, {
+`, titleTest({
             "events": [],
             "namespace": "abc",
 
@@ -51,11 +54,11 @@ namespace abc //this is a comment
         }));
 
 
-        it('should parse apiVersion amd apiName', makeTest(`apiVersion 1.0.0
+        it(`apiVersion 1.0.0
 npmScope stuff
 namespace abc //this is a comment
 modelPath ../../.../stfuasd
-`, {
+`, titleTest({
             "events": [],
             "namespace": "abc",
             "npmScope": "stuff",
@@ -81,7 +84,7 @@ a command there //a comment there
     });
 
     describe('documented statements', function () {
-        it('event weatherUpdatedAtPosition(position: LatLng)', makeTestByName({
+        it('event weatherUpdatedAtPosition(position: LatLng)', titleTest({
             "events": [
                 {
                     "name": "weatherUpdatedAtPosition",
@@ -94,7 +97,7 @@ a command there //a comment there
             "requests": []
         }));
 
-        it(' event weatherUpdated', makeTestByName({
+        it(' event weatherUpdated', titleTest({
             "events": [
                 {
                     "name": "weatherUpdated"
@@ -102,7 +105,7 @@ a command there //a comment there
             requests: []
         }));
 
-        it(`request refreshWeather()`, makeTestByName({
+        it(`request refreshWeather()`, titleTest({
             "events": [],
             "requests": [
                 {
@@ -111,7 +114,7 @@ a command there //a comment there
             ]
         }));
 
-        it('request refreshWeatherFor(location: String)', makeTestByName({
+        it('request refreshWeatherFor(location: String)', titleTest({
             events: [],
             requests: [
                 {
@@ -124,7 +127,7 @@ a command there //a comment there
             ]
         }));
 
-        it('request getTemperatureFor(location: String) : Integer', makeTestByName({
+        it('request getTemperatureFor(location: String) : Integer', titleTest({
             events: [],
             requests: [{
                 "name": "getTemperatureFor",
@@ -136,7 +139,7 @@ a command there //a comment there
             }]
         }));
 
-        it('request getCurrentTemperature() : Integer', makeTestByName({
+        it('request getCurrentTemperature() : Integer', titleTest({
             "events": [],
             "requests": [
                 {
@@ -146,9 +149,9 @@ a command there //a comment there
             ]
         }));
     });
-    const fixtures = path.join(__dirname, 'fixtures')
-    fs.readdirSync(fixtures).filter(f => /\.apischema$/.test(f)).forEach(function (f) {
-        const file = path.join(fixtures, f);
+
+    fs.readdirSync(fixtures()).filter(f => /\.apischema$/.test(f)).forEach(function (f) {
+        const file = fixtures(f);
         let result;
         try {
             result = JSON.parse(fs.readFileSync(file + '.json', 'utf8'));
