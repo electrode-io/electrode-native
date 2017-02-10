@@ -78,7 +78,7 @@ export async function generateApi(options) {
 
     log.info(`==  Generated project: 
         $ cd ${outFolder}
-        $ npm install
+        $ yarn install
         `);
 }
 export async function cleanGenerated(outFolder = cwd()) {
