@@ -1,9 +1,3 @@
-const log = require('console-log-level')({
-    prefix(level) {
-        return '[ern-api-parser]'
-    },
-    level: 'info'
-});
 
 /***
  *
@@ -59,13 +53,13 @@ const requestWReqPWResP = /request\s+?(.+)\({1}(.+)\s*:\s*(.+)\){1}\s*:\s*(.+)\s
 // request with no request payload and a reponse payload
 const requestWoReqPWResP = /request\s+?([a-zA-Z]+)\s*\(\s*\)\s*:\s*(.+)\s*/;
 
-const meta = /^\s*(namespace|apiName|apiVersion|npmScope|modelPath)\s+?(.+?)\s*$/i;
+const meta = /^\s*(namespace|apiName|apiVersion|apiDescription|npmScope|modelPath)\s+?(.+?)\s*$/i;
 const metaMap = {
     npmscope: "npmScope",
     apiname: "apiName",
     apiversion: "apiVersion",
-    modelpath: "modelPath",
-    namespace: 'namespace'
+    apidescription: "apiDescription",
+    modelpath: "modelPath"
 };
 
 export default function generateConfigFromSchemaSync(schema, fileName) {
@@ -88,7 +82,8 @@ export default function generateConfigFromSchemaSync(schema, fileName) {
         }
         if (meta.test(line)) {
             const mr = meta.exec(line);
-            config[metaMap[mr[1].toLowerCase()]] = mr[2];
+            const key = mr[1].toLowerCase();
+            config[metaMap[key] || key] = mr[2];
             continue;
         }
         // Handles statement declaring an event with payload

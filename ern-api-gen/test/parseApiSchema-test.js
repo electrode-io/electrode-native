@@ -15,13 +15,13 @@ function readJSON(file) {
 }
 
 function makeTest(schema, match) {
-    return () => {
-        expect(parseApiSchema(schema, 'parseApiSchema-test')).to.eql(match);
-    };
+    return makeTestWithFilename(schema, match, 'parseApiSchema-test.js');
 }
 function makeTestWithFilename(schema, match, filename) {
     return () => {
-        expect(parseApiSchema(schema, filename)).to.eql(match);
+        const res = parseApiSchema(schema, filename)
+        expect(res).to.eql(match);
+        return Promise.resolve(res);
     };
 }
 
@@ -158,10 +158,12 @@ a command there //a comment there
         }));
     });
 
-    apiFixtures.forEach(f => {
-        const file = fixtures(f);
-        const result = readJSON(`${file}.json`);
-        const source = fs.readFileSync(file, 'utf8');
-        it(`should parse ${f}`, makeTestWithFilename(source, result, file));
-    })
+    describe('api schema fixtures', function () {
+        apiFixtures.forEach(f => {
+            const file = fixtures(f);
+            const result = readJSON(`${file}.json`);
+            const source = fs.readFileSync(file, 'utf8');
+            it(`should parse ${f}`, makeTestWithFilename(source, result, file));
+        });
+    });
 });

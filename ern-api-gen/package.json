@@ -15,8 +15,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
-    "babel-register": "^6.18.0",
     "chalk": "^1.1.3",
     "console-log-level": "^1.4.0",
     "fs-readdir-recursive": "https://npme.walmart.com/fs-readdir-recursive/-/fs-readdir-recursive-1.0.0.tgz",
@@ -28,8 +26,10 @@
     "xcode": "^0.9.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-preset-node6": "^11.0.0",
+    "babel-register": "^6.18.0",
+    "babel-cli": "^6.18.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
   },
