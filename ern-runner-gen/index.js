@@ -5,7 +5,7 @@ const shell = require('shelljs');
 const Mustache = require('mustache');
 const chalk = require('chalk');
 const readDir = require('fs-readdir-recursive');
-import generateContainer from '../ern-container-gen/index.js';
+import { generateContainer } from '../ern-container-gen/index.js';
 
 const workingFolder = process.cwd();
 

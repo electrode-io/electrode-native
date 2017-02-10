@@ -15,7 +15,7 @@ exports.builder = function(yargs) {
 }
 
 exports.handler = function (argv) {
-  const plugins = platform.getSupportedPlugins(argv.platformVersion ?
+  const plugins = platform.getManifestPlugins(argv.platformVersion ?
     argv.platformVersion : platform.currentVersion);
 
   log.info(

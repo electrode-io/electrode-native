@@ -1,4 +1,4 @@
-import { platformCompatCheck } from '../../../util/compatibility.js';
+import { checkCompatibilityWithPlatform } from '../../../util/compatibility.js';
 
 exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'
@@ -16,5 +16,5 @@ exports.builder = function(yargs) {
 }
 
 exports.handler = function (argv) {
-  platformCompatCheck(argv.verbose, argv.platformVersion);
+  checkCompatibilityWithPlatform(argv.verbose, argv.platformVersion);
 }

@@ -440,7 +440,57 @@ async function reactNativeBundle(paths) {
   });
 }
 
-async function bundleMiniApps(miniapps, paths) {
+export async function generateMiniAppsComposite(miniapps, folder, { verbose, plugins }) {
+  if (!log) {
+    log = require('console-log-level')({
+       prefix: () => '[ern-container-gen]',
+       level: verbose ? 'info' : 'warn'
+    });
+  }
+
+  shell.mkdir('-p',folder);
+  shell.cd(folder);
+
+  let content = "";
+  for (const miniapp of miniapps) {
+    const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
+                                      : miniapp.name;
+    content += `import '${miniAppName}'\n`;
+    await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`,
+       yarnAdd(miniAppName, miniapp.version));
+  }
+
+  // If code push plugin is present we need to do some additional work
+  if (plugins) {
+    const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push');
+    if (codePushPlugin) {
+      await yarnAdd(codePushPlugin.name, codePushPlugin.version);
+      content += `import codePush from "react-native-code-push"\n`;
+      content += `codePush.sync()`;
+
+      // We need to add some info to package.json for CodePush
+      // In order to run, code push needs to find the following in package.json
+      // - name & version
+      // - react-native in the dependency block
+      // TODO :For now we hardcode these values for demo purposes. That being said it
+      // might not be needed to do something better because it seems like
+      // code push is not making a real use of this data
+      // Investigate further.
+      // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
+      const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+      packageJson.dependencies['react-native'] =
+        _.find(plugins, p => p.name === 'react-native').version;
+      packageJson.name = "container";
+      packageJson.version = "0.0.1";
+      fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
+    }
+  }
+
+  log.info(`writing index.android.js`);
+  await writeFile('./index.android.js', content);
+}
+
+async function bundleMiniApps(miniapps, paths, plugins) {
   try {
     log.info(`[=== Starting mini apps bundling ===]`);
 
@@ -451,20 +501,7 @@ async function bundleMiniApps(miniapps, paths) {
     }
     // Generic case
     else {
-      shell.mkdir('-p', paths.compositeMiniApp);
-      shell.cd(paths.compositeMiniApp);
-
-      let imports = "";
-      for (const miniapp of miniapps) {
-        const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
-                                          : miniapp.name;
-        imports += `import '${miniAppName}'\n`;
-        await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`,
-           yarnAdd(miniAppName, miniapp.version));
-      }
-
-      log.info(`writing index.android.js`);
-      await writeFile('./index.android.js', imports);
+      await generateMiniAppsComposite(miniapps, paths.compositeMiniApp, { plugins });
     }
 
     // Clear react packager cache beforehand to avoid surprises ...
@@ -695,7 +732,7 @@ async function generateAndroidContainerUsingMavenGenerator(
 
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    await bundleMiniApps(miniapps, paths);
+    await bundleMiniApps(miniapps, paths, includedPlugins);
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
@@ -748,7 +785,7 @@ function required(param) {
 //      version: "1.0.0"
 //    }
 //  ]
-export default async function generateContainer({
+export async function generateContainer({
     nativeAppName = required('nativeAppName'),
     platformPath = required('platformPath'),
     generator = required('generator'),

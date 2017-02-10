@@ -11,7 +11,7 @@ const log = require('console-log-level')();
 import tagOneLine from './tagoneline.js';
 import cauldron from './cauldron.js';
 import platform from './platform.js';
-import { nativeCompatCheck } from './compatibility.js';
+import { checkCompatibilityWithNativeApp } from './compatibility.js';
 import explodeNapSelector from './explodeNapSelector.js';
 import { generateRunner,  generateContainerForRunner } from '../../../ern-runner-gen/index.js';
 import { runAndroid } from './android.js';
@@ -92,6 +92,7 @@ export default class MiniApp {
       appPackageJson.ernPlatformVersion = platformVersion;
       appPackageJson.ernHeadLess = headless;
       appPackageJson.private = false;
+      appPackageJson.dependencies['react'] = platform.getJsDependency("react").version;
       if (scope) { appPackageJson.name = `@${scope}/${appName}`; }
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
 
@@ -193,6 +194,21 @@ export default class MiniApp {
     return result;
   }
 
+  // Return all javascript (non native) dependencies currently used by the mini-app
+  // This method checks dependencies from the package.json of the miniapp and
+  // exclude native dependencies (plugins).
+  get jsDependencies() {
+    const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name);
+    let result = _.map(this.packageJson.dependencies, (val, key) =>
+      platform.buildDependencyObj(`${key}@${val}`));
+
+    return _.filter(result, d => !nativeDependenciesNames.includes(d.name));
+  }
+
+  get nativeAndJsDependencies() {
+    return [...this.jsDependencies, ...this.nativeDependencies];
+  }
+
   async runInAndroidRunner(verbose) {
     const runnerConfig = {
       platformPath: platform.currentPlatformVersionPath,
@@ -220,42 +236,46 @@ export default class MiniApp {
     });
   }
 
-  async addPlugin(pluginString) {
-    const plugin = platform.getPlugin(pluginString);
-    if (!plugin) {
-      return log.error(`Plugin ${pluginString} is not available in current container version`);
+  async addDependency(dependencyName, { dev } = {}) {
+    let dep = platform.getDependency(dependencyName);
+    if (!dep) {
+      log.warn(
+`
+==================================================================================
+Dependency ${dependencyName} is not declared in current platform version manifest.
+If this is a non purely JS dependency you will face issues during publication.
+Otherwise you can safely ignore this warning
+==================================================================================
+`);
+      dep = platform.buildDependencyObj(dependencyName);
+      dep.version = 'latest';
     }
 
     process.chdir(this.path);
-    if (plugin.scope) {
-      await spin(`Installing @${plugin.scope}/${plugin.name}@${plugin.version}`, yarnAdd(plugin));
+    if (dep.scope) {
+      await spin(`Installing @${dep.scope}/${dep.name}@${dep.version}`, yarnAdd(dep, { dev }));
     } else {
-      await spin(`Installing ${plugin.name}@${plugin.version}`, yarnAdd(plugin));
+      await spin(`Installing ${dep.name}@${dep.version}`, yarnAdd(dep, { dev }));
     }
   }
 
   async upgradeToPlatformVersion(versionToUpgradeTo, force) {
     if ((this.platformVersion === versionToUpgradeTo)
-      // Do not enforce if v1000 to help with development (should be temporary)
       && (!force)) {
       return log.error(`This miniapp is already using v${versionToUpgradeTo}. Use 'f' flag if you want to force upgrade.`);
     }
 
-    if (this.platformVersion > versionToUpgradeTo) {
-      return log.error(`Downgrading is not supported. Could be. But no.`);
-    }
-
     // Update all modules versions in package.json
-    const supportedPlugins = platform.getSupportedPlugins(versionToUpgradeTo);
+    const manifestDependencies = platform.getManifestPluginsAndJsDependencies(versionToUpgradeTo);
 
-    for (const supportedPlugin of supportedPlugins) {
-      const nameWithScope = `${supportedPlugin.scope?`@${supportedPlugin.scope}/`:''}${supportedPlugin.name}`;
+    for (const manifestDependency of manifestDependencies) {
+      const nameWithScope = `${manifestDependency.scope?`@${manifestDependency.scope}/`:''}${manifestDependency.name}`;
       if (this.packageJson.dependencies[nameWithScope]) {
-        const pluginManifestVersion = supportedPlugin.version;
-        const currentPluginVersion = this.packageJson.dependencies[nameWithScope];
-        if (pluginManifestVersion != currentPluginVersion) {
-          log.info(`${nameWithScope} : ${currentPluginVersion} => ${pluginManifestVersion}`);
-          this.packageJson.dependencies[nameWithScope] = pluginManifestVersion;
+        const dependencyManifestVersion = manifestDependency.version;
+        const localDependencyVersion = this.packageJson.dependencies[nameWithScope];
+        if (dependencyManifestVersion != localDependencyVersion) {
+          log.info(`${nameWithScope} : ${localDependencyVersion} => ${dependencyManifestVersion}`);
+          this.packageJson.dependencies[nameWithScope] = dependencyManifestVersion;
         }
       }
     }
@@ -320,7 +340,7 @@ export default class MiniApp {
         }*/
 
         log.info('Checking compatibility with each native dependency');
-        let isCompatible = await nativeCompatCheck(
+        let isCompatible = await checkCompatibilityWithNativeApp(
           true, appName, platformName, versionName);
         if (!isCompatible) {
           throw new Error('At least a native dependency is incompatible');
@@ -360,6 +380,7 @@ export default class MiniApp {
 
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
+        throw e;
     }
   }
 

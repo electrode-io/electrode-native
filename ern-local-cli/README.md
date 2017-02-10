@@ -28,15 +28,14 @@ Depending of the user infrastructure and development lifecycle this command line
 │   │   ├── model                   Generates native models using ern-model-gen
 │   ├── miniapp                     [=== MiniApp development related commands ===]
 │   │   ├── init                    Creates a new miniapp
+│   │   ├── add                     Adds a dependency to the miniapp
 │   │   ├── compat                  [--- Binary compatibility checking --]
 │   │   |   ├── nativeapp           Check binary compatibility of miniapp with a native app version
 │   │   |   ├── platform            Check binary compatibility of miniapp with a platform version
-│   │   ├── plugins                 [--- Plugins management --]
-│   │   |   ├── add                 Add a plugin to the miniapp
-│   │   |   ├── list                List the plugins used by the miniapp
 │   │   ├── run                     [--- Run the miniapp ! --]
 │   │   |   ├── android             Run the miniapp in the android runner
-│   │   ├── upgrade                 Upgrade the miniapp to a platform version (TBD)
+│   │   ├── upgrade                 Upgrade the miniapp to a platform version
+│   │   ├── publish                 Publish the miniapp in a in-dev app or OTA
 │   ├── platform                    [=== Platform management ===]
 │   │   ├── config                  Get or set platform configuration value(s)
 │   │   ├── current                 Show the current platform version number
@@ -234,7 +233,7 @@ For now, this command just executes `react-native init` command, using the react
 ```shell
 > ern miniapp init MyCoolMiniApp
 > ern miniapp init MyCoolMiniApp -s walmart:android:4.1
-> ern miniapp init MyCoolMiniApp -v 4 --scope walmart --verbose'
+> ern miniapp init MyCoolMiniApp -v 4 --scope walmart --verbose
 ```
 
 **Check binary compatibility of miniapp with a native application version**  
@@ -242,7 +241,9 @@ For now, this command just executes `react-native init` command, using the react
 `ern miniapp compat nativeapp <napSelector> [verbose]`  
 
 This command will check if the miniapp is binary compatible with a native application version.  
-i.e it will check that all plugins used by the miniapp do exist in the native application version, and also that all versions of these plugins are matching.  
+i.e it will check that all plugins used by the miniapp do exist in the native application version, and also that all versions of these plugins are matching.    
+It will also check JS dependencies versions. If the miniapp is using a JS dependency that is present in the manifest of the current platform version, it will ensure that versions are matching (it will be possible to opt-out from this enforcement later on using a specific config flag stored in the cauldron).  
+
 `napSelector` is a partial one. If `walmart:android` is provided for example, it will check the compatibility will all versions of the walmart android native application.  
 `verbose` is an optional flag to ask for verbose output. If not provided, a single line will indicate compatibility or not with each native application version. If provided, a table with a breakdown of plugins/versions match/mismatch will be displayed for each native application version.  
 
@@ -257,6 +258,8 @@ i.e it will check that all plugins used by the miniapp do exist in the native ap
 
 This command will check if the miniapp is binary compatible with a platform version.  
 i.e it will check that all plugins used by the miniapp do exist in platform version, and also that all versions of these plugins are matching.  
+It will also check JS dependencies versions. If the miniapp is using a JS dependency that is present in the manifest of the current platform version, it will ensure that versions are matching (it will be possible to opt-out from this enforcement later on using a specific config flag stored in the cauldron).   
+
 `platformVersion` (alias `v`) is optional, if not provided the compatibility check will be done with the currently activated platform version.  
 
 ```shell
@@ -264,30 +267,42 @@ i.e it will check that all plugins used by the miniapp do exist in platform vers
 > ern miniapp compat platform -v 3
 ```
 
-**Add a plugin to a miniapp**
+**Add a dependency to a miniapp**
 
-`ern miniapp plugins add <name>`  
+`ern miniapp add <name>`  
 
-This command will add a plugin to the miniapp. Miniapp developers should rely on this command to install plugins rather than directly through `yarn` or `npm` as this command will ensure that the plugin is supported by the platform version used, but will also make sure to use the correct version of the plugin to match the one supported by platform version.  
+This command will add a dependency to the miniapp. Miniapp developers should rely on this command to install dependencies rather than directly through `yarn` or `npm` as this command will ensure that the dependency version matches the version declared in the manifest for this dependency. If the dependency is not declared in current platform version manifest, then it will install the latest version of the dependency and warn the user that in case this is a native dependency it will break binary compatibility.
 
 ```shell
-> ern miniapp plugins add react-native-code-push
->ern miniapp plugins add @walmart/react-native-electrode-bridge
+> ern miniapp add react-native-code-push
+>ern miniapp add @walmart/react-native-electrode-bridge
 ```
-
-**List all plugins used by the miniapp**
-
-`ern miniapp plugins list`  
-
-This command will list all the plugins currently used by the miniapp along with their versions.  
-
-```shell
-> ern miniapp plugins list
-```  
 
 **Run the miniapp in Android runner**  
 
 `ern miniapp run android`
+
+**Publish the miniapp**
+
+`ern miniapp publish [fullNapSelector] [force] [verbose] [containerVersion]`  
+
+```shell
+> ern miniapp publish
+> ern miniapp publish walmart:android:1.0
+> ern miniapp publish walmart:android:1.0 --containerVersion 1.2.3
+> ern miniapp publish walmart:android:1.0 --force --verbose
+```  
+
+The `miniapp publish` command can be used by a miniapp developer or CI platform to publish a miniapp to one or more compatible native application(s) version(s).  
+
+There is two different publication modes, based on the release status of the binary compatible native application version (stored in cauldron) :
+
+- If the targeted native application version is `not yet released` (in-dev, not publish to store yet), then the `publish` command will result in generating a new container (and incrementing it's version) and publishing it, so that it can be consumed by the native app team (and ultimately at some point included in the release of the app to the store).
+- If the targeted native application version is `released` (published to store), then the `publish` command will result in triggering a code push update targeting this native app version.
+
+If `miniapp publish` command is used without any arguments, it starts an interactive session, prompting the user to select from a list of binary compatible native application versions, the ones that he want to publish his miniapp to. We also indicate to the user which native application versions will result in an OTA v.s INAPP publication.
+
+If `miniapp publish` command is used with arguments specifying a fullNapSelector (pointing to a specific native application version), then it will do its job for this version of the native application (if its binary compatible) and will trigger either inapp or ota publication. This mode is more reserved for CI platforms that cannot really enter an interactive terminal session.
 
 ### platform
 

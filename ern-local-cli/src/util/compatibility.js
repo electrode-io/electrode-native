@@ -7,14 +7,16 @@ import { spin } from './spin.js';
 import MiniApp from './miniapp.js'
 import platform from './platform.js';
 
-export async function nativeCompatCheck(verbose, appName, platformName, versionName) {
+//
+// Check compatibility of current miniapp against one or multiple native apps
+export async function checkCompatibilityWithNativeApp(verbose, appName, platformName, versionName) {
   let compatReport = await spin("Checking compatibility",
-    getNativeAppCompatibilityReport({appName, platformName, versionName}));
+    getNativeAppCompatibilityReport({ appName, platformName, versionName }));
 
   for (let r of compatReport) {
     const isCompatible = r.compatibility.incompatible.length === 0;
-    log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + " : "
-      + (isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
+    log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + " : " +
+      (isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
 
     if (verbose) {
       logCompatibilityReportTable(r.compatibility);
@@ -28,11 +30,13 @@ export async function nativeCompatCheck(verbose, appName, platformName, versionN
   }
 }
 
-export function platformCompatCheck(verbose, platformVersion) {
-  const localNativeDeps = MiniApp.fromCurrentPath().nativeDependencies;
-  const platformDependencies = platform.getSupportedPlugins(platformVersion);
+//
+// Check compatibility of current miniapp against a given platform version
+export function checkCompatibilityWithPlatform(verbose, platformVersion) {
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
+  const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion);
 
-  const report = getCompatibility(localNativeDeps, platformDependencies);
+  const report = getCompatibility(miniappDependencies, platformDependencies);
   const isCompatible = report.incompatible.length === 0;
 
   log.info(isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE"));
@@ -42,13 +46,16 @@ export function platformCompatCheck(verbose, platformVersion) {
   }
 }
 
+//
+// Log compatiblity report to terminal in a fancy table
 export async function logCompatibilityReportTable(report) {
   var table = new Table({
-      head: [ chalk.cyan('Scope'),
-              chalk.cyan('Name'),
-              chalk.cyan('Ext Version'),
-              chalk.cyan('Local Version') ],
-      colWidths: [10, 40, 15, 15]
+    head: [chalk.cyan('Scope'),
+      chalk.cyan('Name'),
+      chalk.cyan('Needed Version'),
+      chalk.cyan('Local Version')
+    ],
+    colWidths: [10, 40, 16, 15]
   });
 
   for (const compatibleEntry of report.compatible) {
@@ -72,12 +79,15 @@ export async function logCompatibilityReportTable(report) {
   log.info(table.toString());
 }
 
+//
+// Retrieve compatibility report(s) of current miniapp against one or multiple native apps
 export async function getNativeAppCompatibilityReport({ appName, platformName, versionName } = {}) {
   let result = [];
   const nativeApps = await cauldron.getAllNativeApps();
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const miniAppDependencies = MiniApp.fromCurrentPath().nativeDependencies;
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
+  const manifestJsDependencies = platform.getManifestJsDependencies();
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
@@ -92,8 +102,8 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appVersion: nativeAppVersion.name,
                 appBinary: nativeAppVersion.binary,
                 isReleased: nativeAppVersion.isReleased,
-                compatibility: getCompatibility(miniAppDependencies,
-                  nativeAppVersion.nativeDeps)
+                compatibility: getCompatibility(
+                  miniappDependencies, [...nativeAppVersion.nativeDeps, ...manifestJsDependencies])
               });
             }
           }
@@ -149,29 +159,16 @@ export function getCompatibility(localDeps, remoteDeps) {
       dependencyName: remoteDep.name,
       scope: remoteDep.scope,
       localVersion: localDepVersion,
-      remoteVersion: remoteDep.version };
+      remoteVersion: remoteDep.version
+    };
 
     if ((localDepVersion) &&
-       (localDepVersion !== remoteDep.version)) {
-        result.incompatible.push(entry);
+      (localDepVersion !== remoteDep.version)) {
+      result.incompatible.push(entry);
     } else if ((localDepVersion) &&
-       (localDepVersion === remoteDep.version)) {
-      result.compatible.push(entry);
-    } else {
+      (localDepVersion === remoteDep.version)) {
       result.compatible.push(entry);
     }
-  }
-
-  // all other deps are deemed compatible by default if the do not exists
-  // remotely yet
-  const localOnlyNativeDeps =
-    _.differenceBy(localDeps, remoteDeps, 'name');
-
-  for (const localOnlyNativeDep of localOnlyNativeDeps) {
-    const dependencyName = localOnlyNativeDep.name;
-    const localVersion = localOnlyNativeDep.version;
-    let entry = { dependencyName, scope: localOnlyNativeDep.scope, localVersion };
-    result.compatible.push(entry);
   }
 
   return result;
