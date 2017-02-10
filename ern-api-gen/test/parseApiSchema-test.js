@@ -4,7 +4,15 @@ import fs from 'fs';
 import path from 'path';
 
 const fixtures = path.join.bind(path, __dirname, 'fixtures');
+const apiFixtures = fs.readdirSync(fixtures()).filter(f => /\.apischema$/.test(f));
 
+function readJSON(file) {
+    try {
+        return JSON.parse(fs.readFileSync(file, 'utf8'));
+    } catch (e) {
+        throw new Error(`Error parsing ${file} ${e.message}`);
+    }
+}
 
 function makeTest(schema, match) {
     return () => {
@@ -102,7 +110,7 @@ a command there //a comment there
                 {
                     "name": "weatherUpdated"
                 }],
-            requests: []
+            "requests": []
         }));
 
         it(`request refreshWeather()`, titleTest({
@@ -115,8 +123,8 @@ a command there //a comment there
         }));
 
         it('request refreshWeatherFor(location: String)', titleTest({
-            events: [],
-            requests: [
+            "events": [],
+            "requests": [
                 {
                     "name": "refreshWeatherFor",
                     "payload": {
@@ -128,8 +136,8 @@ a command there //a comment there
         }));
 
         it('request getTemperatureFor(location: String) : Integer', titleTest({
-            events: [],
-            requests: [{
+            "events": [],
+            "requests": [{
                 "name": "getTemperatureFor",
                 "payload": {
                     "type": "String",
@@ -150,17 +158,10 @@ a command there //a comment there
         }));
     });
 
-    fs.readdirSync(fixtures()).filter(f => /\.apischema$/.test(f)).forEach(function (f) {
+    apiFixtures.forEach(f => {
         const file = fixtures(f);
-        let result;
-        try {
-            result = JSON.parse(fs.readFileSync(file + '.json', 'utf8'));
-        } catch (e) {
-            throw new Error(`Error parsing ${file}.json ${e.message}`);
-        }
+        const result = readJSON(`${file}.json`);
         const source = fs.readFileSync(file, 'utf8');
         it(`should parse ${f}`, makeTestWithFilename(source, result, file));
-
-
     })
 });
