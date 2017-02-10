@@ -9,11 +9,11 @@
   "bin": {
     "ern-cauldron-api": "index.js"
   },
-  "main": "dist/index.js",
+  "main": "distrib/index.js",
   "scripts": {
     "test": "node -r babel-register ./node_modules/.bin/isparta cover node_modules/mocha/bin/_mocha",
     "start": "node index.js",
-    "compile": "rimraf dist && babel src -d dist ",
+    "compile": "rimraf distrib && babel src -d distrib ",
     "preversion": "npm run compile"
   },
   "keywords": [],
