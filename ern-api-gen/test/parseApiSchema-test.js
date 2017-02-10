@@ -1,4 +1,4 @@
-import parseApiSchema from '../lib/parseApiSchema';
+import parseApiSchema from '../src/parseApiSchema';
 import {expect} from 'chai';
 import fs from 'fs';
 import path from 'path';

@@ -6,6 +6,9 @@ import generateJSCode from './generateJSCode';
 import {patchHull} from './renderer';
 import normalizeConfig from './normalizeConfig';
 import views from './views';
+import fs from 'fs';
+import shell from 'shelljs';
+import path from 'path';
 import {
     SCHEMA_FILE,
     PKG_FILE,
@@ -14,12 +17,6 @@ import {
 import cwd from './cwd';
 import log from './log';
 import {readJSON} from './fileUtil';
-
-const fs = require('fs');
-const chalk = require('chalk');
-const shell = require('shelljs');
-const path = require('path');
-
 
 // Not pretty but depending of the execution context (direct call to binary
 // v.s using api-gen in a node program) the path might include distrib
