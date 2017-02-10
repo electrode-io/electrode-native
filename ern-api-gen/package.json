@@ -7,7 +7,7 @@
     "ern-api-gen": "boot.js"
   },
   "scripts": {
-    "build": "./node_modules/.bin/babel index.js --out-dir distrib",
+    "build": "./node_modules/.bin/babel lib --out-dir distrib",
     "prepublish": "npm run build"
   },
   "keywords": [],
@@ -28,7 +28,9 @@
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
-    "babel-preset-node6": "^11.0.0"
+    "babel-preset-node6": "^11.0.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   },
   "engines": {
     "node": ">=6.9.4"

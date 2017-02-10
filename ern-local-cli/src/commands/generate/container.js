@@ -4,7 +4,7 @@ import platform from '../../util/platform.js';
 import explodeNapSelector from '../../util/explodeNapSelector.js';
 const log = require('console-log-level')();
 import ernConfig from '../../util/config.js'
-import generateContainer from '../../../../ern-container-gen/index.js';
+import { generateContainer } from '../../../../ern-container-gen/index.js';
 
 exports.command = 'container <fullNapSelector> <containerVersion>'
 exports.desc = 'Run the container generator for a specified native application'

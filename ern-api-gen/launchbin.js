@@ -1,3 +1,3 @@
-import generateApi from './index.js';
+import generateApi from './lib/index.js';
 
 generateApi();

@@ -1,4 +1,5 @@
-import runModelGen from "../ern-model-gen/index.js";
+import runModelGen from "../../ern-model-gen/index.js";
+import parseApiSchema from './parseApiSchema';
 const fs = require('fs');
 const child_process = require('child_process');
 const execSync = child_process.execSync;
@@ -24,7 +25,7 @@ const log = require('console-log-level')({
 // Not pretty but depending of the execution context (direct call to binary
 // v.s using api-gen in a node program) the path might include distrib
 // This is just a temporary work-around, find out a cleaner way
-const apiGenDir = __dirname.replace('/distrib', '');
+const apiGenDir = path.join(__dirname, '..');
 
 const defaultSchemaFile = 'apigen.schema';
 const defaultConfigFile = 'apigenconf.json';
@@ -571,7 +572,58 @@ function hasModelSchema() {
  * configFilePath : path to a config file to be used as input (OPTIONAL)
  * shouldPublishToNpm : true to publish to npm after generation, false otherwise
  */
-export default async function generateApi({
+export default async function generatePackage(options) {
+
+    //--------------------------------------------------------------------------
+    // Get input
+    //--------------------------------------------------------------------------
+    // Two ways to provide needed input to apigen :
+    // - Through a schema file (in that case, a config object will be generated
+    // from the schema)
+    // - Directly giving a config file, skipping schema conversion
+    //
+    // Order of precedence when trying to get input :
+    // - schema from schemaFilePath (provided by apigen method caller)
+    // - config from configFilePath (provided by apigen method caller)
+    // - default schema file
+    // - default config file
+
+    let config = _generateConfig(options);
+    const outFolder = cwd(config.moduleName);
+    if (fs.existsSync(outFolder)) {
+        log.warn(`A directory already exists at ${outFolder}`);
+        process.exit(1);
+    }
+    // Create output folder
+    shell.mkdir(outFolder);
+    await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config));
+    await writeFile(path.join(outFolder, SCHEMA_FILE), generateInitialSchema(config));
+    await writeFile(path.join(outFolder, MODEL_FILE), generateInitialModel(config));
+
+    log.info(`==  Generated project: 
+        $ cd ${outFolder}
+        $ npm install
+        `);
+}
+export async function cleanGenerated(outFolder = cwd()) {
+    if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(cwd(SCHEMA_FILE))) {
+        throw new Error(`Refusing to clean non api project`);
+    }
+    shell.rm('-rf', path.join(outFolder, 'js'));
+    shell.rm('-rf', path.join(outFolder, 'ios'));
+    shell.rm('-rf', path.join(outFolder, 'android'));
+    shell.rm('-f', path.join(outFolder, 'index.js'));
+}
+//generate a configuration.  This looks in the apigen schema
+// and the things passed in.
+function _generateConfig({
+    name,
+    apiName,
+    apiVersion,
+    apiDescripion,
+    apiAuthor,
+    namespace,
+    npmScope,
     bridgeVersion,
     schemaFilePath,
     configFilePath,
@@ -852,13 +904,13 @@ export default async function generateApi({
             shell.cd(`${outFolder}`);
             execSync(`npm publish`);
         }
-
+        const schemaPath = hashModelSchema();
         if (hasModelSchema()) {
-            runModelGen({
+            await runModelGen({
                 javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
                 javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
                 objCModelDest: `${outFolder}/ios/MODEL`,
-                schemaPath: argv.modelsSchemaPath
+                schemaPath
             })
         }
 
