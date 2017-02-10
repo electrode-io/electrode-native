@@ -1,0 +1,6 @@
+namespace com.walmartlabs.ern
+npmscope walmart
+apiname navigation
+apiversion 0.0.4
+
+request navigateTo(dest: String)

@@ -1,0 +1,57 @@
+{
+  "apiName": "weather",
+  "apiVersion": "0.0.1",
+  "events": [
+    {
+      "name": "weatherUpdated"
+    },
+    {
+      "name": "weatherUdpatedAtLocation",
+      "payload": {
+        "name": "location",
+        "type": "String"
+      }
+    }
+  ],
+  "namespace": "com.walmartlabs.ern",
+  "npmScope": "walmart",
+  "requests": [
+    {
+      "name": "refreshWeather"
+    },
+    {
+      "name": "refreshWeatherFor",
+      "payload": {
+        "name": "location",
+        "type": "String"
+      }
+    },
+    {
+      "name": "getTemperatureFor",
+      "payload": {
+        "name": "location",
+        "type": "String"
+      },
+      "respPayloadType": "Integer"
+    },
+    {
+      "name": "getCurrentTemperature",
+      "respPayloadType": "Integer"
+    },
+    {
+      "name": "getCurrentLocations",
+      "respPayloadType": "String[]"
+    },
+    {
+      "name": "getLocation",
+      "respPayloadType": "LatLong"
+    },
+    {
+      "name": "setLocation",
+      "payload": {
+        "name": "location",
+        "type": "LatLong"
+      }
+    }
+  ]
+}

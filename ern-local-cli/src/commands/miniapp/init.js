@@ -1,7 +1,7 @@
 import MiniApp from '../../util/miniapp.js';
 
-exports.command = 'init <appName> [platformVersion] [napSelector] [scope]'
-exports.desc = 'Create a new ern application'
+exports.command = 'init <appName> [platformVersion] [napSelector] [scope]';
+exports.desc = 'Create a new ern application';
 
 exports.builder = function(yargs) {
   return yargs
@@ -25,7 +25,7 @@ exports.builder = function(yargs) {
       describe: 'Creates an headless (without ui) miniapp'
     })
     .conflicts('platformVersion', 'napSelector');
-}
+};
 
 exports.handler = async function (argv) {
   await MiniApp.create(argv.appName, {
@@ -35,4 +35,4 @@ exports.handler = async function (argv) {
     verbose: argv.verbose,
     headless: argv.headless
   });
-}
+};

@@ -1,0 +1,28 @@
+{
+  "apiName": "todo",
+  "apiVersion": "0.0.21",
+  "events": [
+    {
+      "name": "todosUpdated",
+      "payload": {
+        "name": "todos",
+        "type": "String[]"
+      }
+    }
+  ],
+  "namespace": "com.walmartlabs.ern",
+  "npmScope": "walmart",
+  "requests": [
+    {
+      "name": "getTodos",
+      "respPayloadType": "String[]"
+    },
+    {
+      "name": "addTodo",
+      "payload": {
+        "name": "todo",
+        "type": "String"
+      }
+    }
+  ]
+}

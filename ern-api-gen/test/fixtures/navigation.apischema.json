@@ -1,0 +1,16 @@
+{
+  "apiName": "navigation",
+  "apiVersion": "0.0.4",
+  "events": [],
+  "namespace": "com.walmartlabs.ern",
+  "npmScope": "walmart",
+  "requests": [
+    {
+      "name": "navigateTo",
+      "payload": {
+        "name": "dest",
+        "type": "String"
+      }
+    }
+  ]
+}

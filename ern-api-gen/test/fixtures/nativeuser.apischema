@@ -1,0 +1,6 @@
+namespace com.walmartlabs.ern
+npmscope walmart
+apiname user
+apiversion 0.0.12
+
+request getUserName() : String
