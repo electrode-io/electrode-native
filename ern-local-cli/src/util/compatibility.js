@@ -87,7 +87,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
   const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
-  const manifestJsDependencies = platform.getManifestJsDependencies();
+
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
@@ -96,6 +96,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
         if ((!platformName) || (nativeAppPlatform.name === platformName)) {
           for (const nativeAppVersion of nativeAppPlatform.versions) {
             if ((!versionName) || (nativeAppVersion.name === versionName)) {
+              let manifestNativeAndJsDependencies = platform.getManifestPluginsAndJsDependencies(nativeAppVersion.ernPlatformVersion);
               result.push({
                 appName: nativeApp.name,
                 appPlatform: nativeAppPlatform.name,
@@ -103,7 +104,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appBinary: nativeAppVersion.binary,
                 isReleased: nativeAppVersion.isReleased,
                 compatibility: getCompatibility(
-                  miniappDependencies, [...nativeAppVersion.nativeDeps, ...manifestJsDependencies])
+                  miniappDependencies, manifestNativeAndJsDependencies)
               });
             }
           }
