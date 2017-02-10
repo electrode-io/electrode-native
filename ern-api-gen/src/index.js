@@ -104,7 +104,7 @@ async function checkValid(message) {
     } catch (e) {
         throw new Error(message);
     }
-    if (!valid || !/react-native-(.*)-api$/.test(pkg.name)) {
+    if ( !/react-native-(.*)-api$/.test(pkg.name)) {
         throw new Error(message);
     }
 
