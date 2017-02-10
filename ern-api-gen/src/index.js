@@ -93,7 +93,6 @@ export async function cleanGenerated(outFolder = cwd()) {
 
 async function checkValid(message) {
 
-    let valid = true;
     const outFolder = cwd();
 
     if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(cwd(SCHEMA_FILE))) {
@@ -103,7 +102,7 @@ async function checkValid(message) {
     try {
         pkg = await readJSON(cwd(PKG_FILE));
     } catch (e) {
-        valid = false;
+        throw new Error(message);
     }
     if (!valid || !/react-native-(.*)-api$/.test(pkg.name)) {
         throw new Error(message);
@@ -123,7 +122,6 @@ export async function generateCode(options) {
     }, options));
 
     const outFolder = cwd();
-
 
 
     // Copy the api hull (skeleton code with inline templates) to output folder
@@ -150,7 +148,7 @@ export async function generateCode(options) {
 
     if (schemaPath) {
         await runModelGen({
-            javaModelDest: `${outFolder}/android/lib/src/main/java/${config.namespace.replace('.','/')}/${config.apiName}/model`,
+            javaModelDest: `${outFolder}/android/lib/src/main/java/${config.namespace.replace('.', '/')}/${config.apiName}/model`,
             javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
             objCModelDest: `${outFolder}/ios/MODEL`,
             schemaPath

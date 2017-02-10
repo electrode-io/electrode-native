@@ -10,7 +10,9 @@ export function pascalCase(string) {
 /**
  * true if the given type is a type array, false othewise
  */
-
+export function getArrayType(type) {
+    return type.replace('[]', '');
+}
 export function isArrayType(type) {
     return type.includes('[]');
 }

@@ -1,5 +1,8 @@
 
 import {primitiveTypes, isArrayType, getArrayType} from './views';
+
+
+
 const androidPrimitiveTypes = [
     "bool",
     "int",
