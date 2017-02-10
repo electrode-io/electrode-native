@@ -44,25 +44,25 @@ const log = require('console-log-level')({
  * request getCurrentTemparatures() : Integer[]
  * -----------------------------------
  */
-const namespaceRe = /namespace\s+?(.*)/;
-const apinameRe = /apiname\s+?(.*)/;
-const apiversionRe = /apiversion\s+?(.*)/;
-const npmScopeRe = /npmscope\s+?(.*)/;
-const modelPathRe = /modelPath\s+?(.*)/;
+const namespaceRe = /namespace\s+?(.*)\s*/;
+const apinameRe = /apiname\s+?(.*)\s*/;
+const apiversionRe = /apiversion\s+?(.*)\s*/;
+const npmScopeRe = /npmscope\s+?(.*)\s*/;
+const modelPathRe = /modelPath\s+?(.*)\s*/;
 // Regexes matching events schema statements
-const eventWithPayloadRe = /event\s+?(.+)\({1}(.+):\s+?(.+)\){1}/;
+const eventWithPayloadRe = /event\s+?(.+)\({1}(.+)\s*:\s*(.+)\s*\){1}/;
 const eventWoPayloadRe = /event\s+?([a-zA-Z]+)/;
 
 // Regexes matching requests schema statements
 
 // request without request payload and without response payload
-const requestWoReqPWoResP = /request\s+?([a-zA-Z]+)\(\)\s*$/;
+const requestWoReqPWoResP = /request\s+?([a-zA-Z]+)\(\s*\)\s*$/;
 // request with a request payload and no response payload
-const requestWReqPWoResP = /request\s+?(.+)\({1}(.+):\s(.+)\){1}\s*$/;
+const requestWReqPWoResP = /request\s+?(.+)\({1}(.+)\s*:\s*(.+)\s*\){1}\s*$/;
 // request with a request payload and a response payload
-const requestWReqPWResP = /request\s+?(.+)\({1}(.+):\s+?(.+)\){1}\s+?:\s+?(.+)\s*/;
+const requestWReqPWResP = /request\s+?(.+)\({1}(.+)\s*:\s*(.+)\){1}\s*:\s*(.+)\s*/;
 // request with no request payload and a reponse payload
-const requestWoReqPWResP = /request\s+?([a-zA-Z]+)\(\)\s+?:\s+?(.+)\s*/;
+const requestWoReqPWResP = /request\s+?([a-zA-Z]+)\s*\(\s*\)\s*:\s*(.+)\s*/;
 
 
 export default function generateConfigFromSchemaSync(schema) {

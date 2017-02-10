@@ -1,9 +1,8 @@
-import platform from '../../../util/platform.js'
-import {generateCode} from '../../../../../ern-api-gen/index.js'
+import {cleanGenerated} from '../../../../../ern-api-gen/index.js'
 const log = require('console-log-level')();
 
-exports.command = 'regen';
-exports.desc = 'Regenerates an api';
+exports.command = 'clean';
+exports.desc = 'Removes all generated artifacts';
 
 exports.builder = function (yargs) {
     return yargs.option('baseDir', {
@@ -14,8 +13,7 @@ exports.builder = function (yargs) {
 
 exports.handler = async function (argv) {
     try {
-        const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge');
-        await generateCode({bridgeVersion: `${bridgeDep.version}`});
+        await cleanGenerated();
     } catch (e) {
         log.error(e);
     }

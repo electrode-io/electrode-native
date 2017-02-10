@@ -373,7 +373,7 @@ function generateInitialSchema({namespace}) {
 event weatherUpdated
 
 // Event with a primitive type payload
-event weatherUdpatedAtLocation(location: String)
+event weatherUpdatedAtLocation(location: String)
 
 // Event with complex type payload
 event weatherUpdatedAtPosition(position: LatLng)
@@ -420,12 +420,20 @@ export default async function generatePackage(options) {
     await writeFile(path.join(outFolder, SCHEMA_FILE), generateInitialSchema(config));
     await writeFile(path.join(outFolder, MODEL_FILE), generateInitialModel(config));
 
-    log.info(`==  Generated project next: 
+    log.info(`==  Generated project: 
         $ cd ${outFolder}
         $ npm install
         `);
 }
-
+export async function cleanGenerated(outFolder=cwd()) {
+    if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(cwd(SCHEMA_FILE))) {
+        throw new Error(`Refusing to clean non api project`);
+    }
+    shell.rm('-rf', path.join(outFolder, 'js'));
+    shell.rm('-rf', path.join(outFolder, 'ios'));
+    shell.rm('-rf', path.join(outFolder, 'android'));
+    shell.rm('-f', path.join(outFolder, 'index.js'));
+}
 //generate a configuration.  This looks in the apigen schema
 // and the things passed in.
 function _generateConfig({
@@ -483,10 +491,9 @@ function _generateConfig({
     if (npmScope) {
         config.npmScope = npmScope;
     }
-    if (moduleName) {
-        config.moduleName = moduleName;
-    } else if (!config.moduleName) {
-        config.moduleName = `react-native-${simpleName}-api`;
+
+    if (!config.moduleName) {
+        config.moduleName = moduleName || `react-native-${simpleName}-api`;
     }
     if (!config.apiAuthor) {
         config.apiAuthor = apiAuthor || process.env['EMAIL'] || process.env['USER']
@@ -509,8 +516,6 @@ function _generateConfig({
     return config;
 }
 
-const rnRe = /react-native-(.*)-api$/;
-
 
 export async function generateCode(options) {
     log.info('== Regenerating Code')
@@ -527,11 +532,7 @@ export async function generateCode(options) {
     }, options));
     const outFolder = cwd();
     try {
-        shell.rm('-rf', path.join(outFolder, 'js'));
-        shell.rm('-rf', path.join(outFolder, 'ios'));
-        shell.rm('-rf', path.join(outFolder, 'android'));
-        shell.rm('-f', path.join(outFolder, 'README.md'));
-        shell.rm('-f', path.join(outFolder, 'index.js'));
+        await cleanGenerated();
 
         // Copy the api hull (skeleton code with inline templates) to output folder
         shell.cp('-r', `${apiGenDir}/api-hull/*`, outFolder);
@@ -545,11 +546,6 @@ export async function generateCode(options) {
         config.javaDest = `android/lib/src/main/java/${destPath}/${config.apiName}/api`;
         config.objCDest = `ios`;
         config.jsDest = `js`;
-
-        //--------------------------------------------------------------------------
-        // Start fresh
-        //--------------------------------------------------------------------------
-
 
         //--------------------------------------------------------------------------
         // Mustache view creation
