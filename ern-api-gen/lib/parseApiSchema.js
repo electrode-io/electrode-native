@@ -44,8 +44,6 @@ const log = require('console-log-level')({
  * request getCurrentTemparatures() : Integer[]
  * -----------------------------------
  */
-
-
 // Regexes matching events schema statements
 const eventWithPayloadRe = /event\s+?(.+)\({1}(.+)\s*:\s*(.+)\s*\){1}/;
 const eventWoPayloadRe = /event\s+?([a-zA-Z]+)/;
@@ -61,31 +59,38 @@ const requestWReqPWResP = /request\s+?(.+)\({1}(.+)\s*:\s*(.+)\){1}\s*:\s*(.+)\s
 // request with no request payload and a reponse payload
 const requestWoReqPWResP = /request\s+?([a-zA-Z]+)\s*\(\s*\)\s*:\s*(.+)\s*/;
 
-const meta = /^\s*(namespace|apiName|apiVersion|npmScope|modelPath)\s+?(.+?)\s*$/;
+const meta = /^\s*(namespace|apiName|apiVersion|npmScope|modelPath)\s+?(.+?)\s*$/i;
+const metaMap = {
+    npmscope: "npmScope",
+    apiname: "apiName",
+    apiversion: "apiVersion",
+    modelpath: "modelPath",
+    namespace: 'namespace'
+};
 
-export default function generateConfigFromSchemaSync(schema) {
-    let config = {};
-    let events = [];
-    let requests = [];
-
-    // Schema to config workhouse
-    const lines = schema.split('\n');
+export default function generateConfigFromSchemaSync(schema, fileName) {
+    const events = [];
+    const requests = [];
+    const config = {events, requests};
 
     // Todo : Quite some duplication going on in the following for block
     // refactor accordingly to minimize code duplication
-    for (const _line of lines) {
+    let lineNo = -1;
+    for (const _line of  schema.split('\n')) {
+        lineNo++;
+        //Remove Comments
         const [line, comment] = _line.split('//', 2);
-        if (!line) {
+
+        //All Comments if line is empty
+        if (!line.trim()) {
             //swallow comments
             continue;
         }
         if (meta.test(line)) {
             const mr = meta.exec(line);
-            config[mr[1]] = mr[2];
+            config[metaMap[mr[1].toLowerCase()]] = mr[2];
             continue;
         }
-
-
         // Handles statement declaring an event with payload
         // Sample statement :
         //   event weatherUpdatedAtPosition(position: LatLng)
@@ -211,13 +216,11 @@ export default function generateConfigFromSchemaSync(schema) {
                 "name": requestName,
                 "respPayloadType": responsePayloadType
             });
+        } else {
+            throw new Error(`unknown syntax '${line}' at line ${lineNo} in ${fileName}`);
         }
     }
 
-    // Add all events to config
-    config.events = events;
-    // Add all requests to config
-    config.requests = requests;
 
     return config;
 }

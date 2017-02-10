@@ -1,5 +1,5 @@
 namespace com.walmartlabs.react
-apiname dummy
+apiname weather
 apiversion 1.0.0
 bridgeversion 1.0.2
 

@@ -1,0 +1,8 @@
+namespace com.walmartlabs.ern
+npmscope walmart
+apiname todo
+apiversion 0.0.21
+
+event todosUpdated(todos: String[])
+request getTodos() : String[]
+request addTodo(todo: String)
