@@ -10,7 +10,7 @@ import fs from 'fs';
  *   view : The mustache view to use
  */
 export default async function generateObjectiveCCode(view, apiGenDir) {
-    const objCOutputPath = view.objCDest || 'output/objc';
+    const objCOutputPath = 'ios';
     shell.mkdir('-p', objCOutputPath);
 
     const headerFiles = [

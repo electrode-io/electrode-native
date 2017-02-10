@@ -82,22 +82,39 @@ export async function generateApi(options) {
         `);
 }
 export async function cleanGenerated(outFolder = cwd()) {
-    if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(cwd(SCHEMA_FILE))) {
-        throw new Error(`Refusing to clean non api project`);
-    }
+    const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
+
     shell.rm('-rf', path.join(outFolder, 'js'));
     shell.rm('-rf', path.join(outFolder, 'ios'));
     shell.rm('-rf', path.join(outFolder, 'android'));
     shell.rm('-f', path.join(outFolder, 'index.js'));
+    return pkg;
 }
 
-export async function generateCode(options) {
-    log.info('== Regenerating Code')
+async function checkValid(message) {
 
-    const pkg = await readJSON(cwd(PKG_FILE));
-    if (!/react-native-(.*)-api$/.test(pkg.name)) {
-        throw new Error(`Is this an api directory not a valid name try react-native-{name}-api`);
+    let valid = true;
+    const outFolder = cwd();
+
+    if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(cwd(SCHEMA_FILE))) {
+        throw new Error(message);
     }
+    let pkg;
+    try {
+        pkg = await readJSON(cwd(PKG_FILE));
+    } catch (e) {
+        valid = false;
+    }
+    if (!valid || !/react-native-(.*)-api$/.test(pkg.name)) {
+        throw new Error(message);
+    }
+
+    return pkg;
+}
+export async function generateCode(options) {
+    log.info('== Regenerating Code');
+    const pkg = await cleanGenerated();
+
     const config = normalizeConfig(Object.assign({}, {
         name: pkg.name,
         apiVersion: pkg.version,
@@ -107,20 +124,11 @@ export async function generateCode(options) {
 
     const outFolder = cwd();
 
-    await cleanGenerated();
+
 
     // Copy the api hull (skeleton code with inline templates) to output folder
     shell.cp('-r', `${apiGenDir}/api-hull/*`, outFolder);
 
-
-    //--------------------------------------------------------------------------
-    // Construct output path + java/js generation paths
-    //--------------------------------------------------------------------------
-    let destPath = config.namespace.replace(/\./g, '/');
-
-    config.javaDest = `android/lib/src/main/java/${destPath}/${config.apiName}/api`;
-    config.objCDest = `ios`;
-    config.jsDest = `js`;
 
     //--------------------------------------------------------------------------
     // Mustache view creation
@@ -138,16 +146,16 @@ export async function generateCode(options) {
     log.info("== Generating API code");
     await generateAllCode(mustacheView);
 
-    log.info("== Generation complete");
-
     const schemaPath = hasModelSchema(config.modelsSchemaPath);
 
     if (schemaPath) {
         await runModelGen({
-            javaModelDest: `${outFolder}/android/lib/src/main/java/${destPath}/${config.apiName}/model`,
+            javaModelDest: `${outFolder}/android/lib/src/main/java/${config.namespace.replace('.','/')}/${config.apiName}/model`,
             javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
             objCModelDest: `${outFolder}/ios/MODEL`,
             schemaPath
-        })
+        });
     }
+    log.info("== Generation complete");
+
 }

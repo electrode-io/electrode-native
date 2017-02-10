@@ -36,6 +36,8 @@ exports.handler = async function (argv) {
             apiAuthor: argv.apiAuthor
         });
     } catch (e) {
-        log.error(e);
+        log.error(`Initing project failed:`, e.message);
+        process.exit(1);
+
     }
 };

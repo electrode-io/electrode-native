@@ -1,8 +1,8 @@
-import {generateCode} from '../../../../../ern-api-gen/index.js'
+import {cleanGenerated} from '../../../../../ern-api-gen/index.js'
 const log = require('console-log-level')();
 
-exports.command = 'regen';
-exports.desc = 'Regenerates an api';
+exports.command = 'clean';
+exports.desc = 'Removes all generated artifacts';
 
 exports.builder = function (yargs) {
     return yargs;
@@ -10,8 +10,9 @@ exports.builder = function (yargs) {
 
 exports.handler = async function (argv) {
     try {
-        await generateCode();
+        await cleanGenerated();
     } catch (e) {
-        log.error(e);
+        log.error(`Cleaning project failed: ${e.message}`);
+        process.exit(1);
     }
 };

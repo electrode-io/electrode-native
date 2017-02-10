@@ -4,8 +4,10 @@ import log from './log';
 import jView from './javaView';
 
 export default async function generateJavaCode(view, apiGenDir) {
-    view =  jView(view, apiGenDir);
-    const javaOutputPath = view.javaDest ? view.javaDest : 'output/java';
+    view = jView(view, apiGenDir);
+    let destPath = view.namespace.replace(/\./g, '/');
+
+    const javaOutputPath = `android/lib/src/main/java/${destPath}/${view.apiName}/api`;
     shell.mkdir('-p', javaOutputPath);
 
     log.info(`Generating ${javaOutputPath}/${view.pascalCaseApiName}ApiClient.java`);

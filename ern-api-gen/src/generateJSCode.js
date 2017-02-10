@@ -8,25 +8,24 @@ import {mustacheRenderToOutputFileUsingTemplateFile} from './renderer';
  * view : The mustache view to use
  */
 export default async function generateJSCode(view, apiGenDir) {
-    const jsOutputPath = view.jsDest ? view.jsDest : 'output/js';
-    shell.mkdir('-p', jsOutputPath);
+    shell.mkdir('-p', 'js');
 
-    log.info(`Generating ${jsOutputPath}/apiClient.js`);
+    log.info(`Generating js/apiClient.js`);
     await mustacheRenderToOutputFileUsingTemplateFile(
         `${apiGenDir}/templates/js/apiClient.js.mustache`,
         view,
-        `${jsOutputPath}/apiClient.js`);
+        `js/apiClient.js`);
 
-    log.info(`Generating ${jsOutputPath}/api.js`);
+    log.info(`Generating js/api.js`);
     await mustacheRenderToOutputFileUsingTemplateFile(
         `${apiGenDir}/templates/js/api.js.mustache`,
         view,
-        `${jsOutputPath}/api.js`);
+        `js/api.js`);
 
-    log.info(`Generating ${jsOutputPath}/messages.js`);
+    log.info(`Generating js/messages.js`);
     await mustacheRenderToOutputFileUsingTemplateFile(
         `${apiGenDir}/templates/js/messages.js.mustache`,
         view,
-        `${jsOutputPath}/messages.js`);
+        `js/messages.js`);
 
 }
