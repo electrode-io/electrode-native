@@ -14,7 +14,7 @@ export function generatePackageJson({
     apiVersion = '1.0.0', apiDescription, apiAuthor, apiLicense, bridgeVersion
 }) {
     return JSON.stringify({
-        "name": npmScope ? `${npmScope}@${moduleName}` : moduleName,
+        "name": npmScope ? `@${npmScope}/${moduleName}` : moduleName,
         "version": apiVersion,
         "description": apiDescription,
         "main": "index.js",
