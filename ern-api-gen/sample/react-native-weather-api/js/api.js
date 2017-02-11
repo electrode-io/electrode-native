@@ -19,42 +19,42 @@ import * as messages from "./messages.js";
 export function handleRefreshWeatherRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.REFRESH_WEATHER,
     (requestData) => {
-      return handler(requestData);
+      return handler();
     });
 }
 export function handleRefreshWeatherForRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.REFRESH_WEATHER_FOR,
     (requestData) => {
-      return handler(requestData);
+      return handler(requestData.location);
     });
 }
 export function handleGetTemperatureForRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_TEMPERATURE_FOR,
     (requestData) => {
-      return handler(requestData);
+      return handler(requestData.location);
     });
 }
 export function handleGetCurrentTemperatureRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_CURRENT_TEMPERATURE,
     (requestData) => {
-      return handler(requestData);
+      return handler();
     });
 }
 export function handleGetCurrentLocationsRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_CURRENT_LOCATIONS,
     (requestData) => {
-      return handler(requestData);
+      return handler();
     });
 }
 export function handleGetLocationRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_LOCATION,
     (requestData) => {
-      return handler(requestData);
+      return handler();
     });
 }
 export function handleSetLocationRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.SET_LOCATION,
     (requestData) => {
-      return handler(requestData);
+      return handler(requestData.location);
     });
 }

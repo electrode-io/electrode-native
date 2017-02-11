@@ -1,6 +1,7 @@
 package com.walmartlabs.ern.weather.api;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
@@ -10,7 +11,7 @@ import com.walmartlabs.electrode.reactnative.bridge.EventDispatcherImpl;
 import com.walmartlabs.electrode.reactnative.bridge.RequestCompletionListener;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.EventListener;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
-import com.walmartlabs.ern.weather.model.LatLong;
+import com.walmartlabs.ern.weather.model.LatLng;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -110,7 +111,8 @@ public final class WeatherApiClient {
      ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
-           response.onSuccess(bundle.getInt("rsp"));
+           Integer payload = bundle.getInt("rsp");
+           response.onSuccess(payload);
        }
 
        @Override
@@ -136,7 +138,8 @@ public final class WeatherApiClient {
      ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
-           response.onSuccess(bundle.getInt("rsp"));
+           Integer payload = bundle.getInt("rsp");
+           response.onSuccess(payload);
        }
 
        @Override
@@ -162,7 +165,8 @@ public final class WeatherApiClient {
      ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
-           response.onSuccess(bundle.getStringArray("rsp"));
+           String[] payload = bundle.getStringArray("rsp");
+           response.onSuccess(payload);
        }
 
        @Override
@@ -172,12 +176,12 @@ public final class WeatherApiClient {
      });
   }
   public static void getLocation(
-                                final Response<LatLong> response) {
+                                final Response<LatLng> response) {
     getLocation( response, DispatchMode.JS);
   }
 
   public static void getLocation(
-                                final Response<LatLong> response,
+                                final Response<LatLng> response,
                                 final DispatchMode dispatchMode) {
     
      ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(Names.GET_LOCATION)
@@ -188,7 +192,8 @@ public final class WeatherApiClient {
      ElectrodeBridge.sendRequest(req, new RequestCompletionListener() {
        @Override
        public void onSuccess(Bundle bundle) {
-           response.onSuccess(LatLong.fromBundle(bundle));
+           LatLng payload = LatLng.fromBundle(bundle);
+           response.onSuccess(payload);
        }
 
        @Override
@@ -197,12 +202,12 @@ public final class WeatherApiClient {
        }
      });
   }
-  public static void setLocation(final LatLong location,
+  public static void setLocation(final LatLng location,
                                 final Response response) {
     setLocation(location, response, DispatchMode.JS);
   }
 
-  public static void setLocation(final LatLong location,
+  public static void setLocation(final LatLng location,
                                 final Response response,
                                 final DispatchMode dispatchMode) {
     Bundle bundle = location.toBundle();
@@ -237,7 +242,8 @@ public final class WeatherApiClient {
       @Override
       public void onEvent(@NonNull Bundle bundle) {
        for (EventListener listener : sWeatherUpdatedListeners) {
-         listener.onEvent(null);
+         Object payload = null;
+         listener.onEvent(payload);
        }
       }
     });
@@ -245,7 +251,8 @@ public final class WeatherApiClient {
       @Override
       public void onEvent(@NonNull Bundle bundle) {
        for (EventListener<String> listener : sWeatherUdpatedAtLocationListeners) {
-         listener.onEvent(bundle.getString("location"));
+         String payload = bundle.getString("location");
+         listener.onEvent(payload);
        }
       }
     });
