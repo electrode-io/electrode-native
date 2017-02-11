@@ -148,7 +148,7 @@ export async function generateCode(options) {
 
     if (schemaPath) {
         await runModelGen({
-            javaModelDest: `${outFolder}/android/lib/src/main/java/${config.namespace.replace('.', '/')}/${config.apiName}/model`,
+            javaModelDest: `${outFolder}/android/lib/src/main/java/${config.namespace.replace(/\./g, '/')}/${config.apiName}/model`,
             javaPackage: `${config.namespace}.${config.apiName.toLowerCase()}.model`,
             objCModelDest: `${outFolder}/ios/MODEL`,
             schemaPath
