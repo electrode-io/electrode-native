@@ -118,11 +118,11 @@ export default function (view) {
                 // Primitive type
                 if (primitiveTypes.includes(this)) {
                     const primType = (this === 'Integer' ? 'Int' : this);
-                    return `bundle.get${primType}("rsp")`;
+                    return `${this} payload = bundle.get${primType}("rsp");`;
                 }
                 // Complex object type
                 else {
-                    return `${this}.fromBundle(bundle)`;
+                    return `${this} payload = ${this}.fromBundle(bundle);`;
                 }
             }
         }

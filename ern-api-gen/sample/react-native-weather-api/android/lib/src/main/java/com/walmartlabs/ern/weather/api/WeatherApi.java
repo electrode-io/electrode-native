@@ -1,6 +1,7 @@
 package com.walmartlabs.ern.weather.api;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
@@ -9,7 +10,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ExistingHandlerException;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandlerEx;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
-import com.walmartlabs.ern.weather.model.LatLong;
+import com.walmartlabs.ern.weather.model.LatLng;
 
 public final class WeatherApi {
 
@@ -22,8 +23,8 @@ public final class WeatherApi {
   private static RequestHandlerEx<String,Integer> sGetTemperatureForRequestHandler;
   private static RequestHandler<Integer> sGetCurrentTemperatureRequestHandler;
   private static RequestHandler<String[]> sGetCurrentLocationsRequestHandler;
-  private static RequestHandler<LatLong> sGetLocationRequestHandler;
-  private static RequestHandlerEx<LatLong,Void> sSetLocationRequestHandler;
+  private static RequestHandler<LatLng> sGetLocationRequestHandler;
+  private static RequestHandlerEx<LatLng,Void> sSetLocationRequestHandler;
 
   //====================================================================
   // Request Handlers affectation (Public client surface)
@@ -44,10 +45,10 @@ public final class WeatherApi {
   public static void handleGetCurrentLocationsRequest(RequestHandler<String[]> handler) {
       sGetCurrentLocationsRequestHandler = handler;
   }
-  public static void handleGetLocationRequest(RequestHandler<LatLong> handler) {
+  public static void handleGetLocationRequest(RequestHandler<LatLng> handler) {
       sGetLocationRequestHandler = handler;
   }
-  public static void handleSetLocationRequest(RequestHandlerEx<LatLong,Void> handler) {
+  public static void handleSetLocationRequest(RequestHandlerEx<LatLng,Void> handler) {
       sSetLocationRequestHandler = handler;
   }
 
@@ -88,6 +89,9 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.REFRESH_WEATHER, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+
+        Object payload = null;
+
         WeatherApi.sRefreshWeatherRequestHandler.handleRequest(new Response<Void>() {
             @Override
             public void onSuccess(Void obj) {
@@ -104,7 +108,10 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.REFRESH_WEATHER_FOR, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-        WeatherApi.sRefreshWeatherForRequestHandler.handleRequest(bundle.getString("location"),new Response<Void>() {
+
+        String payload = bundle.getString("location");
+
+        WeatherApi.sRefreshWeatherForRequestHandler.handleRequest(payload,new Response<Void>() {
             @Override
             public void onSuccess(Void obj) {
               requestCompletioner.success(null);
@@ -120,7 +127,10 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.GET_TEMPERATURE_FOR, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-        WeatherApi.sGetTemperatureForRequestHandler.handleRequest(bundle.getString("location"),new Response<Integer>() {
+
+        String payload = bundle.getString("location");
+
+        WeatherApi.sGetTemperatureForRequestHandler.handleRequest(payload,new Response<Integer>() {
             @Override
             public void onSuccess(Integer obj) {
               Bundle bundle = new Bundle(); bundle.putInt("rsp", obj);
@@ -137,6 +147,9 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.GET_CURRENT_TEMPERATURE, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+
+        Object payload = null;
+
         WeatherApi.sGetCurrentTemperatureRequestHandler.handleRequest(new Response<Integer>() {
             @Override
             public void onSuccess(Integer obj) {
@@ -154,6 +167,9 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.GET_CURRENT_LOCATIONS, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+
+        Object payload = null;
+
         WeatherApi.sGetCurrentLocationsRequestHandler.handleRequest(new Response<String[]>() {
             @Override
             public void onSuccess(String[] obj) {
@@ -171,9 +187,12 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.GET_LOCATION, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-        WeatherApi.sGetLocationRequestHandler.handleRequest(new Response<LatLong>() {
+
+        Object payload = null;
+
+        WeatherApi.sGetLocationRequestHandler.handleRequest(new Response<LatLng>() {
             @Override
-            public void onSuccess(LatLong obj) {
+            public void onSuccess(LatLng obj) {
               Bundle bundle = obj.toBundle();
               requestCompletioner.success(bundle);
             }
@@ -188,7 +207,10 @@ public final class WeatherApi {
     ElectrodeBridge.registerRequestHandler(Names.SET_LOCATION, new RequestDispatcherImpl.RequestHandler() {
       @Override
       public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-        WeatherApi.sSetLocationRequestHandler.handleRequest(LatLong.fromBundle(bundle),new Response<Void>() {
+
+        LatLng payload = LatLng.fromBundle(bundle);
+
+        WeatherApi.sSetLocationRequestHandler.handleRequest(payload,new Response<Void>() {
             @Override
             public void onSuccess(Void obj) {
               requestCompletioner.success(null);
