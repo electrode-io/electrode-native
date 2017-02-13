@@ -1,5 +1,6 @@
 import platform from '../../../util/platform.js'
 import {generateApi} from '../../../../../ern-api-gen/index.js'
+
 const log = require('console-log-level')();
 
 exports.command = 'init <apiName>';
