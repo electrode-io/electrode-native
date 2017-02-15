@@ -55,12 +55,11 @@ async function writeFile(filename, data) {
 
 async function shellExec(command) {
   return new Promise((resolve, reject) => {
-    shell.exec(command, {async:true}, (code, stdout, stderr) => {
+    shell.exec(command, { async: true }, (code, stdout, stderr) => {
       if (code !== 0) {
         log.error(stderr);
         reject();
-      }
-      else resolve();
+      } else resolve();
     });
   });
 }
@@ -85,7 +84,7 @@ async function httpGet(url) {
 // returns: Rendered string output
 async function mustacheRenderUsingTemplateFile(filename, view) {
   return readFile(filename, 'utf8')
-          .then(template => Mustache.render(template, view));
+    .then(template => Mustache.render(template, view));
 }
 
 // Mustache render to an output file using a template file
@@ -125,7 +124,7 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
   // patch it with specific version config (if present)
   if (fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
     result = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`)
-                   .then(JSON.parse);
+      .then(JSON.parse);
   }
   // No config, assume apigen module (temporary)
   // we need to patch the build.gradle file accordingly to update
@@ -133,9 +132,9 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
   else {
     log.info(`No config.json file for ${plugin.name}. Assuming apigen module`);
     result = {
-      origin: {
-        type: 'npm',
-        scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
+        origin: {
+          type: 'npm',
+          scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
         name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`
       },
       root: 'android',
@@ -385,7 +384,22 @@ async function fillContainerHull(plugins, miniApps, paths) {
       let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
         downloadPluginSource(pluginConfig.origin));
       shell.cd(`${pluginSourcePath}/${pluginConfig.root}`);
-      shell.cp('-R', `${pluginConfig.uploadArchives.moduleName}/src/main/java`, `${paths.outFolder}/lib/src/main`);
+      if (pluginConfig.uploadArchives) {
+        shell.cp('-R', `${pluginConfig.uploadArchives.moduleName}/src/main/java`, `${paths.outFolder}/lib/src/main`);
+      } else {
+        shell.cp('-R', `src/main/java`, `${paths.outFolder}/lib/src/main`);
+      }
+      
+      if (pluginConfig.copy) {
+        for (const cp of pluginConfig.copy) {
+          const sourcePath = `${pluginSourcePath}/${cp.source}`;
+          const destPath = `${paths.outFolder}/${cp.dest}`;
+          if (!fs.existsSync(destPath)) {
+            shell.mkdir('-p', destPath);
+          }
+          shell.cp('-R', sourcePath, destPath);
+        }
+      }
     }
 
     // Create mini app activities
