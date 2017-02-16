@@ -83,7 +83,7 @@ Runner native project generator.
 Generates android/ios native projects that are used to launch the miniapp in a standalone way.
 
 - [manifest.json](manifest.json)  
-Holds the current platform version number as well as the list of supported plugins (and their versions) for this current version of the platform.  
+Holds the current platform version number as well as the list of supported [plugins](plugins.md) (and their versions) for this current version of the platform.  
 
 - [install.js](install.js) and [uninstall.js](uninstall.js)  
 Contains installations/uninstallation steps for this platform version.
@@ -100,13 +100,13 @@ Each version is :
 
 Versions will follow a `2 weeks release cycle`.   
 
-A new version might contain new plugins support as well as version updates of already supported plugins but might also contains improvements/fixes to the tools part of the toolchain (ern-container-gen, ern-api-gen, ern-local-cli ...). It might also introduce new tools and new commands.  
+A new version might contain new [plugins](plugins.md) support as well as version updates of already supported [plugins](plugins.md) but might also contains improvements/fixes to the tools part of the toolchain (ern-container-gen, ern-api-gen, ern-local-cli ...). It might also introduce new tools and new commands.  
 
 Given this versioning, if a native application version is using `v3` of the platform let's say, then ANY miniapp or component out there internally or in the wild, having a version that supports platform `v3` will be compatible with the native app and can be very easily integrated in it using the container generator.  
 
-There is however one important thing to note : all supported plugins will be plugins that are PUBLIC. Plugins that are private to a company, not open-sourced in any way shouldn't be added to the list of supported plugins.  
-Companies that wish to use private platform plugins should therefore fork this repository and add/maintain their own supported internal plugins.  
-The good thing is that while miniapps that are created on this internal platform version cannot be redistributed to be integrate in platform native apps, the opposite is true. Meaning that a native app running platform `v1-mycompany` will be able to use any public miniapp/component that is on official platform `v1`. That is, if they don't modify the supported official plugin list for `v1` but just adds their own internal plugins to it.
+There is however one important thing to note : all supported [plugins](plugins.md) will be [plugins](plugins.md) that are PUBLIC. Plugins that are private to a company, not open-sourced in any way shouldn't be added to the list of supported plugins.  
+Companies that wish to use private platform [plugins](plugins.md) should therefore fork this repository and add/maintain their own supported internal [plugins](plugins.md).  
+The good thing is that while miniapps that are created on this internal platform version cannot be redistributed to be integrate in platform native apps, the opposite is true. Meaning that a native app running platform `v1-mycompany` will be able to use any public miniapp/component that is on official platform `v1`. That is, if they don't modify the supported official plugin list for `v1` but just adds their own internal [plugins](plugins.md) to it.
 
 Eventually we might release "critical fix" version updates that can't wait on a next official version release. This is where the minor versioning with the git tag comes in. For example, if a user using `v2` of the platform finds a big bug in the container that makes it unusable in his context, we might push a fix on the `v2` branch and git tag with `v2.1`. Then the platform update command will allow updating the `v2` version with this fix. Update process yet to be defined.
 Update to version should absolutely not include new dependencies or update dependency versions as it might break binary compatibility with users not running this update or already published apps. It should only fix bugs that are deemed critical, rendering the platform unusable in a given context.
