@@ -302,6 +302,8 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
   try {
     let pluginsView = [];
 
+    mustacheView.pluginCompile = [];
+
     for (const plugin of plugins) {
       if (plugin.name === 'react-native') {
         continue;
@@ -317,11 +319,19 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
           "configurable": pluginConfig.pluginHook.configurable
         });
       }
+
+      if (pluginConfig.dependencies) {
+        for (const dependency of pluginConfig.dependencies) { 
+          log.info(`Will inject: compile '${dependency}'`);
+          mustacheView.pluginCompile.push({
+            "compileStatement" : `compile '${dependency}'`
+          });
+        }
+      }
     }
 
     mustacheView.plugins = pluginsView;
 
-    mustacheView.pluginCompile = [];
     const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
     if (reactNativePlugin) {
       log.info(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`);

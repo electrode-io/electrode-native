@@ -1,0 +1,15 @@
+{
+  "origin": {
+    "type": "npm",
+    "name": "react-native-maps"
+  },
+  "root": "android",
+  "pluginHook": {
+    "name": "MapsPlugin",
+    "configurable": false
+  },
+  "dependencies": [
+    "com.google.android.gms:play-services-base:9.8.0",
+    "com.google.android.gms:play-services-maps:9.8.0"
+  ]
+}
