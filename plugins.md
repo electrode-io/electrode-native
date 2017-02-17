@@ -60,6 +60,29 @@ ern miniapp add react-native-vector-icons
 This popular plugin adds a ton of icons that can be used in your react native miniapp.  
 This plugin does not require specific native configuration.
 
+## [react-native-maps](https://github.com/airbnb/react-native-maps)
+
+```
+ern miniapp add react-native-maps
+```
+
+Needs cross platform map support in your miniapp ? react-native-maps is the way to go.  
+
+On Android this plugin will add the following dependencies (WIP: Allow to use other version)
+
+```
+com.google.android.gms:play-services-base:9.8.0
+com.google.android.gms:play-services-maps:9.8.0
+```
+
+In your Android application manifest.xml, in the application section, you'll also need to add your Google Maps API key, as follow :
+
+```xml
+<meta-data
+  android:name="com.google.android.geo.API_KEY"
+  android:value="YOUR_API_KEY"/>
+```
+
 ## [react-native-electrode-bridge](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/react-native-electrode-bridge)
 
 ```
