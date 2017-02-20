@@ -170,3 +170,21 @@ If you want to add a new dependency to a project (`ern-api-gen` or `ern-local-cl
 Also, if you add a new dependency to a project, make sure to also include it in the root [package.json](package.json) file of `ern-platform`.
 
 If you add or remove new commands, or add or remove features to any of the projects, please make sure to update the appropriate README documentation accordingly and include it as part of your PR.
+
+#### Android integration notes
+
+You can integrate any ERN generated container library in an Android application.  
+That being said, you'll need the two following permissions in your app `AndroidManifest.xml` (only for development) :  
+
+```
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+```
+
+You'll also need to add the following in your application `build.gradle`, in the `android` block :  
+
+```
+configurations.all {
+  resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
+}
+```
