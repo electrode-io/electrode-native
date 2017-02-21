@@ -10,13 +10,10 @@ import path from 'path';
 const BABEL_HOOK = path.resolve(__dirname, '..', '..', '..', 'ern-util-dev', 'babelhook');
 const CLI = path.resolve(__dirname, '..', '..', 'src', 'launchbin.js');
 
-const nodeModulesRe = /node_modules(\/|$)/;
+const excludeFilterRe = /node_modules(\/|$)|yarn\.lock|gradle\.build|API\.xcodeproj/;
 
-const excludeFilter = ({name1, name2, relativePath}) => {
+const excludeFilter = ({name1, name2, relativePath}) => excludeFilterRe.test(relativePath) || excludeFilterRe.test(name2) || excludeFilterRe.test(name1);
 
-    return nodeModulesRe.test(relativePath) || nodeModulesRe.test(name2) || nodeModulesRe.test(name1) || /build\.gradle/.test(name1) || /API\.xcodeproj/.test(relativePath);
-
-};
 
 export default function setup() {
     let tmpDir, clean;
@@ -53,7 +50,7 @@ export default function setup() {
                 let ret = true;
                 for (const diff of diffSet) {
                     if (!excludeFilter(diff) && diff.state != 'equal') {
-                        console.log('Not the same ', diff.name1, diff.name2);
+                        console.log('Not the same ', (diff.name1 || diff.name2 || diff.relativePath || diff), diff.name1, diff.name2);
                         ret = false;
                     }
                 }

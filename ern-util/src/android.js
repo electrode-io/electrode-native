@@ -2,7 +2,7 @@ const child_process = require('child_process');
 const exec = child_process.exec;
 import inquirer from 'inquirer';
 import shell from 'shelljs';
-import { spin } from './spin.js';
+import spin from './spin.js';
 const log = require('console-log-level')();
 
 //==============================================================================

@@ -10,9 +10,10 @@ const {
 } = ernSupport();
 
 describe('commands/miniapp', function () {
+    this.timeout(100000);
+
     before(runBefore);
     after(runAfter);
-    this.timeout(50000);
     it(`miniapp init genapp`, ernTest()
         .then(exists('genapp/package.json'))
         .then(compare('genapp', 'fixtures/init_genapp'))
