@@ -1,21 +1,25 @@
 {
   "name": "@walmart/electrode-react-native",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "bin": {
-    "ern": "start.js"
+    "ern": "bin/ern.js",
+    "ern-dev": "bin/ern-dev.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "ern-babel",
+    "test": "ern-mocha",
+    "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-preset-node6": "^11.0.0",
     "chalk": "^1.1.3",
     "update-notifier": "^1.0.3"
+  },
+  "devDependencies": {
+    "@walmart/ern-util-dev":  "1.0.0"
   }
 }

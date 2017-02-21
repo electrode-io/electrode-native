@@ -27,4 +27,4 @@ npm-debug.log
 .libgencache.json
 
 # distrib
-distrib
+dist

@@ -1,21 +1,20 @@
 {
   "name": "@walmart/ern-cauldron-cli",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Cauldron API Node Client",
-  "main": "./distrib/cli.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel cli.js --out-dir distrib",
+    "build": "ern-babel",
+    "test": "ern-mocha",
     "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-preset-node6": "^11.0.0"
+    "@walmart/ern-util-dev":  "1.0.0"
   },
   "dependencies": {
-    "babel-register": "^6.18.0",
     "unirest": "^0.5.1"
   },
   "engines": {

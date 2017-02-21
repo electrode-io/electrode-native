@@ -35,3 +35,7 @@ distrib
 ern-cauldron-api/test/.cauldron-test
 
 */.cauldron
+*/dist
+**/dist
+lerna-debug.*
+**/lerna-debug.*

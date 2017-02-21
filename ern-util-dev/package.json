@@ -1,0 +1,15 @@
+{
+  "name": "@walmart/ern-util-dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./bin/ern-mocha.js"
+  },
+  "bin": {
+    "ern-babel": "bin/ern-babel.js",
+    "ern-mocha": "bin/ern-mocha.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

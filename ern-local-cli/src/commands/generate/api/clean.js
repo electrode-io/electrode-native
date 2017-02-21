@@ -1,4 +1,4 @@
-import {cleanGenerated} from '../../../../../ern-api-gen/index.js'
+import {cleanGenerated} from '@walmart/ern-api-gen'
 const log = require('console-log-level')();
 
 exports.command = 'clean';

@@ -1,31 +1,22 @@
 {
   "name": "@walmart/ern-runner-gen",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
-  "main": "./distrib/index.js",
-  "bin": {
-    "ern-runner-gen": "boot.js"
-  },
+  "main": "dist/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel index.js --out-dir distrib",
+    "build": "ern-babel",
+    "test": "ern-mocha",
     "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
-    "babel-register": "^6.18.0",
-    "chalk": "^1.1.3",
-    "console-log-level": "^1.4.0",
-    "fs-readdir-recursive": "^1.0.0",
-    "lodash": "^4.17.3",
-    "mustache": "^2.3.0",
-    "shelljs": "^0.7.5"
+    "@walmart/ern-container-gen": "1.0.0",
+    "@walmart/ern-util": "1.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-preset-node6": "^11.0.0"
+    "@walmart/ern-util-dev": "1.0.0"
   },
   "engines": {
     "node": ">=6.9.4"

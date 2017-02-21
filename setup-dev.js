@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 //==============================================================================
 // Script to setup development environment
 // Only meant to be used by ern-platform developers/contributors
@@ -6,6 +6,7 @@
 
 const chalk = require('chalk');
 const shell = require('shelljs');
+const install = require('./install');
 
 // Path to ern platform root folder
 const ERN_PATH = `${process.env['HOME']}/.ern`;
@@ -18,12 +19,15 @@ const ERN_RC_GLOBAL_FILE_PATH = `${ERN_PATH}/.ernrc`;
 // Path from where this script is run (wherever the user cloned the repo locally)
 const WORKING_DIR = process.cwd();
 
+
 // Create the cache folder for this version as a symlink to current working folder
+shell.mkdir('-p', ERN_VERSIONS_CACHE_PATH);
+
 shell.cd(ERN_VERSIONS_CACHE_PATH);
-shell.exec(`ln -s ${WORKING_DIR} v1000`);
+shell.ln('-sf', WORKING_DIR, ERN_PLATFORM_REPO_PATH);
 
 console.log(
-chalk.green(`
+    chalk.green(`
 =================================================================
 Development environment is now setup !
 
@@ -34,3 +38,4 @@ ${chalk.yellow(`ern platform use 1000`)}
 Enjoï.
 =================================================================
 `));
+install.install();

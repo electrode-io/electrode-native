@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+    include '**/*.java'
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+uploadArchives {
+  repositories {
+      mavenDeployer {
+          pom.version = '2.0.0'
+          pom.artifactId = 'react-native-withargs-api'
+          pom.groupId = 'com.withargs.ern'
+          // TODO : Add target repository template variable if we
+          // want to support publication to maven (if not needed anylonger
+          // just remove this whole uploadArchives block)
+      }
+  }
+}
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    lintOptions {
+         abortOnError false
+     }
+}
+
+dependencies {
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:1.1.10'
+}

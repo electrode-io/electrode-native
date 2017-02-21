@@ -1,37 +1,22 @@
 {
   "name": "@walmart/ern-api-gen",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
-  "main": "./distrib/index.js",
-  "bin": {
-    "ern-api-gen": "boot.js"
-  },
+  "main": "./dist/index.js",
   "scripts": {
-    "test":"mocha --compilers js:babel-register ./test/*-test.js",
-    "build": "./node_modules/.bin/babel src --out-dir distrib",
+    "test": "ern-mocha",
+    "build": "ern-babel",
     "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chalk": "^1.1.3",
-    "console-log-level": "^1.4.0",
-    "fs-readdir-recursive": "https://npme.walmart.com/fs-readdir-recursive/-/fs-readdir-recursive-1.0.0.tgz",
-    "lodash.findkey": "^4.6.0",
-    "minimist": "^1.2.0",
-    "mustache": "^2.3.0",
-    "path": "^0.12.7",
-    "shelljs": "^0.7.5",
+    "@walmart/ern-model-gen": "1.0.0",
     "xcode": "^0.9.1"
   },
   "devDependencies": {
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
-    "babel-preset-node6": "^11.0.0",
-    "babel-register": "^6.18.0",
-    "babel-cli": "^6.18.0",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "@walmart/ern-util-dev": "1.0.0"
   },
   "engines": {
     "node": ">=6.9.4"

@@ -1,5 +1,5 @@
-import cauldron from '../../../util/cauldron.js';
-import explodeNapSelector from '../../../util/explodeNapSelector.js';
+import {cauldron, explodeNapSelector} from '@walmart/ern-util';
+
 const log = require('console-log-level')();
 
 exports.command = 'nativeapp <napSelector>'

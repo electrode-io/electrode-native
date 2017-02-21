@@ -1,11 +1,11 @@
-import cauldron from '../../../util/cauldron.js';
-import explodeNapSelector from '../../../util/explodeNapSelector.js';
+import {cauldron, explodeNapSelector} from '@walmart/ern-util';
+
 const log = require('console-log-level')();
 
-exports.command = 'dependencies <fullNapSelector>'
-exports.desc = 'Get all the native dependencies of a given native application'
+exports.command = 'dependencies <fullNapSelector>';
+exports.desc = 'Get all the native dependencies of a given native application';
 
-exports.builder = {}
+exports.builder = {};
 
 exports.handler = function (argv) {
   cauldron.getNativeDependencies(

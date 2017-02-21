@@ -1,5 +1,4 @@
-import cauldron from '../../../util/cauldron.js';
-import explodeNapSelector from '../../../util/explodeNapSelector.js';
+import {explodeNapSelector, cauldron} from '@walmart/ern-util';
 
 exports.command = 'dependency <fullNapSelector> <dependency>'
 exports.desc = 'Add a native dependency in the cauldron'
