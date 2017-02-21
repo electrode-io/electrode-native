@@ -54,6 +54,10 @@ Meant to be invoked manually (or through CI) by a user through the command `ern 
 A user of the platform might or might not have to use this command (i.e this project). Only users that wish to generate an API will have use of this project.  
 Only `ern-local-cli` has a dependency on `ern-api-gen`.
 
+- [ern-model-gen](/ern-model-gen)  
+A cross platform model generator (objC/Java) to generate models for complex objects to be used in APIs.  
+Models are currently respresented as a JSON Schema.
+
 - [ern-cauldron-api](/ern-cauldron-api)  
 The Cauldron server / REST service.  
 Can be started locally or installed/started on an external server.  
