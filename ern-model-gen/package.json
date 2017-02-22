@@ -1,16 +1,16 @@
 {
   "name": "@walmart/ern-model-gen",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Model Generation for Objective-C",
   "main": "dist/index.js",
   "repository": {},
   "author": "Carlos Paelinck",
   "license": "ISC",
   "devDependencies": {
-    "@walmart/ern-util-dev":  "1.0.0"
+    "@walmart/ern-util-dev":  "0.0.1"
   },
   "dependencies": {
-    "@walmart/ern-util":  "1.0.0",
+    "@walmart/ern-util":  "0.0.1",
     "fs-extra": "^2.0.0"
   },
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@walmart/ern-api-gen",
-  "version": "1.0.0",
+  "version":"0.0.1",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
@@ -12,11 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/ern-model-gen": "1.0.0",
+    "@walmart/ern-model-gen": "0.0.1",
     "xcode": "^0.9.1"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "1.0.0"
+    "@walmart/ern-util-dev": "0.0.1"
   },
   "engines": {
     "node": ">=6.9.4"

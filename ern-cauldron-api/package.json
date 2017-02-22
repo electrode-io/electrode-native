@@ -1,6 +1,6 @@
 {
   "name": "@walmart/ern-cauldron-api",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "The Cauldron !",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "lodash": "^4.17.3",
     "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0",
-    "@walmart/ern-util-dev":  "1.0.0"
+    "@walmart/ern-util-dev":  "0.0.1"
   },
   "devDependencies": {
     "chai-http": "^3.0.0"
