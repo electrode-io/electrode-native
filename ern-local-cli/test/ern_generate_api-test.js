@@ -11,9 +11,9 @@ const {
 } = ernSupport();
 
 describe("commands/generate/api", function () {
+    this.timeout(100000);
     before(runBefore);
     after(runAfter);
-    this.timeout(100000);
 
     it('generate api init initapitest', ernTest()
         .then(json('react-native-initapitest-api/package.json', {name: 'react-native-initapitest-api'}))
