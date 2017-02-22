@@ -1,7 +1,6 @@
 import {exec} from 'child_process';
 import fs from 'fs';
 import path from 'path'
-const log = require('console-log-level')();
 
 export default async function reactNativeInit(appName, rnVersion) {
     return new Promise((resolve, reject) => {
@@ -12,11 +11,9 @@ export default async function reactNativeInit(appName, rnVersion) {
         exec(`react-native init ${appName} --version react-native@${rnVersion} --skip-jest`,
             (err, stdout, stderr) => {
                 if (err) {
-                    log.error(err);
-                    reject(err);
-                } else if (stdout) {
-                    resolve(stdout);
+                    return reject(err);
                 }
+                resolve(stdout);
             });
     });
 }
