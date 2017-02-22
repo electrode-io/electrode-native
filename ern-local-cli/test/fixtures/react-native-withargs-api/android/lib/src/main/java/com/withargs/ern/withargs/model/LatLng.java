@@ -8,7 +8,8 @@ import android.support.annotation.Nullable;
 
 public class LatLng implements Parcelable {
 
-    private static final String KEY_BUNDLE_LATLNG = "latLng";
+    private static final String KEY_BUNDLE_ID = "latLng";
+    private static final String VALUE_BUNDLE_ID = LatLng.class.getCanonicalName();
 
     @Nullable
     public static LatLng fromBundle(@Nullable Bundle bundle) {
@@ -16,12 +17,17 @@ public class LatLng implements Parcelable {
             return null;
         }
 
-        Parcelable parcelable = bundle.getParcelable(KEY_BUNDLE_LATLNG);
-        if (parcelable instanceof LatLng) {
-            return (LatLng) parcelable;
-        } else {
+        if (!bundle.containsKey(KEY_BUNDLE_ID)
+                || !(VALUE_BUNDLE_ID).equals(bundle.getString(KEY_BUNDLE_ID))) {
             return null;
         }
+
+
+        Builder builder = new Builder();
+        builder.lat(bundle.containsKey("lat") ? bundle.getInt("lat") : null);
+        builder.lng(bundle.containsKey("lng") ? bundle.getInt("lng") : null);
+        builder.name(bundle.containsKey("name") ? bundle.getString("name") : null);
+        return builder.build();
     }
 
     private final Integer lat;
@@ -35,9 +41,10 @@ public class LatLng implements Parcelable {
     }
 
     private LatLng(Parcel in) {
-        lat = in.readInt();
-        lng = in.readInt();
-        name = in.readString();
+        Bundle bundle = in.readBundle();
+        this.lat = bundle.containsKey("lat") ? bundle.getInt("lat") : null;
+        this.lng = bundle.containsKey("lng") ? bundle.getInt("lng") : null;
+        this.name = bundle.containsKey("name") ? bundle.getString("name") : null;
     }
 
     public static final Creator<LatLng> CREATOR = new Creator<LatLng>() {
@@ -75,15 +82,22 @@ public class LatLng implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(lat);
-        dest.writeInt(lng);
-        dest.writeString(name);
+        dest.writeBundle(toBundle());
     }
 
     @NonNull
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(KEY_BUNDLE_LATLNG, this);
+        if(lat != null) {
+            bundle.putInt("lat", lat);
+        }
+        if(lng != null) {
+            bundle.putInt("lng", lng);
+        }
+        if(name != null) {
+            bundle.putString("name", name);
+        }
+        bundle.putString(KEY_BUNDLE_ID, VALUE_BUNDLE_ID);
         return bundle;
     }
 

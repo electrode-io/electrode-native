@@ -7,21 +7,21 @@
 	objects = {
 /* Begin PBXBuildFile section */
 		29E96DB91E1FF49A00E9ABFC /* API.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E96DB71E1FF49A00E9ABFC /* API.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9DDFC029C3F2436D9E1CD8FE /* InitapitestApi.m in Sources */ = {isa = PBXBuildFile; fileRef = F1416A92DB994E909A0BFE8F /* InitapitestApi.m */; };
-		82041ADD3BC44721AE1D3717 /* InitapitestApiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 92A8FCFD1EA5466A9AC161EA /* InitapitestApiClient.m */; };
-		0D3AB213CCFD4C199A1AA74A /* Names.m in Sources */ = {isa = PBXBuildFile; fileRef = B381660F2BB649AA8D53A917 /* Names.m */; };
+		8DFC4C0DB3C643CDADF34F52 /* InitapitestApi.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DBFDA58AAA4FFF99B2B9A2 /* InitapitestApi.m */; };
+		700C03F632564804AAD8F7DD /* InitapitestApiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8903BFF0A54849F6B81CA921 /* InitapitestApiClient.m */; };
+		FDFE4DF7F5CB4FC19CA84F21 /* Names.m in Sources */ = {isa = PBXBuildFile; fileRef = B14558D8F4F141FC835A76F6 /* Names.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		29E96DB41E1FF49A00E9ABFC /* API.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = API.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29E96DB71E1FF49A00E9ABFC /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = API.h; sourceTree = "<group>"; };
 		29E96DB81E1FF49A00E9ABFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7F4D143C6AF040D9BF0096D4 /* InitapitestApi.h */ = {isa = PBXFileReference; name = "InitapitestApi.h"; path = "InitapitestApi.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		ECD1D5E873AD4F428DF0A8A4 /* InitapitestApiClient.h */ = {isa = PBXFileReference; name = "InitapitestApiClient.h"; path = "InitapitestApiClient.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		B49449B7E16C4F689B274521 /* Names.h */ = {isa = PBXFileReference; name = "Names.h"; path = "Names.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		F1416A92DB994E909A0BFE8F /* InitapitestApi.m */ = {isa = PBXFileReference; name = "InitapitestApi.m"; path = "InitapitestApi.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		92A8FCFD1EA5466A9AC161EA /* InitapitestApiClient.m */ = {isa = PBXFileReference; name = "InitapitestApiClient.m"; path = "InitapitestApiClient.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		B381660F2BB649AA8D53A917 /* Names.m */ = {isa = PBXFileReference; name = "Names.m"; path = "Names.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		5693F5932CAA4DB8A1944025 /* InitapitestApi.h */ = {isa = PBXFileReference; name = "InitapitestApi.h"; path = "InitapitestApi.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		799E6556E8144793BAD467B2 /* InitapitestApiClient.h */ = {isa = PBXFileReference; name = "InitapitestApiClient.h"; path = "InitapitestApiClient.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		39CA24DD7CDD4F449B40BB41 /* Names.h */ = {isa = PBXFileReference; name = "Names.h"; path = "Names.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		B6DBFDA58AAA4FFF99B2B9A2 /* InitapitestApi.m */ = {isa = PBXFileReference; name = "InitapitestApi.m"; path = "InitapitestApi.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		8903BFF0A54849F6B81CA921 /* InitapitestApiClient.m */ = {isa = PBXFileReference; name = "InitapitestApiClient.m"; path = "InitapitestApiClient.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		B14558D8F4F141FC835A76F6 /* Names.m */ = {isa = PBXFileReference; name = "Names.m"; path = "Names.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,12 +56,12 @@
 			children = (
 				29E96DB71E1FF49A00E9ABFC /* API.h */,
 				29E96DB81E1FF49A00E9ABFC /* Info.plist */,
-				7F4D143C6AF040D9BF0096D4 /* InitapitestApi.h */,
-				ECD1D5E873AD4F428DF0A8A4 /* InitapitestApiClient.h */,
-				B49449B7E16C4F689B274521 /* Names.h */,
-				F1416A92DB994E909A0BFE8F /* InitapitestApi.m */,
-				92A8FCFD1EA5466A9AC161EA /* InitapitestApiClient.m */,
-				B381660F2BB649AA8D53A917 /* Names.m */,
+				5693F5932CAA4DB8A1944025 /* InitapitestApi.h */,
+				799E6556E8144793BAD467B2 /* InitapitestApiClient.h */,
+				39CA24DD7CDD4F449B40BB41 /* Names.h */,
+				B6DBFDA58AAA4FFF99B2B9A2 /* InitapitestApi.m */,
+				8903BFF0A54849F6B81CA921 /* InitapitestApiClient.m */,
+				B14558D8F4F141FC835A76F6 /* Names.m */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -145,9 +145,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DDFC029C3F2436D9E1CD8FE /* InitapitestApi.m in Sources */,
-				82041ADD3BC44721AE1D3717 /* InitapitestApiClient.m in Sources */,
-				0D3AB213CCFD4C199A1AA74A /* Names.m in Sources */,
+				8DFC4C0DB3C643CDADF34F52 /* InitapitestApi.m in Sources */,
+				700C03F632564804AAD8F7DD /* InitapitestApiClient.m in Sources */,
+				FDFE4DF7F5CB4FC19CA84F21 /* Names.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
