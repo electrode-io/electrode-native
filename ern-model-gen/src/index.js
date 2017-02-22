@@ -197,17 +197,20 @@ function lowercaseFirstLetter(string) {
 }
 
 const androidViews = {
-    "parcelableReadGetter": function () {
-        return parcelableReadGetter(this)
-    },
-    "parcelableWriteSetter": function () {
-        return parcelableWriteSetter(this)
-    },
     "classNameUpperCase": function () {
         return this.className.toUpperCase();
     },
     "package": function () {
         return `${javaPkg}`;
+    },
+    "getOptionalPropertyBuilder": function () {
+        return getOptionalPropertyBuilder(this);
+    },
+     "getRequiredPropertyBuilder": function () {
+        return getRequiredPropertyBuilder(this);
+    },
+    "setPropertyBuilder" : function () {
+        return setPropertyBuilder(this);
     }
 }
 
@@ -217,36 +220,71 @@ const defaultViews = {
     }
 }
 
-let parcelableReadGetter = (view) => {
+let getOptionalPropertyBuilder = (view) => {
+    return getPropertyBuilder(view, false);
+}
+
+let getRequiredPropertyBuilder = (view) => {
+    return getPropertyBuilder(view, true);
+}
+
+function getPropertyBuilder(view, required){
     if (view.customObject) {
-        return `readParcelable(${view.className}.class.getClassLoader())`;
-    } else {
+        return required 
+                ? `${view.className}.fromBundle(` + getBundle(view) + `)`
+                : `bundle.containsKey("${view.name}") ? ${view.className}.fromBundle(` + getBundle(view) + `) : null`;
+    } else{
         switch (view.javaType) {
             case 'Boolean':
-                return `readInt() != 0`;
+                return required
+                    ? getBundle(view)
+                    : `bundle.containsKey("${view.name}") ? ` + getBundle(view) + ` : null`
             case 'String':
-                return `readString()`;
+                return required
+                    ? getBundle(view)
+                    : `bundle.containsKey("${view.name}") ? ` + getBundle(view) + ` : null`;
             case 'Integer':
-                return `readInt()`;
+                return required
+                    ? getBundle(view)
+                    : `bundle.containsKey("${view.name}") ? ` + getBundle(view) + ` : null`;
         }
     }
 }
 
-let parcelableWriteSetter = (view) => {
+function getBundle(view){
+    const complexBundle = `bundle.getBundle("${view.name}")`;
+    const intBundle = `bundle.getInt("${view.name}")`;
+    const boolBundle = `bundle.getBoolean("${view.name}")`;
+    const strBundle = `bundle.getString("${view.name}")`;
+
     if (view.customObject) {
-        return `writeParcelable(${view.name}, flags)`;
-    } else {
+        return complexBundle;
+    } else{
         switch (view.javaType) {
             case 'Boolean':
-                return `writeInt(${view.name } ? 1 : 0)`;
+                return boolBundle;
             case 'String':
-                return `writeString(${view.name})`;
+                return strBundle;
             case 'Integer':
-                return `writeInt(${view.name})`;
+                return intBundle;
         }
     }
 }
 
+let setPropertyBuilder = (view) => {
+    if (view.customObject) {
+        return `bundle.putParcelable("${view.name}", ${view.name}.toBundle())`;
+    } else {
+        switch (view.javaType) {
+            case 'Boolean':
+                return `bundle.putBoolean("${view.name}", ${view.name})`;
+            case 'String':
+                return `bundle.putString("${view.name}", ${view.name})`;
+            case 'Integer':
+                return `bundle.putInt("${view.name}", ${view.name})`;
+        }
+    }
+}
 
 const DEFAULT_OUTPUT_DIR = 'output'
 const DEFAULT_OUTPUT_DIR_IOS = DEFAULT_OUTPUT_DIR + '/ios'
@@ -272,8 +310,8 @@ export default async function runModelGen({
   console.log(chalk.blue("Models generation, in progress......."))
 
   try {
-    const json = await util.readFile(schemaPath)
-    await generateModels(json)
+    const modelSchema = await util.readFile(schemaPath)
+    await generateModels(modelSchema)
     console.log(chalk.green("Models are generated"))
 
   } catch (error) {

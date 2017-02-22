@@ -1,4 +1,4 @@
-package {{{package}}};
+package {{package}};
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -8,7 +8,8 @@ import android.support.annotation.Nullable;
 
 public class {{className}} implements Parcelable {
 
-    private static final String KEY_BUNDLE_{{{classNameUpperCase}}} = "{{name}}";
+    private static final String KEY_BUNDLE_ID = "{{name}}";
+    private static final String VALUE_BUNDLE_ID = {{className}}.class.getCanonicalName();
 
     @Nullable
     public static {{className}} fromBundle(@Nullable Bundle bundle) {
@@ -16,12 +17,27 @@ public class {{className}} implements Parcelable {
             return null;
         }
 
-        Parcelable parcelable = bundle.getParcelable(KEY_BUNDLE_{{{classNameUpperCase}}});
-        if (parcelable instanceof {{className}}) {
-            return ({{className}}) parcelable;
-        } else {
+        if (!bundle.containsKey(KEY_BUNDLE_ID)
+                || !(VALUE_BUNDLE_ID).equals(bundle.getString(KEY_BUNDLE_ID))) {
             return null;
         }
+
+        {{#properties}}
+        {{#isRequired}}
+        if (!bundle.containsKey("{{name}}")) {
+            return null;
+        }
+
+        {{/isRequired}}
+        {{/properties}}
+
+        Builder builder = new Builder({{#properties}}{{#isRequired}}{{{getRequiredPropertyBuilder}}}{{^isLastRequiredItem}}, {{/isLastRequiredItem}}{{/isRequired}}{{/properties}});
+        {{#properties}}
+        {{^isRequired}}
+        builder.{{name}}({{{getOptionalPropertyBuilder}}});
+        {{/isRequired}}
+        {{/properties}}
+        return builder.build();
     }
 
     {{#properties}}
@@ -35,8 +51,14 @@ public class {{className}} implements Parcelable {
     }
 
     private {{className}}(Parcel in) {
+        Bundle bundle = in.readBundle();
         {{#properties}}
-        {{name}} = in.{{{parcelableReadGetter}}};
+        {{#isRequired}}
+        this.{{name}} = {{{getRequiredPropertyBuilder}}};
+        {{/isRequired}}
+        {{^isRequired}}
+        this.{{name}} = {{{getOptionalPropertyBuilder}}};
+        {{/isRequired}}
         {{/properties}}
     }
 
@@ -83,15 +105,23 @@ public class {{className}} implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        {{#properties}}
-        dest.{{{parcelableWriteSetter}}};
-        {{/properties}}
+        dest.writeBundle(toBundle());
     }
 
     @NonNull
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(KEY_BUNDLE_{{{classNameUpperCase}}}, this);
+        {{#properties}}
+        {{#isRequired}}
+        {{{setPropertyBuilder}}};
+        {{/isRequired}}
+        {{^isRequired}}
+        if({{name}} != null) {
+            {{{setPropertyBuilder}}};
+        }
+        {{/isRequired}}
+        {{/properties}}
+        bundle.putString(KEY_BUNDLE_ID, VALUE_BUNDLE_ID);
         return bundle;
     }
 
