@@ -1,6 +1,6 @@
 {
   "name": "@walmart/ern-container-gen",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
@@ -15,10 +15,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-   "@walmart/ern-util": "1.0.0"
+   "@walmart/ern-util": "0.0.1"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "1.0.0"
+    "@walmart/ern-util-dev": "0.0.1"
   },
   "engines": {
     "node": ">=6.9.4"

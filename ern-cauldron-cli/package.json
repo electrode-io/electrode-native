@@ -1,6 +1,6 @@
 {
   "name": "@walmart/ern-cauldron-cli",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Cauldron API Node Client",
   "main": "dist/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@walmart/ern-util-dev":  "1.0.0"
+    "@walmart/ern-util-dev":  "0.0.1"
   },
   "dependencies": {
     "unirest": "^0.5.1"

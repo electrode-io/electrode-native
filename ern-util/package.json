@@ -1,6 +1,6 @@
 {
   "name": "@walmart/ern-util",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/ern-cauldron-cli": "1.0.0",
+    "@walmart/ern-cauldron-cli": "0.0.1",
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
     "console-log-level": "^1.4.0",
@@ -26,6 +26,6 @@
     "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "1.0.0"
+    "@walmart/ern-util-dev": "0.0.1"
   }
 }
