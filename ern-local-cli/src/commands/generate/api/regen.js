@@ -1,5 +1,5 @@
-import {generateCode} from '../../../../../ern-api-gen/index.js'
-import platform from '../../../util/platform.js'
+import {generateCode} from '@walmart/ern-api-gen'
+import {platform} from '@walmart/ern-util'
 
 const log = require('console-log-level')();
 
@@ -13,11 +13,6 @@ exports.builder = function (yargs) {
 exports.handler = async function (argv) {
     const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge');
 
-    try {
-        await generateCode({bridgeVersion: bridgeDep.version});
-    } catch (e) {
-        log.error(`Regenerating code failed:`, e.message);
-        process.exit(1);
+    return generateCode({bridgeVersion: bridgeDep.version});
 
-    }
 };

@@ -1,6 +1,6 @@
 {
   "name": "@walmart/ern-cauldron-api",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "The Cauldron !",
   "repository": {
     "type": "git",
@@ -9,12 +9,12 @@
   "bin": {
     "ern-cauldron-api": "index.js"
   },
-  "main": "distrib/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "node -r babel-register ./node_modules/.bin/isparta cover node_modules/mocha/bin/_mocha",
     "start": "node index.js",
-    "compile": "rimraf distrib && babel src -d distrib ",
-    "preversion": "npm run compile"
+    "test": "ern-mocha",
+    "build": "ern-babel",
+    "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -24,19 +24,11 @@
     "joi": "^10.1.0",
     "lodash": "^4.17.3",
     "mkdirp": "^0.5.1",
-    "rmdir": "^1.2.0"
+    "rmdir": "^1.2.0",
+    "@walmart/ern-util-dev":  "1.0.0"
   },
   "devDependencies": {
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
-    "babel-preset-node6": "^11.0.0",
-    "babel-register": "^6.18.0",
-    "babel-cli": "^6.18.0",
-    "chai": "^3.5.0",
-    "chai-http": "^3.0.0",
-    "isparta": "^4.0.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.0.2",
-    "rimraf": "^2.5.4"
+    "chai-http": "^3.0.0"
   },
   "engines": {
     "node": ">=6.9.4"

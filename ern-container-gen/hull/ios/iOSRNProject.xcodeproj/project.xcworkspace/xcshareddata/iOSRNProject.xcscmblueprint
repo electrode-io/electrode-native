@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "61B329B3DC0BC9E58BE762EC8A65109695DD7CFE",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1" : 9223372036854775807,
+    "61B329B3DC0BC9E58BE762EC8A65109695DD7CFE" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "A07437FD-BEE5-4306-9D72-78E64F73ED81",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1" : "iOSRNProject\/ElectrodeContainer\/",
+    "61B329B3DC0BC9E58BE762EC8A65109695DD7CFE" : "iOSRNProject\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "iOSRNProject",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ios\/iOSRNProject.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "gecgithub01.walmart.com:cgarvin\/ElectrodeContainer.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "gecgithub01.walmart.com:cgarvin\/iOSRNProject.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "61B329B3DC0BC9E58BE762EC8A65109695DD7CFE"
+    }
+  ]
+}

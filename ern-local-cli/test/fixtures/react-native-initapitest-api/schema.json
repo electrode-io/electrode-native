@@ -1,0 +1,15 @@
+{
+  "type": "Object",
+  "name": "LatLng",
+  "properties": {
+    "lat": {
+      "type": "number"
+    },
+    "lng": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import runModelGen from "../../ern-model-gen/index.js";
+import runModelGen from "@walmart/ern-model-gen";
 import generateJavaCode from './generateJavaCode';
 import generateObjectiveCCode from './generateObjectiveCCode';
 import generateProject from './generateProject';

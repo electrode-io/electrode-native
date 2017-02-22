@@ -1,0 +1,14 @@
+{
+  "name": "@walmartTest/react-native-withargs-api",
+  "version": "2.0.0",
+  "main": "index.js",
+  "author": "tester",
+  "scripts": {
+    "regen": "ern generate api regen .",
+    "preinstall": "ern generate api regen ."
+  },
+  "dependencies": {
+    "@walmart/react-native-electrode-bridge": "1.1.10",
+    "react-native": "0.40.0"
+  }
+}

@@ -14,7 +14,7 @@ const fs = require('fs');
 // |_ .ernrc
 
 // Path to ern platform root folder
-const ERN_PATH = `${process.env['HOME']}/.ern`;
+const ERN_PATH = process.env['ERN_HOME'] || `${process.env['HOME']}/.ern`;
 // Path to ern platform cloned git repo
 const ERN_PLATFORM_REPO_PATH = `${ERN_PATH}/ern-platform`;
 // Path to ern platform cache folder (containing all installed cached versions of the platform)
@@ -36,6 +36,7 @@ exports.install = () => {
     throw new Error('yarn needs to be installed first !');
   }
 
+
   // Platform version (retrieved from the platform manifest)
   const PLATFORM_VERSION =
     JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8')).platformVersion;
@@ -52,9 +53,8 @@ exports.install = () => {
   console.log('=> Installing platform');
   process.chdir(`${PLATFORM_VERSION_PATH}`);
   execSync(`yarn install`);
-
   // Remove .git as he takes unnecessary disk space (we don't need it in the cached version folder)
-  execSync(`rm -rf ${PLATFORM_VERSION_PATH}/.git`);
+  //execSync(`rm -rf ${PLATFORM_VERSION_PATH}/.git`);
 
   // Generate initial ernrc file, if it doesnt already exists (i.e if this is not a first time platform install)
   if (!fs.existsSync(ERN_RC_GLOBAL_FILE_PATH)) {
@@ -70,7 +70,7 @@ exports.install = () => {
           }
         }
       }
-    }
+    };
     fs.writeFileSync(ERN_RC_GLOBAL_FILE_PATH, JSON.stringify(ernRc, null, 2));
   } else {
     // TODO : Handle case where .ernrc global file already exists if needed

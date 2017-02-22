@@ -131,8 +131,12 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
   // birdge dependency compile statement with platform version
   else {
     log.info(`No config.json file for ${plugin.name}. Assuming apigen module`);
-
     result = {
+        origin: {
+          type: 'npm',
+          scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
+        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`
+      },
       root: 'android',
       uploadArchives : {
         moduleName: 'lib'
@@ -141,19 +145,6 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
         { file: 'android/lib/build.gradle' }
       ]
     };
-
-    if (npmScopeModuleRe.test(plugin.name)) {
-      result.origin = {
-        type: 'npm',
-        scope: `${npmScopeModuleRe.exec(plugin.name)[1]}`,
-        name: `${npmScopeModuleRe.exec(plugin.name)[2]}`
-      }
-    } else {
-      result.origin = {
-        type: 'npm',
-        name: plugin.name
-      }
-    }
   }
 
   // If there is no specified version, assume plugin version by default
@@ -311,8 +302,6 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
   try {
     let pluginsView = [];
 
-    mustacheView.pluginCompile = [];
-
     for (const plugin of plugins) {
       if (plugin.name === 'react-native') {
         continue;
@@ -328,19 +317,11 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
           "configurable": pluginConfig.pluginHook.configurable
         });
       }
-
-      if (pluginConfig.dependencies) {
-        for (const dependency of pluginConfig.dependencies) {
-          log.info(`Will inject: compile '${dependency}'`);
-          mustacheView.pluginCompile.push({
-            "compileStatement" : `compile '${dependency}'`
-          });
-        }
-      }
     }
 
     mustacheView.plugins = pluginsView;
 
+    mustacheView.pluginCompile = [];
     const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
     if (reactNativePlugin) {
       log.info(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`);
@@ -408,7 +389,7 @@ async function fillContainerHull(plugins, miniApps, paths) {
       } else {
         shell.cp('-R', `src/main/java`, `${paths.outFolder}/lib/src/main`);
       }
-
+      
       if (pluginConfig.copy) {
         for (const cp of pluginConfig.copy) {
           const sourcePath = `${pluginSourcePath}/${cp.source}`;

@@ -3,4 +3,4 @@ npm-debug.log
 .cache
 containerBase
 cache
-distrib
+dist
