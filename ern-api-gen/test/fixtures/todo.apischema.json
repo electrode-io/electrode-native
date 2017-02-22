@@ -1,6 +1,4 @@
 {
-  "apiName": "todo",
-  "apiVersion": "0.0.21",
   "events": [
     {
       "name": "todosUpdated",
@@ -11,7 +9,6 @@
     }
   ],
   "namespace": "com.walmartlabs.ern",
-  "npmScope": "walmart",
   "requests": [
     {
       "name": "getTodos",

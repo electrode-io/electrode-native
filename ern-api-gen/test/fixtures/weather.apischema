@@ -1,7 +1,4 @@
 namespace com.walmartlabs.ern
-npmscope walmart
-apiname weather
-apiversion 0.0.1
 
 // Event with no payload
 event weatherUpdated
