@@ -8,7 +8,6 @@
   "scripts": {
     "setup-dev": "node setup-dev.js",
     "rebuild": "lerna clean --yes && lerna bootstrap",
-    "prepublish": "echo 'called here!'",
     "test": "lerna run test"
   },
   "bin": {
