@@ -81,7 +81,7 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
     });
 
     const json = (file, _test) => () => {
-        assert(fs.existsSync(api.cwd(file)), `File should exist ${file}`);
+        assert(fs.existsSync(api.cwd(file)), `File should exist ${api.cwd(file)}`);
         const ret = JSON.parse(fs.readFileSync(api.cwd(file), 'utf8'));
         if (_test) {
             if (typeof _test === 'function') {
@@ -101,10 +101,9 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
             let p = new Promise(function (resolve, reject) {
                 const ex = [process.argv[0], '-r', BABEL_HOOK, CLI, str].join(' ');
                 api.log(ex);
-                exec(ex, Object.assign({
-                    cwd: api.cwd(options.cwd),
-                    stdio: 'ignore'
-                }, options), (err, stdout, stderr) => {
+                exec(ex, Object.assign({stdio: 'ignore'}, options, {
+                    cwd: api.cwd(options.cwd)
+                }), (err, stdout, stderr) => {
                     if (err) {
                         console.error(stderr);
                         return reject({err, stdout, stderr});
