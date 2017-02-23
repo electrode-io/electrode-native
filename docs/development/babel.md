@@ -1,12 +1,13 @@
 ERN Babel
 ===
-In order to use the same version of babel across projects, with the same configuration a couple tools have been created.
-Babelhoook - is a hook for loading into node to use our settings 
+In order to use the same version of babel across projects with the same configuration a couple tools have been created.
 
 * ern-babel - runs the babel command line with our babel configuration. It takes no args, but runs relative to the $PWD.
 * ern-mocha - runs mocha with our babel configuration and our mocha configuration, takes no args but runs relative to the $PWD.
+
+To enable thest tools and other there is the babelhook script it can be used as follows
 ```sh
- $ node -r @walmart/ern-util-dev/babelhook ./your_script.js
+ $ node -r @walmart/ern-util-dev/babelhook <your_script>
 ```
 
 
