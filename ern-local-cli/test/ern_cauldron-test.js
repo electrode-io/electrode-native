@@ -1,5 +1,4 @@
-import ernSupport from './support/ern';
-
+import ernSupport from '@walmart/ern-util-dev';
 
 describe('commands/cauldron', function () {
 
@@ -9,7 +8,7 @@ describe('commands/cauldron', function () {
         runBefore,
         runAfter,
         ernTest, fail
-    } = ernSupport();
+    } = ernSupport(__dirname);
 
     before(runBefore);
 

@@ -1,4 +1,4 @@
-import ernSupport from './support/ern';
+import ernSupport from '@walmart/ern-util-dev';
 
 
 describe("commands/generate/api", function () {
@@ -13,7 +13,7 @@ describe("commands/generate/api", function () {
         exists,
         gradle,
         compare,
-    } = ernSupport();
+    } = ernSupport(__dirname);
 
     before(runBefore);
     after(runAfter);

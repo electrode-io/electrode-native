@@ -1,47 +1,59 @@
 import {expect, assert} from 'chai';
 import _tmp from 'tmp';
 import fs from 'fs';
-import rimraf from 'rimraf';
-import shell from 'shelljs';
-import {exec, execSync} from 'child_process';
+import {exec} from 'child_process';
 import dirCompare from 'dir-compare';
 import path from 'path';
+import shell from 'shelljs';
 
-const BABEL_HOOK = path.resolve(__dirname, '..', '..', '..', 'ern-util-dev', 'babelhook');
-const CLI = path.resolve(__dirname, '..', '..', 'src', 'launchbin.js');
+const BABEL_HOOK = path.resolve(__dirname, '..', 'babelhook');
+const CLI = path.resolve(__dirname, '..', '..', 'ern-local-cli', 'src', 'launchbin.js');
 
+
+/**
+ * Sets up an environment for tests.
+ *
+ * @param workingCwd - It tries to resolve your test directory.  You are better off passing __dirname from your test
+ * so that it will work regardless of the directory it is invoked.  This is a best guess and should work most times.
+ * @param - excludeFilter - a function that will pass in an object and exclude it if the function returns true.  Used when doing a compare
+ * @param - log - a function for logging.
+ * @returns {*}
+ */
+const EMPTY_FUNC = () => {
+};
 const excludeFilterRe = /node_modules(\/|$)|yarn\.lock|gradle\.build|API\.xcodeproj/;
+const _excludeFilter = ({name1, name2, relativePath}) => excludeFilterRe.test(relativePath) || excludeFilterRe.test(name2) || excludeFilterRe.test(name1);
 
-const excludeFilter = ({name1, name2, relativePath}) => excludeFilterRe.test(relativePath) || excludeFilterRe.test(name2) || excludeFilterRe.test(name1);
-
-
-export default function setup() {
+export default function setup(workingCwd = path.join(process.cwd(), 'test'), log = EMPTY_FUNC) {
     let tmpDir, clean;
 
-    const runBefore = () => new Promise((resolve, reject) => _tmp.dir({
-        mode: '0750',
-        keep: true,
-        prefix: 'ern_test'
-    }, (e, _tmpDir, _clean) => {
-        if (e) return reject(e);
-        console.log(`tmpDir`, _tmpDir, '\n\n');
-        tmpDir = _tmpDir;
-        clean = _clean;
-        resolve();
-    }));
+
+    const runBefore = function () {
+        return new Promise((resolve, reject) => _tmp.dir({
+            mode: '0750',
+            keep: true,
+            prefix: 'ern_test'
+        }, (e, _tmpDir, _clean) => {
+            if (e) return reject(e);
+            api.log(`tmpDir`, _tmpDir, '\n\n');
+            tmpDir = _tmpDir;
+            clean = _clean;
+            resolve();
+        }));
+    };
 
     const runAfter = function (done) {
-        tmpDir && execSync(`rm -rf ${tmpDir}`);
+        tmpDir && shell.rm('-rf', tmpDir);
         return done();
     };
 
     const cwd = (...args) => path.resolve(tmpDir, ...args);
-    const compare = (src, dest) => () => {
-        dest = path.join(__dirname, '..', dest);
-        src = cwd(src);
+    const compare = (src, dest, excludeFilter = _excludeFilter) => () => {
+        dest = path.join(workingCwd, dest);
+        src = api.cwd(src);
 
         if (!fs.existsSync(dest)) {
-            shell.mkdir('-p', 'fixtures');
+            shell.mkdir('-p', path.join(dest, '..'));
             shell.cp('-r', src, dest);
             return Promise.resolve(true);
         } else {
@@ -50,21 +62,18 @@ export default function setup() {
                 dateTolerance: 500000,
                 compareContent: true
             }).then(({diffSet}) => {
-                let ret = true;
                 for (const diff of diffSet) {
                     if (!excludeFilter(diff) && diff.state != 'equal') {
-                        console.log('Not the same ', (diff.name1 || diff.name2 || diff.relativePath || diff), diff.name1, diff.name2);
-                        ret = false;
+                        assert('Not the same ', (diff.name1 || diff.name2 || diff.relativePath || diff), diff.name1, diff.name2);
                     }
                 }
-                assert(ret, 'Not the same, see console');
-                return ret;
+                return true;
             });
         }
     };
-    const exists = (file) => () => assert(fs.existsSync(cwd(file)), `Expected "${file}" to exist`);
+    const exists = (file) => () => assert(fs.existsSync(api.cwd(file)), `Expected "${file}" to exist`);
     const gradle = (project, cmd = 'build') => () => new Promise((resolve, reject) => {
-        exec(`${cwd(project, 'android', 'gradlew')} ${cmd}`, {cwd: cwd(project, 'android')}, (err, stdout, stderr) => {
+        exec(`${api.cwd(project, 'android', 'gradlew')} ${cmd}`, {cwd: api.cwd(project, 'android')}, (err, stdout, stderr) => {
             if (err) return reject(err);
             /BUILD SUCCESSFUL/.test(stdout);
             resolve();
@@ -72,8 +81,8 @@ export default function setup() {
     });
 
     const json = (file, _test) => () => {
-        assert(fs.existsSync(cwd(file)), `File should exist ${file}`);
-        const ret = JSON.parse(fs.readFileSync(cwd(file), 'utf8'));
+        assert(fs.existsSync(api.cwd(file)), `File should exist ${file}`);
+        const ret = JSON.parse(fs.readFileSync(api.cwd(file), 'utf8'));
         if (_test) {
             if (typeof _test === 'function') {
                 return _test(ret)
@@ -87,12 +96,15 @@ export default function setup() {
         return result;
     };
 
-    const ern = (str, options = {cwd: ''}, thens = []) => {
+    const ern = (str, options, thens = []) => {
         const f = () => {
             let p = new Promise(function (resolve, reject) {
                 const ex = [process.argv[0], '-r', BABEL_HOOK, CLI, str].join(' ');
-                console.log(ex);
-                const s = exec(ex, {cwd: cwd(options.cwd), stdio: 'ignore'}, (err, stdout, stderr) => {
+                api.log(ex);
+                exec(ex, Object.assign({
+                    cwd: api.cwd(options.cwd),
+                    stdio: 'ignore'
+                }, options), (err, stdout, stderr) => {
                     if (err) {
                         console.error(stderr);
                         return reject({err, stdout, stderr});
@@ -117,7 +129,7 @@ export default function setup() {
     //Uses the title of the test to create the ern command.
     const ernTest = (thens = [], options = {cwd: ''}) => {
         function f() {
-            return ern(this.test.title, options, thens)();
+            return api.ern(this.test.title, options, thens)();
         }
 
         f.then = (...args) => {
@@ -126,7 +138,8 @@ export default function setup() {
         };
         return f;
     };
-    return {
+    const api = {
+        log,
         runBefore,
         runAfter,
         ern,
@@ -135,11 +148,13 @@ export default function setup() {
         exists,
         json,
         has,
+        cwd,
         ernTest,
         fail(message = `This should fail if executed`){
             return () => {
                 throw new Error(message)
             };
         }
-    }
+    };
+    return api;
 }
