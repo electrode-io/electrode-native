@@ -19,7 +19,7 @@ The project should be layed out as follows.
 ern-platform/ern-your-project
 ├── src/
 │   └── index.js
-│          └── Contains your code.  You can break it down even further.
+│          └── Contains your code.  You can break it down even further.  
 ├── test/
 │   ├── your-project-test.js
 │   │       └── Needs to end in -test.js for mocha to find it.
@@ -31,16 +31,16 @@ ern-platform/ern-your-project
 ├── .npmignore
 │       └── ignores test directory. dist directory is included, but excluded from gitignore up a level.
 └── package.json
-        ├── name : <@walmart/ern-your-project>
-        ├── version : <ern-project version>
+        ├── name : @walmart/<ern-your-project>
+        ├── version : <ERN_PROJECT_VERSION>
         ├── main : "dist/index.js"
         ├── scripts
-        │        ├── test:"ern-mocha" 
-        │        ├── build:"ern-babel" 
-        │        └── prepublish:"npm run build"
+        │        ├── "test":"ern-mocha" 
+        │        ├── "build":"ern-babel" 
+        │        └── "prepublish":"npm run build"
         │        
         └── devDependencies
-                   └── has a dependency to @walmart/ern-util-dev at the same version
+                   └── "@walmart/ern-util-dev":<ERN_PROJECT_VERSION>
       
 
 ```

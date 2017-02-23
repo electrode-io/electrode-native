@@ -1,4 +1,5 @@
-import ernSupport from './support/ern';
+import ernSupport from '@walmart/ern-util-dev';
+
 describe('commands/miniapp', function () {
     this.timeout(100000);
     const {
@@ -9,7 +10,7 @@ describe('commands/miniapp', function () {
         exists,
         gradle,
         compare,
-    } = ernSupport();
+    } = ernSupport(__dirname);
 
     before(runBefore);
     after(runAfter);

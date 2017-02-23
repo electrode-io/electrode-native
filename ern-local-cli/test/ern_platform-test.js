@@ -1,4 +1,4 @@
-import ernSupport from './support/ern';
+import ernSupport from '@walmart/ern-util-dev';
 import {assert} from 'chai';
 
 
@@ -15,7 +15,7 @@ describe('commands/platform', function () {
         gradle,
         compare,
         fail
-    } = ernSupport();
+    } = ernSupport(__dirname);
 
     before(runBefore);
     after(runAfter);
