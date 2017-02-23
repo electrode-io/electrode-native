@@ -18,6 +18,7 @@ than the home grown solution.   It also
 
 ```bash
   $ rm -f /usr/local/bin/ern
+  $ npm uninstall -g @walmart/electrode-react-native
   $ cd ern-platform
   $ git pull origin master
   $ npm install 
