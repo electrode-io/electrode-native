@@ -3,7 +3,7 @@ import _tmp from 'tmp';
 import fs from 'fs';
 import rimraf from 'rimraf';
 import shell from 'shelljs';
-import {exec} from 'child_process';
+import {exec, execSync} from 'child_process';
 import dirCompare from 'dir-compare';
 import path from 'path';
 
@@ -30,7 +30,10 @@ export default function setup() {
         resolve();
     }));
 
-    const runAfter = () => new Promise(resolve => tmpDir ? rimraf(tmpDir, () => resolve()) : resolve());
+    const runAfter = function (done) {
+        tmpDir && execSync(`rm -rf ${tmpDir}`);
+        return done();
+    };
 
     const cwd = (...args) => path.resolve(tmpDir, ...args);
     const compare = (src, dest) => () => {

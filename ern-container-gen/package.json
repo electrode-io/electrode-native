@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "ern-babel",
-    "test": "ern-test",
+    "test": "ern-mocha",
     "prepublish": "npm run build"
   },
   "keywords": [],

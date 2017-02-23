@@ -50,29 +50,22 @@ describe('parseApiSchema', function () {
             "namespace": "abc",
             "requests": []
         }));
-        it(`apiVersion 1.0.0
+        it(`
 //
 namespace abc //this is a comment
 `, titleTest({
             "events": [],
             "namespace": "abc",
-
-            "apiVersion": "1.0.0",
             "requests": []
         }));
 
 
-        it(`apiVersion 1.0.0
-npmScope stuff
+        it(`
 namespace abc //this is a comment
-modelPath ../../.../stfuasd
 `, titleTest({
             "events": [],
             "namespace": "abc",
-            "npmScope": "stuff",
-            "apiVersion": "1.0.0",
-            "requests": [],
-            "modelPath": "../../.../stfuasd"
+            "requests": []
         }));
     });
 
