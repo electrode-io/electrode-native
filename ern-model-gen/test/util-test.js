@@ -5,6 +5,7 @@ function eql(value, describe){
     expect(result, describe).to.eql(value);
   }
 }
+
 describe('util', function(){
   before(function(){
 

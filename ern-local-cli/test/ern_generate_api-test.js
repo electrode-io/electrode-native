@@ -1,20 +1,22 @@
 import ernSupport from './support/ern';
-const {
-    runBefore,
-    runAfter,
-    ernTest,
-    json,
-    ern,
-    exists,
-    gradle,
-    compare,
-} = ernSupport();
+
 
 describe("commands/generate/api", function () {
+
+    this.timeout(60000);
+    const {
+        runBefore,
+        runAfter,
+        ernTest,
+        json,
+        ern,
+        exists,
+        gradle,
+        compare,
+    } = ernSupport();
+
     before(runBefore);
     after(runAfter);
-    this.timeout(100000);
-
     it('generate api init initapitest', ernTest()
         .then(json('react-native-initapitest-api/package.json', {name: 'react-native-initapitest-api'}))
         .then(ern(`generate api regen`, {cwd: 'react-native-initapitest-api'}))
@@ -30,6 +32,5 @@ describe("commands/generate/api", function () {
         .then(ern(`generate api regen`, {cwd: 'react-native-withargs-api'}))
         .then(compare('react-native-withargs-api', 'fixtures/react-native-withargs-api'))
         .then(gradle('react-native-withargs-api', 'build')));
-
 
 });
