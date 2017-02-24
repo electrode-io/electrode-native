@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 require('@walmart/ern-util-dev/babelhook');
-require('../src/index');
+require('@walmart/ern-global-cli');
