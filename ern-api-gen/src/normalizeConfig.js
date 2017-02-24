@@ -1,10 +1,10 @@
 import cwd from './cwd';
 import parseApiSchema from './parseApiSchema';
 import fs from 'fs';
-import { SCHEMA_FILE, CONFIG_FILE } from './Constants';
+import { SCHEMA_FILE, MODEL_FILE, CONFIG_FILE } from './Constants';
 
 function generateConfigFromSchemaSync(file) {
-  return parseApiSchema(fs.readFileSync(file, 'utf8'), file);
+    return parseApiSchema(fs.readFileSync(file, 'utf8'), file);
 }
 
 // Generate a configuration. This looks in the apigen schema
@@ -36,12 +36,11 @@ export default function normalizeConfig({
   apiAuthor,
   namespace,
   npmScope,
-  modelsSchemaPath,
-  apiSchemaPath,
+  modelsSchemaPath = MODEL_FILE,
+  apiSchemaPath = SCHEMA_FILE,
   moduleName,
-
   shouldGenerateBlankApi,
-  configFilePath = cwd(CONFIG_FILE),
+  configFilePath = cwd(CONFIG_FILE)
 }) {
   let simpleName = name;
 

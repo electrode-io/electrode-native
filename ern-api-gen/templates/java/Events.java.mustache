@@ -1,0 +1,41 @@
+package {{{package}}}.api;
+
+import android.support.annotation.NonNull;
+
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
+import com.walmartlabs.electrode.reactnative.bridge.EventListenerProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.EventProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.None;
+{{#models}}
+import {{{package}}}.model.{{{.}}};
+{{/models}}
+
+final class {{{pascalCaseApiName}}}Events implements {{{pascalCaseApiName}}}Api.Events {
+  {{{pascalCaseApiName}}}Events() {}
+
+{{#events}}
+  {{#hasPayload}}
+  @Override
+  public void add{{{pascalCaseName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{{payload.type}}}> eventListener) {
+    ElectrodeBridgeHolder.addEventListener({{{constantName}}}, new EventListenerProcessor<>({{{payload.type}}}.class, eventListener));
+  }
+
+  @Override
+  public void emit{{{pascalCaseName}}}Event(@NonNull {{{payload.type}}} {{{payload.name}}}) {
+    new EventProcessor<>({{{constantName}}}, {{{payload.name}}}).execute();
+  }
+  {{/hasPayload}} 
+  {{^hasPayload}}
+  @Override
+  public void add{{{pascalCaseName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<None> eventListener) {
+    ElectrodeBridgeHolder.addEventListener({{{constantName}}}, new EventListenerProcessor<>(None.class, eventListener));
+  }
+
+  @Override
+  public void emit{{{pascalCaseName}}}Event() {
+    new EventProcessor<>({{{constantName}}}, null).execute();
+  }
+  {{/hasPayload}}
+{{/events}}
+}

@@ -1,119 +1,62 @@
 package {{{package}}}.api;
 
-import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
-import com.walmartlabs.electrode.reactnative.bridge.RequestDispatcherImpl;
-import com.walmartlabs.electrode.reactnative.bridge.ExistingHandlerException;
-import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandler;
-import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandlerEx;
-import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
+import com.walmartlabs.electrode.reactnative.bridge.FailureMessage;
+import com.walmartlabs.electrode.reactnative.bridge.None;
 {{#models}}
 import {{{package}}}.model.{{{.}}};
 {{/models}}
 
 public final class {{{pascalCaseApiName}}}Api {
-
-  //====================================================================
-  // Request Handlers declaration (Private)
-  //====================================================================
-
-  {{#requests}}
-  {{#hasPayload}}
-  private static RequestHandlerEx<{{{payload.type}}},{{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}Void{{/respPayloadType}}> s{{{pascalCaseName}}}RequestHandler;
-  {{/hasPayload}}
-  {{^hasPayload}}
-  private static RequestHandler{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}} s{{{pascalCaseName}}}RequestHandler;
-  {{/hasPayload}}
-  {{/requests}}
-
-  //====================================================================
-  // Request Handlers affectation (Public client surface)
-  //====================================================================
-
-  {{#requests}}
-  {{#hasPayload}}
-  public static void handle{{{pascalCaseName}}}Request(RequestHandlerEx<{{{payload.type}}},{{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}Void{{/respPayloadType}}> handler) {
-      s{{{pascalCaseName}}}RequestHandler = handler;
-  }
-  {{/hasPayload}}
-  {{^hasPayload}}
-  public static void handle{{{pascalCaseName}}}Request(RequestHandler{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}} handler) {
-      s{{{pascalCaseName}}}RequestHandler = handler;
-  }
-  {{/hasPayload}}
-  {{/requests}}
-
-  //====================================================================
-  // Events emition (Public client surface)
-  //====================================================================
-
-  {{#events}}
-  {{#hasPayload}}
-  public static void {{{name}}}({{{payload.type}}} {{{payload.name}}}) {
-      {{{name}}}({{{payload.name}}}, ElectrodeBridgeEvent.DispatchMode.JS);
-  }
-
-  public static void {{{name}}}({{{payload.type}}} {{{payload.name}}}, final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
-      Bundle bundle = {{{payloadSerizalization}}}
-      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.{{{constantName}}})
-                                     .withDispatchMode(dispatchMode)
-                                     .withData(bundle)
-                                     .build());
-  }
-  {{/hasPayload}}
-  {{^hasPayload}}
-  public static void {{{name}}}() {
-      {{{name}}}(ElectrodeBridgeEvent.DispatchMode.JS);
-  }
-
-  public static void {{{name}}}(final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
-      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.{{{constantName}}})
-                                     .withDispatchMode(dispatchMode)
-                                     .build());
-  }
-  {{/hasPayload}}
-  {{/events}}
-
-  //====================================================================
-  // Bridge initialization
-  //====================================================================
+  private static final Requests REQUESTS;
+  private static final Events EVENTS;
 
   static {
-    //====================================================================
-    // Registration of request handlers with bridge
-    //====================================================================
+    REQUESTS = new {{{pascalCaseApiName}}}Requests();
+    EVENTS = new {{{pascalCaseApiName}}}Events();
+  }
 
-    {{#requests}}
-    ElectrodeBridge.registerRequestHandler(Names.{{{constantName}}}, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+  private {{{pascalCaseApiName}}}Api() {}
 
-        {{{payloadDeserialization}}}
+  @NonNull
+  public static Requests requests() {
+    return REQUESTS;
+  }
 
-        {{{pascalCaseApiName}}}Api.s{{{pascalCaseName}}}RequestHandler.handleRequest({{#hasPayload}}payload,{{/hasPayload}}new Response{{#respPayloadType}}<{{{respPayloadType}}}>{{/respPayloadType}}{{^respPayloadType}}<Void>{{/respPayloadType}}() {
-            @Override
-            {{#respPayloadType}}
-            public void onSuccess({{{respPayloadType}}} obj) {
-              Bundle bundle = {{{responsePayloadSerialization}}}
-              requestCompletioner.success(bundle);
-            }
-            {{/respPayloadType}}
-            {{^respPayloadType}}
-            public void onSuccess(Void obj) {
-              requestCompletioner.success(null);
-            }
-            {{/respPayloadType}}
+  @NonNull
+  public static Events events() {
+    return EVENTS;
+  }
 
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    {{/requests}}
+  public interface Events {
+  {{#events}}
+    String {{{constantName}}} = "{{{bridgeMessageName}}}";
+  {{/events}}
+
+  {{#events}}
+    {{#hasPayload}}
+    void add{{{pascalCaseName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{{payload.type}}}> eventListener);
+    void emit{{{pascalCaseName}}}Event(@NonNull {{{payload.type}}} {{{payload.name}}});
+    {{/hasPayload}} 
+    {{^hasPayload}}
+    void add{{{pascalCaseName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<None> eventListener);
+    void emit{{{pascalCaseName}}}Event();
+    {{/hasPayload}}
+  {{/events}}
+  }
+
+  public interface Requests {
+  {{#requests}}
+    String {{{constantName}}} = "{{{bridgeMessageName}}}";
+  {{/requests}}
+
+  {{#requests}}
+   void register{{{pascalCaseName}}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#hasPayload}}{{{payload.type}}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}> handler);
+   void {{{name}}}({{#hasPayload}}@NonNull {{{payload.type}}} {{payload.name}}, {{/hasPayload}}@NonNull final ElectrodeBridgeResponseListener<{{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}> responseListener);
+  {{/requests}}
   }
 }
