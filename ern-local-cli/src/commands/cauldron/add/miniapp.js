@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
 import { getNativeAppCompatibilityReport} from '../../../lib/compatibility';
+import { explodeNapSelector } from '@walmart/ern-util';
 import miniapp from '../../../lib/miniapp';
 
 exports.command = 'miniapp [fullNapSelector]';
@@ -43,11 +44,11 @@ exports.handler = async function (argv) {
         }).then(answer => {
             for (const fullNapSelector of answer.fullNapSelectors) {
                 miniapp.fromCurrentPath().addToNativeAppInCauldron(
-                    ...explodeNativeAppSelector(fullNapSelector), argv.force)
+                    ...explodeNapSelector(fullNapSelector), argv.force)
             }
         })
     } else {
         return miniapp.fromCurrentPath().addToNativeAppInCauldron(
-            ...explodeNativeAppSelector(argv.fullNapSelector), argv.force);
+            ...explodeNapSelector(argv.fullNapSelector), argv.force);
     }
 }
