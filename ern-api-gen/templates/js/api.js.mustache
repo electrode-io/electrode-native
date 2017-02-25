@@ -8,7 +8,7 @@ import * as messages from "./messages.js";
 {{#events}}
   {{#hasPayload}}
   export function {{{name}}}({{{payload.name}}}, dispatchMode = DispatchMode.NATIVE ) {
-    electrodeBridge.emitEvent(messages.{{{constantName}}}, {data: { {{{payload.name}}} }, dispatchMode});
+    electrodeBridge.emitEvent(messages.{{{constantName}}}, { data: { rsp: {{{payload.name}}} }, dispatchMode});
   }
   {{/hasPayload}}
   {{^hasPayload}}
@@ -27,7 +27,7 @@ import * as messages from "./messages.js";
 export function handle{{{pascalCaseName}}}Request(handler) {
   electrodeBridge.registerRequestHandler(messages.{{{constantName}}},
     (requestData) => {
-      return handler(requestData.{{{payload.name}}});
+      return handler(requestData.req);
     });
 }
   {{/hasPayload}}

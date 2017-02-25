@@ -5,10 +5,10 @@
     "react-native-code-push@1.16.1-beta",
     "react-native-stack-tracer@0.1.1",
     "react-native-vector-icons@4.0.0",
-    "@walmart/react-native-electrode-bridge@1.2.0",
-    "@walmart/react-native-user-api@0.0.12",
-    "@walmart/react-native-todo-api@0.0.21",
-    "@walmart/react-native-navigation-api@0.0.4"
+    "@walmart/react-native-electrode-bridge@1.2.2",
+    "@walmart/react-native-user-api@0.0.14",
+    "@walmart/react-native-todo-api@0.0.23",
+    "@walmart/react-native-navigation-api@0.0.7"
   ],
   "jsDependencies": [
     "react@15.4.2",

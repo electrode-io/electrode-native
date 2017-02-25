@@ -1,4 +1,4 @@
-import {config as ernConfig, cauldron, explodeNapSelector} from '@walmart/ern-util';
+import {config as ernConfig, cauldron, explodeNapSelector, platform} from '@walmart/ern-util';
 
 import {generateContainer} from '@walmart/ern-container-gen';
 

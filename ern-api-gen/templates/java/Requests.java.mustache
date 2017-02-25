@@ -1,0 +1,29 @@
+package {{{package}}}.api;
+
+import android.support.annotation.NonNull;
+
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
+import com.walmartlabs.electrode.reactnative.bridge.None;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.RequestProcessor;
+{{#models}}
+import {{{package}}}.model.{{{.}}};
+{{/models}}
+
+final class {{{pascalCaseApiName}}}Requests implements {{{pascalCaseApiName}}}Api.Requests {
+  {{{pascalCaseApiName}}}Requests() {}
+
+{{#requests}}
+  @Override
+  public void register{{{pascalCaseName}}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#hasPayload}}{{{payload.type}}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}> handler) {
+    ElectrodeBridgeHolder.registerRequestHandler({{{constantName}}}, new RequestHandlerProcessor<{{#hasPayload}}{{{payload.type}}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}>({{#hasPayload}}{{{payload.type}}}.class{{/hasPayload}}{{^hasPayload}}None.class{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}.class{{/respPayloadType}}{{^respPayloadType}}None.class{{/respPayloadType}}, handler));
+  }
+
+  @Override
+  public void {{{name}}}({{#hasPayload}}@NonNull {{{payload.type}}} {{payload.name}}, {{/hasPayload}}@NonNull final ElectrodeBridgeResponseListener<{{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}> responseListener) {
+    new RequestProcessor<{{#hasPayload}}{{payload.type}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}>({{{constantName}}}, {{#hasPayload}}{{payload.name}}{{/hasPayload}}{{^hasPayload}}null{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}.class{{/respPayloadType}}{{^respPayloadType}}None.class{{/respPayloadType}}, responseListener).execute();
+  }
+{{/requests}}
+}
