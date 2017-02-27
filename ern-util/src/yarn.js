@@ -8,9 +8,7 @@ const execSync = child_process.execSync;
 // Yarn add a given dependency
 export async function yarnAdd(dependency, {dev} = {}) {
     return new Promise((resolve, reject) => {
-        exec(tagOneLine`yarn add ${dependency.scope ? `@${dependency.scope}/` : ``}
-                    ${dependency.name}@${dependency.version} --exact
-                    ${dev ? '--dev' : ''}`,
+        exec(`yarn add ${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}@${dependency.version} --exact ${dev ? '--dev' : ''}`,
             (err, stdout, stderr) => {
                 if (err) {
                     log.error(err);
