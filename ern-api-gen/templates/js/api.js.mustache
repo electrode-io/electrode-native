@@ -8,7 +8,7 @@ import * as messages from "./messages.js";
 {{#events}}
   {{#hasPayload}}
   export function {{{name}}}({{{payload.name}}}, dispatchMode = DispatchMode.NATIVE ) {
-    electrodeBridge.emitEvent(messages.{{{constantName}}}, { data: { rsp: {{{payload.name}}} }, dispatchMode});
+    electrodeBridge.emitEvent(messages.{{{constantName}}}, { data: {{{payload.name}}}, dispatchMode});
   }
   {{/hasPayload}}
   {{^hasPayload}}
