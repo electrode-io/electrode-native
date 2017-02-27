@@ -1,4 +1,4 @@
-import publication from '../../lib/publication';
+import {publishMiniApp} from '../../lib/publication';
 
 exports.command = 'publish [fullNapSelector]'
 exports.desc = 'Publish mini app to given native app'
@@ -23,8 +23,8 @@ exports.builder = function (yargs) {
 };
 
 exports.handler = function (argv) {
-    return publication({
-        fullNapSelector: argv.fullNapSelect,
+    return publishMiniApp({
+        fullNapSelector: argv.fullNapSelector,
         force: argv.force,
         verbose: argv.verbose,
         containerVersion: argv.containerVersion
