@@ -53,6 +53,7 @@ exports.install = () => {
   console.log('=> Installing platform');
   process.chdir(`${PLATFORM_VERSION_PATH}`);
   execSync(`yarn install`);
+  execSync(`npm run rebuild`);
   // Remove .git as he takes unnecessary disk space (we don't need it in the cached version folder)
   //execSync(`rm -rf ${PLATFORM_VERSION_PATH}/.git`);
 
