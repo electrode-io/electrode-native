@@ -14,7 +14,6 @@ import {
   PKG_FILE,
   MODEL_FILE
 } from './Constants';
-import cwd from './cwd';
 import log from './log';
 import { readJSON } from './fileUtil';
 
@@ -34,7 +33,7 @@ async function generateAllCode(view) {
   await generateJSCode(view, apiGenDir);
 }
 
-function hasModelSchema(modelsSchemaPath = cwd(MODEL_FILE)) {
+function hasModelSchema(modelsSchemaPath = `${process.cwd()}/${MODEL_FILE}`) {
   return fs.existsSync(modelsSchemaPath) && modelsSchemaPath;
 }
 
@@ -48,7 +47,7 @@ function hasModelSchema(modelsSchemaPath = cwd(MODEL_FILE)) {
 export async function generateApi(options) {
   let config = normalizeConfig(options);
 
-  const outFolder = cwd(config.moduleName);
+  const outFolder = `${process.cwd()}/${config.moduleName}`;
   if (fs.existsSync(outFolder)) {
     log.warn(`A directory already exists at ${outFolder}`);
     process.exit(1);
@@ -57,14 +56,15 @@ export async function generateApi(options) {
   // Create output folder
   shell.mkdir(outFolder);
   await generateProject(config, outFolder);
+  shell.cd(outFolder);
+  await generateCode(config);
 
-  log.info(`==  Generated project: 
+  log.info(`==  Generated project:
         $ cd ${outFolder}
-        $ yarn install
         `);
 }
 
-export async function cleanGenerated(outFolder = cwd()) {
+export async function cleanGenerated(outFolder = process.cwd()) {
   const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
 
   shell.rm('-rf', path.join(outFolder, 'js'));
@@ -75,14 +75,14 @@ export async function cleanGenerated(outFolder = cwd()) {
 }
 
 async function checkValid(message) {
-  const outFolder = cwd();
+  const outFolder = process.cwd();
 
-  if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(cwd(SCHEMA_FILE))) {
+  if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(`${process.cwd()}/${SCHEMA_FILE}`)) {
     throw new Error(message);
   }
   let pkg;
   try {
-    pkg = await readJSON(cwd(PKG_FILE));
+    pkg = await readJSON(`${process.cwd()}/${PKG_FILE}`);
   } catch (e) {
     throw new Error(message);
   }
@@ -104,7 +104,7 @@ export async function generateCode(options) {
     apiAuthor: pkg.author
   }, options));
 
-  const outFolder = cwd();
+  const outFolder = process.cwd();
 
   // Copy the api hull (skeleton code with inline templates) to output folder
   shell.cp('-r', `${apiGenDir}/api-hull/*`, outFolder);

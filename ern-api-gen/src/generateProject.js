@@ -25,10 +25,6 @@ export function generatePackageJson({
     "main": "index.js",
     "author": apiAuthor,
     "license": apiLicense,
-    "scripts": {
-      "regen": "ern generate api regen .",
-      "preinstall": "ern generate api regen ."
-    },
     "dependencies": {
       "@walmart/react-native-electrode-bridge": bridgeVersion,
       'react-native': reactNativeVersion
@@ -73,15 +69,15 @@ export function generateInitialModel({ shouldGenerateBlankApi }) {
 export default async function generateProject(config, outFolder) {
   await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config));
 
-  if (config.apiSchemaPath) {
-    shell.cp(config.apiSchemaPath, outFolder);
-  } else {
+//  if (config.apiSchemaPath) {
+//    shell.cp(config.apiSchemaPath, outFolder);
+//  } else {
     await writeFile(path.join(outFolder, SCHEMA_FILE), generateInitialSchema(config));
-  }
+//  }
 
-  if (config.modelsSchemaPath) {
-    shell.cp(config.modelsSchemaPath, outFolder);
-  } else {
+//  if (config.modelsSchemaPath) {
+//    shell.cp(config.modelsSchemaPath, outFolder);
+//  } else {
     await writeFile(path.join(outFolder, MODEL_FILE), generateInitialModel(config));
-  }
+//  }
 }
