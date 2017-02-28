@@ -22,7 +22,7 @@ updateNotifier({pkg}).notify();
 // Path to ern platform root folder
 const ERN_PATH = `${process.env['HOME']}/.ern`;
 // Path to ern platform cloned git repo
-const ERN_PLATFORM_REPO_PATH = `${ERN_PATH}/ern-platform/packages`;
+const ERN_PLATFORM_REPO_PATH = `${ERN_PATH}/ern-platform`;
 // Default path to the github repo of the platform
 const ERN_DEFAULT_GIT_REPO = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-platform.git`;
 // Path to ern platform cache folder (containing all installed cached versions of the platform)
