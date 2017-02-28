@@ -2,7 +2,7 @@
   "name": "@walmart/ern-container-gen",
   "version": "0.0.1",
   "description": "",
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
   "bin": {
     "ern-container-gen": "dist/launchbin.js"
   },

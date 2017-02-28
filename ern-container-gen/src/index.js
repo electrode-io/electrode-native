@@ -387,7 +387,22 @@ async function fillContainerHull(plugins, miniApps, paths) {
             let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
                 downloadPluginSource(pluginConfig.origin));
             shell.cd(`${pluginSourcePath}/${pluginConfig.root}`);
+      if (pluginConfig.uploadArchives) {
             shell.cp('-R', `${pluginConfig.uploadArchives.moduleName}/src/main/java`, `${paths.outFolder}/lib/src/main`);
+      } else {
+        shell.cp('-R', `src/main/java`, `${paths.outFolder}/lib/src/main`);
+      }
+
+      if (pluginConfig.copy) {
+        for (const cp of pluginConfig.copy) {
+          const sourcePath = `${pluginSourcePath}/${cp.source}`;
+          const destPath = `${paths.outFolder}/${cp.dest}`;
+          if (!fs.existsSync(destPath)) {
+            shell.mkdir('-p', destPath);
+          }
+          shell.cp('-R', sourcePath, destPath);
+        }
+      }
         }
 
         // Create mini app activities

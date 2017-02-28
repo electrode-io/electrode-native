@@ -32,5 +32,4 @@ describe("commands/generate/api", function () {
         .then(ern(`generate api regen`, {cwd: 'react-native-withargs-api'}))
         .then(compare('react-native-withargs-api', 'fixtures/react-native-withargs-api'))
         .then(gradle('react-native-withargs-api', 'build')));
-
 });
