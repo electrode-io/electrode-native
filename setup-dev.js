@@ -1,4 +1,3 @@
-
 //==============================================================================
 // Script to setup development environment
 // Only meant to be used by ern-platform developers/contributors
@@ -20,10 +19,10 @@ const WORKING_DIR = process.cwd();
 
 // Create the cache folder for this version as a symlink to current working folder
 shell.cd(ERN_VERSIONS_CACHE_PATH);
-shell.exec(`ln -s ${WORKING_DIR} v1000`);
+shell.ln('-sf', WORKING_DIR, 'v1000')
 
 console.log(
-chalk.green(`
+    chalk.green(`
 =================================================================
 Development environment is now setup !
 Version v1000 has been created and points to your working folder.
