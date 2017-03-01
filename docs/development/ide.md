@@ -17,4 +17,4 @@ To run tests from IntelliJ add this to your mocha config.
 --compilers js:ern-util-dev/babelhook see screenshot.
 
 
-![Mocha Setup](mocha.png)
+![Mocha Setup](./img/mocha-setup.png)

@@ -152,4 +152,4 @@ When the user wants to switch from an installed version to another (let's say `v
 
 #### Development instructions
 
-Please follow instructions [HERE](docs/development/lerna.md)
+Please follow instructions [HERE](docs/development/setup.md)
