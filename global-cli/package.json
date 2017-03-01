@@ -1,0 +1,16 @@
+{
+  "name": "@walmart/electrode-react-native",
+  "version": "0.0.10",
+  "description": "",
+  "main": "dist/index.js",
+  "bin": {
+    "ern": "bin/ern.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "update-notifier": "^1.0.3"
+  }
+}
