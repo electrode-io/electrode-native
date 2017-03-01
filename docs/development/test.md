@@ -47,7 +47,7 @@ $ ./node_modules/.bin/ern-mocha
 ### Running tests Webstorm
 Open web storm and configure like 
 
-![webstorm](./img/mocha.png)
+![webstorm](./img/mocha-config.png)
 
 Then run
 
