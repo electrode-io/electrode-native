@@ -3,12 +3,12 @@
     "type": "npm",
     "name": "react-native-code-push"
   },
-  "root": "android",
-  "uploadArchives" : {
-    "moduleName": "app"
-  },
-  "pluginHook": {
-    "name": "CodePushPlugin",
-    "configurable": true
+  "android": {
+    "root": "android",
+    "moduleName": "app",
+    "pluginHook": {
+      "name": "CodePushPlugin",
+      "configurable": true
+    }
   }
 }
