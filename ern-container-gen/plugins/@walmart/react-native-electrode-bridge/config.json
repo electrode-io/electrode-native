@@ -4,12 +4,12 @@
     "scope": "@walmart",
     "name": "react-native-electrode-bridge"
   },
-  "root": "android",
-  "uploadArchives" : {
-    "moduleName": "electrode-reactnative-bridge"
-  },
-  "pluginHook": {
-    "name": "BridgePlugin",
-    "configurable": false
+  "android": {
+    "root": "android",
+    "moduleName": "electrode-reactnative-bridge",
+    "pluginHook": {
+      "name": "BridgePlugin",
+      "configurable": false
+    }
   }
 }

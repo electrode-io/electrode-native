@@ -3,12 +3,12 @@
     "type": "git",
     "url": "https://github.com/aoriani/ReactNative-StackTracer.git"
   },
-  "root": "",
-  "uploadArchives" : {
-    "moduleName": "rnstacktracer"
-  },
-  "pluginHook": {
-    "name": "StackTracerPlugin",
-    "configurable": true
+  "android": {
+    "root": "",
+    "moduleName": "rnstacktracer",
+    "pluginHook": {
+      "name": "StackTracerPlugin",
+      "configurable": true
+    }
   }
 }
