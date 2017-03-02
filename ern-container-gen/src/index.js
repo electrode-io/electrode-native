@@ -377,7 +377,7 @@ async function fillContainerHull(plugins, miniApps, paths) {
     for (const plugin of plugins) {
       if (plugin.name === 'react-native') { continue; }
       let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
-      shell.cd(`${paths.tmpFolder}`);
+      shell.cd(`${paths.pluginsDownloadFolder}`);
       let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
           downloadPluginSource(pluginConfig.origin));
       shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`);
@@ -640,14 +640,14 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
   // Folder from which container gen is run from
   const WORKING_FOLDER = `${ERN_PATH}/containergen`;
   // Folder from which we download all plugins sources (from npm or git)
-  const TMP_FOLDER = `${WORKING_FOLDER}/.tmp`;
+  const PLUGINS_DOWNLOAD_FOLDER = `${WORKING_FOLDER}/plugins`;
   // Folder where the resulting container project is stored in
   const OUT_FOLDER = `${WORKING_FOLDER}/out`;
   // Folder from which we assemble the miniapps together / run the bundling
   const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/CompositeMiniApp`;
 
-  // If not maven repository url is provided part of the generator config,
-  // we just default to standard maven local repository location
+  // If no maven repository url (for publication) is provided part of the generator config,
+  // we just fall back to standard maven local repository location.
   // If folder does not exists yet, we create it
   if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
     && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
@@ -661,10 +661,10 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
         namespace: ${namespace}`);
 
     // Clean up to start fresh
-    shell.rm('-rf', TMP_FOLDER);
+    shell.rm('-rf', PLUGINS_DOWNLOAD_FOLDER);
     shell.rm('-rf', OUT_FOLDER);
     shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER);
-    shell.mkdir('-p', TMP_FOLDER);
+    shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER);
 
     // Contains all interesting folders pathes
     const paths = {
@@ -677,7 +677,7 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
       // Where we assemble the miniapps together
       compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
       // Where we download plugins
-      tmpFolder: TMP_FOLDER,
+      pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
       // Where we output final generated container
       outFolder: OUT_FOLDER
     };
@@ -809,19 +809,19 @@ export async function generateContainer({
     });
 
     if (generator.platform === 'android') {
-      await generateAndroidContainer(
-          nativeAppName,
-          platformPath,
-          generator,
-          plugins,
-          miniapps);
+    await generateAndroidContainer(
+        nativeAppName,
+        platformPath,
+        generator,
+        plugins,
+        miniapps);
     } else if (generator.platform === 'ios') {
       await generateIosContainer(
-          nativeAppName,
-          platformPath,
-          generator,
-          plugins,
-          miniapps);
+        nativeAppName,
+        platformPath,
+        generator,
+        plugins,
+        miniapps);
     } else {
       throw new Error(`Platform ${generator.platform} not supported`);
     }
