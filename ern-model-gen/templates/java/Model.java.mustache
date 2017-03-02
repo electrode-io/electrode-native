@@ -6,43 +6,18 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public class {{className}} implements Parcelable {
+import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 
-    private static final String KEY_BUNDLE_ID = "{{name}}";
-    private static final String VALUE_BUNDLE_ID = {{className}}.class.getCanonicalName();
+import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.getNumberValue;
 
-    @Nullable
-    public static {{className}} fromBundle(@Nullable Bundle bundle) {
-        if (bundle == null) {
-            return null;
-        }
-
-        if (!bundle.containsKey(KEY_BUNDLE_ID)
-                || !(VALUE_BUNDLE_ID).equals(bundle.getString(KEY_BUNDLE_ID))) {
-            return null;
-        }
-
-        {{#properties}}
-        {{#isRequired}}
-        if (!bundle.containsKey("{{name}}")) {
-            return null;
-        }
-
-        {{/isRequired}}
-        {{/properties}}
-
-        Builder builder = new Builder({{#properties}}{{#isRequired}}{{{getRequiredPropertyBuilder}}}{{^isLastRequiredItem}}, {{/isLastRequiredItem}}{{/isRequired}}{{/properties}});
-        {{#properties}}
-        {{^isRequired}}
-        builder.{{name}}({{{getOptionalPropertyBuilder}}});
-        {{/isRequired}}
-        {{/properties}}
-        return builder.build();
-    }
+public class {{className}} implements Parcelable, Bridgeable {
 
     {{#properties}}
-    private final {{javaType}} {{name}};
+    private {{javaType}} {{name}};
     {{/properties}}
+
+    private {{className}}() {
+    }
 
     private {{className}}(Builder builder) {
         {{#properties}}
@@ -51,7 +26,15 @@ public class {{className}} implements Parcelable {
     }
 
     private {{className}}(Parcel in) {
-        Bundle bundle = in.readBundle();
+        this(in.readBundle());
+    }
+
+    public {{className}}(@NonNull Bundle bundle) {
+        {{#properties}}{{#isRequired}}
+        if(bundle.get("{{name}}") == null){
+            throw new IllegalArgumentException("{{name}} property is required");
+        }
+        {{/isRequired}}{{/properties}} 
         {{#properties}}
         {{#isRequired}}
         this.{{name}} = {{{getRequiredPropertyBuilder}}};
@@ -121,7 +104,6 @@ public class {{className}} implements Parcelable {
         }
         {{/isRequired}}
         {{/properties}}
-        bundle.putString(KEY_BUNDLE_ID, VALUE_BUNDLE_ID);
         return bundle;
     }
 
