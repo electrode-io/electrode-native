@@ -27,7 +27,7 @@ import * as messages from "./messages.js";
 export function handle{{{pascalCaseName}}}Request(handler) {
   electrodeBridge.registerRequestHandler(messages.{{{constantName}}},
     (requestData) => {
-      return handler(requestData.req);
+      return handler(requestData);
     });
 }
   {{/hasPayload}}

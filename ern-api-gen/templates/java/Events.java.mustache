@@ -18,18 +18,18 @@ final class {{{pascalCaseApiName}}}Events implements {{{pascalCaseApiName}}}Api.
   {{#hasPayload}}
   @Override
   public void add{{{pascalCaseName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{{payload.type}}}> eventListener) {
-    ElectrodeBridgeHolder.addEventListener({{{constantName}}}, new EventListenerProcessor<>({{{payload.type}}}.class, eventListener));
+    new EventListenerProcessor<>({{{constantName}}}, {{{payload.type}}}.class, eventListener).execute();
   }
 
   @Override
   public void emit{{{pascalCaseName}}}Event(@NonNull {{{payload.type}}} {{{payload.name}}}) {
     new EventProcessor<>({{{constantName}}}, {{{payload.name}}}).execute();
   }
-  {{/hasPayload}} 
+  {{/hasPayload}}
   {{^hasPayload}}
   @Override
   public void add{{{pascalCaseName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<None> eventListener) {
-    ElectrodeBridgeHolder.addEventListener({{{constantName}}}, new EventListenerProcessor<>(None.class, eventListener));
+    new EventListenerProcessor<>({{{constantName}}}, None.class, eventListener).execute();
   }
 
   @Override

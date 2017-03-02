@@ -18,12 +18,12 @@ final class {{{pascalCaseApiName}}}Requests implements {{{pascalCaseApiName}}}Ap
 {{#requests}}
   @Override
   public void register{{{pascalCaseName}}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#hasPayload}}{{{payload.type}}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}> handler) {
-    ElectrodeBridgeHolder.registerRequestHandler({{{constantName}}}, new RequestHandlerProcessor<{{#hasPayload}}{{{payload.type}}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}>({{#hasPayload}}{{{payload.type}}}.class{{/hasPayload}}{{^hasPayload}}None.class{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}.class{{/respPayloadType}}{{^respPayloadType}}None.class{{/respPayloadType}}, handler));
+    new RequestHandlerProcessor<>({{{constantName}}}, {{#hasPayload}}{{{payload.type}}}.class{{/hasPayload}}{{^hasPayload}}None.class{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}.class{{/respPayloadType}}{{^respPayloadType}}None.class{{/respPayloadType}}, handler).execute();
   }
 
   @Override
   public void {{{name}}}({{#hasPayload}}@NonNull {{{payload.type}}} {{payload.name}}, {{/hasPayload}}@NonNull final ElectrodeBridgeResponseListener<{{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}> responseListener) {
-    new RequestProcessor<{{#hasPayload}}{{payload.type}}{{/hasPayload}}{{^hasPayload}}None{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}{{/respPayloadType}}{{^respPayloadType}}None{{/respPayloadType}}>({{{constantName}}}, {{#hasPayload}}{{payload.name}}{{/hasPayload}}{{^hasPayload}}null{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}.class{{/respPayloadType}}{{^respPayloadType}}None.class{{/respPayloadType}}, responseListener).execute();
+    new RequestProcessor<>({{{constantName}}}, {{#hasPayload}}{{payload.name}}{{/hasPayload}}{{^hasPayload}}null{{/hasPayload}}, {{#respPayloadType}}{{{respPayloadType}}}.class{{/respPayloadType}}{{^respPayloadType}}None.class{{/respPayloadType}}, responseListener).execute();
   }
 {{/requests}}
 }

@@ -22,7 +22,7 @@ export function on{{{pascalCaseName}}}(handler) {
 export function {{{name}}}({{{payload.name}}}, dispatchMode = DispatchMode.NATIVE) {
   return electrodeBridge.sendRequest(
     messages.{{constantName}}, {
-    data: { req: {{{payload.name}}} },
+    data: {{{payload.name}}},
     dispatchMode
   });
 }
