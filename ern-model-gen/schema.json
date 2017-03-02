@@ -14,7 +14,7 @@
     },
     "month": {
       "description":"Month hired",
-      "type": "number"
+      "type": "integer"
     },
     "status": {
       "description":"Membership status",
@@ -43,7 +43,9 @@
           "type": "number"
         }
       },
-      "required": []
+      "required": [
+        "lat"
+      ]
     },
     "birthYear": {
       "type": "object",

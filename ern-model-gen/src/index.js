@@ -171,7 +171,7 @@ function javaTypeForJsonType(jsonType) {
     switch (jsonType.toLowerCase()) {
         case "boolean": return "Boolean"
         case "string": return "String"
-        case "number": return "Integer"
+        case "number": return "Double"
         case "integer": return "Integer"
         case "array": return "List"
         default: return "Object"
@@ -232,7 +232,7 @@ function getPropertyBuilder(view, required){
     if (view.customObject) {
         return required 
                 ? `${view.className}.fromBundle(` + getBundle(view) + `)`
-                : `bundle.containsKey("${view.name}") ? ${view.className}.fromBundle(` + getBundle(view) + `) : null`;
+                : `bundle.containsKey("${view.name}") ? new ${view.className}(` + getBundle(view) + `) : null`;
     } else{
         switch (view.javaType) {
             case 'Boolean':
@@ -244,6 +244,8 @@ function getPropertyBuilder(view, required){
                     ? getBundle(view)
                     : `bundle.containsKey("${view.name}") ? ` + getBundle(view) + ` : null`;
             case 'Integer':
+                return getBundle(view);
+            case 'Double':
                 return required
                     ? getBundle(view)
                     : `bundle.containsKey("${view.name}") ? ` + getBundle(view) + ` : null`;
@@ -253,9 +255,10 @@ function getPropertyBuilder(view, required){
 
 function getBundle(view){
     const complexBundle = `bundle.getBundle("${view.name}")`;
-    const intBundle = `bundle.getInt("${view.name}")`;
+    const intBundle = `getIntegerValue(bundle, "${view.name}") == null ? null : getIntegerValue(bundle, "${view.name}").intValue()`;
     const boolBundle = `bundle.getBoolean("${view.name}")`;
     const strBundle = `bundle.getString("${view.name}")`;
+    const doubleBundle = `bundle.getDouble("${view.name}")`;
 
     if (view.customObject) {
         return complexBundle;
@@ -267,6 +270,8 @@ function getBundle(view){
                 return strBundle;
             case 'Integer':
                 return intBundle;
+            case 'Double':
+                return doubleBundle;
         }
     }
 }
@@ -282,6 +287,8 @@ let setPropertyBuilder = (view) => {
                 return `bundle.putString("${view.name}", ${view.name})`;
             case 'Integer':
                 return `bundle.putInt("${view.name}", ${view.name})`;
+            case 'Double':
+                return `bundle.putDouble("${view.name}", ${view.name})`;
         }
     }
 }
