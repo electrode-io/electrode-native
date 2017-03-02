@@ -255,7 +255,7 @@ function getPropertyBuilder(view, required){
 
 function getBundle(view){
     const complexBundle = `bundle.getBundle("${view.name}")`;
-    const intBundle = `getIntegerValue(bundle, "${view.name}") == null ? null : getIntegerValue(bundle, "${view.name}").intValue()`;
+    const intBundle = `getNumberValue(bundle, "${view.name}") == null ? null : getNumberValue(bundle, "${view.name}").intValue()`;
     const boolBundle = `bundle.getBoolean("${view.name}")`;
     const strBundle = `bundle.getString("${view.name}")`;
     const doubleBundle = `bundle.getDouble("${view.name}")`;

@@ -8,12 +8,12 @@ import android.support.annotation.Nullable;
 
 import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 
-import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.getIntegerValue;
+import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.getNumberValue;
 
 public class {{className}} implements Parcelable, Bridgeable {
 
     {{#properties}}
-    private {{javaType}} {{name}};
+    {{#isRequired}}@NonNull{{/isRequired}} private {{javaType}} {{name}};
     {{/properties}}
 
     private {{className}}() {
@@ -29,7 +29,7 @@ public class {{className}} implements Parcelable, Bridgeable {
         this(in.readBundle());
     }
 
-    public {{className}}(Bundle bundle) {
+    public {{className}}(@NonNull Bundle bundle) {
         {{#properties}}
         {{#isRequired}}
         this.{{name}} = {{{getRequiredPropertyBuilder}}};
