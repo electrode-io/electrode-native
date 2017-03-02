@@ -1,227 +1,67 @@
 package com.walmartlabs.ern.weather.api;
 
-import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridge;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
-import com.walmartlabs.electrode.reactnative.bridge.RequestDispatcherImpl;
-import com.walmartlabs.electrode.reactnative.bridge.ExistingHandlerException;
-import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandler;
-import com.walmartlabs.electrode.reactnative.bridge.helpers.RequestHandlerEx;
-import com.walmartlabs.electrode.reactnative.bridge.helpers.Response;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
+import com.walmartlabs.electrode.reactnative.bridge.FailureMessage;
+import com.walmartlabs.electrode.reactnative.bridge.None;
 import com.walmartlabs.ern.weather.model.LatLng;
 
 public final class WeatherApi {
-
-  //====================================================================
-  // Request Handlers declaration (Private)
-  //====================================================================
-
-  private static RequestHandler sRefreshWeatherRequestHandler;
-  private static RequestHandlerEx<String,Void> sRefreshWeatherForRequestHandler;
-  private static RequestHandlerEx<String,Integer> sGetTemperatureForRequestHandler;
-  private static RequestHandler<Integer> sGetCurrentTemperatureRequestHandler;
-  private static RequestHandler<String[]> sGetCurrentLocationsRequestHandler;
-  private static RequestHandler<LatLng> sGetLocationRequestHandler;
-  private static RequestHandlerEx<LatLng,Void> sSetLocationRequestHandler;
-
-  //====================================================================
-  // Request Handlers affectation (Public client surface)
-  //====================================================================
-
-  public static void handleRefreshWeatherRequest(RequestHandler handler) {
-      sRefreshWeatherRequestHandler = handler;
-  }
-  public static void handleRefreshWeatherForRequest(RequestHandlerEx<String,Void> handler) {
-      sRefreshWeatherForRequestHandler = handler;
-  }
-  public static void handleGetTemperatureForRequest(RequestHandlerEx<String,Integer> handler) {
-      sGetTemperatureForRequestHandler = handler;
-  }
-  public static void handleGetCurrentTemperatureRequest(RequestHandler<Integer> handler) {
-      sGetCurrentTemperatureRequestHandler = handler;
-  }
-  public static void handleGetCurrentLocationsRequest(RequestHandler<String[]> handler) {
-      sGetCurrentLocationsRequestHandler = handler;
-  }
-  public static void handleGetLocationRequest(RequestHandler<LatLng> handler) {
-      sGetLocationRequestHandler = handler;
-  }
-  public static void handleSetLocationRequest(RequestHandlerEx<LatLng,Void> handler) {
-      sSetLocationRequestHandler = handler;
-  }
-
-  //====================================================================
-  // Events emition (Public client surface)
-  //====================================================================
-
-  public static void weatherUpdated() {
-      weatherUpdated(ElectrodeBridgeEvent.DispatchMode.JS);
-  }
-
-  public static void weatherUpdated(final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
-      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.WEATHER_UPDATED)
-                                     .withDispatchMode(dispatchMode)
-                                     .build());
-  }
-  public static void weatherUdpatedAtLocation(String location) {
-      weatherUdpatedAtLocation(location, ElectrodeBridgeEvent.DispatchMode.JS);
-  }
-
-  public static void weatherUdpatedAtLocation(String location, final ElectrodeBridgeEvent.DispatchMode dispatchMode) {
-      Bundle bundle = new Bundle(); bundle.putString("location",                   location);
-      ElectrodeBridge.emitEvent(new ElectrodeBridgeEvent.Builder(Names.WEATHER_UDPATED_AT_LOCATION)
-                                     .withDispatchMode(dispatchMode)
-                                     .withData(bundle)
-                                     .build());
-  }
-
-  //====================================================================
-  // Bridge initialization
-  //====================================================================
+  private static final Requests REQUESTS;
+  private static final Events EVENTS;
 
   static {
-    //====================================================================
-    // Registration of request handlers with bridge
-    //====================================================================
+    REQUESTS = new WeatherRequests();
+    EVENTS = new WeatherEvents();
+  }
 
-    ElectrodeBridge.registerRequestHandler(Names.REFRESH_WEATHER, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+  private WeatherApi() {}
 
-        Object payload = null;
+  @NonNull
+  public static Requests requests() {
+    return REQUESTS;
+  }
 
-        WeatherApi.sRefreshWeatherRequestHandler.handleRequest(new Response<Void>() {
-            @Override
-            public void onSuccess(Void obj) {
-              requestCompletioner.success(null);
-            }
+  @NonNull
+  public static Events events() {
+    return EVENTS;
+  }
 
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    ElectrodeBridge.registerRequestHandler(Names.REFRESH_WEATHER_FOR, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
+  public interface Events {
+    String WEATHER_UPDATED = "com.walmartlabs.ern.weather.weather.updated";
+    String WEATHER_UDPATED_AT_LOCATION = "com.walmartlabs.ern.weather.weather.udpated.at.location";
 
-        String payload = bundle.getString("location");
+    void addWeatherUpdatedEventListener(@NonNull final ElectrodeBridgeEventListener<None> eventListener);
+    void emitWeatherUpdatedEvent();
+    void addWeatherUdpatedAtLocationEventListener(@NonNull final ElectrodeBridgeEventListener<String> eventListener);
+    void emitWeatherUdpatedAtLocationEvent(@NonNull String location);
+  }
 
-        WeatherApi.sRefreshWeatherForRequestHandler.handleRequest(payload,new Response<Void>() {
-            @Override
-            public void onSuccess(Void obj) {
-              requestCompletioner.success(null);
-            }
+  public interface Requests {
+    String REFRESH_WEATHER = "com.walmartlabs.ern.weather.refresh.weather";
+    String REFRESH_WEATHER_FOR = "com.walmartlabs.ern.weather.refresh.weather.for";
+    String GET_TEMPERATURE_FOR = "com.walmartlabs.ern.weather.get.temperature.for";
+    String GET_CURRENT_TEMPERATURE = "com.walmartlabs.ern.weather.get.current.temperature";
+    String GET_CURRENT_LOCATIONS = "com.walmartlabs.ern.weather.get.current.locations";
+    String GET_LOCATION = "com.walmartlabs.ern.weather.get.location";
+    String SET_LOCATION = "com.walmartlabs.ern.weather.set.location";
 
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    ElectrodeBridge.registerRequestHandler(Names.GET_TEMPERATURE_FOR, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-
-        String payload = bundle.getString("location");
-
-        WeatherApi.sGetTemperatureForRequestHandler.handleRequest(payload,new Response<Integer>() {
-            @Override
-            public void onSuccess(Integer obj) {
-              Bundle bundle = new Bundle(); bundle.putInt("rsp", obj);
-              requestCompletioner.success(bundle);
-            }
-
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    ElectrodeBridge.registerRequestHandler(Names.GET_CURRENT_TEMPERATURE, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-
-        Object payload = null;
-
-        WeatherApi.sGetCurrentTemperatureRequestHandler.handleRequest(new Response<Integer>() {
-            @Override
-            public void onSuccess(Integer obj) {
-              Bundle bundle = new Bundle(); bundle.putInt("rsp", obj);
-              requestCompletioner.success(bundle);
-            }
-
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    ElectrodeBridge.registerRequestHandler(Names.GET_CURRENT_LOCATIONS, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-
-        Object payload = null;
-
-        WeatherApi.sGetCurrentLocationsRequestHandler.handleRequest(new Response<String[]>() {
-            @Override
-            public void onSuccess(String[] obj) {
-              Bundle bundle = new Bundle(); bundle.putStringArray("rsp", obj);
-              requestCompletioner.success(bundle);
-            }
-
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    ElectrodeBridge.registerRequestHandler(Names.GET_LOCATION, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-
-        Object payload = null;
-
-        WeatherApi.sGetLocationRequestHandler.handleRequest(new Response<LatLng>() {
-            @Override
-            public void onSuccess(LatLng obj) {
-              Bundle bundle = obj.toBundle();
-              requestCompletioner.success(bundle);
-            }
-
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
-    ElectrodeBridge.registerRequestHandler(Names.SET_LOCATION, new RequestDispatcherImpl.RequestHandler() {
-      @Override
-      public void onRequest(Bundle bundle, final RequestDispatcherImpl.RequestCompletioner requestCompletioner) {
-
-        LatLng payload = LatLng.fromBundle(bundle);
-
-        WeatherApi.sSetLocationRequestHandler.handleRequest(payload,new Response<Void>() {
-            @Override
-            public void onSuccess(Void obj) {
-              requestCompletioner.success(null);
-            }
-
-            @Override
-            public void onError(String code, String message) {
-              requestCompletioner.error(code, message);
-            }
-        });
-      }
-    });
+   void registerRefreshWeatherRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<None, None> handler);
+   void refreshWeather(@NonNull final ElectrodeBridgeResponseListener<None> responseListener);
+   void registerRefreshWeatherForRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<String, None> handler);
+   void refreshWeatherFor(@NonNull String location, @NonNull final ElectrodeBridgeResponseListener<None> responseListener);
+   void registerGetTemperatureForRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<String, Integer> handler);
+   void getTemperatureFor(@NonNull String location, @NonNull final ElectrodeBridgeResponseListener<Integer> responseListener);
+   void registerGetCurrentTemperatureRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<None, Integer> handler);
+   void getCurrentTemperature(@NonNull final ElectrodeBridgeResponseListener<Integer> responseListener);
+   void registerGetCurrentLocationsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<None, String[]> handler);
+   void getCurrentLocations(@NonNull final ElectrodeBridgeResponseListener<String[]> responseListener);
+   void registerGetLocationRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<None, LatLng> handler);
+   void getLocation(@NonNull final ElectrodeBridgeResponseListener<LatLng> responseListener);
+   void registerSetLocationRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<LatLng, None> handler);
+   void setLocation(@NonNull LatLng location, @NonNull final ElectrodeBridgeResponseListener<None> responseListener);
   }
 }

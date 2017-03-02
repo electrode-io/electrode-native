@@ -9,7 +9,7 @@ import * as messages from "./messages.js";
     electrodeBridge.emitEvent(messages.WEATHER_UPDATED, {dispatchMode});
   }
   export function weatherUdpatedAtLocation(location, dispatchMode = DispatchMode.NATIVE ) {
-    electrodeBridge.emitEvent(messages.WEATHER_UDPATED_AT_LOCATION, {data: { location }, dispatchMode});
+    electrodeBridge.emitEvent(messages.WEATHER_UDPATED_AT_LOCATION, { data: location, dispatchMode});
   }
 
 //====================================================================
@@ -25,13 +25,13 @@ export function handleRefreshWeatherRequest(handler) {
 export function handleRefreshWeatherForRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.REFRESH_WEATHER_FOR,
     (requestData) => {
-      return handler(requestData.location);
+      return handler(requestData);
     });
 }
 export function handleGetTemperatureForRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.GET_TEMPERATURE_FOR,
     (requestData) => {
-      return handler(requestData.location);
+      return handler(requestData);
     });
 }
 export function handleGetCurrentTemperatureRequest(handler) {
@@ -55,6 +55,6 @@ export function handleGetLocationRequest(handler) {
 export function handleSetLocationRequest(handler) {
   electrodeBridge.registerRequestHandler(messages.SET_LOCATION,
     (requestData) => {
-      return handler(requestData.location);
+      return handler(requestData);
     });
 }
