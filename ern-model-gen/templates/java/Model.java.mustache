@@ -13,7 +13,7 @@ import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.
 public class {{className}} implements Parcelable, Bridgeable {
 
     {{#properties}}
-    {{#isRequired}}@NonNull{{/isRequired}} private {{javaType}} {{name}};
+    private {{javaType}} {{name}};
     {{/properties}}
 
     private {{className}}() {
@@ -30,6 +30,11 @@ public class {{className}} implements Parcelable, Bridgeable {
     }
 
     public {{className}}(@NonNull Bundle bundle) {
+        {{#properties}}{{#isRequired}}
+        if(bundle.get("{{name}}") == null){
+            throw new IllegalArgumentException("{{name}} property is required");
+        }
+        {{/isRequired}}{{/properties}} 
         {{#properties}}
         {{#isRequired}}
         this.{{name}} = {{{getRequiredPropertyBuilder}}};
