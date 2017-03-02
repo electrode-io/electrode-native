@@ -295,7 +295,7 @@ function getUnscopedModuleName(pluginName) {
       : pluginName;
 }
 
-async function buildPluginsViews(plugins, pluginsConfigPath) {
+async function buildAndroidPluginsViews(plugins, pluginsConfigPath) {
   try {
     let pluginsView = [];
 
@@ -328,12 +328,12 @@ async function buildPluginsViews(plugins, pluginsConfigPath) {
       });
     }
   } catch (e) {
-    log.error("[buildPluginsViews] Something went wrong: " + e);
+    log.error("[buildAndroidPluginsViews] Something went wrong: " + e);
     throw e;
   }
 }
 
-async function addPluginHookClasses(plugins, paths) {
+async function addAndroidPluginHookClasses(plugins, paths) {
   try {
     log.info(`[=== Adding plugin hook classes ===]`);
 
@@ -344,34 +344,36 @@ async function addPluginHookClasses(plugins, paths) {
       if (androidPluginHook) {
         log.info(`Adding ${androidPluginHook.name}.java`);
         shell.cp(`${paths.containerPluginsConfig}/${plugin.name}/${androidPluginHook.name}.java`,
-            `${paths.outFolder}/lib/src/main/java/com/walmartlabs/ern/container/plugins/`);
+            `${paths.outFolder}/android/lib/src/main/java/com/walmartlabs/ern/container/plugins/`);
       }
     }
 
     log.info(`[=== Done adding plugin hook classes ===]`);
   } catch (e) {
-    log.error("[addPluginHookClasses] Something went wrong: " + e);
+    log.error("[addAndroidPluginHookClasses] Something went wrong: " + e);
     throw e;
   }
 }
 
-async function fillContainerHull(plugins, miniApps, paths) {
+async function fillAndroidContainerHull(plugins, miniApps, paths) {
   try {
     log.info(`[=== Starting container hull filling ===]`);
 
     shell.cd(`${ROOT_DIR}`);
 
-    log.info(`Creating out folder and copying Container Hull to it`);
-    shell.cp('-R', `${paths.containerHull}/android`, `${paths.outFolder}`);
+    const outputFolder =`${paths.outFolder}/android`;
 
-    await buildPluginsViews(plugins, paths.containerPluginsConfig);
-    await addPluginHookClasses(plugins, paths);
+    log.info(`Creating out folder and copying Container Hull to it`);
+    shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder);
+
+    await buildAndroidPluginsViews(plugins, paths.containerPluginsConfig);
+    await addAndroidPluginHookClasses(plugins, paths);
 
     log.info(`Patching hull`);
-    const files = readDir(`${paths.outFolder}`, (f) => !f.endsWith('.jar'));
+    const files = readDir(`${outputFolder}`, (f) => !f.endsWith('.jar'));
     for (const file of files) {
       await mustacheRenderToOutputFileUsingTemplateFile(
-          `${paths.outFolder}/${file}`, mustacheView, `${paths.outFolder}/${file}`);
+          `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`);
     }
 
     for (const plugin of plugins) {
@@ -382,15 +384,15 @@ async function fillContainerHull(plugins, miniApps, paths) {
           downloadPluginSource(pluginConfig.origin));
       shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`);
       if (pluginConfig.android.moduleName) {
-            shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${paths.outFolder}/lib/src/main`);
+            shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${outputFolder}/lib/src/main`);
       } else {
-        shell.cp('-R', `src/main/java`, `${paths.outFolder}/lib/src/main`);
+        shell.cp('-R', `src/main/java`, `${outputFolder}/lib/src/main`);
       }
 
       if (pluginConfig.android.copy) {
         for (const cp of pluginConfig.android.copy) {
           const sourcePath = `${pluginSourcePath}/${cp.source}`;
-          const destPath = `${paths.outFolder}/${cp.dest}`;
+          const destPath = `${outputFolder}/${cp.dest}`;
           if (!fs.existsSync(destPath)) {
             shell.mkdir('-p', destPath);
           }
@@ -415,12 +417,12 @@ async function fillContainerHull(plugins, miniApps, paths) {
       await mustacheRenderToOutputFileUsingTemplateFile(
           `${paths.containerTemplates}/android/MiniAppActivity.mustache`,
           tmpMiniAppView,
-          `${paths.outFolder}/lib/src/main/java/com/walmartlabs/ern/container/miniapps/${activityFileName}`);
+          `${outputFolder}/lib/src/main/java/com/walmartlabs/ern/container/miniapps/${activityFileName}`);
     }
 
     log.info(`[=== Completed container hull filling ===]`);
   } catch (e) {
-      log.error("[fillContainerHull] Something went wrong: " + e);
+      log.error("[fillAndroidContainerHull] Something went wrong: " + e);
       throw e;
   }
 }
@@ -429,13 +431,13 @@ function clearReactPackagerCache() {
   shell.rm('-rf', `${process.env['TMPDIR']}/react-*`);
 }
 
-async function reactNativeBundle(paths) {
+async function reactNativeBundleAndroid(paths) {
   return new Promise((resolve, reject) => {
     exec(`react-native bundle \
       --entry-file=index.android.js \
       --dev=false --platform=android \
-      --bundle-output=${paths.outFolder}/lib/src/main/assets/index.android.bundle \
-      --assets-dest=${paths.outFolder}/lib/src/main/res`,
+      --bundle-output=${paths.outFolder}/android/lib/src/main/assets/index.android.bundle \
+      --assets-dest=${paths.outFolder}/android/lib/src/main/res`,
         (err, stdout, stderr) => {
           if (err) {
             log.error(err);
@@ -519,7 +521,7 @@ async function bundleMiniApps(miniapps, paths, plugins) {
     // Clear react packager cache beforehand to avoid surprises ...
     clearReactPackagerCache();
 
-    await spin(`Bundling miniapp(s)`, reactNativeBundle(paths));
+    await spin(`Bundling miniapp(s)`, reactNativeBundleAndroid(paths));
 
     log.info(`[=== Completed mini apps bundling ===]`);
   } catch (e) {
@@ -527,17 +529,17 @@ async function bundleMiniApps(miniapps, paths, plugins) {
   }
 }
 
-async function buildAndPublishContainer(paths) {
+async function buildAndPublishAndroidContainer(paths) {
   try {
     log.info(`[=== Starting build and publication of the container ===]`);
 
-    shell.cd(`${paths.outFolder}`)
+    shell.cd(`${paths.outFolder}/android`)
     await spin(`Building container and publishing archive`,
         buildAndUploadArchive('lib'));
 
     log.info(`[=== Completed build and publication of the container ===]`);
   } catch (e) {
-    log.error("[buildAndPublishContainer] Something went wrong: " + e);
+    log.error("[buildAndPublishAndroidContainer] Something went wrong: " + e);
   }
 }
 
@@ -620,10 +622,11 @@ async function generateAndroidContainer(nativeAppName = required('nativeAppName'
                                         platformPath = required('platformPath'),
                                         generator = required('generator'),
                                         plugins = [],
-                                        miniapps = []) {
+                                        miniapps = [],
+                                        paths) {
   if (generator.name === 'maven') {
     return generateAndroidContainerUsingMavenGenerator(
-        nativeAppName, platformPath, plugins, miniapps, generator);
+      nativeAppName, platformPath, plugins, miniapps, generator, paths);
   } else {
     throw new Error(`Android generator ${generator.name} not supported`);
   }
@@ -636,59 +639,21 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
   containerPomVersion,
   mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
   namespace = DEFAULT_NAMESPACE
-  } = {}) {
-  // Folder from which container gen is run from
-  const WORKING_FOLDER = `${ERN_PATH}/containergen`;
-  // Folder from which we download all plugins sources (from npm or git)
-  const PLUGINS_DOWNLOAD_FOLDER = `${WORKING_FOLDER}/plugins`;
-  // Folder where the resulting container project is stored in
-  const OUT_FOLDER = `${WORKING_FOLDER}/out`;
-  // Folder from which we assemble the miniapps together / run the bundling
-  const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/CompositeMiniApp`;
-
-  // If no maven repository url (for publication) is provided part of the generator config,
-  // we just fall back to standard maven local repository location.
-  // If folder does not exists yet, we create it
-  if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
-    && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
-    shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''));
-  }
-
+  } = {}, paths) {
   try {
     log.info(`\n === Using maven generator
         mavenRepositoryUrl: ${mavenRepositoryUrl}
         containerPomVersion: ${containerPomVersion}
         namespace: ${namespace}`);
 
-    // Clean up to start fresh
-    shell.rm('-rf', PLUGINS_DOWNLOAD_FOLDER);
-    shell.rm('-rf', OUT_FOLDER);
-    shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER);
-    shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER);
+    // If no maven repository url (for publication) is provided part of the generator config,
+    // we just fall back to standard maven local repository location.
+    // If folder does not exists yet, we create it
+    if ((mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
+      && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
+      shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''));
+    }
 
-    // Contains all interesting folders pathes
-    const paths = {
-      // Where the container project hull is stored
-      containerHull: `${platformPath}/ern-container-gen/hull`,
-      // Where the container generation configuration of all plugins is stored
-      containerPluginsConfig: `${platformPath}/ern-container-gen/plugins`,
-      // Where the templates to be used during container generation are stored
-      containerTemplates: `${platformPath}/ern-container-gen/templates`,
-      // Where we assemble the miniapps together
-      compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
-      // Where we download plugins
-      pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
-      // Where we output final generated container
-      outFolder: OUT_FOLDER
-    };
-
-    const manifest = require(`${platformPath}/manifest.json`);
-
-    // Build the list of plugins to be included in container
-    const includedPlugins = buildPluginListSync(plugins, manifest);
-    // Get the react native version to use, based on what is declared on manifest
-    // for this current platform version
-    const reactNativeVersion = getReactNativeVersionFromManifest(manifest);
     // Get maven repository type (file (mavenLocal) or remote url (Nexus repo or other))
     const mavenRepositoryType = getMavenRepositoryType(mavenRepositoryUrl);
 
@@ -702,31 +667,12 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
           `repository(url: "${mavenRepositoryUrl}") { authentication(userName: mavenUser, password: mavenPassword) }`;
     }
 
-    let exMiniApps = _.map(miniapps, miniapp => ({
-      name: miniapp.name,
-      unscopedName: getUnscopedModuleName(miniapp.name),
-      pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)),
-      version: miniapp.version
-    }));
-
-    // Build our mustache view
-    mustacheView = {
-      "repository": gradleMavenRepositoryCode,
-      mavenRepositoryUrl,
-      namespace,
-      reactNativeVersion,
-      ernPlatformVersion: manifest.platformVersion,
-      containerPomVersion,
-      nativeAppName,
-      miniApps: exMiniApps
-    }
-
-    // Let's make sure that react-native is included (otherwise there is
-    // something pretty much wrong)
-    const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
-    if (!reactNativePlugin) {
-      throw new Error("react-native was not found in plugins list !");
-    }
+    // Enhance mustache view with android specifics
+    mustacheView.android = {
+      repository: gradleMavenRepositoryCode,
+      namespace: namespace,
+      containerPomVersion: containerPomVersion
+    };
 
     //
     // Go through all ern-container-gen steps
@@ -738,15 +684,15 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
     // - Create activities for MiniApps
     // - Patch build.gradle for versioning of the container project and
     //   to specify publication repository target
-    await fillContainerHull(includedPlugins, miniapps, paths);
+    await fillAndroidContainerHull(plugins, miniapps, paths);
 
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    await bundleMiniApps(miniapps, paths, includedPlugins);
+    await bundleMiniApps(miniapps, paths, plugins);
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
-    await buildAndPublishContainer(paths);
+    await buildAndPublishAndroidContainer(paths);
 
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerPomVersion}`);
     log.info(`To ${mavenRepositoryUrl}`);
@@ -763,7 +709,8 @@ async function generateIosContainer(nativeAppName = required('nativeAppName'),
                                     platformPath = required('platformPath'),
                                     generator = required('generator'),
                                     plugins = [],
-                                    miniapps = []) {
+                                    miniapps = [],
+                                    paths) {
   throw new Error(`No iOS generator yet`);
 }
 
@@ -808,20 +755,84 @@ export async function generateContainer({
         level: verbose ? 'info' : 'warn'
     });
 
+    // Folder from which container gen is run from
+    const WORKING_FOLDER = `${ERN_PATH}/containergen`;
+    // Folder from which we download all plugins sources (from npm or git)
+    const PLUGINS_DOWNLOAD_FOLDER = `${WORKING_FOLDER}/plugins`;
+    // Folder where the resulting container project is stored in
+    const OUT_FOLDER = `${WORKING_FOLDER}/out`;
+    // Folder from which we assemble the miniapps together / run the bundling
+    const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/compositeMiniApp`;
+
+    // Contains all interesting folders paths
+    const paths = {
+      // Where the container project hull is stored
+      containerHull: `${platformPath}/ern-container-gen/hull`,
+      // Where the container generation configuration of all plugins is stored
+      containerPluginsConfig: `${platformPath}/ern-container-gen/plugins`,
+      // Where the templates to be used during container generation are stored
+      containerTemplates: `${platformPath}/ern-container-gen/templates`,
+      // Where we assemble the miniapps together
+      compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
+      // Where we download plugins
+      pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
+      // Where we output final generated container
+      outFolder: OUT_FOLDER
+    };
+
+     // Clean up to start fresh
+    shell.rm('-rf', PLUGINS_DOWNLOAD_FOLDER);
+    shell.rm('-rf', OUT_FOLDER);
+    shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER);
+    shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER);
+    shell.mkdir('-p', `${OUT_FOLDER}/android`);
+
+    // Build the list of plugins to be included in container
+    const manifest = require(`${platformPath}/manifest.json`);
+    const includedPlugins = buildPluginListSync(plugins, manifest);
+
+    // Let's make sure that react-native is included (otherwise there is
+    // something pretty much wrong)
+    const reactNativePlugin = _.find(includedPlugins, p => p.name === 'react-native');
+    if (!reactNativePlugin) {
+      throw new Error("react-native was not found in plugins list !");
+    }
+
+    // Get the react native version to use, based on what is declared on manifest
+    // for this current platform version
+    const reactNativeVersion = getReactNativeVersionFromManifest(manifest);
+    const ernPlatformVersion = manifest.platformVersion;
+
+    let miniApps = _.map(miniapps, miniapp => ({
+      name: miniapp.name,
+      unscopedName: getUnscopedModuleName(miniapp.name),
+      pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)),
+      version: miniapp.version
+    }));
+
+    mustacheView = {
+      reactNativeVersion,
+      ernPlatformVersion,
+      nativeAppName,
+      miniApps
+    }
+
     if (generator.platform === 'android') {
     await generateAndroidContainer(
         nativeAppName,
         platformPath,
         generator,
-        plugins,
-        miniapps);
+        includedPlugins,
+        miniapps,
+        paths);
     } else if (generator.platform === 'ios') {
       await generateIosContainer(
         nativeAppName,
         platformPath,
         generator,
-        plugins,
-        miniapps);
+        includedPlugins,
+        miniapps,
+        paths);
     } else {
       throw new Error(`Platform ${generator.platform} not supported`);
     }

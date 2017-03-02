@@ -14,10 +14,10 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            pom.version = '{{{containerPomVersion}}}'
+            pom.version = '{{{android.containerPomVersion}}}'
             pom.artifactId = '{{{nativeAppName}}}-ern-container'
             pom.groupId = 'com.walmartlabs.ern'
-            {{{repository}}}
+            {{{android.repository}}}
         }
     }
 }
