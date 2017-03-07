@@ -7,6 +7,7 @@ import Mustache from 'mustache';
 import Ora from 'ora';
 import readDir from 'fs-readdir-recursive';
 import _ from 'lodash';
+import xcode from 'xcode';
 
 const exec = child_process.exec;
 // 3rd party
@@ -181,9 +182,17 @@ async function yarnAdd(name, version) {
   });
 }
 
-async function gitClone(url, branch) {
+async function gitClone(url, { branch, destFolder } = {}) {
+  let cmd = branch 
+              ? `git clone --branch ${branch} --depth 1 ${url}` 
+              : `git clone ${url}`;
+  
+  if (destFolder) {
+    cmd += ` ${destFolder}`;
+  }
+
   return new Promise((resolve, reject) => {
-    exec(`git clone --branch ${branch} --depth 1 ${url}`,
+    exec(cmd,
       (err, stdout, stderr) => {
         // Git seems to send stuff to stderr :(
         if (err) {
@@ -196,6 +205,82 @@ async function gitClone(url, branch) {
       });
   });
 }
+
+async function gitAdd() {
+  return new Promise((resolve, reject) => {
+    exec('git add .',
+      (err, stdout, stderr) => {
+        // Git seems to send stuff to stderr :(
+        if (err) {
+          log.error(err);
+          reject(err);
+        } else {
+          log.info(stdout ? stdout : stderr);
+          resolve(stdout ? stdout : stderr);
+        }
+      });
+  });
+}
+
+async function gitCommit(message) {
+  let cmd = message 
+          ? `git commit -m '${message}'`
+          : `git commit -m 'no message'`
+          
+  return new Promise((resolve, reject) => {
+    exec(cmd,
+      (err, stdout, stderr) => {
+        // Git seems to send stuff to stderr :(
+        if (err) {
+          log.error(err);
+          reject(err);
+        } else {
+          log.info(stdout ? stdout : stderr);
+          resolve(stdout ? stdout : stderr);
+        }
+      });
+  });
+}
+
+async function gitTag(tag) {
+  return new Promise((resolve, reject) => {
+    exec(`git tag ${tag}`,
+      (err, stdout, stderr) => {
+        // Git seems to send stuff to stderr :(
+        if (err) {
+          log.error(err);
+          reject(err);
+        } else {
+          log.info(stdout ? stdout : stderr);
+          resolve(stdout ? stdout : stderr);
+        }
+      });
+  });
+}
+
+async function gitPush({
+  remote = 'origin',
+  branch = 'master',
+  force = false,
+  tags = false
+} = {}) {
+  let cmd = `git push ${remote} ${branch} ${force?'--force':''} ${tags?'--tags':''}`;
+
+  return new Promise((resolve, reject) => {
+    exec(cmd,
+      (err, stdout, stderr) => {
+        // Git seems to send stuff to stderr :(
+        if (err) {
+          log.error(err);
+          reject(err);
+        } else {
+          log.info(stdout ? stdout : stderr);
+          resolve(stdout ? stdout : stderr);
+        }
+      });
+  });
+}
+
 
 //
 // Download the plugin source given a plugin origin
@@ -231,7 +316,7 @@ async function downloadPluginSource(pluginOrigin) {
     }
   } else if (pluginOrigin.type === 'git') {
       if (pluginOrigin.version) {
-        await gitClone(pluginOrigin.url, pluginOrigin.version);
+        await gitClone(pluginOrigin.url, { branch: pluginOrigin.version });
         downloadPath = gitFolderRe.exec(`${pluginOrigin.url}`)[1];
       }
   }
@@ -427,6 +512,24 @@ async function fillAndroidContainerHull(plugins, miniApps, paths) {
   }
 }
 
+async function fillIosContainerHull(plugins, miniApps, paths) {
+   try {
+    log.info(`[=== Starting container hull filling ===]`);
+
+    shell.cd(`${ROOT_DIR}`);
+
+    const outputFolder =`${paths.outFolder}/ios`;
+
+    log.info(`Creating out folder and copying Container Hull to it`);
+    shell.cp('-R', `${paths.containerHull}/ios/*`, outputFolder);
+
+    log.info(`[=== Completed container hull filling ===]`);
+  } catch (e) {
+      log.error("[fillIosContainerHull] Something went wrong: " + e);
+      throw e;
+  }
+}
+
 function clearReactPackagerCache() {
   shell.rm('-rf', `${process.env['TMPDIR']}/react-*`);
 }
@@ -543,6 +646,14 @@ async function buildAndPublishAndroidContainer(paths) {
   }
 }
 
+async function publishIosContainer(paths) {
+  try {
+
+  } catch(e) {
+    log.error("[publishIosContainer] Something went wrong: " + e);
+  }
+}
+
 function buildPluginListSync(plugins, manifest) {
   let result = [];
 
@@ -626,24 +737,26 @@ async function generateAndroidContainer(nativeAppName = required('nativeAppName'
                                         paths) {
   if (generator.name === 'maven') {
     return generateAndroidContainerUsingMavenGenerator(
-      nativeAppName, platformPath, plugins, miniapps, generator, paths);
+      nativeAppName, platformPath, plugins, miniapps, paths, generator);
   } else {
     throw new Error(`Android generator ${generator.name} not supported`);
   }
 }
 
-async function generateAndroidContainerUsingMavenGenerator(nativeAppName = required('nativeAppName'),
-                                                           platformPath = required('platformPath'),
-                                                           plugins = [],
-                                                           miniapps = [], {
-  containerPomVersion,
-  mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
-  namespace = DEFAULT_NAMESPACE
-  } = {}, paths) {
+async function generateAndroidContainerUsingMavenGenerator(
+  nativeAppName = required('nativeAppName'),
+  platformPath = required('platformPath'),
+  plugins = [],
+  miniapps = [], 
+  paths, {
+    containerVersion,
+    mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
+    namespace = DEFAULT_NAMESPACE
+  } = {}) {
   try {
     log.info(`\n === Using maven generator
         mavenRepositoryUrl: ${mavenRepositoryUrl}
-        containerPomVersion: ${containerPomVersion}
+        containerVersion: ${containerVersion}
         namespace: ${namespace}`);
 
     // If no maven repository url (for publication) is provided part of the generator config,
@@ -671,7 +784,7 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
     mustacheView.android = {
       repository: gradleMavenRepositoryCode,
       namespace: namespace,
-      containerPomVersion: containerPomVersion
+      containerVersion: containerVersion
     };
 
     //
@@ -694,7 +807,7 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
     // build it and publish resulting AAR
     await buildAndPublishAndroidContainer(paths);
 
-    log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerPomVersion}`);
+    log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`);
     log.info(`To ${mavenRepositoryUrl}`);
   } catch (e) {
     log.error(`Something went wrong. Aborting ern-container-gen: ${e}`);
@@ -705,13 +818,66 @@ async function generateAndroidContainerUsingMavenGenerator(nativeAppName = requi
 // ern-container-gen ios generation
 //=============================================================================
 
-async function generateIosContainer(nativeAppName = required('nativeAppName'),
-                                    platformPath = required('platformPath'),
-                                    generator = required('generator'),
-                                    plugins = [],
-                                    miniapps = [],
-                                    paths) {
-  throw new Error(`No iOS generator yet`);
+async function generateIosContainer(
+  nativeAppName = required('nativeAppName'),
+  platformPath = required('platformPath'),
+  generator = required('generator'),
+  plugins = [],
+  miniapps = [],
+  paths) {
+   if (generator.name === 'github') {
+    return generateIosContainerUsingGitHubGenerator(
+      nativeAppName, platformPath, generator.repoUrl, plugins, miniapps, paths, generator);
+  } else {
+    throw new Error(`iOS generator ${generator.name} not supported`);
+  }
+}
+
+async function generateIosContainerUsingGitHubGenerator(
+  nativeAppName = required('nativeAppName'),
+  platformPath = required('platformPath'),
+  repoUrl = required('repoUrl'),
+  plugins = [],
+  miniapps = [], 
+  paths, {
+    containerVersion
+  } = {}) {
+  try {
+    log.info(`\n === Using github generator
+        repoUrl: ${repoUrl}
+        containerVersion: ${containerVersion}`);
+
+    // Enhance mustache view with ios specifics
+    mustacheView.ios = {
+      repoUrl,
+      containerVersion
+    };
+
+    shell.cd(paths.outFolder)
+    await gitClone(mustacheView.ios.repoUrl, { destFolder: 'ios' })
+    shell.rm('-rf', `${paths.outFolder}/ios/*`)
+
+    //
+    // Go through all ern-container-gen steps
+    //
+
+    await fillIosContainerHull(plugins, miniapps, paths)
+    shell.cd(`${paths.outFolder}/ios`)
+    await gitAdd();
+    await gitCommit(`Container v${containerVersion}`)
+    await gitTag(`v${containerVersion}`)
+    await gitPush({force: true, tags: true})
+
+    // Bundle all the miniapps together and store resulting bundle in container
+    // project
+    //await bundleMiniApps(miniapps, paths, plugins);
+
+    // Finally, container hull project is fully generated, now let's just
+    // build it and publish resulting AAR
+    //await publishIosContainer(paths);
+  } catch (e) {
+    log.error(`Something went wrong. Aborting ern-container-gen: ${e}`);
+  }
 }
 
 //=============================================================================
@@ -727,7 +893,7 @@ function required(param) {
 //  {
 //    platform: "android",
 //    name: "maven",
-//    containerPomVersion: "1.2.3",
+//    containerVersion: "1.2.3",
 //    mavenRepositoryUrl = ...
 //  }
 // plugins: Array containing all plugins to be included in the container
