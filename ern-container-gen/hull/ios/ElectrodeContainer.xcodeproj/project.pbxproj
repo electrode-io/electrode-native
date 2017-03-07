@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220224E31E6F7CEC00525520 /* ElectrodeReactNative.h in Headers */ = {isa = PBXBuildFile; fileRef = 22D6B27F1E6E8F4100246E84 /* ElectrodeReactNative.h */; };
 		22D6B26D1E6E8E7300246E84 /* ElectrodeContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 22D6B26B1E6E8E7300246E84 /* ElectrodeContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		22D6B2741E6E8EA000246E84 /* ElectrodeContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22D6B2731E6E8EA000246E84 /* ElectrodeContainer.m */; };
 		22D6B27A1E6E8F0C00246E84 /* ElectrodeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22D6B2791E6E8F0C00246E84 /* ElectrodeBridgeDelegate.h */; };
@@ -77,6 +78,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22D6B27A1E6E8F0C00246E84 /* ElectrodeBridgeDelegate.h in Headers */,
+				220224E31E6F7CEC00525520 /* ElectrodeReactNative.h in Headers */,
 				22D6B26D1E6E8E7300246E84 /* ElectrodeContainer.h in Headers */,
 				22D6B2811E6E8F6300246E84 /* ElectrodeReactNative_Internal.h in Headers */,
 			);
@@ -308,6 +310,7 @@
 				22D6B2721E6E8E7300246E84 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
