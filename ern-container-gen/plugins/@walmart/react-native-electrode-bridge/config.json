@@ -11,5 +11,10 @@
       "name": "BridgePlugin",
       "configurable": false
     }
+  },
+  "ios": {
+    "pod": {
+      "name": "ElectrodeReactNativeBridge"
+    }
   }
 }

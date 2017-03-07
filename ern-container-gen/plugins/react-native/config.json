@@ -1,0 +1,27 @@
+{
+  "origin": {
+    "type": "npm",
+    "name": "react-native"
+  },
+  "ios": {
+    "pod": {
+      "name": "React",
+      "subspecs": [
+        "Core",
+        "RCTText",
+        "RCTNetwork",
+        "RCTAnimation",
+        "RCTCameraRoll",
+        "RCTGeolocation",
+        "RCTImage",
+        "RCTLinkingIOS",
+        "RCTNetwork",
+        "RCTPushNotification",
+        "RCTSettings",
+        "RCTText",
+        "RCTVibration",
+        "RCTWebSocket"
+      ]
+    }
+  }
+}

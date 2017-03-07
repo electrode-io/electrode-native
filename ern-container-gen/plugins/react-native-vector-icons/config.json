@@ -12,5 +12,10 @@
       "name": "VectorIconsPlugin",
       "configurable": false
     }
+  },
+  "ios": {
+    "pod": {
+      "name": "RNVectorIcons"
+    }
   }
 }
