@@ -1,0 +1,7 @@
+### Dumb simple pod template
+
+target 'ElectrodeContainer' do
+  {{#ios.pods}}
+    pod '{{{name}}}', :path => '{{{path}}}' {{#hasSubspecs}}, :subspecs => [ {{{subspecs}}} ] {{/hasSubspecs}}
+  {{/ios.pods}}
+end

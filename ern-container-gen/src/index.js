@@ -7,9 +7,9 @@ import Mustache from 'mustache';
 import Ora from 'ora';
 import readDir from 'fs-readdir-recursive';
 import _ from 'lodash';
-import xcode from 'xcode';
 
 const exec = child_process.exec;
+const execSync = child_process.execSync;
 // 3rd party
 
 let mustacheView = {};
@@ -281,7 +281,6 @@ async function gitPush({
   });
 }
 
-
 //
 // Download the plugin source given a plugin origin
 // pluginOrigin: A plugin origin object
@@ -522,6 +521,30 @@ async function fillIosContainerHull(plugins, miniApps, paths) {
 
     log.info(`Creating out folder and copying Container Hull to it`);
     shell.cp('-R', `${paths.containerHull}/ios/*`, outputFolder);
+ 
+
+    mustacheView.ios.pods = [];
+    for (const plugin of plugins) {
+      const pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
+      if (pluginConfig.ios && pluginConfig.ios.pod) {
+        const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
+          downloadPluginSource(pluginConfig.origin));
+
+        if (pluginConfig.ios.pod.subspecs) {
+         pluginConfig.ios.pod.hasSubspecs = true;
+         pluginConfig.ios.pod.subspecs = _.map(pluginConfig.ios.pod.subspecs, s => `'${s}'`)
+        }
+        pluginConfig.ios.pod.path = pluginSourcePath;
+        mustacheView.ios.pods.push(pluginConfig.ios.pod);
+      }
+    }
+   
+    log.info(`Patching hull`);
+    const files = readDir(`${outputFolder}`);
+    for (const file of files) {
+      await mustacheRenderToOutputFileUsingTemplateFile(
+          `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`);
+    }
 
     log.info(`[=== Completed container hull filling ===]`);
   } catch (e) {
@@ -827,7 +850,7 @@ async function generateIosContainer(
   paths) {
    if (generator.name === 'github') {
     return generateIosContainerUsingGitHubGenerator(
-      nativeAppName, platformPath, generator.repoUrl, plugins, miniapps, paths, generator);
+      nativeAppName, platformPath, generator.targetRepoUrl, plugins, miniapps, paths, generator);
   } else {
     throw new Error(`iOS generator ${generator.name} not supported`);
   }
@@ -836,7 +859,7 @@ async function generateIosContainer(
 async function generateIosContainerUsingGitHubGenerator(
   nativeAppName = required('nativeAppName'),
   platformPath = required('platformPath'),
-  repoUrl = required('repoUrl'),
+  targetRepoUrl = required('targetRepoUrl'),
   plugins = [],
   miniapps = [], 
   paths, {
@@ -844,29 +867,34 @@ async function generateIosContainerUsingGitHubGenerator(
   } = {}) {
   try {
     log.info(`\n === Using github generator
-        repoUrl: ${repoUrl}
+        targetRepoUrl: ${targetRepoUrl}
         containerVersion: ${containerVersion}`);
 
     // Enhance mustache view with ios specifics
     mustacheView.ios = {
-      repoUrl,
+      targetRepoUrl,
       containerVersion
     };
 
+    // Clone target output Git repo
     shell.cd(paths.outFolder)
-    await gitClone(mustacheView.ios.repoUrl, { destFolder: 'ios' })
+    await gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
     shell.rm('-rf', `${paths.outFolder}/ios/*`)
 
     //
     // Go through all ern-container-gen steps
     //
 
+    // Copy iOS container hull to generation ios output folder
     await fillIosContainerHull(plugins, miniapps, paths)
     shell.cd(`${paths.outFolder}/ios`)
-    await gitAdd();
-    await gitCommit(`Container v${containerVersion}`)
-    await gitTag(`v${containerVersion}`)
-    await gitPush({force: true, tags: true})
+    
+    execSync('pod install')
+
+    //await gitAdd();
+    //await gitCommit(`Container v${containerVersion}`)
+    //await gitTag(`v${containerVersion}`)
+    //await gitPush({force: true, tags: true})
 
     // Bundle all the miniapps together and store resulting bundle in container
     // project

@@ -10,5 +10,10 @@
       "name": "CodePushPlugin",
       "configurable": true
     }
+  },
+  "ios": {
+    "pod": { 
+      "name": "CodePush"
+    }
   }
 }
