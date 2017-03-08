@@ -12,12 +12,14 @@ $ npm install -g @walmart/electrode-react-native
 
 3) Fork the platform repository and clone it somewhere on your workstation
 
-4) From your cloned repository root folder run the following commands 
+4) From your cloned repository root folder run the following commands in order :
 
 ```bash
 $ npm install
 $ npm run rebuild
 $ npm run setup-dev
+$ cd ern-util-dev
+$ npm link
 ```
 
 You are now all setup for development. Just make sure to run the following command ...
