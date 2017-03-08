@@ -1,0 +1,1 @@
+All assets should come here

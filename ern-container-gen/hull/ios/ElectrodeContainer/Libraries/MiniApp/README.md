@@ -1,0 +1,1 @@
+Composite miniapp bundle MiniApp.jsbundle should come here

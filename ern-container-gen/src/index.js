@@ -560,10 +560,33 @@ function clearReactPackagerCache() {
 async function reactNativeBundleAndroid(paths) {
   return new Promise((resolve, reject) => {
     exec(`react-native bundle \
-      --entry-file=index.android.js \
+      --entry-file=index.js \
       --dev=false --platform=android \
       --bundle-output=${paths.outFolder}/android/lib/src/main/assets/index.android.bundle \
       --assets-dest=${paths.outFolder}/android/lib/src/main/res`,
+        (err, stdout, stderr) => {
+          if (err) {
+            log.error(err);
+            reject(err);
+          }
+          if (stderr) {
+            log.error(stderr);
+          }
+          if (stdout) {
+            log.info(stdout);
+            resolve(stdout);
+          }
+        });
+  });
+}
+
+async function reactNativeBundleIos(paths) {
+  return new Promise((resolve, reject) => {
+    exec(`react-native bundle \
+      --entry-file=index.js \
+      --dev=false --platform=ios \
+      --bundle-output=${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp.jsbundle \
+      --assets-dest=${paths.outFolder}/ios/ElectrodeContainer/Assets`,
         (err, stdout, stderr) => {
           if (err) {
             log.error(err);
@@ -626,11 +649,11 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
     }
   }
 
-  log.info(`writing index.android.js`);
-  await writeFile('./index.android.js', content);
+  log.info(`writing index.js`);
+  await writeFile('./index.js', content);
 }
 
-async function bundleMiniApps(miniapps, paths, plugins) {
+async function bundleMiniApps(miniapps, paths, plugins, platform) {
   try {
     log.info(`[=== Starting mini apps bundling ===]`);
 
@@ -647,7 +670,11 @@ async function bundleMiniApps(miniapps, paths, plugins) {
     // Clear react packager cache beforehand to avoid surprises ...
     clearReactPackagerCache();
 
-    await spin(`Bundling miniapp(s)`, reactNativeBundleAndroid(paths));
+    if (platform === 'android') {
+      await spin(`Bundling miniapp(s) for Android`, reactNativeBundleAndroid(paths));
+    } else if (platform === 'ios') {
+      await spin(`Bundling miniapp(s) for iOS`, reactNativeBundleIos(paths));
+    }
 
     log.info(`[=== Completed mini apps bundling ===]`);
   } catch (e) {
@@ -824,7 +851,7 @@ async function generateAndroidContainerUsingMavenGenerator(
 
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    await bundleMiniApps(miniapps, paths, plugins);
+    await bundleMiniApps(miniapps, paths, plugins, 'android');
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
@@ -887,18 +914,21 @@ async function generateIosContainerUsingGitHubGenerator(
 
     // Copy iOS container hull to generation ios output folder
     await fillIosContainerHull(plugins, miniapps, paths)
-    shell.cd(`${paths.outFolder}/ios`)
-    
-    execSync('pod install')
-
-    //await gitAdd();
-    //await gitCommit(`Container v${containerVersion}`)
-    //await gitTag(`v${containerVersion}`)
-    //await gitPush({force: true, tags: true})
 
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    //await bundleMiniApps(miniapps, paths, plugins);
+    await bundleMiniApps(miniapps, paths, plugins, 'ios')
+
+    shell.cd(`${paths.outFolder}/ios`)
+
+    // Install all plugins
+    execSync('pod install')
+
+    // Publish resulting container to git repo
+    await gitAdd()
+    await gitCommit(`Container v${containerVersion}`)
+    await gitTag(`v${containerVersion}`)
+    await gitPush({force: true, tags: true})
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
