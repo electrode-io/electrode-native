@@ -560,7 +560,7 @@ function clearReactPackagerCache() {
 async function reactNativeBundleAndroid(paths) {
   return new Promise((resolve, reject) => {
     exec(`react-native bundle \
-      --entry-file=index.js \
+      --entry-file=index.android.js \
       --dev=false --platform=android \
       --bundle-output=${paths.outFolder}/android/lib/src/main/assets/index.android.bundle \
       --assets-dest=${paths.outFolder}/android/lib/src/main/res`,
@@ -583,7 +583,7 @@ async function reactNativeBundleAndroid(paths) {
 async function reactNativeBundleIos(paths) {
   return new Promise((resolve, reject) => {
     exec(`react-native bundle \
-      --entry-file=index.js \
+      --entry-file=index.ios.js \
       --dev=false --platform=ios \
       --bundle-output=${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp.jsbundle \
       --assets-dest=${paths.outFolder}/ios/ElectrodeContainer/Assets`,
@@ -649,8 +649,10 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
     }
   }
 
-  log.info(`writing index.js`);
-  await writeFile('./index.js', content);
+  log.info(`writing index.android.js`);
+  await writeFile('./index.android.js', content);
+  log.info(`writing index.ios.js`);
+  await writeFile('./index.ios.js', content);
 }
 
 async function bundleMiniApps(miniapps, paths, plugins, platform) {
