@@ -12,7 +12,5 @@ exports.builder = function (yargs) {
 
 exports.handler = async function (argv) {
     const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge');
-
     return generateCode({bridgeVersion: bridgeDep.version});
-
 };
