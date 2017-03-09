@@ -114,8 +114,7 @@ export async function generateCode(options) {
   }
   pkg.version = newPluginVer;
   await _checkDependencyVersion(pkg);
-  console.log(JSON.stringify(pkg));
-  // writeFile(`${process.cwd()}/${PKG_FILE}`,JSON.stringify(pkg)); //Write the new package properties
+  writeFile(`${process.cwd()}/${PKG_FILE}`,JSON.stringify(pkg, null, 2)); //Write the new package properties
   const config = normalizeConfig(Object.assign({}, {
     name: pkg.name,
     apiVersion: pkg.version,
@@ -123,6 +122,7 @@ export async function generateCode(options) {
     apiAuthor: pkg.author
   }, options));
 
+  _startCodeRegen(config);
 }
 
 function _promptForPluginVersion(curVersion) {
