@@ -14,7 +14,7 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            pom.version = '{{{android.containerPomVersion}}}'
+            pom.version = '{{{android.containerVersion}}}'
             pom.artifactId = '{{{nativeAppName}}}-ern-container'
             pom.groupId = 'com.walmartlabs.ern'
             {{{android.repository}}}
