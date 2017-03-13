@@ -3,16 +3,28 @@ import generateJavaCode from './generateJavaCode';
 import generateObjectiveCCode from './generateObjectiveCCode';
 import generateProject from './generateProject';
 import generateJSCode from './generateJSCode';
-import {patchHull} from './renderer';
+import {
+  patchHull
+} from './renderer';
 import normalizeConfig from './normalizeConfig';
 import views from './views';
 import fs from 'fs';
 import shell from 'shelljs';
 import path from 'path';
-import {SCHEMA_FILE, PKG_FILE, MODEL_FILE} from './Constants';
+import {
+  SCHEMA_FILE,
+  PKG_FILE,
+  MODEL_FILE
+} from './Constants';
 import log from './log';
-import {readJSON, writeFile} from './fileUtil';
-import {platform} from '@walmart/ern-util'
+import {
+  readJSON,
+  writeFile
+} from './fileUtil';
+import {
+  platform,
+  npm
+} from '@walmart/ern-util'
 import inquirer from 'inquirer';
 
 // Not pretty but depending of the execution context (direct call to binary v.s
@@ -114,7 +126,7 @@ export async function generateCode(options) {
   }
   pkg.version = newPluginVer;
   await _checkDependencyVersion(pkg);
-  writeFile(`${process.cwd()}/${PKG_FILE}`,JSON.stringify(pkg, null, 2)); //Write the new package properties
+  writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)); //Write the new package properties
   const config = normalizeConfig(Object.assign({}, {
     name: pkg.name,
     apiVersion: pkg.version,
@@ -126,13 +138,11 @@ export async function generateCode(options) {
 }
 
 function _promptForPluginVersion(curVersion) {
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'userPluginVer',
-      message: `Current Plugin Version is ${curVersion}. Type the new plugin version (major.minor.patch)?`
-    }
-  ]);
+  return inquirer.prompt([{
+    type: 'input',
+    name: 'userPluginVer',
+    message: `Current Plugin Version is ${curVersion}. Type the new plugin version (major.minor.patch)?`
+  }]);
 }
 
 async function _checkDependencyVersion(pkg) {
@@ -203,4 +213,12 @@ async function _startCodeRegen(config) {
     });
   }
   log.info("== Generation complete");
+  const answers = await inquirer.prompt([{
+    type: 'confirm',
+    name: 'confirmNpmPublish',
+    message: `Would you like to npm publish the plugin?`
+  }]);
+  if (answers.confirmNpmPublish) {
+    await npm.npm('publish');
+  }
 }
