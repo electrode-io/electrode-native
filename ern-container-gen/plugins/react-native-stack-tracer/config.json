@@ -5,10 +5,6 @@
   },
   "android": {
     "root": "",
-    "moduleName": "rnstacktracer",
-    "pluginHook": {
-      "name": "StackTracerPlugin",
-      "configurable": true
-    }
+    "moduleName": "rnstacktracer"
   }
 }

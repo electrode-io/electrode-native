@@ -2,6 +2,7 @@
 import child_process from 'child_process';
 import fs from 'fs';
 import http from 'http';
+import path from 'path';
 import shell from 'shelljs';
 import Mustache from 'mustache';
 import Ora from 'ora';
@@ -125,18 +126,34 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
   if (fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
     result = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`)
         .then(JSON.parse);
+
+    // Add default value (convention) for Android subsection for missing fields
+    if (result.android) {
+      if (!result.android.root) {
+        result.android.root = "android";
+      }
+
+      if (!result.android.pluginHook) {
+        result.android.pluginHook = {}
+        const matchedFiles = 
+          shell.find(pluginConfigPath).filter(function(file) { return file.match(/\.java$/); })
+        if (matchedFiles && matchedFiles.length === 1) {
+          const pluginHookClass = path.basename(matchedFiles[0], '.java')
+          result.android.pluginHook.name = pluginHookClass
+          if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
+            result.android.pluginHook.configurable = true
+          }
+        }
+      }
+    }
   }
+
   // No config, assume apigen module (temporary)
   // we need to patch the build.gradle file accordingly to update
   // birdge dependency compile statement with platform version
   else {
     log.info(`No config.json file for ${plugin.name}. Assuming apigen module`);
     result = {
-      origin: {
-        type: 'npm',
-        scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
-        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`
-      },
       android: {
         root: 'android',
         moduleName: 'lib',
@@ -145,6 +162,21 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
         ]
       } 
     };
+  }
+
+  if (!result.origin) {
+    if (npmScopeModuleRe.test(plugin.name)) {
+      result.origin = {
+        type: 'npm',
+        scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
+        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`
+      }
+    } else {
+       result.origin = {
+        type: 'npm',
+        name: `${npmModuleRe.exec(`${plugin.name}`)[1]}`
+      }
+    }
   }
 
   // If there is no specified version, assume plugin version by default

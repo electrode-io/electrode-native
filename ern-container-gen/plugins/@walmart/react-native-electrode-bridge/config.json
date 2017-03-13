@@ -1,16 +1,6 @@
 {
-  "origin": {
-    "type": "npm",
-    "scope": "@walmart",
-    "name": "react-native-electrode-bridge"
-  },
   "android": {
-    "root": "android",
-    "moduleName": "electrode-reactnative-bridge",
-    "pluginHook": {
-      "name": "BridgePlugin",
-      "configurable": false
-    }
+    "moduleName": "electrode-reactnative-bridge"
   },
   "ios": {
     "pod": {
