@@ -6,11 +6,13 @@ import fs from 'fs';
 import _ from 'lodash';
 import shell from 'shelljs';
 import readDir from 'fs-readdir-recursive';
+import child_process from 'child_process';
 const log = require('console-log-level')();
 
 const  {yarnAdd, yarnInstall} = yarn;
 const {runAndroid} = android;
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/;
+const execSync = child_process.execSync;
 
 export default class MiniApp {
 
@@ -373,6 +375,10 @@ Otherwise you can safely ignore this warning
             log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
             throw e;
         }
+    }
+
+    publishToNpm() {
+        execSync(`npm publish --prefix ${this._path}`)
     }
 
     // Should go somewhere else. Does not belong in MiniApp class

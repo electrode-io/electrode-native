@@ -41,7 +41,7 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
 
         if (nativeAppPlatform === 'android') {
             let generator = ernConfig.obj.libgen.android.generator;
-            generator.containerPomVersion = version;
+            generator.containerVersion = version;
             await generateContainer({
                 nativeAppName,
                 platformPath: platform.currentPlatformVersionPath,
@@ -63,7 +63,17 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
     }
 }
 
-export async function publishMiniApp({fullNapSelector, verbose, force, containerVersion}) {
+export async function publishMiniApp({
+    fullNapSelector, 
+    verbose, 
+    force, 
+    containerVersion, 
+    npmPublish = false
+    } = {}) {
+    if (npmPublish) {
+      MiniApp.fromCurrentPath().publishToNpm()
+    }
+
     // No full nap selector was provied
     // in that case, prompt the user with compatible native application versions
     // so that he can select one or more to publish miniapp to
