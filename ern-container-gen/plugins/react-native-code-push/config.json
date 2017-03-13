@@ -1,15 +1,6 @@
 {
-  "origin": {
-    "type": "npm",
-    "name": "react-native-code-push"
-  },
   "android": {
-    "root": "android",
-    "moduleName": "app",
-    "pluginHook": {
-      "name": "CodePushPlugin",
-      "configurable": true
-    }
+    "moduleName": "app"
   },
   "ios": {
     "pod": { 

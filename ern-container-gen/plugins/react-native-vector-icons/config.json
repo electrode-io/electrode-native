@@ -1,17 +1,8 @@
 {
-  "origin": {
-    "type": "npm",
-    "name": "react-native-vector-icons"
-  },
   "android": {
-    "root": "android",
     "copy": [
       { "source": "Fonts/*", "dest": "lib/src/main/assets/fonts" }
-    ],
-    "pluginHook": {
-      "name": "VectorIconsPlugin",
-      "configurable": false
-    }
+    ]
   },
   "ios": {
     "pod": {
