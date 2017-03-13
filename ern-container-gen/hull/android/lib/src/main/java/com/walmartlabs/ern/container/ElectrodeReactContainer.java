@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
@@ -27,7 +28,7 @@ import com.walmartlabs.ern.container.plugins.{{name}};
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
 
-    private static ReactInstanceManager.Builder reactInstanceManagerBuilder;
+    private static ReactInstanceManagerBuilder reactInstanceManagerBuilder;
     private static ElectrodeReactContainer sInstance;
     private static ReactInstanceManager sReactInstanceManager;
 
