@@ -3,14 +3,14 @@ package com.walmartlabs.ern.container.plugins;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
 import com.microsoft.codepush.react.CodePush;
 
 public class CodePushPlugin {
 
     public ReactPackage hook(@NonNull Application application ,
-                     @NonNull ReactInstanceManager.Builder reactInstanceManagerBuilder,
+                     @NonNull ReactInstanceManagerBuilder reactInstanceManagerBuilder,
                      @NonNull Config config) {
         CodePush codePush = null;
         if (null != config.serverUrl) {
