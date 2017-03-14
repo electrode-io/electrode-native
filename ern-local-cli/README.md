@@ -174,9 +174,9 @@ This command will list all the dependencies used by a given native application v
 
 ### generate
 
-**api**
+#### **api commands** 
 
-**init**
+#### _init_
 
 `ern generate api init`  
 
@@ -195,7 +195,7 @@ By default, api gen will look for a models schema name `schema.json`. If you wan
    --modelSchemaPath [path to models]
 ```
 
-**regen**
+#### _regen_
 
 `ern generate api regen`
 
@@ -206,13 +206,13 @@ During the regeneration process, it scans `dependencies` in api project's `packa
 If there is a mismatch this command will prompt user to confirm the version change. In addition this command bumps patch version of the api and allows user to override
 the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`. 
 
-**clean**
+#### _clean_
 
 `ern generate api clean`
 
 This command removes all generated artifacts. The projects `apigen.schema` , `package.json` still remain intact.
 
-**container**
+#### **container**
 
 `ern generate container <fullNapSelector> <containerVersion>`  
 
