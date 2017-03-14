@@ -26,6 +26,7 @@ Depending of the user infrastructure and development lifecycle this command line
 │   │   ├── api                    
 │   │   │    ├── init               Generates an API package using ern-api-gen
 │   │   │    ├── regen              Regenerates an API using ern-api-gen
+|   |   |    ├── clean              Removes all generated artifacts
 │   │   ├── container               Generates a native container using ern-container-gen
 │   │   ├── model                   Generates native models using ern-model-gen
 │   ├── miniapp                     [=== MiniApp development related commands ===]
@@ -175,6 +176,7 @@ This command will list all the dependencies used by a given native application v
 
 **api**
 
+**init**
 `ern generate api init`  
 
 This command can be used to generate a complete api package, containing JS/iOS/Android code that can be then consumed by native app and/or miniapps.  
@@ -191,6 +193,22 @@ By default, api gen will look for a models schema name `schema.json`. If you wan
    --apiAuthor [env.EMAIL or env.USER]
    --modelSchemaPath [path to models]
 ```
+
+**regen**
+`ern generate api regen`
+
+This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle 
+and happen to change api's or model schema.
+
+During the regeneration process, it scans `dependencies` in api project's `package.json` and comapares with version of `supportedPlugins` in the current `platform` version.
+If there is a mismatch this command will prompt user to confirm the version change. In addition this command bumps patch version of the api and allows user to override
+the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`. 
+
+**clean**
+
+`ern generate api clean`
+
+This command removes all generated artifacts. The projects `apigen.schema` , `package.json` still remain intact.
 
 **container**
 
