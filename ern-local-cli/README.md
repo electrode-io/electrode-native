@@ -177,6 +177,7 @@ This command will list all the dependencies used by a given native application v
 **api**
 
 **init**
+
 `ern generate api init`  
 
 This command can be used to generate a complete api package, containing JS/iOS/Android code that can be then consumed by native app and/or miniapps.  
@@ -195,6 +196,7 @@ By default, api gen will look for a models schema name `schema.json`. If you wan
 ```
 
 **regen**
+
 `ern generate api regen`
 
 This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle 
