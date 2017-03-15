@@ -7,6 +7,7 @@ import shell from 'shelljs';
 import Mustache from 'mustache';
 import Ora from 'ora';
 import readDir from 'fs-readdir-recursive';
+import xcode from 'xcode';
 import _ from 'lodash';
 
 const exec = child_process.exec;
@@ -471,6 +472,17 @@ async function addAndroidPluginHookClasses(plugins, paths) {
   }
 }
 
+function handleCopyDirective(sourceRoot, destRoot, arr) {
+  for (const cp of arr) {
+    const sourcePath = `${sourceRoot}/${cp.source}`;
+    const destPath = `${destRoot}/${cp.dest}`;
+    if (!fs.existsSync(destPath)) {
+      shell.mkdir('-p', destPath);
+    }
+    shell.cp('-R', sourcePath, destPath);
+  }
+}
+
 async function fillAndroidContainerHull(plugins, miniApps, paths) {
   try {
     log.info(`[=== Starting container hull filling ===]`);
@@ -505,15 +517,8 @@ async function fillAndroidContainerHull(plugins, miniApps, paths) {
         shell.cp('-R', `src/main/java`, `${outputFolder}/lib/src/main`);
       }
 
-      if (pluginConfig.android.copy) {
-        for (const cp of pluginConfig.android.copy) {
-          const sourcePath = `${pluginSourcePath}/${cp.source}`;
-          const destPath = `${outputFolder}/${cp.dest}`;
-          if (!fs.existsSync(destPath)) {
-            shell.mkdir('-p', destPath);
-          }
-          shell.cp('-R', sourcePath, destPath);
-        }
+      if (pluginConfig.android && pluginConfig.android.copy) {
+        handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.android.copy);
       }
     }
 
@@ -543,6 +548,19 @@ async function fillAndroidContainerHull(plugins, miniApps, paths) {
   }
 }
 
+async function getIosContainerProject(containerProjectPath) {
+  const containerProject = xcode.project(containerProjectPath)
+
+  return new Promise((resolve, reject) => {
+    containerProject.parse(function (err) {
+      if (err) {
+        reject(err);
+      }
+      resolve(containerProject);
+    })
+  })
+}
+
 async function fillIosContainerHull(plugins, miniApps, paths) {
    try {
     log.info(`[=== Starting container hull filling ===]`);
@@ -553,30 +571,59 @@ async function fillIosContainerHull(plugins, miniApps, paths) {
 
     log.info(`Creating out folder and copying Container Hull to it`);
     shell.cp('-R', `${paths.containerHull}/ios/*`, outputFolder);
- 
 
-    mustacheView.ios.pods = [];
+    const containerProjectPath = `${outputFolder}/ElectrodeContainer.xcodeproj/project.pbxproj`
+    const containerLibrariesPath = `${outputFolder}/ElectrodeContainer/Libraries`
+
+    const containerIosProject = await getIosContainerProject(containerProjectPath)
+
     for (const plugin of plugins) {
       const pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
-      if (pluginConfig.ios && pluginConfig.ios.pod) {
+      if (pluginConfig.ios) {
         const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
           downloadPluginSource(pluginConfig.origin));
 
-        if (pluginConfig.ios.pod.subspecs) {
-         pluginConfig.ios.pod.hasSubspecs = true;
-         pluginConfig.ios.pod.subspecs = _.map(pluginConfig.ios.pod.subspecs, s => `'${s}'`)
+        if (pluginConfig.ios.copy) {
+          handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.ios.copy);
         }
-        pluginConfig.ios.pod.path = pluginSourcePath;
-        mustacheView.ios.pods.push(pluginConfig.ios.pod);
+
+        if (pluginConfig.ios.replaceInFile) {
+          for (const r of pluginConfig.ios.replaceInFile) {
+            const fileContent = fs.readFileSync(`${outputFolder}/${r.path}`, 'utf8')
+            const patchedFileContent = fileContent.replace(r.string, r.replaceWith)
+            fs.writeFileSync(`${outputFolder}/${r.path}`, patchedFileContent, { encoding: 'utf8' })
+          }
+        }
+
+        if (pluginConfig.ios.pbxproj) {
+          if (pluginConfig.ios.pbxproj.addFile) {
+            for (const file of pluginConfig.ios.pbxproj.addFile) {
+              containerIosProject.addFile(file.path, containerIosProject.findPBXGroupKey({name: file.group}))
+            }
+          }
+
+          if (pluginConfig.ios.pbxproj.addFramework) {
+            for (const framework of pluginConfig.ios.pbxproj.addFramework) {
+              containerIosProject.addFramework(framework)
+            }
+          }
+
+          if (pluginConfig.ios.pbxproj.addStaticLibrary) {
+            for (const lib of pluginConfig.ios.pbxproj.addStaticLibrary) {
+              containerIosProject.addStaticLibrary(lib)
+            }
+          }
+
+          if (pluginConfig.ios.pbxproj.addHeaderSearchPath) {
+            for (const path of pluginConfig.ios.pbxproj.addHeaderSearchPath) {
+              containerIosProject.addToHeaderSearchPaths(path)
+            }
+          }
+        }
       }
     }
-   
-    log.info(`Patching hull`);
-    const files = readDir(`${outputFolder}`);
-    for (const file of files) {
-      await mustacheRenderToOutputFileUsingTemplateFile(
-          `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`);
-    }
+
+    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync()); 
 
     log.info(`[=== Completed container hull filling ===]`);
   } catch (e) {

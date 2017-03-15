@@ -58,9 +58,9 @@ extern NSString * const ERNDebugEnabledConfig;
 @interface ElectrodeReactNative : NSObject
 
 /**
- Create a singleton instance of ElectrodeReactNative with the ability to set
+ Create a singleton instance of ElectrodeReactNative with the ability to set 
  configurations for the plugins associated with the container.
- 
+
  @return A singleton instance of ElectrodeReactNative.
  */
 + (instancetype)sharedInstance;
@@ -81,8 +81,8 @@ extern NSString * const ERNDebugEnabledConfig;
 
 /**
  Returns a react native miniapp (from a JSBundle) inside a view controller.
- 
- @param name The name of the mini app, preferably the same name as the jsbundle
+
+ @param name The name of the mini app, preferably the same name as the jsbundle 
  without the extension.
  @param properties Any configuration to set up the mini app with.
  @return A UIViewController containing the view of the miniapp.

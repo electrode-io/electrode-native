@@ -3,8 +3,20 @@
     "moduleName": "app"
   },
   "ios": {
-    "pod": { 
-      "name": "CodePush"
+    "copy": [
+      { "source": "ios/**", "dest": "ElectrodeContainer/Libraries/CodePush" }
+    ],
+    "pbxproj": {
+      "addFile": [
+        { "path": "CodePush/CodePush.xcodeproj", "group": "Libraries" }
+      ],
+      "addStaticLibrary": [
+        "libCodePush.a",
+        "libz.tbd"
+      ],
+      "addHeaderSearchPath": [
+        "\"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**\""
+      ]
     }
   }
 }

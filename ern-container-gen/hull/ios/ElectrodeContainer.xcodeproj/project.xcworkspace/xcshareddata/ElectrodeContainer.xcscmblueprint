@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1" : 9223372036854775807,
+    "9EBAFF008C637BFD759BE0283AF0ABBC6FFAD298" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "5C230B4E-302B-4C04-B472-28019E360999",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1" : "ElectrodeContainer\/",
+    "9EBAFF008C637BFD759BE0283AF0ABBC6FFAD298" : "..\/.."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ElectrodeContainer",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ElectrodeContainer.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "gecgithub01.walmart.com:cgarvin\/ElectrodeContainer.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "57EEDC3C610D5A7992FCA91D2876900ED8DD53F1"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "gecgithub01.walmart.com:Electrode-Mobile-Platform\/platform-demo.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9EBAFF008C637BFD759BE0283AF0ABBC6FFAD298"
+    }
+  ]
+}

@@ -3,10 +3,5 @@
     "copy": [
       { "source": "Fonts/*", "dest": "lib/src/main/assets/fonts" }
     ]
-  },
-  "ios": {
-    "pod": {
-      "name": "RNVectorIcons"
-    }
   }
 }
