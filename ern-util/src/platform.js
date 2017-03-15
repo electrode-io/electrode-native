@@ -2,6 +2,7 @@ import child_process from 'child_process';
 import fs from 'fs';
 import _ from 'lodash';
 import config from './config.js';
+import log from './log.js';
 
 const execSync = child_process.execSync;
 const ERN_GIT_REPO_URL = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-platform.git`;
