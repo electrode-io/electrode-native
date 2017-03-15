@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@walmart/ern-model-gen": "0.0.1",
+    "@walmart/ern-util": "0.0.1",
     "xcode": "^0.9.1"
   },
   "devDependencies": {
