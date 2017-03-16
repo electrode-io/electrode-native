@@ -134,7 +134,7 @@ export async function generateContainerForRunner({
     const generator = {
         platform: 'android',
         name: 'maven',
-        containerPomVersion: RUNNER_CONTAINER_POM_VERSION
+        containerVersion: RUNNER_CONTAINER_POM_VERSION
     };
 
     await generateContainer({
