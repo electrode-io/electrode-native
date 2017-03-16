@@ -11,19 +11,6 @@ artifacts {
     archives androidSourcesJar
 }
 
-uploadArchives {
-  repositories {
-      mavenDeployer {
-          pom.version = '{{{apiVersion}}}'
-          pom.artifactId = '{{{moduleName}}}'
-          pom.groupId = '{{{namespace}}}'
-          // TODO : Add target repository template variable if we
-          // want to support publication to maven (if not needed anylonger
-          // just remove this whole uploadArchives block)
-      }
-  }
-}
-
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
