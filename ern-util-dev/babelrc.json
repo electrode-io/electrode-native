@@ -1,6 +1,6 @@
 {
   "presets": [
-    "node6"
+    "babel-preset-es2015-node4"
   ],
   "plugins": [
     "syntax-async-functions",
