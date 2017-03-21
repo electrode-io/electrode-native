@@ -1,3 +1,5 @@
+"use strict";
+
 const fs = require('fs');
 const child_process = require('child_process');
 const execSync = child_process.execSync;
