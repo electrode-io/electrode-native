@@ -18,6 +18,7 @@ exports.handler = function (argv) {
   process.chdir(platformVersionPath)
   execSync(`git reset --hard`)
   execSync(`git pull origin v${platformVersion}`)
+  execSync(`yarn install`)
   execSync(`npm run rebuild`)
 
   console.log('Update complete')
