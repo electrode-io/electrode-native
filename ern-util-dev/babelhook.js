@@ -1,3 +1,6 @@
+"use strict";
+
+require('babel-polyfill');
 const conf = require('./babelrc.json');
 const Module = require('module');
 const path = require('path');

@@ -27,6 +27,6 @@
     "@walmart/ern-util-dev": "0.0.1"
   },
   "engines": {
-    "node": ">=6.9.4"
+    "node": ">4"
   }
 }
