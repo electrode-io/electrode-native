@@ -175,12 +175,16 @@ export default class MiniApp {
                 result.push({
                     name: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2],
                     scope: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[1],
-                    version: nativeDepPackageJson.version
+                    version: nativeDepPackageJson.version.startsWith('v') 
+                             ? nativeDepPackageJson.version.slice(1)
+                             : nativeDepPackageJson.version
                 });
             } else {
                 result.push({
                     name: nativeDependencyName,
-                    version: nativeDepPackageJson.version
+                    version: nativeDepPackageJson.version.startsWith('v') 
+                             ? nativeDepPackageJson.version.slice(1)
+                             : nativeDepPackageJson.version
                 });
             }
         }
