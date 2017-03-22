@@ -11,6 +11,13 @@ artifacts {
     archives androidSourcesJar
 }
 
+gradle.projectsEvaluated {
+    def buildTypes = android.buildTypes.collect { type -> type.name }
+    android.buildTypes.each {
+        it.resValue 'string', "CODE_PUSH_APK_BUILD_TIME", Long.toString(System.currentTimeMillis())
+    }
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
