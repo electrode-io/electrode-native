@@ -174,7 +174,7 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
     } else {
        result.origin = {
         type: 'npm',
-        name: `${npmModuleRe.exec(`${plugin.name}`)[1]}`
+        name: plugin.name
       }
     }
   }
@@ -747,11 +747,11 @@ function buildPluginListSync(plugins, manifest) {
         version: npmModuleRe.exec(d)[2]
     }));
 
-  const pluginNames = _.map(plugins, p => {
-    return p.scope ?
-        `@${p.scope}/${p.name}` :
-        p.name;
-  });
+  const pluginNames = _.map(plugins, 
+    p => p.scope 
+    ? `@${p.scope}/${p.name}` 
+    : p.name
+  );
 
   for (const manifestPlugin of manifestPlugins) {
     if (pluginNames.includes(manifestPlugin.name)) {
