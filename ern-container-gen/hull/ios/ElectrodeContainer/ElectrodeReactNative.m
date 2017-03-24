@@ -66,7 +66,7 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 {
     // Get the bridge of the mini app
     // This may be needed when we go to multi-bundle
-    //    RCTBridge *bridge = [self.bridges objectForKey:name.lowercaseString];
+//    RCTBridge *bridge = [self.bridges objectForKey:name.lowercaseString];
     RCTBridge *bridge = nil;
     if ([[self.bridges allValues] count] > 0)
     {
@@ -80,7 +80,7 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     {
         // Use the bridge to generate the view
         RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:name initialProperties:properties];
-        
+
         rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
         
         miniAppViewController = [UIViewController new];

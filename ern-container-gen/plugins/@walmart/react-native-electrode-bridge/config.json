@@ -3,8 +3,20 @@
     "moduleName": "electrode-reactnative-bridge"
   },
   "ios": {
-    "pod": {
-      "name": "ElectrodeReactNativeBridge"
-    }
+    "copy": [
+      { "source": "ios/**", "dest": "ElectrodeContainer/Libraries/ElectrodeReactNativeBridge" }
+    ],
+    "pbxproj": {
+      "addFile": [
+        { "path": "ElectrodeReactNativeBridge/ElectrodeReactNativeBridge.xcodeproj", "group": "Libraries" }
+      ],
+      "addFramework": [
+        "ElectrodeReactNativeBridge.framework"
+      ],
+      "addHeaderSearchPath": [
+        "\"$(SRCROOT)/ElectrodeContainer/Libraries/ElectrodeReactNativeBridge/**\""
+      ]
+    },
+    "groupName": "ElectrodeReactNativeBridge"
   }
 }
