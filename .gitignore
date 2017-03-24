@@ -39,3 +39,5 @@ ern-cauldron-api/test/.cauldron-test
 **/dist
 lerna-debug.*
 **/lerna-debug.*
+
+yarn-error.log
