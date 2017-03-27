@@ -436,7 +436,7 @@ async function buildAndroidPluginsViews(plugins, pluginsConfigPath) {
     if (reactNativePlugin) {
       log.info(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`);
       mustacheView.pluginCompile.push({
-          "compileStatement": `compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`
+          "compileStatement": `compile ('com.facebook.react:react-native:${reactNativePlugin.version}@aar') { transitive=true }`
       });
     }
   } catch (e) {
@@ -493,7 +493,7 @@ async function fillAndroidContainerHull(plugins, miniApps, paths) {
     await addAndroidPluginHookClasses(plugins, paths);
 
     log.info(`Patching hull`);
-    const files = readDir(`${outputFolder}`, (f) => !f.endsWith('.jar'));
+    const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')));
     for (const file of files) {
       await mustacheRenderToOutputFileUsingTemplateFile(
           `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`);
