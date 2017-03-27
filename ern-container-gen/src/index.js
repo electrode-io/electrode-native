@@ -603,7 +603,7 @@ async function fillIosContainerHull(plugins, miniApps, paths) {
 
           if (pluginConfig.ios.pbxproj.addFramework) {
             for (const framework of pluginConfig.ios.pbxproj.addFramework) {
-              containerIosProject.addFramework(framework)
+              containerIosProject.addFramework(framework, {sourceTree: 'BUILT_PRODUCTS_DIR', customFramework: true})
             }
           }
 
