@@ -997,12 +997,11 @@ async function generateIosContainerUsingGitHubGenerator(
 
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    await bundleMiniApps(miniapps, paths, plugins, 'ios')
-
+    if (miniapps.length > 0) {
+      await bundleMiniApps(miniapps, paths, plugins, 'ios')
+    }
+    
     shell.cd(`${paths.outFolder}/ios`)
-
-    // Install all plugins
-    execSync('pod install')
 
     // Publish resulting container to git repo
     await gitAdd()
