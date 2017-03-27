@@ -51,7 +51,7 @@
     "tmp": "^0.0.31",
     "unirest": "^0.5.1",
     "update-notifier": "^1.0.3",
-    "xcode": "^0.9.1",
+    "@walmart/xcode": "^0.9.1",
     "yargs": "^6.6.0"
   },
   "engines": {

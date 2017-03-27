@@ -7,7 +7,7 @@ import shell from 'shelljs';
 import Mustache from 'mustache';
 import Ora from 'ora';
 import readDir from 'fs-readdir-recursive';
-import xcode from 'xcode';
+import xcode from '@walmart/xcode';
 import _ from 'lodash';
 
 const exec = child_process.exec;
@@ -136,7 +136,7 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
 
       if (!result.android.pluginHook) {
         result.android.pluginHook = {}
-        const matchedFiles = 
+        const matchedFiles =
           shell.find(pluginConfigPath).filter(function(file) { return file.match(/\.java$/); })
         if (matchedFiles && matchedFiles.length === 1) {
           const pluginHookClass = path.basename(matchedFiles[0], '.java')
@@ -161,7 +161,7 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
         transform: [
           {file: 'android/lib/build.gradle'}
         ]
-      } 
+      }
     };
   }
 
@@ -182,12 +182,7 @@ async function getPluginConfig(plugin, pluginsConfigPath) {
 
   // If there is no specified version, assume plugin version by default
   if (!result.origin.version) {
-    // Handle specific rn case
-    if (plugin.name === 'react-native') {
-      result.origin.version = `v${plugin.version}`;
-    } else {
-      result.origin.version = plugin.version;
-    }
+    result.origin.version = plugin.version;
   }
 
   return result;
@@ -216,10 +211,10 @@ async function yarnAdd(name, version) {
 }
 
 async function gitClone(url, { branch, destFolder } = {}) {
-  let cmd = branch 
-              ? `git clone --branch ${branch} --depth 1 ${url}` 
+  let cmd = branch
+              ? `git clone --branch ${branch} --depth 1 ${url}`
               : `git clone ${url}`;
-  
+
   if (destFolder) {
     cmd += ` ${destFolder}`;
   }
@@ -256,10 +251,10 @@ async function gitAdd() {
 }
 
 async function gitCommit(message) {
-  let cmd = message 
+  let cmd = message
           ? `git commit -m '${message}'`
           : `git commit -m 'no message'`
-          
+
   return new Promise((resolve, reject) => {
     exec(cmd,
       (err, stdout, stderr) => {
@@ -576,9 +571,11 @@ async function fillIosContainerHull(plugins, miniApps, paths) {
     const containerLibrariesPath = `${outputFolder}/ElectrodeContainer/Libraries`
 
     const containerIosProject = await getIosContainerProject(containerProjectPath)
+    const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer');
 
     for (const plugin of plugins) {
       const pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig);
+      shell.cd(`${paths.pluginsDownloadFolder}`);
       if (pluginConfig.ios) {
         const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
           downloadPluginSource(pluginConfig.origin));
@@ -599,6 +596,8 @@ async function fillIosContainerHull(plugins, miniApps, paths) {
           if (pluginConfig.ios.pbxproj.addFile) {
             for (const file of pluginConfig.ios.pbxproj.addFile) {
               containerIosProject.addFile(file.path, containerIosProject.findPBXGroupKey({name: file.group}))
+              // Add target dep in any case for now, will rework later
+              containerIosProject.addTargetDependency(electrodeContainerTarget, [`"${path.basename(file.path)}"`])
             }
           }
 
@@ -623,7 +622,7 @@ async function fillIosContainerHull(plugins, miniApps, paths) {
       }
     }
 
-    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync()); 
+    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync());
 
     log.info(`[=== Completed container hull filling ===]`);
   } catch (e) {
@@ -794,9 +793,9 @@ function buildPluginListSync(plugins, manifest) {
         version: npmModuleRe.exec(d)[2]
     }));
 
-  const pluginNames = _.map(plugins, 
-    p => p.scope 
-    ? `@${p.scope}/${p.name}` 
+  const pluginNames = _.map(plugins,
+    p => p.scope
+    ? `@${p.scope}/${p.name}`
     : p.name
   );
 
@@ -878,7 +877,7 @@ async function generateAndroidContainerUsingMavenGenerator(
   nativeAppName = required('nativeAppName'),
   platformPath = required('platformPath'),
   plugins = [],
-  miniapps = [], 
+  miniapps = [],
   paths, {
     containerVersion,
     mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
@@ -969,7 +968,7 @@ async function generateIosContainerUsingGitHubGenerator(
   platformPath = required('platformPath'),
   targetRepoUrl = required('targetRepoUrl'),
   plugins = [],
-  miniapps = [], 
+  miniapps = [],
   paths, {
     containerVersion
   } = {}) {
