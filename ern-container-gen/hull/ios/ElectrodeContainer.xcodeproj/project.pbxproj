@@ -18,6 +18,7 @@
 		968333D71E54E3470031C565 /* ElectrodeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */; };
 		968333D81E54E3470031C565 /* ElectrodeBridgeDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */; };
 		96F9A1A41E65F64800752759 /* ElectrodeContainerConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96F9A1A31E65F64800752759 /* ElectrodeContainerConfig.plist */; };
+		223A89461E89CDC70092741E /* MiniApp.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 223A89451E89CDC70092741E /* MiniApp.jsbundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,18 @@
 			remoteInfo = ElectrodeContainer;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+               22C03E991E89BDBF009048EA /* CopyFiles */ = {
+                       isa = PBXCopyFilesBuildPhase;
+                       buildActionMask = 2147483647;
+                       dstPath = "";
+                       dstSubfolderSpec = 10;
+                       files = (
+                       );
+                       runOnlyForDeploymentPostprocessing = 0;
+               };
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegateTests.m; sourceTree = "<group>"; };
@@ -45,6 +58,7 @@
 		968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeBridgeDelegate.h; sourceTree = "<group>"; };
 		968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegate.m; sourceTree = "<group>"; };
 		96F9A1A31E65F64800752759 /* ElectrodeContainerConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ElectrodeContainerConfig.plist; sourceTree = "<group>"; };
+		223A89451E89CDC70092741E /* MiniApp.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MiniApp.jsbundle; path = ElectrodeContainer/Libraries/MiniApp.jsbundle; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +153,7 @@
 		9654B8921E5CCA1D00AFF607 /* MiniApp */ = {
 			isa = PBXGroup;
 			children = (
+				223A89451E89CDC70092741E /* MiniApp.jsbundle */,
 			);
 			path = MiniApp;
 			sourceTree = "<group>";
@@ -168,6 +183,7 @@
 				485009DF1E2FF23B009B6610 /* Frameworks */,
 				485009E01E2FF23B009B6610 /* Headers */,
 				485009E11E2FF23B009B6610 /* Resources */,
+				22C03E991E89BDBF009048EA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -240,6 +256,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96F9A1A41E65F64800752759 /* ElectrodeContainerConfig.plist in Resources */,
+				223A89461E89CDC70092741E /* MiniApp.jsbundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
