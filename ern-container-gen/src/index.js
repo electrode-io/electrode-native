@@ -958,7 +958,7 @@ async function generateIosContainer(
   paths) {
    if (generator.name === 'github') {
     return generateIosContainerUsingGitHubGenerator(
-      nativeAppName, platformPath, generator.targetRepoUrl, plugins, miniapps, paths, generator);
+      nativeAppName, platformPath, plugins, miniapps, paths, generator);
   } else {
     throw new Error(`iOS generator ${generator.name} not supported`);
   }
@@ -967,11 +967,11 @@ async function generateIosContainer(
 async function generateIosContainerUsingGitHubGenerator(
   nativeAppName = required('nativeAppName'),
   platformPath = required('platformPath'),
-  targetRepoUrl = required('targetRepoUrl'),
   plugins = [],
   miniapps = [],
   paths, {
-    containerVersion
+    containerVersion,
+    targetRepoUrl
   } = {}) {
   try {
     log.info(`\n === Using github generator
@@ -986,7 +986,10 @@ async function generateIosContainerUsingGitHubGenerator(
 
     // Clone target output Git repo
     shell.cd(paths.outFolder)
-    await gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
+    if (mustacheView.ios.targetRepoUrl) {
+      await gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
+    }
+    
     shell.rm('-rf', `${paths.outFolder}/ios/*`)
 
     //
@@ -1005,11 +1008,13 @@ async function generateIosContainerUsingGitHubGenerator(
     shell.cd(`${paths.outFolder}/ios`)
 
     // Publish resulting container to git repo
-    await gitAdd()
-    await gitCommit(`Container v${containerVersion}`)
-    await gitTag(`v${containerVersion}`)
-    await gitPush({force: true, tags: true})
-
+    if (mustacheView.ios.targetRepoUrl) {
+      await gitAdd()
+      await gitCommit(`Container v${containerVersion}`)
+      await gitTag(`v${containerVersion}`)
+      await gitPush({force: true, tags: true})
+    }
+    
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
     //await publishIosContainer(paths);
