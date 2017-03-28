@@ -7,7 +7,7 @@ import shell from 'shelljs';
 import Mustache from 'mustache';
 import Ora from 'ora';
 import readDir from 'fs-readdir-recursive';
-import xcode from '@walmart/xcode';
+import xcode from '@walmart/xcode-ern';
 import _ from 'lodash';
 
 const exec = child_process.exec;
