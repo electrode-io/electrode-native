@@ -1095,6 +1095,7 @@ export async function generateContainer({
     shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER);
     shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER);
     shell.mkdir('-p', `${OUT_FOLDER}/android`);
+    shell.mkdir('-p', `${OUT_FOLDER}/ios`);
 
     // Build the list of plugins to be included in container
     const manifest = require(`${platformPath}/manifest.json`);

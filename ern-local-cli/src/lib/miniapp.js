@@ -91,11 +91,13 @@ export default class MiniApp {
             fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2));
 
             //
-            // Remove react-native generated android project ...
-            // It will be replaced with our own when user uses `ern miniapp run android` command
+            // Remove react-native generated android and ios projects
+            // They will be replaced with our owns when user uses `ern miniapp run android` 
+            // or `ern miniapp run ios` command
             const miniAppPath = `${process.cwd()}/${appName}`;
             shell.cd(miniAppPath);
-            shell.rm('-rf', `android`);
+            shell.rm('-rf', 'android');
+            shell.rm('-rf', 'ios');
 
             //
             /// If it's a headless miniapp (no ui), just override index.android.js / index.ios.js
@@ -207,6 +209,31 @@ export default class MiniApp {
         return [...this.jsDependencies, ...this.nativeDependencies];
     }
 
+    async runInIosRunner(verbose) {
+        const runnerConfig = {
+            platformPath: platform.currentPlatformVersionPath,
+            plugins: this.nativeDependencies,
+            miniapp: {name: this.name, localPath: this.path},
+            outFolder: `${this.path}/ios`,
+            verbose,
+            headless: this.isHeadLess,
+            platform: 'ios'
+        };
+
+        // Generate initial runner project if it hasn't been created yet
+        if (!fs.existsSync('ios')) {
+            log.info(`Generating runner iOS project`);
+            await generateRunner(runnerConfig);
+        }
+        // Otherwise just regenerates container library
+        else {
+            log.info(`Re-generating runner container`);
+            await generateContainerForRunner(runnerConfig);
+        }
+
+        // Todo : runIos
+    }
+
     async runInAndroidRunner(verbose) {
         const runnerConfig = {
             platformPath: platform.currentPlatformVersionPath,
@@ -214,12 +241,13 @@ export default class MiniApp {
             miniapp: {name: this.name, localPath: this.path},
             outFolder: `${this.path}/android`,
             verbose,
-            headless: this.isHeadLess
+            headless: this.isHeadLess,
+            platform: 'android'
         };
 
         // Generate initial runner project if it hasn't been created yet
         if (!fs.existsSync('android')) {
-            log.info(`Generating runner Android project`);
+            log.info(`Generating runner android project`);
             await generateRunner(runnerConfig);
         }
         // Otherwise just regenerates container library

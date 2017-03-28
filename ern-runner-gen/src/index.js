@@ -3,10 +3,16 @@ import shell from 'shelljs';
 import Mustache from 'mustache';
 import readDir from 'fs-readdir-recursive';
 import {generateContainer} from '@walmart/ern-container-gen';
+import child_process from 'child_process';
 
 const workingFolder = process.cwd();
+const execSync = child_process.execSync;
 
 let log;
+
+// Path to ern platform root folder
+const ERN_PATH = `${process.env['HOME']}/.ern`;
+const CONTAINER_GEN_OUT_FOLDER = `${ERN_PATH}/containergen/out`;
 
 //=============================================================================
 // fs async wrappers
@@ -70,6 +76,7 @@ function camelCase(string) {
 //=============================================================================
 
 const RUNNER_CONTAINER_POM_VERSION = '1.0.0-SNAPSHOT';
+const RUNNER_CONTAINER_FRAMEWORK_VERSION = '1.0.0';
 
 // Generate the runner project (Android only as of now)
 // platformPath : Path to the ern-platform to use
@@ -82,7 +89,8 @@ export async function generateRunner({
     miniapp,
     outFolder,
     verbose,
-    headless
+    headless,
+    platform
 }) {
     try {
         log = require('console-log-level')({
@@ -95,6 +103,7 @@ export async function generateRunner({
         }
 
         const view = {
+            miniAppName: miniapp.name,
             pascalCaseMiniAppName: pascalCase(miniapp.name),
             camelCaseMiniAppName: camelCase(miniapp.name),
             headless
@@ -103,17 +112,29 @@ export async function generateRunner({
         await generateContainerForRunner({
             platformPath,
             plugins,
-            miniapp
+            miniapp,
+            platform
         });
 
         shell.mkdir(outFolder);
-        shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outFolder);
-        const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
-            (f) => (!f.endsWith('.jar') && !f.endsWith('.png')));
-        for (const file of files) {
-            await mustacheRenderToOutputFileUsingTemplateFile(
-                `${outFolder}/${file}`, view, `${outFolder}/${file}`);
+
+        if (platform === 'android') {
+            shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outFolder);
+            const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
+                (f) => (!f.endsWith('.jar') && !f.endsWith('.png')));
+            for (const file of files) {
+                await mustacheRenderToOutputFileUsingTemplateFile(
+                    `${outFolder}/${file}`, view, `${outFolder}/${file}`);
+            }
+        } else if (platform === 'ios') {
+            shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/ios/*`, outFolder);
+            const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/ios`);
+            for (const file of files) {
+                await mustacheRenderToOutputFileUsingTemplateFile(
+                    `${outFolder}/${file}`, view, `${outFolder}/${file}`);
+            }
         }
+        
     } catch (e) {
         log.error("Something went wrong: " + e);
         throw e;
@@ -124,19 +145,30 @@ export async function generateContainerForRunner({
     platformPath,
     plugins,
     miniapp,
-    verbose
+    verbose,
+    platform,
+    outFolder
 }) {
     log = require('console-log-level')({
         prefix: () => '[ern-runner-gen]',
         level: verbose ? 'info' : 'warn'
     });
 
-    const generator = {
-        platform: 'android',
-        name: 'maven',
-        containerVersion: RUNNER_CONTAINER_POM_VERSION
-    };
-
+    let generator;
+    if (platform === 'android') {
+        generator = {
+            platform: 'android',
+            name: 'maven',
+            containerVersion: RUNNER_CONTAINER_POM_VERSION
+        };
+    } else if (platform === 'ios') {
+        generator = {
+            platform: 'ios',
+            name: 'github',
+            containerVersion: RUNNER_CONTAINER_FRAMEWORK_VERSION
+        }
+    }
+    
     await generateContainer({
         nativeAppName: camelCase(miniapp.name),
         generator,
@@ -144,5 +176,14 @@ export async function generateContainerForRunner({
         plugins,
         miniapps: [miniapp]
     })
+
+    // For iOS we need to build the container xcodeproj so that it builds
+    // the ElectrodeContainer.framework that we need to inject in the 
+    // runner project
+    if (platform === 'ios') {
+        shell.cd(`${CONTAINER_GEN_OUT_FOLDER}/ios`)
+        execSync(`xcodebuild -scheme ElectrodeContainer -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' SYMROOT="${CONTAINER_GEN_OUT_FOLDER}/ios/build" build`)
+        shell.cp('-rf', `${CONTAINER_GEN_OUT_FOLDER}/ios/build/Debug-iphonesimulator/ElectrodeContainer.framework`, `${outFolder}/ErnRunner/Frameworks`)
+    }
 }
 
