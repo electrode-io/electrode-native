@@ -6,6 +6,8 @@ import fs from 'fs';
 import _ from 'lodash';
 import shell from 'shelljs';
 import readDir from 'fs-readdir-recursive';
+var simctl = require('node-simctl');
+import inquirer from 'inquirer';
 import child_process from 'child_process';
 const log = require('console-log-level')();
 
@@ -220,6 +222,15 @@ export default class MiniApp {
             platform: 'ios'
         };
 
+        const iosDevices = await simctl.getDevices()
+        const bootedIosDevices = _.filter(
+                                    _.flattenDeep(
+                                        _.map(iosDevices, (val, key) => val)
+                                        ), (device) => device.state === 'Booted')
+        if (bootedIosDevices.length === 0) {
+            throw new Error('No iOS running devices found')
+        }
+
         // Generate initial runner project if it hasn't been created yet
         if (!fs.existsSync('ios')) {
             log.info(`Generating runner iOS project`);
@@ -231,7 +242,24 @@ export default class MiniApp {
             await generateContainerForRunner(runnerConfig);
         }
 
-        // Todo : runIos
+        const inquirerChoices = _.map(bootedIosDevices, (val, key) => ({ 
+            name: `${val.name} (SDK ${val.sdk})`,
+            value: val
+        }))
+
+        const answer = await inquirer.prompt([{
+            type: 'list',
+            name: 'device',
+            message: 'Choose iOS simulator',
+            choices: inquirerChoices
+        }])
+
+        const device = answer.device
+        shell.cd(`${this.path}/ios`)
+        execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name},OS=${device.sdk}' SYMROOT="${this.path}/ios/build" build`)
+
+        await simctl.installApp(device.udid, `${this.path}/ios/build/Debug-iphonesimulator/ErnRunner.app`)
+        await simctl.launch(device.udid, 'MyCompany.ErnRunner')
     }
 
     async runInAndroidRunner(verbose) {

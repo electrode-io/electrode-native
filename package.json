@@ -52,7 +52,8 @@
     "unirest": "^0.5.1",
     "update-notifier": "^1.0.3",
     "@walmart/xcode-ern": "^1.0.0",
-    "yargs": "^6.6.0"
+    "yargs": "^6.6.0",
+    "node-simctl": "^3.5.5"
   },
   "engines": {
     "node": ">=4"

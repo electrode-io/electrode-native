@@ -28,6 +28,10 @@ ajv@^4.9.1:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
 
+amdefine@>=0.0.4:
+  version "1.0.1"
+  resolved "http://npme.walmart.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
+
 ammo@2.x.x:
   version "2.0.3"
   resolved "http://npme.walmart.com/ammo/-/ammo-2.0.3.tgz#914bbcf65b043ed0f58a8a9d0196e250ec51e6a7"
@@ -53,12 +57,37 @@ ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "http://npme.walmart.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
 
+ansi@^0.3.0, ansi@~0.3.1:
+  version "0.3.1"
+  resolved "http://npme.walmart.com/ansi/-/ansi-0.3.1.tgz#0c42d4fb17160d5a9af1e484bace1c66922c1b21"
+
 anymatch@^1.3.0:
   version "1.3.0"
   resolved "http://npme.walmart.com/anymatch/-/anymatch-1.3.0.tgz#a3e52fa39168c825ff57b0248126ce5a8ff95507"
   dependencies:
     arrify "^1.0.0"
     micromatch "^2.1.5"
+
+appium-support@^2.0.10, appium-support@^2.4.0:
+  version "2.6.0"
+  resolved "http://npme.walmart.com/appium-support/-/appium-support-2.6.0.tgz#8e502ab75ba84316c5493b6d4a7decff8c796114"
+  dependencies:
+    babel-runtime "=5.8.24"
+    bluebird "^2.9.25"
+    bplist-creator "^0.0.6"
+    bplist-parser "^0.1.0"
+    glob "^6.0.4"
+    lodash "^4.2.1"
+    md5-file "^2.0.4"
+    mkdirp "^0.5.1"
+    mv "^2.1.1"
+    ncp "^2.0.0"
+    npmlog "^2.0.4"
+    plist "^1.2.0"
+    rimraf "^2.5.1"
+    source-map-support "^0.4.6"
+    teen_process "^1.5.1"
+    which "^1.2.4"
 
 aproba@^1.0.3:
   version "1.1.1"
@@ -81,9 +110,21 @@ arr-flatten@^1.0.1:
   version "1.0.1"
   resolved "http://npme.walmart.com/arr-flatten/-/arr-flatten-1.0.1.tgz#e5ffe54d45e19f32f216e91eb99c8ce892bb604b"
 
+array-filter@~0.0.0:
+  version "0.0.1"
+  resolved "http://npme.walmart.com/array-filter/-/array-filter-0.0.1.tgz#7da8cf2e26628ed732803581fd21f67cacd2eeec"
+
 array-find-index@^1.0.1:
   version "1.0.2"
   resolved "http://npme.walmart.com/array-find-index/-/array-find-index-1.0.2.tgz#df010aa1287e164bbda6f9723b0a96a1ec4187a1"
+
+array-map@~0.0.0:
+  version "0.0.0"
+  resolved "http://npme.walmart.com/array-map/-/array-map-0.0.0.tgz#88a2bab73d1cf7bcd5c1b118a003f66f665fa662"
+
+array-reduce@~0.0.0:
+  version "0.0.0"
+  resolved "http://npme.walmart.com/array-reduce/-/array-reduce-0.0.0.tgz#173899d3ffd1c7d9383e4479525dbe278cab5f2b"
 
 array-unique@^0.2.1:
   version "0.2.1"
@@ -126,6 +167,18 @@ async@^2.0.1:
 async@~0.9.0:
   version "0.9.2"
   resolved "http://npme.walmart.com/async/-/async-0.9.2.tgz#aea74d5e61c1f899613bf64bda66d4c78f2fd17d"
+
+asyncbox@^2.3.1:
+  version "2.3.1"
+  resolved "http://npme.walmart.com/asyncbox/-/asyncbox-2.3.1.tgz#2eb612c9f2c291acc535823cf09dca4646b7ff70"
+  dependencies:
+    babel-runtime "=5.5.5"
+    bluebird "^2.9.34"
+    chai "^3.2.0"
+    chai-as-promised "^5.1.0"
+    es6-mapify "^1.0.0"
+    lodash "^3.10.1"
+    source-map-support "^0.3.1"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -597,6 +650,18 @@ babel-register@^6.22.0, babel-register@^6.24.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
+babel-runtime@=5.5.5:
+  version "5.5.5"
+  resolved "http://npme.walmart.com/babel-runtime/-/babel-runtime-5.5.5.tgz#e1929d18f8a556df3fd098450c7e4e1a11beb780"
+  dependencies:
+    core-js "^0.9.0"
+
+babel-runtime@=5.8.24:
+  version "5.8.24"
+  resolved "http://npme.walmart.com/babel-runtime/-/babel-runtime-5.8.24.tgz#3014a6b01bd4cb74720f13925253ae0d9268147b"
+  dependencies:
+    core-js "^1.0.0"
+
 babel-runtime@^6.18.0, babel-runtime@^6.22.0:
   version "6.23.0"
   resolved "http://npme.walmart.com/babel-runtime/-/babel-runtime-6.23.0.tgz#0a9489f144de70efb3ce4300accdb329e2fc543b"
@@ -655,6 +720,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+big-integer@^1.6.7:
+  version "1.6.17"
+  resolved "http://npme.walmart.com/big-integer/-/big-integer-1.6.17.tgz#f0dcf5109a949e42a993ee3e8fb2070452817b51"
+
 binary-extensions@^1.0.0:
   version "1.8.0"
   resolved "http://npme.walmart.com/binary-extensions/-/binary-extensions-1.8.0.tgz#48ec8d16df4377eae5fa5884682480af4d95c774"
@@ -674,6 +743,10 @@ block-stream@*:
 bluebird@3.4.1:
   version "3.4.1"
   resolved "http://npme.walmart.com/bluebird/-/bluebird-3.4.1.tgz#b731ddf48e2dd3bedac2e75e1215a11bcb91fa07"
+
+bluebird@^2.9.25, bluebird@^2.9.34:
+  version "2.11.0"
+  resolved "http://npme.walmart.com/bluebird/-/bluebird-2.11.0.tgz#534b9033c022c9579c56ba3b3e5a5caafbb650e1"
 
 boom@2.x.x:
   version "2.10.1"
@@ -707,9 +780,21 @@ bplist-creator@0.0.4:
   dependencies:
     stream-buffers "~0.2.3"
 
+bplist-creator@^0.0.6:
+  version "0.0.6"
+  resolved "http://npme.walmart.com/bplist-creator/-/bplist-creator-0.0.6.tgz#fef069bee85975b2ddcc2264aaa7c50dc17a3c7e"
+  dependencies:
+    stream-buffers "~2.2.0"
+
 bplist-parser@0.0.6:
   version "0.0.6"
   resolved "http://npme.walmart.com/bplist-parser/-/bplist-parser-0.0.6.tgz#38da3471817df9d44ab3892e27707bbbd75a11b9"
+
+bplist-parser@^0.1.0:
+  version "0.1.1"
+  resolved "http://npme.walmart.com/bplist-parser/-/bplist-parser-0.1.1.tgz#d60d5dcc20cba6dc7e1f299b35d3e1f95dafbae6"
+  dependencies:
+    big-integer "^1.6.7"
 
 brace-expansion@^1.0.0:
   version "1.1.6"
@@ -801,7 +886,11 @@ catbox@7.x.x:
     hoek "4.x.x"
     joi "10.x.x"
 
-chai@^3.5.0:
+chai-as-promised@^5.1.0:
+  version "5.3.0"
+  resolved "http://npme.walmart.com/chai-as-promised/-/chai-as-promised-5.3.0.tgz#09d7a402908aa70dfdbead53e5853fc79d3ef21c"
+
+chai@^3.2.0, chai@^3.5.0:
   version "3.5.0"
   resolved "http://npme.walmart.com/chai/-/chai-3.5.0.tgz#4d02637b067fe958bdbfdd3a40ec56fef7373247"
   dependencies:
@@ -907,7 +996,7 @@ command-join@^2.0.0:
   version "2.0.0"
   resolved "http://npme.walmart.com/command-join/-/command-join-2.0.0.tgz#52e8b984f4872d952ff1bdc8b98397d27c7144cf"
 
-commander@2.9.0, commander@^2.8.1, commander@^2.9.0:
+commander@2.9.0, commander@2.9.x, commander@^2.8.1, commander@^2.9.0:
   version "2.9.0"
   resolved "http://npme.walmart.com/commander/-/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
   dependencies:
@@ -956,6 +1045,14 @@ content@3.x.x:
 convert-source-map@^1.1.0:
   version "1.4.0"
   resolved "http://npme.walmart.com/convert-source-map/-/convert-source-map-1.4.0.tgz#e3dad195bf61bfe13a7a3c73e9876ec14a0268f3"
+
+core-js@^0.9.0:
+  version "0.9.18"
+  resolved "http://npme.walmart.com/core-js/-/core-js-0.9.18.tgz#13f458e430232b0f4ec1f480da7c2f5288e9d095"
+
+core-js@^1.0.0:
+  version "1.2.7"
+  resolved "http://npme.walmart.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
 core-js@^2.4.0:
   version "2.4.1"
@@ -1087,6 +1184,12 @@ error-ex@^1.2.0:
   resolved "http://npme.walmart.com/error-ex/-/error-ex-1.3.1.tgz#f855a86ce61adc4e8621c3cda21e7a7612c3a8dc"
   dependencies:
     is-arrayish "^0.2.1"
+
+es6-mapify@^1.0.0:
+  version "1.0.0"
+  resolved "http://npme.walmart.com/es6-mapify/-/es6-mapify-1.0.0.tgz#4c745ea075505ea7c616bc2e652eecea6e18de7f"
+  dependencies:
+    traceur "~0.0.74"
 
 escape-string-regexp@1.0.5, escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
@@ -1255,6 +1358,16 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
+gauge@~1.2.5:
+  version "1.2.7"
+  resolved "http://npme.walmart.com/gauge/-/gauge-1.2.7.tgz#e9cec5483d3d4ee0ef44b60a7d99e4935e136d93"
+  dependencies:
+    ansi "^0.3.0"
+    has-unicode "^2.0.0"
+    lodash.pad "^4.1.0"
+    lodash.padend "^4.1.0"
+    lodash.padstart "^4.1.0"
+
 gauge@~2.7.1:
   version "2.7.3"
   resolved "http://npme.walmart.com/gauge/-/gauge-2.7.3.tgz#1c23855f962f17b3ad3d0dc7443f304542edfe09"
@@ -1305,6 +1418,16 @@ glob-parent@^2.0.0:
   dependencies:
     is-glob "^2.0.0"
 
+glob@5.0.x:
+  version "5.0.15"
+  resolved "http://npme.walmart.com/glob/-/glob-5.0.15.tgz#1bc936b9e02f4a603fcc222ecf7633d30b8b93b1"
+  dependencies:
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "2 || 3"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
 glob@7.0.5:
   version "7.0.5"
   resolved "http://npme.walmart.com/glob/-/glob-7.0.5.tgz#b4202a69099bbb4d292a7c1b95b6682b67ebdc95"
@@ -1313,6 +1436,16 @@ glob@7.0.5:
     inflight "^1.0.4"
     inherits "2"
     minimatch "^3.0.2"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
+glob@^6.0.1, glob@^6.0.4:
+  version "6.0.4"
+  resolved "http://npme.walmart.com/glob/-/glob-6.0.4.tgz#0f08860f6a155127b2fadd4f9ce24b1aab6e4d22"
+  dependencies:
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "2 || 3"
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
@@ -1891,11 +2024,23 @@ lodash.keys@^3.0.0:
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
 
-lodash@^3.5.0:
+lodash.pad@^4.1.0:
+  version "4.5.1"
+  resolved "http://npme.walmart.com/lodash.pad/-/lodash.pad-4.5.1.tgz#4330949a833a7c8da22cc20f6a26c4d59debba70"
+
+lodash.padend@^4.1.0:
+  version "4.6.1"
+  resolved "http://npme.walmart.com/lodash.padend/-/lodash.padend-4.6.1.tgz#53ccba047d06e158d311f45da625f4e49e6f166e"
+
+lodash.padstart@^4.1.0:
+  version "4.6.1"
+  resolved "http://npme.walmart.com/lodash.padstart/-/lodash.padstart-4.6.1.tgz#d2e3eebff0d9d39ad50f5cbd1b52a7bce6bb611b"
+
+lodash@^3.10.1, lodash@^3.5.0:
   version "3.10.1"
   resolved "http://npme.walmart.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.14.0, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
+lodash@^4.14.0, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0:
   version "4.17.4"
   resolved "http://npme.walmart.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -1932,6 +2077,10 @@ lru-cache@^4.0.1:
 map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "http://npme.walmart.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
+
+md5-file@^2.0.4:
+  version "2.0.7"
+  resolved "http://npme.walmart.com/md5-file/-/md5-file-2.0.7.tgz#307f78bd04ccb054e467ec661cfa5a9afdc9f210"
 
 meow@^3.7.0:
   version "3.7.0"
@@ -2001,7 +2150,7 @@ mimos@3.x.x:
     hoek "4.x.x"
     mime-db "1.x.x"
 
-minimatch@3.0.2, minimatch@^3.0.0, minimatch@^3.0.2:
+"minimatch@2 || 3", minimatch@3.0.2, minimatch@^3.0.0, minimatch@^3.0.2:
   version "3.0.2"
   resolved "http://npme.walmart.com/minimatch/-/minimatch-3.0.2.tgz#0f398a7300ea441e9c348c83d98ab8c9dbf9c40a"
   dependencies:
@@ -2015,7 +2164,7 @@ minimist@^1.1.3, minimist@^1.2.0:
   version "1.2.0"
   resolved "http://npme.walmart.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
-mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
+mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0.5.1:
   version "0.5.1"
   resolved "http://npme.walmart.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
@@ -2057,9 +2206,21 @@ mute-stream@0.0.7:
   version "0.0.7"
   resolved "http://npme.walmart.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
+mv@^2.1.1:
+  version "2.1.1"
+  resolved "http://npme.walmart.com/mv/-/mv-2.1.1.tgz#ae6ce0d6f6d5e0a4f7d893798d03c1ea9559b6a2"
+  dependencies:
+    mkdirp "~0.5.1"
+    ncp "~2.0.0"
+    rimraf "~2.4.0"
+
 nan@^2.3.0:
   version "2.5.1"
   resolved "http://npme.walmart.com/nan/-/nan-2.5.1.tgz#d5b01691253326a97a2bbee9e61c55d8d60351e2"
+
+ncp@^2.0.0, ncp@~2.0.0:
+  version "2.0.0"
+  resolved "http://npme.walmart.com/ncp/-/ncp-2.0.0.tgz#195a21d6c46e361d2fb1281ba38b91e9df7bdbb3"
 
 nigel@2.x.x:
   version "2.0.2"
@@ -2087,6 +2248,17 @@ node-pre-gyp@^0.6.29:
     semver "^5.3.0"
     tar "^2.2.1"
     tar-pack "^3.4.0"
+
+node-simctl@^3.5.5:
+  version "3.5.5"
+  resolved "http://npme.walmart.com/node-simctl/-/node-simctl-3.5.5.tgz#4d3f8b9a767feac8090659e26a4b851f5ef8d2a3"
+  dependencies:
+    appium-support "^2.4.0"
+    asyncbox "^2.3.1"
+    babel-runtime "=5.8.24"
+    lodash "^4.2.1"
+    source-map-support "^0.4.0"
+    teen_process "^1.5.1"
 
 node-status-codes@^1.0.0:
   version "1.0.0"
@@ -2128,6 +2300,14 @@ normalize-package-data@^2.3.2, normalize-package-data@^2.3.4:
 normalize-path@^2.0.1:
   version "2.0.1"
   resolved "http://npme.walmart.com/normalize-path/-/normalize-path-2.0.1.tgz#47886ac1662760d4261b7d979d241709d3ce3f7a"
+
+npmlog@^2.0.4:
+  version "2.0.4"
+  resolved "http://npme.walmart.com/npmlog/-/npmlog-2.0.4.tgz#98b52530f2514ca90d09ec5b22c8846722375692"
+  dependencies:
+    ansi "~0.3.1"
+    are-we-there-yet "~1.1.2"
+    gauge "~1.2.5"
 
 npmlog@^4.0.2:
   version "4.0.2"
@@ -2310,7 +2490,7 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "http://npme.walmart.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
-plist@1.2.0:
+plist@1.2.0, plist@^1.2.0:
   version "1.2.0"
   resolved "http://npme.walmart.com/plist/-/plist-1.2.0.tgz#084b5093ddc92506e259f874b8d9b1afb8c79593"
   dependencies:
@@ -2610,11 +2790,21 @@ rimraf@2, rimraf@^2.4.4, rimraf@^2.5.1, rimraf@^2.6.0, rimraf@^2.6.1:
   dependencies:
     glob "^7.0.5"
 
+rimraf@~2.4.0:
+  version "2.4.5"
+  resolved "http://npme.walmart.com/rimraf/-/rimraf-2.4.5.tgz#ee710ce5d93a8fdb856fb5ea8ff0e2d75934b2da"
+  dependencies:
+    glob "^6.0.1"
+
 rmdir@^1.2.0:
   version "1.2.0"
   resolved "http://npme.walmart.com/rmdir/-/rmdir-1.2.0.tgz#4fe0357cb06168c258e73e968093dc4e8a0f3253"
   dependencies:
     node.flow "1.2.3"
+
+rsvp@^3.0.13:
+  version "3.5.0"
+  resolved "http://npme.walmart.com/rsvp/-/rsvp-3.5.0.tgz#a62c573a4ae4e1dfd0697ebc6242e79c681eaa34"
 
 run-async@^2.2.0:
   version "2.3.0"
@@ -2640,6 +2830,10 @@ semver-diff@^2.0.0:
   version "5.3.0"
   resolved "http://npme.walmart.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
+semver@^4.3.3:
+  version "4.3.6"
+  resolved "http://npme.walmart.com/semver/-/semver-4.3.6.tgz#300bc6e0e86374f7ba61068b5b1ecd57fc6532da"
+
 set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"
   resolved "http://npme.walmart.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
@@ -2647,6 +2841,15 @@ set-blocking@^2.0.0, set-blocking@~2.0.0:
 set-immediate-shim@^1.0.1:
   version "1.0.1"
   resolved "http://npme.walmart.com/set-immediate-shim/-/set-immediate-shim-1.0.1.tgz#4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61"
+
+shell-quote@^1.4.3:
+  version "1.6.1"
+  resolved "http://npme.walmart.com/shell-quote/-/shell-quote-1.6.1.tgz#f4781949cce402697127430ea3b3c5476f481767"
+  dependencies:
+    array-filter "~0.0.0"
+    array-map "~0.0.0"
+    array-reduce "~0.0.0"
+    jsonify "~0.0.0"
 
 shelljs@^0.7.6:
   version "0.7.7"
@@ -2693,11 +2896,29 @@ sorted-object@^2.0.0:
   version "2.0.1"
   resolved "http://npme.walmart.com/sorted-object/-/sorted-object-2.0.1.tgz#7d631f4bd3a798a24af1dffcfbfe83337a5df5fc"
 
-source-map-support@^0.4.2:
+source-map-support@^0.2.10, source-map-support@~0.2.8:
+  version "0.2.10"
+  resolved "http://npme.walmart.com/source-map-support/-/source-map-support-0.2.10.tgz#ea5a3900a1c1cb25096a0ae8cc5c2b4b10ded3dc"
+  dependencies:
+    source-map "0.1.32"
+
+source-map-support@^0.3.1:
+  version "0.3.3"
+  resolved "http://npme.walmart.com/source-map-support/-/source-map-support-0.3.3.tgz#34900977d5ba3f07c7757ee72e73bb1a9b53754f"
+  dependencies:
+    source-map "0.1.32"
+
+source-map-support@^0.4.0, source-map-support@^0.4.2, source-map-support@^0.4.6:
   version "0.4.14"
   resolved "http://npme.walmart.com/source-map-support/-/source-map-support-0.4.14.tgz#9d4463772598b86271b4f523f6c1f4e02a7d6aef"
   dependencies:
     source-map "^0.5.6"
+
+source-map@0.1.32:
+  version "0.1.32"
+  resolved "http://npme.walmart.com/source-map/-/source-map-0.1.32.tgz#c8b6c167797ba4740a8ea33252162ff08591b266"
+  dependencies:
+    amdefine ">=0.0.4"
 
 source-map@^0.5.0, source-map@^0.5.6:
   version "0.5.6"
@@ -2753,6 +2974,10 @@ statehood@5.x.x:
 stream-buffers@~0.2.3:
   version "0.2.6"
   resolved "http://npme.walmart.com/stream-buffers/-/stream-buffers-0.2.6.tgz#181c08d5bb3690045f69401b9ae6a7a0cf3313fc"
+
+stream-buffers@~2.2.0:
+  version "2.2.0"
+  resolved "http://npme.walmart.com/stream-buffers/-/stream-buffers-2.2.0.tgz#91d5f5130d1cef96dcfa7f726945188741d09ee4"
 
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
@@ -2848,7 +3073,17 @@ tar@^2.2.1:
     fstream "^1.0.2"
     inherits "2"
 
-through@^2.3.6:
+teen_process@^1.5.1:
+  version "1.8.2"
+  resolved "http://npme.walmart.com/teen_process/-/teen_process-1.8.2.tgz#c599b89116a2a544510f8005f725ce97c8156c0d"
+  dependencies:
+    appium-support "^2.0.10"
+    babel-runtime "=5.8.24"
+    shell-quote "^1.4.3"
+    source-map-support "^0.2.10"
+    through "^2.3.8"
+
+through@^2.3.6, through@^2.3.8:
   version "2.3.8"
   resolved "http://npme.walmart.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
@@ -2883,6 +3118,16 @@ tough-cookie@~2.3.0:
   resolved "http://npme.walmart.com/tough-cookie/-/tough-cookie-2.3.2.tgz#f081f76e4c85720e6c37a5faced737150d84072a"
   dependencies:
     punycode "^1.4.1"
+
+traceur@~0.0.74:
+  version "0.0.111"
+  resolved "http://npme.walmart.com/traceur/-/traceur-0.0.111.tgz#c04de74d14696c3373427de4fc08ecaf913fc3a1"
+  dependencies:
+    commander "2.9.x"
+    glob "5.0.x"
+    rsvp "^3.0.13"
+    semver "^4.3.3"
+    source-map-support "~0.2.8"
 
 trim-newlines@^1.0.0:
   version "1.0.0"
@@ -3004,7 +3249,7 @@ which-module@^1.0.0:
   version "1.0.0"
   resolved "http://npme.walmart.com/which-module/-/which-module-1.0.0.tgz#bba63ca861948994ff307736089e3b96026c2a4f"
 
-which@^1.2.9:
+which@^1.2.4, which@^1.2.9:
   version "1.2.14"
   resolved "http://npme.walmart.com/which/-/which-1.2.14.tgz#9a87c4378f03e827cecaf1acdf56c736c01c14e5"
   dependencies:

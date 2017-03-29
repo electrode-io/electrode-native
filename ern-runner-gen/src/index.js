@@ -113,7 +113,8 @@ export async function generateRunner({
             platformPath,
             plugins,
             miniapp,
-            platform
+            platform,
+            outFolder
         });
 
         shell.mkdir(outFolder);
