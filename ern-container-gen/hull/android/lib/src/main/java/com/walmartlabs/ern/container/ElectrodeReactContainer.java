@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import okhttp3.OkHttpClient;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.SafeActivityStarter;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactInstanceManagerBuilder;
@@ -108,6 +109,12 @@ public class ElectrodeReactContainer {
 
     public static ElectrodeReactContainer getInstance() {
         return sInstance;
+    }
+
+    public static void startActivitySafely(Intent intent) {
+       if (null != sReactInstanceManager) {
+            new SafeActivityStarter(sReactInstanceManager.getCurrentReactContext(), intent).startActivity();
+        }
     }
 
     public static Activity getCurrentActivity() {
