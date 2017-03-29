@@ -15,7 +15,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ArrayList;
 
+import okhttp3.OkHttpClient;
+
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
@@ -45,6 +48,11 @@ public class ElectrodeReactContainer {
                             {{/plugins}} ) {
         // ReactNative general config
         this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
+
+        // Replace OkHttpClient with client provided instance, if any
+        if (reactContainerConfig.okHttpClient != null) {
+          OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
+        }
 
         // Ask for overlay permission for the application if
         // developper mode is enabled and android version is Marshmallow
@@ -144,9 +152,15 @@ public class ElectrodeReactContainer {
 
     public static class Config {
         private boolean isReactNativeDeveloperSupport;
+        private OkHttpClient okHttpClient;
 
         public Config isReactNativeDeveloperSupport(boolean value) {
             isReactNativeDeveloperSupport = value;
+            return this;
+        }
+
+        public Config useOkHttpClient(OkHttpClient value) {
+            okHttpClient = value;
             return this;
         }
 
