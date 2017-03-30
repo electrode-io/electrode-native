@@ -240,7 +240,11 @@ class Cauldron {
 
     // Get a native dependency from the cauldron
     async getNativeDependency(appName, platformName, versionName, depName) {
-        return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
+        try {
+            return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
+        } catch (e) {
+            return null;
+        }
     }
 
     // Update an existing native dependency version
