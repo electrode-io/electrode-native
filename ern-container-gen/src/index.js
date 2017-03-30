@@ -649,12 +649,18 @@ async function reactNativeBundleAndroid(paths) {
 }
 
 async function reactNativeBundleIos(paths) {
+  const miniAppOutFolder = `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp`;
+
+  if (!fs.existsSync(miniAppOutFolder)) {
+    shell.mkdir('-p', miniAppOutFolder);
+  }
+
   return reactNative.bundle({
     entryFile: 'index.ios.js',
     dev: false,
-    bundleOutput: `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp.jsbundle`,
+    bundleOutput: `${miniAppOutFolder}/MiniApp.jsbundle`,
     platform: 'ios',
-    assetsDest: `${paths.outFolder}/ios/ElectrodeContainer/Assets`
+    assetsDest: `${miniAppOutFolder}`
   })
 }
 
