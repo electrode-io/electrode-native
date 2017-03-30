@@ -1,3 +1,5 @@
+import {reactNative} from '@walmart/ern-util';
+
 // Node
 import child_process from 'child_process';
 import fs from 'fs';
@@ -637,49 +639,23 @@ function clearReactPackagerCache() {
 }
 
 async function reactNativeBundleAndroid(paths) {
-  return new Promise((resolve, reject) => {
-    exec(`react-native bundle \
-      --entry-file=index.android.js \
-      --dev=false --platform=android \
-      --bundle-output=${paths.outFolder}/android/lib/src/main/assets/index.android.bundle \
-      --assets-dest=${paths.outFolder}/android/lib/src/main/res`,
-        (err, stdout, stderr) => {
-          if (err) {
-            log.error(err);
-            reject(err);
-          }
-          if (stderr) {
-            log.error(stderr);
-          }
-          if (stdout) {
-            log.info(stdout);
-            resolve(stdout);
-          }
-        });
-  });
+  return reactNative.bundle({
+    entryFile: 'index.android.js',
+    dev: false,
+    bundleOutput: `${paths.outFolder}/android/lib/src/main/assets/index.android.bundle`,
+    platform: 'android',
+    assetsDest: `${paths.outFolder}/android/lib/src/main/res`
+  })
 }
 
 async function reactNativeBundleIos(paths) {
-  return new Promise((resolve, reject) => {
-    exec(`react-native bundle \
-      --entry-file=index.ios.js \
-      --dev=false --platform=ios \
-      --bundle-output=${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp.jsbundle \
-      --assets-dest=${paths.outFolder}/ios/ElectrodeContainer/Assets`,
-        (err, stdout, stderr) => {
-          if (err) {
-            log.error(err);
-            reject(err);
-          }
-          if (stderr) {
-            log.error(stderr);
-          }
-          if (stdout) {
-            log.info(stdout);
-            resolve(stdout);
-          }
-        });
-  });
+  return reactNative.bundle({
+    entryFile: 'index.ios.js',
+    dev: false,
+    bundleOutput: `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp.jsbundle`,
+    platform: 'ios',
+    assetsDest: `${paths.outFolder}/ios/ElectrodeContainer/Assets`
+  })
 }
 
 export async function generateMiniAppsComposite(miniapps, folder, {verbose, plugins}) {
