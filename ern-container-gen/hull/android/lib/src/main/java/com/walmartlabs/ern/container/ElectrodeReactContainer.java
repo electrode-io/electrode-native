@@ -125,6 +125,13 @@ public class ElectrodeReactContainer {
         return null;
     }
 
+    public static ReactContext getCurrentReactContext() {
+        if (null != sReactInstanceManager) {
+            return sReactInstanceManager.getCurrentReactContext();
+        }
+        return null;
+    }
+
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
             @NonNull final Config reactContainerConfig
