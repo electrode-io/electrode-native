@@ -16,7 +16,6 @@
       "addHeaderSearchPath": [
         "\"$(SRCROOT)/ElectrodeContainer/Libraries/ElectrodeReactNativeBridge/**\""
       ]
-    },
-    "groupName": "ElectrodeReactNativeBridge"
+    }
   }
 }
