@@ -2,7 +2,7 @@
 const babelRc = require('../babelrc.json');
 process.argv.push('--source-maps');
 process.argv.push('--presets');
-process.argv.push(babelRc.presets.join(','));
+process.argv.push(babelRc.presets);
 process.argv.push('--plugins');
 process.argv.push(babelRc.plugins.join(','));
 // src --out-dir distrib
