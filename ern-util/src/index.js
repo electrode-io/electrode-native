@@ -10,6 +10,7 @@ import _required from './required';
 import _spin from './spin';
 import _tagOneLine from './tagoneline';
 import _yarn from './yarn';
+import _codePush from './codePush';
 
 export const android = _android;
 export const cauldron = _cauldron;
@@ -22,6 +23,7 @@ export const required = _required;
 export const spin = _spin;
 export const tagOneLine = _tagOneLine;
 export const yarn = _yarn;
+export const codePush = _codePush;
 
 export default ({
     android: _android,
@@ -34,5 +36,6 @@ export default ({
     required: _required,
     spin: _spin,
     tagOneLine: _tagOneLine,
-    yarn: _yarn
+    yarn: _yarn,
+    codePush: _codePush
 });

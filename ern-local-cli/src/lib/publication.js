@@ -3,7 +3,8 @@ import {
     config as ernConfig,
     required,
     explodeNapSelector as explodeNativeAppSelector,
-    cauldron
+    cauldron,
+    codePush
 } from '@walmart/ern-util';
 import {nativeCompatCheck, getNativeAppCompatibilityReport} from './compatibility.js';
 import MiniApp from './miniapp.js';
@@ -178,7 +179,14 @@ async function publishOta(fullNapSelector, {verbose, force} = {}) {
 
         const nativeApp = [...explodeNativeAppSelector(fullNapSelector)];
 
-        execSync(`code-push release-react ${nativeApp[0]} ${nativeApp[1]} -t ${nativeApp[2]} -m -d Production`);
+        await codePush.releaseReact(
+          nativeApp[0] /* appName*/,
+          nativeApp[1] /* platform */, {
+            targetBinaryVersion: nativeApp[2],
+            mandatory: true,
+            deploymentName: 'Production'
+          }
+        );
     } catch (e) {
         log.error(`[publishOta] failed: ${e}`);
     }

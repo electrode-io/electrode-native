@@ -77,7 +77,7 @@ export default class MiniApp {
             //
             // Create application using react-native init command
             await spin(`Running react-native init using react-native v${rnVersion}`,
-                reactNative(appName, rnVersion));
+                reactNative.init(appName, rnVersion));
 
             //
             // Patch package.json file of application

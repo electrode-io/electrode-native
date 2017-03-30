@@ -53,7 +53,9 @@
     "update-notifier": "^1.0.3",
     "@walmart/xcode-ern": "^1.0.0",
     "yargs": "^6.6.0",
-    "node-simctl": "^3.5.5"
+    "node-simctl": "^3.5.5",
+    "code-push-cli": "1.12.9-beta",
+    "react-native-cli": "2.0.1"
   },
   "engines": {
     "node": ">=4"
