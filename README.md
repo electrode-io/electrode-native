@@ -29,7 +29,7 @@ Due to the fact that node packages are currently walmart scoped, they are stored
 
 **Android**
 
-If you need run your react-native miniapp standalone in Android or need to run the container generator for Android (this should rather be taken care of by a CI server) you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
+If you intend to run your react-native miniapp standalone in Android or need to run the container generator for Android (this should rather be taken care of by a CI server) you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
 Otherwise, easiest way is to just install the latest version of [Android Studio](https://developer.android.com/studio/index.html).
 
 Make sure to export this env variable pointing to your `sdk` folder :
@@ -39,6 +39,10 @@ export ANDROID_SDK=/Users/your_unix_name/sdk
 ```
 
 If you don't need to work on (or use) Android container generation or only intend to run your miniapp standalone on iOS, do not bother.
+
+**iOS**
+
+If you intend to run you react-native miniapp standalone in iOS or need to run the container generator for iOS (this should rather be taken care of by a CI server), you'll need to have XCode >= 8.2.1 installed on the workstation.
 
 #### Understanding platform structure
 
