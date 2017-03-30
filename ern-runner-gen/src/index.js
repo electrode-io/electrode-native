@@ -109,14 +109,6 @@ export async function generateRunner({
             headless
         };
 
-        await generateContainerForRunner({
-            platformPath,
-            plugins,
-            miniapp,
-            platform,
-            outFolder
-        });
-
         shell.mkdir(outFolder);
 
         if (platform === 'android') {
@@ -135,7 +127,14 @@ export async function generateRunner({
                     `${outFolder}/${file}`, view, `${outFolder}/${file}`);
             }
         }
-        
+
+        await generateContainerForRunner({
+            platformPath,
+            plugins,
+            miniapp,
+            platform,
+            outFolder
+        });
     } catch (e) {
         log.error("Something went wrong: " + e);
         throw e;
