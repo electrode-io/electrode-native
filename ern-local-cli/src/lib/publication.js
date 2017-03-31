@@ -1,3 +1,5 @@
+import MiniApp from './miniapp.js';
+
 import {
     platform,
     config as ernConfig,
@@ -6,9 +8,16 @@ import {
     cauldron,
     codePush
 } from '@walmart/ern-util';
-import {nativeCompatCheck, getNativeAppCompatibilityReport} from './compatibility.js';
-import MiniApp from './miniapp.js';
-import {generateContainer, generateMiniAppsComposite} from '@walmart/ern-container-gen';
+
+import {
+    nativeCompatCheck, 
+    getNativeAppCompatibilityReport
+} from './compatibility.js';
+
+import { 
+    generateContainer, 
+    generateMiniAppsComposite
+} from '@walmart/ern-container-gen';
 
 import _ from 'lodash';
 import emoji from 'node-emoji';
@@ -40,21 +49,24 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
             platform.switchToVersion(nativeApp.ernPlatformVersion);
         }
 
-        if (nativeAppPlatform === 'android') {
-            let generator = ernConfig.obj.libgen.android.generator;
-            generator.containerVersion = version;
-            await generateContainer({
-                nativeAppName,
-                platformPath: platform.currentPlatformVersionPath,
-                generator,
-                plugins,
-                miniapps,
-                verbose
-            });
+         const generator = (platformName === 'android') 
+            ? new MavenGenerator({ 
+                mavenRepositoryUrl: ernConfig.obj.libgen.android.generator.mavenRepositoryUrl,
+                namespace: ernConfig.obj.libgen.android.generator.namespace
+            })
+            : new GithubGenerator({
+                targetRepoUrl: ernConfig.obj.libgen.ios.generator.targetRepoUrl
+            })
 
-        } else {
-            throw new Error(`${platformName} not supported yet`);
-        }
+        await generateContainer({
+            containerVersion: version,
+            nativeAppName,
+            platformPath: platform.currentPlatformVersionPath,
+            generator,
+            plugins,
+            miniapps,
+            verbose
+        });
 
         if (versionBeforeSwitch) {
             platform.switchToVersion(versionBeforeSwitch);

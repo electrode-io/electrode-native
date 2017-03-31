@@ -1,6 +1,10 @@
 import {config as ernConfig, cauldron, explodeNapSelector, platform} from '@walmart/ern-util';
 
-import {generateContainer} from '@walmart/ern-container-gen';
+import {
+  generateContainer,
+  MavenGenerator,
+  GithubGenerator
+} from '@walmart/ern-container-gen';
 
 const log = require('console-log-level')();
 
@@ -31,31 +35,24 @@ exports.handler = async function (argv) {
 
   const platformName = explodeNapSelector(argv.fullNapSelector)[1];
 
-  if (platformName === 'android') {
-    let generator = ernConfig.obj.libgen.android.generator;
-    generator.containerVersion = argv.containerVersion;
-    await generateContainer({
-      nativeAppName: explodeNapSelector(argv.fullNapSelector)[0],
-      platformPath: platform.currentPlatformVersionPath,
-      generator,
-      plugins,
-      miniapps,
-      verbose: argv.verbose
-    });
-  } else if (platformName === 'ios') {
-    let generator = ernConfig.obj.libgen.ios.generator;
-    generator.containerVersion = argv.containerVersion;
-    await generateContainer({
-      nativeAppName: explodeNapSelector(argv.fullNapSelector)[0],
-      platformPath: platform.currentPlatformVersionPath,
-      generator,
-      plugins,
-      miniapps,
-      verbose: argv.verbose
-    });
-  } else {
-    throw new Error(`${platformName} not supported yet`);
-  }
+  const generator = (platformName === 'android') 
+    ? new MavenGenerator({ 
+        mavenRepositoryUrl: ernConfig.obj.libgen.android.generator.mavenRepositoryUrl,
+        namespace: ernConfig.obj.libgen.android.generator.namespace
+      })
+    : new GithubGenerator({
+        targetRepoUrl: ernConfig.obj.libgen.ios.generator.targetRepoUrl
+      })
+
+  await generateContainer({
+    containerVersion:  argv.containerVersion,
+    nativeAppName: explodeNapSelector(argv.fullNapSelector)[0],
+    platformPath: platform.currentPlatformVersionPath,
+    generator,
+    plugins,
+    miniapps,
+    verbose: argv.verbose
+  });
 
   if (versionBeforeSwitch) {
     platform.switchToVersion(versionBeforeSwitch);

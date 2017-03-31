@@ -2,8 +2,13 @@ import fs from 'fs';
 import shell from 'shelljs';
 import Mustache from 'mustache';
 import readDir from 'fs-readdir-recursive';
-import {generateContainer} from '@walmart/ern-container-gen';
 import child_process from 'child_process';
+
+import {
+    generateContainer,
+    MavenGenerator,
+    GithubGenerator
+} from '@walmart/ern-container-gen';
 
 const workingFolder = process.cwd();
 const execSync = child_process.execSync;
@@ -75,8 +80,7 @@ function camelCase(string) {
 // Main
 //=============================================================================
 
-const RUNNER_CONTAINER_POM_VERSION = '1.0.0-SNAPSHOT';
-const RUNNER_CONTAINER_FRAMEWORK_VERSION = '1.0.0';
+const RUNNER_CONTAINER_VERSION = '1.0.0';
 
 // Generate the runner project (Android only as of now)
 // platformPath : Path to the ern-platform to use
@@ -154,22 +158,12 @@ export async function generateContainerForRunner({
         level: verbose ? 'info' : 'warn'
     });
 
-    let generator;
-    if (platform === 'android') {
-        generator = {
-            platform: 'android',
-            name: 'maven',
-            containerVersion: RUNNER_CONTAINER_POM_VERSION
-        };
-    } else if (platform === 'ios') {
-        generator = {
-            platform: 'ios',
-            name: 'github',
-            containerVersion: RUNNER_CONTAINER_FRAMEWORK_VERSION
-        }
-    }
+    const generator = (platform === 'android') 
+        ? new MavenGenerator()
+        : new GithubGenerator()
     
     await generateContainer({
+        containerVersion: RUNNER_CONTAINER_VERSION,
         nativeAppName: camelCase(miniapp.name),
         generator,
         platformPath,
