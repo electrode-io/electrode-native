@@ -1,7 +1,7 @@
 "use strict";
 
 require('babel-polyfill');
-const conf = require('./babelrc.json');
+const conf = require('./babelrc.dev.json');
 const Module = require('module');
 const path = require('path');
 const babelRegister = require('babel-register');

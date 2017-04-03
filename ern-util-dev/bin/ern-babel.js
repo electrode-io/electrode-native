@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const babelRc = require('../babelrc.json');
+const babelRc = require('../babelrc.prod.json');
 process.argv.push('--source-maps');
 process.argv.push('--presets');
 process.argv.push(babelRc.presets);

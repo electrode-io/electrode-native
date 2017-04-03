@@ -20,13 +20,20 @@ to recompile each package before using it.
 
 
 ##Configuration
-The babel configuration is stored in ern-util-dev/babelrc.json.  It follows the .babelrc format and currently is 
+Platform relies on two different babel configurations, one for prod (versions of the platform released for consumption) and another one for development, used solely for platform development.   
+These configurations are stored in `ern-util-dev/babelrc.dev.json` and ``ern-util-dev/babelrc.prod.json`. 
+They follow the .babelrc format and currently are 
 configured thusly:
-```json
 
+
+`babelrc.prod.json`
+
+```json
 {
   "presets": [
-    "node6"
+    [ "env", { 
+      "targets": { "node": 4 }
+    }]
   ],
   "plugins": [
     "syntax-async-functions",
@@ -34,6 +41,20 @@ configured thusly:
     "transform-object-rest-spread"
   ]
 }
+```
 
+`babelrc.dev.json`
+
+```json
+{
+  "presets": [ 
+    "env"
+  ],
+  "plugins": [
+    "syntax-async-functions",
+    "transform-async-to-generator",
+    "transform-object-rest-spread"
+  ]
+}
 ```
 
