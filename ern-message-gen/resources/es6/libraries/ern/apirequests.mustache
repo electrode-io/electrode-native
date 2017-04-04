@@ -1,0 +1,67 @@
+export default class {{{baseName}}}Requests {
+    constructor(bridge) {
+     this._bridge = bridge;
+    }
+
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+        /**
+         * Registers a handler for a particular api.  This allows javascript to handle a request from native.
+         * @param function tak
+         */
+    register{{{camelizedNickName}}}RequestHandler( handler) {
+        this._bridge.registerRequestHandler("{{package}}.request.{{operationId}}", handler);
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+        {{#emitJSDoc}}
+
+    /**{{#summary}}
+      * {{&summary}}{{/summary}}{{#notes}}
+      * {{&notes}}{{/notes}}{{#allParams}}{{#required}}
+      * @param {{{&_jsDocType}}} {{paramName}} {{&description}}{{/required}}{{/allParams}}{{#hasOptionalParams}}
+      * @param {Object} opts Optional parameters{{#allParams}}{{^required}}
+      * @param {{{&_jsDocType}}} opts.{{paramName}} {{&description}}{{#defaultValue}} (default to {{.}}){{/defaultValue}}{{/required}}{{/allParams}}{{/hasOptionalParams}}
+      * @param integer dispatchmode 0-Native, 1-JS, 2-GLOBAL (defaults to 0)
+      * @return {Promise} a {@link https://www.promisejs.org/|Promise}{{#returnType}}, with data of type {@link {{&_jsDocType}} }{{/returnType}}
+      */
+    {{/emitJSDoc}}
+
+     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) { {{#hasOptionalParams}}
+         opts = opts || {};
+     {{/hasOptionalParams}}
+     const data =  {{#bodyParam}}{{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}}{{/bodyParam}}{{^bodyParam}}{}{{/bodyParam}};
+     {{#allParams}}{{#required}}
+         // verify the required parameter '{{paramName}}' is set
+         if ({{paramName}}  == null) {
+         throw "Missing the required parameter '{{paramName}}' when calling {{operationId}}";
+         }
+     {{/required}}{{/allParams}}
+
+     {{#pathParams}}
+         data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+     {{/pathParams}}
+     {{#queryParams}}
+         data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+     {{/queryParams}}
+     {{#headerParams}}
+          data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+     {{/headerParams}}
+     {{#formParams}}
+         data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+     {{/formParams}}
+
+         return this._bridge.sendRequest("{{package}}.request.{{operationId}}",  {data, dispatchMode});
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}

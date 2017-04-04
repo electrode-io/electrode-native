@@ -1,0 +1,9 @@
+{{#apiInfo}}{{#apis}}
+import _{{importPath}} from './api/{{importPath}}';
+{{/apis}}{{/apiInfo}}
+
+
+{{#apiInfo}}{{#apis}}
+export const {{importPath}} = _{{importPath}};
+{{/apis}}{{/apiInfo}}
+

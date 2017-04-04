@@ -1,13 +1,13 @@
-import {expect, assert} from 'chai';
-import _tmp from 'tmp';
-import fs from 'fs';
-import {exec} from 'child_process';
-import dirCompare from 'dir-compare';
-import path from 'path';
-import shell from 'shelljs';
+import {expect, assert} from "chai";
+import _tmp from "tmp";
+import fs from "fs";
+import {exec, execSync} from "child_process";
+import dirCompare from "dir-compare";
+import path from "path";
+import shell from "shelljs";
 
 const BABEL_HOOK = path.resolve(__dirname, '..', 'babelhook');
-const CLI = path.resolve(__dirname, '..', '..', 'ern-local-cli', 'src', 'launchbin.js');
+const CLI = path.resolve(__dirname, '..', '..', 'ern-local-cli', 'src', 'index.dev.js');
 
 
 /**
@@ -21,14 +21,32 @@ const CLI = path.resolve(__dirname, '..', '..', 'ern-local-cli', 'src', 'launchb
  */
 const EMPTY_FUNC = () => {
 };
-const excludeFilterRe = /node_modules(\/|$)|yarn\.lock|gradle\.build|API\.xcodeproj/;
+const excludeFilterRe = /node_modules(\/|$)|yarn\.lock|gradle\.build|\.xcodeproj\.pbxproj|\.DS_Store|genapp-tvOS|npm-debug.log/;
 const _excludeFilter = ({name1, name2, relativePath}) => excludeFilterRe.test(relativePath) || excludeFilterRe.test(name2) || excludeFilterRe.test(name1);
 
-export default function setup(workingCwd = path.join(process.cwd(), 'test'), log = EMPTY_FUNC) {
-    let tmpDir, clean;
+export default function setup(workingCwd = path.join(process.cwd(), 'test'), _dev = false, log = EMPTY_FUNC) {
+    let tmpDir = 'tmp', clean;
+    if (_dev) {
+        console.warn(`
+  --- IN DEV MODE --
+  This will create temp directories in your working project.  Only for development.
+  --- IN DEV MODE --
 
+`);
+        if (typeof _dev === 'string') {
+            tmpDir = _dev;
+        }
+    }
 
     const runBefore = function () {
+        if (_dev) {
+            if (fs.existsSync(tmpDir)) {
+                shell.rm('-rf', tmpDir);
+            }
+            shell.mkdir('-p', path.resolve(tmpDir));
+            return
+        }
+
         return new Promise((resolve, reject) => _tmp.dir({
             mode: '0750',
             keep: true,
@@ -43,15 +61,18 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
     };
 
     const runAfter = function (done) {
-        tmpDir && shell.rm('-rf', tmpDir);
+        if (!_dev) {
+            tmpDir && shell.rm('-rf', tmpDir);
+        }
         return done();
     };
 
-    const cwd = (...args) => path.resolve(tmpDir, ...args);
+    const cwd = (...args) => {
+        return path.resolve(tmpDir, ...args);
+    };
     const compare = (src, dest, excludeFilter = _excludeFilter) => () => {
         dest = path.join(workingCwd, dest);
         src = api.cwd(src);
-
         if (!fs.existsSync(dest)) {
             shell.mkdir('-p', path.join(dest, '..'));
             shell.cp('-r', src, dest);
@@ -61,10 +82,26 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
                 compareDate: false,
                 dateTolerance: 500000,
                 compareContent: true
-            }).then(({diffSet}) => {
+            }).then((resp = {diffSet: []}) => {
+                const {diffSet} = resp;
+
                 for (const diff of diffSet) {
+                    if (!diff.name2 && !excludeFilter(diff)) {
+                        assert(false, `${diff.relativePath} is missing ${diff.name1} in ${dest}`)
+                    }
+                    const nf = `${diff.path1}/${diff.name1}`;
+                    const of = `${dest}/${diff.relativePath.replace(/^\//, '')}/${diff.name2}`
                     if (!excludeFilter(diff) && diff.state != 'equal') {
-                        assert('Not the same ', (diff.name1 || diff.name2 || diff.relativePath || diff), diff.name1, diff.name2);
+                        const cmd = `git diff --ignore-blank-lines --ignore-space-at-eol -b -w ${nf} ${of}`;
+                        try {
+                            execSync(cmd);
+                        } catch (e) {
+                            console.log('ERROR:\n', cmd)
+                            const diffOut = e.output.filter(Boolean).map(v => v + '').join('\n');
+                            assert(false, `Not the same ${diff.relativePath.replace(/^\//, '')}/${diff.name2} ${diff.path1}/${diff.name1}
+${diffOut}  
+`);
+                        }
                     }
                 }
                 return true;
@@ -72,6 +109,13 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
         }
     };
     const exists = (file) => () => assert(fs.existsSync(api.cwd(file)), `Expected "${file}" to exist`);
+    const execIn = (cmd, opts) => new Promise((resolve, reject) => {
+        exec(cmd, Object.assign({}, opts, {cwd: api.cwd(cmd.cwd)}), (err, stdout, stderr) => {
+            if (err) return reject(err);
+            resolve({stdout, stderr});
+        });
+    });
+
     const gradle = (project, cmd = 'build') => () => new Promise((resolve, reject) => {
         exec(`${api.cwd(project, 'android', 'gradlew')} ${cmd}`, {cwd: api.cwd(project, 'android')}, (err, stdout, stderr) => {
             if (err) return reject(err);
@@ -99,11 +143,12 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
     const ern = (str, options, thens = []) => {
         const f = () => {
             let p = new Promise(function (resolve, reject) {
-                const ex = [process.argv[0], '-r', BABEL_HOOK, CLI, str].join(' ');
-                api.log(ex);
-                exec(ex, Object.assign({stdio: 'ignore'}, options, {
+
+                exec(`${CLI} ${str}`, {
+                    stdio: 'ignore',
+                    ...options,
                     cwd: api.cwd(options.cwd)
-                }), (err, stdout, stderr) => {
+                }, (err, stdout, stderr) => {
                     if (err) {
                         console.error(stderr);
                         return reject({err, stdout, stderr});
@@ -139,6 +184,7 @@ export default function setup(workingCwd = path.join(process.cwd(), 'test'), log
     };
     const api = {
         log,
+        execIn,
         runBefore,
         runAfter,
         ern,

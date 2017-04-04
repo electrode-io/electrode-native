@@ -1,8 +1,5 @@
-const child_process = require('child_process');
-const exec = child_process.exec;
-const log = require('console-log-level')();
-
-import inquirer from 'inquirer';
+import exec from './exec';
+import log from './log';
 
 export function npm(cmd, args = [], options = {
     cwd: process.cwd()

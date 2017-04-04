@@ -4,7 +4,7 @@ import fs from 'fs';
  * Async wrappers around node fs
  * ==============================================================================
  */
-export async function readFile(filename, encoding) {
+export async function readFile(filename, encoding = 'utf8') {
     return new Promise((resolve, reject) => {
         fs.readFile(filename, encoding, (err, res) => {
             if (err) reject(err);
@@ -13,7 +13,8 @@ export async function readFile(filename, encoding) {
     });
 }
 export async function readJSON(filename) {
-    return readFile(filename, 'utf8').then(JSON.parse);
+    const content = await readFile(filename);
+    return JSON.parse(content);
 }
 export async function writeFile(filename, data) {
     return new Promise((resolve, reject) => {

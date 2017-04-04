@@ -1,0 +1,106 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Person API",
+    "description": "Person API for you MiniApp",
+    "version": "1.0.0"
+  },
+  "host": "api.person.com",
+  "schemes": [
+    "https"
+  ],
+  "basePath": "/v1",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/person": {
+      "get": {
+        "summary": "Person",
+        "description": "Returns the current person",
+        "tags": [
+          "Person"
+        ],
+        "responses": {
+          "200": {
+            "description": "Person object",
+            "schema": {
+              "$ref": "#/definitions/Person"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Person": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Person's name"
+        },
+        "age": {
+          "type": "integer",
+          "description": "Persons Age"
+        },
+        "hiredMonth": {
+          "type": "integer",
+          "description": "Month hired"
+        },
+        "status": {
+          "description": "Current employment status",
+          "$ref": "#/definitions/Status"
+        },
+        "position": {
+          "description": "Position at the company",
+          "$ref": "#/definitions/Position"
+        },
+        "birthYear": {
+          "description": "Person's birth year",
+          "$ref": "#/definitions/BirthYear"
+        }
+      }
+    },
+    "Status": {
+      "name":"Status",
+      "properties": {
+        "log": {
+          "type": "boolean",
+          "description": "is log ????"
+        },
+        "member": {
+          "type": "boolean",
+          "description": "Is a prime member ?"
+        }
+      }
+    },
+    "Position": {
+      "name":"position",
+      "properties": {
+        "lat": {
+          "type": "number",
+          "format": "double",
+          "description": "Latitude"
+        },
+        "lng": {
+          "type": "number",
+          "format": "double",
+          "description": "Longitude"
+        }
+      }
+    },
+    "BirthYear": {
+      "name":"birthyear",
+      "properties": {
+        "month": {
+          "type": "integer",
+          "description": "Birth month"
+        },
+        "year": {
+          "type": "integer",
+          "description": "Birth year"
+        }
+      }
+    }
+  }
+}

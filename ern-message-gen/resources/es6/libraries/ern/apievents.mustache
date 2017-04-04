@@ -1,0 +1,53 @@
+
+export default class {{{baseName}}}Events {
+    constructor(bridge) {
+        this._bridge = bridge;
+    }
+
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    add{{{camelizedNickName}}}EventListener( eventListener) {
+      return   this._bridge.registerEventListener("{{package}}.request.{{operationId}}",eventListener);
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+
+{{#operations}}
+    {{#operation}}
+        {{#isEvent}}
+            emit{{camelizedNickName}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) { {{#hasOptionalParams}}
+                opts = opts || {};
+            {{/hasOptionalParams}}
+            const data =  {{#bodyParam}}{{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}}{{/bodyParam}}{{^bodyParam}}{}{{/bodyParam}};
+            {{#allParams}}{{#required}}
+                // verify the required parameter '{{paramName}}' is set
+                if ({{paramName}}  == null) {
+                throw "Missing the required parameter '{{paramName}}' when calling {{operationId}}";
+                }
+            {{/required}}{{/allParams}}
+
+
+            {{#pathParams}}
+                data['{{baseName}}']= {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/pathParams}}
+            {{#queryParams}}
+                data['{{baseName}}']= {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/queryParams}}
+            {{#headerParams}}
+                data['{{baseName}}']= {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/headerParams}}
+            {{#formParams}}
+                data['{{baseName}}']={{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/formParams}}
+
+
+            return this._bridge.emitEvent("{{package}}.event.{{operationId}}",  {data, dispatchMode});
+            }
+        {{/isEvent}}
+    {{/operation}}
+{{/operations}}
+}

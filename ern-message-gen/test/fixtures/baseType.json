@@ -1,0 +1,21 @@
+{
+  "paths": {
+    "/user/createWithList": {
+      "post": {
+        "operationId": "createUsersWithListInput",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

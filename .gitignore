@@ -39,5 +39,6 @@ ern-cauldron-api/test/.cauldron-test
 **/dist
 lerna-debug.*
 **/lerna-debug.*
-
+**/coverage/**
+**/.nyc_output/**
 yarn-error.log

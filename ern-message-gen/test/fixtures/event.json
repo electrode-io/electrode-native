@@ -1,0 +1,40 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ERN iOS API",
+    "description": "Generate API for iOS ERN platform",
+    "version": "1.0.0"
+  },
+  "host": "api.walmart.com",
+  "schemes": [
+    "https"
+  ],
+  "basePath": "/v1",
+  "produces": [
+    "application/json"
+  ],
+
+
+  "definitions": {
+    "Event": {
+      "type": "object",
+      "required": [
+        "eventName"
+      ],
+      "properties": {
+        "tag": {
+          "type":"string",
+          "description":"The tag for the event"
+        },
+        "eventPayload": {
+          "type": "string",
+          "description": "Serialized payload"
+        },
+        "eventName":{
+          "type":"string",
+          "description": "A name for the event, doesn't have to be unique"
+        }
+      }
+    }
+  }
+}

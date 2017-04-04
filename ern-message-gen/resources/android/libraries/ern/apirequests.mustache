@@ -1,0 +1,43 @@
+package {{{package}}};
+
+import android.support.annotation.NonNull;
+
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
+import com.walmartlabs.electrode.reactnative.bridge.None;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.RequestProcessor;
+import java.util.*;
+{{#imports}}
+import {{import}};
+{{/imports}}
+
+
+final class {{{requestsImplClassName}}} implements {{{classname}}}.Requests {
+    {{{requestsImplClassName}}}() {}
+
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+    @Override
+    public void register{{{camelizedNickName}}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}> handler) {
+        new RequestHandlerProcessor<>(REQUEST_{{{nickNameConstant}}}, {{#requestParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/requestParam}}, {{#responseParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/responseParam}}, handler).execute();
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+    @Override
+    public void {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{dataType}}} {{paramName}},{{/requestParam}}{{/hasRequestParam}}@NonNull final ElectrodeBridgeResponseListener<{{#responseParam}}{{{dataType}}}{{/responseParam}}> responseListener) {
+        new RequestProcessor<>(REQUEST_{{{nickNameConstant}}}, {{#hasRequestData}} {{#requestParam}}{{paramName}}{{/requestParam}}{{/hasRequestData}}{{^hasRequestData}}null{{/hasRequestData}}, {{#responseParam}}{{#isList}}(Class) List.class, {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/responseParam}}, responseListener).execute();
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}

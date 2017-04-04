@@ -1,0 +1,157 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Cookie Helper",
+    "version": "0.0.4",
+    "title": "Cookie Store"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/cookie": {
+      "get": {
+        "tags": [
+          "Cookie"
+        ],
+        "summary": "Get All cookies",
+        "description": "",
+        "operationId": "getAll",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "cookies",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErnCookie"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cookie"
+        ],
+        "operationId": "setCookie",
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "body",
+            "description": "Cookie to remove",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ErnCookie"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cookie"
+        ],
+        "operationId": "clearAll"
+      }
+    },
+    "/cookie/exists": {
+      "get": {
+        "tags": [
+          "Cookie"
+        ],
+        "operationId": "exists",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "/cookie/{name}": {
+      "get": {
+        "tags": [
+          "Cookie"
+        ],
+        "operationId": "getCookie",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Cookie to retrieve by name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/ErnCookie"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cookie"
+        ],
+        "operationId": "deleteCookie",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Cookie to remove by name",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ErnCookie": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number",
+          "format": "double"
+        },
+        "expiry": {
+          "type": "number",
+          "format": "long"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  }
+}

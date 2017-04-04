@@ -396,7 +396,7 @@ If the version is not installed, it will automatically install it and then activ
 `ern-local-cli` is powered by [yargs](http://yargs.js.org/) to offer all commands. You should familiarize yourself with yargs essentials.  
 Each command is self contained in a single source file. Each subcommand is represented by a folder.  
 All commands are stored in the [commands](./src/commands) folder.  
-For example the command `ern generate api` will be found in `/src/commands/generate/api.js`.
+For example the command `ern generate api` will be found in `/src/commands/generate/message.js`.
 
 All the source files are contained in the [src](./src) folder. This folder is breakdown in two subfolders : [commands](./src/commands) containing all commands implementation and [util](./src/util) containing utilities/BL that are used by the commands.  
 As a general guideline, commands should contain as mininum BL as possible, all BL should be encapsulated in the utils.

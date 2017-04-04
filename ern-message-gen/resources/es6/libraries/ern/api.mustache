@@ -1,0 +1,45 @@
+import { electrodeBridge } from '@walmart/react-native-electrode-bridge';
+{{#hasRequest}}
+{{#imports}}
+import {{baseName}}Requests from './{{baseName}}Requests';
+{{/imports}}
+{{/hasRequest}}
+{{#hasEvent}}
+    {{#imports}}
+import {{baseName}}Events from './{{baseName}}Events';
+    {{/imports}}
+{{/hasEvent}}
+
+{{#hasRequest}}
+const REQUESTS = new {{baseName}}Requests(electrodeBridge);
+
+export function requests() {
+    return REQUESTS;
+}
+{{/hasRequest}}
+
+{{#hasEvent}}
+const EVENTS = new {{baseName}}Events(electrodeBridge);
+
+export function events() {
+  return EVENTS;
+}
+{{/hasEvent}}
+{{!no event has request}}
+{{^hasEvent}}
+{{#hasRequest}}
+export default ({requests});
+{{/hasRequest}}
+{{/hasEvent}}
+{{!has event no request}}
+{{^hasRequest}}
+    {{#hasEvents}}
+export default ({events});
+    {{/hasEvents}}
+{{/hasRequest}}
+{{!has both event and request}}
+{{#hasEvent}}
+    {{#hasRequest}}
+export default ({requests, events});
+    {{/hasRequest}}
+{{/hasEvent}}
