@@ -1,8 +1,6 @@
 {
   "presets": [
-    [ "env", { 
-      "targets": { "node": 4 }
-    }]
+    "env"
   ],
   "plugins": [
     "syntax-async-functions",
