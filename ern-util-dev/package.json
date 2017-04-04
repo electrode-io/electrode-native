@@ -8,7 +8,8 @@
   },
   "bin": {
     "ern-babel": "bin/ern-babel.js",
-    "ern-mocha": "bin/ern-mocha.js"
+    "ern-mocha": "bin/ern-mocha.js",
+    "ern-nyc": "bin/ern-nyc.js"
   },
   "author": "",
   "license": "ISC"

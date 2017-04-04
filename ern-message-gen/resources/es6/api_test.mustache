@@ -1,0 +1,28 @@
+{{>licenseInfo}}
+import {expect} from 'chai';
+import {{classname}}  from '../../src/api/{{classname}}';
+
+describe('{{classname}}', function(){
+  let instance;
+  beforeEach(function() {
+    instance = new {{classname}}({
+
+    });
+  });
+
+{{#operations}}
+{{#operation}}
+    describe('{{operationId}}', function() {
+      it('should call {{operationId}} successfully', function(done) {
+        //uncomment below and update the code to test {{operationId}}
+        //instance.{{operationId}}(pet, function(error) {
+        //  if (error) throw error;
+        //expect().to.be();
+        //});
+        done();
+      });
+    });
+{{/operation}}
+{{/operations}}
+
+});

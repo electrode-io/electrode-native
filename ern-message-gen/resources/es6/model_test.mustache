@@ -1,0 +1,40 @@
+{{>licenseInfo}}
+
+import {expect} from  'chai';
+import {{classname}} from '../../src/{{#modelPackage}}{{&modelPackage}}/{{/modelPackage}}{{classname}}';
+
+
+
+describe('{{classname}}', function() {
+
+    let instance;
+
+    beforeEach(function() {
+{{#models}}
+{{#model}}
+{{^isEnum}}
+        instance = new {{classname}}();
+{{/isEnum}}
+{{/model}}
+{{/models}}
+    });
+
+    it('should create an instance of {{classname}}', function() {
+      // uncomment below and update the code to test {{classname}}
+      const inst = new {{classname}}();
+      expect(inst).to.be.an.instanceof({{classname}});
+    });
+
+{{#models}}
+{{#model}}
+{{#vars}}
+    it('should have the property {{name}} (base name: "{{baseName}}")', function() {
+      // uncomment below and update the code to test the property {{name}}
+      //var instane = new {{classname}}();
+      //expect(instance).to.be();
+    });
+{{/vars}}
+{{/model}}
+{{/models}}
+});
+

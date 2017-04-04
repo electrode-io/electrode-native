@@ -1,0 +1,16 @@
+{
+  "systemProperties": {},
+  "instantiationTypes": {},
+  "typeMappings": {},
+  "additionalProperties": {},
+  "importMappings": {},
+  "languageSpecificPrimitives": {},
+  "gitUserId": "gitMe",
+  "gitRepoId": "repoMe",
+  "releaseNote": "Major update",
+  "dynamicProperties": {
+    "what": "is this"
+  },
+  "verbose": true,
+  "skipOverwrite": true
+}

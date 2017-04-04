@@ -9,6 +9,7 @@
   "scripts": {
     "build": "ern-babel",
     "test": "ern-mocha",
+    "coverage":"ern-nyc",
     "prepublish": "npm run build"
   },
   "keywords": [],

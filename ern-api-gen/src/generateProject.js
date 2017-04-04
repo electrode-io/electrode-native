@@ -1,83 +1,101 @@
-import shell from 'shelljs';
 import path from 'path';
-import { writeFile } from './fileUtil';
+import {writeFile} from './fileUtil';
+import {CodegenConfigurator, DefaultGenerator} from '@walmart/ern-message-gen'
 import {
-  SCHEMA_FILE,
-  PKG_FILE,
-  MODEL_FILE
+    PKG_FILE,
+    MODEL_FILE
 } from './Constants';
 
+//export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"], ["IOS", "ERNSwift"]
+export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
 
-export function generatePackageJson({
-  npmScope,
-  moduleName,
-  reactNativeVersion,
-  apiVersion = '1.0.0',
-  apiDescription,
-  apiAuthor,
-  apiLicense,
-  bridgeVersion
-}) {
-  return JSON.stringify({
-    "name": npmScope ? `@${npmScope}/${moduleName}` : moduleName,
-    "version": apiVersion,
-    "description": apiDescription,
-    "main": "index.js",
-    "author": apiAuthor,
-    "license": apiLicense,
-    "dependencies": {
-      "@walmart/react-native-electrode-bridge": bridgeVersion,
-      'react-native': reactNativeVersion
+export async function generateSwagger({apiSchemaPath = MODEL_FILE, name, namespace = '', ...optional}, outFolder) {
+    const inputSpec = path.resolve(outFolder, apiSchemaPath);
+    const shared = {
+        apiPackage: `${namespace}.api`,
+        modelPackage: `${namespace}.model`,
+        inputSpec,
+        version: optional.apiVersion,
+        description: optional.apiDescription,
+        groupId: namespace,
+        ...optional,
+    };
+
+    for (const [projectName, lang] of GENERATE) {
+        const cc = new CodegenConfigurator({...shared, lang, projectName, outputDir: outFolder + '/' + projectName});
+        const opts = await cc.toClientOptInput();
+        new DefaultGenerator().opts(opts).generate();
     }
-  }, null, 2);
+}
+export function generatePackageJson({
+    npmScope,
+    moduleName,
+    reactNativeVersion,
+    apiVersion = '1.0.0',
+    apiDescription,
+    apiAuthor,
+    apiLicense,
+    bridgeVersion,
+    ...conf
+}) {
+
+    return JSON.stringify({
+        "name": npmScope ? `@${npmScope}/${moduleName}` : moduleName,
+        "version": apiVersion,
+        "description": apiDescription,
+        "main": "index.js",
+        "author": apiAuthor,
+        "license": apiLicense,
+        "scripts": {
+            "prepublish": "ern generate message regen -u same"
+        },
+        "peerDependencies": {
+            "@walmart/react-native-electrode-bridge": bridgeVersion,
+            'react-native': reactNativeVersion
+        },
+        "ern": {
+            "message": conf
+        }
+    }, null, 2);
+
 }
 
-export function generateInitialSchema({ namespace, shouldGenerateBlankApi }) {
-  return shouldGenerateBlankApi ? '' : `namespace ${namespace}
-// Event with no payload
-event weatherUpdated
-
-// Event with a primitive type payload
-event weatherUpdatedAtLocation(location: String)
-
-// Event with complex type payload
-event weatherUpdatedAtPosition(position: LatLng)
-
-// Request with no request payload and no response payload
-request refreshWeather()
+export function generateInitialSchema({namespace, shouldGenerateBlankApi}) {
+    return shouldGenerateBlankApi ? '' : `
+{
+  "swaggerVersion": "1.2",
+  "apis": [
+    {
+      "path": "/hello/{subject}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Greet our subject with hello!",
+          "type": "string",
+          "nickname": "helloSubject",
+          "parameters": [
+            {
+              "name": "subject",
+              "description": "The subject to be greeted.",
+              "required": true,
+              "type": "string",
+              "paramType": "path"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "models": {}
+}  
+  
 `
 }
 
-export function generateInitialModel({ shouldGenerateBlankApi }) {
-  return shouldGenerateBlankApi ? '' : JSON.stringify({
-    type: "Object",
-    name: "LatLng",
-    properties: {
-      "lat": {
-        "type": "number"
-      },
-      "lng": {
-        "type": "number"
-      },
-      "name": {
-        "type": "string"
-      }
-    }
-  }, null, 2);
-}
 
-export default async function generateProject(config, outFolder) {
-  await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config));
+export default async function generateProject(config = {}, outFolder) {
+    await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config));
+    await writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config));
+    await generateSwagger(config, outFolder);
 
-//  if (config.apiSchemaPath) {
-//    shell.cp(config.apiSchemaPath, outFolder);
-//  } else {
-    await writeFile(path.join(outFolder, SCHEMA_FILE), generateInitialSchema(config));
-//  }
-
-//  if (config.modelsSchemaPath) {
-//    shell.cp(config.modelsSchemaPath, outFolder);
-//  } else {
-    await writeFile(path.join(outFolder, MODEL_FILE), generateInitialModel(config));
-//  }
 }

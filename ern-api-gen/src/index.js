@@ -1,50 +1,24 @@
-import runModelGen from "@walmart/ern-model-gen";
-import generateJavaCode from './generateJavaCode';
-import generateObjectiveCCode from './generateObjectiveCCode';
-import generateProject from './generateProject';
-import generateJSCode from './generateJSCode';
-import {
-  patchHull
-} from './renderer';
+import generateProject, {generateSwagger} from './generateProject';
 import normalizeConfig from './normalizeConfig';
-import views from './views';
 import fs from 'fs';
 import shell from 'shelljs';
 import path from 'path';
+import semver from 'semver';
 import {
-  SCHEMA_FILE,
-  PKG_FILE,
-  MODEL_FILE
+    PKG_FILE,
+    MODEL_FILE
 } from './Constants';
 import log from './log';
 import {
-  readJSON,
-  writeFile
+    readJSON,
+    writeFile
 } from './fileUtil';
 import {
-  platform,
-  npm
+    platform,
+    npm
 } from '@walmart/ern-util'
 import inquirer from 'inquirer';
 
-// Not pretty but depending of the execution context (direct call to binary v.s
-// using api-gen in a node program) the path might include distrib This is just
-// a temporary work-around, find out a cleaner way
-const apiGenDir = path.join(__dirname, '..');
-
-/**
- * Generate JS/Android code
- * view : the mustache view to use
- */
-async function generateAllCode(view) {
-  await generateJavaCode(view, apiGenDir);
-  await generateObjectiveCCode(view, apiGenDir);
-  await generateJSCode(view, apiGenDir);
-}
-
-function hasModelSchema(modelsSchemaPath = `${process.cwd()}/${MODEL_FILE}`) {
-  return fs.existsSync(modelsSchemaPath) && modelsSchemaPath;
-}
 
 /**
  * ==============================================================================
@@ -54,171 +28,171 @@ function hasModelSchema(modelsSchemaPath = `${process.cwd()}/${MODEL_FILE}`) {
  * Refer to normalizeConfig function doc for the list of options
  */
 export async function generateApi(options) {
-  let config = normalizeConfig(options);
+    let config = normalizeConfig(options);
 
-  const outFolder = `${process.cwd()}/${config.moduleName}`;
-  if (fs.existsSync(outFolder)) {
-    log.warn(`A directory already exists at ${outFolder}`);
-    process.exit(1);
-  }
+    const outFolder = `${process.cwd()}/${config.moduleName}`;
+    if (fs.existsSync(outFolder)) {
+        log.warn(`A directory already exists at ${outFolder}`);
+        process.exit(1);
+    }
 
-  // Create output folder
-  shell.mkdir(outFolder);
-  await generateProject(config, outFolder);
-  shell.cd(outFolder);
-  await generateCode(config);
-  log.info(`==  Generated project:$ cd ${outFolder}`);
+    // Create output folder
+    shell.mkdir(outFolder);
+    await generateProject(config, outFolder);
+    log.info(`==  Generated project:$ cd ${outFolder}`);
 }
+/**
+ * If updatePlugin is specified it will not attempt to update the version.
+ * It'll just do its job.
+ *
+ * Otherwise it will try to get the next version.
+ *
+ * @param options
+ * @returns {Promise.<void>}
+ */
+export async function regenerateCode(options = {}) {
+    const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
+    const curVersion = pkg.version || '0.0.1';
+    let newPluginVer;
+    if (options.updatePlugin) {
+        newPluginVer = nextVersion(curVersion, options.updatePlugin);
+    } else {
+        newPluginVer = semver.inc(curVersion, 'minor');
+        const {confirmPluginVer} = await inquirer.prompt([{
+            type: 'confirm',
+            name: 'confirmPluginVer',
+            message: `Would you like to bump the plugin version from [${pkg.name}@${curVersion}] to [${pkg.name}@${newPluginVer}]?`
+        }]);
 
+        if (!confirmPluginVer) {
+            newPluginVer = await _promptForPluginVersion(curVersion, pkg.name);
+        }
+    }
+    await _checkDependencyVersion(pkg);
+    const isNewVersion = semver.lt(curVersion, newPluginVer);
+    if (isNewVersion) {
+        pkg.version = newPluginVer;
+        //should call npm version ${} as it tags and does good stuff.
+        writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)); //Write the new package properties
+    }
+    const extra = pkg.ern && pkg.ern.message || {};
+    const config = normalizeConfig({
+        name: pkg.name,
+        apiVersion: pkg.version,
+        apiDescription: pkg.description,
+        apiAuthor: pkg.author,
+        bridgeVersion:options.bridgeVersion || pkg.peerDependencies["@walmart/react-native-electrode-bridge"],
+        ...extra,
+        ...options
+    });
+
+    await cleanGenerated();
+    await generateSwagger(config, process.cwd());
+    log.info("== Generation complete");
+
+
+    if (isNewVersion) {
+        await publish(pkg);
+    } else
+        log.info('OK, make sure you bump the version and publish if needed.')
+}
 export async function cleanGenerated(outFolder = process.cwd()) {
-  const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
+    const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
 
-  shell.rm('-rf', path.join(outFolder, 'js'));
-  shell.rm('-rf', path.join(outFolder, 'ios'));
-  shell.rm('-rf', path.join(outFolder, 'android'));
-  shell.rm('-f', path.join(outFolder, 'index.js'));
-  return pkg;
+    shell.rm('-rf', path.join(outFolder, 'javascript'));
+    shell.rm('-rf', path.join(outFolder, 'swift'));
+    shell.rm('-rf', path.join(outFolder, 'android'));
+    return pkg;
 }
 
 async function checkValid(message) {
-  const outFolder = process.cwd();
+    const outFolder = process.cwd();
 
-  if (!/react-native-(.*)-api$/.test(outFolder) || !fs.existsSync(`${process.cwd()}/${SCHEMA_FILE}`)) {
-    throw new Error(message);
-  }
-  let pkg;
-  try {
-    pkg = await readJSON(`${process.cwd()}/${PKG_FILE}`);
-  } catch (e) {
-    throw new Error(message);
-  }
-  if (!/react-native-(.*)-api$/.test(pkg.name)) {
-    throw new Error(message);
-  }
-  return pkg;
-}
-
-export async function generateCode(options) {
-  log.info('== Regenerating Code');
-  const pkg = await cleanGenerated();
-
-  let versionNums = pkg.version.split("."); //Split major.minor.patch
-  let newPluginVer;
-  if (!isNaN(versionNums[2])) {
-    versionNums[2]++;
-    newPluginVer = versionNums.join('.');
-  }
-  if (newPluginVer === undefined) {
-    //Directly ask for version of the plugin
-    await _promptForPluginVersion(pkg.version).then((answer) => {
-      newPluginVer = answer.userPluginVer;
-    });
-  } else {
-    const answers = await inquirer.prompt([{
-      type: 'confirm',
-      name: 'confirmPluginVer',
-      message: `Would you like to use plugin version ${newPluginVer} for ${pkg.name}?`
-    }]);
-    if (!answers.confirmPluginVer) {
-      const answer = await _promptForPluginVersion(pkg.version);
-      newPluginVer = answer.userPluginVer;
+    if (!/react-native-(.*)-api$/.test(outFolder)) {
+        throw new Error(message);
     }
-  }
-  pkg.version = newPluginVer;
-  await _checkDependencyVersion(pkg);
-  writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)); //Write the new package properties
-  const config = normalizeConfig(Object.assign({}, {
-    name: pkg.name,
-    apiVersion: pkg.version,
-    apiDescription: pkg.description,
-    apiAuthor: pkg.author
-  }, options));
-
-  _startCodeRegen(config);
+    let pkg = await readPackage();
+    if (!/react-native-(.*)-api$/.test(pkg.name)) {
+        throw new Error(message);
+    }
+    return pkg;
 }
+async function readPackage() {
+    return await readJSON(`${process.cwd()}/${PKG_FILE}`);
+}
+const nextVersion = (curVersion, userPluginVer) => {
+    switch ((userPluginVer + '').toLowerCase()) {
+        case 'same':
+        case 'no':
+        case 'q':
+        case 'quit':
+        case 'n':
+            return curVersion;
+        default: {
+            try {
+                const ret = semver.inc(curVersion, userPluginVer);
+                if (ret) {
+                    return ret;
+                }
+            } catch (e) {
+                log.info(`not a valid version:`, userPluginVer);
+            }
+        }
+    }
+};
+async function _promptForPluginVersion(curVersion) {
 
-function _promptForPluginVersion(curVersion) {
-  return inquirer.prompt([{
-    type: 'input',
-    name: 'userPluginVer',
-    message: `Current Plugin Version is ${curVersion}. Type the new plugin version (major.minor.patch)?`
-  }]);
+    const {userPluginVer} = await inquirer.prompt([{
+        type: 'input',
+        name: 'userPluginVer',
+        message: `Current Plugin Version is ${curVersion}. Type the new plugin version (<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | same)?`
+    }]);
+    const ret = nextVersion(curVersion, userPluginVer);
+    if (ret == null) {
+        log.info(`sorry, I do not understand your answer`);
+        return _promptForPluginVersion(curVersion);
+    }
+    return ret;
 }
 
 async function _checkDependencyVersion(pkg) {
-  let pluginDependency = pkg.dependencies;
-  let supportedPluginsMap = _constructSupportedPluginsMap();
-  for (const key of Object.keys(pluginDependency)) {
-    if (supportedPluginsMap.has(key) && pluginDependency[key] !== supportedPluginsMap.get(key)) {
-      const answer = await _promptForMissMatchOfSupportedPlugins(supportedPluginsMap.get(key), key)
-      pluginDependency[key] = answer.userPluginVer ? answer.userPluginVer : supportedPluginsMap.get(key);
+    let pluginDependency = pkg.peerDependencies || {};
+    let supportedPluginsMap = _constructSupportedPluginsMap();
+    for (const key of Object.keys(pluginDependency)) {
+        if (supportedPluginsMap.has(key) && pluginDependency[key] !== supportedPluginsMap.get(key)) {
+            const answer = await _promptForMissMatchOfSupportedPlugins(supportedPluginsMap.get(key), key);
+            pluginDependency[key] = answer.userPluginVer ? answer.userPluginVer : supportedPluginsMap.get(key);
+        }
     }
-  }
 }
 
 function _constructSupportedPluginsMap() {
-  let platformManifest = platform.getManifest(platform.currentVersion)
-  let supportedPluginsMap = new Map(
-    platformManifest.supportedPlugins.map((currVal) => {
-      if (currVal == null) return [];
-      let idx = currVal.lastIndexOf('@'); //logic for scoped dependency
-      return [currVal.substring(0, idx), currVal.substring(idx + 1)];
-    }));
-  return supportedPluginsMap;
+    let platformManifest = platform.getManifest(platform.currentVersion);
+    let supportedPluginsMap = new Map(
+        platformManifest.supportedPlugins.map((currVal) => {
+            if (currVal == null) return [];
+            let idx = currVal.lastIndexOf('@'); //logic for scoped dependency
+            return [currVal.substring(0, idx), currVal.substring(idx + 1)];
+        }));
+    return supportedPluginsMap;
 }
 
 function _promptForMissMatchOfSupportedPlugins(curVersion, pluginName) {
-  return inquirer.prompt([{
-    type: 'input',
-    name: 'userPluginVer',
-    message: `Type new plugin version of ${pluginName}. Press Enter to use the default '${curVersion}'.`
-  }]);
+    return inquirer.prompt([{
+        type: 'input',
+        name: 'userPluginVer',
+        message: `Type new plugin version of ${pluginName}. Press Enter to use the default '${curVersion}'.`
+    }]);
 }
 
-async function _startCodeRegen(config) {
-  const outFolder = process.cwd();
-  // Copy the api hull (skeleton code with inline templates) to output folder
-  shell.cp('-r', `${apiGenDir}/api-hull/*`, outFolder);
+async function publish({version}) {
 
-  // --------------------------------------------------------------------------
-  // Mustache view creation
-  // --------------------------------------------------------------------------
-
-  const mustacheView = await views(config, outFolder);
-
-  // --------------------------------------------------------------------------
-  // Kickstart generation
-  // --------------------------------------------------------------------------
-  // Start by patching the api hull "inplace"
-  log.info("== Patching Hull");
-  await patchHull(mustacheView);
-  // Inject all additional generated code
-  log.info("== Generating API code");
-  await generateAllCode(mustacheView);
-
-  const schemaPath = hasModelSchema(config.modelsSchemaPath);
-
-  if (schemaPath) {
-    await runModelGen({
-      javaModelDest: `${outFolder}/android/lib/src/main/java/${config
-        .namespace
-        .replace(/\./g, '/')}/${config
-        .apiName}/model`,
-      javaPackage: `${config
-        .namespace}.${config
-        .apiName
-        .toLowerCase()}.model`,
-      objCModelDest: `${outFolder}/ios/MODEL`,
-      schemaPath
-    });
-  }
-  log.info("== Generation complete");
-  const answers = await inquirer.prompt([{
-    type: 'confirm',
-    name: 'confirmNpmPublish',
-    message: `Would you like to npm publish the plugin?`
-  }]);
-  if (answers.confirmNpmPublish) {
-    await npm.npm('publish');
-  }
+    const answers = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'confirmNpmPublish',
+        message: `Would you like to npm publish the plugin [${version}]?`
+    }]);
+    if (answers.confirmNpmPublish) {
+        await npm.npm('publish');
+    }
 }

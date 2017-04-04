@@ -7,6 +7,17 @@ const path = require('path');
 const babelRegister = require('babel-register');
 const oload = Module._load;
 
+if (process.env.COVERAGE) {
+    console.log('Has Coverage');
+    conf.plugins.push([
+        "istanbul",
+        {
+            "exclude": [
+                "**/test/*-test.js"
+            ]
+        }
+    ]);
+}
 const project = path.join(__dirname, '..');
 
 //only look into ern- projects that have a src directory.
@@ -25,7 +36,7 @@ function normalizePath(file, parent) {
         return file;
     }
     //fixes issue with globa-cli calling local-cli.
-    if (/\/ern-local-cli$/.test(file)){
+    if (/\/ern-local-cli$/.test(file)) {
         return 'ern-local-cli'
     }
     if (/^\//.test(file)) {

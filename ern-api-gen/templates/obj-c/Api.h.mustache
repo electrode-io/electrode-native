@@ -1,9 +1,0 @@
-#import <Foundation/Foundation.h>
-
-@interface {{{pascalCaseApiName}}}Api : NSObject
-
-{{#requests}}
-- (void) handle{{{pascalCaseName}}}Request: (void (^_Nonnull)(id _Null_unspecified sender)) requestHandler;
-{{/requests}}
-
-@end

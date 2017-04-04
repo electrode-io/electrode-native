@@ -1,3 +1,0 @@
-namespace com.walmartlabs.ern
-
-request navigateTo(dest: String)

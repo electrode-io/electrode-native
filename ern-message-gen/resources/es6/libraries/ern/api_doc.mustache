@@ -1,0 +1,75 @@
+# {{moduleName}}.{{classname}}{{#description}}
+{{{description}}}{{/description}}
+
+
+Method | Type | Description
+------------- | ------ | -------------
+{{#operations}}{{#operation}}[**{{operationId}}**]({{classname}}.md#{{operationId}}) | {{#isEvent}}event{{/isEvent}}{{^isEvent}}request{{/isEvent}} | {{#summary}}{{summary}}{{/summary}}
+{{/operation}}{{/operations}}
+
+{{#operations}}
+{{#operation}}
+<a name="{{operationId}}"></a>
+# **{{operationId}}**
+> {{#returnType}}{{returnType}} {{/returnType}}{{operationId}}({{#allParams}}{{#required}}{{{paramName}}}{{#_hasMoreRequired}}, {{/_hasMoreRequired}}{{/required}}{{/allParams}}{{#hasOptionalParams}}{{#_hasRequiredParams}}, {{/_hasRequiredParams}}opts{{/hasOptionalParams}})
+
+{{{summary}}}{{#notes}}
+
+{{{notes}}}{{/notes}}
+
+### Example
+```javascript
+import { {{classname}} } from '{{{projectName}}}';
+{{#hasRequest}}
+    //Make a request
+    //assuming async function wrapper
+const requests = {{{classname}}}.requests();{{#hasParams}}
+{{#_hasRequiredParams}}{{#allParams}}{{#required}}
+    const {{{paramName}}} = {{{example}}}; // {{{dataType}}} | {{{description}}}
+{{/required}}{{/allParams}}{{/_hasRequiredParams}}{{#hasOptionalParams}}
+    const opts = { {{#allParams}}{{^required}}
+  '{{{paramName}}}': {{{example}}}{{#_hasMoreOptional}},{{/_hasMoreOptional}} // {{{dataType}}} | {{{description}}}{{/required}}{{/allParams}}
+};{{/hasOptionalParams}}{{/hasParams}}
+    try {
+    const data = await requests.{{{operationId}}}({{#allParams}}{{#required}}{{{paramName}}}{{#_hasMoreRequired}}, {{/_hasMoreRequired}}{{/required}}{{/allParams}}{{#hasOptionalParams}}{{#_hasRequiredParams}}, {{/_hasRequiredParams}}opts{{/hasOptionalParams}});
+  {{#returnType}}console.log('API called successfully. Returned data: ', data);{{/returnType}}{{^returnType}}console.log('API called successfully.');{{/returnType}}
+   }catch(e){
+      console.log('an error',e);
+    }
+{{/hasRequest}}
+{{#hasEvent}}
+
+
+    //An listen to and emit an event.
+    const events = {{{classname}}}.events();{{#hasParams}}
+        {{#_hasRequiredParams}}{{#allParams}}{{#required}}
+            const {{{paramName}}} = {{{example}}}; // {{{dataType}}} | {{{description}}}
+        {{/required}}{{/allParams}}{{/_hasRequiredParams}}{{#hasOptionalParams}}
+            const opts = { {{#allParams}}{{^required}}
+                '{{{paramName}}}': {{{example}}}{{#_hasMoreOptional}},{{/_hasMoreOptional}} // {{{dataType}}} | {{{description}}}{{/required}}{{/allParams}}
+            };{{/hasOptionalParams}}{{/hasParams}}
+    events.add{{camelizedNickName}}EventListener(function(data){
+        //console.log(data);
+    });
+    events.emit{{{camelizedNickName}}}({{#allParams}}{{#required}}{{{paramName}}}{{#_hasMoreRequired}}, {{/_hasMoreRequired}}{{/required}}{{/allParams}}{{#hasOptionalParams}}{{#_hasRequiredParams}}, {{/_hasRequiredParams}}opts{{/hasOptionalParams}}).then(function({{#returnType}}data{{/returnType}}) {
+    {{#returnType}}console.log('API called successfully. Returned data: ' + data);{{/returnType}}{{^returnType}}console.log('API called successfully.');{{/returnType}}
+    }, function(error) {
+    console.error(error);
+    });
+{{/hasEvent}}
+
+```
+
+### Parameters
+{{^allParams}}This endpoint does not need any parameter.{{/allParams}}{{#allParams.0}}
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------{{/allParams.0}}
+{{#allParams}} **{{paramName}}** | {{#isPrimitiveType}}**{{dataType}}**{{/isPrimitiveType}}{{^isPrimitiveType}}{{#isFile}}**{{dataType}}**{{/isFile}}{{^isFile}}[**{{dataType}}**]({{baseType}}.md){{/isFile}}{{/isPrimitiveType}}| {{{description}}} | {{^required}}[optional] {{/required}}{{#defaultValue}}[default to {{defaultValue}}]{{/defaultValue}}
+{{/allParams}}
+
+### Return type
+
+{{#returnType}}{{#returnTypeIsPrimitive}}**{{returnType}}**{{/returnTypeIsPrimitive}}{{^returnTypeIsPrimitive}}[**{{returnType}}**]({{returnBaseType}}.md){{/returnTypeIsPrimitive}}{{/returnType}}{{^returnType}}null (empty response body){{/returnType}}
+
+{{/operation}}
+{{/operations}}

@@ -1,0 +1,173 @@
+package {{package}};
+
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
+{{#imports}}
+import {{.}};
+{{/imports}}
+
+import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.getNumberValue;
+{{#description}}
+/**
+* {{description}}
+**/{{/description}}
+public class {{requestDataType}} implements Parcelable, Bridgeable {
+
+    {{#allParams}}
+    private {{{dataType}}} {{baseName}};
+    {{/allParams}}
+
+    private {{requestDataType}}() {}
+
+    private {{requestDataType}}(Builder builder) {
+    {{#allParams}}
+        this.{{baseName}} = builder.{{baseName}};
+    {{/allParams}}
+    }
+
+    private {{requestDataType}}(Parcel in) {
+        this(in.readBundle());
+    }
+
+    public {{requestDataType}}(@NonNull Bundle bundle) {
+    {{#requiredParams}}
+        if(bundle.get("{{baseName}}") == null){
+            throw new IllegalArgumentException("{{baseName}} property is required");
+        }
+
+    {{/requiredParams}}
+    {{#allParams}}
+        {{#isString}}
+        this.{{baseName}} = bundle.getString("{{baseName}}");
+        {{/isString}}
+        {{#isInteger}}
+        this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
+        {{/isInteger}}
+        {{#isBoolean}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
+        {{/isBoolean}}
+        {{^isPrimitiveType}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
+        {{/isPrimitiveType}}
+    {{/allParams}}
+    }
+
+{{#requestDataType}}
+    public static final Creator<{{requestDataType}}> CREATOR = new Creator<{{requestDataType}}>() {
+        @Override
+        public {{requestDataType}} createFromParcel(Parcel in) {
+            return new {{requestDataType}}(in);
+        }
+
+        @Override
+        public {{requestDataType}}[] newArray(int size) {
+            return new {{requestDataType}}[size];
+        }
+    };
+{{/requestDataType}}
+
+    {{#allParams}}
+    {{#description}}
+    /**
+    * {{description}}
+    *
+    * @return {{{dataType}}}
+    */
+    {{/description}}
+    {{#required}}
+    @NonNull
+    {{/required}}
+    {{^required}}
+    @Nullable
+    {{/required}}
+    public {{{dataType}}} get{{baseName}}() {
+        return {{baseName}};
+    }
+
+    {{/allParams}}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeBundle(toBundle());
+    }
+
+    @NonNull
+    @Override
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        {{#requiredParams}}
+        {{#isString}}
+        this.{{baseName}} = bundle.getString("{{baseName}}");
+        {{/isString}}
+        {{#isInteger}}
+        this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
+        {{/isInteger}}
+        {{#isBoolean}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
+        {{/isBoolean}}
+        {{^isPrimitiveType}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
+        {{/isPrimitiveType}}
+        {{/requiredParams}}
+        {{#optionalParams}}
+        {{#isString}}
+        if({{baseName}} != null) {
+            this.{{baseName}} = bundle.getString("{{baseName}}");
+        }
+        {{/isString}}
+        {{#isInteger}}
+        if({{baseName}} != null) {
+            this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
+        }
+        {{/isInteger}}
+        {{#isBoolean}}
+        if({{baseName}} != null) {
+            this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
+        }
+        {{/isBoolean}}
+        {{^isPrimitiveType}}
+        if({{baseName}} != null) {
+            this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
+        }
+        {{/isPrimitiveType}}
+        {{/optionalParams}}
+        return bundle;
+    }
+
+    public static class Builder {
+        {{#requiredParams}}
+        private final {{{dataType}}} {{baseName}};
+        {{/requiredParams}}
+        {{#optionalParams}}
+        private {{{dataType}}} {{baseName}};
+        {{/optionalParams}}
+
+        public Builder({{#requiredParams}}@NonNull {{dataType}} {{baseName}}{{#hasMore}}, {{/hasMore}}{{/requiredParams}}) {
+        {{#requiredParams}}
+            this.{{baseName}} = {{baseName}};
+        {{/requiredParams}}
+        }
+
+        {{#optionalParams}}
+        @NonNull
+        public Builder {{baseName}}(@Nullable {{{dataType}}} {{baseName}}) {
+            this.{{baseName}} = {{baseName}};
+            return this;
+        }
+        {{/optionalParams}}
+
+        @NonNull
+        public {{requestDataType}} build() {
+            return new {{requestDataType}}(this);
+        }
+    }
+}

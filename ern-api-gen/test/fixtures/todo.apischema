@@ -1,5 +1,0 @@
-namespace com.walmartlabs.ern
-
-event todosUpdated(todos: String[])
-request getTodos() : String[]
-request addTodo(todo: String)

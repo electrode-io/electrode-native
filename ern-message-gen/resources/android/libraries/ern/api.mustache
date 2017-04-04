@@ -1,0 +1,96 @@
+package {{package}};
+
+import android.support.annotation.NonNull;
+
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
+import com.walmartlabs.electrode.reactnative.bridge.None;
+import java.util.*;
+{{#imports}}
+import {{import}};
+{{/imports}}
+
+public final class {{classname}} {
+    private static final Requests REQUESTS;
+    {{#hasEvent}}
+    private static final Events EVENTS;
+    {{/hasEvent}}
+
+    static {
+        REQUESTS = new {{baseName}}Requests();
+    {{#hasEvent}}
+        EVENTS = new {{baseName}}Events();
+    {{/hasEvent}}
+    }
+
+    private {{classname}}() {
+    }
+
+    @NonNull
+    public static Requests requests() {
+        return REQUESTS;
+    }
+
+    {{#hasEvent}}
+    @NonNull
+    public static Events events() {
+        return EVENTS;
+    }
+    {{/hasEvent}}
+
+    {{#hasEvent}}
+    public interface Events {
+    {{#operations}}
+    {{#operation}}
+        {{#isEvent}}
+        String EVENT_{{{nickNameConstant}}} = "{{package}}.event.{{operationId}}";
+        {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    {{#operations}}
+    {{#operation}}
+        {{#isEvent}}
+        void add{{camelizedNickName}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener);
+        {{/isEvent}}
+    {{/operation}}
+
+    {{#operation}}
+        {{#isEvent}}
+        void emit{{camelizedNickName}}({{#hasRequestParam}}@NonNull {{#requestParam}}{{{dataType}}} {{{paramName}}}{{/requestParam}}{{/hasRequestParam}});
+        {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    }
+    {{/hasEvent}}
+
+    public interface Requests {
+        {{#operations}}
+        {{#operation}}
+        {{^isEvent}}
+        String REQUEST_{{{nickNameConstant}}} = "{{package}}.request.{{operationId}}";
+        {{/isEvent}}
+        {{/operation}}
+        {{/operations}}
+
+
+    {{#operations}}
+        {{#operation}}
+        {{^isEvent}}
+        void register{{camelizedNickName}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}> handler);
+
+        {{/isEvent}}
+        {{/operation}}
+    {{/operations}}
+    {{#operations}}
+    {{#operation}}
+        {{^isEvent}}
+        void {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{dataType}}} {{paramName}}, {{/requestParam}}{{/hasRequestParam}}@NonNull final ElectrodeBridgeResponseListener<{{#responseParam}}{{{dataType}}}{{/responseParam}}> responseListener);
+
+        {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+    }
+}

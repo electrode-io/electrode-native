@@ -1,0 +1,66 @@
+{{>licenseInfo}}
+import {expect} from 'chai';
+{{#hasRequest}}
+import {{baseName}}Requests  from '../../src/api/{{baseName}}Requests';
+{{/hasRequest}}
+{{#hasEvent}}
+import {{baseName}}Events  from '../../src/api/{{baseName}}Events';
+{{/hasEvent}}
+
+describe('{{classname}}', function(){
+  {{#hasRequest}}
+  let requests;
+  {{/hasRequest}}
+  {{#hasEvent}}
+  let events;
+  {{/hasEvent}}
+  beforeEach(function() {
+    {{#hasRequest}}
+    requests = new {{baseName}}Requests({
+        registerHandler(){
+        },
+        sendRequest(){
+        }
+    });
+    {{/hasRequest}}
+    {{#hasEvent}}
+    events = new {{baseName}}Events({
+        registerEventListener(){
+        },
+        emitEvent(){
+        }
+    });
+    {{/hasEvent}}
+
+  });
+
+{{#operations}}
+{{#operation}}
+
+    describe('{{operationId}}', function() {
+      {{^isEvent}}
+      it('should send request {{operationId}} successfully', ()=> {
+        //uncomment below and update the code to test {{operationId}}
+        //return requests.{{operationId}}({{_argList}}).then(response=> {
+        //  if (error) throw error;
+        //  expect(response).to.be();
+        //});
+
+      });
+    {{/isEvent}}
+    {{#isEvent}}
+        it('should emit event {{operationId}} successfully', (done)=> {
+        //uncomment below and update the code to test {{operationId}}
+        //register listener.
+        //events.add{{{camelizedNickName}}}EventListener(()=>done());
+        //emit event.
+        //events.emit{{camelizedNickName}}({{_argList}});
+        //});
+        done();
+        });
+    {{/isEvent}}
+    });
+{{/operation}}
+{{/operations}}
+
+});

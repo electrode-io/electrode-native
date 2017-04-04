@@ -1,0 +1,22 @@
+{
+  "paths": {
+    "event/test": {
+      "event": {
+        "tags": [
+          "pet"
+        ],
+        "operationId": "fireEvent",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "description": "ID of pet to update",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ]
+      }
+    }
+  }
+}

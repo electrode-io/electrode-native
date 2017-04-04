@@ -1,0 +1,208 @@
+package {{package}};
+
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
+
+import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.getNumberValue;
+{{#models}}
+{{#model}}
+{{#description}}
+/**
+* {{description}}
+**/{{/description}}
+public class {{classname}} implements Parcelable, Bridgeable {
+
+    {{#vars}}
+    private {{{datatype}}} {{name}};
+    {{/vars}}
+
+    private {{classname}}() {}
+
+    private {{classname}}(Builder builder) {
+    {{#vars}}
+        this.{{name}} = builder.{{name}};
+    {{/vars}}
+    }
+
+    private {{classname}}(Parcel in) {
+        this(in.readBundle());
+    }
+
+    public {{classname}}(@NonNull Bundle bundle) {
+    {{#requiredVars}}
+        if(!bundle.containsKey("{{name}}")){
+            throw new IllegalArgumentException("{{name}} property is required");
+        }
+
+    {{/requiredVars}}
+    {{#allVars}}
+        {{#isString}}
+        this.{{name}} = bundle.getString("{{name}}");
+        {{/isString}}
+        {{#isInteger}}
+        this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").intValue();
+        {{/isInteger}}
+        {{#isBoolean}}
+        this.{{name}} = bundle.containsKey("{{name}}") ? bundle.getBoolean("{{name}}") : null;
+        {{/isBoolean}}
+        {{#isLong}}
+        this.{{name}} = bundle.getLong("{{name}}");
+        {{/isLong}}
+        {{#isDouble}}
+        this.{{name}} = bundle.getDouble("{{name}}");
+        {{/isDouble}}
+        {{#isFloat}}
+        this.{{name}} = bundle.getFloat("{{name}}");
+        {{/isFloat}}
+        {{^isPrimitiveType}}
+        this.{{name}} = bundle.containsKey("{{name}}") ? new {{{datatype}}}(bundle.getBundle("{{name}}")) : null;
+        {{/isPrimitiveType}}
+    {{/allVars}}
+    }
+
+{{#classname}}
+    public static final Creator<{{classname}}> CREATOR = new Creator<{{classname}}>() {
+        @Override
+        public {{classname}} createFromParcel(Parcel in) {
+            return new {{classname}}(in);
+        }
+
+        @Override
+        public {{classname}}[] newArray(int size) {
+            return new {{classname}}[size];
+        }
+    };
+{{/classname}}
+
+    {{#vars}}
+    {{#description}}
+    /**
+    * {{description}}
+    *
+    * @return {{{datatype}}}
+    */
+    {{/description}}
+    {{#required}}
+    @NonNull
+    {{/required}}
+    {{^required}}
+    @Nullable
+    {{/required}}
+    public {{{datatype}}} {{getter}}() {
+        return {{name}};
+    }
+
+    {{/vars}}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeBundle(toBundle());
+    }
+
+    @NonNull
+    @Override
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        {{#requiredVars}}
+        {{#isString}}
+        bundle.putString("{{name}}", this.{{name}});
+        {{/isString}}
+        {{#isInteger}}
+        bundle.putInt("{{name}}", this.{{name}});
+        {{/isInteger}}
+        {{#isLong}}
+        bundle.putLong("{{name}}", this.{{name}});
+        {{/isLong}}
+        {{#isDouble}}
+        bundle.putDouble("{{name}}", this.{{name}});
+        {{/isDouble}}
+        {{#isFloat}}
+        bundle.putFloat("{{name}}", this.{{name}});
+        {{/isFloat}}
+        {{#isBoolean}}
+        bundle.putBoolean("{{name}}", this.{{name}});
+        {{/isBoolean}}
+        {{^isPrimitiveType}}
+        bundle.putBundle("{{name}}", this.{{name}}.toBundle());
+        {{/isPrimitiveType}}
+        {{/requiredVars}}
+        {{#optionalVars}}
+        {{#isString}}
+        if({{name}} != null) {
+            bundle.putString("{{name}}", this.{{name}} );
+        }
+        {{/isString}}
+        {{#isInteger}}
+        if(this.{{name}} != null) {
+            bundle.putInt("{{name}}", this.{{name}});
+        }
+        {{/isInteger}}
+        {{#isLong}}
+        if(this.{{name}} != null) {
+            bundle.putLong("{{name}}", this.{{name}});
+        }
+        {{/isLong}}
+        {{#isDouble}}
+        if(this.{{name}} != null) {
+            bundle.putDouble("{{name}}", this.{{name}});
+         }
+        {{/isDouble}}
+        {{#isFloat}}
+        if(this.{{name}} != null) {
+           bundle.putFloat("{{name}}", this.{{name}});
+        }
+        {{/isFloat}}
+        {{#isBoolean}}
+        if(this.{{name}} != null) {
+            bundle.putBoolean("{{name}}", this.{{name}});
+        }
+        {{/isBoolean}}
+        {{^isPrimitiveType}}
+        if(this.{{name}} != null) {
+            bundle.putBundle("{{name}}", this.{{name}}.toBundle());
+        }
+        {{/isPrimitiveType}}
+        {{/optionalVars}}
+        return bundle;
+    }
+
+    public static class Builder {
+        {{#requiredVars}}
+        private final {{{datatype}}} {{name}};
+        {{/requiredVars}}
+        {{#optionalVars}}
+        private {{{datatype}}} {{name}};
+        {{/optionalVars}}
+
+        public Builder({{#requiredVars}}@NonNull {{javaType}} {{name}}{{#hasMore}}, {{/hasMore}}{{/requiredVars}}) {
+        {{#requiredVars}}
+            this.{{name}} = {{name}};
+        {{/requiredVars}}
+        }
+
+        {{#optionalVars}}
+        @NonNull
+        public Builder {{name}}(@Nullable {{{datatype}}} {{name}}) {
+            this.{{name}} = {{name}};
+            return this;
+        }
+        {{/optionalVars}}
+
+        @NonNull
+        public {{classname}} build() {
+            return new {{classname}}(this);
+        }
+    }
+}
+{{/model}}
+{{/models}}

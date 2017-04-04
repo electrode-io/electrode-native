@@ -28,29 +28,33 @@ As of now the API generator looks for a file named `apigen.schema` in the workin
 
 Here is an example of such a schema. Ultimately schema should also contains message types (data types) as the api generator will also probably take care of calling the message generator to fully generate the API including data types.
 
-```
-namespace com.walmartlabs.ern
-
-// Event with no payload
-event weatherUpdated
-
-// Event with a primitive type payload
-event weatherUdpatedAtLocation(location: String)
-
-// Event with complex type payload
-event weatherUpdatedAtPosition(position: LatLng)
-
-// Request with no request payload and no response payload
-request refreshWeather()
-
-// Request with a single request payload and no response payload
-request refreshWeatherFor(location: String)
-
-// Request with a single request payload and a response payload
-request getTemperatureFor(location: String) : Integer
-
-// Request with no request payload and a response payload
-request getCurrentTemperature() : Integer
+```json
+{
+  "swaggerVersion": "1.2",
+  "apis": [
+    {
+      "path": "/hello/{subject}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Greet our subject with hello!",
+          "type": "string",
+          "nickname": "helloSubject",
+          "parameters": [
+            {
+              "name": "subject",
+              "description": "The subject to be greeted.",
+              "required": true,
+              "type": "string",
+              "paramType": "path"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "models": {}
+}  
 ```
 
 `event` generation support is complete.
@@ -63,10 +67,6 @@ Generated code somehow reflect what has been proposed on the wiki :
 
 The [sample](./sample) folder let you see what gets generated based on a sample schema.
 
-##### Project Structure
-
-`api-hull` folder contains the base skeleton for an API lib, be it for Android/iOS or JS.  
-`templates` folder contains api generation code templates for all platforms.
 
 ##### Current suggested development procedure
 
