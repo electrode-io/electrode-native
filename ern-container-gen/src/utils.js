@@ -413,7 +413,7 @@ export async function gitTag(tag) {
   })
 }
 
-async function gitPush({
+export async function gitPush({
   remote = 'origin',
   branch = 'master',
   force = false,
