@@ -107,7 +107,7 @@ class VendorExtensions {
 
     getVendorExtensions() {
         if (!this.vendorExtensions)
-            this.setVendorExtensions(newHashMap);
+            this.setVendorExtensions(newHashMap());
         return this.vendorExtensions;
     }
 
