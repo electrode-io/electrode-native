@@ -1,4 +1,3 @@
-import Logger from "./Logger";
 import {lowerFirst as lcFirst, upperFirst as ucFirst} from './StringUtils';
 
 /**
@@ -58,7 +57,7 @@ function canResolve(obj, path) {
     if (path == null) return false;
     if (typeof path != 'string') return false;
     if (obj instanceof Map) return obj.has(path);
-    return (path in obj)
+    return Object.hasOwnProperty.call(obj, path);
 }
 function each(obj, keys, fn, scope) {
     if (obj == null) return obj;
@@ -116,31 +115,5 @@ export const has = (obj, ...properties) => {
     return true;
 };
 
-export const beanProxy = (value) => {
-    if (value == null) return null;
-    const p = new Proxy(value, BEAN_PROXY_HANDLER);
-    p.___name = `Proxy<${value.constructor.name}>`;
-    return p;
-};
 
-const BEAN_PROXY_HANDLER = {
-    get(target, name){
-        if (has(target, name)) return target[name];
-        if (typeof name !== 'string' || typeof name === 'number') {
-            Logger.warn(`bean  is attempting to use  a non-string`);
-            return target[name];
-        }
-        if (name.startsWith("is")) {
-            return () => target[lcFirst(name, 2)];
-        }
-        if (name.startsWith("get")) {
-            return () => target[lcFirst(name, 3)];
-        }
-        if (name.startsWith("set")) {
-            return (value) => (target[lcFirst(name, 3)] = value);
-        }
-    }
-
-};
-
-export default({beanify, apply, has, beanProxy})
+export default({beanify, apply, has})

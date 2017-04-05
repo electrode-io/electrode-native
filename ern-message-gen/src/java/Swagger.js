@@ -5,7 +5,7 @@ import SwaggerApi from "sway/lib/types/api";
 import Path from "sway/lib/types/path";
 import Operation from "sway/lib/types/operation";
 import parameterFactory from "../models/parameters";
-import {beanify, beanProxy, apply} from "./beanUtils";
+import {beanify, apply} from "./beanUtils";
 import {Property} from "../models/properties";
 import {toModel} from '../models/PropertyBuilder';
 import authFactory from '../models/auth'
@@ -99,14 +99,37 @@ beanify(Object.assign(Response.prototype, {
     }
 }), ['description', 'statusCode', 'examples']);
 
+class VendorExtensions {
+
+    setVendorExtensions(extensions) {
+        this.vendorExtensions = extensions;
+    }
+
+    getVendorExtensions() {
+        if (!this.vendorExtensions)
+            this.setVendorExtensions(newHashMap());
+        return this.vendorExtensions;
+    }
+
+}
+class Contact extends VendorExtensions {
+}
+
+beanify(Contact.prototype, ['name', 'url', 'email']);
+
+class License extends VendorExtensions {
+
+}
+
+beanify(License.prototype, ['name', 'url']);
 
 class Info {
     getContact() {
-        return beanProxy(this.contact);
+        return apply(new Contact(), this.contact);
     }
 
     getLicense() {
-        return beanProxy(this.license);
+        return apply(new License(), this.license);
     }
 }
 
