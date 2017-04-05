@@ -137,7 +137,8 @@ export default async function generateContainer({
     reactNativeVersion,
     ernPlatformVersion,
     nativeAppName,
-    miniApps
+    miniApps,
+    containerVersion
   }
 
   generator.generateContainer(
