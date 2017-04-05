@@ -184,7 +184,7 @@ public class {{classname}} implements Parcelable, Bridgeable {
         private {{{datatype}}} {{name}};
         {{/optionalVars}}
 
-        public Builder({{#requiredVars}}@NonNull {{javaType}} {{name}}{{#hasMore}}, {{/hasMore}}{{/requiredVars}}) {
+        public Builder({{#requiredVars}}@NonNull {{datatype}} {{name}}{{^-last}}, {{/-last}}{{/requiredVars}}) {
         {{#requiredVars}}
             this.{{name}} = {{name}};
         {{/requiredVars}}
