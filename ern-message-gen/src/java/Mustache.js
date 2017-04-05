@@ -120,18 +120,20 @@ const Log = LoggerFactory.getLogger('Mustache');
 export default ({
     compiler(){
         let defValue;
+        const partials = {};
         let partialProxy;
         const cret = {
 
             withLoader(_loader){
-                const partials = {};
                 const handler = {
                     get (target, name){
                         if (name in target) return target[name];
                         return (target[name] = _loader.getTemplate(name));
                     }
                 };
-                partialProxy = new Proxy(partials, handler);
+                partialProxy = function (name) {
+                    return _loader.getTemplate(name);
+                };
                 return cret;
             },
             defaultValue(def){
