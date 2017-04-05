@@ -477,10 +477,14 @@ export default class DefaultGenerator extends AbstractGenerator {
                     }
                     let templateFile;
                     if (support != null && support instanceof GlobalSupportingFile) {
-                        templateFile = this.config.getCommonTemplateDir() + File.separator + (support.templateFile || '');
+                        templateFile = this._resolveFile(this.config.getCommonTemplateDir(), support.templateFile || '');
                     }
                     else {
                         templateFile = this.getFullTemplateFile(this.config, support.templateFile);
+                    }
+                    if (templateFile == null) {
+                        Log.warn(`Could not resolve ${support.templateFile}`);
+                        continue;
                     }
                     let shouldGenerate = true;
                     if (isNotEmptySet(supportingFilesToGenerate)) {
@@ -491,31 +495,23 @@ export default class DefaultGenerator extends AbstractGenerator {
                             shouldGenerate = false;
                         }
                     }
+
                     if (shouldGenerate) {
                         if (this.ignoreProcessor.allowsFile(new File(outputFilename))) {
-                            if (templateFile.endsWith(".mustache")) {
+                            if (templateFile == null) {
+                                Log.warn(`Could not resolve template file ${support.templateFile}`);
+                            } else if (templateFile.endsWith(".mustache")) {
                                 let template = this.readTemplate(templateFile);
                                 let tmpl = Mustache.compiler().withLoader(new TemplateLocator(this)).defaultValue("").compile(template, templateFile);
                                 this.writeToFile(outputFilename, tmpl.execute(bundle));
                                 files.push(new File(outputFilename));
                             }
                             else {
-                                let input = new File(__dirname, '..', templateFile);
-                                if (!input.exists()) {
-                                    input = new File(__dirname, '..', this.getCPResourcePath(templateFile))
-                                }
-
+                                let input = new File(templateFile);
                                 let outputFile = new File(outputFilename);
                                 let out = new File(outputFile);
-                                if (input.exists()) {
-                                    Log.info("writing file " + outputFile);
-                                    IOUtils.copy(input, out);
-                                }
-                                else {
-                                    if (input == null) {
-                                        Log.error("can\'t open " + templateFile + " for input");
-                                    }
-                                }
+                                Log.info("writing file " + outputFile);
+                                IOUtils.copy(input, out);
                                 files.push(outputFile);
                             }
                         } else {
@@ -531,10 +527,11 @@ export default class DefaultGenerator extends AbstractGenerator {
 
             }
             let swaggerCodegenIgnore = ".swagger-codegen-ignore";
+
             let ignoreFileNameTarget = this.config.outputFolder() + File.separator + swaggerCodegenIgnore;
             let ignoreFile = new File(ignoreFileNameTarget);
             if (!ignoreFile.exists()) {
-                let ignoreFileNameSource = File.separator + this.config.getCommonTemplateDir() + File.separator + swaggerCodegenIgnore;
+                let ignoreFileNameSource = this._resolveFilePath(this.config.getCommonTemplateDir(), swaggerCodegenIgnore);
                 let ignoreFileContents = this.readResourceContents(ignoreFileNameSource);
                 try {
                     this.writeToFile(ignoreFileNameTarget, ignoreFileContents);

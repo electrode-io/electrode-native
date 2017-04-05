@@ -3,17 +3,11 @@ import LoggerFactory from '../java/LoggerFactory';
 import DefaultCodegen from '../DefaultCodegen';
 import CliOption from '../CliOption';
 const Log = LoggerFactory.getLogger('ERNMixin');
-export const CONFIG = {
-    API_PACKAGE: "com.walmartlabs.ern.api",
-    MODEL_PACKAGE: "com.walmartlabs.ern.model"
-};
 export const BRDIGE_VERSION = "bridgeVersion";
 export default function mixit(clz, overide) {
     const {processOpts, fromOperation, initalizeCliOptions} = clz.prototype;
     Object.assign(clz.prototype, {
         platformVersion: "1.3.0",
-        __apiPackage: CONFIG.API_PACKAGE,
-        __modelPackage: CONFIG.MODEL_PACKAGE,
         setBridgeVersion(version){
             this.bridgeVersion = version;
         },

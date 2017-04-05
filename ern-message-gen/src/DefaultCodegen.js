@@ -1308,6 +1308,8 @@ export default class DefaultCodegen {
             property.maxLength = sp.getMaxLength();
             property.minLength = sp.getMinLength();
             property.datatype = type;
+            property.isString = true;
+            property.isPrimitive = true;
             property.pattern = this.toRegularExpression(sp.getPattern());
             if (property.pattern != null || property.minLength != null || property.maxLength != null)
                 property.hasValidation = true;

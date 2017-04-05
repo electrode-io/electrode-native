@@ -73,7 +73,21 @@ function each(obj, keys, fn, scope) {
         fn.call(scope, obj[k], k);
     }
 }
-export const apply = (bean, obj, properties) => {
+/**
+ * Apply however, it only sets a value that has a property or a setter to invoke.
+ * @param bean
+ * @param obj
+ */
+export const applyStrict = (bean, obj) => {
+    return apply(bean, obj, null, true);
+};
+export const canResolveNoFunc = (obj, prop) => {
+    if (!canResolve(obj, prop))
+        return false;
+    return typeof obj[prop] !== 'function';
+};
+
+export const apply = (bean, obj, properties, strict = false) => {
     if (obj == null) return bean;
     if (bean == null) throw new Error(`Bean can not be null`);
     const prefix = '';
@@ -97,7 +111,7 @@ export const apply = (bean, obj, properties) => {
             const value = typeof obj[get] === 'function' ? obj[get]() : typeof obj[is] === 'function' ? obj[is]() : resolve(obj, prop);
             if (typeof bean[set] === 'function') {
                 bean[set](value);
-            } else {
+            } else if (!strict || canResolveNoFunc(bean, prop)) {
                 bean[prop] = value;
             }
         }

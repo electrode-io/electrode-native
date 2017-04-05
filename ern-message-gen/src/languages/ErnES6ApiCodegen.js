@@ -1,6 +1,5 @@
 import ES6Codegen from "../languages/ES6Codegen";
 import ernify from './ERNMixin';
-import SupportingFile from '../SupportingFile';
 import {newHashMap} from '../java/javaUtil';
 const {postProcessOperations} = ES6Codegen.prototype;
 export const ERN_SUPPORTING = ['index.mustache', 'package.mustache', 'README.mustache'];
@@ -30,19 +29,17 @@ export default class ErnES6ApiCodegen extends ES6Codegen {
         this.__apiTestTemplateFiles.put("api_test.mustache", ".js");
         this.__apiDocTemplateFiles.put("api_doc.mustache", ".md");
         if (this.classy) {
-            this.addSupportingFilesForErnClassy();
+            this.__additionalProperties.put("isClassy", this.classy);
+            this.__modelTemplateFiles.put("model.mustache", ".js");
+            this.__modelDocTemplateFiles.put("model_doc.mustache", ".md");
         }
-    }
-
-    addSupportingFilesForErnClassy() {
-        this.__modelTemplateFiles.put("model.mustache", "js");
-        this.__modelDocTemplateFiles.put("model_doc.mustache", "js");
     }
 
     preprocessSwagger(swagger) {
         super.preprocessSwagger(swagger);
-        this.__supportingFiles = this.__supportingFiles.filter(v => !contains(ERN_REMOVING, v.templateFile));
-
+        if (!this.classy) {
+            this.__supportingFiles = this.__supportingFiles.filter(v => !contains(ERN_REMOVING, v.templateFile));
+        }
     }
 
     getName() {
@@ -57,6 +54,7 @@ ernify(ErnES6ApiCodegen, {
         if (ops == null)
             return objs;
 
+
         for (const op of ops) {
             if (op.httpMethod !== 'EVENT') {
                 objs.put("hasRequest", true);
@@ -65,6 +63,7 @@ ernify(ErnES6ApiCodegen, {
             op.isEvent = true;
             objs.put("hasEvent", true);
         }
+        objs.put("isClassy", this.classy);
         return objs;
     }
 });

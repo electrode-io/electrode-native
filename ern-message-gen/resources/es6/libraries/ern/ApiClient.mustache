@@ -1,0 +1,175 @@
+{{>licenseInfo}}
+
+
+{{#emitJSDoc}}  /**
+   * @module {{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient
+   * @version {{projectVersion}}
+   */
+
+  /**
+   * Marshals json into classes.
+   * @alias module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient
+   * @class
+   */
+{{/emitJSDoc}}
+class ApiClient {
+
+{{#emitJSDoc}}  /**
+   * Returns a string representation for an actual parameter.
+   * @param param The actual parameter.
+   * @returns {String} The string representation of <code>param</code>.
+   */
+{{/emitJSDoc}}static paramToString(param) {
+    if (param == undefined || param == null) {
+      return '';
+    }
+    if (param instanceof Date) {
+      return param.toJSON();
+    }
+    return param.toString();
+  };
+
+
+{{#emitJSDoc}}  /**
+   * Normalizes parameter values:
+   * <ul>
+   * <li>remove nils</li>
+   * <li>keep files and arrays</li>
+   * <li>format to string with `paramToString` for other cases</li>
+   * </ul>
+   * @param {Object.<String, Object>} params The parameters as object properties.
+   * @returns {Object.<String, Object>} normalized parameters.
+   */
+{{/emitJSDoc}} static  normalizeParams(params) {
+    var newParams = {};
+    for (var key in params) {
+      if (params.hasOwnProperty(key) && params[key] != undefined && params[key] != null) {
+        var value = params[key];
+        if (ApiClient.isFileParam(value) || Array.isArray(value)) {
+          newParams[key] = value;
+        } else {
+          newParams[key] = ApiClient.paramToString(value);
+        }
+      }
+    }
+    return newParams;
+  };
+{{#emitJSDoc}}
+/**
+   * Deserializes an HTTP response body into a value of the specified type.
+   * @param {Object} response A SuperAgent response object.
+   * @param {(String|Array.<String>|Object.<String, Object>|Function)} returnType The type to return. Pass a string for simple types
+   * or the constructor function for a complex type. Pass an array containing the type name to return an array of that type. To
+   * return an object, pass an object with one property whose name is the key type and whose value is the corresponding value type:
+   * all properties on <code>data<code> will be converted to this type.
+   * @returns A value of the specified type.
+   */
+{{/emitJSDoc}}
+    static deserialize(response, returnType) {
+    if (response == null || returnType == null) {
+      return null;
+    }
+    return ApiClient.convertToType(response, returnType);
+  };
+    static deserializer(returnType){
+        return (response)=>ApiClient.deserialize(response, returnType);
+    }
+{{#emitJSDoc}}  /**
+   * Parses an ISO-8601 string representation of a date value.
+   * @param {String} str The date value as a string.
+   * @returns {Date} The parsed date object.
+   */
+{{/emitJSDoc}} static parseDate(str) {
+    return new Date(str.replace(/T/i, ' '));
+  };
+
+{{#emitJSDoc}}  /**
+   * Converts a value to the specified type.
+   * @param {(String|Object)} data The data to convert, as a string or object.
+   * @param {(String|Array.<String>|Object.<String, Object>|Function)} type The type to return. Pass a string for simple types
+   * or the constructor function for a complex type. Pass an array containing the type name to return an array of that type. To
+   * return an object, pass an object with one property whose name is the key type and whose value is the corresponding value type:
+   * all properties on <code>data<code> will be converted to this type.
+   * @returns An instance of the specified type.
+   */
+{{/emitJSDoc}}  static convertToType(data, type) {
+    switch (type) {
+      case 'Boolean':
+        return Boolean(data);
+      case 'Integer':
+        return parseInt(data, 10);
+      case 'Number':
+        return parseFloat(data);
+      case 'String':
+        return String(data);
+      case 'Date':
+        return ApiClient.parseDate(String(data));
+      default:
+        if (type === Object) {
+          // generic object, return directly
+          return data;
+        } else if (typeof type === 'function') {
+          // for model type like: User
+          return type.constructFromObject(data);
+        } else if (Array.isArray(type)) {
+          // for array type like: ['String']
+          var itemType = type[0];
+          return data.map(function(item) {
+            return ApiClient.convertToType(item, itemType);
+          });
+        } else if (typeof type === 'object') {
+          // for plain object type like: {'String': 'Integer'}
+          var keyType, valueType;
+          for (var k in type) {
+            if (type.hasOwnProperty(k)) {
+              keyType = k;
+              valueType = type[k];
+              break;
+            }
+          }
+          var result = {};
+          for (var k in data) {
+            if (data.hasOwnProperty(k)) {
+              const key = ApiClient.convertToType(k, keyType);
+              const value = ApiClient.convertToType(data[k], valueType);
+              result[key] = value;
+            }
+          }
+          return result;
+        } else {
+          // for unknown type, return the data directly
+          return data;
+        }
+    }
+  };
+
+{{#emitJSDoc}}  /**
+   * Constructs a new map or array model from REST data.
+   * @param data {Object|Array} The REST data.
+   * @param obj {Object|Array} The target object or array.
+   */
+{{/emitJSDoc}}  static constructFromObject(data, obj, itemType) {
+    if (Array.isArray(data)) {
+      for (var i = 0; i < data.length; i++) {
+        if (data.hasOwnProperty(i))
+          obj[i] = ApiClient.convertToType(data[i], itemType);
+      }
+    } else {
+      for (var k in data) {
+        if (data.hasOwnProperty(k))
+          obj[k] = ApiClient.convertToType(data[k], itemType);
+      }
+    }
+  };
+
+
+
+}
+
+    {{#emitJSDoc}}  /**
+        * The default API client implementation.
+        * @type {module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient}
+        */
+    {{/emitJSDoc}}
+export const instance =  new ApiClient;
+export default instance;
