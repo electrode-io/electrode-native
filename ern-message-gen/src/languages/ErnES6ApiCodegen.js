@@ -1,5 +1,5 @@
 import ES6Codegen from "../languages/ES6Codegen";
-import ernify, {CONFIG} from './ERNMixin';
+import ernify from './ERNMixin';
 import SupportingFile from '../SupportingFile';
 import {newHashMap} from '../java/javaUtil';
 const {postProcessOperations} = ES6Codegen.prototype;
@@ -47,14 +47,6 @@ export default class ErnES6ApiCodegen extends ES6Codegen {
 
     getName() {
         return "ERNES6";
-    }
-
-    apiPackage() {
-        return CONFIG.API_PACKAGE;
-    }
-
-    modelPackage() {
-        return CONFIG.MODEL_PACKAGE;
     }
 }
 ernify(ErnES6ApiCodegen, {
