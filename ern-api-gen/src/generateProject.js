@@ -43,7 +43,7 @@ export function generatePackageJson({
         "name": npmScope ? `@${npmScope}/${moduleName}` : moduleName,
         "version": apiVersion,
         "description": apiDescription,
-        "main": "index.js",
+        "main": "javascript/src/index.js",
         "author": apiAuthor,
         "license": apiLicense,
         "scripts": {
