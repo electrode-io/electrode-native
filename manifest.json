@@ -9,11 +9,11 @@
     "@walmart/react-native-user-api@0.0.24",
     "@walmart/react-native-todo-api@0.0.34",
     "@walmart/react-native-navigation-api@0.0.17",
-    "@walmart/react-native-walmartanalytics-api@0.1.2",
-    "@walmart/react-native-walmartnavigation-api@0.1.2",
-    "@walmart/react-native-walmartuserauth-api@0.1.2",
-    "@walmart/react-native-walmartcookie-api@0.1.2",
-    "@walmart/react-native-walmartstate-api@0.1.2"
+    "@walmart/react-native-walmartanalytics-api@0.1.3",
+    "@walmart/react-native-walmartnavigation-api@0.1.3",
+    "@walmart/react-native-walmartuserauth-api@0.1.3",
+    "@walmart/react-native-walmartcookie-api@0.1.3",
+    "@walmart/react-native-walmartstate-api@0.1.3"
   ],
   "jsDependencies": [
     "react@15.4.2"
