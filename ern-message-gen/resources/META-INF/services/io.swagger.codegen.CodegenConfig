@@ -1,6 +1,7 @@
 languages.AndroidClientCodegen
 languages.ErnAndroidApiCodegen
 languages.ErnES6ApiCodegen
+languages.ErnSwiftCodegen
 languages.ES6Codegen
 languages.JavascriptClientCodegen
 languages.SwiftCodegen

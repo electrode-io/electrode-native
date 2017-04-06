@@ -105,6 +105,9 @@ describe('DefaultGenerator', function () {
     it("should generate: 'petstore.json' for 'ern-es6-classy'", generate('petstore.json', 'ERNES6', "petstore/ern-es6-classy", {"classy": true})
 //        .then(compare('petstore/ern-es6', 'fixtures/petstore/ern-es6'))
     );
+    //it("should generate: 'personapi.json' for 'ern-swift'", generate('personapi.json', 'ERNSwift', "personapi/ern-swift"));
+
+
     it("should generate: 'uber.json' for 'es6'", generate('uber.json', 'ES6', "uber/es6")
         .then(npm('install', 'uber/es6')));
 
