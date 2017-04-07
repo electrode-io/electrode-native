@@ -81,7 +81,7 @@ export async function regenerateCode(options = {}) {
         apiVersion: pkg.version,
         apiDescription: pkg.description,
         apiAuthor: pkg.author,
-        bridgeVersion:options.bridgeVersion || pkg.peerDependencies["@walmart/react-native-electrode-bridge"],
+        bridgeVersion: options.bridgeVersion || pkg.peerDependencies["@walmart/react-native-electrode-bridge"],
         ...extra,
         ...options
     });
@@ -130,6 +130,10 @@ const nextVersion = (curVersion, userPluginVer) => {
             return curVersion;
         default: {
             try {
+                //If valid return
+                if (semver.valid(userPluginVer) != null) {
+                    return userPluginVer;
+                }
                 const ret = semver.inc(curVersion, userPluginVer);
                 if (ret) {
                     return ret;

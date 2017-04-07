@@ -14,23 +14,29 @@ const tryNewRequire = (mod) => {
         Log.warn(`could not require ${mod}`, e);
     }
 };
+export const SEARCH_PATH = [path.join(__dirname, '..', '..', 'resources')];
+
 export default ({
     load(className){
         const ret = [];
         const lines = [];
-        const meta = new File(__dirname, '..', '..', 'resources', 'META-INF', 'services', className);
-        if (!meta.exists()) {
-            return ret;
-        }
-        try {
-            lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split('\n'));
-        } catch (e) {
-            Log.warn(`Error loading ${className}`, e);
-            return ret;
-        }
+        for (const searchPath of SEARCH_PATH) {
+            let meta = new File(searchPath, 'META-INF', 'services', className);
+            if (!meta.exists()) {
+                continue;
+            }
 
-        for (const mod of lines) {
+            try {
+                lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split('\n'));
+            } catch (e) {
+                Log.warn(`Error loading ${className}`, e);
+                return ret;
+            }
+        }
+        for (const line of lines) {
+            const [mod, comment] = line.split('#', 2);
             if (isEmpty(mod)) continue;
+
             const conf = tryNewRequire(path.join(__dirname, '..', ...mod.split('.')));
             if (conf) {
                 ret.push(conf);

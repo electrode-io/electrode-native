@@ -2,8 +2,18 @@
 import _{{importPath}} from './api/{{importPath}}';
 {{/apis}}{{/apiInfo}}
 
+{{#isClassy}}
+    //Using classes
+    {{#models}}
+import _{{importPath}} from './{{#modelPackage}}{{modelPackage}}/{{/modelPackage}}{{importPath}}';
+    {{/models}}
+{{/isClassy}}
 
 {{#apiInfo}}{{#apis}}
 export const {{importPath}} = _{{importPath}};
 {{/apis}}{{/apiInfo}}
-
+{{#isClassy}}
+    {{#models}}
+export const {{importPath}} = _{{importPath}};
+    {{/models}}
+{{/isClassy}}

@@ -1,3 +1,11 @@
+{{#isClassy}}
+import ApiClient from '../ApiClient';
+
+{{#imports}}import {{import}} from '../{{#modelPackage}}{{&modelPackage}}/{{/modelPackage}}{{import}}';
+{{/imports}}
+
+{{/isClassy}}
+
 export default class {{{baseName}}}Requests {
     constructor(bridge) {
      this._bridge = bridge;
@@ -59,7 +67,11 @@ export default class {{{baseName}}}Requests {
          data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
      {{/formParams}}
 
-         return this._bridge.sendRequest("{{package}}.request.{{operationId}}",  {data, dispatchMode});
+         return this._bridge.sendRequest("{{package}}.request.{{operationId}}",  {data, dispatchMode}){{#isClassy}}
+            {{#returnType}}
+            .then(ApiClient.deserializer({{returnType}}));
+            {{/returnType}}
+        {{/isClassy}}
     }
     {{/isEvent}}
     {{/operation}}

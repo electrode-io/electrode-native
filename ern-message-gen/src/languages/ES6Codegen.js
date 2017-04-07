@@ -8,17 +8,20 @@ export default class ES6Codegen extends JavascriptClientCodegen {
 
     constructor() {
         super();
-
+        this.__supportingFiles = this.__supportingFiles.filter(v => v.templateFile != 'mocha.opts');
         this.__supportingFiles.push(new SupportingFile("babelrc.mustache", "", ".babelrc"));
         this.__supportingFiles.push(new SupportingFile("npmignore.mustache", "", ".npmignore"));
         this.__supportingFiles.push(new SupportingFile("gitignore.mustache", "", ".gitignore"));
+
         this.usePromises = true;
     }
-    processOpts(){
+
+    processOpts() {
         super.processOpts();
         const f = this[`addSupportingFilesFor${JavascriptClientCodegen.camelize(this.getLibrary())}`];
         f && f.call(this);
     }
+
     getName() {
         return 'ES6';
     }

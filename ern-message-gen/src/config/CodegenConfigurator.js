@@ -6,7 +6,7 @@ import AuthParser from "../auth/AuthParser";
 import File from "../java/File";
 import LoggerFactory from "../java/LoggerFactory";
 import {isNotEmpty, isEmpty} from "../java/StringUtils";
-import {apply} from "../java/beanUtils";
+import {apply, applyStrict} from "../java/beanUtils";
 import System from "../java/System";
 import fs from "fs";
 import {newHashMap, newHashSet, asMap} from "../java/javaUtil";
@@ -337,6 +337,7 @@ export default class CodegenConfigurator {
         this.setVerboseFlags();
         this.setSystemProperties();
         let config = CodegenConfigLoader.forName(this.lang);
+        applyStrict(config, this);
         config.setOutputDir(this.outputDir);
         config.setSkipOverwrite(this.skipOverwrite);
         config.instantiationTypes().putAll(this.instantiationTypes);

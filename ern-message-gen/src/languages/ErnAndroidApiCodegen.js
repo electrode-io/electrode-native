@@ -10,7 +10,8 @@ export default class ErnAndroidApiCodegen extends AndroidClientCodegen {
     platformVersion = "1.3.0";
     library = "ern";
     __supportedLibraries = newHashMap(["ern", "ERN plugin makes this platform work"]);
-    addSupportingFilesForErn(){
+
+    addSupportingFilesForErn() {
 
         this.__apiTemplateFiles.put("apirequests.mustache", ".java");
         this.__apiTemplateFiles.put("apievents.mustache", ".java");

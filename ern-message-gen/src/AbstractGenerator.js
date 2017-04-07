@@ -3,7 +3,11 @@ import _F from "./java/File";
 import fs from "fs";
 import path from "path";
 const File = _F;
+
+const ABSTRACT_SEARCH_PATHS = [path.join(__dirname, "..", "resources")];
+
 export default class AbstractGenerator {
+    static SEARCH_PATHS = ABSTRACT_SEARCH_PATHS;
 
     writeToFile(filename, contents) {
         Log.info("writing file " + filename);
@@ -13,7 +17,7 @@ export default class AbstractGenerator {
     }
 
     readTemplate(name) {
-        const reader = this.getTemplateReader(name.startsWith("resources") ? name : "resources/" + name);
+        const reader = this.getTemplateReader(name);
         if (reader == null) {
             throw new Error(`no file found for "${name}"`);
         }
@@ -21,49 +25,86 @@ export default class AbstractGenerator {
     }
 
     getTemplateReader(name) {
-        const f = new File(__dirname, '..', name);
+        const f = this._resolveFilePath(name);
+        if (f == null) {
+            throw new Error("can\'t load template " + name);
+        }
         try {
-            return fs.readFileSync(f.getPath(), 'utf-8');
+            return fs.readFileSync(f, 'utf-8');
         }
         catch (e) {
             Log.trace(e);
         }
 
-        throw new Error("can\'t load template " + name);
+
     }
 
     /**
      * Get the template file path with template dir prepended, and use the
      * library template if exists.
      *
+     * Resolve from embeddedTemplate/library, than embeddedTemplate,  then templateDir
+     *
      * @param config Codegen config
      * @param templateFile Template file
      * @return String Full template file path
      */
     getFullTemplateFile(config, templateFile) {
-        let template = config.templateDir() + File.separator + templateFile;
-        if (new File(template).exists()) {
+        let library = config.getLibrary();
+        if (library) {
+            const libTemplateFile = this._resolveFilePath(config.embeddedTemplateDir(), "libraries", library, templateFile);
+            if (libTemplateFile != null) {
+                return libTemplateFile;
+            }
+        }
+
+        const embeddedTemplate = this._resolveFilePath(config.embeddedTemplateDir(), templateFile);
+        if (embeddedTemplate != null) {
+            return embeddedTemplate;
+        }
+
+        const template = this._resolveFilePath(config.templateDir(), templateFile);
+        if (template != null) {
             return template;
         }
-        else {
-            let library = config.getLibrary();
-            if (library) {
-                const libTemplateFile = 'resources' + File.separator + config.embeddedTemplateDir() + File.separator + "libraries" + File.separator + library + File.separator + templateFile;
-                if (this.embeddedTemplateExists(libTemplateFile)) {
-                    return libTemplateFile;
-                }
-            }
-            const fp = 'resources' + File.separator + config.embeddedTemplateDir() + File.separator + templateFile;
-            return fp;
-        }
+
     }
 
     readResourceContents(resourceFilePath) {
-        return fs.readFileSync(path.join(__dirname, '..', "resources", resourceFilePath), 'utf8');
+        const file = this._resolveFilePath(resourceFilePath);
+        if (file == null) {
+            Log.warn(`Could not resolve ${resourceFilePath}`);
+            return;
+        }
+
+        return fs.readFileSync(file, 'utf8');
+
+    }
+
+    _resolveFilePath(...paths) {
+        const f = this._resolveFile(...paths);
+        if (f == null) {
+            return;
+        }
+        return f.getAbsolutePath();
+    }
+
+    _resolveFile(...paths) {
+        for (const p of this.constructor.SEARCH_PATHS) {
+            const file = new File(p, ...paths);
+            if (file.exists()) {
+                return file;
+            }
+        }
+        const last = new File(...paths);
+        if (last.exists()) {
+            return last;
+        }
     }
 
     embeddedTemplateExists(name) {
-        return new File(__dirname, '..', name).exists();
+        const f = this._resolveFile(name);
+        return f != null;
     }
 
     getCPResourcePath(name) {

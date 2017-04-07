@@ -87,6 +87,12 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         this.__instantiationTypes.put("array", "Array");
         this.__instantiationTypes.put("list", "Array");
         this.__instantiationTypes.put("map", "Object");
+        this.__supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
+        this.__supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
+        this.__supportingFiles.add(new SupportingFile("mocha.opts", "", "mocha.opts"));
+        this.__supportingFiles.add(new SupportingFile("travis.yml", "", ".travis.yml"));
+        this.__supportingFiles.add(new SupportingFile("package.mustache", "", "package.json"));
+
         this.setReservedWordsLowerCase(["abstract", "arguments", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "debugger", "default", "delete", "do", "double", "else", "enum", "eval", "export", "extends", "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", "import", "in", "instanceof", "int", "interface", "let", "long", "native", "new", "null", "package", "private", "protected", "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield", "Array", "Date", "eval", "function", "hasOwnProperty", "Infinity", "isFinite", "isNaN", "isPrototypeOf", "Math", "NaN", "Number", "Object", "prototype", "String", "toString", "undefined", "valueOf"]);
     }
 
@@ -210,13 +216,9 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         this.__additionalProperties.put(JavascriptClientCodegen.EMIT_JS_DOC, this.emitJSDoc);
         this.__additionalProperties.put("apiDocPath", this.apiDocPath);
         this.__additionalProperties.put("modelDocPath", this.modelDocPath);
-        this.__supportingFiles.add(new SupportingFile("package.mustache", "", "package.json"));
         this.__supportingFiles.add(new SupportingFile("index.mustache", this.createPath(this.sourceFolder, this.invokerPackage), "index.js"));
         this.__supportingFiles.add(new SupportingFile("ApiClient.mustache", this.createPath(this.sourceFolder, this.invokerPackage), "ApiClient.js"));
-        this.__supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
-        this.__supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
-        this.__supportingFiles.add(new SupportingFile("mocha.opts", "", "mocha.opts"));
-        this.__supportingFiles.add(new SupportingFile("travis.yml", "", ".travis.yml"));
+
     }
 
     escapeReservedWord(name) {
