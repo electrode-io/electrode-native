@@ -12,5 +12,6 @@
 @interface ElectrodeBridgeDelegate : NSObject <RCTBridgeDelegate>
 
 - (instancetype)initWithModuleURL:(NSURL *)url extraModules:(NSArray *)modules;
+- (instancetype)initWithURL: (NSURL *)url;
 
 @end

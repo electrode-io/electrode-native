@@ -27,6 +27,16 @@
     return self;
 }
 
+- (instancetype)initWithURL: (NSURL *)url 
+{
+    if (self = [super init]) 
+    {
+        _sourceURL = url;
+    }
+    
+    return self;
+}
+
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
     return _sourceURL;
