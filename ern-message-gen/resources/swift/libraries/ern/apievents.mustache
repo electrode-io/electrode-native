@@ -1,0 +1,42 @@
+package {{{package}}};
+
+import android.support.annotation.NonNull;
+
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
+import com.walmartlabs.electrode.reactnative.bridge.EventListenerProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.EventProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.None;
+import java.util.*;
+
+{{#imports}}
+    import {{import}};
+{{/imports}}
+
+final class {{{eventsImplClassName}}} implements {{{classname}}}.Events {
+    {{{eventsImplClassName}}}() {}
+
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    @Override
+    public void add{{{camelizedNickName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener) {
+        new EventListenerProcessor<>(EVENT_{{{nickNameConstant}}}, {{#requestParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/requestParam}}, eventListener).execute();
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    @Override
+    public void emit{{{camelizedNickName}}}({{#requestParam}}{{{dataType}}} {{{paramName}}}{{/requestParam}}) {
+        new EventProcessor<>(EVENT_{{{nickNameConstant}}}{{#hasRequestParam}}, {{#requestParam}}{{{paramName}}}{{/requestParam}}{{/hasRequestParam}}).execute();
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}

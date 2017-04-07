@@ -1,0 +1,56 @@
+
+{{#description}}
+
+    /** {{{description}}} */{{/description}}
+public class {{classname}}: NSObject, Bridgeable {
+
+   private static let tag = String(describing: type(of: self))
+
+{{#models}}
+{{#model}}
+{{#vars}}
+    {{^isEnum}}
+        {{#description}}/** {{{description}}} */
+        {{/description}}let {{name}}: {{{datatype}}}{{^unwrapRequired}}?{{/unwrapRequired}}{{#unwrapRequired}}{{^required}}?{{/required}}{{/unwrapRequired}}{{#defaultValue}} = {{{defaultValue}}}{{/defaultValue}}
+    {{/isEnum}}
+{{/vars}}
+
+{{^unwrapRequired}}
+    public init() {}
+{{/unwrapRequired}}
+{{#unwrapRequired}}
+    public init({{#requiredVars}}{{^-first}}, {{/-first}}{{name}}: {{#isEnum}}{{datatypeWithEnum}}{{/isEnum}}{{^isEnum}}{{datatype}}{{/isEnum}}{{/requiredVars}}) {
+    {{#requiredVars}}
+        self.{{name}} = {{name}}
+    {{/requiredVars}}
+    }
+    convenience init?(dictionary:[String:Any]){
+    {{#allVars}}
+        guard let {{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}{{^isPrimitiveType}}{{name}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[String: Any]{{/isPrimitiveType}} else {
+        {{#required}}
+           assertionFailure("\({{classname}}.tag) need a '{{name}}' property")
+        {{/required}}
+           return nil
+        }
+        {{^isPrimitiveType}}
+         guard let {{name}}Obj = {{classname}}(dictionary:{{name}}Dict) else {
+         {{#required}}
+             assertionFailure("\({{classname}}.tag) need a '{{name}}' property")
+         {{/required}}
+            return nil
+         }
+        {{/isPrimitiveType}}
+
+    {{/allVars}}
+
+    {{#vars}}
+        {{^required}}
+
+        {{/required}}
+    {{/vars}}
+    }
+{{/unwrapRequired}}
+
+
+}{{/model}}
+{{/models}}

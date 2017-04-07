@@ -59,10 +59,17 @@
           "description": "Person's birth year",
           "$ref": "#/definitions/BirthYear"
         }
-      }
+      },
+      "required": [
+        "name",
+        "age",
+        "status",
+        "position",
+        "birthYear"
+      ]
     },
     "Status": {
-      "name":"Status",
+      "name": "Status",
       "properties": {
         "log": {
           "type": "boolean",
@@ -75,7 +82,7 @@
       }
     },
     "Position": {
-      "name":"position",
+      "name": "position",
       "properties": {
         "lat": {
           "type": "number",
@@ -90,7 +97,7 @@
       }
     },
     "BirthYear": {
-      "name":"birthyear",
+      "name": "birthyear",
       "properties": {
         "month": {
           "type": "integer",
