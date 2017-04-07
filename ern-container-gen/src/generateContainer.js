@@ -162,27 +162,12 @@ function getUnscopedModuleName(pluginName) {
 }
 
 function buildPluginListSync(plugins, manifest) {
-  let result = []
-
-  const manifestPlugins = _.map(
-    manifest.supportedPlugins, d => ({
-        name: npmModuleRe.exec(d)[1],
-        version: npmModuleRe.exec(d)[2]
-    }))
-
-  const pluginNames = _.map(plugins,
-    p => p.scope
-    ? `@${p.scope}/${p.name}`
-    : p.name
+  return _.map(plugins,
+    p => ({ 
+      name: p.scope ? `@${p.scope}/${p.name}` : p.name,
+      version: p.version
+    })
   )
-
-  for (const manifestPlugin of manifestPlugins) {
-    if (pluginNames.includes(manifestPlugin.name)) {
-      result.push(manifestPlugin)
-    }
-  }
-
-  return result
 }
 
 function getReactNativeVersionFromManifest(manifest) {
