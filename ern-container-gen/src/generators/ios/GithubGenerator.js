@@ -104,7 +104,7 @@ export default class GithubGenerator {
     const outputFolder =`${paths.outFolder}/ios`
 
     console.log(`Creating out folder and copying Container Hull to it`)
-    shell.cp('-R', `${paths.containerHull}/ios/*`, outputFolder)
+    shell.cp('-R', `${paths.containerHull}/ios`, paths.outFolder)
 
     const containerProjectPath = `${outputFolder}/ElectrodeContainer.xcodeproj/project.pbxproj`
     const containerLibrariesPath = `${outputFolder}/ElectrodeContainer/Libraries`
