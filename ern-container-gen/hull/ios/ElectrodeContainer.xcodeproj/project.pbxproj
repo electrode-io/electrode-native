@@ -82,6 +82,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		22FD4D1E1E96ECBB00FC81DB /* ElectrodeReactNativeBridge */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = ElectrodeReactNativeBridge;
+			sourceTree = "<group>";
+		};
 		226325CE1E80594F00CD0B10 /* ReactNative */ = {
 			isa = PBXGroup;
 			children = (
@@ -112,6 +119,7 @@
 		485009E51E2FF23B009B6610 /* ElectrodeContainer */ = {
 			isa = PBXGroup;
 			children = (
+				22FD4D1E1E96ECBB00FC81DB /* ElectrodeReactNativeBridge */,
 				968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */,
 				968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */,
 				485009E61E2FF23B009B6610 /* ElectrodeContainer.h */,
@@ -403,6 +411,7 @@
 		485009F81E2FF23C009B6610 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -426,10 +435,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		485009F91E2FF23C009B6610 /* Release */ = {
+			CLANG_ENABLE_MODULES = YES;
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
@@ -455,6 +467,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

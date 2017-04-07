@@ -4,17 +4,73 @@
   },
   "ios": {
     "copy": [
-      { "source": "ios/**", "dest": "ElectrodeContainer/Libraries/ElectrodeReactNativeBridge" }
+      { "source": "ios/ElectrodeReactNativeBridge/**", "dest": "ElectrodeContainer/ElectrodeReactNativeBridge" }
+    ],
+    "replaceInFile": [
+      { 
+        "path": "ElectrodeContainer/ElectrodeReactNativeBridge/ElectrodeBridgeMessage.m", 
+        "string": "#import <ElectrodeReactNativeBridge/ElectrodeReactNativeBridge-Swift.h>", 
+        "replaceWith": "#import <ElectrodeContainer/ElectrodeContainer-Swift.h>" 
+      }
     ],
     "pbxproj": {
-      "addFile": [
-        { "path": "ElectrodeReactNativeBridge/ElectrodeReactNativeBridge.xcodeproj", "group": "Libraries" }
+      "addHeader": [
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridge.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeEventNew.h", "group": "ElectrodeReactNativeBridge", "public": true },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeFailureMessage.h", "group": "ElectrodeReactNativeBridge", "public": true },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeHolder.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeHolderNew.h", "group": "ElectrodeReactNativeBridge", "public": true },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeMessage.h", "group": "ElectrodeReactNativeBridge", "public": true },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeProtocols.h", "group": "ElectrodeReactNativeBridge", "public": true },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeRequest.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeRequestNew.h", "group": "ElectrodeReactNativeBridge", "public": true },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeResponse.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTest.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTransaction.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver_Internal.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventDispatcher.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventDispatcherNew.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventRegistrar.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventRegistrarNew.h", "group": "ElectrodeReactNativeBridge" }, 
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestDispatcher.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestDispatcherNew.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestRegistrar.h", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestRegistrarNew.h", "group": "ElectrodeReactNativeBridge"} ,
+        { "path": "ElectrodeReactNativeBridge/ElectrodeResponseBlock.h", "group": "ElectrodeReactNativeBridge" }
       ],
-      "addFramework": [
-        "ElectrodeReactNativeBridge.framework"
-      ],
-      "addHeaderSearchPath": [
-        "\"$(SRCROOT)/ElectrodeContainer/Libraries/ElectrodeReactNativeBridge/**\""
+      "addSource": [
+        { "path": "ElectrodeReactNativeBridge/Bridgeable.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventProcessor.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestHandlerProcessor.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestProcessor.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeUtilities.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/EventListenerProcessor.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/Processor.swift", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridge.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeEventNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeFailureMessage.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeHolder.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeHolderNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeMessage.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeProtocols.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeRequest.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeRequestNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeResponse.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTest.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTransaction.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventDispatcher.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventDispatcherNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventRegistrar.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeEventRegistrarNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestDispatcher.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestDispatcherNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestRegistrar.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeRequestRegistrarNew.m", "group": "ElectrodeReactNativeBridge" },
+        { "path": "ElectrodeReactNativeBridge/ElectrodeResponseBlock.m", "group": "ElectrodeReactNativeBridge" }
       ]
     }
   }

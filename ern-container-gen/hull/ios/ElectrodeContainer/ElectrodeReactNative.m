@@ -11,7 +11,6 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <CodePush/CodePush.h>
-#import <ElectrodeReactNativeBridge/ElectrodeReactNativeBridge.h>
 
 #import "ElectrodeBridgeDelegate.h"
 #import "ElectrodeBridgeTransceiver.h"
@@ -37,14 +36,14 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     {
         [self initializeBundles];
     }
-    
+
     return self;
 }
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
-    
+
     static dispatch_once_t startOnceToken;
     dispatch_once(&startOnceToken, ^{
         [sharedInstance setupPluginsWithConfigurations:configuration];
@@ -58,15 +57,15 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     dispatch_once(&onceToken, ^{
         sharedInstance = [[self alloc] init];
     });
-    
+
     return sharedInstance;
 }
 
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary *)properties
-{  
+{
     UIViewController *miniAppViewController = nil;
-    
+
     // Build out the view controller
     if (self.bridge)
     {
@@ -74,11 +73,11 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
         RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
 
         rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-        
+
         miniAppViewController = [UIViewController new];
         miniAppViewController.view = rootView;
     }
-    
+
     return miniAppViewController;
 }
 
@@ -111,7 +110,7 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     NSArray *returnFiles = nil;
     NSURL *bundle = [[NSBundle bundleForClass:self.class] bundleURL];
     NSError *error = nil;
-    
+
     NSArray *files =
     [[NSFileManager defaultManager] contentsOfDirectoryAtURL:bundle
                                   includingPropertiesForKeys:nil
@@ -133,7 +132,7 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     {
         [self setUpCodePushWithID:[configuration codePushWithIDString]];
     }
-    
+
     if (configuration && [configuration respondsToSelector:@selector(codePushWithServerURLString)])
     {
         [self setUpCodePushWithServer:[configuration codePushWithServerURLString]];
@@ -162,13 +161,13 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     self = [super init];
     if (self)
     {
-        
+
         if (plist)
         {
             [self configure:plist];
         }
     }
-    
+
     return self;
 }
 
@@ -176,7 +175,7 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     if (self = [super init]) {
         [self configureWithData:data];
     }
-    
+
     return self;
 }
 
@@ -190,13 +189,13 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
             {
                 _isDebugEnabled = debugEnabled.boolValue;
             }
-            
+
             NSString *codePushID = [data objectForKey:ERNCodePushConfigDeploymentKey];
             if (codePushID && [codePushID isKindOfClass:[NSString class]])
             {
                 _codePushWithIDString = codePushID;
             }
-            
+
             NSString *codePushURL = [data objectForKey:ERNCodePushConfigServerUrl];
             if (codePushURL && [codePushURL isKindOfClass:[NSString class]])
             {
@@ -222,7 +221,7 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
     NSDictionary *data =
     [NSDictionary dictionaryWithContentsOfFile:
      [[NSBundle bundleForClass:self.class] pathForResource:plist ofType:@"plist"]];
-    
+
     return data;
 }
 
