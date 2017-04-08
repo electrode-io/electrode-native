@@ -1,4 +1,4 @@
-import CauldronClient from '@walmart/ern-cauldron-cli';
+import CauldronCli from '@walmart/ern-cauldron-api/dist/cli';
 import required from './required';
 import spin from './spin';
 import platform from './platform';
@@ -12,9 +12,9 @@ import log from './log';
 class Cauldron {
 
     // cauldronUrl : The url to the cauldron service
-    constructor(cauldronUrl) {
-        this.cauldron = new CauldronClient(cauldronUrl);
-    }
+    constructor(cauldronRepo) {
+        this.cauldron = new CauldronCli( cauldronRepo);
+    }x
 
     // Adds a native application to the Cauldron
     // ernPlatformVersion : The version of the platform to use for this native app [REQUIRED]
@@ -291,7 +291,7 @@ class Cauldron {
     }
 
     async throwIfNativeAppVersionIsReleased(appName, platformName, versionName, errorMessage) {
-        const nativeAppVersion = 
+        const nativeAppVersion =
             await this.cauldron.getNativeAppVersion(appName, platformName, versionName)
 
         if (nativeAppVersion.isReleased) {
@@ -299,4 +299,4 @@ class Cauldron {
         }
     }
 }
-export default new Cauldron(config.obj.cauldronUrl);
+export default new Cauldron(config.getValue('cauldronRepo'));

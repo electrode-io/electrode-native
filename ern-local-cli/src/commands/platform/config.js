@@ -11,7 +11,7 @@ exports.builder = function (yargs) {
             alias: 'v',
             describe: 'Value to set for the key'
         })
-        .choices('key', ['cauldronUrl']);
+        .choices('key', ['cauldronRepo']);
 };
 
 

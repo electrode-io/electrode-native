@@ -4,32 +4,31 @@
   "description": "The Cauldron !",
   "repository": {
     "type": "git",
-    "url": "https://gecgithub01.walmart.com/blemair/cauldron-api"
+    "url": "https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/ern-cauldron-server"
   },
   "bin": {
-    "ern-cauldron-api": "index.js"
+    "ern-cauldron-server": "index.js"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node index.js",
     "test": "ern-mocha",
     "build": "ern-babel",
-    "coverage":"ern-nyc",
+    "coverage": "ern-nyc",
     "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hapi": "^15.0.3",
+    "@walmart/ern-util-dev": "0.0.1",
     "joi": "^10.1.0",
     "lodash": "^4.17.3",
     "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0",
-    "@walmart/ern-util-dev": "0.0.1"
+    "simple-git": "^1.70.0"
   },
   "devDependencies": {
-    "chai-http": "^3.0.0"
   },
   "engines": {
     "node": ">=4"
