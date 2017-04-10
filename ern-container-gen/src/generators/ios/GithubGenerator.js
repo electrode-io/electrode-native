@@ -93,6 +93,7 @@ export default class GithubGenerator {
       //await publishIosContainer(paths)
     } catch (e) {
       console.log(`Something went wrong. Aborting ern-container-gen: ${e}`)
+      console.trace(e)
     }
   }
 
@@ -132,6 +133,19 @@ export default class GithubGenerator {
         }
 
         if (pluginConfig.ios.pbxproj) {
+          if (pluginConfig.ios.pbxproj.addSource) {
+            for (const source of pluginConfig.ios.pbxproj.addSource) {
+              containerIosProject.addSourceFile(source.path, null, containerIosProject.findPBXGroupKey({name: source.group}))
+            }
+          }
+
+          if (pluginConfig.ios.pbxproj.addHeader) {
+            for (const header of pluginConfig.ios.pbxproj.addHeader) {
+              let headerPath = header.path
+              containerIosProject.addHeaderFile(headerPath, { public: header.public }, containerIosProject.findPBXGroupKey({name: header.group}))
+            }
+          }
+          
           if (pluginConfig.ios.pbxproj.addFile) {
             for (const file of pluginConfig.ios.pbxproj.addFile) {
               containerIosProject.addFile(file.path, containerIosProject.findPBXGroupKey({name: file.group}))

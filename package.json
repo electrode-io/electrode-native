@@ -38,7 +38,7 @@
     "rimraf": "^2.6.0"
   },
   "dependencies": {
-    "@walmart/xcode-ern": "^1.0.0",
+    "@walmart/xcode-ern": "1.0.1",
     "babel-polyfill": "^6.23.0",
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
