@@ -14,6 +14,7 @@
 #import <ElectrodeReactNativeBridge/ElectrodeReactNativeBridge.h>
 
 #import "ElectrodeBridgeDelegate.h"
+#import "ElectrodeBridgeTransceiver.h"
 
 NSString * const ERNCodePushConfig = @"CodePush";
 NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
@@ -21,8 +22,8 @@ NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey"
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 
 @interface ElectrodeReactNative ()
-@property (nonatomic, strong) NSDictionary *bridges;
-@property (nonatomic, strong) NSArray *bridgeDelegates;
+@property (nonatomic, strong) RCTBridge *bridge;
+@property (nonatomic, strong) ElectrodeBridgeDelegate *bridgeDelegate;
 @end
 
 @implementation ElectrodeReactNative
@@ -63,23 +64,14 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary *)properties
-{
-    // Get the bridge of the mini app
-    // This may be needed when we go to multi-bundle
-//    RCTBridge *bridge = [self.bridges objectForKey:name.lowercaseString];
-    RCTBridge *bridge = nil;
-    if ([[self.bridges allValues] count] > 0)
-    {
-        bridge = [[self.bridges allValues] objectAtIndex:0];
-    }
-    
+{  
     UIViewController *miniAppViewController = nil;
     
     // Build out the view controller
-    if (bridge)
+    if (self.bridge)
     {
         // Use the bridge to generate the view
-        RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:name initialProperties:properties];
+        RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
 
         rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
         
@@ -101,32 +93,17 @@ NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 
 - (void)initializeBundles
 {
-    // Use the extra modules that need to be initialized with the bridge delegates
-    NSArray *extraModules = [ElectrodeBridgeHolder electrodeModules];
-    
-    // Build up the the bridge delegates
-    NSMutableArray *bridgeDelegates = [[NSMutableArray alloc] init];
-    
-    // Build up the bridges
-    NSMutableDictionary *bridges = [[NSMutableDictionary alloc] init];
-    
-    // Grab all of the jsbundles in the bundle of the app and execute them
-    for (NSURL *url in [self allJSBundleFiles])
-    {
-        // Use a Bridge Delegate in order to create react modules on our own
-        // since they are in a framework and can't automatically launch using
-        // the macros. Keep a reference to them since they are weakly assigned
-        // to the module they are associated with.
-        NSString *bundleName = [[url lastPathComponent] stringByDeletingPathExtension];
-        ElectrodeBridgeDelegate *bridgeDelegate = [[ElectrodeBridgeDelegate alloc] initWithModuleURL:url extraModules:extraModules];
-        [bridgeDelegates addObject:bridgeDelegate];
-        
-        RCTBridge *bridgeWithModules = [[RCTBridge alloc] initWithDelegate:bridgeDelegate launchOptions:nil];
-        [bridges setObject:bridgeWithModules forKey:[bundleName lowercaseString]];
-    }
-    
-    self.bridgeDelegates = [NSArray arrayWithArray:bridgeDelegates];
-    self.bridges = [NSDictionary dictionaryWithDictionary:bridges];
+    NSArray* bundleFiles = [self allJSBundleFiles];
+    ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:bundleFiles[0]];
+    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
+    self.bridge = bridge;
+    ElectrodeBridgeTransceiver *electrodeBridge = [self.bridge moduleForClass:[ElectrodeBridgeTransceiver class]];
+    [electrodeBridge onReactNativeInitialized];
+}
+
+- (id<ElectrodeNativeBridge>)getNativeBridge
+{
+    return [self.bridge moduleForClass:[ElectrodeBridgeTransceiver class]];
 }
 
 - (NSArray *)allJSBundleFiles
