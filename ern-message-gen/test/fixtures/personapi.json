@@ -63,7 +63,6 @@
       "required": [
         "name",
         "age",
-        "status",
         "position",
         "birthYear"
       ]

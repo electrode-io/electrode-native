@@ -1,56 +1,84 @@
-
 {{#description}}
-
-    /** {{{description}}} */{{/description}}
+/**
+{{{description}}}
+*/
+{{/description}}
 public class {{classname}}: NSObject, Bridgeable {
 
-   private static let tag = String(describing: type(of: self))
+    private static let tag = String(describing: type(of: self))
 
-{{#models}}
-{{#model}}
-{{#vars}}
+    {{#models}}
+    {{#model}}
+    {{#vars}}
     {{^isEnum}}
-        {{#description}}/** {{{description}}} */
-        {{/description}}let {{name}}: {{{datatype}}}{{^unwrapRequired}}?{{/unwrapRequired}}{{#unwrapRequired}}{{^required}}?{{/required}}{{/unwrapRequired}}{{#defaultValue}} = {{{defaultValue}}}{{/defaultValue}}
+    {{#description}}
+    /**
+     {{{description}}}
+     */
+    {{/description}}
+    let {{name}}: {{{datatype}}}{{^required}}?{{/required}}{{#defaultValue}} = {{{defaultValue}}}{{/defaultValue}}
     {{/isEnum}}
-{{/vars}}
+    {{/vars}}
 
-{{^unwrapRequired}}
-    public init() {}
-{{/unwrapRequired}}
-{{#unwrapRequired}}
-    public init({{#requiredVars}}{{^-first}}, {{/-first}}{{name}}: {{#isEnum}}{{datatypeWithEnum}}{{/isEnum}}{{^isEnum}}{{datatype}}{{/isEnum}}{{/requiredVars}}) {
-    {{#requiredVars}}
+    public init({{#allVars}}{{^-first}}, {{/-first}}{{name}}: {{#isEnum}}{{datatypeWithEnum}}{{/isEnum}}{{^isEnum}}{{datatype}}{{/isEnum}}{{^required}}?{{/required}}{{/allVars}}) {
+        {{#allVars}}
         self.{{name}} = {{name}}
-    {{/requiredVars}}
+        {{/allVars}}
     }
-    convenience init?(dictionary:[String:Any]){
-    {{#allVars}}
-        guard let {{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}{{^isPrimitiveType}}{{name}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[String: Any]{{/isPrimitiveType}} else {
+
+    convenience init?(dictionary:[String:Any]?) {
+        guard let nonNullDictionary = dictionary else {
+            return nil
+        }
+
+        {{#requiredVars}}
+        {{^isPrimitiveType}}
+        let {{name}}Obj: {{datatype}}
+        {{/isPrimitiveType}}
+        guard let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[String: Any]{{/isPrimitiveType}} else {
         {{#required}}
            assertionFailure("\({{classname}}.tag) need a '{{name}}' property")
         {{/required}}
            return nil
         }
         {{^isPrimitiveType}}
-         guard let {{name}}Obj = {{classname}}(dictionary:{{name}}Dict) else {
-         {{#required}}
-             assertionFailure("\({{classname}}.tag) need a '{{name}}' property")
-         {{/required}}
-            return nil
-         }
+        {{name}}Obj = {{datatype}}(dictionary: {{name}}Dict)
         {{/isPrimitiveType}}
 
-    {{/allVars}}
+        {{/requiredVars}}
 
-    {{#vars}}
-        {{^required}}
+        {{#optionalVars}}
+        {{#isPrimitiveType}}
+        let {{name}} = nonNullDictionary["{{name}}"] as? {{datatype}}?
 
-        {{/required}}
-    {{/vars}}
+        {{/isPrimitiveType}}
+        {{^isPrimitiveType}}
+        let {{name}}Obj: {{datatype}}?
+        guard let {{name}}Dict = nonNullDictionary["{{name}}"] as? [String: Any] else {
+            {{name}}Obj = nil
+            return
+        }
+        {{name}}Obj = {{datatype}}(dictionary: {{name}}Dict)
+
+        {{/isPrimitiveType}}
+        {{/optionalVars}}
+        self.init({{#allVars}}{{name}}: {{name}}{{^-first}}, {{/-first}}{{/allVars}})
     }
-{{/unwrapRequired}}
 
+    public func toDictionary() -> NSDictionary {
+        var dict =  [
+            {{#requiredVars}}
+            "{{name}}": self.{{name}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}
+            {{/requiredVars}}
+        ] as [AnyHashable : Any]
+
+        {{#optionalVars}}
+        if let nonNull{{nameInCamelCase}} = self.{{name}} {
+            dict["{{name}}"] = nonNull{{nameInCamelCase}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}
+        }
+        {{/optionalVars}}
+        return dict as NSDictionary
+    }
 
 }{{/model}}
 {{/models}}
