@@ -19,10 +19,11 @@ export default class ErnSwiftCodegen extends SwiftCodegen {
         f && f.call(this);
     }
     addSupportingFilesForErn(){
-        this.__apiTemplateFiles.put("api.mustache", ".swift");
         this.__apiTemplateFiles.put("apirequests.mustache", ".swift");
         this.__apiTemplateFiles.put("apievents.mustache", ".swift");
+        this.__apiDataTemplateFile.put("apidatamodel.mustache", ".swift");
     }
+
     getName() {
         return "ERNSwift";
     }
