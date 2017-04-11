@@ -1,88 +1,68 @@
-import UIKit
-{{#imports}}
-import {{import}};
-{{/imports}}
-
-public class {{classname}}: NSObject, Bridgeable {
-    private static final Requests REQUESTS;
-    {{#hasEvent}}
-    private static final Events EVENTS;
-    {{/hasEvent}}
-
-    static {
-        REQUESTS = new {{baseName}}Requests();
-    {{#hasEvent}}
-        EVENTS = new {{baseName}}Events();
-    {{/hasEvent}}
-    }
-
-    private {{classname}}() {
-    }
-
-    @NonNull
-    public static Requests requests() {
-        return REQUESTS;
-    }
-
-    {{#hasEvent}}
-    @NonNull
-    public static Events events() {
-        return EVENTS;
-    }
-    {{/hasEvent}}
-
-    {{#hasEvent}}
-    public interface Events {
+public class {{classname}} {
     {{#operations}}
     {{#operation}}
-        {{#isEvent}}
-        String EVENT_{{{nickNameConstant}}} = "{{package}}.event.{{operationId}}";
-        {{/isEvent}}
+    {{#isEvent}}
+    static let kEvent{{{nickNameConstant}}} = "{{classname}}.event.{{operationId}}";
+    {{/isEvent}}
+
+    {{^isEvent}}
+    static let kRequest{{{nickNameConstant}}} = "{{classname}}.request.{{operationId}}";
+    {{/isEvent}}
     {{/operation}}
     {{/operations}}
 
-    {{#operations}}
-    {{#operation}}
-        {{#isEvent}}
-        void add{{camelizedNickName}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener);
-        {{/isEvent}}
-    {{/operation}}
+    {{#hasEvent}}
+    lazy var events: Events = {
+        return {{baseName}}Events()
+    }()
 
-    {{#operation}}
-        {{#isEvent}}
-        void emit{{camelizedNickName}}({{#hasRequestParam}}@NonNull {{#requestParam}}{{{dataType}}} {{{paramName}}}{{/requestParam}}{{/hasRequestParam}});
-        {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
-
-    }
     {{/hasEvent}}
 
-    public interface Requests {
+    lazy var requests: Requests = {
+        return {{baseName}}Requests()
+    }()
+
+    {{#hasEvent}}
+    public class Events {
         {{#operations}}
         {{#operation}}
-        {{^isEvent}}
-        String REQUEST_{{{nickNameConstant}}} = "{{package}}.request.{{operationId}}";
+        {{#isEvent}}
+        func add{{camelizedNickName}}EventListener(eventListener: ElectrodeBridgeEventListener) {
+            assertionFailure("should override")
+        }
+        {{/isEvent}}
+        {{/operation}}
+
+        {{#operation}}
+        {{#isEvent}}
+        func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
+            assertionFailure("should override")
+
+        }
         {{/isEvent}}
         {{/operation}}
         {{/operations}}
+    }
+    {{/hasEvent}}
 
-
-    {{#operations}}
+    public class Requests {
+        {{#operations}}
         {{#operation}}
         {{^isEvent}}
-        void register{{camelizedNickName}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}> handler);
+        func register{{camelizedNickName}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
+            assertionFailure("should override")
+        }
 
         {{/isEvent}}
         {{/operation}}
-    {{/operations}}
-    {{#operations}}
-    {{#operation}}
+        {{#operation}}
         {{^isEvent}}
-        void {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{dataType}}} {{paramName}}, {{/requestParam}}{{/hasRequestParam}}@NonNull final ElectrodeBridgeResponseListener<{{#responseParam}}{{{dataType}}}{{/responseParam}}> responseListener);
+        func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseListener: ElectrodeBridgeResponseListener) {
+            assertionFailure("should override")
+        }
 
         {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+        {{/operation}}
+        {{/operations}}
     }
 }
