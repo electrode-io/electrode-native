@@ -170,8 +170,9 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
         yarnAdd(miniAppName, miniapp.version))
   }
 
+  // REWORK
   // If code push plugin is present we need to do some additional work
-  if (plugins) {
+  /*if (plugins) {
     const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
     if (codePushPlugin) {
       await yarnAdd(codePushPlugin.name, codePushPlugin.version)
@@ -194,7 +195,7 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
       packageJson.version = "0.0.1"
       fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
     }
-  }
+  }*/
 
   console.log(`writing index.android.js`)
   await writeFile('./index.android.js', content)
