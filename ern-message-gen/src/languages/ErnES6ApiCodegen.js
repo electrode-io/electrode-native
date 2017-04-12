@@ -56,6 +56,7 @@ ernify(ErnES6ApiCodegen, {
 
 
         for (const op of ops) {
+            op.hasSingleParam = op.allParams.length == 1;
             if (op.httpMethod !== 'EVENT') {
                 objs.put("hasRequest", true);
                 continue;

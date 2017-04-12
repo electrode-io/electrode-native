@@ -1,0 +1,75 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "Walmart State API",
+		"version": "0.16.1",
+		"title": "WalmartState"
+	},
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+		"/pushItemCount": {
+			"post": {
+				"tags": [
+					"WalmartState"
+				],
+				"operationId": "pushItemCount",
+				"parameters": [{
+					"name": "itemCount",
+					"in": "body",
+					"description": "push item count",
+					"required": true,
+					"schema": {
+						"type": "integer"
+					}
+				}]
+			}
+		},
+		"event/ccmConfigUpdated": {
+			"event": {
+				"tags": [
+					"WalmartState"
+				],
+				"operationId": "ccmConfigUpdated",
+				"parameters": [{
+					"name": "ccmConfigUpdated",
+					"in": "path",
+					"description": "ccm config of the walamart app",
+					"required": true,
+					"type": "string"
+				}]
+			}
+		},
+		"event/expoConfigUpdated": {
+			"event": {
+				"tags": [
+					"WalmartState"
+				],
+				"operationId": "expoConfigUpdated",
+				"parameters": [{
+					"name": "expoConfigUpdated",
+					"in": "path",
+					"description": "expo config of the walamart app",
+					"required": true,
+					"type": "string"
+				}]
+			}
+		},
+		"event/cartUpdated": {
+			"event": {
+				"tags": [
+					"WalmartState"
+				],
+				"operationId": "cartUpdated",
+				"parameters": [{
+					"name": "cartUpdated",
+					"in": "path",
+					"description": "notify for cartUpdated",
+					"required": true,
+					"type": "string"
+				}]
+			}
+		}
+	}
+}

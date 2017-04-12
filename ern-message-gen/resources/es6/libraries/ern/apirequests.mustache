@@ -43,35 +43,19 @@ export default class {{{baseName}}}Requests {
       */
     {{/emitJSDoc}}
 
-     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) { {{#hasOptionalParams}}
-         opts = opts || {};
-     {{/hasOptionalParams}}
-     const data =  {{#bodyParam}}{{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}}{{/bodyParam}}{{^bodyParam}}{}{{/bodyParam}};
-     {{#allParams}}{{#required}}
-         // verify the required parameter '{{paramName}}' is set
-         if ({{paramName}}  == null) {
-         throw "Missing the required parameter '{{paramName}}' when calling {{operationId}}";
-         }
-     {{/required}}{{/allParams}}
-
-     {{#pathParams}}
-         data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-     {{/pathParams}}
-     {{#queryParams}}
-         data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-     {{/queryParams}}
-     {{#headerParams}}
-          data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-     {{/headerParams}}
-     {{#formParams}}
-         data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-     {{/formParams}}
-
-         return this._bridge.sendRequest("{{package}}.request.{{operationId}}",  {data, dispatchMode}){{#isClassy}}
+     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) {
+        {{^allParams.0}}
+            return this._bridge.sendRequest("{{package}}.request.{{operationId}}", null, dispatchMode);
+        {{/allParams.0}}
+        {{>_methodBody}}
+        {{#allParams.0}}
+        return this._bridge.sendRequest("{{package}}.request.{{operationId}}",{{>_invokeWithParams}}){{#isClassy}}
             {{#returnType}}
             .then(ApiClient.deserializer({{returnType}}));
             {{/returnType}}
         {{/isClassy}}
+        {{/allParams.0}}
+
     }
     {{/isEvent}}
     {{/operation}}
