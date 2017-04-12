@@ -35,7 +35,7 @@ final class {{{requestsImplClassName}}} implements {{{classname}}}.Requests {
     {{^isEvent}}
     @Override
     public void {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{dataType}}} {{paramName}},{{/requestParam}}{{/hasRequestParam}}@NonNull final ElectrodeBridgeResponseListener<{{#responseParam}}{{{dataType}}}{{/responseParam}}> responseListener) {
-        new RequestProcessor<>(REQUEST_{{{nickNameConstant}}}, {{#hasRequestData}} {{#requestParam}}{{paramName}}{{/requestParam}}{{/hasRequestData}}{{^hasRequestData}}null{{/hasRequestData}}, {{#responseParam}}{{#isList}}(Class) List.class, {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/responseParam}}, responseListener).execute();
+        new RequestProcessor<>(REQUEST_{{{nickNameConstant}}}, {{#hasRequestParam}} {{#requestParam}}{{paramName}}{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}null{{/hasRequestParam}}, {{#responseParam}}{{#isList}}(Class) List.class, {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/responseParam}}, responseListener).execute();
     }
     {{/isEvent}}
     {{/operation}}
