@@ -17,6 +17,7 @@ export async function generateSwagger({apiSchemaPath = MODEL_FILE, name, namespa
         inputSpec,
         version: optional.apiVersion,
         description: optional.apiDescription,
+        projectVersion: optional.apiVersion,
         groupId: namespace,
         ...optional,
     };
@@ -28,16 +29,16 @@ export async function generateSwagger({apiSchemaPath = MODEL_FILE, name, namespa
     }
 }
 export function generatePackageJson({
-    npmScope,
-    moduleName,
-    reactNativeVersion,
-    apiVersion = '1.0.0',
-    apiDescription,
-    apiAuthor,
-    apiLicense,
-    bridgeVersion,
-    ...conf
-}) {
+                                        npmScope,
+                                        moduleName,
+                                        reactNativeVersion,
+                                        apiVersion = '1.0.0',
+                                        apiDescription,
+                                        apiAuthor,
+                                        apiLicense,
+                                        bridgeVersion,
+                                        ...conf
+                                    }) {
 
     return JSON.stringify({
         "name": npmScope ? `@${npmScope}/${moduleName}` : moduleName,
