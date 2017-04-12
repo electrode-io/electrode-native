@@ -6,8 +6,8 @@ import {
     MODEL_FILE
 } from './Constants';
 
-//export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"], ["IOS", "ERNSwift"]
-export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
+export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"], ["IOS", "ERNSwift"]];
+//export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
 
 export async function generateSwagger({apiSchemaPath = MODEL_FILE, name, namespace = '', ...optional}, outFolder) {
     const inputSpec = path.resolve(outFolder, apiSchemaPath);
