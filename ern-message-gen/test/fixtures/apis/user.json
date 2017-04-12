@@ -1,0 +1,29 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "User Auth helper",
+    "version": "0.16.1",
+    "title": "User Auth"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/signIn": {
+      "post": {
+        "tags": [
+          "WalmartUserAuth"
+        ],
+        "operationId": "cartSignIn",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+}

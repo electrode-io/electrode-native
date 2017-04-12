@@ -1,0 +1,32 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Analytics helper",
+    "version": "0.1.4",
+    "title": "Anivia Analytics"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/analytics": {
+      "post": {
+        "tags": [
+          "WalmartAnalytics"
+        ],
+        "operationId": "trackEvent",
+        "parameters": [
+          {
+            "name": "jsonEvent",
+            "in": "body",
+            "description": "sent anivia event",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

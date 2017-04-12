@@ -19,33 +19,14 @@ export default class {{{baseName}}}Events {
 {{#operations}}
     {{#operation}}
         {{#isEvent}}
-            emit{{camelizedNickName}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) { {{#hasOptionalParams}}
-                opts = opts || {};
-            {{/hasOptionalParams}}
-            const data =  {{#bodyParam}}{{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}}{{/bodyParam}}{{^bodyParam}}{}{{/bodyParam}};
-            {{#allParams}}{{#required}}
-                // verify the required parameter '{{paramName}}' is set
-                if ({{paramName}}  == null) {
-                throw "Missing the required parameter '{{paramName}}' when calling {{operationId}}";
-                }
-            {{/required}}{{/allParams}}
-
-
-            {{#pathParams}}
-                data['{{baseName}}']= {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-            {{/pathParams}}
-            {{#queryParams}}
-                data['{{baseName}}']= {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-            {{/queryParams}}
-            {{#headerParams}}
-                data['{{baseName}}']= {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-            {{/headerParams}}
-            {{#formParams}}
-                data['{{baseName}}']={{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
-            {{/formParams}}
-
-
-            return this._bridge.emitEvent("{{package}}.event.{{operationId}}",  {data, dispatchMode});
+            emit{{camelizedNickName}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) {
+            {{^allParams.0}}
+                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", null, dispatchMode);
+            {{/allParams.0}}
+            {{>method}}
+             {{#allParams.0}}
+                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", {{#hasSingleParam}}{{#allParams.0}}{{#required}}{{paramName}}{{/required}}{{^required}}data['{{paramName}}']{{/required}}{{/allParams.0}},{{/hasSingleParam}}{{^hasSingleParam}} data,{{/hasSingleParam}} dispatchMode)
+            {{/allParams.0}}
             }
         {{/isEvent}}
     {{/operation}}

@@ -1,0 +1,60 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Navigation helper",
+    "version": "0.16.1",
+    "title": "WalmartNavigation"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/navigate/checkout": {
+      "post": {
+        "tags": [
+          "WalmartNavigation"
+        ],
+        "operationId": "navigateToCheckoutPage",
+        "parameters": []
+      }
+    },
+    "/navigate/item": {
+      "post": {
+        "tags": [
+          "WalmartNavigation"
+        ],
+        "operationId": "navigateToItemPage",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "body",
+            "description": "navigate to item page with item id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setTitle": {
+      "post": {
+        "tags": [
+          "WalmartNavigation"
+        ],
+        "operationId": "setTitle",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "body",
+            "description": "set title of the page",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

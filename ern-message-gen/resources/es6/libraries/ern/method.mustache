@@ -1,0 +1,50 @@
+{{#allParams.0}}
+    {{#hasOptionalParams}}
+        opts = opts || {};
+    {{/hasOptionalParams}}
+    {{#hasSingleParam}}
+        {{^required}}
+            const data = {};
+        {{/required}}
+    {{/hasSingleParam}}
+    {{^hasSingleParam}}
+        const data =  {{#bodyParam}}{{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}}{{/bodyParam}}{{^bodyParam}}{}{{/bodyParam}};
+    {{/hasSingleParam}}
+    {{#allParams}}{{#required}}
+        // verify the required parameter '{{paramName}}' is set
+        if ({{paramName}}  == null) {
+        throw "Missing the required parameter '{{paramName}}' when calling '{{classname}}#{{operationId}}'";
+        }
+    {{/required}}{{/allParams}}
+    {{#hasSingleParam}}
+        {{^required}}
+            {{#pathParams}}
+                data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/pathParams}}
+            {{#queryParams}}
+                data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/queryParams}}
+            {{#headerParams}}
+                data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/headerParams}}
+            {{#formParams}}
+                data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+            {{/formParams}}
+        {{/required}}
+    {{/hasSingleParam}}
+    {{^hasSingleParam}}
+        {{#pathParams}}
+            data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+        {{/pathParams}}
+        {{#queryParams}}
+            data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+        {{/queryParams}}
+        {{#headerParams}}
+            data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+        {{/headerParams}}
+        {{#formParams}}
+            data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+        {{/formParams}}
+
+    {{/hasSingleParam}}
+{{/allParams.0}}

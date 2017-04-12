@@ -144,6 +144,7 @@ export default function mixit(clz, overide) {
 
                     if (requiredParams.length) {
                         requiredParams[requiredParams.length - 1].hasMore = false;
+
                     }
 
                     if (optionalParams.length) {
@@ -160,6 +161,8 @@ export default function mixit(clz, overide) {
                         requestDataObject.optionalParams = optionalParams;
                         requestDataObject.package = operations.get("package");
                         requestDataObjects.push(requestDataObject)
+                    }else if (operation.allParams.length == 1) {
+                        operation.hasSingleParam = true;
                     }
                 }
             }
