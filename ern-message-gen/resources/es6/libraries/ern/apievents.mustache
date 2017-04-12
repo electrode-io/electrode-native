@@ -23,9 +23,9 @@ export default class {{{baseName}}}Events {
             {{^allParams.0}}
                 return this._bridge.emitEvent("{{package}}.event.{{operationId}}", null, dispatchMode);
             {{/allParams.0}}
-            {{>method}}
+            {{>_methodBody}}
              {{#allParams.0}}
-                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", {{#hasSingleParam}}{{#allParams.0}}{{#required}}{{paramName}}{{/required}}{{^required}}data['{{paramName}}']{{/required}}{{/allParams.0}},{{/hasSingleParam}}{{^hasSingleParam}} data,{{/hasSingleParam}} dispatchMode)
+                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", {{>_invokeWithParams}})
             {{/allParams.0}}
             }
         {{/isEvent}}

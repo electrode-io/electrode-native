@@ -47,9 +47,9 @@ export default class {{{baseName}}}Requests {
         {{^allParams.0}}
             return this._bridge.sendRequest("{{package}}.request.{{operationId}}", null, dispatchMode);
         {{/allParams.0}}
-        {{>method}}
+        {{>_methodBody}}
         {{#allParams.0}}
-        return this._bridge.sendRequest("{{package}}.request.{{operationId}}", {{#hasSingleParam}}{{#allParams.0}}{{#required}}{{paramName}}{{/required}}{{^required}}data['{{paramName}}']{{/required}}{{/allParams.0}},{{/hasSingleParam}}{{^hasSingleParam}} data,{{/hasSingleParam}} dispatchMode){{#isClassy}}
+        return this._bridge.sendRequest("{{package}}.request.{{operationId}}",{{>_invokeWithParams}}){{#isClassy}}
             {{#returnType}}
             .then(ApiClient.deserializer({{returnType}}));
             {{/returnType}}
