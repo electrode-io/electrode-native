@@ -38,23 +38,23 @@ export default class {{{baseName}}}Requests {
       * @param {{{&_jsDocType}}} {{paramName}} {{&description}}{{/required}}{{/allParams}}{{#hasOptionalParams}}
       * @param {Object} opts Optional parameters{{#allParams}}{{^required}}
       * @param {{{&_jsDocType}}} opts.{{paramName}} {{&description}}{{#defaultValue}} (default to {{.}}){{/defaultValue}}{{/required}}{{/allParams}}{{/hasOptionalParams}}
-      * @param integer dispatchmode 0-Native, 1-JS, 2-GLOBAL (defaults to 0)
+      * @param integer timeout in milliseconds
       * @return {Promise} a {@link https://www.promisejs.org/|Promise}{{#returnType}}, with data of type {@link {{&_jsDocType}} }{{/returnType}}
       */
     {{/emitJSDoc}}
 
-     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) {
-        {{^allParams.0}}
-            return this._bridge.sendRequest("{{package}}.request.{{operationId}}", null, dispatchMode);
-        {{/allParams.0}}
+     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}timeout) {
+        {{^hasParams}}
+            return this._bridge.sendRequest("{{package}}.request.{{operationId}}", {timeout});
+        {{/hasParams}}
         {{>_methodBody}}
-        {{#allParams.0}}
-        return this._bridge.sendRequest("{{package}}.request.{{operationId}}",{{>_invokeWithParams}}){{#isClassy}}
+        {{#hasParams}}
+        return this._bridge.sendRequest("{{package}}.request.{{operationId}}", { data, timeout }){{#isClassy}}
             {{#returnType}}
             .then(ApiClient.deserializer({{returnType}}));
             {{/returnType}}
         {{/isClassy}}
-        {{/allParams.0}}
+        {{/hasParams}}
 
     }
     {{/isEvent}}

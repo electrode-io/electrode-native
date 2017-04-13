@@ -100,14 +100,14 @@ describe('DefaultGenerator', function () {
     it("should generate: 'petstore.json' for 'ern-android'", generate('petstore.json', 'ERNAndroid', "petstore/ern-android")
         //       .then(compare('petstore/ern-android', 'fixtures/petstore/ern-android'))
     );
-    it("should generate: 'petstore.json' for 'ern-es6'", generate('petstore.json', 'ERNES6', "petstore/ern-es6").then(npm('install', 'petstore/ern-es6')));
+    it("should generate: 'petstore.json' for 'ern-es6'", generate('petstore.json', 'ERNES6', "petstore/ern-es6")
+        .then(npm('install', 'petstore/ern-es6')));
 
     it("should generate: 'petstore.json' for 'ern-es6-classy'", generate('petstore.json', 'ERNES6', "petstore/ern-es6-classy", {"classy": true})
 //        .then(compare('petstore/ern-es6', 'fixtures/petstore/ern-es6'))
     );
 
     it("should generate: 'petstore.json' for 'ern-swift'", generate('petstore.json', 'ERNSwift', "petstore/ern-swift")
-
     );
 
 

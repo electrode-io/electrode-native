@@ -156,7 +156,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
             this.usePromises = parseBoolean(this.__additionalProperties.get(JavascriptClientCodegen.USE_PROMISES));
         }
         if (this.__additionalProperties.containsKey(JavascriptClientCodegen.USE_INHERITANCE)) {
-           this.supportsInheritance = parseBoolean(this.__additionalProperties.get(JavascriptClientCodegen.USE_INHERITANCE));
+            this.supportsInheritance = parseBoolean(this.__additionalProperties.get(JavascriptClientCodegen.USE_INHERITANCE));
         }
         else {
             this.supportsInheritance = true;
@@ -646,6 +646,8 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
                 for (const cp of operation.allParams) {
                     cp._jsDocType = this.getJSDocType(cp);
                 }
+                operation.hasOptionalParams = hasOptionalParams;
+                operation.hasParams = operation.allParams.length > 0;
                 operation._jsDocType = this.getJSDocType(operation);
             }
         }

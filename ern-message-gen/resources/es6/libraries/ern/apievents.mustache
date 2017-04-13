@@ -19,14 +19,14 @@ export default class {{{baseName}}}Events {
 {{#operations}}
     {{#operation}}
         {{#isEvent}}
-            emit{{camelizedNickName}}({{_argList}}{{#_argList}},{{/_argList}}dispatchMode) {
-            {{^allParams.0}}
-                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", null, dispatchMode);
-            {{/allParams.0}}
+            emit{{camelizedNickName}}({{_argList}}{{#_argList}},{{/_argList}}timeout) {
+            {{^hasParams}}
+                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", { timeout });
+            {{/hasParams}}
             {{>_methodBody}}
-             {{#allParams.0}}
-                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", {{>_invokeWithParams}})
-            {{/allParams.0}}
+             {{#hasParams}}
+                return this._bridge.emitEvent("{{package}}.event.{{operationId}}",  { data, timeout })
+            {{/hasParams}}
             }
         {{/isEvent}}
     {{/operation}}
