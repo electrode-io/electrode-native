@@ -1,32 +1,41 @@
-
 export default class {{{baseName}}}Events {
     constructor(bridge) {
         this._bridge = bridge;
     }
 
-    {{#operations}}
+{{#operations}}
     {{#operation}}
-    {{#isEvent}}
-    add{{{camelizedNickName}}}EventListener( eventListener) {
-      return   this._bridge.registerEventListener("{{package}}.request.{{operationId}}",eventListener);
-    }
-    {{/isEvent}}
+        {{#isEvent}}
+            add{{{camelizedNickName}}}EventListener( eventListener) {
+            return   this._bridge.registerEventListener("{{package}}.request.{{operationId}}",eventListener);
+            }
+        {{/isEvent}}
     {{/operation}}
-    {{/operations}}
+{{/operations}}
 
-    //------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------
 
 {{#operations}}
     {{#operation}}
         {{#isEvent}}
-            emit{{camelizedNickName}}({{_argList}}{{#_argList}},{{/_argList}}timeout) {
+            emit{{camelizedNickName}}({{_argList}}) {
             {{^hasParams}}
-                return this._bridge.emitEvent("{{package}}.event.{{operationId}}", { timeout });
+                return this._bridge.emitEvent("{{package}}.event.{{operationId}}");
             {{/hasParams}}
-            {{>_methodBody}}
-             {{#hasParams}}
-                return this._bridge.emitEvent("{{package}}.event.{{operationId}}",  { data, timeout })
-            {{/hasParams}}
+            {{#hasSingleParam}}
+                {{#allParams}}
+                    return this._bridge.emitEvent("{{package}}.event.{{operationId}}", { data{{#required}}:{{paramName}}{{/required}}{{^required}}:opts{{/required}} });
+                {{/allParams}}
+            {{/hasSingleParam}}
+            {{^hasSingleParam}}
+
+                {{#hasParams}}
+                    {{>_methodBody}}
+                    return this._bridge.emitEvent("{{package}}.event.{{operationId}}", { data })
+                {{/hasParams}}
+            {{/hasSingleParam}}
+
+
             }
         {{/isEvent}}
     {{/operation}}
