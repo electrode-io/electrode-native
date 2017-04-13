@@ -35,7 +35,7 @@ describe('api schemas', function () {
             config.inputSpec = path.join(__dirname, 'fixtures', config.inputSpec);
             config.outputDir = outputDir;
             config.bridgeVersion = '1.0.0';
-            config.apiPackage = 'com.ern.test_do_not_use';
+            config.apiPackage = 'com.ern.test';
             const cc = new CodegenConfigurator(config);
 
             const opts = await cc.toClientOptInput();
