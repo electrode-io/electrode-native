@@ -47,14 +47,21 @@ export default class {{{baseName}}}Requests {
         {{^hasParams}}
             return this._bridge.sendRequest("{{package}}.request.{{operationId}}", {timeout});
         {{/hasParams}}
-        {{>_methodBody}}
+        {{#hasSingleParam}}
+            {{#allParams}}
+                return this._bridge.sendRequest("{{package}}.request.{{operationId}}", { data{{#required}}:{{paramName}}{{/required}}{{^required}}:opts{{/required}}, timeout });
+            {{/allParams}}
+        {{/hasSingleParam}}
+        {{^hasSingleParam}}
         {{#hasParams}}
+          {{>_methodBody}}
         return this._bridge.sendRequest("{{package}}.request.{{operationId}}", { data, timeout }){{#isClassy}}
             {{#returnType}}
             .then(ApiClient.deserializer({{returnType}}));
             {{/returnType}}
         {{/isClassy}}
         {{/hasParams}}
+        {{/hasSingleParam}}
 
     }
     {{/isEvent}}
