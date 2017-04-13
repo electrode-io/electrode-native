@@ -7,7 +7,7 @@ export default class {{{baseName}}}Events {
     {{#operation}}
         {{#isEvent}}
             add{{{camelizedNickName}}}EventListener( eventListener) {
-            return   this._bridge.registerEventListener("{{package}}.request.{{operationId}}",eventListener);
+            return   this._bridge.registerEventListener("{{package}}.event.{{operationId}}", eventListener);
             }
         {{/isEvent}}
     {{/operation}}
