@@ -6,11 +6,12 @@ import Ora from 'ora'
 import path from 'path'
 import shell from 'shelljs'
 
-import {reactNative} from '@walmart/ern-util'
+import { reactNative, yarn } from '@walmart/ern-util'
+const { yarnAdd } = yarn
 
 const exec = child_process.exec
 const gitFolderRe = /.*\/(.*).git/
-const npmScopeModuleRe = /(@.*)\/(.*)/
+const npmScopeModuleRe = /@(.*)\/(.*)/
 const npmModuleRe = /(.*)@(.*)/
 const pluginConfigFileName = 'config.json'
 
@@ -163,11 +164,9 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
 
   let content = ""
   for (const miniapp of miniapps) {
-    const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}`
-        : miniapp.name
+    const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}` : miniapp.name
     content += `import '${miniAppName}'\n`
-    await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`,
-        yarnAdd(miniAppName, miniapp.version))
+    await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`, yarnAdd(miniapp))
   }
 
   // REWORK
@@ -232,11 +231,10 @@ export function clearReactPackagerCache() {
 export async function downloadPluginSource(pluginOrigin) {
   let downloadPath
   if (pluginOrigin.type === 'npm') {
+    await yarnAdd(pluginOrigin)
     if (pluginOrigin.scope) {
-      await yarnAdd(`${pluginOrigin.scope}/${pluginOrigin.name}`, pluginOrigin.version)
-      downloadPath = `node_modules/${pluginOrigin.scope}/${pluginOrigin.name}`
+      downloadPath = `node_modules/@${pluginOrigin.scope}/${pluginOrigin.name}`
     } else {
-      await yarnAdd(pluginOrigin.name, pluginOrigin.version)
       downloadPath = `node_modules/${pluginOrigin.name}`
     }
   } else if (pluginOrigin.type === 'git') {
@@ -284,31 +282,6 @@ export async function spin(msg, prom, options) {
 // Given a string returns the same string with its first letter capitalized
 export function capitalizeFirstLetter(string) {
   return `${string.charAt(0).toUpperCase()}${string.slice(1)}`
-}
-
-//=============================================================================
-// YARN utils
-//=============================================================================
-
-export async function yarnAdd(name, version) {
-  return new Promise((resolve, reject) => {
-    exec(version ? `yarn add ${name}@${version}` : `yarn add ${name}`,
-      (err, stdout, stderr) => {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (stderr) {
-          if (!stderr.startsWith('warning')) {
-            console.log(stderr)
-          }
-        }
-        if (stdout) {
-          console.log(stdout)
-          resolve(stdout)
-        }
-      })
-  })
 }
 
 //=============================================================================
