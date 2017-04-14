@@ -4,7 +4,7 @@
   },
   "ios": {
     "copy": [
-      { "source": "ios/ElectrodeReactNativeBridge/**", "dest": "ElectrodeContainer/ElectrodeReactNativeBridge" }
+      { "source": "ios/ElectrodeReactNativeBridge/*", "dest": "ElectrodeContainer/ElectrodeReactNativeBridge" }
     ],
     "replaceInFile": [
       { 
