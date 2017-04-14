@@ -20,7 +20,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     required public init(dictionary:[AnyHashable:Any]) {
         if
             {{#requiredParams}}
-            let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}{{^hasMore}} { {{/hasMore}}
+            let {{baseName}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}{{^hasMore}} { {{/hasMore}}
             {{/requiredParams}}
             {{#requiredParams}}
             {{#isPrimitiveType}}
@@ -43,7 +43,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
         {{/isPrimitiveType}}
         {{^isPrimitiveType}}
 
-        if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
+        if let {{baseName}}Dict = dictionary["{{baseName}}"] as? [AnyHashable: Any] {
             self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
         } else {
             self.{{baseName}} = nil
