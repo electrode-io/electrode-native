@@ -135,7 +135,20 @@ export default class GithubGenerator {
         if (pluginConfig.ios.pbxproj) {
           if (pluginConfig.ios.pbxproj.addSource) {
             for (const source of pluginConfig.ios.pbxproj.addSource) {
-              containerIosProject.addSourceFile(source.path, null, containerIosProject.findPBXGroupKey({name: source.group}))
+              // Multiple source files
+              if (source.from) {
+                const relativeSourcePath = path.dirname(source.from)
+                const pathToSourceFiles = path.join(pluginSourcePath, relativeSourcePath)
+                const fileNames = _.filter(fs.readdirSync(pathToSourceFiles), f => f.endsWith(path.extname(source.from)))
+                for (const fileName of fileNames) {
+                  const fileNamePath = path.join(pathToSourceFiles, fileName)
+                  containerIosProject.addSourceFile(path.join(source.path, fileName), null, containerIosProject.findPBXGroupKey({name: source.group}))
+                }
+              }
+              // Single source file 
+              else {
+                containerIosProject.addSourceFile(source.path, null, containerIosProject.findPBXGroupKey({name: source.group}))
+              }
             }
           }
 

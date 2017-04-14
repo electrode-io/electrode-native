@@ -70,6 +70,16 @@ export async function getPluginConfig(plugin, pluginsConfigPath) {
         transform: [
           {file: 'android/lib/build.gradle'}
         ]
+      },
+      ios: {
+        copy: [
+          { source: 'IOS/IOS/Classes/SwaggersAPIs/*', dest: 'ElectrodeContainer/APIs' }
+        ],
+        pbxproj: {
+          addSource: [
+            { from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift', path: "APIs", group: "APIs" }
+          ]
+        }
       }
     }
   }
