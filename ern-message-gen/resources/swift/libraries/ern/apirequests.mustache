@@ -5,7 +5,7 @@ class {{{requestsImplClassName}}}: {{{classname}}}.Requests {
     {{^isEvent}}
 
     override func register{{{camelizedNickName}}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
-        let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: kRequest{{{nickNameConstant}}}, reqClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self, respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self, requestHandler: handler)
+        let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{nickNameConstant}}}, reqClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self, respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self, requestHandler: handler)
         requestHandlerProcessor.execute()
     }
     {{/isEvent}}
