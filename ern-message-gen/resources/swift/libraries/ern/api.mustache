@@ -1,4 +1,4 @@
-public class {{classname}} {
+public class {{classname}}: NSObject  {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
@@ -12,57 +12,58 @@ public class {{classname}} {
     {{/operations}}
 
     {{#hasEvent}}
-    lazy var events: Events = {
+    public lazy var events: Events = {
         return {{baseName}}Events()
     }()
 
     {{/hasEvent}}
 
-    lazy var requests: Requests = {
+    public lazy var requests: Requests = {
         return {{baseName}}Requests()
     }()
-
-    {{#hasEvent}}
-    public class Events {
-        {{#operations}}
-        {{#operation}}
-        {{#isEvent}}
-        func add{{camelizedNickName}}EventListener(eventListener: ElectrodeBridgeEventListener) {
-            assertionFailure("should override")
-        }
-        {{/isEvent}}
-        {{/operation}}
-
-        {{#operation}}
-        {{#isEvent}}
-        func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
-            assertionFailure("should override")
-
-        }
-        {{/isEvent}}
-        {{/operation}}
-        {{/operations}}
-    }
-    {{/hasEvent}}
-
-    public class Requests {
-        {{#operations}}
-        {{#operation}}
-        {{^isEvent}}
-        func register{{camelizedNickName}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
-            assertionFailure("should override")
-        }
-
-        {{/isEvent}}
-        {{/operation}}
-        {{#operation}}
-        {{^isEvent}}
-        func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseListener: ElectrodeBridgeResponseListener) {
-            assertionFailure("should override")
-        }
-
-        {{/isEvent}}
-        {{/operation}}
-        {{/operations}}
-    }
 }
+
+{{#hasEvent}}
+public class {{classname}}Events: NSObject {
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    public func add{{camelizedNickName}}EventListener(eventListener: ElectrodeBridgeEventListener) {
+        assertionFailure("should override")
+    }
+    {{/isEvent}}
+    {{/operation}}
+
+    {{#operation}}
+    {{#isEvent}}
+    public func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
+        assertionFailure("should override")
+
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}
+{{/hasEvent}}
+
+public class {{classname}}Requests: NSObject {
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+    public func register{{camelizedNickName}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
+        assertionFailure("should override")
+    }
+
+    {{/isEvent}}
+    {{/operation}}
+    {{#operation}}
+    {{^isEvent}}
+    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseListener: ElectrodeBridgeResponseListener) {
+        assertionFailure("should override")
+    }
+
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}
+
