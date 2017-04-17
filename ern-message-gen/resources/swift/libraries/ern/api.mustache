@@ -2,11 +2,11 @@ public class {{classname}} {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    static let kEvent{{{nickNameConstant}}} = "{{package}}.event.{{operationId}}";
+    static let kEvent{{{camelizedNickName}}} = "{{package}}.event.{{operationId}}";
     {{/isEvent}}
 
     {{^isEvent}}
-    static let kRequest{{{nickNameConstant}}} = "{{package}}.request.{{operationId}}";
+    static let kRequest{{{camelizedNickName}}} = "{{package}}.request.{{operationId}}";
     {{/isEvent}}
     {{/operation}}
     {{/operations}}
