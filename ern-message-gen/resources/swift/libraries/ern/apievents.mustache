@@ -18,7 +18,7 @@ public class {{{eventsImplClassName}}}:  {{{classname}}}Events {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    override public func emitEventPersonAdded({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
+    override public func emitEvent{{{camelizedNickName}}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
         let eventProcessor = EventProcessor(
                                 eventName: {{{classname}}}.kEvent{{{camelizedNickName}}},
                                 eventPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}}{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil{{/hasRequestParam}})
