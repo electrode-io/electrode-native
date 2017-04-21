@@ -40,7 +40,7 @@ export async function getPluginConfig(plugin, pluginsConfigPath) {
 
     // Add default value (convention) for Android subsection for missing fields
     if (result.android) {
-      if (!result.android.root) {
+      if (result.android.root === undefined) {
         result.android.root = "android"
       }
 
