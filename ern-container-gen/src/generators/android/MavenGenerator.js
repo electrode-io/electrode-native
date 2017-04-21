@@ -12,7 +12,8 @@ import {
   downloadPluginSource,
   handleCopyDirective,
   mustacheRenderToOutputFileUsingTemplateFile,
-  capitalizeFirstLetter
+  capitalizeFirstLetter,
+  throwIfShellCommandFailed
 } from '../../utils.js'
 
 const DEFAULT_MAVEN_REPO_URL = `file://${process.env['HOME']}/.m2/repository`
@@ -80,6 +81,7 @@ export default class MavenGenerator {
     if ((this.mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
       && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
       shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''))
+      throwIfShellCommandFailed()
     }
 
     // Enhance mustache view with android specifics
@@ -119,11 +121,13 @@ export default class MavenGenerator {
       console.log(`[=== Starting container hull filling ===]`)
 
       shell.cd(`${ROOT_DIR}`)
+      throwIfShellCommandFailed()
 
       const outputFolder =`${paths.outFolder}/android`
 
       console.log(`Creating out folder and copying Container Hull to it`)
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
+      throwIfShellCommandFailed()
 
       await this.buildAndroidPluginsViews(plugins, paths.containerPluginsConfig, mustacheView)
       await this.addAndroidPluginHookClasses(plugins, paths)
@@ -139,13 +143,17 @@ export default class MavenGenerator {
         if (plugin.name === 'react-native') { continue; }
         let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
         shell.cd(`${paths.pluginsDownloadFolder}`)
+        throwIfShellCommandFailed()
         let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
             downloadPluginSource(pluginConfig.origin))
         shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`)
+        throwIfShellCommandFailed()
         if (pluginConfig.android.moduleName) {
               shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${outputFolder}/lib/src/main`)
+              throwIfShellCommandFailed()
         } else {
           shell.cp('-R', `src/main/java`, `${outputFolder}/lib/src/main`)
+          throwIfShellCommandFailed()
         }
 
         if (pluginConfig.android && pluginConfig.android.copy) {
@@ -189,6 +197,7 @@ export default class MavenGenerator {
           console.log(`Adding ${androidPluginHook.name}.java`)
           shell.cp(`${paths.containerPluginsConfig}/${plugin.name}/${androidPluginHook.name}.java`,
               `${paths.outFolder}/android/lib/src/main/java/com/walmartlabs/ern/container/plugins/`)
+          throwIfShellCommandFailed()
         }
       }
 
@@ -242,12 +251,14 @@ export default class MavenGenerator {
       console.log(`[=== Starting build and publication of the container ===]`)
 
       shell.cd(`${paths.outFolder}/android`)
+      throwIfShellCommandFailed()
       await spin(`Building container and publishing archive`,
           this.buildAndUploadArchive('lib'))
 
       console.log(`[=== Completed build and publication of the container ===]`)
     } catch (e) {
       console.log("[buildAndPublishAndroidContainer] Something went wrong: " + e)
+      throw e
     }
   }
 

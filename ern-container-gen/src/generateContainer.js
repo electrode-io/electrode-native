@@ -11,7 +11,8 @@ import xcode from '@walmart/xcode-ern'
 import _ from 'lodash'
 
 import {
-  capitalizeFirstLetter
+  capitalizeFirstLetter,
+  throwIfShellCommandFailed
 } from './utils.js'
 
 const exec = child_process.exec
@@ -108,6 +109,7 @@ export default async function generateContainer({
   shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER)
   shell.mkdir('-p', `${OUT_FOLDER}/android`)
   shell.mkdir('-p', `${OUT_FOLDER}/ios`)
+  throwIfShellCommandFailed()
 
   // Build the list of plugins to be included in container
   const manifest = require(`${platformPath}/manifest.json`)

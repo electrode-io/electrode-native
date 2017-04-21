@@ -14,7 +14,8 @@ import {
   bundleMiniApps,
   spin,
   downloadPluginSource,
-  handleCopyDirective
+  handleCopyDirective,
+  throwIfShellCommandFailed
 } from '../../utils.js'
 
 const ROOT_DIR = shell.pwd()
@@ -59,11 +60,13 @@ export default class GithubGenerator {
 
       // Clone target output Git repo
       shell.cd(paths.outFolder)
+      throwIfShellCommandFailed()
       if (mustacheView.ios.targetRepoUrl) {
         await gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
       }
       
       shell.rm('-rf', `${paths.outFolder}/ios/*`)
+      throwIfShellCommandFailed()
 
       //
       // Go through all ern-container-gen steps
@@ -79,6 +82,7 @@ export default class GithubGenerator {
       }
       
       shell.cd(`${paths.outFolder}/ios`)
+      throwIfShellCommandFailed()
 
       // Publish resulting container to git repo
       if (mustacheView.ios.targetRepoUrl) {
@@ -101,11 +105,13 @@ export default class GithubGenerator {
     console.log(`[=== Starting container hull filling ===]`)
 
     shell.cd(`${ROOT_DIR}`)
+    throwIfShellCommandFailed()
 
     const outputFolder =`${paths.outFolder}/ios`
 
     console.log(`Creating out folder and copying Container Hull to it`)
     shell.cp('-R', `${paths.containerHull}/ios`, paths.outFolder)
+    throwIfShellCommandFailed()
 
     const containerProjectPath = `${outputFolder}/ElectrodeContainer.xcodeproj/project.pbxproj`
     const containerLibrariesPath = `${outputFolder}/ElectrodeContainer/Libraries`
@@ -116,6 +122,7 @@ export default class GithubGenerator {
     for (const plugin of plugins) {
       const pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
       shell.cd(`${paths.pluginsDownloadFolder}`)
+      throwIfShellCommandFailed()
       if (pluginConfig.ios) {
         const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
           downloadPluginSource(pluginConfig.origin))
