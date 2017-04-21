@@ -48,6 +48,7 @@ export async function getPluginConfig(plugin, pluginsConfigPath) {
         result.android.pluginHook = {}
         const matchedFiles =
           shell.find(pluginConfigPath).filter(function(file) { return file.match(/\.java$/); })
+          throwIfShellCommandFailed()
         if (matchedFiles && matchedFiles.length === 1) {
           const pluginHookClass = path.basename(matchedFiles[0], '.java')
           result.android.pluginHook.name = pluginHookClass
@@ -121,6 +122,7 @@ export async function bundleMiniApps(miniapps, paths, plugins, platform) {
     // container for runner and we want to bundle the local miniapp
     if ((miniapps.length === 1) && (miniapps[0].localPath)) {
       shell.cd(miniapps[0].localPath)
+      throwIfShellCommandFailed()
     }
     // Generic case
     else {
@@ -157,6 +159,7 @@ export async function reactNativeBundleIos(paths) {
 
   if (!fs.existsSync(miniAppOutFolder)) {
     shell.mkdir('-p', miniAppOutFolder)
+    throwIfShellCommandFailed()
   }
 
   return reactNative.bundle({
@@ -171,6 +174,7 @@ export async function reactNativeBundleIos(paths) {
 export async function generateMiniAppsComposite(miniapps, folder, {verbose, plugins}) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
+  throwIfShellCommandFailed()
 
   let content = ""
   for (const miniapp of miniapps) {
@@ -214,6 +218,7 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
 
 export function clearReactPackagerCache() {
   shell.rm('-rf', `${process.env['TMPDIR']}/react-*`)
+  throwIfShellCommandFailed()
 }
 
 //
@@ -263,8 +268,10 @@ export function handleCopyDirective(sourceRoot, destRoot, arr) {
     const destPath = `${destRoot}/${cp.dest}`
     if (!fs.existsSync(destPath)) {
       shell.mkdir('-p', destPath)
+      throwIfShellCommandFailed()
     }
     shell.cp('-R', sourcePath, destPath)
+    throwIfShellCommandFailed()
   }
 }
 
@@ -440,4 +447,15 @@ async function writeFile(filename, data) {
       else resolve(res)
     })
   })
+}
+
+//=============================================================================
+// Shell error helper
+//=============================================================================
+
+export function throwIfShellCommandFailed() {
+  const shellError = shell.error();
+  if (shellError) {
+    throw new Error(shellError);
+  }
 }
