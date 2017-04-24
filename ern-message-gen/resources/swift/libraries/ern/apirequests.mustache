@@ -4,7 +4,7 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{#operation}}
     {{^isEvent}}
 
-    override func register{{{camelizedNickName}}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
+    public override func register{{{camelizedNickName}}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}}, reqClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self, respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self, requestHandler: handler)
         requestHandlerProcessor.execute()
     }
@@ -18,7 +18,7 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{#operation}}
     {{^isEvent}}
 
-    override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseListener: ElectrodeBridgeResponseListener) {
+    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseListener: ElectrodeBridgeResponseListener) {
         let requestProcessor = ElectrodeRequestProcessor<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}, Any>(
             requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
             requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil, {{/hasRequestParam}}
