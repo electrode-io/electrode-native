@@ -12,13 +12,13 @@ public class {{classname}}: NSObject  {
     {{/operations}}
 
     {{#hasEvent}}
-    public lazy var events: Events = {
+    public lazy var events: {{classname}}Events = {
         return {{baseName}}Events()
     }()
 
     {{/hasEvent}}
 
-    public lazy var requests: Requests = {
+    public lazy var requests: {{classname}}Requests = {
         return {{baseName}}Requests()
     }()
 }
