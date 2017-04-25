@@ -4,10 +4,10 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     private static let tag = String(describing: type(of: self))
 
     {{#requiredParams}}
-    let {{baseName}}: {{{dataType}}}
+    public let {{baseName}}: {{{dataType}}}
     {{/requiredParams}}
     {{#optionalParams}}
-    let {{baseName}}: {{{dataType}}}?
+    public let {{baseName}}: {{{dataType}}}?
     {{/optionalParams}}
 
     public init({{#allParams}}{{^-first}}, {{/-first}}{{baseName}}: {{dataType}}{{/allParams}}) {
