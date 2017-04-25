@@ -31,7 +31,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
             {{/isPrimitiveType}}
             {{/requiredParams}}
         } else {
-            assertionFailure("\({{classname}}.tag) missing one or more required properties[{{#requiredParams}}{{baseName}}{{#hasMore}},{{/hasMore}}{{/requiredParams}}]")
+            assertionFailure("\({{requestDataType}}.tag) missing one or more required properties[{{#requiredParams}}{{baseName}}{{#hasMore}},{{/hasMore}}{{/requiredParams}}]")
             {{#requiredParams}}
             self.{{baseName}} = dictionary["{{baseName}}"] as! {{dataType}}
             {{/requiredParams}}
