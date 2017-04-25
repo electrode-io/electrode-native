@@ -20,7 +20,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     required public init(dictionary:[AnyHashable:Any]) {
         if
             {{#requiredParams}}
-            let {{baseName}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}{{^hasMore}} { {{/hasMore}}
+            let {{baseName}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}
             {{/requiredParams}}
             {{#requiredParams}}
             {{#isPrimitiveType}}
@@ -31,7 +31,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
             {{/isPrimitiveType}}
             {{/requiredParams}}
         } else {
-            assertionFailure("\({{requestDataType}}.tag) missing one or more required properties[{{#requiredParams}}{{baseName}}{{#hasMore}},{{/hasMore}}{{/requiredParams}}]")
+            assertionFailure("\({{requestDataType}}.tag) missing one or more required properties[{{#requiredParams}}{{baseName}}{{^last}},{{/last}}{{/requiredParams}}]")
             {{#requiredParams}}
             self.{{baseName}} = dictionary["{{baseName}}"] as! {{dataType}}
             {{/requiredParams}}
@@ -57,7 +57,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     public func toDictionary() -> NSDictionary {
         var dict =  [
             {{#requiredParams}}
-            "{{baseName}}": self.{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}
+            "{{baseName}}": self.{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{^last}},{{/last}}
             {{/requiredParams}}
         ] as [AnyHashable : Any]
 

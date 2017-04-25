@@ -30,7 +30,7 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     required public init(dictionary:[AnyHashable:Any]) {
         if
             {{#requiredVars}}
-            let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}{{^hasMore}} { {{/hasMore}}
+            let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}
             {{/requiredVars}}
             {{#requiredVars}}
             {{#isPrimitiveType}}
@@ -41,7 +41,7 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
             {{/isPrimitiveType}}
             {{/requiredVars}}
         } else {
-            assertionFailure("\({{classname}}.tag) missing one or more required properties[{{#requiredVars}}{{name}}{{#hasMore}},{{/hasMore}}{{/requiredVars}}]")
+            assertionFailure("\({{classname}}.tag) missing one or more required properties[{{#requiredVars}}{{name}}{{^last}},{{/last}}{{/requiredVars}}]")
             {{#requiredVars}}
             self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
             {{/requiredVars}}
@@ -67,7 +67,7 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     public func toDictionary() -> NSDictionary {
         var dict =  [
             {{#requiredVars}}
-            "{{name}}": self.{{name}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{#hasMore}},{{/hasMore}}
+            "{{name}}": self.{{name}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{^last}},{{/last}}
             {{/requiredVars}}
         ] as [AnyHashable : Any]
 
