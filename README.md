@@ -58,9 +58,8 @@ Meant to be invoked manually (or through CI) by a user through the command `ern 
 A user of the platform might or might not have to use this command (i.e this project). Only users that wish to generate an API will have use of this project.  
 Only `ern-local-cli` has a dependency on `ern-api-gen`.
 
-- [ern-model-gen](/ern-model-gen)  
-A cross platform model generator (objC/Java) to generate models for complex objects to be used in APIs.  
-Models are currently respresented as a JSON Schema.
+- [ern-message-gen](/ern-message-gen)  
+A cross platform generator (objC/swift/Java) to Generate API and models from swagger files.
 
 - [ern-cauldron-api](/ern-cauldron-api)  
 The Cauldron server / REST service.  
@@ -76,11 +75,11 @@ Native container generator.
 Invoked through the the command `ern generate container`.  
 Only `ern-local-cli` depends on `ern-container-gen`.
 
-- [ern-global-cli](/ern-global-cli)  
+- [global-cli](/global-cli)  
 Ultra lightweight node module to bootstrap first time platform installation and to relay all `ern` command invocations to the local client (`ern-local-cli`) of the currently activated platform version.
 This project is the `ern` binary.
 It is meant to be installed by a user that install the platform for the first time through `npm install -g electrode-react-native`.  
-No projects depends on `ern-global-cli`.
+No projects depends on `global-cli`.
 
 - [ern-local-cli](/ern-local-cli)  
 The portal to the platform ! Command line client to access all platform features.
@@ -129,9 +128,9 @@ For the developers of a react native miniapp using the platform, the best approa
 #### Understanding platform installation & version switching
 
 A user installing the platform for a first time, will have to first install the `ern` binary.  
-This is done by running `npm install -g electrode-react-native` (this is the [ern-global-cli](/ern-global-cli) project).
+This is done by running `npm install -g electrode-react-native` (this is the [global-cli](/global-cli) project).
 
-Then, when running `ern` for the first time, and assuming `v3` is the latest version of the platform, `ern-global-cli` will create the following directory structure in the user home directory :
+Then, when running `ern` for the first time, and assuming `v3` is the latest version of the platform, `global-cli` will create the following directory structure in the user home directory :
 
 ```
 .ern
@@ -145,7 +144,7 @@ Then, when running `ern` for the first time, and assuming `v3` is the latest ver
 - `cache` folder have a folder for each installed version of the platform, containing the installed version. In this case as `v3` was the latest version, `ern` installed this version and created the correct folder.
 - `.ernrc` file holds global platform configuration and also the version of the currently activated/in-use platform.
 
-From there on, when running `ern` command again, it will still go through `ern-global-cli`, but this time, as it will detect that the `.ern` folder already exists in user home directory, it will now proxy the `ern` calls to the `ern-local-cli` of the currently in-use version of the platform.  
+From there on, when running `ern` command again, it will still go through `global-cli`, but this time, as it will detect that the `.ern` folder already exists in user home directory, it will now proxy the `ern` calls to the `ern-local-cli` of the currently in-use version of the platform.  
 To achieve that, it will look in the `.ernrc` file what is the currently activated version of the platform and will call the `ern-local-cli` present in the cache folder of the right version (in that case, for `v3` it will use `cache/v3/ern-local-cli/index.js`).
 
 When the user wants to list all versions of the platform, `ern-local-cli` will just issue the `git ls-remote --heads` command to list all remote branches (each version has its own branch) and extract the versions from there. The good thing here is that this command will always reflect the available versions, no need to update repo.
