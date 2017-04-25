@@ -17,6 +17,10 @@ export default class ErnSwiftCodegen extends SwiftCodegen {
         this.__typeMapping.put("integer", "Int");
     }
 
+    modelFileFolder() {
+        return this.__outputFolder + File.separator + this.sourceFolder + 'APIs'
+    }
+
     apiFileFolder() {
         return this.__outputFolder + File.separator + this.sourceFolder + 'APIs'
     }
