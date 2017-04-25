@@ -26,7 +26,7 @@ export default class MavenGenerator {
   constructor({ 
     mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
     namespace = DEFAULT_NAMESPACE
-   }) {
+   } = {}) {
     this._mavenRepositoryUrl = mavenRepositoryUrl
     this._namespace = namespace
   }
