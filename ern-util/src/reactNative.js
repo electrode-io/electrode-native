@@ -36,7 +36,7 @@ export class ReactNativeCommands {
         return new Promise((resolve, reject) => {
             exec(`${this.reactNativeBinaryPath} bundle \
         ${entryFile ? `--entry-file=${entryFile}` : ''} \
-        ${dev ? '--dev=false' : '--dev=true'} \
+        ${dev ? '--dev=true' : '--dev=false'} \
         ${platform ? `--platform=${platform}` : ''} \
         ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
         ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`,
