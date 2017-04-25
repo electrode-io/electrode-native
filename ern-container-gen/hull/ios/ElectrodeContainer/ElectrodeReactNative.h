@@ -39,7 +39,9 @@ extern NSString * const ERNDebugEnabledConfig;
  @param plist A string of the name of the plist with configuration in it.
  @return instancetype of the class that adheres to the protocol.
  */
+- (instancetype)initWithIsDebugEnabled: (BOOL) enabled;
 - (instancetype)initWithPlist:(NSString *)plist;
+- (instancetype)initWithDeploymentKey: (NSString *)deploymentKey;
 
 // Optional Properties
 @property (nonatomic, copy, readonly) NSString *codePushWithServerURLString;
@@ -78,6 +80,7 @@ extern NSString * const ERNDebugEnabledConfig;
  */
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration;
+
 
 /**
  Returns a react native miniapp (from a JSBundle) inside a view controller.
