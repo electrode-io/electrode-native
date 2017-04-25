@@ -132,7 +132,8 @@ export default async function generateContainer({
     scope: miniapp.scope,
     version: miniapp.version,
     unscopedName: getUnscopedModuleName(miniapp.name),
-    pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name))
+    pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)),
+    localPath: miniapp.localPath
   }))
 
   mustacheView = {
@@ -143,7 +144,7 @@ export default async function generateContainer({
     containerVersion
   }
 
-  generator.generateContainer(
+  await generator.generateContainer(
     containerVersion,
     nativeAppName,
     platformPath,

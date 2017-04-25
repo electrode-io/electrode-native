@@ -170,7 +170,7 @@ export async function generateContainerForRunner({
         plugins,
         miniapps: [miniapp]
     })
-
+    
     // For iOS we need to build the container xcodeproj so that it builds
     // the ElectrodeContainer.framework that we need to inject in the 
     // runner project

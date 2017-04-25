@@ -69,5 +69,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
-    compile('com.walmartlabs.ern:{{{camelCaseMiniAppName}}}-ern-container:1.0.0-SNAPSHOT') { changing = true }
+    compile('com.walmartlabs.ern:{{{camelCaseMiniAppName}}}-ern-container:1.0.0') { changing = true }
 }
