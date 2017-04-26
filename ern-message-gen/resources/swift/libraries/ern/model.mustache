@@ -27,6 +27,15 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
         super.init()
     }
 
+    public override init() {
+        {{#requiredVars}}
+        self.{{name}} = {{datatype}}()
+        {{/requiredVars}}
+        {{#optionalVars}}
+        self.{{name}} = nil
+        {{/optionalVars}}
+    }
+
     required public init(dictionary:[AnyHashable:Any]) {
         if
             {{#requiredVars}}
