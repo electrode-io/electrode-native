@@ -27,16 +27,6 @@
     return self;
 }
 
-- (instancetype)initWithURL: (NSURL *)url 
-{
-    if (self = [super init]) 
-    {
-        _sourceURL = url;
-    }
-    
-    return self;
-}
-
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
     return _sourceURL;
@@ -45,6 +35,16 @@
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
 {
     return _extraModules;
+}
+
+- (instancetype)initWithURL: (NSURL *)url
+{
+    if (self = [super init])
+    {
+        _sourceURL = url;
+    }
+    
+    return self;
 }
 
 @end

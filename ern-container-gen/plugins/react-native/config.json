@@ -16,10 +16,18 @@
       { "source": "Libraries/WebSocket", "dest": "ElectrodeContainer/Libraries/ReactNative" }
     ],
     "replaceInFile": [
-      { "path": "ElectrodeContainer/Libraries/ReactNative/React/React.xcodeproj/project.pbxproj", "string": "../Libraries", "replaceWith": "../" }
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/React.xcodeproj/project.pbxproj", "string": "../Libraries", "replaceWith": "../" },
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTBridgeDelegate.h>", "replaceWith": "#if __has_include(<React/RCTBridgeDelegate.h>)\n#import <React/RCTBridgeDelegate.h>\n#elif __has_include(\"RCTBridgeDelegate.h\")\n#import \"RCTBridgeDelegate.h\"\n#else\n#import \"React/RCTBridgeDelegate.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTBridgeModule.h>", "replaceWith": "#if __has_include(<React/RCTBridgeModule.h>)\n#import <React/RCTBridgeModule.h>\n#elif __has_include(\"RCTBridgeModule.h\")\n#import \"RCTBridgeModule.h\"\n#else\n#import \"React/RCTBridgeModule.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTFrameUpdate.h>", "replaceWith": "#if __has_include(<React/RCTFrameUpdate.h>)\n#import <React/RCTFrameUpdate.h>\n#elif __has_include(\"RCTFrameUpdate.h\")\n#import \"RCTFrameUpdate.h\"\n#else\n#import \"React/RCTFrameUpdate.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTInvalidating.h>", "replaceWith": "#if __has_include(<React/RCTInvalidating.h>)\n#import <React/RCTInvalidating.h>\n#elif __has_include(\"RCTInvalidating.h\")\n#import \"RCTInvalidating.h\"\n#else\n#import \"React/RCTInvalidating.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridgeModule.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTJavaScriptLoader.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"}
     ],
     "pbxproj": {
       "addFile": [
+        { "path": "ReactNative/React/React.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/ActionSheetIOS/RCTActionSheet.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/Image/RCTImage.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/NativeAnimation/RCTAnimation.xcodeproj", "group": "ReactNative" },
@@ -29,7 +37,6 @@
         { "path": "ReactNative/Geolocation/RCTGeolocation.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/LinkingIOS/RCTLinking.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/Network/RCTNetwork.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/React/React.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/Settings/RCTSettings.xcodeproj", "group": "ReactNative" },
         { "path": "ReactNative/Vibration/RCTVibration.xcodeproj", "group": "ReactNative" }
       ],

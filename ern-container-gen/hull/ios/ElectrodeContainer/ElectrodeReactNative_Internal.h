@@ -6,7 +6,8 @@
 //  Copyright © 2017 Walmart. All rights reserved.
 //
 
-#import <ElectrodeContainer/ElectrodeContainer.h>
+#import "ElectrodeContainer.h"
+#import "ElectrodeReactNative.h"
 
 @interface ElectrodeConfigure : NSObject <ElectrodePluginConfigurator>
 
