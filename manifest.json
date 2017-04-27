@@ -12,7 +12,7 @@
     "@walmart/react-native-walmartanalytics-api@0.17.6",
     "@walmart/react-native-walmartnavigation-api@0.17.10",
     "@walmart/react-native-walmartuserauth-api@0.17.6",
-    "@walmart/react-native-walmartcookie-api@0.17.10",
+    "@walmart/react-native-walmartcookie-api@0.17.11",
     "@walmart/react-native-walmartstate-api@0.17.8"
   ],
   "jsDependencies": [
