@@ -22,36 +22,28 @@
       { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTBridgeModule.h>", "replaceWith": "#if __has_include(<React/RCTBridgeModule.h>)\n#import <React/RCTBridgeModule.h>\n#elif __has_include(\"RCTBridgeModule.h\")\n#import \"RCTBridgeModule.h\"\n#else\n#import \"React/RCTBridgeModule.h\"\n#endif"},
       { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTFrameUpdate.h>", "replaceWith": "#if __has_include(<React/RCTFrameUpdate.h>)\n#import <React/RCTFrameUpdate.h>\n#elif __has_include(\"RCTFrameUpdate.h\")\n#import \"RCTFrameUpdate.h\"\n#else\n#import \"React/RCTFrameUpdate.h\"\n#endif"},
       { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridge.h", "string": "#import <React/RCTInvalidating.h>", "replaceWith": "#if __has_include(<React/RCTInvalidating.h>)\n#import <React/RCTInvalidating.h>\n#elif __has_include(\"RCTInvalidating.h\")\n#import \"RCTInvalidating.h\"\n#else\n#import \"React/RCTInvalidating.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTAssert.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridgeDelegate.h", "string": "#import <React/RCTJavaScriptLoader.h>", "replaceWith": "#if __has_include(<React/RCTJavaScriptLoader.h>)\n#import <React/RCTJavaScriptLoader.h>\n#elif __has_include(\"RCTJavaScriptLoader.h\")\n#import \"RCTJavaScriptLoader.h\"\n#else\n#import \"React/RCTJavaScriptLoader.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTLog.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTLog.h", "string": "#import <React/RCTAssert.h>", "replaceWith": "#if __has_include(<React/RCTAssert.h>)\n#import <React/RCTAssert.h>\n#elif __has_include(\"RCTAssert.h\")\n#import \"RCTAssert.h\"\n#else\n#import \"React/RCTAssert.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTRootView.h", "string": "#import <React/RCTBridge.h>", "replaceWith": "#if __has_include(<React/RCTBridge.h>)\n#import <React/RCTBridge.h>\n#elif __has_include(\"RCTBridge.h\")\n#import \"RCTBridge.h\"\n#else\n#import \"React/RCTBridge.h\"\n#endif"},
+      { "path": "ElectrodeContainer/Libraries/ReactNative/React/Modules/RCTEventEmitter.h", "string": "#import <React/RCTBridge.h>", "replaceWith": "#if __has_include(<React/RCTBridge.h>)\n#import <React/RCTBridge.h>\n#elif __has_include(\"RCTBridge.h\")\n#import \"RCTBridge.h\"\n#else\n#import \"React/RCTBridge.h\"\n#endif"},
       { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTBridgeModule.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"},
       { "path": "ElectrodeContainer/Libraries/ReactNative/React/Base/RCTJavaScriptLoader.h", "string": "#import <React/RCTDefines.h>", "replaceWith": "#if __has_include(<React/RCTDefines.h>)\n#import <React/RCTDefines.h>\n#elif __has_include(\"RCTDefines.h\")\n#import \"RCTDefines.h\"\n#else\n#import \"React/RCTDefines.h\"\n#endif"}
     ],
     "pbxproj": {
-      "addFile": [
-        { "path": "ReactNative/React/React.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/ActionSheetIOS/RCTActionSheet.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/Image/RCTImage.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/NativeAnimation/RCTAnimation.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/PushNotificationIOS/RCTPushNotification.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/Text/RCTText.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/WebSocket/RCTWebSocket.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/Geolocation/RCTGeolocation.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/LinkingIOS/RCTLinking.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/Network/RCTNetwork.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/Settings/RCTSettings.xcodeproj", "group": "ReactNative" },
-        { "path": "ReactNative/Vibration/RCTVibration.xcodeproj", "group": "ReactNative" }
-      ],
-      "addStaticLibrary": [
-        "libReact.a",
-        "libRCTAnimation.a",
-        "libRCTActionSheet.a",
-        "libRCTGeolocation.a",
-        "libRCTImage.a",
-        "libRCTLinking.a",
-        "libRCTNetwork.a",
-        "libRCTSettings.a",
-        "libRCTText.a",
-        "libRCTVibration.a",
-        "libRCTWebSocket.a"
+      "addProject": [
+        { "path": "ReactNative/React/React.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libReact.a", "target": "React" } ] },
+        { "path": "ReactNative/ActionSheetIOS/RCTActionSheet.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTActionSheet.a", "target": "RCTActionSheet" } ] },
+        { "path": "ReactNative/Image/RCTImage.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTImage.a", "target": "RCTImage" } ] },
+        { "path": "ReactNative/NativeAnimation/RCTAnimation.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTAnimation.a", "target": "RCTAnimation" } ] },
+        { "path": "ReactNative/Text/RCTText.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTText.a", "target": "RCTText" } ] },
+        { "path": "ReactNative/WebSocket/RCTWebSocket.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTWebSocket.a", "target": "RCTWebSocket" } ] },
+        { "path": "ReactNative/Geolocation/RCTGeolocation.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTGeolocation.a", "target": "RCTGeolocation" } ] },
+        { "path": "ReactNative/LinkingIOS/RCTLinking.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTLinking.a", "target": "RCTLinking" } ] },
+        { "path": "ReactNative/Network/RCTNetwork.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTNetwork.a", "target": "RCTNetwork" } ] },
+        { "path": "ReactNative/Settings/RCTSettings.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTSettings.a", "target": "RCTSettings" } ] },
+        { "path": "ReactNative/Vibration/RCTVibration.xcodeproj", "group": "ReactNative", "staticLibs": [ { "name": "libRCTVibration.a", "target": "RCTVibration" } ] }
       ]
     }
   }

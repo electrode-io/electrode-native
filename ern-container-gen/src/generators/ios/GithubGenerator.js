@@ -181,6 +181,13 @@ export default class GithubGenerator {
             }
           }
 
+          if (pluginConfig.ios.pbxproj.addProject) {
+            for (const project of pluginConfig.ios.pbxproj.addProject) {
+              const projectAbsolutePath = `${containerLibrariesPath}/${project.path}/project.pbxproj`;
+              containerIosProject.addProject(projectAbsolutePath, project.path, project.group, electrodeContainerTarget, project.staticLibs)
+            }
+          }
+
           if (pluginConfig.ios.pbxproj.addStaticLibrary) {
             for (const lib of pluginConfig.ios.pbxproj.addStaticLibrary) {
               containerIosProject.addStaticLibrary(lib)

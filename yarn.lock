@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@walmart/xcode-ern@1.0.1":
-  version "1.0.1"
-  resolved "http://npme.walmart.com/@walmart/xcode-ern/-/xcode-ern-1.0.1.tgz#3bed1693c5a8e6b1fc2ac12dbaf9612d3bc1759a"
+"@walmart/xcode-ern@1.0.2":
+  version "1.0.2"
+  resolved "http://npme.walmart.com/@walmart/xcode-ern/-/xcode-ern-1.0.2.tgz#789f0884bccf6f7eb6d34653dd16320004f7bcb4"
   dependencies:
     pegjs "0.9.0"
     simple-plist "0.1.4"
