@@ -24,6 +24,7 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
         {{#optionalParams}}
         self.{{baseName}} = nil
         {{/optionalParams}}
+        super.init()
     }
 
     required public init(dictionary:[AnyHashable:Any]) {
