@@ -3,7 +3,7 @@ import {generateApi} from '@walmart/ern-api-gen'
 const log = require('console-log-level')();
 
 exports.command = 'init <apiName>';
-exports.desc = 'Create a new api';
+exports.desc = 'Creates a new api';
 
 exports.builder = function (yargs) {
     return yargs.option('swagger', {

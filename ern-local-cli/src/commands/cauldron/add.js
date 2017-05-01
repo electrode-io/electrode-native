@@ -1,5 +1,5 @@
-exports.command = 'add <command>'
-exports.desc = 'Add stuff to the Cauldron'
+exports.command = 'add'
+exports.desc = 'Add objects to the Cauldron'
 exports.builder = function (yargs) {
   return yargs.commandDir('add').demandCommand(1, 'add needs a command');
 }

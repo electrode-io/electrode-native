@@ -1,5 +1,5 @@
-exports.command = 'del <command>'
-exports.desc = 'Remove stuff from the Cauldron'
+exports.command = 'del'
+exports.desc = 'Remove objects from the Cauldron'
 exports.builder = function (yargs) {
   return yargs.commandDir('del').demandCommand(1, 'add needs a command');
 }
