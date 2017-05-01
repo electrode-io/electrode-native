@@ -16,7 +16,9 @@ import {
 
 import { 
     generateContainer, 
-    generateMiniAppsComposite
+    generateMiniAppsComposite,
+    MavenGenerator,
+    GithubGenerator
 } from '@walmart/ern-container-gen';
 
 import _ from 'lodash';
@@ -49,7 +51,7 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
             platform.switchToVersion(nativeApp.ernPlatformVersion);
         }
 
-         const generator = (platformName === 'android') 
+         const generator = (nativeAppPlatform === 'android') 
             ? new MavenGenerator({ 
                 mavenRepositoryUrl: ernConfig.obj.libgen.android.generator.mavenRepositoryUrl,
                 namespace: ernConfig.obj.libgen.android.generator.namespace
