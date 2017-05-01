@@ -23,8 +23,7 @@
     "mkdirp": "^0.5.1",
     "yargs": "^6.6.0",
     "node-simctl": "^3.5.5",
-    "inquirer": "^3.0.1",
-    "@walmart/xcode-ern": "^1.0.0"
+    "inquirer": "^3.0.1"
   },
   "devDependencies": {
     "@walmart/ern-util-dev": "0.0.1"
