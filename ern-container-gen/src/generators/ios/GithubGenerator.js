@@ -23,7 +23,7 @@ const ROOT_DIR = shell.pwd()
 export default class GithubGenerator {
   constructor({
     targetRepoUrl
-  }) {
+  } = {}) {
     this._targetRepoUrl = targetRepoUrl
   }
 
