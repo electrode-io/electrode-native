@@ -220,6 +220,20 @@ export default class MiniApp {
     }
 
     async runInIosRunner(verbose) {
+        // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
+        // (no code injection for plugins yet :()), it has hard-coded references to 
+        // our bridge and code-push ... so we absolutely need them in the miniapp for 
+        // iOS container project to build
+        // Ensure that they are present
+        // This block should be removed once iOS container is improved to be more flexbile
+        const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
+        if (!nativeDependenciesNames.includes('react-native-electrode-bridge')) {
+            throw new Error('react-native-electrode-bridge is required for iOS runner :(')
+        }
+        if (!nativeDependenciesNames.includes('react-native-code-push')) {
+            throw new Error('react-native-code-push is required for iOS runner :(')
+        }
+
         const runnerConfig = {
             platformPath: platform.currentPlatformVersionPath,
             plugins: this.nativeDependencies,
