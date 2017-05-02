@@ -5,15 +5,15 @@
     "react-native-code-push@1.17.1-beta",
     "react-native-stack-tracer@0.1.1",
     "react-native-vector-icons@4.0.0",
-    "@walmart/react-native-electrode-bridge@1.4.8",
+    "@walmart/react-native-electrode-bridge@1.4.9",
     "@walmart/react-native-user-api@0.0.24",
     "@walmart/react-native-todo-api@0.0.34",
     "@walmart/react-native-navigation-api@0.0.17",
-    "@walmart/react-native-walmartanalytics-api@0.17.7",
-    "@walmart/react-native-walmartnavigation-api@0.17.11",
-    "@walmart/react-native-walmartuserauth-api@0.17.7",
-    "@walmart/react-native-walmartcookie-api@0.17.12",
-    "@walmart/react-native-walmartstate-api@0.17.9"
+    "@walmart/react-native-walmartanalytics-api@0.17.8",
+    "@walmart/react-native-walmartnavigation-api@0.17.12",
+    "@walmart/react-native-walmartuserauth-api@0.17.8",
+    "@walmart/react-native-walmartcookie-api@0.17.13",
+    "@walmart/react-native-walmartstate-api@0.17.10"
   ],
   "jsDependencies": [
     "react@15.4.2"
