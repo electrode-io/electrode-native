@@ -4,7 +4,7 @@ import {platform} from '@walmart/ern-util'
 const log = require('console-log-level')();
 
 exports.command = 'regen';
-exports.desc = 'Regenerates an api';
+exports.desc = 'Regenerates an existing api';
 
 exports.builder = function (yargs) {
     return yargs.option('updatePlugin', {

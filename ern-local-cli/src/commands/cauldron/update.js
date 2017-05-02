@@ -1,5 +1,5 @@
-exports.command = 'update <command>';
-exports.desc = 'Update stuff in the Cauldron';
+exports.command = 'update';
+exports.desc = 'Update objects in the Cauldron';
 exports.builder = function (yargs) {
     return yargs.commandDir('update');
 };
