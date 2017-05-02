@@ -48,7 +48,7 @@ export function generatePackageJson({
         "author": apiAuthor,
         "license": apiLicense,
         "scripts": {
-            "prepublish": "ern generate message regen -u same"
+            "prepublish": "ern generate api regen -u same"
         },
         "peerDependencies": {
             "@walmart/react-native-electrode-bridge": bridgeVersion,
