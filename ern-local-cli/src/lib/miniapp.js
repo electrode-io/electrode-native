@@ -155,9 +155,17 @@ export default class MiniApp {
 
         const nativeDependenciesNames = new Set();
 
-        // Get names of all native deps
-        const nativeDepsFolders = readDir(`${this.path}/node_modules`)
+        // Get all node_modules folders that are containing a build.gradle
+        // file (Note: might not be enough if we have react-native plugins 
+        // that are solely for iOS. Not the case yet)
+        const nodeModulesFoldersWithBuildGradle = readDir(`${this.path}/node_modules`)
             .filter(a => a.includes('build.gradle'));
+
+        // By convention we only assume react native plugins to be in folders
+        // which names are starting with 'react-native' (excluding scope)
+        const nativeDepsFolders = _.filter(nodeModulesFoldersWithBuildGradle,
+            d => d.includes('react-native'));
+        
         for (const nativeDepsFolder of nativeDepsFolders) {
             // Scoped module
             if (nativeDepsFolder.split('/')[0].startsWith('@')) {
@@ -197,7 +205,7 @@ export default class MiniApp {
     }
 
     // Return all javascript (non native) dependencies currently used by the mini-app
-    // This method checks dependencies from the package.json of the miniapp and
+    // This method checks dependencies from the pa2ckage.json of the miniapp and
     // exclude native dependencies (plugins).
     get jsDependencies() {
         const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name);
