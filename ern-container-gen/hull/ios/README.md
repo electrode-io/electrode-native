@@ -1,19 +1,5 @@
-##ElectrodePluginConfigurator
+## Electrode Container
 
-Implement this protocol if your mini-app needs CodePush support. 
-
-#### Initialization
-
-```initWithPlist: (NSString *)plist```  initialize an instance of your class by using key-value in your plist. This plist includes configuration for you to setup CodePush.  
-- `(NSString *)plist`: the path of your plist.   
-
-Here’s a list of keys that can be used in your plist. 
-
-- `DebugEnabledConfig` set if debug mode is enabled. Default to NO.    
-- `CodePushConfigServerUrl` serverURL where all the JSBundle could be found. Defaults to ```https://codepush.azurewebsites.net/```.  
-- `ERNCodePushConfigDeploymentKey` your miniApp deployment key.  
-
-#### Access Config
-- `isDebugEnabled` return true if debug is enabled for current config.  
-- `codePushWithServerURLString` return URL for JSBundle under current config.  
-- `codePushWithIDString`  return deployment key.
+This project is fully generated using ern container generator (via `ern generate container` command).  
+Please DO NOT modify this project manually as your changes will get overwritten by another generation. 
+If you need to make changes to the container code, they should be made inside [ern container generator project](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/tree/master/ern-container-gen) and included in a future platform version release.
