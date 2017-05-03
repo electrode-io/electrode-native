@@ -183,14 +183,18 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
     await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`, yarnAdd(miniapp))
   }
 
-  // REWORK
   // If code push plugin is present we need to do some additional work
-  /*if (plugins) {
+  if (plugins) {
     const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
     if (codePushPlugin) {
-      await yarnAdd(codePushPlugin.name, codePushPlugin.version)
-      content += `import codePush from "react-native-code-push"\n`
-      content += `codePush.sync()`
+      //
+      // The following code will need to be uncommented and properly reworked or included
+      // in a different way, once Cart and TYP don't directly depend on code push directly
+      // We will work with Cart team in that direction
+      //
+      //await yarnAdd(codePushPlugin.name, codePushPlugin.version)
+      //content += `import codePush from "react-native-code-push"\n`
+      //content += `codePush.sync()`
 
       // We need to add some info to package.json for CodePush
       // In order to run, code push needs to find the following in package.json
@@ -208,7 +212,7 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
       packageJson.version = "0.0.1"
       fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
     }
-  }*/
+  }
 
   console.log(`writing index.android.js`)
   await writeFile('./index.android.js', content)
