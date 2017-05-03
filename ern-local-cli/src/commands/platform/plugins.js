@@ -22,6 +22,6 @@ exports.handler = function (argv) {
     suports the following plugins`)
     for (const plugin of plugins) {
         console.log(
-            `${chalk.yellow(`${plugin.name}`)}@${chalk.magenta(`${plugin.version}`)}`);
+            `${chalk.yellow(`${plugin.scope?`${plugin.scope}@`:''}${plugin.name}`)}@${chalk.magenta(`${plugin.version}`)}`);
     }
 };
