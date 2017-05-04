@@ -44,6 +44,10 @@ class Platform {
     return config.getValue('platformVersion');
   }
 
+  get currentGitCommitSha() {
+    return execSync(`git -C ${this.currentPlatformVersionPath} rev-parse HEAD`).slice(0,7)
+  }
+
   // Return an array of versions (ex: [1,2,3,4,5])
   // representing all the available versions of the platform
   // Doing this by looking at all remote branches of the platform
