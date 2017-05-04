@@ -62,12 +62,20 @@ exports.install = () => {
     console.log (`=> Creating initial .ernrc configuration file`);
     const ernRc = {
       platformVersion: PLATFORM_VERSION,
-      cauldronUrl: "http://localhost:3000",
+      cauldronUrl: "http://wm-cauldron.dev.walmart.com",
       libgen: {
         android: {
           generator: {
             platform: "android",
-            name: "maven"
+            name: "maven",
+            mavenRepositoryUrl: "http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted"
+          }
+        },
+        ios: {
+          generator: {
+            platform: "ios",
+            name: "github",
+            targetRepoUrl: "https://gecgithub01.walmart.com/react-native/walmart-react-container-ios.git"
           }
         }
       }
