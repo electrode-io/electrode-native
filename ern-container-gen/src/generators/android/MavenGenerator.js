@@ -165,11 +165,11 @@ export default class MavenGenerator {
       console.log(`Creating miniapp activities`)
       for (const miniApp of miniApps) {
         let tmpMiniAppView = {
-          miniAppName: miniApp.unscopedName,
-          pascalCaseMiniAppName: miniApp.pascalCaseName
+          miniAppName: miniApp.unscopedName.replace('-',''),
+          pascalCaseMiniAppName: miniApp.pascalCaseName.replace('-', '')
         }
 
-        let activityFileName = `${miniApp.pascalCaseName}Activity.java`
+        let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
 
         console.log(`Creating ${activityFileName}`)
         await mustacheRenderToOutputFileUsingTemplateFile(
