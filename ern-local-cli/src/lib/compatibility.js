@@ -84,8 +84,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
   const nativeApps = await cauldron.getAllNativeApps();
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
-
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeDependencies;
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
@@ -94,7 +93,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
         if ((!platformName) || (nativeAppPlatform.name === platformName)) {
           for (const nativeAppVersion of nativeAppPlatform.versions) {
             if ((!versionName) || (nativeAppVersion.name === versionName)) {
-              let manifestNativeAndJsDependencies = platform.getManifestPluginsAndJsDependencies(nativeAppVersion.ernPlatformVersion);
+              let nativeAppDependencies = nativeAppVersion.nativeDeps;
               result.push({
                 appName: nativeApp.name,
                 appPlatform: nativeAppPlatform.name,
@@ -102,7 +101,9 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 appBinary: nativeAppVersion.binary,
                 isReleased: nativeAppVersion.isReleased,
                 compatibility: getCompatibility(
-                  miniappDependencies, manifestNativeAndJsDependencies)
+                  miniappDependencies, nativeAppDependencies, { 
+                    uncompatibleIfARemoteDepIsMissing: nativeAppVersion.isReleased
+                  })
               });
             }
           }
@@ -146,7 +147,17 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
 //     }
 //   ]
 // }
-export function getCompatibility(localDeps, remoteDeps) {
+// 
+// Optional inputs :
+// - uncompatibleIfARemoteDepIsMissing : true if a missing remote 
+// dependency should be deemed uncompatible (for example for released 
+// native application versions, if a native dependency is missing from
+// the binary, it's not compatible. On the other hand, for non released
+// versions it's OK as it's always possible to regenerate a container
+// that include this new native dependency)
+export function getCompatibility(localDeps, remoteDeps, { 
+  uncompatibleIfARemoteDepIsMissing 
+} = {}) {
   let result = { compatible: [], incompatible: [] };
 
   for (const remoteDep of remoteDeps) {
@@ -167,6 +178,25 @@ export function getCompatibility(localDeps, remoteDeps) {
     } else if ((localDepVersion) &&
       (localDepVersion === remoteDep.version)) {
       result.compatible.push(entry);
+    } 
+  }
+
+  if (uncompatibleIfARemoteDepIsMissing) {
+    for (const localDep of localDeps) {
+       const remoteDep = _.find(remoteDeps,
+        d => (d.name === localDep.name) && (d.scope === localDep.scope));
+      const remoteDepVersion = remoteDep ? remoteDep.version : undefined;
+
+      let entry = {
+        dependencyName: localDep.name,
+        scope: localDep.scope,
+        localVersion: localDep.version,
+        remoteVersion: remoteDepVersion ? remoteDepVersion : 'MISSING'
+      };
+
+      if (!remoteDepVersion) {
+        result.incompatible.push(entry)
+      }
     }
   }
 
