@@ -112,6 +112,9 @@ class Cauldron {
             required(platformName, 'platformName');
             required(versionName, 'versionName');
 
+            await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
+                'Cannot add a native dependency to a released native app version')
+
             return spin(
                 tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
                    to ${appName}:${platformName}:${versionName}`,
@@ -139,6 +142,9 @@ class Cauldron {
             required(appName, 'appName');
             required(platformName, 'platformName');
             required(versionName, 'versionName');
+
+            await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
+                'Cannot remove a native dependency from a released native app version')
 
             return spin(
                 tagOneLine`Removing dependency ${dependencyName} from
@@ -240,16 +246,21 @@ class Cauldron {
 
     // Get a native dependency from the cauldron
     async getNativeDependency(appName, platformName, versionName, depName) {
-        try {
-            return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
-        } catch (e) {
-            return null;
-        }
+        return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
     }
 
     // Update an existing native dependency version
-    async updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion) {
-        return this.cauldron.updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion);
+    async updateNativeAppDependency(appName, platformName, versionName, dependency) {
+        await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
+            'Cannot update a native dependency for a released native app version')
+        //
+        // This should be the way, but is currently broken because caldron service does not properly
+        // commit changes to it's internal DB for updates of native app dependencies (this is a bug in cauldron service)
+        // return this.cauldron.updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion);
+
+        // While waiting for a fix, this is the work-arround
+        await this.removeNativeDependency(dependency.name, appName, platformName, versionName)
+        await this.addNativeDependency(dependency, appName, platformName, versionName)
     }
 
     // Retrieves all native apps metadata from the Cauldron
@@ -277,6 +288,15 @@ class Cauldron {
 
     async updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased) {
         return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased);
+    }
+
+    async throwIfNativeAppVersionIsReleased(appName, platformName, versionName, errorMessage) {
+        const nativeAppVersion = 
+            await this.cauldron.getNativeAppVersion(appName, platformName, versionName)
+
+        if (nativeAppVersion.isReleased) {
+            throw new Error(errorMessage)
+        }
     }
 }
 export default new Cauldron(config.obj.cauldronUrl);

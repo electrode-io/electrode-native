@@ -430,11 +430,18 @@ Otherwise you can safely ignore this warning
                 }
                 // Forced add. Update dependency versions in cauldron if needed.
                 else {
-                    const nativeDepInCauldron = await cauldron
-                        .getNativeDependency(appName, platformName, versionName, localNativeDependency.name);
+                    let nativeDepInCauldron
+                    try {
+                        nativeDepInCauldron = await cauldron
+                            .getNativeDependency(appName, platformName, versionName, localNativeDependency.name);
+                    } catch(e) { 
+                        // 404 most probably, swallow, need to improve cauldron cli to return null
+                        // instead in case of 404
+                    }
+ 
                     if (nativeDepInCauldron) {
                         await cauldron.updateNativeAppDependency(
-                            appName, platformName, versionName, localNativeDependency.name, localNativeDependency.version);
+                            appName, platformName, versionName, localNativeDependency);
                     } else {
                         await cauldron.addNativeDependency(
                             localNativeDependency, appName, platformName, versionName);
