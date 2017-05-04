@@ -549,9 +549,9 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
-					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-lz",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -578,6 +578,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
+					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
 				);
 				INFOPLIST_FILE = ElectrodeContainer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -589,9 +590,9 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
-					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-lz",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
