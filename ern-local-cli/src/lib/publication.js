@@ -112,20 +112,20 @@ export async function publishMiniApp({
             return log.error('No compatible native application versions have been found');
         }
 
-        inquirer.prompt({
+        const {nativeApps} = await inquirer.prompt({
             type: 'checkbox',
             name: 'nativeApps',
             message: 'Select one or more compatible native application version(s)',
             choices: compatibleVersionsChoices
-        }).then(async(answer) => {
-            for (const nativeApp of answer.nativeApps) {
-                if (nativeApp.isReleased) {
-                    await publishOta(nativeApp.fullNapSelector, {verbose, force});
-                } else {
-                    await publishInApp(nativeApp.fullNapSelector, {containerVersion, verbose, force});
-                }
-            }
         })
+
+        for (const nativeApp of nativeApps) {
+            if (nativeApp.isReleased) {
+                await publishOta(nativeApp.fullNapSelector, {verbose, force})
+            } else {
+                await publishInApp(nativeApp.fullNapSelector, {containerVersion, verbose, force})
+            }
+        }
     }
     // full nap selector was provided (mostly for CI use)
     // do the job !
@@ -133,18 +133,11 @@ export async function publishMiniApp({
         // Todo : Check for compat first !
         // Todo : handle OTA
         if (!containerVersion) {
-            inquirer.prompt({
-                type: 'input',
-                name: 'containerVersion',
-                message: 'Version of generated container'
-            }).then(async(answer) => {
-                await runContainerGen(
-                    ...explodeNativeAppSelector(fullNapSelector), answer.containerVersion, verbose)
-            })
-        } else {
-            await runContainerGen(
-                ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
-        }
+            containerVersion = await askUserForContainerVersion()
+        } 
+
+        await runContainerGen(
+            ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
     }
 }
 
@@ -154,21 +147,23 @@ async function publishInApp(fullNapSelector, {containerVersion, verbose, force})
             ...explodeNativeAppSelector(fullNapSelector), force);
 
         if (!containerVersion) {
-            inquirer.prompt({
-                type: 'input',
-                name: 'containerVersion',
-                message: 'Version of generated container'
-            }).then(async(answer) => {
-                await runContainerGen(
-                    ...explodeNativeAppSelector(fullNapSelector), answer.containerVersion, verbose)
-            })
-        } else {
-            await runContainerGen(
-                ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
-        }
+            containerVersion = await askUserForContainerVersion()
+        } 
+
+        await runContainerGen(
+            ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
     } catch (e) {
         log.error(`[publishInApp] failed`);
     }
+}
+
+async function askUserForContainerVersion() {
+    const {userSelectedContainerVersion} = await inquirer.prompt({
+        type: 'input',
+        name: 'userSelectedContainerVersion',
+        message: 'Version of generated container'
+    })
+    return userSelectedContainerVersion
 }
 
 async function publishOta(fullNapSelector, {verbose, force} = {}) {
