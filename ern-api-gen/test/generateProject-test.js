@@ -11,8 +11,11 @@ describe('generateProject', function () {
         const normalized = normalizeConfig({
             name: '@whatever/react-native-hello-api',
             reactNativeVersion: '14.0.5',
+            bridgeVersion:'1.2.3',
             apiVersion: '1.1.0'
         });
+
+
         const ans = await gen(normalized, cwd());
     });
 

@@ -101,7 +101,8 @@ describe('DefaultGenerator', function () {
         //       .then(compare('petstore/ern-android', 'fixtures/petstore/ern-android'))
     );
     it("should generate: 'petstore.json' for 'ern-es6'", generate('petstore.json', 'ERNES6', "petstore/ern-es6")
-        .then(npm('install', 'petstore/ern-es6')));
+    //    .then(npm('install', 'petstore/ern-es6'))
+    );
 
     it("should generate: 'petstore.json' for 'ern-es6-classy'", generate('petstore.json', 'ERNES6', "petstore/ern-es6-classy", {"classy": true})
 //        .then(compare('petstore/ern-es6', 'fixtures/petstore/ern-es6'))
@@ -112,10 +113,12 @@ describe('DefaultGenerator', function () {
 
 
     it("should generate: 'uber.json' for 'es6'", generate('uber.json', 'ES6', "uber/es6")
-        .then(npm('install', 'uber/es6')));
+    //    .then(npm('install', 'uber/es6'))
+    );
 
     it("should generate: 'petstore.json' for 'es6'", generate('petstore.json', 'ES6', "petstore/es6")
-        .then(npm('install', 'petstore/es6')));
+    //    .then(npm('install', 'petstore/es6'))
+    );
 
     it("should generate: 'event.json' for 'Swift'", generate('event.json', 'Swift', "event/swift"));
 

@@ -22,8 +22,8 @@ describe('SwaggerCodegen', function () {
     it('should parse empty', execTest());
     it('langs', execTest());
     it('-h', execTest());
-    it('config-help -l android', execTest());
-    it('config-help -l swift', execTest());
+    it('config-help -l Android', execTest());
+    it('config-help -l Swift', execTest());
     it('config-help -l javascript', execTest());
 
     it('generate -l android -h  -i ./test/fixtures/petstore.json', execTest(`-o ${cwd('petstore')}`));
