@@ -168,8 +168,7 @@ async function askUserForContainerVersion() {
 
 async function publishOta(fullNapSelector, {verbose, force} = {}) {
     try {
-        const plugins =
-            await cauldron.getNativeDependencies(...explodeNativeAppSelector(fullNapSelector));
+        const plugins = await cauldron.getNativeDependencies(...explodeNativeAppSelector(fullNapSelector));
 
         const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push');
         if (!codePushPlugin) {
@@ -180,8 +179,7 @@ async function publishOta(fullNapSelector, {verbose, force} = {}) {
             ...explodeNativeAppSelector(fullNapSelector), force);
 
         const workingFolder = `${ERN_PATH}/CompositeOta`;
-        const miniapps =
-        await cauldron.getReactNativeApps(...explodeNativeAppSelector(fullNapSelector));
+        const miniapps = await cauldron.getReactNativeApps(...explodeNativeAppSelector(fullNapSelector));
 
         await generateMiniAppsComposite(miniapps, workingFolder, {plugins});
         process.chdir(workingFolder);

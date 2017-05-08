@@ -29,7 +29,7 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
     let shouldExecuteCodePushCommand = true
 
     if (askForConfirmation) {
-      console.log(`Will run ${codePushCommand}`)
+      console.log(`Will run:\n${codePushCommand}`)
       const {userConfirmedCodePushCommand} = await inquirer.prompt({
         type: 'confirm',
         name: 'userConfirmedCodePushCommand',
@@ -40,7 +40,6 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
     }
 
     if (shouldExecuteCodePushCommand) {
-      console.log('bilou')
       return new Promise((resolve, reject) => {
         exec(codePushCommand,
             (err, stdout, stderr) => {
