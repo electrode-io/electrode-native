@@ -4,16 +4,19 @@ import {ensureDir, writeFile} from './fs-util';
 import fs from 'fs';
 
 const ERN_PATH = path.resolve(process.env['HOME'], '.ern');
+
 function trim(v) {
     return v && v.trim();
 }
+
 export const settings = {
     README: `Cauldron Repo
     ===
     Please use the ERN cli to manipulate not for general consumption
     `
 };
-export default class GitStore {
+
+export default class BaseGit {
 
     constructor(ernPath = ERN_PATH, repository, branch = 'master') {
         this.path = path.resolve(ernPath, 'cauldron');
@@ -28,35 +31,34 @@ export default class GitStore {
     async _push(git) {
         if (this.repository) {
             git = git || this.git();
-            git.push(this.repository, this.branch);
+            return git.push(['upstream', this.branch]);
         }
+        return Promise.reject(new Error('No repository to push to !'))
     }
 
     async _ensure() {
         await ensureDir(this.path);
-        const git = this.git();
+        const git = this.git();    
         if (!fs.existsSync(path.resolve(this.path, '.git'))) {
-            await git.init();
+            await git.init()
+                     .addRemote('upstream', this.repository);
         }
 
-        if (this.repository) {
-
-            await new Promise((resolve, reject) => {
-
-                git.pull(this.repository, this.branch, (e, o) => {
-                    if (e) {
-                        if (/Couldn't find remote ref master/.test(e + '')) {
-                            console.log(`pull failed try write commit and push`);
-                            return this._writeReadme();
-                        } else {
-                            return reject(typeof e == 'string' ? new Error(e) : e);
-                        }
+        await new Promise((resolve, reject) => {
+            git.fetch('upstream', 'master', (e, o) => {
+                if (e) {
+                    if (/Couldn't find remote ref master/.test(e + '')) {
+                        console.log(`pull failed try write commit and push`);
+                        return this._writeReadme();
+                    } else {
+                        return reject(typeof e == 'string' ? new Error(e) : e);
                     }
-                    resolve();
-                });
-            });
-            await this._writeReadme();
-        }
+                }
+                resolve()
+            })
+        })
+
+        await git.reset(['--hard', 'upstream/master'])        
     }
 
     async _writeReadme() {

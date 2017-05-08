@@ -1,4 +1,4 @@
-import CauldronCli from '@walmart/ern-cauldron-api/dist/cli';
+import CauldronCli from '@walmart/ern-cauldron-api/src/cli';
 import required from './required';
 import spin from './spin';
 import platform from './platform';
@@ -14,7 +14,7 @@ class Cauldron {
     // cauldronUrl : The url to the cauldron service
     constructor(cauldronRepo) {
         this.cauldron = new CauldronCli( cauldronRepo);
-    }x
+    }
 
     // Adds a native application to the Cauldron
     // ernPlatformVersion : The version of the platform to use for this native app [REQUIRED]
@@ -37,7 +37,6 @@ class Cauldron {
                     appName,
                     platformName,
                     versionName));
-            log.info('done.')
         } catch (e) {
             log.error(`[addNativeApp] ${e}`);
             throw e;
@@ -286,8 +285,8 @@ class Cauldron {
             this.cauldron.addReactNativeApp(appName, platformName, versionName, app));
     }
 
-    async updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased) {
-        return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased);
+    async updateNativeAppIsReleased(appName, platformName, versionName, isReleased) {
+        return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, isReleased);
     }
 
     async throwIfNativeAppVersionIsReleased(appName, platformName, versionName, errorMessage) {

@@ -11,7 +11,7 @@ export default class CauldronClient {
     }
 
     addNativeApp(app) {
-        this.cauldron.createNativeApplication(app);
+        return this.cauldron.createNativeApplication(app);
     }
 
     getAllNativeApps() {
@@ -76,7 +76,7 @@ export default class CauldronClient {
     }
 
     updateNativeAppIsReleased(appName, platformName, versionName, isReleased) {
-        return this.cauldron.updateNativeDep(appName, platformName, versionName, {isReleased: isReleased});
+        return this.cauldron.updateVersion(appName, platformName, versionName, {isReleased: isReleased});
     }
 
     deleteNativeAppDependency(appName, platformName, versionName, dependencyName) {

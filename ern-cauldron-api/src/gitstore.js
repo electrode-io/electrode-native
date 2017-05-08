@@ -7,8 +7,7 @@ const ERN_PATH = path.resolve(process.env['HOME'], '.ern');
 export default class GitStore extends BaseGit {
 
     constructor(ernPath = ERN_PATH, repository, branch = 'master', cauldron = {
-        "nativeApps": [],
-        "reactNativeApps": []
+        "nativeApps": []
     }) {
         super(ernPath, repository, branch);
         this._jsonPath = path.resolve(this.path, 'cauldron.json');
@@ -22,7 +21,6 @@ export default class GitStore extends BaseGit {
         await git.add('cauldron.json');
         await git.commit(message);
         await this._push(git)
-
     }
 
     //check and sync;

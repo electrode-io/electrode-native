@@ -11,8 +11,8 @@ exports.builder = function (yargs) {
       });
 };
 
-exports.handler = function (argv) {
-  cauldron.addNativeApp(
+exports.handler = async function (argv) {
+  await cauldron.addNativeApp(
       argv.platformVersion ? argv.platformVersion.toString().replace('v', '') : undefined,
       ...explodeNapSelector(argv.napSelector));
 };

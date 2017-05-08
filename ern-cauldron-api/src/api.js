@@ -3,6 +3,16 @@ import {
     alreadyExists,
     checkNotFound
 } from './util';
+import {
+    nativeDependencySchema,
+    nativeDependencyPatchSchema,
+    reactNativeAppSchema,
+    nativeApplicationVersionSchema,
+    nativeAplicationVersionPatchSchema,
+    nativeApplicationPlatformSchema,
+    nativeApplicationSchema
+} from './schemas'
+import Joi from 'Joi'
 import BaseApi from './base-api';
 
 function fmt(action, appName, platformName, versionName, nativeDepName, version) {
@@ -30,6 +40,18 @@ function fmt(action, appName, platformName, versionName, nativeDepName, version)
     }
     return `[${action}] - ${label} '${path.pop()}' ${path.join('.')}`;
 }
+
+function joiValidate(payload, schema) {
+    return new Promise(function(resolve, reject) {
+        Joi.validate(payload, schema, (err, value) => {
+            if (err) {
+                return reject(err)
+            }
+            resolve(value)
+        })
+    })
+} 
+
 export default class CauldronApi extends BaseApi {
     constructor(db, binaryStore, sourcemapStore) {
         super(binaryStore, sourcemapStore);
@@ -41,42 +63,48 @@ export default class CauldronApi extends BaseApi {
         return this._db.cauldron;
     }
 
-    begin() {
-        this._db.begin();
+    async begin() {
+        return this._db.begin();
     }
 
     commit(...args) {
         return this._db.commit(fmt(...args));
     }
 
-    removeAllApps() {
+    async removeAllApps() {
+        await this.begin()
         this._cauldron.nativeApps = [];
         return this.commit('remove', 'nativeApps');
     }
 
-    getNativeApplications() {
+    async getNativeApplications() {
+        await this.begin()
         return this._cauldron.nativeApps;
     }
 
-    getNativeApplication(name) {
+    async getNativeApplication(name) {
+        await this.begin()
         return _.find(this._cauldron.nativeApps, x => x.name === name);
     }
 
-
-    createNativeApplication(payload) {
+    async createNativeApplication(payload) {
+        await this.begin()
         if (!alreadyExists(this._cauldron.nativeApps, payload.name)) {
-            this._cauldron.nativeApps.push(payload);
+            const validatedPayload = await joiValidate(payload, nativeApplicationSchema)
+            
+            this._cauldron.nativeApps.push(validatedPayload);
             return this.commit('create', payload.name);
         }
-        return false;
     }
 
-    removeNativeApplication(name) {
+    async removeNativeApplication(name) {
+        await this.begin()
         const ret = _.remove(this._cauldron.nativeApps, x => x.name === name).length > 0;
         return ret ? this.commit('remove', name) : false;
     }
 
     async getPlatforms(appName) {
+        await this.begin()
         const app = await this._getNativeApplication(appName);
         return app == null ? null : app.platforms;
     }
@@ -92,16 +120,19 @@ export default class CauldronApi extends BaseApi {
     }
 
     async createPlatform(appName, payload) {
+        await this.begin()
         const app = await this.getNativeApplication(appName);
 
         if (!alreadyExists(app.platforms, payload.name)) {
-            app.platforms.push(payload);
+            const validatedPayload = await joiValidate(payload, nativeApplicationPlatformSchema)
+            
+            app.platforms.push(validatedPayload);
             return this.commit('create', appName, payload.name);
         }
-        return false;
     }
 
     async removePlatform(appName, platformName) {
+        await this.begin()
         const app = this.getNativeApplication(appName);
         if (app == null) {
             return false;
@@ -112,13 +143,17 @@ export default class CauldronApi extends BaseApi {
     }
 
     async createVersion(appName, platformName, payload) {
+        await this.begin()
         const platform = await this._getPlatform(appName, platformName);
 
         if (!alreadyExists(platform.versions, payload.name)) {
-            if (payload.isReleased == null) {
-                payload.isReleased = false;
+            const validatedPayload = await joiValidate(payload, nativeApplicationVersionSchema)
+
+            if (validatedPayload.isReleased == null) {
+                validatedPayload.isReleased = false;
             }
-            platform.versions.push(payload);
+
+            platform.versions.push(validatedPayload);
             return this.commit('create', appName, platformName, payload.name);
         }
         return false;
@@ -150,7 +185,6 @@ export default class CauldronApi extends BaseApi {
         return ret ? this.commit(`remove`, appName, platformName, versionName, nativeDepName) : false;
 
     }
-
 
     async updateNativeDep(appName, platformName, versionName, nativedepName, payload) {
         const nativedep = await this._getNativeDependency(appName, platformName, versionName, nativedepName);

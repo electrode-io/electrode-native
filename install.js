@@ -62,7 +62,7 @@ exports.install = () => {
     console.log (`=> Creating initial .ernrc configuration file`);
     const ernRc = {
       platformVersion: PLATFORM_VERSION,
-      cauldronUrl: "http://wm-cauldron.dev.walmart.com",
+      cauldronRepo: "git@gecgithub01.walmart.com:react-native/walmart-cauldron.git",
       libgen: {
         android: {
           generator: {
