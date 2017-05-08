@@ -181,22 +181,93 @@ async function publishOta(fullNapSelector, {verbose, force} = {}) {
 
         const workingFolder = `${ERN_PATH}/CompositeOta`;
         const miniapps =
-            await cauldron.getReactNativeApps(...explodeNativeAppSelector(fullNapSelector));
+        await cauldron.getReactNativeApps(...explodeNativeAppSelector(fullNapSelector));
 
         await generateMiniAppsComposite(miniapps, workingFolder, {plugins});
         process.chdir(workingFolder);
-
         const nativeApp = [...explodeNativeAppSelector(fullNapSelector)];
 
+        const applicationName = nativeApp[0]
+        const platformName = nativeApp[1]
+
+        const codePushDeploymentName = await askUserForCodePushDeploymentName()
+        const codePushAppName = await askUserForCodePushAppName(`${applicationName}-${platformName}`)
+        const codePushPlatformName = await askUserForCodePushPlatformName(platformName)
+        const codePushTargetVersionName = await askUserForCodePushTargetVersionName()
+        const codePushIsMandatoryRelease = await askUserIfCodePushMandatoryRelease(false)
+        const codePushRolloutPercentage = await askUserForCodePushRolloutPercentage(100)
+        
         await codePush.releaseReact(
-          nativeApp[0] /* appName*/,
-          nativeApp[1] /* platform */, {
-            targetBinaryVersion: nativeApp[2],
-            mandatory: true,
-            deploymentName: 'Production'
+          codePushAppName,
+          codePushPlatformName, {
+            targetBinaryVersion: codePushTargetVersionName,
+            mandatory: codePushIsMandatoryRelease,
+            deploymentName: codePushDeploymentName,
+            rolloutPercentage: codePushRolloutPercentage,
+            askForConfirmation: true
           }
         );
     } catch (e) {
         log.error(`[publishOta] failed: ${e}`);
     }
+}
+
+async function askUserForCodePushDeploymentName(defaultDeploymentName) {
+     const {userSelectedDeploymentName} = await inquirer.prompt({
+        type: 'input',
+        name: 'userSelectedCodePushAppName',
+        message: 'Deployment name',
+        default: defaultDeploymentName
+    })
+    return userSelectedDeploymentName
+}
+
+async function askUserForCodePushAppName(defaultAppName) {
+    const {userSelectedCodePushAppName} = await inquirer.prompt({
+        type: 'input',
+        name: 'userSelectedCodePushAppName',
+        message: 'Application name',
+        default: defaultAppName
+    })
+    return userSelectedCodePushAppName
+}
+
+async function askUserForCodePushPlatformName(defaultPlatformName) {
+     const {userSelectedCodePushPlatformName} = await inquirer.prompt({
+        type: 'input',
+        name: 'userSelectedCodePushPlatformName',
+        message: 'Platform name',
+        default: defaultPlatformName
+    })
+    return userSelectedCodePushPlatformName
+}
+
+async function askUserForCodePushTargetVersionName(defaultTargetVersionName) {
+     const {userSelectedCodePushTargetVersionName} = await inquirer.prompt({
+        type: 'input',
+        name: 'userSelectedCodePushTargetVersionName',
+        message: 'Target binary version name',
+        default: defaultTargetVersionName
+    })
+    return userSelectedCodePushTargetVersionName
+}
+
+async function askUserIfCodePushMandatoryRelease(defaultValue) {
+     const {userSelectedCodePushMandatoryRelease} = await inquirer.prompt({
+        type: 'confirm',
+        name: 'userSelectedCodePushMandatoryRelease',
+        message: 'Is this a mandatory release ?',
+        default: defaultValue
+    })
+    return userSelectedCodePushMandatoryRelease
+}
+
+async function askUserForCodePushRolloutPercentage(defaultRolloutPercentage) {
+     const {userSelectedCodePushRolloutPercentage} = await inquirer.prompt({
+        type: 'input',
+        name: 'userSelectedCodePushRolloutPercentage',
+        message: 'Release rollout percentage [1-100]',
+        default: defaultRolloutPercentage
+    })
+    return userSelectedCodePushRolloutPercentage
 }
