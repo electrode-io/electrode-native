@@ -395,10 +395,12 @@ Otherwise you can safely ignore this warning
                 try {
                     currentMiniAppEntryIncauldron = await cauldron.getReactNativeApp(
                         appName, platformName, versionName, miniAppName);
-                } catch (e) {
+                }
+                // Assume 404 exception 
+                catch (e) {
                     currentMiniAppEntryIncauldron = [];
                 }
-                ;
+
                 const isVersionPresent =
                     _.find(currentMiniAppEntryIncauldron, e => e.version === this.version);
                 if (isVersionPresent) {
@@ -422,8 +424,18 @@ Otherwise you can safely ignore this warning
                 }
             }
 
+            
+
             for (const localNativeDependency of this.nativeDependencies) {
-                // optimize : should only be done if new native dep (not already in cauldron)
+                // If local native dependency already exists at same version in cauldron, 
+                // we then don't need to add it or update it 
+                if (_.find(nativeApp.nativeDeps, d => 
+                      (d.name === localNativeDependency.name 
+                    && d.scope === localNativeDependency.scope
+                    && d.version === localNativeDependency.version))) {
+                    continue;
+                }
+
                 if (!force) {
                     await cauldron.addNativeDependency(
                         localNativeDependency, appName, platformName, versionName);
