@@ -453,7 +453,7 @@ Otherwise you can safely ignore this warning
  
                     if (nativeDepInCauldron) {
                         await cauldron.updateNativeAppDependency(
-                            appName, platformName, versionName, localNativeDependency);
+                            appName, platformName, versionName, localNativeDependency.name, localNativeDependency.version);
                     } else {
                         await cauldron.addNativeDependency(
                             localNativeDependency, appName, platformName, versionName);
