@@ -31,7 +31,14 @@ export default class BaseGit {
     async _push(git) {
         if (this.repository) {
             git = git || this.git();
-            return git.push(['upstream', this.branch]);
+            return new Promise((resolve, reject) => {
+                git.push('upstream', this.branch, (e, o) => {
+                    if (e) {
+                        return reject(e)
+                    }
+                    resolve(o)
+                })
+            })
         }
         return Promise.reject(new Error('No repository to push to !'))
     }
@@ -50,13 +57,16 @@ export default class BaseGit {
             git.fetch('upstream', 'master', (e, o) => {
                 if (e) {
                     if (/Couldn't find remote ref master/.test(e + '')) {
-                        console.log(`pull failed try write commit and push`);
-                        return this._writeReadme();
+                        console.log(`Remote repository is empty. Issuing first commit`);
+                        this._writeReadme()
+                            .then(r => resolve(r))
+                            .catch(err => reject(err));
                     } else {
                         return reject(typeof e == 'string' ? new Error(e) : e);
                     }
+                } else {
+                    resolve(o)
                 }
-                resolve()
             })
         })
 
