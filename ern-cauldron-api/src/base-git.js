@@ -44,6 +44,8 @@ export default class BaseGit {
                      .addRemote('upstream', this.repository);
         }
 
+        await this._setUpstreamRemoteUrl(this.repository)
+
         await new Promise((resolve, reject) => {
             git.fetch('upstream', 'master', (e, o) => {
                 if (e) {
@@ -59,6 +61,23 @@ export default class BaseGit {
         })
 
         await git.reset(['--hard', 'upstream/master'])        
+    }
+
+    async _setUpstreamRemoteUrl(url) {
+        return new Promise((resolve, reject) => {
+            this.git().raw(
+                [
+                    'remote',
+                    'set-url',
+                    'upstream',
+                    url
+                ], (err, result) => {
+                if (err) {
+                    return reject(err)
+                }
+                resolve(result)
+            })
+        })
     }
 
     async _writeReadme() {

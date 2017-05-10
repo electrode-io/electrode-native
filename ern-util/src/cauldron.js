@@ -11,9 +11,12 @@ import log from './log';
 // It uses the ern-cauldron-cli client
 class Cauldron {
 
-    // cauldronUrl : The url to the cauldron service
-    constructor(cauldronRepo) {
-        this.cauldron = new CauldronCli( cauldronRepo);
+    constructor(cauldronRepoAlias) {
+        if (!cauldronRepoAlias) {
+            return console.log('!!! No Cauldron repository currently activated !!!')
+        }
+        const cauldronRepositories = config.getValue('cauldronRepositories')
+        this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias]);
     }
 
     // Adds a native application to the Cauldron
@@ -298,4 +301,4 @@ class Cauldron {
         }
     }
 }
-export default new Cauldron(config.getValue('cauldronRepo'));
+export default new Cauldron(config.getValue('cauldronRepoInUse'));
