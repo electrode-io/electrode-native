@@ -13,8 +13,10 @@ export async function readFile(filename, encoding = 'utf8') {
     });
 }
 export async function readJSON(filename) {
-    const content = await readFile(filename);
-    return JSON.parse(content);
+    return readFile(filename).then(JSON.parse);
+}
+export async function writeJSON(filename, json) {
+    return writeFile(filename, JSON.stringify(json, null, 2));
 }
 export async function writeFile(filename, data) {
     return new Promise((resolve, reject) => {

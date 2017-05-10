@@ -1,4 +1,4 @@
-import CauldronClient from '@walmart/ern-cauldron-cli';
+import CauldronCli from '@walmart/ern-cauldron-api/src/cli';
 import required from './required';
 import spin from './spin';
 import platform from './platform';
@@ -11,9 +11,12 @@ import log from './log';
 // It uses the ern-cauldron-cli client
 class Cauldron {
 
-    // cauldronUrl : The url to the cauldron service
-    constructor(cauldronUrl) {
-        this.cauldron = new CauldronClient(cauldronUrl);
+    constructor(cauldronRepoAlias) {
+        if (!cauldronRepoAlias) {
+            return console.log('!!! No Cauldron repository currently activated !!!')
+        }
+        const cauldronRepositories = config.getValue('cauldronRepositories')
+        this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias]);
     }
 
     // Adds a native application to the Cauldron
@@ -37,7 +40,6 @@ class Cauldron {
                     appName,
                     platformName,
                     versionName));
-            log.info('done.')
         } catch (e) {
             log.error(`[addNativeApp] ${e}`);
             throw e;
@@ -286,12 +288,12 @@ class Cauldron {
             this.cauldron.addReactNativeApp(appName, platformName, versionName, app));
     }
 
-    async updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased) {
-        return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, dependencyName, isReleased);
+    async updateNativeAppIsReleased(appName, platformName, versionName, isReleased) {
+        return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, isReleased);
     }
 
     async throwIfNativeAppVersionIsReleased(appName, platformName, versionName, errorMessage) {
-        const nativeAppVersion = 
+        const nativeAppVersion =
             await this.cauldron.getNativeAppVersion(appName, platformName, versionName)
 
         if (nativeAppVersion.isReleased) {
@@ -299,4 +301,4 @@ class Cauldron {
         }
     }
 }
-export default new Cauldron(config.obj.cauldronUrl);
+export default new Cauldron(config.getValue('cauldronRepoInUse'));

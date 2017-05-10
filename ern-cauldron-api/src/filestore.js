@@ -1,60 +1,77 @@
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import BaseGit from './base-git';
+import path from 'path';
+import { writeFile, mkdirp} from './fs-util';
+function trim(v) {
+    return v && v.trim();
+}
+export default class FileStore extends BaseGit {
 
-export default class FileStore {
-  /**
-   * Instanciate a FileStore
-   *
-   * @param {string} path - Path to the folder where this FileStore will store files
-   */
-  constructor(path) {
-    this._path = path;
-    try {
-      fs.statSync(this._path);
-    } catch (e) {
-      mkdirp(this._path);
+    constructor(ernPath, repository, branch, prefix) {
+        super(ernPath, repository, branch);
+        this._prefix = prefix;
     }
-  }
 
-  /**
-   * Stores a file in this file store
-   *
-   * @param {string} filename - The name of the file to store
-   * @param {string|Buffer} data - The file binary data
-   */
-  storeFile(filename, data) {
-    fs.writeFileSync(this.pathToFile(filename), data);
-  }
+    /**
+     * Stores a file in this file store
+     *
+     * @param {string} filename - The name of the file to store
+     * @param {string|Buffer} data - The file binary data
+     * @return sha1 hash from git.
+     */
+    async storeFile(identifier, content) {
+        await this._ensure();
+        await mkdirp(path.resolve(this.path, this._prefix));
+        const relPath = this.pathToFile(identifier);
+        await writeFile(path.resolve(this.path, relPath), content, {flag: 'w'});
+        const git = this.git();
+        await git.add(relPath);
+        await git.commit(`[added file] ${identifier}`);
+        await this._push(git);
 
-  hasFile(filename) {
-    try {
-      fs.statSync(this.pathToFile(filename)).isFile();
-      return true;
-    } catch (e) {
-      return false;
+        const sha1 = await new Promise((resolve, reject) => {
+            git.revparse([`:${relPath}`], (e, o) => {
+                if (e) return reject(e);
+                resolve(o);
+            });
+        });
+        return trim(sha1);
     }
-  }
 
-  /**
-   * Retrieves a file from this store
-   *
-   * @param {string} filename - The name of the file to retrieve
-   * @return {Buffer} The file binary data
-   */
-  getFile(filename) {
-    return fs.readFileSync(this.pathToFile(filename));
-  }
 
-  /**
-   * Removes a file from this store
-   *
-   * @param {string} filename - The name of the file to remove
-   */
-  removeFile(filename) {
-    fs.unlinkSync(this.pathToFile(filename));
-  }
+    async hasFile(filename) {
+        await this._ensure();
+        try {
+            fs.statSync(this.pathToFile(filename)).isFile();
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 
-  pathToFile(filename) {
-    return this._path + '/' + filename;
-  }
+    /**
+     * Retrieves a file from this store
+     *
+     * @param {string} filename - The name of the file to retrieve
+     * @return {Buffer} The file binary data
+     */
+    async getFile(filename) {
+        await this._ensure();
+        return fs.readFileSync(this.pathToFile(filename));
+    }
+
+    /**
+     * Removes a file from this store
+     *
+     * @param {string} filename - The name of the file to remove
+     */
+    async removeFile(filename) {
+        await this._ensure();
+        await this.git().rm(this.pathToFile(filename));
+        return this._push();
+    }
+
+    pathToFile(filename) {
+        return path.join(this._prefix, filename);
+    }
 }

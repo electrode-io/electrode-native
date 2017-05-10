@@ -5,7 +5,7 @@ exports.desc = 'Remove a native application from the cauldron';
 
 exports.builder = {};
 
-exports.handler = function (argv) {
-    cauldron.removeNativeApp(
+exports.handler = async function (argv) {
+    await cauldron.removeNativeApp(
         ...explodeNapSelector(argv.napSelector));
 };

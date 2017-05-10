@@ -1,7 +1,6 @@
 import {config as ernConfig} from '@walmart/ern-util';
 const log = require('console-log-level')();
 
-
 exports.command = 'config <key> [value]';
 exports.desc = 'Get or set a configuration key';
 
@@ -11,9 +10,7 @@ exports.builder = function (yargs) {
             alias: 'v',
             describe: 'Value to set for the key'
         })
-        .choices('key', ['cauldronUrl']);
 };
-
 
 exports.handler = function (argv) {
     if (argv.value) {

@@ -1,37 +1,61 @@
-import Boom from 'boom';
 import _ from 'lodash';
-import crypto from 'crypto';
+import {
+    alreadyExists,
+    checkNotFound
+} from './util';
+import {
+    nativeDependencySchema,
+    nativeDependencyPatchSchema,
+    reactNativeAppSchema,
+    nativeApplicationVersionSchema,
+    nativeAplicationVersionPatchSchema,
+    nativeApplicationPlatformSchema,
+    nativeApplicationSchema
+} from './schemas'
+import Joi from 'Joi'
+import BaseApi from './base-api';
 
-//====================================
-// Cauldron Helper
-//====================================
-
-function alreadyExists(collection, name, version) {
-    if (!version) {
-        return _.some(collection, x => x.name === name);
-    } else {
-        return _.some(collection, x => (x.name === name) && (x.version === version));
+function fmt(action, appName, platformName, versionName, nativeDepName, version) {
+    const path = [];
+    let label = '';
+    if (appName) {
+        path.push(appName);
+        label = 'app';
     }
+    if (platformName) {
+        path.push(platformName);
+        label = 'platform';
+    }
+    if (versionName) {
+        path.push(versionName);
+        label = 'version'
+    }
+    if (nativeDepName) {
+        path.push(nativeDepName);
+        label = 'native dep';
+    }
+    if (version) {
+        path.push(version);
+        label = 'native dep version';
+    }
+    return `[${action}] - ${label} '${path.pop()}' ${path.join('.')}`;
 }
 
-function buildNativeBinaryFileName(appName, platformName, versionName) {
-    const ext = getNativeBinaryFileExt(platformName);
-    return `${appName}-${platformName}@${versionName}.${ext}`;
-}
+function joiValidate(payload, schema) {
+    return new Promise(function(resolve, reject) {
+        Joi.validate(payload, schema, (err, value) => {
+            if (err) {
+                return reject(err)
+            }
+            resolve(value)
+        })
+    })
+} 
 
-function getNativeBinaryFileExt(platformName) {
-    return platformName === 'android' ? 'apk' : 'app';
-}
-
-function buildReactNativeSourceMapFileName(appName, versionName) {
-    return `${appName}@${versionName}.map`;
-}
-
-export default class CauldronApi {
+export default class CauldronApi extends BaseApi {
     constructor(db, binaryStore, sourcemapStore) {
+        super(binaryStore, sourcemapStore);
         this._db = db;
-        this._nativeBinariesStore = binaryStore;
-        this._sourceMapStore = sourcemapStore;
     }
 
     //So it gets it from the Filesystem.
@@ -39,202 +63,135 @@ export default class CauldronApi {
         return this._db.cauldron;
     }
 
-    begin() {
-        this._db.begin();
+    async begin() {
+        return this._db.begin();
     }
 
-    removeAllApps(cb) {
-        this._db.cauldron.nativeApps = [];
-        this._db.commit(cb);
+    commit(...args) {
+        return this._db.commit(fmt(...args));
     }
 
-    getNativeApplication(name) {
+    async removeAllApps() {
+        await this.begin()
+        this._cauldron.nativeApps = [];
+        return this.commit('remove', 'nativeApps');
+    }
+
+    async getNativeApplications() {
+        await this.begin()
+        return this._cauldron.nativeApps;
+    }
+
+    async getNativeApplication(name) {
+        await this.begin()
         return _.find(this._cauldron.nativeApps, x => x.name === name);
     }
 
-    createNativeApplication(payload, cb) {
+    async createNativeApplication(payload) {
+        await this.begin()
         if (!alreadyExists(this._cauldron.nativeApps, payload.name)) {
-            this._cauldron.nativeApps.push(payload);
-            return this._db.commit(() => cb(null, true));
+            const validatedPayload = await joiValidate(payload, nativeApplicationSchema)
+            
+            this._cauldron.nativeApps.push(validatedPayload);
+            return this.commit('create', payload.name);
         }
-        cb(null, false);
     }
 
-    removeNativeApplication(name, cb) {
+    async removeNativeApplication(name) {
+        await this.begin()
         const ret = _.remove(this._cauldron.nativeApps, x => x.name === name).length > 0;
-        return this._db.commit(() => cb(null, ret));
+        return ret ? this.commit('remove', name) : false;
     }
 
-    getPlatform(appName, platformName) {
-        return this.getPlatformForApp(this.getNativeApplication(appName), platformName);
+    async getPlatforms(appName) {
+        await this.begin()
+        const app = await this._getNativeApplication(appName);
+        return app == null ? null : app.platforms;
     }
+
+    async getPlatform(appName, platformName) {
+        return this.getPlatformForApp(await this.getPlatforms(appName), platformName);
+    }
+
 
     //So the reference does not change.
-    getPlatformForApp(app, platformName) {
-        if (app) {
-            return _.find(app.platforms, x => x.name === platformName);
-        }
+    getPlatformForApp(platforms, platformName) {
+        return _.find(platforms, x => x.name === platformName);
     }
 
-    createPlatform(appName, payload, cb) {
-        const {app} = this.validateAndGet(appName);
+    async createPlatform(appName, payload) {
+        await this.begin()
+        const app = await this.getNativeApplication(appName);
+
         if (!alreadyExists(app.platforms, payload.name)) {
-            app.platforms.push(payload);
-            return this._db.commit(() => cb(null, true));
+            const validatedPayload = await joiValidate(payload, nativeApplicationPlatformSchema)
+            
+            app.platforms.push(validatedPayload);
+            return this.commit('create', appName, payload.name);
         }
-        cb(null, false);
     }
 
-    removePlatform(appName, platformName, cb) {
-        const {app} =this.validateAndGet(appName, platformName);
+    async removePlatform(appName, platformName) {
+        await this.begin()
+        const app = this.getNativeApplication(appName);
+        if (app == null) {
+            return false;
+        }
         const ret = _.remove(app.platforms, x => x.name === platformName).length > 0;
-        this._db.commit(() => cb(null, ret));
+        await this.commit('remove', appName, platformName);
+        return ret;
     }
 
-    createVersion(appName, platformName, payload, cb) {
-        const {platform} = this.validateAndGet(appName, platformName);
+    async createVersion(appName, platformName, payload) {
+        await this.begin()
+        const platform = await this._getPlatform(appName, platformName);
 
         if (!alreadyExists(platform.versions, payload.name)) {
-            platform.versions.push(payload);
-            return this._db.commit(() => cb(null, true));
+            const validatedPayload = await joiValidate(payload, nativeApplicationVersionSchema)
+
+            if (validatedPayload.isReleased == null) {
+                validatedPayload.isReleased = false;
+            }
+
+            platform.versions.push(validatedPayload);
+            return this.commit('create', appName, platformName, payload.name);
         }
-        cb(null, false);
+        return false;
     }
 
-    updateVersion(appName, platformName, versionName, payload, cb) {
-        const {version} = this.validateAndGet(appName, platformName, versionName);
-        if (payload.isReleased !== undefined) {
-            version.isReleased = payload.isReleased;
-        }
-        this._db.commit(() => cb(null, true));
+
+    async getVersions(appName, platformName) {
+        const platform = await this._getPlatform(appName, platformName);
+        return platform.versions;
     }
 
-    getVersion(appName, platformName, versionName) {
-        const platform = this.getPlatform(appName, platformName);
-        if (platform) {
-            return _.find(platform.versions, x => x.name === versionName);
-        }
+    async getVersion(appName, platformName, versionName) {
+        const versions = await this.getVersions(appName, platformName);
+        return _.find(versions, x => x.name === versionName);
     }
 
-    removeVersion(appName, platformName, versionName, cb) {
-        const {platform} = this.validateAndGet(appName, platformName, versionName);
+    async removeVersion(appName, platformName, versionName) {
+        const platform = await this.getPlatform(appName, platformName);
+        checkNotFound(platform, `No version named ${versionName}`);
         const ret = _.remove(platform.versions, x => x.name === versionName).length > 0;
-        this._db.commit(() => cb(null, ret));
+        return ret ? this.commit(`remove`, appName, platformName, versionName) : false;
     }
 
-    getNativeDependency(nativeAppVersion, nativeDepName) {
-        return _.find(nativeAppVersion.nativeDeps, x => x.name === nativeDepName);
-    }
 
-    removeNativeDependency(appName, platformName, versionName, nativeDepName, cb) {
-        const {version} =   this.validateAndGet(appName, platformName, versionName);
+    async removeNativeDependency(appName, platformName, versionName, nativeDepName) {
+        const version = await this._getVersion(appName, platformName, versionName);
+
         const ret = _.remove(version.nativeDeps, x => x.name === nativeDepName).length > 0;
-        this._db.commit(() => {
-            cb(null, ret);
-        });
+        return ret ? this.commit(`remove`, appName, platformName, versionName, nativeDepName) : false;
+
     }
 
-    getReactNativeApp(nativeAppVersion, appName) {
-        return _.filter(nativeAppVersion.reactNativeApps, x => x.name === appName);
+    async updateNativeDep(appName, platformName, versionName, nativedepName, payload) {
+        const nativedep = await this._getNativeDependency(appName, platformName, versionName, nativedepName);
+        nativedep.version = payload.version ? payload.version : nativedep.version;
+        await this.commit('update', appName, platformName, versionName, nativedepName, nativedep.version);
+        return nativedep;
     }
 
-    removeReactNativeApp(appName, platformName, versionName, reactnativeappName, cb) {
-        const {version} =this.validateAndGet(appName, platformName, versionName);
-        const ret = _.remove(version.reactNativeApps, x => x.name === reactnativeappName).length > 0;
-        cb(null, ret);
-    }
 
-    createReactNativeApp(appName, platformName, versionName, payload, cb) {
-
-        const {version} =this.validateAndGet(appName, platformName, versionName);
-        if (!alreadyExists(version.reactNativeApps, payload.name)) {
-            version.reactNativeApps.push(payload);
-        } else { /// consider version update, even if not the case
-            _.find(version.reactNativeApps, r => r.name === payload.name).version = payload.version;
-        }
-        this._db.commit(cb);
-    }
-
-    createNativeDep(appName, platformName, versionName, payload, cb) {
-        const {version} = this.validateAndGet(appName, platformName, versionName);
-        if (!alreadyExists(version.nativeDeps, payload.name)) {
-            version.nativeDeps.push(payload);
-            return this._db.commit(() => cb(null, true));
-        }
-        cb(null, false);
-    }
-
-    updateNativeDep(appName, platformName, versionName, nativedepName, payload, cb) {
-        const {version} = this.validateAndGet(appName, platformName, versionName);
-        const nativedep = this.getNativeDependency(version, nativedepName);
-        if (nativedep) {
-            nativedep.version = payload.version ? payload.version : nativedep.version;
-            cb(null, nativedep);
-        } else {
-            cb();
-        }
-    }
-
-    validateAndGet(appName, platformName, versionName) {
-        let app = this.getNativeApplication(appName);
-        let platform, version;
-
-        if (!app) {
-            throw Boom.notFound(`No application named ${appName}`);
-        }
-        if (platformName) {
-            platform = this.getPlatform(appName, platformName);
-            if (!platform) {
-                throw Boom.notFound(`No platform named ${platformName}`);
-            }
-            if (versionName) {
-                version = this.getVersion(appName, platformName, versionName);
-                if (!version) {
-                    throw Boom.notFound(`No version named ${versionName}`);
-                }
-            }
-        }
-
-        return {app, platform, version};
-    }
-
-    createNativeBinary(appName, platformName, versionName, payload, cb) {
-        const {app, platform, version} =
-            this.validateAndGet(appName, platformName, versionName);
-
-        const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
-        const shasum = crypto.createHash('sha1');
-        shasum.update(payload);
-        this._nativeBinariesStore.storeFile(filename, payload);
-        version.binary = shasum.digest('hex');
-        cb(null, version);
-    }
-
-    getNativeBinary(appName, platformName, versionName, cb) {
-        const {app, platform, version} = this.validateAndGet(appName, platformName, versionName);
-        const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
-        cb(null, this._nativeBinariesStore.getFile(filename)).code(200);
-    }
-
-    removeNativeBinary(appName, platformName, versionName, cb) {
-        const {app, platform, version} =
-            this.validateAndGet(appName, platformName, versionName);
-
-        const filename = buildNativeBinaryFileName(app.name, platform.name, version.name);
-        this._nativeBinariesStore.removeFile(filename);
-        version.binary = null;
-        cb();
-    }
-
-    createSourceMap(appName, versionName, payload, cb) {
-        const filename = buildReactNativeSourceMapFileName(appName, versionName);
-        this._sourceMapStore.storeFile(filename, payload);
-        cb();
-    }
-
-    getSourceMap(appName, versionName, cb) {
-        const filename = buildReactNativeSourceMapFileName(appName, versionName);
-        const fileExists = this._sourceMapStore.hasFile(filename);
-        cb(null, fileExists ? this._sourceMapStore.getFile(filename) : false);
-    }
 }
