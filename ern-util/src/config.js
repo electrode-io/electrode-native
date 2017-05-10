@@ -16,8 +16,8 @@ export class ErnConfig {
             ERN_RC_GLOBAL_FILE_PATH;
     }
 
-    getValue(key) {
-        return this.obj[key];
+    getValue(key, defaultValue) {
+        return this.obj[key] || defaultValue;
     }
 
     setValue(key, value) {
