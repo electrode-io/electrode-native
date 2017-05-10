@@ -1,49 +1,5 @@
 ## Electrode React Native Platform (ern-platform)
 
-#### Required prerequisites
-
-**Yarn**
-
-The platform is using [yarn](https://yarnpkg.com) packager manager (instead of npm).  
-Yarn is being used for installing the platform and platform versions, but also used for container generation.
-
-At some point we might make it optional for the user and fall back to npm if yarn is not installed, but for now this is a requirement.
-
-Yarn install is quite straightforward using [brew](http://brew.sh/).
-
-```
-brew update
-brew install yarn
-```
-
-**Node**
-
-The platform is running on [node](https://nodejs.org/en/) and has a node engine version requirement of `>=6.9.4` (current LTS version). Please make sure you are running a node engine matching this version requirement (you should use `nvm` if not already, to easily install and switch between node versions).  
-In the future we might have a lower node version requirement, but for now this is it !
-
-**Walmart npm**
-
-Due to the fact that node packages are currently walmart scoped, they are stored in our internal enterprise npm repository. If you haven't done so already, you'll need to setup npm accordingly. Please see [this confluence page](https://confluence.walmart.com/display/PGPTOOLS/NPM+and+Nexus) for instructions.  
-
-#### Optional prerequisites
-
-**Android**
-
-If you intend to run your react-native miniapp standalone in Android or need to run the container generator for Android (this should rather be taken care of by a CI server) you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
-Otherwise, easiest way is to just install the latest version of [Android Studio](https://developer.android.com/studio/index.html).
-
-Make sure to export this env variable pointing to your `sdk` folder :
-
-```
-export ANDROID_SDK=/Users/your_unix_name/sdk
-```
-
-If you don't need to work on (or use) Android container generation or only intend to run your miniapp standalone on iOS, do not bother.
-
-**iOS**
-
-If you intend to run you react-native miniapp standalone in iOS or need to run the container generator for iOS (this should rather be taken care of by a CI server), you'll need to have XCode >= 8.2.1 installed on the workstation.
-
 #### Understanding platform structure
 
 In order to work on the platform, you first need to understand how it's structured and the different projects that it is composed of.  
@@ -155,5 +111,53 @@ When the user wants to switch from an installed version to another (let's say `v
 
 #### Development instructions
 
-Please follow instructions [HERE](docs/development/setup.md)
-# cauldron-test
+
+### Prerequisites
+
+#### 1. Required prerequisites
+
+**Yarn**
+
+The platform is using [yarn](https://yarnpkg.com) packager manager (instead of npm).  
+Yarn is being used for installing the platform and platform versions, but also used for container generation.
+
+At some point we might make it optional for the user and fall back to npm if yarn is not installed, but for now this is a requirement.
+
+Yarn install is quite straightforward using [brew](http://brew.sh/).
+
+```
+brew update
+brew install yarn
+```
+
+**Node**
+
+The platform is running on [node](https://nodejs.org/en/) and has a node engine version requirement of `>=6.9.4` (current LTS version). Please make sure you are running a node engine matching this version requirement (you should use `nvm` if not already, to easily install and switch between node versions).  
+In the future we might have a lower node version requirement, but for now this is it !
+
+**Walmart npm**
+
+Due to the fact that node packages are currently walmart scoped, they are stored in our internal enterprise npm repository. If you haven't done so already, you'll need to setup npm accordingly. Please see [this confluence page](https://confluence.walmart.com/display/PGPTOOLS/NPM+and+Nexus) for instructions.  
+
+#### 2. Optional prerequisites
+
+**Android**
+
+If you intend to run your react-native miniapp standalone in Android or need to run the container generator for Android (this should rather be taken care of by a CI server) you'll need to have all build tools installed. If you have Android Studio installed (and corresponding ENV variable paths correctly setup), you should be good to go.  
+Otherwise, easiest way is to just install the latest version of [Android Studio](https://developer.android.com/studio/index.html).
+
+Make sure to export this env variable pointing to your `sdk` folder :
+
+```
+export ANDROID_SDK=/Users/your_unix_name/sdk
+```
+
+If you don't need to work on (or use) Android container generation or only intend to run your miniapp standalone on iOS, do not bother.
+
+**iOS**
+
+If you intend to run you react-native miniapp standalone in iOS or need to run the container generator for iOS (this should rather be taken care of by a CI server), you'll need to have XCode >= 8.2.1 installed on the workstation.
+
+#### 3. Setup
+
+Please follow instructions [HERE](docs/development/setup.md) to complete the dev set-up 
