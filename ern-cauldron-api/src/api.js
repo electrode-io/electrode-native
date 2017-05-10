@@ -187,6 +187,7 @@ export default class CauldronApi extends BaseApi {
     }
 
     async updateNativeDep(appName, platformName, versionName, nativedepName, payload) {
+        await this.begin()
         const nativedep = await this._getNativeDependency(appName, platformName, versionName, nativedepName);
         nativedep.version = payload.version ? payload.version : nativedep.version;
         await this.commit('update', appName, platformName, versionName, nativedepName, nativedep.version);

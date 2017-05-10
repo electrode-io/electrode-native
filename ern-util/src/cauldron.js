@@ -252,17 +252,12 @@ class Cauldron {
     }
 
     // Update an existing native dependency version
-    async updateNativeAppDependency(appName, platformName, versionName, dependency) {
+    async updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion) {
         await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
             'Cannot update a native dependency for a released native app version')
-        //
-        // This should be the way, but is currently broken because caldron service does not properly
-        // commit changes to it's internal DB for updates of native app dependencies (this is a bug in cauldron service)
-        // return this.cauldron.updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion);
 
-        // While waiting for a fix, this is the work-arround
-        await this.removeNativeDependency(dependency.name, appName, platformName, versionName)
-        await this.addNativeDependency(dependency, appName, platformName, versionName)
+        return spin(`Updating dependency ${dependencyName} version to ${newVersion}`,
+                this.cauldron.updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion));
     }
 
     // Retrieves all native apps metadata from the Cauldron
