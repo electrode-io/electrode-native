@@ -6,10 +6,7 @@ exports.desc = 'Add a Cauldron git repository'
 exports.builder = {}
 
 exports.handler = function (argv) {
-    let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
-    if (!cauldronRepositories) {
-      cauldronRepositories = {}
-    }
+    let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
     if (cauldronRepositories[argv.repoAlias]) {
       return console.log(`A Cauldron repository is already associated to ${argv.repoAlias} alias`)
     }
