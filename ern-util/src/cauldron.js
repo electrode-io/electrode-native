@@ -75,7 +75,6 @@ class Cauldron {
           ${platformName ? `for ${platformName} platform` : ''}
           from cauldron`,
                 this._removeNativeApp(appName, platformName, versionName))
-            log.info('done.')
         } catch (e) {
             log.error(`[removeNativeApp] ${e}`);
             throw e;
@@ -122,8 +121,6 @@ class Cauldron {
                    to ${appName}:${platformName}:${versionName}`,
                 this.cauldron.addNativeAppDependency(
                     appName, platformName, versionName, dependency));
-
-            log.info('done.');
         } catch (e) {
             log.error(`[addNativeDependency] ${e}`);
             throw e;
