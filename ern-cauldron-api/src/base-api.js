@@ -4,7 +4,8 @@ import {
     buildNativeBinaryFileName,
     buildReactNativeSourceMapFileName,
     checkNotFound,
-    alreadyExists
+    alreadyExists,
+    containsDependency
 } from './util';
 import {find, remove} from 'lodash';
 
@@ -103,19 +104,18 @@ export default class BaseApi {
         return version;
     }
 
-    async createNativeDep(appName, platformName, versionName, payload, withAuth) {
+    async createNativeDep(appName, platformName, versionName, dependency, withAuth) {
         const version = await this._getVersion(appName, platformName, versionName, withAuth);
-        if (!alreadyExists(version.nativeDeps, payload.name)) {
-            version.nativeDeps.push(payload);
+        if (!containsDependency(version.nativeDeps, dependency, { shouldMatchVersion: false })) {
+            version.nativeDeps.push(dependency);
             return this.commit(version);
         }
         return false;
     }
 
-
     async getNativeDependency(appName, platformName, versionName, nativedepName, withAuth) {
         const nativeDeps = await this.getNativeDependencies(appName, platformName, versionName, withAuth);
-        return find(nativeDeps, x => x.name === nativedepName);
+        return find(nativeDeps, x => x.startsWith(`${nativedepName}@`));
     }
 
     async getNativeDependencies(appName, platformName, versionName, withAuth) {
@@ -125,11 +125,9 @@ export default class BaseApi {
 
     async _getNativeDependency(appName, platformName, versionName, nativedepName, withAuth) {
         return checkNotFound(await this.getNativeDependency(appName, platformName, versionName, nativedepName, withAuth), `Native Dependency not found [${nativedepName}]`);
-
     }
 
     async createReactNativeApp(appName, platformName, versionName, payload, withAuth) {
-
         const version = await this._getVersion(appName, platformName, versionName, withAuth);
         if (!alreadyExists(version.reactNativeApps, payload.name)) {
             version.reactNativeApps.push(payload);

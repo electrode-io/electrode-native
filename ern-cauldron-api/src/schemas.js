@@ -1,15 +1,5 @@
 import Joi from 'joi';
 
-export const nativeDependencySchema = Joi.object({
-    name: Joi.string().required(),
-    version: Joi.string().required(),
-    scope: Joi.string().optional()
-});
-
-export const nativeDependencyPatchSchema = Joi.object({
-    version: Joi.string().optional()
-});
-
 export const reactNativeAppSchema = Joi.object({
     name: Joi.string().required(),
     version: Joi.string().required(),
@@ -23,7 +13,7 @@ export const nativeApplicationVersionSchema = Joi.object({
     ernPlatformVersion: Joi.string().required(),
     isReleased: Joi.boolean().optional().default(false),
     binary: Joi.string().default(null),
-    nativeDeps: Joi.array().items(nativeDependencySchema).default([]),
+    nativeDeps: Joi.array().default([]),
     reactNativeApps: Joi.array().items(reactNativeAppSchema).default([])
 });
 
@@ -42,8 +32,6 @@ export const nativeApplicationSchema = Joi.object({
 });
 
 export default ({
-    nativeDependencySchema,
-    nativeDependencyPatchSchema,
     reactNativeAppSchema,
     nativeApplicationVersionSchema,
     nativeAplicationVersionPatchSchema,

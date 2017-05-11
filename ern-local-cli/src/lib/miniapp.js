@@ -424,15 +424,14 @@ Otherwise you can safely ignore this warning
                 }
             }
 
-            
-
             for (const localNativeDependency of this.nativeDependencies) {
                 // If local native dependency already exists at same version in cauldron, 
                 // we then don't need to add it or update it 
-                if (_.find(nativeApp.nativeDeps, d => 
-                      (d.name === localNativeDependency.name 
-                    && d.scope === localNativeDependency.scope
-                    && d.version === localNativeDependency.version))) {
+                const localNativeDependencyString =  
+                        `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
+                const remoteDependency = 
+                    await cauldron.getNativeDependency(appName, platformName, versionName, localNativeDependencyString)
+                if (remoteDependency && (remoteDependency.version === localNativeDependency.version)) {
                     continue;
                 }
 
@@ -445,7 +444,8 @@ Otherwise you can safely ignore this warning
                     let nativeDepInCauldron
                     try {
                         nativeDepInCauldron = await cauldron
-                            .getNativeDependency(appName, platformName, versionName, localNativeDependency.name);
+                            .getNativeDependency(appName, platformName, versionName, 
+                            localNativeDependencyString);
                     } catch(e) { 
                         // 404 most probably, swallow, need to improve cauldron cli to return null
                         // instead in case of 404
@@ -453,7 +453,7 @@ Otherwise you can safely ignore this warning
  
                     if (nativeDepInCauldron) {
                         await cauldron.updateNativeAppDependency(
-                            appName, platformName, versionName, localNativeDependency.name, localNativeDependency.version);
+                            appName, platformName, versionName, localNativeDependencyString, localNativeDependency.version);
                     } else {
                         await cauldron.addNativeDependency(
                             localNativeDependency, appName, platformName, versionName);
