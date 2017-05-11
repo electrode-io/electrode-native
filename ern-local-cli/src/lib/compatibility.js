@@ -93,7 +93,10 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
         if ((!platformName) || (nativeAppPlatform.name === platformName)) {
           for (const nativeAppVersion of nativeAppPlatform.versions) {
             if ((!versionName) || (nativeAppVersion.name === versionName)) {
-              let nativeAppDependencies = nativeAppVersion.nativeDeps;
+              let nativeAppDependencies = await cauldron.getNativeDependencies(
+                  nativeApp.name,
+                  nativeAppPlatform.name,
+                  nativeAppVersion.name)
               result.push({
                 appName: nativeApp.name,
                 appPlatform: nativeAppPlatform.name,

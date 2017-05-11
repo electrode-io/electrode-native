@@ -5,6 +5,7 @@ import platform from './platform';
 import tagOneLine from './tagoneline';
 import config from './config';
 import log from './log';
+import _ from 'lodash';
 
 //
 // Helper class to access the cauldron
@@ -18,6 +19,41 @@ class Cauldron {
         const cauldronRepositories = config.getValue('cauldronRepositories')
         this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias]);
     }
+
+    dependencyObjToString(dependencyObj) {
+        return tagOneLine`${dependencyObj.scope ? `@${dependencyObj.scope}/` : ''}
+                          ${dependencyObj.name}
+                          ${dependencyObj.version ? `@${dependencyObj.version}` : ''}`.replace(/\s/g, '')
+    }
+
+    dependencyStringToObj(dependencyString) {
+        if (!dependencyString) { return }
+
+        const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/;
+        const unscopedModuleWithVersionRe = /(.+)@(.+)/;
+        const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/;
+
+        if (scopedModuleWithVersionRe.test(dependencyString)) {
+            return {
+                scope: scopedModuleWithVersionRe.exec(dependencyString)[1],
+                name: scopedModuleWithVersionRe.exec(dependencyString)[2],
+                version: scopedModuleWithVersionRe.exec(dependencyString)[3]
+            }
+        } else if (unscopedModuleWithVersionRe.test(dependencyString)) {
+            return {
+                name: unscopedModuleWithVersionRe.exec(dependencyString)[1],
+                version: unscopedModuleWithVersionRe.exec(dependencyString)[2]
+            }
+        } else if (scopedModuleWithoutVersionRe.test(dependencyString)) {
+            return {
+                scope: scopedModuleWithoutVersionRe.exec(dependencyString)[1],
+                name: scopedModuleWithoutVersionRe.exec(dependencyString)[2]
+            }
+        } else {
+            return { name: dependencyString }
+        } 
+    }
+    ///
 
     // Adds a native application to the Cauldron
     // ernPlatformVersion : The version of the platform to use for this native app [REQUIRED]
@@ -120,7 +156,7 @@ class Cauldron {
                 tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
                    to ${appName}:${platformName}:${versionName}`,
                 this.cauldron.addNativeAppDependency(
-                    appName, platformName, versionName, dependency));
+                    appName, platformName, versionName, this.dependencyObjToString(dependency)));
         } catch (e) {
             log.error(`[addNativeDependency] ${e}`);
             throw e;
@@ -186,14 +222,16 @@ class Cauldron {
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
     async getNativeDependencies(appName,
                                 platformName,
-                                versionName) {
+                                versionName,
+                                { convertToObjects=true } = {}) {
         try {
             required(appName, 'appName');
             required(platformName, 'platformName');
             required(versionName, 'versionName');
+            
+            const dependencies = await this.cauldron.getAllNativeAppDependencies(appName, platformName, versionName)
 
-            return this.cauldron.getAllNativeAppDependencies(
-                appName, platformName, versionName);
+            return convertToObjects ? _.map(dependencies, this.dependencyStringToObj) : dependencies 
         } catch (e) {
             log.error(`[getNativeDependencies] ${e}`);
             throw e;
@@ -244,8 +282,9 @@ class Cauldron {
     }
 
     // Get a native dependency from the cauldron
-    async getNativeDependency(appName, platformName, versionName, depName) {
-        return this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName);
+    async getNativeDependency(appName, platformName, versionName, depName, { convertToObject=true } = {}) {
+        const dependency = await this.cauldron.getNativeAppDependency(appName, platformName, versionName, depName)
+        return convertToObject ? this.dependencyStringToObj(dependency) : dependency
     }
 
     // Update an existing native dependency version

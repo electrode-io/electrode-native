@@ -9,7 +9,7 @@ exports.builder = {};
 
 exports.handler = function (argv) {
   cauldron.getNativeDependencies(
-    ...explodeNapSelector(argv.fullNapSelector)).then(res => {
+    ...explodeNapSelector(argv.fullNapSelector), { convertToObjects: false }).then(res => {
       log.info(JSON.stringify(res, null, 1));
     });
 }

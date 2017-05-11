@@ -1,11 +1,10 @@
 import _ from 'lodash';
 import {
     alreadyExists,
-    checkNotFound
+    checkNotFound,
+    removeVersionFromDependency
 } from './util';
 import {
-    nativeDependencySchema,
-    nativeDependencyPatchSchema,
     reactNativeAppSchema,
     nativeApplicationVersionSchema,
     nativeAplicationVersionPatchSchema,
@@ -159,7 +158,6 @@ export default class CauldronApi extends BaseApi {
         return false;
     }
 
-
     async getVersions(appName, platformName) {
         const platform = await this._getPlatform(appName, platformName);
         return platform.versions;
@@ -177,22 +175,19 @@ export default class CauldronApi extends BaseApi {
         return ret ? this.commit(`remove`, appName, platformName, versionName) : false;
     }
 
-
-    async removeNativeDependency(appName, platformName, versionName, nativeDepName) {
+    async removeNativeDependency(appName, platformName, versionName, dependency) {
         const version = await this._getVersion(appName, platformName, versionName);
-
-        const ret = _.remove(version.nativeDeps, x => x.name === nativeDepName).length > 0;
-        return ret ? this.commit(`remove`, appName, platformName, versionName, nativeDepName) : false;
-
+        const ret = _.remove(version.nativeDeps, x => x.startsWith(`${dependency}@`)).length > 0;
+        return ret ? this.commit(`remove`, appName, platformName, versionName, dependency) : false;
     }
 
-    async updateNativeDep(appName, platformName, versionName, nativedepName, payload) {
+    async updateNativeDep(appName, platformName, versionName, dependencyName, newVersion) {
         await this.begin()
-        const nativedep = await this._getNativeDependency(appName, platformName, versionName, nativedepName);
-        nativedep.version = payload.version ? payload.version : nativedep.version;
-        await this.commit('update', appName, platformName, versionName, nativedepName, nativedep.version);
-        return nativedep;
+        const version = await this._getVersion(appName, platformName, versionName)
+        _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
+        const newDependencyString = `${dependencyName}@${newVersion}`
+        version.nativeDeps.push(newDependencyString)        
+        await this.commit('update', appName, platformName, versionName, dependencyName,newVersion);
+        return newDependencyString;
     }
-
-
 }

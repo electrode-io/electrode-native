@@ -72,15 +72,15 @@ export default class CauldronClient {
     }
 
     updateNativeAppDependency(appName, platformName, versionName, dependencyName, newVersion) {
-        return this.cauldron.updateNativeDep(appName, platformName, versionName, dependencyName, {version: newVersion});
+        return this.cauldron.updateNativeDep(appName, platformName, versionName, dependencyName, newVersion);
     }
 
     updateNativeAppIsReleased(appName, platformName, versionName, isReleased) {
         return this.cauldron.updateVersion(appName, platformName, versionName, {isReleased: isReleased});
     }
 
-    deleteNativeAppDependency(appName, platformName, versionName, dependencyName) {
-        return this.cauldron.removeNativeDependency(appName, platformName, versionName, dependencyName);
+    deleteNativeAppDependency(appName, platformName, versionName, dependency) {
+        return this.cauldron.removeNativeDependency(appName, platformName, versionName, dependency);
     }
 
     addReactNativeApp(appName, platformName, versionName, reactNativeApp) {
