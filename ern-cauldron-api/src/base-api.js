@@ -129,16 +129,16 @@ export default class BaseApi {
 
     async createReactNativeApp(appName, platformName, versionName, payload, withAuth) {
         const version = await this._getVersion(appName, platformName, versionName, withAuth);
-        if (!alreadyExists(version.reactNativeApps, payload.name)) {
+        if (!alreadyExists(version.reactNativeApps, payload.name, payload.version)) {
             version.reactNativeApps.push(payload);
-        } else { /// consider version update, even if not the case
-            const f = find(version.reactNativeApps, r => r.name === payload.name);
-            if (f) {
-                f.version = payload.version;
-            } else {
-                return false;
-            }
-        }
+        } 
+        return this.commit(version);
+    }
+
+    async updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion) {
+        const version = await this._getVersion(appName, platformName, versionName);
+        const f = find(version.reactNativeApps, r => r.name === payload.name);
+        f.version = newVersion;
         return this.commit(version);
     }
 
