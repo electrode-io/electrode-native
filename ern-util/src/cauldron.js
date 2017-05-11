@@ -323,6 +323,10 @@ class Cauldron {
         return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, isReleased);
     }
 
+    async updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion) {
+        return this.cauldron.updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion);
+    }
+
     async throwIfNativeAppVersionIsReleased(appName, platformName, versionName, errorMessage) {
         const nativeAppVersion =
             await this.cauldron.getNativeAppVersion(appName, platformName, versionName)

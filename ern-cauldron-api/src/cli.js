@@ -99,6 +99,10 @@ export default class CauldronClient {
         return this.cauldron.removeReactNativeApp(appName, platformName, versionName, reactNativeAppName);
     }
 
+    updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion) {
+        return this.cauldron.updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion);
+    }
+
     addNativeAppBinary(appName, platformName, versionName, binaryPath) {
         return this.cauldron.createNativeBinary(appName, platformName, versionName, fs.readFileSync(binaryPath));
     }

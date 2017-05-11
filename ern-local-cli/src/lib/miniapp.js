@@ -94,7 +94,7 @@ export default class MiniApp {
 
             //
             // Remove react-native generated android and ios projects
-            // They will be replaced with our owns when user uses `ern miniapp run android` 
+            // They will be replaced with our owns when user uses `ern miniapp run android`
             // or `ern miniapp run ios` command
             const miniAppPath = `${process.cwd()}/${appName}`;
             shell.cd(miniAppPath);
@@ -156,7 +156,7 @@ export default class MiniApp {
         const nativeDependenciesNames = new Set();
 
         // Get all node_modules folders that are containing a build.gradle
-        // file (Note: might not be enough if we have react-native plugins 
+        // file (Note: might not be enough if we have react-native plugins
         // that are solely for iOS. Not the case yet)
         const nodeModulesFoldersWithBuildGradle = readDir(`${this.path}/node_modules`)
             .filter(a => a.includes('build.gradle'));
@@ -165,7 +165,7 @@ export default class MiniApp {
         // which names are starting with 'react-native' (excluding scope)
         const nativeDepsFolders = _.filter(nodeModulesFoldersWithBuildGradle,
             d => d.includes('react-native'));
-        
+
         for (const nativeDepsFolder of nativeDepsFolders) {
             // Scoped module
             if (nativeDepsFolder.split('/')[0].startsWith('@')) {
@@ -187,14 +187,14 @@ export default class MiniApp {
                 result.push({
                     name: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2],
                     scope: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[1],
-                    version: nativeDepPackageJson.version.startsWith('v') 
+                    version: nativeDepPackageJson.version.startsWith('v')
                              ? nativeDepPackageJson.version.slice(1)
                              : nativeDepPackageJson.version
                 });
             } else {
                 result.push({
                     name: nativeDependencyName,
-                    version: nativeDepPackageJson.version.startsWith('v') 
+                    version: nativeDepPackageJson.version.startsWith('v')
                              ? nativeDepPackageJson.version.slice(1)
                              : nativeDepPackageJson.version
                 });
@@ -221,8 +221,8 @@ export default class MiniApp {
 
     async runInIosRunner(verbose) {
         // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
-        // (no code injection for plugins yet :()), it has hard-coded references to 
-        // our bridge and code-push ... so we absolutely need them in the miniapp for 
+        // (no code injection for plugins yet :()), it has hard-coded references to
+        // our bridge and code-push ... so we absolutely need them in the miniapp for
         // iOS container project to build
         // Ensure that they are present
         // This block should be removed once iOS container is improved to be more flexbile
@@ -264,7 +264,7 @@ export default class MiniApp {
             await generateContainerForRunner(runnerConfig);
         }
 
-        const inquirerChoices = _.map(bootedIosDevices, (val, key) => ({ 
+        const inquirerChoices = _.map(bootedIosDevices, (val, key) => ({
             name: `${val.name} (SDK ${val.sdk})`,
             value: val
         }))
@@ -386,20 +386,12 @@ Otherwise you can safely ignore this warning
             const miniAppDesc = `${miniAppName}@${this.version}`;
             const appDesc = `${appName}:${platformName}:${versionName}`;
             const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
+            const currentMiniAppEntryIncauldron = await cauldron.getReactNativeApp(
+                        appName, platformName, versionName, miniAppName);
 
             // If this is not a forced add, we run quite some checks beforehand
             if (!force) {
                 log.info(`Checking if ${miniAppDesc} is not already in ${appDesc}`);
-                let currentMiniAppEntryIncauldron;
-
-                try {
-                    currentMiniAppEntryIncauldron = await cauldron.getReactNativeApp(
-                        appName, platformName, versionName, miniAppName);
-                }
-                // Assume 404 exception 
-                catch (e) {
-                    currentMiniAppEntryIncauldron = [];
-                }
 
                 const isVersionPresent =
                     _.find(currentMiniAppEntryIncauldron, e => e.version === this.version);
@@ -425,11 +417,11 @@ Otherwise you can safely ignore this warning
             }
 
             for (const localNativeDependency of this.nativeDependencies) {
-                // If local native dependency already exists at same version in cauldron, 
-                // we then don't need to add it or update it 
-                const localNativeDependencyString =  
+                // If local native dependency already exists at same version in cauldron,
+                // we then don't need to add it or update it
+                const localNativeDependencyString =
                         `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
-                const remoteDependency = 
+                const remoteDependency =
                     await cauldron.getNativeDependency(appName, platformName, versionName, localNativeDependencyString)
                 if (remoteDependency && (remoteDependency.version === localNativeDependency.version)) {
                     continue;
@@ -444,13 +436,13 @@ Otherwise you can safely ignore this warning
                     let nativeDepInCauldron
                     try {
                         nativeDepInCauldron = await cauldron
-                            .getNativeDependency(appName, platformName, versionName, 
+                            .getNativeDependency(appName, platformName, versionName,
                             localNativeDependencyString);
-                    } catch(e) { 
+                    } catch(e) {
                         // 404 most probably, swallow, need to improve cauldron cli to return null
                         // instead in case of 404
                     }
- 
+
                     if (nativeDepInCauldron) {
                         await cauldron.updateNativeAppDependency(
                             appName, platformName, versionName, localNativeDependencyString, localNativeDependency.version);
@@ -470,8 +462,11 @@ Otherwise you can safely ignore this warning
                     scope: miniAppScope
                 } : {});
 
-            await cauldron.addReactNativeApp(appName, platformName, versionName, miniApp);
-
+            if ((currentMiniAppEntryIncauldron.length > 0) && !nativeApp.isReleased) {
+                await cauldron. updateReactNativeAppVersion(appName, platformName, versionName, miniApp, miniApp.version)
+            } else {
+                await cauldron.addReactNativeApp(appName, platformName, versionName, miniApp);
+            }
         } catch (e) {
             log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
             throw e;
