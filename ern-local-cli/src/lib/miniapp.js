@@ -48,22 +48,12 @@ export default class MiniApp {
 
     static async create(appName, {
         platformVersion,
-        napSelector,
         scope,
         verbose,
         headless
     }) {
         try {
-            // If appSelector provided, and no forced version of platform is provided
-            // use same ernPlatformVersion as native app one
-            if (!platformVersion && napSelector) {
-                const nativeApp =
-                    await cauldron.getNativeApp(
-                        ...explodeNapSelector(napSelector));
-                platformVersion = nativeApp.ernPlatformVersion;
-            }
-            // Otherwise, if no forced platform version provided, use current platform version
-            else if (!platformVersion) {
+            if (!platformVersion) {
                 platformVersion = platform.currentVersion;
             }
 
@@ -83,7 +73,7 @@ export default class MiniApp {
             // Patch package.json file of application
             const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`;
             const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'));
-            appPackageJson.ernPlatformVersion = platformVersion;
+            appPackageJson.ernPlatformVersion = `${platformVersion}`;
             appPackageJson.ernHeadLess = headless;
             appPackageJson.private = false;
             appPackageJson.dependencies['react'] = platform.getJsDependency("react").version;

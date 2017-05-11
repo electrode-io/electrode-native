@@ -9,10 +9,6 @@ exports.builder = function (yargs) {
             alias: 'v',
             describe: 'Force version of ern platform to use'
         })
-        .option('napSelector', {
-            alias: 's',
-            describe: 'Native application selector '
-        })
         .option('scope', {
             describe: 'npm scope to use for this app'
         })
@@ -24,13 +20,11 @@ exports.builder = function (yargs) {
             type: 'bool',
             describe: 'Creates an headless (without ui) miniapp'
         })
-        .conflicts('platformVersion', 'napSelector');
 };
 
 exports.handler = async function (argv) {
     return await MiniApp.create(argv.appName, {
-        platformVersion: argv.platformVersion,
-        napSelector: argv.napSelector,
+        platformVersion: `${argv.platformVersion}`.replace('v', ''),
         scope: argv.scope,
         verbose: argv.verbose,
         headless: argv.headless
