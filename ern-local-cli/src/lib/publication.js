@@ -11,7 +11,8 @@ import {
 
 import {
     nativeCompatCheck, 
-    getNativeAppCompatibilityReport
+    getNativeAppCompatibilityReport,
+    checkCompatibilityWithNativeApp
 } from './compatibility.js';
 
 import { 
@@ -66,7 +67,7 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
             containerVersion: version,
             nativeAppName,
             platformPath: platform.currentPlatformVersionPath,
-            generator: createContainerGenerator(config.containerGenerator),
+            generator: createContainerGenerator(nativeAppPlatform, config.containerGenerator),
             plugins,
             miniapps,
             verbose
@@ -76,33 +77,58 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
     }
 }
 
+// This is the entry point for publication of a MiniApp either in a new generated
+// container or as an OTA update through CodePush
 export async function publishMiniApp({
-    fullNapSelector, 
     verbose, 
     force, 
-    containerVersion, 
-    npmPublish = false
-    } = {}) {
+    fullNapSelector,
+    npmPublish = false,
+    publishAsOtaUpdate = false,
+    publishAsNewContainer = false,
+    containerVersion,
+    codePushAppName,
+    codePushDeploymentName,
+    codePushPlatformName,
+    codePushTargetVersionName,
+    codePushIsMandatoryRelease,
+    codePushRolloutPercentage
+} = {}) {
     if (npmPublish) {
       MiniApp.fromCurrentPath().publishToNpm()
     }
+    
+    let nativeAppsToPublish = []
 
-    // No full nap selector was provied
-    // in that case, prompt the user with compatible native application versions
-    // so that he can select one or more to publish miniapp to
-    if (!fullNapSelector) {
+    // A specific native application / platform / version was provided, check for compatibility
+    if (fullNapSelector) {
+        const explodedNapSelector =  explodeNativeAppSelector(fullNapSelector)
+        const report = await checkCompatibilityWithNativeApp(verbose, explodedNapSelector[0], explodedNapSelector[1], explodedNapSelector[2])
+        if (!report.isCompatible) {
+            throw new Error('Cannot publish MiniApp. Native Application is not compatible')
+        }
+
+        nativeAppsToPublish.push({fullNapSelector, isReleased: report.isReleased})
+    } 
+    // No specific native application version was provided, list all compatible native application
+    // versions and ask the user to choose one
+    else {
         const compatibilityReport = await getNativeAppCompatibilityReport();
 
         const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
-            if (entry.compatibility.incompatible.length === 0) {
-                const value = {
-                    fullNapSelector: `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`,
-                    isReleased: entry.isReleased
-                };
-                const suffix = value.isReleased ?
-                    `[OTA] ${emoji.get('rocket')}` : `[IN-APP]`;
-                const name = `${value.fullNapSelector} ${suffix}`;
-                return {name, value}
+            if (entry.isCompatible) {
+                if ((publishAsOtaUpdate && entry.isReleased) 
+                || (publishAsNewContainer && !entry.isReleased)
+                || (!publishAsOtaUpdate && !publishAsNewContainer)) {
+                    const value = {
+                        fullNapSelector: `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`,
+                        isReleased: entry.isReleased
+                    };
+                    const suffix = value.isReleased ?
+                        `[OTA] ${emoji.get('rocket')}` : `[IN-APP]`;
+                    const name = `${value.fullNapSelector} ${suffix}`;
+                    return {name, value}
+                }
             }
         }).filter(e => e !== undefined);
 
@@ -117,25 +143,28 @@ export async function publishMiniApp({
             choices: compatibleVersionsChoices
         })
 
-        for (const nativeApp of nativeApps) {
-            if (nativeApp.isReleased) {
-                await publishOta(nativeApp.fullNapSelector, {verbose, force})
-            } else {
-                await publishInApp(nativeApp.fullNapSelector, {containerVersion, verbose, force})
-            }
-        }
+        nativeAppsToPublish = nativeApps
     }
-    // full nap selector was provided (mostly for CI use)
-    // do the job !
-    else {
-        // Todo : Check for compat first !
-        // Todo : handle OTA
-        if (!containerVersion) {
-            containerVersion = await askUserForContainerVersion()
-        } 
 
-        await runContainerGen(
-            ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
+    for (const nativeApp of nativeAppsToPublish) {
+        if (nativeApp.isReleased) {
+            await publishOta(nativeApp.fullNapSelector, { 
+                verbose, 
+                force,
+                codePushAppName,
+                codePushDeploymentName,
+                codePushPlatformName,
+                codePushTargetVersionName,
+                codePushIsMandatoryRelease,
+                codePushRolloutPercentage
+            })
+        } else {
+            await publishInApp(nativeApp.fullNapSelector, {
+                verbose,
+                force,
+                containerVersion
+            })
+        }
     }
 }
 
@@ -164,9 +193,22 @@ async function askUserForContainerVersion() {
     return userSelectedContainerVersion
 }
 
-async function publishOta(fullNapSelector, {verbose, force} = {}) {
+export async function publishOta(fullNapSelector, {
+    verbose, 
+    force,
+    codePushAppName,
+    codePushDeploymentName,
+    codePushPlatformName,
+    codePushTargetVersionName,
+    codePushIsMandatoryRelease,
+    codePushRolloutPercentage
+} = {}) {
     try {
         const explodedNapSelector = explodeNativeAppSelector(fullNapSelector);
+        const applicationName = explodedNapSelector[0]
+        const platformName = explodedNapSelector[1]
+        const versionName = explodedNapSelector[2]
+
         const plugins = await cauldron.getNativeDependencies(...explodedNapSelector);
 
         const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push');
@@ -182,19 +224,9 @@ async function publishOta(fullNapSelector, {verbose, force} = {}) {
         await generateMiniAppsComposite(miniapps, workingFolder, {plugins});
         process.chdir(workingFolder);
 
-        const applicationName = explodedNapSelector[0]
-        const platformName = explodedNapSelector[1]
-
-        const config = await cauldron.getConfig(...explodedNapSelector)
-        const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
-        const codePushDeployments = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
-
-        const codePushDeploymentName = await askUserForCodePushDeploymentName(codePushDeployments)
-        const codePushAppName = await askUserForCodePushAppName(`${applicationName}-${platformName}`)
-        const codePushPlatformName = await askUserForCodePushPlatformName(platformName)
-        const codePushTargetVersionName = await askUserForCodePushTargetVersionName()
-        const codePushIsMandatoryRelease = await askUserIfCodePushMandatoryRelease(false)
-        const codePushRolloutPercentage = await askUserForCodePushRolloutPercentage(100)
+        codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(fullNapSelector)
+        codePushAppName = codePushAppName || await askUserForCodePushAppName(`${applicationName}-${platformName}`)
+        codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(platformName)
         
         await codePush.releaseReact(
           codePushAppName,
@@ -202,15 +234,19 @@ async function publishOta(fullNapSelector, {verbose, force} = {}) {
             targetBinaryVersion: codePushTargetVersionName,
             mandatory: codePushIsMandatoryRelease,
             deploymentName: codePushDeploymentName,
-            rolloutPercentage: codePushRolloutPercentage,
-            askForConfirmation: true
+            rolloutPercentage: codePushRolloutPercentage
           })
     } catch (e) {
         log.error(`[publishOta] failed: ${e}`);
     }
 }
 
-async function askUserForCodePushDeploymentName(choices) {
+async function askUserForCodePushDeploymentName(fullNapSelector) {
+    const explodedNapSelector = explodeNativeAppSelector(fullNapSelector)
+    const config = await cauldron.getConfig(...explodedNapSelector)
+    const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
+    const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
+
      const {userSelectedDeploymentName} = await inquirer.prompt({
         type: choices ? 'list': 'input',
         name: 'userSelectedDeploymentName',
