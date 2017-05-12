@@ -166,27 +166,30 @@ async function askUserForContainerVersion() {
 
 async function publishOta(fullNapSelector, {verbose, force} = {}) {
     try {
-        const plugins = await cauldron.getNativeDependencies(...explodeNativeAppSelector(fullNapSelector));
+        const explodedNapSelector = explodeNativeAppSelector(fullNapSelector);
+        const plugins = await cauldron.getNativeDependencies(...explodedNapSelector);
 
         const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push');
         if (!codePushPlugin) {
             throw new Error("react-native-code-push plugin is not in native app !");
         }
 
-        await MiniApp.fromCurrentPath().addToNativeAppInCauldron(
-            ...explodeNativeAppSelector(fullNapSelector), force);
+        await MiniApp.fromCurrentPath().addToNativeAppInCauldron(...explodedNapSelector, force);
 
         const workingFolder = `${ERN_PATH}/CompositeOta`;
-        const miniapps = await cauldron.getReactNativeApps(...explodeNativeAppSelector(fullNapSelector));
+        const miniapps = await cauldron.getReactNativeApps(...explodedNapSelector);
 
         await generateMiniAppsComposite(miniapps, workingFolder, {plugins});
         process.chdir(workingFolder);
-        const nativeApp = [...explodeNativeAppSelector(fullNapSelector)];
 
-        const applicationName = nativeApp[0]
-        const platformName = nativeApp[1]
+        const applicationName = explodedNapSelector[0]
+        const platformName = explodedNapSelector[1]
 
-        const codePushDeploymentName = await askUserForCodePushDeploymentName()
+        const config = await cauldron.getConfig(...explodedNapSelector)
+        const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
+        const codePushDeployments = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
+
+        const codePushDeploymentName = await askUserForCodePushDeploymentName(codePushDeployments)
         const codePushAppName = await askUserForCodePushAppName(`${applicationName}-${platformName}`)
         const codePushPlatformName = await askUserForCodePushPlatformName(platformName)
         const codePushTargetVersionName = await askUserForCodePushTargetVersionName()
@@ -201,20 +204,20 @@ async function publishOta(fullNapSelector, {verbose, force} = {}) {
             deploymentName: codePushDeploymentName,
             rolloutPercentage: codePushRolloutPercentage,
             askForConfirmation: true
-          }
-        );
+          })
     } catch (e) {
         log.error(`[publishOta] failed: ${e}`);
     }
 }
 
-async function askUserForCodePushDeploymentName(defaultDeploymentName) {
+async function askUserForCodePushDeploymentName(choices) {
      const {userSelectedDeploymentName} = await inquirer.prompt({
-        type: 'input',
-        name: 'userSelectedCodePushAppName',
+        type: choices ? 'list': 'input',
+        name: 'userSelectedDeploymentName',
         message: 'Deployment name',
-        default: defaultDeploymentName
+        choices
     })
+
     return userSelectedDeploymentName
 }
 
