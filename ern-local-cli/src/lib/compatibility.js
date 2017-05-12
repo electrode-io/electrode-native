@@ -12,18 +12,15 @@ export async function checkCompatibilityWithNativeApp(verbose, appName, platform
     getNativeAppCompatibilityReport({ appName, platformName, versionName }));
 
   for (let r of compatReport) {
-    const isCompatible = r.compatibility.incompatible.length === 0;
     log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + " : " +
-      (isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
+      (r.isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
 
     if (verbose) {
       logCompatibilityReportTable(r.compatibility);
     }
 
-    // Special case, if it was a check for a single instance (app+platform+version)
-    // then return true or false to denote compat with this instance or not
     if (appName && platformName && versionName) {
-      return isCompatible;
+      return r;
     }
   }
 }
@@ -97,16 +94,18 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                   nativeApp.name,
                   nativeAppPlatform.name,
                   nativeAppVersion.name)
+              const compatibility = getCompatibility(
+                  miniappDependencies, nativeAppDependencies, { 
+                    uncompatibleIfARemoteDepIsMissing: nativeAppVersion.isReleased
+                  })
               result.push({
                 appName: nativeApp.name,
                 appPlatform: nativeAppPlatform.name,
                 appVersion: nativeAppVersion.name,
                 appBinary: nativeAppVersion.binary,
                 isReleased: nativeAppVersion.isReleased,
-                compatibility: getCompatibility(
-                  miniappDependencies, nativeAppDependencies, { 
-                    uncompatibleIfARemoteDepIsMissing: nativeAppVersion.isReleased
-                  })
+                isCompatible: compatibility.incompatible.length === 0,
+                compatibility
               });
             }
           }
