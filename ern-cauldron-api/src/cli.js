@@ -126,4 +126,8 @@ export default class CauldronClient {
     deleteNativeAppBinary(reactNativeAppName, versionName) {
         return this.cauldron.removeSourceMap(reactNativeAppName, versionName);
     }
+
+    getConfig({appName, platformName, versionName} = {}) {
+        return this.cauldron.getConfig({appName, platformName, versionName})
+    }
 };

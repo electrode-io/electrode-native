@@ -190,4 +190,20 @@ export default class CauldronApi extends BaseApi {
         await this.commit('update', appName, platformName, versionName, dependencyName,newVersion);
         return newDependencyString;
     }
+
+    async getConfig({appName, platformName, versionName} = {}) {
+        await this.begin()
+        if (appName) {
+            if (platformName) {
+                if (versionName) {
+                    const version = await this._getVersion(appName, platformName, versionName)
+                    return version.config
+                }
+                const platform = await this._getPlatform(appName, platformName)
+                return platform.config
+            }
+            const app = await this._getNativeApplication(appName)
+            return app.config
+        }
+    }
 }
