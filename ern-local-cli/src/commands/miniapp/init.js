@@ -7,6 +7,7 @@ exports.builder = function (yargs) {
     return yargs
         .option('platformVersion', {
             alias: 'v',
+            type: 'string',
             describe: 'Force version of ern platform to use'
         })
         .option('scope', {
@@ -24,7 +25,7 @@ exports.builder = function (yargs) {
 
 exports.handler = async function (argv) {
     return await MiniApp.create(argv.appName, {
-        platformVersion: `${argv.platformVersion}`.replace('v', ''),
+        platformVersion: argv.platfomrversion && argv.platformVersion.replace('v', ''),
         scope: argv.scope,
         verbose: argv.verbose,
         headless: argv.headless
