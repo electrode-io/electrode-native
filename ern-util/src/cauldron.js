@@ -319,6 +319,17 @@ class Cauldron {
             this.cauldron.addReactNativeApp(appName, platformName, versionName, app));
     }
 
+    async getConfig(appName, platformName, versionName) {
+        let config = await this.cauldron.getConfig({appName, platformName, versionName})
+        if (!config) {
+            config = await this.cauldron.getConfig({appName, platformName})
+            if (!config) {
+                config = await this.cauldron.getConfig({appName})
+            }
+        }
+        return config
+    }
+
     async updateNativeAppIsReleased(appName, platformName, versionName, isReleased) {
         return this.cauldron.updateNativeAppIsReleased(appName, platformName, versionName, isReleased);
     }

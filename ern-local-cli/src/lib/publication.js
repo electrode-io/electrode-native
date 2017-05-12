@@ -31,48 +31,46 @@ const log = require('console-log-level')();
 const ERN_PATH = `${process.env['HOME']}/.ern`;
 const execSync = child_process.execSync;
 
+function createContainerGenerator(platform, config) {
+    if (config) {
+        switch (config.name) {
+            case 'maven': 
+                return new MavenGenerator({ mavenRepositoryUrl: config.mavenRepositoryUrl })
+            case 'github':
+                return new GithubGenerator({ targetRepoUrl: config.targetRepoUrl })
+        }
+    }
+    
+    // No generator configuration was provided
+    // Create default generator for target native platform
+    switch(platform) {
+        case 'android':
+            return new MavenGenerator()
+        case 'ios':
+            return new GithubGenerator()
+    }
+}
+
 export async function runContainerGen(nativeAppName = required(nativeAppName, 'nativeAppName'),
                                       nativeAppPlatform = required(nativeAppPlatform, 'nativeAppPlatform'),
                                       nativeAppVersion = required(nativeAppVersion, 'nativeAppVersion'),
                                       version = required(version, 'version'),
                                       verbose) {
     try {
-        const nativeApp =
-            await cauldron.getNativeApp(nativeAppName, nativeAppPlatform, nativeAppVersion);
-        const plugins =
-            await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion);
+        const plugins = await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion);
         const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
-        const miniapps =
-            await cauldron.getReactNativeApps(nativeAppName, nativeAppPlatform, nativeAppVersion);
-        let versionBeforeSwitch;
-
-        if (platform.currentVersion !== nativeApp.ernPlatformVersion) {
-            versionBeforeSwitch = platform.currentVersion;
-            platform.switchToVersion(nativeApp.ernPlatformVersion);
-        }
-
-         const generator = (nativeAppPlatform === 'android') 
-            ? new MavenGenerator({ 
-                mavenRepositoryUrl: ernConfig.obj.libgen.android.generator.mavenRepositoryUrl,
-                namespace: ernConfig.obj.libgen.android.generator.namespace
-            })
-            : new GithubGenerator({
-                targetRepoUrl: ernConfig.obj.libgen.ios.generator.targetRepoUrl
-            })
+        const miniapps = await cauldron.getReactNativeApps(nativeAppName, nativeAppPlatform, nativeAppVersion);
+        const config = await cauldron.getConfig(nativeAppName, nativeAppPlatform, nativeAppVersion) 
 
         await generateContainer({
             containerVersion: version,
             nativeAppName,
             platformPath: platform.currentPlatformVersionPath,
-            generator,
+            generator: createContainerGenerator(config.containerGenerator),
             plugins,
             miniapps,
             verbose
         });
-
-        if (versionBeforeSwitch) {
-            platform.switchToVersion(versionBeforeSwitch);
-        }
     } catch (e) {
         log.error(e);
     }

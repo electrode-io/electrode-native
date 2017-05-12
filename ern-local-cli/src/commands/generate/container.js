@@ -1,4 +1,5 @@
 import {config as ernConfig, cauldron, explodeNapSelector, platform} from '@walmart/ern-util';
+import {runContainerGen} from '../../lib/publication';
 
 import {
   generateContainer,
@@ -47,9 +48,16 @@ exports.handler = async function (argv) {
   let fullNapSelector = argv.fullNapSelector
   let containerVersion = argv.containerVersion;
 
+  //
+  // Full native application selector was not provided.
+  // Ask the user to select a fullNapSelector from a list 
+  // containing all the native applications versions in the cauldron
   if (!fullNapSelector) {
     const nativeApps = await cauldron.getAllNativeApps()
 
+    // Transform native apps from the cauldron to an Array 
+    // of fullNapSelector strings
+    // [Should probably move to a Cauldron util class for reusability]
     let result = _.flattenDeep(
                   _.map(nativeApps, nativeApp => 
                     _.map(nativeApp.platforms, platform => 
@@ -59,65 +67,58 @@ exports.handler = async function (argv) {
      const { userSelectedFullNapSelector } = await inquirer.prompt([{
         type: 'list',
         name: 'userSelectedFullNapSelector',
-        message: `Choose a native application version for which to generate container`,
+        message: 'Choose a native application version for which to generate container',
         choices: result
     }])
 
     fullNapSelector = userSelectedFullNapSelector
   }
 
+  const explodedNapSelector = explodeNapSelector(fullNapSelector);
+
+  //
+  // If the user wants to generates a complete container (not --jsOnly)
+  // user has to provide a container version
+  // If not specified in command line, we ask user to input the version
   if (!containerVersion && !argv.jsOnly) {
      const { userSelectedContainerVersion } = await inquirer.prompt([{
         type: 'input',
         name: 'userSelectedContainerVersion',
-        message: `Enter version for the generated container`
+        message: 'Enter version for the generated container'
     }]);
 
     containerVersion = userSelectedContainerVersion
   }
 
-  const miniapps =
-    await cauldron.getReactNativeApps(...explodeNapSelector(fullNapSelector));
-  const plugins =
-    await cauldron.getNativeDependencies(...explodeNapSelector(fullNapSelector));
-
+  //
+  // --jsOnly switch
+  // Ony generates the composite miniapp to a provided output folder
   if (argv.jsOnly) {
     let outputFolder = argv.outputFolder
+
+    const miniapps = await cauldron.getReactNativeApps(...explodedNapSelector);
+    const plugins = await cauldron.getNativeDependencies(...explodedNapSelector);
 
     if (!outputFolder) {
       const { userSelectedOutputFolder } = await inquirer.prompt([{
         type: 'input',
         name: 'userSelectedOutputFolder',
-        message: `Enter output folder path`
+        message: 'Enter output folder path'
       }]);
 
       outputFolder = userSelectedOutputFolder
     }
 
     await generateMiniAppsComposite(miniapps, outputFolder, {plugins});
-  } else {
-    const nativeApp =
-      await cauldron.getNativeApp(...explodeNapSelector(fullNapSelector));
-
-    const platformName = explodeNapSelector(fullNapSelector)[1];
-
-    const generator = (platformName === 'android') 
-      ? new MavenGenerator({ 
-          mavenRepositoryUrl: ernConfig.obj.libgen.android.generator.mavenRepositoryUrl,
-          namespace: ernConfig.obj.libgen.android.generator.namespace
-        })
-      : new GithubGenerator({
-          targetRepoUrl: ernConfig.obj.libgen.ios.generator.targetRepoUrl
-        })
-
-    await generateContainer({
-      containerVersion:  containerVersion,
-      nativeAppName: explodeNapSelector(fullNapSelector)[0],
-      platformPath: platform.currentPlatformVersionPath,
-      generator,
-      plugins,
-      miniapps,
-      verbose: argv.verbose
-    });
+  }
+  //
+  // Full container generation 
+  else {
+    await runContainerGen(
+      explodedNapSelector[0], /* nativeAppName */
+      explodedNapSelector[1], /* nativeAppPlatform */
+      explodedNapSelector[2], /* nativeAppVersion */
+      containerVersion,
+      argv.verbose)
   }
 };
