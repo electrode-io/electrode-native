@@ -22,10 +22,12 @@
   "license": "ISC",
   "dependencies": {
     "@walmart/ern-util-dev": "0.0.1",
+    "bluebird": "^3.5.0",
     "joi": "^10.1.0",
     "lodash": "^4.17.3",
     "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0",
+    "shelljs": "^0.7.6",
     "simple-git": "^1.70.0"
   },
   "devDependencies": {
