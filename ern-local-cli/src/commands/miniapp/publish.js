@@ -32,7 +32,7 @@ exports.builder = function (yargs) {
     })
     .group(['containerVersion'], 'Container Options:')
     .option('containerVersion', {
-      describe: 'The version to apply to generated container',
+      describe: '[Container] The version to apply to generated container',
       alias: 'v'
     })
     .group(['appName', 'deploymentName', 'platform', 'targetBinaryVersion', 'mandatory', 'rollout'], 'CodePush OTA Options:')
@@ -55,13 +55,13 @@ exports.builder = function (yargs) {
       type: 'string'
     })
     .option('mandatory', {
-      describe: 'Specifies whether this release should be considered mandatory',
+      describe: '[CodePush] Specifies whether this release should be considered mandatory',
       alias: 'm',
       type: 'boolean',
       default: false
     })
     .option('rollout', {
-      describe: 'Percentage of users this release should be immediately available to',
+      describe: '[CodePush] Percentage of users this release should be immediately available to',
       alias: 'r',
       type: 'string',
       default: '100%'
