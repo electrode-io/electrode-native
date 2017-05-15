@@ -57,7 +57,7 @@ if (!fs.existsSync(ERN_PATH)) {
     process.chdir(ERN_PLATFORM_REPO_PATH);
 
     // List all available versions from remote
-    const branchVersionRe = /heads\/v(\d+)/;
+    const branchVersionRe = /heads\/v(.+)/;
     const latestVersion = execSync(`git ls-remote --heads`)
       .toString()
       .split('\n')
