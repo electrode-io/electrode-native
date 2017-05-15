@@ -207,7 +207,7 @@ export default class CauldronApi  {
   }
   
   async createReactNativeApp(nativeApplicationName, platformName, versionName, rnApp) {
-    const version = await this._getVersion(nativeApplicationName, platformName, versionName)
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (!alreadyExists(version.reactNativeApps, rnApp.name, rnApp.version)) {
       version.reactNativeApps.push(rnApp)
       await this.commit(`Add ${rnApp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName}`)
@@ -220,7 +220,7 @@ export default class CauldronApi  {
     if (platformName) {
       platform = await this.getPlatform(nativeApplicationName, platformName)
       if (versionName) {
-        version = await this._getVersion(nativeApplicationName, platformName, versionName)
+        version = await this.getVersion(nativeApplicationName, platformName, versionName)
       }
     }
     return {app, platform, version}
@@ -261,7 +261,7 @@ export default class CauldronApi  {
   }
   
   async createNativeBinary(nativeApplicationName, platformName, versionName, payload) {
-    const version = await this._getVersion(nativeApplicationName, platformName, versionName)
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     
     const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
     
