@@ -1,54 +1,60 @@
-import inquirer from 'inquirer';
-import { getNativeAppCompatibilityReport} from '../../../lib/compatibility';
-import { explodeNapSelector } from '@walmart/ern-util';
-import miniapp from '../../../lib/miniapp';
+import inquirer from 'inquirer'
+import { getNativeAppCompatibilityReport} from '../../../lib/compatibility'
+import { explodeNapSelector } from '@walmart/ern-util'
+import miniapp from '../../../lib/miniapp'
+import _ from 'lodash'
 
-exports.command = 'miniapp [fullNapSelector]';
-exports.desc = 'Publish mini app to given native app';
+exports.command = 'miniapp [fullNapSelector]'
+exports.desc = 'Publish mini app to given native app'
 
 exports.builder = function (yargs) {
-    return yargs
-        .option('fullNapSelector', {
-            alias: 's',
-            describe: 'Full native application selector'
-        })
-        .option('force', {
-            alias: 'f',
-            type: 'bool',
-            describe: 'Force publish'
-        })
+  return yargs
+  .option('fullNapSelector', {
+    alias: 's',
+    describe: 'Full native application selector'
+  })
+  .option('force', {
+    alias: 'f',
+    type: 'bool',
+    describe: 'Force publish'
+  })
 }
 
 exports.handler = async function (argv) {
-    // todo : move logic away from this command source !
-    if (!argv.fullNapSelector) {
-        const compatibilityReport = await getNativeAppCompatibilityReport();
-        const compatibleVersionsChoices = Object.keys(compatibilityReport).forEach(key => {
-            const entry = compatibilityReport[key];
-            if (entry.compatibility.incompatible.length === 0) {
-                const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`;
-                const name = entry.isReleased ? `${value} [OTA]` : `${value} [IN-APP]`;
-                return {name, value}
-            }
-        }).filter(e => e !== undefined);
-
-        if (compatibleVersionsChoices.length === 0) {
-            return console.log("No compatible native application versions were found :(");
-        }
-
-        inquirer.prompt({
-            type: 'checkbox',
-            name: 'fullNapSelectors',
-            message: 'Select one or more compatible native application version(s)',
-            choices: compatibleVersionsChoices
-        }).then(answer => {
-            for (const fullNapSelector of answer.fullNapSelectors) {
-                miniapp.fromCurrentPath().addToNativeAppInCauldron(
-                    ...explodeNapSelector(fullNapSelector), argv.force)
-            }
-        })
-    } else {
-        return miniapp.fromCurrentPath().addToNativeAppInCauldron(
-            ...explodeNapSelector(argv.fullNapSelector), argv.force);
+  // todo : move logic away from this command source !
+  if (!argv.fullNapSelector) {
+    const compatibilityReport = await getNativeAppCompatibilityReport()
+    const compatibleVersionsChoices = _.map(Object.keys(compatibilityReport), key => {
+      const entry = compatibilityReport[key]
+      if (entry.isCompatible) {
+        const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`
+        const name = entry.isReleased ? `${value} [OTA]` : `${value} [IN-APP]`
+        return {name, value}
+      }
+    }).filter(e => e !== undefined)
+    
+    if (compatibleVersionsChoices.length === 0) {
+      return console.log("No compatible native application versions were found :(")
     }
+    
+    const {fullNapSelectors} = await inquirer.prompt({
+      type: 'checkbox',
+      name: 'fullNapSelectors',
+      message: 'Select one or more compatible native application version(s)',
+      choices: compatibleVersionsChoices
+    })
+    
+    for (const fullNapSelector of fullNapSelectors) {
+      try {
+        await miniapp.fromCurrentPath().addToNativeAppInCauldron(
+        ...explodeNapSelector(fullNapSelector), argv.force)
+      } catch(e) {
+        console.log(`An error happened while trying to add MiniApp to ${fullNapSelector}`)
+      }
+      
+    }
+  } else {
+    return miniapp.fromCurrentPath().addToNativeAppInCauldron(
+    ...explodeNapSelector(argv.fullNapSelector), argv.force)
+  }
 }
