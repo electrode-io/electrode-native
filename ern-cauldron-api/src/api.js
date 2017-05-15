@@ -132,7 +132,7 @@ export default class CauldronApi  {
     if (!alreadyExists(nativeApplication.platforms, platform.name)) {
       const validatedPlatform = await joiValidate(platform, nativeApplicationPlatformSchema)
       nativeApplication.platforms.push(validatedPlatform)
-      await this.commit(`Add ${platform.name} platform to ${nativeApplicationName}`)
+      await this.commit(`Create ${platform.name} platform for ${nativeApplicationName}`)
     }
   }
   
@@ -148,7 +148,7 @@ export default class CauldronApi  {
     if (!alreadyExists(platform.versions, version.name)) {
       const validatedVersion = await joiValidate(version, nativeApplicationVersionSchema)
       platform.versions.push(validatedVersion)
-      await this.commit(`Add version ${version.name} to ${nativeApplicationName} ${platformName}`)
+      await this.commit(`Create version ${version.name} of ${nativeApplicationName} ${platformName}`)
     }
   }
   
