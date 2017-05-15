@@ -122,7 +122,7 @@ export default async function generateContainer({
     throw new Error("react-native was not found in plugins list !")
   }
 
-  // Get the react native version to use, based on what is declared on manifest
+  // Get the react native version to use, based on what is declared on manifests
   // for this current platform version
   const reactNativeVersion = getReactNativeVersionFromManifest(manifest)
   const ernPlatformVersion = manifest.platformVersion
@@ -131,8 +131,8 @@ export default async function generateContainer({
     name: miniapp.name,
     scope: miniapp.scope,
     version: miniapp.version,
-    unscopedName: getUnscopedModuleName(miniapp.name),
-    pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)),
+    unscopedName: getUnscopedModuleName(miniapp.name).replace(/-/g, ''),
+    pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)).replace(/-/g, ''),
     localPath: miniapp.localPath
   }))
 
