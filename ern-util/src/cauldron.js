@@ -1,4 +1,4 @@
-import CauldronCli from '@walmart/ern-cauldron-api/src/index';
+import CauldronCli from '@walmart/ern-cauldron-api';
 import required from './required';
 import spin from './spin';
 import platform from './platform';
