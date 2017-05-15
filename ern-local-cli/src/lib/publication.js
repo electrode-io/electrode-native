@@ -67,7 +67,7 @@ export async function runContainerGen(nativeAppName = required(nativeAppName, 'n
             containerVersion: version,
             nativeAppName,
             platformPath: platform.currentPlatformVersionPath,
-            generator: createContainerGenerator(nativeAppPlatform, config.containerGenerator),
+            generator: createContainerGenerator(nativeAppPlatform, config ? config.containerGenerator : undefined),
             plugins,
             miniapps,
             verbose
