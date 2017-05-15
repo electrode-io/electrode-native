@@ -96,7 +96,7 @@ export default class CauldronApi  {
         const platform = await this.getPlatform(appName, platformName)
         return platform.config
       }
-      const app = await this.getNativeApplications(appName)
+      const app = await this.getNativeApplication(appName)
       return app.config
     }
   }
@@ -131,7 +131,7 @@ export default class CauldronApi  {
     const nativeApplication = await this.getNativeApplication(nativeApplicationName)
     if (!alreadyExists(nativeApplication.platforms, platform.name)) {
       const validatedPlatform = await joiValidate(platform, nativeApplicationPlatformSchema)
-      app.platforms.push(validatedPlatform)
+      nativeApplication.platforms.push(validatedPlatform)
       await this.commit(`Add ${platform.name} platform to ${nativeApplicationName}`)
     }
   }
@@ -215,7 +215,7 @@ export default class CauldronApi  {
   }
   
   async validateAndGet(nativeApplicationName, platformName, versionName) {
-    let app = await this.getNativeApplications(nativeApplicationName)
+    let app = await this.getNativeApplication(nativeApplicationName)
     let platform, version
     if (platformName) {
       platform = await this.getPlatform(nativeApplicationName, platformName)
