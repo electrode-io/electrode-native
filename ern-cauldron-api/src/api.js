@@ -116,7 +116,7 @@ export default class CauldronApi  {
     if (!alreadyExists(cauldron.nativeApps, nativeApplication.name)) {
       const validatedNativeApplication = await joiValidate(nativeApplication, nativeApplicationSchema)
       cauldron.nativeApps.push(validatedNativeApplication)
-      await this.commit(`Create ${payload.name} native application`)
+      await this.commit(`Create ${nativeApplication.name} native application`)
     }
   }
   
