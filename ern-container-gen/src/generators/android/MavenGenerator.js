@@ -165,8 +165,8 @@ export default class MavenGenerator {
       console.log(`Creating miniapp activities`)
       for (const miniApp of miniApps) {
         let tmpMiniAppView = {
-          miniAppName: miniApp.unscopedName.replace(/-/g, ''),
-          pascalCaseMiniAppName: miniApp.pascalCaseName.replace(/-/g, '')
+          miniAppName: miniApp.unscopedName,
+          pascalCaseMiniAppName: miniApp.pascalCaseName
         }
 
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
