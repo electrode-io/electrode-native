@@ -1,4 +1,5 @@
-import {explodeNapSelector, cauldron} from '@walmart/ern-util'
+import {explodeNapSelector} from '@walmart/ern-util'
+import cauldron from '../../../lib/cauldron'
 
 exports.command = 'nativeapp <fullNapSelector> [platformVersion]'
 exports.desc = 'Add a native application to the cauldron'

@@ -1,5 +1,6 @@
-import {config as ernConfig, cauldron, explodeNapSelector, platform} from '@walmart/ern-util';
+import {config as ernConfig, explodeNapSelector, platform} from '@walmart/ern-util';
 import {runContainerGen} from '../../lib/publication';
+import cauldron from '../../lib/cauldron'
 
 import {
   generateContainer,
@@ -96,7 +97,7 @@ exports.handler = async function (argv) {
   if (argv.jsOnly) {
     let outputFolder = argv.outputFolder
 
-    const miniapps = await cauldron.getReactNativeApps(...explodedNapSelector);
+    const miniapps = await cauldron.getContainerMiniApps(...explodedNapSelector, { convertToObjects: true });
     const plugins = await cauldron.getNativeDependencies(...explodedNapSelector);
 
     if (!outputFolder) {

@@ -1,8 +1,9 @@
-import {cauldron, spin, platform } from '@walmart/ern-util';
+import { spin, platform } from '@walmart/ern-util';
 import _ from 'lodash';
 import chalk from 'chalk';
 import Table from 'cli-table';
 import MiniApp from './miniapp.js'
+import cauldron from './cauldron'
 const log = require('console-log-level')();
 
 //
