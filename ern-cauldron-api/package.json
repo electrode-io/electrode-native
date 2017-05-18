@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@walmart/ern-util": "0.0.1",
     "bluebird": "^3.5.0",
     "joi": "^10.1.0",
     "lodash": "^4.17.3",
