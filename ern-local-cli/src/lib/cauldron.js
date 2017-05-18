@@ -1,10 +1,13 @@
 import CauldronCli from '@walmart/ern-cauldron-api';
-import required from './required';
-import spin from './spin';
-import platform from './platform';
-import tagOneLine from './tagoneline';
-import config from './config';
-import log from './log';
+import { 
+    required,
+    spin,
+    platform,
+    tagOneLine,
+    config,
+    log,
+    Dependency
+} from '@walmart/ern-util'
 import _ from 'lodash';
 
 //
@@ -20,53 +23,16 @@ class Cauldron {
         this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias]);
     }
 
-    dependencyObjToString(dependencyObj) {
-        return tagOneLine`${dependencyObj.scope ? `@${dependencyObj.scope}/` : ''}
-                          ${dependencyObj.name}
-                          ${dependencyObj.version ? `@${dependencyObj.version}` : ''}`.replace(/\s/g, '')
-    }
-
-    dependencyStringToObj(dependencyString) {
-        if (!dependencyString) { return }
-
-        const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/;
-        const unscopedModuleWithVersionRe = /(.+)@(.+)/;
-        const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/;
-
-        if (scopedModuleWithVersionRe.test(dependencyString)) {
-            return {
-                scope: scopedModuleWithVersionRe.exec(dependencyString)[1],
-                name: scopedModuleWithVersionRe.exec(dependencyString)[2],
-                version: scopedModuleWithVersionRe.exec(dependencyString)[3]
-            }
-        } else if (unscopedModuleWithVersionRe.test(dependencyString)) {
-            return {
-                name: unscopedModuleWithVersionRe.exec(dependencyString)[1],
-                version: unscopedModuleWithVersionRe.exec(dependencyString)[2]
-            }
-        } else if (scopedModuleWithoutVersionRe.test(dependencyString)) {
-            return {
-                scope: scopedModuleWithoutVersionRe.exec(dependencyString)[1],
-                name: scopedModuleWithoutVersionRe.exec(dependencyString)[2]
-            }
-        } else {
-            return { name: dependencyString }
-        } 
-    }
-    ///
-
     // Creates a native application in the Cauldron
     // ernPlatformVersion : The version of the platform to use for this native app [REQUIRED]
     // appName : The name of the native application [REQUIRED]
     // platformName : The name of the platform of this application (android or ios)
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
     async addNativeApp(ernPlatformVersion = platform.currentVersion,
-                       appName,
+                       appName = required('appName'),
                        platformName,
                        versionName) {
         try {
-            required(appName, 'appName');
-
             return spin(tagOneLine`Adding ${appName} app
           ${versionName ? `at version ${versionName}` : ''}
           ${platformName ? `for ${platformName} platform` : ''}
@@ -100,12 +66,10 @@ class Cauldron {
     // appName : The name of the native application [REQUIRED]
     // platformName : The name of the platform of this application (android or ios)
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
-    async removeNativeApp(appName,
+    async removeNativeApp(appName = required('appName'),
                           platformName,
                           versionName) {
         try {
-            required(appName, 'appName');
-
             return spin(tagOneLine`Removing ${appName} app
           ${versionName ? `at version ${versionName}` : ''}
           ${platformName ? `for ${platformName} platform` : ''}
@@ -139,16 +103,11 @@ class Cauldron {
     // appName : The name of the native application [REQUIRED]
     // platformName : The name of the platform of this application (android or ios) [REQUIRED]
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-    async addNativeDependency(dependency,
-                              appName,
-                              platformName,
-                              versionName) {
+    async addNativeDependency(dependency = required('dependency'),
+                              appName = required('appName'),
+                              platformName = required('platformName'),
+                              versionName = required('versionName')) {
         try {
-            required(dependency, 'dependency');
-            required(appName, 'appName');
-            required(platformName, 'platformName');
-            required(versionName, 'versionName');
-
             await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
                 'Cannot add a native dependency to a released native app version')
 
@@ -156,7 +115,7 @@ class Cauldron {
                 tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
                    to ${appName}:${platformName}:${versionName}`,
                 this.cauldron.createNativeDependency(
-                    appName, platformName, versionName, this.dependencyObjToString(dependency)));
+                    appName, platformName, versionName, dependency.toString()));
         } catch (e) {
             log.error(`[addNativeDependency] ${e}`);
             throw e;
@@ -168,16 +127,11 @@ class Cauldron {
     // appName : The name of the native application [REQUIRED]
     // platformName : The name of the platform of this application (android or ios) [REQUIRED]
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-    async removeNativeDependency(dependencyName,
-                                 appName,
-                                 platformName,
-                                 versionName) {
+    async removeNativeDependency(dependencyName = required('dependencyName'),
+                                 appName = required('appName'),
+                                 platformName = required('platformName'),
+                                 versionName= required('versionName')) {
         try {
-            required(dependencyName, 'dependencyName');
-            required(appName, 'appName');
-            required(platformName, 'platformName');
-            required(versionName, 'versionName');
-
             await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
                 'Cannot remove a native dependency from a released native app version')
 
@@ -196,12 +150,10 @@ class Cauldron {
     // appName : The name of the app [REQUIRED]
     // platformName : The name of the platform of this application (android or ios) [REQUIRED]
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-    async getNativeApp(appName,
+    async getNativeApp(appName = required('appName'),
                        platformName,
                        versionName) {
         try {
-            required(appName, 'appName');
-
             if (versionName) {
                 return this.cauldron.getVersion(
                     appName, platformName, versionName);
@@ -220,18 +172,14 @@ class Cauldron {
     // appName : The name of the app [REQUIRED]
     // platformName : The name of the platform of this application (android or ios) [REQUIRED]
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-    async getNativeDependencies(appName,
-                                platformName,
-                                versionName,
+    async getNativeDependencies(appName = required('appName'),
+                                platformName = required('platformName'),
+                                versionName = required('versionName'),
                                 { convertToObjects=true } = {}) {
         try {
-            required(appName, 'appName');
-            required(platformName, 'platformName');
-            required(versionName, 'versionName');
-            
             const dependencies = await this.cauldron.getNativeDependencies(appName, platformName, versionName)
 
-            return convertToObjects ? _.map(dependencies, this.dependencyStringToObj) : dependencies 
+            return convertToObjects ? _.map(dependencies, Dependency.fromString) : dependencies 
         } catch (e) {
             log.error(`[getNativeDependencies] ${e}`);
             throw e;
@@ -243,16 +191,11 @@ class Cauldron {
     // appName : The name of the app [REQUIRED]
     // platformName : The name of the platform of this application (android or ios) [REQUIRED]
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-    async addNativeBinary(binaryPath,
-                          appName,
-                          platformName,
-                          versionName) {
+    async addNativeBinary(binaryPath = required('binaryPath'),
+                          appName = required('appName'),
+                          platformName = required('platformName'),
+                          versionName = required('versionName')) {
         try {
-            required(binaryPath, 'binaryPath');
-            required(appName, 'appName');
-            required(platformName, 'platformName');
-            required(versionName, 'versionName');
-
             return this.cauldron.createNativeBinary(
                 appName, platformName, versionName, binaryPath);
         } catch (e) {
@@ -265,14 +208,10 @@ class Cauldron {
     // appName : The name of the app [REQUIRED]
     // platformName : The name of the platform of this application (android or ios) [REQUIRED]
     // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-    async getNativeBinary(appName,
-                          platformName,
-                          versionName) {
+    async getNativeBinary(appName = required('appName'),
+                          platformName = required('platformName'),
+                          versionName = reqiored('versionName')) {
         try {
-            required(appName, 'appName');
-            required(platformName, 'platformName');
-            required(versionName, 'versionName');
-
             return this.cauldron.getNativeBinary(
                 appName, platformName, versionName);
         } catch (e) {
@@ -284,7 +223,7 @@ class Cauldron {
     // Get a native dependency from the cauldron
     async getNativeDependency(appName, platformName, versionName, depName, { convertToObject=true } = {}) {
         const dependency = await this.cauldron.getNativeDependency(appName, platformName, versionName, depName)
-        return convertToObject ? this.dependencyStringToObj(dependency) : dependency
+        return convertToObject ? Dependency.fromString(dependency) : dependency
     }
 
     // Update an existing native dependency version
@@ -296,27 +235,57 @@ class Cauldron {
                 this.cauldron.updateNativeDependency(appName, platformName, versionName, dependencyName, newVersion));
     }
 
-    // Retrieves all native apps metadata from the Cauldron
     async getAllNativeApps() {
         return this.cauldron.getNativeApplications();
     }
 
-    // Retrieves a specific react native app metadat from the Cauldron
-    async getReactNativeApp(appName, platformName, versionName, miniAppName) {
-        return this.cauldron.getReactNativeApp(appName, platformName, versionName, miniAppName);
+    async getOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp) {
+       return this.cauldron.getOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp)
     }
 
-    // Retrieves the metadata of all react native apps that are part of
-    // a given native application
-    async getReactNativeApps(appName, platformName, versionName) {
-        return this.cauldron.getReactNativeApps(appName, platformName, versionName);
+    async getContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp) {
+       return this.cauldron.getContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp)
     }
 
-    // Add a react native app metadata to a given native application
-    async addReactNativeApp(appName, platformName, versionName, app) {
-        return spin(tagOneLine`Adding ${app.name}@${app.version} to
-               ${appName}:${platformName}:${versionName}`,
-            this.cauldron.createReactNativeApp(appName, platformName, versionName, app));
+    async getOtaMiniApps(nativeApplicationName, platformName, versionName, { 
+        convertToObjects=true, 
+        onlyKeepLatest
+    } = {}) {
+        let miniApps = await this.cauldron.getOtaMiniApps(nativeApplicationName, platformName, versionName)
+        const miniAppsObjects = _.map(miniApps, Dependency.fromString)
+        // Could be done in a better way
+        if (onlyKeepLatest) {
+            let tmp = {}
+            for (const miniApp of miniAppsObjects) {
+                let currentVersion = tmp[miniApp.withoutVersion().toString()]
+                if ((currentVersion && currentVersion < miniApp.version)
+                    || !currentVersion) {
+                    tmp[miniApp.withoutVersion().toString()] = miniApp.version
+                } 
+            }
+            miniApps = []
+            for (const miniAppName in tmp) {
+                miniApps.push(`${miniAppName}@${tmp[miniAppName]}`)
+            }
+        }
+        return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps 
+    }
+
+    async getContainerMiniApps(nativeApplicationName, platformName, versionName, { convertToObjects=true } = {}) {
+        const miniApps = await this.cauldron.getContainerMiniApps(nativeApplicationName, platformName, versionName)
+        return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps 
+    }
+
+     async addOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp) {
+        return spin(tagOneLine`Adding ${miniApp.toString()} to
+               ${nativeApplicationName}:${platformName}:${versionName} ota`,
+            this.cauldron.addOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp))
+    }
+
+    async addContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp) {
+         return spin(tagOneLine`Adding ${miniApp.toString()} to
+               ${nativeApplicationName}:${platformName}:${versionName} container`,
+            this.cauldron.addContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp))
     }
 
     async getConfig(appName, platformName, versionName) {
@@ -334,8 +303,8 @@ class Cauldron {
         return this.cauldron.updateVersion(appName, platformName, versionName, {isReleased});
     }
 
-    async updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion) {
-        return this.cauldron.updateReactNativeAppVersion(appName, platformName, versionName, payload, newVersion);
+    async updateMiniAppVersion(appName, platformName, versionName, miniApp) {
+        return this.cauldron.updateMiniAppVersion(appName, platformName, versionName, miniApp);
     }
 
     async throwIfNativeAppVersionIsReleased(appName, platformName, versionName, errorMessage) {

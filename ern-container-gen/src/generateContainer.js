@@ -1,4 +1,7 @@
-import { reactNative } from '@walmart/ern-util'
+import {
+   reactNative,
+   required
+} from '@walmart/ern-util'
 
 // Node
 import child_process from 'child_process'
@@ -152,10 +155,6 @@ export default async function generateContainer({
     miniApps,
     paths,
     mustacheView)
-}
-
-function required(param) {
-  throw new Error(`Missing required ${param} parameter`)
 }
 
 function getUnscopedModuleName(pluginName) {

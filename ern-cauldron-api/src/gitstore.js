@@ -26,7 +26,7 @@ export default class GitStore extends BaseGit {
     await this.sync()
     if (fs.existsSync(this._jsonPath)) {
       this.cauldron = await readJSON(this._jsonPath)
-      return this.cauldron
     }
+    return this.cauldron
   }
 }

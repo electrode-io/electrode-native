@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/ern-cauldron-api": "0.0.1",
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
     "console-log-level": "^1.4.0",

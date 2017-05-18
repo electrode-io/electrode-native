@@ -1,6 +1,16 @@
-import {cauldron, spin, explodeNapSelector, yarn, android, reactNative, tagOneLine, platform} from '@walmart/ern-util';
+import {
+    spin, 
+    explodeNapSelector, 
+    yarn, 
+    android, 
+    reactNative, 
+    tagOneLine, 
+    platform,
+    Dependency
+} from '@walmart/ern-util';
 import {checkCompatibilityWithNativeApp} from './compatibility.js';
 import {generateRunner, generateContainerForRunner} from '@walmart/ern-runner-gen';
+import cauldron from './cauldron'
 
 import fs from 'fs';
 import _ from 'lodash';
@@ -174,20 +184,18 @@ export default class MiniApp {
                 `${this.path}/node_modules/${nativeDependencyName}/package.json`);
 
             if (NPM_SCOPED_MODULE_RE.test(nativeDependencyName)) {
-                result.push({
-                    name: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2],
+                result.push(new Dependency(NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2], {
                     scope: NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[1],
                     version: nativeDepPackageJson.version.startsWith('v')
                              ? nativeDepPackageJson.version.slice(1)
                              : nativeDepPackageJson.version
-                });
+                }));
             } else {
-                result.push({
-                    name: nativeDependencyName,
+                result.push(new Dependency(nativeDependencyName, {
                     version: nativeDepPackageJson.version.startsWith('v')
                              ? nativeDepPackageJson.version.slice(1)
                              : nativeDepPackageJson.version
-                });
+                }));
             }
         }
 
@@ -362,31 +370,21 @@ Otherwise you can safely ignore this warning
                                    versionName = required('versionName'),
                                    force) {
         try {
-            let miniAppName, miniAppScope;
-
-            const nameFromPackageJson = this.packageJson.name;
-
-            if (NPM_SCOPED_MODULE_RE.test(nameFromPackageJson)) {
-                miniAppScope = NPM_SCOPED_MODULE_RE.exec(nameFromPackageJson)[1];
-                miniAppName = NPM_SCOPED_MODULE_RE.exec(nameFromPackageJson)[2];
-            } else {
-                miniAppName = nameFromPackageJson;
-            }
-
-            const miniAppDesc = `${miniAppName}@${this.version}`;
             const appDesc = `${appName}:${platformName}:${versionName}`;
             const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName);
-            const currentMiniAppEntryIncauldron = await cauldron.getReactNativeApp(
-                        appName, platformName, versionName, miniAppName);
+
+            const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
+
+            const currentMiniAppEntryInCauldronAtSameVersion = nativeApp.isReleased 
+                    ? await cauldron.getOtaMiniApp(appName, platformName, versionName, miniApp)
+                    : await cauldron.getContainerMiniApp(appName, platformName, versionName, miniApp)
 
             // If this is not a forced add, we run quite some checks beforehand
             if (!force) {
-                log.info(`Checking if ${miniAppDesc} is not already in ${appDesc}`);
+                log.info(`Checking if ${miniApp.toString()} is not already in ${appDesc}`);
 
-                const isVersionPresent =
-                    _.find(currentMiniAppEntryIncauldron, e => e.version === this.version);
-                if (isVersionPresent) {
-                    throw new Error(`${miniAppDesc} already in binary of ${appDesc}`);
+                if (currentMiniAppEntryInCauldronAtSameVersion) {
+                    throw new Error(`${miniApp.toString()} already in ${appDesc}`);
                 }
 
                 log.info(`Checking that container version match native app version`);
@@ -412,7 +410,7 @@ Otherwise you can safely ignore this warning
                 const localNativeDependencyString =
                         `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
                 const remoteDependency =
-                    await cauldron.getNativeDependency(appName, platformName, versionName, localNativeDependencyString)
+                    await cauldron.getNativeDependency(appName, platformName, versionName, localNativeDependencyString, { convertToObject: true })
                 if (remoteDependency && (remoteDependency.version === localNativeDependency.version)) {
                     continue;
                 }
@@ -443,19 +441,15 @@ Otherwise you can safely ignore this warning
                 }
             }
 
-            const miniApp = Object.assign({
-                name: miniAppName,
-                version: this.version,
-                isInBinary: !nativeApp.isReleased
-            }, miniAppScope ?
-                {
-                    scope: miniAppScope
-                } : {});
+            const currentMiniAppEntryInContainer =
+                await cauldron.getContainerMiniApp(appName, platformName, versionName, miniApp.withoutVersion())
 
-            if ((currentMiniAppEntryIncauldron.length > 0) && !nativeApp.isReleased) {
-                await cauldron. updateReactNativeAppVersion(appName, platformName, versionName, miniApp, miniApp.version)
+            if (currentMiniAppEntryInContainer && !nativeApp.isReleased) {
+                await cauldron.updateMiniAppVersion(appName, platformName, versionName, miniApp)
+            } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
+                await cauldron.addContainerMiniApp(appName, platformName, versionName, miniApp);
             } else {
-                await cauldron.addReactNativeApp(appName, platformName, versionName, miniApp);
+                await cauldron.addOtaMiniApp(appName, platformName, versionName, miniApp);
             }
         } catch (e) {
             log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`);
