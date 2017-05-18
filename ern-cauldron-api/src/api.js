@@ -5,17 +5,19 @@ import {
   buildReactNativeSourceMapFileName,
   checkNotFound,
   alreadyExists,
-  containsDependency,
-  removeVersionFromDependency
+  containsDependency
 } from './util'
 import {
-  reactNativeAppSchema,
+  miniAppsSchema,
   nativeApplicationVersionSchema,
   nativeAplicationVersionPatchSchema,
   nativeApplicationPlatformSchema,
   nativeApplicationSchema,
   joiValidate
 } from './schemas'
+import {
+  Dependency
+} from '@walmart/ern-util'
 
 export default class CauldronApi  {
   constructor(db, binaryStore, sourcemapStore) {
@@ -65,15 +67,25 @@ export default class CauldronApi  {
     const versions = await this.getVersions(nativeApplicationName, platformName)
     return _.find(versions, x => x.name === versionName)
   }
-  
-  async getReactNativeApps(nativeApplicationName, platformName, versionName) {
-    const {reactNativeApps} = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return reactNativeApps || []
+
+  async getOtaMiniApps(nativeApplicationName, platformName, versionName) {
+      const {miniApps} = await this.getVersion(nativeApplicationName, platformName, versionName) 
+      return miniApps.ota
   }
-  
-  async getReactNativeApp(nativeApplicationName, platformName, versionName, reactAppName) {
-    const reactNativeApps = await this.getReactNativeApps(nativeApplicationName, platformName, versionName)
-    return reactNativeApps.filter(v => v.name == reactAppName)
+
+  async getContainerMiniApps(nativeApplicationName, platformName, versionName) {
+      const {miniApps} = await this.getVersion(nativeApplicationName, platformName, versionName) 
+      return miniApps.container
+  }
+
+  async getOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp) {
+    const miniApps = await this.getOtaMiniApps(nativeApplicationName, platformName, versionName)
+    return _.find(miniApps, m => m.startsWith(miniApp.toString()))
+  }
+
+  async getContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp) {
+    const miniApps = await this.getContainerMiniApps(nativeApplicationName, platformName, versionName)
+    return _.find(miniApps, m => m.startsWith(miniApp.toString()))
   }
   
   async getNativeDependencies(nativeApplicationName, platformName, versionName) {
@@ -184,33 +196,51 @@ export default class CauldronApi  {
     await this.commit(`Update ${dependency} dependency to v${dependencyName,newVersion} for ${nativeApplicationName} ${platformName}`)
   }
   
-  async updateReactNativeAppVersion(nativeApplicationName, platformName, versionName, rnApp, newVersion) {
+  // Only version of miniapps in container can be updated
+  async updateMiniAppVersion(nativeApplicationName, platformName, versionName, miniApp) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    const f = _.find(version.reactNativeApps, r => r.name === rnApp.name)
-    f.version = newVersion
-    await this.commit(`Update version of ${rnApp.name} MiniApp to ${newVersion}`)
+    let miniAppInContainer = _.find(version.miniApps.container, m => Dependency.same(Dependency.fromString(m), miniApp, { ignoreVersion: true })) 
+    if (miniAppInContainer) {
+      version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
+      await this.commit(`Update version of ${miniApp.name} MiniApp to ${miniApp.version}`)
+    }    
   }
-  
-  async removeReactNativeApp(nativeApplicationName, platformName, versionName, rnAppName) {
+
+  async removeOtaMiniApp(nativeApplicationName, platformName, versionName, miniAppName, miniAppVersion) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (_.remove(version.reactNativeApps, x => x.name === rnAppName).length > 0) {
-      await this.commit(`Remove ${rnAppName} from ${appName} ${platformName} ${versionName}`)
+    if (_.remove(version.miniApps.ota, x => x.name ==- `${miniAppName}@${miniAppVersion}`).length > 0) {
+      await this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} ota`)
+    }
+  }
+
+  async removeContainerMiniApp(nativeApplicationName, platformName, versionName, miniAppName) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (_.remove(version.miniApps.container, x => x.name.startsWith(`${miniAppName}@`)).length > 0) {
+      await this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
     }
   }
   
   async createNativeDependency(nativeApplicationName, platformName, versionName, dependency) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!containsDependency(version.nativeDeps, dependency, { shouldMatchVersion: false })) {
-      version.nativeDeps.push(dependency)
+    if (!version.nativeDeps.includes(dependency.toString())) {
+      version.nativeDeps.push(dependency.toString())
       await this.commit(`Add native dependency ${dependency.name} to ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
-  
-  async createReactNativeApp(nativeApplicationName, platformName, versionName, rnApp) {
+
+  async addOtaMiniApp(nativeApplicationName, platformName, versionName, miniapp) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!alreadyExists(version.reactNativeApps, rnApp.name, rnApp.version)) {
-      version.reactNativeApps.push(rnApp)
-      await this.commit(`Add ${rnApp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName}`)
+    if (!version.miniApps.ota.includes(miniapp.toString())) { 
+      version.miniApps.ota.push(miniapp.toString())
+      await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} ota`)
+    } 
+  }
+
+  async addContainerMiniApp(nativeApplicationName, platformName, versionName, miniapp) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (!version.miniApps.container.includes(miniapp.toString())) { 
+      version.miniApps.container.push(miniapp.toString())
+      await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
     } 
   }
   

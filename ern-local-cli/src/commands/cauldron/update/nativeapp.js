@@ -1,5 +1,5 @@
-import {cauldron, explodeNapSelector} from '@walmart/ern-util';
-
+import {explodeNapSelector} from '@walmart/ern-util';
+import cauldron from '../../../lib/cauldron'
 
 exports.command = 'nativeapp <fullNapSelector> [isReleased]';
 exports.desc = 'Update a native application info in cauldron';

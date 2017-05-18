@@ -1,11 +1,11 @@
 import MiniApp from './miniapp.js';
+import cauldron from './cauldron'
 
 import {
     platform,
     config as ernConfig,
     required,
     explodeNapSelector as explodeNativeAppSelector,
-    cauldron,
     codePush
 } from '@walmart/ern-util';
 
@@ -52,15 +52,15 @@ function createContainerGenerator(platform, config) {
     }
 }
 
-export async function runContainerGen(nativeAppName = required(nativeAppName, 'nativeAppName'),
-                                      nativeAppPlatform = required(nativeAppPlatform, 'nativeAppPlatform'),
-                                      nativeAppVersion = required(nativeAppVersion, 'nativeAppVersion'),
-                                      version = required(version, 'version'),
+export async function runContainerGen(nativeAppName = required('nativeAppName'),
+                                      nativeAppPlatform = required('nativeAppPlatform'),
+                                      nativeAppVersion = required('nativeAppVersion'),
+                                      version = required('version'),
                                       verbose) {
     try {
         const plugins = await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion);
         const reactNativePlugin = _.find(plugins, p => p.name === 'react-native');
-        const miniapps = await cauldron.getReactNativeApps(nativeAppName, nativeAppPlatform, nativeAppVersion);
+        const miniapps = await cauldron.getContainerMiniApps(nativeAppName, nativeAppPlatform, nativeAppVersion, { convertToObjects: true });
         const config = await cauldron.getConfig(nativeAppName, nativeAppPlatform, nativeAppVersion) 
 
         await generateContainer({
@@ -219,7 +219,7 @@ export async function publishOta(fullNapSelector, {
         await MiniApp.fromCurrentPath().addToNativeAppInCauldron(...explodedNapSelector, force);
 
         const workingFolder = `${ERN_PATH}/CompositeOta`;
-        const miniapps = await cauldron.getReactNativeApps(...explodedNapSelector);
+        const miniapps = await cauldron.getOtaMiniApps(...explodedNapSelector, { convertToObjects: true, onlyKeepLatest: true });
 
         await generateMiniAppsComposite(miniapps, workingFolder, {plugins});
         process.chdir(workingFolder);

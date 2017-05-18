@@ -1,11 +1,8 @@
 import Joi from 'joi'
 
-export const reactNativeAppSchema = Joi.object({
-  name: Joi.string().required(),
-  version: Joi.string().required(),
-  isInBinary: Joi.boolean().required(),
-  scope: Joi.string().optional(),
-  hasSourceMap: Joi.boolean().optional()
+export const miniAppsSchema = Joi.object({
+  container: Joi.array().default([]),
+  ota: Joi.array().default([])
 })
 
 export const nativeApplicationVersionSchema = Joi.object({
@@ -14,7 +11,7 @@ export const nativeApplicationVersionSchema = Joi.object({
   isReleased: Joi.boolean().optional().default(false),
   binary: Joi.string().default(null),
   nativeDeps: Joi.array().default([]),
-  reactNativeApps: Joi.array().items(reactNativeAppSchema).default([])
+  miniApps: miniAppsSchema.default()
 })
 
 export const nativeAplicationVersionPatchSchema = Joi.object({
@@ -32,7 +29,7 @@ export const nativeApplicationSchema = Joi.object({
 })
 
 export default ({
-  reactNativeAppSchema,
+  miniAppsSchema,
   nativeApplicationVersionSchema,
   nativeAplicationVersionPatchSchema,
   nativeApplicationPlatformSchema,
