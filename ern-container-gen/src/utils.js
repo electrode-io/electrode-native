@@ -6,7 +6,11 @@ import Ora from 'ora'
 import path from 'path'
 import shell from 'shelljs'
 
-import { reactNative, yarn } from '@walmart/ern-util'
+import { 
+  Dependency,
+  reactNative, 
+  yarn 
+} from '@walmart/ern-util'
 const { yarnAdd } = yarn
 
 const exec = child_process.exec
@@ -114,7 +118,7 @@ export function getPluginConfigPath(plugin, pluginsConfigPath) {
   return `${pluginsConfigPath}/${plugin.name}`
 }
 
-export async function bundleMiniApps(miniapps, paths, plugins, platform) {
+export async function bundleMiniApps(miniapps, paths, platform) {
   try {
     console.log(`[=== Starting mini apps bundling ===]`)
 
@@ -126,7 +130,8 @@ export async function bundleMiniApps(miniapps, paths, plugins, platform) {
     }
     // Generic case
     else {
-      await generateMiniAppsComposite(miniapps, paths.compositeMiniApp, {plugins})
+      const miniAppStrings = _.map(miniapps, m => new Dependency(m.name, {scope: m.scope, version: m.version}.toString()))
+      await generateMiniAppsComposite(miniAppStrings, paths.compositeMiniApp)
     }
 
     // Clear react packager cache beforehand to avoid surprises ...
@@ -171,22 +176,31 @@ export async function reactNativeBundleIos(paths) {
   })
 }
 
-export async function generateMiniAppsComposite(miniapps, folder, {verbose, plugins}) {
+//
+// miniapps should be strings that can be provided to `yarn add`
+// this way we can generate a miniapp composite from different miniapp sources
+// (git, local file system, npm ...)
+export async function generateMiniAppsComposite(miniapps, folder, {verbose} = {}) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
   throwIfShellCommandFailed()
 
   let content = ""
   for (const miniapp of miniapps) {
-    const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}` : miniapp.name
-    content += `import '${miniAppName}'\n`
-    await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`, yarnAdd(miniapp))
+    await spin(`Retrieving and installing ${miniapp}`, yarnAdd(miniapp))
   }
 
+  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+  for (const dependency of Object.keys(packageJson.dependencies)) {
+    content += `import '${dependency}'\n`
+  }
+
+  const codePushNodeModuleFolder = `${folder}/node_modules/react-native-code-push`
+  const reactNativeNodeModuleFolder = `${folder}/node_modules/react-native`
   // If code push plugin is present we need to do some additional work
-  if (plugins) {
-    const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
-    if (codePushPlugin) {
+  if (fs.existsSync(codePushNodeModuleFolder)) {
+      const reactNativePackageJson = JSON.parse(fs.readFileSync(`${reactNativeNodeModuleFolder}/package.json`, 'utf-8'))
+
       //
       // The following code will need to be uncommented and properly reworked or included
       // in a different way, once Cart and TYP don't directly depend on code push directly
@@ -205,13 +219,10 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
       // code push is not making a real use of this data
       // Investigate further.
       // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
-      const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-      packageJson.dependencies['react-native'] =
-          _.find(plugins, p => p.name === 'react-native').version
+      packageJson.dependencies['react-native'] = reactNativePackageJson.version
       packageJson.name = "container"
       packageJson.version = "0.0.1"
       fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
-    }
   }
 
   console.log(`writing index.android.js`)
