@@ -114,7 +114,7 @@ export function getPluginConfigPath(plugin, pluginsConfigPath) {
   return `${pluginsConfigPath}/${plugin.name}`
 }
 
-export async function bundleMiniApps(miniapps, paths, plugins, platform) {
+export async function bundleMiniApps(miniapps, paths, platform) {
   try {
     console.log(`[=== Starting mini apps bundling ===]`)
 
@@ -126,7 +126,7 @@ export async function bundleMiniApps(miniapps, paths, plugins, platform) {
     }
     // Generic case
     else {
-      await generateMiniAppsComposite(miniapps, paths.compositeMiniApp, {plugins})
+      await generateMiniAppsComposite(miniapps, paths.compositeMiniApp)
     }
 
     // Clear react packager cache beforehand to avoid surprises ...
@@ -171,7 +171,7 @@ export async function reactNativeBundleIos(paths) {
   })
 }
 
-export async function generateMiniAppsComposite(miniapps, folder, {verbose, plugins}) {
+export async function generateMiniAppsComposite(miniapps, folder, {verbose} = {}) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
   throwIfShellCommandFailed()
@@ -183,10 +183,12 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
     await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`, yarnAdd(miniapp))
   }
 
+  const codePushNodeModuleFolder = `${folder}/node_modules/react-native-code-push`
+  const reactNativeNodeModuleFolder = `${folder}/node_modules/react-native`
   // If code push plugin is present we need to do some additional work
-  if (plugins) {
-    const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
-    if (codePushPlugin) {
+  if (fs.existsSync(codePushNodeModuleFolder)) {
+      const reactNativePackageJson = JSON.parse(fs.readFileSync(`${reactNativeNodeModuleFolder}/package.json`, 'utf-8'))
+
       //
       // The following code will need to be uncommented and properly reworked or included
       // in a different way, once Cart and TYP don't directly depend on code push directly
@@ -206,12 +208,10 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose, plug
       // Investigate further.
       // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
       const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-      packageJson.dependencies['react-native'] =
-          _.find(plugins, p => p.name === 'react-native').version
+      packageJson.dependencies['react-native'] = reactNativePackageJson.version
       packageJson.name = "container"
       packageJson.version = "0.0.1"
       fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
-    }
   }
 
   console.log(`writing index.android.js`)

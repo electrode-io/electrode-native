@@ -98,7 +98,6 @@ exports.handler = async function (argv) {
     let outputFolder = argv.outputFolder
 
     const miniapps = await cauldron.getContainerMiniApps(...explodedNapSelector, { convertToObjects: true });
-    const plugins = await cauldron.getNativeDependencies(...explodedNapSelector);
 
     if (!outputFolder) {
       const { userSelectedOutputFolder } = await inquirer.prompt([{
@@ -110,7 +109,7 @@ exports.handler = async function (argv) {
       outputFolder = userSelectedOutputFolder
     }
 
-    await generateMiniAppsComposite(miniapps, outputFolder, {plugins});
+    await generateMiniAppsComposite(miniapps, outputFolder);
   }
   //
   // Full container generation 
