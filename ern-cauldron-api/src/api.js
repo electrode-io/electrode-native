@@ -193,7 +193,7 @@ export default class CauldronApi  {
     _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
     const newDependencyString = `${dependencyName}@${newVersion}`
     version.nativeDeps.push(newDependencyString)        
-    await this.commit(`Update ${dependency} dependency to v${dependencyName,newVersion} for ${nativeApplicationName} ${platformName}`)
+    await this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
   }
   
   // Only version of miniapps in container can be updated
