@@ -78,7 +78,7 @@ export default class GithubGenerator {
       // Bundle all the miniapps together and store resulting bundle in container
       // project
       if (miniapps.length > 0) {
-        await bundleMiniApps(miniapps, paths, plugins, 'ios')
+        await bundleMiniApps(miniapps, paths, 'ios')
       }
       
       shell.cd(`${paths.outFolder}/ios`)

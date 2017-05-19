@@ -105,7 +105,7 @@ export default class MavenGenerator {
     // Todo : move to utils .js as it is crossplatform
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    await bundleMiniApps(miniapps, paths, plugins, 'android')
+    await bundleMiniApps(miniapps, paths, 'android')
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
