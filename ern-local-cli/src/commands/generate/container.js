@@ -38,22 +38,37 @@ exports.builder = function (yargs) {
       alias: 'js',
       describe: 'Generates JS only (composite app)'
     })
+    .group(['outputFolder, miniapps'], 'jsOnly Options:')
     .option('outputFolder', {
       type: 'string',
       alias: 'out',
-      describe: 'Output folder path (only used with jsOnly flag)'
-    });
+      describe: 'Output folder path'
+    })
+    .option('miniapps', {
+      type: 'array',
+      alias: 'm',
+      describe: 'A list of one or more miniapps'
+    })
 };
 
 exports.handler = async function (argv) {
-  let fullNapSelector = argv.fullNapSelector
-  let containerVersion = argv.containerVersion;
+  let { 
+    fullNapSelector,
+    containerVersion,
+    jsOnly,
+    outputFolder,
+    verbose,
+    miniapps
+  }  = argv
+
+  let explodedNapSelector
 
   //
   // Full native application selector was not provided.
   // Ask the user to select a fullNapSelector from a list 
   // containing all the native applications versions in the cauldron
-  if (!fullNapSelector) {
+  // Not needed if miniapps are provided with jsOnly flag
+  if (!fullNapSelector && !miniapps) {
     const nativeApps = await cauldron.getAllNativeApps()
 
     // Transform native apps from the cauldron to an Array 
@@ -73,15 +88,14 @@ exports.handler = async function (argv) {
     }])
 
     fullNapSelector = userSelectedFullNapSelector
+    explodedNapSelector = explodeNapSelector(fullNapSelector)
   }
-
-  const explodedNapSelector = explodeNapSelector(fullNapSelector);
 
   //
   // If the user wants to generates a complete container (not --jsOnly)
   // user has to provide a container version
   // If not specified in command line, we ask user to input the version
-  if (!containerVersion && !argv.jsOnly) {
+  if (!containerVersion && !jsOnly) {
      const { userSelectedContainerVersion } = await inquirer.prompt([{
         type: 'input',
         name: 'userSelectedContainerVersion',
@@ -94,10 +108,12 @@ exports.handler = async function (argv) {
   //
   // --jsOnly switch
   // Ony generates the composite miniapp to a provided output folder
-  if (argv.jsOnly) {
-    let outputFolder = argv.outputFolder
+  if (jsOnly) {
+    let outputFolder = outputFolder
 
-    const miniapps = await cauldron.getContainerMiniApps(...explodedNapSelector, { convertToObjects: true });
+    if (!miniapps) {
+      miniapps = await cauldron.getContainerMiniApps(...explodedNapSelector)
+    } 
 
     if (!outputFolder) {
       const { userSelectedOutputFolder } = await inquirer.prompt([{
@@ -119,6 +135,6 @@ exports.handler = async function (argv) {
       explodedNapSelector[1], /* nativeAppPlatform */
       explodedNapSelector[2], /* nativeAppVersion */
       containerVersion,
-      argv.verbose)
+      verbose)
   }
 };

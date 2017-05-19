@@ -219,7 +219,7 @@ export async function publishOta(fullNapSelector, {
         await MiniApp.fromCurrentPath().addToNativeAppInCauldron(...explodedNapSelector, force);
 
         const workingFolder = `${ERN_PATH}/CompositeOta`;
-        const miniapps = await cauldron.getOtaMiniApps(...explodedNapSelector, { convertToObjects: true, onlyKeepLatest: true });
+        const miniapps = await cauldron.getOtaMiniApps(...explodedNapSelector, { onlyKeepLatest: true });
 
         await generateMiniAppsComposite(miniapps, workingFolder);
         process.chdir(workingFolder);

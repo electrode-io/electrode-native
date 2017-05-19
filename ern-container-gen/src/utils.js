@@ -6,7 +6,11 @@ import Ora from 'ora'
 import path from 'path'
 import shell from 'shelljs'
 
-import { reactNative, yarn } from '@walmart/ern-util'
+import { 
+  Dependency,
+  reactNative, 
+  yarn 
+} from '@walmart/ern-util'
 const { yarnAdd } = yarn
 
 const exec = child_process.exec
@@ -126,7 +130,8 @@ export async function bundleMiniApps(miniapps, paths, platform) {
     }
     // Generic case
     else {
-      await generateMiniAppsComposite(miniapps, paths.compositeMiniApp)
+      const miniAppStrings = _.map(miniapps, m => new Dependency(m.name, {scope: m.scope, version: m.version}.toString()))
+      await generateMiniAppsComposite(miniAppStrings, paths.compositeMiniApp)
     }
 
     // Clear react packager cache beforehand to avoid surprises ...
@@ -171,6 +176,10 @@ export async function reactNativeBundleIos(paths) {
   })
 }
 
+//
+// miniapps should be strings that can be provided to `yarn add`
+// this way we can generate a miniapp composite from different miniapp sources
+// (git, local file system, npm ...)
 export async function generateMiniAppsComposite(miniapps, folder, {verbose} = {}) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
@@ -178,9 +187,12 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose} = {}
 
   let content = ""
   for (const miniapp of miniapps) {
-    const miniAppName = miniapp.scope ? `@${miniapp.scope}/${miniapp.name}` : miniapp.name
-    content += `import '${miniAppName}'\n`
-    await spin(`Retrieving and installing ${miniAppName}@${miniapp.version}`, yarnAdd(miniapp))
+    await spin(`Retrieving and installing ${miniapp}`, yarnAdd(miniapp))
+  }
+
+  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+  for (const dependency of Object.keys(packageJson.dependencies)) {
+    content += `import '${dependency}'\n`
   }
 
   const codePushNodeModuleFolder = `${folder}/node_modules/react-native-code-push`
@@ -207,7 +219,6 @@ export async function generateMiniAppsComposite(miniapps, folder, {verbose} = {}
       // code push is not making a real use of this data
       // Investigate further.
       // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
-      const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
       packageJson.dependencies['react-native'] = reactNativePackageJson.version
       packageJson.name = "container"
       packageJson.version = "0.0.1"
