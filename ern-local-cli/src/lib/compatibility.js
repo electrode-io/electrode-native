@@ -1,50 +1,54 @@
-import { spin, platform } from '@walmart/ern-util';
-import _ from 'lodash';
-import chalk from 'chalk';
-import Table from 'cli-table';
-import MiniApp from './miniapp.js'
+import {
+  platform,
+  spin
+} from '@walmart/ern-util'
 import cauldron from './cauldron'
-const log = require('console-log-level')();
+import MiniApp from './miniapp.js'
+import _ from 'lodash'
+import chalk from 'chalk'
+import Table from 'cli-table'
+
+const log = require('console-log-level')()
 
 //
 // Check compatibility of current miniapp against one or multiple native apps
-export async function checkCompatibilityWithNativeApp(verbose, appName, platformName, versionName) {
-  let compatReport = await spin("Checking compatibility",
-    getNativeAppCompatibilityReport({ appName, platformName, versionName }));
+export async function checkCompatibilityWithNativeApp (verbose, appName, platformName, versionName) {
+  let compatReport = await spin('Checking compatibility',
+    getNativeAppCompatibilityReport({ appName, platformName, versionName }))
 
   for (let r of compatReport) {
-    log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + " : " +
-      (r.isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE")));
+    log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + ' : ' +
+      (r.isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE')))
 
     if (verbose) {
-      logCompatibilityReportTable(r.compatibility);
+      logCompatibilityReportTable(r.compatibility)
     }
 
     if (appName && platformName && versionName) {
-      return r;
+      return r
     }
   }
 }
 
 //
 // Check compatibility of current miniapp against a given platform version
-export function checkCompatibilityWithPlatform(verbose, platformVersion) {
-  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies;
-  const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion);
+export function checkCompatibilityWithPlatform (verbose, platformVersion) {
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies
+  const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion)
 
-  const report = getCompatibility(miniappDependencies, platformDependencies);
-  const isCompatible = report.incompatible.length === 0;
+  const report = getCompatibility(miniappDependencies, platformDependencies)
+  const isCompatible = report.incompatible.length === 0
 
-  log.info(isCompatible ? chalk.green("COMPATIBLE") : chalk.red("NOT COMPATIBLE"));
+  log.info(isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE'))
 
   if (verbose) {
-    logCompatibilityReportTable(report);
+    logCompatibilityReportTable(report)
   }
 }
 
 //
 // Log compatiblity report to terminal in a fancy table
-export async function logCompatibilityReportTable(report) {
+export async function logCompatibilityReportTable (report) {
   var table = new Table({
     head: [chalk.cyan('Scope'),
       chalk.cyan('Name'),
@@ -52,7 +56,7 @@ export async function logCompatibilityReportTable(report) {
       chalk.cyan('Local Version')
     ],
     colWidths: [10, 40, 16, 15]
-  });
+  })
 
   for (const compatibleEntry of report.compatible) {
     table.push([
@@ -60,7 +64,7 @@ export async function logCompatibilityReportTable(report) {
       compatibleEntry.dependencyName,
       chalk.green(compatibleEntry.remoteVersion ? compatibleEntry.remoteVersion : ''),
       chalk.green(compatibleEntry.localVersion ? compatibleEntry.localVersion : '')
-    ]);
+    ])
   }
 
   for (const incompatibleEntry of report.incompatible) {
@@ -69,20 +73,20 @@ export async function logCompatibilityReportTable(report) {
       incompatibleEntry.dependencyName,
       incompatibleEntry.remoteVersion,
       chalk.red(incompatibleEntry.localVersion)
-    ]);
+    ])
   }
 
-  log.info(table.toString());
+  log.info(table.toString())
 }
 
 //
 // Retrieve compatibility report(s) of current miniapp against one or multiple native apps
-export async function getNativeAppCompatibilityReport({ appName, platformName, versionName } = {}) {
-  let result = [];
-  const nativeApps = await cauldron.getAllNativeApps();
+export async function getNativeAppCompatibilityReport ({ appName, platformName, versionName } = {}) {
+  let result = []
+  const nativeApps = await cauldron.getAllNativeApps()
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const miniappDependencies = MiniApp.fromCurrentPath().nativeDependencies;
+  const miniappDependencies = MiniApp.fromCurrentPath().nativeDependencies
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
@@ -96,7 +100,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                   nativeAppPlatform.name,
                   nativeAppVersion.name)
               const compatibility = getCompatibility(
-                  miniappDependencies, nativeAppDependencies, { 
+                  miniappDependencies, nativeAppDependencies, {
                     uncompatibleIfARemoteDepIsMissing: nativeAppVersion.isReleased
                   })
               result.push({
@@ -107,7 +111,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
                 isReleased: nativeAppVersion.isReleased,
                 isCompatible: compatibility.incompatible.length === 0,
                 compatibility
-              });
+              })
             }
           }
         }
@@ -115,7 +119,7 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
     }
   }
 
-  return result;
+  return result
 }
 
 //
@@ -150,52 +154,52 @@ export async function getNativeAppCompatibilityReport({ appName, platformName, v
 //     }
 //   ]
 // }
-// 
+//
 // Optional inputs :
-// - uncompatibleIfARemoteDepIsMissing : true if a missing remote 
-// dependency should be deemed uncompatible (for example for released 
+// - uncompatibleIfARemoteDepIsMissing : true if a missing remote
+// dependency should be deemed uncompatible (for example for released
 // native application versions, if a native dependency is missing from
 // the binary, it's not compatible. On the other hand, for non released
 // versions it's OK as it's always possible to regenerate a container
 // that include this new native dependency)
-export function getCompatibility(localDeps, remoteDeps, { 
-  uncompatibleIfARemoteDepIsMissing 
+export function getCompatibility (localDeps, remoteDeps, {
+  uncompatibleIfARemoteDepIsMissing
 } = {}) {
-  let result = { compatible: [], incompatible: [] };
+  let result = { compatible: [], incompatible: [] }
 
   for (const remoteDep of remoteDeps) {
     const localDep = _.find(localDeps,
-      d => (d.name === remoteDep.name) && (d.scope === remoteDep.scope));
-    const localDepVersion = localDep ? localDep.version : undefined;
+      d => (d.name === remoteDep.name) && (d.scope === remoteDep.scope))
+    const localDepVersion = localDep ? localDep.version : undefined
 
     let entry = {
       dependencyName: remoteDep.name,
       scope: remoteDep.scope,
       localVersion: localDepVersion,
       remoteVersion: remoteDep.version
-    };
+    }
 
     if ((localDepVersion) &&
       (localDepVersion !== remoteDep.version)) {
-      result.incompatible.push(entry);
+      result.incompatible.push(entry)
     } else if ((localDepVersion) &&
       (localDepVersion === remoteDep.version)) {
-      result.compatible.push(entry);
-    } 
+      result.compatible.push(entry)
+    }
   }
 
   if (uncompatibleIfARemoteDepIsMissing) {
     for (const localDep of localDeps) {
-       const remoteDep = _.find(remoteDeps,
-        d => (d.name === localDep.name) && (d.scope === localDep.scope));
-      const remoteDepVersion = remoteDep ? remoteDep.version : undefined;
+      const remoteDep = _.find(remoteDeps,
+        d => (d.name === localDep.name) && (d.scope === localDep.scope))
+      const remoteDepVersion = remoteDep ? remoteDep.version : undefined
 
       let entry = {
         dependencyName: localDep.name,
         scope: localDep.scope,
         localVersion: localDep.version,
-        remoteVersion: remoteDepVersion ? remoteDepVersion : 'MISSING'
-      };
+        remoteVersion: remoteDepVersion || 'MISSING'
+      }
 
       if (!remoteDepVersion) {
         result.incompatible.push(entry)
@@ -203,5 +207,5 @@ export function getCompatibility(localDeps, remoteDeps, {
     }
   }
 
-  return result;
+  return result
 }

@@ -1,2 +1,2 @@
-process.env.COVERAGE = 1;
-require('./babelhook');
+process.env.COVERAGE = 1
+require('./babelhook')

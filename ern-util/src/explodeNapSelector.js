@@ -1,3 +1,3 @@
-export default function explodeNapSelector(appSelector) {
-  return appSelector.split(':');
+export default function explodeNapSelector (appSelector) {
+  return appSelector.split(':')
 }

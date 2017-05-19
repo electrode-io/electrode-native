@@ -1,4 +1,6 @@
-import {publishMiniApp} from '../../lib/publication';
+import {
+  publishMiniApp
+} from '../../lib/publication'
 
 exports.command = 'publish'
 exports.desc = 'Publish a miniapp'
@@ -66,7 +68,7 @@ exports.builder = function (yargs) {
       type: 'string',
       default: '100%'
     })
-};
+}
 
 exports.handler = function (argv) {
   return publishMiniApp({
@@ -83,5 +85,5 @@ exports.handler = function (argv) {
     codePushTargetVersionName: argv.targetBinaryVersion,
     codePushIsMandatoryRelease: argv.mandatory,
     codePushRolloutPercentage: argv.rollout
-  });
-};
+  })
+}

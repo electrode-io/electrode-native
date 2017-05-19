@@ -1,47 +1,22 @@
 import {
-   reactNative,
-   required
-} from '@walmart/ern-util'
-
-// Node
-import child_process from 'child_process'
-import fs from 'fs'
-import http from 'http'
-import path from 'path'
-import shell from 'shelljs'
-import Ora from 'ora'
-import xcode from '@walmart/xcode-ern'
-import _ from 'lodash'
-
-import {
   capitalizeFirstLetter,
   throwIfShellCommandFailed
 } from './utils.js'
-
-const exec = child_process.exec
-const execSync = child_process.execSync
-// 3rd party
+import { required } from '@walmart/ern-util'
+import _ from 'lodash'
+import shell from 'shelljs'
 
 let mustacheView = {}
-let containerBaseManifest
 
-const ROOT_DIR = shell.pwd()
-const gitFolderRe = /.*\/(.*).git/
 const npmScopeModuleRe = /(@.*)\/(.*)/
 const npmModuleRe = /(.*)@(.*)/
-const fileRe = /^file:\/\//
-
-const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
-const DEFAULT_MAVEN_REPO_URL = `file://${process.env['HOME']}/.m2/repository`
 
 // Path to ern platform root folder
 const ERN_PATH = `${process.env['HOME']}/.ern`
 
-let log
-
-//=============================================================================
+// =============================================================================
 // ern-container-gen entry point
-//=============================================================================
+// =============================================================================
 
 // generator: The generator to use along with its config
 //  ex :
@@ -62,7 +37,7 @@ let log
 //      version: "1.0.0"
 //    }
 //  ]
-export default async function generateContainer({
+export default async function generateContainer ({
   containerVersion = required('containerVersion'),
   nativeAppName = required('nativeAppName'),
   platformPath = required('platformPath'),
@@ -71,13 +46,8 @@ export default async function generateContainer({
   miniapps = [],
   verbose
 } = {}) {
-  log = require('console-log-level')({
-      prefix: () => '[ern-container-gen]',
-      level: verbose ? 'info' : 'warn'
-  })
-
   if (!generator.generateContainer) {
-    throw new Error("The generator miss a generateContainer function !")
+    throw new Error('The generator miss a generateContainer function !')
   }
 
   // Folder from which container gen is run from
@@ -122,7 +92,7 @@ export default async function generateContainer({
   // something pretty much wrong)
   const reactNativePlugin = _.find(includedPlugins, p => p.name === 'react-native')
   if (!reactNativePlugin) {
-    throw new Error("react-native was not found in plugins list !")
+    throw new Error('react-native was not found in plugins list !')
   }
 
   // Get the react native version to use, based on what is declared on manifests
@@ -157,22 +127,22 @@ export default async function generateContainer({
     mustacheView)
 }
 
-function getUnscopedModuleName(pluginName) {
-  return npmScopeModuleRe.test(pluginName) ?
-      npmScopeModuleRe.exec(`${pluginName}`)[2]
+function getUnscopedModuleName (pluginName) {
+  return npmScopeModuleRe.test(pluginName)
+      ? npmScopeModuleRe.exec(`${pluginName}`)[2]
       : pluginName
 }
 
-function buildPluginListSync(plugins, manifest) {
+function buildPluginListSync (plugins, manifest) {
   return _.map(plugins,
-    p => ({ 
+    p => ({
       name: p.scope ? `@${p.scope}/${p.name}` : p.name,
       version: p.version
     })
   )
 }
 
-function getReactNativeVersionFromManifest(manifest) {
+function getReactNativeVersionFromManifest (manifest) {
   const rnDep = _.find(manifest.supportedPlugins, d => d.startsWith('react-native@'))
   return npmModuleRe.exec(rnDep)[2]
 }

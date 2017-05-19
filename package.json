@@ -9,7 +9,8 @@
     "setup-dev": "node setup-dev.js",
     "rebuild": "lerna clean --yes && lerna bootstrap",
     "test": "lerna run test",
-    "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r lcov -r html $(find ./ern-*/.nyc_output -type f -name '*.json' -maxdepth 3)"
+    "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r lcov -r html $(find ./ern-*/.nyc_output -type f -name '*.json' -maxdepth 3)",
+    "standard": "standard"
   },
   "bin": {
     "ern": "ern-global-cli/bin/ern.js",
@@ -28,6 +29,7 @@
     "chai": "^3.5.0",
     "cross-env": "^3.2.4",
     "dir-compare": "^1.3.0",
+    "dirty-chai": "^1.2.2",
     "husky": "^0.13.2",
     "install": "^0.8.7",
     "istanbul-combine": "^0.3.0",
@@ -35,7 +37,8 @@
     "mocha": "^3.2.0",
     "npm": "^4.4.1",
     "nyc": "^10.1.2",
-    "rimraf": "^2.6.0"
+    "rimraf": "^2.6.0",
+    "standard": "^10.0.2"
   },
   "dependencies": {
     "@walmart/xcode-ern": "1.0.2",
@@ -67,6 +70,20 @@
     "unirest": "^0.5.1",
     "update-notifier": "^1.0.3",
     "yargs": "^6.6.0"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "beforeEach",
+      "afterEach",
+      "before",
+      "after"
+    ],
+    "ignore": [
+      "**/dist",
+      "**/ern-message-gen/"
+    ]
   },
   "engines": {
     "node": ">=4"

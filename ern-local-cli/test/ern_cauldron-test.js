@@ -1,21 +1,18 @@
-import ernSupport from '@walmart/ern-util-dev';
+import ernSupport from '@walmart/ern-util-dev'
 
 describe('commands/cauldron', function () {
+  this.timeout(100000)
 
-    this.timeout(100000);
-
-    const {
+  const {
         runBefore,
         runAfter,
         ernTest, fail
-    } = ernSupport(__dirname);
+    } = ernSupport(__dirname)
 
-    before(runBefore);
+  before(runBefore)
 
-    it(`cauldron`, ernTest().then(fail, function ({err, stdout, stderr}) {
-        /cauldron needs a command/.test(stderr);
-    }));
-    after(runAfter);
-
-
-});
+  it(`cauldron`, ernTest().then(fail, (err) => {
+    /cauldron needs a command/.test(err.message)
+  }))
+  after(runAfter)
+})

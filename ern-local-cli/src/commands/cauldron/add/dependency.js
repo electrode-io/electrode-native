@@ -1,7 +1,7 @@
 import {
   Dependency,
-  explodeNapSelector,
-} from '@walmart/ern-util';
+  explodeNapSelector
+} from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
 exports.command = 'dependency <fullNapSelector> <dependency>'

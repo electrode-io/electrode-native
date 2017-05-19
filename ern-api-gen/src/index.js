@@ -1,24 +1,22 @@
-import generateProject, {generateSwagger} from './generateProject';
-import normalizeConfig from './normalizeConfig';
-import fs from 'fs';
-import shell from 'shelljs';
-import path from 'path';
-import semver from 'semver';
+import generateProject, {generateSwagger} from './generateProject'
+import normalizeConfig from './normalizeConfig'
+import fs from 'fs'
+import shell from 'shelljs'
+import path from 'path'
+import semver from 'semver'
 import {
-    PKG_FILE,
-    MODEL_FILE
-} from './Constants';
-import log from './log';
+    PKG_FILE
+} from './Constants'
+import log from './log'
 import {
     readJSON,
     writeFile
-} from './fileUtil';
+} from './fileUtil'
 import {
     platform,
     npm
 } from '@walmart/ern-util'
-import inquirer from 'inquirer';
-
+import inquirer from 'inquirer'
 
 /**
  * ==============================================================================
@@ -27,19 +25,19 @@ import inquirer from 'inquirer';
  *
  * Refer to normalizeConfig function doc for the list of options
  */
-export async function generateApi(options) {
-    let config = normalizeConfig(options);
+export async function generateApi (options) {
+  let config = normalizeConfig(options)
 
-    const outFolder = `${process.cwd()}/${config.moduleName}`;
-    if (fs.existsSync(outFolder)) {
-        log.warn(`A directory already exists at ${outFolder}`);
-        process.exit(1);
-    }
+  const outFolder = `${process.cwd()}/${config.moduleName}`
+  if (fs.existsSync(outFolder)) {
+    log.warn(`A directory already exists at ${outFolder}`)
+    process.exit(1)
+  }
 
     // Create output folder
-    shell.mkdir(outFolder);
-    await generateProject(config, outFolder);
-    log.info(`==  Generated project:$ cd ${outFolder}`);
+  shell.mkdir(outFolder)
+  await generateProject(config, outFolder)
+  log.info(`==  Generated project:$ cd ${outFolder}`)
 }
 /**
  * If updatePlugin is specified it will not attempt to update the version.
@@ -50,153 +48,149 @@ export async function generateApi(options) {
  * @param options
  * @returns {Promise.<void>}
  */
-export async function regenerateCode(options = {}) {
-    const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
-    const curVersion = pkg.version || '0.0.1';
-    let newPluginVer;
-    if (options.updatePlugin) {
-        newPluginVer = nextVersion(curVersion, options.updatePlugin);
-    } else {
-        newPluginVer = semver.inc(curVersion, 'minor');
-        const {confirmPluginVer} = await inquirer.prompt([{
-            type: 'confirm',
-            name: 'confirmPluginVer',
-            message: `Would you like to bump the plugin version from [${pkg.name}@${curVersion}] to [${pkg.name}@${newPluginVer}]?`
-        }]);
+export async function regenerateCode (options = {}) {
+  const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`)
+  const curVersion = pkg.version || '0.0.1'
+  let newPluginVer
+  if (options.updatePlugin) {
+    newPluginVer = nextVersion(curVersion, options.updatePlugin)
+  } else {
+    newPluginVer = semver.inc(curVersion, 'minor')
+    const {confirmPluginVer} = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'confirmPluginVer',
+      message: `Would you like to bump the plugin version from [${pkg.name}@${curVersion}] to [${pkg.name}@${newPluginVer}]?`
+    }])
 
-        if (!confirmPluginVer) {
-            newPluginVer = await _promptForPluginVersion(curVersion, pkg.name);
-        }
+    if (!confirmPluginVer) {
+      newPluginVer = await _promptForPluginVersion(curVersion, pkg.name)
     }
-    await _checkDependencyVersion(pkg);
-    const isNewVersion = semver.lt(curVersion, newPluginVer);
-    if (isNewVersion) {
-        pkg.version = newPluginVer;
-        //should call npm version ${} as it tags and does good stuff.
-        writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)); //Write the new package properties
-    }
-    const extra = pkg.ern && pkg.ern.message || {};
-    const config = normalizeConfig({
-        name: pkg.name,
-        apiVersion: pkg.version,
-        apiDescription: pkg.description,
-        apiAuthor: pkg.author,
-        bridgeVersion: options.bridgeVersion || pkg.peerDependencies["@walmart/react-native-electrode-bridge"],
-        ...extra,
-        ...options
-    });
+  }
+  await _checkDependencyVersion(pkg)
+  const isNewVersion = semver.lt(curVersion, newPluginVer)
+  if (isNewVersion) {
+    pkg.version = newPluginVer
+        // should call npm version ${} as it tags and does good stuff.
+    writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)) // Write the new package properties
+  }
+  const extra = (pkg.ern && pkg.ern.message) || {}
+  const config = normalizeConfig({
+    name: pkg.name,
+    apiVersion: pkg.version,
+    apiDescription: pkg.description,
+    apiAuthor: pkg.author,
+    bridgeVersion: options.bridgeVersion || pkg.peerDependencies['@walmart/react-native-electrode-bridge'],
+    ...extra,
+    ...options
+  })
 
-    await cleanGenerated();
-    await generateSwagger(config, process.cwd());
-    log.info("== Generation complete");
+  await cleanGenerated()
+  await generateSwagger(config, process.cwd())
+  log.info('== Generation complete')
 
-
-    if (isNewVersion) {
-        await publish(pkg);
-    } else
-        log.info('OK, make sure you bump the version and publish if needed.')
+  if (isNewVersion) {
+    await publish(pkg)
+  } else { log.info('OK, make sure you bump the version and publish if needed.') }
 }
-export async function cleanGenerated(outFolder = process.cwd()) {
-    const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`);
+export async function cleanGenerated (outFolder = process.cwd()) {
+  const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`)
 
-    shell.rm('-rf', path.join(outFolder, 'javascript'));
-    shell.rm('-rf', path.join(outFolder, 'swift'));
-    shell.rm('-rf', path.join(outFolder, 'android'));
-    return pkg;
+  shell.rm('-rf', path.join(outFolder, 'javascript'))
+  shell.rm('-rf', path.join(outFolder, 'swift'))
+  shell.rm('-rf', path.join(outFolder, 'android'))
+  return pkg
 }
 
-async function checkValid(message) {
-    const outFolder = process.cwd();
+async function checkValid (message) {
+  const outFolder = process.cwd()
 
-    if (!/react-native-(.*)-api$/.test(outFolder)) {
-        throw new Error(message);
-    }
-    let pkg = await readPackage();
-    if (!/react-native-(.*)-api$/.test(pkg.name)) {
-        throw new Error(message);
-    }
-    return pkg;
+  if (!/react-native-(.*)-api$/.test(outFolder)) {
+    throw new Error(message)
+  }
+  let pkg = await readPackage()
+  if (!/react-native-(.*)-api$/.test(pkg.name)) {
+    throw new Error(message)
+  }
+  return pkg
 }
-async function readPackage() {
-    return await readJSON(`${process.cwd()}/${PKG_FILE}`);
+async function readPackage () {
+  return readJSON(`${process.cwd()}/${PKG_FILE}`)
 }
 const nextVersion = (curVersion, userPluginVer) => {
-    switch ((userPluginVer + '').toLowerCase()) {
-        case 'same':
-        case 'no':
-        case 'q':
-        case 'quit':
-        case 'n':
-            return curVersion;
-        default: {
-            try {
-                //If valid return
-                if (semver.valid(userPluginVer) != null) {
-                    return userPluginVer;
-                }
-                const ret = semver.inc(curVersion, userPluginVer);
-                if (ret) {
-                    return ret;
-                }
-            } catch (e) {
-                log.info(`not a valid version:`, userPluginVer);
-            }
+  switch ((userPluginVer + '').toLowerCase()) {
+    case 'same':
+    case 'no':
+    case 'q':
+    case 'quit':
+    case 'n':
+      return curVersion
+    default: {
+      try {
+                // If valid return
+        if (semver.valid(userPluginVer) != null) {
+          return userPluginVer
         }
+        const ret = semver.inc(curVersion, userPluginVer)
+        if (ret) {
+          return ret
+        }
+      } catch (e) {
+        log.info(`not a valid version:`, userPluginVer)
+      }
     }
-};
-async function _promptForPluginVersion(curVersion) {
-
-    const {userPluginVer} = await inquirer.prompt([{
-        type: 'input',
-        name: 'userPluginVer',
-        message: `Current Plugin Version is ${curVersion}. Type the new plugin version (<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | same)?`
-    }]);
-    const ret = nextVersion(curVersion, userPluginVer);
-    if (ret == null) {
-        log.info(`sorry, I do not understand your answer`);
-        return _promptForPluginVersion(curVersion);
-    }
-    return ret;
+  }
+}
+async function _promptForPluginVersion (curVersion) {
+  const {userPluginVer} = await inquirer.prompt([{
+    type: 'input',
+    name: 'userPluginVer',
+    message: `Current Plugin Version is ${curVersion}. Type the new plugin version (<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | same)?`
+  }])
+  const ret = nextVersion(curVersion, userPluginVer)
+  if (ret == null) {
+    log.info(`sorry, I do not understand your answer`)
+    return _promptForPluginVersion(curVersion)
+  }
+  return ret
 }
 
-async function _checkDependencyVersion(pkg) {
-    let pluginDependency = pkg.peerDependencies || {};
-    let supportedPluginsMap = _constructSupportedPluginsMap();
-    for (const key of Object.keys(pluginDependency)) {
-        if (supportedPluginsMap.has(key) && pluginDependency[key] !== supportedPluginsMap.get(key)) {
-            const answer = await _promptForMissMatchOfSupportedPlugins(supportedPluginsMap.get(key), key);
-            pluginDependency[key] = answer.userPluginVer ? answer.userPluginVer : supportedPluginsMap.get(key);
-        }
+async function _checkDependencyVersion (pkg) {
+  let pluginDependency = pkg.peerDependencies || {}
+  let supportedPluginsMap = _constructSupportedPluginsMap()
+  for (const key of Object.keys(pluginDependency)) {
+    if (supportedPluginsMap.has(key) && pluginDependency[key] !== supportedPluginsMap.get(key)) {
+      const answer = await _promptForMissMatchOfSupportedPlugins(supportedPluginsMap.get(key), key)
+      pluginDependency[key] = answer.userPluginVer ? answer.userPluginVer : supportedPluginsMap.get(key)
     }
+  }
 }
 
-function _constructSupportedPluginsMap() {
-    let platformManifest = platform.getManifest(platform.currentVersion);
-    let supportedPluginsMap = new Map(
+function _constructSupportedPluginsMap () {
+  let platformManifest = platform.getManifest(platform.currentVersion)
+  let supportedPluginsMap = new Map(
         platformManifest.supportedPlugins.map((currVal) => {
-            if (currVal == null) return [];
-            let idx = currVal.lastIndexOf('@'); //logic for scoped dependency
-            return [currVal.substring(0, idx), currVal.substring(idx + 1)];
-        }));
-    return supportedPluginsMap;
+          if (currVal == null) return []
+          let idx = currVal.lastIndexOf('@') // logic for scoped dependency
+          return [currVal.substring(0, idx), currVal.substring(idx + 1)]
+        }))
+  return supportedPluginsMap
 }
 
-function _promptForMissMatchOfSupportedPlugins(curVersion, pluginName) {
-    return inquirer.prompt([{
-        type: 'input',
-        name: 'userPluginVer',
-        message: `Type new plugin version of ${pluginName}. Press Enter to use the default '${curVersion}'.`
-    }]);
+function _promptForMissMatchOfSupportedPlugins (curVersion, pluginName) {
+  return inquirer.prompt([{
+    type: 'input',
+    name: 'userPluginVer',
+    message: `Type new plugin version of ${pluginName}. Press Enter to use the default '${curVersion}'.`
+  }])
 }
 
-async function publish({version}) {
-
-    const answers = await inquirer.prompt([{
-        type: 'confirm',
-        name: 'confirmNpmPublish',
-        message: `Would you like to npm publish the plugin [${version}]?`
-    }]);
-    if (answers.confirmNpmPublish) {
-        await npm.npm('publish');
-    }
+async function publish ({version}) {
+  const answers = await inquirer.prompt([{
+    type: 'confirm',
+    name: 'confirmNpmPublish',
+    message: `Would you like to npm publish the plugin [${version}]?`
+  }])
+  if (answers.confirmNpmPublish) {
+    await npm.npm('publish')
+  }
 }

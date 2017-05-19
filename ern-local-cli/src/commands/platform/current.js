@@ -1,11 +1,14 @@
-import {platform} from '@walmart/ern-util';
-const log = require('console-log-level')();
+import {
+  platform
+} from '@walmart/ern-util'
 
-exports.command = 'current';
-exports.desc = 'Show current platform version';
+const log = require('console-log-level')()
 
-exports.builder = {};
+exports.command = 'current'
+exports.desc = 'Show current platform version'
+
+exports.builder = {}
 
 exports.handler = function (argv) {
-    log.info(`Platform version : v${platform.currentVersion}`);
-};
+  log.info(`Platform version : v${platform.currentVersion}`)
+}

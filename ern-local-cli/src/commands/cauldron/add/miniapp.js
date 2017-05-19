@@ -1,8 +1,12 @@
-import inquirer from 'inquirer'
-import { getNativeAppCompatibilityReport} from '../../../lib/compatibility'
-import { explodeNapSelector } from '@walmart/ern-util'
-import miniapp from '../../../lib/miniapp'
+import {
+  getNativeAppCompatibilityReport
+} from '../../../lib/compatibility'
+import {
+  explodeNapSelector
+} from '@walmart/ern-util'
 import _ from 'lodash'
+import inquirer from 'inquirer'
+import miniapp from '../../../lib/miniapp'
 
 exports.command = 'miniapp [fullNapSelector]'
 exports.desc = 'Publish mini app to given native app'
@@ -32,26 +36,25 @@ exports.handler = async function (argv) {
         return {name, value}
       }
     }).filter(e => e !== undefined)
-    
+
     if (compatibleVersionsChoices.length === 0) {
-      return console.log("No compatible native application versions were found :(")
+      return console.log('No compatible native application versions were found :(')
     }
-    
+
     const {fullNapSelectors} = await inquirer.prompt({
       type: 'checkbox',
       name: 'fullNapSelectors',
       message: 'Select one or more compatible native application version(s)',
       choices: compatibleVersionsChoices
     })
-    
+
     for (const fullNapSelector of fullNapSelectors) {
       try {
         await miniapp.fromCurrentPath().addToNativeAppInCauldron(
         ...explodeNapSelector(fullNapSelector), argv.force)
-      } catch(e) {
+      } catch (e) {
         console.log(`An error happened while trying to add MiniApp to ${fullNapSelector}`)
       }
-      
     }
   } else {
     return miniapp.fromCurrentPath().addToNativeAppInCauldron(

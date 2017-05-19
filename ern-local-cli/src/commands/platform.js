@@ -1,5 +1,5 @@
 exports.command = 'platform'
 exports.desc = 'Platform related commands'
 exports.builder = function (yargs) {
-    return yargs.commandDir('platform').demandCommand(1, 'platform needs a command');
-};
+  return yargs.commandDir('platform').demandCommand(1, 'platform needs a command')
+}

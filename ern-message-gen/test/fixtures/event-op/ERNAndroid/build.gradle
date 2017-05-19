@@ -1,0 +1,20 @@
+buildscript {
+repositories {
+jcenter()
+}
+dependencies {
+classpath 'com.android.tools.build:gradle:2.2.2'
+}
+}
+
+allprojects {
+repositories {
+mavenLocal()
+maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
+jcenter()
+}
+}
+
+task clean(type: Delete) {
+delete rootProject.buildDir
+}

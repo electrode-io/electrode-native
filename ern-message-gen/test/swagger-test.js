@@ -1,29 +1,22 @@
-import Swagger from '../src/java/Swagger';
-import path from 'path';
-import {expect} from 'chai';
-
+import Swagger from '../src/java/Swagger'
+import path from 'path'
+import {expect} from 'chai'
 
 describe('Swagger', function () {
+  it('should create', async function () {
+    const swagger = await Swagger.create({definition: path.join(__dirname, 'fixtures', 'uber.json')})
 
-    it('should create', async function () {
-        const swagger = await Swagger.create({definition: path.join(__dirname, 'fixtures', 'uber.json')})
+    const info = swagger.getInfo()
 
-        const info = swagger.getInfo();
+    const definitions = swagger.getDefinitions()
 
+    const activities = definitions.get('Activities')
 
-        const definitions = swagger.getDefinitions();
+    const history = activities.getProperties().get('history')
 
-        const activities = definitions.get("Activities");
+    const items = history.getItems()
 
-
-
-        const history = activities.getProperties().get("history");
-
-        const items = history.getItems();
-
-        expect(items.get$ref()).to.eql('#/definitions/Activity');
-        expect(info).to.exist;
-
-    });
-
-});
+    expect(items.get$ref()).to.eql('#/definitions/Activity')
+    expect(info).to.exist
+  })
+})
