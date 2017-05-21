@@ -1,5 +1,4 @@
 import exec from './exec'
-import log from './log'
 
 export function npm (cmd, args = [], options = {
   cwd: process.cwd()

@@ -8,11 +8,9 @@ import _ from 'lodash'
 import chalk from 'chalk'
 import Table from 'cli-table'
 
-const log = require('console-log-level')()
-
 //
 // Check compatibility of current miniapp against one or multiple native apps
-export async function checkCompatibilityWithNativeApp (verbose, appName, platformName, versionName) {
+export async function checkCompatibilityWithNativeApp (appName, platformName, versionName) {
   let compatReport = await spin('Checking compatibility',
     getNativeAppCompatibilityReport({ appName, platformName, versionName }))
 
@@ -20,10 +18,8 @@ export async function checkCompatibilityWithNativeApp (verbose, appName, platfor
     log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + ' : ' +
       (r.isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE')))
 
-    if (verbose) {
-      logCompatibilityReportTable(r.compatibility)
-    }
-
+    logCompatibilityReportTable(r.compatibility)
+    
     if (appName && platformName && versionName) {
       return r
     }
@@ -32,7 +28,7 @@ export async function checkCompatibilityWithNativeApp (verbose, appName, platfor
 
 //
 // Check compatibility of current miniapp against a given platform version
-export function checkCompatibilityWithPlatform (verbose, platformVersion) {
+export function checkCompatibilityWithPlatform (platformVersion) {
   const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies
   const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion)
 
@@ -41,9 +37,7 @@ export function checkCompatibilityWithPlatform (verbose, platformVersion) {
 
   log.info(isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE'))
 
-  if (verbose) {
-    logCompatibilityReportTable(report)
-  }
+  logCompatibilityReportTable(report)
 }
 
 //

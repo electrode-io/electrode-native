@@ -7,7 +7,6 @@ import semver from 'semver'
 import {
     PKG_FILE
 } from './Constants'
-import log from './log'
 import {
     readJSON,
     writeFile

@@ -1,5 +1,6 @@
 // android
 import * as _android from './android'
+import _coloredLog from './coloredLog'
 import _config from './config'
 import _explodeNapSelector from './explodeNapSelector'
 import _platform from './platform'
@@ -13,6 +14,7 @@ import _codePush from './codePush'
 import _Dependency from './Dependency'
 
 export const android = _android
+export const coloredLog = _coloredLog
 export const config = _config
 export const explodeNapSelector = _explodeNapSelector
 export const platform = _platform
@@ -27,6 +29,7 @@ export const Dependency = _Dependency
 
 export default ({
   android: _android,
+  coloredLog: _coloredLog,
   config: _config,
   explodeNapSelector: _explodeNapSelector,
   platform: _platform,

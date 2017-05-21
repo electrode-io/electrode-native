@@ -11,12 +11,8 @@ exports.builder = function (yargs) {
           alias: 'v',
           describe: 'Platform version to check compatibility with'
         })
-        .option('verbose', {
-          type: 'bool',
-          describe: 'verbose output'
-        })
 }
 
 exports.handler = function (argv) {
-  return checkCompatibilityWithPlatform(argv.verbose, argv.platformVersion)
+  return checkCompatibilityWithPlatform(argv.platformVersion)
 }

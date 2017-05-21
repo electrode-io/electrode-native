@@ -3,8 +3,6 @@ import {
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
-const log = require('console-log-level')()
-
 exports.command = 'dependencies <fullNapSelector>'
 exports.desc = 'Get all the native dependencies of a given native application'
 

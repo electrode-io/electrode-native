@@ -1,5 +1,4 @@
 import { generateContainer } from './index.js'
-const log = require('console-log-level')()
 const argv = require('minimist')(process.argv.slice(2))
 
 //

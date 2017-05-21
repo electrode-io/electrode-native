@@ -2,7 +2,6 @@ import {
   execSync
 } from 'child_process'
 import config from './config.js'
-import log from './log.js'
 import fs from 'fs'
 import _ from 'lodash'
 

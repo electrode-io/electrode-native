@@ -16,10 +16,6 @@ exports.desc = 'Run the container generator'
 
 exports.builder = function (yargs) {
   return yargs
-    .option('verbose', {
-      type: 'bool',
-      describe: 'verbose output'
-    })
     .option('fullNapSelector', {
       type: 'string',
       alias: 'n',
@@ -54,7 +50,6 @@ exports.handler = async function (argv) {
     containerVersion,
     jsOnly,
     outputFolder,
-    verbose,
     miniapps
   } = argv
 
@@ -126,7 +121,6 @@ exports.handler = async function (argv) {
       explodedNapSelector[0], /* nativeAppName */
       explodedNapSelector[1], /* nativeAppPlatform */
       explodedNapSelector[2], /* nativeAppVersion */
-      containerVersion,
-      verbose)
+      containerVersion)
   }
 }

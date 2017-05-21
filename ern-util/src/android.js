@@ -3,8 +3,6 @@ import inquirer from 'inquirer'
 import shell from 'shelljs'
 import spin from './spin.js'
 
-const log = require('console-log-level')()
-
 // ==============================================================================
 // Misc utilities
 // ==============================================================================

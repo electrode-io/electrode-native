@@ -13,10 +13,6 @@ exports.builder = function (yargs) {
         .option('scope', {
           describe: 'npm scope to use for this app'
         })
-        .option('verbose', {
-          type: 'bool',
-          describe: 'verbose output'
-        })
         .option('headless', {
           type: 'bool',
           describe: 'Creates an headless (without ui) miniapp'
@@ -27,7 +23,6 @@ exports.handler = async function (argv) {
   await MiniApp.create(argv.appName, {
     platformVersion: argv.platfomrversion && argv.platformVersion.replace('v', ''),
     scope: argv.scope,
-    verbose: argv.verbose,
     headless: argv.headless
   })
 }

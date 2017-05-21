@@ -12,9 +12,6 @@ exports.builder = function (yargs) {
       type: 'bool',
       describe: 'Force publish'
     })
-    .option('verbose', {
-      describe: 'Verbose output'
-    })
     .option('fullNapSelector', {
       alias: 'n',
       describe: 'Full native application selector'
@@ -73,7 +70,6 @@ exports.builder = function (yargs) {
 exports.handler = function (argv) {
   return publishMiniApp({
     force: argv.force,
-    verbose: argv.verbose,
     fullNapSelector: argv.fullNapSelector,
     npmPublish: argv.npmPublish,
     publishAsOtaUpdate: argv.ota,

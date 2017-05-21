@@ -4,8 +4,6 @@ import {
 } from '@walmart/ern-util'
 import chalk from 'chalk'
 
-const log = require('console-log-level')()
-
 exports.command = 'plugins [platformVersion]'
 exports.desc = 'List supported platform plugins'
 

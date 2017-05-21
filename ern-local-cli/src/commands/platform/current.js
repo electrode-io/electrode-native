@@ -2,8 +2,6 @@ import {
   platform
 } from '@walmart/ern-util'
 
-const log = require('console-log-level')()
-
 exports.command = 'current'
 exports.desc = 'Show current platform version'
 

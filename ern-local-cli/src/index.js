@@ -1,5 +1,6 @@
 import 'babel-polyfill'
 import {
+  coloredLog,
   platform
 } from '@walmart/ern-util'
 import chalk from 'chalk'
@@ -22,6 +23,7 @@ function showBanner () {
 // Entry point
 // ==============================================================================
 export default function run () {
+  global.log = coloredLog
   showBanner()
   return yargs.commandDir('commands')
         .demandCommand(1, 'Need a command')

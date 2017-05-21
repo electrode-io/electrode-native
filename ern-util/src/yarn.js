@@ -3,8 +3,6 @@ import {
   execSync
 } from 'child_process'
 
-const log = require('console-log-level')()
-
 // Yarn add a given dependency
 export async function yarnAdd (dependency, {dev} = {}) {
   return new Promise((resolve, reject) => {

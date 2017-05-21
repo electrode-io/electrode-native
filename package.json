@@ -78,7 +78,8 @@
       "beforeEach",
       "afterEach",
       "before",
-      "after"
+      "after",
+      "log"
     ],
     "ignore": [
       "**/dist",

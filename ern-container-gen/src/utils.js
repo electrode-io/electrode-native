@@ -172,7 +172,7 @@ export async function reactNativeBundleIos (paths) {
 // miniapps should be strings that can be provided to `yarn add`
 // this way we can generate a miniapp composite from different miniapp sources
 // (git, local file system, npm ...)
-export async function generateMiniAppsComposite (miniapps, folder, {verbose} = {}) {
+export async function generateMiniAppsComposite (miniapps, folder) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
   throwIfShellCommandFailed()

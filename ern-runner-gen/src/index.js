@@ -90,16 +90,10 @@ export async function generateRunner ({
     plugins,
     miniapp,
     outFolder,
-    verbose,
     headless,
     platform
 }) {
   try {
-    log = require('console-log-level')({
-      prefix: () => '[ern-runner-gen]',
-      level: verbose ? 'info' : 'warn'
-    })
-
     if (!miniapp.localPath) {
       throw new Error('Miniapp must come with a local path !')
     }
@@ -147,15 +141,9 @@ export async function generateContainerForRunner ({
     platformPath,
     plugins,
     miniapp,
-    verbose,
     platform,
     outFolder
 }) {
-  log = require('console-log-level')({
-    prefix: () => '[ern-runner-gen]',
-    level: verbose ? 'info' : 'warn'
-  })
-
   const generator = (platform === 'android')
         ? new MavenGenerator()
         : new GithubGenerator()

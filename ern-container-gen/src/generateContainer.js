@@ -43,8 +43,7 @@ export default async function generateContainer ({
   platformPath = required('platformPath'),
   generator = required('generator'),
   plugins = [],
-  miniapps = [],
-  verbose
+  miniapps = []
 } = {}) {
   if (!generator.generateContainer) {
     throw new Error('The generator miss a generateContainer function !')

@@ -25,7 +25,6 @@ import inquirer from 'inquirer'
 import _ from 'lodash'
 import shell from 'shelljs'
 
-const log = require('console-log-level')()
 const simctl = require('node-simctl')
 
 const {
@@ -70,7 +69,6 @@ export default class MiniApp {
   static async create (appName, {
         platformVersion,
         scope,
-        verbose,
         headless
     }) {
     try {
@@ -225,7 +223,7 @@ export default class MiniApp {
     return [...this.jsDependencies, ...this.nativeDependencies]
   }
 
-  async runInIosRunner (verbose) {
+  async runInIosRunner () {
     // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
     // (no code injection for plugins yet :()), it has hard-coded references to
     // our bridge and code-push ... so we absolutely need them in the miniapp for
@@ -245,7 +243,6 @@ export default class MiniApp {
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/ios`,
-      verbose,
       headless: this.isHeadLess,
       platform: 'ios'
     }
@@ -287,13 +284,12 @@ export default class MiniApp {
     await simctl.launch(device.udid, 'MyCompany.ErnRunner')
   }
 
-  async runInAndroidRunner (verbose) {
+  async runInAndroidRunner () {
     const runnerConfig = {
       platformPath: platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/android`,
-      verbose,
       headless: this.isHeadLess,
       platform: 'android'
     }

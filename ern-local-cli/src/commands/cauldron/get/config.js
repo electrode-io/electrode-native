@@ -3,8 +3,6 @@ import {
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
-const log = require('console-log-level')()
-
 exports.command = 'config <napSelector>'
 exports.desc = 'Get a configuration from the cauldron'
 

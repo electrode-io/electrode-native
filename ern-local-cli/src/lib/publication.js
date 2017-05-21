@@ -20,7 +20,6 @@ import inquirer from 'inquirer'
 import _ from 'lodash'
 import emoji from 'node-emoji'
 
-const log = require('console-log-level')()
 const ERN_PATH = `${process.env['HOME']}/.ern`
 
 function createContainerGenerator (platform, config) {
@@ -46,8 +45,7 @@ function createContainerGenerator (platform, config) {
 export async function runContainerGen (nativeAppName = required('nativeAppName'),
                                       nativeAppPlatform = required('nativeAppPlatform'),
                                       nativeAppVersion = required('nativeAppVersion'),
-                                      version = required('version'),
-                                      verbose) {
+                                      version = required('version')) {
   try {
     const plugins = await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion)
     const miniapps = await cauldron.getContainerMiniApps(nativeAppName, nativeAppPlatform, nativeAppVersion, { convertToObjects: true })
@@ -59,8 +57,7 @@ export async function runContainerGen (nativeAppName = required('nativeAppName')
       platformPath: platform.currentPlatformVersionPath,
       generator: createContainerGenerator(nativeAppPlatform, config ? config.containerGenerator : undefined),
       plugins,
-      miniapps,
-      verbose
+      miniapps
     })
   } catch (e) {
     log.error(e)
@@ -70,7 +67,6 @@ export async function runContainerGen (nativeAppName = required('nativeAppName')
 // This is the entry point for publication of a MiniApp either in a new generated
 // container or as an OTA update through CodePush
 export async function publishMiniApp ({
-    verbose,
     force,
     fullNapSelector,
     npmPublish = false,
@@ -93,7 +89,7 @@ export async function publishMiniApp ({
   // A specific native application / platform / version was provided, check for compatibility
   if (fullNapSelector) {
     const explodedNapSelector = explodeNativeAppSelector(fullNapSelector)
-    const report = await checkCompatibilityWithNativeApp(verbose, explodedNapSelector[0], explodedNapSelector[1], explodedNapSelector[2])
+    const report = await checkCompatibilityWithNativeApp(explodedNapSelector[0], explodedNapSelector[1], explodedNapSelector[2])
     if (!report.isCompatible) {
       throw new Error('Cannot publish MiniApp. Native Application is not compatible')
     }
@@ -136,7 +132,6 @@ export async function publishMiniApp ({
   for (const nativeApp of nativeAppsToPublish) {
     if (nativeApp.isReleased) {
       await publishOta(nativeApp.fullNapSelector, {
-        verbose,
         force,
         codePushAppName,
         codePushDeploymentName,
@@ -147,7 +142,6 @@ export async function publishMiniApp ({
       })
     } else {
       await publishInApp(nativeApp.fullNapSelector, {
-        verbose,
         force,
         containerVersion
       })
@@ -155,7 +149,7 @@ export async function publishMiniApp ({
   }
 }
 
-async function publishInApp (fullNapSelector, {containerVersion, verbose, force}) {
+async function publishInApp (fullNapSelector, {containerVersion, force}) {
   try {
     await MiniApp.fromCurrentPath().addToNativeAppInCauldron(
             ...explodeNativeAppSelector(fullNapSelector), force)
@@ -165,7 +159,7 @@ async function publishInApp (fullNapSelector, {containerVersion, verbose, force}
     }
 
     await runContainerGen(
-            ...explodeNativeAppSelector(fullNapSelector), containerVersion, verbose)
+            ...explodeNativeAppSelector(fullNapSelector), containerVersion)
   } catch (e) {
     log.error(`[publishInApp] failed`)
   }
@@ -181,7 +175,6 @@ async function askUserForContainerVersion () {
 }
 
 export async function publishOta (fullNapSelector, {
-    verbose,
     force,
     codePushAppName,
     codePushDeploymentName,
