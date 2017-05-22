@@ -1,7 +1,7 @@
-import {
+/* import {
   exec
 } from 'child_process'
-import inquirer from 'inquirer'
+import inquirer from 'inquirer' */
 import platform from './platform'
 
 export class CodePushCommands {
@@ -25,8 +25,9 @@ ${mandatory ? `-m` : ''} \
 ${deploymentName ? `-d ${deploymentName}` : ''} \
 ${rolloutPercentage ? `-r ${rolloutPercentage}` : ''} \
 ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
+    console.log(`CodePush command : ${codePushCommand}`)
 
-    let shouldExecuteCodePushCommand = true
+    /* let shouldExecuteCodePushCommand = true
 
     if (askForConfirmation) {
       console.log(`Will run:\n${codePushCommand}`)
@@ -39,7 +40,7 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
       shouldExecuteCodePushCommand = userConfirmedCodePushCommand
     }
 
-    if (shouldExecuteCodePushCommand) {
+     if (shouldExecuteCodePushCommand) {
       return new Promise((resolve, reject) => {
         exec(codePushCommand,
             (err, stdout, stderr) => {
@@ -54,7 +55,7 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
               }
             })
       })
-    }
+    } */
   }
 }
 
