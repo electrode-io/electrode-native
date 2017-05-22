@@ -1,5 +1,5 @@
 export default class CodegenSecurity {
-    toString() {
-        return `${this.name}(${this.type})`
-    }
+  toString () {
+    return `${this.name}(${this.type})`
+  }
 }

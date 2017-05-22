@@ -1,173 +1,169 @@
-import path from 'path';
-import {writeFile} from './fileUtil';
+import path from 'path'
+import {writeFile} from './fileUtil'
 import {CodegenConfigurator, DefaultGenerator} from '@walmart/ern-message-gen'
 import {
-    PKG_FILE,
-    MODEL_FILE
-} from './Constants';
+  PKG_FILE,
+  MODEL_FILE
+} from './Constants'
 
-export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"], ["IOS", "ERNSwift"]];
-//export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
+export const GENERATE = [['android', 'ERNAndroid'], ['javascript', 'ERNES6'], ['IOS', 'ERNSwift']]
+// export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
 
-export async function generateSwagger({apiSchemaPath = MODEL_FILE, name, namespace = '', ...optional}, outFolder) {
-    const inputSpec = path.resolve(outFolder, apiSchemaPath);
-    const shared = {
-        apiPackage: `${namespace}.api`,
-        modelPackage: `${namespace}.model`,
-        inputSpec,
-        version: optional.apiVersion,
-        description: optional.apiDescription,
-        projectVersion: optional.apiVersion,
-        groupId: namespace,
-        ...optional,
-    };
+export async function generateSwagger ({apiSchemaPath = MODEL_FILE, name, namespace = '', ...optional}, outFolder) {
+  const inputSpec = path.resolve(outFolder, apiSchemaPath)
+  const shared = {
+    apiPackage: `${namespace}.api`,
+    modelPackage: `${namespace}.model`,
+    inputSpec,
+    version: optional.apiVersion,
+    description: optional.apiDescription,
+    projectVersion: optional.apiVersion,
+    groupId: namespace,
+    ...optional
+  }
 
-    for (const [projectName, lang] of GENERATE) {
-        const cc = new CodegenConfigurator({...shared, lang, projectName, outputDir: outFolder + '/' + projectName});
-        const opts = await cc.toClientOptInput();
-        new DefaultGenerator().opts(opts).generate();
-    }
+  for (const [projectName, lang] of GENERATE) {
+    const cc = new CodegenConfigurator({...shared, lang, projectName, outputDir: outFolder + '/' + projectName})
+    const opts = await cc.toClientOptInput()
+    new DefaultGenerator().opts(opts).generate()
+  }
 }
-export function generatePackageJson({
-                                        npmScope,
-                                        moduleName,
-                                        reactNativeVersion,
-                                        apiVersion = '1.0.0',
-                                        apiDescription,
-                                        apiAuthor,
-                                        apiLicense,
-                                        bridgeVersion,
-                                        ...conf
-                                    }) {
+export function generatePackageJson ({
+  npmScope,
+  moduleName,
+  reactNativeVersion,
+  apiVersion = '1.0.0',
+  apiDescription,
+  apiAuthor,
+  apiLicense,
+  bridgeVersion,
+  ...conf
+}) {
+  return JSON.stringify({
+    'name': npmScope ? `@${npmScope}/${moduleName}` : moduleName,
+    'version': apiVersion,
+    'description': apiDescription,
+    'main': 'javascript/src/index.js',
+    'author': apiAuthor,
+    'license': apiLicense,
+    'scripts': {
+      'prepublish': 'ern generate api regen -u same'
+    },
+    'peerDependencies': {
+      '@walmart/react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
+    },
+    'ern': {
+      'message': conf
+    }
+  }, null, 2)
+}
 
-    return JSON.stringify({
-        "name": npmScope ? `@${npmScope}/${moduleName}` : moduleName,
-        "version": apiVersion,
-        "description": apiDescription,
-        "main": "javascript/src/index.js",
-        "author": apiAuthor,
-        "license": apiLicense,
-        "scripts": {
-            "prepublish": "ern generate api regen -u same"
+export function generateInitialSchema ({namespace, shouldGenerateBlankApi}) {
+  return shouldGenerateBlankApi ? '' : `
+  {
+    "swagger": "2.0",
+    "info": {
+      "description": "Walmart Item Module",
+      "title": "WalmartItem",
+      "contact": {
+        "name": "ERN Mobile Platform Team"
+      }
+    },
+    "paths": {
+      "/items": {
+        "get": {
+          "tags": [
+          "WalmartItem"
+          ],
+          "description": "Returns all items from the system that the user has access to",
+          "operationId": "findItems",
+          "parameters": [{
+            "name": "limit",
+            "in": "query",
+            "description": "maximum number of results to return",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }],
+          "responses": {
+            "200": {
+              "description": "Item response",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Item"
+                }
+              }
+            }
+          }
         },
-        "peerDependencies": {
-            "@walmart/react-native-electrode-bridge": `${bridgeVersion.split('.')[0]}.x`
-        },
-        "ern": {
-            "message": conf
+        "post": {
+          "tags": [
+          "WalmartItem"
+          ],
+          "description": "Creates a Item in the store.",
+          "operationId": "addItem",
+          "parameters": [{
+            "name": "item",
+            "in": "body",
+            "description": "Item to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          }],
+          "responses": {
+            "200": {
+              "schema": {
+                "type": "boolean"
+              }
+            }
+          }
         }
-    }, null, 2);
-
-}
-
-export function generateInitialSchema({namespace, shouldGenerateBlankApi}) {
-    return shouldGenerateBlankApi ? '' : `
-    {
-    	"swagger": "2.0",
-    	"info": {
-    		"description": "Walmart Item Module",
-    		"title": "WalmartItem",
-    		"contact": {
-    			"name": "ERN Mobile Platform Team"
-    		}
-    	},
-    	"paths": {
-    		"/items": {
-    			"get": {
-    				"tags": [
-    					"WalmartItem"
-    				],
-    				"description": "Returns all items from the system that the user has access to",
-    				"operationId": "findItems",
-    				"parameters": [{
-    					"name": "limit",
-    					"in": "query",
-    					"description": "maximum number of results to return",
-    					"required": false,
-    					"type": "integer",
-    					"format": "int32"
-    				}],
-    				"responses": {
-    					"200": {
-    						"description": "Item response",
-    						"schema": {
-    							"type": "array",
-    							"items": {
-    								"$ref": "#/definitions/Item"
-    							}
-    						}
-    					}
-    				}
-    			},
-    			"post": {
-    				"tags": [
-    					"WalmartItem"
-    				],
-    				"description": "Creates a Item in the store.",
-    				"operationId": "addItem",
-    				"parameters": [{
-    					"name": "item",
-    					"in": "body",
-    					"description": "Item to add",
-    					"required": true,
-    					"schema": {
-    						"$ref": "#/definitions/Item"
-    					}
-    				}],
-    				"responses": {
-    					"200": {
-    						"schema": {
-    							"type": "boolean"
-    						}
-    					}
-    				}
-    			}
-    		},
-    		"event/itemAdded": {
-    			"event": {
-    				"tags": [
-    					"WalmartItem"
-    				],
-    				"operationId": "itemAdded",
-    				"parameters": [{
-    					"name": "itemId",
-    					"in": "path",
-    					"description": "Event to notify new item added",
-    					"required": true,
-    					"type": "string"
-    				}]
-    			}
-    		}
-    	},
-    	"definitions": {
-    		"Item": {
-    			"type": "object",
-    			"required": [
-    				"name",
-    				"id"
-    			],
-    			"properties": {
-    				"id": {
-    					"type": "integer",
-    					"format": "int64"
-    				},
-    				"name": {
-    					"type": "string"
-    				},
-    				"description": {
-    					"type": "string"
-    				}
-    			}
-    		}
-    	}
+      },
+      "event/itemAdded": {
+        "event": {
+          "tags": [
+          "WalmartItem"
+          ],
+          "operationId": "itemAdded",
+          "parameters": [{
+            "name": "itemId",
+            "in": "path",
+            "description": "Event to notify new item added",
+            "required": true,
+            "type": "string"
+          }]
+        }
+      }
+    },
+    "definitions": {
+      "Item": {
+        "type": "object",
+        "required": [
+        "name",
+        "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
     }
-`
+  }
+  `
 }
 
-
-export default async function generateProject(config = {}, outFolder) {
-    await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config));
-    await writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config));
-    await generateSwagger(config, outFolder);
-
+export default async function generateProject (config = {}, outFolder) {
+  await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config))
+  await writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config))
+  await generateSwagger(config, outFolder)
 }

@@ -7,8 +7,8 @@ export default class ParserException extends Error {
      * @param message the detail message. The detail message is saved for
      * later retrieval by the {@link #getMessage()} method.
      */
-    constructor(message) {
-        super(message);
-        this.message = message;
-    }
+  constructor (message) {
+    super(message)
+    this.message = message
+  }
 }

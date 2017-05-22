@@ -1,35 +1,35 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
-const ERN_PATH = path.join(process.env['HOME'], '.ern');
-const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc');
-const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc');
+const ERN_PATH = path.join(process.env['HOME'], '.ern')
+const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
+const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc')
 
 export class ErnConfig {
-    get obj() {
-        return JSON.parse(fs.readFileSync(this.ernRcFilePath, 'utf-8'));
-    }
+  get obj () {
+    return JSON.parse(fs.readFileSync(this.ernRcFilePath, 'utf-8'))
+  }
 
-    get ernRcFilePath() {
-        return fs.existsSync(ERN_RC_LOCAL_FILE_PATH) ?
-            ERN_RC_LOCAL_FILE_PATH :
-            ERN_RC_GLOBAL_FILE_PATH;
-    }
+  get ernRcFilePath () {
+    return fs.existsSync(ERN_RC_LOCAL_FILE_PATH)
+            ? ERN_RC_LOCAL_FILE_PATH
+            : ERN_RC_GLOBAL_FILE_PATH
+  }
 
-    getValue(key, defaultValue) {
-        return this.obj[key] || defaultValue;
-    }
+  getValue (key, defaultValue) {
+    return this.obj[key] || defaultValue
+  }
 
-    setValue(key, value) {
-        let c = this.obj;
-        c[key] = value;
-        fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c));
-    }
+  setValue (key, value) {
+    let c = this.obj
+    c[key] = value
+    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c))
+  }
 
-    writeConfig(obj) {
-        fs.writeFileSync(this.ernRcFilePath, JSON.stringify(obj, null, 2));
-    }
+  writeConfig (obj) {
+    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(obj, null, 2))
+  }
 }
-const config = new ErnConfig();
+const config = new ErnConfig()
 
-export default config;
+export default config

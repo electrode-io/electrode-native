@@ -1,4 +1,6 @@
-import {publishMiniApp} from '../../lib/publication';
+import {
+  publishMiniApp
+} from '../../lib/publication'
 
 exports.command = 'publish'
 exports.desc = 'Publish a miniapp'
@@ -9,9 +11,6 @@ exports.builder = function (yargs) {
       alias: 'f',
       type: 'bool',
       describe: 'Force publish'
-    })
-    .option('verbose', {
-      describe: 'Verbose output'
     })
     .option('fullNapSelector', {
       alias: 'n',
@@ -66,12 +65,11 @@ exports.builder = function (yargs) {
       type: 'string',
       default: '100%'
     })
-};
+}
 
 exports.handler = function (argv) {
   return publishMiniApp({
     force: argv.force,
-    verbose: argv.verbose,
     fullNapSelector: argv.fullNapSelector,
     npmPublish: argv.npmPublish,
     publishAsOtaUpdate: argv.ota,
@@ -83,5 +81,5 @@ exports.handler = function (argv) {
     codePushTargetVersionName: argv.targetBinaryVersion,
     codePushIsMandatoryRelease: argv.mandatory,
     codePushRolloutPercentage: argv.rollout
-  });
-};
+  })
+}
