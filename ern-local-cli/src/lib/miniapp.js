@@ -395,8 +395,7 @@ Otherwise you can safely ignore this warning
         } */
 
         log.info('Checking compatibility with each native dependency')
-        let report = await checkCompatibilityWithNativeApp(
-                    true, appName, platformName, versionName)
+        let report = await checkCompatibilityWithNativeApp(appName, platformName, versionName)
         if (!report.isCompatible) {
           throw new Error('At least a native dependency is incompatible')
         }
