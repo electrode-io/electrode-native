@@ -122,7 +122,7 @@ export async function bundleMiniApps (miniapps, paths, platform) {
       shell.cd(miniapps[0].localPath)
       throwIfShellCommandFailed()
     } else {
-      const miniAppStrings = _.map(miniapps, m => new Dependency(m.name, {scope: m.scope, version: m.version}.toString()))
+      const miniAppStrings = _.map(miniapps, m => new Dependency(m.name, {scope: m.scope, version: m.version}).toString())
       await generateMiniAppsComposite(miniAppStrings, paths.compositeMiniApp)
     }
 
