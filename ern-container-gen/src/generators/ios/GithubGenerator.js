@@ -1,45 +1,44 @@
+import {
+  bundleMiniApps,
+  downloadPluginSource,
+  getPluginConfig,
+  gitAdd,
+  gitClone,
+  gitCommit,
+  gitPush,
+  gitTag,
+  handleCopyDirective,
+  spin,
+  throwIfShellCommandFailed
+} from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import shell from 'shelljs'
 import xcode from '@walmart/xcode-ern'
 
-import {
-  getPluginConfig,
-  gitClone,
-  gitAdd,
-  gitTag,
-  gitPush,
-  gitCommit,
-  bundleMiniApps,
-  spin,
-  downloadPluginSource,
-  handleCopyDirective,
-  throwIfShellCommandFailed
-} from '../../utils.js'
-
 const ROOT_DIR = shell.pwd()
 
 export default class GithubGenerator {
-  constructor({
+  constructor ({
     targetRepoUrl
   } = {}) {
     this._targetRepoUrl = targetRepoUrl
   }
 
-  get name() {
-    return "GithubGenerator"
+  get name () {
+    return 'GithubGenerator'
   }
 
-  get platform() {
-    return "ios"
+  get platform () {
+    return 'ios'
   }
 
-  get targetRepoUrl() {
+  get targetRepoUrl () {
     return this._targetRepoUrl
   }
 
-   async generateContainer(
+  async generateContainer (
     containerVersion,
     nativeAppName,
     platformPath,
@@ -47,7 +46,7 @@ export default class GithubGenerator {
     miniapps,
     paths,
     mustacheView) {
-     try {
+    try {
       console.log(`\n === Using github generator
           targetRepoUrl: ${this.targetRepoUrl}
           containerVersion: ${containerVersion}`)
@@ -64,7 +63,7 @@ export default class GithubGenerator {
       if (mustacheView.ios.targetRepoUrl) {
         await gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
       }
-      
+
       shell.rm('-rf', `${paths.outFolder}/ios/*`)
       throwIfShellCommandFailed()
 
@@ -80,7 +79,7 @@ export default class GithubGenerator {
       if (miniapps.length > 0) {
         await bundleMiniApps(miniapps, paths, 'ios')
       }
-      
+
       shell.cd(`${paths.outFolder}/ios`)
       throwIfShellCommandFailed()
 
@@ -91,23 +90,23 @@ export default class GithubGenerator {
         await gitTag(`v${containerVersion}`)
         await gitPush({force: true, tags: true})
       }
-      
+
       // Finally, container hull project is fully generated, now let's just
       // build it and publish resulting AAR
-      //await publishIosContainer(paths)
+      // await publishIosContainer(paths)
     } catch (e) {
       console.log(`Something went wrong. Aborting ern-container-gen: ${e}`)
       console.trace(e)
     }
   }
 
-  async fillContainerHull(plugins, miniApps, paths) {
+  async fillContainerHull (plugins, miniApps, paths) {
     console.log(`[=== Starting container hull filling ===]`)
 
     shell.cd(`${ROOT_DIR}`)
     throwIfShellCommandFailed()
 
-    const outputFolder =`${paths.outFolder}/ios`
+    const outputFolder = `${paths.outFolder}/ios`
 
     console.log(`Creating out folder and copying Container Hull to it`)
     shell.cp('-R', `${paths.containerHull}/ios`, paths.outFolder)
@@ -148,12 +147,11 @@ export default class GithubGenerator {
                 const pathToSourceFiles = path.join(pluginSourcePath, relativeSourcePath)
                 const fileNames = _.filter(fs.readdirSync(pathToSourceFiles), f => f.endsWith(path.extname(source.from)))
                 for (const fileName of fileNames) {
-                  const fileNamePath = path.join(pathToSourceFiles, fileName)
-                  containerIosProject.addSourceFile(path.join(source.path, fileName), null, containerIosProject.findPBXGroupKey({name: source.group}))
+                  const fileNamePath = path.join(source.path, fileName)
+                  containerIosProject.addSourceFile(fileNamePath, null, containerIosProject.findPBXGroupKey({name: source.group}))
                 }
-              }
-              // Single source file 
-              else {
+              } else {
+                // Single source file
                 containerIosProject.addSourceFile(source.path, null, containerIosProject.findPBXGroupKey({name: source.group}))
               }
             }
@@ -165,7 +163,7 @@ export default class GithubGenerator {
               containerIosProject.addHeaderFile(headerPath, { public: header.public }, containerIosProject.findPBXGroupKey({name: header.group}))
             }
           }
-          
+
           if (pluginConfig.ios.pbxproj.addFile) {
             for (const file of pluginConfig.ios.pbxproj.addFile) {
               containerIosProject.addFile(file.path, containerIosProject.findPBXGroupKey({name: file.group}))
@@ -183,7 +181,7 @@ export default class GithubGenerator {
 
           if (pluginConfig.ios.pbxproj.addProject) {
             for (const project of pluginConfig.ios.pbxproj.addProject) {
-              const projectAbsolutePath = `${containerLibrariesPath}/${project.path}/project.pbxproj`;
+              const projectAbsolutePath = `${containerLibrariesPath}/${project.path}/project.pbxproj`
               containerIosProject.addProject(projectAbsolutePath, project.path, project.group, electrodeContainerTarget, project.staticLibs)
             }
           }
@@ -208,7 +206,7 @@ export default class GithubGenerator {
     console.log(`[=== Completed container hull filling ===]`)
   }
 
-  async getIosContainerProject(containerProjectPath) {
+  async getIosContainerProject (containerProjectPath) {
     const containerProject = xcode.project(containerProjectPath)
 
     return new Promise((resolve, reject) => {
@@ -220,5 +218,4 @@ export default class GithubGenerator {
       })
     })
   }
-
 }

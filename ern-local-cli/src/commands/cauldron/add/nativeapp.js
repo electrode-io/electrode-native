@@ -1,4 +1,6 @@
-import {explodeNapSelector} from '@walmart/ern-util'
+import {
+  explodeNapSelector
+} from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
 exports.command = 'nativeapp <fullNapSelector> [platformVersion]'
@@ -17,8 +19,8 @@ exports.handler = async function (argv) {
   if (explodedNapSelector.length !== 3) {
     return console.log('You need to provide a fullNapSelector to this command !')
   }
-  await cauldron.addNativeApp(argv.platformVersion 
-    ? argv.platformVersion.toString().replace('v', '') 
+  await cauldron.addNativeApp(argv.platformVersion
+    ? argv.platformVersion.toString().replace('v', '')
     : undefined
-    , ...explodedNapSelector);
+    , ...explodedNapSelector)
 }

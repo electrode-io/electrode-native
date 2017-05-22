@@ -1,6 +1,9 @@
-import {platform} from '@walmart/ern-util'
-import child_process from 'child_process'
-const execSync = child_process.execSync
+import {
+  platform
+} from '@walmart/ern-util'
+import {
+  execSync
+} from 'child_process'
 
 exports.command = 'update'
 exports.desc = 'Update currently activated platform version'
@@ -22,4 +25,4 @@ exports.handler = function (argv) {
   execSync(`npm run rebuild`)
 
   console.log('Update complete')
-};
+}

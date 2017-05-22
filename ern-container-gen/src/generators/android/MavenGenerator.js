@@ -1,29 +1,28 @@
+import {
+  bundleMiniApps,
+  downloadPluginSource,
+  getPluginConfig,
+  handleCopyDirective,
+  mustacheRenderToOutputFileUsingTemplateFile,
+  throwIfShellCommandFailed,
+  spin
+} from '../../utils.js'
+import {
+  exec
+} from 'child_process'
 import _ from 'lodash'
-import child_process from 'child_process'
 import fs from 'fs'
 import http from 'http'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
-import { 
-  getPluginConfig,
-  bundleMiniApps,
-  spin,
-  downloadPluginSource,
-  handleCopyDirective,
-  mustacheRenderToOutputFileUsingTemplateFile,
-  capitalizeFirstLetter,
-  throwIfShellCommandFailed
-} from '../../utils.js'
-
 const DEFAULT_MAVEN_REPO_URL = `file://${process.env['HOME']}/.m2/repository`
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 const fileRe = /^file:\/\//
 const ROOT_DIR = shell.pwd()
-const exec = child_process.exec
 
 export default class MavenGenerator {
-  constructor({ 
+  constructor ({
     mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
     namespace = DEFAULT_NAMESPACE
    } = {}) {
@@ -31,23 +30,23 @@ export default class MavenGenerator {
     this._namespace = namespace
   }
 
-  get name() { 
-    return "MavenGenerator"
-  }
-  
-  get platform() {
-    return "android"
+  get name () {
+    return 'MavenGenerator'
   }
 
-  get mavenRepositoryUrl() {
+  get platform () {
+    return 'android'
+  }
+
+  get mavenRepositoryUrl () {
     return this._mavenRepositoryUrl
   }
 
-  get namespace() {
+  get namespace () {
     return this._namespace
   }
 
-  get mavenRepositoryType() {
+  get mavenRepositoryType () {
     if (this.mavenRepositoryUrl.startsWith('http')) {
       return 'http'
     } else if (this.mavenRepositoryUrl.startsWith('file')) {
@@ -56,10 +55,9 @@ export default class MavenGenerator {
     return 'unknown'
   }
 
-  get targetRepositoryGradleStatement() {
+  get targetRepositoryGradleStatement () {
     // Build repository statement to be injected in Android build.gradle for
     // publication target of generated container
-    let gradleMavenRepositoryCode
     if (this.mavenRepositoryType === 'file') {
       return `repository(url: "${this.mavenRepositoryUrl}")`
     } else if (this.mavenRepositoryType === 'http') {
@@ -67,7 +65,7 @@ export default class MavenGenerator {
     }
   }
 
-  async generateContainer(
+  async generateContainer (
     containerVersion,
     nativeAppName,
     platformPath,
@@ -78,8 +76,8 @@ export default class MavenGenerator {
     // If no maven repository url (for publication) is provided part of the generator config,
     // we just fall back to standard maven local repository location.
     // If folder does not exists yet, we create it
-    if ((this.mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL)
-      && (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
+    if ((this.mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL) &&
+      (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
       shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''))
       throwIfShellCommandFailed()
     }
@@ -113,17 +111,16 @@ export default class MavenGenerator {
 
     console.log(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
     console.log(`To ${this.mavenRepositoryUrl}`)
-
   }
 
-  async fillContainerHull(plugins, miniApps, paths, mustacheView) {
+  async fillContainerHull (plugins, miniApps, paths, mustacheView) {
     try {
       console.log(`[=== Starting container hull filling ===]`)
 
       shell.cd(`${ROOT_DIR}`)
       throwIfShellCommandFailed()
 
-      const outputFolder =`${paths.outFolder}/android`
+      const outputFolder = `${paths.outFolder}/android`
 
       console.log(`Creating out folder and copying Container Hull to it`)
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
@@ -140,7 +137,7 @@ export default class MavenGenerator {
       }
 
       for (const plugin of plugins) {
-        if (plugin.name === 'react-native') { continue; }
+        if (plugin.name === 'react-native') { continue }
         let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
@@ -149,8 +146,8 @@ export default class MavenGenerator {
         shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`)
         throwIfShellCommandFailed()
         if (pluginConfig.android.moduleName) {
-              shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${outputFolder}/lib/src/main`)
-              throwIfShellCommandFailed()
+          shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${outputFolder}/lib/src/main`)
+          throwIfShellCommandFailed()
         } else {
           shell.cp('-R', `src/main/java`, `${outputFolder}/lib/src/main`)
           throwIfShellCommandFailed()
@@ -180,17 +177,17 @@ export default class MavenGenerator {
 
       console.log(`[=== Completed container hull filling ===]`)
     } catch (e) {
-        console.log("[fillContainerHull] Something went wrong: " + e)
-        throw e
+      console.log('[fillContainerHull] Something went wrong: ' + e)
+      throw e
     }
   }
 
-  async addAndroidPluginHookClasses(plugins, paths) {
+  async addAndroidPluginHookClasses (plugins, paths) {
     try {
       console.log(`[=== Adding plugin hook classes ===]`)
 
       for (const plugin of plugins) {
-        if (plugin.name === 'react-native') { continue; }
+        if (plugin.name === 'react-native') { continue }
         let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
@@ -203,12 +200,12 @@ export default class MavenGenerator {
 
       console.log(`[=== Done adding plugin hook classes ===]`)
     } catch (e) {
-      console.log("[addAndroidPluginHookClasses] Something went wrong: " + e)
+      console.log('[addAndroidPluginHookClasses] Something went wrong: ' + e)
       throw e
     }
   }
 
-  async buildAndroidPluginsViews(plugins, pluginsConfigPath, mustacheView) {
+  async buildAndroidPluginsViews (plugins, pluginsConfigPath, mustacheView) {
     try {
       let pluginsView = []
 
@@ -222,10 +219,10 @@ export default class MavenGenerator {
         if (androidPluginHook) {
           console.log(`Hooking ${plugin.name} plugin`)
           pluginsView.push({
-            "name": androidPluginHook.name,
-            "lcname": androidPluginHook.name.charAt(0).toLowerCase() +
+            'name': androidPluginHook.name,
+            'lcname': androidPluginHook.name.charAt(0).toLowerCase() +
             androidPluginHook.name.slice(1),
-            "configurable": androidPluginHook.configurable
+            'configurable': androidPluginHook.configurable
           })
         }
       }
@@ -237,16 +234,16 @@ export default class MavenGenerator {
       if (reactNativePlugin) {
         console.log(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`)
         mustacheView.pluginCompile.push({
-            "compileStatement": `compile ('com.facebook.react:react-native:${reactNativePlugin.version}@aar') { transitive=true }`
+          'compileStatement': `compile ('com.facebook.react:react-native:${reactNativePlugin.version}@aar') { transitive=true }`
         })
       }
     } catch (e) {
-      console.log("[buildAndroidPluginsViews] Something went wrong: " + e)
+      console.log('[buildAndroidPluginsViews] Something went wrong: ' + e)
       throw e
     }
   }
 
-  async buildAndPublishContainer(paths) {
+  async buildAndPublishContainer (paths) {
     try {
       console.log(`[=== Starting build and publication of the container ===]`)
 
@@ -257,13 +254,12 @@ export default class MavenGenerator {
 
       console.log(`[=== Completed build and publication of the container ===]`)
     } catch (e) {
-      console.log("[buildAndPublishAndroidContainer] Something went wrong: " + e)
+      console.log('[buildAndPublishAndroidContainer] Something went wrong: ' + e)
       throw e
     }
   }
 
-
-  async buildAndUploadArchive(moduleName) {
+  async buildAndUploadArchive (moduleName) {
     let cmd = `./gradlew ${moduleName}:uploadArchives `
     return new Promise((resolve, reject) => {
       exec(cmd,
@@ -284,7 +280,7 @@ export default class MavenGenerator {
   }
 
   // Not used for now, but kept here. Might need it
-  async isArtifactInMavenRepo(artifactDescriptor, mavenRepoUrl) {
+  async isArtifactInMavenRepo (artifactDescriptor, mavenRepoUrl) {
     // An artifact follows the format group:name:version
     // i.e com.walmartlabs.ern:react-native-electrode-bridge:1.0.0
     // Split it !
@@ -305,18 +301,15 @@ export default class MavenGenerator {
     if (this.mavenRepositoryType === 'http') {
       // Last `/` is important here, otherwise we'll get an HTTP 302 instead of 200
       // in case the artifact does exists !
-      const res = await httpGet(`${mavenRepoUrl}/${pathToArtifactInRepository}/`)
+      const res = await this.httpGet(`${mavenRepoUrl}/${pathToArtifactInRepository}/`)
       return res.statusCode === 200
-    }
-    // Otherwise if local storage just check if folder exists !
-    else if (this.mavenRepositoryType === 'file') {
+    } else if (this.mavenRepositoryType === 'file') {
       const mavenRepositoryPath = mavenRepoUrl.replace('file://', '')
-      const exists = fs.existsSync(`${mavenRepositoryPath}/${pathToArtifactInRepository}`)
       return fs.existsSync(`${mavenRepositoryPath}/${pathToArtifactInRepository}`)
     }
   }
 
-  async httpGet(url) {
+  async httpGet (url) {
     return new Promise((resolve, reject) => {
       http.get(url, res => {
         resolve(res)

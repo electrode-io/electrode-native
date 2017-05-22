@@ -1,28 +1,31 @@
-import path from 'path'
-import {writeJSON, readJSON, ensureDir, writeFile} from './fs-util'
-import fs from 'fs'
+import {
+  readJSON,
+  writeJSON
+} from './fs-util'
 import BaseGit from './base-git'
+import fs from 'fs'
+import path from 'path'
+
 const ERN_PATH = path.resolve(process.env['HOME'], '.ern')
 const CAULDRON_FILENAME = 'cauldron.json'
 
 export default class GitStore extends BaseGit {
-  
-  constructor(ernPath = ERN_PATH, repository, branch = 'master', cauldron = {
-    "nativeApps": []
+  constructor (ernPath = ERN_PATH, repository, branch = 'master', cauldron = {
+    'nativeApps': []
   }) {
     super(ernPath, repository, branch)
     this._jsonPath = path.resolve(this.path, CAULDRON_FILENAME)
     this.cauldron = cauldron
   }
-  
-  async commit(message = 'Commit') {
+
+  async commit (message = 'Commit') {
     await writeJSON(this._jsonPath, this.cauldron)
     await this.git.addAsync(CAULDRON_FILENAME)
     await this.git.commitAsync(message)
     await this.push()
   }
-  
-  async getCauldron() {
+
+  async getCauldron () {
     await this.sync()
     if (fs.existsSync(this._jsonPath)) {
       this.cauldron = await readJSON(this._jsonPath)

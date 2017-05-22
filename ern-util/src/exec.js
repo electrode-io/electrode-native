@@ -1,12 +1,11 @@
-import ChildProcess from 'child_process';
+import ChildProcess from 'child_process'
 
 export const IMPLEMENTATION = {
-    exec: ChildProcess.exec
-};
-
-
-export function exec(...args) {
-    return IMPLEMENTATION.exec(...args);
+  exec: ChildProcess.exec
 }
 
-export default exec;
+export function exec (...args) {
+  return IMPLEMENTATION.exec(...args)
+}
+
+export default exec

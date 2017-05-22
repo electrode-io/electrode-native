@@ -1,48 +1,29 @@
 import Joi from 'joi'
 
-export const miniAppsSchema = Joi.object({
+export const miniApps = Joi.object({
   container: Joi.array().default([]),
   ota: Joi.array().default([])
 })
 
-export const nativeApplicationVersionSchema = Joi.object({
+export const nativeApplicationVersion = Joi.object({
   name: Joi.string().required(),
   ernPlatformVersion: Joi.string().required(),
   isReleased: Joi.boolean().optional().default(false),
   binary: Joi.string().default(null),
   nativeDeps: Joi.array().default([]),
-  miniApps: miniAppsSchema.default()
+  miniApps: miniApps.default()
 })
 
-export const nativeAplicationVersionPatchSchema = Joi.object({
+export const nativeAplicationVersionPatch = Joi.object({
   isReleased: Joi.boolean().optional()
 })
 
-export const nativeApplicationPlatformSchema = Joi.object({
+export const nativeApplicationPlatform = Joi.object({
   name: Joi.string().valid(['android', 'ios']),
-  versions: Joi.array().items(nativeApplicationVersionSchema).default([])
+  versions: Joi.array().items(nativeApplicationVersion).default([])
 })
 
-export const nativeApplicationSchema = Joi.object({
+export const nativeApplication = Joi.object({
   name: Joi.string().required(),
-  platforms: Joi.array().items(nativeApplicationPlatformSchema).default([])
+  platforms: Joi.array().items(nativeApplicationPlatform).default([])
 })
-
-export default ({
-  miniAppsSchema,
-  nativeApplicationVersionSchema,
-  nativeAplicationVersionPatchSchema,
-  nativeApplicationPlatformSchema,
-  nativeApplicationSchema
-})
-
-export function joiValidate(payload, schema) {
-  return new Promise(function(resolve, reject) {
-    Joi.validate(payload, schema, (err, value) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(value)
-    })
-  })
-} 

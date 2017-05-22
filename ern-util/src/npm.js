@@ -1,20 +1,19 @@
-import exec from './exec';
-import log from './log';
+import exec from './exec'
 
-export function npm(cmd, args = [], options = {
-    cwd: process.cwd()
+export function npm (cmd, args = [], options = {
+  cwd: process.cwd()
 }) {
-    return new Promise((resolve, reject) => {
-        exec(`npm ${cmd} ${args.join(' ')}`, options,
+  return new Promise((resolve, reject) => {
+    exec(`npm ${cmd} ${args.join(' ')}`, options,
             (err, stdout, stderr) => {
-                if (err) {
-                    log.error(stderr);
-                    return reject(err);
-                }
-                return resolve(stdout);
-            });
-    });
+              if (err) {
+                log.error(stderr)
+                return reject(err)
+              }
+              return resolve(stdout)
+            })
+  })
 }
 export default ({
-    npm
+  npm
 })
