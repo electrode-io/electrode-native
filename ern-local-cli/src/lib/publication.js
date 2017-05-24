@@ -45,11 +45,21 @@ function createContainerGenerator (platform, config) {
 export async function runContainerGen (nativeAppName = required('nativeAppName'),
                                       nativeAppPlatform = required('nativeAppPlatform'),
                                       nativeAppVersion = required('nativeAppVersion'),
-                                      version = required('version')) {
+                                      version = required('version'), {
+                                        disablePublication
+                                      } = {}) {
   try {
     const plugins = await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion)
     const miniapps = await cauldron.getContainerMiniApps(nativeAppName, nativeAppPlatform, nativeAppVersion, { convertToObjects: true })
-    const config = await cauldron.getConfig(nativeAppName, nativeAppPlatform, nativeAppVersion)
+
+    // Retrieve generator configuration (which for now only contains publication URL config)
+    // only if caller of this method wants to publish the generated container
+    let config
+    if (disablePublication) {
+      log.info('Container publication is disabled. Will generate the container locally.')
+    } else {
+      config = await cauldron.getConfig(nativeAppName, nativeAppPlatform, nativeAppVersion)
+    }
 
     await generateContainer({
       containerVersion: version,

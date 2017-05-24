@@ -31,6 +31,11 @@ exports.builder = function (yargs) {
       alias: 'js',
       describe: 'Generates JS only (composite app)'
     })
+    .option('disablePublication', {
+      type: 'boolean',
+      alias: 'dontPublish',
+      describe: 'Do not publish container to Maven or GitHub (just generate it)'
+    })
     .group(['outputFolder, miniapps'], 'jsOnly Options:')
     .option('outputFolder', {
       type: 'string',
@@ -50,7 +55,8 @@ exports.handler = async function (argv) {
     containerVersion,
     jsOnly,
     outputFolder,
-    miniapps
+    miniapps,
+    disablePublication
   } = argv
 
   let explodedNapSelector
@@ -121,6 +127,7 @@ exports.handler = async function (argv) {
       explodedNapSelector[0], /* nativeAppName */
       explodedNapSelector[1], /* nativeAppPlatform */
       explodedNapSelector[2], /* nativeAppVersion */
-      containerVersion)
+      containerVersion,
+      { disablePublication })
   }
 }
