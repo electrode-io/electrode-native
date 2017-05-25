@@ -232,9 +232,11 @@ export default class MiniApp {
     // This block should be removed once iOS container is improved to be more flexbile
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     if (!nativeDependenciesNames.includes('react-native-electrode-bridge')) {
+      log.error("react-native-electrode-bridge is required for iOS runner.\n Execute `ern miniapp add @walmart/react-native-electrode-bridge` if you haven't already");
       throw new Error('react-native-electrode-bridge is required for iOS runner :(')
     }
     if (!nativeDependenciesNames.includes('react-native-code-push')) {
+      log.error("react-native-code-push is required for iOS runner.\n Execute `ern miniapp add react-native-code-push` if you haven't already");
       throw new Error('react-native-code-push is required for iOS runner :(')
     }
 
