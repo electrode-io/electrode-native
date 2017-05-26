@@ -9,19 +9,27 @@ Depending of the user infrastructure and development lifecycle this command line
 ```
 ├── ern
 │   ├── cauldron                    [=== Cauldron client ===]
-│   │   ├── add                     [--- Add stuff to the cauldron --]
+│   │   ├── add                     [--- Add objects to the cauldron --]
 │   │   |   ├── binary              Add a native app binary
 │   │   |   ├── dependency          Add a native app dependency
 │   │   |   ├── miniapp             Add a miniapp to the cauldron
 │   │   |   ├── nativeapp           Add a native application
-│   │   ├── del                     [--- Remove stuff from the cauldron --]
+│   │   ├── del                     [--- Remove objects from the cauldron --]
 │   │   |   ├── dependency          Remove a native dependency
 │   │   |   ├── nativeapp           Remove a native application
-│   │   ├── get                     [--- Retrieve stuff from the cauldron --]
+│   │   ├── get                     [--- Retrieve objects from the cauldron --]
 │   │   |   ├── binary              Get the binary of a native app version
+│   │   |   ├── config              Get a configuration from the cauldron
 │   │   |   ├── dependencies        Get native dependencies info
 │   │   |   ├── nativeapp           Get a native application info
-│   │   ├── start                   Start the cauldron service
+│   │   ├── repository              Manage Cauldron git repository(ies)
+│   │   |   ├── add                 Add a Cauldron git repository
+│   │   |   ├── current             Display the currently activated Cauldron repository
+│   │   |   ├── list                List all Cauldron repositories
+│   │   |   ├── remove              Remove a cauldron repository given its alias
+│   │   |   ├── use                 Select a Cauldron repository to use
+|   |   ├── update                  Update objects in the Cauldron
+│   │   |   ├── nativeapp           Update a native application info in cauldron
 │   ├── generate                    [=== Generation related commands ===]
 │   │   ├── api                    
 │   │   │    ├── init               Generates an API package using ern-api-gen
@@ -171,6 +179,67 @@ This command will list all the dependencies used by a given native application v
 ```shell
 > ern cauldron get dependency walmart:android:4.1
 ```
+
+**Retrieve configuration from the cauldron**  
+
+`ern cauldron get config <fullNapSelector>`  
+
+This command will retrieve the configuration used by a given native application version. e.x. code push or container generation config. A snippet of configuration may look like below.
+
+```
+"containerGenerator": {
+  "name": "maven",
+  "mavenRepositoryUrl": "http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted"
+ }
+```
+
+```shell
+> ern cauldron get config walmart:android:4.1
+```
+
+**Add a Cauldron git repository**  
+
+`ern cauldron repository add <repoAlias> <repoUrl>`  
+
+A `repoAlias` is alias assigned to the git repo url where the cauldron json config is hosted. `repoAlias` may be useful to change the currently activated Cauldron repository or to Remove a cauldron repository.
+
+A `repoUrl` is the url to the git repository where cauldron config is hosted.
+
+```shell
+> ern cauldron repository add walmart git@gecgithub01.walmart.com:react-native/walmart-cauldron.git
+```
+
+**Select a Cauldron repository to use**  
+`ern cauldron repository use <repoAlias>`  
+
+A `repoAlias` is alias assigned to the git repo url where the cauldron json config is hosted. You can use this command to let the plaform know what's the git repo you'd like to use currently.
+
+```shell
+> ern cauldron repository use walmart
+```
+
+**Remove a cauldron repository**  
+`ern cauldron repository remove <repoAlias>`  
+
+A `repoAlias` is alias assigned to the git repo url where the cauldron json config is hosted. This command is used to remove git repository where the cauldron config is hosted
+
+```shell
+> ern cauldron repository remove walmart
+```
+
+**Display the currently activated Cauldron repository**
+
+`ern cauldron repository current`  
+
+This command returns the current cauldron git repository in use, below is the stdout for this command. 
+
+ `walmart [git@gecgithub01.walmart.com:react-native/walmart-cauldron.git]`
+
+**List all Cauldron repositories**
+
+`ern cauldron repository list`  
+
+This command lists all the cauldron git repositories. 
 
 ### generate
 
