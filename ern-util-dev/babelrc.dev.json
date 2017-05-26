@@ -1,6 +1,7 @@
 {
   "presets": [
-    "env"
+    "env",
+    "flow"
   ],
   "plugins": [
     "syntax-async-functions",
