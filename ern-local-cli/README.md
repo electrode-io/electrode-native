@@ -34,9 +34,7 @@ Depending of the user infrastructure and development lifecycle this command line
 │   │   ├── api                    
 │   │   │    ├── init               Generates an API package using ern-api-gen
 │   │   │    ├── regen              Regenerates an API using ern-api-gen
-|   |   |    ├── clean              Removes all generated artifacts
 │   │   ├── container               Generates a native container using ern-container-gen
-│   │   ├── model                   Generates native models using ern-model-gen
 │   ├── miniapp                     [=== MiniApp development related commands ===]
 │   │   ├── init                    Creates a new miniapp
 │   │   ├── add                     Adds a dependency to the miniapp
@@ -231,7 +229,7 @@ A `repoAlias` is alias assigned to the git repo url where the cauldron json conf
 
 `ern cauldron repository current`  
 
-This command returns the current cauldron git repository in use, below is the stdout for this command. 
+This command returns the current cauldron git repository in use, below is the stdout for this command.
 
  `walmart [git@gecgithub01.walmart.com:react-native/walmart-cauldron.git]`
 
@@ -239,11 +237,11 @@ This command returns the current cauldron git repository in use, below is the st
 
 `ern cauldron repository list`  
 
-This command lists all the cauldron git repositories. 
+This command lists all the cauldron git repositories.
 
 ### generate
 
-#### **api commands** 
+#### **api commands**
 
 _init_
 
@@ -251,8 +249,8 @@ _init_
 
 This command can be used to generate a complete api package, containing JS/iOS/Android code that can be then consumed by native app and/or miniapps.  
 It generates a package.json with a sample apigen.schema and schema.json, which are where a user defines the api. package.json
-controls the version of the package. 
-  
+controls the version of the package.
+
 This command relies on [ern-api-gen](../ern-api-gen). For more details about the generation process and the structure of `apigen.schema`, feel free to go check it out.
 By default, api gen will look for a models schema name `schema.json`. If you want to specify the path to a custom model file you can use the option `modelsSchemaPath`.
 
@@ -268,18 +266,12 @@ _regen_
 
 `ern generate api regen`
 
-This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle 
+This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle
 and happen to change api's or model schema.
 
 During the regeneration process, it scans `dependencies` in api project's `package.json` and comapares with version of `supportedPlugins` in the current `platform` version.
 If there is a mismatch this command will prompt user to confirm the version change. In addition this command bumps patch version of the api and allows user to override
-the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`. 
-
-_clean_
-
-`ern generate api clean`
-
-This command removes all generated artifacts. The projects `apigen.schema` , `package.json` still remain intact.
+the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`.
 
 #### **container**
 
