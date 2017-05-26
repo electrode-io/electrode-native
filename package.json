@@ -88,7 +88,9 @@
     "ignore": [
       "**/dist",
       "**/ern-message-gen/"
-    ]
+    ],
+    "plugins": [ "flowtype" ],
+    "parser": "babel-eslint"
   },
   "engines": {
     "node": ">=4"
