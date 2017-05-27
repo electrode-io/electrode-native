@@ -1,6 +1,8 @@
+// @flow
+
 // tagged template outputing a one line string
 // used to help logging
-export default function tagOneLine (literals, ...substitutions) {
+export default function tagOneLine (literals: any, ...substitutions: any) {
   let result = ''
 
   for (let i = 0; i < substitutions.length; i++) {

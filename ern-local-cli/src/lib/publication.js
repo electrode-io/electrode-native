@@ -1,3 +1,5 @@
+// @flow
+
 import {
   generateContainer,
   generateMiniAppsComposite,
@@ -42,12 +44,15 @@ function createContainerGenerator (platform, config) {
   }
 }
 
-export async function runContainerGen (nativeAppName = required('nativeAppName'),
-                                      nativeAppPlatform = required('nativeAppPlatform'),
-                                      nativeAppVersion = required('nativeAppVersion'),
-                                      version = required('version'), {
-                                        disablePublication
-                                      } = {}) {
+export async function runContainerGen (
+  nativeAppName: string,
+  nativeAppPlatform: string,
+  nativeAppVersion: string,
+  version: string, {
+    disablePublication
+  } : {
+    disablePublication: boolean
+  }= {}) {
   try {
     const plugins = await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion)
     const miniapps = await cauldron.getContainerMiniApps(nativeAppName, nativeAppPlatform, nativeAppVersion, { convertToObjects: true })
@@ -77,18 +82,31 @@ export async function runContainerGen (nativeAppName = required('nativeAppName')
 // This is the entry point for publication of a MiniApp either in a new generated
 // container or as an OTA update through CodePush
 export async function publishMiniApp ({
-    force,
-    fullNapSelector,
-    npmPublish = false,
-    publishAsOtaUpdate = false,
-    publishAsNewContainer = false,
-    containerVersion,
-    codePushAppName,
-    codePushDeploymentName,
-    codePushPlatformName,
-    codePushTargetVersionName,
-    codePushIsMandatoryRelease,
-    codePushRolloutPercentage
+  force,
+  fullNapSelector,
+  npmPublish = false,
+  publishAsOtaUpdate = false,
+  publishAsNewContainer = false,
+  containerVersion,
+  codePushAppName,
+  codePushDeploymentName,
+  codePushPlatformName,
+  codePushTargetVersionName,
+  codePushIsMandatoryRelease,
+  codePushRolloutPercentage
+} : {
+  force: boolean,
+  fullNapSelector: string,
+  npmPublish: boolean,
+  publishAsOtaUpdate: boolean,
+  publishAsNewContainer: boolean,
+  containerVersion: string,
+  codePushAppName: string,
+  codePushDeploymentName: string,
+  codePushPlatformName: string,
+  codePushTargetVersionName: string,
+  codePushIsMandatoryRelease: boolean,
+  codePushRolloutPercentage: string
 } = {}) {
   if (npmPublish) {
     MiniApp.fromCurrentPath().publishToNpm()
@@ -184,14 +202,23 @@ async function askUserForContainerVersion () {
   return userSelectedContainerVersion
 }
 
-export async function publishOta (fullNapSelector, {
-    force,
-    codePushAppName,
-    codePushDeploymentName,
-    codePushPlatformName,
-    codePushTargetVersionName,
-    codePushIsMandatoryRelease,
-    codePushRolloutPercentage
+export async function publishOta (
+  fullNapSelector: string, {
+  force,
+  codePushAppName,
+  codePushDeploymentName,
+  codePushPlatformName,
+  codePushTargetVersionName,
+  codePushIsMandatoryRelease,
+  codePushRolloutPercentage
+} : {
+  force: boolean,
+  codePushAppName: string,
+  codePushDeploymentName: string,
+  codePushPlatformName: string,
+  codePushTargetVersionName: string,
+  codePushIsMandatoryRelease: boolean,
+  codePushRolloutPercentage: string
 } = {}) {
   try {
     const explodedNapSelector = explodeNativeAppSelector(fullNapSelector)

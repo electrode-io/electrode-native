@@ -1,10 +1,12 @@
+// @flow
+
 import {
   exec,
   execSync
 } from 'child_process'
 
 // Yarn add a given dependency
-export async function yarnAdd (dependency, { dev } = {}) {
+export async function yarnAdd (dependency: Object, { dev } : { dev: boolean }= {}) {
   return new Promise((resolve, reject) => {
     let yarnCmd = `yarn add ${dependency.scope ? `@${dependency.scope}/` : ``}`
     yarnCmd += `${dependency.name}@${dependency.version} --exact`

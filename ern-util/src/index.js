@@ -1,4 +1,5 @@
-// android
+// @flow
+
 import * as _android from './android'
 import _coloredLog from './coloredLog'
 import _config from './config'

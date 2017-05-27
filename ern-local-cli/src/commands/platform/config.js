@@ -1,3 +1,5 @@
+// @flow
+
 import {
   config as ernConfig
 } from '@walmart/ern-util'
@@ -5,7 +7,7 @@ import {
 exports.command = 'config <key> [value]'
 exports.desc = 'Get or set a configuration key'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
         .option('value', {
           alias: 'v',
@@ -13,7 +15,7 @@ exports.builder = function (yargs) {
         })
 }
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   if (argv.value) {
     ernConfig.setValue(argv.key, argv.value)
   } else {

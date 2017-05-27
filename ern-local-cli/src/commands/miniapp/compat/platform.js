@@ -1,3 +1,5 @@
+// @flow
+
 import {
   checkCompatibilityWithPlatform
 } from '../../../lib/compatibility'
@@ -5,7 +7,7 @@ import {
 exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
         .option('platformVersion', {
           alias: 'v',
@@ -13,6 +15,6 @@ exports.builder = function (yargs) {
         })
 }
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   return checkCompatibilityWithPlatform(argv.platformVersion)
 }

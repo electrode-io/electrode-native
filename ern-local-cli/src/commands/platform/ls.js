@@ -1,3 +1,5 @@
+// @flow
+
 import {
   platform,
   tagOneLine
@@ -9,7 +11,7 @@ exports.desc = 'List platform versions'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   log.info(tagOneLine`
     ${chalk.green('[CURRENT]')}
     ${chalk.yellow('[INSTALLED]')}

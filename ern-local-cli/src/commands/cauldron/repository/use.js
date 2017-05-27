@@ -1,3 +1,5 @@
+// @flow
+
 import {
   config as ernConfig
 } from '@walmart/ern-util'
@@ -7,7 +9,7 @@ exports.desc = 'Select a Cauldron repository to use'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
   if (!cauldronRepositories) {
     return console.log('No Cauldron repositories have been added yet')

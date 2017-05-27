@@ -1,3 +1,5 @@
+// @flow
+
 import {
   platform,
   tagOneLine
@@ -7,7 +9,7 @@ import chalk from 'chalk'
 exports.command = 'plugins [platformVersion]'
 exports.desc = 'List supported platform plugins'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
         .option('platformVersion', {
           alias: 'v',
@@ -15,7 +17,7 @@ exports.builder = function (yargs) {
         })
 }
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   const plugins = platform.getManifestPlugins(argv.platformVersion
         ? argv.platformVersion : platform.currentVersion)
 

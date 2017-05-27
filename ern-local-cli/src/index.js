@@ -1,3 +1,5 @@
+// @flow
+
 import 'babel-polyfill'
 import {
   coloredLog,

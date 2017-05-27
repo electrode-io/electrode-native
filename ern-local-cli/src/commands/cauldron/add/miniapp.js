@@ -1,3 +1,5 @@
+// @flow
+
 import {
   getNativeAppCompatibilityReport
 } from '../../../lib/compatibility'
@@ -11,7 +13,7 @@ import miniapp from '../../../lib/miniapp'
 exports.command = 'miniapp [fullNapSelector]'
 exports.desc = 'Publish mini app to given native app'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
   .option('fullNapSelector', {
     alias: 's',
@@ -24,7 +26,7 @@ exports.builder = function (yargs) {
   })
 }
 
-exports.handler = async function (argv) {
+exports.handler = async function (argv: any) {
   // todo : move logic away from this command source !
   if (!argv.fullNapSelector) {
     const compatibilityReport = await getNativeAppCompatibilityReport()

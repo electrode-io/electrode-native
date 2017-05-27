@@ -1,22 +1,24 @@
+// @flow
+
 import chalk from 'chalk'
 const _log = require('console-log-level')({
   level: process.env['LOG_LEVEL']
 })
 
 export default {
-  trace (msg) {
+  trace (msg: string) {
     _log.trace(chalk.gray(msg))
   },
-  debug (msg) {
+  debug (msg: string) {
     _log.debug(chalk.green(msg))
   },
-  info (msg) {
+  info (msg: string) {
     _log.info(chalk.cyan(msg))
   },
-  warn (msg) {
+  warn (msg: string) {
     _log.warn(chalk.yellow(msg))
   },
-  error (msg) {
+  error (msg: string) {
     _log.error(chalk.red(msg))
   }
 }

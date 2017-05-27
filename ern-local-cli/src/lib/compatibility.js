@@ -1,3 +1,5 @@
+// @flow
+
 import {
   platform,
   spin
@@ -10,7 +12,10 @@ import Table from 'cli-table'
 
 //
 // Check compatibility of current miniapp against one or multiple native apps
-export async function checkCompatibilityWithNativeApp (appName, platformName, versionName) {
+export async function checkCompatibilityWithNativeApp (
+  appName: string,
+  platformName: string,
+  versionName: string) : Object {
   let compatReport = await spin('Checking compatibility',
     getNativeAppCompatibilityReport({ appName, platformName, versionName }))
 
@@ -19,7 +24,7 @@ export async function checkCompatibilityWithNativeApp (appName, platformName, ve
       (r.isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE')))
 
     logCompatibilityReportTable(r.compatibility)
-    
+
     if (appName && platformName && versionName) {
       return r
     }
@@ -28,7 +33,7 @@ export async function checkCompatibilityWithNativeApp (appName, platformName, ve
 
 //
 // Check compatibility of current miniapp against a given platform version
-export function checkCompatibilityWithPlatform (platformVersion) {
+export function checkCompatibilityWithPlatform (platformVersion: string) {
   const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies
   const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion)
 
@@ -42,7 +47,7 @@ export function checkCompatibilityWithPlatform (platformVersion) {
 
 //
 // Log compatiblity report to terminal in a fancy table
-export async function logCompatibilityReportTable (report) {
+export async function logCompatibilityReportTable (report: Object) {
   var table = new Table({
     head: [chalk.cyan('Scope'),
       chalk.cyan('Name'),
@@ -75,7 +80,15 @@ export async function logCompatibilityReportTable (report) {
 
 //
 // Retrieve compatibility report(s) of current miniapp against one or multiple native apps
-export async function getNativeAppCompatibilityReport ({ appName, platformName, versionName } = {}) {
+export async function getNativeAppCompatibilityReport ({
+  appName,
+  platformName,
+  versionName
+} : {
+  appName: string,
+  platformName?: string,
+  versionName?: string
+}= {}) {
   let result = []
   const nativeApps = await cauldron.getAllNativeApps()
 
@@ -156,9 +169,13 @@ export async function getNativeAppCompatibilityReport ({ appName, platformName, 
 // the binary, it's not compatible. On the other hand, for non released
 // versions it's OK as it's always possible to regenerate a container
 // that include this new native dependency)
-export function getCompatibility (localDeps, remoteDeps, {
-  uncompatibleIfARemoteDepIsMissing
-} = {}) {
+export function getCompatibility (
+  localDeps: Array<any>,
+  remoteDeps: Array<any>, {
+    uncompatibleIfARemoteDepIsMissing
+} : {
+    uncompatibleIfARemoteDepIsMissing?: boolean
+}= {}) {
   let result = { compatible: [], incompatible: [] }
 
   for (const remoteDep of remoteDeps) {

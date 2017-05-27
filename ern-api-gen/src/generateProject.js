@@ -1,3 +1,5 @@
+// @flow
+
 import path from 'path'
 import {writeFile} from './fileUtil'
 import {CodegenConfigurator, DefaultGenerator} from '@walmart/ern-message-gen'
@@ -9,7 +11,17 @@ import {
 export const GENERATE = [['android', 'ERNAndroid'], ['javascript', 'ERNES6'], ['IOS', 'ERNSwift']]
 // export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
 
-export async function generateSwagger ({apiSchemaPath = MODEL_FILE, name, namespace = '', ...optional}, outFolder) {
+export async function generateSwagger ({
+    apiSchemaPath = MODEL_FILE,
+    name,
+    namespace = '',
+    ...optional
+  } : {
+    apiSchemaPath?: string,
+    name?: string,
+    namespace?: string,
+    optional?: any
+  }, outFolder: string) {
   const inputSpec = path.resolve(outFolder, apiSchemaPath)
   const shared = {
     apiPackage: `${namespace}.api`,
@@ -30,14 +42,24 @@ export async function generateSwagger ({apiSchemaPath = MODEL_FILE, name, namesp
 }
 export function generatePackageJson ({
   npmScope,
-  moduleName,
+  moduleName = '',
   reactNativeVersion,
   apiVersion = '1.0.0',
   apiDescription,
   apiAuthor,
   apiLicense,
-  bridgeVersion,
+  bridgeVersion = '',
   ...conf
+} : {
+  npmScope?: string,
+  moduleName?: string,
+  reactNativeVersion?: string,
+  apiVersion?: string,
+  apiDescription?: string,
+  apiAuthor?: string,
+  apiLicense?: string,
+  bridgeVersion?: string,
+  config?: any
 }) {
   return JSON.stringify({
     'name': npmScope ? `@${npmScope}/${moduleName}` : moduleName,
@@ -58,7 +80,13 @@ export function generatePackageJson ({
   }, null, 2)
 }
 
-export function generateInitialSchema ({namespace, shouldGenerateBlankApi}) {
+export function generateInitialSchema ({
+  namespace,
+  shouldGenerateBlankApi
+} : {
+  namespace?: string,
+  shouldGenerateBlankApi?: boolean
+}) {
   return shouldGenerateBlankApi ? '' : `
   {
     "swagger": "2.0",
@@ -162,7 +190,7 @@ export function generateInitialSchema ({namespace, shouldGenerateBlankApi}) {
   `
 }
 
-export default async function generateProject (config = {}, outFolder) {
+export default async function generateProject (config: Object = {}, outFolder: string) {
   await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config))
   await writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config))
   await generateSwagger(config, outFolder)

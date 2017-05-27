@@ -1,3 +1,5 @@
+// @flow
+
 import {
   explodeNapSelector
 } from '@walmart/ern-util'
@@ -8,7 +10,7 @@ exports.desc = 'Add a native binary (.app or .apk) in the cauldron'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   cauldron.addNativeBinary(
         argv.path,
         ...explodeNapSelector(argv.fullNapSelector))

@@ -17,7 +17,7 @@
     "ern-dev": "ern-global-cli/bin/ern-dev.js"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.0",
+    "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-syntax-async-functions": "^6.13.0",
@@ -89,7 +89,9 @@
       "**/dist",
       "**/ern-message-gen/"
     ],
-    "plugins": [ "flowtype" ],
+    "plugins": [
+      "flowtype"
+    ],
     "parser": "babel-eslint"
   },
   "engines": {

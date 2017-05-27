@@ -1,3 +1,5 @@
+// @flow
+
 import {
   explodeNapSelector
 } from '@walmart/ern-util'
@@ -8,7 +10,7 @@ exports.desc = 'Remove a dependency from the cauldron'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   cauldron.removeNativeDependency(
         argv.dependencyName,
         ...explodeNapSelector(argv.fullNapSelector))

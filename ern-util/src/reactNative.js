@@ -1,3 +1,5 @@
+// @flow
+
 import {
   exec
 } from './exec'
@@ -6,11 +8,13 @@ import fs from 'fs'
 import path from 'path'
 
 export class ReactNativeCommands {
+  reactNativeBinaryPath: string
+
   constructor () {
     this.reactNativeBinaryPath = `${platform.currentPlatformVersionPath}/node_modules/.bin/react-native`
   }
 
-  async init (appName, rnVersion) {
+  async init (appName: string, rnVersion: string) {
     return new Promise((resolve, reject) => {
       const dir = path.join(process.cwd(), appName)
 
@@ -29,12 +33,18 @@ export class ReactNativeCommands {
   }
 
   async bundle ({
-        entryFile,
-        dev,
-        bundleOutput,
-        assetsDest,
-        platform
-    }) {
+    entryFile,
+    dev,
+    bundleOutput,
+    assetsDest,
+    platform
+  } : {
+    entryFile: string,
+    dev: boolean,
+    bundleOutput: string,
+    assetsDest: string,
+    platform: 'android' | 'ios'
+  }) {
     return new Promise((resolve, reject) => {
       exec(`${this.reactNativeBinaryPath} bundle \
         ${entryFile ? `--entry-file=${entryFile}` : ''} \

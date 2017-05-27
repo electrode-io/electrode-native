@@ -1,3 +1,5 @@
+// @flow
+
 import {
   Dependency,
   explodeNapSelector
@@ -9,6 +11,6 @@ exports.desc = 'Add a native dependency in the cauldron'
 
 exports.builder = {}
 
-exports.handler = async function (argv) {
+exports.handler = async function (argv: any) {
   await cauldron.addNativeDependency(Dependency.fromString(argv.dependency), ...explodeNapSelector(argv.fullNapSelector))
 }
