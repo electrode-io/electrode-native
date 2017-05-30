@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  platform,
+  Platform,
   spin
 } from '@walmart/ern-util'
 import cauldron from './cauldron'
@@ -35,7 +35,7 @@ export async function checkCompatibilityWithNativeApp (
 // Check compatibility of current miniapp against a given platform version
 export function checkCompatibilityWithPlatform (platformVersion: string) {
   const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies
-  const platformDependencies = platform.getManifestPluginsAndJsDependencies(platformVersion)
+  const platformDependencies = Platform.getManifestPluginsAndJsDependencies(platformVersion)
 
   const report = getCompatibility(miniappDependencies, platformDependencies)
   const isCompatible = report.incompatible.length === 0

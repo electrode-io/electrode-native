@@ -3,8 +3,7 @@
 import {
     config,
     Dependency,
-    log,
-    platform,
+    Platform,
     spin,
     tagOneLine
 } from '@walmart/ern-util'
@@ -30,7 +29,7 @@ class Cauldron {
   // appName : The name of the native application [REQUIRED]
   // platformName : The name of the platform of this application (android or ios)
   // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
-  async addNativeApp (ernPlatformVersion: string = platform.currentVersion,
+  async addNativeApp (ernPlatformVersion: string = Platform.currentVersion,
                       appName: string,
                       platformName?: string,
                       versionName?: string) : Promise<*> {

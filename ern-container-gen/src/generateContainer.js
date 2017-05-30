@@ -1,6 +1,9 @@
 // @flow
 
 import {
+  Platform
+} from '@walmart/ern-util'
+import {
   capitalizeFirstLetter,
   throwIfShellCommandFailed
 } from './utils.js'
@@ -12,9 +15,6 @@ let mustacheView = {}
 
 const npmScopeModuleRe = /(@.*)\/(.*)/
 const npmModuleRe = /(.*)@(.*)/
-
-// Path to ern platform root folder
-const ERN_PATH = `${process.env['HOME']}/.ern`
 
 // =============================================================================
 // ern-container-gen entry point
@@ -59,7 +59,7 @@ export default async function generateContainer ({
   }
 
   // Folder from which container gen is run from
-  const WORKING_FOLDER = `${ERN_PATH}/containergen`
+  const WORKING_FOLDER = `${Platform.rootDirectory}/containergen`
   // Folder from which we download all plugins sources (from npm or git)
   const PLUGINS_DOWNLOAD_FOLDER = `${WORKING_FOLDER}/plugins`
   // Folder where the resulting container project is stored in

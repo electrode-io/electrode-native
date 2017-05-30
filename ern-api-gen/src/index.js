@@ -14,7 +14,7 @@ import {
     writeFile
 } from './fileUtil'
 import {
-    platform,
+    Platform,
     npm
 } from '@walmart/ern-util'
 import inquirer from 'inquirer'
@@ -168,7 +168,7 @@ async function _checkDependencyVersion (pkg: any) {
 }
 
 function _constructSupportedPluginsMap () {
-  let platformManifest = platform.getManifest(platform.currentVersion)
+  let platformManifest = Platform.getManifest(Platform.currentVersion)
   let supportedPluginsMap = new Map(
         platformManifest.supportedPlugins.map((currVal) => {
           if (currVal == null) return []

@@ -1,4 +1,7 @@
 import {
+  Platform
+} from '@walmart/ern-util'
+import {
   writeFile
 } from './fs-util'
 import Prom from 'bluebird'
@@ -7,12 +10,11 @@ import path from 'path'
 import shell from 'shelljs'
 import simpleGit from 'simple-git'
 
-const ERN_PATH = path.resolve(process.env['HOME'], '.ern')
 const GIT_REMOTE_NAME = 'upstream'
 const README = '### Cauldron Repository'
 
 export default class BaseGit {
-  constructor (ernPath = ERN_PATH, repository, branch = 'master') {
+  constructor (ernPath = Platform.rootDirectory, repository, branch = 'master') {
     this.path = path.resolve(ernPath, 'cauldron')
     if (!fs.existsSync(this.path)) {
       shell.mkdir('-p', this.path)

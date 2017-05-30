@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  platform
+  Platform
 } from '@walmart/ern-util'
 import {
   execSync
@@ -13,8 +13,8 @@ exports.desc = 'Update currently activated platform version'
 exports.builder = {}
 
 exports.handler = function (argv: any) {
-  const platformVersionPath = platform.currentPlatformVersionPath
-  const platformVersion = platform.currentVersion
+  const platformVersionPath = Platform.currentPlatformVersionPath
+  const platformVersion = Platform.currentVersion
 
   if (platformVersion === '1000') {
     return console.log('Development version (v1000) cannot be updated through this command')
