@@ -21,7 +21,7 @@ export function buildNativeBinaryFileName (appName, platformName, versionName) {
   return `${appName}-${platformName}@${versionName}.${ext}`
 }
 
-export function getNativeBinaryFileExt (platformName)  {
+export function getNativeBinaryFileExt (platformName) {
   return platformName === 'android' ? 'apk' : 'app'
 }
 
