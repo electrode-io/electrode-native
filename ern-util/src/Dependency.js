@@ -57,4 +57,3 @@ export default class Dependency {
           `${this.version ? `@${this.version}` : ''}`
   }
 }
-
