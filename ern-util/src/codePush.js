@@ -1,3 +1,5 @@
+// @flow
+
 /* import {
   exec
 } from 'child_process'
@@ -9,13 +11,21 @@ export class CodePushCommands {
     return `${platform.currentPlatformVersionPath}/node_modules/.bin/code-push`
   }
 
-  async releaseReact (appName, platform, {
-    targetBinaryVersion,
-    mandatory,
-    deploymentName,
-    rolloutPercentage,
-    askForConfirmation
-  }) {
+  async releaseReact (
+    appName: string,
+    platform: 'android' | 'ios', {
+      targetBinaryVersion,
+      mandatory,
+      deploymentName,
+      rolloutPercentage,
+      askForConfirmation
+    } : {
+      targetBinaryVersion: string,
+      mandatory: boolean,
+      deploymentName: string,
+      rolloutPercentage: string,
+      askForConfirmation: boolean
+    }) {
     const codePushCommand =
       `${this.codePushBinaryPath} release-react \
 ${appName} \

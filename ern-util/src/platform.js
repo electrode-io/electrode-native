@@ -1,3 +1,5 @@
+// @flow
+
 import {
   execSync
 } from 'child_process'
@@ -14,36 +16,36 @@ class Platform {
     execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout master`)
   }
 
-  switchPlatformRepositoryToVersion (version) {
+  switchPlatformRepositoryToVersion (version: string) {
     execSync(`git -C ${ERN_PLATFORM_REPO_PATH} fetch origin`)
     execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout origin/v${version}`)
   }
 
-  isPlatformVersionAvailable (version) {
+  isPlatformVersionAvailable (version: string) {
     return this.versions.includes('' + version)
   }
 
-  isPlatformVersionInstalled (version) {
+  isPlatformVersionInstalled (version: string) {
     return fs.existsSync(this.getPlatformVersionPath(version))
   }
 
-  getPlatformVersionPath (version) {
+  getPlatformVersionPath (version: string) {
     return `${ERN_VERSIONS_CACHE_PATH}/v${version}`
   }
 
-  get latestVersion () {
+  get latestVersion () : string {
     return this.versions.slice(-1)[0]
   }
 
-  get currentPlatformVersionPath () {
+  get currentPlatformVersionPath () : string {
     return this.getPlatformVersionPath(this.currentVersion)
   }
 
-  get currentVersion () {
-    return config.getValue('platformVersion')
+  get currentVersion () : string {
+    return config.getValue('platformVersion', '1000')
   }
 
-  get currentGitCommitSha () {
+  get currentGitCommitSha () : Buffer {
     return execSync(`git -C ${this.currentPlatformVersionPath} rev-parse HEAD`).slice(0, 7)
   }
 
@@ -51,7 +53,7 @@ class Platform {
   // representing all the available versions of the platform
   // Doing this by looking at all remote branches of the platform
   // matching `vX` where x is a number.
-  get versions () {
+  get versions () : Array<string> {
     const branchVersionRe = /heads\/v(\d+)/
     const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`)
       .toString()
@@ -64,7 +66,7 @@ class Platform {
   // Install a given platform version
   // If version is not installed yet and available it will just checkout
   // the version branch in the platform repository and call its install script
-  installPlatform (version) {
+  installPlatform (version: string) {
     if (this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is already installed`)
     }
@@ -82,7 +84,7 @@ class Platform {
   // If version is installed yet and not the currently activated version it will
   // just checkout the version branch in the platform repository and call its
   // uninstall script
-  uninstallPlatform (version) {
+  uninstallPlatform (version: string) {
     if (!this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is not installed`)
     }
@@ -99,7 +101,7 @@ class Platform {
   // Switch to / activate a given version
   // If the version is not installed yet, it will install it beforehand, then
   // it will just update the config file with new activated version number
-  switchToVersion (version) {
+  switchToVersion (version: string) {
     if (version === this.currentVersion) {
       return log.info(`v${version} is already the version in use`)
     }
@@ -112,11 +114,11 @@ class Platform {
     config.setValue('platformVersion', version)
   }
 
-  get currentVersionManifest () {
+  get currentVersionManifest () : Object {
     return JSON.parse(fs.readFileSync(`${this.currentPlatformVersionPath}/manifest.json`, 'utf-8'))
   }
 
-  get repositoryManifest () {
+  get repositoryManifest () : Object {
     return JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8'))
   }
 
@@ -126,7 +128,7 @@ class Platform {
   // react-native@0.40
   // @walmart/react-native
   // @walmart/react-native@0.40
-  buildDependencyObj (pluginString) {
+  buildDependencyObj (pluginString: string) : Object {
     const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/
     const unscopedModuleWithVersionRe = /(.+)@(.+)/
     const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/
@@ -155,7 +157,7 @@ class Platform {
   // Returns the manifest of a given platform version
   // If no version is specified, returns the manifest of the currently activated
   // platform version
-  getManifest (version) {
+  getManifest (version: string) : Object {
     if ((!version && version !== 0) || (version === this.currentVersion)) {
       return this.currentVersionManifest
     } else {
@@ -172,7 +174,7 @@ class Platform {
   // version manifest.
   // Otherwise it just switch the platform repository to the given version branch
   // and then build the array based on the manifest
-  getManifestPlugins (version) {
+  getManifestPlugins (version: string) : Array<any> {
     const manifest = this.getManifest(version)
     return _.map(manifest.supportedPlugins, d => this.buildDependencyObj(d))
   }
@@ -183,30 +185,30 @@ class Platform {
   // version manifest.
   // Otherwise it just switch the platform repository to the given version branch
   // and then build the array based on the manifest
-  getManifestJsDependencies (version) {
+  getManifestJsDependencies (version: string) : Array<any> {
     const manifest = this.getManifest(version)
     return _.map(manifest.jsDependencies, d => this.buildDependencyObj(d))
   }
 
-  getManifestPluginsAndJsDependencies (version) {
+  getManifestPluginsAndJsDependencies (version: string) : Array<any> {
     const manifest = this.getManifest(version)
     const manifestDeps = _.union(manifest.jsDependencies, manifest.supportedPlugins)
     return _.map(manifestDeps, d => this.buildDependencyObj(d))
   }
 
-  getPlugin (pluginString) {
+  getPlugin (pluginString: string) : any {
     const plugin = this.buildDependencyObj(pluginString)
     return _.find(this.getManifestPlugins(this.currentVersion),
       d => (d.name === plugin.name) && (d.scope === plugin.scope))
   }
 
-  getJsDependency (dependencyString) {
+  getJsDependency (dependencyString: string) : any {
     const jsDependency = this.buildDependencyObj(dependencyString)
     return _.find(this.getManifestJsDependencies(this.currentVersion),
       d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))
   }
 
-  getDependency (dependencyString) {
+  getDependency (dependencyString: string) : any {
     const dependency = this.buildDependencyObj(dependencyString)
     return _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
       d => (d.name === dependency.name) && (d.scope === dependency.scope))

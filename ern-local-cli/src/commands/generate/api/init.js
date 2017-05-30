@@ -1,3 +1,5 @@
+// @flow
+
 import {
   generateApi
 } from '@walmart/ern-api-gen'
@@ -8,7 +10,7 @@ import {
 exports.command = 'init <apiName>'
 exports.desc = 'Creates a new api'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs.option('swagger', {
     alias: 's',
     describe: 'Path to swagger'
@@ -24,7 +26,7 @@ exports.builder = function (yargs) {
   }).demandCommand(1, 'Must have an apiName')
 }
 
-exports.handler = async function (argv) {
+exports.handler = async function (argv: any) {
   const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge')
   const reactNative = platform.getPlugin('react-native')
 

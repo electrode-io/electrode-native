@@ -1,3 +1,5 @@
+// @flow
+
 import {
   publishMiniApp
 } from '../../lib/publication'
@@ -5,7 +7,7 @@ import {
 exports.command = 'publish'
 exports.desc = 'Publish a miniapp'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
     .option('force', {
       alias: 'f',
@@ -67,7 +69,7 @@ exports.builder = function (yargs) {
     })
 }
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   return publishMiniApp({
     force: argv.force,
     fullNapSelector: argv.fullNapSelector,

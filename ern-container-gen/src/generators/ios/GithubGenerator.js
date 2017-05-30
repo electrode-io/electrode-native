@@ -1,3 +1,5 @@
+// @flow
+
 import {
   bundleMiniApps,
   downloadPluginSource,
@@ -20,32 +22,36 @@ import xcode from '@walmart/xcode-ern'
 const ROOT_DIR = shell.pwd()
 
 export default class GithubGenerator {
+  _targetRepoUrl: string
+
   constructor ({
     targetRepoUrl
+  } : {
+    targetRepoUrl: string
   } = {}) {
     this._targetRepoUrl = targetRepoUrl
   }
 
-  get name () {
+  get name () : string {
     return 'GithubGenerator'
   }
 
-  get platform () {
+  get platform () : string {
     return 'ios'
   }
 
-  get targetRepoUrl () {
+  get targetRepoUrl () : string {
     return this._targetRepoUrl
   }
 
   async generateContainer (
-    containerVersion,
-    nativeAppName,
-    platformPath,
-    plugins,
-    miniapps,
-    paths,
-    mustacheView) {
+    containerVersion: string,
+    nativeAppName: string,
+    platformPath: string,
+    plugins: any,
+    miniapps: any,
+    paths: any,
+    mustacheView: any) : Promise<*> {
     try {
       console.log(`\n === Using github generator
           targetRepoUrl: ${this.targetRepoUrl}
@@ -100,7 +106,7 @@ export default class GithubGenerator {
     }
   }
 
-  async fillContainerHull (plugins, miniApps, paths) {
+  async fillContainerHull (plugins: any, miniApps: any, paths: any) : Promise<*> {
     console.log(`[=== Starting container hull filling ===]`)
 
     shell.cd(`${ROOT_DIR}`)
@@ -206,7 +212,7 @@ export default class GithubGenerator {
     console.log(`[=== Completed container hull filling ===]`)
   }
 
-  async getIosContainerProject (containerProjectPath) {
+  async getIosContainerProject (containerProjectPath: string) : Promise<*> {
     const containerProject = xcode.project(containerProjectPath)
 
     return new Promise((resolve, reject) => {

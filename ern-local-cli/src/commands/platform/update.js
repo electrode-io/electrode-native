@@ -1,3 +1,5 @@
+// @flow
+
 import {
   platform
 } from '@walmart/ern-util'
@@ -10,7 +12,7 @@ exports.desc = 'Update currently activated platform version'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   const platformVersionPath = platform.currentPlatformVersionPath
   const platformVersion = platform.currentVersion
 

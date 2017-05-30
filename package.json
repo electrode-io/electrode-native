@@ -17,19 +17,23 @@
     "ern-dev": "ern-global-cli/bin/ern-dev.js"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.0",
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-async-to-generator": "^6.22.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.2.2",
+    "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.22.0",
     "boom": "^4.3.0",
     "chai": "^3.5.0",
     "cross-env": "^3.2.4",
     "dir-compare": "^1.3.0",
     "dirty-chai": "^1.2.2",
+    "eslint-plugin-flowtype": "^2.33.0",
+    "flow-bin": "^0.47.0",
     "husky": "^0.13.2",
     "install": "^0.8.7",
     "istanbul-combine": "^0.3.0",
@@ -83,8 +87,13 @@
     ],
     "ignore": [
       "**/dist",
-      "**/ern-message-gen/"
-    ]
+      "**/ern-message-gen/",
+      "**/flow-typed/"
+    ],
+    "plugins": [
+      "flowtype"
+    ],
+    "parser": "babel-eslint"
   },
   "engines": {
     "node": ">=4"

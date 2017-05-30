@@ -1,8 +1,13 @@
+// @flow
+
 import exec from './exec'
 
-export function npm (cmd, args = [], options = {
-  cwd: process.cwd()
-}) {
+export function npm (
+  cmd: string,
+  args: Array<any> = [],
+  options: Object = {
+    cwd: process.cwd()
+  }) {
   return new Promise((resolve, reject) => {
     exec(`npm ${cmd} ${args.join(' ')}`, options,
             (err, stdout, stderr) => {

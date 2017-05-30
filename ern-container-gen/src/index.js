@@ -1,3 +1,5 @@
+// @flow
+
 import { generateMiniAppsComposite as _generateMiniAppsComposite } from './utils'
 import _generateContainer from './generateContainer'
 import _GithubGenerator from './generators/ios/GithubGenerator'

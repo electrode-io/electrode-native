@@ -1,3 +1,5 @@
+// @flow
+
 import {
   generateContainerForRunner,
   generateRunner
@@ -38,9 +40,10 @@ const {
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/
 
 export default class MiniApp {
-  //
-  // Constructor just takes the path to folder containining miniapp
-  constructor (miniAppPath) {
+  _path: string
+  _packageJson: Object
+
+  constructor (miniAppPath: string) {
     this._path = miniAppPath
 
     const packageJsonPath = `${miniAppPath}/package.json`
@@ -49,7 +52,7 @@ export default class MiniApp {
       This command should be run at the root of a mini-app`)
     }
 
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath))
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
     if (!packageJson.ernPlatformVersion) {
       throw new Error(tagOneLine`No ernPlatformVersion found in package.json.
       Are you sure you are running this within an electrode miniapp folder ?`)
@@ -66,10 +69,15 @@ export default class MiniApp {
     return new MiniApp(path)
   }
 
-  static async create (appName, {
-        platformVersion,
-        scope,
-        headless
+  static async create (
+    appName: string, {
+      platformVersion,
+      scope,
+      headless
+    } : {
+      platformVersion: string,
+      scope: string,
+      headless: boolean
     }) {
     try {
       if (!platformVersion) {
@@ -127,27 +135,27 @@ export default class MiniApp {
     }
   }
 
-  get packageJson () {
+  get packageJson () : Object {
     return this._packageJson
   }
 
-  get path () {
+  get path () : string {
     return this._path
   }
 
-  get name () {
+  get name (): string {
     return this.getUnscopedModuleName(this.packageJson.name)
   }
 
-  get version () {
+  get version () : string {
     return this.packageJson.version
   }
 
-  get platformVersion () {
+  get platformVersion () : string {
     return this.packageJson.ernPlatformVersion
   }
 
-  get isHeadLess () {
+  get isHeadLess () : boolean {
     return this.packageJson.ernHeadLess
   }
 
@@ -159,7 +167,7 @@ export default class MiniApp {
     // Each object represent a native dependency (name/version and optionaly scope)
     // Sample output :
     // [ { name: "react-native", version: "0.39.2", scope: "walmart" }]
-  get nativeDependencies () {
+  get nativeDependencies () : Array<any> {
     let result = []
 
     const nativeDependenciesNames = new Set()
@@ -211,7 +219,7 @@ export default class MiniApp {
     // Return all javascript (non native) dependencies currently used by the mini-app
     // This method checks dependencies from the pa2ckage.json of the miniapp and
     // exclude native dependencies (plugins).
-  get jsDependencies () {
+  get jsDependencies () : Array<any> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     let result = _.map(this.packageJson.dependencies, (val, key) =>
             platform.buildDependencyObj(`${key}@${val}`))
@@ -219,11 +227,11 @@ export default class MiniApp {
     return _.filter(result, d => !nativeDependenciesNames.includes(d.name))
   }
 
-  get nativeAndJsDependencies () {
+  get nativeAndJsDependencies () : Array<any> {
     return [...this.jsDependencies, ...this.nativeDependencies]
   }
 
-  async runInIosRunner () {
+  async runInIosRunner () : Promise<*> {
     // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
     // (no code injection for plugins yet :()), it has hard-coded references to
     // our bridge and code-push ... so we absolutely need them in the miniapp for
@@ -286,7 +294,7 @@ export default class MiniApp {
     await simctl.launch(device.udid, 'MyCompany.ErnRunner')
   }
 
-  async runInAndroidRunner () {
+  async runInAndroidRunner () : Promise<*> {
     const runnerConfig = {
       platformPath: platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
@@ -310,7 +318,9 @@ export default class MiniApp {
     })
   }
 
-  async addDependency (dependencyName, {dev} = {}) {
+  async addDependency (
+    dependencyName: string,
+    {dev} : { dev: boolean } = {}) {
     let dep = platform.getDependency(dependencyName)
     if (!dep) {
       log.warn(
@@ -333,7 +343,7 @@ Otherwise you can safely ignore this warning
     }
   }
 
-  async upgradeToPlatformVersion (versionToUpgradeTo, force) {
+  async upgradeToPlatformVersion (versionToUpgradeTo: string, force: boolean) : Promise<*> {
     if ((this.platformVersion === versionToUpgradeTo) &&
             (!force)) {
       return log.error(`This miniapp is already using v${versionToUpgradeTo}. Use 'f' flag if you want to force upgrade.`)
@@ -365,10 +375,11 @@ Otherwise you can safely ignore this warning
     await spin(`Running yarn install`, yarnInstall())
   }
 
-  async addToNativeAppInCauldron (appName = required('appName'),
-                                   platformName = required('platformName'),
-                                   versionName = required('versionName'),
-                                   force) {
+  async addToNativeAppInCauldron (
+    appName: string,
+    platformName: string,
+    versionName: string,
+    force: boolean) {
     try {
       const appDesc = `${appName}:${platformName}:${versionName}`
       const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName)
@@ -459,7 +470,7 @@ Otherwise you can safely ignore this warning
   }
 
     // Should go somewhere else. Does not belong in MiniApp class
-  getUnscopedModuleName (moduleName) {
+  getUnscopedModuleName (moduleName: string) : string {
     const npmScopeModuleRe = /(@.*)\/(.*)/
     return npmScopeModuleRe.test(moduleName)
             ? npmScopeModuleRe.exec(`${moduleName}`)[2]

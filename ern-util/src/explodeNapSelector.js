@@ -1,3 +1,5 @@
-export default function explodeNapSelector (appSelector) {
+// @flow
+
+export default function explodeNapSelector (appSelector: string) {
   return appSelector.split(':')
 }

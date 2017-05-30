@@ -1,10 +1,12 @@
+// @flow
+
 import {
   exec,
   execSync
 } from 'child_process'
 
 // Yarn add a given dependency
-export async function yarnAdd (dependency, {dev} = {}) {
+export async function yarnAdd (dependency: string, {dev} : {dev:boolean} = {}) {
   return new Promise((resolve, reject) => {
     let _package = typeof (dependency) === 'string'
             ? dependency
@@ -35,7 +37,7 @@ export async function yarnInstall () {
   })
 }
 
-export function isYarnInstalled () {
+export function isYarnInstalled () : boolean {
   try {
     execSync('yarn --version')
     return true

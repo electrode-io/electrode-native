@@ -1,3 +1,5 @@
+// @flow
+
 import {
   generateMiniAppsComposite
 } from '@walmart/ern-container-gen'
@@ -14,7 +16,7 @@ import inquirer from 'inquirer'
 exports.command = 'container'
 exports.desc = 'Run the container generator'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
     .option('fullNapSelector', {
       type: 'string',
@@ -49,7 +51,7 @@ exports.builder = function (yargs) {
     })
 }
 
-exports.handler = async function (argv) {
+exports.handler = async function (argv: any) {
   let {
     fullNapSelector,
     containerVersion,
@@ -58,8 +60,6 @@ exports.handler = async function (argv) {
     miniapps,
     disablePublication
   } = argv
-
-  let explodedNapSelector
 
   //
   // Full native application selector was not provided.
@@ -86,8 +86,9 @@ exports.handler = async function (argv) {
     }])
 
     fullNapSelector = userSelectedFullNapSelector
-    explodedNapSelector = explodeNapSelector(fullNapSelector)
   }
+
+  const explodedNapSelector = explodeNapSelector(fullNapSelector)
 
   //
   // If the user wants to generates a complete container (not --jsOnly)
