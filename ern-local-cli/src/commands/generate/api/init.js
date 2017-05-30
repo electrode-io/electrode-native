@@ -4,7 +4,7 @@ import {
   generateApi
 } from '@walmart/ern-api-gen'
 import {
-  platform
+  Platform
 } from '@walmart/ern-util'
 
 exports.command = 'init <apiName>'
@@ -27,8 +27,8 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function (argv: any) {
-  const bridgeDep = platform.getPlugin('@walmart/react-native-electrode-bridge')
-  const reactNative = platform.getPlugin('react-native')
+  const bridgeDep = Platform.getPlugin('@walmart/react-native-electrode-bridge')
+  const reactNative = Platform.getPlugin('react-native')
 
   await generateApi({
     bridgeVersion: `${bridgeDep.version}`,

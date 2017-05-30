@@ -6,6 +6,9 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
+  Platform
+} from '@walmart/ern-util'
+import {
   execSync
 } from 'child_process'
 import fs from 'fs'
@@ -15,9 +18,7 @@ import shell from 'shelljs'
 
 let log
 
-// Path to ern platform root folder
-const ERN_PATH = `${process.env['HOME']}/.ern`
-const CONTAINER_GEN_OUT_FOLDER = `${ERN_PATH}/containergen/out`
+const CONTAINER_GEN_OUT_FOLDER = `${Platform.rootDirectory}/containergen/out`
 
 // =============================================================================
 // fs async wrappers

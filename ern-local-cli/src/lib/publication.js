@@ -9,8 +9,7 @@ import {
 import {
   codePush,
   explodeNapSelector as explodeNativeAppSelector,
-  platform,
-  required
+  Platform
 } from '@walmart/ern-util'
 import {
   checkCompatibilityWithNativeApp,
@@ -21,8 +20,6 @@ import MiniApp from './miniapp.js'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import emoji from 'node-emoji'
-
-const ERN_PATH = `${process.env['HOME']}/.ern`
 
 function createContainerGenerator (platform, config) {
   if (config) {
@@ -69,7 +66,7 @@ export async function runContainerGen (
     await generateContainer({
       containerVersion: version,
       nativeAppName,
-      platformPath: platform.currentPlatformVersionPath,
+      platformPath: Platform.currentPlatformVersionPath,
       generator: createContainerGenerator(nativeAppPlatform, config ? config.containerGenerator : undefined),
       plugins,
       miniapps
@@ -234,7 +231,7 @@ export async function publishOta (
 
     await MiniApp.fromCurrentPath().addToNativeAppInCauldron(...explodedNapSelector, force)
 
-    const workingFolder = `${ERN_PATH}/CompositeOta`
+    const workingFolder = `${Platform.rootDirectory}/CompositeOta`
     const miniapps = await cauldron.getOtaMiniApps(...explodedNapSelector, { onlyKeepLatest: true })
 
     await generateMiniAppsComposite(miniapps, workingFolder)

@@ -4,11 +4,11 @@
   exec
 } from 'child_process'
 import inquirer from 'inquirer' */
-import platform from './platform'
+import Platform from './platform'
 
 export class CodePushCommands {
-  get codePushBinaryPath () {
-    return `${platform.currentPlatformVersionPath}/node_modules/.bin/code-push`
+  get codePushBinaryPath () : string {
+    return `${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`
   }
 
   async releaseReact (

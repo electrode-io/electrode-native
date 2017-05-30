@@ -7,9 +7,8 @@ import {
 import {
   android,
   Dependency,
-  platform,
+  Platform,
   reactNative,
-  required,
   spin,
   tagOneLine,
   yarn
@@ -81,15 +80,15 @@ export default class MiniApp {
     }) {
     try {
       if (!platformVersion) {
-        platformVersion = platform.currentVersion
+        platformVersion = Platform.currentVersion
       }
 
-      if (platform.currentVersion !== platformVersion) {
-        platform.switchToVersion(platformVersion)
+      if (Platform.currentVersion !== platformVersion) {
+        Platform.switchToVersion(platformVersion)
       }
 
       log.info(`Creating application ${appName} at platform version ${platformVersion}`)
-      const rnVersion = platform.getPlugin('react-native').version
+      const rnVersion = Platform.getPlugin('react-native').version
 
       //
       // Create application using react-native init command
@@ -103,7 +102,7 @@ export default class MiniApp {
       appPackageJson.ernPlatformVersion = `${platformVersion}`
       appPackageJson.ernHeadLess = headless
       appPackageJson.private = false
-      appPackageJson.dependencies['react'] = platform.getJsDependency('react').version
+      appPackageJson.dependencies['react'] = Platform.getJsDependency('react').version
       if (scope) {
         appPackageJson.name = `@${scope}/${appName}`
       }
@@ -222,7 +221,7 @@ export default class MiniApp {
   get jsDependencies () : Array<any> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     let result = _.map(this.packageJson.dependencies, (val, key) =>
-            platform.buildDependencyObj(`${key}@${val}`))
+            Platform.buildDependencyObj(`${key}@${val}`))
 
     return _.filter(result, d => !nativeDependenciesNames.includes(d.name))
   }
@@ -240,16 +239,16 @@ export default class MiniApp {
     // This block should be removed once iOS container is improved to be more flexbile
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     if (!nativeDependenciesNames.includes('react-native-electrode-bridge')) {
-      log.error("react-native-electrode-bridge is required for iOS runner.\n Execute `ern miniapp add @walmart/react-native-electrode-bridge` if you haven't already");
+      log.error("react-native-electrode-bridge is required for iOS runner.\n Execute `ern miniapp add @walmart/react-native-electrode-bridge` if you haven't already")
       throw new Error('react-native-electrode-bridge is required for iOS runner :(')
     }
     if (!nativeDependenciesNames.includes('react-native-code-push')) {
-      log.error("react-native-code-push is required for iOS runner.\n Execute `ern miniapp add react-native-code-push` if you haven't already");
+      log.error("react-native-code-push is required for iOS runner.\n Execute `ern miniapp add react-native-code-push` if you haven't already")
       throw new Error('react-native-code-push is required for iOS runner :(')
     }
 
     const runnerConfig = {
-      platformPath: platform.currentPlatformVersionPath,
+      platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/ios`,
@@ -296,7 +295,7 @@ export default class MiniApp {
 
   async runInAndroidRunner () : Promise<*> {
     const runnerConfig = {
-      platformPath: platform.currentPlatformVersionPath,
+      platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/android`,
@@ -321,7 +320,7 @@ export default class MiniApp {
   async addDependency (
     dependencyName: string,
     {dev} : { dev: boolean } = {}) {
-    let dep = platform.getDependency(dependencyName)
+    let dep = Platform.getDependency(dependencyName)
     if (!dep) {
       log.warn(
                 `
@@ -331,7 +330,7 @@ If this is a non purely JS dependency you will face issues during publication.
 Otherwise you can safely ignore this warning
 ==================================================================================
 `)
-      dep = platform.buildDependencyObj(dependencyName)
+      dep = Platform.buildDependencyObj(dependencyName)
       dep.version = 'latest'
     }
 
@@ -350,7 +349,7 @@ Otherwise you can safely ignore this warning
     }
 
     // Update all modules versions in package.json
-    const manifestDependencies = platform.getManifestPluginsAndJsDependencies(versionToUpgradeTo)
+    const manifestDependencies = Platform.getManifestPluginsAndJsDependencies(versionToUpgradeTo)
 
     for (const manifestDependency of manifestDependencies) {
       const nameWithScope = `${manifestDependency.scope ? `@${manifestDependency.scope}/` : ''}${manifestDependency.name}`

@@ -2,9 +2,9 @@
 
 import fs from 'fs'
 import path from 'path'
+import Platform from './platform'
 
-const ERN_PATH = path.join(process.env['HOME'], '.ern')
-const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
+const ERN_RC_GLOBAL_FILE_PATH = path.join(Platform.rootDirectory, '.ernrc')
 const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc')
 
 export class ErnConfig {

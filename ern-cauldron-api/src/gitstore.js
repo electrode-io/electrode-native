@@ -1,4 +1,7 @@
 import {
+  Platform
+} from '@walmart/ern-util'
+import {
   readJSON,
   writeJSON
 } from './fs-util'
@@ -6,11 +9,10 @@ import BaseGit from './base-git'
 import fs from 'fs'
 import path from 'path'
 
-const ERN_PATH = path.resolve(process.env['HOME'], '.ern')
 const CAULDRON_FILENAME = 'cauldron.json'
 
 export default class GitStore extends BaseGit {
-  constructor (ernPath = ERN_PATH, repository, branch = 'master', cauldron = {
+  constructor (ernPath = Platform.rootDirectory, repository, branch = 'master', cauldron = {
     'nativeApps': []
   }) {
     super(ernPath, repository, branch)

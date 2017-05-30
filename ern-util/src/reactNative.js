@@ -3,7 +3,7 @@
 import {
   exec
 } from './exec'
-import platform from './platform'
+import Platform from './platform'
 import fs from 'fs'
 import path from 'path'
 
@@ -11,7 +11,7 @@ export class ReactNativeCommands {
   reactNativeBinaryPath: string
 
   constructor () {
-    this.reactNativeBinaryPath = `${platform.currentPlatformVersionPath}/node_modules/.bin/react-native`
+    this.reactNativeBinaryPath = `${Platform.currentPlatformVersionPath}/node_modules/.bin/react-native`
   }
 
   async init (appName: string, rnVersion: string) {

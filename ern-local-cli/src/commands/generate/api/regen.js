@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  platform
+  Platform
 } from '@walmart/ern-util'
 import {
   regenerateCode
@@ -24,6 +24,6 @@ exports.handler = async function ({
   updatePlugin: boolean,
   bridgeVersion: string
 } = {}) {
-  const version = bridgeVersion || platform.getPlugin('@walmart/react-native-electrode-bridge').version
+  const version = bridgeVersion || Platform.getPlugin('@walmart/react-native-electrode-bridge').version
   return regenerateCode({bridgeVersion: version, updatePlugin})
 }

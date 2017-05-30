@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  platform,
+  Platform,
   tagOneLine
 } from '@walmart/ern-util'
 import chalk from 'chalk'
@@ -16,9 +16,9 @@ exports.handler = function (argv: any) {
     ${chalk.green('[CURRENT]')}
     ${chalk.yellow('[INSTALLED]')}
     ${chalk.gray('[NOT INSTALLED]')}`)
-  for (const version of platform.versions) {
-    if (platform.isPlatformVersionInstalled(version)) {
-      if (platform.currentVersion === version) {
+  for (const version of Platform.versions) {
+    if (Platform.isPlatformVersionInstalled(version)) {
+      if (Platform.currentVersion === version) {
         log.info(chalk.green(`-> v${version}`))
       } else {
         log.info(chalk.yellow(`v${version}`))
