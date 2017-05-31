@@ -85,7 +85,7 @@ export async function getNativeAppCompatibilityReport ({
   platformName,
   versionName
 } : {
-  appName: string,
+  appName?: string,
   platformName?: string,
   versionName?: string
 }= {}) {

@@ -10,7 +10,7 @@ exports.desc = 'Get the native binary of a given native application'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
-  cauldron.getBinaryFromCauldron(
+exports.handler = async function (argv: any) {
+  await cauldron.getNativeBinary(
     ...explodeNapSelector(argv.fullNapSelector))
 }

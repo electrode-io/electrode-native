@@ -231,8 +231,11 @@ export async function generateMiniAppsComposite (
 }
 
 export function clearReactPackagerCache () {
-  shell.rm('-rf', `${process.env['TMPDIR']}/react-*`)
-  throwIfShellCommandFailed()
+  const TMPDIR = process.env['TMPDIR']
+  if (TMPDIR) {
+    shell.rm('-rf', `${TMPDIR}/react-*`)
+    throwIfShellCommandFailed()
+  }
 }
 
 //

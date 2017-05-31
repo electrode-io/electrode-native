@@ -30,8 +30,7 @@ exports.handler = async function (argv: any) {
   // todo : move logic away from this command source !
   if (!argv.fullNapSelector) {
     const compatibilityReport = await getNativeAppCompatibilityReport()
-    const compatibleVersionsChoices = _.map(Object.keys(compatibilityReport), key => {
-      const entry = compatibilityReport[key]
+    const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
       if (entry.isCompatible) {
         const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`
         const name = entry.isReleased ? `${value} [OTA]` : `${value} [IN-APP]`

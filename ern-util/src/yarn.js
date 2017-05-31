@@ -6,7 +6,7 @@ import {
 } from 'child_process'
 
 // Yarn add a given dependency
-export async function yarnAdd (dependency: string, {dev} : {dev:boolean} = {}) {
+export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean} = {}) {
   return new Promise((resolve, reject) => {
     let _package = typeof (dependency) === 'string'
             ? dependency

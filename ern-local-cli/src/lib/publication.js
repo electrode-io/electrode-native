@@ -100,7 +100,7 @@ export async function publishMiniApp ({
   containerVersion: string,
   codePushAppName: string,
   codePushDeploymentName: string,
-  codePushPlatformName: string,
+  codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
   codePushRolloutPercentage: string
@@ -212,7 +212,7 @@ export async function publishOta (
   force: boolean,
   codePushAppName: string,
   codePushDeploymentName: string,
-  codePushPlatformName: string,
+  codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
   codePushRolloutPercentage: string
@@ -281,7 +281,7 @@ async function askUserForCodePushAppName (defaultAppName) {
 }
 
 async function askUserForCodePushPlatformName (defaultPlatformName) {
-  const {userSelectedCodePushPlatformName} = await inquirer.prompt({
+  const {userSelectedCodePushPlatformName} : {userSelectedCodePushPlatformName: 'android' | 'ios'} = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedCodePushPlatformName',
     message: 'Platform name',

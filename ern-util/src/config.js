@@ -18,11 +18,11 @@ export class ErnConfig {
             : ERN_RC_GLOBAL_FILE_PATH
   }
 
-  getValue (key: string, defaultValue: string) : string {
+  getValue (key: string, defaultValue: any) : any {
     return this.obj[key] || defaultValue
   }
 
-  setValue (key: string, value: string) {
+  setValue (key: string, value: any) {
     let c = this.obj
     c[key] = value
     fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c))
