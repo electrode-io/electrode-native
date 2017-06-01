@@ -17,7 +17,7 @@ exports.builder = function (yargs: any) {
         })
         .option('headless', {
           type: 'bool',
-          describe: 'Creates an headless (without ui) miniapp'
+          describe: 'Creates a headless (without ui) miniapp'
         })
 }
 
