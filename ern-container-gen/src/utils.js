@@ -19,6 +19,7 @@ const { yarnAdd } = yarn
 const gitFolderRe = /.*\/(.*).git/
 const npmScopeModuleRe = /@(.*)\/(.*)/
 const pluginConfigFileName = 'config.json'
+const apiPluginConfig = require('./apiPluginConfig.json')
 
 // =============================================================================
 // GENERATOR utils
@@ -65,25 +66,7 @@ export async function getPluginConfig (plugin: any, pluginsConfigPath: string) {
     }
   } else {
     console.log(`No config.json file for ${plugin.name}. Assuming apigen module`)
-    result = {
-      android: {
-        root: 'android',
-        moduleName: 'lib',
-        transform: [
-          {file: 'android/lib/build.gradle'}
-        ]
-      },
-      ios: {
-        copy: [
-          { source: 'IOS/IOS/Classes/SwaggersAPIs/*', dest: 'ElectrodeContainer/APIs' }
-        ],
-        pbxproj: {
-          addSource: [
-            { from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift', path: 'APIs', group: 'APIs' }
-          ]
-        }
-      }
-    }
+    result = apiPluginConfig
   }
 
   if (!result.origin) {
@@ -91,18 +74,17 @@ export async function getPluginConfig (plugin: any, pluginsConfigPath: string) {
       result.origin = {
         type: 'npm',
         scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
-        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`
+        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`,
+        version: plugin.version
       }
     } else {
       result.origin = {
         type: 'npm',
-        name: plugin.name
+        name: plugin.name,
+        version: plugin.version
       }
     }
-  }
-
-  // If there is no specified version, assume plugin version by default
-  if (!result.origin.version) {
+  } else if (!result.origin.version) {
     result.origin.version = plugin.version
   }
 
