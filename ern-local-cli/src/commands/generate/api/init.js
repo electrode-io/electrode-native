@@ -22,7 +22,7 @@ exports.builder = function (yargs: any) {
     describe: 'Initial npm version'
   }).option('apiAuthor', {
     alias: 'u',
-    describe: `Author of library default is : ${process.env['EMAIL'] || process.env['USER']}`
+    describe: `Author of library`
   }).demandCommand(1, 'Must have an apiName')
 }
 

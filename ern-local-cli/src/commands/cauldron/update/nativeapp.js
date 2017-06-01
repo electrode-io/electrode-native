@@ -1,11 +1,11 @@
 // @flow
 
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
-exports.command = 'nativeapp <fullNapSelector> [isReleased]'
+exports.command = 'nativeapp <completeNapDescriptor> [isReleased]'
 exports.desc = 'Update a native application info in cauldron'
 
 exports.builder = function (yargs: any) {
@@ -14,12 +14,12 @@ exports.builder = function (yargs: any) {
           alias: 'r',
           type: 'bool',
           describe: 'true if version is released, false otherwise'
-        }).demandCommand(1, 'nativeapp needs <fullNapSelector>')
+        }).demandCommand(1, 'nativeapp needs <completeNapDescriptor>')
 }
 
 exports.handler = async function (argv: any) {
+  const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
   if (argv.isReleased !== undefined) {
-    cauldron.updateNativeAppIsReleased(...explodeNapSelector(argv.fullNapSelector),
-            argv.isReleased)
+    cauldron.updateNativeAppIsReleased(napDescriptor, argv.isReleased)
   }
 }

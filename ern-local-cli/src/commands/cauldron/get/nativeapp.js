@@ -1,18 +1,18 @@
 // @flow
 
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
-exports.command = 'nativeapp <napSelector>'
+exports.command = 'nativeapp <napDescriptor>'
 exports.desc = 'Get a native application from the cauldron'
 
 exports.builder = {}
 
 exports.handler = function (argv: any) {
-  cauldron.getNativeApp(
-    ...explodeNapSelector(argv.napSelector)).then(res => {
-      log.info(JSON.stringify(res, null, 1))
-    })
+  const napDescriptor = NativeApplicationDescriptor.fromString(argv.napDescriptor)
+  cauldron.getNativeApp(napDescriptor).then(res => {
+    log.info(JSON.stringify(res, null, 1))
+  })
 }

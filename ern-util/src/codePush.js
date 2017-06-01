@@ -20,11 +20,11 @@ export class CodePushCommands {
       rolloutPercentage,
       askForConfirmation
     } : {
-      targetBinaryVersion: string,
-      mandatory: boolean,
+      targetBinaryVersion?: string,
+      mandatory?: boolean,
       deploymentName: string,
-      rolloutPercentage: string,
-      askForConfirmation: boolean
+      rolloutPercentage?: string,
+      askForConfirmation?: boolean
     }) {
     const codePushCommand =
       `${this.codePushBinaryPath} release-react \

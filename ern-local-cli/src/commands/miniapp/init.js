@@ -2,7 +2,7 @@
 
 import MiniApp from '../../lib/miniapp'
 
-exports.command = 'init <appName> [platformVersion] [napSelector] [scope]'
+exports.command = 'init <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application'
 
 exports.builder = function (yargs: any) {

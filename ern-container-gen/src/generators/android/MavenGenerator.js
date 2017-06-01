@@ -18,7 +18,13 @@ import http from 'http'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
-const DEFAULT_MAVEN_REPO_URL = `file://${process.env['HOME']}/.m2/repository`
+const HOME_DIRECTORY = process.env['HOME']
+const getDefaultMavenLocalDirectory = () => {
+  if (!HOME_DIRECTORY) {
+    throw new Error(`process.env['HOME'] is undefined !!!`)
+  }
+  return `file://${HOME_DIRECTORY}/.m2/repository`
+}
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 const fileRe = /^file:\/\//
 const ROOT_DIR = shell.pwd()
@@ -28,11 +34,11 @@ export default class MavenGenerator {
   _namespace : string
 
   constructor ({
-    mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
+    mavenRepositoryUrl = getDefaultMavenLocalDirectory(),
     namespace = DEFAULT_NAMESPACE
    } : {
-    mavenRepositoryUrl: string,
-    namespace: string
+    mavenRepositoryUrl?: string,
+    namespace?: string
    } = {}) {
     this._mavenRepositoryUrl = mavenRepositoryUrl
     this._namespace = namespace
@@ -84,9 +90,10 @@ export default class MavenGenerator {
     // If no maven repository url (for publication) is provided part of the generator config,
     // we just fall back to standard maven local repository location.
     // If folder does not exists yet, we create it
-    if ((this.mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL) &&
-      (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
-      shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''))
+    const defaultMavenLocalDirectory = getDefaultMavenLocalDirectory()
+    if ((this.mavenRepositoryUrl === defaultMavenLocalDirectory) &&
+      (!fs.existsSync(defaultMavenLocalDirectory))) {
+      shell.mkdir('-p', defaultMavenLocalDirectory.replace(fileRe, ''))
       throwIfShellCommandFailed()
     }
 

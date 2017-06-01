@@ -8,7 +8,7 @@ import {
 } from '@walmart/ern-container-gen'
 import {
   codePush,
-  explodeNapSelector as explodeNativeAppSelector,
+  NativeApplicationDescriptor,
   Platform
 } from '@walmart/ern-util'
 import {
@@ -42,17 +42,15 @@ function createContainerGenerator (platform, config) {
 }
 
 export async function runContainerGen (
-  nativeAppName: string,
-  nativeAppPlatform: string,
-  nativeAppVersion: string,
+  napDescriptor: NativeApplicationDescriptor,
   version: string, {
     disablePublication
   } : {
     disablePublication: boolean
   }= {}) {
   try {
-    const plugins = await cauldron.getNativeDependencies(nativeAppName, nativeAppPlatform, nativeAppVersion)
-    const miniapps = await cauldron.getContainerMiniApps(nativeAppName, nativeAppPlatform, nativeAppVersion, { convertToObjects: true })
+    const plugins = await cauldron.getNativeDependencies(napDescriptor)
+    const miniapps = await cauldron.getContainerMiniApps(napDescriptor, { convertToObjects: true })
 
     // Retrieve generator configuration (which for now only contains publication URL config)
     // only if caller of this method wants to publish the generated container
@@ -60,14 +58,14 @@ export async function runContainerGen (
     if (disablePublication) {
       log.info('Container publication is disabled. Will generate the container locally.')
     } else {
-      config = await cauldron.getConfig(nativeAppName, nativeAppPlatform, nativeAppVersion)
+      config = await cauldron.getConfig(napDescriptor)
     }
 
     await generateContainer({
       containerVersion: version,
-      nativeAppName,
+      nativeAppName: napDescriptor.name,
       platformPath: Platform.currentPlatformVersionPath,
-      generator: createContainerGenerator(nativeAppPlatform, config ? config.containerGenerator : undefined),
+      generator: createContainerGenerator(napDescriptor.platform, config ? config.containerGenerator : undefined),
       plugins,
       miniapps
     })
@@ -80,7 +78,7 @@ export async function runContainerGen (
 // container or as an OTA update through CodePush
 export async function publishMiniApp ({
   force,
-  fullNapSelector,
+  napDescriptor,
   npmPublish = false,
   publishAsOtaUpdate = false,
   publishAsNewContainer = false,
@@ -93,14 +91,14 @@ export async function publishMiniApp ({
   codePushRolloutPercentage
 } : {
   force: boolean,
-  fullNapSelector: string,
+  napDescriptor: NativeApplicationDescriptor,
   npmPublish: boolean,
   publishAsOtaUpdate: boolean,
   publishAsNewContainer: boolean,
   containerVersion: string,
   codePushAppName: string,
   codePushDeploymentName: string,
-  codePushPlatformName: string,
+  codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
   codePushRolloutPercentage: string
@@ -112,14 +110,13 @@ export async function publishMiniApp ({
   let nativeAppsToPublish = []
 
   // A specific native application / platform / version was provided, check for compatibility
-  if (fullNapSelector) {
-    const explodedNapSelector = explodeNativeAppSelector(fullNapSelector)
-    const report = await checkCompatibilityWithNativeApp(explodedNapSelector[0], explodedNapSelector[1], explodedNapSelector[2])
+  if (napDescriptor) {
+    const report = await checkCompatibilityWithNativeApp(napDescriptor.name, napDescriptor.platform, napDescriptor.version)
     if (!report.isCompatible) {
       throw new Error('Cannot publish MiniApp. Native Application is not compatible')
     }
 
-    nativeAppsToPublish.push({fullNapSelector, isReleased: report.isReleased})
+    nativeAppsToPublish.push({napDescriptor, isReleased: report.isReleased})
   } else {
     const compatibilityReport = await getNativeAppCompatibilityReport()
 
@@ -128,13 +125,15 @@ export async function publishMiniApp ({
         if ((publishAsOtaUpdate && entry.isReleased) ||
                 (publishAsNewContainer && !entry.isReleased) ||
                 (!publishAsOtaUpdate && !publishAsNewContainer)) {
+          const curNapDescriptor =
+            new NativeApplicationDescriptor(entry.appName, entry.appPlatform, entry.appVersion)
           const value = {
-            fullNapSelector: `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`,
+            napDescriptor: curNapDescriptor,
             isReleased: entry.isReleased
           }
           const suffix = value.isReleased
                         ? `[OTA] ${emoji.get('rocket')}` : `[IN-APP]`
-          const name = `${value.fullNapSelector} ${suffix}`
+          const name = `${value.napDescriptor.toString()} ${suffix}`
           return {name, value}
         }
       }
@@ -156,7 +155,7 @@ export async function publishMiniApp ({
 
   for (const nativeApp of nativeAppsToPublish) {
     if (nativeApp.isReleased) {
-      await publishOta(nativeApp.fullNapSelector, {
+      await publishOta(nativeApp.napDescriptor, {
         force,
         codePushAppName,
         codePushDeploymentName,
@@ -166,7 +165,7 @@ export async function publishMiniApp ({
         codePushRolloutPercentage
       })
     } else {
-      await publishInApp(nativeApp.fullNapSelector, {
+      await publishInApp(nativeApp.napDescriptor, {
         force,
         containerVersion
       })
@@ -174,17 +173,17 @@ export async function publishMiniApp ({
   }
 }
 
-async function publishInApp (fullNapSelector, {containerVersion, force}) {
+async function publishInApp (
+  napDescriptor: NativeApplicationDescriptor,
+  { containerVersion, force }) {
   try {
-    await MiniApp.fromCurrentPath().addToNativeAppInCauldron(
-            ...explodeNativeAppSelector(fullNapSelector), force)
+    await MiniApp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, force)
 
     if (!containerVersion) {
       containerVersion = await askUserForContainerVersion()
     }
 
-    await runContainerGen(
-            ...explodeNativeAppSelector(fullNapSelector), containerVersion)
+    await runContainerGen(napDescriptor, containerVersion)
   } catch (e) {
     log.error(`[publishInApp] failed`)
   }
@@ -200,7 +199,7 @@ async function askUserForContainerVersion () {
 }
 
 export async function publishOta (
-  fullNapSelector: string, {
+  napDescriptor: NativeApplicationDescriptor, {
   force,
   codePushAppName,
   codePushDeploymentName,
@@ -212,34 +211,30 @@ export async function publishOta (
   force: boolean,
   codePushAppName: string,
   codePushDeploymentName: string,
-  codePushPlatformName: string,
+  codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
   codePushRolloutPercentage: string
 } = {}) {
   try {
-    const explodedNapSelector = explodeNativeAppSelector(fullNapSelector)
-    const applicationName = explodedNapSelector[0]
-    const platformName = explodedNapSelector[1]
-
-    const plugins = await cauldron.getNativeDependencies(...explodedNapSelector)
+    const plugins = await cauldron.getNativeDependencies(napDescriptor)
 
     const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
     if (!codePushPlugin) {
       throw new Error('react-native-code-push plugin is not in native app !')
     }
 
-    await MiniApp.fromCurrentPath().addToNativeAppInCauldron(...explodedNapSelector, force)
+    await MiniApp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, force)
 
     const workingFolder = `${Platform.rootDirectory}/CompositeOta`
-    const miniapps = await cauldron.getOtaMiniApps(...explodedNapSelector, { onlyKeepLatest: true })
+    const miniapps = await cauldron.getOtaMiniApps(napDescriptor, { onlyKeepLatest: true })
 
     await generateMiniAppsComposite(miniapps, workingFolder)
     process.chdir(workingFolder)
 
-    codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(fullNapSelector)
-    codePushAppName = codePushAppName || await askUserForCodePushAppName(`${applicationName}-${platformName}`)
-    codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(platformName)
+    codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
+    codePushAppName = codePushAppName || await askUserForCodePushAppName()
+    codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
 
     await codePush.releaseReact(
           codePushAppName,
@@ -254,9 +249,8 @@ export async function publishOta (
   }
 }
 
-async function askUserForCodePushDeploymentName (fullNapSelector) {
-  const explodedNapSelector = explodeNativeAppSelector(fullNapSelector)
-  const config = await cauldron.getConfig(...explodedNapSelector)
+async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor) {
+  const config = await cauldron.getConfig(napDescriptor)
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
   const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
 
@@ -281,7 +275,7 @@ async function askUserForCodePushAppName (defaultAppName) {
 }
 
 async function askUserForCodePushPlatformName (defaultPlatformName) {
-  const {userSelectedCodePushPlatformName} = await inquirer.prompt({
+  const {userSelectedCodePushPlatformName} : {userSelectedCodePushPlatformName: 'android' | 'ios'} = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedCodePushPlatformName',
     message: 'Platform name',

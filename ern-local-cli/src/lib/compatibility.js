@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  NativeApplicationDescriptor,
   Platform,
   spin
 } from '@walmart/ern-util'
@@ -14,8 +15,8 @@ import Table from 'cli-table'
 // Check compatibility of current miniapp against one or multiple native apps
 export async function checkCompatibilityWithNativeApp (
   appName: string,
-  platformName: string,
-  versionName: string) : Object {
+  platformName: ?string,
+  versionName: ?string) : Object {
   let compatReport = await spin('Checking compatibility',
     getNativeAppCompatibilityReport({ appName, platformName, versionName }))
 
@@ -85,9 +86,9 @@ export async function getNativeAppCompatibilityReport ({
   platformName,
   versionName
 } : {
-  appName: string,
-  platformName?: string,
-  versionName?: string
+  appName: ?string,
+  platformName: ?string,
+  versionName: ?string
 }= {}) {
   let result = []
   const nativeApps = await cauldron.getAllNativeApps()
@@ -102,10 +103,11 @@ export async function getNativeAppCompatibilityReport ({
         if ((!platformName) || (nativeAppPlatform.name === platformName)) {
           for (const nativeAppVersion of nativeAppPlatform.versions) {
             if ((!versionName) || (nativeAppVersion.name === versionName)) {
-              let nativeAppDependencies = await cauldron.getNativeDependencies(
-                  nativeApp.name,
-                  nativeAppPlatform.name,
-                  nativeAppVersion.name)
+              const napDescriptor = new NativeApplicationDescriptor(
+                nativeApp.name,
+                nativeAppPlatform.name,
+                nativeAppVersion.name)
+              let nativeAppDependencies = await cauldron.getNativeDependencies(napDescriptor)
               const compatibility = getCompatibility(
                   miniappDependencies, nativeAppDependencies, {
                     uncompatibleIfARemoteDepIsMissing: nativeAppVersion.isReleased

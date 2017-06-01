@@ -1,16 +1,16 @@
 // @flow
 
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
-exports.command = 'nativeapp <napSelector>'
+exports.command = 'nativeapp <napDescriptor>'
 exports.desc = 'Remove a native application from the cauldron'
 
 exports.builder = {}
 
 exports.handler = async function (argv: any) {
-  await cauldron.removeNativeApp(
-        ...explodeNapSelector(argv.napSelector))
+  const napDescriptor = NativeApplicationDescriptor.fromString(argv.napDescriptor)
+  await cauldron.removeNativeApp(napDescriptor)
 }

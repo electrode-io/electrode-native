@@ -5,7 +5,8 @@ import {
     Dependency,
     Platform,
     spin,
-    tagOneLine
+    tagOneLine,
+    NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import CauldronCli from '@walmart/ern-cauldron-api'
@@ -24,144 +25,104 @@ class Cauldron {
     this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias])
   }
 
-  // Creates a native application in the Cauldron
-  // ernPlatformVersion : The version of the platform to use for this native app [REQUIRED]
-  // appName : The name of the native application [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios)
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
-  async addNativeApp (ernPlatformVersion: string = Platform.currentVersion,
-                      appName: string,
-                      platformName?: string,
-                      versionName?: string) : Promise<*> {
+  async addNativeApp (
+    napDescriptor: NativeApplicationDescriptor,
+    ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {
     try {
-      return spin(tagOneLine`Adding ${appName} app
-          ${versionName ? `at version ${versionName}` : ''}
-          ${platformName ? `for ${platformName} platform` : ''}
+      return spin(tagOneLine`Adding ${napDescriptor.name} app
+          ${napDescriptor.version ? `at version ${napDescriptor.version}` : ''}
+          ${napDescriptor.platform ? `for ${napDescriptor.platform} platform` : ''}
           to cauldron`,
-                this._createNativeApp(
-                    ernPlatformVersion,
-                    appName,
-                    platformName,
-                    versionName))
+            this._createNativeApp(napDescriptor, ernPlatformVersion))
     } catch (e) {
       log.error(`[addNativeApp] ${e}`)
       throw e
     }
   }
 
-  async _createNativeApp (ernPlatformVersion: string,
-                          appName: string,
-                          platformName?: string,
-                          versionName?: string) : Promise<*> {
-    await this.cauldron.createNativeApplication({name: appName})
-    if (platformName) {
-      await this.cauldron.createPlatform(appName, {name: platformName})
-      if (versionName) {
+  async _createNativeApp (
+    napDescriptor: NativeApplicationDescriptor,
+    ernPlatformVersion: string) : Promise<*> {
+    await this.cauldron.createNativeApplication({name: napDescriptor.name})
+    if (napDescriptor.platform) {
+      await this.cauldron.createPlatform(napDescriptor.name, {name: napDescriptor.platform})
+      if (napDescriptor.version) {
         await this.cauldron.createVersion(
-                    appName, platformName, {name: versionName, ernPlatformVersion})
+                    napDescriptor.name, napDescriptor.platform, {name: napDescriptor.version, ernPlatformVersion})
       }
     }
   }
 
-  // Removes a native application from the Cauldron
-  // appName : The name of the native application [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios)
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...)
-  async removeNativeApp (appName: string,
-                         platformName?: string,
-                         versionName?: string) : Promise<*> {
+  async removeNativeApp (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     try {
-      return spin(tagOneLine`Removing ${appName} app
-          ${versionName ? `at version ${versionName}` : ''}
-          ${platformName ? `for ${platformName} platform` : ''}
+      return spin(tagOneLine`Removing ${napDescriptor.name} app
+          ${napDescriptor.version ? `at version ${napDescriptor.version}` : ''}
+          ${napDescriptor.platform ? `for ${napDescriptor.platform} platform` : ''}
           from cauldron`,
-                this._removeNativeApp(appName, platformName, versionName))
+              this._removeNativeApp(napDescriptor))
     } catch (e) {
       log.error(`[removeNativeApp] ${e}`)
       throw e
     }
   }
 
-  async _removeNativeApp (appName: string,
-                          platformName?: string,
-                          versionName?: string) : Promise<*> {
-    if (versionName) {
+  async _removeNativeApp (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
+    if (napDescriptor.version) {
       await this.cauldron.removeVersion(
-                appName, platformName, versionName)
-    } else if (platformName) {
-      await this.cauldron.removePlatform(appName, platformName)
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+    } else if (napDescriptor.platform) {
+      await this.cauldron.removePlatform(napDescriptor.name, napDescriptor.platform)
     } else {
-      await this.cauldron.removeNativeApplication(appName)
+      await this.cauldron.removeNativeApplication(napDescriptor.name)
     }
   }
 
-  // Adds a native dependency to the Cauldron
-  // dependency : The dependency to add (object) [REQUIRED]
-  //   ex : {
-  //    name: "react-native-code-push",
-  //    version: "1.16.1-beta"
-  //   }
-  // appName : The name of the native application [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-  async addNativeDependency (dependency: Dependency,
-                             appName: string,
-                             platformName: string,
-                             versionName: string) : Promise<*> {
+  async addNativeDependency (
+    napDescriptor: NativeApplicationDescriptor,
+    dependency: Dependency) : Promise<*> {
     try {
-      await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
-                'Cannot add a native dependency to a released native app version')
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeAppVersionIsReleased(napDescriptor,
+        'Cannot add a native dependency to a released native app version')
 
-      return spin(
-                tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
-                   to ${appName}:${platformName}:${versionName}`,
-                this.cauldron.createNativeDependency(
-                    appName, platformName, versionName, dependency.toString()))
+      return spin(tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
+        to ${napDescriptor.toString()}`,
+        this.cauldron.createNativeDependency(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependency.toString()))
     } catch (e) {
       log.error(`[addNativeDependency] ${e}`)
       throw e
     }
   }
 
-  // Removes a native dependency from the Cauldron
-  // dependencyName : The name of the dependency to remove [REQUIRED]
-  // appName : The name of the native application [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-  async removeNativeDependency (dependencyName: string,
-                                appName: string,
-                                platformName: string,
-                                versionName: string) : Promise<*> {
+  async removeNativeDependency (
+    napDescriptor: NativeApplicationDescriptor,
+    dependencyName: string) : Promise<*> {
     try {
-      await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeAppVersionIsReleased(napDescriptor,
                 'Cannot remove a native dependency from a released native app version')
 
       return spin(
                 tagOneLine`Removing dependency ${dependencyName} from
-                  ${appName}:${platformName}:${versionName}`,
+                  ${napDescriptor.toString()}`,
                 this.cauldron.removeNativeDependency(
-                    appName, platformName, versionName, dependencyName))
+                    napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependencyName))
     } catch (e) {
       log.error(`[removeNativeDependency] ${e}`)
       throw e
     }
   }
 
-  // Gets a native app metadata from the Cauldron
-  // appName : The name of the app [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-  async getNativeApp (appName: string,
-                      platformName: string,
-                      versionName: string) : Promise<*> {
+  async getNativeApp (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     try {
-      if (versionName) {
+      if (napDescriptor.version) {
         return this.cauldron.getVersion(
-                    appName, platformName, versionName)
-      } else if (platformName) {
-        return this.cauldron.getPlatform(appName, platformName)
+                    napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+      } else if (napDescriptor.platform) {
+        return this.cauldron.getPlatform(napDescriptor.name, napDescriptor.platform)
       } else {
-        return this.cauldron.getNativeApplication(appName)
+        return this.cauldron.getNativeApplication(napDescriptor.name)
       }
     } catch (e) {
       log.error(`[getNativeApp] ${e}`)
@@ -169,17 +130,16 @@ class Cauldron {
     }
   }
 
-  // Gets all native dependencies metadata from the Cauldron for a given native app
-  // appName : The name of the app [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-  async getNativeDependencies (appName: string,
-                               platformName: string,
-                               versionName: string,
-                               { convertToObjects = true } :
-                               { convertToObjects: boolean } = {}) : Promise<*> {
+  async getNativeDependencies (
+    napDescriptor: NativeApplicationDescriptor,
+    { convertToObjects = true } :
+    { convertToObjects: boolean } = {}) : Promise<*> {
     try {
-      const dependencies = await this.cauldron.getNativeDependencies(appName, platformName, versionName)
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      const dependencies = await this.cauldron.getNativeDependencies(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version)
 
       return convertToObjects ? _.map(dependencies, Dependency.fromString) : dependencies
     } catch (e) {
@@ -188,167 +148,256 @@ class Cauldron {
     }
   }
 
-  // Adds a native application binary (APP or APK) to the Cauldron for a given native app
-  // binaryPath : Absolute or relative path to the binary [REQUIRED]
-  // appName : The name of the app [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-  async addNativeBinary (binaryPath: string,
-                         appName: string,
-                         platformName: string,
-                         versionName: string) : Promise<*> {
+  async addNativeBinary (
+    napDescriptor: NativeApplicationDescriptor,
+    binaryPath: string) : Promise<*> {
     try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
       return this.cauldron.createNativeBinary(
-                appName, platformName, versionName, binaryPath)
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version, binaryPath)
     } catch (e) {
       log.error(`[addNativeBinary] ${e}`)
       throw e
     }
   }
 
-  // Retrieves a native app binary (APP or APK) from the Cauldron for a given native app
-  // appName : The name of the app [REQUIRED]
-  // platformName : The name of the platform of this application (android or ios) [REQUIRED]
-  // versionName : The name of the version (i.e "4.1" or "4.1-dev-debug" or ...) [REQUIRED]
-  async getNativeBinary (appName: string,
-                         platformName: string,
-                         versionName: string) : Promise<*> {
+  async getNativeBinary (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
       return this.cauldron.getNativeBinary(
-                appName, platformName, versionName)
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version)
     } catch (e) {
       log.error(`[getNativeBinary] ${e}`)
       throw e
     }
   }
 
-  // Get a native dependency from the cauldron
-  async getNativeDependency (appName: string,
-                             platformName: string,
-                             versionName: string,
-                             dependencyName: string,
-                             { convertToObject = true } :
-                             { convertToObject: boolean } = {}) : Promise<Dependency> {
-    const dependency = await this.cauldron.getNativeDependency(appName, platformName, versionName, dependencyName)
-    return convertToObject ? Dependency.fromString(dependency) : dependency
+  async getNativeDependency (
+    napDescriptor: NativeApplicationDescriptor,
+    dependencyName: string,
+    { convertToObject = true } :
+    { convertToObject: boolean } = {}) : Promise<Dependency> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      const dependency = await this.cauldron.getNativeDependency(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        dependencyName)
+      return convertToObject ? Dependency.fromString(dependency) : dependency
+    } catch (e) {
+      log.error(`[getNativeDependency] ${e}`)
+      throw e
+    }
   }
 
-  // Update an existing native dependency version
-  async updateNativeAppDependency (appName: string,
-                                   platformName: string,
-                                   versionName: string,
-                                   dependencyName: string,
-                                   newVersion: string) : Promise<*> {
-    await this.throwIfNativeAppVersionIsReleased(appName, platformName, versionName,
-            'Cannot update a native dependency for a released native app version')
+  async updateNativeAppDependency (
+    napDescriptor: NativeApplicationDescriptor,
+    dependencyName: string,
+    newVersion: string) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeAppVersionIsReleased(napDescriptor,
+        'Cannot update a native dependency for a released native app version')
 
-    return spin(`Updating dependency ${dependencyName} version to ${newVersion}`,
-                this.cauldron.updateNativeDependency(appName, platformName, versionName, dependencyName, newVersion))
+      return spin(`Updating dependency ${dependencyName} version to ${newVersion}`,
+        this.cauldron.updateNativeDependency(
+          napDescriptor.name,
+          napDescriptor.platform,
+          napDescriptor.version,
+          dependencyName,
+          newVersion))
+    } catch (e) {
+      log.error(`[updateNativeAppDependency] ${e}`)
+      throw e
+    }
   }
 
   async getAllNativeApps () : Promise<*> {
     return this.cauldron.getNativeApplications()
   }
 
-  async getOtaMiniApp (nativeApplicationName: string,
-                       platformName: string,
-                       versionName: string,
-                       miniApp: Object) : Promise<*> {
-    return this.cauldron.getOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp)
+  async getOtaMiniApp (
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: Object) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getOtaMiniApp(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        miniApp)
+    } catch (e) {
+      log.error(`[getOtaMiniApp] ${e}`)
+      throw e
+    }
   }
 
-  async getContainerMiniApp (nativeApplicationName: string,
-                             platformName: string,
-                             versionName: string,
-                             miniApp: Object) : Promise<*> {
-    return this.cauldron.getContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp)
+  async getContainerMiniApp (
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: Object) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getContainerMiniApp(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        miniApp)
+    } catch (e) {
+      log.error(`[getContainerMiniApp] ${e}`)
+      throw e
+    }
   }
 
-  async getOtaMiniApps (nativeApplicationName: string,
-                        platformName: string,
-                        versionName: string,
-                        { convertToObjects = true, onlyKeepLatest } :
-                        { convertToObjects: boolean, onlyKeepLatest: boolean } = {}) : Promise<*> {
-    let miniApps = await this.cauldron.getOtaMiniApps(nativeApplicationName, platformName, versionName)
-    const miniAppsObjects = _.map(miniApps, Dependency.fromString)
-        // Could be done in a better way
-    if (onlyKeepLatest) {
-      let tmp = {}
-      for (const miniApp of miniAppsObjects) {
-        let currentVersion = tmp[miniApp.withoutVersion().toString()]
-        if ((currentVersion && currentVersion < miniApp.version) ||
-                    !currentVersion) {
-          tmp[miniApp.withoutVersion().toString()] = miniApp.version
+  async getOtaMiniApps (
+    napDescriptor: NativeApplicationDescriptor,
+    { convertToObjects = true, onlyKeepLatest } :
+    { convertToObjects: boolean, onlyKeepLatest: boolean } = {}) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      let miniApps = await this.cauldron.getOtaMiniApps(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version)
+      const miniAppsObjects = _.map(miniApps, Dependency.fromString)
+          // Could be done in a better way
+      if (onlyKeepLatest) {
+        let tmp = {}
+        for (const miniApp of miniAppsObjects) {
+          let currentVersion = tmp[miniApp.withoutVersion().toString()]
+          if ((currentVersion && currentVersion < miniApp.version) ||
+                      !currentVersion) {
+            tmp[miniApp.withoutVersion().toString()] = miniApp.version
+          }
+        }
+        miniApps = []
+        for (const miniAppName in tmp) {
+          miniApps.push(`${miniAppName}@${tmp[miniAppName]}`)
         }
       }
-      miniApps = []
-      for (const miniAppName in tmp) {
-        miniApps.push(`${miniAppName}@${tmp[miniAppName]}`)
-      }
+      return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps
+    } catch (e) {
+      log.error(`[getOtaMiniApps] ${e}`)
+      throw e
     }
-    return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps
   }
 
-  async getContainerMiniApps (nativeApplicationName: string,
-                              platformName: string,
-                              versionName: string,
-                              { convertToObjects = true } :
-                              { convertToObjects: boolean } = {}) : Promise<*> {
-    const miniApps = await this.cauldron.getContainerMiniApps(nativeApplicationName, platformName, versionName)
-    return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps
+  async getContainerMiniApps (
+    napDescriptor: NativeApplicationDescriptor,
+    { convertToObjects = true } :
+    { convertToObjects: boolean } = {}) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      const miniApps = await this.cauldron.getContainerMiniApps(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version)
+      return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps
+    } catch (e) {
+      log.error(`[getOtaMiniApps] ${e}`)
+      throw e
+    }
   }
 
-  async addOtaMiniApp (nativeApplicationName: string,
-                       platformName: string,
-                       versionName: string,
-                       miniApp: Object) : Promise<*> {
-    return spin(tagOneLine`Adding ${miniApp.toString()} to
-               ${nativeApplicationName}:${platformName}:${versionName} ota`,
-            this.cauldron.addOtaMiniApp(nativeApplicationName, platformName, versionName, miniApp))
+  async addOtaMiniApp (
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: Object) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return spin(tagOneLine`Adding ${miniApp.toString()} to
+               ${napDescriptor.toString()} ota`,
+            this.cauldron.addOtaMiniApp(
+              napDescriptor.name,
+              napDescriptor.platform,
+              napDescriptor.version,
+              miniApp))
+    } catch (e) {
+      log.error(`[addOtaMiniApp] ${e}`)
+      throw e
+    }
   }
 
-  async addContainerMiniApp (nativeApplicationName: string,
-                             platformName: string,
-                             versionName: string,
-                             miniApp: Object) : Promise<*> {
-    return spin(tagOneLine`Adding ${miniApp.toString()} to
-               ${nativeApplicationName}:${platformName}:${versionName} container`,
-            this.cauldron.addContainerMiniApp(nativeApplicationName, platformName, versionName, miniApp))
+  async addContainerMiniApp (
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: Object) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return spin(tagOneLine`Adding ${miniApp.toString()} to
+               ${napDescriptor.toString()} container`,
+            this.cauldron.addContainerMiniApp(
+              napDescriptor.name,
+              napDescriptor.platform,
+              napDescriptor.version,
+              miniApp))
+    } catch (e) {
+      log.error(`[addContainerMiniApp] ${e}`)
+      throw e
+    }
   }
 
-  async getConfig (appName: string,
-                   platformName: string,
-                   versionName: string) : Promise<*> {
-    let config = await this.cauldron.getConfig({appName, platformName, versionName})
+  async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
+    let config = await this.cauldron.getConfig({
+      appName: napDescriptor.name,
+      platformName: napDescriptor.platform,
+      versionName: napDescriptor.version
+    })
     if (!config) {
-      config = await this.cauldron.getConfig({appName, platformName})
+      config = await this.cauldron.getConfig({
+        appName: napDescriptor.name,
+        platformName: napDescriptor.platform
+      })
       if (!config) {
-        config = await this.cauldron.getConfig({appName})
+        config = await this.cauldron.getConfig({appName: napDescriptor.name})
       }
     }
     return config
   }
 
-  async updateNativeAppIsReleased (appName: string,
-                                   platformName: string,
-                                   versionName: string,
-                                   isReleased: boolean) : Promise<*> {
-    return this.cauldron.updateVersion(appName, platformName, versionName, {isReleased})
+  async updateNativeAppIsReleased (
+    napDescriptor: NativeApplicationDescriptor,
+    isReleased: boolean) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.updateVersion(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version, {isReleased})
+    } catch (e) {
+      log.error(`[updateNativeAppIsReleased] ${e}`)
+      throw e
+    }
   }
 
-  async updateMiniAppVersion (appName: string,
-                              platformName: string,
-                              versionName: string,
-                              miniApp: Object) : Promise<*> {
-    return this.cauldron.updateMiniAppVersion(appName, platformName, versionName, miniApp)
+  async updateMiniAppVersion (
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: Object) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.updateMiniAppVersion(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        miniApp)
+    } catch (e) {
+      log.error(`[updateMiniAppVersion] ${e}`)
+      throw e
+    }
   }
 
-  async throwIfNativeAppVersionIsReleased (appName: string,
-                                           platformName: string,
-                                           versionName: string,
-                                           errorMessage: string) : Promise<*> {
+  throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {
+    if (napDescriptor.isPartial) {
+      throw new Error(`Cannot work with a partial native application descriptor`)
+    }
+  }
+
+  async throwIfNativeAppVersionIsReleased (
+    napDescriptor: NativeApplicationDescriptor,
+    errorMessage: string) : Promise<*> {
     const nativeAppVersion =
-            await this.cauldron.getVersion(appName, platformName, versionName)
+            await this.cauldron.getVersion(
+              napDescriptor.name,
+              napDescriptor.platform,
+              napDescriptor.version)
 
     if (nativeAppVersion.isReleased) {
       throw new Error(errorMessage)
