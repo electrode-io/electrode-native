@@ -111,10 +111,28 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
     
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;
-    ElectrodeBridgeTransceiver *electrodeBridge = [self.bridge moduleForClass:[ElectrodeBridgeTransceiver class]];
-    [electrodeBridge onReactNativeInitialized];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notifyElectrodeOnReactInitialized:)
+                                                 name:RCTDidInitializeModuleNotification object:nil];
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void) notifyElectrodeOnReactInitialized: (NSNotification *) notification {
+    if (notification) {
+        if ([notification.object isKindOfClass:[RCTBridge class]] ) {
+            RCTBridge *initializedBridge = (RCTBridge *) notification.object;
+            id moduleInstance = notification.userInfo[@"module"];
+            if ([moduleInstance isKindOfClass:[ElectrodeBridgeTransceiver class]]) {
+                ElectrodeBridgeTransceiver *electrodeBridge = [self.bridge moduleForClass:[ElectrodeBridgeTransceiver class]];
+                [electrodeBridge onReactNativeInitialized];
+            }
+        }
+    }
+}
 
 - (NSArray *)allJSBundleFiles
 {
