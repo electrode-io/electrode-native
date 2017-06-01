@@ -252,7 +252,7 @@ class Cauldron {
   async getOtaMiniApps (
     napDescriptor: NativeApplicationDescriptor,
     { convertToObjects = true, onlyKeepLatest } :
-    { convertToObjects: boolean, onlyKeepLatest: boolean } = {}) : Promise<*> {
+    { convertToObjects?: boolean, onlyKeepLatest: boolean } = {}) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       let miniApps = await this.cauldron.getOtaMiniApps(
