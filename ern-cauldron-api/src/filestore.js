@@ -1,3 +1,5 @@
+// @flow
+
 import {
   mkdirp,
   writeFile
@@ -6,11 +8,17 @@ import BaseGit from './base-git'
 import fs from 'fs'
 import path from 'path'
 
-function trim (v) {
+function trim (v: string) : string {
   return v && v.trim()
 }
 export default class FileStore extends BaseGit {
-  constructor (ernPath, repository, branch, prefix) {
+  _prefix : string
+
+  constructor (
+    ernPath: string,
+    repository: string,
+    branch: string,
+    prefix: string) {
     super(ernPath, repository, branch)
     this._prefix = prefix
   }
@@ -22,7 +30,7 @@ export default class FileStore extends BaseGit {
   * @param {string|Buffer} data - The file binary data
   * @return sha1 hash from git.
   */
-  async storeFile (identifier, content) {
+  async storeFile (identifier: string, content: string | Buffer) {
     await this.sync()
     await mkdirp(path.resolve(this.path, this._prefix))
     const relPath = this.pathToFile(identifier)
@@ -35,7 +43,7 @@ export default class FileStore extends BaseGit {
     return trim(sha1)
   }
 
-  async hasFile (filename) {
+  async hasFile (filename: string) {
     await this.sync()
     try {
       fs.statSync(this.pathToFile(filename)).isFile()
@@ -51,7 +59,7 @@ export default class FileStore extends BaseGit {
   * @param {string} filename - The name of the file to retrieve
   * @return {Buffer} The file binary data
   */
-  async getFile (filename) {
+  async getFile (filename: string) {
     await this.sync()
     return fs.readFileSync(this.pathToFile(filename))
   }
@@ -61,13 +69,13 @@ export default class FileStore extends BaseGit {
   *
   * @param {string} filename - The name of the file to remove
   */
-  async removeFile (filename) {
+  async removeFile (filename: string) {
     await this.sync()
     await this.git.rmAsync(this.pathToFile(filename))
     return this.push()
   }
 
-  pathToFile (filename) {
+  pathToFile (filename: string) {
     return path.join(this._prefix, filename)
   }
 }

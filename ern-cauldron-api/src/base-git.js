@@ -1,3 +1,5 @@
+// @flow
+
 import {
   Platform
 } from '@walmart/ern-util'
@@ -14,7 +16,15 @@ const GIT_REMOTE_NAME = 'upstream'
 const README = '### Cauldron Repository'
 
 export default class BaseGit {
-  constructor (ernPath = Platform.rootDirectory, repository, branch = 'master') {
+  path: string
+  repository: string
+  branch: string
+  git: any
+
+  constructor (
+    ernPath: string = Platform.rootDirectory,
+    repository: string,
+    branch: string = 'master') {
     this.path = path.resolve(ernPath, 'cauldron')
     if (!fs.existsSync(this.path)) {
       shell.mkdir('-p', this.path)
