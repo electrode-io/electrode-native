@@ -10,8 +10,13 @@
     "rebuild": "lerna clean --yes && lerna bootstrap",
     "test": "lerna run test",
     "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r lcov -r html $(find ./ern-*/.nyc_output -type f -name '*.json' -maxdepth 3)",
-    "standard": "standard"
+    "standard": "standard",
+    "flow": "flow"
   },
+  "pre-commit": [
+    "standard",
+    "flow"
+  ],
   "bin": {
     "ern": "ern-global-cli/bin/ern.js",
     "ern-dev": "ern-global-cli/bin/ern-dev.js"
@@ -41,6 +46,7 @@
     "mocha": "^3.2.0",
     "npm": "^4.4.1",
     "nyc": "^10.1.2",
+    "pre-commit": "^1.2.2",
     "rimraf": "^2.6.0",
     "standard": "^10.0.2"
   },
