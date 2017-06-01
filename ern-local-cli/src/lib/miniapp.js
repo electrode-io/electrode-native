@@ -7,6 +7,7 @@ import {
 import {
   android,
   Dependency,
+  NativeApplicationDescriptor,
   Platform,
   reactNative,
   spin,
@@ -375,26 +376,23 @@ Otherwise you can safely ignore this warning
   }
 
   async addToNativeAppInCauldron (
-    appName: string,
-    platformName: string,
-    versionName: string,
+    napDescriptor: NativeApplicationDescriptor,
     force: boolean) {
     try {
-      const appDesc = `${appName}:${platformName}:${versionName}`
-      const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName)
+      const nativeApp = await cauldron.getNativeApp(napDescriptor)
 
       const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
 
       const currentMiniAppEntryInCauldronAtSameVersion = nativeApp.isReleased
-                    ? await cauldron.getOtaMiniApp(appName, platformName, versionName, miniApp)
-                    : await cauldron.getContainerMiniApp(appName, platformName, versionName, miniApp)
+                    ? await cauldron.getOtaMiniApp(napDescriptor, miniApp)
+                    : await cauldron.getContainerMiniApp(napDescriptor, miniApp)
 
        // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
-        log.info(`Checking if ${miniApp.toString()} is not already in ${appDesc}`)
+        log.info(`Checking if ${miniApp.toString()} is not already in ${napDescriptor.toString()}`)
 
         if (currentMiniAppEntryInCauldronAtSameVersion) {
-          throw new Error(`${miniApp.toString()} already in ${appDesc}`)
+          throw new Error(`${miniApp.toString()} already in ${napDescriptor.toString()}`)
         }
 
         /* log.info(`Checking that container version match native app version`)
@@ -407,7 +405,10 @@ Otherwise you can safely ignore this warning
         } */
 
         log.info('Checking compatibility with each native dependency')
-        let report = await checkCompatibilityWithNativeApp(appName, platformName, versionName)
+        let report = await checkCompatibilityWithNativeApp(
+          napDescriptor.name,
+          napDescriptor.platform,
+          napDescriptor.version)
         if (!report.isCompatible) {
           throw new Error('At least a native dependency is incompatible')
         }
@@ -419,44 +420,40 @@ Otherwise you can safely ignore this warning
         const localNativeDependencyString =
                         `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
         const remoteDependency =
-                    await cauldron.getNativeDependency(appName, platformName, versionName, localNativeDependencyString, { convertToObject: true })
+                    await cauldron.getNativeDependency(napDescriptor, localNativeDependencyString, { convertToObject: true })
         if (remoteDependency && (remoteDependency.version === localNativeDependency.version)) {
           continue
         }
 
         if (!force) {
-          await cauldron.addNativeDependency(
-                        localNativeDependency, appName, platformName, versionName)
+          await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
         } else {
           let nativeDepInCauldron
           try {
             nativeDepInCauldron = await cauldron
-                            .getNativeDependency(appName, platformName, versionName,
-                            localNativeDependencyString)
+                            .getNativeDependency(napDescriptor, localNativeDependencyString)
           } catch (e) {
                         // 404 most probably, swallow, need to improve cauldron cli to return null
                         // instead in case of 404
           }
 
           if (nativeDepInCauldron) {
-            await cauldron.updateNativeAppDependency(
-                            appName, platformName, versionName, localNativeDependencyString, localNativeDependency.version)
+            await cauldron.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
           } else {
-            await cauldron.addNativeDependency(
-                            localNativeDependency, appName, platformName, versionName)
+            await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
           }
         }
       }
 
       const currentMiniAppEntryInContainer =
-                await cauldron.getContainerMiniApp(appName, platformName, versionName, miniApp.withoutVersion())
+                await cauldron.getContainerMiniApp(napDescriptor, miniApp.withoutVersion())
 
       if (currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldron.updateMiniAppVersion(appName, platformName, versionName, miniApp)
+        await cauldron.updateMiniAppVersion(napDescriptor, miniApp)
       } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldron.addContainerMiniApp(appName, platformName, versionName, miniApp)
+        await cauldron.addContainerMiniApp(napDescriptor, miniApp)
       } else {
-        await cauldron.addOtaMiniApp(appName, platformName, versionName, miniApp)
+        await cauldron.addOtaMiniApp(napDescriptor, miniApp)
       }
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`)

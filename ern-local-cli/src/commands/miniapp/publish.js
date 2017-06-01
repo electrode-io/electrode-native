@@ -1,6 +1,9 @@
 // @flow
 
 import {
+  NativeApplicationDescriptor
+} from '@walmart/ern-util'
+import {
   publishMiniApp
 } from '../../lib/publication'
 
@@ -14,7 +17,7 @@ exports.builder = function (yargs: any) {
       type: 'bool',
       describe: 'Force publish'
     })
-    .option('fullNapSelector', {
+    .option('completeNapDescriptor', {
       alias: 'n',
       describe: 'Full native application selector'
     })
@@ -72,7 +75,7 @@ exports.builder = function (yargs: any) {
 exports.handler = function (argv: any) {
   return publishMiniApp({
     force: argv.force,
-    fullNapSelector: argv.fullNapSelector,
+    napDescriptor: NativeApplicationDescriptor.fromString(argv.completeNapDescriptor),
     npmPublish: argv.npmPublish,
     publishAsOtaUpdate: argv.ota,
     publishAsNewContainer: argv.container,

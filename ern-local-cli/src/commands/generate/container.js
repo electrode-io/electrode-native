@@ -4,7 +4,7 @@ import {
   generateMiniAppsComposite
 } from '@walmart/ern-container-gen'
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import {
   runContainerGen
@@ -18,7 +18,7 @@ exports.desc = 'Run the container generator'
 
 exports.builder = function (yargs: any) {
   return yargs
-    .option('fullNapSelector', {
+    .option('completeNapDescriptor', {
       type: 'string',
       alias: 'n',
       describe: 'Full native application selector'
@@ -53,7 +53,7 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function (argv: any) {
   let {
-    fullNapSelector,
+    completeNapDescriptor,
     containerVersion,
     jsOnly,
     outputFolder,
@@ -63,14 +63,14 @@ exports.handler = async function (argv: any) {
 
   //
   // Full native application selector was not provided.
-  // Ask the user to select a fullNapSelector from a list
+  // Ask the user to select a completeNapDescriptor from a list
   // containing all the native applications versions in the cauldron
   // Not needed if miniapps are provided with jsOnly flag
-  if (!fullNapSelector && !miniapps) {
+  if (!completeNapDescriptor && !miniapps) {
     const nativeApps = await cauldron.getAllNativeApps()
 
     // Transform native apps from the cauldron to an Array
-    // of fullNapSelector strings
+    // of completeNapDescriptor strings
     // [Should probably move to a Cauldron util class for reusability]
     let result = _.flattenDeep(
                   _.map(nativeApps, nativeApp =>
@@ -78,17 +78,17 @@ exports.handler = async function (argv: any) {
                       _.map(platform.versions, version =>
                        `${nativeApp.name}:${platform.name}:${version.name}`))))
 
-    const { userSelectedFullNapSelector } = await inquirer.prompt([{
+    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',
-      name: 'userSelectedFullNapSelector',
+      name: 'userSelectedCompleteNapDescriptor',
       message: 'Choose a native application version for which to generate container',
       choices: result
     }])
 
-    fullNapSelector = userSelectedFullNapSelector
+    completeNapDescriptor = userSelectedCompleteNapDescriptor
   }
 
-  const explodedNapSelector = explodeNapSelector(fullNapSelector)
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
 
   //
   // If the user wants to generates a complete container (not --jsOnly)
@@ -109,7 +109,7 @@ exports.handler = async function (argv: any) {
   // Ony generates the composite miniapp to a provided output folder
   if (jsOnly) {
     if (!miniapps) {
-      miniapps = await cauldron.getContainerMiniApps(...explodedNapSelector)
+      miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     }
 
     if (!outputFolder) {
@@ -125,9 +125,7 @@ exports.handler = async function (argv: any) {
     await generateMiniAppsComposite(miniapps, outputFolder)
   } else {
     await runContainerGen(
-      explodedNapSelector[0], /* nativeAppName */
-      explodedNapSelector[1], /* nativeAppPlatform */
-      explodedNapSelector[2], /* nativeAppVersion */
+      napDescriptor,
       containerVersion,
       { disablePublication })
   }

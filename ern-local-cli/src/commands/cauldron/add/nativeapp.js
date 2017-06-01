@@ -1,11 +1,11 @@
 // @flow
 
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
-exports.command = 'nativeapp <fullNapSelector> [platformVersion]'
+exports.command = 'nativeapp <completeNapDescriptor> [platformVersion]'
 exports.desc = 'Add a native application to the cauldron'
 
 exports.builder = function (yargs: any) {
@@ -17,12 +17,12 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function (argv: any) {
-  const explodedNapSelector = explodeNapSelector(argv.fullNapSelector)
-  if (explodedNapSelector.length !== 3) {
-    return console.log('You need to provide a fullNapSelector to this command !')
+  const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
+  if (napDescriptor.isPartial) {
+    return log.error('You need to provide a complete native application descriptor to this command !')
   }
-  await cauldron.addNativeApp(argv.platformVersion
+
+  await cauldron.addNativeApp(napDescriptor, argv.platformVersion
     ? argv.platformVersion.toString().replace('v', '')
-    : undefined
-    , ...explodedNapSelector)
+    : undefined)
 }

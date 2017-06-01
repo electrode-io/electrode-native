@@ -1,13 +1,13 @@
 // @flow
 
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import {
   checkCompatibilityWithNativeApp
 } from '../../../lib/compatibility'
 
-exports.command = 'nativeapp <napSelector>'
+exports.command = 'nativeapp <napDescriptor>'
 exports.desc = 'Check the compatibility of the miniapp with given native app(s)'
 
 exports.builder = function (yargs: any) {
@@ -15,5 +15,6 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function (argv: any) {
-  checkCompatibilityWithNativeApp(...explodeNapSelector(argv.napSelector))
+  const napDescriptor = NativeApplicationDescriptor.fromString(argv.napDescriptor)
+  checkCompatibilityWithNativeApp(napDescriptor.name, napDescriptor.platform, napDescriptor.version)
 }
