@@ -7,6 +7,7 @@ import config from './config.js'
 import fs from 'fs'
 import _ from 'lodash'
 
+const npmModuleRe = /(.*)@(.*)/
 const HOME_DIRECTORY = process.env['HOME']
 
 export default class Platform {
@@ -225,5 +226,13 @@ export default class Platform {
     const dependency = this.buildDependencyObj(dependencyString)
     return _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
       d => (d.name === dependency.name) && (d.scope === dependency.scope))
+  }
+
+  static get reactNativeVersionFromManifest () {
+    return npmModuleRe.exec(this.reactNativeDependencyFromManifest)[2]
+  }
+
+  static get reactNativeDependencyFromManifest () {
+    return _.find(this.currentVersionManifest.supportedPlugins, d => d.startsWith('react-native@'))
   }
 }
