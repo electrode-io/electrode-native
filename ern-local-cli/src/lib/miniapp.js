@@ -221,10 +221,10 @@ export default class MiniApp {
     // exclude native dependencies (plugins).
   get jsDependencies () : Array<any> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
-    let result = _.map(this.packageJson.dependencies, (val, key) =>
+    let result = _.map(this.packageJson.dependencies, (val: string, key: string) =>
             Platform.buildDependencyObj(`${key}@${val}`))
 
-    return _.filter(result, d => !nativeDependenciesNames.includes(d.name))
+    return result == null ? [] : _.filter(result, d => !nativeDependenciesNames.includes(d.name))
   }
 
   get nativeAndJsDependencies () : Array<any> {

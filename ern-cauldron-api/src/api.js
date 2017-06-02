@@ -52,21 +52,27 @@ export default class CauldronApi {
 
   async getPlatforms (nativeApplicationName: string) {
     const app = await this.getNativeApplication(nativeApplicationName)
-    return app == null ? null : app.platforms
+    if (app) {
+      return app.platforms
+    }
   }
 
   async getPlatform (
     nativeApplicationName: string,
     platformName: string) {
     const platforms = await this.getPlatforms(nativeApplicationName)
-    return _.find(platforms, p => p.name === platformName)
+    if (platforms) {
+      return _.find(platforms, p => p.name === platformName)
+    }
   }
 
   async getVersions (
     nativeApplicationName: string,
     platformName: string) {
     const platform = await this.getPlatform(nativeApplicationName, platformName)
-    return platform.versions
+    if (platform) {
+      return platform.versions
+    }
   }
 
   async getVersion (
@@ -74,23 +80,29 @@ export default class CauldronApi {
     platformName: string,
     versionName: string) {
     const versions = await this.getVersions(nativeApplicationName, platformName)
-    return _.find(versions, x => x.name === versionName)
+    if (versions) {
+      return _.find(versions, x => x.name === versionName)
+    }
   }
 
   async getOtaMiniApps (
     nativeApplicationName: string,
     platformName: string,
     versionName: string) {
-    const {miniApps} = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return miniApps.ota
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version && version.miniApps) {
+      return version.miniApps.ota
+    }
   }
 
   async getContainerMiniApps (
     nativeApplicationName: string,
     platformName: string,
     versionName: string) {
-    const {miniApps} = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return miniApps.container
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version && version.miniApps) {
+      return version.miniApps.container
+    }
   }
 
   async getOtaMiniApp (
@@ -115,8 +127,8 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string) {
-    const {nativeDeps = []} = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return nativeDeps
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    return version == null ? [] : version.nativeDeps
   }
 
   async getNativeDependency (
@@ -141,13 +153,13 @@ export default class CauldronApi {
       if (platformName) {
         if (versionName) {
           const version = await this.getVersion(appName, platformName, versionName)
-          return version.config
+          return version == null ? undefined : version.config
         }
         const platform = await this.getPlatform(appName, platformName)
-        return platform.config
+        return platform == null ? undefined : platform.config
       }
       const app = await this.getNativeApplication(appName)
-      return app.config
+      return app == null ? undefined : app.config
     }
   }
 
@@ -181,6 +193,9 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platform: any) {
     const nativeApplication = await this.getNativeApplication(nativeApplicationName)
+    if (!nativeApplication) {
+      throw new Error(`Cannot create platform for unexisting native application ${nativeApplicationName}`)
+    }
     if (!alreadyExists(nativeApplication.platforms, platform.name)) {
       const validatedPlatform = await joiValidate(platform, schemas.nativeApplicationPlatform)
       nativeApplication.platforms.push(validatedPlatform)
@@ -192,6 +207,9 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string) {
     const nativeApplication = await this.getNativeApplication(nativeApplicationName)
+    if (!nativeApplication) {
+      throw new Error(`Cannot remove platform of unexisting native application ${nativeApplicationName}`)
+    }
     if (_.remove(nativeApplication.platforms, x => x.name === platformName).length > 0) {
       await this.commit(`Remove ${platformName} platform from ${nativeApplicationName}`)
     }
@@ -202,6 +220,9 @@ export default class CauldronApi {
     platformName: string,
     version: any) {
     const platform = await this.getPlatform(nativeApplicationName, platformName)
+    if (!platform) {
+      throw new Error(`Cannot create version for unexisting ${nativeApplicationName}:${platformName}`)
+    }
     if (!alreadyExists(platform.versions, version.name)) {
       const validatedVersion = await joiValidate(version, schemas.nativeApplicationVersion)
       platform.versions.push(validatedVersion)
@@ -214,6 +235,9 @@ export default class CauldronApi {
     platformName: string,
     versionName: string) {
     const platform = await this.getPlatform(nativeApplicationName, platformName)
+    if (!platform) {
+      throw new Error(`Cannot remove version from unexisting ${nativeApplicationName}:${platformName}`)
+    }
     checkNotFound(platform, `No platform named ${platformName}`)
     if (_.remove(platform.versions, x => x.name === versionName).length > 0) {
       await this.commit(`Remove version ${versionName} from ${nativeApplicationName} ${platformName}`)
@@ -227,7 +251,7 @@ export default class CauldronApi {
     newVersion: string) {
     const validatedVersion = await joiValidate(newVersion, schemas.nativeAplicationVersionPatch)
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (validatedVersion.isReleased != null) {
+    if (version && validatedVersion.isReleased != null) {
       version.isReleased = validatedVersion.isReleased
       await this.commit(`Update release status of ${nativeApplicationName} ${platformName} ${versionName}`)
     }
@@ -239,7 +263,7 @@ export default class CauldronApi {
     versionName: string,
     dependency: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (_.remove(version.nativeDeps, x => x.startsWith(`${dependency}@`)).length > 0) {
+    if (version && _.remove(version.nativeDeps, x => x.startsWith(`${dependency}@`)).length > 0) {
       await this.commit(`Remove ${dependency} dependency from ${nativeApplicationName} ${platformName}`)
     }
   }
@@ -251,10 +275,12 @@ export default class CauldronApi {
     dependencyName: string,
     newVersion: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
-    const newDependencyString = `${dependencyName}@${newVersion}`
-    version.nativeDeps.push(newDependencyString)
-    await this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
+    if (version) {
+      _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
+      const newDependencyString = `${dependencyName}@${newVersion}`
+      version.nativeDeps.push(newDependencyString)
+      await this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
+    }
   }
 
   // Only version of miniapps in container can be updated
@@ -264,10 +290,12 @@ export default class CauldronApi {
     versionName: string,
     miniApp: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    let miniAppInContainer = _.find(version.miniApps.container, m => Dependency.same(Dependency.fromString(m), miniApp, { ignoreVersion: true }))
-    if (miniAppInContainer) {
-      version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
-      await this.commit(`Update version of ${miniApp.name} MiniApp to ${miniApp.version}`)
+    if (version) {
+      let miniAppInContainer = _.find(version.miniApps.container, m => Dependency.same(Dependency.fromString(m), miniApp, { ignoreVersion: true }))
+      if (miniAppInContainer) {
+        version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
+        await this.commit(`Update version of ${miniApp.name} MiniApp to ${miniApp.version}`)
+      }
     }
   }
 
@@ -278,7 +306,7 @@ export default class CauldronApi {
     miniAppName: string,
     miniAppVersion: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (_.remove(version.miniApps.ota, x => x.name === `${miniAppName}@${miniAppVersion}`).length > 0) {
+    if (version && _.remove(version.miniApps.ota, x => x === `${miniAppName}@${miniAppVersion}`).length > 0) {
       await this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} ota`)
     }
   }
@@ -289,7 +317,7 @@ export default class CauldronApi {
     versionName: string,
     miniAppName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (_.remove(version.miniApps.container, x => x.name.startsWith(`${miniAppName}@`)).length > 0) {
+    if (version && _.remove(version.miniApps.container, x => x.startsWith(`${miniAppName}@`)).length > 0) {
       await this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
     }
   }
@@ -300,7 +328,7 @@ export default class CauldronApi {
     versionName: string,
     dependency: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version.nativeDeps.includes(dependency.toString())) {
+    if (version && !version.nativeDeps.includes(dependency.toString())) {
       version.nativeDeps.push(dependency.toString())
       await this.commit(`Add native dependency ${dependency.name} to ${nativeApplicationName} ${platformName} ${versionName}`)
     }
@@ -312,7 +340,7 @@ export default class CauldronApi {
     versionName: string,
     miniapp: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version.miniApps.ota.includes(miniapp.toString())) {
+    if (version && !version.miniApps.ota.includes(miniapp.toString())) {
       version.miniApps.ota.push(miniapp.toString())
       await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} ota`)
     }
@@ -324,7 +352,7 @@ export default class CauldronApi {
     versionName: string,
     miniapp: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version.miniApps.container.includes(miniapp.toString())) {
+    if (version && !version.miniApps.container.includes(miniapp.toString())) {
       version.miniApps.container.push(miniapp.toString())
       await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
     }
@@ -335,6 +363,9 @@ export default class CauldronApi {
     platformName: string,
     versionName: string) {
     let app = await this.getNativeApplication(nativeApplicationName)
+    if (!app) {
+      throw new Error(`Cannot remove platform of unexisting native application ${nativeApplicationName}`)
+    }
     let platform, version
     if (platformName) {
       platform = await this.getPlatform(nativeApplicationName, platformName)
@@ -362,10 +393,13 @@ export default class CauldronApi {
     platformName: string,
     versionName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
-    this._nativeBinariesStore.removeFile(filename)
-    version.binary = null
-    return this.commit(version)
+
+    if (version) {
+      const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
+      this._nativeBinariesStore.removeFile(filename)
+      version.binary = null
+      this.commit(`Remove binary of ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
   }
 
   async createSourceMap (
@@ -400,12 +434,11 @@ export default class CauldronApi {
     payload: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
 
-    const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
-
-    await this._nativeBinariesStore.storeFile(filename, payload)
-
-    version.binary = shasum(payload)
-    this.commit(version)
-    return version
+    if (version) {
+      const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
+      await this._nativeBinariesStore.storeFile(filename, payload)
+      version.binary = shasum(payload)
+      this.commit(`Add binary for ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
   }
 }

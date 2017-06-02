@@ -152,5 +152,7 @@ function buildPluginListSync (plugins, manifest) {
 
 function getReactNativeVersionFromManifest (manifest) {
   const rnDep = _.find(manifest.supportedPlugins, d => d.startsWith('react-native@'))
-  return npmModuleRe.exec(rnDep)[2]
+  if (rnDep) {
+    return npmModuleRe.exec(rnDep)[2]
+  }
 }
