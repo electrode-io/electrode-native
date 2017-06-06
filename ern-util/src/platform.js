@@ -68,7 +68,7 @@ export default class Platform {
   // Doing this by looking at all remote branches of the platform
   // matching `vX` where x is a number.
   static get versions () : Array<string> {
-    const branchVersionRe = /heads\/v(\d+)/
+    const branchVersionRe = /heads\/v(\d+.\d+.*\d*)/
     const versions = execSync(`git --git-dir ${this.repositoryDirectory}/.git ls-remote --heads`)
       .toString()
       .split('\n')
