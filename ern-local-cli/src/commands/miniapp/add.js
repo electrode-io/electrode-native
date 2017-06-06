@@ -11,7 +11,7 @@ exports.builder = function (yargs: any) {
           type: 'bool',
           alias: 'd',
           describe: 'Add this dependency as a devDependency'
-        }).demandCommand(1, 'Needs a name')
+        })
 }
 
 exports.handler = async function (argv: any) {

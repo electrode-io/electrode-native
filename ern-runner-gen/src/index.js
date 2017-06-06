@@ -171,7 +171,7 @@ export async function generateContainerForRunner ({
 
   await generateContainer({
     containerVersion: RUNNER_CONTAINER_VERSION,
-    nativeAppName: camelCase(miniapp.name),
+    nativeAppName: miniapp.name,
     generator,
     platformPath,
     plugins,
