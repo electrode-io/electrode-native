@@ -228,11 +228,13 @@ export default class Platform {
       d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }
 
-  static get reactNativeVersionFromManifest () {
-    return npmModuleRe.exec(this.reactNativeDependencyFromManifest)[2]
+  static get reactNativeVersionFromManifest () : ?string {
+    if (this.reactNativeDependencyFromManifest) {
+      return npmModuleRe.exec(this.reactNativeDependencyFromManifest)[2]
+    }
   }
 
-  static get reactNativeDependencyFromManifest () {
+  static get reactNativeDependencyFromManifest () : ?string {
     return _.find(this.currentVersionManifest.supportedPlugins, d => d.startsWith('react-native@'))
   }
 }
