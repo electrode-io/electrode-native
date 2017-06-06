@@ -28,7 +28,14 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function (argv: any) {
   const bridgeDep = Platform.getPlugin('@walmart/react-native-electrode-bridge')
+  if (!bridgeDep) {
+    return log.error(`@walmart/react-native-electrode-bridge not found in manifest. cannot infer version to use`)
+  }
+
   const reactNative = Platform.getPlugin('react-native')
+  if (!reactNative) {
+    return log.error(`react-native not found in manifest. cannot infer version to use`)
+  }
 
   await generateApi({
     bridgeVersion: `${bridgeDep.version}`,

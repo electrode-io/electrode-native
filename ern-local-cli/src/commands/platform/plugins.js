@@ -18,8 +18,10 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function (argv: any) {
-  const plugins = Platform.getManifestPlugins(argv.platformVersion
-        ? argv.platformVersion : Platform.currentVersion)
+  const plugins = Platform.getManifestPlugins(
+    argv.platformVersion
+        ? argv.platformVersion
+        : Platform.currentVersion)
 
   log.info(
         tagOneLine`Platform v${argv.platformVersion ? argv.platformVersion : Platform.currentVersion}

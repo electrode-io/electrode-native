@@ -24,6 +24,13 @@ exports.handler = async function ({
   updatePlugin: boolean,
   bridgeVersion: string
 } = {}) {
-  const version = bridgeVersion || Platform.getPlugin('@walmart/react-native-electrode-bridge').version
-  return regenerateCode({bridgeVersion: version, updatePlugin})
+  if (!bridgeVersion) {
+    const bridgeDep = Platform.getPlugin('@walmart/react-native-electrode-bridge')
+    if (!bridgeDep) {
+      return log.error(`@walmart/react-native-electrode-bridge not found in manifest. please provide explicit version`)
+    }
+    bridgeVersion = bridgeDep.version
+  }
+
+  return regenerateCode({bridgeVersion, updatePlugin})
 }
