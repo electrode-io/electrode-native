@@ -19,7 +19,12 @@ const { yarnAdd } = yarn
 const gitFolderRe = /.*\/(.*).git/
 const npmScopeModuleRe = /@(.*)\/(.*)/
 const pluginConfigFileName = 'config.json'
-const apiPluginConfig = require('./apiPluginConfig.json')
+
+type PluginConfig = {
+  android: Object,
+  ios: Object,
+  origin?: Object
+}
 
 // =============================================================================
 // GENERATOR utils
@@ -34,7 +39,7 @@ const apiPluginConfig = require('./apiPluginConfig.json')
 //   name: "react-native-code-push",
 //   version: "1.2.3"
 // }
-export async function getPluginConfig (plugin: any, pluginsConfigPath: string) {
+export async function getPluginConfig (plugin: any, pluginsConfigPath: string) : Promise<PluginConfig> {
   let result = {}
   const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
 
@@ -66,7 +71,7 @@ export async function getPluginConfig (plugin: any, pluginsConfigPath: string) {
     }
   } else {
     console.log(`No config.json file for ${plugin.name}. Assuming apigen module`)
-    result = apiPluginConfig
+    result = getApiPluginDefaultConfig()
   }
 
   if (!result.origin) {
@@ -89,6 +94,35 @@ export async function getPluginConfig (plugin: any, pluginsConfigPath: string) {
   }
 
   return result
+}
+
+function getApiPluginDefaultConfig () : PluginConfig {
+  return {
+    android: {
+      root: 'android',
+      moduleName: 'lib',
+      transform: [
+        { file: 'android/lib/build.gradle' }
+      ]
+    },
+    ios: {
+      copy: [
+        {
+          source: 'IOS/IOS/Classes/SwaggersAPIs/*',
+          dest: 'ElectrodeContainer/APIs'
+        }
+      ],
+      pbxproj: {
+        addSource: [
+          {
+            from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift',
+            path: 'APIs',
+            group: 'APIs'
+          }
+        ]
+      }
+    }
+  }
 }
 
 // Returns the base path of a given plugin generation config
