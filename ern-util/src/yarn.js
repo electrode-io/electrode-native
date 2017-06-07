@@ -10,7 +10,7 @@ export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean
   return new Promise((resolve, reject) => {
     let _package = typeof (dependency) === 'string'
             ? dependency
-            : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}@${dependency.version}`
+            : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
     exec(`yarn add ${_package} --ignore-engines --exact ${dev ? '--dev' : ''}`,
             (err, stdout, stderr) => {
               if (err) {
