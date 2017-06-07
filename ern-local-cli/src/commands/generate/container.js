@@ -61,6 +61,8 @@ exports.handler = async function (argv: any) {
     disablePublication
   } = argv
 
+  let napDescriptor
+
   //
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
@@ -88,7 +90,9 @@ exports.handler = async function (argv: any) {
     completeNapDescriptor = userSelectedCompleteNapDescriptor
   }
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  if (completeNapDescriptor) {
+    napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  }
 
   //
   // If the user wants to generates a complete container (not --jsOnly)
@@ -109,6 +113,9 @@ exports.handler = async function (argv: any) {
   // Ony generates the composite miniapp to a provided output folder
   if (jsOnly) {
     if (!miniapps) {
+      if (!napDescriptor) {
+        return log.error('You need to provide a napDescriptor if not providing miniapps')
+      }
       miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     }
 
@@ -124,6 +131,9 @@ exports.handler = async function (argv: any) {
 
     await generateMiniAppsComposite(miniapps, outputFolder)
   } else {
+    if (!napDescriptor) {
+      return log.error('You need to provide a napDescriptor if not providing miniapps')
+    }
     await runContainerGen(
       napDescriptor,
       containerVersion,
