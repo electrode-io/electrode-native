@@ -11,7 +11,7 @@ export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean
     let _package = typeof (dependency) === 'string'
             ? dependency
             : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}@${dependency.version}`
-    exec(`yarn add ${_package} --exact ${dev ? '--dev' : ''}`,
+    exec(`yarn add ${_package} --ignore-engines --exact ${dev ? '--dev' : ''}`,
             (err, stdout, stderr) => {
               if (err) {
                 log.error(err)
