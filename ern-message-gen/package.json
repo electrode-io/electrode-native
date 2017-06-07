@@ -2,7 +2,7 @@
   "name": "@walmart/ern-message-gen",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "build": "ern-babel",
     "test": "ern-mocha",
