@@ -1,3 +1,5 @@
+// @flow
+
 import {
   config as ernConfig
 } from '@walmart/ern-util'
@@ -7,7 +9,7 @@ exports.desc = 'Display the currently activated Cauldron repository'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   const cauldronRepoInUse = ernConfig.getValue('cauldronRepoInUse')
   if (!cauldronRepoInUse) {
     return console.log(`No Cauldron repository is in use yet`)

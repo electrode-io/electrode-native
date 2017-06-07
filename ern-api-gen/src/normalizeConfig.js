@@ -1,3 +1,5 @@
+// @flow
+
 import fs from 'fs'
 import {MODEL_FILE, CONFIG_FILE} from './Constants'
 import path from 'path'
@@ -23,20 +25,35 @@ const isApiRe = /.*react-native-(.*)-api$/
 // - shouldGenerateBlankApi : Indicated whether to generate blank api/model schema or sample one [Default : false]
 // - configFilePath : Path to configuration file [Default : no path]
 export default function normalizeConfig ({
-    name, /* REQUIRED */
-    bridgeVersion, /* REQUIRED */
-    reactNativeVersion, /* REQUIRED */
-    apiVersion,
-    apiDescription,
-    apiAuthor,
-    namespace,
-    npmScope,
-    apiSchemaPath = MODEL_FILE,
-    moduleName,
-    artifactId,
-    shouldGenerateBlankApi,
-    configFilePath = cwd(CONFIG_FILE),
-    ...rest
+  name, /* REQUIRED */
+  bridgeVersion, /* REQUIRED */
+  reactNativeVersion, /* REQUIRED */
+  apiVersion,
+  apiDescription,
+  apiAuthor,
+  namespace,
+  npmScope,
+  apiSchemaPath = MODEL_FILE,
+  moduleName,
+  artifactId,
+  shouldGenerateBlankApi,
+  configFilePath = cwd(CONFIG_FILE),
+  ...rest
+} : {
+  name: string,
+  bridgeVersion: string,
+  reactNativeVersion: string,
+  apiVersion?: string,
+  apiDescription?: string,
+  apiAuthor?: string,
+  namespace?: string,
+  npmScope?: string,
+  apiSchemaPath?: string,
+  moduleName?: string,
+  artifactId?: string,
+  shouldGenerateBlankApi?: boolean,
+  configFilePath?: string,
+  rest?: any
 }) {
   let simpleName = name
 

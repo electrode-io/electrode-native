@@ -1,8 +1,13 @@
+// @flow
+
 import {
   generateContainer,
   GithubGenerator,
   MavenGenerator
 } from '@walmart/ern-container-gen'
+import {
+  Platform
+} from '@walmart/ern-util'
 import {
   execSync
 } from 'child_process'
@@ -13,15 +18,13 @@ import shell from 'shelljs'
 
 let log
 
-// Path to ern platform root folder
-const ERN_PATH = `${process.env['HOME']}/.ern`
-const CONTAINER_GEN_OUT_FOLDER = `${ERN_PATH}/containergen/out`
+const CONTAINER_GEN_OUT_FOLDER = `${Platform.rootDirectory}/containergen/out`
 
 // =============================================================================
 // fs async wrappers
 // =============================================================================
 
-async function readFile (filename, enc) {
+async function readFile (filename: string, enc: string) {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, enc, (err, res) => {
       err ? reject(err) : resolve(res)
@@ -29,7 +32,7 @@ async function readFile (filename, enc) {
   })
 }
 
-async function writeFile (filename, data) {
+async function writeFile (filename: string, data: string) {
   return new Promise((resolve, reject) => {
     fs.writeFile(filename, data, (err, res) => {
       err ? reject(err) : resolve(res)
@@ -45,7 +48,9 @@ async function writeFile (filename, data) {
 // filename: Path to the template file
 // view: Mustache view to apply to the template
 // returns: Rendered string output
-async function mustacheRenderUsingTemplateFile (filename, view) {
+async function mustacheRenderUsingTemplateFile (
+  filename: string,
+  view: Object) {
   return readFile(filename, 'utf8')
         .then(template => Mustache.render(template, view))
 }
@@ -54,7 +59,10 @@ async function mustacheRenderUsingTemplateFile (filename, view) {
 // templateFilename: Path to the template file
 // view: Mustache view to apply to the template
 // outputFile: Path to the output file
-async function mustacheRenderToOutputFileUsingTemplateFile (templateFilename, view, outputFile) {
+async function mustacheRenderToOutputFileUsingTemplateFile (
+  templateFilename: string,
+  view: Object,
+  outputFile: string) {
   return mustacheRenderUsingTemplateFile(templateFilename, view).then(output => {
     return writeFile(outputFile, output)
   })
@@ -65,13 +73,13 @@ async function mustacheRenderToOutputFileUsingTemplateFile (templateFilename, vi
 // ==============================================================================
 
 // Given a string returns the same string with its first letter capitalized
-function pascalCase (string) {
-  return `${string.charAt(0).toUpperCase()}${string.slice(1)}`
+function pascalCase (str: string) {
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
 }
 
 // Given a string returns the same string with its first letter in lower case
-function camelCase (string) {
-  return `${string.charAt(0).toLowerCase()}${string.slice(1)}`
+function camelCase (str: string) {
+  return `${str.charAt(0).toLowerCase()}${str.slice(1)}`
 }
 
 // =============================================================================
@@ -86,12 +94,19 @@ const RUNNER_CONTAINER_VERSION = '1.0.0'
 // miniapp : The miniapp to attach to this runner. Needs to have localPath set !
 // outFolder : Where the generated project will be outputed
 export async function generateRunner ({
-    platformPath,
-    plugins,
-    miniapp,
-    outFolder,
-    headless,
-    platform
+  platformPath,
+  plugins,
+  miniapp,
+  outFolder,
+  headless,
+  platform
+} : {
+  platformPath: string,
+  plugins: Array<Object>,
+  miniapp: Object,
+  outFolder: string,
+  headless: boolean,
+  platform: 'android' | 'ios'
 }) {
   try {
     if (!miniapp.localPath) {
@@ -138,11 +153,17 @@ export async function generateRunner ({
 }
 
 export async function generateContainerForRunner ({
-    platformPath,
-    plugins,
-    miniapp,
-    platform,
-    outFolder
+  platformPath,
+  plugins,
+  miniapp,
+  platform,
+  outFolder
+} : {
+  platformPath: string,
+  plugins: Array<Object>,
+  miniapp: Object,
+  platform: 'android' | 'ios',
+  outFolder: string
 }) {
   const generator = (platform === 'android')
         ? new MavenGenerator()
@@ -150,7 +171,7 @@ export async function generateContainerForRunner ({
 
   await generateContainer({
     containerVersion: RUNNER_CONTAINER_VERSION,
-    nativeAppName: camelCase(miniapp.name),
+    nativeAppName: miniapp.name,
     generator,
     platformPath,
     plugins,

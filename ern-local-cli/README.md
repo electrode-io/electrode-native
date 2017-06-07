@@ -9,26 +9,32 @@ Depending of the user infrastructure and development lifecycle this command line
 ```
 ├── ern
 │   ├── cauldron                    [=== Cauldron client ===]
-│   │   ├── add                     [--- Add stuff to the cauldron --]
+│   │   ├── add                     [--- Add objects to the cauldron --]
 │   │   |   ├── binary              Add a native app binary
 │   │   |   ├── dependency          Add a native app dependency
 │   │   |   ├── miniapp             Add a miniapp to the cauldron
 │   │   |   ├── nativeapp           Add a native application
-│   │   ├── del                     [--- Remove stuff from the cauldron --]
+│   │   ├── del                     [--- Remove objects from the cauldron --]
 │   │   |   ├── dependency          Remove a native dependency
 │   │   |   ├── nativeapp           Remove a native application
-│   │   ├── get                     [--- Retrieve stuff from the cauldron --]
+│   │   ├── get                     [--- Retrieve objects from the cauldron --]
 │   │   |   ├── binary              Get the binary of a native app version
+│   │   |   ├── config              Get a configuration from the cauldron
 │   │   |   ├── dependencies        Get native dependencies info
 │   │   |   ├── nativeapp           Get a native application info
-│   │   ├── start                   Start the cauldron service
+│   │   ├── repository              Manage Cauldron git repository(ies)
+│   │   |   ├── add                 Add a Cauldron git repository
+│   │   |   ├── current             Display the currently activated Cauldron repository
+│   │   |   ├── list                List all Cauldron repositories
+│   │   |   ├── remove              Remove a cauldron repository given its alias
+│   │   |   ├── use                 Select a Cauldron repository to use
+|   |   ├── update                  Update objects in the Cauldron
+│   │   |   ├── nativeapp           Update a native application info in cauldron
 │   ├── generate                    [=== Generation related commands ===]
 │   │   ├── api                    
 │   │   │    ├── init               Generates an API package using ern-api-gen
 │   │   │    ├── regen              Regenerates an API using ern-api-gen
-|   |   |    ├── clean              Removes all generated artifacts
 │   │   ├── container               Generates a native container using ern-container-gen
-│   │   ├── model                   Generates native models using ern-model-gen
 │   ├── miniapp                     [=== MiniApp development related commands ===]
 │   │   ├── init                    Creates a new miniapp
 │   │   ├── add                     Adds a dependency to the miniapp
@@ -172,9 +178,70 @@ This command will list all the dependencies used by a given native application v
 > ern cauldron get dependency walmart:android:4.1
 ```
 
+**Retrieve configuration from the cauldron**  
+
+`ern cauldron get config <fullNapSelector>`  
+
+This command will retrieve the configuration used by a given native application version. e.x. code push or container generation config. A snippet of configuration may look like below.
+
+```
+"containerGenerator": {
+  "name": "maven",
+  "mavenRepositoryUrl": "http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted"
+ }
+```
+
+```shell
+> ern cauldron get config walmart:android:4.1
+```
+
+**Add a Cauldron git repository**  
+
+`ern cauldron repository add <repoAlias> <repoUrl>`  
+
+A `repoAlias` is alias assigned to the git repo url where the cauldron json config is hosted. `repoAlias` may be useful to change the currently activated Cauldron repository or to Remove a cauldron repository.
+
+A `repoUrl` is the url to the git repository where cauldron config is hosted.
+
+```shell
+> ern cauldron repository add walmart git@gecgithub01.walmart.com:react-native/walmart-cauldron.git
+```
+
+**Select a Cauldron repository to use**  
+`ern cauldron repository use <repoAlias>`  
+
+A `repoAlias` is alias assigned to the git repo url where the cauldron json config is hosted. You can use this command to let the plaform know what's the git repo you'd like to use currently.
+
+```shell
+> ern cauldron repository use walmart
+```
+
+**Remove a cauldron repository**  
+`ern cauldron repository remove <repoAlias>`  
+
+A `repoAlias` is alias assigned to the git repo url where the cauldron json config is hosted. This command is used to remove git repository where the cauldron config is hosted
+
+```shell
+> ern cauldron repository remove walmart
+```
+
+**Display the currently activated Cauldron repository**
+
+`ern cauldron repository current`  
+
+This command returns the current cauldron git repository in use, below is the stdout for this command.
+
+ `walmart [git@gecgithub01.walmart.com:react-native/walmart-cauldron.git]`
+
+**List all Cauldron repositories**
+
+`ern cauldron repository list`  
+
+This command lists all the cauldron git repositories.
+
 ### generate
 
-#### **api commands** 
+#### **api commands**
 
 _init_
 
@@ -182,8 +249,8 @@ _init_
 
 This command can be used to generate a complete api package, containing JS/iOS/Android code that can be then consumed by native app and/or miniapps.  
 It generates a package.json with a sample apigen.schema and schema.json, which are where a user defines the api. package.json
-controls the version of the package. 
-  
+controls the version of the package.
+
 This command relies on [ern-api-gen](../ern-api-gen). For more details about the generation process and the structure of `apigen.schema`, feel free to go check it out.
 By default, api gen will look for a models schema name `schema.json`. If you want to specify the path to a custom model file you can use the option `modelsSchemaPath`.
 
@@ -199,18 +266,12 @@ _regen_
 
 `ern generate api regen`
 
-This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle 
+This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle
 and happen to change api's or model schema.
 
 During the regeneration process, it scans `dependencies` in api project's `package.json` and comapares with version of `supportedPlugins` in the current `platform` version.
 If there is a mismatch this command will prompt user to confirm the version change. In addition this command bumps patch version of the api and allows user to override
-the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`. 
-
-_clean_
-
-`ern generate api clean`
-
-This command removes all generated artifacts. The projects `apigen.schema` , `package.json` still remain intact.
+the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`.
 
 #### **container**
 

@@ -1,21 +1,24 @@
+// @flow
+
 import {
   getNativeAppCompatibilityReport
 } from '../../../lib/compatibility'
 import {
-  explodeNapSelector
+  NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import miniapp from '../../../lib/miniapp'
 
-exports.command = 'miniapp [fullNapSelector]'
+exports.command = 'miniapp [completeNapDescriptor]'
 exports.desc = 'Publish mini app to given native app'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
-  .option('fullNapSelector', {
-    alias: 's',
-    describe: 'Full native application selector'
+  .option('completeNapDescriptor', {
+    alias: 'd',
+    describe: 'Complete native application descriptor',
+    example: 'walmart:android:17.8.0'
   })
   .option('force', {
     alias: 'f',
@@ -24,12 +27,10 @@ exports.builder = function (yargs) {
   })
 }
 
-exports.handler = async function (argv) {
-  // todo : move logic away from this command source !
-  if (!argv.fullNapSelector) {
+exports.handler = async function (argv: any) {
+  if (!argv.completeNapDescriptor) {
     const compatibilityReport = await getNativeAppCompatibilityReport()
-    const compatibleVersionsChoices = _.map(Object.keys(compatibilityReport), key => {
-      const entry = compatibilityReport[key]
+    const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
       if (entry.isCompatible) {
         const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`
         const name = entry.isReleased ? `${value} [OTA]` : `${value} [IN-APP]`
@@ -41,23 +42,23 @@ exports.handler = async function (argv) {
       return console.log('No compatible native application versions were found :(')
     }
 
-    const {fullNapSelectors} = await inquirer.prompt({
+    const {completeNapDescriptors} = await inquirer.prompt({
       type: 'checkbox',
-      name: 'fullNapSelectors',
+      name: 'completeNapDescriptors',
       message: 'Select one or more compatible native application version(s)',
       choices: compatibleVersionsChoices
     })
 
-    for (const fullNapSelector of fullNapSelectors) {
+    for (const completeNapDescriptor of completeNapDescriptors) {
       try {
-        await miniapp.fromCurrentPath().addToNativeAppInCauldron(
-        ...explodeNapSelector(fullNapSelector), argv.force)
+        const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+        await miniapp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, argv.force)
       } catch (e) {
-        console.log(`An error happened while trying to add MiniApp to ${fullNapSelector}`)
+        console.log(`An error happened while trying to add MiniApp to ${completeNapDescriptor}`)
       }
     }
   } else {
-    return miniapp.fromCurrentPath().addToNativeAppInCauldron(
-    ...explodeNapSelector(argv.fullNapSelector), argv.force)
+    const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
+    return miniapp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, argv.force)
   }
 }

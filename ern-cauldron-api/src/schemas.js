@@ -1,3 +1,5 @@
+// @flow
+
 import Joi from 'joi'
 
 export const miniApps = Joi.object({

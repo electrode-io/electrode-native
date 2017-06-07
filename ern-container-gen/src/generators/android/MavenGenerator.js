@@ -1,3 +1,5 @@
+// @flow
+
 import {
   bundleMiniApps,
   downloadPluginSource,
@@ -16,37 +18,49 @@ import http from 'http'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
-const DEFAULT_MAVEN_REPO_URL = `file://${process.env['HOME']}/.m2/repository`
+const HOME_DIRECTORY = process.env['HOME']
+const getDefaultMavenLocalDirectory = () => {
+  if (!HOME_DIRECTORY) {
+    throw new Error(`process.env['HOME'] is undefined !!!`)
+  }
+  return `file://${HOME_DIRECTORY}/.m2/repository`
+}
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 const fileRe = /^file:\/\//
 const ROOT_DIR = shell.pwd()
 
 export default class MavenGenerator {
+  _mavenRepositoryUrl : string
+  _namespace : string
+
   constructor ({
-    mavenRepositoryUrl = DEFAULT_MAVEN_REPO_URL,
+    mavenRepositoryUrl = getDefaultMavenLocalDirectory(),
     namespace = DEFAULT_NAMESPACE
+   } : {
+    mavenRepositoryUrl?: string,
+    namespace?: string
    } = {}) {
     this._mavenRepositoryUrl = mavenRepositoryUrl
     this._namespace = namespace
   }
 
-  get name () {
+  get name () : string {
     return 'MavenGenerator'
   }
 
-  get platform () {
+  get platform (): string {
     return 'android'
   }
 
-  get mavenRepositoryUrl () {
+  get mavenRepositoryUrl () : string {
     return this._mavenRepositoryUrl
   }
 
-  get namespace () {
+  get namespace () : string {
     return this._namespace
   }
 
-  get mavenRepositoryType () {
+  get mavenRepositoryType () : 'http' | 'file' | 'unknown' {
     if (this.mavenRepositoryUrl.startsWith('http')) {
       return 'http'
     } else if (this.mavenRepositoryUrl.startsWith('file')) {
@@ -55,7 +69,7 @@ export default class MavenGenerator {
     return 'unknown'
   }
 
-  get targetRepositoryGradleStatement () {
+  get targetRepositoryGradleStatement () : ?string {
     // Build repository statement to be injected in Android build.gradle for
     // publication target of generated container
     if (this.mavenRepositoryType === 'file') {
@@ -66,19 +80,20 @@ export default class MavenGenerator {
   }
 
   async generateContainer (
-    containerVersion,
-    nativeAppName,
-    platformPath,
-    plugins,
-    miniapps,
-    paths,
-    mustacheView) {
+    containerVersion: string,
+    nativeAppName: string,
+    platformPath: string,
+    plugins: any,
+    miniapps: any,
+    paths: any,
+    mustacheView: any) {
     // If no maven repository url (for publication) is provided part of the generator config,
     // we just fall back to standard maven local repository location.
     // If folder does not exists yet, we create it
-    if ((this.mavenRepositoryUrl === DEFAULT_MAVEN_REPO_URL) &&
-      (!fs.existsSync(DEFAULT_MAVEN_REPO_URL))) {
-      shell.mkdir('-p', DEFAULT_MAVEN_REPO_URL.replace(fileRe, ''))
+    const defaultMavenLocalDirectory = getDefaultMavenLocalDirectory()
+    if ((this.mavenRepositoryUrl === defaultMavenLocalDirectory) &&
+      (!fs.existsSync(defaultMavenLocalDirectory))) {
+      shell.mkdir('-p', defaultMavenLocalDirectory.replace(fileRe, ''))
       throwIfShellCommandFailed()
     }
 
@@ -113,7 +128,11 @@ export default class MavenGenerator {
     console.log(`To ${this.mavenRepositoryUrl}`)
   }
 
-  async fillContainerHull (plugins, miniApps, paths, mustacheView) {
+  async fillContainerHull (
+    plugins: any,
+    miniApps: any,
+    paths: any,
+    mustacheView: any) : Promise<*> {
     try {
       console.log(`[=== Starting container hull filling ===]`)
 
@@ -182,7 +201,7 @@ export default class MavenGenerator {
     }
   }
 
-  async addAndroidPluginHookClasses (plugins, paths) {
+  async addAndroidPluginHookClasses (plugins: any, paths: any) : Promise<*> {
     try {
       console.log(`[=== Adding plugin hook classes ===]`)
 
@@ -205,7 +224,7 @@ export default class MavenGenerator {
     }
   }
 
-  async buildAndroidPluginsViews (plugins, pluginsConfigPath, mustacheView) {
+  async buildAndroidPluginsViews (plugins: any, pluginsConfigPath: string, mustacheView: any) : Promise<*> {
     try {
       let pluginsView = []
 
@@ -243,7 +262,7 @@ export default class MavenGenerator {
     }
   }
 
-  async buildAndPublishContainer (paths) {
+  async buildAndPublishContainer (paths: any) : Promise<*> {
     try {
       console.log(`[=== Starting build and publication of the container ===]`)
 
@@ -259,7 +278,7 @@ export default class MavenGenerator {
     }
   }
 
-  async buildAndUploadArchive (moduleName) {
+  async buildAndUploadArchive (moduleName: string) : Promise<*> {
     let cmd = `./gradlew ${moduleName}:uploadArchives `
     return new Promise((resolve, reject) => {
       exec(cmd,
@@ -280,7 +299,7 @@ export default class MavenGenerator {
   }
 
   // Not used for now, but kept here. Might need it
-  async isArtifactInMavenRepo (artifactDescriptor, mavenRepoUrl) {
+  async isArtifactInMavenRepo (artifactDescriptor: string, mavenRepoUrl: string) : Promise<?boolean> {
     // An artifact follows the format group:name:version
     // i.e com.walmartlabs.ern:react-native-electrode-bridge:1.0.0
     // Split it !
@@ -309,7 +328,7 @@ export default class MavenGenerator {
     }
   }
 
-  async httpGet (url) {
+  async httpGet (url: string) : Promise<http.IncomingMessage> {
     return new Promise((resolve, reject) => {
       http.get(url, res => {
         resolve(res)

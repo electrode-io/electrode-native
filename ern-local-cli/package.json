@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@walmart/ern-api-gen": "0.0.1",
+    "@walmart/ern-api-impl-gen": "0.0.1",
     "@walmart/ern-container-gen": "0.0.1",
     "@walmart/ern-runner-gen": "0.0.1",
     "@walmart/ern-util": "0.0.1",
@@ -22,9 +23,9 @@
     "cli-table": "^0.3.1",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
-    "yargs": "^6.6.0",
+    "yargs": "^7.1.0",
     "node-simctl": "^3.5.5",
-    "inquirer": "^3.0.1"
+    "inquirer": "^3.0.6"
   },
   "devDependencies": {
     "@walmart/ern-util-dev": "0.0.1"

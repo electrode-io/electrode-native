@@ -1,21 +1,31 @@
+// @flow
+
 /* import {
   exec
 } from 'child_process'
 import inquirer from 'inquirer' */
-import platform from './platform'
+import Platform from './platform'
 
 export class CodePushCommands {
-  get codePushBinaryPath () {
-    return `${platform.currentPlatformVersionPath}/node_modules/.bin/code-push`
+  get codePushBinaryPath () : string {
+    return `${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`
   }
 
-  async releaseReact (appName, platform, {
-    targetBinaryVersion,
-    mandatory,
-    deploymentName,
-    rolloutPercentage,
-    askForConfirmation
-  }) {
+  async releaseReact (
+    appName: string,
+    platform: 'android' | 'ios', {
+      targetBinaryVersion,
+      mandatory,
+      deploymentName,
+      rolloutPercentage,
+      askForConfirmation
+    } : {
+      targetBinaryVersion?: string,
+      mandatory?: boolean,
+      deploymentName: string,
+      rolloutPercentage?: string,
+      askForConfirmation?: boolean
+    }) {
     const codePushCommand =
       `${this.codePushBinaryPath} release-react \
 ${appName} \

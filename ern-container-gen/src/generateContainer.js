@@ -1,18 +1,20 @@
+// @flow
+
+import {
+  Platform
+} from '@walmart/ern-util'
 import {
   capitalizeFirstLetter,
   throwIfShellCommandFailed
 } from './utils.js'
-import { required } from '@walmart/ern-util'
 import _ from 'lodash'
+import fs from 'fs'
 import shell from 'shelljs'
 
 let mustacheView = {}
 
 const npmScopeModuleRe = /(@.*)\/(.*)/
 const npmModuleRe = /(.*)@(.*)/
-
-// Path to ern platform root folder
-const ERN_PATH = `${process.env['HOME']}/.ern`
 
 // =============================================================================
 // ern-container-gen entry point
@@ -38,19 +40,26 @@ const ERN_PATH = `${process.env['HOME']}/.ern`
 //    }
 //  ]
 export default async function generateContainer ({
-  containerVersion = required('containerVersion'),
-  nativeAppName = required('nativeAppName'),
-  platformPath = required('platformPath'),
-  generator = required('generator'),
-  plugins = [],
-  miniapps = []
+  containerVersion,
+  nativeAppName,
+  platformPath,
+  generator,
+  plugins,
+  miniapps
+} : {
+  containerVersion: string,
+  nativeAppName: string,
+  platformPath: string,
+  generator: any,
+  plugins: Array<any>,
+  miniapps: Array<any>
 } = {}) {
   if (!generator.generateContainer) {
     throw new Error('The generator miss a generateContainer function !')
   }
 
   // Folder from which container gen is run from
-  const WORKING_FOLDER = `${ERN_PATH}/containergen`
+  const WORKING_FOLDER = `${Platform.rootDirectory}/containergen`
   // Folder from which we download all plugins sources (from npm or git)
   const PLUGINS_DOWNLOAD_FOLDER = `${WORKING_FOLDER}/plugins`
   // Folder where the resulting container project is stored in
@@ -74,7 +83,7 @@ export default async function generateContainer ({
     outFolder: OUT_FOLDER
   }
 
-    // Clean up to start fresh
+  // Clean up to start fresh
   shell.rm('-rf', PLUGINS_DOWNLOAD_FOLDER)
   shell.rm('-rf', OUT_FOLDER)
   shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER)
@@ -84,7 +93,7 @@ export default async function generateContainer ({
   throwIfShellCommandFailed()
 
   // Build the list of plugins to be included in container
-  const manifest = require(`${platformPath}/manifest.json`)
+  const manifest = JSON.parse(fs.readFileSync(`${platformPath}/manifest.json`, 'utf-8'))
   const includedPlugins = buildPluginListSync(plugins, manifest)
 
   // Let's make sure that react-native is included (otherwise there is
@@ -143,5 +152,7 @@ function buildPluginListSync (plugins, manifest) {
 
 function getReactNativeVersionFromManifest (manifest) {
   const rnDep = _.find(manifest.supportedPlugins, d => d.startsWith('react-native@'))
-  return npmModuleRe.exec(rnDep)[2]
+  if (rnDep) {
+    return npmModuleRe.exec(rnDep)[2]
+  }
 }

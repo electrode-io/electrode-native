@@ -16,7 +16,7 @@
     "cli-table": "^0.3.1",
     "console-log-level": "^1.4.0",
     "fs-readdir-recursive": "^1.0.0",
-    "inquirer": "^3.0.1",
+    "inquirer": "^3.0.6",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
     "node-emoji": "^1.5.1",

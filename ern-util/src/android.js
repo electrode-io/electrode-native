@@ -1,3 +1,5 @@
+// @flow
+
 import exec from './exec'
 import inquirer from 'inquirer'
 import shell from 'shelljs'
@@ -9,7 +11,7 @@ import spin from './spin.js'
 
 //
 // Returns a promise that will get resolved after a given delay (in ms)
-async function delay (ms) {
+async function delay (ms: number) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve()
@@ -32,8 +34,11 @@ async function delay (ms) {
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
 export async function runAndroid ({
-    projectPath,
-    packageName
+  projectPath,
+  packageName
+} : {
+  projectPath: string,
+  packageName: string
 }) {
   const devices = await getDevices()
   if (devices.length === 1) {
@@ -61,7 +66,10 @@ export async function runAndroid ({
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
 // - avdImageName : name of the avd image to use (emulator image)
-async function runAndroidUsingAvdImage (projectPath, packageName, avdImageName) {
+async function runAndroidUsingAvdImage (
+  projectPath: string,
+  packageName: string,
+  avdImageName: string) {
   exec(`emulator -avd ${avdImageName}`)
   await spin('Waiting for device to start', waitForAndroidDevice())
   installAndLaunchApp(projectPath, packageName)
@@ -72,7 +80,9 @@ async function runAndroidUsingAvdImage (projectPath, packageName, avdImageName) 
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
-async function installAndLaunchApp (projectPath, packageName) {
+async function installAndLaunchApp (
+  projectPath: string,
+  packageName: string) {
   await spin('Installing application', installApp(projectPath))
   await spin('Launching application',
         launchAndroidActivity(packageName, 'MainActivity'))
@@ -108,7 +118,7 @@ async function androidGetBootAnimProp () {
 // params :
 // - projectPath : Absolute or relative path to the root of the Android project
 // containing the application
-async function installApp (projectPath) {
+async function installApp (projectPath: string) {
   return new Promise((resolve, reject) => {
     shell.cd(projectPath)
     exec(`./gradlew installDebug`,
@@ -127,7 +137,9 @@ async function installApp (projectPath) {
 // Params :
 // - packageName : name of the package containing the application
 // - activityName : name of the Activity to launch
-async function launchAndroidActivity (packageName, activityName) {
+async function launchAndroidActivity (
+  packageName: string,
+  activityName: string) {
   return new Promise((resolve, reject) => {
     exec(`${androidAdbPath()} shell am start -n ${packageName}/.${activityName}`,
             (err, stdout, stderr) => {
@@ -167,13 +179,13 @@ async function getDevices () {
   })
 }
 
-function androidAdbPath () {
+function androidAdbPath () : string {
   return process.env.ANDROID_HOME
         ? `${process.env.ANDROID_HOME}/platform-tools/adb`
         : 'adb'
 }
 
-function androidEmulatorPath () {
+function androidEmulatorPath () : string {
   return process.env.ANDROID_HOME
         ? `${process.env.ANDROID_HOME}/tools/emulator`
         : 'emulator'

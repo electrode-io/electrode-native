@@ -1,3 +1,5 @@
+// @flow
+
 import {
   Dependency,
   reactNative,
@@ -18,6 +20,12 @@ const gitFolderRe = /.*\/(.*).git/
 const npmScopeModuleRe = /@(.*)\/(.*)/
 const pluginConfigFileName = 'config.json'
 
+type PluginConfig = {
+  android: Object,
+  ios: Object,
+  origin?: Object
+}
+
 // =============================================================================
 // GENERATOR utils
 // =============================================================================
@@ -31,14 +39,14 @@ const pluginConfigFileName = 'config.json'
 //   name: "react-native-code-push",
 //   version: "1.2.3"
 // }
-export async function getPluginConfig (plugin, pluginsConfigPath) {
+export async function getPluginConfig (plugin: any, pluginsConfigPath: string) : Promise<PluginConfig> {
   let result = {}
   const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
 
   // If there is a base file (common to all versions) use it and optionally
   // patch it with specific version config (if present)
   if (fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
-    result = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`)
+    result = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
         .then(JSON.parse)
 
     // Add default value (convention) for Android subsection for missing fields
@@ -63,25 +71,7 @@ export async function getPluginConfig (plugin, pluginsConfigPath) {
     }
   } else {
     console.log(`No config.json file for ${plugin.name}. Assuming apigen module`)
-    result = {
-      android: {
-        root: 'android',
-        moduleName: 'lib',
-        transform: [
-          {file: 'android/lib/build.gradle'}
-        ]
-      },
-      ios: {
-        copy: [
-          { source: 'IOS/IOS/Classes/SwaggersAPIs/*', dest: 'ElectrodeContainer/APIs' }
-        ],
-        pbxproj: {
-          addSource: [
-            { from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift', path: 'APIs', group: 'APIs' }
-          ]
-        }
-      }
-    }
+    result = getApiPluginDefaultConfig()
   }
 
   if (!result.origin) {
@@ -89,30 +79,61 @@ export async function getPluginConfig (plugin, pluginsConfigPath) {
       result.origin = {
         type: 'npm',
         scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
-        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`
+        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`,
+        version: plugin.version
       }
     } else {
       result.origin = {
         type: 'npm',
-        name: plugin.name
+        name: plugin.name,
+        version: plugin.version
       }
     }
-  }
-
-  // If there is no specified version, assume plugin version by default
-  if (!result.origin.version) {
+  } else if (!result.origin.version) {
     result.origin.version = plugin.version
   }
 
   return result
 }
 
+function getApiPluginDefaultConfig () : PluginConfig {
+  return {
+    android: {
+      root: 'android',
+      moduleName: 'lib',
+      transform: [
+        { file: 'android/lib/build.gradle' }
+      ]
+    },
+    ios: {
+      copy: [
+        {
+          source: 'IOS/IOS/Classes/SwaggersAPIs/*',
+          dest: 'ElectrodeContainer/APIs'
+        }
+      ],
+      pbxproj: {
+        addSource: [
+          {
+            from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift',
+            path: 'APIs',
+            group: 'APIs'
+          }
+        ]
+      }
+    }
+  }
+}
+
 // Returns the base path of a given plugin generation config
-export function getPluginConfigPath (plugin, pluginsConfigPath) {
+export function getPluginConfigPath (plugin: any, pluginsConfigPath: string) {
   return `${pluginsConfigPath}/${plugin.name}`
 }
 
-export async function bundleMiniApps (miniapps, paths, platform) {
+export async function bundleMiniApps (
+  miniapps: Array<any>,
+  paths: any,
+  platform: 'android' | 'ios') {
   try {
     console.log(`[=== Starting mini apps bundling ===]`)
 
@@ -141,7 +162,7 @@ export async function bundleMiniApps (miniapps, paths, platform) {
   }
 }
 
-export async function reactNativeBundleAndroid (paths) {
+export async function reactNativeBundleAndroid (paths: any) {
   return reactNative.bundle({
     entryFile: 'index.android.js',
     dev: false,
@@ -151,7 +172,7 @@ export async function reactNativeBundleAndroid (paths) {
   })
 }
 
-export async function reactNativeBundleIos (paths) {
+export async function reactNativeBundleIos (paths: any) {
   const miniAppOutFolder = `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp`
 
   if (!fs.existsSync(miniAppOutFolder)) {
@@ -172,7 +193,9 @@ export async function reactNativeBundleIos (paths) {
 // miniapps should be strings that can be provided to `yarn add`
 // this way we can generate a miniapp composite from different miniapp sources
 // (git, local file system, npm ...)
-export async function generateMiniAppsComposite (miniapps, folder) {
+export async function generateMiniAppsComposite (
+  miniapps: Array<any>,
+  folder: string) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
   throwIfShellCommandFailed()
@@ -224,8 +247,11 @@ export async function generateMiniAppsComposite (miniapps, folder) {
 }
 
 export function clearReactPackagerCache () {
-  shell.rm('-rf', `${process.env['TMPDIR']}/react-*`)
-  throwIfShellCommandFailed()
+  const TMPDIR = process.env['TMPDIR']
+  if (TMPDIR) {
+    shell.rm('-rf', `${TMPDIR}/react-*`)
+    throwIfShellCommandFailed()
+  }
 }
 
 //
@@ -250,8 +276,8 @@ export function clearReactPackagerCache () {
 // the git repo as one would expect
 //
 // Returns: Absolute path to where the plugin was installed
-export async function downloadPluginSource (pluginOrigin) {
-  let downloadPath
+export async function downloadPluginSource (pluginOrigin: any) {
+  let downloadPath = ''
   if (pluginOrigin.type === 'npm') {
     await yarnAdd(pluginOrigin)
     if (pluginOrigin.scope) {
@@ -264,12 +290,17 @@ export async function downloadPluginSource (pluginOrigin) {
       await gitClone(pluginOrigin.url, { branch: pluginOrigin.version })
       downloadPath = gitFolderRe.exec(`${pluginOrigin.url}`)[1]
     }
+  } else {
+    throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
   }
 
   return Promise.resolve(`${shell.pwd()}/${downloadPath}`)
 }
 
-export function handleCopyDirective (sourceRoot, destRoot, arr) {
+export function handleCopyDirective (
+  sourceRoot: string,
+  destRoot: string,
+  arr: Array<any>) {
   for (const cp of arr) {
     const sourcePath = `${sourceRoot}/${cp.source}`
     const destPath = `${destRoot}/${cp.dest}`
@@ -289,7 +320,10 @@ export function handleCopyDirective (sourceRoot, destRoot, arr) {
 // Promisify ora spinner
 // there is already a promise method on ora spinner, unfortunately it does
 // not return the wrapped promise so that's utterly useless !
-export async function spin (msg, prom, options) {
+export async function spin (
+  msg: string,
+  prom: Promise<*>,
+  options: any) {
   const spinner = new Ora(options || msg)
   spinner.start()
 
@@ -304,8 +338,8 @@ export async function spin (msg, prom, options) {
 }
 
 // Given a string returns the same string with its first letter capitalized
-export function capitalizeFirstLetter (string) {
-  return `${string.charAt(0).toUpperCase()}${string.slice(1)}`
+export function capitalizeFirstLetter (str: string) {
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
 }
 
 // =============================================================================
@@ -316,7 +350,9 @@ export function capitalizeFirstLetter (string) {
 // filename: Path to the template file
 // view: Mustache view to apply to the template
 // returns: Rendered string output
-export async function mustacheRenderUsingTemplateFile (filename, view) {
+export async function mustacheRenderUsingTemplateFile (
+  filename: string,
+  view: any) {
   return readFile(filename, 'utf8')
       .then(template => Mustache.render(template, view))
 }
@@ -325,7 +361,10 @@ export async function mustacheRenderUsingTemplateFile (filename, view) {
 // templateFilename: Path to the template file
 // view: Mustache view to apply to the template
 // outputFile: Path to the output file
-export async function mustacheRenderToOutputFileUsingTemplateFile (templateFilename, view, outputFile) {
+export async function mustacheRenderToOutputFileUsingTemplateFile (
+  templateFilename: string,
+  view: any,
+  outputFile: string) {
   return mustacheRenderUsingTemplateFile(templateFilename, view).then(output => {
     return writeFile(outputFile, output)
   })
@@ -335,10 +374,18 @@ export async function mustacheRenderToOutputFileUsingTemplateFile (templateFilen
 // GIT utils
 // =============================================================================
 
-export async function gitClone (url, { branch, destFolder } = {}) {
+export async function gitClone (
+  url: string,
+  {
+    branch,
+    destFolder
+  } : {
+    branch?: string,
+    destFolder?: string
+  } = {}) {
   let cmd = branch
-              ? `git clone --branch ${branch} --depth 1 ${url}`
-              : `git clone ${url}`
+    ? `git clone --branch ${branch} --depth 1 ${url}`
+    : `git clone ${url}`
 
   if (destFolder) {
     cmd += ` ${destFolder}`
@@ -375,7 +422,7 @@ export async function gitAdd () {
   })
 }
 
-export async function gitCommit (message) {
+export async function gitCommit (message: string) {
   let cmd = message
           ? `git commit -m '${message}'`
           : `git commit -m 'no message'`
@@ -395,7 +442,7 @@ export async function gitCommit (message) {
   })
 }
 
-export async function gitTag (tag) {
+export async function gitTag (tag: string) {
   return new Promise((resolve, reject) => {
     exec(`git tag ${tag}`,
       (err, stdout, stderr) => {
@@ -416,6 +463,11 @@ export async function gitPush ({
   branch = 'master',
   force = false,
   tags = false
+} : {
+  remote?: string,
+  branch?: string,
+  force: boolean,
+  tags: boolean
 } = {}) {
   let cmd = `git push ${remote} ${branch} ${force ? '--force' : ''} ${tags ? '--tags' : ''}`
 
@@ -438,7 +490,9 @@ export async function gitPush ({
 // Async wrappers
 // =============================================================================
 
-async function readFile (filename, enc) {
+async function readFile (
+  filename: string,
+  enc: string) {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, enc, (err, res) => {
       if (err) reject(err)
@@ -447,7 +501,9 @@ async function readFile (filename, enc) {
   })
 }
 
-async function writeFile (filename, data) {
+async function writeFile (
+  filename: string,
+  data: any) {
   return new Promise((resolve, reject) => {
     fs.writeFile(filename, data, (err, res) => {
       if (err) reject(err)

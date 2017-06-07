@@ -1,5 +1,7 @@
+// @flow
+
 import {
-  platform,
+  Platform,
   tagOneLine
 } from '@walmart/ern-util'
 import chalk from 'chalk'
@@ -7,7 +9,7 @@ import chalk from 'chalk'
 exports.command = 'plugins [platformVersion]'
 exports.desc = 'List supported platform plugins'
 
-exports.builder = function (yargs) {
+exports.builder = function (yargs: any) {
   return yargs
         .option('platformVersion', {
           alias: 'v',
@@ -15,12 +17,12 @@ exports.builder = function (yargs) {
         })
 }
 
-exports.handler = function (argv) {
-  const plugins = platform.getManifestPlugins(argv.platformVersion
-        ? argv.platformVersion : platform.currentVersion)
+exports.handler = function (argv: any) {
+  const plugins = Platform.getManifestPlugins(argv.platformVersion
+        ? argv.platformVersion : Platform.currentVersion)
 
   log.info(
-        tagOneLine`Platform v${argv.platformVersion ? argv.platformVersion : platform.currentVersion}
+        tagOneLine`Platform v${argv.platformVersion ? argv.platformVersion : Platform.currentVersion}
     suports the following plugins`)
   for (const plugin of plugins) {
     console.log(

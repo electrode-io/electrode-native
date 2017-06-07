@@ -1,3 +1,5 @@
+// @flow
+
 import {
   execSync
 } from 'child_process'
@@ -5,55 +7,69 @@ import config from './config.js'
 import fs from 'fs'
 import _ from 'lodash'
 
-const ERN_PATH = `${process.env['HOME']}/.ern`
-const ERN_PLATFORM_REPO_PATH = `${ERN_PATH}/ern-platform`
-const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/cache`
+const npmModuleRe = /(.*)@(.*)/
+const HOME_DIRECTORY = process.env['HOME']
 
-class Platform {
-  switchPlatformRepositoryToMaster () {
-    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout master`)
+export default class Platform {
+  static get rootDirectory () : string {
+    if (!HOME_DIRECTORY) {
+      throw new Error(`process.env['HOME'] is undefined !!!`)
+    }
+    return `${HOME_DIRECTORY}/.ern`
   }
 
-  switchPlatformRepositoryToVersion (version) {
-    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} fetch origin`)
-    execSync(`git -C ${ERN_PLATFORM_REPO_PATH} checkout origin/v${version}`)
+  static get repositoryDirectory () : string {
+    return `${this.rootDirectory}/ern-platform`
   }
 
-  isPlatformVersionAvailable (version) {
-    return this.versions.includes('' + version)
+  static get versionCacheDirectory () : string {
+    return `${this.rootDirectory}/cache`
   }
 
-  isPlatformVersionInstalled (version) {
-    return fs.existsSync(this.getPlatformVersionPath(version))
-  }
-
-  getPlatformVersionPath (version) {
-    return `${ERN_VERSIONS_CACHE_PATH}/v${version}`
-  }
-
-  get latestVersion () {
+  static get latestVersion () : string {
     return this.versions.slice(-1)[0]
   }
 
-  get currentPlatformVersionPath () {
+  static get currentPlatformVersionPath () : string {
     return this.getPlatformVersionPath(this.currentVersion)
   }
 
-  get currentVersion () {
-    return config.getValue('platformVersion')
+  static get currentVersion () : string {
+    return config.getValue('platformVersion', '1000')
   }
 
-  get currentGitCommitSha () {
-    return execSync(`git -C ${this.currentPlatformVersionPath} rev-parse HEAD`).slice(0, 7)
+  static get currentGitCommitSha () : string {
+    return execSync(`git -C ${this.currentPlatformVersionPath} rev-parse HEAD`).slice(0, 7).toString()
+  }
+
+  static switchPlatformRepositoryToMaster () {
+    execSync(`git -C ${this.repositoryDirectory} checkout master`)
+  }
+
+  static switchPlatformRepositoryToVersion (version: string) {
+    execSync(`git -C ${this.repositoryDirectory} fetch origin`)
+    execSync(`git -C ${this.repositoryDirectory} checkout origin/v${version}`)
+  }
+
+  static isPlatformVersionAvailable (version: string) {
+    return this.versions.includes('' + version)
+  }
+
+  static isPlatformVersionInstalled (version: string) {
+    return fs.existsSync(this.getPlatformVersionPath(version))
+  }
+
+  static getPlatformVersionPath (version: string) {
+    return `${this.versionCacheDirectory}/v${version}`
   }
 
   // Return an array of versions (ex: [1,2,3,4,5])
   // representing all the available versions of the platform
   // Doing this by looking at all remote branches of the platform
   // matching `vX` where x is a number.
-  get versions () {
-    const branchVersionRe = /heads\/v(\d+)/
-    const versions = execSync(`git --git-dir ${ERN_PLATFORM_REPO_PATH}/.git ls-remote --heads`)
+  static get versions () : Array<string> {
+    const branchVersionRe = /heads\/v(\d+.\d+.*\d*)/
+    const versions = execSync(`git --git-dir ${this.repositoryDirectory}/.git ls-remote --heads`)
       .toString()
       .split('\n')
       .filter(v => branchVersionRe.test(v))
@@ -64,7 +80,7 @@ class Platform {
   // Install a given platform version
   // If version is not installed yet and available it will just checkout
   // the version branch in the platform repository and call its install script
-  installPlatform (version) {
+  static installPlatform (version: string) {
     if (this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is already installed`)
     }
@@ -75,14 +91,14 @@ class Platform {
 
     this.switchPlatformRepositoryToVersion(version)
 
-    require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install()
+    require(`${this.repositoryDirectory}/install.js`).install()
   }
 
   // Uninstall a given platform version
   // If version is installed yet and not the currently activated version it will
   // just checkout the version branch in the platform repository and call its
   // uninstall script
-  uninstallPlatform (version) {
+  static uninstallPlatform (version: string) {
     if (!this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is not installed`)
     }
@@ -93,13 +109,13 @@ class Platform {
 
     this.switchPlatformRepositoryToVersion(version)
 
-    require(`${ERN_PLATFORM_REPO_PATH}/uninstall.js`).uninstall()
+    require(`${this.repositoryDirectory}/uninstall.js`).uninstall()
   }
 
   // Switch to / activate a given version
   // If the version is not installed yet, it will install it beforehand, then
   // it will just update the config file with new activated version number
-  switchToVersion (version) {
+  static switchToVersion (version: string) {
     if (version === this.currentVersion) {
       return log.info(`v${version} is already the version in use`)
     }
@@ -112,12 +128,12 @@ class Platform {
     config.setValue('platformVersion', version)
   }
 
-  get currentVersionManifest () {
+  static get currentVersionManifest () : Object {
     return JSON.parse(fs.readFileSync(`${this.currentPlatformVersionPath}/manifest.json`, 'utf-8'))
   }
 
-  get repositoryManifest () {
-    return JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8'))
+  static get repositoryManifest () : Object {
+    return JSON.parse(fs.readFileSync(`${this.repositoryDirectory}/manifest.json`, 'utf-8'))
   }
 
   // Given a string representing the dependency, explode it into an object
@@ -126,7 +142,7 @@ class Platform {
   // react-native@0.40
   // @walmart/react-native
   // @walmart/react-native@0.40
-  buildDependencyObj (pluginString) {
+  static buildDependencyObj (pluginString: string) : Object {
     const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/
     const unscopedModuleWithVersionRe = /(.+)@(.+)/
     const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/
@@ -155,7 +171,7 @@ class Platform {
   // Returns the manifest of a given platform version
   // If no version is specified, returns the manifest of the currently activated
   // platform version
-  getManifest (version) {
+  static getManifest (version?: string) : Object {
     if ((!version && version !== 0) || (version === this.currentVersion)) {
       return this.currentVersionManifest
     } else {
@@ -172,7 +188,7 @@ class Platform {
   // version manifest.
   // Otherwise it just switch the platform repository to the given version branch
   // and then build the array based on the manifest
-  getManifestPlugins (version) {
+  static getManifestPlugins (version: string) : Array<any> {
     const manifest = this.getManifest(version)
     return _.map(manifest.supportedPlugins, d => this.buildDependencyObj(d))
   }
@@ -183,34 +199,42 @@ class Platform {
   // version manifest.
   // Otherwise it just switch the platform repository to the given version branch
   // and then build the array based on the manifest
-  getManifestJsDependencies (version) {
+  static getManifestJsDependencies (version: string) : Array<any> {
     const manifest = this.getManifest(version)
     return _.map(manifest.jsDependencies, d => this.buildDependencyObj(d))
   }
 
-  getManifestPluginsAndJsDependencies (version) {
+  static getManifestPluginsAndJsDependencies (version: string) : Array<any> {
     const manifest = this.getManifest(version)
     const manifestDeps = _.union(manifest.jsDependencies, manifest.supportedPlugins)
     return _.map(manifestDeps, d => this.buildDependencyObj(d))
   }
 
-  getPlugin (pluginString) {
+  static getPlugin (pluginString: string) : any {
     const plugin = this.buildDependencyObj(pluginString)
     return _.find(this.getManifestPlugins(this.currentVersion),
       d => (d.name === plugin.name) && (d.scope === plugin.scope))
   }
 
-  getJsDependency (dependencyString) {
+  static getJsDependency (dependencyString: string) : any {
     const jsDependency = this.buildDependencyObj(dependencyString)
     return _.find(this.getManifestJsDependencies(this.currentVersion),
       d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))
   }
 
-  getDependency (dependencyString) {
+  static getDependency (dependencyString: string) : any {
     const dependency = this.buildDependencyObj(dependencyString)
     return _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
       d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }
-}
 
-export default new Platform()
+  static get reactNativeVersionFromManifest () : ?string {
+    if (this.reactNativeDependencyFromManifest) {
+      return npmModuleRe.exec(this.reactNativeDependencyFromManifest)[2]
+    }
+  }
+
+  static get reactNativeDependencyFromManifest () : ?string {
+    return _.find(this.currentVersionManifest.supportedPlugins, d => d.startsWith('react-native@'))
+  }
+}

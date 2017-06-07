@@ -1,3 +1,5 @@
+// @flow
+
 import {
   config as ernConfig
 } from '@walmart/ern-util'
@@ -7,7 +9,7 @@ exports.desc = 'Add a Cauldron git repository'
 
 exports.builder = {}
 
-exports.handler = function (argv) {
+exports.handler = function (argv: any) {
   let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
   if (cauldronRepositories[argv.repoAlias]) {
     return console.log(`A Cauldron repository is already associated to ${argv.repoAlias} alias`)

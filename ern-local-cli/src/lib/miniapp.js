@@ -1,3 +1,5 @@
+// @flow
+
 import {
   generateContainerForRunner,
   generateRunner
@@ -5,9 +7,9 @@ import {
 import {
   android,
   Dependency,
-  platform,
+  NativeApplicationDescriptor,
+  Platform,
   reactNative,
-  required,
   spin,
   tagOneLine,
   yarn
@@ -38,9 +40,10 @@ const {
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/
 
 export default class MiniApp {
-  //
-  // Constructor just takes the path to folder containining miniapp
-  constructor (miniAppPath) {
+  _path: string
+  _packageJson: Object
+
+  constructor (miniAppPath: string) {
     this._path = miniAppPath
 
     const packageJsonPath = `${miniAppPath}/package.json`
@@ -49,7 +52,7 @@ export default class MiniApp {
       This command should be run at the root of a mini-app`)
     }
 
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath))
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
     if (!packageJson.ernPlatformVersion) {
       throw new Error(tagOneLine`No ernPlatformVersion found in package.json.
       Are you sure you are running this within an electrode miniapp folder ?`)
@@ -66,22 +69,27 @@ export default class MiniApp {
     return new MiniApp(path)
   }
 
-  static async create (appName, {
-        platformVersion,
-        scope,
-        headless
+  static async create (
+    appName: string, {
+      platformVersion,
+      scope,
+      headless
+    } : {
+      platformVersion: string,
+      scope: string,
+      headless: boolean
     }) {
     try {
       if (!platformVersion) {
-        platformVersion = platform.currentVersion
+        platformVersion = Platform.currentVersion
       }
 
-      if (platform.currentVersion !== platformVersion) {
-        platform.switchToVersion(platformVersion)
+      if (Platform.currentVersion !== platformVersion) {
+        Platform.switchToVersion(platformVersion)
       }
 
       log.info(`Creating application ${appName} at platform version ${platformVersion}`)
-      const rnVersion = platform.getPlugin('react-native').version
+      const rnVersion = Platform.getPlugin('react-native').version
 
       //
       // Create application using react-native init command
@@ -95,7 +103,7 @@ export default class MiniApp {
       appPackageJson.ernPlatformVersion = `${platformVersion}`
       appPackageJson.ernHeadLess = headless
       appPackageJson.private = false
-      appPackageJson.dependencies['react'] = platform.getJsDependency('react').version
+      appPackageJson.dependencies['react'] = Platform.getJsDependency('react').version
       if (scope) {
         appPackageJson.name = `@${scope}/${appName}`
       }
@@ -127,27 +135,27 @@ export default class MiniApp {
     }
   }
 
-  get packageJson () {
+  get packageJson () : Object {
     return this._packageJson
   }
 
-  get path () {
+  get path () : string {
     return this._path
   }
 
-  get name () {
+  get name (): string {
     return this.getUnscopedModuleName(this.packageJson.name)
   }
 
-  get version () {
+  get version () : string {
     return this.packageJson.version
   }
 
-  get platformVersion () {
+  get platformVersion () : string {
     return this.packageJson.ernPlatformVersion
   }
 
-  get isHeadLess () {
+  get isHeadLess () : boolean {
     return this.packageJson.ernHeadLess
   }
 
@@ -159,7 +167,7 @@ export default class MiniApp {
     // Each object represent a native dependency (name/version and optionaly scope)
     // Sample output :
     // [ { name: "react-native", version: "0.39.2", scope: "walmart" }]
-  get nativeDependencies () {
+  get nativeDependencies () : Array<any> {
     let result = []
 
     const nativeDependenciesNames = new Set()
@@ -211,19 +219,19 @@ export default class MiniApp {
     // Return all javascript (non native) dependencies currently used by the mini-app
     // This method checks dependencies from the pa2ckage.json of the miniapp and
     // exclude native dependencies (plugins).
-  get jsDependencies () {
+  get jsDependencies () : Array<any> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
-    let result = _.map(this.packageJson.dependencies, (val, key) =>
-            platform.buildDependencyObj(`${key}@${val}`))
+    let result = _.map(this.packageJson.dependencies, (val: string, key: string) =>
+            Platform.buildDependencyObj(`${key}@${val}`))
 
-    return _.filter(result, d => !nativeDependenciesNames.includes(d.name))
+    return result == null ? [] : _.filter(result, d => !nativeDependenciesNames.includes(d.name))
   }
 
-  get nativeAndJsDependencies () {
+  get nativeAndJsDependencies () : Array<any> {
     return [...this.jsDependencies, ...this.nativeDependencies]
   }
 
-  async runInIosRunner () {
+  async runInIosRunner () : Promise<*> {
     // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
     // (no code injection for plugins yet :()), it has hard-coded references to
     // our bridge and code-push ... so we absolutely need them in the miniapp for
@@ -232,14 +240,16 @@ export default class MiniApp {
     // This block should be removed once iOS container is improved to be more flexbile
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     if (!nativeDependenciesNames.includes('react-native-electrode-bridge')) {
+      log.error("react-native-electrode-bridge is required for iOS runner.\n Execute `ern miniapp add @walmart/react-native-electrode-bridge` if you haven't already")
       throw new Error('react-native-electrode-bridge is required for iOS runner :(')
     }
     if (!nativeDependenciesNames.includes('react-native-code-push')) {
+      log.error("react-native-code-push is required for iOS runner.\n Execute `ern miniapp add react-native-code-push` if you haven't already")
       throw new Error('react-native-code-push is required for iOS runner :(')
     }
 
     const runnerConfig = {
-      platformPath: platform.currentPlatformVersionPath,
+      platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/ios`,
@@ -284,9 +294,9 @@ export default class MiniApp {
     await simctl.launch(device.udid, 'MyCompany.ErnRunner')
   }
 
-  async runInAndroidRunner () {
+  async runInAndroidRunner () : Promise<*> {
     const runnerConfig = {
-      platformPath: platform.currentPlatformVersionPath,
+      platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/android`,
@@ -308,8 +318,10 @@ export default class MiniApp {
     })
   }
 
-  async addDependency (dependencyName, {dev} = {}) {
-    let dep = platform.getDependency(dependencyName)
+  async addDependency (
+    dependencyName: string,
+    {dev} : { dev: boolean } = {}) {
+    let dep = Platform.getDependency(dependencyName)
     if (!dep) {
       log.warn(
                 `
@@ -319,7 +331,7 @@ If this is a non purely JS dependency you will face issues during publication.
 Otherwise you can safely ignore this warning
 ==================================================================================
 `)
-      dep = platform.buildDependencyObj(dependencyName)
+      dep = Platform.buildDependencyObj(dependencyName)
       dep.version = 'latest'
     }
 
@@ -331,14 +343,14 @@ Otherwise you can safely ignore this warning
     }
   }
 
-  async upgradeToPlatformVersion (versionToUpgradeTo, force) {
+  async upgradeToPlatformVersion (versionToUpgradeTo: string, force: boolean) : Promise<*> {
     if ((this.platformVersion === versionToUpgradeTo) &&
             (!force)) {
       return log.error(`This miniapp is already using v${versionToUpgradeTo}. Use 'f' flag if you want to force upgrade.`)
     }
 
     // Update all modules versions in package.json
-    const manifestDependencies = platform.getManifestPluginsAndJsDependencies(versionToUpgradeTo)
+    const manifestDependencies = Platform.getManifestPluginsAndJsDependencies(versionToUpgradeTo)
 
     for (const manifestDependency of manifestDependencies) {
       const nameWithScope = `${manifestDependency.scope ? `@${manifestDependency.scope}/` : ''}${manifestDependency.name}`
@@ -363,26 +375,24 @@ Otherwise you can safely ignore this warning
     await spin(`Running yarn install`, yarnInstall())
   }
 
-  async addToNativeAppInCauldron (appName = required('appName'),
-                                   platformName = required('platformName'),
-                                   versionName = required('versionName'),
-                                   force) {
+  async addToNativeAppInCauldron (
+    napDescriptor: NativeApplicationDescriptor,
+    force: boolean) {
     try {
-      const appDesc = `${appName}:${platformName}:${versionName}`
-      const nativeApp = await cauldron.getNativeApp(appName, platformName, versionName)
+      const nativeApp = await cauldron.getNativeApp(napDescriptor)
 
       const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
 
       const currentMiniAppEntryInCauldronAtSameVersion = nativeApp.isReleased
-                    ? await cauldron.getOtaMiniApp(appName, platformName, versionName, miniApp)
-                    : await cauldron.getContainerMiniApp(appName, platformName, versionName, miniApp)
+                    ? await cauldron.getOtaMiniApp(napDescriptor, miniApp)
+                    : await cauldron.getContainerMiniApp(napDescriptor, miniApp)
 
        // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
-        log.info(`Checking if ${miniApp.toString()} is not already in ${appDesc}`)
+        log.info(`Checking if ${miniApp.toString()} is not already in ${napDescriptor.toString()}`)
 
         if (currentMiniAppEntryInCauldronAtSameVersion) {
-          throw new Error(`${miniApp.toString()} already in ${appDesc}`)
+          throw new Error(`${miniApp.toString()} already in ${napDescriptor.toString()}`)
         }
 
         /* log.info(`Checking that container version match native app version`)
@@ -395,7 +405,10 @@ Otherwise you can safely ignore this warning
         } */
 
         log.info('Checking compatibility with each native dependency')
-        let report = await checkCompatibilityWithNativeApp(appName, platformName, versionName)
+        let report = await checkCompatibilityWithNativeApp(
+          napDescriptor.name,
+          napDescriptor.platform,
+          napDescriptor.version)
         if (!report.isCompatible) {
           throw new Error('At least a native dependency is incompatible')
         }
@@ -407,44 +420,40 @@ Otherwise you can safely ignore this warning
         const localNativeDependencyString =
                         `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
         const remoteDependency =
-                    await cauldron.getNativeDependency(appName, platformName, versionName, localNativeDependencyString, { convertToObject: true })
+                    await cauldron.getNativeDependency(napDescriptor, localNativeDependencyString, { convertToObject: true })
         if (remoteDependency && (remoteDependency.version === localNativeDependency.version)) {
           continue
         }
 
         if (!force) {
-          await cauldron.addNativeDependency(
-                        localNativeDependency, appName, platformName, versionName)
+          await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
         } else {
           let nativeDepInCauldron
           try {
             nativeDepInCauldron = await cauldron
-                            .getNativeDependency(appName, platformName, versionName,
-                            localNativeDependencyString)
+                            .getNativeDependency(napDescriptor, localNativeDependencyString)
           } catch (e) {
                         // 404 most probably, swallow, need to improve cauldron cli to return null
                         // instead in case of 404
           }
 
           if (nativeDepInCauldron) {
-            await cauldron.updateNativeAppDependency(
-                            appName, platformName, versionName, localNativeDependencyString, localNativeDependency.version)
+            await cauldron.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
           } else {
-            await cauldron.addNativeDependency(
-                            localNativeDependency, appName, platformName, versionName)
+            await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
           }
         }
       }
 
       const currentMiniAppEntryInContainer =
-                await cauldron.getContainerMiniApp(appName, platformName, versionName, miniApp.withoutVersion())
+                await cauldron.getContainerMiniApp(napDescriptor, miniApp.withoutVersion())
 
       if (currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldron.updateMiniAppVersion(appName, platformName, versionName, miniApp)
+        await cauldron.updateMiniAppVersion(napDescriptor, miniApp)
       } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldron.addContainerMiniApp(appName, platformName, versionName, miniApp)
+        await cauldron.addContainerMiniApp(napDescriptor, miniApp)
       } else {
-        await cauldron.addOtaMiniApp(appName, platformName, versionName, miniApp)
+        await cauldron.addOtaMiniApp(napDescriptor, miniApp)
       }
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`)
@@ -457,7 +466,7 @@ Otherwise you can safely ignore this warning
   }
 
     // Should go somewhere else. Does not belong in MiniApp class
-  getUnscopedModuleName (moduleName) {
+  getUnscopedModuleName (moduleName: string) : string {
     const npmScopeModuleRe = /(@.*)\/(.*)/
     return npmScopeModuleRe.test(moduleName)
             ? npmScopeModuleRe.exec(`${moduleName}`)[2]
