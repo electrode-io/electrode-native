@@ -89,12 +89,21 @@ export default class MiniApp {
       }
 
       log.info(`Creating application ${appName} at platform version ${platformVersion}`)
-      const rnVersion = Platform.getPlugin('react-native').version
+
+      const reactNativeDependency = Platform.getPlugin('react-native')
+      if (!reactNativeDependency) {
+        throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
+      }
+
+      const reactDependency = Platform.getJsDependency('react')
+      if (!reactDependency) {
+        throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
+      }
 
       //
       // Create application using react-native init command
-      await spin(`Running react-native init using react-native v${rnVersion}`,
-                reactNative.init(appName, rnVersion))
+      await spin(`Running react-native init using react-native v${reactNativeDependency.version}`,
+                reactNative.init(appName, reactNativeDependency.version))
 
       //
       // Patch package.json file of application
@@ -103,7 +112,7 @@ export default class MiniApp {
       appPackageJson.ernPlatformVersion = `${platformVersion}`
       appPackageJson.ernHeadLess = headless
       appPackageJson.private = false
-      appPackageJson.dependencies['react'] = Platform.getJsDependency('react').version
+      appPackageJson.dependencies['react'] = reactDependency.version
       if (scope) {
         appPackageJson.name = `@${scope}/${appName}`
       }
@@ -167,7 +176,7 @@ export default class MiniApp {
     // Each object represent a native dependency (name/version and optionaly scope)
     // Sample output :
     // [ { name: "react-native", version: "0.39.2", scope: "walmart" }]
-  get nativeDependencies () : Array<any> {
+  get nativeDependencies () : Array<Dependency> {
     let result = []
 
     const nativeDependenciesNames = new Set()
@@ -222,7 +231,7 @@ export default class MiniApp {
   get jsDependencies () : Array<any> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     let result = _.map(this.packageJson.dependencies, (val: string, key: string) =>
-            Platform.buildDependencyObj(`${key}@${val}`))
+            Dependency.fromString(`${key}@${val}`))
 
     return result == null ? [] : _.filter(result, d => !nativeDependenciesNames.includes(d.name))
   }
@@ -331,7 +340,7 @@ If this is a non purely JS dependency you will face issues during publication.
 Otherwise you can safely ignore this warning
 ==================================================================================
 `)
-      dep = Platform.buildDependencyObj(dependencyName)
+      dep = Dependency.fromString(dependencyName)
       dep.version = 'latest'
     }
 

@@ -4,6 +4,7 @@ import {
   execSync
 } from 'child_process'
 import config from './config.js'
+import Dependency from './Dependency.js'
 import fs from 'fs'
 import _ from 'lodash'
 
@@ -136,38 +137,6 @@ export default class Platform {
     return JSON.parse(fs.readFileSync(`${this.repositoryDirectory}/manifest.json`, 'utf-8'))
   }
 
-  // Given a string representing the dependency, explode it into an object
-  // Valid input strings samples :
-  // react-native
-  // react-native@0.40
-  // @walmart/react-native
-  // @walmart/react-native@0.40
-  static buildDependencyObj (pluginString: string) : Object {
-    const scopedModuleWithVersionRe = /@(.+)\/(.+)@(.+)/
-    const unscopedModuleWithVersionRe = /(.+)@(.+)/
-    const scopedModuleWithoutVersionRe = /@(.+)\/(.+)/
-
-    if (scopedModuleWithVersionRe.test(pluginString)) {
-      return {
-        scope: scopedModuleWithVersionRe.exec(pluginString)[1],
-        name: scopedModuleWithVersionRe.exec(pluginString)[2],
-        version: scopedModuleWithVersionRe.exec(pluginString)[3]
-      }
-    } else if (unscopedModuleWithVersionRe.test(pluginString)) {
-      return {
-        name: unscopedModuleWithVersionRe.exec(pluginString)[1],
-        version: unscopedModuleWithVersionRe.exec(pluginString)[2]
-      }
-    } else if (scopedModuleWithoutVersionRe.test(pluginString)) {
-      return {
-        scope: scopedModuleWithoutVersionRe.exec(pluginString)[1],
-        name: scopedModuleWithoutVersionRe.exec(pluginString)[2]
-      }
-    } else {
-      return { name: pluginString }
-    }
-  }
-
   // Returns the manifest of a given platform version
   // If no version is specified, returns the manifest of the currently activated
   // platform version
@@ -188,9 +157,9 @@ export default class Platform {
   // version manifest.
   // Otherwise it just switch the platform repository to the given version branch
   // and then build the array based on the manifest
-  static getManifestPlugins (version: string) : Array<any> {
+  static getManifestPlugins (version: string) : Array<Dependency> {
     const manifest = this.getManifest(version)
-    return _.map(manifest.supportedPlugins, d => this.buildDependencyObj(d))
+    return _.map(manifest.supportedPlugins, d => Dependency.fromString(d))
   }
 
   // Returns the list of javascript dependencies listed in manifest for a given
@@ -199,31 +168,31 @@ export default class Platform {
   // version manifest.
   // Otherwise it just switch the platform repository to the given version branch
   // and then build the array based on the manifest
-  static getManifestJsDependencies (version: string) : Array<any> {
+  static getManifestJsDependencies (version: string) : Array<Dependency> {
     const manifest = this.getManifest(version)
-    return _.map(manifest.jsDependencies, d => this.buildDependencyObj(d))
+    return _.map(manifest.jsDependencies, d => Dependency.fromString(d))
   }
 
-  static getManifestPluginsAndJsDependencies (version: string) : Array<any> {
+  static getManifestPluginsAndJsDependencies (version: string) : Array<Dependency> {
     const manifest = this.getManifest(version)
     const manifestDeps = _.union(manifest.jsDependencies, manifest.supportedPlugins)
-    return _.map(manifestDeps, d => this.buildDependencyObj(d))
+    return _.map(manifestDeps, d => Dependency.fromString(d))
   }
 
-  static getPlugin (pluginString: string) : any {
-    const plugin = this.buildDependencyObj(pluginString)
+  static getPlugin (pluginString: string) : ?Dependency {
+    const plugin = Dependency.fromString(pluginString)
     return _.find(this.getManifestPlugins(this.currentVersion),
       d => (d.name === plugin.name) && (d.scope === plugin.scope))
   }
 
-  static getJsDependency (dependencyString: string) : any {
-    const jsDependency = this.buildDependencyObj(dependencyString)
+  static getJsDependency (dependencyString: string) : ?Dependency {
+    const jsDependency = Dependency.fromString(dependencyString)
     return _.find(this.getManifestJsDependencies(this.currentVersion),
       d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))
   }
 
-  static getDependency (dependencyString: string) : any {
-    const dependency = this.buildDependencyObj(dependencyString)
+  static getDependency (dependencyString: string) : ?Dependency {
+    const dependency = Dependency.fromString(dependencyString)
     return _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
       d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }
