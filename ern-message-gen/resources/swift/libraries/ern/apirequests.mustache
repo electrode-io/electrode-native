@@ -4,8 +4,8 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{#operation}}
     {{^isEvent}}
 
-    public override func register{{{camelizedNickName}}}RequestHandler(handler: ElectrodeBridgeRequestHandler) {
-        let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}}, reqClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self, respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self, requestHandler: handler)
+    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) {
+        let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}}, reqClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self, respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self, requestCompletionHandler: handler)
         requestHandlerProcessor.execute()
     }
     {{/isEvent}}
@@ -18,13 +18,13 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{#operation}}
     {{^isEvent}}
 
-    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseListener: ElectrodeBridgeResponseListener) {
+    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
         let requestProcessor = ElectrodeRequestProcessor<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}, Any>(
             requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
             requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil, {{/hasRequestParam}}
             respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
             responseItemType: nil,
-            responseListener: responseListener)
+            responseCompletionHandler: responseCompletionHandler)
 
         requestProcessor.execute()
     }
