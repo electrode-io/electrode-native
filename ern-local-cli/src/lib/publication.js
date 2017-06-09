@@ -55,14 +55,23 @@ export async function runLocalContainerGen (
   miniappPackages: Array<string>,
   platform: 'android' | 'ios', {
     containerVersion = '1.0.0',
-    nativeAppName = 'local'
+    nativeAppName = 'local',
+    publicationUrl
   } : {
-    containerVersion: string,
-    nativeAppName: string
+    containerVersion?: string,
+    nativeAppName?: string,
+    publicationUrl?: string
   } = {}) {
   try {
     const nativeDependencies: Set<string> = new Set()
     let miniapps = []
+    let config
+
+    if (publicationUrl) {
+      config = platform === 'android'
+        ? { name: 'maven', mavenRepositoryUrl: publicationUrl }
+        : { name: 'github', targetRepoUrl: publicationUrl }
+    }
 
     for (const miniappPackage of miniappPackages) {
       log.info(`Processing ${miniappPackage}`)
@@ -110,7 +119,7 @@ export async function runLocalContainerGen (
       containerVersion,
       nativeAppName,
       platformPath: Platform.currentPlatformVersionPath,
-      generator: createContainerGenerator(platform),
+      generator: createContainerGenerator(platform, config),
       plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
       miniapps
     })
@@ -126,7 +135,7 @@ export async function runCauldronContainerGen (
   version: string, {
     disablePublication
   } : {
-    disablePublication: boolean
+    disablePublication?: boolean
   }= {}) {
   try {
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
