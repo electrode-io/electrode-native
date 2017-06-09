@@ -8,7 +8,6 @@ import {
 import {
   exec
 } from 'child_process'
-import _ from 'lodash'
 import fs from 'fs'
 import Mustache from 'mustache'
 import Ora from 'ora'
@@ -143,7 +142,17 @@ export async function bundleMiniApps (
       shell.cd(miniapps[0].localPath)
       throwIfShellCommandFailed()
     } else {
-      const miniAppStrings = _.map(miniapps, m => new Dependency(m.name, {scope: m.scope, version: m.version}).toString())
+      let miniAppStrings = []
+      for (const miniapp of miniapps) {
+        if (miniapp.packagePath) {
+          miniAppStrings.push(miniapp.packagePath)
+        } else {
+          miniAppStrings.push(new Dependency(miniapp.name, {
+            scope: miniapp.scope,
+            version: miniapp.version
+          }).toString())
+        }
+      }
       await generateMiniAppsComposite(miniAppStrings, paths.compositeMiniApp)
     }
 
@@ -276,7 +285,7 @@ export function clearReactPackagerCache () {
 // the git repo as one would expect
 //
 // Returns: Absolute path to where the plugin was installed
-export async function downloadPluginSource (pluginOrigin: any) {
+export async function downloadPluginSource (pluginOrigin: any) : Promise<string> {
   let downloadPath = ''
   if (pluginOrigin.type === 'npm') {
     await yarnAdd(pluginOrigin)
@@ -323,7 +332,7 @@ export function handleCopyDirective (
 export async function spin (
   msg: string,
   prom: Promise<*>,
-  options: any) {
+  options: any) : Promise<*> {
   const spinner = new Ora(options || msg)
   spinner.start()
 

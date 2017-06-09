@@ -7,7 +7,8 @@ import {
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import {
-  runContainerGen
+  runLocalContainerGen,
+  runCauldronContainerGen
 } from '../../lib/publication'
 import _ from 'lodash'
 import cauldron from '../../lib/cauldron'
@@ -38,36 +39,61 @@ exports.builder = function (yargs: any) {
       alias: 'dontPublish',
       describe: 'Do not publish container to Maven or GitHub (just generate it)'
     })
-    .group(['outputFolder, miniapps'], 'jsOnly Options:')
-    .option('outputFolder', {
+    .option('publicationUrl', {
       type: 'string',
-      alias: 'out',
-      describe: 'Output folder path'
+      describe: 'The url to publish cauldron to'
     })
     .option('miniapps', {
       type: 'array',
       alias: 'm',
       describe: 'A list of one or more miniapps'
     })
+    .option('platform', {
+      type: 'string',
+      alias: 'p',
+      describe: 'The platform for which to generate the container',
+      choices: ['android', 'ios']
+    })
+    .option('containerName', {
+      type: 'string',
+      describe: 'The name to user for the container (usually native application name)'
+    })
+    .group(['outputFolder'], 'jsOnly Options:')
+    .option('outputFolder', {
+      type: 'string',
+      alias: 'out',
+      describe: 'Output folder path'
+    })
 }
 
-exports.handler = async function (argv: any) {
-  let {
-    completeNapDescriptor,
-    containerVersion,
-    jsOnly,
-    outputFolder,
-    miniapps,
-    disablePublication
-  } = argv
-
-  let napDescriptor
+exports.handler = async function ({
+  completeNapDescriptor,
+  containerVersion,
+  jsOnly,
+  outputFolder,
+  miniapps,
+  disablePublication,
+  platform,
+  containerName,
+  publicationUrl
+} : {
+  completeNapDescriptor?: string,
+  containerVersion?: string,
+  disablePublication?: boolean,
+  jsOnly?: boolean,
+  outputFolder?: string,
+  miniapps?: Array<string>,
+  platform?: 'android' | 'ios',
+  containerName?: string,
+  publicationUrl?: string
+}) {
+  let napDescriptor: ?NativeApplicationDescriptor
 
   //
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
   // containing all the native applications versions in the cauldron
-  // Not needed if miniapps are provided with jsOnly flag
+  // Not needed if miniapps are directly provided
   if (!completeNapDescriptor && !miniapps) {
     const nativeApps = await cauldron.getAllNativeApps()
 
@@ -131,12 +157,31 @@ exports.handler = async function (argv: any) {
 
     await generateMiniAppsComposite(miniapps, outputFolder)
   } else {
-    if (!napDescriptor) {
-      return log.error('You need to provide a napDescriptor if not providing miniapps')
-    }
-    await runContainerGen(
+    if (!napDescriptor && miniapps) {
+      if (!platform) {
+        const { userSelectedPlatform } = await inquirer.prompt([{
+          type: 'list',
+          name: 'userSelectedPlatform',
+          message: 'Choose platform to generate container for',
+          choices: ['android', 'ios']
+        }])
+
+        platform = userSelectedPlatform
+      }
+
+      await runLocalContainerGen(
+        miniapps,
+        platform, {
+          containerVersion,
+          nativeAppName: containerName,
+          publicationUrl
+        }
+      )
+    } else if (napDescriptor && containerVersion) {
+      await runCauldronContainerGen(
       napDescriptor,
       containerVersion,
       { disablePublication })
+    }
   }
 }

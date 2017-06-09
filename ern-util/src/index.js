@@ -14,6 +14,7 @@ import _codePush from './codePush'
 import _Dependency from './Dependency'
 import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import _noop from './noop'
+import _findNativeDependencies from './findNativeDependencies'
 
 export const android = _android
 export const coloredLog = _coloredLog
@@ -29,6 +30,7 @@ export const codePush = _codePush
 export const Dependency = _Dependency
 export const NativeApplicationDescriptor = _NativeApplicationDescriptor
 export const noop = _noop
+export const findNativeDependencies = _findNativeDependencies
 
 export default ({
   android: _android,
@@ -44,5 +46,6 @@ export default ({
   codePush: _codePush,
   Dependency: _Dependency,
   NativeApplicationDescriptor: _NativeApplicationDescriptor,
-  noop: _noop
+  noop: _noop,
+  findNativeDependencies: _findNativeDependencies
 })

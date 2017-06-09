@@ -162,6 +162,9 @@ export default class MavenGenerator {
         throwIfShellCommandFailed()
         let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
             downloadPluginSource(pluginConfig.origin))
+        if (!pluginSourcePath) {
+          throw new Error(`Was not able to download ${plugin.name}`)
+        }
         shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`)
         throwIfShellCommandFailed()
         if (pluginConfig.android.moduleName) {
