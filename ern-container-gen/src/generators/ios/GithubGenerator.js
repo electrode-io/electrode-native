@@ -131,6 +131,9 @@ export default class GithubGenerator {
       if (pluginConfig.ios) {
         const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
           downloadPluginSource(pluginConfig.origin))
+        if (!pluginSourcePath) {
+          throw new Error(`Was not able to download ${plugin.name}`)
+        }
 
         if (pluginConfig.ios.copy) {
           handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.ios.copy)

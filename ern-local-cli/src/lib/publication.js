@@ -8,8 +8,11 @@ import {
 } from '@walmart/ern-container-gen'
 import {
   codePush,
+  Dependency,
+  findNativeDependencies,
   NativeApplicationDescriptor,
-  Platform
+  Platform,
+  yarn
 } from '@walmart/ern-util'
 import {
   checkCompatibilityWithNativeApp,
@@ -20,6 +23,7 @@ import MiniApp from './miniapp.js'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import emoji from 'node-emoji'
+import tmp from 'tmp'
 
 function createContainerGenerator (platform, config) {
   if (config) {
@@ -41,6 +45,82 @@ function createContainerGenerator (platform, config) {
   }
 }
 
+// Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
+// The string used to represent a miniapp package can be anything supported by `yarn add` command
+// For example, the following miniapp strings are all valid
+// FROM NPM => @walmart/react-native-cart@1.2.3
+// FROM GIT => git@gecgithub01.walmart.com:react-native/Cart.git
+// FROM FS  => file:/Users/blemair/Code/Cart
+export async function runLocalContainerGen (
+  miniappPackages: Array<string>,
+  platform: 'android' | 'ios', {
+    containerVersion = '1.0.0',
+    nativeAppName = 'local'
+  } : {
+    containerVersion: string,
+    nativeAppName: string
+  } = {}) {
+  try {
+    const nativeDependencies: Set<string> = new Set()
+    let miniapps = []
+
+    for (const miniappPackage of miniappPackages) {
+      log.info(`Processing ${miniappPackage}`)
+
+      // Create temporary directory and yarn add the miniapp from within it
+      const tmpDirPath = tmp.dirSync({unsafeCleanup: true}).name
+      process.chdir(tmpDirPath)
+      await yarn.yarnAdd(miniappPackage)
+
+      // Extract full name of miniapp package from the package.json resulting from yarn add command
+      const packageJson = require(`${tmpDirPath}/package.json`)
+      const miniappDependency = Dependency.fromString(_.keys(packageJson.dependencies)[0])
+
+      miniapps.push({
+        scope: miniappDependency.scope,
+        name: miniappDependency.name,
+        packagePath: miniappPackage
+      })
+
+      // Find all native dependencies of this miniapp in the node_modules folder
+      // and remove the miniapp itself, wrongly considered as a native dependency
+      let miniappNativeDependencies = findNativeDependencies(`${tmpDirPath}/node_modules`)
+      _.remove(miniappNativeDependencies,
+        d => (d.scope === miniappDependency.scope) && (d.name === miniappDependency.name))
+
+      // Add all native dependencies as strings to the set of native dependencies
+      // of all miniapps
+      miniappNativeDependencies.forEach(d => nativeDependencies.add(d.toString()))
+    }
+
+    const nativeDependenciesArray = Array.from(nativeDependencies)
+
+    // Verify uniqueness of native dependencies (that all miniapps are using the same
+    // native dependencies version). This is a requirement in order to generate a proper container
+    const nativeDependenciesWithoutVersion: Array<string> = _.map(
+      nativeDependenciesArray, d => Dependency.fromString(d).withoutVersion().toString())
+    const duplicateNativeDependencies =
+      _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
+    if (duplicateNativeDependencies.length > 0) {
+      throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
+    }
+
+    log.info(`Generating container`)
+    await generateContainer({
+      containerVersion,
+      nativeAppName,
+      platformPath: Platform.currentPlatformVersionPath,
+      generator: createContainerGenerator(platform),
+      plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
+      miniapps
+    })
+  } catch (e) {
+    log.error(`runLocalContainerGen failed: ${e}`)
+    throw e
+  }
+}
+
+// Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronContainerGen (
   napDescriptor: NativeApplicationDescriptor,
   version: string, {
@@ -70,7 +150,8 @@ export async function runCauldronContainerGen (
       miniapps
     })
   } catch (e) {
-    log.error(e)
+    log.error(`runCauldronContainerGen failed: ${e}`)
+    throw e
   }
 }
 
