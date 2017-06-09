@@ -41,7 +41,7 @@ function createContainerGenerator (platform, config) {
   }
 }
 
-export async function runContainerGen (
+export async function runCauldronContainerGen (
   napDescriptor: NativeApplicationDescriptor,
   version: string, {
     disablePublication
@@ -183,7 +183,7 @@ async function publishInApp (
       containerVersion = await askUserForContainerVersion()
     }
 
-    await runContainerGen(napDescriptor, containerVersion)
+    await runCauldronContainerGen(napDescriptor, containerVersion)
   } catch (e) {
     log.error(`[publishInApp] failed`)
   }

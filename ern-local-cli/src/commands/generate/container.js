@@ -7,7 +7,7 @@ import {
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import {
-  runContainerGen
+  runCauldronContainerGen
 } from '../../lib/publication'
 import _ from 'lodash'
 import cauldron from '../../lib/cauldron'
@@ -134,7 +134,7 @@ exports.handler = async function (argv: any) {
     if (!napDescriptor) {
       return log.error('You need to provide a napDescriptor if not providing miniapps')
     }
-    await runContainerGen(
+    await runCauldronContainerGen(
       napDescriptor,
       containerVersion,
       { disablePublication })
