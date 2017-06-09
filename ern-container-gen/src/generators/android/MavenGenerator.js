@@ -124,8 +124,8 @@ export default class MavenGenerator {
     // build it and publish resulting AAR
     await this.buildAndPublishContainer(paths)
 
-    console.log(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
-    console.log(`To ${this.mavenRepositoryUrl}`)
+    log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
+    log.info(`To ${this.mavenRepositoryUrl}`)
   }
 
   async fillContainerHull (
@@ -134,21 +134,21 @@ export default class MavenGenerator {
     paths: any,
     mustacheView: any) : Promise<*> {
     try {
-      console.log(`[=== Starting container hull filling ===]`)
+      log.debug(`[=== Starting container hull filling ===]`)
 
       shell.cd(`${ROOT_DIR}`)
       throwIfShellCommandFailed()
 
       const outputFolder = `${paths.outFolder}/android`
 
-      console.log(`Creating out folder and copying Container Hull to it`)
+      log.debug(`Creating out folder and copying Container Hull to it`)
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
       throwIfShellCommandFailed()
 
       await this.buildAndroidPluginsViews(plugins, paths.containerPluginsConfig, mustacheView)
       await this.addAndroidPluginHookClasses(plugins, paths)
 
-      console.log(`Patching hull`)
+      log.debug(`Patching hull`)
       const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
       for (const file of files) {
         await mustacheRenderToOutputFileUsingTemplateFile(
@@ -181,7 +181,7 @@ export default class MavenGenerator {
       }
 
       // Create mini app activities
-      console.log(`Creating miniapp activities`)
+      log.debug(`Creating miniapp activities`)
       for (const miniApp of miniApps) {
         let tmpMiniAppView = {
           miniAppName: miniApp.unscopedName,
@@ -190,39 +190,39 @@ export default class MavenGenerator {
 
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
 
-        console.log(`Creating ${activityFileName}`)
+        log.debug(`Creating ${activityFileName}`)
         await mustacheRenderToOutputFileUsingTemplateFile(
             `${paths.containerTemplates}/android/MiniAppActivity.mustache`,
             tmpMiniAppView,
             `${outputFolder}/lib/src/main/java/com/walmartlabs/ern/container/miniapps/${activityFileName}`)
       }
 
-      console.log(`[=== Completed container hull filling ===]`)
+      log.debug(`[=== Completed container hull filling ===]`)
     } catch (e) {
-      console.log('[fillContainerHull] Something went wrong: ' + e)
+      log.error('[fillContainerHull] Something went wrong: ' + e)
       throw e
     }
   }
 
   async addAndroidPluginHookClasses (plugins: any, paths: any) : Promise<*> {
     try {
-      console.log(`[=== Adding plugin hook classes ===]`)
+      log.debug(`[=== Adding plugin hook classes ===]`)
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
         let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
-          console.log(`Adding ${androidPluginHook.name}.java`)
+          log.debug(`Adding ${androidPluginHook.name}.java`)
           shell.cp(`${paths.containerPluginsConfig}/${plugin.name}/${androidPluginHook.name}.java`,
               `${paths.outFolder}/android/lib/src/main/java/com/walmartlabs/ern/container/plugins/`)
           throwIfShellCommandFailed()
         }
       }
 
-      console.log(`[=== Done adding plugin hook classes ===]`)
+      log.debug(`[=== Done adding plugin hook classes ===]`)
     } catch (e) {
-      console.log('[addAndroidPluginHookClasses] Something went wrong: ' + e)
+      log.error('[addAndroidPluginHookClasses] Something went wrong: ' + e)
       throw e
     }
   }
@@ -239,7 +239,7 @@ export default class MavenGenerator {
 
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
-          console.log(`Hooking ${plugin.name} plugin`)
+          log.debug(`Hooking ${plugin.name} plugin`)
           pluginsView.push({
             'name': androidPluginHook.name,
             'lcname': androidPluginHook.name.charAt(0).toLowerCase() +
@@ -254,29 +254,29 @@ export default class MavenGenerator {
       mustacheView.pluginCompile = []
       const reactNativePlugin = _.find(plugins, p => p.name === 'react-native')
       if (reactNativePlugin) {
-        console.log(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`)
+        log.debug(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`)
         mustacheView.pluginCompile.push({
           'compileStatement': `compile ('com.facebook.react:react-native:${reactNativePlugin.version}@aar') { transitive=true }`
         })
       }
     } catch (e) {
-      console.log('[buildAndroidPluginsViews] Something went wrong: ' + e)
+      log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
       throw e
     }
   }
 
   async buildAndPublishContainer (paths: any) : Promise<*> {
     try {
-      console.log(`[=== Starting build and publication of the container ===]`)
+      log.debug(`[=== Starting build and publication of the container ===]`)
 
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
       await spin(`Building container and publishing archive`,
           this.buildAndUploadArchive('lib'))
 
-      console.log(`[=== Completed build and publication of the container ===]`)
+      log.debug(`[=== Completed build and publication of the container ===]`)
     } catch (e) {
-      console.log('[buildAndPublishAndroidContainer] Something went wrong: ' + e)
+      log.error('[buildAndPublishAndroidContainer] Something went wrong: ' + e)
       throw e
     }
   }
@@ -287,14 +287,14 @@ export default class MavenGenerator {
       exec(cmd,
         (err, stdout, stderr) => {
           if (err) {
-            console.log(err)
+            log.error(err)
             reject(err)
           }
           if (stderr) {
-            console.log(stderr)
+            log.error(stderr)
           }
           if (stdout) {
-            console.log(stdout)
+            log.debug(stdout)
             resolve(stdout)
           }
         })
