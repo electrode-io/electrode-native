@@ -53,7 +53,7 @@ export default class GithubGenerator {
     paths: any,
     mustacheView: any) : Promise<*> {
     try {
-      console.log(`\n === Using github generator
+      log.debug(`\n === Using github generator
           targetRepoUrl: ${this.targetRepoUrl}
           containerVersion: ${containerVersion}`)
 
@@ -101,20 +101,20 @@ export default class GithubGenerator {
       // build it and publish resulting AAR
       // await publishIosContainer(paths)
     } catch (e) {
-      console.log(`Something went wrong. Aborting ern-container-gen: ${e}`)
+      log.error(`Something went wrong. Aborting ern-container-gen: ${e}`)
       console.trace(e)
     }
   }
 
   async fillContainerHull (plugins: any, miniApps: any, paths: any) : Promise<*> {
-    console.log(`[=== Starting container hull filling ===]`)
+    log.debug(`[=== Starting container hull filling ===]`)
 
     shell.cd(`${ROOT_DIR}`)
     throwIfShellCommandFailed()
 
     const outputFolder = `${paths.outFolder}/ios`
 
-    console.log(`Creating out folder and copying Container Hull to it`)
+    log.debug(`Creating out folder and copying Container Hull to it`)
     shell.cp('-R', `${paths.containerHull}/ios`, paths.outFolder)
     throwIfShellCommandFailed()
 
@@ -212,7 +212,7 @@ export default class GithubGenerator {
 
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
 
-    console.log(`[=== Completed container hull filling ===]`)
+    log.debug(`[=== Completed container hull filling ===]`)
   }
 
   async getIosContainerProject (containerProjectPath: string) : Promise<*> {

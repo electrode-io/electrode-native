@@ -69,7 +69,7 @@ export async function getPluginConfig (plugin: any, pluginsConfigPath: string) :
       }
     }
   } else {
-    console.log(`No config.json file for ${plugin.name}. Assuming apigen module`)
+    log.debug(`No config.json file for ${plugin.name}. Assuming apigen module`)
     result = getApiPluginDefaultConfig()
   }
 
@@ -134,7 +134,7 @@ export async function bundleMiniApps (
   paths: any,
   platform: 'android' | 'ios') {
   try {
-    console.log(`[=== Starting mini apps bundling ===]`)
+    log.debug(`[=== Starting mini apps bundling ===]`)
 
     // Specific case where we use container gen to generate
     // container for runner and we want to bundle the local miniapp
@@ -165,9 +165,9 @@ export async function bundleMiniApps (
       await spin(`Bundling miniapp(s) for iOS`, reactNativeBundleIos(paths))
     }
 
-    console.log(`[=== Completed mini apps bundling ===]`)
+    log.debug(`[=== Completed mini apps bundling ===]`)
   } catch (e) {
-    console.log('[bundleMiniApps] Something went wrong: ' + e)
+    log.error('[bundleMiniApps] Something went wrong: ' + e)
   }
 }
 
@@ -249,9 +249,9 @@ export async function generateMiniAppsComposite (
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
   }
 
-  console.log(`writing index.android.js`)
+  log.debug(`writing index.android.js`)
   await writeFile('./index.android.js', content)
-  console.log(`writing index.ios.js`)
+  log.debug(`writing index.ios.js`)
   await writeFile('./index.ios.js', content)
 }
 
@@ -405,12 +405,13 @@ export async function gitClone (
       (err, stdout, stderr) => {
         // Git seems to send stuff to stderr :(
         if (err) {
-          console.log(err)
+          log.error(err)
           reject(err)
         } else {
-          console.log(stdout || stderr)
+          log.debug(stdout || stderr)
           resolve(stdout || stderr)
         }
+
       })
   })
 }
@@ -421,10 +422,10 @@ export async function gitAdd () {
       (err, stdout, stderr) => {
         // Git seems to send stuff to stderr :(
         if (err) {
-          console.log(err)
+          log.error(err)
           reject(err)
         } else {
-          console.log(stdout || stderr)
+          log.debug(stdout || stderr)
           resolve(stdout || stderr)
         }
       })
@@ -441,10 +442,10 @@ export async function gitCommit (message: string) {
       (err, stdout, stderr) => {
         // Git seems to send stuff to stderr :(
         if (err) {
-          console.log(err)
+          log.error(err)
           reject(err)
         } else {
-          console.log(stdout || stderr)
+          log.debug(stdout || stderr)
           resolve(stdout || stderr)
         }
       })
@@ -457,10 +458,10 @@ export async function gitTag (tag: string) {
       (err, stdout, stderr) => {
         // Git seems to send stuff to stderr :(
         if (err) {
-          console.log(err)
+          log.error(err)
           reject(err)
         } else {
-          console.log(stdout || stderr)
+          log.debug(stdout || stderr)
           resolve(stdout || stderr)
         }
       })
@@ -485,10 +486,10 @@ export async function gitPush ({
       (err, stdout, stderr) => {
         // Git seems to send stuff to stderr :(
         if (err) {
-          console.log(err)
+          log.error(err)
           reject(err)
         } else {
-          console.log(stdout || stderr)
+          log.debug(stdout || stderr)
           resolve(stdout || stderr)
         }
       })
