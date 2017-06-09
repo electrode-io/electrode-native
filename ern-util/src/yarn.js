@@ -63,6 +63,34 @@ export async function yarnInstall () {
   })
 }
 
+export async function yarnInfo (dependency: string, {
+  field,
+  json
+} : {
+  field?: string,
+  json?: boolean
+} = {}) {
+  return new Promise((resolve, reject) => {
+    let _package =
+      typeof (dependency) === 'string'
+      ? dependency
+      : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
+    exec(`yarn info ${_package} ${field || ''} ${json ? '--json' : ''}`,
+      (err, stdout, stderr) => {
+        if (err) {
+          log.error(err)
+          reject(err)
+        } else {
+          if (json) {
+            resolve(JSON.parse(stdout))
+          } else {
+            resolve(stdout)
+          }
+        }
+      })
+  })
+}
+
 export function isYarnInstalled () : boolean {
   try {
     execSync('yarn --version')
@@ -75,5 +103,6 @@ export function isYarnInstalled () : boolean {
 export default ({
   isYarnInstalled,
   yarnInstall,
-  yarnAdd
+  yarnAdd,
+  yarnInfo
 })

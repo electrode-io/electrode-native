@@ -411,7 +411,6 @@ export async function gitClone (
           log.debug(stdout || stderr)
           resolve(stdout || stderr)
         }
-
       })
   })
 }

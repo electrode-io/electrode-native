@@ -34,7 +34,8 @@ const {
 } = android
 const {
   yarnAdd,
-  yarnInstall
+  yarnInstall,
+  yarnInfo
 } = yarn
 
 export default class MiniApp {
@@ -169,6 +170,18 @@ export default class MiniApp {
   // Return all native dependencies currently used by the mini-app
   get nativeDependencies () : Array<Dependency> {
     return findNativeDependencies(`${this.path}/node_modules`)
+  }
+
+  async isPublishedToNpm () : Promise<boolean> {
+    const publishedVersionsInfo = await yarnInfo(`${this.packageJson.name}@${this.packageJson.version}`, {
+      field: 'versions',
+      json: true
+    })
+    if (publishedVersionsInfo.type === 'error') {
+      return false
+    }
+    let publishedVersions: Array<string> = publishedVersionsInfo.data
+    return publishedVersions.includes(this.packageJson.version)
   }
 
     // Return all javascript (non native) dependencies currently used by the mini-app

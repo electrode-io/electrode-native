@@ -8,7 +8,7 @@ import {
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import inquirer from 'inquirer'
-import miniapp from '../../../lib/miniapp'
+import Miniapp from '../../../lib/miniapp'
 
 exports.command = 'miniapp [completeNapDescriptor]'
 exports.desc = 'Publish mini app to given native app'
@@ -28,6 +28,24 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function (argv: any) {
+  const miniapp = Miniapp.fromCurrentPath()
+  const miniappPackage = `${miniapp.packageJson.name}@${miniapp.packageJson.version}`
+
+  if (!await miniapp.isPublishedToNpm()) {
+    const {publishToNpm} = await inquirer.prompt({
+      type: 'confirm',
+      name: 'doPublishToNpm',
+      message: `${miniappPackage} not published to npm. Do you want to publish it`,
+      default: true
+    })
+    if (publishToNpm) {
+      log.info(`Publishing MiniApp to npm`)
+      miniapp.publishToNpm()
+    } else {
+      return log.error(`You cannot add an unpublished MiniApp to the Cauldron !!!`)
+    }
+  }
+
   if (!argv.completeNapDescriptor) {
     const compatibilityReport = await getNativeAppCompatibilityReport()
     const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
@@ -52,13 +70,13 @@ exports.handler = async function (argv: any) {
     for (const completeNapDescriptor of completeNapDescriptors) {
       try {
         const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-        await miniapp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, argv.force)
+        await miniapp.addToNativeAppInCauldron(napDescriptor, argv.force)
       } catch (e) {
         console.log(`An error happened while trying to add MiniApp to ${completeNapDescriptor}`)
       }
     }
   } else {
     const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
-    return miniapp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, argv.force)
+    return miniapp.addToNativeAppInCauldron(napDescriptor, argv.force)
   }
 }
