@@ -14,7 +14,7 @@ exports.builder = function (yargs: any) {
           alias: 'r',
           type: 'bool',
           describe: 'true if version is released, false otherwise'
-        }).demandCommand(1, 'nativeapp needs <completeNapDescriptor>')
+        })
 }
 
 exports.handler = async function (argv: any) {
