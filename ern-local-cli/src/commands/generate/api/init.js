@@ -23,7 +23,7 @@ exports.builder = function (yargs: any) {
   }).option('apiAuthor', {
     alias: 'u',
     describe: `Author of library`
-  }).demandCommand(1, 'Must have an apiName')
+  })
 }
 
 exports.handler = async function (argv: any) {
