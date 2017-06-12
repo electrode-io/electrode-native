@@ -33,11 +33,7 @@ export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean
 
 async function _yarnAdd (dependency: string | Object, {dev} : {dev:boolean} = {}) {
   return new Promise((resolve, reject) => {
-    let _package =
-      typeof (dependency) === 'string'
-      ? dependency
-      : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
-    exec(`yarn add ${_package} --ignore-engines --exact ${dev ? '--dev' : ''}`,
+    exec(`yarn add ${_package(dependency)} --ignore-engines --exact ${dev ? '--dev' : ''}`,
       (err, stdout, stderr) => {
         if (err) {
           log.error(err)
@@ -71,11 +67,7 @@ export async function yarnInfo (dependency: string, {
   json?: boolean
 } = {}) {
   return new Promise((resolve, reject) => {
-    let _package =
-      typeof (dependency) === 'string'
-      ? dependency
-      : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
-    exec(`yarn info ${_package} ${field || ''} ${json ? '--json' : ''}`,
+    exec(`yarn info ${_package(dependency)} ${field || ''} ${json ? '--json' : ''}`,
       (err, stdout, stderr) => {
         if (err) {
           log.error(err)
@@ -89,6 +81,12 @@ export async function yarnInfo (dependency: string, {
         }
       })
   })
+}
+
+function _package (dependency) {
+  return typeof (dependency) === 'string'
+    ? dependency
+    : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
 }
 
 export function isYarnInstalled () : boolean {
