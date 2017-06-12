@@ -15,7 +15,7 @@ exports.builder = function (yargs: any) {
     alias: 'n',
     type: 'bool',
     describe: 'Generate native projects with proper dependencies (Implementation of the API has to be written in native'
-  }).demandCommand(1, 'Must provide an api name to generate implementation skeleton')
+  })
 }
 
 exports.handler = function (argv: any) {
