@@ -33,11 +33,7 @@ export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean
 
 async function _yarnAdd (dependency: string | Object, {dev} : {dev:boolean} = {}) {
   return new Promise((resolve, reject) => {
-    let _package =
-      typeof (dependency) === 'string'
-      ? dependency
-      : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
-    exec(`yarn add ${_package} --ignore-engines --exact ${dev ? '--dev' : ''}`,
+    exec(`yarn add ${_package(dependency)} --ignore-engines --exact ${dev ? '--dev' : ''}`,
       (err, stdout, stderr) => {
         if (err) {
           log.error(err)
@@ -63,20 +59,27 @@ export async function yarnInstall () {
   })
 }
 
-export async function yarnInfo (dependency: string, {
+export async function yarnInfo (dependency: string | Object, {
   field,
   json
 } : {
   field?: string,
   json?: boolean
 } = {}) {
+  const currentLocation = shell.pwd()
+  let yarnInfoCommand
+
+  if (typeof (dependency) === 'string' && dependency.startsWith('file:')) {
+    shell.cd(dependency.substr(5))
+    yarnInfoCommand = `yarn info ${field || ''} ${json ? '--json' : ''}`
+  } else {
+    yarnInfoCommand = `yarn info ${_package(dependency)} ${field || ''} ${json ? '--json' : ''}`
+  }
+
   return new Promise((resolve, reject) => {
-    let _package =
-      typeof (dependency) === 'string'
-      ? dependency
-      : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
-    exec(`yarn info ${_package} ${field || ''} ${json ? '--json' : ''}`,
+    exec(yarnInfoCommand,
       (err, stdout, stderr) => {
+        shell.cd(currentLocation)// Make sure we switch back to the original directory.
         if (err) {
           log.error(err)
           reject(err)
@@ -89,6 +92,12 @@ export async function yarnInfo (dependency: string, {
         }
       })
   })
+}
+
+function _package (dependency) {
+  return typeof (dependency) === 'string'
+    ? dependency
+    : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
 }
 
 export function isYarnInstalled () : boolean {
