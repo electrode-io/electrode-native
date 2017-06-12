@@ -59,16 +59,27 @@ export async function yarnInstall () {
   })
 }
 
-export async function yarnInfo (dependency: string, {
+export async function yarnInfo (dependency: string | Object, {
   field,
   json
 } : {
   field?: string,
   json?: boolean
 } = {}) {
+  const currentLocation = shell.pwd()
+  let yarnInfoCommand
+
+  if (typeof (dependency) === 'string' && dependency.startsWith('file:')) {
+    shell.cd(dependency.substr(5))
+    yarnInfoCommand = `yarn info ${field || ''} ${json ? '--json' : ''}`
+  } else {
+    yarnInfoCommand = `yarn info ${_package(dependency)} ${field || ''} ${json ? '--json' : ''}`
+  }
+
   return new Promise((resolve, reject) => {
-    exec(`yarn info ${_package(dependency)} ${field || ''} ${json ? '--json' : ''}`,
+    exec(yarnInfoCommand,
       (err, stdout, stderr) => {
+        shell.cd(currentLocation)// Make sure we switch back to the original directory.
         if (err) {
           log.error(err)
           reject(err)
