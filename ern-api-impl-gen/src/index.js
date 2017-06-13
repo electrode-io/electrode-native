@@ -10,6 +10,7 @@ import {
 
 import ApiImplGen from './generators/ApiImplGen'
 
+const API_NAME_RE = /([^/]*)$/
 const WORKING_FOLDER = `${Platform.rootDirectory}/api-impl-gen`
 const PLUGIN_FOLDER = `${WORKING_FOLDER}/plugins`
 
@@ -32,28 +33,45 @@ paths.platformPath = platformPath
 export async function generateApiImpl ({
                                          api,
                                          outputFolder,
-                                         nativeOnly
+                                         nativeOnly,
+                                         forceGenerate
                                        }: {
   api: string, // Can be an npm package, git repo link or a file location.
   outputFolder: string,
-  nativeOnly: boolean
+  nativeOnly: boolean,
+  forceGenerate: boolean
 } = {}) {
   console.log('Entering generate API IMPL')
 
   // get the folder to output the generated project.
-  paths.outFolder = formOutputFolderName(api, outputFolder)
+  paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
 
-  if (fs.existsSync(outputFolder)) {
-    Utils.logErrorAndExitProcess(`An implementation directory already exists: ${outputFolder}`)
-    // RETURN
+  try {
+    createOutputFolder(forceGenerate, outputFolder)
+
+    let platforms = getPlatforms(nativeOnly)
+
+    // Creates a working folder to collect all the necessary files/folders for the api-impl generation.
+    await createWorkingFolder()
+
+    new ApiImplGen().generateApiImplementation(api, paths, platforms)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(`Unable to start project generation: ${e}`)
   }
+}
 
-  let platforms = getPlatforms(nativeOnly)
-
-  // Creates a working folder to collect all the necessary files/folders for the api-impl generation.
-  await createWorkingFolder()
-
-  new ApiImplGen().generateApiImplementation(api, paths, platforms)
+function createOutputFolder (forceGenerate, outputFolder) {
+  if (!forceGenerate && fs.existsSync(outputFolder)) {
+    Utils.logErrorAndExitProcess(`An implementation directory already exists: ${outputFolder}. \nIf you want to force create this project use -f option in your command.`)
+    // RETURN
+  } else {
+    if (forceGenerate && fs.existsSync(outputFolder)) {
+      log.info(`Deleting the existing folder and recreating a new output folder" ${outputFolder}`)
+      shell.rm('-R', outputFolder)
+    }
+    shell.mkdir(outputFolder)
+    Utils.throwIfShellCommandFailed()
+  }
 }
 
 async function createWorkingFolder () {
@@ -63,12 +81,14 @@ async function createWorkingFolder () {
 
 function formOutputFolderName (api, outputFolder) {
   let apiDependencyObj = Dependency.fromString(api)
+  let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
 
   if (!outputFolder) {
-    outputFolder = `${shell.pwd()}/${apiDependencyObj.name}-impl`
+    outputFolder = `${shell.pwd()}/${apiName}-impl`
   } else {
-    outputFolder = `${outputFolder}/${apiDependencyObj.name}-impl`
+    outputFolder = `${outputFolder}/${apiName}-impl`
   }
+
   return outputFolder
 }
 
