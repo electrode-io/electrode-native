@@ -9,6 +9,10 @@ exports.desc = 'Install a given ern platform version'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
-  Platform.installPlatform(argv.platformVersion.toString().replace('v', ''))
+exports.handler = function ({
+  platformVersion
+} : {
+  platformVersion: string
+}) {
+  Platform.installPlatform(platformVersion.toString().replace('v', ''))
 }

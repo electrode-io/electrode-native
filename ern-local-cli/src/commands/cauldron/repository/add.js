@@ -9,12 +9,18 @@ exports.desc = 'Add a Cauldron git repository'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
+exports.handler = function ({
+  repoAlias,
+  repoUrl
+} : {
+  repoAlias: string,
+  repoUrl: string
+}) {
   let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
-  if (cauldronRepositories[argv.repoAlias]) {
-    return console.log(`A Cauldron repository is already associated to ${argv.repoAlias} alias`)
+  if (cauldronRepositories[repoAlias]) {
+    return console.log(`A Cauldron repository is already associated to ${repoAlias} alias`)
   }
-  cauldronRepositories[argv.repoAlias] = argv.repoUrl
+  cauldronRepositories[repoAlias] = repoUrl
   ernConfig.setValue('cauldronRepositories', cauldronRepositories)
-  console.log(`Added Cauldron repository ${argv.repoUrl} with alias ${argv.repoAlias}`)
+  console.log(`Added Cauldron repository ${repoUrl} with alias ${repoAlias}`)
 }

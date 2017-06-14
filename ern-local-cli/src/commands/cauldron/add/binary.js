@@ -10,8 +10,14 @@ exports.desc = 'Add a native binary (.app or .apk) in the cauldron'
 
 exports.builder = {}
 
-exports.handler = async function (argv: any) {
+exports.handler = async function ({
+  completeNapDescriptor,
+  path
+} : {
+  completeNapDescriptor: string,
+  path: string
+}) {
   await cauldron.addNativeBinary(
-    NativeApplicationDescriptor.fromString(argv.completeNapDescriptor),
-    argv.path)
+    NativeApplicationDescriptor.fromString(completeNapDescriptor),
+    path)
 }

@@ -70,19 +70,15 @@ export default class MiniApp {
 
   static async create (
     appName: string, {
-      platformVersion,
+      platformVersion = Platform.currentVersion,
       scope,
       headless
     } : {
       platformVersion: string,
-      scope: string,
-      headless: boolean
+      scope?: string,
+      headless?: boolean
     }) {
     try {
-      if (!platformVersion) {
-        platformVersion = Platform.currentVersion
-      }
-
       if (Platform.currentVersion !== platformVersion) {
         Platform.switchToVersion(platformVersion)
       }

@@ -16,13 +16,19 @@ exports.builder = function (yargs: any) {
   })
 }
 
-exports.handler = async function (argv: any) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
+exports.handler = async function ({
+  completeNapDescriptor,
+  platformVersion
+} : {
+  completeNapDescriptor: string,
+  platformVersion?: string
+}) {
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   if (napDescriptor.isPartial) {
     return log.error('You need to provide a complete native application descriptor to this command !')
   }
 
-  await cauldron.addNativeApp(napDescriptor, argv.platformVersion
-    ? argv.platformVersion.toString().replace('v', '')
+  await cauldron.addNativeApp(napDescriptor, platformVersion
+    ? platformVersion.toString().replace('v', '')
     : undefined)
 }

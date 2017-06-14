@@ -12,7 +12,7 @@ exports.desc = 'Update currently activated platform version'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
+exports.handler = function () {
   const platformVersionPath = Platform.currentPlatformVersionPath
   const platformVersion = Platform.currentVersion
 

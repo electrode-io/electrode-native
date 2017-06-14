@@ -72,19 +72,47 @@ exports.builder = function (yargs: any) {
     })
 }
 
-exports.handler = function (argv: any) {
+exports.handler = function ({
+  force,
+  completeNapDescriptor,
+  npmPublish,
+  ota,
+  container,
+  containerVersion,
+  appName,
+  deploymentName,
+  platform,
+  targetBinaryVersion,
+  mandatory,
+  rollout
+} : {
+  force: boolean,
+  completeNapDescriptor: string,
+  npmPublish: boolean,
+  ota: boolean,
+  container: boolean,
+  containerVersion: string,
+  appName: string,
+  deploymentName: string,
+  platform: 'android' | 'ios',
+  targetBinaryVersion: string,
+  mandatory: boolean,
+  rollout: string
+}) {
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+
   return publishMiniApp({
-    force: argv.force,
-    napDescriptor: NativeApplicationDescriptor.fromString(argv.completeNapDescriptor),
-    npmPublish: argv.npmPublish,
-    publishAsOtaUpdate: argv.ota,
-    publishAsNewContainer: argv.container,
-    containerVersion: argv.containerVersion,
-    codePushAppName: argv.appName,
-    codePushDeploymentName: argv.deploymentName,
-    codePushPlatformName: argv.platform,
-    codePushTargetVersionName: argv.targetBinaryVersion,
-    codePushIsMandatoryRelease: argv.mandatory,
-    codePushRolloutPercentage: argv.rollout
+    force: force,
+    napDescriptor: napDescriptor,
+    npmPublish: npmPublish,
+    publishAsOtaUpdate: ota,
+    publishAsNewContainer: container,
+    containerVersion: containerVersion,
+    codePushAppName: appName,
+    codePushDeploymentName: deploymentName,
+    codePushPlatformName: platform,
+    codePushTargetVersionName: targetBinaryVersion,
+    codePushIsMandatoryRelease: mandatory,
+    codePushRolloutPercentage: rollout
   })
 }

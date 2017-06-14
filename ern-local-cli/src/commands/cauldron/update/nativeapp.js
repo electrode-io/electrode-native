@@ -17,9 +17,15 @@ exports.builder = function (yargs: any) {
         })
 }
 
-exports.handler = async function (argv: any) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
-  if (argv.isReleased !== undefined) {
-    cauldron.updateNativeAppIsReleased(napDescriptor, argv.isReleased)
+exports.handler = async function ({
+  completeNapDescriptor,
+  isReleased
+} : {
+  completeNapDescriptor: string,
+  isReleased?: boolean
+}) {
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  if (isReleased !== undefined) {
+    cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
   }
 }

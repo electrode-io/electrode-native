@@ -9,6 +9,6 @@ exports.desc = 'Show current platform version'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
+exports.handler = function () {
   log.info(`Platform version : v${Platform.currentVersion}`)
 }

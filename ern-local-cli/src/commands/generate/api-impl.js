@@ -19,16 +19,29 @@ exports.builder = function (yargs: any) {
     alias: 'f',
     type: 'bool',
     describe: 'Forces a project creation even if an imlemenation already present inside the output location'
+  }).option('outputFolder', {
+    alias: 'o',
+    describe: 'Path to output folder'
   })
 }
 
-exports.handler = function (argv: any) {
-  console.log(`command identified for generating API implementation for  ${argv.api}`)
+exports.handler = function ({
+  api,
+  nativeOnly,
+  force,
+  outputFolder
+} : {
+  api: string,
+  nativeOnly: boolean,
+  force: boolean,
+  outputFolder: string
+}) {
+  console.log(`command identified for generating API implementation for  ${api}`)
 
   generateApiImpl({
-    api: argv.api,
-    outputFolder: argv.outputFolder,
-    nativeOnly: argv.nativeOnly,
-    forceGenerate: argv.force
+    api,
+    outputFolder,
+    nativeOnly,
+    forceGenerate: force
   })
 }

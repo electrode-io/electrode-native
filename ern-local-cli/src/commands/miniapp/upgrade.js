@@ -14,7 +14,13 @@ exports.builder = function (yargs: any) {
         })
 }
 
-exports.handler = async function (argv: any) {
+exports.handler = async function ({
+  platformVersion,
+  force = false
+} : {
+  platformVersion: string,
+  force: boolean
+}) {
   await MiniApp.fromCurrentPath().upgradeToPlatformVersion(
-        argv.platformVersion.toString().replace('v', ''), argv.force)
+        platformVersion.toString().replace('v', ''), force)
 }

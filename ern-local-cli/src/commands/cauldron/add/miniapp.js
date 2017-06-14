@@ -27,7 +27,13 @@ exports.builder = function (yargs: any) {
   })
 }
 
-exports.handler = async function (argv: any) {
+exports.handler = async function ({
+  completeNapDescriptor,
+  force = false
+} : {
+  completeNapDescriptor: string,
+  force: boolean
+}) {
   const miniapp = Miniapp.fromCurrentPath()
   const miniappPackage = `${miniapp.packageJson.name}@${miniapp.packageJson.version}`
 
@@ -46,7 +52,7 @@ exports.handler = async function (argv: any) {
     }
   }
 
-  if (!argv.completeNapDescriptor) {
+  if (!completeNapDescriptor) {
     const compatibilityReport = await getNativeAppCompatibilityReport()
     const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
       if (entry.isCompatible) {
@@ -70,13 +76,13 @@ exports.handler = async function (argv: any) {
     for (const completeNapDescriptor of completeNapDescriptors) {
       try {
         const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-        await miniapp.addToNativeAppInCauldron(napDescriptor, argv.force)
+        await miniapp.addToNativeAppInCauldron(napDescriptor, force)
       } catch (e) {
         console.log(`An error happened while trying to add MiniApp to ${completeNapDescriptor}`)
       }
     }
   } else {
-    const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
-    return miniapp.addToNativeAppInCauldron(napDescriptor, argv.force)
+    const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+    return miniapp.addToNativeAppInCauldron(napDescriptor, force)
   }
 }
