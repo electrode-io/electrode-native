@@ -33,8 +33,8 @@ final class {{{eventsImplClassName}}} implements {{{classname}}}.Events {
     {{#operation}}
     {{#isEvent}}
     @Override
-    public void emit{{{camelizedNickName}}}({{#requestParam}}{{{dataType}}} {{{paramName}}}{{/requestParam}}) {
-        new EventProcessor<>(EVENT_{{{nickNameConstant}}}{{#hasRequestParam}}, {{#requestParam}}{{{paramName}}}{{/requestParam}}{{/hasRequestParam}}).execute();
+    public void emit{{{camelizedNickName}}}({{#hasRequestParam}}{{#requestParam}}{{{dataType}}} {{{paramName}}}{{/requestParam}}{{/hasRequestParam}}) {
+        new EventProcessor<>(EVENT_{{{nickNameConstant}}}{{#hasRequestParam}}, {{#requestParam}}{{{paramName}}}{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}, null{{/hasRequestParam}}).execute();
     }
     {{/isEvent}}
     {{/operation}}
