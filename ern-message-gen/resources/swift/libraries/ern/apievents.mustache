@@ -19,7 +19,7 @@ public class {{{eventsImplClassName}}}:  {{{classname}}}Events {
     {{#operation}}
     {{#isEvent}}
     public override func emitEvent{{{camelizedNickName}}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
-        let eventProcessor = EventProcessor(
+        let eventProcessor = EventProcessor{{^hasRequestParam}}<None>{{/hasRequestParam}}(
                                 eventName: {{{classname}}}.kEvent{{{camelizedNickName}}},
                                 eventPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}}{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil{{/hasRequestParam}})
 
