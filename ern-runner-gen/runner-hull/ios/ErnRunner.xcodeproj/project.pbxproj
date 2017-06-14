@@ -7,23 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		22736AFD1E8AD74B009D4D80 /* ElectrodeContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22736AFC1E8AD74B009D4D80 /* ElectrodeContainer.framework */; };
-		22736AFF1E8AD750009D4D80 /* ElectrodeContainer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22736AFC1E8AD74B009D4D80 /* ElectrodeContainer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		22B36F891E8AD00600C1794D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B36F881E8AD00600C1794D /* main.m */; };
-		22B36F8C1E8AD00600C1794D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B36F8B1E8AD00600C1794D /* AppDelegate.m */; };
-		22B36F921E8AD00600C1794D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22B36F901E8AD00600C1794D /* Main.storyboard */; };
-		22B36F941E8AD00600C1794D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22B36F931E8AD00600C1794D /* Assets.xcassets */; };
-		22B36F971E8AD00600C1794D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22B36F951E8AD00600C1794D /* LaunchScreen.storyboard */; };
+		302CACDF1EF0A6D600B1ED18 /* ElectrodeContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 302CACDC1EF0A6CF00B1ED18 /* ElectrodeContainer.framework */; };
+		302CACE01EF0A6D600B1ED18 /* ElectrodeContainer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 302CACDC1EF0A6CF00B1ED18 /* ElectrodeContainer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		304F3E9A1EEF455C00F1E36B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 304F3E991EEF455C00F1E36B /* main.m */; };
+		304F3E9D1EEF455C00F1E36B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 304F3E9C1EEF455C00F1E36B /* AppDelegate.m */; };
+		304F3EA31EEF455C00F1E36B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 304F3EA11EEF455C00F1E36B /* Main.storyboard */; };
+		304F3EA51EEF455C00F1E36B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 304F3EA41EEF455C00F1E36B /* Assets.xcassets */; };
+		304F3EA81EEF455C00F1E36B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 304F3EA61EEF455C00F1E36B /* LaunchScreen.storyboard */; };
+		304F3ED21EEF5AE500F1E36B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 304F3ED11EEF5AE500F1E36B /* ViewController.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		302CACDB1EF0A6CF00B1ED18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 485009E31E2FF23B009B6610;
+			remoteInfo = ElectrodeContainer;
+		};
+		302CACDD1EF0A6CF00B1ED18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 485009EC1E2FF23C009B6610;
+			remoteInfo = ElectrodeContainerTests;
+		};
+		302CACE11EF0A6D600B1ED18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 485009E21E2FF23B009B6610;
+			remoteInfo = ElectrodeContainer;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
-		22F096B01E8AD6A70047B66E /* Embed Frameworks */ = {
+		304F3ECB1EEF597600F1E36B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				22736AFF1E8AD750009D4D80 /* ElectrodeContainer.framework in Embed Frameworks */,
+				302CACE01EF0A6D600B1ED18 /* ElectrodeContainer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -31,72 +56,85 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		22736AFC1E8AD74B009D4D80 /* ElectrodeContainer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ElectrodeContainer.framework; path = ErnRunner/Frameworks/ElectrodeContainer.framework; sourceTree = "<group>"; };
-		22B36F841E8AD00600C1794D /* ErnRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ErnRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		22B36F881E8AD00600C1794D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		22B36F8A1E8AD00600C1794D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		22B36F8B1E8AD00600C1794D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		22B36F911E8AD00600C1794D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		22B36F931E8AD00600C1794D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		22B36F961E8AD00600C1794D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		22B36F981E8AD00600C1794D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ElectrodeContainer.xcodeproj; path = "{{{pathToElectrodeContainerXcodeProj}}}/ElectrodeContainer.xcodeproj"; sourceTree = "<group>"; };
+		304F3E951EEF455C00F1E36B /* ErnRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ErnRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		304F3E991EEF455C00F1E36B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		304F3E9B1EEF455C00F1E36B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		304F3E9C1EEF455C00F1E36B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		304F3EA21EEF455C00F1E36B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		304F3EA41EEF455C00F1E36B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		304F3EA71EEF455C00F1E36B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		304F3EA91EEF455C00F1E36B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		304F3ED01EEF5AE500F1E36B /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		304F3ED11EEF5AE500F1E36B /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		22B36F811E8AD00600C1794D /* Frameworks */ = {
+		304F3E921EEF455C00F1E36B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22736AFD1E8AD74B009D4D80 /* ElectrodeContainer.framework in Frameworks */,
+				302CACDF1EF0A6D600B1ED18 /* ElectrodeContainer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		22B36F7B1E8AD00600C1794D = {
+		302CACCB1EF0A6CF00B1ED18 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				22F096AB1E8AD61C0047B66E /* Frameworks */,
-				22B36F861E8AD00600C1794D /* ErnRunner */,
-				22B36F851E8AD00600C1794D /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		22B36F851E8AD00600C1794D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				22B36F841E8AD00600C1794D /* ErnRunner.app */,
+				302CACDC1EF0A6CF00B1ED18 /* ElectrodeContainer.framework */,
+				302CACDE1EF0A6CF00B1ED18 /* ElectrodeContainerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		22B36F861E8AD00600C1794D /* ErnRunner */ = {
+		304F3E8C1EEF455C00F1E36B = {
 			isa = PBXGroup;
 			children = (
-				22B36F8A1E8AD00600C1794D /* AppDelegate.h */,
-				22B36F8B1E8AD00600C1794D /* AppDelegate.m */,
-				22B36F901E8AD00600C1794D /* Main.storyboard */,
-				22B36F931E8AD00600C1794D /* Assets.xcassets */,
-				22B36F951E8AD00600C1794D /* LaunchScreen.storyboard */,
-				22B36F981E8AD00600C1794D /* Info.plist */,
-				22B36F871E8AD00600C1794D /* Supporting Files */,
+				304F3EB01EEF58A300F1E36B /* Frameworks */,
+				304F3E971EEF455C00F1E36B /* ErnRunner */,
+				304F3E961EEF455C00F1E36B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		304F3E961EEF455C00F1E36B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				304F3E951EEF455C00F1E36B /* ErnRunner.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		304F3E971EEF455C00F1E36B /* ErnRunner */ = {
+			isa = PBXGroup;
+			children = (
+				304F3ED01EEF5AE500F1E36B /* ViewController.h */,
+				304F3ED11EEF5AE500F1E36B /* ViewController.m */,
+				304F3E9B1EEF455C00F1E36B /* AppDelegate.h */,
+				304F3E9C1EEF455C00F1E36B /* AppDelegate.m */,
+				304F3EA11EEF455C00F1E36B /* Main.storyboard */,
+				304F3EA41EEF455C00F1E36B /* Assets.xcassets */,
+				304F3EA61EEF455C00F1E36B /* LaunchScreen.storyboard */,
+				304F3EA91EEF455C00F1E36B /* Info.plist */,
+				304F3E981EEF455C00F1E36B /* Supporting Files */,
 			);
 			path = ErnRunner;
 			sourceTree = "<group>";
 		};
-		22B36F871E8AD00600C1794D /* Supporting Files */ = {
+		304F3E981EEF455C00F1E36B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				22B36F881E8AD00600C1794D /* main.m */,
+				304F3E991EEF455C00F1E36B /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		22F096AB1E8AD61C0047B66E /* Frameworks */ = {
+		304F3EB01EEF58A300F1E36B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				22736AFC1E8AD74B009D4D80 /* ElectrodeContainer.framework */,
+				302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -104,40 +142,41 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		22B36F831E8AD00600C1794D /* ErnRunner */ = {
+		304F3E941EEF455C00F1E36B /* ErnRunner */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 22B36F9B1E8AD00600C1794D /* Build configuration list for PBXNativeTarget "ErnRunner" */;
+			buildConfigurationList = 304F3EAC1EEF455C00F1E36B /* Build configuration list for PBXNativeTarget "ErnRunner" */;
 			buildPhases = (
-				22B36F801E8AD00600C1794D /* Sources */,
-				22B36F811E8AD00600C1794D /* Frameworks */,
-				22B36F821E8AD00600C1794D /* Resources */,
-				22F096B01E8AD6A70047B66E /* Embed Frameworks */,
+				304F3E911EEF455C00F1E36B /* Sources */,
+				304F3E921EEF455C00F1E36B /* Frameworks */,
+				304F3E931EEF455C00F1E36B /* Resources */,
+				304F3ECB1EEF597600F1E36B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				302CACE21EF0A6D600B1ED18 /* PBXTargetDependency */,
 			);
 			name = ErnRunner;
 			productName = ErnRunner;
-			productReference = 22B36F841E8AD00600C1794D /* ErnRunner.app */;
+			productReference = 304F3E951EEF455C00F1E36B /* ErnRunner.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		22B36F7C1E8AD00600C1794D /* Project object */ = {
+		304F3E8D1EEF455C00F1E36B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
-				ORGANIZATIONNAME = "Benoit Lemaire";
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Claire Weijie Li";
 				TargetAttributes = {
-					22B36F831E8AD00600C1794D = {
-						CreatedOnToolsVersion = 8.2.1;
+					304F3E941EEF455C00F1E36B = {
+						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = 22B36F7F1E8AD00600C1794D /* Build configuration list for PBXProject "ErnRunner" */;
+			buildConfigurationList = 304F3E901EEF455C00F1E36B /* Build configuration list for PBXProject "ErnRunner" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -145,54 +184,86 @@
 				en,
 				Base,
 			);
-			mainGroup = 22B36F7B1E8AD00600C1794D;
-			productRefGroup = 22B36F851E8AD00600C1794D /* Products */;
+			mainGroup = 304F3E8C1EEF455C00F1E36B;
+			productRefGroup = 304F3E961EEF455C00F1E36B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 302CACCB1EF0A6CF00B1ED18 /* Products */;
+					ProjectRef = 302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
-				22B36F831E8AD00600C1794D /* ErnRunner */,
+				304F3E941EEF455C00F1E36B /* ErnRunner */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		302CACDC1EF0A6CF00B1ED18 /* ElectrodeContainer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ElectrodeContainer.framework;
+			remoteRef = 302CACDB1EF0A6CF00B1ED18 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		302CACDE1EF0A6CF00B1ED18 /* ElectrodeContainerTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ElectrodeContainerTests.xctest;
+			remoteRef = 302CACDD1EF0A6CF00B1ED18 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
-		22B36F821E8AD00600C1794D /* Resources */ = {
+		304F3E931EEF455C00F1E36B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22B36F971E8AD00600C1794D /* LaunchScreen.storyboard in Resources */,
-				22B36F941E8AD00600C1794D /* Assets.xcassets in Resources */,
-				22B36F921E8AD00600C1794D /* Main.storyboard in Resources */,
+				304F3EA81EEF455C00F1E36B /* LaunchScreen.storyboard in Resources */,
+				304F3EA51EEF455C00F1E36B /* Assets.xcassets in Resources */,
+				304F3EA31EEF455C00F1E36B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		22B36F801E8AD00600C1794D /* Sources */ = {
+		304F3E911EEF455C00F1E36B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22B36F8C1E8AD00600C1794D /* AppDelegate.m in Sources */,
-				22B36F891E8AD00600C1794D /* main.m in Sources */,
+				304F3ED21EEF5AE500F1E36B /* ViewController.m in Sources */,
+				304F3E9D1EEF455C00F1E36B /* AppDelegate.m in Sources */,
+				304F3E9A1EEF455C00F1E36B /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		302CACE21EF0A6D600B1ED18 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ElectrodeContainer;
+			targetProxy = 302CACE11EF0A6D600B1ED18 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
-		22B36F901E8AD00600C1794D /* Main.storyboard */ = {
+		304F3EA11EEF455C00F1E36B /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				22B36F911E8AD00600C1794D /* Base */,
+				304F3EA21EEF455C00F1E36B /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		22B36F951E8AD00600C1794D /* LaunchScreen.storyboard */ = {
+		304F3EA61EEF455C00F1E36B /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				22B36F961E8AD00600C1794D /* Base */,
+				304F3EA71EEF455C00F1E36B /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -200,11 +271,12 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		22B36F991E8AD00600C1794D /* Debug */ = {
+		304F3EAA1EEF455C00F1E36B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -240,7 +312,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -248,11 +320,12 @@
 			};
 			name = Debug;
 		};
-		22B36F9A1E8AD00600C1794D /* Release */ = {
+		304F3EAB1EEF455C00F1E36B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -282,7 +355,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -290,34 +363,26 @@
 			};
 			name = Release;
 		};
-		22B36F9C1E8AD00600C1794D /* Debug */ = {
+		304F3EAD1EEF455C00F1E36B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/ErnRunner/Frameworks",
-				);
 				INFOPLIST_FILE = ErnRunner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = MyCompany.ErnRunner;
+				PRODUCT_BUNDLE_IDENTIFIER = c.ErnRunner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		22B36F9D1E8AD00600C1794D /* Release */ = {
+		304F3EAE1EEF455C00F1E36B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/ErnRunner/Frameworks",
-				);
 				INFOPLIST_FILE = ErnRunner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = MyCompany.ErnRunner;
+				PRODUCT_BUNDLE_IDENTIFIER = c.ErnRunner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -325,25 +390,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		22B36F7F1E8AD00600C1794D /* Build configuration list for PBXProject "ErnRunner" */ = {
+		304F3E901EEF455C00F1E36B /* Build configuration list for PBXProject "ErnRunner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				22B36F991E8AD00600C1794D /* Debug */,
-				22B36F9A1E8AD00600C1794D /* Release */,
+				304F3EAA1EEF455C00F1E36B /* Debug */,
+				304F3EAB1EEF455C00F1E36B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		22B36F9B1E8AD00600C1794D /* Build configuration list for PBXNativeTarget "ErnRunner" */ = {
+		304F3EAC1EEF455C00F1E36B /* Build configuration list for PBXNativeTarget "ErnRunner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				22B36F9C1E8AD00600C1794D /* Debug */,
-				22B36F9D1E8AD00600C1794D /* Release */,
+				304F3EAD1EEF455C00F1E36B /* Debug */,
+				304F3EAE1EEF455C00F1E36B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 22B36F7C1E8AD00600C1794D /* Project object */;
+	rootObject = 304F3E8D1EEF455C00F1E36B /* Project object */;
 }

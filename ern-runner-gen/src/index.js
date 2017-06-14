@@ -8,9 +8,7 @@ import {
 import {
   Platform
 } from '@walmart/ern-util'
-import {
-  execSync
-} from 'child_process'
+
 import fs from 'fs'
 import Mustache from 'mustache'
 import readDir from 'fs-readdir-recursive'
@@ -115,6 +113,7 @@ export async function generateRunner ({
 
     const view = {
       miniAppName: miniapp.name,
+      pathToElectrodeContainerXcodeProj: `${CONTAINER_GEN_OUT_FOLDER}/ios`,
       pascalCaseMiniAppName: pascalCase(miniapp.name),
       camelCaseMiniAppName: camelCase(miniapp.name),
       headless
@@ -177,13 +176,4 @@ export async function generateContainerForRunner ({
     plugins,
     miniapps: [miniapp]
   })
-
-    // For iOS we need to build the container xcodeproj so that it builds
-    // the ElectrodeContainer.framework that we need to inject in the
-    // runner project
-  if (platform === 'ios') {
-    shell.cd(`${CONTAINER_GEN_OUT_FOLDER}/ios`)
-    execSync(`xcodebuild -scheme ElectrodeContainer -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' SYMROOT="${CONTAINER_GEN_OUT_FOLDER}/ios/build" build`)
-    shell.cp('-rf', `${CONTAINER_GEN_OUT_FOLDER}/ios/build/Debug-iphonesimulator/ElectrodeContainer.framework`, `${outFolder}/ErnRunner/Frameworks`)
-  }
 }
