@@ -15,6 +15,10 @@ exports.builder = function (yargs: any) {
     alias: 'n',
     type: 'bool',
     describe: 'Generate native projects with proper dependencies (Implementation of the API has to be written in native'
+  }).option('force', {
+    alias: 'f',
+    type: 'bool',
+    describe: 'Forces a project creation even if an imlemenation already present inside the output location'
   })
 }
 
@@ -24,6 +28,7 @@ exports.handler = function (argv: any) {
   generateApiImpl({
     api: argv.api,
     outputFolder: argv.outputFolder,
-    nativeOnly: argv.nativeOnly
+    nativeOnly: argv.nativeOnly,
+    forceGenerate: argv.force
   })
 }
