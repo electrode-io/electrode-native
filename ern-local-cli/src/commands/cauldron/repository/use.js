@@ -11,15 +11,19 @@ exports.desc = 'Select a Cauldron repository to use'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
+exports.handler = function ({
+  repoAlias
+} : {
+  repoAlias: string
+}) {
   let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
   if (!cauldronRepositories) {
     return console.log('No Cauldron repositories have been added yet')
   }
-  if (!cauldronRepositories[argv.repoAlias]) {
-    return console.log(`No Cauldron repository exists with ${argv.repoAlias} alias`)
+  if (!cauldronRepositories[repoAlias]) {
+    return console.log(`No Cauldron repository exists with ${repoAlias} alias`)
   }
-  ernConfig.setValue('cauldronRepoInUse', argv.repoAlias)
+  ernConfig.setValue('cauldronRepoInUse', repoAlias)
   shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-  console.log(`${argv.repoAlias} Cauldron is now in use`)
+  console.log(`${repoAlias} Cauldron is now in use`)
 }

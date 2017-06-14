@@ -11,7 +11,7 @@ exports.desc = 'List platform versions'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
+exports.handler = function () {
   log.info(tagOneLine`
     ${chalk.green('[CURRENT]')}
     ${chalk.yellow('[INSTALLED]')}

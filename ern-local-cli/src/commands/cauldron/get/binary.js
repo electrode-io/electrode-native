@@ -10,7 +10,10 @@ exports.desc = 'Get the native binary of a given native application'
 
 exports.builder = {}
 
-exports.handler = async function (argv: any) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
-  await cauldron.getNativeBinary(napDescriptor)
+exports.handler = async function ({
+  completeNapDescriptor
+} : {
+  completeNapDescriptor: string
+}) {
+  await cauldron.getNativeBinary(NativeApplicationDescriptor.fromString(completeNapDescriptor))
 }

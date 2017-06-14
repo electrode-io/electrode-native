@@ -14,7 +14,11 @@ exports.builder = function (yargs: any) {
   return yargs
 }
 
-exports.handler = function (argv: any) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(argv.napDescriptor)
-  checkCompatibilityWithNativeApp(napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+exports.handler = function ({
+  napDescriptor
+} : {
+  napDescriptor: string
+}) {
+  const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
+  checkCompatibilityWithNativeApp(descriptor.name, descriptor.platform, descriptor.version)
 }

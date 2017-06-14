@@ -21,10 +21,20 @@ exports.builder = function (yargs: any) {
         })
 }
 
-exports.handler = async function (argv: any) {
-  await MiniApp.create(argv.appName, {
-    platformVersion: argv.platfomrversion && argv.platformVersion.replace('v', ''),
-    scope: argv.scope,
-    headless: argv.headless
+exports.handler = async function ({
+  appName,
+  platformVersion,
+  scope,
+  headless
+} : {
+  appName: string,
+  platformVersion: string,
+  scope?: string,
+  headless?: boolean
+}) {
+  await MiniApp.create(appName, {
+    platformVersion: platformVersion && platformVersion.replace('v', ''),
+    scope,
+    headless
   })
 }

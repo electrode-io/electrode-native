@@ -9,7 +9,7 @@ exports.desc = 'List all Cauldron repositories'
 
 exports.builder = {}
 
-exports.handler = function (argv: any) {
+exports.handler = function () {
   const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
   if (!cauldronRepositories) {
     return console.log('No Cauldron repositories have been added yet')

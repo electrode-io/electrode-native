@@ -22,11 +22,28 @@ exports.builder = function (yargs: any) {
     describe: 'Initial npm version'
   }).option('apiAuthor', {
     alias: 'u',
-    describe: `Author of library`
+    describe: 'Author of library'
+  }).option('modelSchemaPath', {
+    alias: 'm',
+    describe: 'Path to model schema'
   })
 }
 
-exports.handler = async function (argv: any) {
+exports.handler = async function ({
+  apiName,
+  swagger,
+  scope,
+  apiVersion,
+  apiAuthor,
+  modelSchemaPath
+} : {
+  apiName: string,
+  swagger?: string,
+  scope?: string,
+  apiVersion?: string,
+  apiAuthor?: string,
+  modelSchemaPath?: string
+}) {
   const bridgeDep = Platform.getPlugin('@walmart/react-native-electrode-bridge')
   if (!bridgeDep) {
     return log.error(`@walmart/react-native-electrode-bridge not found in manifest. cannot infer version to use`)
@@ -40,10 +57,10 @@ exports.handler = async function (argv: any) {
   await generateApi({
     bridgeVersion: `${bridgeDep.version}`,
     reactNativeVersion: reactNative.version,
-    name: argv.apiName,
-    npmScope: argv.scope,
-    modelSchemaPath: argv.modelSchemaPath,
-    apiVersion: argv.apiVersion,
-    apiAuthor: argv.apiAuthor
+    name: apiName,
+    npmScope: scope,
+    modelSchemaPath: modelSchemaPath,
+    apiVersion: apiVersion,
+    apiAuthor: apiAuthor
   })
 }

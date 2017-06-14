@@ -15,10 +15,16 @@ exports.builder = function (yargs: any) {
         })
 }
 
-exports.handler = function (argv: any) {
-  if (argv.value) {
-    ernConfig.setValue(argv.key, argv.value)
+exports.handler = function ({
+  key,
+  value
+} : {
+  key: string,
+  value?: string
+}) {
+  if (value) {
+    ernConfig.setValue(key, value)
   } else {
-    log.info(`${argv.key}: ${ernConfig.getValue(argv.key)}`)
+    log.info(`${key}: ${ernConfig.getValue(key)}`)
   }
 }

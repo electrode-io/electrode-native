@@ -9,6 +9,6 @@ exports.builder = function (yargs: any) {
   return yargs
 }
 
-exports.handler = async function (argv: any) {
+exports.handler = async function () {
   await MiniApp.fromCurrentPath().runInIosRunner()
 }

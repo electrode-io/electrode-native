@@ -14,7 +14,12 @@ exports.builder = function (yargs: any) {
         })
 }
 
-exports.handler = async function (argv: any) {
-  return MiniApp.fromCurrentPath().addDependency(
-        argv.name, {dev: argv.dev})
+exports.handler = async function ({
+  name,
+  dev = false
+} : {
+  name: string,
+  dev: boolean
+}) {
+  return MiniApp.fromCurrentPath().addDependency(name, {dev})
 }

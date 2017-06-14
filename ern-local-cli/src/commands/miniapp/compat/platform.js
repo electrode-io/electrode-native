@@ -15,6 +15,10 @@ exports.builder = function (yargs: any) {
         })
 }
 
-exports.handler = function (argv: any) {
-  return checkCompatibilityWithPlatform(argv.platformVersion)
+exports.handler = function ({
+  platformVersion
+} : {
+  platformVersion: string
+}) {
+  return checkCompatibilityWithPlatform(platformVersion)
 }

@@ -10,7 +10,13 @@ exports.desc = 'Remove a dependency from the cauldron'
 
 exports.builder = {}
 
-exports.handler = async function (argv: any) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(argv.completeNapDescriptor)
-  await cauldron.removeNativeDependency(napDescriptor, argv.dependencyName)
+exports.handler = async function ({
+  completeNapDescriptor,
+  dependencyName
+} : {
+  completeNapDescriptor: string,
+  dependencyName: string
+}) {
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  await cauldron.removeNativeDependency(napDescriptor, dependencyName)
 }
