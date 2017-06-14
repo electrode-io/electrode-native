@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
+      parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "22B36F831E8AD00600C1794D"
+               BlueprintIdentifier = "304F3E941EEF455C00F1E36B"
                BuildableName = "ErnRunner.app"
                BlueprintName = "ErnRunner"
                ReferencedContainer = "container:ErnRunner.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "22B36F831E8AD00600C1794D"
+            BlueprintIdentifier = "304F3E941EEF455C00F1E36B"
             BuildableName = "ErnRunner.app"
             BlueprintName = "ErnRunner"
             ReferencedContainer = "container:ErnRunner.xcodeproj">
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "22B36F831E8AD00600C1794D"
+            BlueprintIdentifier = "304F3E941EEF455C00F1E36B"
             BuildableName = "ErnRunner.app"
             BlueprintName = "ErnRunner"
             ReferencedContainer = "container:ErnRunner.xcodeproj">
@@ -74,7 +74,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "22B36F831E8AD00600C1794D"
+            BlueprintIdentifier = "304F3E941EEF455C00F1E36B"
             BuildableName = "ErnRunner.app"
             BlueprintName = "ErnRunner"
             ReferencedContainer = "container:ErnRunner.xcodeproj">

@@ -2,8 +2,8 @@
 //  main.m
 //  ErnRunner
 //
-//  Created by Benoit Lemaire on 3/28/17.
-//  Copyright © 2017 Benoit Lemaire. All rights reserved.
+//  Created by Claire Weijie Li on 6/12/17.
+//  Copyright © 2017 Claire Weijie Li. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
