@@ -2,7 +2,7 @@
 
 import chalk from 'chalk'
 const _log = require('console-log-level')({
-  level: process.env['LOG_LEVEL']
+  level: process.env['ERN_LOG_LEVEL']
 })
 
 export default {
