@@ -252,8 +252,7 @@ export default class MiniApp {
 
     const device = answer.device
     shell.cd(`${this.path}/ios`)
-    execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name},OS=${device.sdk}' SYMROOT="${this.path}/ios/build" build`)
-
+    execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${this.path}/ios/build" build`)
     await simctl.installApp(device.udid, `${this.path}/ios/build/Debug-iphonesimulator/ErnRunner.app`)
     await simctl.launch(device.udid, 'MyCompany.ErnRunner')
   }
