@@ -1,4 +1,8 @@
 import { generateApiImpl } from '../src/index'
+import {
+  coloredLog
+} from '@walmart/ern-util'
+global.log = coloredLog
 
 describe('run ApiImpl generator command', () => {
   it('should create impl prject dirs', (done) => {

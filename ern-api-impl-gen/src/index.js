@@ -5,13 +5,10 @@ import shell from 'shelljs'
 import {
   Platform,
   Dependency,
-  Utils,
-  coloredLog
+  Utils
 } from '@walmart/ern-util'
 
 import ApiImplGen from './generators/ApiImplGen'
-
-const log = coloredLog
 
 const API_NAME_RE = /([^/]*)$/
 const WORKING_FOLDER = `${Platform.rootDirectory}/api-impl-gen`
