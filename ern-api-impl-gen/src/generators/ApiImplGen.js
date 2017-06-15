@@ -2,7 +2,8 @@ import {
   yarn,
   spin,
   Dependency,
-  Utils
+  Utils,
+  coloredLog
 } from '@walmart/ern-util'
 import shell from 'shelljs'
 import _ from 'lodash'
@@ -10,6 +11,7 @@ import chalk from 'chalk'
 import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
+const log = coloredLog
 const {yarnAdd, yarnInfo} = yarn
 let plugins: Array<Dependency>
 
@@ -17,7 +19,7 @@ export default class ApiImplGen {
   async generateApiImplementation (api: string, // npm package || git location || file path file:/Users/x/y/z
                                    paths: Object,
                                    platforms: Array<string>) {
-    console.log(`inside generateApiImplementation for api:${api},  platforms:${platforms}`)
+    log.info(`inside generateApiImplementation for api:${api},  platforms:${platforms}`)
 
     await this.downloadApiAndDependencies(api, paths.pluginsDownloadFolder)
 

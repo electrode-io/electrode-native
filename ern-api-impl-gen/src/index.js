@@ -5,10 +5,13 @@ import shell from 'shelljs'
 import {
   Platform,
   Dependency,
-  Utils
+  Utils,
+  coloredLog
 } from '@walmart/ern-util'
 
 import ApiImplGen from './generators/ApiImplGen'
+
+const log = coloredLog
 
 const API_NAME_RE = /([^/]*)$/
 const WORKING_FOLDER = `${Platform.rootDirectory}/api-impl-gen`
@@ -23,7 +26,7 @@ const paths = {}
 paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
 
 // Where the container generation configuration of all plugins is stored
-paths.pluginsConfig = `${platformPath}/ern-container-gen/plugins`
+paths.pluginsConfigPath = `${platformPath}/ern-container-gen/plugins`
 
 // Where we download plugins
 paths.pluginsDownloadFolder = PLUGIN_FOLDER
