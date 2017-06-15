@@ -73,16 +73,16 @@ export async function getPluginConfig (plugin: Dependency, pluginsConfigPath: st
 
     result.path = pluginConfigPath
   } else {
-    log.debug(`No config.json file for ${plugin.name}. Assuming apigen module`)
+    log.debug(`No config.json file for ${plugin.scopedName}. Assuming apigen module`)
     result = getApiPluginDefaultConfig()
   }
 
   if (!result.origin) {
-    if (npmScopeModuleRe.test(plugin.name)) {
+    if (npmScopeModuleRe.test(plugin.scopedName)) {
       result.origin = {
         type: 'npm',
-        scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
-        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`,
+        scope: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[1]}`,
+        name: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[2]}`,
         version: plugin.version
       }
     } else {
@@ -131,7 +131,7 @@ function getApiPluginDefaultConfig () : PluginConfig {
 // Returns the base path of a given plugin generation config
 export function getPluginConfigPath (plugin: Dependency, pluginsConfigPath: string) : ?string {
    // Folder names cannot contain '/' so it's replaced by ':'
-  const pluginScopeAndName = plugin.withoutVersion().toString().replace(/\//g, ':')
+  const pluginScopeAndName = plugin.scopedName.replace(/\//g, ':')
 
   const pluginVersions = _.map(
       fs.readdirSync(pluginsConfigPath).filter(f => f.startsWith(pluginScopeAndName)),

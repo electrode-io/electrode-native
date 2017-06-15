@@ -254,7 +254,7 @@ export default class MavenGenerator {
 
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
-          log.debug(`Hooking ${plugin.name} plugin`)
+          log.debug(`Hooking ${plugin.scopedName} plugin`)
           pluginsView.push({
             'name': androidPluginHook.name,
             'lcname': androidPluginHook.name.charAt(0).toLowerCase() +

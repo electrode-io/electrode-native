@@ -132,10 +132,10 @@ export default class GithubGenerator {
       shell.cd(`${paths.pluginsDownloadFolder}`)
       throwIfShellCommandFailed()
       if (pluginConfig.ios) {
-        const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
+        const pluginSourcePath = await spin(`Retrieving ${plugin.scopedName}`,
           downloadPluginSource(pluginConfig.origin))
         if (!pluginSourcePath) {
-          throw new Error(`Was not able to download ${plugin.name}`)
+          throw new Error(`Was not able to download ${plugin.scopedName}`)
         }
 
         if (pluginConfig.ios.copy) {

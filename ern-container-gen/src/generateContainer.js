@@ -98,12 +98,9 @@ export default async function generateContainer ({
   shell.mkdir('-p', `${OUT_FOLDER}/ios`)
   throwIfShellCommandFailed()
 
-  // Build the list of plugins to be included in container
-  const includedPlugins = buildPluginListSync(plugins)
-
   // Let's make sure that react-native is included (otherwise there is
   // something pretty much wrong)
-  const reactNativePlugin = _.find(includedPlugins, p => p.name === 'react-native')
+  const reactNativePlugin = _.find(plugins, p => p.name === 'react-native')
   if (!reactNativePlugin) {
     throw new Error('react-native was not found in plugins list !')
   }
@@ -129,22 +126,14 @@ export default async function generateContainer ({
     containerVersion,
     nativeAppName,
     platformPath,
-    includedPlugins,
+    plugins,
     miniApps,
     paths,
     mustacheView)
 }
 
-function getUnscopedModuleName (pluginName) {
-  return npmScopeModuleRe.test(pluginName)
-      ? npmScopeModuleRe.exec(`${pluginName}`)[2]
-      : pluginName
-}
-
-function buildPluginListSync (plugins: Array<Dependency>) : Array<Dependency> {
-  return _.map(plugins,
-    p => new Dependency(p.scope ? `@${p.scope}/${p.name}` : p.name, {
-      version: p.version
-    })
-  )
+function getUnscopedModuleName (moduleName) {
+  return npmScopeModuleRe.test(moduleName)
+      ? npmScopeModuleRe.exec(`${moduleName}`)[2]
+      : moduleName
 }
