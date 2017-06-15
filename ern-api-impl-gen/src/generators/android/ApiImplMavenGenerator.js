@@ -5,7 +5,8 @@ import {
 } from '@walmart/ern-util'
 
 import {
-  getPluginConfig
+  getPluginConfig,
+  PluginConfig
 } from '../../../../ern-container-gen/src/utils.js'
 
 import ApiImplGeneratable from '../../ApiImplGeneratable'
@@ -22,7 +23,7 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
                   plugins: Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
 
-    this.fillHull(api, paths, plugins)
+    await this.fillHull(api, paths, plugins)
   }
 
   async fillHull (api: string,
@@ -35,7 +36,7 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
       Utils.throwIfShellCommandFailed()
 
       const outputFolder = `${paths.outFolder}/android/`
-      log.debug(`Creating out folder(${log.debug(outputFolder)}) for android and copying container hull to it.`)
+      log.debug(`Creating out folder(${outputFolder}) for android and copying container hull to it.`)
       shell.mkdir(outputFolder)
       Utils.throwIfShellCommandFailed()
 
@@ -43,12 +44,18 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
       Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
-        log.debug(plugin)
-        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigPath)
-        log.debug(pluginConfig)
+        await getPluginConfig(plugin, paths.pluginsConfigPath).then((pluginConfig) => {
+          this.copyPluginToOutput(paths, outputFolder, plugin, pluginConfig)
+        })
       }
     } catch (e) {
       Utils.logErrorAndExitProcess(`Error while generating api impl hull for android: ${e}`)
     }
+  }
+
+  copyPluginToOutput (paths: Object, outputFolder: string, plugin: Dependency, pluginConfig: PluginConfig) {
+    log.debug(`injecting ${plugin.name} code.`)
+    const pluginSrcFolder = `${paths.pluginsDownloadFolder}/node_modules/${plugin.scopedName}/android/${pluginConfig.android.moduleName}/src/*`
+    shell.cp(`-R`, pluginSrcFolder, `${outputFolder}/lib/src/`)
   }
 }

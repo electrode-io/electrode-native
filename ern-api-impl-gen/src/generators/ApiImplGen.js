@@ -43,6 +43,7 @@ export default class ApiImplGen {
       Utils.throwIfShellCommandFailed()
       await this.spinAndDownload(api)
       plugins = await this.getDependencies(api)
+      plugins.push(Dependency.fromString(api))// Also add the api as a plugin so it's src files will get copied.
       if (plugins) {
         console.log('Downloading dependencies')
         for (let dependency of plugins) {

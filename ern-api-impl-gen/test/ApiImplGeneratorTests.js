@@ -1,15 +1,15 @@
 import { generateApiImpl } from '../src/index'
-import {
-  coloredLog
-} from '@walmart/ern-util'
 import shell from 'shelljs'
 import fs from 'fs'
 import { assert } from 'chai'
 
-global.log = coloredLog
+global.log = require('console-log-level')({
+  prefix: `ApiImplGen Test: `,
+  level: 'trace'
+})
 
 const TEST_API_NAME = 'react-native-movie-api'
-const TMP_OUT_FOLDER = `${shell.pwd()}/tmp/`
+const TMP_OUT_FOLDER = `${shell.pwd()}/tmp`
 const TMP_ANDROID_FOLDER = `${TMP_OUT_FOLDER}/${TEST_API_NAME}-impl/android`
 
 describe('run ApiImpl generator command', () => {
