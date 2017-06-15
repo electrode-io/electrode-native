@@ -1,7 +1,13 @@
 // @flow
 
+import {
+  Dependency
+} from '@walmart/ern-util'
 import fs from 'fs'
-import {MODEL_FILE, CONFIG_FILE} from './Constants'
+import {
+  MODEL_FILE,
+  CONFIG_FILE
+} from './Constants'
 import path from 'path'
 const cwd = path.join.bind(path, process.cwd())
 
@@ -28,6 +34,7 @@ export default function normalizeConfig ({
   name, /* REQUIRED */
   bridgeVersion, /* REQUIRED */
   reactNativeVersion, /* REQUIRED */
+  targetDependencies, /* REQUIRED */
   apiVersion,
   apiDescription,
   apiAuthor,
@@ -43,6 +50,7 @@ export default function normalizeConfig ({
   name: string,
   bridgeVersion: string,
   reactNativeVersion: string,
+  targetDependencies: Array<Dependency>,
   apiVersion?: string,
   apiDescription?: string,
   apiAuthor?: string,
@@ -118,6 +126,9 @@ export default function normalizeConfig ({
   }
   if (!artifactId) {
     config.artifactId = config.moduleName
+  }
+  if (targetDependencies) {
+    config.targetDependencies = targetDependencies
   }
   return config
 }

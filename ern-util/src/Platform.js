@@ -1,14 +1,15 @@
 // @flow
 
 import {
+    config
+} from '@walmart/ern-util'
+import {
   execSync
 } from 'child_process'
-import config from './config.js'
-import Dependency from './Dependency.js'
+
 import fs from 'fs'
 import _ from 'lodash'
 
-const npmModuleRe = /(.*)@(.*)/
 const HOME_DIRECTORY = process.env['HOME']
 
 export default class Platform {
@@ -17,6 +18,23 @@ export default class Platform {
       throw new Error(`process.env['HOME'] is undefined !!!`)
     }
     return `${HOME_DIRECTORY}/.ern`
+  }
+
+  static get manifestDirectory () : string {
+    return `${this.rootDirectory}/ern-master-manifest`
+  }
+
+  static get pluginsConfigurationDirectory () : string {
+    const versions = _.map(
+      fs.readdirSync(`${this.manifestDirectory}/plugins`),
+      s => /ern_v(.+)\+/.exec(s)[1])
+
+    const matchingVersion = _.find(versions.sort().reverse(), d => this.currentVersion >= d)
+    if (matchingVersion) {
+      return `${this.manifestDirectory}/plugins/ern_v${matchingVersion}+`
+    } else {
+      throw new Error(`Plugins configuration directory was not found`)
+    }
   }
 
   static get repositoryDirectory () : string {
@@ -36,7 +54,7 @@ export default class Platform {
   }
 
   static get currentVersion () : string {
-    return config.getValue('platformVersion', '1000')
+    return config.getValue('platformVersion', '1000.0.0')
   }
 
   static get currentGitCommitSha () : string {
@@ -127,83 +145,5 @@ export default class Platform {
     }
 
     config.setValue('platformVersion', version)
-  }
-
-  static get currentVersionManifest () : Object {
-    return JSON.parse(fs.readFileSync(`${this.currentPlatformVersionPath}/manifest.json`, 'utf-8'))
-  }
-
-  static get repositoryManifest () : Object {
-    return JSON.parse(fs.readFileSync(`${this.repositoryDirectory}/manifest.json`, 'utf-8'))
-  }
-
-  // Returns the manifest of a given platform version
-  // If no version is specified, returns the manifest of the currently activated
-  // platform version
-  static getManifest (version?: string) : Object {
-    if ((!version && version !== 0) || (version === this.currentVersion)) {
-      return this.currentVersionManifest
-    } else {
-      if (!this.isPlatformVersionAvailable(version)) {
-        throw new Error(`Version ${version} does not exists`)
-      }
-      this.switchPlatformRepositoryToVersion(version)
-      return this.repositoryManifest
-    }
-  }
-
-  // Returns the list of plugins listed in manifest for a given platform version
-  // If version is currently activated one, it just looks in the current
-  // version manifest.
-  // Otherwise it just switch the platform repository to the given version branch
-  // and then build the array based on the manifest
-  static getManifestPlugins (version: string) : Array<Dependency> {
-    const manifest = this.getManifest(version)
-    return _.map(manifest.supportedPlugins, d => Dependency.fromString(d))
-  }
-
-  // Returns the list of javascript dependencies listed in manifest for a given
-  // platform version
-  // If version is currently activated one, it just looks in the current
-  // version manifest.
-  // Otherwise it just switch the platform repository to the given version branch
-  // and then build the array based on the manifest
-  static getManifestJsDependencies (version: string) : Array<Dependency> {
-    const manifest = this.getManifest(version)
-    return _.map(manifest.jsDependencies, d => Dependency.fromString(d))
-  }
-
-  static getManifestPluginsAndJsDependencies (version: string) : Array<Dependency> {
-    const manifest = this.getManifest(version)
-    const manifestDeps = _.union(manifest.jsDependencies, manifest.supportedPlugins)
-    return _.map(manifestDeps, d => Dependency.fromString(d))
-  }
-
-  static getPlugin (pluginString: string) : ?Dependency {
-    const plugin = Dependency.fromString(pluginString)
-    return _.find(this.getManifestPlugins(this.currentVersion),
-      d => (d.name === plugin.name) && (d.scope === plugin.scope))
-  }
-
-  static getJsDependency (dependencyString: string) : ?Dependency {
-    const jsDependency = Dependency.fromString(dependencyString)
-    return _.find(this.getManifestJsDependencies(this.currentVersion),
-      d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))
-  }
-
-  static getDependency (dependencyString: string) : ?Dependency {
-    const dependency = Dependency.fromString(dependencyString)
-    return _.find(this.getManifestPluginsAndJsDependencies(this.currentVersion),
-      d => (d.name === dependency.name) && (d.scope === dependency.scope))
-  }
-
-  static get reactNativeVersionFromManifest () : ?string {
-    if (this.reactNativeDependencyFromManifest) {
-      return npmModuleRe.exec(this.reactNativeDependencyFromManifest)[2]
-    }
-  }
-
-  static get reactNativeDependencyFromManifest () : ?string {
-    return _.find(this.currentVersionManifest.supportedPlugins, d => d.startsWith('react-native@'))
   }
 }

@@ -52,7 +52,7 @@ exports.builder = function (yargs: any) {
       type: 'string',
       alias: 'p',
       describe: 'The platform for which to generate the container',
-      choices: ['android', 'ios']
+      choices: ['android', 'ios', undefined]
     })
     .option('containerName', {
       type: 'string',
@@ -102,9 +102,9 @@ exports.handler = async function ({
     // [Should probably move to a Cauldron util class for reusability]
     let result = _.flattenDeep(
                   _.map(nativeApps, nativeApp =>
-                    _.map(nativeApp.platforms, platform =>
-                      _.map(platform.versions, version =>
-                       `${nativeApp.name}:${platform.name}:${version.name}`))))
+                    _.map(nativeApp.platforms, p =>
+                      _.map(p.versions, version =>
+                       `${nativeApp.name}:${p.name}:${version.name}`))))
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',

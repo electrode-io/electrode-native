@@ -1,7 +1,0 @@
-{
-  "android": {
-    "copy": [
-      { "source": "Fonts/*", "dest": "lib/src/main/assets/fonts" }
-    ]
-  }
-}

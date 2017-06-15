@@ -25,19 +25,28 @@ exports.builder = function (yargs: any) {
     type: 'bool',
     describe: 'Force publish'
   })
+  .option('ignoreNpmPublish', {
+    alias: 'i',
+    type: 'bool',
+    describe: 'Ignore npm publication step'
+  })
 }
 
+/// Most/All of the logic here should be moved to the MiniApp class
+/// Commands should remain as much logic less as possible
 exports.handler = async function ({
   completeNapDescriptor,
-  force = false
+  force = false,
+  ignoreNpmPublish = false
 } : {
   completeNapDescriptor: string,
-  force: boolean
+  force: boolean,
+  ignoreNpmPublish: boolean
 }) {
   const miniapp = Miniapp.fromCurrentPath()
   const miniappPackage = `${miniapp.packageJson.name}@${miniapp.packageJson.version}`
 
-  if (!await miniapp.isPublishedToNpm()) {
+  if (!ignoreNpmPublish && !await miniapp.isPublishedToNpm()) {
     const {publishToNpm} = await inquirer.prompt({
       type: 'confirm',
       name: 'doPublishToNpm',

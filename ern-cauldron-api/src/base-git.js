@@ -1,9 +1,6 @@
 // @flow
 
 import {
-  Platform
-} from '@walmart/ern-util'
-import {
   writeFile
 } from './fs-util'
 import Prom from 'bluebird'
@@ -22,10 +19,10 @@ export default class BaseGit {
   git: any
 
   constructor (
-    ernPath: string = Platform.rootDirectory,
+    cauldronPath: string,
     repository: string,
     branch: string = 'master') {
-    this.path = path.resolve(ernPath, 'cauldron')
+    this.path = cauldronPath
     if (!fs.existsSync(this.path)) {
       shell.mkdir('-p', this.path)
     }

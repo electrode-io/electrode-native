@@ -16,8 +16,8 @@ exports.handler = function () {
   const platformVersionPath = Platform.currentPlatformVersionPath
   const platformVersion = Platform.currentVersion
 
-  if (platformVersion === '1000') {
-    return console.log('Development version (v1000) cannot be updated through this command')
+  if (platformVersion === '1000.0.0') {
+    return console.log('Development version (v1000.0.0) cannot be updated through this command')
   }
 
   process.chdir(platformVersionPath)

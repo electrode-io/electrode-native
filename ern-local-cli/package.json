@@ -19,11 +19,13 @@
     "@walmart/ern-runner-gen": "0.0.1",
     "@walmart/ern-util": "0.0.1",
     "@walmart/ern-cauldron-api": "0.0.1",
+    "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
     "lodash": "^4.17.4",
     "tmp": "^0.0.31",
     "mkdirp": "^0.5.1",
+    "simple-git": "^1.70.0",
     "yargs": "^7.1.0",
     "node-simctl": "^3.5.5",
     "inquirer": "^3.0.6"

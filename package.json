@@ -76,6 +76,7 @@
     "rmdir": "^1.2.0",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
+    "simple-git": "^1.70.0",
     "tmp": "^0.0.31",
     "unirest": "^0.5.1",
     "update-notifier": "^1.0.3",

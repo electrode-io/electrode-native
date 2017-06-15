@@ -1,5 +1,7 @@
 // @flow
-
+import {
+  Dependency
+} from '@walmart/ern-util'
 import {
   bundleMiniApps,
   downloadPluginSource,
@@ -83,7 +85,7 @@ export default class MavenGenerator {
     containerVersion: string,
     nativeAppName: string,
     platformPath: string,
-    plugins: any,
+    plugins: Array<Dependency>,
     miniapps: any,
     paths: any,
     mustacheView: any) {
@@ -129,7 +131,7 @@ export default class MavenGenerator {
   }
 
   async fillContainerHull (
-    plugins: any,
+    plugins: Array<Dependency>,
     miniApps: any,
     paths: any,
     mustacheView: any) : Promise<*> {
@@ -145,7 +147,7 @@ export default class MavenGenerator {
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
       throwIfShellCommandFailed()
 
-      await this.buildAndroidPluginsViews(plugins, paths.containerPluginsConfig, mustacheView)
+      await this.buildAndroidPluginsViews(plugins, paths.pluginsConfigurationDirectory, mustacheView)
       await this.addAndroidPluginHookClasses(plugins, paths)
 
       log.debug(`Patching hull`)
@@ -155,9 +157,14 @@ export default class MavenGenerator {
             `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
       }
 
+      const reactNativeAarFileName = `react-native-${mustacheView.reactNativeVersion}.aar`
+      console.log(`Injecting ${reactNativeAarFileName}`)
+      shell.cp(`${paths.reactNativeAars}/${reactNativeAarFileName}`, `${outputFolder}/lib/libs`)
+      throwIfShellCommandFailed()
+
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
+        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
         let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
@@ -204,17 +211,22 @@ export default class MavenGenerator {
     }
   }
 
-  async addAndroidPluginHookClasses (plugins: any, paths: any) : Promise<*> {
+  async addAndroidPluginHookClasses (
+    plugins: Array<Dependency>,
+    paths: any) : Promise<*> {
     try {
       log.debug(`[=== Adding plugin hook classes ===]`)
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
+        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
-          log.debug(`Adding ${androidPluginHook.name}.java`)
-          shell.cp(`${paths.containerPluginsConfig}/${plugin.name}/${androidPluginHook.name}.java`,
+          console.log(`Adding ${androidPluginHook.name}.java`)
+          if (!pluginConfig.path) {
+            throw new Error(`No plugin config path was set. Cannot proceed.`)
+          }
+          shell.cp(`${pluginConfig.path}/${androidPluginHook.name}.java`,
               `${paths.outFolder}/android/lib/src/main/java/com/walmartlabs/ern/container/plugins/`)
           throwIfShellCommandFailed()
         }
@@ -227,7 +239,10 @@ export default class MavenGenerator {
     }
   }
 
-  async buildAndroidPluginsViews (plugins: any, pluginsConfigPath: string, mustacheView: any) : Promise<*> {
+  async buildAndroidPluginsViews (
+    plugins: Array<Dependency>,
+    pluginsConfigPath: string,
+    mustacheView: any) : Promise<*> {
     try {
       let pluginsView = []
 
@@ -239,7 +254,7 @@ export default class MavenGenerator {
 
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
-          log.debug(`Hooking ${plugin.name} plugin`)
+          log.debug(`Hooking ${plugin.scopedName} plugin`)
           pluginsView.push({
             'name': androidPluginHook.name,
             'lcname': androidPluginHook.name.charAt(0).toLowerCase() +

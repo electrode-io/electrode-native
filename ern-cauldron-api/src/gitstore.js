@@ -1,9 +1,6 @@
 // @flow
 
 import {
-  Platform
-} from '@walmart/ern-util'
-import {
   readJSON,
   writeJSON
 } from './fs-util'
@@ -41,6 +38,7 @@ type TypeCauldronNativeApp = {
 }
 
 type TypeCauldron = {
+  manifests?: Array<Object>,
   nativeApps: Array<TypeCauldronNativeApp>
 }
 
@@ -49,13 +47,14 @@ export default class GitStore extends BaseGit {
   cauldron: Object
 
   constructor (
-    ernPath: string = Platform.rootDirectory,
+    cauldronPath: string,
     repository: string,
     branch: string = 'master',
     cauldron: Object = {
+      'manifests': [],
       'nativeApps': []
     }) {
-    super(ernPath, repository, branch)
+    super(cauldronPath, repository, branch)
     this._jsonPath = path.resolve(this.path, CAULDRON_FILENAME)
     this.cauldron = cauldron
   }

@@ -1,11 +1,9 @@
 // @flow
 
 import {
-  Platform
-} from '@walmart/ern-util'
-import {
   regenerateCode
 } from '@walmart/ern-api-gen'
+import Manifest from '../../../lib/Manifest'
 
 exports.command = 'regen'
 exports.desc = 'Regenerates an existing api'
@@ -25,7 +23,7 @@ exports.handler = async function ({
   bridgeVersion: string
 } = {}) {
   if (!bridgeVersion) {
-    const bridgeDep = Platform.getPlugin('@walmart/react-native-electrode-bridge')
+    const bridgeDep = await Manifest.getPlugin('@walmart/react-native-electrode-bridge')
     if (!bridgeDep) {
       return log.error(`@walmart/react-native-electrode-bridge not found in manifest. please provide explicit version`)
     }

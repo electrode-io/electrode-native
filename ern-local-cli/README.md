@@ -269,7 +269,7 @@ _regen_
 This command can be used to regenerate a complete package api initialized using `init` command. The command is useful as you progress over the time in your project development cycle
 and happen to change api's or model schema.
 
-During the regeneration process, it scans `dependencies` in api project's `package.json` and comapares with version of `supportedPlugins` in the current `platform` version.
+During the regeneration process, it scans `dependencies` in api project's `package.json` and comapares with version of `targetNativeDependencies` in the current `platform` version.
 If there is a mismatch this command will prompt user to confirm the version change. In addition this command bumps patch version of the api and allows user to override
 the version of api with custom `version` entry. Lastly it prompts user to do `npm publish`.
 

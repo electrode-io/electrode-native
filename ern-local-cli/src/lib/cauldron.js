@@ -3,10 +3,10 @@
 import {
     config,
     Dependency,
-    Platform,
     spin,
     tagOneLine,
-    NativeApplicationDescriptor
+    NativeApplicationDescriptor,
+    Platform
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import CauldronCli from '@walmart/ern-cauldron-api'
@@ -17,12 +17,12 @@ import CauldronCli from '@walmart/ern-cauldron-api'
 class Cauldron {
   cauldron: Object
 
-  constructor (cauldronRepoAlias: string) {
+  constructor (cauldronRepoAlias: string, cauldronPath: string) {
     if (!cauldronRepoAlias) {
       return console.log('!!! No Cauldron repository currently activated !!!')
     }
     const cauldronRepositories = config.getValue('cauldronRepositories')
-    this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias])
+    this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias], cauldronPath)
   }
 
   async addNativeApp (
@@ -384,6 +384,10 @@ class Cauldron {
     }
   }
 
+  async getManifests () {
+    return this.cauldron.getManifests()
+  }
+
   throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {
     if (napDescriptor.isPartial) {
       throw new Error(`Cannot work with a partial native application descriptor`)
@@ -405,4 +409,4 @@ class Cauldron {
   }
 }
 
-export default new Cauldron(config.getValue('cauldronRepoInUse'))
+export default new Cauldron(config.getValue('cauldronRepoInUse'), `${Platform.rootDirectory}/cauldron`)

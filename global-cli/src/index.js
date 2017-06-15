@@ -93,7 +93,7 @@ if (!fs.existsSync(ERN_PATH)) {
 
   const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'))
 
-  if (ernRc.platformVersion === '1000') {
+  if ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0')) {
     require(`${ERN_VERSIONS_CACHE_PATH}/v${ernRc.platformVersion}/ern-local-cli/src/index.dev.js`)
   } else {
     require(`${ERN_VERSIONS_CACHE_PATH}/v${ernRc.platformVersion}/ern-local-cli/src/index.prod.js`)

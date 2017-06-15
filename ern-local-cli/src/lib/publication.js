@@ -7,7 +7,7 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
-  codePush,
+  CodePushCommands,
   Dependency,
   findNativeDependencies,
   NativeApplicationDescriptor,
@@ -35,8 +35,8 @@ function createContainerGenerator (platform, config) {
     }
   }
 
-    // No generator configuration was provided
-    // Create default generator for target native platform
+  // No generator configuration was provided
+  // Create default generator for target native platform
   switch (platform) {
     case 'android':
       return new MavenGenerator()
@@ -52,32 +52,30 @@ function createContainerGenerator (platform, config) {
 // FROM GIT => git@gecgithub01.walmart.com:react-native/Cart.git
 // FROM FS  => file:/Users/blemair/Code/Cart
 export async function runLocalContainerGen (
-  miniappPackages: Array<string>,
-  platform: 'android' | 'ios', {
-    containerVersion = '1.0.0',
-    nativeAppName = 'local',
-    publicationUrl
-  } : {
-    containerVersion?: string,
-    nativeAppName?: string,
-    publicationUrl?: string
-  } = {}) {
+miniappPackages: Array < string >,
+platform: 'android' | 'ios', {
+  containerVersion = '1.0.0',
+  nativeAppName = 'local',
+  publicationUrl
+}: {
+  containerVersion ? : string,
+  nativeAppName ? : string,
+  publicationUrl ? : string
+} = {}) {
   try {
-    const nativeDependencies: Set<string> = new Set()
+    const nativeDependencies: Set < string > = new Set()
     let miniapps = []
     let config
 
     if (publicationUrl) {
-      config = platform === 'android'
-        ? { name: 'maven', mavenRepositoryUrl: publicationUrl }
-        : { name: 'github', targetRepoUrl: publicationUrl }
+      config = platform === 'android' ? { name: 'maven', mavenRepositoryUrl: publicationUrl } : { name: 'github', targetRepoUrl: publicationUrl }
     }
 
     for (const miniappPackage of miniappPackages) {
       log.info(`Processing ${miniappPackage}`)
 
       // Create temporary directory and yarn add the miniapp from within it
-      const tmpDirPath = tmp.dirSync({unsafeCleanup: true}).name
+      const tmpDirPath = tmp.dirSync({ unsafeCleanup: true }).name
       process.chdir(tmpDirPath)
       await yarn.yarnAdd(miniappPackage)
 
@@ -95,7 +93,7 @@ export async function runLocalContainerGen (
       // and remove the miniapp itself, wrongly considered as a native dependency
       let miniappNativeDependencies = findNativeDependencies(`${tmpDirPath}/node_modules`)
       _.remove(miniappNativeDependencies,
-        d => (d.scope === miniappDependency.scope) && (d.name === miniappDependency.name))
+      d => (d.scope === miniappDependency.scope) && (d.name === miniappDependency.name))
 
       // Add all native dependencies as strings to the set of native dependencies
       // of all miniapps
@@ -106,10 +104,10 @@ export async function runLocalContainerGen (
 
     // Verify uniqueness of native dependencies (that all miniapps are using the same
     // native dependencies version). This is a requirement in order to generate a proper container
-    const nativeDependenciesWithoutVersion: Array<string> = _.map(
-      nativeDependenciesArray, d => Dependency.fromString(d).withoutVersion().toString())
+    const nativeDependenciesWithoutVersion: Array < string > = _.map(
+    nativeDependenciesArray, d => Dependency.fromString(d).withoutVersion().toString())
     const duplicateNativeDependencies =
-      _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
+    _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
     if (duplicateNativeDependencies.length > 0) {
       throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
     }
@@ -121,7 +119,10 @@ export async function runLocalContainerGen (
       platformPath: Platform.currentPlatformVersionPath,
       generator: createContainerGenerator(platform, config),
       plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
-      miniapps
+      miniapps,
+      workingFolder: `${Platform.rootDirectory}/containergen`,
+      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     })
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
@@ -131,14 +132,15 @@ export async function runLocalContainerGen (
 
 // Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronContainerGen (
-  napDescriptor: NativeApplicationDescriptor,
-  version: string, {
-    disablePublication
-  } : {
-    disablePublication?: boolean
-  }= {}) {
+napDescriptor: NativeApplicationDescriptor,
+version: string, {
+  disablePublication
+}: {
+  disablePublication ? : boolean
+} = {}) {
   try {
-    const plugins = await cauldron.getNativeDependencies(napDescriptor)
+    let plugins = await cauldron.getNativeDependencies(napDescriptor)
+    plugins = _.map(plugins, p => new Dependency(p.name, { scope: p.scope, version: p.version }))
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor, { convertToObjects: true })
 
     // Retrieve generator configuration (which for now only contains publication URL config)
@@ -156,7 +158,10 @@ export async function runCauldronContainerGen (
       platformPath: Platform.currentPlatformVersionPath,
       generator: createContainerGenerator(napDescriptor.platform, config ? config.containerGenerator : undefined),
       plugins,
-      miniapps
+      miniapps,
+      workingFolder: `${Platform.rootDirectory}/containergen`,
+      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     })
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
@@ -179,7 +184,7 @@ export async function publishMiniApp ({
   codePushTargetVersionName,
   codePushIsMandatoryRelease,
   codePushRolloutPercentage
-} : {
+}: {
   force: boolean,
   napDescriptor: NativeApplicationDescriptor,
   npmPublish: boolean,
@@ -206,25 +211,26 @@ export async function publishMiniApp ({
       throw new Error('Cannot publish MiniApp. Native Application is not compatible')
     }
 
-    nativeAppsToPublish.push({napDescriptor, isReleased: report.isReleased})
+    nativeAppsToPublish.push({ napDescriptor, isReleased: report.isReleased })
   } else {
     const compatibilityReport = await getNativeAppCompatibilityReport()
 
     const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
       if (entry.isCompatible) {
         if ((publishAsOtaUpdate && entry.isReleased) ||
-                (publishAsNewContainer && !entry.isReleased) ||
-                (!publishAsOtaUpdate && !publishAsNewContainer)) {
+        (publishAsNewContainer && !entry.isReleased) ||
+        (!publishAsOtaUpdate && !publishAsNewContainer)) {
           const curNapDescriptor =
-            new NativeApplicationDescriptor(entry.appName, entry.appPlatform, entry.appVersion)
+          new NativeApplicationDescriptor(entry.appName, entry.appPlatform, entry.appVersion)
           const value = {
             napDescriptor: curNapDescriptor,
             isReleased: entry.isReleased
           }
           const suffix = value.isReleased
-                        ? `[OTA] ${emoji.get('rocket')}` : `[IN-APP]`
+          ? `[OTA] ${emoji.get('rocket')}`
+          : `[IN-APP]`
           const name = `${value.napDescriptor.toString()} ${suffix}`
-          return {name, value}
+          return { name, value }
         }
       }
     }).filter(e => e !== undefined)
@@ -233,7 +239,7 @@ export async function publishMiniApp ({
       return log.error('No compatible native application versions have been found')
     }
 
-    const {nativeApps} = await inquirer.prompt({
+    const { nativeApps } = await inquirer.prompt({
       type: 'checkbox',
       name: 'nativeApps',
       message: 'Select one or more compatible native application version(s)',
@@ -264,8 +270,7 @@ export async function publishMiniApp ({
 }
 
 async function publishInApp (
-  napDescriptor: NativeApplicationDescriptor,
-  { containerVersion, force }) {
+napDescriptor: NativeApplicationDescriptor, { containerVersion, force }) {
   try {
     await MiniApp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, force)
 
@@ -280,7 +285,7 @@ async function publishInApp (
 }
 
 async function askUserForContainerVersion () {
-  const {userSelectedContainerVersion} = await inquirer.prompt({
+  const { userSelectedContainerVersion } = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedContainerVersion',
     message: 'Version of generated container'
@@ -289,7 +294,7 @@ async function askUserForContainerVersion () {
 }
 
 export async function publishOta (
-  napDescriptor: NativeApplicationDescriptor, {
+napDescriptor: NativeApplicationDescriptor, {
   force,
   codePushAppName,
   codePushDeploymentName,
@@ -297,7 +302,7 @@ export async function publishOta (
   codePushTargetVersionName,
   codePushIsMandatoryRelease,
   codePushRolloutPercentage
-} : {
+}: {
   force: boolean,
   codePushAppName: string,
   codePushDeploymentName: string,
@@ -326,14 +331,16 @@ export async function publishOta (
     codePushAppName = codePushAppName || await askUserForCodePushAppName()
     codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
 
-    await codePush.releaseReact(
-          codePushAppName,
-          codePushPlatformName, {
-            targetBinaryVersion: codePushTargetVersionName,
-            mandatory: codePushIsMandatoryRelease,
-            deploymentName: codePushDeploymentName,
-            rolloutPercentage: codePushRolloutPercentage
-          })
+    const codePushCommands = new CodePushCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`)
+
+    await codePushCommands.releaseReact(
+    codePushAppName,
+    codePushPlatformName, {
+      targetBinaryVersion: codePushTargetVersionName,
+      mandatory: codePushIsMandatoryRelease,
+      deploymentName: codePushDeploymentName,
+      rolloutPercentage: codePushRolloutPercentage
+    })
   } catch (e) {
     log.error(`[publishOta] failed: ${e}`)
   }
@@ -344,7 +351,7 @@ async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicatio
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
   const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
 
-  const {userSelectedDeploymentName} = await inquirer.prompt({
+  const { userSelectedDeploymentName } = await inquirer.prompt({
     type: choices ? 'list' : 'input',
     name: 'userSelectedDeploymentName',
     message: 'Deployment name',
@@ -355,7 +362,7 @@ async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicatio
 }
 
 async function askUserForCodePushAppName (defaultAppName) {
-  const {userSelectedCodePushAppName} = await inquirer.prompt({
+  const { userSelectedCodePushAppName } = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedCodePushAppName',
     message: 'Application name',
@@ -365,7 +372,7 @@ async function askUserForCodePushAppName (defaultAppName) {
 }
 
 async function askUserForCodePushPlatformName (defaultPlatformName) {
-  const {userSelectedCodePushPlatformName} : {userSelectedCodePushPlatformName: 'android' | 'ios'} = await inquirer.prompt({
+  const { userSelectedCodePushPlatformName }: { userSelectedCodePushPlatformName: 'android' | 'ios' } = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedCodePushPlatformName',
     message: 'Platform name',

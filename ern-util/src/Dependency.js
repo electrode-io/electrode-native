@@ -47,6 +47,10 @@ export default class Dependency {
         (ignoreVersion || (depA.version === depB.version))
   }
 
+  get scopedName () : string {
+    return this.scope ? `@${this.scope}/${this.name}` : this.name
+  }
+
   withoutVersion () : Dependency {
     return new Dependency(this.name, { scope: this.scope })
   }

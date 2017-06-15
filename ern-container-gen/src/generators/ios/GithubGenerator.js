@@ -1,6 +1,9 @@
 // @flow
 
 import {
+  Dependency
+} from '@walmart/ern-util'
+import {
   bundleMiniApps,
   downloadPluginSource,
   getPluginConfig,
@@ -48,7 +51,7 @@ export default class GithubGenerator {
     containerVersion: string,
     nativeAppName: string,
     platformPath: string,
-    plugins: any,
+    plugins: Array<Dependency>,
     miniapps: any,
     paths: any,
     mustacheView: any) : Promise<*> {
@@ -106,7 +109,7 @@ export default class GithubGenerator {
     }
   }
 
-  async fillContainerHull (plugins: any, miniApps: any, paths: any) : Promise<*> {
+  async fillContainerHull (plugins: Array<Dependency>, miniApps: any, paths: any) : Promise<*> {
     log.debug(`[=== Starting container hull filling ===]`)
 
     shell.cd(`${ROOT_DIR}`)
@@ -125,14 +128,14 @@ export default class GithubGenerator {
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
     for (const plugin of plugins) {
-      const pluginConfig = await getPluginConfig(plugin, paths.containerPluginsConfig)
+      const pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
       shell.cd(`${paths.pluginsDownloadFolder}`)
       throwIfShellCommandFailed()
       if (pluginConfig.ios) {
-        const pluginSourcePath = await spin(`Retrieving ${plugin.name}`,
+        const pluginSourcePath = await spin(`Retrieving ${plugin.scopedName}`,
           downloadPluginSource(pluginConfig.origin))
         if (!pluginSourcePath) {
-          throw new Error(`Was not able to download ${plugin.name}`)
+          throw new Error(`Was not able to download ${plugin.scopedName}`)
         }
 
         if (pluginConfig.ios.copy) {

@@ -2,7 +2,7 @@
 
 import {
   Dependency,
-  reactNative,
+  ReactNativeCommands,
   yarn
 } from '@walmart/ern-util'
 import {
@@ -13,6 +13,7 @@ import Mustache from 'mustache'
 import Ora from 'ora'
 import path from 'path'
 import shell from 'shelljs'
+import _ from 'lodash'
 
 const { yarnAdd } = yarn
 const gitFolderRe = /.*\/(.*).git/
@@ -22,7 +23,8 @@ const pluginConfigFileName = 'config.json'
 type PluginConfig = {
   android: Object,
   ios: Object,
-  origin?: Object
+  origin?: Object,
+  path?: string
 }
 
 // =============================================================================
@@ -38,13 +40,13 @@ type PluginConfig = {
 //   name: "react-native-code-push",
 //   version: "1.2.3"
 // }
-export async function getPluginConfig (plugin: any, pluginsConfigPath: string) : Promise<PluginConfig> {
+export async function getPluginConfig (plugin: Dependency, pluginsConfigPath: string) : Promise<PluginConfig> {
   let result = {}
   const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
 
   // If there is a base file (common to all versions) use it and optionally
   // patch it with specific version config (if present)
-  if (fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
+  if (pluginConfigPath && fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
     result = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
         .then(JSON.parse)
 
@@ -68,17 +70,19 @@ export async function getPluginConfig (plugin: any, pluginsConfigPath: string) :
         }
       }
     }
+
+    result.path = pluginConfigPath
   } else {
-    log.debug(`No config.json file for ${plugin.name}. Assuming apigen module`)
+    log.debug(`No config.json file for ${plugin.scopedName}. Assuming apigen module`)
     result = getApiPluginDefaultConfig()
   }
 
   if (!result.origin) {
-    if (npmScopeModuleRe.test(plugin.name)) {
+    if (npmScopeModuleRe.test(plugin.scopedName)) {
       result.origin = {
         type: 'npm',
-        scope: `${npmScopeModuleRe.exec(`${plugin.name}`)[1]}`,
-        name: `${npmScopeModuleRe.exec(`${plugin.name}`)[2]}`,
+        scope: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[1]}`,
+        name: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[2]}`,
         version: plugin.version
       }
     } else {
@@ -125,8 +129,18 @@ function getApiPluginDefaultConfig () : PluginConfig {
 }
 
 // Returns the base path of a given plugin generation config
-export function getPluginConfigPath (plugin: any, pluginsConfigPath: string) {
-  return `${pluginsConfigPath}/${plugin.name}`
+export function getPluginConfigPath (plugin: Dependency, pluginsConfigPath: string) : ?string {
+   // Folder names cannot contain '/' so it's replaced by ':'
+  const pluginScopeAndName = plugin.scopedName.replace(/\//g, ':')
+
+  const pluginVersions = _.map(
+      fs.readdirSync(pluginsConfigPath).filter(f => f.startsWith(pluginScopeAndName)),
+      s => /_v(.+)\+/.exec(s)[1])
+
+  const matchingVersion = _.find(pluginVersions.sort().reverse(), d => plugin.version >= d)
+  if (matchingVersion) {
+    return `${pluginsConfigPath}/${pluginScopeAndName}_v${matchingVersion}+`
+  }
 }
 
 export async function bundleMiniApps (
@@ -172,7 +186,8 @@ export async function bundleMiniApps (
 }
 
 export async function reactNativeBundleAndroid (paths: any) {
-  return reactNative.bundle({
+  const reactNativeCommands = new ReactNativeCommands(paths.reactNativeBinary)
+  return reactNativeCommands.bundle({
     entryFile: 'index.android.js',
     dev: false,
     bundleOutput: `${paths.outFolder}/android/lib/src/main/assets/index.android.bundle`,
@@ -183,13 +198,14 @@ export async function reactNativeBundleAndroid (paths: any) {
 
 export async function reactNativeBundleIos (paths: any) {
   const miniAppOutFolder = `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp`
+  const reactNativeCommands = new ReactNativeCommands(paths.reactNativeBinary)
 
   if (!fs.existsSync(miniAppOutFolder)) {
     shell.mkdir('-p', miniAppOutFolder)
     throwIfShellCommandFailed()
   }
 
-  return reactNative.bundle({
+  return reactNativeCommands.bundle({
     entryFile: 'index.ios.js',
     dev: false,
     bundleOutput: `${miniAppOutFolder}/MiniApp.jsbundle`,
