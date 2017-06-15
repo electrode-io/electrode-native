@@ -6,17 +6,14 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
-  Platform
+  Dependency
 } from '@walmart/ern-util'
-
 import fs from 'fs'
 import Mustache from 'mustache'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
 let log
-
-const CONTAINER_GEN_OUT_FOLDER = `${Platform.rootDirectory}/containergen/out`
 
 // =============================================================================
 // fs async wrappers
@@ -97,14 +94,20 @@ export async function generateRunner ({
   miniapp,
   outFolder,
   headless,
-  platform
+  platform,
+  containerGenWorkingFolder,
+  pluginsConfigurationDirectory,
+  reactNativeAarsPath
 } : {
   platformPath: string,
   plugins: Array<Object>,
   miniapp: Object,
   outFolder: string,
   headless: boolean,
-  platform: 'android' | 'ios'
+  platform: 'android' | 'ios',
+  containerGenWorkingFolder: string,
+  pluginsConfigurationDirectory: string,
+  reactNativeAarsPath: string
 }) {
   try {
     if (!miniapp.localPath) {
@@ -113,7 +116,7 @@ export async function generateRunner ({
 
     const view = {
       miniAppName: miniapp.name,
-      pathToElectrodeContainerXcodeProj: `${CONTAINER_GEN_OUT_FOLDER}/ios`,
+      pathToElectrodeContainerXcodeProj: `${containerGenWorkingFolder}/out/ios`,
       pascalCaseMiniAppName: pascalCase(miniapp.name),
       camelCaseMiniAppName: camelCase(miniapp.name),
       headless
@@ -143,7 +146,10 @@ export async function generateRunner ({
       plugins,
       miniapp,
       platform,
-      outFolder
+      containerGenWorkingFolder,
+      outFolder,
+      pluginsConfigurationDirectory,
+      reactNativeAarsPath
     })
   } catch (e) {
     log.error('Something went wrong: ' + e)
@@ -156,13 +162,19 @@ export async function generateContainerForRunner ({
   plugins,
   miniapp,
   platform,
-  outFolder
+  containerGenWorkingFolder,
+  outFolder,
+  pluginsConfigurationDirectory,
+  reactNativeAarsPath
 } : {
   platformPath: string,
-  plugins: Array<Object>,
+  plugins: Array<Dependency>,
   miniapp: Object,
   platform: 'android' | 'ios',
-  outFolder: string
+  containerGenWorkingFolder: string,
+  outFolder: string,
+  pluginsConfigurationDirectory: string,
+  reactNativeAarsPath: string
 }) {
   const generator = (platform === 'android')
         ? new MavenGenerator()
@@ -174,6 +186,9 @@ export async function generateContainerForRunner ({
     generator,
     platformPath,
     plugins,
-    miniapps: [miniapp]
+    miniapps: [miniapp],
+    workingFolder: containerGenWorkingFolder,
+    pluginsConfigurationDirectory,
+    reactNativeAarsPath
   })
 }
