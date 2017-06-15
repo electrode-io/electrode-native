@@ -20,7 +20,7 @@ const gitFolderRe = /.*\/(.*).git/
 const npmScopeModuleRe = /@(.*)\/(.*)/
 const pluginConfigFileName = 'config.json'
 
-type PluginConfig = {
+export type PluginConfig = {
   android: Object,
   ios: Object,
   origin?: Object,
@@ -73,7 +73,7 @@ export async function getPluginConfig (plugin: Dependency, pluginsConfigPath: st
 
     result.path = pluginConfigPath
   } else {
-    log.debug(`No config.json file for ${plugin.scopedName}. Assuming apigen module`)
+    log.debug(`No config.json file for ${plugin.name}. Will use default config`)
     result = getApiPluginDefaultConfig()
   }
 
