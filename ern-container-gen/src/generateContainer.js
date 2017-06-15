@@ -1,20 +1,18 @@
 // @flow
 
 import {
-  Platform
+  Dependency
 } from '@walmart/ern-util'
 import {
   capitalizeFirstLetter,
   throwIfShellCommandFailed
 } from './utils.js'
 import _ from 'lodash'
-import fs from 'fs'
 import shell from 'shelljs'
 
 let mustacheView = {}
 
 const npmScopeModuleRe = /(@.*)\/(.*)/
-const npmModuleRe = /(.*)@(.*)/
 
 // =============================================================================
 // ern-container-gen entry point
@@ -43,44 +41,52 @@ export default async function generateContainer ({
   containerVersion,
   nativeAppName,
   platformPath,
+  pluginsConfigurationDirectory,
   generator,
   plugins,
-  miniapps
+  miniapps,
+  workingFolder,
+  reactNativeAarsPath
 } : {
   containerVersion: string,
   nativeAppName: string,
   platformPath: string,
+  pluginsConfigurationDirectory: string,
   generator: any,
-  plugins: Array<any>,
-  miniapps: Array<any>
+  plugins: Array<Dependency>,
+  miniapps: Array<any>,
+  workingFolder: string,
+  reactNativeAarsPath: string
 } = {}) {
   if (!generator.generateContainer) {
     throw new Error('The generator miss a generateContainer function !')
   }
 
-  // Folder from which container gen is run from
-  const WORKING_FOLDER = `${Platform.rootDirectory}/containergen`
   // Folder from which we download all plugins sources (from npm or git)
-  const PLUGINS_DOWNLOAD_FOLDER = `${WORKING_FOLDER}/plugins`
+  const PLUGINS_DOWNLOAD_FOLDER = `${workingFolder}/plugins`
   // Folder where the resulting container project is stored in
-  const OUT_FOLDER = `${WORKING_FOLDER}/out`
+  const OUT_FOLDER = `${workingFolder}/out`
   // Folder from which we assemble the miniapps together / run the bundling
-  const COMPOSITE_MINIAPP_FOLDER = `${WORKING_FOLDER}/compositeMiniApp`
+  const COMPOSITE_MINIAPP_FOLDER = `${workingFolder}/compositeMiniApp`
 
   // Contains all interesting folders paths
   const paths = {
     // Where the container project hull is stored
     containerHull: `${platformPath}/ern-container-gen/hull`,
     // Where the container generation configuration of all plugins is stored
-    containerPluginsConfig: `${platformPath}/ern-container-gen/plugins`,
+    pluginsConfigurationDirectory,
     // Where the templates to be used during container generation are stored
     containerTemplates: `${platformPath}/ern-container-gen/templates`,
     // Where we assemble the miniapps together
     compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
     // Where we download plugins
     pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
+    // React native binary path
+    reactNativeBinary: `${platformPath}/node_modules/.bin/react-native`,
     // Where we output final generated container
-    outFolder: OUT_FOLDER
+    outFolder: OUT_FOLDER,
+    // Where the AARs of react-native are located
+    reactNativeAars: reactNativeAarsPath
   }
 
   // Clean up to start fresh
@@ -93,8 +99,7 @@ export default async function generateContainer ({
   throwIfShellCommandFailed()
 
   // Build the list of plugins to be included in container
-  const manifest = JSON.parse(fs.readFileSync(`${platformPath}/manifest.json`, 'utf-8'))
-  const includedPlugins = buildPluginListSync(plugins, manifest)
+  const includedPlugins = buildPluginListSync(plugins)
 
   // Let's make sure that react-native is included (otherwise there is
   // something pretty much wrong)
@@ -102,11 +107,6 @@ export default async function generateContainer ({
   if (!reactNativePlugin) {
     throw new Error('react-native was not found in plugins list !')
   }
-
-  // Get the react native version to use, based on what is declared on manifests
-  // for this current platform version
-  const reactNativeVersion = getReactNativeVersionFromManifest(manifest)
-  const ernPlatformVersion = manifest.platformVersion
 
   let miniApps = _.map(miniapps, miniapp => ({
     name: miniapp.name,
@@ -119,8 +119,7 @@ export default async function generateContainer ({
   }))
 
   mustacheView = {
-    reactNativeVersion,
-    ernPlatformVersion,
+    reactNativeVersion: reactNativePlugin.version,
     nativeAppName,
     miniApps,
     containerVersion
@@ -142,18 +141,10 @@ function getUnscopedModuleName (pluginName) {
       : pluginName
 }
 
-function buildPluginListSync (plugins, manifest) {
+function buildPluginListSync (plugins: Array<Dependency>) : Array<Dependency> {
   return _.map(plugins,
-    p => ({
-      name: p.scope ? `@${p.scope}/${p.name}` : p.name,
+    p => new Dependency(p.scope ? `@${p.scope}/${p.name}` : p.name, {
       version: p.version
     })
   )
-}
-
-function getReactNativeVersionFromManifest (manifest) {
-  const rnDep = _.find(manifest.supportedPlugins, d => d.startsWith('react-native@'))
-  if (rnDep) {
-    return npmModuleRe.exec(rnDep)[2]
-  }
 }
