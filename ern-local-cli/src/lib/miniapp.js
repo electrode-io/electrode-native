@@ -9,6 +9,7 @@ import {
   findNativeDependencies,
   Dependency,
   NativeApplicationDescriptor,
+  Platform,
   ReactNativeCommands,
   spin,
   tagOneLine,
@@ -22,7 +23,6 @@ import {
 } from 'child_process'
 import cauldron from './cauldron'
 import Manifest from './Manifest'
-import Platform from './platform'
 import fs from 'fs'
 import inquirer from 'inquirer'
 import _ from 'lodash'

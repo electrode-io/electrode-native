@@ -1,9 +1,11 @@
 // @flow
 
 import {
+  Platform
+} from '@walmart/ern-util'
+import {
   execSync
 } from 'child_process'
-import Platform from '../../lib/Platform'
 
 exports.command = 'update'
 exports.desc = 'Update currently activated platform version'

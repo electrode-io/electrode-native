@@ -11,6 +11,7 @@ import {
   Dependency,
   findNativeDependencies,
   NativeApplicationDescriptor,
+  Platform,
   yarn
 } from '@walmart/ern-util'
 import {
@@ -19,7 +20,6 @@ import {
 } from './compatibility.js'
 import cauldron from './cauldron'
 import MiniApp from './miniapp.js'
-import Platform from './Platform'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import emoji from 'node-emoji'

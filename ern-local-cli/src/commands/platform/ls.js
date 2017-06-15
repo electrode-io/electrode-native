@@ -1,10 +1,10 @@
 // @flow
 
 import {
-  tagOneLine
+  tagOneLine,
+  Platform
 } from '@walmart/ern-util'
 import chalk from 'chalk'
-import Platform from '../../lib/Platform'
 
 exports.command = 'ls'
 exports.desc = 'List platform versions'

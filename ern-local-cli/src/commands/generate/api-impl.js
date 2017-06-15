@@ -3,7 +3,6 @@
 import {
   generateApiImpl
 } from '@walmart/ern-api-impl-gen'
-import Platform from '../../lib/Platform'
 
 exports.command = 'api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
@@ -26,7 +25,7 @@ exports.builder = function (yargs: any) {
   })
 }
 
-exports.handler = async function ({
+exports.handler = function ({
   api,
   nativeOnly,
   force,
@@ -39,12 +38,10 @@ exports.handler = async function ({
 }) {
   console.log(`command identified for generating API implementation for  ${api}`)
 
-  await generateApiImpl({
+  generateApiImpl({
     api,
     outputFolder,
     nativeOnly,
-    forceGenerate: force,
-    platformPath: Platform.currentPlatformVersionPath,
-    workingFolder: `${Platform.rootDirectory}/api-impl-gen`
+    forceGenerate: force
   })
 }

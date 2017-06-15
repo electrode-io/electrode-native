@@ -1,6 +1,8 @@
 // @flow
 
-import Platform from '../../lib/Platform'
+import {
+  Platform
+} from '@walmart/ern-util'
 
 exports.command = 'use <platformVersion>'
 exports.desc = 'Switch to a given ern platform version'

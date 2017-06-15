@@ -1,11 +1,11 @@
 // @flow
 
 import {
-  Dependency
+  Dependency,
+  Platform
 } from '@walmart/ern-util'
 import chalk from 'chalk'
 import Manifest from '../../../lib/Manifest'
-import Platform from '../../../lib/Platform'
 
 exports.command = 'search <pluginName> [platformVersion]'
 exports.desc = 'Search a plugin'

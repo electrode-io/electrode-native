@@ -1,6 +1,8 @@
 // @flow
 
-import Platform from '../../lib/Platform'
+import {
+  Platform
+} from '@walmart/ern-util'
 
 exports.command = 'uninstall <platformVersion>'
 exports.desc = 'Uninstall a given ern platform version'

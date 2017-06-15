@@ -1,9 +1,9 @@
 // @flow
 
 import {
-  config as ernConfig
+  config as ernConfig,
+  Platform
 } from '@walmart/ern-util'
-import Platform from '../../../lib/Platform'
 import shell from 'shelljs'
 
 exports.command = 'use <repoAlias>'

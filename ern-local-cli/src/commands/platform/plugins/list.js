@@ -1,7 +1,9 @@
 // @flow
 
+import {
+  Platform
+} from '@walmart/ern-util'
 import Manifest from '../../../lib/Manifest'
-import Platform from '../../../lib/Platform'
 import chalk from 'chalk'
 import Table from 'cli-table'
 
