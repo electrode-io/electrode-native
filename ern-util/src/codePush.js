@@ -4,11 +4,16 @@
   exec
 } from 'child_process'
 import inquirer from 'inquirer' */
-import Platform from './platform'
 
-export class CodePushCommands {
+export default class CodePushCommands {
+  codePushPath: ?string
+
+  constructor (codePushPath?: string) {
+    this.codePushPath = codePushPath
+  }
+
   get codePushBinaryPath () : string {
-    return `${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`
+    return this.codePushPath ? this.codePushPath : `code-push`
   }
 
   async releaseReact (
@@ -68,5 +73,3 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
     } */
   }
 }
-
-export default new CodePushCommands()
