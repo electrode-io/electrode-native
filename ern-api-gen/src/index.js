@@ -7,15 +7,15 @@ import shell from 'shelljs'
 import path from 'path'
 import semver from 'semver'
 import {
-    PKG_FILE
+  PKG_FILE
 } from './Constants'
 import {
-    readJSON,
-    writeFile
+  readJSON,
+  writeFile
 } from './fileUtil'
 import {
-    Platform,
-    npm
+  Dependency,
+  npm
 } from '@walmart/ern-util'
 import inquirer from 'inquirer'
 
@@ -68,7 +68,7 @@ export async function regenerateCode (options: Object = {}) {
       newPluginVer = await _promptForPluginVersion(curVersion)
     }
   }
-  await _checkDependencyVersion(pkg)
+  await _checkDependencyVersion(pkg, options.targetDependencies)
   const isNewVersion = semver.lt(curVersion, newPluginVer)
   if (isNewVersion) {
     pkg.version = newPluginVer
@@ -156,26 +156,25 @@ async function _promptForPluginVersion (curVersion: string) {
   return ret
 }
 
-async function _checkDependencyVersion (pkg: any) {
+async function _checkDependencyVersion (pkg: any, targetDependencies: Array<Dependency>) {
   let pluginDependency = pkg.peerDependencies || {}
-  let supportedPluginsMap = _constructSupportedPluginsMap()
+  let targetNativeDependenciesMap = _constructTargetNativeDependenciesMap(targetDependencies)
   for (const key of Object.keys(pluginDependency)) {
-    if (supportedPluginsMap.has(key) && pluginDependency[key] !== supportedPluginsMap.get(key)) {
-      const answer = await _promptForMissMatchOfSupportedPlugins(supportedPluginsMap.get(key), key)
-      pluginDependency[key] = answer.userPluginVer ? answer.userPluginVer : supportedPluginsMap.get(key)
+    if (targetNativeDependenciesMap.has(key) && pluginDependency[key] !== targetNativeDependenciesMap.get(key)) {
+      const answer = await _promptForMissMatchOfSupportedPlugins(targetNativeDependenciesMap.get(key), key)
+      pluginDependency[key] = answer.userPluginVer ? answer.userPluginVer : targetNativeDependenciesMap.get(key)
     }
   }
 }
 
-function _constructSupportedPluginsMap () {
-  let platformManifest = Platform.getManifest(Platform.currentVersion)
-  let supportedPluginsMap = new Map(
-        platformManifest.supportedPlugins.map((currVal) => {
-          if (currVal == null) return []
-          let idx = currVal.lastIndexOf('@') // logic for scoped dependency
-          return [currVal.substring(0, idx), currVal.substring(idx + 1)]
+function _constructTargetNativeDependenciesMap (targetDependencies: Array<Dependency>) {
+  let targetNativeDependenciesMap = new Map(
+        targetDependencies.map((currVal) => {
+          const dependencyString = currVal.toString()
+          let idx = dependencyString.lastIndexOf('@') // logic for scoped dependency
+          return [dependencyString.substring(0, idx), dependencyString.substring(idx + 1)]
         }))
-  return supportedPluginsMap
+  return targetNativeDependenciesMap
 }
 
 function _promptForMissMatchOfSupportedPlugins (curVersion: any, pluginName: string) {
