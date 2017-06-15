@@ -1,8 +1,6 @@
 // @flow
 
-import {
-  Platform
-} from '@walmart/ern-util'
+import Platform from '../../lib/Platform'
 
 exports.command = 'current'
 exports.desc = 'Show current platform version'

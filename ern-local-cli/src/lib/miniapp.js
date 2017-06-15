@@ -9,8 +9,7 @@ import {
   findNativeDependencies,
   Dependency,
   NativeApplicationDescriptor,
-  Platform,
-  reactNative,
+  ReactNativeCommands,
   spin,
   tagOneLine,
   yarn
@@ -22,6 +21,8 @@ import {
   execSync
 } from 'child_process'
 import cauldron from './cauldron'
+import Manifest from './Manifest'
+import Platform from './platform'
 import fs from 'fs'
 import inquirer from 'inquirer'
 import _ from 'lodash'
@@ -85,20 +86,22 @@ export default class MiniApp {
 
       log.info(`Creating application ${appName} at platform version ${platformVersion}`)
 
-      const reactNativeDependency = Platform.getPlugin('react-native')
+      const reactNativeDependency = await Manifest.getPlugin('react-native')
       if (!reactNativeDependency) {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactDependency = Platform.getJsDependency('react')
+      const reactDependency = await Manifest.getJsDependency('react')
       if (!reactDependency) {
         throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
       }
 
+      const reactNativeCommands = new ReactNativeCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/react-native`)
+
       //
       // Create application using react-native init command
       await spin(`Running react-native init using react-native v${reactNativeDependency.version}`,
-                reactNative.init(appName, reactNativeDependency.version))
+                reactNativeCommands.init(appName, reactNativeDependency.version))
 
       //
       // Patch package.json file of application
@@ -218,7 +221,10 @@ export default class MiniApp {
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/ios`,
       headless: this.isHeadLess,
-      platform: 'ios'
+      platform: 'ios',
+      containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
+      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     }
 
     const iosDevices = await simctl.getDevices()
@@ -264,7 +270,10 @@ export default class MiniApp {
       miniapp: {name: this.name, localPath: this.path},
       outFolder: `${this.path}/android`,
       headless: this.isHeadLess,
-      platform: 'android'
+      platform: 'android',
+      containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
+      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     }
 
     if (!fs.existsSync('android')) {
@@ -284,7 +293,7 @@ export default class MiniApp {
   async addDependency (
     dependencyName: string,
     {dev} : { dev: boolean } = {}) {
-    let dep = Platform.getDependency(dependencyName)
+    let dep = await Manifest.getDependency(dependencyName)
     if (!dep) {
       log.warn(
                 `
@@ -295,7 +304,6 @@ Otherwise you can safely ignore this warning
 ==================================================================================
 `)
       dep = Dependency.fromString(dependencyName)
-      dep.version = 'latest'
     }
 
     process.chdir(this.path)
@@ -313,7 +321,7 @@ Otherwise you can safely ignore this warning
     }
 
     // Update all modules versions in package.json
-    const manifestDependencies = Platform.getManifestPluginsAndJsDependencies(versionToUpgradeTo)
+    const manifestDependencies = await Manifest.getTargetNativeAndJsDependencies(versionToUpgradeTo)
 
     for (const manifestDependency of manifestDependencies) {
       const nameWithScope = `${manifestDependency.scope ? `@${manifestDependency.scope}/` : ''}${manifestDependency.name}`

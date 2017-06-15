@@ -3,9 +3,7 @@
 import {
   generateApi
 } from '@walmart/ern-api-gen'
-import {
-  Platform
-} from '@walmart/ern-util'
+import Manifest from '../../../lib/Manifest'
 
 exports.command = 'init <apiName>'
 exports.desc = 'Creates a new api'
@@ -44,12 +42,12 @@ exports.handler = async function ({
   apiAuthor?: string,
   modelSchemaPath?: string
 }) {
-  const bridgeDep = Platform.getPlugin('@walmart/react-native-electrode-bridge')
+  const bridgeDep = await Manifest.getPlugin('@walmart/react-native-electrode-bridge')
   if (!bridgeDep) {
     return log.error(`@walmart/react-native-electrode-bridge not found in manifest. cannot infer version to use`)
   }
 
-  const reactNative = Platform.getPlugin('react-native')
+  const reactNative = await Manifest.getPlugin('react-native')
   if (!reactNative) {
     return log.error(`react-native not found in manifest. cannot infer version to use`)
   }

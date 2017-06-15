@@ -2,11 +2,11 @@
 
 import {
   NativeApplicationDescriptor,
-  Platform,
   spin
 } from '@walmart/ern-util'
 import cauldron from './cauldron'
 import MiniApp from './miniapp.js'
+import Manifest from './Manifest'
 import _ from 'lodash'
 import chalk from 'chalk'
 import Table from 'cli-table'
@@ -34,9 +34,9 @@ export async function checkCompatibilityWithNativeApp (
 
 //
 // Check compatibility of current miniapp against a given platform version
-export function checkCompatibilityWithPlatform (platformVersion: string) {
+export async function checkCompatibilityWithPlatform (platformVersion: string) {
   const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies
-  const platformDependencies = Platform.getManifestPluginsAndJsDependencies(platformVersion)
+  const platformDependencies = await Manifest.getTargetNativeAndJsDependencies(platformVersion)
 
   const report = getCompatibility(miniappDependencies, platformDependencies)
   const isCompatible = report.incompatible.length === 0
