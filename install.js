@@ -7,12 +7,14 @@ const fs = require('fs')
 //
 // .ern
 // |_ ern-platform (git)
+// |_ ern-master-manifest (git)
 // |_ cache
 //   |_ v1
 //   |_ v2
 // ....
 // |_ .ernrc
 
+const PLATFORM_VERSION = '0.2.0'
 // Path to ern platform root folder
 const ERN_PATH = process.env['ERN_HOME'] || `${process.env['HOME']}/.ern`
 // Path to ern platform cloned git repo
@@ -21,6 +23,10 @@ const ERN_PLATFORM_REPO_PATH = `${ERN_PATH}/ern-platform`
 const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/cache`
 // Path to ern global configuration file
 const ERN_RC_GLOBAL_FILE_PATH = `${ERN_PATH}/.ernrc`
+// Path to ern platform manifest repo
+const ERN_MANIFEST_REPO_PATH = `${ERN_PATH}/ern-master-manifest`
+// Remote git path to ern manifest repo
+const ERN_MANIFEST_DEFAULT_GIT_REPO = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-master-manifest.git`
 
 function isYarnInstalled () {
   try {
@@ -36,9 +42,11 @@ exports.install = () => {
     throw new Error('yarn needs to be installed first !')
   }
 
-  // Platform version (retrieved from the platform manifest)
-  const PLATFORM_VERSION =
-    JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8')).platformVersion
+  // Clone ern manifest repository if not done already
+  if (!fs.existsSync(ERN_MANIFEST_REPO_PATH)) {
+    console.log('Cloning ern platform manifest')
+    execSync(`git clone ${ERN_MANIFEST_DEFAULT_GIT_REPO} ${ERN_MANIFEST_REPO_PATH}`)
+  }
 
   // Path to cached platform at this version
   const PLATFORM_VERSION_PATH = `${ERN_VERSIONS_CACHE_PATH}/v${PLATFORM_VERSION}`
