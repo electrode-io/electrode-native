@@ -23,7 +23,7 @@ const paths = {}
 paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
 
 // Where the container generation configuration of all plugins is stored
-paths.pluginsConfigPath = `${platformPath}/ern-container-gen/plugins`
+paths.pluginsConfigPath = Platform.pluginsConfigurationDirectory
 
 // Where we download plugins
 paths.pluginsDownloadFolder = PLUGIN_FOLDER
