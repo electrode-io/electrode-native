@@ -1,12 +1,17 @@
 import MavenGenerator from '../../../../ern-container-gen/src/generators/android/MavenGenerator'
 import shell from 'shelljs'
 import {
-  Dependency, Utils
+  Dependency, Utils, coloredLog
 } from '@walmart/ern-util'
+
+import {
+  getPluginConfig
+} from '../../../../ern-container-gen/src/utils.js'
 
 import ApiImplGeneratable from '../../ApiImplGeneratable'
 
 export const ROOT_DIR = shell.pwd()
+const log = coloredLog
 
 export default class ApiImplMavenGenerator extends MavenGenerator implements ApiImplGeneratable {
   get name (): string {
@@ -21,9 +26,9 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
     this.fillHull(api, paths, plugins)
   }
 
-  fillHull (api: string,
-            paths: Object,
-            plugins: Array<Dependency>) {
+  async fillHull (api: string,
+                  paths: Object,
+                  plugins: Array<Dependency>) {
     try {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
 
@@ -37,6 +42,12 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
 
       shell.cp(`-R`, `${paths.apiImplHull}/android/*`, outputFolder)
       Utils.throwIfShellCommandFailed()
+
+      for (let plugin: Dependency of plugins) {
+        log.debug(plugin)
+        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigPath)
+        log.debug(pluginConfig)
+      }
     } catch (e) {
       Utils.logErrorAndExitProcess(`Error while generating api impl hull for android: ${e}`)
     }
