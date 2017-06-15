@@ -85,7 +85,7 @@ export async function yarnInfo (dependency: string | Object, {
           reject(err)
         } else {
           if (json) {
-            resolve(JSON.parse(stdout))
+            resolve(JSON.parse(stdout || stderr))
           } else {
             resolve(stdout)
           }
