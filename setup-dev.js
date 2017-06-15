@@ -15,15 +15,15 @@ const WORKING_DIR = process.cwd()
 
 // Create the cache folder for this version as a symlink to current working folder
 shell.cd(ERN_VERSIONS_CACHE_PATH)
-shell.ln('-sf', WORKING_DIR, 'v1000')
+shell.ln('-sf', WORKING_DIR, 'v1000.0.0')
 
 console.log(
     chalk.green(`
 =================================================================
 Development environment is now setup !
-Version v1000 has been created and points to your working folder.
+Version v1000.0.0 has been created and points to your working folder.
 You can switch to this version by running :
-${chalk.yellow(`ern platform use 1000`)}
+${chalk.yellow(`ern platform use 1000.0.0`)}
 Enjoï.
 =================================================================
 `))
