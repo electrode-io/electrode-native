@@ -1,7 +1,7 @@
 import MavenGenerator from '../../../../ern-container-gen/src/generators/android/MavenGenerator'
 import shell from 'shelljs'
 import {
-  Dependency, Utils, coloredLog
+  Dependency, Utils
 } from '@walmart/ern-util'
 
 import {
@@ -11,7 +11,6 @@ import {
 import ApiImplGeneratable from '../../ApiImplGeneratable'
 
 export const ROOT_DIR = shell.pwd()
-const log = coloredLog
 
 export default class ApiImplMavenGenerator extends MavenGenerator implements ApiImplGeneratable {
   get name (): string {
