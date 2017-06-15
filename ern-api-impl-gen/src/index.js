@@ -54,7 +54,7 @@ export async function generateApiImpl ({
     // Creates a working folder to collect all the necessary files/folders for the api-impl generation.
     await createWorkingFolder()
 
-    new ApiImplGen().generateApiImplementation(api, paths, platforms)
+    await new ApiImplGen().generateApiImplementation(api, paths, platforms)
   } catch (e) {
     Utils.logErrorAndExitProcess(`Unable to start project generation: ${e}`)
   }
@@ -69,7 +69,7 @@ function createOutputFolder (forceGenerate, outputFolder) {
       log.info(`Deleting the existing folder and recreating a new output folder" ${outputFolder}`)
       shell.rm('-R', outputFolder)
     }
-    shell.mkdir(outputFolder)
+    shell.mkdir('-p', outputFolder)
     Utils.throwIfShellCommandFailed()
   }
 }
