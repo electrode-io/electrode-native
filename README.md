@@ -158,6 +158,21 @@ If you don't need to work on (or use) Android container generation or only inten
 
 If you intend to run you react-native miniapp standalone in iOS or need to run the container generator for iOS (this should rather be taken care of by a CI server), you'll need to have XCode >= 8.3.1 installed on the workstation.
 
-#### 3. Setup
+#### 3. Setup  
 
-Please follow instructions [HERE](docs/development/setup.md) to complete the dev set-up 
+As a client/user of the `ern` platform, all it takes is running these two steps in your favorite terminal :  
+
+```shell
+> npm install -g @walmart/electrode-react-native
+```
+
+Which will install the global platform client.  
+And then, once installed just run `ern` client this way :
+
+```shell
+> ern
+```  
+
+Which will take care of initial installation of the local client. It'll take some time (1-2 min), so just be patient while it's working its magic ;)  
+
+Once done, you're good to go !  
