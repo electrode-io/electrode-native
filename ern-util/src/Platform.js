@@ -66,8 +66,8 @@ export default class Platform {
   }
 
   static switchPlatformRepositoryToVersion (version: string) {
-    execSync(`git -C ${this.repositoryDirectory} fetch origin`)
-    execSync(`git -C ${this.repositoryDirectory} checkout origin/v${version}`)
+    execSync(`git -C ${this.repositoryDirectory} fetch origin --tags`)
+    execSync(`git -C ${this.repositoryDirectory} checkout tags/v${version}`)
   }
 
   static isPlatformVersionAvailable (version: string) {
@@ -87,8 +87,8 @@ export default class Platform {
   // Doing this by looking at all remote branches of the platform
   // matching `vX` where x is a number.
   static get versions () : Array<string> {
-    const branchVersionRe = /heads\/v(\d+.\d+.*\d*)/
-    const versions = execSync(`git --git-dir ${this.repositoryDirectory}/.git ls-remote --heads`)
+    const branchVersionRe = /tags\/v(\d+.\d+.*\d*)/
+    const versions = execSync(`git --git-dir ${this.repositoryDirectory}/.git ls-remote --tags`)
       .toString()
       .split('\n')
       .filter(v => branchVersionRe.test(v))
