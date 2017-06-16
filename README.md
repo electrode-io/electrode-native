@@ -156,7 +156,7 @@ If you don't need to work on (or use) Android container generation or only inten
 
 **iOS**
 
-If you intend to run you react-native miniapp standalone in iOS or need to run the container generator for iOS (this should rather be taken care of by a CI server), you'll need to have XCode >= 8.2.1 installed on the workstation.
+If you intend to run you react-native miniapp standalone in iOS or need to run the container generator for iOS (this should rather be taken care of by a CI server), you'll need to have XCode >= 8.3.1 installed on the workstation.
 
 #### 3. Setup
 
