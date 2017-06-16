@@ -3,7 +3,6 @@ import fs from 'fs'
 import shell from 'shelljs'
 
 import {
-  Platform,
   Dependency,
   Utils
 } from '@walmart/ern-util'
@@ -11,48 +10,32 @@ import {
 import ApiImplGen from './generators/ApiImplGen'
 
 const API_NAME_RE = /([^/]*)$/
-const WORKING_FOLDER = `${Platform.rootDirectory}/api-impl-gen`
-const PLUGIN_FOLDER = `${WORKING_FOLDER}/plugins`
-
-const platformPath = `${Platform.currentPlatformVersionPath}`
-
-// Contains all interesting folders paths
-const paths = {}
-
-// Where the container project hull is stored
-paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
-
-// Where the container generation configuration of all plugins is stored
-paths.pluginsConfigPath = Platform.pluginsConfigurationDirectory
-
-// Where we download plugins
-paths.pluginsDownloadFolder = PLUGIN_FOLDER
-
-paths.platformPath = platformPath
 
 export async function generateApiImpl ({
                                          api,
                                          outputFolder,
                                          nativeOnly,
-                                         forceGenerate
+                                         forceGenerate,
+                                         paths
                                        }: {
   api: string, // Can be an npm package, git repo link or a file location.
   outputFolder: string,
   nativeOnly: boolean,
-  forceGenerate: boolean
+  forceGenerate: boolean,
+  paths: Object
 } = {}) {
   console.log('Entering generate API IMPL')
 
-  // get the folder to output the generated project.
-  paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
-
   try {
+    // get the folder to output the generated project.
+    paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
+
     createOutputFolder(forceGenerate, outputFolder)
 
     let platforms = getPlatforms(nativeOnly)
 
     // Creates a working folder to collect all the necessary files/folders for the api-impl generation.
-    await createWorkingFolder()
+    await createWorkingFolder(paths)
 
     await new ApiImplGen().generateApiImplementation(api, paths, platforms)
   } catch (e) {
@@ -74,9 +57,10 @@ function createOutputFolder (forceGenerate, outputFolder) {
   }
 }
 
-async function createWorkingFolder () {
-  shell.rm('-rf', WORKING_FOLDER)
-  shell.mkdir('-p', PLUGIN_FOLDER)
+async function createWorkingFolder (paths: Object) {
+  shell.rm('-rf', paths.workingFolder)
+  shell.mkdir('-p', paths.workingFolder)
+  shell.mkdir('-p', paths.pluginsDownloadFolder)
 }
 
 function formOutputFolderName (api, outputFolder) {
