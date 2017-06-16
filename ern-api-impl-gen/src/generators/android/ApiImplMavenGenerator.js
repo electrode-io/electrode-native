@@ -55,7 +55,7 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
 
   copyPluginToOutput (paths: Object, outputFolder: string, plugin: Dependency, pluginConfig: PluginConfig) {
     log.debug(`injecting ${plugin.name} code.`)
-    const pluginSrcFolder = `${paths.pluginsDownloadFolder}/node_modules/${plugin.scopedName}/android/${pluginConfig.android.moduleName}/src/*`
-    shell.cp(`-R`, pluginSrcFolder, `${outputFolder}/lib/src/`)
+    const pluginSrcFolder = `${paths.pluginsDownloadFolder}/node_modules/${plugin.scopedName}/android/${pluginConfig.android.moduleName}/src/main/java/*`
+    shell.cp(`-R`, pluginSrcFolder, `${outputFolder}/lib/src/main/java`)
   }
 }
