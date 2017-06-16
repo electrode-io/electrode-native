@@ -49,7 +49,7 @@ export default class Platform {
 
   static switchPlatformRepositoryToVersion (version: string) {
     execSync(`git -C ${this.repositoryDirectory} fetch origin --tags`)
-    execSync(`git -C ${this.repositoryDirectory} checkout origin/v${version}`)
+    execSync(`git -C ${this.repositoryDirectory} checkout tags/v${version}`)
   }
 
   static isPlatformVersionAvailable (version: string) {
