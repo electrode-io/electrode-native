@@ -56,16 +56,16 @@ if (!fs.existsSync(ERN_PATH)) {
     process.chdir(ERN_PLATFORM_REPO_PATH)
 
     // List all available versions from remote
-    const branchVersionRe = /heads\/v(.+)/
-    const latestVersion = execSync(`git ls-remote --heads`)
+    const tagVersionRe = /tags\/v(.+)/
+    const latestVersion = execSync(`git ls-remote --tags`)
       .toString()
       .split('\n')
-      .filter(v => branchVersionRe.test(v))
+      .filter(v => tagVersionRe.test(v))
       .slice(-1)[0]
 
     // Checkout latest branch version
-    const latestVersionNumber = branchVersionRe.exec(latestVersion)[1]
-    execSync(`git checkout origin/v${latestVersionNumber}`)
+    const latestVersionNumber = tagVersionRe.exec(latestVersion)[1]
+    execSync(`git checkout tags/v${latestVersionNumber}`)
 
     // Call install function
     const install = require(`${ERN_PLATFORM_REPO_PATH}/install.js`).install

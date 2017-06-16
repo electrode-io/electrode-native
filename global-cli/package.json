@@ -1,6 +1,6 @@
 {
   "name": "@walmart/electrode-react-native",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
