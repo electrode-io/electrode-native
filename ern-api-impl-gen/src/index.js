@@ -26,10 +26,10 @@ export async function generateApiImpl ({
 } = {}) {
   console.log('Entering generate API IMPL')
 
-  // get the folder to output the generated project.
-  paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
-
   try {
+    // get the folder to output the generated project.
+    paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
+
     createOutputFolder(forceGenerate, outputFolder)
 
     let platforms = getPlatforms(nativeOnly)
