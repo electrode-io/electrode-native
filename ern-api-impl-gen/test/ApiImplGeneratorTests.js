@@ -28,6 +28,8 @@ paths.platformPath = platformPath
 // Where the container project hull is stored
 paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
 
+paths.reactNativeAarsPath = `${Platform.manifestDirectory}/react-native_aars`
+
 // Where the container generation configuration of all plugins is stored
 paths.pluginsConfigPath = Platform.pluginsConfigurationDirectory
 
@@ -36,6 +38,8 @@ paths.pluginsDownloadFolder = PLUGIN_FOLDER
 
 // Placeholder for all the downloads needed for generating an impl project.
 paths.workingFolder = WORKING_FOLDER
+
+paths.reactNativeVersion = '0.42.0'
 
 describe('run ApiImpl generator command', () => {
   it('should create android impl project directories', (done) => {

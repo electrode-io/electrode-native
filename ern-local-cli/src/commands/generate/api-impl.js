@@ -8,6 +8,8 @@ import {
   Platform
 } from '@walmart/ern-util'
 
+import Manifest from '../../lib/Manifest'
+
 exports.command = 'api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
 
@@ -41,6 +43,8 @@ paths.platformPath = platformPath
 // Where the container project hull is stored
 paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
 
+paths.reactNativeAarsPath = `${Platform.manifestDirectory}/react-native_aars`
+
 // Where the container generation configuration of all plugins is stored
 paths.pluginsConfigPath = Platform.pluginsConfigurationDirectory
 
@@ -50,20 +54,19 @@ paths.pluginsDownloadFolder = PLUGIN_FOLDER
 // Placeholder for all the downloads needed for generating an impl project.
 paths.workingFolder = WORKING_FOLDER
 
-exports.handler = function ({
+exports.handler = async function ({
   api,
   nativeOnly,
   force,
-  outputFolder,
-  paths
+  outputFolder
 } : {
   api: string,
   nativeOnly: boolean,
   force: boolean,
   outputFolder: string,
-  paths: Object
 }) {
   console.log(`command identified for generating API implementation for  ${api}`)
+  paths.reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
 
   generateApiImpl({
     api,
