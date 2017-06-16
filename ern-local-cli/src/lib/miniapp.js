@@ -228,12 +228,27 @@ export default class MiniApp {
     }
 
     const iosDevices = await simctl.getDevices()
-    const bootedIosDevices = _.filter(
+    let iosDevicesChoices = _.filter(
                                     _.flattenDeep(
-                                        _.map(iosDevices, (val, key) => val)
-                                        ), (device) => device.state === 'Booted')
-    if (bootedIosDevices.length === 0) {
-      throw new Error('No iOS running devices found')
+                                       _.map(iosDevices, (val, key) => val)
+                                        ), (device) => device.name.match(/^iPhone/))
+    const inquirerChoices = _.map(iosDevicesChoices, (val, key) => ({
+      name: `${val.name} (UDID ${val.udid})`,
+      value: val
+    }))
+
+    const answer = await inquirer.prompt([{
+      type: 'list',
+      name: 'device',
+      message: 'Choose iOS simulator',
+      choices: inquirerChoices
+    }])
+    execSync(`xcrun simctl shutdown all`)
+    try {
+      execSync(`xcrun instruments -w ${answer.device.udid}`)
+    } catch (e) {
+      // Apple will always throw some exception because we don't provide a -t.
+      // but we just care about launching simulator with chosen UDID
     }
 
     if (!fs.existsSync('ios')) {
@@ -244,23 +259,11 @@ export default class MiniApp {
       await generateContainerForRunner(runnerConfig)
     }
 
-    const inquirerChoices = _.map(bootedIosDevices, (val, key) => ({
-      name: `${val.name} (SDK ${val.sdk})`,
-      value: val
-    }))
-
-    const answer = await inquirer.prompt([{
-      type: 'list',
-      name: 'device',
-      message: 'Choose iOS simulator',
-      choices: inquirerChoices
-    }])
-
     const device = answer.device
     shell.cd(`${this.path}/ios`)
     execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${this.path}/ios/build" build`)
     await simctl.installApp(device.udid, `${this.path}/ios/build/Debug-iphonesimulator/ErnRunner.app`)
-    await simctl.launch(device.udid, 'MyCompany.ErnRunner')
+    await simctl.launch(device.udid, 'com.yourcompany.ernrunner')
   }
 
   async runInAndroidRunner () : Promise<*> {
