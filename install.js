@@ -13,6 +13,7 @@ const fs = require('fs')
 // ....
 // |_ .ernrc
 
+const PLATFORM_VERSION = '0.1.0'
 // Path to ern platform root folder
 const ERN_PATH = process.env['ERN_HOME'] || `${process.env['HOME']}/.ern`
 // Path to ern platform cloned git repo
@@ -35,10 +36,6 @@ exports.install = () => {
   if (!isYarnInstalled()) {
     throw new Error('yarn needs to be installed first !')
   }
-
-  // Platform version (retrieved from the platform manifest)
-  const PLATFORM_VERSION =
-    JSON.parse(fs.readFileSync(`${ERN_PLATFORM_REPO_PATH}/manifest.json`, 'utf-8')).platformVersion
 
   // Path to cached platform at this version
   const PLATFORM_VERSION_PATH = `${ERN_VERSIONS_CACHE_PATH}/v${PLATFORM_VERSION}`
