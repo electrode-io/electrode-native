@@ -12,6 +12,8 @@ import {
 
 import ApiImplGeneratable from '../../ApiImplGeneratable'
 
+const path = require('path')
+
 export const ROOT_DIR = shell.pwd()
 
 export default class ApiImplMavenGenerator extends MavenGenerator implements ApiImplGeneratable {
@@ -36,12 +38,12 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
       shell.cd(`${ROOT_DIR}`)
       Utils.throwIfShellCommandFailed()
 
-      const outputFolder = `${paths.outFolder}/android/`
+      const outputFolder = path.join(paths.outFolder, `android`)
       log.debug(`Creating out folder(${outputFolder}) for android and copying container hull to it.`)
       shell.mkdir(outputFolder)
       Utils.throwIfShellCommandFailed()
 
-      shell.cp(`-R`, `${paths.apiImplHull}/android/*`, outputFolder)
+      shell.cp(`-R`, path.join(paths.apiImplHull, `/android/*`), outputFolder)
       Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
@@ -58,18 +60,18 @@ export default class ApiImplMavenGenerator extends MavenGenerator implements Api
 
   copyPluginToOutput (paths: Object, outputFolder: string, plugin: Dependency, pluginConfig: PluginConfig) {
     log.debug(`injecting ${plugin.name} code.`)
-    const pluginSrcFolder = `${paths.pluginsDownloadFolder}/node_modules/${plugin.scopedName}/android/${pluginConfig.android.moduleName}/src/main/java/*`
-    shell.cp(`-R`, pluginSrcFolder, `${outputFolder}/lib/src/main/java`)
+    const pluginSrcFolder = path.join(paths.pluginsDownloadFolder, `node_modules`, plugin.scopedName, `android`, pluginConfig.android.moduleName, `src/main/java/*`)
+    shell.cp(`-R`, pluginSrcFolder, path.join(outputFolder, `/lib/src/main/java`))
   }
 
   copyReactNativeAarAndUpdateGradle (paths: Object, outputFolder: string): Promise {
     log.debug(`injecting react-native@${paths.reactNativeVersion} dependency`)
     let mustacheView = {}
     mustacheView.reactNativeVersion = paths.reactNativeVersion
-    shell.cp(`${paths.reactNativeAarsPath}/react-native-${paths.reactNativeVersion}.aar`, `${outputFolder}/lib/libs/`)
+    shell.cp(path.join(paths.reactNativeAarsPath, `/react-native-${paths.reactNativeVersion}.aar`), path.join(outputFolder, `/lib/libs/`))
     return mustacheRenderToOutputFileUsingTemplateFile(
-      `${paths.apiImplHull}/android/lib/build.gradle`,
+      path.join(paths.apiImplHull, `/android/lib/build.gradle`),
       mustacheView,
-      `${outputFolder}/lib/build.gradle`)
+      path.join(outputFolder, `/lib/build.gradle`))
   }
 }
