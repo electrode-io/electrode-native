@@ -34,6 +34,7 @@ export default class ApiImplGen {
       }
     }
 
+    log.info(chalk.green(`Successfully generated, location:  ${paths.outFolder}`))
     log.info(chalk.green(`Done!.`))
   }
 
