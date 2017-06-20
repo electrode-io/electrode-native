@@ -20,27 +20,6 @@ const WORKING_FOLDER = `${Platform.rootDirectory}/api-impl-gen`
 const PLUGIN_FOLDER = `${WORKING_FOLDER}/plugins`
 const platformPath = `${Platform.currentPlatformVersionPath}`
 
-// Contains all interesting folders paths
-const paths = {}
-
-paths.platformPath = platformPath
-
-// Where the container project hull is stored
-paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
-
-paths.reactNativeAarsPath = `${Platform.manifestDirectory}/react-native_aars`
-
-// Where the container generation configuration of all plugins is stored
-paths.pluginsConfigPath = Platform.pluginsConfigurationDirectory
-
-// Where we download plugins
-paths.pluginsDownloadFolder = PLUGIN_FOLDER
-
-// Placeholder for all the downloads needed for generating an impl project.
-paths.workingFolder = WORKING_FOLDER
-
-paths.reactNativeVersion = '0.42.0'
-
 describe('run ApiImpl generator command', () => {
   it('should create android impl project directories', (done) => {
     generateApiImpl({
@@ -48,7 +27,15 @@ describe('run ApiImpl generator command', () => {
       outputFolder: TMP_OUT_FOLDER,
       nativeOnly: true,
       forceGenerate: true,
-      paths: paths
+      reactNativeVersion: '0.42.0',
+      paths: {
+        apiImplHull: `${platformPath}/ern-api-impl-gen/hull`,
+        reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+        pluginsConfigPath: Platform.pluginsConfigurationDirectory,
+        pluginsDownloadFolder: PLUGIN_FOLDER,
+        workingFolder: WORKING_FOLDER,
+        outFolder: ''
+      }
     }).then(() => {
       assert.isTrue(fs.existsSync(TMP_OUT_FOLDER))
       assert.isTrue(fs.existsSync(TMP_ANDROID_FOLDER))

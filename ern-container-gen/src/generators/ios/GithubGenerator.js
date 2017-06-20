@@ -50,7 +50,6 @@ export default class GithubGenerator {
   async generateContainer (
     containerVersion: string,
     nativeAppName: string,
-    platformPath: string,
     plugins: Array<Dependency>,
     miniapps: any,
     paths: any,

@@ -21,15 +21,16 @@ import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
 const HOME_DIRECTORY = process.env['HOME']
+const ROOT_DIR = shell.pwd()
+const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
+const FILE_REGEX = /^file:\/\//
+
 const getDefaultMavenLocalDirectory = () => {
   if (!HOME_DIRECTORY) {
     throw new Error(`process.env['HOME'] is undefined !!!`)
   }
   return `file://${HOME_DIRECTORY}/.m2/repository`
 }
-const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
-const fileRe = /^file:\/\//
-const ROOT_DIR = shell.pwd()
 
 export default class MavenGenerator {
   _mavenRepositoryUrl : string
@@ -84,7 +85,6 @@ export default class MavenGenerator {
   async generateContainer (
     containerVersion: string,
     nativeAppName: string,
-    platformPath: string,
     plugins: Array<Dependency>,
     miniapps: any,
     paths: any,
@@ -95,7 +95,7 @@ export default class MavenGenerator {
     const defaultMavenLocalDirectory = getDefaultMavenLocalDirectory()
     if ((this.mavenRepositoryUrl === defaultMavenLocalDirectory) &&
       (!fs.existsSync(defaultMavenLocalDirectory))) {
-      shell.mkdir('-p', defaultMavenLocalDirectory.replace(fileRe, ''))
+      shell.mkdir('-p', defaultMavenLocalDirectory.replace(FILE_REGEX, ''))
       throwIfShellCommandFailed()
     }
 
