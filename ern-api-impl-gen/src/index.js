@@ -11,6 +11,7 @@ import ApiImplGen from './generators/ApiImplGen'
 
 const API_NAME_RE = /([^/]*)$/
 
+const path = require('path')
 export async function generateApiImpl ({
                                          api,
                                          outputFolder,
@@ -68,9 +69,9 @@ function formOutputFolderName (api, outputFolder) {
   let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
 
   if (!outputFolder) {
-    outputFolder = `${shell.pwd()}/${apiName}-impl`
+    outputFolder = path.join(`${shell.pwd()}`, `${apiName}-impl`)
   } else {
-    outputFolder = `${outputFolder}/${apiName}-impl`
+    outputFolder = path.join(`${outputFolder}`, `${apiName}-impl`)
   }
 
   return outputFolder

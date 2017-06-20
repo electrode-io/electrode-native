@@ -10,6 +10,8 @@ import {
 
 import Manifest from '../../lib/Manifest'
 
+const path = require('path')
+
 exports.command = 'api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
 
@@ -31,8 +33,8 @@ exports.builder = function (yargs: any) {
   })
 }
 
-const WORKING_FOLDER = `${Platform.rootDirectory}/api-impl-gen`
-const PLUGIN_FOLDER = `${WORKING_FOLDER}/plugins`
+const WORKING_FOLDER = path.join(Platform.rootDirectory, `api-impl-gen`)
+const PLUGIN_FOLDER = path.join(WORKING_FOLDER, `plugins`)
 const platformPath = `${Platform.currentPlatformVersionPath}`
 
 // Contains all interesting folders paths
@@ -41,12 +43,12 @@ const paths = {}
 paths.platformPath = platformPath
 
 // Where the container project hull is stored
-paths.apiImplHull = `${platformPath}/ern-api-impl-gen/hull`
+paths.apiImplHull = path.join(platformPath, `ern-api-impl-gen/hull`)
 
-paths.reactNativeAarsPath = `${Platform.manifestDirectory}/react-native_aars`
+paths.reactNativeAarsPath = path.join(Platform.manifestDirectory, `react-native_aars`)
 
 // Where the container generation configuration of all plugins is stored
-paths.pluginsConfigPath = Platform.pluginsConfigurationDirectory
+paths.pluginsConfigPath = `${Platform.pluginsConfigurationDirectory}`
 
 // Where we download plugins
 paths.pluginsDownloadFolder = PLUGIN_FOLDER
@@ -55,11 +57,11 @@ paths.pluginsDownloadFolder = PLUGIN_FOLDER
 paths.workingFolder = WORKING_FOLDER
 
 exports.handler = async function ({
-  api,
-  nativeOnly,
-  force,
-  outputFolder
-} : {
+                                    api,
+                                    nativeOnly,
+                                    force,
+                                    outputFolder
+                                  }: {
   api: string,
   nativeOnly: boolean,
   force: boolean,
