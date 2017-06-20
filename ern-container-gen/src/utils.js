@@ -35,20 +35,26 @@ export type PluginConfig = {
 // Get the generation config of a given plugin
 // plugin: A plugin object
 // pluginsConfigPath : Path to plugins config
+// projectName : The name of the project where this plugin will be injected into.
+//               Used for iOS plugin config only for now.
 // Sample plugin object :
 // {
 //   name: "react-native-code-push",
 //   version: "1.2.3"
 // }
-export async function getPluginConfig (plugin: Dependency, pluginsConfigPath: string) : Promise<PluginConfig> {
+export async function getPluginConfig (
+  plugin: Dependency,
+  pluginsConfigPath: string,
+  projectName: string = 'ElectrodeContainer') : Promise<PluginConfig> {
   let result = {}
   const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
 
   // If there is a base file (common to all versions) use it and optionally
   // patch it with specific version config (if present)
   if (pluginConfigPath && fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
-    result = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
-        .then(JSON.parse)
+    let configFile = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
+    configFile = Mustache.render(configFile, { projectName })
+    result = JSON.parse(configFile)
 
     // Add default value (convention) for Android subsection for missing fields
     if (result.android) {
