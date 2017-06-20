@@ -11,6 +11,7 @@ import shell from 'shelljs'
 import _ from 'lodash'
 import chalk from 'chalk'
 import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
+import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
 const log = coloredLog
@@ -98,6 +99,8 @@ export default class ApiImplGen {
       switch (platform) {
         case 'android' :
           return new ApiImplMavenGenerator()
+        case 'ios' :
+          return new ApiImplGithubGenerator()
         default:
           return new NullApiImplGenerator()
       }
