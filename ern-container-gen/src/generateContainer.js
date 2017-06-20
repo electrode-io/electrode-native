@@ -125,7 +125,6 @@ export default async function generateContainer ({
   await generator.generateContainer(
     containerVersion,
     nativeAppName,
-    platformPath,
     plugins,
     miniApps,
     paths,
