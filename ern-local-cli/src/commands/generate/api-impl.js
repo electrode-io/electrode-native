@@ -37,44 +37,37 @@ const WORKING_FOLDER = path.join(Platform.rootDirectory, `api-impl-gen`)
 const PLUGIN_FOLDER = path.join(WORKING_FOLDER, `plugins`)
 const platformPath = `${Platform.currentPlatformVersionPath}`
 
-// Contains all interesting folders paths
-const paths = {}
-
-paths.platformPath = platformPath
-
-// Where the container project hull is stored
-paths.apiImplHull = path.join(platformPath, `ern-api-impl-gen/hull`)
-
-paths.reactNativeAarsPath = path.join(Platform.manifestDirectory, `react-native_aars`)
-
-// Where the container generation configuration of all plugins is stored
-paths.pluginsConfigPath = `${Platform.pluginsConfigurationDirectory}`
-
-// Where we download plugins
-paths.pluginsDownloadFolder = PLUGIN_FOLDER
-
-// Placeholder for all the downloads needed for generating an impl project.
-paths.workingFolder = WORKING_FOLDER
-
 exports.handler = async function ({
-                                    api,
-                                    nativeOnly,
-                                    force,
-                                    outputFolder
-                                  }: {
+  api,
+  nativeOnly,
+  force,
+  outputFolder
+} : {
   api: string,
   nativeOnly: boolean,
   force: boolean,
   outputFolder: string,
 }) {
   console.log(`command identified for generating API implementation for  ${api}`)
-  paths.reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
 
-  generateApiImpl({
+  let reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
+  if (!reactNativeVersion) {
+    return log.error('Could not retrieve react native version from manifest')
+  }
+
+  await generateApiImpl({
     api,
     outputFolder,
     nativeOnly,
     forceGenerate: force,
-    paths: paths
+    reactNativeVersion,
+    paths: {
+      apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
+      reactNativeAarsPath: path.join(Platform.manifestDirectory, `react-native_aars`),
+      pluginsConfigPath: `${Platform.pluginsConfigurationDirectory}`,
+      pluginsDownloadFolder: PLUGIN_FOLDER,
+      workingFolder: WORKING_FOLDER,
+      outFolder: ''
+    }
   })
 }

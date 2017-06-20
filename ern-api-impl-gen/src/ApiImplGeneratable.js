@@ -7,7 +7,8 @@ import {
 export interface ApiImplGeneratable {
   generate (api: string,
             paths: Object,
+            reactNativeVersion: string,
             plugins: Array<Dependency>): any;
 
-  name(): string
+  +name : string
 }

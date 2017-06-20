@@ -1,3 +1,5 @@
+// @flow
+
 import {
   yarn,
   spin,
@@ -16,10 +18,19 @@ const {yarnAdd, yarnInfo} = yarn
 let plugins: Array<Dependency>
 
 export default class ApiImplGen {
-  async generateApiImplementation (api: string, // npm package || git location || file path file:/Users/x/y/z
-                                   paths: Object,
-                                   platforms: Array<string>) {
-    log.info(`inside generateApiImplementation for api:${api},  platforms:${platforms}`)
+  async generateApiImplementation (
+    api: string, // npm package || git location || file path file:/Users/x/y/z
+    paths: {
+      workingFolder: string,
+      pluginsDownloadFolder: string,
+      pluginsConfigPath: string,
+      apiImplHull: string,
+      reactNativeAarsPath: string,
+      outFolder: string
+    },
+    reactNativeVersion: string,
+    platforms: Array<string>) {
+    log.debug(`inside generateApiImplementation for api:${api},  platforms:${platforms.toString()}`)
 
     await this.downloadApiAndDependencies(api, paths.pluginsDownloadFolder)
 
@@ -27,18 +38,18 @@ export default class ApiImplGen {
     for (let generator of generators) {
       try {
         if (generator) {
-          await generator.generate(api, paths, plugins)
+          await generator.generate(api, paths, reactNativeVersion, plugins)
         }
       } catch (e) {
-        Utils.logErrorAndExitProcess(`Error executing generators, error: ${e}, generator: ${generator}`)
+        Utils.logErrorAndExitProcess(`Error executing generators, error: ${e}, generator: ${generator.name.toString()}`)
       }
     }
 
-    log.info(chalk.green(`Successfully generated, location:  ${paths.outFolder}`))
+    log.info(chalk.green(`Successfully generated, location: ${paths.outFolder}`))
     log.info(chalk.green(`Done!.`))
   }
 
-  async downloadApiAndDependencies (api: string, path) {
+  async downloadApiAndDependencies (api: string, path: string) {
     try {
       shell.cd(path)
       Utils.throwIfShellCommandFailed()
@@ -46,7 +57,7 @@ export default class ApiImplGen {
       plugins = await this.getDependencies(api)
       plugins.push(Dependency.fromString(api))// Also add the api as a plugin so it's src files will get copied.
       if (plugins) {
-        console.log('Downloading dependencies')
+        log.info('Downloading dependencies')
         for (let dependency of plugins) {
           await this.spinAndDownload(dependency)
         }
@@ -57,25 +68,28 @@ export default class ApiImplGen {
   }
 
   async spinAndDownload (dependency: string | Dependency) {
-    await spin(`Downloading ${dependency}`, yarnAdd(dependency))
+    await spin(`Downloading ${dependency.toString()}`, yarnAdd(dependency))
   }
 
-  async getDependencies (api: string): Array<Dependency> {
+  async getDependencies (api: string) : Promise<Array<Dependency>> {
     try {
-      console.log(`Looking for peerDependencies`)
-      return await yarnInfo(api, {json: true}).then((result: Object) => {
-        if (result.data.peerDependencies) {
-          let pluginsNames = []
-          for (let dependency in result.data.peerDependencies) {
-            pluginsNames.push(`${dependency}@${result.data.peerDependencies[dependency]}`)
-          }
-          return _.map(pluginsNames, Dependency.fromString)
-        } else {
-          console.info('no peer dependencies found.')
+      log.info(`Looking for peerDependencies`)
+      const apiPackageInfo = await yarnInfo(api, {json: true})
+
+      let dependencies = []
+      if (apiPackageInfo.data.peerDependencies) {
+        let pluginsNames = []
+        for (let dependency in apiPackageInfo.data.peerDependencies) {
+          pluginsNames.push(`${dependency}@${apiPackageInfo.data.peerDependencies[dependency]}`)
         }
-      })
+        dependencies = _.map(pluginsNames, Dependency.fromString)
+      } else {
+        log.warn('no peer dependencies found.')
+      }
+      return dependencies
     } catch (e) {
       Utils.logErrorAndExitProcess(`Error while downloading dependencies: ${e}`)
+      throw e
     }
   }
 
@@ -84,13 +98,23 @@ export default class ApiImplGen {
       switch (platform) {
         case 'android' :
           return new ApiImplMavenGenerator()
-        case 'ios':
-          // FIXME
-          break
-        case 'js':
-          // FIXME
-          break
+        default:
+          return new NullApiImplGenerator()
       }
     })
+  }
+}
+
+class NullApiImplGenerator implements ApiImplGeneratable {
+  get name () : string {
+    return 'NullApiImplGenerator'
+  }
+
+  async generate (
+    api: string,
+    paths: Object,
+    reactNativeVersion: string,
+    plugins: Array<Dependency>) {
+    log.debug('NullApiImplGenerator generate - noop')
   }
 }
