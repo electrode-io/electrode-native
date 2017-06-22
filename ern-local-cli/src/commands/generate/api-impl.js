@@ -9,6 +9,7 @@ import {
 } from '@walmart/ern-util'
 
 import Manifest from '../../lib/Manifest'
+import inquirer from 'inquirer'
 
 const path = require('path')
 
@@ -23,6 +24,10 @@ exports.builder = function (yargs: any) {
     alias: 'n',
     type: 'bool',
     describe: 'Generate native projects with proper dependencies (Implementation of the API has to be written in native'
+  }).option('jsOnly', {
+    alias: 'j',
+    type: 'bool',
+    describe: 'Generate js project with proper dependencies (Implementation of the API has to be written in js'
   }).option('force', {
     alias: 'f',
     type: 'bool',
@@ -40,11 +45,13 @@ const platformPath = `${Platform.currentPlatformVersionPath}`
 exports.handler = async function ({
   api,
   nativeOnly,
+  jsOnly,
   force,
   outputFolder
 } : {
   api: string,
   nativeOnly: boolean,
+  jsOnly: boolean,
   force: boolean,
   outputFolder: string,
 }) {
@@ -53,6 +60,15 @@ exports.handler = async function ({
   let reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
   if (!reactNativeVersion) {
     return log.error('Could not retrieve react native version from manifest')
+  }
+
+  if (jsOnly && nativeOnly) {
+    log.warn('Looks like both js and native are selected, should be only one')
+    nativeOnly = await promptPlatformSelection()
+  }
+
+  if (!jsOnly && !nativeOnly) {
+    nativeOnly = await promptPlatformSelection()
   }
 
   await generateApiImpl({
@@ -69,5 +85,17 @@ exports.handler = async function ({
       workingFolder: WORKING_FOLDER,
       outFolder: ''
     }
+  })
+}
+
+async function promptPlatformSelection () {
+  return inquirer.prompt([{
+    type: 'list',
+    name: 'targetPlatform',
+    message: `Choose a platform that you are planning to write this api implementation in?`,
+    default: `js`,
+    choices: [`js`, `native`]
+  }]).then((answers) => {
+    return answers.targetPlatform !== `js`
   })
 }
