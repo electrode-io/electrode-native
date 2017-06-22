@@ -80,7 +80,7 @@ export async function getPluginConfig (
     result.path = pluginConfigPath
   } else {
     log.debug(`No config.json file for ${plugin.name}. Will use default config`)
-    result = getApiPluginDefaultConfig()
+    result = getApiPluginDefaultConfig(projectName)
   }
 
   if (!result.origin) {
@@ -105,7 +105,7 @@ export async function getPluginConfig (
   return result
 }
 
-function getApiPluginDefaultConfig () : PluginConfig {
+function getApiPluginDefaultConfig (projectName?: string) : PluginConfig {
   return {
     android: {
       root: 'android',
@@ -118,7 +118,7 @@ function getApiPluginDefaultConfig () : PluginConfig {
       copy: [
         {
           source: 'IOS/IOS/Classes/SwaggersAPIs/*',
-          dest: 'ElectrodeContainer/APIs'
+          dest: `${projectName}/APIs`
         }
       ],
       pbxproj: {
