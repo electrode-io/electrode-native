@@ -37,7 +37,7 @@ run(`curl -u ernplatformtest:${gitHubPesonalToken} -d '{"name": "${gitHubCauldro
 //
 // Cauldron repository
 run(`ern cauldron repository remove ${cauldronName}`)
-run(`ern cauldron repository add ${cauldronName} https://${gitUserName}:${gitPassword}@github.com/${gitUserName}/${gitHubCauldronRepositoryName}.git`)
+run(`ern cauldron repository add ${cauldronName} https://${gitUserName}:${gitPassword}@github.com/${gitUserName}/${gitHubCauldronRepositoryName}.git --current=false`)
 run(`ern cauldron repository use ${cauldronName}`)
 run(`ern cauldron repository current`)
 run(`ern cauldron repository list`)
