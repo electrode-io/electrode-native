@@ -12,7 +12,7 @@ exports.builder = function (yargs: any) {
   return yargs
     .option('current', {
       type: 'boolean',
-      describe: 'use repoAlias as current Cauldron repository'
+      describe: 'set repoAlias as the current Cauldron repository'
     })
 }
 
