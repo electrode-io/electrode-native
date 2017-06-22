@@ -1,13 +1,14 @@
 import GithubGenerator from '../../../../ern-container-gen/src/generators/ios/GithubGenerator'
 import shell from 'shelljs'
 import {
-  Dependency, Utils, Spin
+  Dependency, Utils
 } from '@walmart/ern-util'
 
 import {
   getPluginConfig,
   handleCopyDirective,
-  downloadPluginSource
+  downloadPluginSource,
+  spin
   // PluginConfig,
   // mustacheRenderToOutputFileUsingTemplateFile
 } from '../../../../ern-container-gen/src/utils.js'
@@ -27,42 +28,53 @@ export default class ApiImplGithubGenerator extends GithubGenerator implements A
 
   async generate (api : string,
                   paths : Object,
+                  reactNativeVersion: string,
                   plugins : Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
-
-    await this.fillHull(api, paths, plugins)
+    await this.fillHull(api, paths, reactNativeVersion, plugins)
   }
 
-  async fillHull (api: String,
+  async fillHull (api: string,
                   paths: Object,
+                  reactNativeVersion: string,
                   plugins: Array<Dependency>) {
     try {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
-
       shell.cd(`${ROOT_DIR}`)
       Utils.throwIfShellCommandFailed()
 
-      const outputFolder = `${paths.outFolder}/ios/`
+      const outputFolder = path.join(paths.outFolder, `ios`)
       log.debug(`Creating out folder(${outputFolder}) for ios and copying container hull to it.`)
       shell.mkdir(outputFolder)
+
       Utils.throwIfShellCommandFailed()
 
-      shell.cp(`-R`, `${paths.apiImplHull}/ios/*`, outputFolder)
+      shell.cp(`-R`, path.join(paths.apiImplHull, `/ios/*`), outputFolder)
       Utils.throwIfShellCommandFailed()
 
-      const apiImplProjectPath = `${outputFolder}/ElectrodeApiImplApiImpl.xcodeproj/project.pbxproj`
-      const apiImplLibrariesPath = `${outputFolder}/ElectrodeApiImplApiImpl/Libraries`
+      const apiImplProjectPath = `${outputFolder}/ElectrodeApiImpl.xcodeproj/project.pbxproj`
+      const apiImplLibrariesPath = `${outputFolder}/ElectrodeApiImpl/Libraries`
 
       const apiImplProject = await this.getIosApiImplProject(apiImplProjectPath)
-      const apiImplTarget = apiImplProject.findTargetKey('ElectrodeApiImplApiImpl')
+
+      const apiImplTarget = apiImplProject.findTargetKey('ElectrodeApiImpl')
+
+      log.debug(`Downloading plugins`)
+
+      // For now react-native plugin is added manually for ios. There's another story to make it automatic
+      const reactnativeplugin = new Dependency('react-native', {
+        version: '0.42.0'
+      })
+
+      plugins.push(reactnativeplugin)
 
       for (const plugin of plugins) {
-        const pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
-        shell.cd(`${paths.pluginsDownloadFolder}`)
+        const pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigPath, `ElectrodeApiImpl`)
         Utils.throwIfShellCommandFailed()
         if (pluginConfig.ios) {
-          const pluginSourcePath = await Spin.spin(`Retrieving ${plugin.scopedName}`,
+          const pluginSourcePath = await spin(`Retrieving ${plugin.scopedName}`,
             downloadPluginSource(pluginConfig.origin))
+
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.scopedName}`)
           }
@@ -101,35 +113,36 @@ export default class ApiImplGithubGenerator extends GithubGenerator implements A
             if (pluginConfig.ios.pbxproj.addHeader) {
               for (const header of pluginConfig.ios.pbxproj.addHeader) {
                 let headerPath = header.path
-                apiImplTarget.addHeaderFile(headerPath, {public: header.public}, apiImplTarget.findPBXGroupKey({name: header.group}))
+
+                apiImplProject.addHeaderFile(headerPath, {public: header.public}, apiImplProject.findPBXGroupKey({name: header.group}))
               }
             }
 
             if (pluginConfig.ios.pbxproj.addFile) {
               for (const file of pluginConfig.ios.pbxproj.addFile) {
-                apiImplTarget.addFile(file.path, apiImplTarget.findPBXGroupKey({name: file.group}))
+                apiImplProject.addFile(file.path, apiImplTarget.findPBXGroupKey({name: file.group}))
                 // Add target dep in any case for now, will rework later
-                apiImplTarget.addTargetDependency(apiImplTarget, [`"${path.basename(file.path)}"`])
+                apiImplProject.addTargetDependency(apiImplTarget, [`"${path.basename(file.path)}"`])
               }
             }
 
             if (pluginConfig.ios.pbxproj.addFramework) {
               for (const framework of pluginConfig.ios.pbxproj.addFramework) {
-                apiImplTarget.addFramework(framework, {sourceTree: 'BUILT_PRODUCTS_DIR', customFramework: true})
-                apiImplTarget.addCopyfileFrameworkCustom(framework)
+                apiImplProject.addFramework(framework, {sourceTree: 'BUILT_PRODUCTS_DIR', customFramework: true})
+                apiImplProject.addCopyfileFrameworkCustom(framework)
               }
             }
 
             if (pluginConfig.ios.pbxproj.addProject) {
               for (const project of pluginConfig.ios.pbxproj.addProject) {
                 const projectAbsolutePath = `${apiImplLibrariesPath}/${project.path}/project.pbxproj`
-                apiImplTarget.addProject(projectAbsolutePath, project.path, project.group, apiImplTarget, project.staticLibs)
+                apiImplProject.addProject(projectAbsolutePath, project.path, project.group, apiImplTarget, project.staticLibs)
               }
             }
 
             if (pluginConfig.ios.pbxproj.addStaticLibrary) {
               for (const lib of pluginConfig.ios.pbxproj.addStaticLibrary) {
-                apiImplTarget.addStaticLibrary(lib)
+                apiImplProject.addStaticLibrary(lib)
               }
             }
 
@@ -146,11 +159,13 @@ export default class ApiImplGithubGenerator extends GithubGenerator implements A
 
       log.debug(`[=== Completed api-impl hull filling ===]`)
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while generating api impl hull for android: ${e}`)
+      Utils.logErrorAndExitProcess(`Error while generating api impl hull for ios: ${JSON.stringify(e)}`)
     }
   }
 
   async getIosApiImplProject (apiImplProjectPath: string) : Promise<*> {
+    log.debug(apiImplProjectPath)
+
     const containerProject = xcode.project(apiImplProjectPath)
 
     return new Promise((resolve, reject) => {
