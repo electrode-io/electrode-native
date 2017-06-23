@@ -134,9 +134,9 @@ platform: 'android' | 'ios', {
 export async function runCauldronContainerGen (
 napDescriptor: NativeApplicationDescriptor,
 version: string, {
-  disablePublication
+  publish
 }: {
-  disablePublication ? : boolean
+    publish ? : boolean
 } = {}) {
   try {
     let plugins = await cauldron.getNativeDependencies(napDescriptor)
@@ -146,10 +146,10 @@ version: string, {
     // Retrieve generator configuration (which for now only contains publication URL config)
     // only if caller of this method wants to publish the generated container
     let config
-    if (disablePublication) {
-      log.info('Container publication is disabled. Will generate the container locally.')
-    } else {
+    if (publish) {
       config = await cauldron.getConfig(napDescriptor)
+    } else {
+      log.info('Container publication is disabled. Will generate the container locally.')
     }
 
     await generateContainer({
