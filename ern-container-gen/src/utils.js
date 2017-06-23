@@ -105,7 +105,7 @@ export async function getPluginConfig (
   return result
 }
 
-function getApiPluginDefaultConfig (projectName?: string) : PluginConfig {
+function getApiPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginConfig {
   return {
     android: {
       root: 'android',
