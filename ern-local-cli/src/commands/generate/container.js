@@ -34,10 +34,9 @@ exports.builder = function (yargs: any) {
       alias: 'js',
       describe: 'Generates JS only (composite app)'
     })
-    .option('disablePublication', {
+    .option('publish', {
       type: 'boolean',
-      alias: 'dontPublish',
-      describe: 'Do not publish container to Maven or GitHub (just generate it)'
+      describe: 'Publish the generated container to Maven(.aar file for android) or GitHub (Project framework for ios)'
     })
     .option('publicationUrl', {
       type: 'string',
@@ -72,14 +71,14 @@ exports.handler = async function ({
   jsOnly,
   outputFolder,
   miniapps,
-  disablePublication,
+  publish,
   platform,
   containerName,
   publicationUrl
 } : {
   completeNapDescriptor?: string,
   containerVersion?: string,
-  disablePublication?: boolean,
+  publish?: boolean,
   jsOnly?: boolean,
   outputFolder?: string,
   miniapps?: Array<string>,
@@ -181,7 +180,7 @@ exports.handler = async function ({
       await runCauldronContainerGen(
       napDescriptor,
       containerVersion,
-      { disablePublication })
+      { publish })
     }
   }
 }
