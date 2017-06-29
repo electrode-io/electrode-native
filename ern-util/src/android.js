@@ -70,7 +70,8 @@ async function runAndroidUsingAvdImage (
   projectPath: string,
   packageName: string,
   avdImageName: string) {
-  exec(`emulator -avd ${avdImageName}`)
+  // https://issuetracker.google.com/issues/37137213
+  exec(`${androidEmulatorPath()} -avd ${avdImageName}`)
   await spin('Waiting for device to start', waitForAndroidDevice())
   installAndLaunchApp(projectPath, packageName)
 }
