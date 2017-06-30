@@ -98,6 +98,9 @@ export default async function generateContainer ({
   shell.mkdir('-p', `${OUT_FOLDER}/ios`)
   throwIfShellCommandFailed()
 
+  // Sort the plugin to have consistent ElectrodeContainer.java generated code
+  sortPlugins(plugins)
+
   // Let's make sure that react-native is included (otherwise there is
   // something pretty much wrong)
   const reactNativePlugin = _.find(plugins, p => p.name === 'react-native')
@@ -121,7 +124,6 @@ export default async function generateContainer ({
     miniApps,
     containerVersion
   }
-
   await generator.generateContainer(
     containerVersion,
     nativeAppName,
@@ -135,4 +137,16 @@ function getUnscopedModuleName (moduleName) {
   return npmScopeModuleRe.test(moduleName)
       ? npmScopeModuleRe.exec(`${moduleName}`)[2]
       : moduleName
+}
+
+function sortPlugins (plugins: Array<Dependency>) {
+  return plugins.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1
+    }
+    if (a.name > b.name) {
+      return 1
+    }
+    return 0
+  })
 }
