@@ -11,6 +11,8 @@
 @interface ElectrodeBridgeDelegate ()
 @property (nonatomic, copy) NSURL *sourceURL;
 @property (nonatomic, strong) NSArray *extraModules;
+@property(nonatomic, strong) id<ElectrodePluginConfig> containerConfig;
+@property(nonatomic, strong) id<ElectrodePluginConfig> codePushConfig;
 @end
 
 @implementation ElectrodeBridgeDelegate
@@ -29,7 +31,7 @@
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
-    return _sourceURL;
+    return self.jsBundleURL;
 }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
@@ -37,14 +39,18 @@
     return _extraModules;
 }
 
-- (instancetype)initWithURL: (NSURL *)url
-{
-    if (self = [super init])
-    {
-        _sourceURL = url;
+- (instancetype)initWithContainerConfig: (id<ElectrodePluginConfig>) containerConfig
+                         codePushConfig: (id<ElectrodePluginConfig>) codePushConfig {
+    if (self = [super init]) {
+        _codePushConfig = codePushConfig;
+        _containerConfig = containerConfig;
+        
     }
     
     return self;
 }
 
+- (void) setUp {
+    
+}
 @end

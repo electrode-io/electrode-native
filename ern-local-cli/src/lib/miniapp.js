@@ -243,7 +243,12 @@ export default class MiniApp {
       message: 'Choose iOS simulator',
       choices: inquirerChoices
     }])
-    execSync(`xcrun simctl shutdown all`)
+    try {
+      execSync(`killall "Simulator" `)
+    } catch (e) {
+      // do nothing if there is no simulator launched
+    }
+
     try {
       execSync(`xcrun instruments -w ${answer.device.udid}`)
     } catch (e) {

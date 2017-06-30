@@ -20,3 +20,4 @@ FOUNDATION_EXPORT const unsigned char ElectrodeContainerVersionString[];
 #import <ElectrodeContainer/ElectrodeBridgeProtocols.h>
 #import <ElectrodeContainer/ElectrodeBridgeEvent.h>
 #import <ElectrodeContainer/ElectrodeBridgeRequest.h>
+#import <ElectrodeContainer/ElectrodeCodePushConfig.h>
