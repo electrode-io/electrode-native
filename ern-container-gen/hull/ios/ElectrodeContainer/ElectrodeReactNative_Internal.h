@@ -7,16 +7,5 @@
 //
 
 #import "ElectrodeContainer.h"
-#import "ElectrodeReactNative.h"
+#import "ElectrodeBridgeDelegate.h"
 
-@interface ElectrodeConfigure : NSObject <ElectrodePluginConfigurator>
-
-@property (nonatomic, assign, readonly) BOOL isDebugEnabled;
-
-@property (nonatomic, copy, readonly) NSString *codePushWithIDString;
-
-@property (nonatomic, copy, readonly) NSString *codePushWithServerURLString;
-
-- (instancetype)initWithData: (NSDictionary *)data;
-
-@end

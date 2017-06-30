@@ -8,48 +8,19 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+@protocol ElectrodePluginConfig;
 
 extern NSString * const ERNCodePushConfig;
 extern NSString * const ERNCodePushConfigServerUrl;
 extern NSString * const ERNCodePushConfigDeploymentKey;
 extern NSString * const ERNDebugEnabledConfig;
 
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - ElectrodePluginConfigurator
-/**
- Used as configuration for the start up of the ElectrodeReactNative system. Build
- a class that adheres to this
- */
-@protocol ElectrodePluginConfigurator <NSObject>
 
-// Required Properties
-
-/**
- Sets wether to set up the bridge in a debug fashion or not.
- */
-@property (nonatomic, assign, readonly) BOOL isDebugEnabled;
-
-
-@optional
-// Optional Instance Methods
-
-/**
- Builds an instance of the configurator based off of a plist of configuration.
- 
- @param plist A string of the name of the plist with configuration in it.
- @return instancetype of the class that adheres to the protocol.
- */
-- (instancetype)initWithIsDebugEnabled: (BOOL) enabled;
-- (instancetype)initWithPlist:(NSString *)plist;
-- (instancetype)initWithDeploymentKey: (NSString *)deploymentKey;
-
-// Optional Properties
-@property (nonatomic, copy, readonly) NSString *codePushWithServerURLString;
-
-@property (nonatomic, copy, readonly) NSString *codePushWithIDString;
-
+@interface ElectrodeContainerConfig: NSObject<ElectrodePluginConfig>
+@property (nonatomic, assign, readonly) BOOL debugEnabled;
+@property (nonatomic, strong, readonly) NSURL *jsBundleURL;
+- (instancetype)initWithDebugEnabled: (BOOL)enabled;
 @end
-
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - ElectrodeReactNative
@@ -60,9 +31,9 @@ extern NSString * const ERNDebugEnabledConfig;
 @interface ElectrodeReactNative : NSObject
 
 /**
- Create a singleton instance of ElectrodeReactNative with the ability to set 
+ Create a singleton instance of ElectrodeReactNative with the ability to set
  configurations for the plugins associated with the container.
-
+ 
  @return A singleton instance of ElectrodeReactNative.
  */
 + (instancetype)sharedInstance;
@@ -79,13 +50,14 @@ extern NSString * const ERNDebugEnabledConfig;
  multiple plugins.
  */
 
-+ (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration;
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
+                 codePushConfig: (id<ElectrodePluginConfig>) codePushConfig;
 
 
 /**
  Returns a react native miniapp (from a JSBundle) inside a view controller.
-
- @param name The name of the mini app, preferably the same name as the jsbundle 
+ 
+ @param name The name of the mini app, preferably the same name as the jsbundle
  without the extension.
  @param properties Any configuration to set up the mini app with.
  @return A UIViewController containing the view of the miniapp.

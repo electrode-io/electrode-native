@@ -24,7 +24,7 @@
 #import "React/RCTRootView.h"   // Required when used as a Pod in a Swift project
 #endif
 
-#import <CodePush/CodePush.h>
+
 
 #import "ElectrodeBridgeDelegate.h"
 #import "ElectrodeBridgeTransceiver.h"
@@ -34,6 +34,58 @@ NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
 NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey";
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electronics.ElectrodeContainer";
+
+@interface ElectrodeContainerConfig()
+@property (nonatomic, assign) BOOL debugEnabled;
+@property (nonatomic, strong) NSURL *jsBundleURL;
+- (instancetype)initWithDebugEnabled: (BOOL)enabled;
+@end
+
+@implementation ElectrodeContainerConfig
+
+- (instancetype)initWithDebugEnabled: (BOOL)enabled {
+    if (self = [super init]) {
+        _debugEnabled = enabled;
+    }
+    
+    return self;
+}
+
+-(void) setupConfig {
+    
+}
+
+- (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
+    NSURL *url;
+    if (self.debugEnabled) {
+        url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+        NSLog(@"using local port to debug");
+    } else {
+        NSArray *returnFiles = nil;
+        NSURL *bundle = [[NSBundle bundleForClass:self.class] bundleURL];
+        NSError *error = nil;
+        
+        NSArray *files =
+        [[NSFileManager defaultManager] contentsOfDirectoryAtURL:bundle
+                                      includingPropertiesForKeys:nil
+                                                         options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                           error:&error];
+        if (!error)
+        {
+            NSPredicate *jsBundlePredicate = [NSPredicate predicateWithFormat:@"pathExtension='jsbundle'"];
+            returnFiles = [files filteredArrayUsingPredicate:jsBundlePredicate];
+        }
+        
+        url = returnFiles[0];
+    }
+    
+    if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
+        ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
+        [bridgeDelegate setJsBundleURL:url];
+    }
+}
+
+@end
 
 @interface ElectrodeReactNative ()
 @property (nonatomic, strong) RCTBridge *bridge;
@@ -45,13 +97,14 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Public Methods
 
-+ (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
+                 codePushConfig: (id<ElectrodePluginConfig>) codePushConfig
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
-    
     static dispatch_once_t startOnceToken;
     dispatch_once(&startOnceToken, ^{
-        [sharedInstance startContainerWithConfiguration:configuration];
+        [sharedInstance startContainerWithConfiguration:reactContainerConfig
+                                         codePushConfig:codePushConfig];
     });
 }
 
@@ -69,11 +122,11 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary *)properties
 {
-
+    
     UIViewController *miniAppViewController = nil;
     
     // Build out the view controller
-        // Use the bridge to generate the view
+    // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
     
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
@@ -86,32 +139,17 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Convenience Methods
 
-- (void)startContainerWithConfiguration:(id<ElectrodePluginConfigurator>)configuration
+- (void)startContainerWithConfiguration:(id<ElectrodePluginConfig>)reactContainerConfig
+                         codePushConfig: (id<ElectrodePluginConfig>) codePushConfig
 {
-    // Look for CodePush
-    [CodePush initialize];
-    [self configureCodePush:configuration];
+    ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] init];
     
-    NSURL *url;
-    if([configuration isDebugEnabled]) {
-        url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
-        NSLog(@"using local port to debug");
-    } else {
-        url = [CodePush bundleURLForResource:@"MiniApp"
-                               withExtension:@"jsbundle"
-                                subdirectory:nil
-                                      bundle:[NSBundle bundleForClass:[self class]]];
-
-    }
-
-    //NSArray* bundleFiles = [self allJSBundleFiles];
-    //ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:bundleFiles[0]];
-    
-    ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:url];
+    [reactContainerConfig setupConfigWithDelegate:delegate];
+    [codePushConfig setupConfigWithDelegate:delegate];
     
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(notifyElectrodeOnReactInitialized:)
                                                  name:RCTDidInitializeModuleNotification object:nil];
@@ -152,106 +190,4 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
     }
     return returnFiles;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - CodePush Methods
-- (void)configureCodePush:(id<ElectrodePluginConfigurator>)configuration
-{
-    if (configuration && [configuration respondsToSelector:@selector(codePushWithIDString)])
-    {
-        [self setUpCodePushWithID:[configuration codePushWithIDString]];
-    }
-    
-    if (configuration && [configuration respondsToSelector:@selector(codePushWithServerURLString)])
-    {
-        [self setUpCodePushWithServer:[configuration codePushWithServerURLString]];
-    }
-}
-
-- (void)setUpCodePushWithID:(NSString *)codePushID
-{
-    [CodePush setDeploymentKey:codePushID];
-}
-
-- (void)setUpCodePushWithServer:(NSString *)serverURL
-{
-    [CodePushConfig current].serverURL = serverURL;
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - ElectrodeCofnigure
-
-@implementation ElectrodeConfigure
-
-- (instancetype)initWithPlist:(NSString *)plist
-{
-    self = [super init];
-    if (self)
-    {
-        
-        if (plist)
-        {
-            [self configure:plist];
-        }
-    }
-    
-    return self;
-}
-
-- (instancetype)initWithData: (NSDictionary *)data {
-    if (self = [super init]) {
-        [self configureWithData:data];
-    }
-    
-    return self;
-}
-
-- (void)configureWithData: (NSDictionary *)data {
-    if (data)
-    { // Configure
-        if ([data objectForKey:ERNDebugEnabledConfig])
-        {
-            NSNumber *debugEnabled = [data objectForKey:ERNDebugEnabledConfig];
-            if (debugEnabled && [debugEnabled isKindOfClass:[NSNumber class]])
-            {
-                _isDebugEnabled = debugEnabled.boolValue;
-            }
-            
-            NSString *codePushID = [data objectForKey:ERNCodePushConfigDeploymentKey];
-            if (codePushID && [codePushID isKindOfClass:[NSString class]])
-            {
-                _codePushWithIDString = codePushID;
-            }
-            
-            NSString *codePushURL = [data objectForKey:ERNCodePushConfigServerUrl];
-            if (codePushURL && [codePushURL isKindOfClass:[NSString class]])
-            {
-                _codePushWithServerURLString = codePushURL;
-            }
-        }
-    }
-}
-
-- (void)configure:(NSString *)plist
-{
-    NSDictionary *data = [self dataForPlist:plist];
-    [self configureWithData:data];
-}
-
-- (NSDictionary *)dataForPlist:(NSString *)plist
-{
-    // Remove the extension if necessary
-    if ([[plist pathExtension] isEqualToString:@"plist"])
-    {
-        plist = [plist stringByReplacingOccurrencesOfString:@".plist" withString:@""];
-    }
-    NSDictionary *data =
-    [NSDictionary dictionaryWithContentsOfFile:
-     [[NSBundle bundleForClass:self.class] pathForResource:plist ofType:@"plist"]];
-    
-    return data;
-}
-
 @end
