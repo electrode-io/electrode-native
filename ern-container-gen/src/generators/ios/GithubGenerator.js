@@ -14,13 +14,15 @@ import {
   gitTag,
   handleCopyDirective,
   spin,
-  throwIfShellCommandFailed
+  throwIfShellCommandFailed,
+  mustacheRenderToOutputFileUsingTemplateFile
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import shell from 'shelljs'
 import xcode from '@walmart/xcode-ern'
+import readDir from 'fs-readdir-recursive'
 
 const ROOT_DIR = shell.pwd()
 
@@ -80,7 +82,7 @@ export default class GithubGenerator {
       //
 
       // Copy iOS container hull to generation ios output folder
-      await this.fillContainerHull(plugins, miniapps, paths)
+      await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
       // Bundle all the miniapps together and store resulting bundle in container
       // project
@@ -108,7 +110,11 @@ export default class GithubGenerator {
     }
   }
 
-  async fillContainerHull (plugins: Array<Dependency>, miniApps: any, paths: any) : Promise<*> {
+  async fillContainerHull (
+    plugins: Array<Dependency>,
+    miniApps: any,
+    paths: any,
+    mustacheView: any) : Promise<*> {
     log.debug(`[=== Starting container hull filling ===]`)
 
     shell.cd(`${ROOT_DIR}`)
@@ -119,6 +125,18 @@ export default class GithubGenerator {
     log.debug(`Creating out folder and copying Container Hull to it`)
     shell.cp('-R', `${paths.containerHull}/ios`, paths.outFolder)
     throwIfShellCommandFailed()
+
+    await this.buildiOSPluginsViews(plugins, paths.pluginsConfigurationDirectory, mustacheView)
+    await this.addiOSPluginHookClasses(plugins, paths)
+
+    log.debug(`---iOS: reading template files to be rendered for plugins`)
+    const files = readDir(`${outputFolder}`, (f) => (f))
+    for (const file of files) {
+      if ((file.endsWith('.h') || file.endsWith('.m'))) {
+        await mustacheRenderToOutputFileUsingTemplateFile(
+          `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
+      }
+    }
 
     const containerProjectPath = `${outputFolder}/ElectrodeContainer.xcodeproj/project.pbxproj`
     const containerLibrariesPath = `${outputFolder}/ElectrodeContainer/Libraries`
@@ -217,9 +235,78 @@ export default class GithubGenerator {
     log.debug(`[=== Completed container hull filling ===]`)
   }
 
+  async buildiOSPluginsViews (
+    plugins: Array<Dependency>,
+    pluginsConfigPath: string,
+    mustacheView: any) : Promise<*> {
+    try {
+      let pluginsView = []
+      log.debug(`===iOS: building iOS plugin views`)
+      for (const plugin of plugins) {
+        if (plugin.name !== 'react-native-code-push') {
+          continue
+        } // TODO: Claire remove me eventually
+
+        let pluginConfig = await getPluginConfig(plugin, pluginsConfigPath)
+        let iosPluginHook = pluginConfig.ios.pluginHook
+        if (iosPluginHook) {
+          pluginsView.push({
+            'name': iosPluginHook.name,
+            'lcname': iosPluginHook.name.charAt(0).toLowerCase() + iosPluginHook.name.slice(1),
+            'configurable': iosPluginHook.configurable
+          })
+        }
+      }
+
+      mustacheView.plugins = pluginsView
+    } catch (e) {
+      log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
+      throw e
+    }
+  }
+
+  async addiOSPluginHookClasses (
+    plugins: Array<Dependency>,
+    paths: any) : Promise<*> {
+    try {
+      log.debug(`[=== iOS: Adding plugin hook classes ===]`)
+
+      for (const plugin of plugins) {
+        if (plugin.name === 'react-native') { continue }
+        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let iOSPluginHook = pluginConfig.ios.pluginHook
+        if (iOSPluginHook) {
+          if (iOSPluginHook.header) {
+            console.log(`Adding ${iOSPluginHook.name}.h`)
+            if (!pluginConfig.path) {
+              throw new Error(`No plugin config path was set. Cannot proceed.`)
+            }
+            shell.cp(`${pluginConfig.path}/${iOSPluginHook.name}.h`,
+              `${paths.outFolder}/ios/ElectrodeContainer/`)
+            throwIfShellCommandFailed()
+          }
+
+          if (iOSPluginHook.source) {
+            console.log(`Adding ${iOSPluginHook.name}.m`)
+            if (!pluginConfig.path) {
+              throw new Error(`No plugin config path was set. Cannot proceed.`)
+            }
+            shell.cp(`${pluginConfig.path}/${iOSPluginHook.name}.m`,
+              `${paths.outFolder}/ios/ElectrodeContainer/`)
+            throwIfShellCommandFailed()
+          }
+        }
+      }
+
+      log.debug(`[=== iOS: Done adding plugin hook classes ===]`)
+    } catch (e) {
+      log.error('[addAndroidPluginHookClasses] Something went wrong: ' + e)
+      throw e
+    }
+  }
+
   async getIosContainerProject (containerProjectPath: string) : Promise<*> {
     const containerProject = xcode.project(containerProjectPath)
-
     return new Promise((resolve, reject) => {
       containerProject.parse(function (err) {
         if (err) {

@@ -51,7 +51,11 @@ extern NSString * const ERNDebugEnabledConfig;
  */
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
-                 codePushConfig: (id<ElectrodePluginConfig>) codePushConfig;
+                        {{#plugins}}
+                            {{#configurable}}
+                                {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
+                            {{/configurable}}
+                        {{/plugins}};
 
 
 /**

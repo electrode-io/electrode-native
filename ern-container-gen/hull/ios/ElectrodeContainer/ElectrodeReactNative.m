@@ -51,10 +51,6 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
     return self;
 }
 
--(void) setupConfig {
-    
-}
-
 - (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
     NSURL *url;
     if (self.debugEnabled) {
@@ -98,13 +94,22 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 #pragma mark - Public Methods
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
-                 codePushConfig: (id<ElectrodePluginConfig>) codePushConfig
+                {{#plugins}}
+                    {{#configurable}}
+                {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
+                    {{/configurable}}
+                {{/plugins}}
+
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
     static dispatch_once_t startOnceToken;
     dispatch_once(&startOnceToken, ^{
         [sharedInstance startContainerWithConfiguration:reactContainerConfig
-                                         codePushConfig:codePushConfig];
+         {{#plugins}}
+         {{#configurable}}
+         {{{lcname}}}:{{{lcname}}}
+         {{/configurable}}
+         {{/plugins}}];
     });
 }
 
@@ -140,12 +145,20 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 #pragma mark - Convenience Methods
 
 - (void)startContainerWithConfiguration:(id<ElectrodePluginConfig>)reactContainerConfig
-                         codePushConfig: (id<ElectrodePluginConfig>) codePushConfig
+         {{#plugins}}
+            {{#configurable}}
+                {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
+            {{/configurable}}
+         {{/plugins}}
 {
     ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] init];
     
     [reactContainerConfig setupConfigWithDelegate:delegate];
-    [codePushConfig setupConfigWithDelegate:delegate];
+    {{#plugins}}
+        {{#configurable}}
+            [{{{lcname}}} setupConfigWithDelegate:delegate];
+        {{/configurable}}
+    {{/plugins}}
     
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;

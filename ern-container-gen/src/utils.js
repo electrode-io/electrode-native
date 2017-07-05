@@ -76,7 +76,27 @@ export async function getPluginConfig (
         }
       }
     }
+    if (result.ios) {
+      if (result.ios.root === undefined) {
+        result.ios.root = 'ios'
+      }
 
+      if (!result.ios.pluginHook) {
+        result.ios.pluginHook = {}
+        const matchedHeaderFiles =
+          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
+        throwIfShellCommandFailed()
+        const matchedSourceFiles =
+          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
+        if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
+          const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
+          result.ios.pluginHook.name = pluginHookClass
+          result.ios.pluginHook.configurable = true // TODO: CLAIRE change if it should be true on different types of plugins
+          result.ios.pluginHook.header = matchedHeaderFiles[0]
+          result.ios.pluginHook.source = matchedSourceFiles[0]
+        }
+      }
+    }
     result.path = pluginConfigPath
   } else {
     log.debug(`No config.json file for ${plugin.name}. Will use default config`)
