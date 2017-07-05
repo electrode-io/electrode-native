@@ -186,7 +186,7 @@ export default class MiniApp {
     // Return all javascript (non native) dependencies currently used by the mini-app
     // This method checks dependencies from the pa2ckage.json of the miniapp and
     // exclude native dependencies (plugins).
-  get jsDependencies () : Array<any> {
+  get jsDependencies () : Array<Dependency> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     let result = _.map(this.packageJson.dependencies, (val: string, key: string) =>
             Dependency.fromString(`${key}@${val}`))
@@ -194,7 +194,7 @@ export default class MiniApp {
     return result == null ? [] : _.filter(result, d => !nativeDependenciesNames.includes(d.name))
   }
 
-  get nativeAndJsDependencies () : Array<any> {
+  get nativeAndJsDependencies () : Array<Dependency> {
     return [...this.jsDependencies, ...this.nativeDependencies]
   }
 

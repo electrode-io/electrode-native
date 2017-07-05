@@ -52,15 +52,15 @@ function createContainerGenerator (platform, config) {
 // FROM GIT => git@gecgithub01.walmart.com:react-native/Cart.git
 // FROM FS  => file:/Users/blemair/Code/Cart
 export async function runLocalContainerGen (
-miniappPackages: Array < string >,
+miniappPackages: Array<any>,
 platform: 'android' | 'ios', {
   containerVersion = '1.0.0',
   nativeAppName = 'local',
   publicationUrl
 }: {
-  containerVersion ? : string,
-  nativeAppName ? : string,
-  publicationUrl ? : string
+  containerVersion?: string,
+  nativeAppName?: string,
+  publicationUrl?: string
 } = {}) {
   try {
     const nativeDependencies: Set < string > = new Set()
@@ -72,7 +72,7 @@ platform: 'android' | 'ios', {
     }
 
     for (const miniappPackage of miniappPackages) {
-      log.info(`Processing ${miniappPackage}`)
+      log.info(`Processing ${miniappPackage.toString()}`)
 
       // Create temporary directory and yarn add the miniapp from within it
       const tmpDirPath = tmp.dirSync({ unsafeCleanup: true }).name
@@ -136,12 +136,11 @@ napDescriptor: NativeApplicationDescriptor,
 version: string, {
   publish
 }: {
-    publish ? : boolean
+  publish?: boolean
 } = {}) {
   try {
-    let plugins = await cauldron.getNativeDependencies(napDescriptor)
-    plugins = _.map(plugins, p => new Dependency(p.name, { scope: p.scope, version: p.version }))
-    const miniapps = await cauldron.getContainerMiniApps(napDescriptor, { convertToObjects: true })
+    const plugins = await cauldron.getNativeDependencies(napDescriptor)
+    const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
 
     // Retrieve generator configuration (which for now only contains publication URL config)
     // only if caller of this method wants to publish the generated container

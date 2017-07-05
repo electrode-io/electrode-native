@@ -131,9 +131,7 @@ class Cauldron {
   }
 
   async getNativeDependencies (
-    napDescriptor: NativeApplicationDescriptor,
-    { convertToObjects = true } :
-    { convertToObjects: boolean } = {}) : Promise<*> {
+    napDescriptor: NativeApplicationDescriptor) : Promise<Array<Dependency>> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       const dependencies = await this.cauldron.getNativeDependencies(
@@ -141,7 +139,7 @@ class Cauldron {
         napDescriptor.platform,
         napDescriptor.version)
 
-      return convertToObjects ? _.map(dependencies, Dependency.fromString) : dependencies
+      return _.map(dependencies, Dependency.fromString)
     } catch (e) {
       log.error(`[getNativeDependencies] ${e}`)
       throw e
@@ -251,8 +249,8 @@ class Cauldron {
 
   async getOtaMiniApps (
     napDescriptor: NativeApplicationDescriptor,
-    { convertToObjects = true, onlyKeepLatest } :
-    { convertToObjects?: boolean, onlyKeepLatest: boolean } = {}) : Promise<*> {
+    { onlyKeepLatest } :
+    { onlyKeepLatest: boolean } = {}) : Promise<Array<Dependency>> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       let miniApps = await this.cauldron.getOtaMiniApps(
@@ -275,7 +273,7 @@ class Cauldron {
           miniApps.push(`${miniAppName}@${tmp[miniAppName]}`)
         }
       }
-      return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps
+      return _.map(miniApps, Dependency.fromString)
     } catch (e) {
       log.error(`[getOtaMiniApps] ${e}`)
       throw e
@@ -283,18 +281,16 @@ class Cauldron {
   }
 
   async getContainerMiniApps (
-    napDescriptor: NativeApplicationDescriptor,
-    { convertToObjects = true } :
-    { convertToObjects: boolean } = {}) : Promise<*> {
+    napDescriptor: NativeApplicationDescriptor) : Promise<Array<Dependency>> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       const miniApps = await this.cauldron.getContainerMiniApps(
         napDescriptor.name,
         napDescriptor.platform,
         napDescriptor.version)
-      return convertToObjects ? _.map(miniApps, Dependency.fromString) : miniApps
+      return _.map(miniApps, Dependency.fromString)
     } catch (e) {
-      log.error(`[getOtaMiniApps] ${e}`)
+      log.error(`[getContainerMiniApps] ${e}`)
       throw e
     }
   }

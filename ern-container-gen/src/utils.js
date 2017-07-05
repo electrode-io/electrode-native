@@ -162,7 +162,7 @@ export async function bundleMiniApps (
       shell.cd(miniapps[0].localPath)
       throwIfShellCommandFailed()
     } else {
-      let miniAppStrings = []
+      let miniAppStrings : Array<string|Dependency> = []
       for (const miniapp of miniapps) {
         if (miniapp.packagePath) {
           miniAppStrings.push(miniapp.packagePath)
@@ -233,7 +233,7 @@ export async function generateMiniAppsComposite (
 
   let content = ''
   for (const miniapp of miniapps) {
-    await spin(`Retrieving and installing ${miniapp}`, yarnAdd(miniapp))
+    await spin(`Retrieving and installing ${miniapp.toString()}`, yarnAdd(miniapp))
   }
 
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))

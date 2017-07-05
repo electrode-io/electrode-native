@@ -10,13 +10,14 @@ exports.desc = 'Get all the native dependencies of a given native application'
 
 exports.builder = {}
 
-exports.handler = function ({
+exports.handler = async function ({
   completeNapDescriptor
 } : {
   completeNapDescriptor: string
 }) {
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-  cauldron.getNativeDependencies(napDescriptor, { convertToObjects: false }).then(res => {
-    log.info(JSON.stringify(res, null, 1))
-  })
+  const dependencies = await cauldron.getNativeDependencies(napDescriptor)
+  for (const dependency of dependencies) {
+    log.info(dependency.toString())
+  }
 }

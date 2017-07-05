@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  Dependency,
   NativeApplicationDescriptor,
   spin
 } from '@walmart/ern-util'
@@ -172,8 +173,8 @@ export async function getNativeAppCompatibilityReport ({
 // versions it's OK as it's always possible to regenerate a container
 // that include this new native dependency)
 export function getCompatibility (
-  localDeps: Array<any>,
-  remoteDeps: Array<any>, {
+  localDeps: Array<Dependency>,
+  remoteDeps: Array<Dependency>, {
     uncompatibleIfARemoteDepIsMissing
 } : {
     uncompatibleIfARemoteDepIsMissing?: boolean
@@ -181,8 +182,7 @@ export function getCompatibility (
   let result = { compatible: [], incompatible: [] }
 
   for (const remoteDep of remoteDeps) {
-    const localDep = _.find(localDeps,
-      d => (d.name === remoteDep.name) && (d.scope === remoteDep.scope))
+    const localDep = _.find(localDeps, d => Dependency.same(d, remoteDep, { ignoreVersion: true }))
     const localDepVersion = localDep ? localDep.version : undefined
 
     let entry = {

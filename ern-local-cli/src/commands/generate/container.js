@@ -4,6 +4,7 @@ import {
   generateMiniAppsComposite
 } from '@walmart/ern-container-gen'
 import {
+  Dependency,
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import {
@@ -133,6 +134,8 @@ exports.handler = async function ({
     containerVersion = userSelectedContainerVersion
   }
 
+  let miniAppsObjs: Array<Dependency> = _.map(miniapps, Dependency.fromString)
+
   //
   // --jsOnly switch
   // Ony generates the composite miniapp to a provided output folder
@@ -141,7 +144,7 @@ exports.handler = async function ({
       if (!napDescriptor) {
         return log.error('You need to provide a napDescriptor if not providing miniapps')
       }
-      miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+      miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
     }
 
     if (!outputFolder) {
@@ -154,7 +157,7 @@ exports.handler = async function ({
       outputFolder = userSelectedOutputFolder
     }
 
-    await generateMiniAppsComposite(miniapps, outputFolder)
+    await generateMiniAppsComposite(miniAppsObjs, outputFolder)
   } else {
     if (!napDescriptor && miniapps) {
       if (!platform) {
@@ -169,7 +172,7 @@ exports.handler = async function ({
       }
 
       await runLocalContainerGen(
-        miniapps,
+        miniAppsObjs,
         platform, {
           containerVersion,
           nativeAppName: containerName,
