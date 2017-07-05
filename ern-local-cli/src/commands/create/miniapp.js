@@ -10,10 +10,10 @@ exports.builder = function (yargs: any) {
     .option('platformVersion', {
       alias: 'v',
       type: 'string',
-      describe: 'Force version of ern platform to use, if not provided it will pick the current platform version in use'
+      describe: 'Overrides current platform version in use with this platform version'
     })
     .option('scope', {
-      describe: 'npm scope to use for this app'
+      describe: 'specify npm scope to group related packages together'
     })
 }
 
