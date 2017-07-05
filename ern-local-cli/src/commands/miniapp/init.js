@@ -1,6 +1,6 @@
 // @flow
 
-import MiniApp from '../../lib/miniapp'
+import {Utils} from '@walmart/ern-util'
 
 exports.command = 'init <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application'
@@ -23,18 +23,12 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   appName,
-  platformVersion,
-  scope,
-  headless
+  platformVersion = '',
+  scope = ''
 } : {
   appName: string,
   platformVersion: string,
   scope?: string,
-  headless?: boolean
 }) {
-  await MiniApp.create(appName, {
-    platformVersion: platformVersion && platformVersion.replace('v', ''),
-    scope,
-    headless
-  })
+  Utils.logErrorAndExitProcess(`This command is deprecated, run the following command instead: ern create miniapp ${appName} ${platformVersion} ${scope}`)
 }

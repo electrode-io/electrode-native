@@ -44,7 +44,7 @@ run(`ern cauldron repository list`)
 
 //
 // Miniapp commands
-run(`ern miniapp init ${miniAppName}`)
+run(`ern create miniapp ${miniAppName}`)
 console.log(info(`Entering ${process.cwd()}/${miniAppName}`))
 process.chdir(`${process.cwd()}/${miniAppName}`)
 run(`ern miniapp add @walmart/react-native-electrode-bridge`)
