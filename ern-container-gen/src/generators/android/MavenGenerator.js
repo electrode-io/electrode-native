@@ -150,15 +150,8 @@ export default class MavenGenerator {
       await this.buildAndroidPluginsViews(plugins, paths.pluginsConfigurationDirectory, mustacheView)
       await this.addAndroidPluginHookClasses(plugins, paths)
 
-      log.debug(`Patching hull`)
-      const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
-      for (const file of files) {
-        await mustacheRenderToOutputFileUsingTemplateFile(
-            `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
-      }
-
       const reactNativeAarFileName = `react-native-${mustacheView.reactNativeVersion}.aar`
-      console.log(`Injecting ${reactNativeAarFileName}`)
+      log.debug(`Injecting ${reactNativeAarFileName}`)
       shell.cp(`${paths.reactNativeAars}/${reactNativeAarFileName}`, `${outputFolder}/lib/libs`)
       throwIfShellCommandFailed()
 
@@ -182,8 +175,26 @@ export default class MavenGenerator {
           throwIfShellCommandFailed()
         }
 
-        if (pluginConfig.android && pluginConfig.android.copy) {
-          handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.android.copy)
+        if (pluginConfig.android) {
+          if (pluginConfig.android.copy) {
+            handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.android.copy)
+          }
+
+          if (pluginConfig.android.dependencies) {
+            for (const dependency of pluginConfig.android.dependencies) {
+              log.debug(`Adding compile '${dependency}'`)
+              mustacheView.pluginCompile.push({
+                'compileStatement': `compile '${dependency}'`
+              })
+            }
+          }
+        }
+
+        log.debug(`Patching hull`)
+        const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
+        for (const file of files) {
+          await mustacheRenderToOutputFileUsingTemplateFile(
+              `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
         }
       }
 
