@@ -11,7 +11,7 @@ exports.builder = function (yargs: any) {
           alias: 'f',
           type: 'bool',
           describe: 'Force upgrade'
-        }).demandCommand(1, 'upgrade needs a platformVersion')
+        })
 }
 
 exports.handler = async function (argv: any) {
