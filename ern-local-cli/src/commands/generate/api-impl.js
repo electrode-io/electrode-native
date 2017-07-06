@@ -1,17 +1,8 @@
 // @flow
 
 import {
-  generateApiImpl
-} from '@walmart/ern-api-impl-gen'
-
-import {
-  Platform
+  Utils
 } from '@walmart/ern-util'
-
-import Manifest from '../../lib/Manifest'
-import inquirer from 'inquirer'
-
-const path = require('path')
 
 exports.command = 'api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
@@ -38,10 +29,6 @@ exports.builder = function (yargs: any) {
   })
 }
 
-const WORKING_FOLDER = path.join(Platform.rootDirectory, `api-impl-gen`)
-const PLUGIN_FOLDER = path.join(WORKING_FOLDER, `plugins`)
-const platformPath = `${Platform.currentPlatformVersionPath}`
-
 exports.handler = async function ({
   api,
   nativeOnly,
@@ -55,47 +42,5 @@ exports.handler = async function ({
   force: boolean,
   outputFolder: string,
 }) {
-  console.log(`command identified for generating API implementation for  ${api}`)
-
-  let reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
-  if (!reactNativeVersion) {
-    return log.error('Could not retrieve react native version from manifest')
-  }
-
-  if (jsOnly && nativeOnly) {
-    log.warn('Looks like both js and native are selected, should be only one')
-    nativeOnly = await promptPlatformSelection()
-  }
-
-  if (!jsOnly && !nativeOnly) {
-    nativeOnly = await promptPlatformSelection()
-  }
-
-  await generateApiImpl({
-    api,
-    outputFolder,
-    nativeOnly,
-    forceGenerate: force,
-    reactNativeVersion,
-    paths: {
-      apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
-      reactNativeAarsPath: path.join(Platform.manifestDirectory, `react-native_aars`),
-      pluginsConfigPath: `${Platform.pluginsConfigurationDirectory}`,
-      pluginsDownloadFolder: PLUGIN_FOLDER,
-      workingFolder: WORKING_FOLDER,
-      outFolder: ''
-    }
-  })
-}
-
-async function promptPlatformSelection () {
-  return inquirer.prompt([{
-    type: 'list',
-    name: 'targetPlatform',
-    message: `Choose a platform that you are planning to write this api implementation in?`,
-    default: `js`,
-    choices: [`js`, `native`]
-  }]).then((answers) => {
-    return answers.targetPlatform !== `js`
-  })
+  Utils.logErrorAndExitProcess(`This command is deprecated: to create an api implementation use: ern create api-impl ${api}`)
 }
