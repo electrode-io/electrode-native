@@ -21,9 +21,9 @@
     // Start the container
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] initWithDebugEnabled:NO];
     
-    ElectrodeCodePushConfig *codePushConfig = [[ElectrodeCodePushConfig alloc] initWithDeploymentKey:@"" serverURL:nil];
-    [ElectrodeReactNative startWithConfigurations:containerConfig codePushConfig:codePushConfig];
-    
+    ElectrodeCodePushConfig *{{{lcname}}} = [[ElectrodeCodePushConfig alloc] initWithDeploymentKey:@"" serverURL:nil];
+    [ElectrodeReactNative startWithConfigurations:containerConfig electrodeCodePushConfig:codePushConfig];
+
     return YES;
 }
 
