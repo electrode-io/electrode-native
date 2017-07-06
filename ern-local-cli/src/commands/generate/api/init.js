@@ -1,8 +1,6 @@
 // @flow
 
-import {
-  generateApi
-} from '@walmart/ern-api-gen'
+import {Utils} from '@walmart/ern-util'
 import Manifest from '../../../lib/Manifest'
 
 exports.command = 'init <apiName>'
@@ -52,13 +50,5 @@ exports.handler = async function ({
     return log.error(`react-native not found in manifest. cannot infer version to use`)
   }
 
-  await generateApi({
-    bridgeVersion: `${bridgeDep.version}`,
-    reactNativeVersion: reactNative.version,
-    name: apiName,
-    npmScope: scope,
-    modelSchemaPath: modelSchemaPath,
-    apiVersion: apiVersion,
-    apiAuthor: apiAuthor
-  })
+  Utils.logErrorAndExitProcess(`This command is deprecated. To create an API, run the following command: ern create api ${apiName}`)
 }
