@@ -1,6 +1,6 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
+import MiniApp from '../../lib/miniapp'
 
 exports.command = 'android'
 exports.desc = 'Run miniapp in android runner project'
@@ -10,5 +10,9 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function () {
-  Utils.logErrorAndExitProcess(`We made this command simple for you, simply run 'ern run android' from the root folder of your mini-app`)
+  try {
+    MiniApp.fromCurrentPath().runInAndroidRunner()
+  } catch (e) {
+    log.error(`${e}`)
+  }
 }
