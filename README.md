@@ -28,7 +28,7 @@ Only `ern-local-cli` depends on `ern-cauldron-cli`.
 
 - [ern-container-gen](/ern-container-gen)  
 Native container generator.  
-Invoked through the the command `ern generate container`.  
+Invoked through the the command `ern create container`.
 Only `ern-local-cli` depends on `ern-container-gen`.
 
 - [global-cli](/global-cli)  
