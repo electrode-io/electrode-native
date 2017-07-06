@@ -35,49 +35,12 @@ NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey"
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electronics.ElectrodeContainer";
 
-@interface ElectrodeContainerConfig()
-@property (nonatomic, assign) BOOL debugEnabled;
-@property (nonatomic, strong) NSURL *jsBundleURL;
-- (instancetype)initWithDebugEnabled: (BOOL)enabled;
-@end
-
 @implementation ElectrodeContainerConfig
 
-- (instancetype)initWithDebugEnabled: (BOOL)enabled {
-    if (self = [super init]) {
-        _debugEnabled = enabled;
-    }
-    
-    return self;
-}
-
 - (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
-    NSURL *url;
-    if (self.debugEnabled) {
-        url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
-        NSLog(@"using local port to debug");
-    } else {
-        NSArray *returnFiles = nil;
-        NSURL *bundle = [[NSBundle bundleForClass:self.class] bundleURL];
-        NSError *error = nil;
-        
-        NSArray *files =
-        [[NSFileManager defaultManager] contentsOfDirectoryAtURL:bundle
-                                      includingPropertiesForKeys:nil
-                                                         options:NSDirectoryEnumerationSkipsHiddenFiles
-                                                           error:&error];
-        if (!error)
-        {
-            NSPredicate *jsBundlePredicate = [NSPredicate predicateWithFormat:@"pathExtension='jsbundle'"];
-            returnFiles = [files filteredArrayUsingPredicate:jsBundlePredicate];
-        }
-        
-        url = returnFiles[0];
-    }
-    
-    if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
+    if (self.useOkHttpClient && [delegate respondsToSelector:@selector(setJsBundleURL:)]) {
         ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
-        [bridgeDelegate setJsBundleURL:url];
+        [bridgeDelegate setJsBundleURL:self.useOkHttpClient];
     }
 }
 

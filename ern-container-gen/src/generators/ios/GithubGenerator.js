@@ -243,10 +243,9 @@ export default class GithubGenerator {
       let pluginsView = []
       log.debug(`===iOS: building iOS plugin views`)
       for (const plugin of plugins) {
-        if (plugin.name !== 'react-native-code-push') {
+        if (plugin.name === 'react-native') {
           continue
-        } // TODO: Claire remove me eventually
-
+        }
         let pluginConfig = await getPluginConfig(plugin, pluginsConfigPath)
         let iosPluginHook = pluginConfig.ios.pluginHook
         if (iosPluginHook) {

@@ -9,17 +9,17 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 @protocol ElectrodePluginConfig;
-
+NS_ASSUME_NONNULL_BEGIN
 extern NSString * const ERNCodePushConfig;
 extern NSString * const ERNCodePushConfigServerUrl;
 extern NSString * const ERNCodePushConfigDeploymentKey;
 extern NSString * const ERNDebugEnabledConfig;
 
 
-@interface ElectrodeContainerConfig: NSObject<ElectrodePluginConfig>
-@property (nonatomic, assign, readonly) BOOL debugEnabled;
-@property (nonatomic, strong, readonly) NSURL *jsBundleURL;
-- (instancetype)initWithDebugEnabled: (BOOL)enabled;
+
+@interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
+@property (nonatomic, assign) BOOL debugEnabled;
+@property (nonatomic, strong, nullable) NSURL *useOkHttpClient;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,3 +69,4 @@ extern NSString * const ERNDebugEnabledConfig;
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary *)properties;
 @end
+NS_ASSUME_NONNULL_END
