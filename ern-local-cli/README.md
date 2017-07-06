@@ -275,7 +275,7 @@ the version of api with custom `version` entry. Lastly it prompts user to do `np
 
 #### **container**
 
-`ern generate container <fullNapSelector> <containerVersion>`  
+`ern create container <fullNapSelector> <containerVersion>`
 
 This command can be used to generate a native application container targeting a specific native application version.  
 A `fullNapSelector` needs to be provided as well as a `containerVersion`, being the version of the generated container.  
@@ -283,7 +283,7 @@ While this command can be run directly by a user, in an enterprise environment, 
 This command relies on [ern-container-gen](../ern-container-gen). For more details about the generation process, feel free to go check it out.   
 
 ```shell
-> ern generate container walmart:android:4.1 1.0.0
+> ern create container walmart:android:4.1 1.0.0
 ```
 
 ### miniapp

@@ -67,8 +67,8 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 //
 // Container generation commands
-run(`ern generate container -n ${androidNativeApplicationDescriptor} -v 1.0.0`)
-run(`ern generate container -n ${iosNativeApplicationDescriptor} -v 1.0.0`)
+run(`ern create container -n ${androidNativeApplicationDescriptor} -v 1.0.0`)
+run(`ern create container -n ${iosNativeApplicationDescriptor} -v 1.0.0`)
 
 //
 // Platform commands
