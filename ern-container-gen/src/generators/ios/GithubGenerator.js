@@ -127,7 +127,6 @@ export default class GithubGenerator {
     throwIfShellCommandFailed()
 
     await this.buildiOSPluginsViews(plugins, paths.pluginsConfigurationDirectory, mustacheView)
-    await this.addiOSPluginHookClasses(plugins, paths)
 
     log.debug(`---iOS: reading template files to be rendered for plugins`)
     const files = readDir(`${outputFolder}`, (f) => (f))
@@ -230,6 +229,7 @@ export default class GithubGenerator {
       }
     }
 
+    await this.addiOSPluginHookClasses(containerIosProject, plugins, paths)
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
 
     log.debug(`[=== Completed container hull filling ===]`)
@@ -265,6 +265,7 @@ export default class GithubGenerator {
   }
 
   async addiOSPluginHookClasses (
+    containerIosProject: any,
     plugins: Array<Dependency>,
     paths: any) : Promise<*> {
     try {
@@ -283,6 +284,8 @@ export default class GithubGenerator {
             shell.cp(`${pluginConfig.path}/${iOSPluginHook.name}.h`,
               `${paths.outFolder}/ios/ElectrodeContainer/`)
             throwIfShellCommandFailed()
+            containerIosProject.addHeaderFile(`${iOSPluginHook.name}.h`, { public: true }, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
+            containerIosProject.addSourceFile(`${iOSPluginHook.name}.m`, null, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
           }
 
           if (iOSPluginHook.source) {
