@@ -20,9 +20,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Start the container
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] initWithDebugEnabled:NO];
-    
-    ElectrodeCodePushConfig *{{{lcname}}} = [[ElectrodeCodePushConfig alloc] initWithDeploymentKey:@"" serverURL:nil];
-    [ElectrodeReactNative startWithConfigurations:containerConfig electrodeCodePushConfig:codePushConfig];
+    [ElectrodeReactNative startWithConfigurations:containerConfig];
 
     return YES;
 }
