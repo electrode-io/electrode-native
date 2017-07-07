@@ -1,6 +1,6 @@
 // @flow
 
-import MiniApp from '../../lib/miniapp'
+import {Utils} from '@walmart/ern-util'
 
 exports.command = 'add <name> [dev]'
 exports.desc = 'Add a dependency to this miniapp'
@@ -21,5 +21,5 @@ exports.handler = async function ({
   name: string,
   dev: boolean
 }) {
-  return MiniApp.fromCurrentPath().addDependency(name, {dev})
+  Utils.logErrorAndExitProcess(`We have made it simple for you, simply run 'ern add ${name}' to add this dependency to your miniapp`)
 }

@@ -47,8 +47,8 @@ run(`ern cauldron repository list`)
 run(`ern create miniapp ${miniAppName}`)
 console.log(info(`Entering ${process.cwd()}/${miniAppName}`))
 process.chdir(`${process.cwd()}/${miniAppName}`)
-run(`ern miniapp add @walmart/react-native-electrode-bridge`)
-run(`ern miniapp add react-native-code-push`)
+run(`ern add @walmart/react-native-electrode-bridge`)
+run(`ern add react-native-code-push`)
 
 //
 // Cauldron access commands
