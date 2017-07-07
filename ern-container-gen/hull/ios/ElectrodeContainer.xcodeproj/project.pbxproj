@@ -10,8 +10,6 @@
 		223A89461E89CDC70092741E /* MiniApp.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 223A89451E89CDC70092741E /* MiniApp.jsbundle */; };
 		2265A4A21EB26943007D6C3D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2265A4A11EB26943007D6C3D /* Info.plist */; };
 		22BF1FEB1E8DAAF800E7F500 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 22BF1FEA1E8DAAF800E7F500 /* assets */; };
-		308CEA7B1F03054000726FDF /* ElectrodeCodePushConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 308CEA791F03054000726FDF /* ElectrodeCodePushConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		308CEA7C1F03054000726FDF /* ElectrodeCodePushConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 308CEA7A1F03054000726FDF /* ElectrodeCodePushConfig.m */; };
 		30B77DD61E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */; };
 		30F8CDE41E677D7C00413247 /* ElectrodeReactNativeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */; };
 		30F8CDEE1E67946E00413247 /* ElectrodeReactNative_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */; };
@@ -41,8 +39,6 @@
 		223A89451E89CDC70092741E /* MiniApp.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MiniApp.jsbundle; sourceTree = "<group>"; };
 		2265A4A11EB26943007D6C3D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22BF1FEA1E8DAAF800E7F500 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
-		308CEA791F03054000726FDF /* ElectrodeCodePushConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeCodePushConfig.h; sourceTree = "<group>"; };
-		308CEA7A1F03054000726FDF /* ElectrodeCodePushConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeCodePushConfig.m; sourceTree = "<group>"; };
 		30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegateTests.m; sourceTree = "<group>"; };
 		30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeReactNativeTests.m; sourceTree = "<group>"; };
 		30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeReactNative_Internal.h; sourceTree = "<group>"; };
@@ -129,10 +125,9 @@
 				48500A961E2FF55B009B6610 /* ElectrodeReactNative.h */,
 				30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */,
 				48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */,
-				308CEA791F03054000726FDF /* ElectrodeCodePushConfig.h */,
-				308CEA7A1F03054000726FDF /* ElectrodeCodePushConfig.m */,
 			);
 			path = ElectrodeContainer;
+			name = ElectrodeContainer;
 			sourceTree = "<group>";
 		};
 		485009F01E2FF23C009B6610 /* ElectrodeContainerTests */ = {
@@ -181,7 +176,6 @@
 			files = (
 				485009F41E2FF23C009B6610 /* ElectrodeContainer.h in Headers */,
 				968333D71E54E3470031C565 /* ElectrodeBridgeDelegate.h in Headers */,
-				308CEA7B1F03054000726FDF /* ElectrodeCodePushConfig.h in Headers */,
 				30F8CDEE1E67946E00413247 /* ElectrodeReactNative_Internal.h in Headers */,
 				48500A981E2FF55B009B6610 /* ElectrodeReactNative.h in Headers */,
 			);
@@ -289,7 +283,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				308CEA7C1F03054000726FDF /* ElectrodeCodePushConfig.m in Sources */,
 				48500A991E2FF55B009B6610 /* ElectrodeReactNative.m in Sources */,
 				968333D81E54E3470031C565 /* ElectrodeBridgeDelegate.m in Sources */,
 			);

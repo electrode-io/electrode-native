@@ -52,9 +52,9 @@ extern NSString * const ERNDebugEnabledConfig;
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
                         {{#plugins}}
-                            {{#configurable}}
-                                {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
-                            {{/configurable}}
+                        {{#configurable}}
+                        {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
+                        {{/configurable}}
                         {{/plugins}};
 
 
