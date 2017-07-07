@@ -27,7 +27,6 @@
 
 
 #import "ElectrodeBridgeDelegate.h"
-#import "ElectrodeBridgeTransceiver.h"
 
 NSString * const ERNCodePushConfig = @"CodePush";
 NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
@@ -41,7 +40,30 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
     if (self.useOkHttpClient && [delegate respondsToSelector:@selector(setJsBundleURL:)]) {
         ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
         [bridgeDelegate setJsBundleURL:self.useOkHttpClient];
+    } else {
+        ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
+        NSURL *url = [self allJSBundleFiles][0];
+        [bridgeDelegate setJsBundleURL:url];
     }
+}
+
+- (NSArray *)allJSBundleFiles
+{
+    NSArray *returnFiles = nil;
+    NSURL *bundle = [[NSBundle bundleForClass:self.class] bundleURL];
+    NSError *error = nil;
+
+    NSArray *files =
+    [[NSFileManager defaultManager] contentsOfDirectoryAtURL:bundle
+                                  includingPropertiesForKeys:nil
+                                                     options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                       error:&error];
+    if (!error)
+    {
+        NSPredicate *jsBundlePredicate = [NSPredicate predicateWithFormat:@"pathExtension='jsbundle'"];
+        returnFiles = [files filteredArrayUsingPredicate:jsBundlePredicate];
+    }
+    return returnFiles;
 }
 
 @end
@@ -138,32 +160,13 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 - (void) notifyElectrodeOnReactInitialized: (NSNotification *) notification {
     if (notification) {
         if ([notification.object isKindOfClass:[RCTBridge class]] ) {
-            RCTBridge *initializedBridge = (RCTBridge *) notification.object;
             id moduleInstance = notification.userInfo[@"module"];
-            if ([moduleInstance isKindOfClass:[ElectrodeBridgeTransceiver class]]) {
-                ElectrodeBridgeTransceiver *electrodeBridge = [self.bridge moduleForClass:[ElectrodeBridgeTransceiver class]];
-                [electrodeBridge onReactNativeInitialized];
+            SEL selector = NSSelectorFromString(@"onReactNativeInitialized:");
+            if ([moduleInstance  respondsToSelector: selector]) {
+                [moduleInstance performSelector:selector];
             }
         }
     }
 }
 
-- (NSArray *)allJSBundleFiles
-{
-    NSArray *returnFiles = nil;
-    NSURL *bundle = [[NSBundle bundleForClass:self.class] bundleURL];
-    NSError *error = nil;
-    
-    NSArray *files =
-    [[NSFileManager defaultManager] contentsOfDirectoryAtURL:bundle
-                                  includingPropertiesForKeys:nil
-                                                     options:NSDirectoryEnumerationSkipsHiddenFiles
-                                                       error:&error];
-    if (!error)
-    {
-        NSPredicate *jsBundlePredicate = [NSPredicate predicateWithFormat:@"pathExtension='jsbundle'"];
-        returnFiles = [files filteredArrayUsingPredicate:jsBundlePredicate];
-    }
-    return returnFiles;
-}
 @end

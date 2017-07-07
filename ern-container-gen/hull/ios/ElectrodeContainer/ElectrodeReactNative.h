@@ -10,12 +10,6 @@
 #import <UIKit/UIKit.h>
 @protocol ElectrodePluginConfig;
 NS_ASSUME_NONNULL_BEGIN
-extern NSString * const ERNCodePushConfig;
-extern NSString * const ERNCodePushConfigServerUrl;
-extern NSString * const ERNCodePushConfigDeploymentKey;
-extern NSString * const ERNDebugEnabledConfig;
-
-
 
 @interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
 @property (nonatomic, assign) BOOL debugEnabled;

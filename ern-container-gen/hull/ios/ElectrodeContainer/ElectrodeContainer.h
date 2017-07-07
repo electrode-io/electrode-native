@@ -16,12 +16,12 @@ FOUNDATION_EXPORT const unsigned char ElectrodeContainerVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <ElectrodeContainer/PublicHeader.h>
 #import <ElectrodeContainer/ElectrodeReactNative.h>
-#import <ElectrodeContainer/ElectrodeBridgeHolder.h>
-#import <ElectrodeContainer/ElectrodeBridgeProtocols.h>
-#import <ElectrodeContainer/ElectrodeBridgeEvent.h>
-#import <ElectrodeContainer/ElectrodeBridgeRequest.h>
+
 {{#plugins}}
 {{#configurable}}
 #import <ElectrodeContainer/{{{name}}}.h>
+{{#containerHeader}}
+#import <ElectrodeContainer/{{.}}>
+{{/containerHeader}}
 {{/configurable}}
 {{/plugins}}
