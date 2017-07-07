@@ -118,8 +118,8 @@ export default class MiniApp {
 
       //
       // Remove react-native generated android and ios projects
-      // They will be replaced with our owns when user uses `ern miniapp run android`
-      // or `ern miniapp run ios` command
+      // They will be replaced with our owns when user uses `ern run android`
+      // or `ern run ios` command
       const miniAppPath = `${process.cwd()}/${appName}`
       shell.cd(miniAppPath)
       shell.rm('-rf', 'android')
