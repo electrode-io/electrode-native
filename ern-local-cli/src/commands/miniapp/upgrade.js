@@ -1,6 +1,6 @@
 // @flow
 
-import MiniApp from '../../lib/miniapp'
+import {Utils} from '@walmart/ern-util'
 
 exports.command = 'upgrade <platformVersion> [force]'
 exports.desc = 'Upgrade the mini app to a specific platform version'
@@ -21,6 +21,5 @@ exports.handler = async function ({
   platformVersion: string,
   force: boolean
 }) {
-  await MiniApp.fromCurrentPath().upgradeToPlatformVersion(
-        platformVersion.toString().replace('v', ''), force)
+  Utils.logErrorAndExitProcess(`We have made it simple for you, simply run 'ern upgrade ${platformVersion}' to upgrade this miniapp to a version ${platformVersion} of platform.`)
 }
