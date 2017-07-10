@@ -1,8 +1,9 @@
 // @flow
 
 import {
-  Utils
-} from '@walmart/ern-util'
+  regenerateCode
+} from '@walmart/ern-api-gen'
+import Manifest from '../lib/Manifest'
 
 exports.command = 'regen'
 exports.desc = 'Regenerates an existing api'
@@ -17,9 +18,17 @@ exports.builder = function (yargs: any) {
 exports.handler = async function ({
                                     updatePlugin,
                                     bridgeVersion
-                                  }: {
+                                  } : {
   updatePlugin: boolean,
   bridgeVersion: string
 } = {}) {
-  Utils.logErrorAndExitProcess(`This command is deprecated, simply type 'ern regen' from the root of the api to regenerate the api and models.`)
+  if (!bridgeVersion) {
+    const bridgeDep = await Manifest.getPlugin('@walmart/react-native-electrode-bridge')
+    if (!bridgeDep) {
+      return log.error(`@walmart/react-native-electrode-bridge not found in manifest. please provide explicit version`)
+    }
+    bridgeVersion = bridgeDep.version
+  }
+
+  return regenerateCode({bridgeVersion, updatePlugin})
 }

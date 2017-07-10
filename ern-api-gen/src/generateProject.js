@@ -69,7 +69,7 @@ export function generatePackageJson ({
     'author': apiAuthor,
     'license': apiLicense,
     'scripts': {
-      'prepublish': 'ern generate api regen -u same'
+      'prepublish': 'ern regen -u same'
     },
     'peerDependencies': {
       '@walmart/react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
