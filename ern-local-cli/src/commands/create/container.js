@@ -14,6 +14,7 @@ import {
 import _ from 'lodash'
 import cauldron from '../../lib/cauldron'
 import inquirer from 'inquirer'
+import semver from 'semver'
 
 exports.command = 'container'
 exports.desc = 'Run the container generator'
@@ -58,6 +59,11 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'The name to user for the container (usually native application name)'
     })
+    .option('autoIncrementVersion', {
+      type: 'bool',
+      describe: 'Auto increment container version',
+      alias: 'i'
+    })
     .group(['outputFolder'], 'jsOnly Options:')
     .option('outputFolder', {
       type: 'string',
@@ -75,7 +81,8 @@ exports.handler = async function ({
                                     publish,
                                     platform,
                                     containerName,
-                                    publicationUrl
+                                    publicationUrl,
+                                    autoIncrementVersion
                                   } : {
   completeNapDescriptor?: string,
   containerVersion?: string,
@@ -85,10 +92,11 @@ exports.handler = async function ({
   miniapps?: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
-  publicationUrl?: string
+  publicationUrl?: string,
+  autoIncrementVersion?: boolean
 }) {
   let napDescriptor: ?NativeApplicationDescriptor
-
+  let cauldronContainerVersion: ?string
   //
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
@@ -115,23 +123,34 @@ exports.handler = async function ({
 
     completeNapDescriptor = userSelectedCompleteNapDescriptor
   }
-
   if (completeNapDescriptor) {
     napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+    // get container version from, update patch version and write it to cauldron
+    const containerGeneratorConfig: any = await cauldron.getContainerGeneratorConfig(napDescriptor)
+    cauldronContainerVersion = _.get(containerGeneratorConfig, 'containerVersion')
+    if (cauldronContainerVersion) {
+      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
+    }
   }
-
   //
   // If the user wants to generates a complete container (not --jsOnly)
   // user has to provide a container version
   // If not specified in command line, we ask user to input the version
   if (!containerVersion && !jsOnly) {
-    const { userSelectedContainerVersion } = await inquirer.prompt([{
-      type: 'input',
-      name: 'userSelectedContainerVersion',
-      message: 'Enter version for the generated container'
-    }])
-
-    containerVersion = userSelectedContainerVersion
+    if (cauldronContainerVersion && autoIncrementVersion) {
+      containerVersion = cauldronContainerVersion
+    } else {
+      const message = cauldronContainerVersion
+                      ? `Enter version for the generated container or do you want to use the auto incremented version:`
+                      : `Enter version for the generated container`
+      const { userSelectedContainerVersion } = await inquirer.prompt([{
+        type: 'input',
+        name: 'userSelectedContainerVersion',
+        message,
+        default: cauldronContainerVersion
+      }])
+      containerVersion = cauldronContainerVersion || userSelectedContainerVersion
+    }
   }
 
   let miniAppsObjs: Array<Dependency> = _.map(miniapps, Dependency.fromString)
@@ -184,6 +203,8 @@ exports.handler = async function ({
         napDescriptor,
         containerVersion,
         { publish })
+      // update container version for cauldron in Git
+      await cauldron.updateContainerVersion(napDescriptor, containerVersion)
     }
   }
 }

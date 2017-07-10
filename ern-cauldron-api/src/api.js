@@ -303,6 +303,18 @@ export default class CauldronApi {
       }
     }
   }
+  async updateContainerVersion (
+    nativeApplicationName: string,
+    platformName: string,
+    containerVersion: string) {
+   // do get config and update the version of containerVersion property in cauldron
+    const platform = await this.getPlatform(nativeApplicationName, platformName)
+    if (platform && platform.config) {
+      const currentContainerVersion = platform.config.containerGenerator.containerVersion
+      platform.config.containerGenerator.containerVersion = containerVersion
+      await this.commit(`Update ${currentContainerVersion} currentContainerVersion to v${containerVersion} for ${nativeApplicationName} ${platformName}`)
+    }
+  }
 
   async removeOtaMiniApp (
     nativeApplicationName: string,

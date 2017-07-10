@@ -331,6 +331,16 @@ class Cauldron {
     }
   }
 
+  async getContainerGeneratorConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
+    let config = await this.cauldron.getConfig({
+      appName: napDescriptor.name,
+      platformName: napDescriptor.platform
+    })
+    if (config) {
+      return _.get(config, 'containerGenerator') || null
+    }
+  }
+
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     let config = await this.cauldron.getConfig({
       appName: napDescriptor.name,
@@ -360,6 +370,22 @@ class Cauldron {
         napDescriptor.version, {isReleased})
     } catch (e) {
       log.error(`[updateNativeAppIsReleased] ${e}`)
+      throw e
+    }
+  }
+
+  async updateContainerVersion (
+    napDescriptor: NativeApplicationDescriptor,
+    containerVersion: string) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.updateContainerVersion(
+        napDescriptor.name,
+        napDescriptor.platform,
+        containerVersion
+      )
+    } catch (e) {
+      log.error(`[updateContainerVersion] ${e}`)
       throw e
     }
   }
