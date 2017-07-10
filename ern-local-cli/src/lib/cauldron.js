@@ -407,7 +407,9 @@ class Cauldron {
   }
 
   async getManifests () {
-    return this.cauldron.getManifests()
+    if (this.cauldron) {
+      return this.cauldron.getManifests()
+    }
   }
 
   throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {
