@@ -12,7 +12,7 @@ import {
 import {
   readJSON,
   writeFile
-} from './fileUtil'
+} from '../../ern-util/src/fileUtil'
 import {
   Dependency,
   npm

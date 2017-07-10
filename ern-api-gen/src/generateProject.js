@@ -1,7 +1,7 @@
 // @flow
 
 import path from 'path'
-import {writeFile} from './fileUtil'
+import {writeFile} from '../../ern-util/src/fileUtil'
 import {CodegenConfigurator, DefaultGenerator} from '@walmart/ern-message-gen'
 import {
   PKG_FILE,
