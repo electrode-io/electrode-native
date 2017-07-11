@@ -68,7 +68,7 @@ export async function regenerateCode (options: Object = {}) {
       newPluginVer = await _promptForPluginVersion(curVersion)
     }
   }
-  await _checkDependencyVersion(pkg, options.targetDependencies)
+  await _checkDependencyVersion(pkg, options.targetDependencies || [])
   const isNewVersion = semver.lt(curVersion, newPluginVer)
   if (isNewVersion) {
     pkg.version = newPluginVer
