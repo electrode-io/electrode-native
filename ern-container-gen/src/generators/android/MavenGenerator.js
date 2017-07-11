@@ -17,6 +17,7 @@ import {
 import _ from 'lodash'
 import fs from 'fs'
 import http from 'http'
+import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
@@ -122,6 +123,9 @@ export default class MavenGenerator {
     // project
     await bundleMiniApps(miniapps, paths, 'android')
 
+    // Rnpm handling
+    this.copyRnpmAssets(miniapps, paths)
+
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
     await this.buildAndPublishContainer(paths)
@@ -189,13 +193,13 @@ export default class MavenGenerator {
             }
           }
         }
+      }
 
-        log.debug(`Patching hull`)
-        const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
-        for (const file of files) {
-          await mustacheRenderToOutputFileUsingTemplateFile(
-              `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
-        }
+      log.debug(`Patching hull`)
+      const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
+      for (const file of files) {
+        await mustacheRenderToOutputFileUsingTemplateFile(
+            `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
       }
 
       // Create mini app activities
@@ -219,6 +223,34 @@ export default class MavenGenerator {
     } catch (e) {
       log.error('[fillContainerHull] Something went wrong: ' + e)
       throw e
+    }
+  }
+
+  copyRnpmAssets (
+    miniApps: any,
+    paths: any) {
+    const outputFolder = path.join(paths.outFolder, 'android')
+    // Case of local container for runner
+    if ((miniApps.length === 1) && (miniApps[0].localPath)) {
+      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].localPath, outputFolder)
+    } else {
+      for (const miniApp of miniApps) {
+        const miniAppPath = path.join(
+          paths.compositeMiniApp,
+          'node_modules',
+          miniApp.scope ? `@${miniApp.scope}` : '',
+          miniApp.name)
+        this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
+      }
+    }
+  }
+
+  copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
+    const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
+    if (packageJson.rnpm && packageJson.rnpm.assets) {
+      for (const assetDirectoryName of packageJson.rnpm.assets) {
+        handleCopyDirective(miniAppPath, outputPath, [{ source: `${assetDirectoryName}/*`, dest: `lib/src/main/assets/${assetDirectoryName.toLowerCase()}` }])
+      }
     }
   }
 
