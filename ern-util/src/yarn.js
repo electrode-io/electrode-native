@@ -47,7 +47,7 @@ async function _yarnAdd (dependency: string | Object, {dev} : {dev:boolean} = {}
 
 export async function yarnInstall () {
   return new Promise((resolve, reject) => {
-    exec(`yarn install`,
+    exec(`yarn install --ignore-engines`,
             (err, stdout, stderr) => {
               if (err) {
                 log.error(err)
