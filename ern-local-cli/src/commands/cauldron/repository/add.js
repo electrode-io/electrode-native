@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  config as ernConfig
+  config as ernConfig,
+  Platform
 } from '@walmart/ern-util'
 import shell from 'shelljs'
 import inquirer from 'inquirer'
@@ -35,7 +36,7 @@ exports.handler = function ({
   ernConfig.setValue('cauldronRepositories', cauldronRepositories)
   console.log(`Added Cauldron repository ${repoUrl} with alias ${repoAlias}`)
   if (current) {
-    runUseCauldronRepositoryCommand(repoAlias)
+    useCauldronRepository(repoAlias)
   } else if (!(current === false)) {
     inquirer.prompt([{
       type: 'confirm',
@@ -43,12 +44,14 @@ exports.handler = function ({
       message: `Set ${repoAlias} as the current Cauldron repository`
     }]).then(answers => {
       if (answers.current) {
-        runUseCauldronRepositoryCommand(repoAlias)
+        useCauldronRepository(repoAlias)
       }
     })
   }
 }
 
-function runUseCauldronRepositoryCommand (repoAlias: string) {
-  shell.exec(`ern cauldron repository use ${repoAlias}`)
+function useCauldronRepository (repoAlias: string) {
+  ernConfig.setValue('cauldronRepoInUse', repoAlias)
+  shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
+  log.info(`${repoAlias} Cauldron is now in use`)
 }
