@@ -11,6 +11,7 @@ import fs from 'fs'
 import _ from 'lodash'
 
 const HOME_DIRECTORY = process.env['HOME']
+const ERN_VERSION_DIRECTORY_RE = /ern_v(.+)\+/
 
 export default class Platform {
   static get rootDirectory () : string {
@@ -27,7 +28,9 @@ export default class Platform {
   static get pluginsConfigurationDirectory () : string {
     const versions = _.map(
       fs.readdirSync(`${this.manifestDirectory}/plugins`),
-      s => /ern_v(.+)\+/.exec(s)[1])
+        s => ERN_VERSION_DIRECTORY_RE.test(s)
+          ? /ern_v(.+)\+/.exec(s)[1]
+          : '')
 
     const matchingVersion = _.find(versions.sort().reverse(), d => this.currentVersion >= d)
     if (matchingVersion) {
