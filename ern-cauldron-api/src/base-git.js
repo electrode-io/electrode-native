@@ -28,7 +28,9 @@ export default class BaseGit {
     }
     this.repository = repository
     this.branch = branch
-    this.git = Prom.promisifyAll(simpleGit(this.path))
+    let simpleGitInstance = simpleGit(this.path)
+    simpleGitInstance.silent(true)
+    this.git = Prom.promisifyAll(simpleGitInstance)
   }
 
   async push () {
@@ -37,12 +39,8 @@ export default class BaseGit {
 
   async sync () {
     if (!fs.existsSync(path.resolve(this.path, '.git'))) {
-      // create a new repository on the command line
-      // git init
-      // git remote add origin https://github.com/
       await this.git.initAsync()
       await this.git.addRemoteAsync(GIT_REMOTE_NAME, this.repository)
-      await this._doInitialCommit()
     }
 
     await this.git.rawAsync([
@@ -51,20 +49,22 @@ export default class BaseGit {
       GIT_REMOTE_NAME,
       this.repository
     ])
+
     try {
       await this.git.fetchAsync(GIT_REMOTE_NAME, 'master')
-    } catch (error) {
-      console.log(error)
-      throw error
+    } catch (e) {
+      if (e.message.includes(`Couldn't find remote ref master`)) {
+        await this._doInitialCommit()
+      } else {
+        throw e
+      }
     }
 
     await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/master`])
   }
 
   async _doInitialCommit () {
-    // git add README.md
-    // git commit -m "first commit"
-    // git push -u origin master
+    log.debug('Performing initial commit')
     const fpath = path.resolve(this.path, 'README.md')
     if (!fs.existsSync(fpath)) {
       await writeFile(fpath, {encoding: 'utf8'}, README)
