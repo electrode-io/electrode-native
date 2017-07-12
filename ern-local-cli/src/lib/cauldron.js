@@ -215,22 +215,6 @@ class Cauldron {
     return this.cauldron.getNativeApplications()
   }
 
-  async getOtaMiniApp (
-    napDescriptor: NativeApplicationDescriptor,
-    miniApp: Object) : Promise<*> {
-    try {
-      this.throwIfPartialNapDescriptor(napDescriptor)
-      return this.cauldron.getOtaMiniApp(
-        napDescriptor.name,
-        napDescriptor.platform,
-        napDescriptor.version,
-        miniApp)
-    } catch (e) {
-      log.error(`[getOtaMiniApp] ${e}`)
-      throw e
-    }
-  }
-
   async getContainerMiniApp (
     napDescriptor: NativeApplicationDescriptor,
     miniApp: Object) : Promise<*> {
@@ -247,35 +231,15 @@ class Cauldron {
     }
   }
 
-  async getOtaMiniApps (
-    napDescriptor: NativeApplicationDescriptor,
-    { onlyKeepLatest } :
-    { onlyKeepLatest: boolean } = {}) : Promise<Array<Dependency>> {
+  async getCodePushMiniApps (napDescriptor: NativeApplicationDescriptor) : Promise<Array<Array<string>>> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
-      let miniApps = await this.cauldron.getOtaMiniApps(
+      return this.cauldron.getCodePushMiniApps(
         napDescriptor.name,
         napDescriptor.platform,
         napDescriptor.version)
-      const miniAppsObjects = _.map(miniApps, Dependency.fromString)
-          // Could be done in a better way
-      if (onlyKeepLatest) {
-        let tmp = {}
-        for (const miniApp of miniAppsObjects) {
-          let currentVersion = tmp[miniApp.withoutVersion().toString()]
-          if ((currentVersion && currentVersion < miniApp.version) ||
-                      !currentVersion) {
-            tmp[miniApp.withoutVersion().toString()] = miniApp.version
-          }
-        }
-        miniApps = []
-        for (const miniAppName in tmp) {
-          miniApps.push(`${miniAppName}@${tmp[miniAppName]}`)
-        }
-      }
-      return _.map(miniApps, Dependency.fromString)
     } catch (e) {
-      log.error(`[getOtaMiniApps] ${e}`)
+      log.error(`[getCodePushMiniApps] ${e}`)
       throw e
     }
   }
@@ -295,18 +259,19 @@ class Cauldron {
     }
   }
 
-  async addOtaMiniApp (
+  async addCodePushMiniApps (
     napDescriptor: NativeApplicationDescriptor,
-    miniApp: Object) : Promise<*> {
+    miniApps: Array<Dependency>) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
-      return spin(tagOneLine`Adding ${miniApp.toString()} to
-               ${napDescriptor.toString()} ota`,
-            this.cauldron.addOtaMiniApp(
+      const miniAppsAsStrings = _.map(miniApps, x => x.toString())
+      return spin(tagOneLine`Adding miniapps to
+               ${napDescriptor.toString()} codePush`,
+            this.cauldron.addCodePushMiniApps(
               napDescriptor.name,
               napDescriptor.platform,
               napDescriptor.version,
-              miniApp))
+              miniAppsAsStrings))
     } catch (e) {
       log.error(`[addOtaMiniApp] ${e}`)
       throw e

@@ -12,7 +12,7 @@ const CAULDRON_FILENAME = 'cauldron.json'
 
 type TypeCauldronMiniApps = {
   container: Array<string>,
-  ota: Array<string>
+  codePush: Array<any>
 }
 
 type TypeCauldronVersion = {

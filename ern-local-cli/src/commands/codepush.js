@@ -1,25 +1,33 @@
 // @flow
 
 import {
+  Dependency,
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import {
-  publishOta
+  performCodePushOtaUpdate
 } from '../lib/publication'
+import _ from 'lodash'
 
 exports.command = 'codepush'
-exports.desc = 'CodePush a MiniApp'
+exports.desc = 'CodePush one or more MiniApp(s) versions to a target native application version'
 
 exports.builder = function (yargs: any) {
   return yargs
     .option('completeNapDescriptor', {
       alias: 'n',
-      describe: 'Full native application selector'
+      required: true,
+      describe: 'Full native application selector (target native application version for the push)'
+    })
+    .option('miniapps', {
+      required: true,
+      type: 'array',
+      describe: 'The list of MiniApps to include in this CodePush bundle'
     })
     .option('force', {
       alias: 'f',
       type: 'bool',
-      describe: 'Force upgrade'
+      describe: 'Force upgrade (ignore compatiblity issues -at your own risks-)'
     })
     .option('appName', {
       describe: 'Application name'
@@ -30,7 +38,7 @@ exports.builder = function (yargs: any) {
       type: 'string'
     })
     .option('platform', {
-      describe: '=Platform name (android / ios)',
+      describe: 'Platform name (android / ios)',
       alias: 'p',
       type: 'string'
     })
@@ -55,6 +63,7 @@ exports.builder = function (yargs: any) {
 
 exports.handler = function ({
   force,
+  miniapps,
   completeNapDescriptor,
   appName,
   deploymentName,
@@ -64,6 +73,7 @@ exports.handler = function ({
   rollout
 } : {
   force: boolean,
+  miniapps: Array<string>,
   completeNapDescriptor: string,
   appName: string,
   deploymentName: string,
@@ -72,15 +82,15 @@ exports.handler = function ({
   mandatory: boolean,
   rollout: string
 }) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-
-  return publishOta(napDescriptor, {
-    force: force,
-    codePushAppName: appName,
-    codePushDeploymentName: deploymentName,
-    codePushPlatformName: platform,
-    codePushTargetVersionName: targetBinaryVersion,
-    codePushIsMandatoryRelease: mandatory,
-    codePushRolloutPercentage: rollout
-  })
+  return performCodePushOtaUpdate(
+    NativeApplicationDescriptor.fromString(completeNapDescriptor),
+    _.map(miniapps, Dependency.fromString), {
+      force: force,
+      codePushAppName: appName,
+      codePushDeploymentName: deploymentName,
+      codePushPlatformName: platform,
+      codePushTargetVersionName: targetBinaryVersion,
+      codePushIsMandatoryRelease: mandatory,
+      codePushRolloutPercentage: rollout
+    })
 }
