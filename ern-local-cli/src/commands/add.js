@@ -15,9 +15,9 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function ({
-                              name,
-                              dev = false
-                            }: {
+  name,
+  dev = false
+} : {
   name: string,
   dev: boolean
 }) {

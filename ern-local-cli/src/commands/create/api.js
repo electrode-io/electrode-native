@@ -25,12 +25,12 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-                                    apiName,
-                                    scope,
-                                    apiVersion,
-                                    apiAuthor,
-                                    schemaPath
-                                  } : {
+  apiName,
+  scope,
+  apiVersion,
+  apiAuthor,
+  schemaPath
+} : {
   apiName: string,
   scope?: string,
   apiVersion?: string,

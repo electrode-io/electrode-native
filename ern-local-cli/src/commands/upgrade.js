@@ -15,9 +15,9 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function ({
-                                    platformVersion,
-                                    force = false
-                                  } : {
+  platformVersion,
+  force = false
+} : {
   platformVersion: string,
   force: boolean
 }) {

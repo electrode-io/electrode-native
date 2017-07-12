@@ -15,9 +15,9 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-                                    updatePlugin,
-                                    bridgeVersion
-                                  }: {
+  updatePlugin,
+  bridgeVersion
+} : {
   updatePlugin: boolean,
   bridgeVersion: string
 } = {}) {

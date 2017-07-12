@@ -18,10 +18,10 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-                                    appName,
-                                    platformVersion,
-                                    scope
-                                  } : {
+  appName,
+  platformVersion,
+  scope
+} : {
   appName: string,
   platformVersion: string,
   scope?: string,

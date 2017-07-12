@@ -43,12 +43,12 @@ const PLUGIN_FOLDER = path.join(WORKING_FOLDER, `plugins`)
 const platformPath = `${Platform.currentPlatformVersionPath}`
 
 exports.handler = async function ({
-                                    api,
-                                    nativeOnly,
-                                    jsOnly,
-                                    force,
-                                    outputFolder
-                                  } : {
+  api,
+  nativeOnly,
+  jsOnly,
+  force,
+  outputFolder
+} : {
   api: string,
   nativeOnly: boolean,
   jsOnly: boolean,

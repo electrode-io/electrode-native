@@ -73,17 +73,17 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-                                    completeNapDescriptor,
-                                    containerVersion,
-                                    jsOnly,
-                                    outputFolder,
-                                    miniapps,
-                                    publish,
-                                    platform,
-                                    containerName,
-                                    publicationUrl,
-                                    autoIncrementVersion
-                                  } : {
+  completeNapDescriptor,
+  containerVersion,
+  jsOnly,
+  outputFolder,
+  miniapps,
+  publish,
+  platform,
+  containerName,
+  publicationUrl,
+  autoIncrementVersion
+} : {
   completeNapDescriptor?: string,
   containerVersion?: string,
   publish?: boolean,
