@@ -353,7 +353,7 @@ Otherwise you can safely ignore this warning
       const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
 
       const currentMiniAppEntryInCauldronAtSameVersion = nativeApp.isReleased
-                    ? await cauldron.getOtaMiniApp(napDescriptor, miniApp)
+                    ? false
                     : await cauldron.getContainerMiniApp(napDescriptor, miniApp)
 
        // If this is not a forced add, we run quite some checks beforehand
@@ -422,7 +422,7 @@ Otherwise you can safely ignore this warning
       } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
         await cauldron.addContainerMiniApp(napDescriptor, miniApp)
       } else {
-        await cauldron.addOtaMiniApp(napDescriptor, miniApp)
+        console.log('not supported')
       }
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`)

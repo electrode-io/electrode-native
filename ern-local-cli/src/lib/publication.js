@@ -14,15 +14,9 @@ import {
   Platform,
   yarn
 } from '@walmart/ern-util'
-import {
-  checkCompatibilityWithNativeApp,
-  getNativeAppCompatibilityReport
-} from './compatibility.js'
 import cauldron from './cauldron'
-import MiniApp from './miniapp.js'
 import inquirer from 'inquirer'
 import _ from 'lodash'
-import emoji from 'node-emoji'
 import tmp from 'tmp'
 
 function createContainerGenerator (platform, config) {
@@ -168,132 +162,9 @@ version: string, {
   }
 }
 
-// This is the entry point for publication of a MiniApp either in a new generated
-// container or as an OTA update through CodePush
-export async function publishMiniApp ({
-  force,
-  napDescriptor,
-  npmPublish = false,
-  publishAsOtaUpdate = false,
-  publishAsNewContainer = false,
-  containerVersion,
-  codePushAppName,
-  codePushDeploymentName,
-  codePushPlatformName,
-  codePushTargetVersionName,
-  codePushIsMandatoryRelease,
-  codePushRolloutPercentage
-}: {
-  force: boolean,
-  napDescriptor: NativeApplicationDescriptor,
-  npmPublish: boolean,
-  publishAsOtaUpdate: boolean,
-  publishAsNewContainer: boolean,
-  containerVersion: string,
-  codePushAppName: string,
-  codePushDeploymentName: string,
-  codePushPlatformName: 'android' | 'ios',
-  codePushTargetVersionName: string,
-  codePushIsMandatoryRelease: boolean,
-  codePushRolloutPercentage: string
-} = {}) {
-  if (npmPublish) {
-    MiniApp.fromCurrentPath().publishToNpm()
-  }
-
-  let nativeAppsToPublish = []
-
-  // A specific native application / platform / version was provided, check for compatibility
-  if (napDescriptor) {
-    const report = await checkCompatibilityWithNativeApp(napDescriptor.name, napDescriptor.platform, napDescriptor.version)
-    if (!report.isCompatible) {
-      throw new Error('Cannot publish MiniApp. Native Application is not compatible')
-    }
-
-    nativeAppsToPublish.push({ napDescriptor, isReleased: report.isReleased })
-  } else {
-    const compatibilityReport = await getNativeAppCompatibilityReport()
-
-    const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
-      if (entry.isCompatible) {
-        if ((publishAsOtaUpdate && entry.isReleased) ||
-        (publishAsNewContainer && !entry.isReleased) ||
-        (!publishAsOtaUpdate && !publishAsNewContainer)) {
-          const curNapDescriptor =
-          new NativeApplicationDescriptor(entry.appName, entry.appPlatform, entry.appVersion)
-          const value = {
-            napDescriptor: curNapDescriptor,
-            isReleased: entry.isReleased
-          }
-          const suffix = value.isReleased
-          ? `[OTA] ${emoji.get('rocket')}`
-          : `[IN-APP]`
-          const name = `${value.napDescriptor.toString()} ${suffix}`
-          return { name, value }
-        }
-      }
-    }).filter(e => e !== undefined)
-
-    if (compatibleVersionsChoices.length === 0) {
-      return log.error('No compatible native application versions have been found')
-    }
-
-    const { nativeApps } = await inquirer.prompt({
-      type: 'checkbox',
-      name: 'nativeApps',
-      message: 'Select one or more compatible native application version(s)',
-      choices: compatibleVersionsChoices
-    })
-
-    nativeAppsToPublish = nativeApps
-  }
-
-  for (const nativeApp of nativeAppsToPublish) {
-    if (nativeApp.isReleased) {
-      await publishOta(nativeApp.napDescriptor, {
-        force,
-        codePushAppName,
-        codePushDeploymentName,
-        codePushPlatformName,
-        codePushTargetVersionName,
-        codePushIsMandatoryRelease,
-        codePushRolloutPercentage
-      })
-    } else {
-      await publishInApp(nativeApp.napDescriptor, {
-        force,
-        containerVersion
-      })
-    }
-  }
-}
-
-async function publishInApp (
-napDescriptor: NativeApplicationDescriptor, { containerVersion, force }) {
-  try {
-    await MiniApp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, force)
-
-    if (!containerVersion) {
-      containerVersion = await askUserForContainerVersion()
-    }
-
-    await runCauldronContainerGen(napDescriptor, containerVersion)
-  } catch (e) {
-    log.error(`[publishInApp] failed`)
-  }
-}
-
-async function askUserForContainerVersion () {
-  const { userSelectedContainerVersion } = await inquirer.prompt({
-    type: 'input',
-    name: 'userSelectedContainerVersion',
-    message: 'Version of generated container'
-  })
-  return userSelectedContainerVersion
-}
-
-export async function publishOta (
-napDescriptor: NativeApplicationDescriptor, {
+export async function performCodePushOtaUpdate (
+napDescriptor: NativeApplicationDescriptor,
+miniApps: Array<Dependency>, {
   force,
   codePushAppName,
   codePushDeploymentName,
@@ -310,29 +181,45 @@ napDescriptor: NativeApplicationDescriptor, {
   codePushIsMandatoryRelease: boolean,
   codePushRolloutPercentage: string
 } = {}) {
-  try {
-    const plugins = await cauldron.getNativeDependencies(napDescriptor)
+  const plugins = await cauldron.getNativeDependencies(napDescriptor)
 
-    const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
-    if (!codePushPlugin) {
-      throw new Error('react-native-code-push plugin is not in native app !')
-    }
+  const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
+  if (!codePushPlugin) {
+    throw new Error('react-native-code-push plugin is not in native app !')
+  }
 
-    await MiniApp.fromCurrentPath().addToNativeAppInCauldron(napDescriptor, force)
+  const workingFolder = `${Platform.rootDirectory}/CompositeOta`
+  const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
+  const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
 
-    const workingFolder = `${Platform.rootDirectory}/CompositeOta`
-    const miniapps = await cauldron.getOtaMiniApps(napDescriptor, { onlyKeepLatest: true })
+  // We need to include, in this CodePush bundle, all the MiniApps that were part
+  // of the previous CodePush. We will override versions of the MiniApps with
+  // the one provided to this function, and keep other ones intact.
+  // For example, if previous CodePush bundle was containing MiniAppOne@1.0.0 and
+  // MiniAppTwo@1.0.0 and this method is called to CodePush MiniAppOne@2.0.0, then
+  // the bundle we will push will container MiniAppOne@2.0.0 and MiniAppTwo@1.0.0.
+  // If this the first ever CodePush bundle for this specific native application version
+  // then the reference miniapp versions are the one from the container.
+  let referenceMiniAppsToCodePush : Array<Dependency> = latestCodePushedMiniApps
+  if (!referenceMiniAppsToCodePush || referenceMiniAppsToCodePush.length === 0) {
+    referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(napDescriptor)
+  }
 
-    await generateMiniAppsComposite(miniapps, workingFolder)
-    process.chdir(workingFolder)
+  const miniAppsToCodePush = _.unionBy(
+    miniApps, referenceMiniAppsToCodePush, x => x.withoutVersion().toString())
 
-    codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
-    codePushAppName = codePushAppName || await askUserForCodePushAppName()
-    codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
+  // TODO : Compatibility checking !
 
-    const codePushCommands = new CodePushCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`)
+  await generateMiniAppsComposite(miniAppsToCodePush, workingFolder)
+  process.chdir(workingFolder)
 
-    await codePushCommands.releaseReact(
+  codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
+  codePushAppName = codePushAppName || await askUserForCodePushAppName()
+  codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
+
+  const codePushCommands = new CodePushCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`)
+
+  await codePushCommands.releaseReact(
     codePushAppName,
     codePushPlatformName, {
       targetBinaryVersion: codePushTargetVersionName,
@@ -340,9 +227,8 @@ napDescriptor: NativeApplicationDescriptor, {
       deploymentName: codePushDeploymentName,
       rolloutPercentage: codePushRolloutPercentage
     })
-  } catch (e) {
-    log.error(`[publishOta] failed: ${e}`)
-  }
+
+  await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToCodePush)
 }
 
 async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor) {

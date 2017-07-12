@@ -90,13 +90,13 @@ export default class CauldronApi {
     }
   }
 
-  async getOtaMiniApps (
+  async getCodePushMiniApps (
     nativeApplicationName: string,
     platformName: string,
     versionName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version && version.miniApps) {
-      return version.miniApps.ota
+      return version.miniApps.codePush
     }
   }
 
@@ -108,15 +108,6 @@ export default class CauldronApi {
     if (version && version.miniApps) {
       return version.miniApps.container
     }
-  }
-
-  async getOtaMiniApp (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    miniApp: any) {
-    const miniApps = await this.getOtaMiniApps(nativeApplicationName, platformName, versionName)
-    return _.find(miniApps, m => m.startsWith(miniApp.toString()))
   }
 
   async getContainerMiniApp (
@@ -316,18 +307,6 @@ export default class CauldronApi {
     }
   }
 
-  async removeOtaMiniApp (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    miniAppName: string,
-    miniAppVersion: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && _.remove(version.miniApps.ota, x => x === `${miniAppName}@${miniAppVersion}`).length > 0) {
-      await this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} ota`)
-    }
-  }
-
   async removeContainerMiniApp (
     nativeApplicationName: string,
     platformName: string,
@@ -351,15 +330,15 @@ export default class CauldronApi {
     }
   }
 
-  async addOtaMiniApp (
+  async addCodePushMiniApps (
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    miniapp: any) {
+    miniapps: Array<string>) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && !version.miniApps.ota.includes(miniapp.toString())) {
-      version.miniApps.ota.push(miniapp.toString())
-      await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} ota`)
+    if (version) {
+      version.miniApps.codePush.push(miniapps)
+      await this.commit(`New CodePush OTA update`)
     }
   }
 
