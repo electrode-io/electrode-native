@@ -161,8 +161,8 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
     if (notification) {
         if ([notification.object isKindOfClass:[RCTBridge class]] ) {
             id moduleInstance = notification.userInfo[@"module"];
-            SEL selector = NSSelectorFromString(@"onReactNativeInitialized:");
-            if ([moduleInstance  respondsToSelector: selector]) {
+            SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
+            if ([moduleInstance  respondsToSelector:selector]) {
                 [moduleInstance performSelector:selector];
             }
         }
