@@ -17,15 +17,13 @@ $ npm install -g @walmart/electrode-react-native
 ```bash
 $ npm install
 $ npm run rebuild
-$ npm run setup-dev
-$ cd ern-util-dev
-$ npm link
+$ node setup-dev
 ```
 
 You are now all setup for development. Just make sure to run the following command ...
 
 ```bash
-$ ern platform use v1000
+$ ern platform use v1000.0.0
 ```
 
-... so that whenever you run `ern` it will point to your cloned repository. You can install other platform versions and switch between platform versions as any platform user, but keep in mind that only `v1000` will point to your local cloned workspace.
+... so that whenever you run `ern` it will point to your cloned repository. You can install other platform versions and switch between platform versions as any platform user, but keep in mind that only `v1000.0.0` will point to your local cloned workspace.
