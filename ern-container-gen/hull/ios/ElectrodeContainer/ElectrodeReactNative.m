@@ -163,7 +163,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
             id moduleInstance = notification.userInfo[@"module"];
             SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
             if ([moduleInstance  respondsToSelector:selector]) {
-                [moduleInstance performSelector:selector];
+             ((void (*)(id, SEL))[moduleInstance methodForSelector:selector])(moduleInstance, selector);
             }
         }
     }
