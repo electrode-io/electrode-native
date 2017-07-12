@@ -1,6 +1,6 @@
 // @flow
 
-import MiniApp from '../../lib/miniapp'
+import MiniApp from '../../lib/MiniApp'
 
 exports.command = 'miniapp <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application(miniapp)'

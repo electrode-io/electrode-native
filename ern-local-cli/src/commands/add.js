@@ -1,6 +1,6 @@
 // @flow
 
-import MiniApp from '../lib/miniapp'
+import MiniApp from '../lib/MiniApp'
 
 exports.command = 'add <name> [dev]'
 exports.desc = 'Add a dependency to this miniapp'

@@ -1,6 +1,6 @@
 // @flow
 
-import MiniApp from '../lib/miniapp'
+import MiniApp from '../lib/MiniApp'
 
 exports.command = 'upgrade <platformVersion> [force]'
 exports.desc = 'Upgrade the mini app to a specific platform version'

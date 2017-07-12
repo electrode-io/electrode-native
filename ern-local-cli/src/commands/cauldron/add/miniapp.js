@@ -8,7 +8,7 @@ import {
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import inquirer from 'inquirer'
-import Miniapp from '../../../lib/miniapp'
+import Miniapp from '../../../lib/MiniApp'
 
 exports.command = 'miniapp [completeNapDescriptor]'
 exports.desc = 'Publish mini app to given native app'
