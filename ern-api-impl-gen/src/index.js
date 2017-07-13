@@ -5,7 +5,8 @@ import shell from 'shelljs'
 
 import {
   Dependency,
-  Utils
+  Utils,
+  yarn
 } from '@walmart/ern-util'
 
 import ApiImplGen from './generators/ApiImplGen'
@@ -14,14 +15,16 @@ const API_NAME_RE = /([^/]*)$/
 
 const path = require('path')
 
+const {yarnInit, yarnAdd} = yarn
+
 export async function generateApiImpl ({
-  api,
-  outputFolder,
-  nativeOnly,
-  forceGenerate,
-  reactNativeVersion,
-  paths
-}: {
+                                         api,
+                                         outputFolder,
+                                         nativeOnly,
+                                         forceGenerate,
+                                         reactNativeVersion,
+                                         paths
+                                       }: {
   api: string, // Can be an npm package, git repo link or a file location.
   outputFolder: string,
   nativeOnly: boolean,
@@ -42,6 +45,7 @@ export async function generateApiImpl ({
     // get the folder to output the generated project.
     paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
     createOutputFolder(outputFolder, forceGenerate)
+    createNodePackage(outputFolder, api)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -67,6 +71,18 @@ function createOutputFolder (outputFolderPath: string, forceGenerate) {
     shell.mkdir('-p', outputFolderPath)
     Utils.throwIfShellCommandFailed()
   }
+}
+
+async function createNodePackage (outputFolderPath: string, api: string) {
+  let currentFolder = shell.pwd()
+  shell.cd(outputFolderPath)
+  yarnInit()
+  yarnAdd(api).then(() => {
+    shell.rm('-rf', `${outputFolderPath}/node_modules/`)
+    Utils.throwIfShellCommandFailed()
+    log.debug('Deleted node modules folder')
+  })
+  shell.cd(currentFolder)
 }
 
 function createWorkingFolder (workingFolderPath: string) {

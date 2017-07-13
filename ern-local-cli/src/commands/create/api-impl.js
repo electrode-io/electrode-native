@@ -55,7 +55,7 @@ exports.handler = async function ({
   force: boolean,
   outputFolder: string,
 }) {
-  console.log(`command identified for generating API implementation for  ${api}`)
+  console.log(`Generating API implementation for  ${api}`)
 
   let reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
   if (!reactNativeVersion) {
