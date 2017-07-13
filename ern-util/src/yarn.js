@@ -94,6 +94,20 @@ export async function yarnInfo (dependency: string | Object, {
   })
 }
 
+export async function yarnInit () {
+  let yarnInitCommand = `yarn init --yes`
+  return new Promise((resolve, reject) => {
+    exec(yarnInitCommand, (err, stdout, stderr) => {
+      if (err) {
+        log.error(err)
+        reject(err)
+      } else {
+        resolve(stdout)
+      }
+    })
+  })
+}
+
 function _package (dependency) {
   return typeof (dependency) === 'string'
     ? dependency
@@ -113,5 +127,6 @@ export default ({
   isYarnInstalled,
   yarnInstall,
   yarnAdd,
-  yarnInfo
+  yarnInfo,
+  yarnInit
 })
