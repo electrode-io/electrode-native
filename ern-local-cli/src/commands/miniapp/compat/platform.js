@@ -3,6 +3,7 @@
 import {
   checkCompatibilityWithPlatform
 } from '../../../lib/compatibility'
+import MiniApp from '../../../lib/MiniApp'
 
 exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'
@@ -20,5 +21,5 @@ exports.handler = function ({
 } : {
   platformVersion: string
 }) {
-  return checkCompatibilityWithPlatform(platformVersion)
+  return checkCompatibilityWithPlatform(MiniApp.fromCurrentPath(), platformVersion)
 }

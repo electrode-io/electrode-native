@@ -6,6 +6,7 @@ import {
 import {
   checkCompatibilityWithNativeApp
 } from '../../../lib/compatibility'
+import MiniApp from '../../../lib/MiniApp'
 
 exports.command = 'nativeapp <napDescriptor>'
 exports.desc = 'Check the compatibility of the miniapp with given native app(s)'
@@ -20,5 +21,5 @@ exports.handler = function ({
   napDescriptor: string
 }) {
   const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
-  checkCompatibilityWithNativeApp(descriptor.name, descriptor.platform, descriptor.version)
+  checkCompatibilityWithNativeApp(MiniApp.fromCurrentPath(), descriptor.name, descriptor.platform, descriptor.version)
 }

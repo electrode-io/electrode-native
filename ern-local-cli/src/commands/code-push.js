@@ -9,7 +9,7 @@ import {
 } from '../lib/publication'
 import _ from 'lodash'
 
-exports.command = 'codepush'
+exports.command = 'code-push'
 exports.desc = 'CodePush one or more MiniApp(s) versions to a target native application version'
 
 exports.builder = function (yargs: any) {

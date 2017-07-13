@@ -27,6 +27,8 @@ import fs from 'fs'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import shell from 'shelljs'
+import tmp from 'tmp'
+import path from 'path'
 
 const simctl = require('node-simctl')
 
@@ -67,6 +69,20 @@ export default class MiniApp {
 
   static fromPath (path) {
     return new MiniApp(path)
+  }
+
+  // Create a MiniApp object given a valid package path to the MiniApp
+  // package path can be any valid git/npm or file path to the MiniApp
+  // package
+  static async fromPackagePath (packagePath) {
+    const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
+    shell.cd(tmpMiniAppPath)
+    await yarnAdd(packagePath)
+    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+    const packageName = Object.keys(packageJson.dependencies)[0]
+    shell.rm(path.join(tmpMiniAppPath, 'package.json'))
+    shell.mv(path.join(tmpMiniAppPath, 'node_modules', packageName, '*'), tmpMiniAppPath)
+    return this.fromPath(tmpMiniAppPath)
   }
 
   static async create (
@@ -375,6 +391,7 @@ Otherwise you can safely ignore this warning
 
         log.info('Checking compatibility with each native dependency')
         let report = await checkCompatibilityWithNativeApp(
+          this,
           napDescriptor.name,
           napDescriptor.platform,
           napDescriptor.version)

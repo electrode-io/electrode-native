@@ -12,9 +12,14 @@ import {
   findNativeDependencies,
   NativeApplicationDescriptor,
   Platform,
+  spin,
   yarn
 } from '@walmart/ern-util'
+import {
+  checkCompatibilityWithNativeApp
+} from './compatibility'
 import cauldron from './cauldron'
+import MiniApp from './MiniApp'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
@@ -188,6 +193,32 @@ miniApps: Array<Dependency>, {
     throw new Error('react-native-code-push plugin is not in native app !')
   }
 
+  let nativeDependenciesVersionAligned = true
+
+  for (const miniApp of miniApps) {
+    let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
+      MiniApp.fromPackagePath(miniApp.toString()))
+    let report = await checkCompatibilityWithNativeApp(
+          miniAppInstance,
+          napDescriptor.name,
+          napDescriptor.platform,
+          napDescriptor.version)
+    if (!report.isCompatible) {
+      nativeDependenciesVersionAligned = false
+      log.warn('At least one native dependency version is not aligned !')
+    } else {
+      log.info(`${miniApp.toString()} native dependencies versions are aligned with ${napDescriptor.toString()}`)
+    }
+  }
+
+  if (!nativeDependenciesVersionAligned && force) {
+    log.warn('Native dependencies versions are not aligned but ignoring due to the use of force flag')
+  } else if (!nativeDependenciesVersionAligned && !force) {
+    if (!await askUserToForceCodePushPublication()) {
+      return log.info('CodePush publication aborted')
+    }
+  }
+
   const workingFolder = `${Platform.rootDirectory}/CompositeOta`
   const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
   const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
@@ -205,12 +236,22 @@ miniApps: Array<Dependency>, {
     referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(napDescriptor)
   }
 
-  const miniAppsToCodePush = _.unionBy(
+  const miniAppsToBeCodePushed = _.unionBy(
     miniApps, referenceMiniAppsToCodePush, x => x.withoutVersion().toString())
 
-  // TODO : Compatibility checking !
+  // If force was not provided as option, we ask user for confirmation before proceeding
+  // with code-push publication
+  const userConfirmedCodePushPublication = force || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed)
 
-  await generateMiniAppsComposite(miniAppsToCodePush, workingFolder)
+  if (!userConfirmedCodePushPublication) {
+    return log.info('CodePush publication aborted')
+  } else {
+    log.info('Proceeding with CodePush publication')
+  }
+
+  await spin('Generating composite bundle to be published through CodePush',
+     generateMiniAppsComposite(miniAppsToBeCodePushed, workingFolder))
+
   process.chdir(workingFolder)
 
   codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
@@ -228,7 +269,30 @@ miniApps: Array<Dependency>, {
       rolloutPercentage: codePushRolloutPercentage
     })
 
-  await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToCodePush)
+  await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
+}
+
+async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) {
+  log.info(`The following MiniApp versions will get shipped in this CodePush bundle:`)
+  miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
+
+  const { userCodePushPublicationConfirmation } = await inquirer.prompt({
+    type: 'confirm',
+    name: 'userCodePushPublicationConfirmation',
+    message: 'Do you want to proceed with CodePush publication ?'
+  })
+
+  return userCodePushPublicationConfirmation
+}
+
+async function askUserToForceCodePushPublication () {
+  const { userCodePushForcePublication } = await inquirer.prompt({
+    type: 'confirm',
+    name: 'userCodePushForcePublication',
+    message: 'At least one native dependency version is not properly aligned. Do you want to force CodePush anyway ?'
+  })
+
+  return userCodePushForcePublication
 }
 
 async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor) {

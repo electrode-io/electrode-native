@@ -13,13 +13,14 @@ import chalk from 'chalk'
 import Table from 'cli-table'
 
 //
-// Check compatibility of current miniapp against one or multiple native apps
+// Check compatibility of a given miniapp against one or multiple native apps
 export async function checkCompatibilityWithNativeApp (
+  miniApp: MiniApp,
   appName: string,
   platformName: ?string,
   versionName: ?string) : Object {
   let compatReport = await spin('Checking compatibility',
-    getNativeAppCompatibilityReport({ appName, platformName, versionName }))
+    getNativeAppCompatibilityReport(miniApp, { appName, platformName, versionName }))
 
   for (let r of compatReport) {
     log.info(chalk.magenta(`${r.appName}:${r.appPlatform}:${r.appVersion}`) + ' : ' +
@@ -34,9 +35,9 @@ export async function checkCompatibilityWithNativeApp (
 }
 
 //
-// Check compatibility of current miniapp against a given platform version
-export async function checkCompatibilityWithPlatform (platformVersion: string) {
-  const miniappDependencies = MiniApp.fromCurrentPath().nativeAndJsDependencies
+// Check compatibility of a given miniapp against a given platform version
+export async function checkCompatibilityWithPlatform (miniApp: MiniApp, platformVersion: string) {
+  const miniappDependencies = miniApp.nativeAndJsDependencies
   const platformDependencies = await Manifest.getTargetNativeAndJsDependencies(platformVersion)
 
   const report = getCompatibility(miniappDependencies, platformDependencies)
@@ -81,8 +82,8 @@ export async function logCompatibilityReportTable (report: Object) {
 }
 
 //
-// Retrieve compatibility report(s) of current miniapp against one or multiple native apps
-export async function getNativeAppCompatibilityReport ({
+// Retrieve compatibility report(s) of a given miniapp against one or multiple native apps
+export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
   appName,
   platformName,
   versionName
@@ -95,7 +96,7 @@ export async function getNativeAppCompatibilityReport ({
   const nativeApps = await cauldron.getAllNativeApps()
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const miniappDependencies = MiniApp.fromCurrentPath().nativeDependencies
+  const miniappDependencies = miniApp.nativeDependencies
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
