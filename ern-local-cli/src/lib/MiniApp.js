@@ -391,6 +391,7 @@ Otherwise you can safely ignore this warning
 
         log.info('Checking compatibility with each native dependency')
         let report = await checkCompatibilityWithNativeApp(
+          this,
           napDescriptor.name,
           napDescriptor.platform,
           napDescriptor.version)

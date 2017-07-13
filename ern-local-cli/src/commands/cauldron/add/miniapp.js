@@ -62,7 +62,7 @@ exports.handler = async function ({
   }
 
   if (!completeNapDescriptor) {
-    const compatibilityReport = await getNativeAppCompatibilityReport()
+    const compatibilityReport = await getNativeAppCompatibilityReport(miniapp)
     const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
       if (entry.isCompatible) {
         const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`
