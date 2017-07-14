@@ -3,5 +3,19 @@
     "copy": [
       { "source": "Fonts/*", "dest": "lib/src/main/assets/fonts" }
     ]
+  },
+  "ios": {
+    "copy": [
+      { "source": "RNVectorIcons.xcodeproj", "dest": "ElectrodeContainer/Libraries/VectorIcons" },
+      { "source": "RNVectorIconsManager", "dest": "ElectrodeContainer/Libraries/VectorIcons" }
+    ],
+    "pbxproj": {
+      "addProject": [
+        { "path": "VectorIcons/RNVectorIcons.xcodeproj", "group": "Libraries", "staticLibs": [ { "name": "libRNVectorIcons.a", "target": "RNVectorIcons" } ] }
+      ],
+      "addHeaderSearchPath": [
+        "\"$(SRCROOT)/ElectrodeContainer/Libraries/RNVectorIcons/**\""
+      ]
+    }
   }
 }
