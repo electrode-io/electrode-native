@@ -27,7 +27,7 @@ export default function findNativeDependencies (path: string) : Array<Dependency
   // By convention we only assume react native plugins to be in folders
   // which names are starting with 'react-native' (excluding scope)
   const nativeDepsFolders = _.filter(nodeModulesFoldersWithBuildGradle,
-          d => d.includes('react-native'))
+          d => d.includes('react-native') && !/sample|demo|example/i.test(d))
 
   for (const nativeDepsFolder of nativeDepsFolders) {
     if (nativeDepsFolder.split('/')[0].startsWith('@')) {
