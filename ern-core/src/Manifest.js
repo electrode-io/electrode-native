@@ -109,7 +109,7 @@ export default class Manifest {
     return _.find(targetNativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }
 
-  static async getJsDependency (dependencyString: string) : Promise<?Dependency> {
+  static async getTargetJsDependency (dependencyString: string) : Promise<?Dependency> {
     const jsDependency = Dependency.fromString(dependencyString)
     return _.find(await this.getTargetJsDependencies(Platform.currentVersion),
       d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))

@@ -108,7 +108,7 @@ export default class MiniApp {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactDependency = await Manifest.getJsDependency('react')
+      const reactDependency = await Manifest.getTargetJsDependency('react')
       if (!reactDependency) {
         throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
       }
