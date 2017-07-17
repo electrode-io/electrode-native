@@ -57,7 +57,7 @@ export default class MiniApp {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
     if (!packageJson.ernPlatformVersion) {
       throw new Error(tagOneLine`No ernPlatformVersion found in package.json.
-      Are you sure you are running this within an electrode miniapp folder ?`)
+      Are you sure you are trying to add a miniApp to cauldron?`)
     }
 
     this._packageJson = packageJson
