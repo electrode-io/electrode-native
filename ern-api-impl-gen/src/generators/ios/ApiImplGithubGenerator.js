@@ -26,16 +26,14 @@ export default class ApiImplGithubGenerator extends GithubGenerator implements A
     return 'ApiImplGithubGenerator'
   }
 
-  async generate (api : string,
-                  paths : Object,
+  async generate (paths : Object,
                   reactNativeVersion: string,
                   plugins : Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
-    await this.fillHull(api, paths, reactNativeVersion, plugins)
+    await this.fillHull(paths, reactNativeVersion, plugins)
   }
 
-  async fillHull (api: string,
-                  paths: Object,
+  async fillHull (paths: Object,
                   reactNativeVersion: string,
                   plugins: Array<Dependency>) {
     try {

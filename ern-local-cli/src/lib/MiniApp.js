@@ -8,6 +8,7 @@ import {
   android,
   findNativeDependencies,
   Dependency,
+  DependencyPath,
   NativeApplicationDescriptor,
   Platform,
   ReactNativeCommands,
@@ -74,7 +75,7 @@ export default class MiniApp {
   // Create a MiniApp object given a valid package path to the MiniApp
   // package path can be any valid git/npm or file path to the MiniApp
   // package
-  static async fromPackagePath (packagePath) {
+  static async fromPackagePath (packagePath: DependencyPath) {
     const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
     shell.cd(tmpMiniAppPath)
     await yarnAdd(packagePath)
@@ -188,7 +189,7 @@ export default class MiniApp {
   }
 
   async isPublishedToNpm () : Promise<boolean> {
-    const publishedVersionsInfo = await yarnInfo(`${this.packageJson.name}@${this.packageJson.version}`, {
+    const publishedVersionsInfo = await yarnInfo(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
       field: 'versions',
       json: true
     })
@@ -320,11 +321,13 @@ Otherwise you can safely ignore this warning
       dep = Dependency.fromString(dependencyName)
     }
 
+    const dependencyPath = new DependencyPath(dep.toString())
+
     process.chdir(this.path)
     if (dep.scope) {
-      await spin(`Installing @${dep.scope}/${dep.name}@${dep.version}`, yarnAdd(dep, {dev}))
+      await spin(`Installing @${dep.scope}/${dep.name}@${dep.version}`, yarnAdd(dependencyPath, {dev}))
     } else {
-      await spin(`Installing ${dep.name}@${dep.version}`, yarnAdd(dep, {dev}))
+      await spin(`Installing ${dep.name}@${dep.version}`, yarnAdd(dependencyPath, {dev}))
     }
   }
 

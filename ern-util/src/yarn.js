@@ -6,9 +6,10 @@ import {
 } from 'child_process'
 import tmp from 'tmp'
 import shell from 'shelljs'
+import DependencyPath from './DependencyPath'
 
 // Yarn add a given dependency
-export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean} = {}) {
+export async function yarnAdd (dependencyPath: DependencyPath, {dev} : {dev:boolean} = {}) {
   // Special handling with yarn add when the dependency is a local file path
   // In that case, for some reason it copies the node_modules folder of this path, which
   // is not a wanted behavior, especially for react-native bundling as it will create
@@ -21,19 +22,19 @@ export async function yarnAdd (dependency: string | Object, {dev} : {dev:boolean
   // directory contained within this package after yarn add is executed. Howver subsequent
   // yarn add of a different dependency just reintroduce the error on previous package
   // this is really weird]
-  if ((typeof (dependency) === 'string') && (dependency.startsWith('file:'))) {
+  if (dependencyPath.isAFileSystemPath) {
     const tmpDirPath = tmp.dirSync({unsafeCleanup: true}).name
-    shell.cp('-R', `${/file:(.+)/.exec(dependency)[1]}/*`, tmpDirPath)
+    shell.cp('-R', `${/file:(.+)/.exec(dependencyPath.toString())[1]}/*`, tmpDirPath)
     shell.rm('-rf', `${tmpDirPath}/node_modules`)
-    dependency = `file:${tmpDirPath}`
+    dependencyPath = DependencyPath.fromFileSystemPath(tmpDirPath)
   }
 
-  return _yarnAdd(dependency, {dev})
+  return _yarnAdd(dependencyPath, {dev})
 }
 
-async function _yarnAdd (dependency: string | Object, {dev} : {dev:boolean} = {}) {
+async function _yarnAdd (dependencyPath: DependencyPath, {dev} : {dev:boolean} = {}) {
   return new Promise((resolve, reject) => {
-    exec(`yarn add ${_package(dependency)} --ignore-engines --exact ${dev ? '--dev' : ''}`,
+    exec(`yarn add ${dependencyPath.toString()} --ignore-engines --exact ${dev ? '--dev' : ''}`,
       (err, stdout, stderr) => {
         if (err) {
           log.error(err)
@@ -59,7 +60,7 @@ export async function yarnInstall () {
   })
 }
 
-export async function yarnInfo (dependency: string | Object, {
+export async function yarnInfo (dependencyPath: DependencyPath, {
   field,
   json
 } : {
@@ -69,11 +70,13 @@ export async function yarnInfo (dependency: string | Object, {
   const currentLocation = shell.pwd()
   let yarnInfoCommand
 
-  if (typeof (dependency) === 'string' && dependency.startsWith('file:')) {
-    shell.cd(dependency.substr(5))
+  if (dependencyPath.isAGitPath) {
+    throw new Error('yarnInfo. Git paths are not yet supported.')
+  } else if (dependencyPath.isAFileSystemPath) {
+    shell.cd(dependencyPath.toString().substr(5))
     yarnInfoCommand = `yarn info ${field || ''} ${json ? '--json' : ''}`
   } else {
-    yarnInfoCommand = `yarn info ${_package(dependency)} ${field || ''} ${json ? '--json' : ''}`
+    yarnInfoCommand = `yarn info ${dependencyPath.toString()} ${field || ''} ${json ? '--json' : ''}`
   }
 
   return new Promise((resolve, reject) => {
@@ -106,12 +109,6 @@ export async function yarnInit () {
       }
     })
   })
-}
-
-function _package (dependency) {
-  return typeof (dependency) === 'string'
-    ? dependency
-    : `${dependency.scope ? `@${dependency.scope}/` : ``}${dependency.name}${dependency.version ? `@${dependency.version}` : ``}`
 }
 
 export function isYarnInstalled () : boolean {

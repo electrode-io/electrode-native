@@ -5,8 +5,7 @@ import {
 } from '@walmart/ern-util'
 
 export interface ApiImplGeneratable {
-  generate (api: string,
-            paths: Object,
+  generate (paths: Object,
             reactNativeVersion: string,
             plugins: Array<Dependency>): any;
 

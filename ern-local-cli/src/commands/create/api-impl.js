@@ -5,6 +5,7 @@ import {
 } from '@walmart/ern-api-impl-gen'
 
 import {
+  DependencyPath,
   Platform
 } from '@walmart/ern-util'
 
@@ -72,7 +73,7 @@ exports.handler = async function ({
   }
 
   await generateApiImpl({
-    api,
+    apiDependencyPath: DependencyPath.fromString(api),
     outputFolder,
     nativeOnly,
     forceGenerate: force,

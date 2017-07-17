@@ -9,6 +9,7 @@ import {
 import {
   CodePushCommands,
   Dependency,
+  DependencyPath,
   findNativeDependencies,
   NativeApplicationDescriptor,
   Platform,
@@ -51,7 +52,7 @@ function createContainerGenerator (platform, config) {
 // FROM GIT => git@gecgithub01.walmart.com:react-native/Cart.git
 // FROM FS  => file:/Users/blemair/Code/Cart
 export async function runLocalContainerGen (
-miniappPackages: Array<any>,
+miniappPackagesPaths: Array<DependencyPath>,
 platform: 'android' | 'ios', {
   containerVersion = '1.0.0',
   nativeAppName = 'local',
@@ -70,13 +71,13 @@ platform: 'android' | 'ios', {
       config = platform === 'android' ? { name: 'maven', mavenRepositoryUrl: publicationUrl } : { name: 'github', targetRepoUrl: publicationUrl }
     }
 
-    for (const miniappPackage of miniappPackages) {
-      log.info(`Processing ${miniappPackage.toString()}`)
+    for (const miniappPackagePath of miniappPackagesPaths) {
+      log.info(`Processing ${miniappPackagePath.toString()}`)
 
       // Create temporary directory and yarn add the miniapp from within it
       const tmpDirPath = tmp.dirSync({ unsafeCleanup: true }).name
       process.chdir(tmpDirPath)
-      await yarn.yarnAdd(miniappPackage)
+      await yarn.yarnAdd(miniappPackagePath)
 
       // Extract full name of miniapp package from the package.json resulting from yarn add command
       const packageJson = require(`${tmpDirPath}/package.json`)
@@ -85,7 +86,7 @@ platform: 'android' | 'ios', {
       miniapps.push({
         scope: miniappDependency.scope,
         name: miniappDependency.name,
-        packagePath: miniappPackage
+        packagePath: miniappPackagePath
       })
 
       // Find all native dependencies of this miniapp in the node_modules folder
@@ -197,7 +198,7 @@ miniApps: Array<Dependency>, {
 
   for (const miniApp of miniApps) {
     let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
-      MiniApp.fromPackagePath(miniApp.toString()))
+      MiniApp.fromPackagePath(new DependencyPath(miniApp.toString())))
     let report = await checkCompatibilityWithNativeApp(
           miniAppInstance,
           napDescriptor.name,
@@ -249,8 +250,9 @@ miniApps: Array<Dependency>, {
     log.info('Proceeding with CodePush publication')
   }
 
+  const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
   await spin('Generating composite bundle to be published through CodePush',
-     generateMiniAppsComposite(miniAppsToBeCodePushed, workingFolder))
+     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingFolder))
 
   process.chdir(workingFolder)
 

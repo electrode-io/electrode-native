@@ -2,6 +2,7 @@
 
 import {
   Dependency,
+  DependencyPath,
   ReactNativeCommands,
   yarn
 } from '@walmart/ern-util'
@@ -182,18 +183,18 @@ export async function bundleMiniApps (
       shell.cd(miniapps[0].localPath)
       throwIfShellCommandFailed()
     } else {
-      let miniAppStrings : Array<string|Dependency> = []
+      let miniAppsPaths : Array<DependencyPath> = []
       for (const miniapp of miniapps) {
         if (miniapp.packagePath) {
-          miniAppStrings.push(miniapp.packagePath)
+          miniAppsPaths.push(miniapp.packagePath)
         } else {
-          miniAppStrings.push(new Dependency(miniapp.name, {
+          miniAppsPaths.push(new DependencyPath(new Dependency(miniapp.name, {
             scope: miniapp.scope,
             version: miniapp.version
-          }).toString())
+          }).toString()))
         }
       }
-      await generateMiniAppsComposite(miniAppStrings, paths.compositeMiniApp)
+      await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp)
     }
 
     // Clear react packager cache beforehand to avoid surprises ...
@@ -245,15 +246,15 @@ export async function reactNativeBundleIos (paths: any) {
 // this way we can generate a miniapp composite from different miniapp sources
 // (git, local file system, npm ...)
 export async function generateMiniAppsComposite (
-  miniapps: Array<any>,
+  miniappsPaths: Array<DependencyPath>,
   folder: string) {
   shell.mkdir('-p', folder)
   shell.cd(folder)
   throwIfShellCommandFailed()
 
   let content = ''
-  for (const miniapp of miniapps) {
-    await spin(`Retrieving and installing ${miniapp.toString()}`, yarnAdd(miniapp))
+  for (const miniappPath of miniappsPaths) {
+    await spin(`Retrieving and installing ${miniappPath.toString()}`, yarnAdd(miniappPath))
   }
 
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))

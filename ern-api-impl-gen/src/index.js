@@ -5,6 +5,7 @@ import shell from 'shelljs'
 
 import {
   Dependency,
+  DependencyPath,
   Utils,
   yarn
 } from '@walmart/ern-util'
@@ -18,14 +19,14 @@ const path = require('path')
 const {yarnInit, yarnAdd} = yarn
 
 export async function generateApiImpl ({
-                                         api,
-                                         outputFolder,
-                                         nativeOnly,
-                                         forceGenerate,
-                                         reactNativeVersion,
-                                         paths
-                                       }: {
-  api: string, // Can be an npm package, git repo link or a file location.
+  apiDependencyPath,
+  outputFolder,
+  nativeOnly,
+  forceGenerate,
+  reactNativeVersion,
+  paths
+} : {
+  apiDependencyPath: DependencyPath,
   outputFolder: string,
   nativeOnly: boolean,
   forceGenerate: boolean,
@@ -43,9 +44,9 @@ export async function generateApiImpl ({
 
   try {
     // get the folder to output the generated project.
-    paths.outFolder = outputFolder = formOutputFolderName(api, outputFolder)
+    paths.outFolder = outputFolder = formOutputFolderName(apiDependencyPath, outputFolder)
     createOutputFolder(outputFolder, forceGenerate)
-    createNodePackage(outputFolder, api)
+    createNodePackage(outputFolder, apiDependencyPath)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -53,7 +54,7 @@ export async function generateApiImpl ({
     createWorkingFolder(paths.workingFolder)
     createPluginsDownloadFolder(paths.pluginsDownloadFolder)
 
-    await new ApiImplGen().generateApiImplementation(api, paths, reactNativeVersion, platforms)
+    await new ApiImplGen().generateApiImplementation(apiDependencyPath, paths, reactNativeVersion, platforms)
   } catch (e) {
     Utils.logErrorAndExitProcess(`Unable to start project generation: ${e}`)
   }
@@ -73,11 +74,11 @@ function createOutputFolder (outputFolderPath: string, forceGenerate) {
   }
 }
 
-async function createNodePackage (outputFolderPath: string, api: string) {
+async function createNodePackage (outputFolderPath: string, apiDependencyPath: DependencyPath) {
   let currentFolder = shell.pwd()
   shell.cd(outputFolderPath)
   yarnInit()
-  yarnAdd(api).then(() => {
+  yarnAdd(apiDependencyPath).then(() => {
     shell.rm('-rf', `${outputFolderPath}/node_modules/`)
     Utils.throwIfShellCommandFailed()
     log.debug('Deleted node modules folder')
@@ -94,8 +95,8 @@ function createPluginsDownloadFolder (pluginsDownloadPath: string) {
   shell.mkdir('-p', pluginsDownloadPath)
 }
 
-function formOutputFolderName (api, outputFolderPath: string) {
-  let apiDependencyObj = Dependency.fromString(api)
+function formOutputFolderName (apiDependencyPath, outputFolderPath: string) {
+  let apiDependencyObj = Dependency.fromPath(apiDependencyPath)
   let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
 
   return outputFolderPath
