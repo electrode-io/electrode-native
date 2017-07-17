@@ -148,5 +148,6 @@ export default class Platform {
     }
 
     config.setValue('platformVersion', version)
+    log.info(`v${version} is set as the current platform version`)
   }
 }

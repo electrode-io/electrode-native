@@ -10,11 +10,16 @@ import _ from 'lodash'
 import inquirer from 'inquirer'
 import Miniapp from '../../../lib/MiniApp'
 
-exports.command = 'miniapp [completeNapDescriptor]'
+exports.command = 'miniapp [completeNapDescriptor] [miniappName]'
 exports.desc = 'Publish mini app to given native app'
 
 exports.builder = function (yargs: any) {
   return yargs
+    .option('miniappName', {
+      alias: 'm',
+      describe: 'miniapp that needs to be added to cauldron',
+      example: 'miniapp1@1.0.0 || git@x.y.z.com:Electrode-Mobile-Platform/MiniApp1.git || file://Users/workspace/MiniApp1'
+    })
   .option('completeNapDescriptor', {
     alias: 'd',
     describe: 'Complete native application descriptor',
@@ -35,15 +40,18 @@ exports.builder = function (yargs: any) {
 /// Most/All of the logic here should be moved to the MiniApp class
 /// Commands should remain as much logic less as possible
 exports.handler = async function ({
+  miniappName,
   completeNapDescriptor,
   force = false,
   ignoreNpmPublish = false
 } : {
+  miniappName: string,
   completeNapDescriptor: string,
   force: boolean,
   ignoreNpmPublish: boolean
 }) {
-  const miniapp = Miniapp.fromCurrentPath()
+  const miniapp = await getMiniApp(miniappName)
+
   const miniappPackage = `${miniapp.packageJson.name}@${miniapp.packageJson.version}`
 
   if (!ignoreNpmPublish && !await miniapp.isPublishedToNpm()) {
@@ -93,5 +101,14 @@ exports.handler = async function ({
   } else {
     const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
     return miniapp.addToNativeAppInCauldron(napDescriptor, force)
+  }
+}
+
+async function getMiniApp (miniappName) {
+  if (miniappName) {
+    return Miniapp.fromPackagePath(miniappName)
+  } else {
+    log.debug('Miniapp name is NOT passed, will proceed if the command is executed from MiniApp\'s root folder')
+    return Miniapp.fromCurrentPath()
   }
 }
