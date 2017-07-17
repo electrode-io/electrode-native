@@ -104,7 +104,7 @@ export default class Manifest {
       d => (d.name === plugin.name) && (d.scope === plugin.scope))
   }
 
-  static async getTargetNativeDependency (platformVersion: string, dependency: Dependency) : Promise<?Dependency> {
+  static async getTargetNativeDependency (dependency: Dependency, platformVersion?: string = Platform.currentVersion) : Promise<?Dependency> {
     const targetNativeDependencies = await this.getTargetNativeDependencies(platformVersion)
     return _.find(targetNativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }
