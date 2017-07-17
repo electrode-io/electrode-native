@@ -40,9 +40,9 @@ export default class CauldronApi {
   // READ OPERATIONS
   // =====================================================================================
 
-  async getManifests () {
+  async getManifest () {
     const cauldron = await this.getCauldron()
-    return cauldron.manifests
+    return cauldron.manifest
   }
 
   async getNativeApplications () {

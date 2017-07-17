@@ -390,9 +390,9 @@ class Cauldron {
     }
   }
 
-  async getManifests () {
+  async getManifest () {
     if (this.cauldron) {
-      return this.cauldron.getManifests()
+      return this.cauldron.getManifest()
     }
   }
 

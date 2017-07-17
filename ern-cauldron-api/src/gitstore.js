@@ -37,8 +37,13 @@ type TypeCauldronNativeApp = {
   config?: Object
 }
 
+type TypeCauldronManifest = {
+  targetNativeDependencies: Array<string>,
+  targetJsDependencies: Array<string>
+}
+
 type TypeCauldron = {
-  manifests?: Array<Object>,
+  manifest?: TypeCauldronManifest,
   nativeApps: Array<TypeCauldronNativeApp>
 }
 
@@ -51,7 +56,10 @@ export default class GitStore extends BaseGit {
     repository: string,
     branch: string = 'master',
     cauldron: Object = {
-      'manifests': [],
+      'manifest': {
+        'targetNativeDependencies': [],
+        'targetJsDependencies': []
+      },
       'nativeApps': []
     }) {
     super(cauldronPath, repository, branch)
