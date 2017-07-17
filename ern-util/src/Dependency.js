@@ -1,5 +1,7 @@
 // @flow
 
+import DependencyPath from './DependencyPath'
+
 const SCOPE_NAME_VERSION_RE = /@(.+)\/(.*)@(.*)/
 const SCOPE_NAME_NO_VERSION_RE = /@(.+)\/(.+)/
 const NAME_VERSION_RE = /(.*)@(.*)/
@@ -35,6 +37,13 @@ export default class Dependency {
     } else {
       return new Dependency(str)
     }
+  }
+
+  static fromPath (path: DependencyPath) : Dependency {
+    if (path.isAFileSystemPath || path.isAGitPath) {
+      throw new Error('fromPath. File path or Git Path not yet supported')
+    }
+    return Dependency.fromString(path.toString())
   }
 
   static same (depA: Dependency, depB: Dependency, {

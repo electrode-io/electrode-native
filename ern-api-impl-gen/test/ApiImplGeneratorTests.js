@@ -4,6 +4,7 @@ import fs from 'fs'
 import { assert } from 'chai'
 
 import {
+  DependencyPath,
   Platform
 } from '@walmart/ern-util'
 
@@ -23,7 +24,7 @@ const platformPath = `${Platform.currentPlatformVersionPath}`
 describe('run ApiImpl generator command', () => {
   it('should create android impl project directories', (done) => {
     generateApiImpl({
-      api: TEST_API_NAME,
+      apiDependencyPath: DependencyPath.fromString(TEST_API_NAME),
       outputFolder: TMP_OUT_FOLDER,
       nativeOnly: true,
       forceGenerate: true,

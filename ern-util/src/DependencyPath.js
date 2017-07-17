@@ -7,11 +7,23 @@ export default class DependencyPath {
     this.path = path
   }
 
-  get isFilePath () : boolean {
+  static fromString (strPath: string) {
+    return new DependencyPath(strPath)
+  }
+
+  static fromFileSystemPath (fsPath: string) {
+    return new DependencyPath(`file:${fsPath}`)
+  }
+
+  get isAFileSystemPath () : boolean {
     return /^file:/.test(this.path)
   }
 
-  get isGitPath () : boolean {
+  get isAGitPath () : boolean {
     return /^git/.test(this.path)
+  }
+
+  toString () : string {
+    return this.path
   }
 }

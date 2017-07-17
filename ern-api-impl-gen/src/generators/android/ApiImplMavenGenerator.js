@@ -28,7 +28,6 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   }
 
   async generate (
-    api: string,
     paths: {
       workingFolder: string,
       pluginsDownloadFolder: string,
@@ -41,11 +40,10 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     plugins: Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
 
-    await this.fillHull(api, paths, reactNativeVersion, plugins)
+    await this.fillHull(paths, reactNativeVersion, plugins)
   }
 
-  async fillHull (api: string,
-                  paths: Object,
+  async fillHull (paths: Object,
                   reactNativeVersion: string,
                   plugins: Array<Dependency>) {
     try {
