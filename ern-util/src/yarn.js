@@ -70,7 +70,9 @@ export async function yarnInfo (dependencyPath: DependencyPath, {
   const currentLocation = shell.pwd()
   let yarnInfoCommand
 
-  if (dependencyPath.isAFileSystemPath) {
+  if (dependencyPath.isAGitPath) {
+    throw new Error('yarnInfo. Git paths are not yet supported.')
+  } else if (dependencyPath.isAFileSystemPath) {
     shell.cd(dependencyPath.toString().substr(5))
     yarnInfoCommand = `yarn info ${field || ''} ${json ? '--json' : ''}`
   } else {
