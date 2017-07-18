@@ -7,12 +7,14 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
+  Platform
+} from '@walmart/ern-core'
+import {
   CodePushCommands,
   Dependency,
   DependencyPath,
   findNativeDependencies,
   NativeApplicationDescriptor,
-  Platform,
   spin,
   yarn
 } from '@walmart/ern-util'

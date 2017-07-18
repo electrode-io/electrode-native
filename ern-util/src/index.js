@@ -16,7 +16,6 @@ import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import _noop from './noop'
 import _findNativeDependencies from './findNativeDependencies'
 import _Utils from './utils'
-import _Platform from './Platform'
 import _DependencyPath from './DependencyPath'
 
 export const android = _android
@@ -34,7 +33,6 @@ export const NativeApplicationDescriptor = _NativeApplicationDescriptor
 export const noop = _noop
 export const findNativeDependencies = _findNativeDependencies
 export const Utils = _Utils
-export const Platform = _Platform
 export const DependencyPath = _DependencyPath
 export const mustacheUtils = _mustacheUtils
 
@@ -54,7 +52,6 @@ export default ({
   noop: _noop,
   findNativeDependencies: _findNativeDependencies,
   Utils: _Utils,
-  Platform: _Platform,
   DependencyPath: _DependencyPath,
   mustacheUtils: _mustacheUtils
 })

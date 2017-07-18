@@ -1,8 +1,10 @@
 // @flow
 
 import {
-    Dependency,
-    Platform
+  Platform
+} from '@walmart/ern-core'
+import {
+    Dependency
 } from '@walmart/ern-util'
 import cauldron from './cauldron'
 import Prom from 'bluebird'

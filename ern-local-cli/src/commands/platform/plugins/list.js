@@ -2,7 +2,7 @@
 
 import {
   Platform
-} from '@walmart/ern-util'
+} from '@walmart/ern-core'
 import Manifest from '../../../lib/Manifest'
 import chalk from 'chalk'
 import Table from 'cli-table'

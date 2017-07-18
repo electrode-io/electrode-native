@@ -1,6 +1,9 @@
 // @flow
 
 import {
+  Platform
+} from '@walmart/ern-core'
+import {
   generateContainerForRunner,
   generateRunner
 } from '@walmart/ern-runner-gen'
@@ -10,7 +13,6 @@ import {
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
-  Platform,
   ReactNativeCommands,
   spin,
   tagOneLine,

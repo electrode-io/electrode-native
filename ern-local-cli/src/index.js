@@ -2,8 +2,10 @@
 
 import 'babel-polyfill'
 import {
-  coloredLog,
   Platform
+} from '@walmart/ern-core'
+import {
+  coloredLog
 } from '@walmart/ern-util'
 import chalk from 'chalk'
 import yargs from 'yargs'

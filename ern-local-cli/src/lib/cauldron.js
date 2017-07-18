@@ -1,12 +1,14 @@
 // @flow
 
 import {
+  Platform
+} from '@walmart/ern-core'
+import {
     config,
     Dependency,
     spin,
     tagOneLine,
-    NativeApplicationDescriptor,
-    Platform
+    NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import CauldronCli from '@walmart/ern-cauldron-api'

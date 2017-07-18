@@ -1,8 +1,10 @@
 // @flow
 
 import {
-  Dependency,
   Platform
+} from '@walmart/ern-core'
+import {
+  Dependency
 } from '@walmart/ern-util'
 import chalk from 'chalk'
 import Manifest from '../../../lib/Manifest'

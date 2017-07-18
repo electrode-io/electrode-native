@@ -16,6 +16,7 @@
     "@walmart/ern-api-gen": "0.0.1",
     "@walmart/ern-api-impl-gen": "0.0.1",
     "@walmart/ern-container-gen": "0.0.1",
+    "@walmart/ern-core": "0.0.1",
     "@walmart/ern-runner-gen": "0.0.1",
     "@walmart/ern-util": "0.0.1",
     "@walmart/ern-cauldron-api": "0.0.1",

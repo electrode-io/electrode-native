@@ -1,12 +1,13 @@
 // @flow
 
 import {
+  Platform
+} from '@walmart/ern-core'
+import {
   generateApiImpl
 } from '@walmart/ern-api-impl-gen'
-
 import {
-  DependencyPath,
-  Platform
+  DependencyPath
 } from '@walmart/ern-util'
 
 import Manifest from '../../lib/Manifest'
