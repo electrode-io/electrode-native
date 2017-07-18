@@ -6,9 +6,7 @@ import {
 
 import {
   getPluginConfig,
-  handleCopyDirective,
-  downloadPluginSource,
-  spin
+  handleCopyDirective
   // PluginConfig,
   // mustacheRenderToOutputFileUsingTemplateFile
 } from '../../../../ern-container-gen/src/utils.js'
@@ -52,27 +50,24 @@ export default class ApiImplGithubGenerator extends GithubGenerator implements A
 
       const apiImplProjectPath = `${outputFolder}/ElectrodeApiImpl.xcodeproj/project.pbxproj`
       const apiImplLibrariesPath = `${outputFolder}/ElectrodeApiImpl/Libraries`
-
       const apiImplProject = await this.getIosApiImplProject(apiImplProjectPath)
-
       const apiImplTarget = apiImplProject.findTargetKey('ElectrodeApiImpl')
-
-      log.debug(`Downloading plugins`)
 
       // For now react-native plugin is added manually for ios. There's another story to make it automatic
       const reactnativeplugin = new Dependency('react-native', {
         version: '0.42.0'
       })
-
       plugins.push(reactnativeplugin)
-
       for (const plugin of plugins) {
         const pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigPath, `ElectrodeApiImpl`)
         Utils.throwIfShellCommandFailed()
         if (pluginConfig.ios) {
-          const pluginSourcePath = await spin(`Retrieving ${plugin.scopedName}`,
-            downloadPluginSource(pluginConfig.origin))
-
+          let pluginSourcePath
+          if (pluginConfig.origin.scope) {
+            pluginSourcePath = `node_modules/@${pluginConfig.origin.scope}/${pluginConfig.origin.name}`
+          } else {
+            pluginSourcePath = `node_modules/${pluginConfig.origin.name}`
+          }
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.scopedName}`)
           }
