@@ -4,6 +4,7 @@ import {
   getNativeAppCompatibilityReport
 } from '../../../lib/compatibility'
 import {
+  DependencyPath,
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import _ from 'lodash'
@@ -106,7 +107,7 @@ exports.handler = async function ({
 
 async function getMiniApp (miniappName) {
   if (miniappName) {
-    return Miniapp.fromPackagePath(miniappName)
+    return Miniapp.fromPackagePath(DependencyPath.fromString(miniappName))
   } else {
     log.debug('Miniapp name is NOT passed, will proceed if the command is executed from MiniApp\'s root folder')
     return Miniapp.fromCurrentPath()
