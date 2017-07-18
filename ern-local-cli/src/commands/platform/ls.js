@@ -1,8 +1,10 @@
 // @flow
 
 import {
-  tagOneLine,
   Platform
+} from '@walmart/ern-core'
+import {
+  tagOneLine
 } from '@walmart/ern-util'
 import chalk from 'chalk'
 

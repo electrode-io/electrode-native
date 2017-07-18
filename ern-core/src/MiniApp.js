@@ -10,20 +10,20 @@ import {
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
-  Platform,
   ReactNativeCommands,
   spin,
   tagOneLine,
   yarn
 } from '@walmart/ern-util'
+import cauldron from './cauldron'
+import Manifest from './Manifest'
+import Platform from './Platform'
 import {
   checkCompatibilityWithNativeApp
-} from './compatibility.js'
+} from './compatibility'
 import {
   execSync
 } from 'child_process'
-import cauldron from './cauldron'
-import Manifest from './Manifest'
 import fs from 'fs'
 import inquirer from 'inquirer'
 import _ from 'lodash'

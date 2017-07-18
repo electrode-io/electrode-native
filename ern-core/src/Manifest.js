@@ -1,15 +1,17 @@
 // @flow
 
 import {
-    Dependency,
-    Platform
+  Dependency
 } from '@walmart/ern-util'
 import cauldron from './cauldron'
+import Platform from './Platform'
+
 import Prom from 'bluebird'
 import _ from 'lodash'
 import fs from 'fs'
 import semver from 'semver'
 import simpleGit from 'simple-git'
+
 const git = Prom.promisifyAll(simpleGit(Platform.manifestDirectory))
 
 const npmModuleRe = /(.*)@(.*)/

@@ -1,9 +1,10 @@
 // @flow
 
 import {
+  Manifest,
   Platform
-} from '@walmart/ern-util'
-import Manifest from '../../../lib/Manifest'
+} from '@walmart/ern-core'
+
 import chalk from 'chalk'
 import Table from 'cli-table'
 

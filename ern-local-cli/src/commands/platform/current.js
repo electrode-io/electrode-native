@@ -2,7 +2,7 @@
 
 import {
   Platform
-} from '@walmart/ern-util'
+} from '@walmart/ern-core'
 
 exports.command = 'current'
 exports.desc = 'Show current platform version'

@@ -5,11 +5,11 @@ import {
     Dependency,
     spin,
     tagOneLine,
-    NativeApplicationDescriptor,
-    Platform
+    NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import CauldronCli from '@walmart/ern-cauldron-api'
+import Platform from './Platform'
 
 //
 // Helper class to access the cauldron

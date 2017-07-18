@@ -3,7 +3,9 @@
 import {
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
-import cauldron from '../../../lib/cauldron'
+import {
+  cauldron
+} from '@walmart/ern-core'
 
 exports.command = 'dependencies <completeNapDescriptor>'
 exports.desc = 'Get all the native dependencies of a given native application'

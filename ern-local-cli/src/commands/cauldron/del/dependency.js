@@ -4,7 +4,9 @@ import {
   Dependency,
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
-import cauldron from '../../../lib/cauldron'
+import {
+  cauldron
+} from '@walmart/ern-core'
 
 exports.command = 'dependency <completeNapDescriptor> <dependency>'
 exports.desc = 'Remove a dependency from the cauldron'

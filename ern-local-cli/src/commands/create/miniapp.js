@@ -1,6 +1,8 @@
 // @flow
 
-import MiniApp from '../../lib/MiniApp'
+import {
+  MiniApp
+} from '@walmart/ern-core'
 
 exports.command = 'miniapp <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application(miniapp)'

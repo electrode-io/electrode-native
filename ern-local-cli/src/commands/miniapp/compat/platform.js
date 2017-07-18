@@ -1,9 +1,9 @@
 // @flow
 
 import {
-  checkCompatibilityWithPlatform
-} from '../../../lib/compatibility'
-import MiniApp from '../../../lib/MiniApp'
+  compatibility,
+  MiniApp
+} from '@walmart/ern-core'
 
 exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'
@@ -21,5 +21,5 @@ exports.handler = function ({
 } : {
   platformVersion: string
 }) {
-  return checkCompatibilityWithPlatform(MiniApp.fromCurrentPath(), platformVersion)
+  return compatibility.checkCompatibilityWithPlatform(MiniApp.fromCurrentPath(), platformVersion)
 }

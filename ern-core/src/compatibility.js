@@ -5,9 +5,9 @@ import {
   NativeApplicationDescriptor,
   spin
 } from '@walmart/ern-util'
-import cauldron from './cauldron'
+import cauldron from './cauldron.js'
+import Manifest from './manifest.js'
 import MiniApp from './miniapp.js'
-import Manifest from './Manifest'
 import _ from 'lodash'
 import chalk from 'chalk'
 import Table from 'cli-table'

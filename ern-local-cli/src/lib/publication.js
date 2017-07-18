@@ -7,20 +7,20 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
+  cauldron,
+  compatibility,
+  MiniApp,
+  Platform
+} from '@walmart/ern-core'
+import {
   CodePushCommands,
   Dependency,
   DependencyPath,
   findNativeDependencies,
   NativeApplicationDescriptor,
-  Platform,
   spin,
   yarn
 } from '@walmart/ern-util'
-import {
-  checkCompatibilityWithNativeApp
-} from './compatibility'
-import cauldron from './cauldron'
-import MiniApp from './MiniApp'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
@@ -199,7 +199,7 @@ miniApps: Array<Dependency>, {
   for (const miniApp of miniApps) {
     let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
       MiniApp.fromPackagePath(new DependencyPath(miniApp.toString())))
-    let report = await checkCompatibilityWithNativeApp(
+    let report = await compatibility.checkCompatibilityWithNativeApp(
           miniAppInstance,
           napDescriptor.name,
           napDescriptor.platform,

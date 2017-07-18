@@ -3,7 +3,9 @@
 import {
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
-import cauldron from '../../../lib/cauldron'
+import {
+  cauldron
+} from '@walmart/ern-core'
 
 exports.command = 'nativeapp <completeNapDescriptor> [platformVersion]'
 exports.desc = 'Add a native application to the cauldron'

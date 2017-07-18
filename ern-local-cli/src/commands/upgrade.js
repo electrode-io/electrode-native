@@ -1,6 +1,8 @@
 // @flow
 
-import MiniApp from '../lib/MiniApp'
+import {
+  MiniApp
+} from '@walmart/ern-core'
 
 exports.command = 'upgrade <platformVersion> [force]'
 exports.desc = 'Upgrade the mini app to a specific platform version'

@@ -2,7 +2,7 @@
 
 import {
   Platform
-} from '@walmart/ern-util'
+} from '@walmart/ern-core'
 
 exports.command = 'uninstall <platformVersion>'
 exports.desc = 'Uninstall a given ern platform version'

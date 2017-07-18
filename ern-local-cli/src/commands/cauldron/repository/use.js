@@ -1,8 +1,10 @@
 // @flow
 
 import {
-  config as ernConfig,
   Platform
+} from '@walmart/ern-core'
+import {
+  config as ernConfig
 } from '@walmart/ern-util'
 import shell from 'shelljs'
 

@@ -1,7 +1,11 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
-import Manifest from '../../../lib/Manifest'
+import {
+  Manifest
+} from '@walmart/ern-core'
+import {
+  Utils
+} from '@walmart/ern-util'
 
 exports.command = 'init <apiName>'
 exports.desc = 'Creates a new api'
