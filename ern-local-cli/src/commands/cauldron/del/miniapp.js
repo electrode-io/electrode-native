@@ -1,7 +1,8 @@
 // @flow
 
 import {
-    NativeApplicationDescriptor
+    NativeApplicationDescriptor,
+    Dependency
 } from '@walmart/ern-util'
 import cauldron from '../../../lib/cauldron'
 
@@ -18,5 +19,5 @@ miniAppName
      miniAppName: string
 }) {
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-  await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppName)
+  await cauldron.removeMiniAppFromContainer(napDescriptor, Dependency.fromString(miniAppName))
 }
