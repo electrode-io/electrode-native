@@ -1,21 +1,23 @@
 // @flow
 
 import {
-  Dependency
+  plugin,
+  handleCopyDirective
+} from '@walmart/ern-core'
+import {
+  Dependency,
+  mustacheUtils
 } from '@walmart/ern-util'
 import {
   bundleMiniApps,
   downloadPluginSource,
-  getPluginConfig,
   gitAdd,
   gitClone,
   gitCommit,
   gitPush,
   gitTag,
-  handleCopyDirective,
   spin,
-  throwIfShellCommandFailed,
-  mustacheRenderToOutputFileUsingTemplateFile
+  throwIfShellCommandFailed
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
@@ -25,6 +27,10 @@ import xcode from '@walmart/xcode-ern'
 import readDir from 'fs-readdir-recursive'
 
 const ROOT_DIR = shell.pwd()
+
+const {
+  getPluginConfig
+} = plugin
 
 export default class GithubGenerator {
   _targetRepoUrl: string
@@ -132,7 +138,7 @@ export default class GithubGenerator {
     const files = readDir(`${outputFolder}`, (f) => (f))
     for (const file of files) {
       if ((file.endsWith('.h') || file.endsWith('.m'))) {
-        await mustacheRenderToOutputFileUsingTemplateFile(
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
           `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
       }
     }

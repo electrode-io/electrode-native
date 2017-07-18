@@ -10,165 +10,10 @@ import {
   exec
 } from 'child_process'
 import fs from 'fs'
-import Mustache from 'mustache'
 import Ora from 'ora'
-import path from 'path'
 import shell from 'shelljs'
-import _ from 'lodash'
-
 const { yarnAdd } = yarn
 const gitFolderRe = /.*\/(.*).git/
-const npmScopeModuleRe = /@(.*)\/(.*)/
-const pluginConfigFileName = 'config.json'
-
-export type PluginConfig = {
-  android: Object,
-  ios: Object,
-  origin?: Object,
-  path?: string
-}
-
-// =============================================================================
-// GENERATOR utils
-// =============================================================================
-
-//
-// Get the generation config of a given plugin
-// plugin: A plugin object
-// pluginsConfigPath : Path to plugins config
-// projectName : The name of the project where this plugin will be injected into.
-//               Used for iOS plugin config only for now.
-// Sample plugin object :
-// {
-//   name: "react-native-code-push",
-//   version: "1.2.3"
-// }
-export async function getPluginConfig (
-  plugin: Dependency,
-  pluginsConfigPath: string,
-  projectName: string = 'ElectrodeContainer') : Promise<PluginConfig> {
-  let result = {}
-  const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
-
-  // If there is a base file (common to all versions) use it and optionally
-  // patch it with specific version config (if present)
-  if (pluginConfigPath && fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`)) {
-    let configFile = await readFile(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
-    configFile = Mustache.render(configFile, { projectName })
-    result = JSON.parse(configFile)
-
-    // Add default value (convention) for Android subsection for missing fields
-    if (result.android) {
-      if (result.android.root === undefined) {
-        result.android.root = 'android'
-      }
-
-      if (!result.android.pluginHook) {
-        result.android.pluginHook = {}
-        const matchedFiles =
-          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
-        throwIfShellCommandFailed()
-        if (matchedFiles && matchedFiles.length === 1) {
-          const pluginHookClass = path.basename(matchedFiles[0], '.java')
-          result.android.pluginHook.name = pluginHookClass
-          if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
-            result.android.pluginHook.configurable = true
-          }
-        }
-      }
-    }
-    if (result.ios) {
-      if (result.ios.root === undefined) {
-        result.ios.root = 'ios'
-      }
-
-      if (!result.ios.pluginHook) {
-        const matchedHeaderFiles =
-          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
-        throwIfShellCommandFailed()
-        const matchedSourceFiles =
-          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
-        if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
-          result.ios.pluginHook = {}
-          const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
-          result.ios.pluginHook.name = pluginHookClass
-          result.ios.pluginHook.configurable = true // TODO: CLAIRE change if it should be true on different types of plugins
-          result.ios.pluginHook.header = matchedHeaderFiles[0]
-          result.ios.pluginHook.source = matchedSourceFiles[0]
-        }
-      }
-    }
-    result.path = pluginConfigPath
-  } else {
-    log.debug(`No config.json file for ${plugin.name}. Will use default config`)
-    result = getApiPluginDefaultConfig(projectName)
-  }
-
-  if (!result.origin) {
-    if (npmScopeModuleRe.test(plugin.scopedName)) {
-      result.origin = {
-        type: 'npm',
-        scope: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[1]}`,
-        name: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[2]}`,
-        version: plugin.version
-      }
-    } else {
-      result.origin = {
-        type: 'npm',
-        name: plugin.name,
-        version: plugin.version
-      }
-    }
-  } else if (!result.origin.version) {
-    result.origin.version = plugin.version
-  }
-
-  return result
-}
-
-function getApiPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginConfig {
-  return {
-    android: {
-      root: 'android',
-      moduleName: 'lib',
-      transform: [
-        { file: 'android/lib/build.gradle' }
-      ]
-    },
-    ios: {
-      copy: [
-        {
-          source: 'IOS/IOS/Classes/SwaggersAPIs/*',
-          dest: `${projectName}/APIs`
-        }
-      ],
-      pbxproj: {
-        addSource: [
-          {
-            from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift',
-            path: 'APIs',
-            group: 'APIs'
-          }
-        ]
-      }
-    }
-  }
-}
-
-// Returns the base path of a given plugin generation config
-export function getPluginConfigPath (plugin: Dependency, pluginsConfigPath: string) : ?string {
-   // Folder names cannot contain '/' so it's replaced by ':'
-  const pluginScopeAndName = plugin.scopedName.replace(/\//g, ':')
-
-  const pluginVersions = _.map(
-      fs.readdirSync(pluginsConfigPath).filter(f => f.startsWith(pluginScopeAndName)),
-      s => /_v(.+)\+/.exec(s)[1])
-
-  const matchingVersion = _.find(pluginVersions.sort().reverse(), d => plugin.version >= d)
-  if (matchingVersion) {
-    return `${pluginsConfigPath}/${pluginScopeAndName}_v${matchingVersion}+`
-  }
-}
 
 export async function bundleMiniApps (
   miniapps: Array<any>,
@@ -349,22 +194,6 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
   return Promise.resolve(`${shell.pwd()}/${downloadPath}`)
 }
 
-export function handleCopyDirective (
-  sourceRoot: string,
-  destRoot: string,
-  arr: Array<any>) {
-  for (const cp of arr) {
-    const sourcePath = `${sourceRoot}/${cp.source}`
-    const destPath = `${destRoot}/${cp.dest}`
-    if (!fs.existsSync(destPath)) {
-      shell.mkdir('-p', destPath)
-      throwIfShellCommandFailed()
-    }
-    shell.cp('-R', sourcePath, destPath)
-    throwIfShellCommandFailed()
-  }
-}
-
 // =============================================================================
 // MISC utils
 // =============================================================================
@@ -392,34 +221,6 @@ export async function spin (
 // Given a string returns the same string with its first letter capitalized
 export function capitalizeFirstLetter (str: string) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
-}
-
-// =============================================================================
-// Mustache related utilities
-// =============================================================================
-
-// Mustache render using a template file
-// filename: Path to the template file
-// view: Mustache view to apply to the template
-// returns: Rendered string output
-export async function mustacheRenderUsingTemplateFile (
-  filename: string,
-  view: any) {
-  return readFile(filename, 'utf8')
-      .then(template => Mustache.render(template, view))
-}
-
-// Mustache render to an output file using a template file
-// templateFilename: Path to the template file
-// view: Mustache view to apply to the template
-// outputFile: Path to the output file
-export async function mustacheRenderToOutputFileUsingTemplateFile (
-  templateFilename: string,
-  view: any,
-  outputFile: string) {
-  return mustacheRenderUsingTemplateFile(templateFilename, view).then(output => {
-    return writeFile(outputFile, output)
-  })
 }
 
 // =============================================================================
@@ -541,17 +342,6 @@ export async function gitPush ({
 // =============================================================================
 // Async wrappers
 // =============================================================================
-
-async function readFile (
-  filename: string,
-  enc: string) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filename, enc, (err, res) => {
-      if (err) reject(err)
-      else resolve(res)
-    })
-  })
-}
 
 async function writeFile (
   filename: string,

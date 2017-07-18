@@ -1,13 +1,16 @@
 // @flow
+
 import {
+  plugin,
+  handleCopyDirective
+} from '@walmart/ern-core'
+import {
+  mustacheUtils,
   Dependency
 } from '@walmart/ern-util'
 import {
   bundleMiniApps,
   downloadPluginSource,
-  getPluginConfig,
-  handleCopyDirective,
-  mustacheRenderToOutputFileUsingTemplateFile,
   throwIfShellCommandFailed,
   spin
 } from '../../utils.js'
@@ -25,6 +28,10 @@ const HOME_DIRECTORY = process.env['HOME']
 const ROOT_DIR = shell.pwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 const FILE_REGEX = /^file:\/\//
+
+const {
+  getPluginConfig
+} = plugin
 
 const getDefaultMavenLocalDirectory = () => {
   if (!HOME_DIRECTORY) {
@@ -198,7 +205,7 @@ export default class MavenGenerator {
       log.debug(`Patching hull`)
       const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
       for (const file of files) {
-        await mustacheRenderToOutputFileUsingTemplateFile(
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
       }
 
@@ -213,7 +220,7 @@ export default class MavenGenerator {
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
 
         log.debug(`Creating ${activityFileName}`)
-        await mustacheRenderToOutputFileUsingTemplateFile(
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             `${paths.containerTemplates}/android/MiniAppActivity.mustache`,
             tmpMiniAppView,
             `${outputFolder}/lib/src/main/java/com/walmartlabs/ern/container/miniapps/${activityFileName}`)

@@ -6,62 +6,13 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
-  Dependency
+  Dependency,
+  mustacheUtils
 } from '@walmart/ern-util'
-import fs from 'fs'
-import Mustache from 'mustache'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
 let log
-
-// =============================================================================
-// fs async wrappers
-// =============================================================================
-
-async function readFile (filename: string, enc: string) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filename, enc, (err, res) => {
-      err ? reject(err) : resolve(res)
-    })
-  })
-}
-
-async function writeFile (filename: string, data: string) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(filename, data, (err, res) => {
-      err ? reject(err) : resolve(res)
-    })
-  })
-}
-
-// =============================================================================
-// Mustache related utilities
-// =============================================================================
-
-// Mustache render using a template file
-// filename: Path to the template file
-// view: Mustache view to apply to the template
-// returns: Rendered string output
-async function mustacheRenderUsingTemplateFile (
-  filename: string,
-  view: Object) {
-  return readFile(filename, 'utf8')
-        .then(template => Mustache.render(template, view))
-}
-
-// Mustache render to an output file using a template file
-// templateFilename: Path to the template file
-// view: Mustache view to apply to the template
-// outputFile: Path to the output file
-async function mustacheRenderToOutputFileUsingTemplateFile (
-  templateFilename: string,
-  view: Object,
-  outputFile: string) {
-  return mustacheRenderUsingTemplateFile(templateFilename, view).then(output => {
-    return writeFile(outputFile, output)
-  })
-}
 
 // ==============================================================================
 // Misc utitlities
@@ -129,14 +80,14 @@ export async function generateRunner ({
       const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
                 (f) => (!f.endsWith('.jar') && !f.endsWith('.png')))
       for (const file of files) {
-        await mustacheRenderToOutputFileUsingTemplateFile(
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
                     `${outFolder}/${file}`, view, `${outFolder}/${file}`)
       }
     } else if (platform === 'ios') {
       shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/ios/*`, outFolder)
       const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/ios`)
       for (const file of files) {
-        await mustacheRenderToOutputFileUsingTemplateFile(
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
                     `${outFolder}/${file}`, view, `${outFolder}/${file}`)
       }
     }
