@@ -114,6 +114,23 @@ class Cauldron {
     }
   }
 
+  async removeMiniAppFromContainer (
+    napDescriptor: NativeApplicationDescriptor,
+    miniAppName: string) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeAppVersionIsReleased(napDescriptor,
+      'Cannot remove a MiniApp for a released native app version')
+      return spin(
+                tagOneLine`Removing miniApp ${miniAppName} from
+                  ${napDescriptor.toString()}`,
+                this.cauldron.removeContainerMiniApp(napDescriptor.name, napDescriptor.platform, napDescriptor.version, miniAppName))
+    } catch (e) {
+      log.error(`[removeMiniAppFromContainer] ${e}`)
+      throw e
+    }
+  }
+
   async getNativeApp (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     try {
       if (napDescriptor.version) {
