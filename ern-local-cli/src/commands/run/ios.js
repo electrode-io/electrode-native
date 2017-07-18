@@ -1,6 +1,8 @@
 // @flow
 
-import MiniApp from '../../lib/MiniApp'
+import {
+  MiniApp
+} from '@walmart/ern-core'
 
 exports.command = 'ios'
 exports.desc = 'Run miniapp in ios runner project'

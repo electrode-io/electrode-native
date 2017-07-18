@@ -1,11 +1,6 @@
 // @flow
 
 import {
-  cauldron,
-  Manifest,
-  Platform
-} from '@walmart/ern-core'
-import {
   generateContainerForRunner,
   generateRunner
 } from '@walmart/ern-runner-gen'
@@ -20,9 +15,12 @@ import {
   tagOneLine,
   yarn
 } from '@walmart/ern-util'
+import cauldron from './cauldron'
+import Manifest from './Manifest'
+import Platform from './Platform'
 import {
   checkCompatibilityWithNativeApp
-} from './compatibility.js'
+} from './compatibility'
 import {
   execSync
 } from 'child_process'

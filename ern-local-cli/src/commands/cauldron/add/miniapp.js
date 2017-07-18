@@ -1,15 +1,15 @@
 // @flow
 
 import {
-  getNativeAppCompatibilityReport
-} from '../../../lib/compatibility'
+  compatibility,
+  MiniApp
+} from '@walmart/ern-core'
 import {
   DependencyPath,
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
 import _ from 'lodash'
 import inquirer from 'inquirer'
-import Miniapp from '../../../lib/MiniApp'
 
 exports.command = 'miniapp [completeNapDescriptor] [miniappName]'
 exports.desc = 'Publish mini app to given native app'
@@ -71,7 +71,7 @@ exports.handler = async function ({
   }
 
   if (!completeNapDescriptor) {
-    const compatibilityReport = await getNativeAppCompatibilityReport(miniapp)
+    const compatibilityReport = await compatibility.getNativeAppCompatibilityReport(miniapp)
     const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
       if (entry.isCompatible) {
         const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`
@@ -107,9 +107,9 @@ exports.handler = async function ({
 
 async function getMiniApp (miniappName) {
   if (miniappName) {
-    return Miniapp.fromPackagePath(DependencyPath.fromString(miniappName))
+    return MiniApp.fromPackagePath(DependencyPath.fromString(miniappName))
   } else {
     log.debug('Miniapp name is NOT passed, will proceed if the command is executed from MiniApp\'s root folder')
-    return Miniapp.fromCurrentPath()
+    return MiniApp.fromCurrentPath()
   }
 }

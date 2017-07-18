@@ -1,14 +1,12 @@
 // @flow
 
 import {
-  cauldron,
-  Manifest
-} from '@walmart/ern-core'
-import {
   Dependency,
   NativeApplicationDescriptor,
   spin
 } from '@walmart/ern-util'
+import cauldron from './cauldron.js'
+import Manifest from './manifest.js'
 import MiniApp from './miniapp.js'
 import _ from 'lodash'
 import chalk from 'chalk'
