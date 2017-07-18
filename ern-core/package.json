@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
    "@walmart/ern-util": "0.0.1",
+    "@walmart/ern-cauldron-api": "0.0.1",
    "mustache": "^2.3.0",
    "shelljs": "^0.7.6", 
    "lodash": "^4.17.3"

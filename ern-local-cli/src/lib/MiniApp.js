@@ -1,6 +1,8 @@
 // @flow
 
 import {
+  cauldron,
+  Manifest,
   Platform
 } from '@walmart/ern-core'
 import {
@@ -24,8 +26,6 @@ import {
 import {
   execSync
 } from 'child_process'
-import cauldron from './cauldron'
-import Manifest from './Manifest'
 import fs from 'fs'
 import inquirer from 'inquirer'
 import _ from 'lodash'

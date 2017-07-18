@@ -7,6 +7,7 @@ import {
   MavenGenerator
 } from '@walmart/ern-container-gen'
 import {
+  cauldron,
   Platform
 } from '@walmart/ern-core'
 import {
@@ -21,7 +22,6 @@ import {
 import {
   checkCompatibilityWithNativeApp
 } from './compatibility'
-import cauldron from './cauldron'
 import MiniApp from './MiniApp'
 import inquirer from 'inquirer'
 import _ from 'lodash'

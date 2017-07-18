@@ -4,6 +4,9 @@ import {
   generateMiniAppsComposite
 } from '@walmart/ern-container-gen'
 import {
+  cauldron
+} from '@walmart/ern-core'
+import {
   DependencyPath,
   NativeApplicationDescriptor
 } from '@walmart/ern-util'
@@ -12,7 +15,6 @@ import {
   runCauldronContainerGen
 } from '../../lib/publication'
 import _ from 'lodash'
-import cauldron from '../../lib/cauldron'
 import inquirer from 'inquirer'
 import semver from 'semver'
 

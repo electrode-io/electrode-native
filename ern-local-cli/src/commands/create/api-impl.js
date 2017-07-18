@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  Manifest,
   Platform
 } from '@walmart/ern-core'
 import {
@@ -10,7 +11,6 @@ import {
   DependencyPath
 } from '@walmart/ern-util'
 
-import Manifest from '../../lib/Manifest'
 import inquirer from 'inquirer'
 
 const path = require('path')

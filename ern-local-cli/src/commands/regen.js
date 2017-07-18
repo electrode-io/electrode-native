@@ -3,7 +3,9 @@
 import {
   regenerateCode
 } from '@walmart/ern-api-gen'
-import Manifest from '../lib/Manifest'
+import {
+  Manifest
+} from '@walmart/ern-core'
 
 exports.command = 'regen'
 exports.desc = 'Regenerates an existing api'
