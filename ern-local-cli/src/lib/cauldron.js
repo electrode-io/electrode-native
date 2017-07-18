@@ -97,17 +97,18 @@ class Cauldron {
 
   async removeNativeDependency (
     napDescriptor: NativeApplicationDescriptor,
-    dependencyName: string) : Promise<*> {
+    dependency: Dependency) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
+      const versionLessDependencyString = dependency.withoutVersion().toString()
       await this.throwIfNativeAppVersionIsReleased(napDescriptor,
                 'Cannot remove a native dependency from a released native app version')
 
       return spin(
-                tagOneLine`Removing dependency ${dependencyName} from
+                tagOneLine`Removing dependency ${versionLessDependencyString} from
                   ${napDescriptor.toString()}`,
                 this.cauldron.removeNativeDependency(
-                    napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependencyName))
+                    napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessDependencyString))
     } catch (e) {
       log.error(`[removeNativeDependency] ${e}`)
       throw e
