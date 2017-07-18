@@ -43,7 +43,7 @@ type TypeCauldronManifest = {
 }
 
 type TypeCauldron = {
-  manifest?: TypeCauldronManifest,
+  manifest: TypeCauldronManifest,
   nativeApps: Array<TypeCauldronNativeApp>
 }
 
