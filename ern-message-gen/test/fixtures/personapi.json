@@ -58,6 +58,13 @@
         "birthYear": {
           "description": "Person's birth year",
           "$ref": "#/definitions/BirthYear"
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Person's addresses",
+          "items": {
+            "$ref": "#/definitions/CompleteAddress"
+          }
         }
       },
       "required": [
@@ -107,6 +114,37 @@
           "description": "Birth year"
         }
       }
+    },
+    "CompleteAddress": {
+      "name": "completeAddress",
+      "properties": {
+        "streetOne":{
+          "type": "string",
+          "description": "street one of person's address"
+        },
+        "streetTwo": {
+          "type": "string",
+          "description": "street two of person's address (optional)"
+        },
+        "zipcode": {
+          "type": "string",
+          "description": "zipcode of person"
+        },
+        "state": {
+          "type": "string",
+          "description": "state of the person"
+        },
+        "city": {
+          "type": "string",
+          "description": "city of the person"
+        }
+      },
+      "required": [
+        "streetOne",
+        "zipcode",
+        "state",
+        "city"
+      ]
     }
   }
 }

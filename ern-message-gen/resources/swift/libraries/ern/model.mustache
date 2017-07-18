@@ -38,16 +38,18 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     }
 
     required public init(dictionary:[AnyHashable:Any]) {
-        if
-            {{#requiredVars}}
-            let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}
+        if {{#requiredVars}}{{#isNotContainer}} let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}{{/isNotContainer}}
+            {{^isNotContainer}} let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+                                let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {{^last}},{{/last}}{{#last}} { {{/last}}
+            {{/isNotContainer}}
             {{/requiredVars}}
+
             {{#requiredVars}}
             {{#isPrimitiveType}}
             self.{{name}} = {{name}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
-            self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
+            self.{{name}} = {{#isNotContainer}}{{datatype}}(dictionary: {{name}}Dict){{/isNotContainer}}{{^isNotContainer}}{{baseName}}List{{/isNotContainer}}
             {{/isPrimitiveType}}
             {{/requiredVars}}
         } else {
@@ -61,13 +63,20 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
         {{#isPrimitiveType}}
         self.{{name}} = dictionary["{{name}}"] as? {{datatype}}
         {{/isPrimitiveType}}
-        {{^isPrimitiveType}}
+        {{^isPrimitiveType}}{{#isNotContainer}}
 
         if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
             self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
         } else {
             self.{{name}} = nil
         }
+        {{/isNotContainer}}{{^isNotContainer}}if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+           let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
+            self.{{name}} = {{baseName}}List
+        } else {
+            self.{{name}} = nil
+        }
+        {{/isNotContainer}}
         {{/isPrimitiveType}}
         {{/optionalVars}}
 
@@ -77,17 +86,16 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     public func toDictionary() -> NSDictionary {
         var dict =  [
             {{#requiredVars}}
-            "{{name}}": self.{{name}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{^last}},{{/last}}
+            "{{name}}": self.{{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map{$0.toDictionary()}{{/isNotContainer}}{{/isPrimitiveType}}{{^last}},{{/last}}
             {{/requiredVars}}
         ] as [AnyHashable : Any]
 
         {{#optionalVars}}
         if let nonNull{{nameInCamelCase}} = self.{{name}} {
-            dict["{{name}}"] = nonNull{{nameInCamelCase}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}
+                dict["{{name}}"] = nonNull{{nameInCamelCase}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map{$0.toDictionary()}{{/isNotContainer}}{{/isPrimitiveType}}
         }
         {{/optionalVars}}
         return dict as NSDictionary
     }
-
 }{{/model}}
 {{/models}}
