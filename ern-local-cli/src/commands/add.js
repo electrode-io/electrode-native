@@ -3,8 +3,11 @@
 import {
   MiniApp
 } from '@walmart/ern-core'
+import {
+  Dependency
+} from '@walmart/ern-util'
 
-exports.command = 'add <name> [dev]'
+exports.command = 'add <dependency> [dev]'
 exports.desc = 'Add a dependency to this miniapp'
 
 exports.builder = function (yargs: any) {
@@ -17,14 +20,14 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function ({
-  name,
+  dependency,
   dev = false
 } : {
-  name: string,
+  dependency: string,
   dev: boolean
 }) {
   try {
-    return MiniApp.fromCurrentPath().addDependency(name, {dev})
+    return MiniApp.fromCurrentPath().addDependency(Dependency.fromString(dependency), {dev})
   } catch (e) {
     log.error(`${e}`)
   }
