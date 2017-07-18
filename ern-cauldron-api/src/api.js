@@ -354,6 +354,22 @@ export default class CauldronApi {
     }
   }
 
+  async addTargetJsDependencyToManifest (dependency: Dependency) {
+    const manifest = await this.getManifest()
+    if (!_.find(manifest.targetJsDependencies, d => Dependency.same(dependency, Dependency.fromString(d), { ignoreVersion: true }))) {
+      manifest.targetJsDependencies.push(dependency.toString())
+      await this.commit(`Add JS dependency ${dependency.toString()} to manifest`)
+    }
+  }
+
+  async addTargetNativeDependencyToManifest (dependency: Dependency) {
+    const manifest = await this.getManifest()
+    if (!_.find(manifest.targetNativeDependencies, d => Dependency.same(dependency, Dependency.fromString(d), { ignoreVersion: true }))) {
+      manifest.targetNativeDependencies.push(dependency.toString())
+      await this.commit(`Add Native dependency ${dependency.toString()} to manifest`)
+    }
+  }
+
   async validateAndGet (
     nativeApplicationName: string,
     platformName: string,

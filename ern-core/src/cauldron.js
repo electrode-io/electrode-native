@@ -396,6 +396,14 @@ class Cauldron {
     }
   }
 
+  async addTargetJsDependencyToManifest (dependency: Dependency) {
+    return this.cauldron.addTargetJsDependencyToManifest(dependency)
+  }
+
+  async addTargetNativeDependencyToManifest (dependency: Dependency) {
+    return this.cauldron.addTargetNativeDependencyToManifest(dependency)
+  }
+
   throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {
     if (napDescriptor.isPartial) {
       throw new Error(`Cannot work with a partial native application descriptor`)
