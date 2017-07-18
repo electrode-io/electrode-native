@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  plugin,
+  pluginUtil,
   handleCopyDirective
 } from '@walmart/ern-core'
 import {
@@ -27,10 +27,6 @@ import xcode from '@walmart/xcode-ern'
 import readDir from 'fs-readdir-recursive'
 
 const ROOT_DIR = shell.pwd()
-
-const {
-  getPluginConfig
-} = plugin
 
 export default class GithubGenerator {
   _targetRepoUrl: string
@@ -150,7 +146,7 @@ export default class GithubGenerator {
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
     for (const plugin of plugins) {
-      const pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+      const pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
       shell.cd(`${paths.pluginsDownloadFolder}`)
       throwIfShellCommandFailed()
       if (pluginConfig.ios) {
@@ -252,7 +248,7 @@ export default class GithubGenerator {
         if (plugin.name === 'react-native') {
           continue
         }
-        let pluginConfig = await getPluginConfig(plugin, pluginsConfigPath)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin, pluginsConfigPath)
         let iosPluginHook = pluginConfig.ios.pluginHook
         let containerHeader = pluginConfig.ios.containerPublicHeader
         if (iosPluginHook) {
@@ -281,7 +277,7 @@ export default class GithubGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
         let iOSPluginHook = pluginConfig.ios.pluginHook
         if (iOSPluginHook) {
           if (iOSPluginHook.header) {

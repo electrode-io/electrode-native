@@ -1,6 +1,6 @@
 // @flow
 
-import * as _plugin from './plugin'
+import * as _pluginUtil from './pluginUtil'
 import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
 import _Manifest from './Manifest'
@@ -8,7 +8,7 @@ import _cauldron from './cauldron'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 
-export const plugin = _plugin
+export const pluginUtil = _pluginUtil
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
 export const Manifest = _Manifest
@@ -17,7 +17,7 @@ export const compatibility = _compatibility
 export const MiniApp = _MiniApp
 
 export default ({
-  plugin: _plugin,
+  pluginUtil: _pluginUtil,
   handleCopyDirective: _handleCopyDirective,
   Platform: _Platform,
   Manifest: _Manifest,

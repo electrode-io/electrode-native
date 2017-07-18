@@ -1,6 +1,6 @@
 import shell from 'shelljs'
 import {
-  plugin,
+  pluginUtil,
   handleCopyDirective
 } from '@walmart/ern-core'
 import {
@@ -16,7 +16,7 @@ import xcode from '@walmart/xcode-ern'
 
 const {
   getPluginConfig
-} = plugin
+} = pluginUtil
 
 export const ROOT_DIR = shell.pwd()
 

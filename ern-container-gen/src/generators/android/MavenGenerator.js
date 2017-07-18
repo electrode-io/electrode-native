@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  plugin,
+  pluginUtil,
   handleCopyDirective
 } from '@walmart/ern-core'
 import {
@@ -28,10 +28,6 @@ const HOME_DIRECTORY = process.env['HOME']
 const ROOT_DIR = shell.pwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 const FILE_REGEX = /^file:\/\//
-
-const {
-  getPluginConfig
-} = plugin
 
 const getDefaultMavenLocalDirectory = () => {
   if (!HOME_DIRECTORY) {
@@ -168,7 +164,7 @@ export default class MavenGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
         let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
@@ -269,7 +265,7 @@ export default class MavenGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
           console.log(`Adding ${androidPluginHook.name}.java`)
@@ -300,7 +296,7 @@ export default class MavenGenerator {
         if (plugin.name === 'react-native') {
           continue
         }
-        let pluginConfig = await getPluginConfig(plugin, pluginsConfigPath)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin, pluginsConfigPath)
 
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {

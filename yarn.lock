@@ -1595,17 +1595,17 @@ debug-log@^1.0.0, debug-log@^1.0.1:
   version "1.0.1"
   resolved "http://npme.walmart.com/debug-log/-/debug-log-1.0.1.tgz#2307632d4c04382b8df8a32f70b895046d52745f"
 
-debug@2, debug@2.2.0, debug@^2.1.1, debug@^2.2.0:
-  version "2.2.0"
-  resolved "http://npme.walmart.com/debug/-/debug-2.2.0.tgz#4a75b7ec6cfce16cd2b40ad7d690400a01ecd3ce"
-  dependencies:
-    ms "0.7.1"
-
-debug@^2.6.7:
+debug@2, debug@^2.1.1, debug@^2.2.0, debug@^2.6.7:
   version "2.6.8"
   resolved "http://npme.walmart.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
   dependencies:
     ms "2.0.0"
+
+debug@2.2.0:
+  version "2.2.0"
+  resolved "http://npme.walmart.com/debug/-/debug-2.2.0.tgz#4a75b7ec6cfce16cd2b40ad7d690400a01ecd3ce"
+  dependencies:
+    ms "0.7.1"
 
 debuglog@^1.0.1:
   version "1.0.1"

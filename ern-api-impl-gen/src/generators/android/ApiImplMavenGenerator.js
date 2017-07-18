@@ -2,7 +2,7 @@
 
 import shell from 'shelljs'
 import {
-  plugin
+  pluginUtil
 } from '@walmart/ern-core'
 import {
   Dependency,
@@ -15,7 +15,7 @@ import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 const {
   PluginConfig,
   getPluginConfig
-} = plugin
+} = pluginUtil
 
 const path = require('path')
 
