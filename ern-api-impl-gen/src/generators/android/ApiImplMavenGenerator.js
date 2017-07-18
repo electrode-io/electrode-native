@@ -2,17 +2,20 @@
 
 import shell from 'shelljs'
 import {
-  Dependency, Utils
+  plugin
+} from '@walmart/ern-core'
+import {
+  Dependency,
+  Utils,
+  mustacheUtils
 } from '@walmart/ern-util'
 
-import {
-  getPluginConfig,
-  mustacheRenderToOutputFileUsingTemplateFile
-} from '../../../../ern-container-gen/src/utils.js'
-
-import type { PluginConfig } from '../../../../ern-container-gen/src/utils.js'
-
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
+
+const {
+  PluginConfig,
+  getPluginConfig
+} = plugin
 
 const path = require('path')
 
@@ -83,7 +86,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     let mustacheView = {}
     mustacheView.reactNativeVersion = reactNativeVersion
     shell.cp(path.join(paths.reactNativeAarsPath, `/react-native-${reactNativeVersion}.aar`), path.join(outputFolder, `/lib/libs/`))
-    return mustacheRenderToOutputFileUsingTemplateFile(
+    return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(paths.apiImplHull, `/android/lib/build.gradle`),
       mustacheView,
       path.join(outputFolder, `/lib/build.gradle`))

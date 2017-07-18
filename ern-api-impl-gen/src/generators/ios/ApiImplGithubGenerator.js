@@ -1,15 +1,12 @@
-import GithubGenerator from '../../../../ern-container-gen/src/generators/ios/GithubGenerator'
 import shell from 'shelljs'
 import {
-  Dependency, Utils
-} from '@walmart/ern-util'
-
-import {
-  getPluginConfig,
+  plugin,
   handleCopyDirective
-  // PluginConfig,
-  // mustacheRenderToOutputFileUsingTemplateFile
-} from '../../../../ern-container-gen/src/utils.js'
+} from '@walmart/ern-core'
+import {
+  Dependency,
+  Utils
+} from '@walmart/ern-util'
 
 import ApiImplGeneratable from '../../ApiImplGeneratable'
 import fs from 'fs'
@@ -17,11 +14,19 @@ import path from 'path'
 import _ from 'lodash'
 import xcode from '@walmart/xcode-ern'
 
+const {
+  getPluginConfig
+} = plugin
+
 export const ROOT_DIR = shell.pwd()
 
-export default class ApiImplGithubGenerator extends GithubGenerator implements ApiImplGeneratable {
+export default class ApiImplGithubGenerator implements ApiImplGeneratable {
   get name () : string {
     return 'ApiImplGithubGenerator'
+  }
+
+  get platform (): string {
+    return 'ios'
   }
 
   async generate (paths : Object,

@@ -1,21 +1,20 @@
 {
-  "name": "@walmart/ern-api-impl-gen",
+  "name": "@walmart/ern-core",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "ern-mocha",
     "build": "ern-babel",
-    "coverage": "ern-nyc",
     "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/ern-util": "0.0.1",
-    "@walmart/ern-core": "0.0.1",
-    "xcode": "^0.9.1"
+   "@walmart/ern-util": "0.0.1",
+   "mustache": "^2.3.0",
+   "shelljs": "^0.7.6", 
+   "lodash": "^4.17.3"
   },
   "devDependencies": {
     "@walmart/ern-util-dev": "0.0.1"

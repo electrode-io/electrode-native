@@ -1,6 +1,7 @@
 // @flow
 
 import * as _android from './android'
+import * as _mustacheUtils from './mustacheUtils'
 import _coloredLog from './coloredLog'
 import _config from './config'
 import _npm from './npm'
@@ -35,6 +36,7 @@ export const findNativeDependencies = _findNativeDependencies
 export const Utils = _Utils
 export const Platform = _Platform
 export const DependencyPath = _DependencyPath
+export const mustacheUtils = _mustacheUtils
 
 export default ({
   android: _android,
@@ -53,5 +55,6 @@ export default ({
   findNativeDependencies: _findNativeDependencies,
   Utils: _Utils,
   Platform: _Platform,
-  DependencyPath: _DependencyPath
+  DependencyPath: _DependencyPath,
+  mustacheUtils: _mustacheUtils
 })
