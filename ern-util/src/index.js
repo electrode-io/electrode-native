@@ -16,6 +16,7 @@ import _noop from './noop'
 import _findNativeDependencies from './findNativeDependencies'
 import _Utils from './utils'
 import _Platform from './Platform'
+import _DependencyPath from './DependencyPath'
 
 export const android = _android
 export const coloredLog = _coloredLog
@@ -33,6 +34,7 @@ export const noop = _noop
 export const findNativeDependencies = _findNativeDependencies
 export const Utils = _Utils
 export const Platform = _Platform
+export const DependencyPath = _DependencyPath
 
 export default ({
   android: _android,
@@ -50,5 +52,6 @@ export default ({
   noop: _noop,
   findNativeDependencies: _findNativeDependencies,
   Utils: _Utils,
-  Platform: _Platform
+  Platform: _Platform,
+  DependencyPath: _DependencyPath
 })

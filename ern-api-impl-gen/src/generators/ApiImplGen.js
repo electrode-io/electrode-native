@@ -4,6 +4,7 @@ import {
   yarn,
   spin,
   Dependency,
+  DependencyPath,
   Utils,
   coloredLog
 } from '@walmart/ern-util'
@@ -20,7 +21,7 @@ let plugins: Array<Dependency>
 
 export default class ApiImplGen {
   async generateApiImplementation (
-    api: string, // npm package || git location || file path file:/Users/x/y/z
+    apiDependencyPath: DependencyPath,
     paths: {
       workingFolder: string,
       pluginsDownloadFolder: string,
@@ -31,15 +32,15 @@ export default class ApiImplGen {
     },
     reactNativeVersion: string,
     platforms: Array<string>) {
-    log.debug(`inside generateApiImplementation for api:${api},  platforms:${platforms.toString()}`)
+    log.debug(`Inside generateApiImplementation for api:${apiDependencyPath.toString()},  platforms:${platforms.toString()}`)
 
-    await this.downloadApiAndDependencies(api, paths.pluginsDownloadFolder)
+    await this.downloadApiAndDependencies(apiDependencyPath, paths.pluginsDownloadFolder)
 
     const generators: Array<ApiImplGeneratable> = this.getGenerators(platforms)
     for (let generator of generators) {
       try {
         if (generator) {
-          await generator.generate(api, paths, reactNativeVersion, plugins)
+          await generator.generate(paths, reactNativeVersion, plugins)
         }
       } catch (e) {
         Utils.logErrorAndExitProcess(`Error executing generators, error: ${e}, generator: ${generator.name.toString()}`)
@@ -50,17 +51,17 @@ export default class ApiImplGen {
     log.info(chalk.green(`Done!.`))
   }
 
-  async downloadApiAndDependencies (api: string, path: string) {
+  async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string) {
     try {
       shell.cd(path)
       Utils.throwIfShellCommandFailed()
-      await this.spinAndDownload(api)
-      plugins = await this.getDependencies(api)
-      plugins.push(Dependency.fromString(api))// Also add the api as a plugin so it's src files will get copied.
+      await this.spinAndDownload(apiDependencyPath)
+      plugins = await this.getDependencies(apiDependencyPath)
+      plugins.push(Dependency.fromPath(apiDependencyPath))// Also add the api as a plugin so it's src files will get copied.
       if (plugins) {
         log.info('Downloading dependencies')
         for (let dependency of plugins) {
-          await this.spinAndDownload(dependency)
+          await this.spinAndDownload(DependencyPath.fromString(dependency.toString()))
         }
       }
     } catch (e) {
@@ -68,14 +69,14 @@ export default class ApiImplGen {
     }
   }
 
-  async spinAndDownload (dependency: string | Dependency) {
-    await spin(`Downloading ${dependency.toString()}`, yarnAdd(dependency))
+  async spinAndDownload (dependencyPath: DependencyPath) {
+    await spin(`Downloading ${dependencyPath.toString()}`, yarnAdd(dependencyPath))
   }
 
-  async getDependencies (api: string) : Promise<Array<Dependency>> {
+  async getDependencies (apiDependencyPath: DependencyPath) : Promise<Array<Dependency>> {
     try {
       log.info(`Looking for peerDependencies`)
-      const apiPackageInfo = await yarnInfo(api, {json: true})
+      const apiPackageInfo = await yarnInfo(apiDependencyPath, {json: true})
 
       let dependencies = []
       if (apiPackageInfo.data.peerDependencies) {
@@ -114,7 +115,6 @@ class NullApiImplGenerator implements ApiImplGeneratable {
   }
 
   async generate (
-    api: string,
     paths: Object,
     reactNativeVersion: string,
     plugins: Array<Dependency>) {
