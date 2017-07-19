@@ -25,6 +25,10 @@ class Cauldron {
     this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias], cauldronPath)
   }
 
+  isActive () {
+    return this.cauldron !== undefined
+  }
+
   async addNativeApp (
     napDescriptor: NativeApplicationDescriptor,
     ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {

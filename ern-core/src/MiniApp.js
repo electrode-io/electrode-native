@@ -342,8 +342,8 @@ export default class MiniApp {
             // Let's check if this is an API (or API implementation) or a third party native dependency
             if (/^react-native-.+-api$|^react-native-.+-api-impl$/.test(dependency.name)) {
               // This is a native API or API implementation
-              // Just ask user if wants to add it to Cauldron manifest
-              if (await this.doesUserWantsToAddDependencyToManifest(versionLessDependency)) {
+              // Just ask user if wants to add it to Cauldron manifest (if a Cauldron is active)
+              if (cauldron.isActive() && await this.doesUserWantsToAddDependencyToManifest(versionLessDependency)) {
                 const pathToDependencyPackageJson = path.join(tmpPath, 'node_modules', versionLessDependency.toString(), 'package.json')
                 const dependencyPackageJson = JSON.parse(fs.readFileSync(pathToDependencyPackageJson, 'utf-8'))
                 finalDependency = new Dependency(dependency.name, { scope: dependency.scope, version: dependencyPackageJson.version })
