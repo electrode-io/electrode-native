@@ -7,7 +7,7 @@ import {
   Manifest
 } from '@walmart/ern-core'
 
-exports.command = 'regen'
+exports.command = 'regen-api'
 exports.desc = 'Regenerates an existing api'
 
 exports.builder = function (yargs: any) {

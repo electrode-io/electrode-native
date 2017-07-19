@@ -30,5 +30,5 @@ exports.handler = async function ({
   platformVersion: string,
   scope?: string,
 }) {
-  Utils.logErrorAndExitProcess(`This command is deprecated, run the following command instead: ern create miniapp ${appName} ${platformVersion} ${scope}`)
+  Utils.logErrorAndExitProcess(`This command is deprecated, run the following command instead: ern create-miniapp ${appName} ${platformVersion} ${scope}`)
 }

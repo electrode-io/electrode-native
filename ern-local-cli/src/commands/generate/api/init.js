@@ -54,5 +54,5 @@ exports.handler = async function ({
     return log.error(`react-native not found in manifest. cannot infer version to use`)
   }
 
-  Utils.logErrorAndExitProcess(`This command is deprecated. To create an API, run the following command: ern create api ${apiName}`)
+  Utils.logErrorAndExitProcess(`This command is deprecated. To create an API, run the following command: ern create-api ${apiName}`)
 }

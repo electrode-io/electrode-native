@@ -4,8 +4,8 @@ import {
   MiniApp
 } from '@walmart/ern-core'
 
-exports.command = 'android'
-exports.desc = 'Run miniapp in android runner project'
+exports.command = 'run-ios'
+exports.desc = 'Run miniapp in ios runner project'
 
 exports.builder = function (yargs: any) {
   return yargs
@@ -13,7 +13,7 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function () {
   try {
-    MiniApp.fromCurrentPath().runInAndroidRunner()
+    MiniApp.fromCurrentPath().runInIosRunner()
   } catch (e) {
     log.error(`${e}`)
   }
