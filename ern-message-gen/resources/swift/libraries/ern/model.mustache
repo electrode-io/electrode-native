@@ -38,28 +38,25 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     }
 
     required public init(dictionary:[AnyHashable:Any]) {
-        if {{#requiredVars}}{{#isNotContainer}} let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}{{/isNotContainer}}
+         {{#requiredVars}}{{#isNotContainer}}if let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}{{/isNotContainer}}
             {{^isNotContainer}} let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
                                 let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {{^last}},{{/last}}{{#last}} { {{/last}}
             {{/isNotContainer}}
-            {{/requiredVars}}
 
-            {{#requiredVars}}
             {{#isPrimitiveType}}
             self.{{name}} = {{name}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
             self.{{name}} = {{#isNotContainer}}{{datatype}}(dictionary: {{name}}Dict){{/isNotContainer}}{{^isNotContainer}}{{baseName}}List{{/isNotContainer}}
             {{/isPrimitiveType}}
-            {{/requiredVars}}
         } else {
             assertionFailure("\({{classname}}.tag) missing one or more required properties[{{#requiredVars}}{{name}}{{^last}},{{/last}}{{/requiredVars}}]")
-            {{#requiredVars}}
             self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
-            {{/requiredVars}}
         }
+         {{/requiredVars}}
 
-        {{#optionalVars}}
+
+    {{#optionalVars}}
         {{#isPrimitiveType}}
         self.{{name}} = dictionary["{{name}}"] as? {{datatype}}
         {{/isPrimitiveType}}
