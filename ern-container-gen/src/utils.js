@@ -176,7 +176,8 @@ export function clearReactPackagerCache () {
 export async function downloadPluginSource (pluginOrigin: any) : Promise<string> {
   let downloadPath = ''
   if (pluginOrigin.type === 'npm') {
-    await yarnAdd(pluginOrigin)
+    const dependency = new Dependency(pluginOrigin.name, { scope: pluginOrigin.scope, version: pluginOrigin.version })
+    await yarnAdd(DependencyPath.fromString(dependency.toString()))
     if (pluginOrigin.scope) {
       downloadPath = `node_modules/@${pluginOrigin.scope}/${pluginOrigin.name}`
     } else {
