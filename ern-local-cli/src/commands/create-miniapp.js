@@ -4,7 +4,7 @@ import {
   MiniApp
 } from '@walmart/ern-core'
 
-exports.command = 'miniapp <appName> [platformVersion] [scope]'
+exports.command = 'create-miniapp <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application(miniapp)'
 
 exports.builder = function (yargs: any) {

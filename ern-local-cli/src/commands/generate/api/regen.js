@@ -21,5 +21,5 @@ exports.handler = async function ({
   updatePlugin: boolean,
   bridgeVersion: string
 } = {}) {
-  Utils.logErrorAndExitProcess(`This command is deprecated, simply type 'ern regen' from the root of the api to regenerate the api and models.`)
+  Utils.logErrorAndExitProcess(`This command is deprecated, simply type 'ern regen-api' from the root of the api to regenerate the api and models.`)
 }

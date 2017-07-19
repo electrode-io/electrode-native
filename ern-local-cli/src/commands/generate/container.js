@@ -74,5 +74,5 @@ exports.handler = async function ({
   containerName?: string,
   publicationUrl?: string
 }) {
-  Utils.logErrorAndExitProcess(`This command is deprecated, to create a container run the following command: ern create container`)
+  Utils.logErrorAndExitProcess(`This command is deprecated, to create a container run the following command: ern create-container`)
 }

@@ -42,5 +42,5 @@ exports.handler = async function ({
   force: boolean,
   outputFolder: string,
 }) {
-  Utils.logErrorAndExitProcess(`This command is deprecated: to create an api implementation use: ern create api-impl ${api}`)
+  Utils.logErrorAndExitProcess(`This command is deprecated: to create an api implementation use: ern create-api-impl ${api}`)
 }

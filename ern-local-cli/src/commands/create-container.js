@@ -13,12 +13,12 @@ import {
 import {
   runLocalContainerGen,
   runCauldronContainerGen
-} from '../../lib/publication'
+} from '../lib/publication'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'
 
-exports.command = 'container'
+exports.command = 'create-container'
 exports.desc = 'Run the container generator'
 
 exports.builder = function (yargs: any) {

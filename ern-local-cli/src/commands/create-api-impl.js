@@ -15,7 +15,7 @@ import inquirer from 'inquirer'
 
 const path = require('path')
 
-exports.command = 'api-impl <api>'
+exports.command = 'create-api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
 
 exports.builder = function (yargs: any) {

@@ -7,7 +7,7 @@ import {
   Manifest
 } from '@walmart/ern-core'
 
-exports.command = 'api <apiName>'
+exports.command = 'create-api <apiName>'
 exports.desc = 'Create a new api'
 
 exports.builder = function (yargs: any) {

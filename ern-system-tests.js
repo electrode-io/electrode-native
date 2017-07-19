@@ -44,7 +44,7 @@ run(`ern cauldron repository list`)
 
 //
 // Miniapp commands
-run(`ern create miniapp ${miniAppName}`)
+run(`ern create-miniapp ${miniAppName}`)
 console.log(info(`Entering ${process.cwd()}/${miniAppName}`))
 process.chdir(`${process.cwd()}/${miniAppName}`)
 run(`ern add @walmart/react-native-electrode-bridge`)
@@ -67,8 +67,8 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 //
 // Container generation commands
-run(`ern create container -n ${androidNativeApplicationDescriptor} -v 1.0.0`)
-run(`ern create container -n ${iosNativeApplicationDescriptor} -v 1.0.0`)
+run(`ern create-container -n ${androidNativeApplicationDescriptor} -v 1.0.0`)
+run(`ern create-container -n ${iosNativeApplicationDescriptor} -v 1.0.0`)
 
 //
 // Platform commands
