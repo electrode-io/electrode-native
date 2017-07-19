@@ -30,14 +30,23 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     required public init(dictionary:[AnyHashable:Any]) {
         if
             {{#requiredParams}}
-            let {{baseName}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}
+
+                let {{baseName}}{{^isPrimitiveType}}{{^isListContainer}}Dict{{/isListContainer}}{{#isListContainer}}Array{{/isListContainer}}{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}
             {{/requiredParams}}
             {{#requiredParams}}
             {{#isPrimitiveType}}
             self.{{baseName}} = {{baseName}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
-            self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+                {{^isListContainer}}
+                    self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+                {{/isListContainer}}
+                {{#isListContainer}}
+                    self.{{baseName}} = {{baseName}}Dict.map({ obj in
+                    {{complexType}}(dictionary: obj as! [AnyHashable : Any])
+                    })
+
+                {{/isListContainer}}
             {{/isPrimitiveType}}
             {{/requiredParams}}
         } else {
