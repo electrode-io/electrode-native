@@ -25,6 +25,10 @@ class Cauldron {
     this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias], cauldronPath)
   }
 
+  isActive () {
+    return this.cauldron !== undefined
+  }
+
   async addNativeApp (
     napDescriptor: NativeApplicationDescriptor,
     ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {
@@ -390,10 +394,18 @@ class Cauldron {
     }
   }
 
-  async getManifests () {
+  async getManifest () {
     if (this.cauldron) {
-      return this.cauldron.getManifests()
+      return this.cauldron.getManifest()
     }
+  }
+
+  async addTargetJsDependencyToManifest (dependency: Dependency) {
+    return this.cauldron.addTargetJsDependencyToManifest(dependency)
+  }
+
+  async addTargetNativeDependencyToManifest (dependency: Dependency) {
+    return this.cauldron.addTargetNativeDependencyToManifest(dependency)
   }
 
   throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {

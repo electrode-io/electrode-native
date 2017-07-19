@@ -108,7 +108,7 @@ export default class MiniApp {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactDependency = await Manifest.getJsDependency('react')
+      const reactDependency = await Manifest.getTargetJsDependency('react')
       if (!reactDependency) {
         throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
       }
@@ -306,29 +306,102 @@ export default class MiniApp {
   }
 
   async addDependency (
-    dependencyName: string,
-    {dev} : { dev: boolean } = {}) {
-    let dep = await Manifest.getDependency(dependencyName)
-    if (!dep) {
-      log.warn(
-                `
-==================================================================================
-Dependency ${dependencyName} is not declared in current platform version manifest.
-If this is a non purely JS dependency you will face issues during publication.
-Otherwise you can safely ignore this warning
-==================================================================================
-`)
-      dep = Dependency.fromString(dependencyName)
-    }
-
-    const dependencyPath = new DependencyPath(dep.toString())
-
-    process.chdir(this.path)
-    if (dep.scope) {
-      await spin(`Installing @${dep.scope}/${dep.name}@${dep.version}`, yarnAdd(dependencyPath, {dev}))
+    dependency: Dependency,
+    { dev } : { dev: boolean } = {}) : Promise<?Dependency> {
+    if (dev) {
+      // Dependency is a devDependency
+      // In that case we don't perform any checks at all (for now) because development
+      // dependencies do not really have to be aligned
+      const devDependencyPath = DependencyPath.fromString(dependency.toString())
+      await spin(`Adding ${dependency.toString()} to MiniApp devDependencies`, yarnAdd(devDependencyPath, { dev: true }))
     } else {
-      await spin(`Installing ${dep.name}@${dep.version}`, yarnAdd(dependencyPath, {dev}))
+      let finalDependency
+
+      // Dependency is not a development dependency
+      // In that case we need to perform additional checks and operations
+      const versionLessDependency = dependency.withoutVersion()
+      const manifestDependency = await Manifest.getDependency(versionLessDependency)
+
+      if (!manifestDependency) {
+        // Dependency is not declared in manifest
+        // We need to detect if this dependency is a pure JS one or if it's a native one or
+        // if it contains transitive native dependencies
+        const tmpPath = tmp.dirSync({ unsafeCleanup: true }).name
+        process.chdir(tmpPath)
+        await spin(`${versionLessDependency.toString()} is not declared in the manifest. Performing additional checks.`,
+                    yarnAdd(DependencyPath.fromString(dependency.toString())))
+
+        const nativeDependencies = findNativeDependencies(path.join(tmpPath, 'node_modules'))
+        if (nativeDependencies.length === 0) {
+          // This is a pure JS dependency. Not much to do here -yet-
+          finalDependency = manifestDependency
+        } else if (nativeDependencies.length === 1) {
+          // This is a native dependency or it contains a single native dependency as a transitive one
+          if (Dependency.same(nativeDependencies[0], dependency, { ignoreVersion: true })) {
+            // This dependency is itself the native dependency.
+            // Let's check if this is an API (or API implementation) or a third party native dependency
+            if (/^react-native-.+-api$|^react-native-.+-api-impl$/.test(dependency.name)) {
+              // This is a native API or API implementation
+              // Just ask user if wants to add it to Cauldron manifest (if a Cauldron is active)
+              if (cauldron.isActive() && await this.doesUserWantsToAddDependencyToManifest(versionLessDependency)) {
+                const pathToDependencyPackageJson = path.join(tmpPath, 'node_modules', versionLessDependency.toString(), 'package.json')
+                const dependencyPackageJson = JSON.parse(fs.readFileSync(pathToDependencyPackageJson, 'utf-8'))
+                finalDependency = new Dependency(dependency.name, { scope: dependency.scope, version: dependencyPackageJson.version })
+                await cauldron.addTargetNativeDependencyToManifest(finalDependency)
+              }
+            } else {
+              // This is a third party native dependency. If it's not in the master manifest,
+              // then it means that it is not supported by the platform yet. Fail.
+              return log.error(`${dependency.toString()} plugin is not yet supported. Consider adding support for it to the master manifest`)
+            }
+          } else {
+            // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
+            // Recurse with this native dependency
+            if (!await this.addDependency(nativeDependencies[0])) {
+              return log.error(`${dependency.toString()} was not added to the MiniApp.`)
+            }
+          }
+        } else {
+          // Multiple native dependencies ! (example '@shoutem/ui')
+          // It might be a pure JS dependency which contains transitive native dependencies
+          // Or a native dependency which also contains transitive native dependencies
+          // We don't support this scenario just yet
+          return log.error(`${dependency.toString()} contains multiple plugins. This is not supported yet.`)
+        }
+      } else {
+        // Dependency is defined in manifest. But does the version match the one from manifest ?
+        if (!dependency.version) {
+          // If no version was specified for this dependency, we're good, just use the version
+          // declared in the manifest
+          finalDependency = manifestDependency
+        } else {
+          // Version is provided for this dependency, check that version match manifest
+          if (dependency.version !== manifestDependency.version) {
+            // Dependency version mismatch. We don't support that yet
+            return log.error(`${dependency.toString()} version mismatch. ${manifestDependency.version} v.s ${dependency.version}. This is not supported yet`)
+          } else {
+            // Dependency version match
+            finalDependency = manifestDependency
+          }
+        }
+      }
+
+      if (finalDependency) {
+        process.chdir(this.path)
+        await spin(`Adding ${finalDependency.toString()} to MiniApp`, yarnAdd(DependencyPath.fromString(finalDependency.toString())))
+        return finalDependency
+      }
     }
+  }
+
+  async doesUserWantsToAddDependencyToManifest (dependency: Dependency) : Promise<boolean> {
+    const { shouldAddDependencyToManifest } = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'shouldAddDependencyToManifest',
+      message: `Would you like to add ${dependency.toString()} to your current Caudron manifest ?`,
+      default: true
+    }])
+    return shouldAddDependencyToManifest
   }
 
   async upgradeToPlatformVersion (versionToUpgradeTo: string, force: boolean) : Promise<*> {

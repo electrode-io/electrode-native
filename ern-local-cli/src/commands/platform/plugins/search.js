@@ -28,7 +28,7 @@ exports.handler = async function ({
   pluginName: string,
   platformVersion?: string
 }) {
-  const plugin = await Manifest.getTargetNativeDependency(platformVersion, Dependency.fromString(pluginName))
+  const plugin = await Manifest.getTargetNativeDependency(Dependency.fromString(pluginName), platformVersion)
   if (!plugin) {
     return log.warn(`No plugin named ${pluginName} was found for platform version $platformVersion}`)
   }

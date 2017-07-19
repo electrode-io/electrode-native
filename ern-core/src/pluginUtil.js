@@ -19,6 +19,13 @@ export type PluginConfig = {
 const npmScopeModuleRe = /@(.*)\/(.*)/
 const pluginConfigFileName = 'config.json'
 
+export function hasPluginConfig (
+  plugin: Dependency,
+  pluginsConfigPath: string) : boolean {
+  const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
+  return (pluginConfigPath != null && fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`))
+}
+
 //
 // Get the generation config of a given plugin
 // plugin: A plugin object

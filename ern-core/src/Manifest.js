@@ -17,35 +17,12 @@ const git = Prom.promisifyAll(simpleGit(Platform.manifestDirectory))
 const npmModuleRe = /(.*)@(.*)/
 
 export default class Manifest {
-  //
-  // Manifest access
-  //
-
-  // Gets the manifest of a given platform version
-  static async getManifest (version) : Promise<?Object> {
-    let manifest
-
-    if (this.hasLocalManifest(version) && (Platform.currentVersion === version)) {
-      manifest = this.getLocalManifest(version)
-    }
-
-    if ((!manifest) && (await this.hasCauldronManifest(version))) {
-      manifest = await this.getCauldronManifest(version)
-    }
-
-    if ((!manifest) && (this.hasMasterManifest(version))) {
-      manifest = await this.getMasterManifest(version)
-    }
-
-    return manifest
-  }
-
   // Gets the merged manifest of a given platform version
   static async getMergedManifest (version) : Promise<?Object> {
     let mergedManifest = {}
 
     const localManifest = this.getLocalManifest(version)
-    const cauldronManifest = await this.getCauldronManifest(version)
+    const cauldronManifest = await cauldron.getManifest()
     const masterManifest = await this.getMasterManifest(version)
 
     mergedManifest.targetNativeDependencies = _.unionBy(
@@ -73,17 +50,6 @@ export default class Manifest {
     if (this.hasLocalManifest(version)) {
       return JSON.parse(fs.readFileSync(`${Platform.getPlatformVersionPath(version)}/manifest.json`, 'utf-8'))
     }
-  }
-
-  // Is there a manifest in current Cauldron for a given platform version ?
-  static async hasCauldronManifest (version: string) : Promise<boolean> {
-    return this.getCauldronManifest(version) !== undefined
-  }
-
-  // Gets the manifest of a given platform version from the Cauldron
-  static async getCauldronManifest (version: string) : Promise<?Object> {
-    const manifests = await cauldron.getManifests()
-    return _.find(manifests, m => semver.satisfies(version, m.platformVersion))
   }
 
   // Is there an official master manifest for a given platform version ?
@@ -138,19 +104,18 @@ export default class Manifest {
       d => (d.name === plugin.name) && (d.scope === plugin.scope))
   }
 
-  static async getTargetNativeDependency (platformVersion: string, dependency: Dependency) : Promise<?Dependency> {
+  static async getTargetNativeDependency (dependency: Dependency, platformVersion?: string = Platform.currentVersion) : Promise<?Dependency> {
     const targetNativeDependencies = await this.getTargetNativeDependencies(platformVersion)
     return _.find(targetNativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }
 
-  static async getJsDependency (dependencyString: string) : Promise<?Dependency> {
+  static async getTargetJsDependency (dependencyString: string) : Promise<?Dependency> {
     const jsDependency = Dependency.fromString(dependencyString)
     return _.find(await this.getTargetJsDependencies(Platform.currentVersion),
       d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))
   }
 
-  static async getDependency (dependencyString: string) : Promise<?Dependency> {
-    const dependency = Dependency.fromString(dependencyString)
+  static async getDependency (dependency: Dependency) : Promise<?Dependency> {
     return _.find(await this.getTargetNativeAndJsDependencies(Platform.currentVersion),
       d => (d.name === dependency.name) && (d.scope === dependency.scope))
   }

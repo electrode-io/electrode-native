@@ -40,9 +40,9 @@ export default class CauldronApi {
   // READ OPERATIONS
   // =====================================================================================
 
-  async getManifests () {
+  async getManifest () {
     const cauldron = await this.getCauldron()
-    return cauldron.manifests
+    return cauldron.manifest
   }
 
   async getNativeApplications () {
@@ -351,6 +351,22 @@ export default class CauldronApi {
     if (version && !version.miniApps.container.includes(miniapp.toString())) {
       version.miniApps.container.push(miniapp.toString())
       await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
+    }
+  }
+
+  async addTargetJsDependencyToManifest (dependency: Dependency) {
+    const manifest = await this.getManifest()
+    if (!_.find(manifest.targetJsDependencies, d => Dependency.same(dependency, Dependency.fromString(d), { ignoreVersion: true }))) {
+      manifest.targetJsDependencies.push(dependency.toString())
+      await this.commit(`Add JS dependency ${dependency.toString()} to manifest`)
+    }
+  }
+
+  async addTargetNativeDependencyToManifest (dependency: Dependency) {
+    const manifest = await this.getManifest()
+    if (!_.find(manifest.targetNativeDependencies, d => Dependency.same(dependency, Dependency.fromString(d), { ignoreVersion: true }))) {
+      manifest.targetNativeDependencies.push(dependency.toString())
+      await this.commit(`Add Native dependency ${dependency.toString()} to manifest`)
     }
   }
 
