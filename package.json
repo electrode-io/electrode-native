@@ -69,6 +69,7 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
     "node-emoji": "^1.5.1",
+    "node-fetch": "^1.7.1",
     "node-simctl": "^3.5.5",
     "ora": "^1.1.0",
     "path": "^0.12.7",
