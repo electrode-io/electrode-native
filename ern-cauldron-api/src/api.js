@@ -370,6 +370,30 @@ export default class CauldronApi {
     }
   }
 
+  async updateTargetDependencyVersionInManifest (dependency: Dependency) {
+    // Dumb way ... call both
+    await this.updateTargetJsDependencyVersionInManifest(dependency)
+    await this.updateTargetNativeDependencyVersionInManifest(dependency)
+  }
+
+  async updateTargetJsDependencyVersionInManifest (dependency: Dependency) {
+    const manifest = await this.getManifest()
+    let targetJsDependency = _.find(manifest.targetJsDependencies, d => Dependency.same(Dependency.fromString(d), dependency, { ignoreVersion: true }))
+    if (targetJsDependency && (targetJsDependency.version !== dependency.version)) {
+      manifest.targetJsDependencies = _.map(manifest.targetJsDependencies, t => (t === targetJsDependency) ? dependency.toString() : t)
+      await this.commit(`Update version of JS dependency ${dependency.name} to ${dependency.version} in manifest`)
+    }
+  }
+
+  async updateTargetNativeDependencyVersionInManifest (dependency: Dependency) {
+    const manifest = await this.getManifest()
+    let targetNativeDependency = _.find(manifest.targetNativeDependencies, d => Dependency.same(Dependency.fromString(d), dependency, { ignoreVersion: true }))
+    if (targetNativeDependency && (targetNativeDependency.version !== dependency.version)) {
+      manifest.targetNativeDependencies = _.map(manifest.targetNativeDependencies, t => (t === targetNativeDependency) ? dependency.toString() : t)
+      await this.commit(`Update version of native dependency ${dependency.name} to ${dependency.version} in manifest`)
+    }
+  }
+
   async validateAndGet (
     nativeApplicationName: string,
     platformName: string,
