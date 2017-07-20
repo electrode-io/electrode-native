@@ -377,8 +377,17 @@ export default class MiniApp {
         } else {
           // Version is provided for this dependency, check that version match manifest
           if (dependency.version !== manifestDependency.version) {
-            // Dependency version mismatch. We don't support that yet
-            return log.error(`${dependency.toString()} version mismatch. ${manifestDependency.version} v.s ${dependency.version}. This is not supported yet`)
+            // Dependency version mismatch. Let the user know of potential impacts and ask
+            // if user wants to proceed with version update in manifest
+            // TODO : If not API/API impl, we need to ensure that plugin is supported by platform
+            // for the provided plugin version
+            log.warn(`${dependency.toString()} version mismatch.`)
+            log.warn(`Manifest version: ${manifestDependency.version}`)
+            log.warn(`Wanted version: ${dependency.version}`)
+            if (cauldron.isActive() && await this.doesUserWantsToUpdateDependencyVersionInManifest(versionLessDependency)) {
+              finalDependency = dependency
+              await cauldron.updateTargetDependencyVersionInManifest(finalDependency)
+            }
           } else {
             // Dependency version match
             finalDependency = manifestDependency
@@ -398,10 +407,20 @@ export default class MiniApp {
     const { shouldAddDependencyToManifest } = await inquirer.prompt([{
       type: 'confirm',
       name: 'shouldAddDependencyToManifest',
-      message: `Would you like to add ${dependency.toString()} to your current Caudron manifest ?`,
+      message: `Would you like to add ${dependency.toString()} to the current Caudron manifest ?`,
       default: true
     }])
     return shouldAddDependencyToManifest
+  }
+
+  async doesUserWantsToUpdateDependencyVersionInManifest (dependency: Dependency) : Promise<boolean> {
+    const { shouldUpdateDependencyVersionInManifest } = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'shouldUpdateDependencyVersionInManifest',
+      message: `Would you like to update ${dependency.toString()} in the current Caudron manifest (this could impact other MiniApps) ?`,
+      default: true
+    }])
+    return shouldUpdateDependencyVersionInManifest
   }
 
   async upgradeToPlatformVersion (versionToUpgradeTo: string, force: boolean) : Promise<*> {
