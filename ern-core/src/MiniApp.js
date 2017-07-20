@@ -6,6 +6,7 @@ import {
 } from '@walmart/ern-runner-gen'
 import {
   android,
+  config as ernConfig,
   findNativeDependencies,
   Dependency,
   DependencyPath,
@@ -575,7 +576,7 @@ export default class MiniApp {
       } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
         await cauldron.addContainerMiniApp(napDescriptor, miniApp)
       } else {
-        console.log('not supported')
+        log.error('not supported')
       }
     } catch (e) {
       log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`)
@@ -587,11 +588,35 @@ export default class MiniApp {
     execSync(`npm publish --prefix ${this._path}`)
   }
 
-    // Should go somewhere else. Does not belong in MiniApp class
+  // Should go somewhere else. Does not belong in MiniApp class
   getUnscopedModuleName (moduleName: string) : string {
     const npmScopeModuleRe = /(@.*)\/(.*)/
     return npmScopeModuleRe.test(moduleName)
             ? npmScopeModuleRe.exec(`${moduleName}`)[2]
             : moduleName
+  }
+
+  async link () {
+    let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
+    const previousLinkPath = miniAppsLinks[this.packageJson.name]
+    if (previousLinkPath && (previousLinkPath !== this.path)) {
+      log.warn(`Replacing previous link [${this.packageJson.name} => ${previousLinkPath}]`)
+    } else if (previousLinkPath && (previousLinkPath === this.path)) {
+      return log.warn(`Link is already created for ${this.packageJson.name} with same path`)
+    }
+    miniAppsLinks[this.packageJson.name] = this.path
+    ernConfig.setValue('miniAppsLinks', miniAppsLinks)
+    log.info(`${this.packageJson.name} link created [${this.packageJson.name} => ${this.path}]`)
+  }
+
+  async unlink () {
+    let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
+    if (miniAppsLinks[this.packageJson.name]) {
+      delete miniAppsLinks[this.packageJson.name]
+      ernConfig.setValue('miniAppsLinks', miniAppsLinks)
+      log.info(`${this.packageJson.name} link was removed`)
+    } else {
+      return log.warn(`No link exists for ${this.packageJson.name}`)
+    }
   }
 }
