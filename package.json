@@ -55,6 +55,7 @@
     "babel-polyfill": "^6.23.0",
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
+    "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
     "code-push-cli": "1.12.9-beta",
     "console-log-level": "^1.4.0",
