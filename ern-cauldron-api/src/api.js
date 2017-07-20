@@ -59,6 +59,8 @@ export default class CauldronApi {
     const app = await this.getNativeApplication(nativeApplicationName)
     if (app) {
       return app.platforms
+    } else {
+      log.error(`failed to fetch nativeApp ${nativeApplicationName}`)
     }
   }
 
@@ -68,6 +70,8 @@ export default class CauldronApi {
     const platforms = await this.getPlatforms(nativeApplicationName)
     if (platforms) {
       return _.find(platforms, p => p.name === platformName)
+    } else {
+      log.error(`failed to fetch platform ${platformName}`)
     }
   }
 
@@ -77,6 +81,8 @@ export default class CauldronApi {
     const platform = await this.getPlatform(nativeApplicationName, platformName)
     if (platform) {
       return platform.versions
+    } else {
+      log.error('failed to fetch versions')
     }
   }
 
