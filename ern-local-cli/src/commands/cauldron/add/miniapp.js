@@ -58,7 +58,7 @@ exports.handler = async function ({
   if (!ignoreNpmPublish && !await miniapp.isPublishedToNpm()) {
     const {publishToNpm} = await inquirer.prompt({
       type: 'confirm',
-      name: 'doPublishToNpm',
+      name: 'publishToNpm',
       message: `${miniappPackage} not published to npm. Do you want to publish it`,
       default: true
     })
