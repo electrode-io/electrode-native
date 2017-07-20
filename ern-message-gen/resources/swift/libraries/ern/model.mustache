@@ -38,54 +38,60 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     }
 
     required public init(dictionary:[AnyHashable:Any]) {
-         {{#requiredVars}}{{#isNotContainer}}if let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}{{/isNotContainer}}
-            {{^isNotContainer}} let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
-                                let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {{^last}},{{/last}}{{#last}} { {{/last}}
-            {{/isNotContainer}}
-
-            {{#isPrimitiveType}}
-            self.{{name}} = {{name}}
-            {{/isPrimitiveType}}
-            {{^isPrimitiveType}}
-            self.{{name}} = {{#isNotContainer}}{{datatype}}(dictionary: {{name}}Dict){{/isNotContainer}}{{^isNotContainer}}{{baseName}}List{{/isNotContainer}}
-            {{/isPrimitiveType}}
+         {{#requiredVars}}{{#isNotContainer}}
+        {{^isPrimitiveType}}if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
+            self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
         } else {
-            assertionFailure("\({{classname}}.tag) missing one or more required properties[{{#requiredVars}}{{name}}{{^last}},{{/last}}{{/requiredVars}}]")
+            assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}] ")
             self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
-        }
+        }{{/isPrimitiveType}}
+
+        {{#isPrimitiveType}}if let {{name}} = dictionary["{{name}}"] as? {{datatype}}  {
+                  self.{{name}} = {{name}}
+        } else {
+            assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}] ")
+            self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
+        }{{/isPrimitiveType}}
+         {{/isNotContainer}}
+
+         {{^isNotContainer}}if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+             let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}}  {
+                 self.{{name}} = {{baseName}}List
+             } else {
+             assertionFailure("\({{classname}}.tag) missing one or more required properties[{{name}}]")
+             self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
+             }
+         {{/isNotContainer}}
          {{/requiredVars}}
 
-
     {{#optionalVars}}
-        {{#isPrimitiveType}}
-        self.{{name}} = dictionary["{{name}}"] as? {{datatype}}
-        {{/isPrimitiveType}}
-        {{^isPrimitiveType}}{{#isNotContainer}}
 
-        if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
-            self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
+        {{#isNotContainer}}
+
+        if let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}} {
+            self.{{name}} = {{^isPrimitiveType}}{{datatype}}(dictionary: {{name}}Dict){{/isPrimitiveType}}{{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}
         } else {
             self.{{name}} = nil
         }
-        {{/isNotContainer}}{{^isNotContainer}}if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+        {{/isNotContainer}}
+        {{^isNotContainer}}if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
            let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
             self.{{name}} = {{baseName}}List
         } else {
             self.{{name}} = nil
         }
         {{/isNotContainer}}
-        {{/isPrimitiveType}}
         {{/optionalVars}}
 
         super.init(dictionary: dictionary)
     }
 
     public func toDictionary() -> NSDictionary {
-        var dict =  [
-            {{#requiredVars}}
-            "{{name}}": self.{{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map{$0.toDictionary()}{{/isNotContainer}}{{/isPrimitiveType}}{{^last}},{{/last}}
-            {{/requiredVars}}
-        ] as [AnyHashable : Any]
+
+         var dict = [:] as [AnyHashable : Any]
+
+         {{#requiredVars}}dict["{{name}}"] =  self.{{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map{$0.toDictionary()}{{/isNotContainer}}{{/isPrimitiveType}}
+         {{/requiredVars}}
 
         {{#optionalVars}}
         if let nonNull{{nameInCamelCase}} = self.{{name}} {
