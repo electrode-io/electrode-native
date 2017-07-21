@@ -5,7 +5,7 @@ import {
 } from '@walmart/ern-util'
 
 exports.command = 'api-impl <api>'
-exports.desc = 'Commands to generate API implementation skeleton.'
+exports.desc = 'Commands to generate API implementation skeleton. [DEPRECATED]'
 
 exports.builder = function (yargs: any) {
   return yargs.option('api', {

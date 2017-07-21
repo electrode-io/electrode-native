@@ -3,7 +3,7 @@
 import {Utils} from '@walmart/ern-util'
 
 exports.command = 'ios'
-exports.desc = 'Run miniapp in ios runner project'
+exports.desc = 'Run miniapp in ios runner project [DEPRECATED]'
 
 exports.builder = function (yargs: any) {
   return yargs

@@ -3,7 +3,7 @@
 import {Utils} from '@walmart/ern-util'
 
 exports.command = 'container'
-exports.desc = 'Run the container generator'
+exports.desc = 'Run the container generator [DEPRECATED]'
 
 exports.builder = function (yargs: any) {
   return yargs

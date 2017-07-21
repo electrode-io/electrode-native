@@ -3,7 +3,7 @@
 import {Utils} from '@walmart/ern-util'
 
 exports.command = 'android'
-exports.desc = 'Run miniapp in android runner project'
+exports.desc = 'Run miniapp in android runner project [DEPRECATED]'
 
 exports.builder = function (yargs: any) {
   return yargs
