@@ -86,10 +86,6 @@ export async function reactNativeBundleIos (paths: any) {
   })
 }
 
-//
-// miniapps should be strings that can be provided to `yarn add`
-// this way we can generate a miniapp composite from different miniapp sources
-// (git, local file system, npm ...)
 export async function generateMiniAppsComposite (
   miniappsPaths: Array<DependencyPath>,
   folder: string) {
@@ -137,10 +133,18 @@ export async function generateMiniAppsComposite (
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
   }
 
-  log.debug(`writing index.android.js`)
-  await writeFile('./index.android.js', content)
-  log.debug(`writing index.ios.js`)
-  await writeFile('./index.ios.js', content)
+  log.debug(`Removing .babelrc files from all modules`)
+  shell.rm('-rf', 'node_modules/**/.babelrc')
+  throwIfShellCommandFailed()
+
+  log.debug(`Creating .babelrc`)
+  const compositeBabelRc = { 'presets': ['react-native'] }
+  await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
+
+  log.debug(`Creating index.android.js`)
+  await writeFile('index.android.js', content)
+  log.debug(`Creating index.ios.js`)
+  await writeFile('index.ios.js', content)
 }
 
 export function clearReactPackagerCache () {
