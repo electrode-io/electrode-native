@@ -1,6 +1,7 @@
 const shell = require('shelljs')
 const chalk = require('chalk')
 const tmp = require('tmp')
+const path = require('path')
 const workingDirectoryPath = tmp.dirSync({ unsafeCleanup: true }).name
 const info = chalk.bold.blue
 
@@ -45,8 +46,9 @@ run(`ern cauldron repository list`)
 //
 // Miniapp commands
 run(`ern create-miniapp ${miniAppName}`)
-console.log(info(`Entering ${process.cwd()}/${miniAppName}`))
-process.chdir(`${process.cwd()}/${miniAppName}`)
+const miniAppPath = path.join(process.cwd(), miniAppName)
+console.log(info(`Entering ${miniAppPath}`))
+process.chdir(`${miniAppPath}`)
 run(`ern add @walmart/react-native-electrode-bridge`)
 run(`ern add react-native-code-push`)
 
@@ -67,8 +69,14 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 //
 // Container generation commands
+// Two following commands will fail cause MiniApp is not published to NPM, but it'll test
+// nap selector based command usage.
 run(`ern create-container -n ${androidNativeApplicationDescriptor} -v 1.0.0`)
 run(`ern create-container -n ${iosNativeApplicationDescriptor} -v 1.0.0`)
+
+// Container gen should be successful for the two following commands
+run(`ern create-container -m file:${miniAppPath} -p android -v 1.0.0`)
+run(`ern create-container -m file:${miniAppPath} -p ios -v 1.0.0`)
 
 //
 // Platform commands
