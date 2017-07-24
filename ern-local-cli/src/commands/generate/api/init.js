@@ -1,14 +1,11 @@
 // @flow
 
 import {
-  Manifest
-} from '@walmart/ern-core'
-import {
   Utils
 } from '@walmart/ern-util'
 
 exports.command = 'init <apiName>'
-exports.desc = 'Creates a new api'
+exports.desc = 'Creates a new api [DEPRECATED]'
 
 exports.builder = function (yargs: any) {
   return yargs.option('swagger', {
@@ -44,15 +41,5 @@ exports.handler = async function ({
   apiAuthor?: string,
   modelSchemaPath?: string
 }) {
-  const bridgeDep = await Manifest.getPlugin('@walmart/react-native-electrode-bridge')
-  if (!bridgeDep) {
-    return log.error(`@walmart/react-native-electrode-bridge not found in manifest. cannot infer version to use`)
-  }
-
-  const reactNative = await Manifest.getPlugin('react-native')
-  if (!reactNative) {
-    return log.error(`react-native not found in manifest. cannot infer version to use`)
-  }
-
   Utils.logErrorAndExitProcess(`This command is deprecated. To create an API, run the following command: ern create-api ${apiName}`)
 }

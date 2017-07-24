@@ -5,7 +5,7 @@ import {
 } from '@walmart/ern-util'
 
 exports.command = 'regen'
-exports.desc = 'Regenerates an existing api'
+exports.desc = 'Regenerates an existing api [DEPRECATED]'
 
 exports.builder = function (yargs: any) {
   return yargs.option('updatePlugin', {
