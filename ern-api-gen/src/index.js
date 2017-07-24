@@ -10,11 +10,8 @@ import {
   PKG_FILE
 } from './Constants'
 import {
-  readJSON,
-  writeFile
-} from '../../ern-util/src/fileUtil'
-import {
   Dependency,
+  fileUtils,
   npm
 } from '@walmart/ern-util'
 import inquirer from 'inquirer'
@@ -73,7 +70,7 @@ export async function regenerateCode (options: Object = {}) {
   if (isNewVersion) {
     pkg.version = newPluginVer
     // should call npm version ${} as it tags and does good stuff.
-    writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)) // Write the new package properties
+    fileUtils.writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)) // Write the new package properties
   }
   const extra = (pkg.ern && pkg.ern.message) || {}
   const config = normalizeConfig({
@@ -116,7 +113,7 @@ async function checkValid (message: string) {
   return pkg
 }
 async function readPackage () {
-  return readJSON(`${process.cwd()}/${PKG_FILE}`)
+  return fileUtils.readJSON(`${process.cwd()}/${PKG_FILE}`)
 }
 const nextVersion = (curVersion: string, userPluginVer: string) => {
   switch ((userPluginVer + '').toLowerCase()) {

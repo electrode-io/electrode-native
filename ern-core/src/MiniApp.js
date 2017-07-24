@@ -10,6 +10,7 @@ import {
   findNativeDependencies,
   Dependency,
   DependencyPath,
+  fileUtils,
   NativeApplicationDescriptor,
   ReactNativeCommands,
   spin,
@@ -19,9 +20,6 @@ import {
 import cauldron from './cauldron'
 import Manifest from './Manifest'
 import Platform from './Platform'
-import {
-  writeFile
-} from '../../ern-util/src/fileUtil'
 import {
   checkCompatibilityWithNativeApp
 } from './compatibility'
@@ -325,7 +323,7 @@ export default class MiniApp {
         const launchPackagerScript = path.resolve(scriptsDir, scriptFile)
         const procConfig = {cwd: scriptsDir, detached: true}
 
-        writeFile(`${scriptsDir}/packageRunner.config`, `cwd="${shell.pwd()}"`).then(() => {
+        fileUtils.writeFile(`${scriptsDir}/packageRunner.config`, `cwd="${shell.pwd()}"`).then(() => {
           try {
             return spawn(`open`, [launchPackagerScript], procConfig)
           } catch (e) {
