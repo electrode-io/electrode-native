@@ -1,8 +1,13 @@
 // @flow
 
 import path from 'path'
-import {writeFile} from '../../ern-util/src/fileUtil'
-import {CodegenConfigurator, DefaultGenerator} from '@walmart/ern-message-gen'
+import {
+  fileUtils
+} from '@walmart/ern-util'
+import {
+  CodegenConfigurator,
+  DefaultGenerator
+} from '@walmart/ern-message-gen'
 import {
   PKG_FILE,
   MODEL_FILE
@@ -191,7 +196,7 @@ export function generateInitialSchema ({
 }
 
 export default async function generateProject (config: Object = {}, outFolder: string) {
-  await writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config))
-  await writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config))
+  await fileUtils.writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config))
+  await fileUtils.writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config))
   await generateSwagger(config, outFolder)
 }
