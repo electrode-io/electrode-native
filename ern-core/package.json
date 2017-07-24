@@ -13,6 +13,7 @@
   "dependencies": {
     "@walmart/ern-util": "0.0.1",
     "@walmart/ern-cauldron-api": "0.0.1",
+    "@walmart/ern-runner-gen": "0.0.1",
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
     "chokidar": "^1.7.0",
