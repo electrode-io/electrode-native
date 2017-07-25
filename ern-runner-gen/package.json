@@ -1,16 +1,52 @@
 {
   "name": "ern-runner-gen",
   "version": "0.0.1",
-  "description": "",
+  "description": "ERN module to generate runner native project",
   "main": "./dist/index.js",
+  "homepage": "http://www.electrode.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+  },
+  "keywords": [
+    "ern",
+    "react-native",
+    "runner",
+    "node",
+    "android",
+    "ios"
+  ],
+  "contributors": [
+    {
+      "name": "Benoit Lemaire",
+      "email": "blemaire@walmartlabs.com"
+    },
+    {
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Bharath Marulasiddappa",
+      "email": "BMarulasiddappa@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
+    },
+    {
+      "name": "Krunal Shah",
+      "email": "KShah1@walmartlabs.com"
+    }
+  ],
   "scripts": {
     "build": "ern-babel",
     "test": "ern-mocha",
     "coverage":"ern-nyc",
     "prepublish": "npm run build"
   },
-  "keywords": [],
-  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "ern-container-gen": "0.0.1",

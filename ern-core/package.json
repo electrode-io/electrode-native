@@ -1,14 +1,49 @@
 {
   "name": "ern-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "ERN module contain core platform types",
   "main": "./dist/index.js",
+  "homepage": "http://www.electrode.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+  },
+  "keywords": [
+    "ern",
+    "react-native",
+    "node",
+    "android",
+    "ios"
+  ],
+  "contributors": [
+    {
+      "name": "Benoit Lemaire",
+      "email": "blemaire@walmartlabs.com"
+    },
+    {
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Bharath Marulasiddappa",
+      "email": "BMarulasiddappa@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
+    },
+    {
+      "name": "Krunal Shah",
+      "email": "KShah1@walmartlabs.com"
+    }
+  ],
   "scripts": {
     "build": "ern-babel",
     "prepublish": "npm run build"
   },
-  "keywords": [],
-  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "ern-util": "0.0.1",

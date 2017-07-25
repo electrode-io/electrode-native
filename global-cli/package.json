@@ -1,14 +1,48 @@
 {
   "name": "@walmart/electrode-react-native",
   "version": "0.0.15",
-  "description": "",
+  "description": "ERN global client",
   "main": "./dist/index.js",
   "bin": {
     "ern": "bin/ern.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "homepage": "http://www.electrode.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+  },
+  "keywords": [
+    "ern",
+    "react-native",
+    "client",
+    "node"
+  ],
+  "contributors": [
+    {
+      "name": "Benoit Lemaire",
+      "email": "blemaire@walmartlabs.com"
+    },
+    {
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Bharath Marulasiddappa",
+      "email": "BMarulasiddappa@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
+    },
+    {
+      "name": "Krunal Shah",
+      "email": "KShah1@walmartlabs.com"
+    }
+  ],
+  "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^1.1.3",
     "update-notifier": "^1.0.3"

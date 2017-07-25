@@ -1,15 +1,51 @@
 {
   "name": "ern-util",
   "version": "0.0.1",
-  "description": "",
+  "description": "ERN module containing non platform bounded utility code",
   "main": "./dist/index.js",
+  "homepage": "http://www.electrode.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+  },
+  "keywords": [
+    "ern",
+    "utilities",
+    "node",
+    "android",
+    "ios"
+  ],
+  "contributors": [
+    {
+      "name": "Benoit Lemaire",
+      "email": "blemaire@walmartlabs.com"
+    },
+    {
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Bharath Marulasiddappa",
+      "email": "BMarulasiddappa@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
+    },
+    {
+      "name": "Krunal Shah",
+      "email": "KShah1@walmartlabs.com"
+    }
+  ],
   "scripts": {
     "build": "ern-babel",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "npm run build"
   },
-  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^1.1.3",

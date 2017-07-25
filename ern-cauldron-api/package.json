@@ -1,15 +1,49 @@
 {
   "name": "ern-cauldron-api",
   "version": "0.0.1",
-  "description": "The Cauldron !",
-  "repository": {
-    "type": "git",
-    "url": "https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/ern-cauldron-server"
-  },
+  "description": "ERN module to create, access and manage Cauldrons",
   "bin": {
     "ern-cauldron-server": "index.js"
   },
   "main": "./dist/index.js",
+  "homepage": "http://www.electrode.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+  },
+  "keywords": [
+    "ern",
+    "react-native",
+    "cauldron",
+    "node",
+    "android",
+    "ios"
+  ],
+  "contributors": [
+    {
+      "name": "Benoit Lemaire",
+      "email": "blemaire@walmartlabs.com"
+    },
+    {
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Bharath Marulasiddappa",
+      "email": "BMarulasiddappa@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
+    },
+    {
+      "name": "Krunal Shah",
+      "email": "KShah1@walmartlabs.com"
+    }
+  ],
   "scripts": {
     "start": "node index.js",
     "test": "ern-mocha",
@@ -17,8 +51,6 @@
     "coverage": "ern-nyc",
     "prepublish": "npm run build"
   },
-  "keywords": [],
-  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "ern-util": "0.0.1",
