@@ -2,10 +2,10 @@
 
 import {
   generateApi
-} from '@walmart/ern-api-gen'
+} from 'ern-api-gen'
 import {
   Manifest
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'create-api <apiName>'
 exports.desc = 'Create a new api'

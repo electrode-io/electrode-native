@@ -3,7 +3,7 @@
 import {
   Dependency,
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   performCodePushOtaUpdate
 } from '../lib/publication'

@@ -1,5 +1,5 @@
 {
-  "name": "@walmart/ern-message-gen",
+  "name": "ern-message-gen",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
@@ -21,7 +21,7 @@
     "sway": "^1.0.0"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "0.0.1",
+    "ern-util-dev": "0.0.1",
     "cross-env": "^3.2.4"
   }
 }

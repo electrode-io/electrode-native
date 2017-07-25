@@ -1,6 +1,6 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
+import {Utils} from 'ern-util'
 
 exports.command = 'upgrade <platformVersion> [force]'
 exports.desc = 'Upgrade the mini app to a specific platform version'

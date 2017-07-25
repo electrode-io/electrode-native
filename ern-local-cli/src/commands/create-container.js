@@ -2,14 +2,14 @@
 
 import {
   generateMiniAppsComposite
-} from '@walmart/ern-container-gen'
+} from 'ern-container-gen'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   DependencyPath,
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   runLocalContainerGen,
   runCauldronContainerGen

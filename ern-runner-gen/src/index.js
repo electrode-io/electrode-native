@@ -4,11 +4,11 @@ import {
   generateContainer,
   GithubGenerator,
   MavenGenerator
-} from '@walmart/ern-container-gen'
+} from 'ern-container-gen'
 import {
   Dependency,
   mustacheUtils
-} from '@walmart/ern-util'
+} from 'ern-util'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 

@@ -5,7 +5,7 @@ To manage the dependencies between projects we are using [Lerna](https://github.
 
 ## Using
 
-Whenever you add a new @walmart/ern- package or a dependency to an @walmart/ern- package run 
+Whenever you add a new ern- package or a dependency to an ern- package run 
 ```bash
 $ npm run rebuild
 ```

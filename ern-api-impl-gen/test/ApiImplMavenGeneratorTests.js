@@ -3,7 +3,7 @@ import { assert } from 'chai'
 
 import {
   coloredLog
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 global.log = coloredLog
 

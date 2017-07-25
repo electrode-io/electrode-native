@@ -3,11 +3,11 @@
 import path from 'path'
 import {
   fileUtils
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   CodegenConfigurator,
   DefaultGenerator
-} from '@walmart/ern-message-gen'
+} from 'ern-message-gen'
 import {
   PKG_FILE,
   MODEL_FILE

@@ -2,10 +2,10 @@
 
 import {
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   config as ernConfig
-} from '@walmart/ern-util'
+} from 'ern-util'
 import shell from 'shelljs'
 
 exports.command = 'use <repoAlias>'

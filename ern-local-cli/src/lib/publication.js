@@ -5,13 +5,13 @@ import {
   generateMiniAppsComposite,
   GithubGenerator,
   MavenGenerator
-} from '@walmart/ern-container-gen'
+} from 'ern-container-gen'
 import {
   cauldron,
   compatibility,
   MiniApp,
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   CodePushCommands,
   Dependency,
@@ -20,7 +20,7 @@ import {
   NativeApplicationDescriptor,
   spin,
   yarn
-} from '@walmart/ern-util'
+} from 'ern-util'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'

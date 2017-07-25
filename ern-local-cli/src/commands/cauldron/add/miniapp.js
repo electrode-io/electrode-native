@@ -3,11 +3,11 @@
 import {
   compatibility,
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   DependencyPath,
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 

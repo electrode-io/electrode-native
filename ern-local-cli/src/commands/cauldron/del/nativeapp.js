@@ -2,10 +2,10 @@
 
 import {
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'nativeapp <napDescriptor>'
 exports.desc = 'Remove a native application from the cauldron'

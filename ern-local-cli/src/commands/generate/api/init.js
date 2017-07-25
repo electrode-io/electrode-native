@@ -2,7 +2,7 @@
 
 import {
   Utils
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'init <apiName>'
 exports.desc = 'Creates a new api [DEPRECATED]'

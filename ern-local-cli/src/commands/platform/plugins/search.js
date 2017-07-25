@@ -3,10 +3,10 @@
 import {
   Manifest,
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   Dependency
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 import chalk from 'chalk'
 

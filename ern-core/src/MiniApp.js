@@ -3,7 +3,7 @@
 import {
   generateContainerForRunner,
   generateRunner
-} from '@walmart/ern-runner-gen'
+} from 'ern-runner-gen'
 import {
   android,
   config as ernConfig,
@@ -16,7 +16,7 @@ import {
   spin,
   tagOneLine,
   yarn
-} from '@walmart/ern-util'
+} from 'ern-util'
 import cauldron from './cauldron'
 import Manifest from './Manifest'
 import Platform from './Platform'

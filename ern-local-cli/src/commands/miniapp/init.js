@@ -1,6 +1,6 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
+import {Utils} from 'ern-util'
 
 exports.command = 'init <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application'

@@ -1,5 +1,5 @@
 {
-  "name": "@walmart/ern-cauldron-api",
+  "name": "ern-cauldron-api",
   "version": "0.0.1",
   "description": "The Cauldron !",
   "repository": {
@@ -21,7 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/ern-util": "0.0.1",
+    "ern-util": "0.0.1",
     "bluebird": "^3.5.0",
     "joi": "^10.1.0",
     "lodash": "^4.17.3",
@@ -31,7 +31,7 @@
     "simple-git": "^1.70.0"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "0.0.1"
+    "ern-util-dev": "0.0.1"
   },
   "engines": {
     "node": ">=4"

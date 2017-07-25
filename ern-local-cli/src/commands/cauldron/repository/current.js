@@ -2,7 +2,7 @@
 
 import {
   config as ernConfig
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'current'
 exports.desc = 'Display the currently activated Cauldron repository'

@@ -1,5 +1,5 @@
 {
-  "name": "@walmart/ern-util",
+  "name": "ern-util",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
@@ -27,6 +27,6 @@
     "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "0.0.1"
+    "ern-util-dev": "0.0.1"
   }
 }

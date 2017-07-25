@@ -2,7 +2,7 @@
 
 import {
   config as ernConfig
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'remove <repoAlias>'
 exports.desc = 'Remove a cauldron repository given its alias'

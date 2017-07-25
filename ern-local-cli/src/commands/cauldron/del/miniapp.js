@@ -3,10 +3,10 @@
 import {
     NativeApplicationDescriptor,
     Dependency
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'miniapp <completeNapDescriptor> <miniAppName>'
 exports.desc = 'Remove a mini app from the cauldron'

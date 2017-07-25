@@ -4,7 +4,7 @@ import {
   Dependency,
   NativeApplicationDescriptor,
   spin
-} from '@walmart/ern-util'
+} from 'ern-util'
 import cauldron from './cauldron.js'
 import Manifest from './manifest.js'
 import MiniApp from './miniapp.js'

@@ -3,7 +3,7 @@
 import {
   compatibility,
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'platform [platformVersion]'
 exports.desc = 'Check the compatibility of the miniapp with platform current or specific version'

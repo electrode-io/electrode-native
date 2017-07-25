@@ -2,10 +2,10 @@
 
 import {
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'binary <completeNapDescriptor> <path>'
 exports.desc = 'Add a native binary (.app or .apk) in the cauldron'

@@ -2,7 +2,7 @@
 
 import {
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'unlink'
 exports.desc = 'Unlink a MiniApp'

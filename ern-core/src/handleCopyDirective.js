@@ -4,7 +4,7 @@ import fs from 'fs'
 import shell from 'shelljs'
 import {
   Utils
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 export default function handleCopyDirective (
   sourceRoot: string,

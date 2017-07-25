@@ -2,7 +2,7 @@
 
 import {
   Dependency
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 export interface ApiImplGeneratable {
   generate (paths: Object,

@@ -2,7 +2,7 @@
 
 import {
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'run-android'
 exports.desc = 'Run miniapp in android runner project'

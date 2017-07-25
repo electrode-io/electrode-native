@@ -3,12 +3,12 @@
 import shell from 'shelljs'
 import {
   pluginUtil
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   Dependency,
   Utils,
   mustacheUtils
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 

@@ -5,7 +5,7 @@ import {
   DependencyPath,
   ReactNativeCommands,
   yarn
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   exec
 } from 'child_process'

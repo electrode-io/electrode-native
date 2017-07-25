@@ -1,4 +1,4 @@
-import ernSupport from '@walmart/ern-util-dev'
+import ernSupport from 'ern-util-dev'
 
 describe('commands/cauldron', function () {
   this.timeout(100000)
