@@ -10,7 +10,7 @@
     "prepublish": "npm run build"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
