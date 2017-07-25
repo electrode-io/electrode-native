@@ -3,7 +3,7 @@
 import {
   Manifest,
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 import chalk from 'chalk'
 import Table from 'cli-table'

@@ -2,10 +2,10 @@
 
 import {
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'config <napDescriptor>'
 exports.desc = 'Get a configuration from the cauldron'

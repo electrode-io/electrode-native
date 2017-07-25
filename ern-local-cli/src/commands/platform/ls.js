@@ -2,10 +2,10 @@
 
 import {
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   tagOneLine
-} from '@walmart/ern-util'
+} from 'ern-util'
 import chalk from 'chalk'
 
 exports.command = 'ls'

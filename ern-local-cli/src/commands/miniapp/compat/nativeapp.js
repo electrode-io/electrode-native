@@ -2,11 +2,11 @@
 
 import {
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   compatibility,
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'nativeapp <napDescriptor>'
 exports.desc = 'Check the compatibility of the miniapp with given native app(s)'

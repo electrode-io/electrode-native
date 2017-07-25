@@ -2,7 +2,7 @@
 
 import {
   Dependency
-} from '@walmart/ern-util'
+} from 'ern-util'
 import cauldron from './cauldron'
 import Platform from './Platform'
 

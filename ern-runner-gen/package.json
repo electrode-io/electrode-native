@@ -1,5 +1,5 @@
 {
-  "name": "@walmart/ern-runner-gen",
+  "name": "ern-runner-gen",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
@@ -13,11 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@walmart/ern-container-gen": "0.0.1",
-    "@walmart/ern-util": "0.0.1"
+    "ern-container-gen": "0.0.1",
+    "ern-util": "0.0.1"
   },
   "devDependencies": {
-    "@walmart/ern-util-dev": "0.0.1"
+    "ern-util-dev": "0.0.1"
   },
   "engines": {
     "node": ">=4"

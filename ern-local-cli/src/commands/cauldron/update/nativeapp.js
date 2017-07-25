@@ -2,10 +2,10 @@
 
 import {
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'nativeapp <completeNapDescriptor> [isReleased]'
 exports.desc = 'Update a native application info in cauldron'

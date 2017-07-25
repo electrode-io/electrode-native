@@ -2,7 +2,7 @@
 
 import {
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'install <platformVersion>'
 exports.desc = 'Install a given ern platform version'

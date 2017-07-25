@@ -2,10 +2,10 @@
 
 import {
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   Dependency
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'add <dependency> [dev]'
 exports.desc = 'Add a dependency to this miniapp'

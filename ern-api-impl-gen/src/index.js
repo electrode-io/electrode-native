@@ -8,7 +8,7 @@ import {
   DependencyPath,
   Utils,
   yarn
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 import ApiImplGen from './generators/ApiImplGen'
 

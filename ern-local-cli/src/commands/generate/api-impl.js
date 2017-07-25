@@ -2,7 +2,7 @@
 
 import {
   Utils
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton. [DEPRECATED]'

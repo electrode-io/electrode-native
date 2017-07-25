@@ -22,7 +22,7 @@ and add a test script to package.json
   },
   ...,
   "devDependencies": {
-    "@walmart/ern-util-dev": "0.0.1",
+    "ern-util-dev": "0.0.1",
      ...
   }
   
@@ -75,7 +75,7 @@ To test the command line there is some special support in ./ern-local-cli/test/s
 To use it you need to hook into your before and after.  This creates and removes a tempdirectory
 your the commands run in.
 
-'@walmart/ern-util-dev' returns an object with the following function
+'ern-util-dev' returns an object with the following function
 ``` 
  
 ├── runBefore 
@@ -101,7 +101,7 @@ your the commands run in.
 
 An example
 ```javascript
-import ernSupport from '@walmart/ern-util-dev';
+import ernSupport from 'ern-util-dev';
 
 describe('commands/cauldron', function () {
 

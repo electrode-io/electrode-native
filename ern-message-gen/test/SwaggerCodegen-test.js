@@ -1,6 +1,6 @@
 import SwaggerCodegen from '../src/SwaggerCodegen'
 import {expect} from 'chai'
-import ernUtilDev from '@walmart/ern-util-dev'
+import ernUtilDev from 'ern-util-dev'
 function execTest (out, resolve = console.log, reject = console.error) {
   return async function () {
     try {

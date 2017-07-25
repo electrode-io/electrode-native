@@ -1,5 +1,5 @@
 import gen from '../src/generateProject'
-import ernUtilDev from '@walmart/ern-util-dev'
+import ernUtilDev from 'ern-util-dev'
 import normalizeConfig from '../src/normalizeConfig'
 
 describe('generateProject', function () {

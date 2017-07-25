@@ -7,7 +7,7 @@ import {
   DependencyPath,
   Utils,
   coloredLog
-} from '@walmart/ern-util'
+} from 'ern-util'
 import shell from 'shelljs'
 import _ from 'lodash'
 import chalk from 'chalk'

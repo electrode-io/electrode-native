@@ -2,7 +2,7 @@
 
 import {
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'upgrade <platformVersion> [force]'
 exports.desc = 'Upgrade the mini app to a specific platform version'

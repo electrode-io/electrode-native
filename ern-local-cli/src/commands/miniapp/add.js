@@ -1,6 +1,6 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
+import {Utils} from 'ern-util'
 
 exports.command = 'add <name> [dev]'
 exports.desc = 'Add a dependency to this miniapp'

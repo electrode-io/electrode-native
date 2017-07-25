@@ -1,6 +1,6 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
+import {Utils} from 'ern-util'
 
 exports.command = 'ios'
 exports.desc = 'Run miniapp in ios runner project [DEPRECATED]'

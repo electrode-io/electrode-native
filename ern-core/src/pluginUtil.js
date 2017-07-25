@@ -2,7 +2,7 @@
 
 import {
   Dependency
-} from '@walmart/ern-util'
+} from 'ern-util'
 import fs from 'fs'
 import path from 'path'
 import Mustache from 'mustache'

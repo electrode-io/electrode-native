@@ -2,7 +2,7 @@
 
 import {
   Utils
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'regen'
 exports.desc = 'Regenerates an existing api [DEPRECATED]'

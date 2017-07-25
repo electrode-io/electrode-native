@@ -2,7 +2,7 @@
 
 import {
     config
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   execSync
 } from 'child_process'

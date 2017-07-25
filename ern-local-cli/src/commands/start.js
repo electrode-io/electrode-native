@@ -2,16 +2,16 @@
 
 import {
   generateMiniAppsComposite
-} from '@walmart/ern-container-gen'
+} from 'ern-container-gen'
 import {
   cauldron,
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   config as ernConfig,
   DependencyPath,
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import chokidar from 'chokidar'
 import shell from 'shelljs'
 import _ from 'lodash'

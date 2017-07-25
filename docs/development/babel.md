@@ -7,7 +7,7 @@ In order to use the same version of babel across projects with the same configur
 
 To enable thest tools and other there is the babelhook script it can be used as follows
 ```sh
- $ node -r @walmart/ern-util-dev/babelhook <your_script>
+ $ node -r ern-util-dev/babelhook <your_script>
 ```
 
 

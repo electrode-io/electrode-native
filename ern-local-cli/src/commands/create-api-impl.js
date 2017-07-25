@@ -3,13 +3,13 @@
 import {
   Manifest,
   Platform
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   generateApiImpl
-} from '@walmart/ern-api-impl-gen'
+} from 'ern-api-impl-gen'
 import {
   DependencyPath
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 import inquirer from 'inquirer'
 

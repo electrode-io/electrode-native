@@ -1,4 +1,4 @@
-import ernUtilDev from '@walmart/ern-util-dev'
+import ernUtilDev from 'ern-util-dev'
 import {assert} from 'chai'
 import CodegenIgnoreProcessor from '../src/ignore/CodegenIgnoreProcessor'
 import fs from 'fs'

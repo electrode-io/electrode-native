@@ -3,10 +3,10 @@
 import {
   Dependency,
   NativeApplicationDescriptor
-} from '@walmart/ern-util'
+} from 'ern-util'
 import {
   cauldron
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'dependency <completeNapDescriptor> <dependency>'
 exports.desc = 'Add a native dependency in the cauldron'

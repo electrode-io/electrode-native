@@ -6,7 +6,7 @@ import { assert } from 'chai'
 import {
   DependencyPath,
   Platform
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 global.log = require('console-log-level')({
   prefix: `ApiImplGen Test: `,

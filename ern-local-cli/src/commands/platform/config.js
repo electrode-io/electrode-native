@@ -2,7 +2,7 @@
 
 import {
   config as ernConfig
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 exports.command = 'config <key> [value]'
 exports.desc = 'Get or set a configuration key'

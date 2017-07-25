@@ -13,7 +13,7 @@ import {
   Dependency,
   fileUtils,
   npm
-} from '@walmart/ern-util'
+} from 'ern-util'
 import inquirer from 'inquirer'
 
 /**

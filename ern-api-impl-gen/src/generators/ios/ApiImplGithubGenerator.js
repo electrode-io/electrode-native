@@ -2,11 +2,11 @@ import shell from 'shelljs'
 import {
   pluginUtil,
   handleCopyDirective
-} from '@walmart/ern-core'
+} from 'ern-core'
 import {
   Dependency,
   Utils
-} from '@walmart/ern-util'
+} from 'ern-util'
 
 import ApiImplGeneratable from '../../ApiImplGeneratable'
 import fs from 'fs'

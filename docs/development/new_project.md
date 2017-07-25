@@ -2,7 +2,7 @@ New Projects
 ===
 Projects are good, they isolate logic, give a place to document and test, allow for reuse.   However whenever a project
 becomes a bunch of projects things can go sideways.    This is a short guide to setting up a project within
-@walmart/ern-, by following a few rules we can automate a lot of the ugliness.
+ern-, by following a few rules we can automate a lot of the ugliness.
 
 
 
@@ -40,7 +40,7 @@ ern-platform/ern-your-project
         │        └── "prepublish":"npm run build"
         │        
         └── devDependencies
-                   └── "@walmart/ern-util-dev":<ERN_PROJECT_VERSION>
+                   └── "ern-util-dev":<ERN_PROJECT_VERSION>
 
 
 ```

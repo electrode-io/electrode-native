@@ -1,6 +1,6 @@
 // @flow
 
-import {Utils} from '@walmart/ern-util'
+import {Utils} from 'ern-util'
 
 exports.command = 'container'
 exports.desc = 'Run the container generator [DEPRECATED]'

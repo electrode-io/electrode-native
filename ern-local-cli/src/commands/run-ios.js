@@ -2,7 +2,7 @@
 
 import {
   MiniApp
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 exports.command = 'run-ios'
 exports.desc = 'Run miniapp in ios runner project'
