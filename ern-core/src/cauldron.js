@@ -89,7 +89,7 @@ class Cauldron {
       await this.throwIfNativeAppVersionIsReleased(napDescriptor,
         'Cannot add a native dependency to a released native app version')
 
-      return spin(tagOneLine`Adding dependency ${dependency.name}@${dependency.version}
+      return spin(tagOneLine`Adding dependency ${dependency.toString()}
         to ${napDescriptor.toString()}`,
         this.cauldron.createNativeDependency(
         napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependency.toString()))
