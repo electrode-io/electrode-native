@@ -1,9 +1,9 @@
 // @flow
 
-/* import {
+import {
   exec
 } from 'child_process'
-import inquirer from 'inquirer' */
+import inquirer from 'inquirer'
 
 export default class CodePushCommands {
   codePushPath: ?string
@@ -30,7 +30,7 @@ export default class CodePushCommands {
       deploymentName: string,
       rolloutPercentage?: string,
       askForConfirmation?: boolean
-    }) {
+    }) : Promise<boolean> {
     const codePushCommand =
       `${this.codePushBinaryPath} release-react \
 ${appName} \
@@ -42,7 +42,7 @@ ${rolloutPercentage ? `-r ${rolloutPercentage}` : ''} \
 ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
     console.log(`CodePush command : ${codePushCommand}`)
 
-    /* let shouldExecuteCodePushCommand = true
+    let shouldExecuteCodePushCommand = true
 
     if (askForConfirmation) {
       console.log(`Will run:\n${codePushCommand}`)
@@ -55,8 +55,8 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
       shouldExecuteCodePushCommand = userConfirmedCodePushCommand
     }
 
-     if (shouldExecuteCodePushCommand) {
-      return new Promise((resolve, reject) => {
+    if (shouldExecuteCodePushCommand) {
+      await new Promise((resolve, reject) => {
         exec(codePushCommand,
             (err, stdout, stderr) => {
               if (err) {
@@ -70,6 +70,8 @@ ${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
               }
             })
       })
-    } */
+    }
+
+    return shouldExecuteCodePushCommand
   }
 }
