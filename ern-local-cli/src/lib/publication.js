@@ -247,7 +247,7 @@ miniApps: Array<Dependency>, {
   if (!userConfirmedCodePushPublication) {
     return log.info('CodePush publication aborted')
   } else {
-    log.info('Proceeding with CodePush publication')
+    log.info('Getting things ready for CodePush publication')
   }
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
@@ -262,26 +262,29 @@ miniApps: Array<Dependency>, {
 
   const codePushCommands = new CodePushCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`)
 
-  await codePushCommands.releaseReact(
+  const codePushWasDone = await codePushCommands.releaseReact(
     codePushAppName,
     codePushPlatformName, {
       targetBinaryVersion: codePushTargetVersionName,
       mandatory: codePushIsMandatoryRelease,
       deploymentName: codePushDeploymentName,
-      rolloutPercentage: codePushRolloutPercentage
+      rolloutPercentage: codePushRolloutPercentage,
+      askForConfirmation: !force
     })
 
-  await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
+  if (codePushWasDone) {
+    await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
+  }
 }
 
 async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) {
-  log.info(`The following MiniApp versions will get shipped in this CodePush bundle:`)
+  log.info(`The following MiniApp versions will get shipped in this CodePush OTA update :`)
   miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
 
   const { userCodePushPublicationConfirmation } = await inquirer.prompt({
     type: 'confirm',
     name: 'userCodePushPublicationConfirmation',
-    message: 'Do you want to proceed with CodePush publication ?'
+    message: 'Do you want to continue with CodePush publication ?'
   })
 
   return userCodePushPublicationConfirmation
