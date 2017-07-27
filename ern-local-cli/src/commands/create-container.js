@@ -203,8 +203,10 @@ exports.handler = async function ({
         napDescriptor,
         containerVersion,
         { publish })
-      // update container version for cauldron in Git
-      await cauldron.updateContainerVersion(napDescriptor, containerVersion)
+      // Update container version for Cauldron in Git (only if Cauldron is published)
+      if (publish) {
+        await cauldron.updateContainerVersion(napDescriptor, containerVersion)
+      }
     }
   }
 }
