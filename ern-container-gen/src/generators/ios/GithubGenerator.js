@@ -263,7 +263,7 @@ export default class GithubGenerator {
 
       mustacheView.plugins = pluginsView
     } catch (e) {
-      log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
+      log.error('[buildiOSPluginsViews] Something went wrong: ' + e)
       throw e
     }
   }
