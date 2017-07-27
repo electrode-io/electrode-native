@@ -142,16 +142,13 @@ exports.handler = async function ({
     if (cauldronContainerVersion && autoIncrementVersion) {
       containerVersion = cauldronContainerVersion
     } else {
-      const message = cauldronContainerVersion
-                      ? `Enter version for the generated container or do you want to use the auto incremented version:`
-                      : `Enter version for the generated container`
       const { userSelectedContainerVersion } = await inquirer.prompt([{
         type: 'input',
         name: 'userSelectedContainerVersion',
-        message,
+        message: 'Enter desired version for generated container',
         default: cauldronContainerVersion
       }])
-      containerVersion = cauldronContainerVersion || userSelectedContainerVersion
+      containerVersion = userSelectedContainerVersion
     }
   }
 
