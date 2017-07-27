@@ -39,7 +39,7 @@ ${targetBinaryVersion ? `-t ${targetBinaryVersion}` : ''} \
 ${mandatory ? `-m` : ''} \
 ${deploymentName ? `-d ${deploymentName}` : ''} \
 ${rolloutPercentage ? `-r ${rolloutPercentage}` : ''} \
-${platform === 'ios' ? `-b Miniapp.jsbundle` : ''}`
+${platform === 'ios' ? `-b MiniApp.jsbundle` : ''}`
     console.log(`CodePush command : ${codePushCommand}`)
 
     let shouldExecuteCodePushCommand = true
