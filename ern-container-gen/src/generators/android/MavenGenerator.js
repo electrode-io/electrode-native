@@ -201,6 +201,13 @@ export default class MavenGenerator {
       log.debug(`Patching hull`)
       const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
       for (const file of files) {
+        if (file.startsWith(`lib/src/main/java/com`) && !file.startsWith(`lib/src/main/java/com/walmartlabs/ern/container`)) {
+          // We don't want to Mustache process library files. It can lead to bad things
+          // We just want to process container specific code (which contains mustache templates)
+          log.debug(`Skipping mustaching of ${file}`)
+          continue
+        }
+        log.debug(`Mustaching ${file}`)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
       }
