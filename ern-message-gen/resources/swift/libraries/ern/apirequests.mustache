@@ -23,7 +23,7 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
             requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
             requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil, {{/hasRequestParam}}
             respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
-            responseItemType: nil,
+            responseItemType: {{#responseParam}}{{#isList}}{{{baseType}}}.self{{/isList}}{{^isList}}nil{{/isList}}{{/responseParam}},
             responseCompletionHandler: responseCompletionHandler)
 
         requestProcessor.execute()
