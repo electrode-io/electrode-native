@@ -18,11 +18,9 @@ export default function findNativeDependencies (path: string) : Array<Dependency
 
   const nativeDependenciesNames = new Set()
 
-  // Get all folders that are containing a build.gradle
-  // file (Note: might not be enough if we have react-native plugins
-  // that are solely for iOS. Not the case yet)
+  // Get all folders that are containing a build.gradle or .pbxproj file
   const nodeModulesFoldersWithBuildGradle = readDir(path)
-          .filter(a => a.includes('build.gradle'))
+          .filter(a => a.includes('build.gradle') || a.includes('.pbxproj'))
 
   // By convention we only assume react native plugins to be in folders
   // which names are starting with 'react-native' (excluding scope)
