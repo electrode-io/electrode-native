@@ -60,9 +60,12 @@ export default class MiniApp {
     }
 
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
-    if (!packageJson.ernPlatformVersion) {
-      throw new Error(tagOneLine`No ernPlatformVersion found in package.json.
-      Are you sure you are trying to add a miniApp to cauldron?`)
+    if (packageJson.ernPlatformVersion) {
+      log.warn(`ernPlatformVersion in ${packageJson.name} MiniApp package.json will be deprecated in next ern version. 
+Please replace with "ern" : { "version" : "${packageJson.ernPlatformVersion}" } instead`)
+    } else if (!packageJson.ern) {
+      throw new Error(tagOneLine`No ern section found in ${packageJson.name} package.json. 
+Are you sure this is a MiniApp ?`)
     }
 
     this._packageJson = packageJson
@@ -128,7 +131,9 @@ export default class MiniApp {
       // Patch package.json file of application
       const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
-      appPackageJson.ernPlatformVersion = `${platformVersion}`
+      appPackageJson.ern = {
+        version: `${platformVersion}`
+      }
       appPackageJson.ernHeadLess = headless
       appPackageJson.private = false
       appPackageJson.dependencies['react'] = reactDependency.version
@@ -180,7 +185,7 @@ export default class MiniApp {
   }
 
   get platformVersion () : string {
-    return this.packageJson.ernPlatformVersion
+    return this.packageJson.ern ? this.packageJson.ern.version : this.packageJson.ernPlatformVersion
   }
 
   get isHeadLess () : boolean {
@@ -485,7 +490,12 @@ export default class MiniApp {
     }
 
     // Update ernPlatfomVersion in package.json
-    this.packageJson.ernPlatformVersion = versionToUpgradeTo
+    if (!this.packageJson.ern) {
+      throw new Error(`In order to upgrade, please first replace "ernPlatformVersion" : "${this.packageJson.ernPlatformVersion}" in your package.json 
+with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
+    }
+
+    this.packageJson.ern.version = versionToUpgradeTo
 
     // Write back package.json
     const appPackageJsonPath = `${this.path}/package.json`
