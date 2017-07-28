@@ -281,7 +281,7 @@ export default class GithubGenerator {
         let iOSPluginHook = pluginConfig.ios.pluginHook
         if (iOSPluginHook) {
           if (iOSPluginHook.header) {
-            console.log(`Adding ${iOSPluginHook.name}.h`)
+            log.debug(`Adding ${iOSPluginHook.name}.h`)
             if (!pluginConfig.path) {
               throw new Error(`No plugin config path was set. Cannot proceed.`)
             }
@@ -293,7 +293,7 @@ export default class GithubGenerator {
           }
 
           if (iOSPluginHook.source) {
-            console.log(`Adding ${iOSPluginHook.name}.m`)
+            log.debug(`Adding ${iOSPluginHook.name}.m`)
             if (!pluginConfig.path) {
               throw new Error(`No plugin config path was set. Cannot proceed.`)
             }

@@ -275,7 +275,7 @@ export default class MavenGenerator {
         let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
-          console.log(`Adding ${androidPluginHook.name}.java`)
+          log.debug(`Adding ${androidPluginHook.name}.java`)
           if (!pluginConfig.path) {
             throw new Error(`No plugin config path was set. Cannot proceed.`)
           }
