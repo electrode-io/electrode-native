@@ -185,7 +185,7 @@ export function generateInitialSchema ({
           "name": {
             "type": "string"
           },
-          "description": {
+          "desc": {
             "type": "string"
           }
         }
