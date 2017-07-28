@@ -304,6 +304,10 @@ export default class MavenGenerator {
           continue
         }
         let pluginConfig = await pluginUtil.getPluginConfig(plugin, pluginsConfigPath)
+        if (!pluginConfig.android) {
+          log.warn(`${plugin.name} does not have any injection configuration for Android`)
+          continue
+        }
 
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {

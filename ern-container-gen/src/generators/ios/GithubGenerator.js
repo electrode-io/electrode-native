@@ -278,6 +278,10 @@ export default class GithubGenerator {
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
         let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        if (!pluginConfig.ios) {
+          log.warn(`${plugin.name} does not have any injection configuration for iOS`)
+          continue
+        }
         let iOSPluginHook = pluginConfig.ios.pluginHook
         if (iOSPluginHook) {
           if (iOSPluginHook.header) {
