@@ -20,6 +20,8 @@ FOUNDATION_EXPORT const unsigned char ElectrodeContainerVersionString[];
 {{#plugins}}
 {{#configurable}}
 #import <ElectrodeContainer/{{{name}}}.h>
+{{/configurable}}
+{{^configurable}}
 {{#containerHeader}}
 #import <ElectrodeContainer/{{.}}>
 {{/containerHeader}}

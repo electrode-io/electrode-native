@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
 @property (nonatomic, assign) BOOL debugEnabled;
-@property (nonatomic, strong, nullable) NSURL *useOkHttpClient;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

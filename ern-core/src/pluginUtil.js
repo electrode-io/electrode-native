@@ -89,6 +89,9 @@ export async function getPluginConfig (
           result.ios.pluginHook.configurable = true // TODO: CLAIRE change if it should be true on different types of plugins
           result.ios.pluginHook.header = matchedHeaderFiles[0]
           result.ios.pluginHook.source = matchedSourceFiles[0]
+        } else if (result.ios.containerPublicHeader) {
+          result.ios.pluginHook = {}
+          result.ios.pluginHook.configurable = false
         }
       }
     }
