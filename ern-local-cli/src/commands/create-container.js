@@ -146,7 +146,7 @@ exports.handler = async function ({
         type: 'input',
         name: 'userSelectedContainerVersion',
         message: 'Enter desired version for generated container',
-        default: cauldronContainerVersion
+        default: cauldronContainerVersion || '1.0.0'
       }])
       containerVersion = userSelectedContainerVersion
     }
