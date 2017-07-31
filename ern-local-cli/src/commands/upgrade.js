@@ -1,31 +1,33 @@
 // @flow
 
 import {
-  MiniApp
+  MiniApp,
+  Platform
 } from 'ern-core'
 
-exports.command = 'upgrade <platformVersion> [force]'
-exports.desc = 'Upgrade the mini app to a specific platform version'
+exports.command = 'upgrade'
+exports.desc = 'Upgrade a MiniApp to current or specific platform version'
 
 exports.builder = function (yargs: any) {
   return yargs
-    .option('force', {
-      alias: 'f',
-      type: 'bool',
-      describe: 'Force upgrade'
+    .option('version', {
+      alias: 'v',
+      type: 'string',
+      describe: 'Specific platform version to upgrade MiniApp to'
     })
 }
 
 exports.handler = function ({
-  platformVersion,
+  version = Platform.currentVersion,
   force = false
 } : {
-  platformVersion: string,
+  version: string,
   force: boolean
 }) {
   try {
-    MiniApp.fromCurrentPath().upgradeToPlatformVersion(
-      platformVersion.toString().replace('v', ''), force)
+    const miniApp = MiniApp.fromCurrentPath()
+    const versionWithoutPrefix = version.toString().replace('v', '')
+    miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
   } catch (e) {
     log.error(`${e}`)
   }

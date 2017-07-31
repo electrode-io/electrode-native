@@ -471,12 +471,7 @@ Are you sure this is a MiniApp ?`)
     return shouldUpdateDependencyVersionInManifest
   }
 
-  async upgradeToPlatformVersion (versionToUpgradeTo: string, force: boolean) : Promise<*> {
-    if ((this.platformVersion === versionToUpgradeTo) &&
-            (!force)) {
-      return log.error(`This miniapp is already using v${versionToUpgradeTo}. Use 'f' flag if you want to force upgrade.`)
-    }
-
+  async upgradeToPlatformVersion (versionToUpgradeTo: string) : Promise<*> {
     // Update all modules versions in package.json
     const manifestDependencies = await Manifest.getTargetNativeAndJsDependencies(versionToUpgradeTo)
 
