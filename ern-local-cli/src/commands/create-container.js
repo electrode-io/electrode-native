@@ -57,11 +57,11 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'The name to user for the container (usually native application name)'
     })
-    .group(['outputFolder'], 'jsOnly Options:')
-    .option('outputFolder', {
+    .group(['outDir'], 'jsOnly Options:')
+    .option('outDir', {
       type: 'string',
       alias: 'out',
-      describe: 'Output folder path'
+      describe: 'Path to output directory'
     })
 }
 
@@ -69,7 +69,7 @@ exports.handler = async function ({
   completeNapDescriptor,
   version,
   jsOnly,
-  outputFolder,
+  outDir,
   miniapps,
   publish,
   platform,
@@ -80,7 +80,7 @@ exports.handler = async function ({
   version?: string,
   publish?: boolean,
   jsOnly?: boolean,
-  outputFolder?: string,
+  outDir?: string,
   miniapps?: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
@@ -155,17 +155,17 @@ exports.handler = async function ({
       miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
     }
 
-    if (!outputFolder) {
-      const { userSelectedOutputFolder } = await inquirer.prompt([{
+    if (!outDir) {
+      const { userSelectedOutputDirectory } = await inquirer.prompt([{
         type: 'input',
-        name: 'userSelectedOutputFolder',
-        message: 'Enter output folder path'
+        name: 'userSelectedOutputDirectory',
+        message: 'Enter path to output directory for this container'
       }])
 
-      outputFolder = userSelectedOutputFolder
+      outDir = userSelectedOutputDirectory
     }
 
-    await generateMiniAppsComposite(miniAppsPaths, outputFolder)
+    await generateMiniAppsComposite(miniAppsPaths, outDir)
   } else {
     if (!napDescriptor && miniapps) {
       if (!platform) {
