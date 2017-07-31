@@ -42,10 +42,6 @@ exports.builder = function (yargs: any) {
       type: 'boolean',
       describe: 'Publish the generated container to Maven(.aar file for android) or GitHub (Project framework for ios)'
     })
-    .option('publicationUrl', {
-      type: 'string',
-      describe: 'The url to publish cauldron to'
-    })
     .option('miniapps', {
       type: 'array',
       alias: 'm',
@@ -187,8 +183,7 @@ exports.handler = async function ({
         miniAppsPaths,
         platform, {
           containerVersion: version,
-          nativeAppName: containerName,
-          publicationUrl
+          nativeAppName: containerName
         }
       )
     } else if (napDescriptor && version) {
