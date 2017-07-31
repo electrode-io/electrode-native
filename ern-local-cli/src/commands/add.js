@@ -7,27 +7,36 @@ import {
   Dependency
 } from 'ern-util'
 
-exports.command = 'add <dependency> [dev]'
-exports.desc = 'Add a dependency to this miniapp'
+// Note : We use `pkg` instead of `package` because `package` is
+// a reserved JavaScript word
+exports.command = 'add <pkg>'
+exports.desc = 'Add a package to this miniapp'
 
 exports.builder = function (yargs: any) {
   return yargs
     .option('dev', {
       type: 'bool',
       alias: 'd',
-      describe: 'Add this dependency as a devDependency'
+      describe: 'Add this package to devDependencies'
+    })
+    .option('peer', {
+      type: 'bool',
+      alias: 'p',
+      describe: 'Add this package to peerDependencies'
     })
 }
 
 exports.handler = function ({
-  dependency,
-  dev = false
+  pkg,
+  dev = false,
+  peer = false
 } : {
-  dependency: string,
-  dev: boolean
+  pkg: string,
+  dev: boolean,
+  peer: boolean
 }) {
   try {
-    return MiniApp.fromCurrentPath().addDependency(Dependency.fromString(dependency), {dev})
+    return MiniApp.fromCurrentPath().addDependency(Dependency.fromString(pkg), {dev, peer})
   } catch (e) {
     log.error(`${e}`)
   }

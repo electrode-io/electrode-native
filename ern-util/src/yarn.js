@@ -9,7 +9,15 @@ import shell from 'shelljs'
 import DependencyPath from './DependencyPath'
 
 // Yarn add a given dependency
-export async function yarnAdd (dependencyPath: DependencyPath, {dev} : {dev:boolean} = {}) {
+export async function yarnAdd (
+  dependencyPath: DependencyPath,
+  {
+    dev,
+    peer
+  } : {
+    dev?: boolean,
+    peer?: boolean
+  } = {}) {
   // Special handling with yarn add when the dependency is a local file path
   // In that case, for some reason it copies the node_modules folder of this path, which
   // is not a wanted behavior, especially for react-native bundling as it will create
@@ -29,12 +37,20 @@ export async function yarnAdd (dependencyPath: DependencyPath, {dev} : {dev:bool
     dependencyPath = DependencyPath.fromFileSystemPath(tmpDirPath)
   }
 
-  return _yarnAdd(dependencyPath, {dev})
+  return _yarnAdd(dependencyPath, {dev, peer})
 }
 
-async function _yarnAdd (dependencyPath: DependencyPath, {dev} : {dev:boolean} = {}) {
+async function _yarnAdd (
+  dependencyPath: DependencyPath,
+  {
+    dev,
+    peer
+  } : {
+    dev?: boolean,
+    peer?: boolean
+  } = {}) {
   return new Promise((resolve, reject) => {
-    exec(`yarn add ${dependencyPath.toString()} --ignore-engines --exact ${dev ? '--dev' : ''}`,
+    exec(`yarn add ${dependencyPath.toString()} --ignore-engines --exact ${dev ? '--dev' : ''} ${peer ? '--peer' : ''}`,
       (err, stdout, stderr) => {
         if (err) {
           log.error(err)

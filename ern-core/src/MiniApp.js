@@ -352,13 +352,16 @@ Are you sure this is a MiniApp ?`)
 
   async addDependency (
     dependency: Dependency,
-    { dev } : { dev: boolean } = {}) : Promise<?Dependency> {
-    if (dev) {
-      // Dependency is a devDependency
-      // In that case we don't perform any checks at all (for now) because development
-      // dependencies do not really have to be aligned
+    { dev, peer } : { dev?: boolean, peer?: boolean } = {}) : Promise<?Dependency> {
+    if (dev || peer) {
+      // Dependency is a devDependency or peerDependency
+      // In that case we don't perform any checks at all (for now)
       const devDependencyPath = DependencyPath.fromString(dependency.toString())
-      await spin(`Adding ${dependency.toString()} to MiniApp devDependencies`, yarnAdd(devDependencyPath, { dev: true }))
+      if (dev) {
+        await spin(`Adding ${dependency.toString()} to MiniApp devDependencies`, yarnAdd(devDependencyPath, { dev: true }))
+      } else {
+        await spin(`Adding ${dependency.toString()} to MiniApp peerDependencies`, yarnAdd(devDependencyPath, { peer: true }))
+      }
     } else {
       let finalDependency
 
