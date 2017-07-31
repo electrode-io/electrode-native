@@ -61,11 +61,6 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'The name to user for the container (usually native application name)'
     })
-    .option('autoIncrementVersion', {
-      type: 'bool',
-      describe: 'Auto increment container version',
-      alias: 'i'
-    })
     .group(['outputFolder'], 'jsOnly Options:')
     .option('outputFolder', {
       type: 'string',
@@ -83,8 +78,7 @@ exports.handler = async function ({
   publish,
   platform,
   containerName,
-  publicationUrl,
-  autoIncrementVersion
+  publicationUrl
 } : {
   completeNapDescriptor?: string,
   version?: string,
@@ -94,8 +88,7 @@ exports.handler = async function ({
   miniapps?: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
-  publicationUrl?: string,
-  autoIncrementVersion?: boolean
+  publicationUrl?: string
 }) {
   let napDescriptor: ?NativeApplicationDescriptor
   let cauldronContainerVersion: ?string
@@ -138,8 +131,8 @@ exports.handler = async function ({
   // If the user wants to generates a complete container (not --jsOnly)
   // user has to provide a container version
   // If not specified in command line, we ask user to input the version
-  if (!version && !jsOnly) {
-    if (cauldronContainerVersion && autoIncrementVersion) {
+  if ((!version || version === 'auto') && !jsOnly) {
+    if (cauldronContainerVersion && version === 'auto') {
       version = cauldronContainerVersion
     } else {
       const { userSelectedContainerVersion } = await inquirer.prompt([{
