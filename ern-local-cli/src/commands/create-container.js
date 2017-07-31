@@ -4,7 +4,8 @@ import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
-  cauldron
+  cauldron,
+  Platform
 } from 'ern-core'
 import {
   DependencyPath,
@@ -57,11 +58,10 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'The name to user for the container (usually native application name)'
     })
-    .group(['outDir'], 'jsOnly Options:')
     .option('outDir', {
       type: 'string',
       alias: 'out',
-      describe: 'Path to output directory'
+      describe: 'Directory to output the generated container to'
     })
 }
 
@@ -155,17 +155,7 @@ exports.handler = async function ({
       miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
     }
 
-    if (!outDir) {
-      const { userSelectedOutputDirectory } = await inquirer.prompt([{
-        type: 'input',
-        name: 'userSelectedOutputDirectory',
-        message: 'Enter path to output directory for this container'
-      }])
-
-      outDir = userSelectedOutputDirectory
-    }
-
-    await generateMiniAppsComposite(miniAppsPaths, outDir)
+    await generateMiniAppsComposite(miniAppsPaths, outDir || `${Platform.rootDirectory}/miniAppsComposite`)
   } else {
     if (!napDescriptor && miniapps) {
       if (!platform) {
@@ -183,14 +173,15 @@ exports.handler = async function ({
         miniAppsPaths,
         platform, {
           containerVersion: version,
-          nativeAppName: containerName
+          nativeAppName: containerName,
+          outDir
         }
       )
     } else if (napDescriptor && version) {
       await runCauldronContainerGen(
         napDescriptor,
         version,
-        { publish })
+        { publish, outDir })
       // Update container version for Cauldron in Git (only if Cauldron is published)
       if (publish) {
         await cauldron.updateContainerVersion(napDescriptor, version)
