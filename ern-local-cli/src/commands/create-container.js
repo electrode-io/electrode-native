@@ -28,7 +28,7 @@ exports.builder = function (yargs: any) {
       alias: 'n',
       describe: 'Full native application selector'
     })
-    .option('containerVersion', {
+    .option('version', {
       type: 'string',
       alias: 'v',
       describe: 'Version of the generated container'
@@ -76,7 +76,7 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   completeNapDescriptor,
-  containerVersion,
+  version,
   jsOnly,
   outputFolder,
   miniapps,
@@ -87,7 +87,7 @@ exports.handler = async function ({
   autoIncrementVersion
 } : {
   completeNapDescriptor?: string,
-  containerVersion?: string,
+  version?: string,
   publish?: boolean,
   jsOnly?: boolean,
   outputFolder?: string,
@@ -138,9 +138,9 @@ exports.handler = async function ({
   // If the user wants to generates a complete container (not --jsOnly)
   // user has to provide a container version
   // If not specified in command line, we ask user to input the version
-  if (!containerVersion && !jsOnly) {
+  if (!version && !jsOnly) {
     if (cauldronContainerVersion && autoIncrementVersion) {
-      containerVersion = cauldronContainerVersion
+      version = cauldronContainerVersion
     } else {
       const { userSelectedContainerVersion } = await inquirer.prompt([{
         type: 'input',
@@ -148,7 +148,7 @@ exports.handler = async function ({
         message: 'Enter desired version for generated container',
         default: cauldronContainerVersion || '1.0.0'
       }])
-      containerVersion = userSelectedContainerVersion
+      version = userSelectedContainerVersion
     }
   }
 
@@ -193,19 +193,19 @@ exports.handler = async function ({
       await runLocalContainerGen(
         miniAppsPaths,
         platform, {
-          containerVersion,
+          containerVersion: version,
           nativeAppName: containerName,
           publicationUrl
         }
       )
-    } else if (napDescriptor && containerVersion) {
+    } else if (napDescriptor && version) {
       await runCauldronContainerGen(
         napDescriptor,
-        containerVersion,
+        version,
         { publish })
       // Update container version for Cauldron in Git (only if Cauldron is published)
       if (publish) {
-        await cauldron.updateContainerVersion(napDescriptor, containerVersion)
+        await cauldron.updateContainerVersion(napDescriptor, version)
       }
     }
   }
