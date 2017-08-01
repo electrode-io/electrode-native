@@ -22,9 +22,6 @@
 		968333D81E54E3470031C565 /* ElectrodeBridgeDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXReferenceProxy section */
-/* End PBXReferenceProxy section */
-
 /* Begin PBXContainerItemProxy section */
 		485009EE1E2FF23C009B6610 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -257,6 +254,9 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		485009E11E2FF23B009B6610 /* Resources */ = {
