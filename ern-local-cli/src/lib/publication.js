@@ -123,7 +123,6 @@ platform: 'android' | 'ios', {
       plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
       miniapps,
       workingFolder: outDir,
-      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     })
   } catch (e) {
@@ -163,7 +162,6 @@ version: string, {
       plugins,
       miniapps,
       workingFolder: outDir,
-      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     })
   } catch (e) {

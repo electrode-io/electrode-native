@@ -128,7 +128,7 @@ export default class GithubGenerator {
     shell.cp('-R', `${paths.containerHull}/ios`, paths.outFolder)
     throwIfShellCommandFailed()
 
-    await this.buildiOSPluginsViews(plugins, paths.pluginsConfigurationDirectory, mustacheView)
+    await this.buildiOSPluginsViews(plugins, mustacheView)
 
     log.debug(`---iOS: reading template files to be rendered for plugins`)
     const files = readDir(`${outputFolder}`, (f) => (f))
@@ -146,7 +146,7 @@ export default class GithubGenerator {
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
     for (const plugin of plugins) {
-      const pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+      const pluginConfig = await pluginUtil.getPluginConfig(plugin)
       shell.cd(`${paths.pluginsDownloadFolder}`)
       throwIfShellCommandFailed()
       if (pluginConfig.ios) {
@@ -239,7 +239,6 @@ export default class GithubGenerator {
 
   async buildiOSPluginsViews (
     plugins: Array<Dependency>,
-    pluginsConfigPath: string,
     mustacheView: any) : Promise<*> {
     try {
       let pluginsView = []
@@ -248,7 +247,7 @@ export default class GithubGenerator {
         if (plugin.name === 'react-native') {
           continue
         }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin, pluginsConfigPath)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
         let iosPluginHook = pluginConfig.ios.pluginHook
         let containerHeader = pluginConfig.ios.containerPublicHeader
         if (iosPluginHook) {
@@ -277,7 +276,7 @@ export default class GithubGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
         if (!pluginConfig.ios) {
           log.warn(`${plugin.name} does not have any injection configuration for iOS`)
           continue

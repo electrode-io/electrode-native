@@ -82,7 +82,6 @@ exports.handler = async function ({
     paths: {
       apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
       reactNativeAarsPath: path.join(Platform.manifestDirectory, `react-native_aars`),
-      pluginsConfigPath: `${Platform.pluginsConfigurationDirectory}`,
       pluginsDownloadFolder: PLUGIN_FOLDER,
       workingFolder: WORKING_FOLDER,
       outFolder: ''

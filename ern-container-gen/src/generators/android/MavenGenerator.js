@@ -154,7 +154,7 @@ export default class MavenGenerator {
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
       throwIfShellCommandFailed()
 
-      await this.buildAndroidPluginsViews(plugins, paths.pluginsConfigurationDirectory, mustacheView)
+      await this.buildAndroidPluginsViews(plugins, mustacheView)
       await this.addAndroidPluginHookClasses(plugins, paths)
 
       const reactNativeAarFileName = `react-native-${mustacheView.reactNativeVersion}.aar`
@@ -164,7 +164,7 @@ export default class MavenGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
         let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
@@ -272,7 +272,7 @@ export default class MavenGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin, paths.pluginsConfigurationDirectory)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
           log.debug(`Adding ${androidPluginHook.name}.java`)
@@ -294,7 +294,6 @@ export default class MavenGenerator {
 
   async buildAndroidPluginsViews (
     plugins: Array<Dependency>,
-    pluginsConfigPath: string,
     mustacheView: any) : Promise<*> {
     try {
       let pluginsView = []
@@ -303,7 +302,7 @@ export default class MavenGenerator {
         if (plugin.name === 'react-native') {
           continue
         }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin, pluginsConfigPath)
+        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
         if (!pluginConfig.android) {
           log.warn(`${plugin.name} does not have any injection configuration for Android`)
           continue

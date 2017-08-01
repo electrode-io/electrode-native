@@ -25,7 +25,6 @@ export default class ApiImplGen {
     paths: {
       workingFolder: string,
       pluginsDownloadFolder: string,
-      pluginsConfigPath: string,
       apiImplHull: string,
       reactNativeAarsPath: string,
       outFolder: string

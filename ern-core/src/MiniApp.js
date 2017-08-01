@@ -241,7 +241,6 @@ Are you sure this is a MiniApp ?`)
       headless: this.isHeadLess,
       platform: 'ios',
       containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
-      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     }
 
@@ -300,7 +299,6 @@ Are you sure this is a MiniApp ?`)
       headless: this.isHeadLess,
       platform: 'android',
       containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
-      pluginsConfigurationDirectory: Platform.pluginsConfigurationDirectory,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     }
 

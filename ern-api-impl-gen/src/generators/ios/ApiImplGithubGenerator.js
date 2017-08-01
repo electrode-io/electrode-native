@@ -64,7 +64,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       })
       plugins.push(reactnativeplugin)
       for (const plugin of plugins) {
-        const pluginConfig = await getPluginConfig(plugin, paths.pluginsConfigPath, `ElectrodeApiImpl`)
+        const pluginConfig = await getPluginConfig(plugin, `ElectrodeApiImpl`)
         Utils.throwIfShellCommandFailed()
         if (pluginConfig.ios) {
           let pluginSourcePath

@@ -41,7 +41,6 @@ export default async function generateContainer ({
   containerVersion,
   nativeAppName,
   platformPath,
-  pluginsConfigurationDirectory,
   generator,
   plugins,
   miniapps,
@@ -51,7 +50,6 @@ export default async function generateContainer ({
   containerVersion: string,
   nativeAppName: string,
   platformPath: string,
-  pluginsConfigurationDirectory: string,
   generator: any,
   plugins: Array<Dependency>,
   miniapps: Array<any>,
@@ -73,8 +71,6 @@ export default async function generateContainer ({
   const paths = {
     // Where the container project hull is stored
     containerHull: `${platformPath}/ern-container-gen/hull`,
-    // Where the container generation configuration of all plugins is stored
-    pluginsConfigurationDirectory,
     // Where the templates to be used during container generation are stored
     containerTemplates: `${platformPath}/ern-container-gen/templates`,
     // Where we assemble the miniapps together

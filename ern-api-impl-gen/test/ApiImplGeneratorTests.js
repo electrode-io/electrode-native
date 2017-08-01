@@ -32,7 +32,6 @@ describe('run ApiImpl generator command', () => {
       paths: {
         apiImplHull: `${platformPath}/ern-api-impl-gen/hull`,
         reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
-        pluginsConfigPath: Platform.pluginsConfigurationDirectory,
         pluginsDownloadFolder: PLUGIN_FOLDER,
         workingFolder: WORKING_FOLDER,
         outFolder: ''
