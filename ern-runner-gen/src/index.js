@@ -47,7 +47,6 @@ export async function generateRunner ({
   headless,
   platform,
   containerGenWorkingFolder,
-  pluginsConfigurationDirectory,
   reactNativeAarsPath
 } : {
   platformPath: string,
@@ -57,7 +56,6 @@ export async function generateRunner ({
   headless: boolean,
   platform: 'android' | 'ios',
   containerGenWorkingFolder: string,
-  pluginsConfigurationDirectory: string,
   reactNativeAarsPath: string
 }) {
   try {
@@ -99,7 +97,6 @@ export async function generateRunner ({
       platform,
       containerGenWorkingFolder,
       outFolder,
-      pluginsConfigurationDirectory,
       reactNativeAarsPath
     })
   } catch (e) {
@@ -115,7 +112,6 @@ export async function generateContainerForRunner ({
   platform,
   containerGenWorkingFolder,
   outFolder,
-  pluginsConfigurationDirectory,
   reactNativeAarsPath
 } : {
   platformPath: string,
@@ -124,7 +120,6 @@ export async function generateContainerForRunner ({
   platform: 'android' | 'ios',
   containerGenWorkingFolder: string,
   outFolder: string,
-  pluginsConfigurationDirectory: string,
   reactNativeAarsPath: string
 }) {
   const generator = (platform === 'android')
@@ -139,7 +134,6 @@ export async function generateContainerForRunner ({
     plugins,
     miniapps: [miniapp],
     workingFolder: containerGenWorkingFolder,
-    pluginsConfigurationDirectory,
     reactNativeAarsPath
   })
 }

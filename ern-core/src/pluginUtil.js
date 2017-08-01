@@ -8,6 +8,7 @@ import path from 'path'
 import Mustache from 'mustache'
 import shell from 'shelljs'
 import _ from 'lodash'
+import Platform from './Platform'
 
 export type PluginConfig = {
   android: Object,
@@ -18,18 +19,44 @@ export type PluginConfig = {
 
 const npmScopeModuleRe = /@(.*)\/(.*)/
 const pluginConfigFileName = 'config.json'
+const ERN_VERSION_DIRECTORY_RE = /ern_v(.+)\+/
 
-export function hasPluginConfig (
+function getPluginsConfigurationDirectories (maxVersion: string = Platform.currentVersion) : Array<string> {
+  return _(fs.readdirSync(`${Platform.manifestDirectory}/plugins`))
+          .filter(d => ERN_VERSION_DIRECTORY_RE.test(d) && ERN_VERSION_DIRECTORY_RE.exec(d)[1] <= maxVersion)
+          .map(d => `${Platform.manifestDirectory}/plugins/${d}`)
+          .value()
+}
+
+export function getPluginConfigurationPath (
   plugin: Dependency,
-  pluginsConfigPath: string) : boolean {
-  const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
-  return (pluginConfigPath != null && fs.existsSync(`${pluginConfigPath}/${pluginConfigFileName}`))
+  platformVersion: string = Platform.currentVersion) : ?string {
+  const orderedPluginsConfigurationDirectories = _(getPluginsConfigurationDirectories(platformVersion))
+                                                .sortBy()
+                                                .reverse()
+                                                .value()
+
+  for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
+    // Directory names cannot contain '/', so, replaced by ':'
+    const pluginScopeAndName = plugin.scopedName.replace(/\//g, ':')
+
+    const pluginVersions = _.map(
+      fs.readdirSync(pluginsConfigurationDirectory).filter(f => f.startsWith(pluginScopeAndName)),
+      s => /_v(.+)\+/.exec(s)[1])
+
+    const matchingVersion = _.find(pluginVersions.sort().reverse(), d => plugin.version >= d)
+    if (matchingVersion) {
+      const pluginConfigurationPath = `${pluginsConfigurationDirectory}/${pluginScopeAndName}_v${matchingVersion}+`
+      if (fs.existsSync(`${pluginConfigurationPath}/${pluginConfigFileName}`)) {
+        return pluginConfigurationPath
+      }
+    }
+  }
 }
 
 //
-// Get the generation config of a given plugin
+// Get the container injection configuration of a given plugin
 // plugin: A plugin object
-// pluginsConfigPath : Path to plugins config
 // projectName : The name of the project where this plugin will be injected into.
 //               Used for iOS plugin config only for now.
 // Sample plugin object :
@@ -39,10 +66,10 @@ export function hasPluginConfig (
 // }
 export async function getPluginConfig (
   plugin: Dependency,
-  pluginsConfigPath: string,
-  projectName: string = 'ElectrodeContainer') : Promise<PluginConfig> {
+  projectName: string = 'ElectrodeContainer',
+  platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
   let result = {}
-  const pluginConfigPath = getPluginConfigPath(plugin, pluginsConfigPath)
+  const pluginConfigPath = getPluginConfigurationPath(plugin, platformVersion)
 
   // If there is a base file (common to all versions) use it and optionally
   // patch it with specific version config (if present)
@@ -146,21 +173,6 @@ function getApiPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginCo
         ]
       }
     }
-  }
-}
-
-// Returns the base path of a given plugin generation config
-function getPluginConfigPath (plugin: Dependency, pluginsConfigPath: string) : ?string {
-   // Folder names cannot contain '/' so it's replaced by ':'
-  const pluginScopeAndName = plugin.scopedName.replace(/\//g, ':')
-
-  const pluginVersions = _.map(
-      fs.readdirSync(pluginsConfigPath).filter(f => f.startsWith(pluginScopeAndName)),
-      s => /_v(.+)\+/.exec(s)[1])
-
-  const matchingVersion = _.find(pluginVersions.sort().reverse(), d => plugin.version >= d)
-  if (matchingVersion) {
-    return `${pluginsConfigPath}/${pluginScopeAndName}_v${matchingVersion}+`
   }
 }
 
