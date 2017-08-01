@@ -34,7 +34,6 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     paths: {
       workingFolder: string,
       pluginsDownloadFolder: string,
-      pluginsConfigPath: string,
       apiImplHull: string,
       reactNativeAarsPath: string,
       outFolder: string
@@ -64,7 +63,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
-        await getPluginConfig(plugin, paths.pluginsConfigPath).then((pluginConfig) => {
+        await getPluginConfig(plugin).then((pluginConfig) => {
           this.copyPluginToOutput(paths, outputFolder, plugin, pluginConfig)
         })
       }
