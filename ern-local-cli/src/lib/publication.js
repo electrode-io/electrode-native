@@ -56,11 +56,13 @@ miniappPackagesPaths: Array<DependencyPath>,
 platform: 'android' | 'ios', {
   containerVersion = '1.0.0',
   nativeAppName = 'local',
-  publicationUrl
+  publicationUrl,
+  outDir = `${Platform.rootDirectory}/containergen`
 }: {
   containerVersion?: string,
   nativeAppName?: string,
-  publicationUrl?: string
+  publicationUrl?: string,
+  outDir?: string
 } = {}) {
   try {
     const nativeDependencies: Set < string > = new Set()
@@ -120,7 +122,7 @@ platform: 'android' | 'ios', {
       generator: createContainerGenerator(platform, config),
       plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
       miniapps,
-      workingFolder: `${Platform.rootDirectory}/containergen`,
+      workingFolder: outDir,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     })
   } catch (e) {
@@ -133,9 +135,11 @@ platform: 'android' | 'ios', {
 export async function runCauldronContainerGen (
 napDescriptor: NativeApplicationDescriptor,
 version: string, {
-  publish
+  publish,
+  outDir = `${Platform.rootDirectory}/containergen`
 }: {
-  publish?: boolean
+  publish?: boolean,
+  outDir?: string
 } = {}) {
   try {
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
@@ -157,7 +161,7 @@ version: string, {
       generator: createContainerGenerator(napDescriptor.platform, config ? config.containerGenerator : undefined),
       plugins,
       miniapps,
-      workingFolder: `${Platform.rootDirectory}/containergen`,
+      workingFolder: outDir,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     })
   } catch (e) {

@@ -4,7 +4,8 @@ import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
-  cauldron
+  cauldron,
+  Platform
 } from 'ern-core'
 import {
   DependencyPath,
@@ -28,7 +29,7 @@ exports.builder = function (yargs: any) {
       alias: 'n',
       describe: 'Full native application selector'
     })
-    .option('containerVersion', {
+    .option('version', {
       type: 'string',
       alias: 'v',
       describe: 'Version of the generated container'
@@ -41,10 +42,6 @@ exports.builder = function (yargs: any) {
     .option('publish', {
       type: 'boolean',
       describe: 'Publish the generated container to Maven(.aar file for android) or GitHub (Project framework for ios)'
-    })
-    .option('publicationUrl', {
-      type: 'string',
-      describe: 'The url to publish cauldron to'
     })
     .option('miniapps', {
       type: 'array',
@@ -61,41 +58,33 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'The name to user for the container (usually native application name)'
     })
-    .option('autoIncrementVersion', {
-      type: 'bool',
-      describe: 'Auto increment container version',
-      alias: 'i'
-    })
-    .group(['outputFolder'], 'jsOnly Options:')
-    .option('outputFolder', {
+    .option('outDir', {
       type: 'string',
       alias: 'out',
-      describe: 'Output folder path'
+      describe: 'Directory to output the generated container to'
     })
 }
 
 exports.handler = async function ({
   completeNapDescriptor,
-  containerVersion,
+  version,
   jsOnly,
-  outputFolder,
+  outDir,
   miniapps,
   publish,
   platform,
   containerName,
-  publicationUrl,
-  autoIncrementVersion
+  publicationUrl
 } : {
   completeNapDescriptor?: string,
-  containerVersion?: string,
+  version?: string,
   publish?: boolean,
   jsOnly?: boolean,
-  outputFolder?: string,
+  outDir?: string,
   miniapps?: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
-  publicationUrl?: string,
-  autoIncrementVersion?: boolean
+  publicationUrl?: string
 }) {
   let napDescriptor: ?NativeApplicationDescriptor
   let cauldronContainerVersion: ?string
@@ -138,17 +127,17 @@ exports.handler = async function ({
   // If the user wants to generates a complete container (not --jsOnly)
   // user has to provide a container version
   // If not specified in command line, we ask user to input the version
-  if (!containerVersion && !jsOnly) {
-    if (cauldronContainerVersion && autoIncrementVersion) {
-      containerVersion = cauldronContainerVersion
+  if ((!version || version === 'auto') && !jsOnly) {
+    if (cauldronContainerVersion && version === 'auto') {
+      version = cauldronContainerVersion
     } else {
       const { userSelectedContainerVersion } = await inquirer.prompt([{
         type: 'input',
         name: 'userSelectedContainerVersion',
         message: 'Enter desired version for generated container',
-        default: cauldronContainerVersion
+        default: cauldronContainerVersion || '1.0.0'
       }])
-      containerVersion = userSelectedContainerVersion
+      version = userSelectedContainerVersion
     }
   }
 
@@ -166,17 +155,7 @@ exports.handler = async function ({
       miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
     }
 
-    if (!outputFolder) {
-      const { userSelectedOutputFolder } = await inquirer.prompt([{
-        type: 'input',
-        name: 'userSelectedOutputFolder',
-        message: 'Enter output folder path'
-      }])
-
-      outputFolder = userSelectedOutputFolder
-    }
-
-    await generateMiniAppsComposite(miniAppsPaths, outputFolder)
+    await generateMiniAppsComposite(miniAppsPaths, outDir || `${Platform.rootDirectory}/miniAppsComposite`)
   } else {
     if (!napDescriptor && miniapps) {
       if (!platform) {
@@ -193,19 +172,19 @@ exports.handler = async function ({
       await runLocalContainerGen(
         miniAppsPaths,
         platform, {
-          containerVersion,
+          containerVersion: version,
           nativeAppName: containerName,
-          publicationUrl
+          outDir
         }
       )
-    } else if (napDescriptor && containerVersion) {
+    } else if (napDescriptor && version) {
       await runCauldronContainerGen(
         napDescriptor,
-        containerVersion,
-        { publish })
+        version,
+        { publish, outDir })
       // Update container version for Cauldron in Git (only if Cauldron is published)
       if (publish) {
-        await cauldron.updateContainerVersion(napDescriptor, containerVersion)
+        await cauldron.updateContainerVersion(napDescriptor, version)
       }
     }
   }
