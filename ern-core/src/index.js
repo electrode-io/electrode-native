@@ -7,6 +7,7 @@ import _Manifest from './Manifest'
 import _cauldron from './cauldron'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
+import * as _ModuleTypes from './ModuleTypes'
 
 export const pluginUtil = _pluginUtil
 export const handleCopyDirective = _handleCopyDirective
@@ -15,6 +16,7 @@ export const Manifest = _Manifest
 export const cauldron = _cauldron
 export const compatibility = _compatibility
 export const MiniApp = _MiniApp
+export const ModuleTypes = _ModuleTypes
 
 export default ({
   pluginUtil: _pluginUtil,
@@ -23,5 +25,6 @@ export default ({
   Manifest: _Manifest,
   cauldron: _cauldron,
   compatibility: _compatibility,
-  MiniApp: _MiniApp
+  MiniApp: _MiniApp,
+  ModuleTypes: _ModuleTypes
 })
