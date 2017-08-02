@@ -33,6 +33,7 @@ import _ from 'lodash'
 import shell from 'shelljs'
 import tmp from 'tmp'
 import path from 'path'
+import ora from 'ora'
 
 const simctl = require('node-simctl')
 const fetch = require('node-fetch')
@@ -283,9 +284,20 @@ Are you sure this is a MiniApp ?`)
 
     const device = answer.device
     shell.cd(`${this.path}/ios`)
-    execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${this.path}/ios/build" build`)
-    await simctl.installApp(device.udid, `${this.path}/ios/build/Debug-iphonesimulator/ErnRunner.app`)
-    await simctl.launch(device.udid, 'com.yourcompany.ernrunner')
+
+    const spinner = ora(`Compiling runner project`).start()
+
+    try {
+      execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${this.path}/ios/build" build`)
+      spinner.text = 'Installing runner project on device'
+      await simctl.installApp(device.udid, `${this.path}/ios/build/Debug-iphonesimulator/ErnRunner.app`)
+      spinner.text = 'Launching runner project'
+      await simctl.launch(device.udid, 'com.yourcompany.ernrunner')
+      spinner.succeed('Done')
+    } catch (e) {
+      spinner.fail(e.message)
+      throw e
+    }
   }
 
   async runInAndroidRunner () : Promise<*> {

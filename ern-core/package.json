@@ -59,7 +59,8 @@
     "path": "^0.12.7",
     "tmp": "^0.0.31",
     "lodash": "^4.17.3",
-    "node-fetch": "^1.7.1"
+    "node-fetch": "^1.7.1",
+    "ora": "^1.1.0"
   },
   "devDependencies": {
     "ern-util-dev": "0.0.1"
