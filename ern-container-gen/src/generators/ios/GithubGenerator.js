@@ -250,10 +250,15 @@ export default class GithubGenerator {
         let pluginConfig = await pluginUtil.getPluginConfig(plugin)
         let iosPluginHook = pluginConfig.ios.pluginHook
         let containerHeader = pluginConfig.ios.containerPublicHeader
-        if (iosPluginHook) {
+        if (iosPluginHook.configurable) {
           pluginsView.push({
             'name': iosPluginHook.name,
             'lcname': iosPluginHook.name.charAt(0).toLowerCase() + iosPluginHook.name.slice(1),
+            'configurable': iosPluginHook.configurable,
+            'containerHeader': containerHeader
+          })
+        } else {
+          pluginsView.push({
             'configurable': iosPluginHook.configurable,
             'containerHeader': containerHeader
           })

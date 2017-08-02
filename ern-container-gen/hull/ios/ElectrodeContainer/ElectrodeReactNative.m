@@ -37,14 +37,19 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
 @implementation ElectrodeContainerConfig
 
 - (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
-    if (self.useOkHttpClient && [delegate respondsToSelector:@selector(setJsBundleURL:)]) {
+    if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
+        NSURL *url;
+        if (self.debugEnabled) {
+            url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+            NSLog(@"using local port to debug");
+        } else {
+            url = [self allJSBundleFiles][0];
+        }
+        
         ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
-        [bridgeDelegate setJsBundleURL:self.useOkHttpClient];
-    } else {
-        ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
-        NSURL *url = [self allJSBundleFiles][0];
         [bridgeDelegate setJsBundleURL:url];
     }
+        
 }
 
 - (NSArray *)allJSBundleFiles
