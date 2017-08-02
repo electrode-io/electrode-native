@@ -33,6 +33,7 @@ NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
 NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey";
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electronics.ElectrodeContainer";
+static id moduleInstance;
 
 @implementation ElectrodeContainerConfig
 
@@ -148,25 +149,35 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electron
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(notifyElectrodeOnReactInitialized:)
-                                                 name:RCTDidInitializeModuleNotification object:nil];
+     [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(saveElectrodeBridgeInstanceOnInitialized:)
+                                                     name:RCTDidInitializeModuleNotification object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(notifyElectrodeOnReactNativeInitialized:)
+                                                     name:RCTJavaScriptDidLoadNotification object:nil];
+
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) notifyElectrodeOnReactInitialized: (NSNotification *) notification {
+- (void) saveElectrodeBridgeInstanceOnInitialized: (NSNotification *) notification {
     if (notification) {
         if ([notification.object isKindOfClass:[RCTBridge class]] ) {
-            id moduleInstance = notification.userInfo[@"module"];
+            id localModuleInstance = notification.userInfo[@"module"];
             SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
-            if ([moduleInstance  respondsToSelector:selector]) {
-             ((void (*)(id, SEL))[moduleInstance methodForSelector:selector])(moduleInstance, selector);
+            if ([localModuleInstance  respondsToSelector:selector]) {
+                moduleInstance  = localModuleInstance;
             }
         }
     }
+}
+
+- (void) notifyElectrodeOnReactNativeInitialized: (NSNotification *) notification {
+    SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
+    ((void (*)(id, SEL))[moduleInstance methodForSelector:selector])(moduleInstance, selector);
 }
 
 @end
