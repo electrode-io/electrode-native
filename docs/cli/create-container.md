@@ -9,7 +9,7 @@ This will create a new container
 #### `ern create-container --version/-v <version>`
 
 Specify the `version` to use for the container.  
-You can use `version=auto` to auto increment the version of the container based on the version stored in the current Cauldron, or use a specific version (for example `version=1.2.3`)
+You can use `version=auto` to auto increment the version of the container based on the version stored in the current Cauldron, or use a compliant version string in the form `x.y.z` where x, y and z are integers (for example `version=1.2.3`).  
 Please note that if you are using a specific version, it will overwrite the current delcared version stored in your Cauldron
 
 #### `ern create-container [--jsOnly/--js]`
