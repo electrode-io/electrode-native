@@ -9,6 +9,9 @@ import {
   Utils,
   yarn
 } from 'ern-util'
+import {
+  ModuleTypes
+} from '@walmart/ern-core'
 
 import ApiImplGen from './generators/ApiImplGen'
 
@@ -45,7 +48,7 @@ export async function generateApiImpl ({
     // get the folder to output the generated project.
     paths.outFolder = outputFolder = formOutputFolderName(apiDependencyPath, outputFolder)
     createOutputFolder(outputFolder, forceGenerate)
-    createNodePackage(outputFolder, apiDependencyPath)
+    await createNodePackage(outputFolder, apiDependencyPath, nativeOnly)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -73,15 +76,27 @@ function createOutputFolder (outputFolderPath: string, forceGenerate) {
   }
 }
 
-async function createNodePackage (outputFolderPath: string, apiDependencyPath: DependencyPath) {
+async function createNodePackage (
+  outputFolderPath: string,
+  apiDependencyPath: DependencyPath,
+  nativeOnly: boolean) {
   let currentFolder = shell.pwd()
   shell.cd(outputFolderPath)
-  yarnInit()
-  yarnAdd(apiDependencyPath).then(() => {
-    shell.rm('-rf', `${outputFolderPath}/node_modules/`)
-    Utils.throwIfShellCommandFailed()
-    log.debug('Deleted node modules folder')
-  })
+  await yarnInit()
+  await yarnAdd(apiDependencyPath)
+  shell.rm('-rf', `${outputFolderPath}/node_modules/`)
+  Utils.throwIfShellCommandFailed()
+  log.debug('Deleted node modules folder')
+  const packageJsonPath = path.join(outputFolderPath, 'package.json')
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+  const moduleType = nativeOnly ? `${ModuleTypes.NATIVE_API_IMPL}` : `${ModuleTypes.JS_API_IMPL}`
+  packageJson.ern = {
+    moduleType
+  }
+  packageJson.keywords
+    ? packageJson.keywords.push(moduleType)
+    : packageJson.keywords = [moduleType]
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
   shell.cd(currentFolder)
 }
 

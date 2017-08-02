@@ -55,7 +55,8 @@
     "xcode": "^0.9.1"
   },
   "devDependencies": {
-    "ern-util-dev": "0.0.1"
+    "ern-util-dev": "0.0.1",
+    "ern-core": "0.0.1"
   },
   "engines": {
     "node": ">=4"

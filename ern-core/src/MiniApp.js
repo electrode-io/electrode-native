@@ -20,6 +20,7 @@ import {
 import cauldron from './cauldron'
 import Manifest from './Manifest'
 import Platform from './Platform'
+import * as ModuleTypes from './ModuleTypes'
 import {
   checkCompatibilityWithNativeApp
 } from './compatibility'
@@ -133,11 +134,16 @@ Are you sure this is a MiniApp ?`)
       const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
       appPackageJson.ern = {
-        version: `${platformVersion}`
+        version: `${platformVersion}`,
+        moduleType: `${ModuleTypes.MINIAPP}`
       }
       appPackageJson.ernHeadLess = headless
       appPackageJson.private = false
       appPackageJson.dependencies['react'] = reactDependency.version
+      appPackageJson.keywords
+        ? appPackageJson.keywords.push(ModuleTypes.MINIAPP)
+        : appPackageJson.keywords = [ModuleTypes.MINIAPP]
+
       if (scope) {
         appPackageJson.name = `@${scope}/${appName}`
       }

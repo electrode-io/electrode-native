@@ -12,6 +12,9 @@ import {
   PKG_FILE,
   MODEL_FILE
 } from './Constants'
+import {
+  ModuleTypes
+} from '@walmart/ern-core'
 
 export const GENERATE = [['android', 'ERNAndroid'], ['javascript', 'ERNES6'], ['IOS', 'ERNSwift']]
 // export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
@@ -80,8 +83,12 @@ export function generatePackageJson ({
       '@walmart/react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
     },
     'ern': {
-      'message': conf
-    }
+      'message': conf,
+      'moduleType': `${ModuleTypes.API}`
+    },
+    'keywords': [
+      `${ModuleTypes.API}`
+    ]
   }, null, 2)
 }
 
