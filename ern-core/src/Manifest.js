@@ -62,11 +62,16 @@ export default class Manifest {
     return _.find(await this.getMasterManifests(), m => semver.satisfies(version, m.platformVersion))
   }
 
+  // Sync the master manifest local repository with the remote one
+  static async syncMasterManifest () {
+    return git ? git.pullAsync('origin', 'master') : Promise.resolve()
+  }
+
   // Get the offical master manifests
   static async getMasterManifests () : Promise<Array<Object>> {
     let result = []
     if (git) {
-      await git.pullAsync('origin', 'master')
+      await this.syncMasterManifest()
       result = JSON.parse(fs.readFileSync(`${Platform.manifestDirectory}/manifest.json`, 'utf-8'))
     }
     return result
