@@ -9,6 +9,7 @@ import Mustache from 'mustache'
 import shell from 'shelljs'
 import _ from 'lodash'
 import Platform from './Platform'
+import Manifest from './Manifest'
 
 export type PluginConfig = {
   android: Object,
@@ -68,6 +69,7 @@ export async function getPluginConfig (
   plugin: Dependency,
   projectName: string = 'ElectrodeContainer',
   platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
+  Manifest.syncMasterManifest()
   let result = {}
   const pluginConfigPath = getPluginConfigurationPath(plugin, platformVersion)
 
