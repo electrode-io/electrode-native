@@ -88,6 +88,11 @@ exports.handler = async function ({
 }) {
   let napDescriptor: ?NativeApplicationDescriptor
   let cauldronContainerVersion: ?string
+
+  if (version) {
+    ensureValidContainerVersion(version)
+  }
+
   //
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
@@ -139,6 +144,7 @@ exports.handler = async function ({
       }])
       version = userSelectedContainerVersion
     }
+    ensureValidContainerVersion(version)
   }
 
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
@@ -187,5 +193,11 @@ exports.handler = async function ({
         await cauldron.updateContainerVersion(napDescriptor, version)
       }
     }
+  }
+}
+
+function ensureValidContainerVersion (version: string) {
+  if ((/^\d+.\d+.\d+$/.test(version) === false) && (version !== 'auto')) {
+    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }
