@@ -398,7 +398,7 @@ Are you sure this is a MiniApp ?`)
         const nativeDependencies = findNativeDependencies(path.join(tmpPath, 'node_modules'))
         if (nativeDependencies.length === 0) {
           // This is a pure JS dependency. Not much to do here -yet-
-          finalDependency = manifestDependency
+          finalDependency = versionLessDependency
         } else if (nativeDependencies.length === 1) {
           // This is a native dependency or it contains a single native dependency as a transitive one
           if (Dependency.same(nativeDependencies[0], dependency, { ignoreVersion: true })) {
