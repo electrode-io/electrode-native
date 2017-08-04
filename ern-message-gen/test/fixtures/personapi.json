@@ -65,6 +65,11 @@
           "items": {
             "$ref": "#/definitions/CompleteAddress"
           }
+        },
+        "salary":{
+          "type": "number",
+          "format": "long",
+          "description": "Latitude"
         }
       },
       "required": [
@@ -97,7 +102,7 @@
         },
         "lng": {
           "type": "number",
-          "format": "double",
+          "format": "float",
           "description": "Longitude"
         }
       }
