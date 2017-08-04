@@ -123,15 +123,15 @@ export default class Platform {
   // it will just update the config file with new activated version number
   static switchToVersion (version: string) {
     if (version === this.currentVersion) {
-      return log.info(`v${version} is already the version in use`)
+      return log.info(`ern v${version} is now the currently activated version.`)
     }
 
     if (!this.isPlatformVersionInstalled(version)) {
-      log.info(`v${version} is not installed yet. Trying to install now`)
+      log.info(`ern v${version} is not installed yet. Installing now.`)
       this.installPlatform(version)
     }
 
     config.setValue('platformVersion', version)
-    log.info(`v${version} is set as the current platform version`)
+    log.info(`ern v${version} is now activated.`)
   }
 }

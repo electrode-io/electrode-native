@@ -28,14 +28,14 @@ export async function generateApi (options: Object) {
 
   const outFolder = `${process.cwd()}/${config.moduleName}`
   if (fs.existsSync(outFolder)) {
-    log.warn(`A directory already exists at ${outFolder}`)
+    log.warn(`${outFolder} directory already exists`)
     process.exit(1)
   }
 
     // Create output folder
   shell.mkdir(outFolder)
   await generateProject(config, outFolder)
-  log.info(`==  Generated project:$ cd ${outFolder}`)
+  log.info(`==  Project was generated in ${outFolder}`)
 }
 
 /**
@@ -48,7 +48,7 @@ export async function generateApi (options: Object) {
  * @returns {Promise.<void>}
  */
 export async function regenerateCode (options: Object = {}) {
-  const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`)
+  const pkg = await checkValid(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
   const curVersion = pkg.version || '0.0.1'
   let newPluginVer
   if (options.updatePlugin) {
@@ -85,14 +85,14 @@ export async function regenerateCode (options: Object = {}) {
 
   await cleanGenerated()
   await generateSwagger(config, process.cwd())
-  log.info('== Generation complete')
+  log.info('== API generation complete !')
 
   if (isNewVersion) {
     await publish(pkg)
-  } else { log.info('OK, make sure you bump the version and publish if needed.') }
+  } else { log.info('O.K, make sure you bump the version and NPM publish if needed.') }
 }
 export async function cleanGenerated (outFolder: string = process.cwd()) {
-  const pkg = await checkValid(`Is this not an api directory try a directory named: react-native-{name}-api`)
+  const pkg = await checkValid(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
 
   shell.rm('-rf', path.join(outFolder, 'javascript'))
   shell.rm('-rf', path.join(outFolder, 'swift'))
@@ -147,7 +147,7 @@ async function _promptForPluginVersion (curVersion: string) {
   }])
   const ret = nextVersion(curVersion, userPluginVer)
   if (ret == null) {
-    log.info(`sorry, I do not understand your answer`)
+    log.info(`Sorry, I do not understand your answer`)
     return _promptForPluginVersion(curVersion)
   }
   return ret
@@ -178,7 +178,7 @@ function _promptForMissMatchOfSupportedPlugins (curVersion: any, pluginName: str
   return inquirer.prompt([{
     type: 'input',
     name: 'userPluginVer',
-    message: `Type new plugin version of ${pluginName}. Press Enter to use the default '${curVersion}'.`
+    message: `Type new plugin version for ${pluginName}. Press Enter to use the default '${curVersion}'.`
   }])
 }
 
@@ -186,7 +186,7 @@ async function publish ({version} : {version: string}) {
   const answers = await inquirer.prompt([{
     type: 'confirm',
     name: 'confirmNpmPublish',
-    message: `Would you like to npm publish the plugin [${version}]?`
+    message: `Would you like to NPM publish version [${version}] of this API ?`
   }])
   if (answers.confirmNpmPublish) {
     await npm.npm('publish')

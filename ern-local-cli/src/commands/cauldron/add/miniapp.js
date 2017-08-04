@@ -66,7 +66,7 @@ exports.handler = async function ({
       log.info(`Publishing MiniApp to npm`)
       miniapp.publishToNpm()
     } else {
-      return log.error(`You cannot add an unpublished MiniApp to the Cauldron !!!`)
+      return log.error(`Sorry you cannot add a MiniApp version that was not published to NPM to the Cauldron.`)
     }
   }
 
@@ -109,7 +109,7 @@ async function getMiniApp (miniappName) {
   if (miniappName) {
     return MiniApp.fromPackagePath(DependencyPath.fromString(miniappName))
   } else {
-    log.debug('Miniapp name is NOT passed, will proceed if the command is executed from MiniApp\'s root folder')
+    log.debug('Miniapp name was not provided. Will proceed if the command is executed from MiniApp\'s root folder')
     return MiniApp.fromCurrentPath()
   }
 }

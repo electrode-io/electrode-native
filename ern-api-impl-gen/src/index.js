@@ -64,11 +64,11 @@ export async function generateApiImpl ({
 
 function createOutputFolder (outputFolderPath: string, forceGenerate) {
   if (!forceGenerate && fs.existsSync(outputFolderPath)) {
-    Utils.logErrorAndExitProcess(`An implementation directory already exists: ${outputFolderPath}. \nIf you want to force create this project use -f option in your command.`)
+    Utils.logErrorAndExitProcess(`An implementation directory already exists in ${outputFolderPath}. \nIf you want to force the creation of this API implementation project use -f option in your command.`)
     // RETURN
   } else {
     if (forceGenerate && fs.existsSync(outputFolderPath)) {
-      log.info(`Deleting the existing folder and recreating a new output folder" ${outputFolderPath}`)
+      log.info(`Deleting the existing directory and recreating a new one in ${outputFolderPath}`)
       shell.rm('-R', outputFolderPath)
     }
     shell.mkdir('-p', outputFolderPath)
@@ -86,7 +86,7 @@ async function createNodePackage (
   await yarnAdd(apiDependencyPath)
   shell.rm('-rf', `${outputFolderPath}/node_modules/`)
   Utils.throwIfShellCommandFailed()
-  log.debug('Deleted node modules folder')
+  log.debug('Removed node modules folder')
   const packageJsonPath = path.join(outputFolderPath, 'package.json')
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
   const moduleType = nativeOnly ? `${ModuleTypes.NATIVE_API_IMPL}` : `${ModuleTypes.JS_API_IMPL}`

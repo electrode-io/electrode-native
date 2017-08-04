@@ -49,7 +49,7 @@ exports.handler = async function ({
     return log.error(`react-native not found in manifest. cannot infer version to use`)
   }
 
-  log.info(`Generating ${apiName} api`)
+  log.info(`Generating ${apiName} API`)
   generateApi({
     bridgeVersion: `${bridgeDep.version}`,
     reactNativeVersion: reactNative.version,

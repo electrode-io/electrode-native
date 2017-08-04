@@ -55,5 +55,5 @@ exports.handler = function ({
 function useCauldronRepository (repoAlias: string) {
   ernConfig.setValue('cauldronRepoInUse', repoAlias)
   shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-  log.info(`${repoAlias} Cauldron is now in use`)
+  log.info(`${repoAlias} Cauldron is now activated`)
 }

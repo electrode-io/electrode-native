@@ -46,8 +46,7 @@ export default class ApiImplGen {
       }
     }
 
-    log.info(chalk.green(`Successfully generated, location: ${paths.outFolder}`))
-    log.info(chalk.green(`Done!.`))
+    log.info(chalk.green(`API implementation project was successfully generated in ${paths.outFolder}`))
   }
 
   async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string) {
@@ -64,7 +63,7 @@ export default class ApiImplGen {
         }
       }
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while downloading API: ${e}`)
+      Utils.logErrorAndExitProcess(`Error while retrieving API: ${e}`)
     }
   }
 
@@ -89,7 +88,7 @@ export default class ApiImplGen {
       }
       return dependencies
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while downloading dependencies: ${e}`)
+      Utils.logErrorAndExitProcess(`Error while retrieving dependencies: ${e}`)
       throw e
     }
   }
