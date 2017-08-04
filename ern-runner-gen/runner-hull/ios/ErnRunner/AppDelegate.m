@@ -20,6 +20,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Start the container
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] init];
+    containerConfig.debugEnabled = YES;
     [ElectrodeReactNative startWithConfigurations:containerConfig];
 
     return YES;
