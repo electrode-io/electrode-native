@@ -51,13 +51,13 @@ public class {{classname}} implements Parcelable, Bridgeable {
         this.{{name}} = bundle.containsKey("{{name}}") ? bundle.getBoolean("{{name}}") : null;
         {{/isBoolean}}
         {{#isLong}}
-        this.{{name}} = bundle.getLong("{{name}}");
+        this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").longValue();
         {{/isLong}}
         {{#isDouble}}
         this.{{name}} = bundle.getDouble("{{name}}");
         {{/isDouble}}
         {{#isFloat}}
-        this.{{name}} = bundle.getFloat("{{name}}");
+        this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").floatValue();
         {{/isFloat}}
         {{^isPrimitiveType}}
         this.{{name}} = bundle.containsKey("{{name}}") ? new {{{datatype}}}(bundle.getBundle("{{name}}")) : null;
