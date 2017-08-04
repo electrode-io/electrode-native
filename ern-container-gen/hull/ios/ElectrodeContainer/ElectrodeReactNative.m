@@ -27,13 +27,15 @@
 
 
 #import "ElectrodeBridgeDelegate.h"
+#import "NSBundle+frameworkBundle.h"
+#import <CoreText/CTFontManager.h>
 
 NSString * const ERNCodePushConfig = @"CodePush";
 NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
 NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey";
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electronics.ElectrodeContainer";
-static id moduleInstance;
+static dispatch_semaphore_t semaphore;
 
 @implementation ElectrodeContainerConfig
 
@@ -94,6 +96,7 @@ static id moduleInstance;
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
     static dispatch_once_t startOnceToken;
+    semaphore = dispatch_semaphore_create(0);
     dispatch_once(&startOnceToken, ^{
         [sharedInstance startContainerWithConfiguration:reactContainerConfig
          {{#plugins}}
@@ -155,34 +158,55 @@ static id moduleInstance;
     self.bridge = bridge;
     
      [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(saveElectrodeBridgeInstanceOnInitialized:)
+                                                 selector:@selector(notifyElectrodeReactNativeOnInitialized:)
                                                      name:RCTDidInitializeModuleNotification object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(notifyElectrodeOnReactNativeInitialized:)
+                                                 selector:@selector(signalElectrodeOnReactNativeInitializedSemaphore:)
                                                      name:RCTJavaScriptDidLoadNotification object:nil];
+    [self loadMyCustomFont];
 
+}
+
+- (void) loadMyCustomFont{
+    NSArray *fontPaths = [[NSBundle frameworkBundle] pathsForResourcesOfType:@".ttf" inDirectory:nil];
+    for (NSString *fontPath in fontPaths) {
+        NSData *inData = [NSData dataWithContentsOfFile:fontPath];
+        CFErrorRef error;
+        CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
+        CGFontRef font = CGFontCreateWithDataProvider(provider);
+        if (! CTFontManagerRegisterGraphicsFont(font, &error)) {
+            CFStringRef errorDescription = CFErrorCopyDescription(error);
+            NSLog(@"Failed to load font: %@", errorDescription);
+            CFRelease(errorDescription);
+        }
+        CFRelease(font);
+        CFRelease(provider);
+    }
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) saveElectrodeBridgeInstanceOnInitialized: (NSNotification *) notification {
+- (void) notifyElectrodeReactNativeOnInitialized: (NSNotification *) notification {
     if (notification) {
         if ([notification.object isKindOfClass:[RCTBridge class]] ) {
             id localModuleInstance = notification.userInfo[@"module"];
             SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
             if ([localModuleInstance  respondsToSelector:selector]) {
-                moduleInstance  = localModuleInstance;
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        dispatch_semaphore_wait(semaphore, 5000);
+                        ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);                    });
+                });
             }
         }
     }
 }
 
-- (void) notifyElectrodeOnReactNativeInitialized: (NSNotification *) notification {
-    SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
-    ((void (*)(id, SEL))[moduleInstance methodForSelector:selector])(moduleInstance, selector);
+- (void) signalElectrodeOnReactNativeInitializedSemaphore: (NSNotification *) notification {
+    dispatch_semaphore_signal(semaphore);
 }
 
 @end

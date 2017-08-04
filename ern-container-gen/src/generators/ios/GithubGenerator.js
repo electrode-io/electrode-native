@@ -83,6 +83,8 @@ export default class GithubGenerator {
       // Go through all ern-container-gen steps
       //
 
+      // Handle resources copying
+      this.copyRnpmAssets(miniapps, paths)
       // Copy iOS container hull to generation ios output folder
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
@@ -109,6 +111,34 @@ export default class GithubGenerator {
     } catch (e) {
       log.error(`Something went wrong. Aborting ern-container-gen: ${e}`)
       console.trace(e)
+    }
+  }
+
+  copyRnpmAssets (
+    miniApps: any,
+    paths: any) {
+    const outputFolder = path.join(paths.outFolder, 'ios')
+    // Case of local container for runner
+    if ((miniApps.length === 1) && (miniApps[0].localPath)) {
+      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].localPath, outputFolder)
+    } else {
+      for (const miniApp of miniApps) {
+        const miniAppPath = path.join(
+          paths.compositeMiniApp,
+          'node_modules',
+          miniApp.scope ? `@${miniApp.scope}` : '',
+          miniApp.name)
+        this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
+      }
+    }
+  }
+
+  copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
+    const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
+    if (packageJson.rnpm && packageJson.rnpm.assets) {
+      for (const assetDirectoryName of packageJson.rnpm.assets) {
+        handleCopyDirective(miniAppPath, outputPath, [{ source: `${assetDirectoryName}/*`, dest: `ElectrodeContainer/Resources` }])
+      }
     }
   }
 
@@ -145,6 +175,11 @@ export default class GithubGenerator {
     const containerIosProject = await this.getIosContainerProject(containerProjectPath)
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
+    log.debug(`---iOS: adding resource files. `)
+    readDir(`${outputFolder}/ElectrodeContainer/Resources`, (resourceFile) => {
+      containerIosProject.addResourceFile(`${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
+    })
+    log.debug(`---iOS: finished adding resource files. `)
     for (const plugin of plugins) {
       const pluginConfig = await pluginUtil.getPluginConfig(plugin)
       shell.cd(`${paths.pluginsDownloadFolder}`)
