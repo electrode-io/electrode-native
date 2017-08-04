@@ -47,6 +47,12 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         {{#isInteger}}
         this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
         {{/isInteger}}
+        {{#isLong}}
+            this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").longValue();
+        {{/isLong}}
+        {{#isFloat}}
+            this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").floatValue();
+        {{/isFloat}}
         {{#isBoolean}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
         {{/isBoolean}}
