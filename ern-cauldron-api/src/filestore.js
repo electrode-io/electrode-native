@@ -32,10 +32,12 @@ export default class FileStore extends BaseGit {
   */
   async storeFile (identifier: string, content: string | Buffer) {
     await this.sync()
-    await mkdirp(path.resolve(this.path, this._prefix))
-    const relPath = this.pathToFile(identifier)
-    await writeFile(path.resolve(this.path, relPath), content, {flag: 'w'})
-    await this.git.addAsync(relPath)
+    const storeDirectoryPath = path.resolve(this.path, this._prefix)
+    console.log(`creating dir ${storeDirectoryPath}`)
+    await mkdirp(storeDirectoryPath)
+    const pathToFile = path.resolve(storeDirectoryPath, identifier)
+    await writeFile(pathToFile, content, {flag: 'w'})
+    await this.git.addAsync(pathToFile)
     await this.git.commitAsync(`[added file] ${identifier}`)
     await this.push()
   }

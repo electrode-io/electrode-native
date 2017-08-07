@@ -19,8 +19,8 @@ export function mkdirp (path: string) {
 }
 export function writeFile (
   filename: string,
-  options: any,
-  data: any) {
+  data: any,
+  options: any) {
   if (!data) {
     data = options
     options = {}

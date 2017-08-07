@@ -67,7 +67,7 @@ export default class BaseGit {
     log.debug('Performing initial commit')
     const fpath = path.resolve(this.path, 'README.md')
     if (!fs.existsSync(fpath)) {
-      await writeFile(fpath, {encoding: 'utf8'}, README)
+      await writeFile(fpath, README, {encoding: 'utf8'})
       await this.git.addAsync('README.md')
       await this.git.commitAsync('First Commit!')
       return this.push()
