@@ -75,6 +75,6 @@ export default class FileStore extends BaseGit {
   }
 
   pathToFile (filename: string) {
-    return path.join(this._prefix, filename)
+    return path.join(this.path, this._prefix, filename)
   }
 }
