@@ -18,14 +18,17 @@ export default class CauldronApi {
   _db: GitStore
   _nativeBinariesStore: FileStore
   _sourceMapStore: FileStore
+  _yarnlockStore: FileStore
 
   constructor (
     db: GitStore,
     binaryStore: FileStore,
-    sourcemapStore: FileStore) {
+    sourcemapStore: FileStore,
+    yarnlockStore: FileStore) {
     this._db = db
     this._nativeBinariesStore = binaryStore
     this._sourceMapStore = sourcemapStore
+    this._yarnlockStore = yarnlockStore
   }
 
   async commit (message: string) {
