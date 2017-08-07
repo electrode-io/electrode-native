@@ -38,14 +38,6 @@ export default class FileStore extends BaseGit {
     await this.git.addAsync(relPath)
     await this.git.commitAsync(`[added file] ${identifier}`)
     await this.push()
-
-    const sha1 = await new Promise((resolve, reject) => {
-      this.git.revparse([`:${relPath}`], (err, res) => {
-        err ? reject(err) : resolve(res)
-      })
-    })
-
-    return trim(sha1)
   }
 
   async hasFile (filename: string) {
