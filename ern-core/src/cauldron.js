@@ -208,6 +208,17 @@ class Cauldron {
     }
   }
 
+  async getYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<?Buffer> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+    } catch (e) {
+      log.error(`[addYarnLock] ${e}`)
+      throw e
+    }
+  }
+
   async getNativeDependency (
     napDescriptor: NativeApplicationDescriptor,
     dependencyName: string,

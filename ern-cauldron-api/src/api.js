@@ -495,4 +495,17 @@ export default class CauldronApi {
       await this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
+
+  async getYarnLock (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string
+  ) : Promise<?Buffer> {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+
+    if (version && version.yarnlock) {
+      const fileExists = this._yarnlockStore.hasFile(version.yarnlock)
+      return fileExists ? this._yarnlockStore.getFile(version.yarnlock) : undefined
+    }
+  }
 }
