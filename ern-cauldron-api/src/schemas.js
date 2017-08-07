@@ -12,6 +12,7 @@ export const nativeApplicationVersion = Joi.object({
   ernPlatformVersion: Joi.string().required(),
   isReleased: Joi.boolean().optional().default(false),
   binary: Joi.string().default(null),
+  yarnlock: Joi.string().default(null),
   nativeDeps: Joi.array().default([]),
   miniApps: miniApps.default()
 })
