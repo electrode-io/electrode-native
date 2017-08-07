@@ -11,7 +11,7 @@ import {
 } from 'ern-util'
 import {
   ModuleTypes
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 import ApiImplGen from './generators/ApiImplGen'
 

@@ -14,7 +14,7 @@ import {
 } from './Constants'
 import {
   ModuleTypes
-} from '@walmart/ern-core'
+} from 'ern-core'
 
 export const GENERATE = [['android', 'ERNAndroid'], ['javascript', 'ERNES6'], ['IOS', 'ERNSwift']]
 // export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
