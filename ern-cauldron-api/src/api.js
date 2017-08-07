@@ -480,4 +480,19 @@ export default class CauldronApi {
       this.commit(`Add binary for ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
+
+  async addYarnLock (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    yarnlock: string | Buffer) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+
+    if (version) {
+      const filename = shasum(yarnlock)
+      await this._yarnlockStore.storeFile(filename, yarnlock)
+      version.yarnlock = filename
+      await this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
+  }
 }

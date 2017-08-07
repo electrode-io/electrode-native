@@ -1,11 +1,12 @@
 // @flow
 
 import {
-    config,
-    Dependency,
-    spin,
-    tagOneLine,
-    NativeApplicationDescriptor
+  config,
+  Dependency,
+  spin,
+  tagOneLine,
+  NativeApplicationDescriptor,
+  fileUtils
 } from 'ern-util'
 import _ from 'lodash'
 import CauldronCli from 'ern-cauldron-api'
@@ -189,6 +190,20 @@ class Cauldron {
         napDescriptor.name, napDescriptor.platform, napDescriptor.version)
     } catch (e) {
       log.error(`[getNativeBinary] ${e}`)
+      throw e
+    }
+  }
+
+  async addYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    yarnlockPath: string) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      let yarnLockFile = await fileUtils.readFile(yarnlockPath)
+      return this.cauldron.addYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnLockFile)
+    } catch (e) {
+      log.error(`[addYarnLock] ${e}`)
       throw e
     }
   }
