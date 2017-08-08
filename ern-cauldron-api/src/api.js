@@ -481,6 +481,15 @@ export default class CauldronApi {
     }
   }
 
+  async hasYarnLock (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string
+  ) : Promise<boolean> {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    return version ? version.yarnlock !== null : false
+  }
+
   async addYarnLock (
     nativeApplicationName: string,
     platformName: string,
