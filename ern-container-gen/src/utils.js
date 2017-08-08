@@ -88,9 +88,9 @@ export async function reactNativeBundleIos (paths: any) {
 
 export async function generateMiniAppsComposite (
   miniappsPaths: Array<DependencyPath>,
-  folder: string) {
-  shell.mkdir('-p', folder)
-  shell.cd(folder)
+  outDir: string) {
+  shell.mkdir('-p', outDir)
+  shell.cd(outDir)
   throwIfShellCommandFailed()
 
   let content = ''
@@ -103,11 +103,11 @@ export async function generateMiniAppsComposite (
     content += `import '${dependency}'\n`
   }
 
-  const codePushNodeModuleFolder = `${folder}/node_modules/react-native-code-push`
-  const reactNativeNodeModuleFolder = `${folder}/node_modules/react-native`
+  const pathToCodePushNodeModuleDir = `${outDir}/node_modules/react-native-code-push`
+  const pathToReactNativeNodeModuleDir = `${outDir}/node_modules/react-native`
   // If code push plugin is present we need to do some additional work
-  if (fs.existsSync(codePushNodeModuleFolder)) {
-    const reactNativePackageJson = JSON.parse(fs.readFileSync(`${reactNativeNodeModuleFolder}/package.json`, 'utf-8'))
+  if (fs.existsSync(pathToCodePushNodeModuleDir)) {
+    const reactNativePackageJson = JSON.parse(fs.readFileSync(`${pathToReactNativeNodeModuleDir}/package.json`, 'utf-8'))
 
       //
       // The following code will need to be uncommented and properly reworked or included
