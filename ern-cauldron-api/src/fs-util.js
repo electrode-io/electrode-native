@@ -1,6 +1,5 @@
 // @flow
 
-import _mkdirp from 'mkdirp'
 import fs from 'fs'
 
 export function writeJSON (
@@ -10,13 +9,7 @@ export function writeJSON (
     fs.writeFile(filename, JSON.stringify(json, null, 2), (e, o) => e ? reject(e) : resolve(o))
   })
 }
-export function mkdirp (path: string) {
-  return new Promise((resolve, reject) => {
-    _mkdirp(path, function (e, o) {
-      e ? reject(e) : resolve(o)
-    })
-  })
-}
+
 export function writeFile (
   filename: string,
   data: any,
@@ -32,14 +25,6 @@ export function writeFile (
   })
 }
 
-export function ensureDir (f: string) {
-  return new Promise((resolve, reject) => {
-    _mkdirp(f, function (e, o) {
-      if (e) return reject(e)
-      resolve(true)
-    })
-  })
-}
 export function readJSON (f: string) {
   return new Promise((resolve, reject) => {
     fs.readFile(f, function (e, o) {

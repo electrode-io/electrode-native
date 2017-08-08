@@ -1,12 +1,12 @@
 // @flow
 
 import {
-  mkdirp,
   writeFile
 } from './fs-util'
 import BaseGit from './base-git'
 import fs from 'fs'
 import path from 'path'
+import shell from 'shelljs'
 
 export default class FileStore extends BaseGit {
   _prefix : string
@@ -30,8 +30,10 @@ export default class FileStore extends BaseGit {
   async storeFile (identifier: string, content: string | Buffer) {
     await this.sync()
     const storeDirectoryPath = path.resolve(this.path, this._prefix)
-    console.log(`creating dir ${storeDirectoryPath}`)
-    await mkdirp(storeDirectoryPath)
+    if (!fs.existsSync(storeDirectoryPath)) {
+      log.debug(`creating dir ${storeDirectoryPath}`)
+      shell.mkdir('-p', storeDirectoryPath)
+    }
     const pathToFile = path.resolve(storeDirectoryPath, identifier)
     await writeFile(pathToFile, content, {flag: 'w'})
     await this.git.addAsync(pathToFile)
@@ -55,9 +57,11 @@ export default class FileStore extends BaseGit {
   * @param {string} filename - The name of the file to retrieve
   * @return {Buffer} The file binary data
   */
-  async getFile (filename: string) {
+  async getFile (filename: string) : Promise<?Buffer> {
     await this.sync()
-    return fs.readFileSync(this.pathToFile(filename))
+    if (fs.existsSync(this.pathToFile(filename))) {
+      return fs.readFileSync(this.pathToFile(filename))
+    }
   }
 
   /**
@@ -65,11 +69,15 @@ export default class FileStore extends BaseGit {
   *
   * @param {string} filename - The name of the file to remove
   */
-  async removeFile (filename: string) {
+  async removeFile (filename: string) : Promise<boolean> {
     await this.sync()
-    await this.git.rmAsync(this.pathToFile(filename))
-    await this.git.commitAsync(`[removed file] ${filename}`)
-    return this.push()
+    if (fs.existsSync(this.pathToFile(filename))) {
+      await this.git.rmAsync(this.pathToFile(filename))
+      await this.git.commitAsync(`[removed file] ${filename}`)
+      await this.push()
+      return true
+    }
+    return false
   }
 
   pathToFile (filename: string) {
