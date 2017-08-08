@@ -8,9 +8,6 @@ import BaseGit from './base-git'
 import fs from 'fs'
 import path from 'path'
 
-function trim (v: string) : string {
-  return v && v.trim()
-}
 export default class FileStore extends BaseGit {
   _prefix : string
 
