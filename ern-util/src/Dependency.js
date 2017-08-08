@@ -56,6 +56,10 @@ export default class Dependency {
         (ignoreVersion || (depA.version === depB.version))
   }
 
+  get isVersioned () : boolean {
+    return this.version !== undefined
+  }
+
   get scopedName () : string {
     return this.scope ? `@${this.scope}/${this.name}` : this.name
   }
