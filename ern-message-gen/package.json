@@ -55,7 +55,8 @@
     "minimatch": "^3.0.3",
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
-    "sway": "^1.0.0"
+    "sway": "^1.0.0",
+    "swagger-methods": "^1.0.0"
   },
   "devDependencies": {
     "ern-util-dev": "0.0.1",
