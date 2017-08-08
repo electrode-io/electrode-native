@@ -164,24 +164,26 @@ static dispatch_semaphore_t semaphore;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(signalElectrodeOnReactNativeInitializedSemaphore:)
                                                      name:RCTJavaScriptDidLoadNotification object:nil];
-    [self loadMyCustomFont];
+    [self loadCustomFonts];
 
 }
 
-- (void) loadMyCustomFont{
-    NSArray *fontPaths = [[NSBundle frameworkBundle] pathsForResourcesOfType:@".ttf" inDirectory:nil];
+- (void)loadCustomFonts {
+    NSMutableArray *fontPaths = [[NSBundle frameworkBundle] pathsForResourcesOfType:nil inDirectory:nil];
     for (NSString *fontPath in fontPaths) {
-        NSData *inData = [NSData dataWithContentsOfFile:fontPath];
-        CFErrorRef error;
-        CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
-        CGFontRef font = CGFontCreateWithDataProvider(provider);
-        if (! CTFontManagerRegisterGraphicsFont(font, &error)) {
-            CFStringRef errorDescription = CFErrorCopyDescription(error);
-            NSLog(@"Failed to load font: %@", errorDescription);
-            CFRelease(errorDescription);
+        if ([[fontPath pathExtension] isEqualToString:@"ttf"] || [[fontPath pathExtension] isEqualToString:@"otf"]) {
+            NSData *inData = [NSData dataWithContentsOfFile:fontPath];
+            CFErrorRef error;
+            CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
+            CGFontRef font = CGFontCreateWithDataProvider(provider);
+            if (! CTFontManagerRegisterGraphicsFont(font, &error)) {
+                CFStringRef errorDescription = CFErrorCopyDescription(error);
+                NSLog(@"Failed to load font: %@", errorDescription);
+                CFRelease(errorDescription);
+            }
+            CFRelease(font);
+            CFRelease(provider);
         }
-        CFRelease(font);
-        CFRelease(provider);
     }
 }
 
