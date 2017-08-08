@@ -12,7 +12,9 @@ import {
 import fs from 'fs'
 import Ora from 'ora'
 import shell from 'shelljs'
-const { yarnAdd } = yarn
+import _ from 'lodash'
+
+const { yarnAdd, yarnInstall, yarnUpgrade } = yarn
 const gitFolderRe = /.*\/(.*).git/
 
 export async function bundleMiniApps (
@@ -88,49 +90,132 @@ export async function reactNativeBundleIos (paths: any) {
 
 export async function generateMiniAppsComposite (
   miniappsPaths: Array<DependencyPath>,
-  outDir: string) {
+  outDir: string,
+  {
+    pathToYarnLock
+  } : {
+    pathToYarnLock?: string
+  } = {}) {
   shell.mkdir('-p', outDir)
   shell.cd(outDir)
   throwIfShellCommandFailed()
 
-  let content = ''
-  for (const miniappPath of miniappsPaths) {
-    await spin(`Retrieving and installing ${miniappPath.toString()}`, yarnAdd(miniappPath))
+  let compositePackageJson = {}
+
+  if (pathToYarnLock) {
+    log.debug(`[generateMiniAppsComposite] pathToYarnLock: ${pathToYarnLock}`)
+    if (_.some(miniappsPaths, p => p.isAFileSystemPath || p.isAGitPath)) {
+      throw new Error('[generateMiniAppsComposite] When providing a yarn.lock you cannot pass MiniApps paths with file or git scheme')
+    }
+
+    const miniAppsPackages = _.map(miniappsPaths, p => Dependency.fromPath(p))
+    if (_.some(miniAppsPackages, m => !m.isVersioned)) {
+      throw new Error('[generateMiniAppsComposite] When providing a yarn.lock you cannot pass MiniApps without an explicit version')
+    }
+
+    log.debug(`Copying yarn.lock to ${outDir}`)
+    shell.cp(pathToYarnLock, outDir)
+    throwIfShellCommandFailed()
+
+    const yarnLock = fs.readFileSync(pathToYarnLock, 'utf8')
+
+    // Using the yarn.lock file as reference for deltas, group the MiniApps as follow :
+    // 'new' : The MiniApp is a new one (it was not part of previously generated composite)
+    // 'same' : The MiniApp is the same (it was part of previously generated composite, with same version)
+    // 'upgraded' : The MiniApp has a new version (it was part of previously generated composite, but with a different version)
+    const miniAppsDeltas = _.groupBy(miniAppsPackages, m => {
+      const re = new RegExp(`\n${m.withoutVersion.toString()}(.+):`)
+      const match = re.exec(yarnLock)
+      if (match === null) {
+        return 'new'
+      } else {
+        return (match[1] === m.version) ? 'same' : 'upgraded'
+      }
+    })
+
+    log.debug(`[generateMiniAppsComposite] miniAppsDeltas: ${JSON.stringify(miniAppsDeltas)}`)
+
+    // Create initial package.json
+    // This package.json will contain the same MiniApps at the same versions that were
+    // used to generate the provided yarn.lock, so that we get back to original state
+    // conforming with yarn.lock
+    // It only contains 'same' and 'upgrade' MiniApps (not new ones)
+    compositePackageJson.dependencies = {}
+
+    if (miniAppsDeltas.same) {
+      for (const m of miniAppsDeltas.same) {
+        compositePackageJson.dependencies[`${m.withoutVersion.toString()}`] = m.version
+      }
+    }
+
+    if (miniAppsDeltas.upgraded) {
+      for (const m of miniAppsDeltas.upgraded) {
+        const re = new RegExp(`\n${m.withoutVersion.toString()}(.+):`)
+        const initialVersion = re.exec(yarnLock)[1]
+        compositePackageJson.dependencies[`${m.withoutVersion.toString()}`] = initialVersion
+      }
+    }
+
+    // Now that the composite package.json is similar to the one used to generated yarn.lock
+    // we can run yarn install to get back to the exact same dependency graph as the previously
+    // generated composite
+    await spin(`Installing initial MiniApps`, yarnInstall())
+
+    // Now we can `yarn add` new MiniApps and `yarn upgrade` the ones that have new versions
+    if (miniAppsDeltas.new) {
+      for (const m of miniAppsDeltas.new) {
+        await spin(`Adding new MiniApp ${m.toString()}`, yarnAdd(DependencyPath.fromString(m.toString())))
+      }
+    }
+
+    if (miniAppsDeltas.upgraded) {
+      for (const m of miniAppsDeltas.upgraded) {
+        await spin(`Upgrading MiniApp ${m.toString()}`, yarnUpgrade(DependencyPath.fromString(m.toString())))
+      }
+    }
+  } else {
+    // No yarn.lock path was provided, just add miniapps one by one
+    log.debug(`[generateMiniAppsComposite] no yarn.lock provided`)
+    for (const miniappPath of miniappsPaths) {
+      await spin(`Retrieving and installing ${miniappPath.toString()}`, yarnAdd(miniappPath))
+    }
   }
 
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-  for (const dependency of Object.keys(packageJson.dependencies)) {
-    content += `import '${dependency}'\n`
+  let entryIndexJsContent = ''
+
+  compositePackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  for (const dependency of Object.keys(compositePackageJson.dependencies)) {
+    entryIndexJsContent += `import '${dependency}'\n`
   }
 
   const pathToCodePushNodeModuleDir = `${outDir}/node_modules/react-native-code-push`
   const pathToReactNativeNodeModuleDir = `${outDir}/node_modules/react-native`
   // If code push plugin is present we need to do some additional work
   if (fs.existsSync(pathToCodePushNodeModuleDir)) {
-    const reactNativePackageJson = JSON.parse(fs.readFileSync(`${pathToReactNativeNodeModuleDir}/package.json`, 'utf-8'))
+    const reactNativePackageJson = JSON.parse(fs.readFileSync(`${pathToReactNativeNodeModuleDir}/package.json`, 'utf8'))
 
-      //
-      // The following code will need to be uncommented and properly reworked or included
-      // in a different way, once Cart and TYP don't directly depend on code push directly
-      // We will work with Cart team in that direction
-      //
-      // await yarnAdd(codePushPlugin.name, codePushPlugin.version)
-      // content += `import codePush from "react-native-code-push"\n`
-      // content += `codePush.sync()`
+    //
+    // The following code will need to be uncommented and properly reworked or included
+    // in a different way, once Cart and TYP don't directly depend on code push directly
+    // We will work with Cart team in that direction
+    //
+    // await yarnAdd(codePushPlugin.name, codePushPlugin.version)
+    // content += `import codePush from "react-native-code-push"\n`
+    // content += `codePush.sync()`
 
-      // We need to add some info to package.json for CodePush
-      // In order to run, code push needs to find the following in package.json
-      // - name & version
-      // - react-native in the dependency block
-      // TODO :For now we hardcode these values for demo purposes. That being said it
-      // might not be needed to do something better because it seems like
-      // code push is not making a real use of this data
-      // Investigate further.
-      // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
-    packageJson.dependencies['react-native'] = reactNativePackageJson.version
-    packageJson.name = 'container'
-    packageJson.version = '0.0.1'
-    fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2))
+    // We need to add some info to package.json for CodePush
+    // In order to run, code push needs to find the following in package.json
+    // - name & version
+    // - react-native in the dependency block
+    // TODO :For now we hardcode these values for demo purposes. That being said it
+    // might not be needed to do something better because it seems like
+    // code push is not making a real use of this data
+    // Investigate further.
+    // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
+    compositePackageJson.dependencies['react-native'] = reactNativePackageJson.version
+    compositePackageJson.name = 'container'
+    compositePackageJson.version = '0.0.1'
+    fs.writeFileSync('package.json', JSON.stringify(compositePackageJson, null, 2))
   }
 
   log.debug(`Removing .babelrc files from all modules`)
@@ -142,9 +227,9 @@ export async function generateMiniAppsComposite (
   await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
 
   log.debug(`Creating index.android.js`)
-  await writeFile('index.android.js', content)
+  await writeFile('index.android.js', entryIndexJsContent)
   log.debug(`Creating index.ios.js`)
-  await writeFile('index.ios.js', content)
+  await writeFile('index.ios.js', entryIndexJsContent)
 }
 
 export function clearReactPackagerCache () {
