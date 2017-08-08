@@ -83,8 +83,6 @@ export default class GithubGenerator {
       // Go through all ern-container-gen steps
       //
 
-      // Handle resources copying
-      this.copyRnpmAssets(miniapps, paths)
       // Copy iOS container hull to generation ios output folder
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
@@ -93,6 +91,9 @@ export default class GithubGenerator {
       if (miniapps.length > 0) {
         await bundleMiniApps(miniapps, paths, 'ios')
       }
+
+      // Handle resources copying
+      this.copyRnpmAssets(miniapps, paths)
 
       shell.cd(`${paths.outFolder}/ios`)
       throwIfShellCommandFailed()
@@ -349,7 +350,7 @@ export default class GithubGenerator {
 
       log.debug(`[=== iOS: Done adding plugin hook classes ===]`)
     } catch (e) {
-      log.error('[addAndroidPluginHookClasses] Something went wrong: ' + e)
+      log.error('[addiOSPluginHookClasses] Something went wrong: ' + e)
       throw e
     }
   }

@@ -162,6 +162,9 @@ function getApiPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginCo
       ]
     },
     ios: {
+      pluginHook: {
+        configurable: false
+      },
       copy: [
         {
           source: 'IOS/IOS/Classes/SwaggersAPIs/*',

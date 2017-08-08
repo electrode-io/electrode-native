@@ -138,6 +138,7 @@
 				301CB9001F33F3450048C58B /* NSBundle+frameworkBundle.m */,
 			);
 			path = ElectrodeContainer;
+			name = ElectrodeContainer;
 			sourceTree = "<group>";
 		};
 		485009F01E2FF23C009B6610 /* ElectrodeContainerTests */ = {
