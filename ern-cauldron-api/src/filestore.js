@@ -71,6 +71,7 @@ export default class FileStore extends BaseGit {
   async removeFile (filename: string) {
     await this.sync()
     await this.git.rmAsync(this.pathToFile(filename))
+    await this.git.commitAsync(`[removed file] ${filename}`)
     return this.push()
   }
 
