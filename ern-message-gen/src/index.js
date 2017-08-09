@@ -9,6 +9,7 @@ import _Swagger from './java/Swagger'
 import _ClientOptInput from './ClientOptInput'
 import _ClientOpts from './ClientOpts'
 import _CodegenConfigurator from './config/CodegenConfigurator'
+import _ApiGen from './apigen'
 
 export const Android = _Android
 export const Swift = _Swift
@@ -22,6 +23,8 @@ export const Swagger = _Swagger
 export const ClientOptInput = _ClientOptInput
 export const ClientOpts = _ClientOpts
 export const CodegenConfigurator = _CodegenConfigurator
+export const ApiGen = _ApiGen
+
 export default ({
   Android,
   Swift,

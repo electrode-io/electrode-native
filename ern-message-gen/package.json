@@ -49,6 +49,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "ern-core": "0.0.1",
+    "ern-util": "0.0.1",
     "collections": "^5.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.4",

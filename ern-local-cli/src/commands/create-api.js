@@ -1,8 +1,8 @@
 // @flow
 
 import {
-  generateApi
-} from 'ern-api-gen'
+  ApiGen
+} from 'ern-message-gen'
 import {
   Manifest
 } from 'ern-core'
@@ -49,8 +49,8 @@ exports.handler = async function ({
     return log.error(`react-native not found in manifest. cannot infer version to use`)
   }
 
-  log.info(`Generating ${apiName} API`)
-  generateApi({
+  log.info(`Generating ${apiName} API ${ApiGen}`)
+  ApiGen.generateApi({
     bridgeVersion: `${bridgeDep.version}`,
     reactNativeVersion: reactNative.version,
     name: apiName,
