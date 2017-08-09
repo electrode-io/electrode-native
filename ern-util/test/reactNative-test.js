@@ -15,17 +15,6 @@ describe('reactNativeInit', function () {
   afterEach(() => {
     IMPLEMENTATION.exec = exec
   })
-
-  it('should execute', async() => {
-    IMPLEMENTATION.exec = (cmd, args, done) => {
-      if (done == null && typeof args === 'function') {
-        done = args
-      }
-      expect(cmd).to.eql('whatever init super --version react-native@0.50.0 --skip-jest')
-      done(null, '')
-    }
-    await reactNative.init('super', '0.50.0')
-  })
   it('should not execute directory exists', async() => {
     IMPLEMENTATION.exec = (cmd, args, done) => {
       expect(false).to.be.true()

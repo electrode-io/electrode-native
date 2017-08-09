@@ -75,9 +75,6 @@ describe('DefaultGenerator', function () {
     outputDir: 'uber/android'
   })
         .then(compare('uber/android', 'fixtures/uber/android')))
-  it("should generate: 'event-op.json' for 'ERNAndroid'", generate('event-op.json', 'ERNAndroid', 'event-op/ERNAndroid')
-        .then(compare('event-op/ERNAndroid', 'fixtures/event-op/ERNAndroid'))
-    )
 
   it("should generate: 'cookie.json' for 'ERNAndroid'", generate('cookie.json', 'ERNAndroid', 'erncookie/ERNAndroid'))
 
