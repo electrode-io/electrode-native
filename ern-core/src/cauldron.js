@@ -230,6 +230,18 @@ class Cauldron {
     }
   }
 
+  async getPathToYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<?string> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getPathToYarnLock(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version
+      )
+    } catch (e) {
+      log.error(`[getPathToYarnLock] ${e}`)
+      throw e
+    }
+  }
+
   async removeYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)

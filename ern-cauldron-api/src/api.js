@@ -520,6 +520,18 @@ export default class CauldronApi {
     }
   }
 
+  async getPathToYarnLock (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string
+  ) : Promise<?string> {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+
+    if (version && version.yarnlock) {
+      return this._yarnlockStore.getPathToFile(version.yarnlock)
+    }
+  }
+
   async removeYarnLock (
     nativeApplicationName: string,
     platformName: string,
