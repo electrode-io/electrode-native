@@ -25,7 +25,6 @@ import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
 import path from 'path'
-import fs from 'fs'
 
 function createContainerGenerator (platform, config) {
   if (config) {
@@ -169,9 +168,11 @@ version: string, {
       pathToYarnLock
     })
 
-    const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
-    const newYarnLock = fs.readFileSync(pathToNewYarnLock, 'utf8')
-    await cauldron.addOrUpdateYarnLock(napDescriptor, newYarnLock)
+    // Only update yarn lock if container is getting published
+    if (publish) {
+      const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
+      await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
+    }
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e
@@ -286,6 +287,8 @@ miniApps: Array<Dependency>, {
 
   if (codePushWasDone) {
     await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
+    const pathToNewYarnLock = path.join(workingFolder, 'yarn.lock')
+    await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
   }
 }
 
