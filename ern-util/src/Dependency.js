@@ -17,6 +17,10 @@ export default class Dependency {
     this.version = version
   }
 
+  static fromObject (obj: Object) {
+    return new Dependency(obj.name, { scope: obj.scope, version: obj.version })
+  }
+
   static fromString (str: string) : Dependency {
     if (SCOPE_NAME_VERSION_RE.test(str)) {
       const scopeNameVersion = SCOPE_NAME_VERSION_RE.exec(str)
@@ -37,6 +41,10 @@ export default class Dependency {
     } else {
       return new Dependency(str)
     }
+  }
+
+  get path () : DependencyPath {
+    return DependencyPath.fromString(this.toString())
   }
 
   static fromPath (path: DependencyPath) : Dependency {
