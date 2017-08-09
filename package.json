@@ -96,7 +96,7 @@
     ],
     "ignore": [
       "**/dist",
-      "**/ern-message-gen/",
+      "**/ern-api-gen/",
       "**/flow-typed/",
       "**/test"
     ],

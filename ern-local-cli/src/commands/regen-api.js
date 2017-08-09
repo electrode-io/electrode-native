@@ -2,7 +2,7 @@
 
 import {
   ApiGen
-} from 'ern-message-gen'
+} from 'ern-api-gen'
 import {
   Manifest
 } from 'ern-core'

@@ -1,5 +1,5 @@
 {
-  "name": "ern-message-gen",
+  "name": "ern-api-gen",
   "version": "0.0.1",
   "description": "ERN module used to generate APIs",
   "main": "./dist/index.js",
