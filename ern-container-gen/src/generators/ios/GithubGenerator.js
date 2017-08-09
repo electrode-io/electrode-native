@@ -176,11 +176,6 @@ export default class GithubGenerator {
     const containerIosProject = await this.getIosContainerProject(containerProjectPath)
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
-    log.debug(`---iOS: adding resource files. `)
-    readDir(`${outputFolder}/ElectrodeContainer/Resources`, (resourceFile) => {
-      containerIosProject.addResourceFile(`${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
-    })
-    log.debug(`---iOS: finished adding resource files. `)
     for (const plugin of plugins) {
       const pluginConfig = await pluginUtil.getPluginConfig(plugin)
       shell.cd(`${paths.pluginsDownloadFolder}`)
@@ -266,6 +261,12 @@ export default class GithubGenerator {
         }
       }
     }
+
+    log.debug(`---iOS: adding resource files. `)
+    readDir(`${outputFolder}/ElectrodeContainer/Resources`, (resourceFile) => {
+      log.debug(`---iOS: reading directory file ${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`)
+      containerIosProject.addResourceFile(`${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
+    })
 
     await this.addiOSPluginHookClasses(containerIosProject, plugins, paths)
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
