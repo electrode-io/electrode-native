@@ -179,7 +179,8 @@ miniApps: Array<Dependency>, {
   codePushPlatformName,
   codePushTargetVersionName,
   codePushIsMandatoryRelease,
-  codePushRolloutPercentage
+  codePushRolloutPercentage,
+  pathToYarnLock
 }: {
   force: boolean,
   codePushAppName: string,
@@ -187,7 +188,8 @@ miniApps: Array<Dependency>, {
   codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
-  codePushRolloutPercentage: string
+  codePushRolloutPercentage: string,
+  pathToYarnLock?: string
 } = {}) {
   const plugins = await cauldron.getNativeDependencies(napDescriptor)
 
@@ -254,7 +256,7 @@ miniApps: Array<Dependency>, {
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
   await spin('Generating composite bundle to be published through CodePush',
-     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingFolder))
+     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingFolder, {pathToYarnLock}))
 
   process.chdir(workingFolder)
 

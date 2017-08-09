@@ -5,6 +5,9 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
+  cauldron
+} from 'ern-core'
+import {
   performCodePushOtaUpdate
 } from '../lib/publication'
 import _ from 'lodash'
@@ -61,7 +64,7 @@ exports.builder = function (yargs: any) {
     })
 }
 
-exports.handler = function ({
+exports.handler = async function ({
   force,
   miniapps,
   completeNapDescriptor,
@@ -82,7 +85,8 @@ exports.handler = function ({
   mandatory: boolean,
   rollout: string
 }) {
-  return performCodePushOtaUpdate(
+  const pathToYarnLock = await cauldron.getPathToYarnLock(completeNapDescriptor)
+  await performCodePushOtaUpdate(
     NativeApplicationDescriptor.fromString(completeNapDescriptor),
     _.map(miniapps, Dependency.fromString), {
       force: force,
@@ -91,6 +95,7 @@ exports.handler = function ({
       codePushPlatformName: platform,
       codePushTargetVersionName: targetBinaryVersion,
       codePushIsMandatoryRelease: mandatory,
-      codePushRolloutPercentage: rollout
+      codePushRolloutPercentage: rollout,
+      pathToYarnLock
     })
 }

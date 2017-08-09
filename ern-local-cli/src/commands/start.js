@@ -63,7 +63,11 @@ exports.handler = async function ({
   const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
   log.debug(`Temporary working directory is ${workingDir}`)
 
-  await generateMiniAppsComposite(miniAppsPaths, workingDir)
+  let pathToYarnLock
+  if (completeNapDescriptor) {
+    pathToYarnLock = await cauldron.getPathToYarnLock(completeNapDescriptor)
+  }
+  await generateMiniAppsComposite(miniAppsPaths, workingDir, {pathToYarnLock})
 
   let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
 

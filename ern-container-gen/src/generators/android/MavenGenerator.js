@@ -92,7 +92,11 @@ export default class MavenGenerator {
     plugins: Array<Dependency>,
     miniapps: any,
     paths: any,
-    mustacheView: any) {
+    mustacheView: any, {
+      pathToYarnLock
+    } : {
+      pathToYarnLock?: string
+    } = {}) {
     // If no maven repository url (for publication) is provided part of the generator config,
     // we just fall back to standard maven local repository location.
     // If folder does not exists yet, we create it
@@ -124,7 +128,7 @@ export default class MavenGenerator {
     // Todo : move to utils .js as it is crossplatform
     // Bundle all the miniapps together and store resulting bundle in container
     // project
-    await bundleMiniApps(miniapps, paths, 'android')
+    await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
 
     // Rnpm handling
     this.copyRnpmAssets(miniapps, paths)

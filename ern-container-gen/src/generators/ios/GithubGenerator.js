@@ -57,7 +57,11 @@ export default class GithubGenerator {
     plugins: Array<Dependency>,
     miniapps: any,
     paths: any,
-    mustacheView: any) : Promise<*> {
+    mustacheView: any, {
+      pathToYarnLock
+    } : {
+      pathToYarnLock?: string
+    } = {}) : Promise<*> {
     try {
       log.debug(`\n === Using github generator
           targetRepoUrl: ${this.targetRepoUrl}
@@ -89,7 +93,7 @@ export default class GithubGenerator {
       // Bundle all the miniapps together and store resulting bundle in container
       // project
       if (miniapps.length > 0) {
-        await bundleMiniApps(miniapps, paths, 'ios')
+        await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock})
       }
 
       // Handle resources copying

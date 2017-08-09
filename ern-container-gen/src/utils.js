@@ -19,7 +19,11 @@ const gitFolderRe = /.*\/(.*).git/
 export async function bundleMiniApps (
   miniapps: Array<any>,
   paths: any,
-  platform: 'android' | 'ios') {
+  platform: 'android' | 'ios', {
+    pathToYarnLock
+  } : {
+    pathToYarnLock?: string
+  } = {}) {
   try {
     log.debug(`[=== Starting mini apps bundling ===]`)
 
@@ -40,7 +44,7 @@ export async function bundleMiniApps (
           }).toString()))
         }
       }
-      await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp)
+      await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock})
     }
 
     // Clear react packager cache beforehand to avoid surprises ...
@@ -89,8 +93,7 @@ export async function reactNativeBundleIos (paths: any) {
 
 export async function generateMiniAppsComposite (
   miniappsPaths: Array<DependencyPath>,
-  outDir: string,
-  {
+  outDir: string, {
     pathToYarnLock
   } : {
     pathToYarnLock?: string
