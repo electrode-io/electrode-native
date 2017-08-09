@@ -1,20 +1,19 @@
 // @flow
 
-import {
-  Dependency,
-  DependencyPath,
-  ReactNativeCommands,
-  yarn
-} from 'ern-util'
+import * as ernUtil from 'ern-util'
 import {
   exec
 } from 'child_process'
 import fs from 'fs'
-import Ora from 'ora'
 import shell from 'shelljs'
 import _ from 'lodash'
+import path from 'path'
+const {
+  Dependency,
+  DependencyPath,
+  ReactNativeCommands
+} = ernUtil
 
-const { yarnAdd, yarnInstall, yarnUpgrade } = yarn
 const gitFolderRe = /.*\/(.*).git/
 
 export async function bundleMiniApps (
@@ -48,9 +47,9 @@ export async function bundleMiniApps (
     clearReactPackagerCache()
 
     if (platform === 'android') {
-      await spin(`Bundling miniapp(s) for Android`, reactNativeBundleAndroid(paths))
+      await ernUtil.spin(`Bundling miniapp(s) for Android`, reactNativeBundleAndroid(paths))
     } else if (platform === 'ios') {
-      await spin(`Bundling miniapp(s) for iOS`, reactNativeBundleIos(paths))
+      await ernUtil.spin(`Bundling miniapp(s) for iOS`, reactNativeBundleIos(paths))
     }
 
     log.debug(`[=== Completed mini apps bundling ===]`)
@@ -103,14 +102,17 @@ export async function generateMiniAppsComposite (
   let compositePackageJson = {}
 
   if (pathToYarnLock) {
-    log.debug(`[generateMiniAppsComposite] pathToYarnLock: ${pathToYarnLock}`)
     if (_.some(miniappsPaths, p => p.isAFileSystemPath || p.isAGitPath)) {
-      throw new Error('[generateMiniAppsComposite] When providing a yarn.lock you cannot pass MiniApps paths with file or git scheme')
+      throw new Error('[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps paths with file or git scheme')
     }
 
     const miniAppsPackages = _.map(miniappsPaths, p => Dependency.fromPath(p))
     if (_.some(miniAppsPackages, m => !m.isVersioned)) {
-      throw new Error('[generateMiniAppsComposite] When providing a yarn.lock you cannot pass MiniApps without an explicit version')
+      throw new Error('[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version')
+    }
+
+    if (!fs.existsSync(pathToYarnLock)) {
+      throw new Error(`[generateMiniAppsComposite] Path to yarn.lock does not exists (${pathToYarnLock})`)
     }
 
     log.debug(`Copying yarn.lock to ${outDir}`)
@@ -118,66 +120,24 @@ export async function generateMiniAppsComposite (
     throwIfShellCommandFailed()
 
     const yarnLock = fs.readFileSync(pathToYarnLock, 'utf8')
-
-    // Using the yarn.lock file as reference for deltas, group the MiniApps as follow :
-    // 'new' : The MiniApp is a new one (it was not part of previously generated composite)
-    // 'same' : The MiniApp is the same (it was part of previously generated composite, with same version)
-    // 'upgraded' : The MiniApp has a new version (it was part of previously generated composite, but with a different version)
-    const miniAppsDeltas = _.groupBy(miniAppsPackages, m => {
-      const re = new RegExp(`\n${m.withoutVersion.toString()}(.+):`)
-      const match = re.exec(yarnLock)
-      if (match === null) {
-        return 'new'
-      } else {
-        return (match[1] === m.version) ? 'same' : 'upgraded'
-      }
-    })
+    const miniAppsDeltas = getMiniAppsDeltas(miniAppsPackages, yarnLock)
 
     log.debug(`[generateMiniAppsComposite] miniAppsDeltas: ${JSON.stringify(miniAppsDeltas)}`)
 
     // Create initial package.json
-    // This package.json will contain the same MiniApps at the same versions that were
-    // used to generate the provided yarn.lock, so that we get back to original state
-    // conforming with yarn.lock
-    // It only contains 'same' and 'upgrade' MiniApps (not new ones)
-    compositePackageJson.dependencies = {}
-
-    if (miniAppsDeltas.same) {
-      for (const m of miniAppsDeltas.same) {
-        compositePackageJson.dependencies[`${m.withoutVersion.toString()}`] = m.version
-      }
-    }
-
-    if (miniAppsDeltas.upgraded) {
-      for (const m of miniAppsDeltas.upgraded) {
-        const re = new RegExp(`\n${m.withoutVersion.toString()}(.+):`)
-        const initialVersion = re.exec(yarnLock)[1]
-        compositePackageJson.dependencies[`${m.withoutVersion.toString()}`] = initialVersion
-      }
-    }
+    compositePackageJson.dependencies = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, yarnLock)
+    fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(compositePackageJson, null, 2), 'utf8')
 
     // Now that the composite package.json is similar to the one used to generated yarn.lock
     // we can run yarn install to get back to the exact same dependency graph as the previously
     // generated composite
-    await spin(`Installing initial MiniApps`, yarnInstall())
-
-    // Now we can `yarn add` new MiniApps and `yarn upgrade` the ones that have new versions
-    if (miniAppsDeltas.new) {
-      for (const m of miniAppsDeltas.new) {
-        await spin(`Adding new MiniApp ${m.toString()}`, yarnAdd(DependencyPath.fromString(m.toString())))
-      }
-    }
-
-    if (miniAppsDeltas.upgraded) {
-      for (const m of miniAppsDeltas.upgraded) {
-        await spin(`Upgrading MiniApp ${m.toString()}`, yarnUpgrade(DependencyPath.fromString(m.toString())))
-      }
-    }
+    await ernUtil.spin(`Installing initial MiniApps`, ernUtil.yarn.yarnInstall())
+    await runYarnUsingMiniAppDeltas(miniAppsDeltas)
   } else {
     // No yarn.lock path was provided, just add miniapps one by one
-    log.debug(`[generateMiniAppsComposite] no yarn.lock provided`)
+    log.debug(`[generateMiniAppsComposite] no yarn lock provided`)
     for (const miniappPath of miniappsPaths) {
-      await spin(`Retrieving and installing ${miniappPath.toString()}`, yarnAdd(miniappPath))
+      await ernUtil.spin(`Retrieving and installing ${miniappPath.toString()}`, ernUtil.yarn.yarnAdd(miniappPath))
     }
   }
 
@@ -240,6 +200,68 @@ export function clearReactPackagerCache () {
   }
 }
 
+// Using a yarn.lock file content as reference to figure out deltas, group the MiniApps as follow :
+// 'new' : The MiniApp is a new one (it was not part of previously generated composite)
+// 'same' : The MiniApp is the same (it was part of previously generated composite, with same version)
+// 'upgraded' : The MiniApp has a new version (it was part of previously generated composite, but with a different version)
+export function getMiniAppsDeltas (
+  miniApps: Array<Dependency>,
+  yarnlock: string) {
+  return _.groupBy(miniApps, m => {
+    const re = new RegExp(`\n${m.withoutVersion().toString()}@(.+):`)
+    const match = re.exec(yarnlock)
+    if (match === null) {
+      return 'new'
+    } else {
+      return (match[1] === m.version) ? 'same' : 'upgraded'
+    }
+  })
+}
+
+// Generate package.json dependencies object based on MiniApp deltas
+// The  object will contain the same MiniApps at the same versions that were
+// used to generate the provided yarn.lock, so that we get back to original state
+// conforming with yarn.lock
+// It only contains 'same' and 'upgrade' MiniApps (not new ones)
+export function getPackageJsonDependenciesUsingMiniAppDeltas (
+  miniAppsDeltas: Object,
+  yarnlock: string) {
+  let result = {}
+
+  if (miniAppsDeltas.same) {
+    for (const m of miniAppsDeltas.same) {
+      result[`${m.name}`] = m.version
+    }
+  }
+
+  if (miniAppsDeltas.upgraded) {
+    for (const m of miniAppsDeltas.upgraded) {
+      const re = new RegExp(`\n${m.name.toString()}@(.+):`)
+      const initialVersion = re.exec(yarnlock)[1]
+      result[`${m.name}`] = initialVersion
+    }
+  }
+
+  return result
+}
+
+export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
+  // Now we can `yarn add` new MiniApps and `yarn upgrade` the ones that have new versions
+  if (miniAppsDeltas.new) {
+    for (const m of miniAppsDeltas.new) {
+      const miniappPackage = Dependency.fromObject(m)
+      await ernUtil.spin(`Adding new MiniApp ${miniappPackage.toString()}`, ernUtil.yarn.yarnAdd(miniappPackage.path))
+    }
+  }
+
+  if (miniAppsDeltas.upgraded) {
+    for (const m of miniAppsDeltas.upgraded) {
+      const miniappPackage = Dependency.fromObject(m)
+      await ernUtil.spin(`Upgrading MiniApp ${miniappPackage.toString()}`, ernUtil.yarn.yarnUpgrade(miniappPackage.path))
+    }
+  }
+}
+
 //
 // Download the plugin source given a plugin origin
 // pluginOrigin: A plugin origin object
@@ -266,7 +288,7 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
   let downloadPath = ''
   if (pluginOrigin.type === 'npm') {
     const dependency = new Dependency(pluginOrigin.name, { scope: pluginOrigin.scope, version: pluginOrigin.version })
-    await yarnAdd(DependencyPath.fromString(dependency.toString()))
+    await ernUtil.yarn.yarnAdd(DependencyPath.fromString(dependency.toString()))
     if (pluginOrigin.scope) {
       downloadPath = `node_modules/@${pluginOrigin.scope}/${pluginOrigin.name}`
     } else {
@@ -287,26 +309,6 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
 // =============================================================================
 // MISC utils
 // =============================================================================
-
-// Promisify ora spinner
-// there is already a promise method on ora spinner, unfortunately it does
-// not return the wrapped promise so that's utterly useless !
-export async function spin (
-  msg: string,
-  prom: Promise<*>,
-  options: any) : Promise<*> {
-  const spinner = new Ora(options || msg)
-  spinner.start()
-
-  try {
-    let result = await prom
-    spinner.succeed()
-    return result
-  } catch (e) {
-    spinner.fail(e)
-    throw e
-  }
-}
 
 // Given a string returns the same string with its first letter capitalized
 export function capitalizeFirstLetter (str: string) {
