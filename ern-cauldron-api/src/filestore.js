@@ -64,6 +64,13 @@ export default class FileStore extends BaseGit {
     }
   }
 
+  async getPathToFile (filename: string) : Promise<?string> {
+    await this.sync()
+    if (fs.existsSync(this.pathToFile(filename))) {
+      return this.pathToFile(filename)
+    }
+  }
+
   /**
   * Removes a file from this store
   *
