@@ -207,7 +207,7 @@ class Cauldron {
 
   async addYarnLock (
     napDescriptor: NativeApplicationDescriptor,
-    yarnlockPath: string | Buffer) : Promise<*> {
+    yarnlockPath: string) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       let yarnLockFile = await fileUtils.readFile(yarnlockPath)
@@ -255,12 +255,13 @@ class Cauldron {
 
   async updateYarnLock (
     napDescriptor: NativeApplicationDescriptor,
-    yarnlock: string | Buffer
+    yarnlockPath: string
   ) : Promise<boolean> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
+      let yarnLockFile = await fileUtils.readFile(yarnlockPath)
       return this.cauldron.updateYarnLock(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnlock)
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnLockFile)
     } catch (e) {
       log.error(`[updateYarnLock] ${e}`)
       throw e
@@ -284,14 +285,14 @@ class Cauldron {
 
   async addOrUpdateYarnLock (
     napDescriptor: NativeApplicationDescriptor,
-    yarnlock: string | Buffer
+    yarnlockPath: string
   ) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       if (await this.hasYarnLock(napDescriptor)) {
-        return this.updateYarnLock(napDescriptor, yarnlock)
+        return this.updateYarnLock(napDescriptor, yarnlockPath)
       } else {
-        return this.addYarnLock(napDescriptor, yarnlock)
+        return this.addYarnLock(napDescriptor, yarnlockPath)
       }
     } catch (e) {
       log.error(`[addOrUpdateYarnLock] ${e}`)
