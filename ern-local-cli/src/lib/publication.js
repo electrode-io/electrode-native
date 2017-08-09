@@ -24,6 +24,8 @@ import {
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
+import path from 'path'
+import fs from 'fs'
 
 function createContainerGenerator (platform, config) {
   if (config) {
@@ -144,6 +146,7 @@ version: string, {
   try {
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+    const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
 
     // Retrieve generator configuration (which for now only contains publication URL config)
     // only if caller of this method wants to publish the generated container
@@ -154,7 +157,7 @@ version: string, {
       log.info('Container publication is disabled. Will generate the container locally.')
     }
 
-    await generateContainer({
+    const paths = await generateContainer({
       containerVersion: version,
       nativeAppName: napDescriptor.name,
       platformPath: Platform.currentPlatformVersionPath,
@@ -162,8 +165,13 @@ version: string, {
       plugins,
       miniapps,
       workingFolder: outDir,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      pathToYarnLock
     })
+
+    const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
+    const newYarnLock = fs.readFileSync(pathToNewYarnLock, 'utf8')
+    await cauldron.addOrUpdateYarnLock(napDescriptor, newYarnLock)
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e

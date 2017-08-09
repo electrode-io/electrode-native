@@ -130,6 +130,8 @@ export default async function generateContainer ({
     paths,
     mustacheView,
     {pathToYarnLock})
+
+  return paths
 }
 
 function getUnscopedModuleName (moduleName) {
