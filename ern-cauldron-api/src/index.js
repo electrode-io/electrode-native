@@ -10,6 +10,7 @@ export default function factory (
   branch: string = 'master') {
   const sourcemapStore = new FileStore(cauldronPath, repository, branch, 'sourcemaps')
   const binaryStore = new FileStore(cauldronPath, repository, branch, 'binaries')
+  const yarnlockStore = new FileStore(cauldronPath, repository, branch, 'yarnlocks')
   const dbStore = new GitStore(cauldronPath, repository, branch)
-  return new Api(dbStore, binaryStore, sourcemapStore)
+  return new Api(dbStore, binaryStore, sourcemapStore, yarnlockStore)
 }

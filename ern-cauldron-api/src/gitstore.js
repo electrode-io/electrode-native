@@ -20,6 +20,7 @@ type TypeCauldronVersion = {
   ernPlatormVersion: string,
   isReleased: boolean,
   binary: ?string,
+  yarnlock: ?string,
   nativeDeps: Array<string>,
   miniApps: TypeCauldronMiniApps,
   config?: Object

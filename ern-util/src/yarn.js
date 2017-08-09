@@ -62,6 +62,22 @@ async function _yarnAdd (
   })
 }
 
+export async function yarnUpgrade (
+  dependencyPath: DependencyPath
+) {
+  return new Promise((resolve, reject) => {
+    exec(`yarn upgrade ${dependencyPath.toString()} --ignore-engines --exact`,
+      (err, stdout, stderr) => {
+        if (err) {
+          log.error(err)
+          reject(err)
+        } else {
+          resolve(stdout)
+        }
+      })
+  })
+}
+
 export async function yarnInstall () {
   return new Promise((resolve, reject) => {
     exec(`yarn install --ignore-engines`,
@@ -141,5 +157,6 @@ export default ({
   yarnInstall,
   yarnAdd,
   yarnInfo,
-  yarnInit
+  yarnInit,
+  yarnUpgrade
 })

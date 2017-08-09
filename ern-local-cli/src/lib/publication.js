@@ -24,6 +24,7 @@ import {
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
+import path from 'path'
 
 function createContainerGenerator (platform, config) {
   if (config) {
@@ -144,6 +145,7 @@ version: string, {
   try {
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+    const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
 
     // Retrieve generator configuration (which for now only contains publication URL config)
     // only if caller of this method wants to publish the generated container
@@ -154,7 +156,7 @@ version: string, {
       log.info('Container publication is disabled. Will generate the container locally.')
     }
 
-    await generateContainer({
+    const paths = await generateContainer({
       containerVersion: version,
       nativeAppName: napDescriptor.name,
       platformPath: Platform.currentPlatformVersionPath,
@@ -162,8 +164,15 @@ version: string, {
       plugins,
       miniapps,
       workingFolder: outDir,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      pathToYarnLock
     })
+
+    // Only update yarn lock if container is getting published
+    if (publish) {
+      const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
+      await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
+    }
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e
@@ -179,7 +188,8 @@ miniApps: Array<Dependency>, {
   codePushPlatformName,
   codePushTargetVersionName,
   codePushIsMandatoryRelease,
-  codePushRolloutPercentage
+  codePushRolloutPercentage,
+  pathToYarnLock
 }: {
   force: boolean,
   codePushAppName: string,
@@ -187,7 +197,8 @@ miniApps: Array<Dependency>, {
   codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
-  codePushRolloutPercentage: string
+  codePushRolloutPercentage: string,
+  pathToYarnLock?: string
 } = {}) {
   const plugins = await cauldron.getNativeDependencies(napDescriptor)
 
@@ -254,7 +265,7 @@ miniApps: Array<Dependency>, {
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
   await spin('Generating composite bundle to be published through CodePush',
-     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingFolder))
+     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingFolder, {pathToYarnLock}))
 
   process.chdir(workingFolder)
 
@@ -276,6 +287,8 @@ miniApps: Array<Dependency>, {
 
   if (codePushWasDone) {
     await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
+    const pathToNewYarnLock = path.join(workingFolder, 'yarn.lock')
+    await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
   }
 }
 

@@ -8,7 +8,7 @@ import Joi from 'joi'
 // ====================================
 // Cauldron Helper
 // ====================================
-export const shasum = (payload: any) => crypto.createHash('sha1').update(payload).digest('hex')
+export const shasum = (payload: string | Buffer) => crypto.createHash('sha1').update(payload).digest('hex')
 
 export function alreadyExists (
   collection: any,

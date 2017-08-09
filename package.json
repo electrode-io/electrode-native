@@ -97,7 +97,8 @@
     "ignore": [
       "**/dist",
       "**/ern-message-gen/",
-      "**/flow-typed/"
+      "**/flow-typed/",
+      "**/test"
     ],
     "plugins": [
       "flowtype"

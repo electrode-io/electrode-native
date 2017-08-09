@@ -1,11 +1,12 @@
 // @flow
 
 import {
-    config,
-    Dependency,
-    spin,
-    tagOneLine,
-    NativeApplicationDescriptor
+  config,
+  Dependency,
+  spin,
+  tagOneLine,
+  NativeApplicationDescriptor,
+  fileUtils
 } from 'ern-util'
 import _ from 'lodash'
 import CauldronCli from 'ern-cauldron-api'
@@ -189,6 +190,112 @@ class Cauldron {
         napDescriptor.name, napDescriptor.platform, napDescriptor.version)
     } catch (e) {
       log.error(`[getNativeBinary] ${e}`)
+      throw e
+    }
+  }
+
+  async hasYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.hasYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+    } catch (e) {
+      log.error(`[hasYarnLock] ${e}`)
+      throw e
+    }
+  }
+
+  async addYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    yarnlockPath: string) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      let yarnLockFile = await fileUtils.readFile(yarnlockPath)
+      return this.cauldron.addYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnLockFile)
+    } catch (e) {
+      log.error(`[addYarnLock] ${e}`)
+      throw e
+    }
+  }
+
+  async getYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<?Buffer> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+    } catch (e) {
+      log.error(`[getYarnLock] ${e}`)
+      throw e
+    }
+  }
+
+  async getPathToYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<?string> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getPathToYarnLock(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version
+      )
+    } catch (e) {
+      log.error(`[getPathToYarnLock] ${e}`)
+      throw e
+    }
+  }
+
+  async removeYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.removeYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+    } catch (e) {
+      log.error(`[removeYarnLock] ${e}`)
+      throw e
+    }
+  }
+
+  async updateYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    yarnlockPath: string
+  ) : Promise<boolean> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      let yarnLockFile = await fileUtils.readFile(yarnlockPath)
+      return this.cauldron.updateYarnLock(
+                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnLockFile)
+    } catch (e) {
+      log.error(`[updateYarnLock] ${e}`)
+      throw e
+    }
+  }
+
+  async setYarnLockId (
+    napDescriptor: NativeApplicationDescriptor,
+    yarnlockid: string
+  ) {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.setYarnLockId(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnlockid
+      )
+    } catch (e) {
+      log.error(`[setYarnLockId] ${e}`)
+      throw e
+    }
+  }
+
+  async addOrUpdateYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    yarnlockPath: string
+  ) : Promise<*> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      if (await this.hasYarnLock(napDescriptor)) {
+        return this.updateYarnLock(napDescriptor, yarnlockPath)
+      } else {
+        return this.addYarnLock(napDescriptor, yarnlockPath)
+      }
+    } catch (e) {
+      log.error(`[addOrUpdateYarnLock] ${e}`)
       throw e
     }
   }

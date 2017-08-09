@@ -17,6 +17,10 @@ export default class Dependency {
     this.version = version
   }
 
+  static fromObject (obj: Object) {
+    return new Dependency(obj.name, { scope: obj.scope, version: obj.version })
+  }
+
   static fromString (str: string) : Dependency {
     if (SCOPE_NAME_VERSION_RE.test(str)) {
       const scopeNameVersion = SCOPE_NAME_VERSION_RE.exec(str)
@@ -39,6 +43,10 @@ export default class Dependency {
     }
   }
 
+  get path () : DependencyPath {
+    return DependencyPath.fromString(this.toString())
+  }
+
   static fromPath (path: DependencyPath) : Dependency {
     if (path.isAFileSystemPath || path.isAGitPath) {
       throw new Error('fromPath. File path or Git Path not yet supported')
@@ -54,6 +62,10 @@ export default class Dependency {
     return (depA.name === depB.name) &&
         (depA.scope === depB.scope) &&
         (ignoreVersion || (depA.version === depB.version))
+  }
+
+  get isVersioned () : boolean {
+    return this.version !== undefined
   }
 
   get scopedName () : string {

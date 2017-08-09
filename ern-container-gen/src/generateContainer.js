@@ -45,7 +45,8 @@ export default async function generateContainer ({
   plugins,
   miniapps,
   workingFolder,
-  reactNativeAarsPath
+  reactNativeAarsPath,
+  pathToYarnLock
 } : {
   containerVersion: string,
   nativeAppName: string,
@@ -54,7 +55,8 @@ export default async function generateContainer ({
   plugins: Array<Dependency>,
   miniapps: Array<any>,
   workingFolder: string,
-  reactNativeAarsPath: string
+  reactNativeAarsPath: string,
+  pathToYarnLock?: string
 } = {}) {
   if (!generator.generateContainer) {
     throw new Error('The generator miss a generateContainer function !')
@@ -126,7 +128,10 @@ export default async function generateContainer ({
     plugins,
     miniApps,
     paths,
-    mustacheView)
+    mustacheView,
+    {pathToYarnLock})
+
+  return paths
 }
 
 function getUnscopedModuleName (moduleName) {

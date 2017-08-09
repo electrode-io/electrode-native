@@ -1,16 +1,13 @@
 // @flow
 
 import {
-  mkdirp,
   writeFile
 } from './fs-util'
 import BaseGit from './base-git'
 import fs from 'fs'
 import path from 'path'
+import shell from 'shelljs'
 
-function trim (v: string) : string {
-  return v && v.trim()
-}
 export default class FileStore extends BaseGit {
   _prefix : string
 
@@ -32,15 +29,16 @@ export default class FileStore extends BaseGit {
   */
   async storeFile (identifier: string, content: string | Buffer) {
     await this.sync()
-    await mkdirp(path.resolve(this.path, this._prefix))
-    const relPath = this.pathToFile(identifier)
-    await writeFile(path.resolve(this.path, relPath), content, {flag: 'w'})
-    await this.git.addAsync(relPath)
+    const storeDirectoryPath = path.resolve(this.path, this._prefix)
+    if (!fs.existsSync(storeDirectoryPath)) {
+      log.debug(`creating dir ${storeDirectoryPath}`)
+      shell.mkdir('-p', storeDirectoryPath)
+    }
+    const pathToFile = path.resolve(storeDirectoryPath, identifier)
+    await writeFile(pathToFile, content, {flag: 'w'})
+    await this.git.addAsync(pathToFile)
     await this.git.commitAsync(`[added file] ${identifier}`)
     await this.push()
-
-    const sha1 = await this.git.revparseAysnc([`:${relPath}`])
-    return trim(sha1)
   }
 
   async hasFile (filename: string) {
@@ -59,9 +57,18 @@ export default class FileStore extends BaseGit {
   * @param {string} filename - The name of the file to retrieve
   * @return {Buffer} The file binary data
   */
-  async getFile (filename: string) {
+  async getFile (filename: string) : Promise<?Buffer> {
     await this.sync()
-    return fs.readFileSync(this.pathToFile(filename))
+    if (fs.existsSync(this.pathToFile(filename))) {
+      return fs.readFileSync(this.pathToFile(filename))
+    }
+  }
+
+  async getPathToFile (filename: string) : Promise<?string> {
+    await this.sync()
+    if (fs.existsSync(this.pathToFile(filename))) {
+      return this.pathToFile(filename)
+    }
   }
 
   /**
@@ -69,13 +76,18 @@ export default class FileStore extends BaseGit {
   *
   * @param {string} filename - The name of the file to remove
   */
-  async removeFile (filename: string) {
+  async removeFile (filename: string) : Promise<boolean> {
     await this.sync()
-    await this.git.rmAsync(this.pathToFile(filename))
-    return this.push()
+    if (fs.existsSync(this.pathToFile(filename))) {
+      await this.git.rmAsync(this.pathToFile(filename))
+      await this.git.commitAsync(`[removed file] ${filename}`)
+      await this.push()
+      return true
+    }
+    return false
   }
 
   pathToFile (filename: string) {
-    return path.join(this._prefix, filename)
+    return path.join(this.path, this._prefix, filename)
   }
 }
