@@ -21,7 +21,7 @@ Run the following command to add a repository with an associated alias to your e
 -  ern cauldron repository add <repoAlias> <repoUrl>
 ```
  
- You can ass as many cauldron urls as you want using the above command and easily switch between cauldron instances using the `use` command as shown below.
+ You can add as many cauldron urls as you want using the above command and easily switch between cauldron instances using the `use` command as shown below.
  
  ```
  -  ern cauldron repository use <repoAlias>
