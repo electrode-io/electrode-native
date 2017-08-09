@@ -267,6 +267,21 @@ class Cauldron {
     }
   }
 
+  async setYarnLockId (
+    napDescriptor: NativeApplicationDescriptor,
+    yarnlockid: string
+  ) {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.setYarnLockId(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnlockid
+      )
+    } catch (e) {
+      log.error(`[setYarnLockId] ${e}`)
+      throw e
+    }
+  }
+
   async addOrUpdateYarnLock (
     napDescriptor: NativeApplicationDescriptor,
     yarnlock: string | Buffer

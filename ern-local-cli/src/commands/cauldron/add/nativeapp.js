@@ -39,20 +39,25 @@ exports.handler = async function ({
     return log.error('You need to provide a complete native application descriptor to this command !')
   }
 
-  const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
+  const previousApp = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
 
   await cauldron.addNativeApp(napDescriptor, platformVersion
     ? platformVersion.toString().replace('v', '')
     : undefined)
 
-  if (previousApps && (copyPreviousVersionData || await askUserCopyPreviousVersionData())) {
+  if (previousApp && (copyPreviousVersionData || await askUserCopyPreviousVersionData())) {
+    const previousNativeAppVersion = _.last(previousApp.versions)
     // Copy over previous native application version native dependencies
-    for (const nativeDep of _.last(previousApps.versions).nativeDeps) {
+    for (const nativeDep of previousNativeAppVersion.nativeDeps) {
       await cauldron.addNativeDependency(napDescriptor, Dependency.fromString(nativeDep))
     }
     // Copy over previous native application version container MiniApps
-    for (const containerMiniApp of _.last(previousApps.versions).miniApps.container) {
+    for (const containerMiniApp of previousNativeAppVersion.miniApps.container) {
       await cauldron.addContainerMiniApp(napDescriptor, Dependency.fromString(containerMiniApp))
+    }
+    // Copy over previous yarn lock if any
+    if (previousNativeAppVersion.yarnlock) {
+      await cauldron.setYarnLockId(napDescriptor, previousNativeAppVersion.yarnlock)
     }
   }
 }

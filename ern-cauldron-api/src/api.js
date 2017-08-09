@@ -568,4 +568,17 @@ export default class CauldronApi {
 
     return false
   }
+
+  async setYarnLockId (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    yarnlockid: string
+  ) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version) {
+      version.yarnlock = yarnlockid
+      await this.commit(`Set yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
+  }
 }
