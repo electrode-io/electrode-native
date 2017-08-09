@@ -6,7 +6,8 @@ import {
 } from 'ern-core'
 import {
   Dependency,
-  mustacheUtils
+  mustacheUtils,
+  spin
 } from 'ern-util'
 import {
   bundleMiniApps,
@@ -16,7 +17,6 @@ import {
   gitCommit,
   gitPush,
   gitTag,
-  spin,
   throwIfShellCommandFailed
 } from '../../utils.js'
 import _ from 'lodash'

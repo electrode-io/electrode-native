@@ -6,13 +6,13 @@ import {
 } from 'ern-core'
 import {
   mustacheUtils,
-  Dependency
+  Dependency,
+  spin
 } from 'ern-util'
 import {
   bundleMiniApps,
   downloadPluginSource,
-  throwIfShellCommandFailed,
-  spin
+  throwIfShellCommandFailed
 } from '../../utils.js'
 import {
   exec
