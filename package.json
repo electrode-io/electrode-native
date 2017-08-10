@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup-dev": "node setup-dev.js",
-    "rebuild": "lerna clean --yes && lerna bootstrap",
+    "rebuild": "lerna clean --yes && lerna bootstrap --npmClient=yarn",
     "test": "lerna run test",
     "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r lcov -r html $(find ./ern-*/.nyc_output -type f -name '*.json' -maxdepth 3)",
     "standard": "standard",
@@ -42,7 +42,7 @@
     "husky": "^0.13.2",
     "install": "^0.8.7",
     "istanbul-combine": "^0.3.0",
-    "lerna": "2.0.0-beta.37",
+    "lerna": "2.0.0",
     "mocha": "^3.2.0",
     "npm": "^4.4.1",
     "nyc": "^10.1.2",
