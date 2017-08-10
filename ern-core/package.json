@@ -42,7 +42,7 @@
   ],
   "scripts": {
     "build": "ern-babel",
-    "prepublish": "npm run build"
+    "prepublish": "yarn run build"
   },
   "license": "Apache-2.0",
   "dependencies": {

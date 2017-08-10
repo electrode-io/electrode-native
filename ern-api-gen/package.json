@@ -11,6 +11,12 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-react-native/issues"
   },
+  "scripts": {
+    "test": "ern-mocha",
+    "build": "ern-babel",
+    "coverage": "ern-nyc",
+    "prepublish": "yarn run build"
+  },
   "keywords": [
     "ern",
     "react-native",
