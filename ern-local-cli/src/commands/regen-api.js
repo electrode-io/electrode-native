@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  regenerateCode
+  ApiGen
 } from 'ern-api-gen'
 import {
   Manifest
@@ -32,5 +32,5 @@ exports.handler = async function ({
     bridgeVersion = bridgeDep.version
   }
 
-  return regenerateCode({bridgeVersion, updatePlugin})
+  return ApiGen.regenerateCode({bridgeVersion, updatePlugin})
 }

@@ -14,7 +14,7 @@ Meant to be invoked manually (or through CI) by a user through the command `ern 
 A user of the platform might or might not have to use this command (i.e this project). Only users that wish to generate an API will have use of this project.  
 Only `ern-local-cli` has a dependency on `ern-api-gen`.
 
-- [ern-message-gen](/ern-message-gen)  
+- [ern-api-gen](/ern-api-gen)
 A cross platform generator (objC/swift/Java) to Generate API and models from swagger files.
 
 - [ern-cauldron-api](/ern-cauldron-api)  

@@ -4,10 +4,12 @@ import path from 'path'
 import {
   fileUtils
 } from 'ern-util'
+
 import {
   CodegenConfigurator,
   DefaultGenerator
-} from 'ern-message-gen'
+} from './index'
+
 import {
   PKG_FILE,
   MODEL_FILE

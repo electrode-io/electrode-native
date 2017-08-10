@@ -1,26 +1,19 @@
 {
   "name": "ern-api-gen",
   "version": "0.0.1",
-  "description": "ERN module to generate API projects",
+  "description": "ERN module used to generate APIs",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
-   "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-react-native.git"
   },
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-react-native/issues"
   },
-  "scripts": {
-    "test": "ern-mocha",
-    "build": "ern-babel",
-    "coverage": "ern-nyc",
-    "prepublish": "npm run build"
-  },
   "keywords": [
     "ern",
     "react-native",
-    "generator",
     "api",
     "node",
     "android",
@@ -48,17 +41,27 @@
       "email": "KShah1@walmartlabs.com"
     }
   ],
+  "scripts": {
+    "build": "ern-babel",
+    "test": "ern-mocha",
+    "coverage": "ern-nyc",
+    "prepublish": "npm run build"
+  },
   "license": "Apache-2.0",
   "dependencies": {
+    "ern-core": "0.0.1",
     "ern-util": "0.0.1",
-    "ern-message-gen": "0.0.1",
-    "xcode": "^0.9.1"
+    "collections": "^5.0.6",
+    "json-stable-stringify": "^1.0.1",
+    "lodash": "^4.17.4",
+    "minimatch": "^3.0.3",
+    "mkdirp": "^0.5.1",
+    "mustache": "^2.3.0",
+    "sway": "^1.0.0",
+    "swagger-methods": "^1.0.0"
   },
   "devDependencies": {
     "ern-util-dev": "0.0.1",
-    "ern-core": "0.0.1"
-  },
-  "engines": {
-    "node": ">=4"
+    "cross-env": "^3.2.4"
   }
 }
