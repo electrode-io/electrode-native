@@ -42,7 +42,7 @@
     "husky": "^0.13.2",
     "install": "^0.8.7",
     "istanbul-combine": "^0.3.0",
-    "lerna": "2.0.0-beta.37",
+    "lerna": "2.0.0",
     "mocha": "^3.2.0",
     "npm": "^4.4.1",
     "nyc": "^10.1.2",
