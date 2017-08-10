@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup-dev": "node setup-dev.js",
-    "rebuild": "lerna clean --yes && lerna bootstrap",
+    "rebuild": "lerna clean --yes && lerna bootstrap --npmClient=yarn",
     "test": "lerna run test",
     "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r lcov -r html $(find ./ern-*/.nyc_output -type f -name '*.json' -maxdepth 3)",
     "standard": "standard",
