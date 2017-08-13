@@ -5,6 +5,7 @@ import {
   Platform
 } from 'ern-core'
 import {
+  config as ernConfig,
   coloredLog
 } from 'ern-util'
 import chalk from 'chalk'
@@ -28,10 +29,21 @@ function showBanner () {
 // ==============================================================================
 export default function run () {
   global.log = coloredLog
-  showBanner()
+
+  if (ernConfig.getValue('banner', true)) {
+    showBanner()
+  }
+
   return yargs.commandDir('commands')
-        .demandCommand(1, 'Need a command')
-        .help()
-        .wrap(yargs.terminalWidth())
-        .argv
+    .command('*', 'top level command handler', () => {}, (argv) => {
+      if (argv['show-banner']) {
+        ernConfig.setValue('banner', true)
+      } else if (argv['hide-banner']) {
+        ernConfig.setValue('banner', false)
+      }
+    })
+    .demandCommand(1, 'Need a command')
+    .help()
+    .wrap(yargs.terminalWidth())
+    .argv
 }
