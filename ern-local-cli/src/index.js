@@ -28,6 +28,8 @@ function showBanner () {
 // Entry point
 // ==============================================================================
 export default function run () {
+  process.env['ERN_LOG_LEVEL'] = ernConfig.getValue('loglevel', 'info')
+
   global.log = coloredLog
 
   if (ernConfig.getValue('banner', true)) {
@@ -40,6 +42,8 @@ export default function run () {
         ernConfig.setValue('banner', true)
       } else if (argv['hide-banner']) {
         ernConfig.setValue('banner', false)
+      } else if (argv['log-level']) {
+        ernConfig.setValue('loglevel', argv['log-level'])
       }
     })
     .demandCommand(1, 'Need a command')
