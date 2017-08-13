@@ -8,13 +8,13 @@ import {
 } from 'ern-container-gen'
 import {
   cauldron,
+  codepush,
   compatibility,
   MiniApp,
   Platform,
   yarn
 } from 'ern-core'
 import {
-  CodePushCommands,
   Dependency,
   DependencyPath,
   findNativeDependencies,
@@ -273,9 +273,7 @@ miniApps: Array<Dependency>, {
   codePushAppName = codePushAppName || await askUserForCodePushAppName()
   codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
 
-  const codePushCommands = new CodePushCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`)
-
-  const codePushWasDone = await codePushCommands.releaseReact(
+  const codePushWasDone = await codepush.releaseReact(
     codePushAppName,
     codePushPlatformName, {
       targetBinaryVersion: codePushTargetVersionName,

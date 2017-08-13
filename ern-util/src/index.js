@@ -9,7 +9,7 @@ import _ReactNativeCli from './ReactNativeCli'
 import _required from './required'
 import _spin from './spin'
 import _tagOneLine from './tagoneline'
-import _CodePushCommands from './codePush'
+import _CodePushCli from './CodePushCli'
 import _Dependency from './Dependency'
 import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import _noop from './noop'
@@ -27,7 +27,7 @@ export const ReactNativeCli = _ReactNativeCli
 export const required = _required
 export const spin = _spin
 export const tagOneLine = _tagOneLine
-export const CodePushCommands = _CodePushCommands
+export const CodePushCli = _CodePushCli
 export const Dependency = _Dependency
 export const NativeApplicationDescriptor = _NativeApplicationDescriptor
 export const noop = _noop
@@ -47,7 +47,7 @@ export default ({
   required: _required,
   spin: _spin,
   tagOneLine: _tagOneLine,
-  CodePushCommands: _CodePushCommands,
+  CodePushCli: _CodePushCli,
   Dependency: _Dependency,
   NativeApplicationDescriptor: _NativeApplicationDescriptor,
   noop: _noop,
