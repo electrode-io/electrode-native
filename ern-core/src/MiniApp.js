@@ -14,12 +14,12 @@ import {
   NativeApplicationDescriptor,
   ReactNativeCommands,
   spin,
-  tagOneLine,
-  yarn
+  tagOneLine
 } from 'ern-util'
 import cauldron from './cauldron'
 import Manifest from './Manifest'
 import Platform from './Platform'
+import { yarn } from './clients'
 import * as ModuleTypes from './ModuleTypes'
 import {
   checkCompatibilityWithNativeApp
@@ -42,11 +42,6 @@ const fetch = require('node-fetch')
 const {
   runAndroid
 } = android
-const {
-  yarnAdd,
-  yarnInstall,
-  yarnInfo
-} = yarn
 
 export default class MiniApp {
   _path: string
@@ -87,7 +82,7 @@ Are you sure this is a MiniApp ?`)
   static async fromPackagePath (packagePath: DependencyPath) {
     const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
     shell.cd(tmpMiniAppPath)
-    await yarnAdd(packagePath)
+    await yarn.add(packagePath)
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
     const packageName = Object.keys(packageJson.dependencies)[0]
     shell.rm(path.join(tmpMiniAppPath, 'package.json'))
@@ -205,7 +200,7 @@ Are you sure this is a MiniApp ?`)
   }
 
   async isPublishedToNpm () : Promise<boolean> {
-    const publishedVersionsInfo = await yarnInfo(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
+    const publishedVersionsInfo = await yarn.info(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
       field: 'versions',
       json: true
     })
@@ -374,9 +369,9 @@ Are you sure this is a MiniApp ?`)
       // In that case we don't perform any checks at all (for now)
       const devDependencyPath = DependencyPath.fromString(dependency.toString())
       if (dev) {
-        await spin(`Adding ${dependency.toString()} to MiniApp devDependencies`, yarnAdd(devDependencyPath, { dev: true }))
+        await spin(`Adding ${dependency.toString()} to MiniApp devDependencies`, yarn.add(devDependencyPath, { dev: true }))
       } else {
-        await spin(`Adding ${dependency.toString()} to MiniApp peerDependencies`, yarnAdd(devDependencyPath, { peer: true }))
+        await spin(`Adding ${dependency.toString()} to MiniApp peerDependencies`, yarn.add(devDependencyPath, { peer: true }))
       }
     } else {
       let finalDependency
@@ -393,7 +388,7 @@ Are you sure this is a MiniApp ?`)
         const tmpPath = tmp.dirSync({ unsafeCleanup: true }).name
         process.chdir(tmpPath)
         await spin(`${versionLessDependency.toString()} is not declared in the manifest. Performing additional checks.`,
-                    yarnAdd(DependencyPath.fromString(dependency.toString())))
+                    yarn.add(DependencyPath.fromString(dependency.toString())))
 
         const nativeDependencies = findNativeDependencies(path.join(tmpPath, 'node_modules'))
         if (nativeDependencies.length === 0) {
@@ -461,7 +456,7 @@ Are you sure this is a MiniApp ?`)
 
       if (finalDependency) {
         process.chdir(this.path)
-        await spin(`Adding ${finalDependency.toString()} to MiniApp`, yarnAdd(DependencyPath.fromString(finalDependency.toString())))
+        await spin(`Adding ${finalDependency.toString()} to MiniApp`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
         return finalDependency
       }
     }
@@ -516,7 +511,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     fs.writeFileSync(appPackageJsonPath, JSON.stringify(this.packageJson, null, 2))
 
     process.chdir(this.path)
-    await spin(`Running yarn install`, yarnInstall())
+    await spin(`Running yarn install`, yarn.install())
   }
 
   async addToNativeAppInCauldron (

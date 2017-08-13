@@ -8,6 +8,10 @@ import fs from 'fs'
 import shell from 'shelljs'
 import _ from 'lodash'
 import path from 'path'
+import {
+  yarn
+} from 'ern-core'
+
 const {
   Dependency,
   DependencyPath,
@@ -134,13 +138,13 @@ export async function generateMiniAppsComposite (
     // Now that the composite package.json is similar to the one used to generated yarn.lock
     // we can run yarn install to get back to the exact same dependency graph as the previously
     // generated composite
-    await ernUtil.spin(`Installing initial MiniApps`, ernUtil.yarn.yarnInstall())
+    await ernUtil.spin(`Installing initial MiniApps`, yarn.install())
     await runYarnUsingMiniAppDeltas(miniAppsDeltas)
   } else {
     // No yarn.lock path was provided, just add miniapps one by one
     log.debug(`[generateMiniAppsComposite] no yarn lock provided`)
     for (const miniappPath of miniappsPaths) {
-      await ernUtil.spin(`Retrieving and installing ${miniappPath.toString()}`, ernUtil.yarn.yarnAdd(miniappPath))
+      await ernUtil.spin(`Retrieving and installing ${miniappPath.toString()}`, yarn.add(miniappPath))
     }
   }
 
@@ -162,7 +166,7 @@ export async function generateMiniAppsComposite (
     // in a different way, once Cart and TYP don't directly depend on code push directly
     // We will work with Cart team in that direction
     //
-    // await yarnAdd(codePushPlugin.name, codePushPlugin.version)
+    // await yarn.add(codePushPlugin.name, codePushPlugin.version)
     // content += `import codePush from "react-native-code-push"\n`
     // content += `codePush.sync()`
 
@@ -253,14 +257,14 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
   if (miniAppsDeltas.new) {
     for (const m of miniAppsDeltas.new) {
       const miniappPackage = Dependency.fromObject(m)
-      await ernUtil.spin(`Adding new MiniApp ${miniappPackage.toString()}`, ernUtil.yarn.yarnAdd(miniappPackage.path))
+      await ernUtil.spin(`Adding new MiniApp ${miniappPackage.toString()}`, yarn.add(miniappPackage.path))
     }
   }
 
   if (miniAppsDeltas.upgraded) {
     for (const m of miniAppsDeltas.upgraded) {
       const miniappPackage = Dependency.fromObject(m)
-      await ernUtil.spin(`Upgrading MiniApp ${miniappPackage.toString()}`, ernUtil.yarn.yarnUpgrade(miniappPackage.path))
+      await ernUtil.spin(`Upgrading MiniApp ${miniappPackage.toString()}`, yarn.upgrade(miniappPackage.path))
     }
   }
 }
@@ -291,7 +295,7 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
   let downloadPath = ''
   if (pluginOrigin.type === 'npm') {
     const dependency = new Dependency(pluginOrigin.name, { scope: pluginOrigin.scope, version: pluginOrigin.version })
-    await ernUtil.yarn.yarnAdd(DependencyPath.fromString(dependency.toString()))
+    await yarn.add(DependencyPath.fromString(dependency.toString()))
     if (pluginOrigin.scope) {
       downloadPath = `node_modules/@${pluginOrigin.scope}/${pluginOrigin.name}`
     } else {

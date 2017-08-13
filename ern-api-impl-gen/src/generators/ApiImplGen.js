@@ -1,13 +1,15 @@
 // @flow
 
 import {
-  yarn,
   spin,
   Dependency,
   DependencyPath,
   Utils,
   coloredLog
 } from 'ern-util'
+import {
+  yarn
+} from 'ern-core'
 import shell from 'shelljs'
 import _ from 'lodash'
 import chalk from 'chalk'
@@ -16,7 +18,6 @@ import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
 const log = coloredLog
-const {yarnAdd, yarnInfo} = yarn
 let plugins: Array<Dependency>
 
 export default class ApiImplGen {
@@ -68,13 +69,13 @@ export default class ApiImplGen {
   }
 
   async spinAndDownload (dependencyPath: DependencyPath) {
-    await spin(`Downloading ${dependencyPath.toString()}`, yarnAdd(dependencyPath))
+    await spin(`Downloading ${dependencyPath.toString()}`, yarn.add(dependencyPath))
   }
 
   async getDependencies (apiDependencyPath: DependencyPath) : Promise<Array<Dependency>> {
     try {
       log.info(`Looking for peerDependencies`)
-      const apiPackageInfo = await yarnInfo(apiDependencyPath, {json: true})
+      const apiPackageInfo = await yarn.info(apiDependencyPath, {json: true})
 
       let dependencies = []
       if (apiPackageInfo.data.peerDependencies) {

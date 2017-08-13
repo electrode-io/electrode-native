@@ -6,11 +6,11 @@ import shell from 'shelljs'
 import {
   Dependency,
   DependencyPath,
-  Utils,
-  yarn
+  Utils
 } from 'ern-util'
 import {
-  ModuleTypes
+  ModuleTypes,
+  yarn
 } from 'ern-core'
 
 import ApiImplGen from './generators/ApiImplGen'
@@ -18,8 +18,6 @@ import ApiImplGen from './generators/ApiImplGen'
 const API_NAME_RE = /([^/]*)$/
 
 const path = require('path')
-
-const {yarnInit, yarnAdd} = yarn
 
 export async function generateApiImpl ({
   apiDependencyPath,
@@ -82,8 +80,8 @@ async function createNodePackage (
   nativeOnly: boolean) {
   let currentFolder = shell.pwd()
   shell.cd(outputFolderPath)
-  await yarnInit()
-  await yarnAdd(apiDependencyPath)
+  await yarn.init()
+  await yarn.add(apiDependencyPath)
   shell.rm('-rf', `${outputFolderPath}/node_modules/`)
   Utils.throwIfShellCommandFailed()
   log.debug('Removed node modules folder')
