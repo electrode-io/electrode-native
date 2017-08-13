@@ -44,10 +44,13 @@ export default function run () {
         ernConfig.setValue('banner', false)
       } else if (argv['log-level']) {
         ernConfig.setValue('loglevel', argv['log-level'])
+      } else {
+        log.error(`Command does not exists. Typo ?`)
       }
     })
     .demandCommand(1, 'Need a command')
     .help()
     .wrap(yargs.terminalWidth())
+    .strict()
     .argv
 }
