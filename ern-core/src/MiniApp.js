@@ -200,11 +200,14 @@ Are you sure this is a MiniApp ?`)
   }
 
   async isPublishedToNpm () : Promise<boolean> {
-    const publishedVersionsInfo = await yarn.info(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
-      field: 'versions',
-      json: true
-    })
-    if (publishedVersionsInfo.type === 'error') {
+    let publishedVersionsInfo
+    try {
+      publishedVersionsInfo = await yarn.info(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
+        field: 'versions',
+        json: true
+      })
+    } catch (e) {
+      log.debug(e)
       return false
     }
     let publishedVersions: Array<string> = publishedVersionsInfo.data
