@@ -12,14 +12,16 @@ import {
   DependencyPath,
   fileUtils,
   NativeApplicationDescriptor,
-  ReactNativeCommands,
   spin,
   tagOneLine
 } from 'ern-util'
 import cauldron from './cauldron'
 import Manifest from './Manifest'
 import Platform from './Platform'
-import { yarn } from './clients'
+import {
+  reactnative,
+  yarn
+} from './clients'
 import * as ModuleTypes from './ModuleTypes'
 import {
   checkCompatibilityWithNativeApp
@@ -117,12 +119,10 @@ Are you sure this is a MiniApp ?`)
         throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactNativeCommands = new ReactNativeCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/react-native`)
-
       //
       // Create application using react-native init command
       await spin(`Running react-native init using react-native v${reactNativeDependency.version}`,
-                reactNativeCommands.init(appName, reactNativeDependency.version))
+                reactnative.init(appName, reactNativeDependency.version))
 
       //
       // Patch package.json file of application

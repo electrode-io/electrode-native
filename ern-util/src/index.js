@@ -5,7 +5,7 @@ import * as _mustacheUtils from './mustacheUtils'
 import _coloredLog from './coloredLog'
 import _config from './config'
 import _npm from './npm'
-import _ReactNativeCommands from './reactNative'
+import _ReactNativeCli from './ReactNativeCli'
 import _required from './required'
 import _spin from './spin'
 import _tagOneLine from './tagoneline'
@@ -23,7 +23,7 @@ export const android = _android
 export const coloredLog = _coloredLog
 export const config = _config
 export const npm = _npm
-export const ReactNativeCommands = _ReactNativeCommands
+export const ReactNativeCli = _ReactNativeCli
 export const required = _required
 export const spin = _spin
 export const tagOneLine = _tagOneLine
@@ -43,7 +43,7 @@ export default ({
   coloredLog: _coloredLog,
   config: _config,
   npm: _npm,
-  ReactNativeCommands: _ReactNativeCommands,
+  ReactNativeCli: _ReactNativeCli,
   required: _required,
   spin: _spin,
   tagOneLine: _tagOneLine,

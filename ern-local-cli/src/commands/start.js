@@ -5,7 +5,7 @@ import {
 } from 'ern-container-gen'
 import {
   cauldron,
-  Platform
+  reactnative
 } from 'ern-core'
 import {
   config as ernConfig,
@@ -76,8 +76,7 @@ exports.handler = async function ({
     startLinkSynchronization(workingDir, linkName, miniAppsLinks[linkName])
   })
 
-  const reactNativeBinaryPath = `${Platform.currentPlatformVersionPath}/node_modules/.bin/react-native`
-  const reactNativePackagerProcess = childProcess.spawn(reactNativeBinaryPath, [
+  const reactNativePackagerProcess = childProcess.spawn(reactnative.binaryPath, [
     'start', '--reset-cache', '--providesModuleNodeModules', `react-native,${Object.keys(miniAppsLinks).join(',')}`])
   reactNativePackagerProcess.stdout.on('data', data => log.info(data.toString()))
   reactNativePackagerProcess.stderr.on('data', data => log.error(data.toString()))

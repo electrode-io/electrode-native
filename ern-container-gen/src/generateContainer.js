@@ -79,8 +79,6 @@ export default async function generateContainer ({
     compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
     // Where we download plugins
     pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
-    // React native binary path
-    reactNativeBinary: `${platformPath}/node_modules/.bin/react-native`,
     // Where we output final generated container
     outFolder: OUT_FOLDER,
     // Where the AARs of react-native are located

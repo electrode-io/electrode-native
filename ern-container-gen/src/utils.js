@@ -9,13 +9,13 @@ import shell from 'shelljs'
 import _ from 'lodash'
 import path from 'path'
 import {
+  reactnative,
   yarn
 } from 'ern-core'
 
 const {
   Dependency,
-  DependencyPath,
-  ReactNativeCommands
+  DependencyPath
 } = ernUtil
 
 const gitFolderRe = /.*\/(.*).git/
@@ -67,8 +67,7 @@ export async function bundleMiniApps (
 }
 
 export async function reactNativeBundleAndroid (paths: any) {
-  const reactNativeCommands = new ReactNativeCommands(paths.reactNativeBinary)
-  return reactNativeCommands.bundle({
+  return reactnative.bundle({
     entryFile: 'index.android.js',
     dev: false,
     bundleOutput: `${paths.outFolder}/android/lib/src/main/assets/index.android.bundle`,
@@ -79,14 +78,13 @@ export async function reactNativeBundleAndroid (paths: any) {
 
 export async function reactNativeBundleIos (paths: any) {
   const miniAppOutFolder = `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp`
-  const reactNativeCommands = new ReactNativeCommands(paths.reactNativeBinary)
 
   if (!fs.existsSync(miniAppOutFolder)) {
     shell.mkdir('-p', miniAppOutFolder)
     throwIfShellCommandFailed()
   }
 
-  return reactNativeCommands.bundle({
+  return reactnative.bundle({
     entryFile: 'index.ios.js',
     dev: false,
     bundleOutput: `${miniAppOutFolder}/MiniApp.jsbundle`,
