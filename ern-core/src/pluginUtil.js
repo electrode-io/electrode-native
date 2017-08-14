@@ -167,14 +167,14 @@ function getApiPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginCo
       },
       copy: [
         {
-          source: 'IOS/IOS/Classes/SwaggersAPIs/*',
+          source: 'IOS/APIs/*',
           dest: `${projectName}/APIs`
         }
       ],
       pbxproj: {
         addSource: [
           {
-            from: 'IOS/IOS/Classes/SwaggersAPIs/*.swift',
+            from: 'IOS/APIs/*.swift',
             path: 'APIs',
             group: 'APIs'
           }

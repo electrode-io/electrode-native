@@ -130,15 +130,6 @@ export default class SwiftCodegen extends DefaultCodegen {
         if (!this.__additionalProperties.containsKey(SwiftCodegen.POD_AUTHORS)) {
             this.__additionalProperties.put(SwiftCodegen.POD_AUTHORS, SwiftCodegen.DEFAULT_POD_AUTHORS);
         }
-        this.__supportingFiles.add(new SupportingFile("Podspec.mustache", "", this.projectName + ".podspec"));
-        this.__supportingFiles.add(new SupportingFile("Cartfile.mustache", "", "Cartfile"));
-        this.__supportingFiles.add(new SupportingFile("APIHelper.mustache", this.sourceFolder, "APIHelper.swift"));
-        this.__supportingFiles.add(new SupportingFile("AlamofireImplementations.mustache", this.sourceFolder, "AlamofireImplementations.swift"));
-        this.__supportingFiles.add(new SupportingFile("Extensions.mustache", this.sourceFolder, "Extensions.swift"));
-        this.__supportingFiles.add(new SupportingFile("Models.mustache", this.sourceFolder, "Models.swift"));
-        this.__supportingFiles.add(new SupportingFile("APIs.mustache", this.sourceFolder, "APIs.swift"));
-        this.__supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
-        this.__supportingFiles.add(new SupportingFile("gitignore.mustache", "", ".gitignore"));
     }
 
     isReservedWord(word) {
