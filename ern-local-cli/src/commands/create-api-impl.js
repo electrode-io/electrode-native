@@ -86,6 +86,8 @@ exports.handler = async function ({
       workingFolder: WORKING_FOLDER,
       outFolder: ''
     }
+  }).then(() => {
+    log.info('Success!')
   })
 }
 
