@@ -19,7 +19,6 @@ import {
 } from 'ern-core'
 
 export const GENERATE = [['android', 'ERNAndroid'], ['javascript', 'ERNES6'], ['IOS', 'ERNSwift']]
-// export const GENERATE = [['android', 'ERNAndroid'], ["javascript", "ERNES6"]];
 
 export async function generateSwagger ({
     apiSchemaPath = MODEL_FILE,
