@@ -2,7 +2,7 @@
 
 import * as _android from './android'
 import * as _mustacheUtils from './mustacheUtils'
-import _coloredLog from './coloredLog'
+import _ColoredLog from './ColoredLog'
 import _config from './config'
 import _npm from './npm'
 import _ReactNativeCli from './ReactNativeCli'
@@ -20,7 +20,7 @@ import * as _fileUtils from './fileUtil'
 import _YarnCli from './YarnCli'
 
 export const android = _android
-export const coloredLog = _coloredLog
+export const ColoredLog = _ColoredLog
 export const config = _config
 export const npm = _npm
 export const ReactNativeCli = _ReactNativeCli
@@ -40,7 +40,7 @@ export const YarnCli = _YarnCli
 
 export default ({
   android: _android,
-  coloredLog: _coloredLog,
+  ColoredLog: _ColoredLog,
   config: _config,
   npm: _npm,
   ReactNativeCli: _ReactNativeCli,

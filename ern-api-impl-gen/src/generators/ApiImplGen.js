@@ -4,8 +4,7 @@ import {
   spin,
   Dependency,
   DependencyPath,
-  Utils,
-  coloredLog
+  Utils
 } from 'ern-util'
 import {
   yarn
@@ -17,7 +16,6 @@ import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
 import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
-const log = coloredLog
 let plugins: Array<Dependency>
 
 export default class ApiImplGen {

@@ -5,8 +5,8 @@ import {
   Platform
 } from 'ern-core'
 import {
-  config as ernConfig,
-  coloredLog
+  ColoredLog,
+  config as ernConfig
 } from 'ern-util'
 import chalk from 'chalk'
 import yargs from 'yargs'
@@ -28,9 +28,7 @@ function showBanner () {
 // Entry point
 // ==============================================================================
 export default function run () {
-  process.env['ERN_LOG_LEVEL'] = ernConfig.getValue('loglevel', 'info')
-
-  global.log = coloredLog
+  global.log = new ColoredLog(ernConfig.getValue('loglevel', 'info'))
 
   if (ernConfig.getValue('banner', true)) {
     showBanner()
