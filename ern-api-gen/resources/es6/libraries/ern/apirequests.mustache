@@ -16,7 +16,7 @@ export default class {{{baseName}}}Requests {
     {{^isEvent}}
         /**
          * Registers a handler for a particular api.  This allows javascript to handle a request from native.
-         * @param function tak
+         * @param The handler function, taking a single parameter being the data of the request and returning a Promise. Implementer of the handler should either resolve the promise with an object being the response data (if any) or reject the promise with an Error
          */
     register{{{camelizedNickName}}}RequestHandler( handler) {
         this._bridge.registerRequestHandler("{{package}}.request.{{operationId}}", handler);
