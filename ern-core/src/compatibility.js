@@ -11,6 +11,7 @@ import MiniApp from './miniapp.js'
 import _ from 'lodash'
 import chalk from 'chalk'
 import Table from 'cli-table'
+import semver from 'semver'
 
 //
 // Check compatibility of a given miniapp against one or multiple native apps
@@ -66,6 +67,15 @@ export async function logCompatibilityReportTable (report: Object) {
       compatibleEntry.dependencyName,
       chalk.green(compatibleEntry.remoteVersion ? compatibleEntry.remoteVersion : ''),
       chalk.green(compatibleEntry.localVersion ? compatibleEntry.localVersion : '')
+    ])
+  }
+
+  for (const compatibleNonStrictEntry of report.compatibleNonStrict) {
+    table.push([
+      compatibleNonStrictEntry.scope ? compatibleNonStrictEntry.scope : '',
+      compatibleNonStrictEntry.dependencyName,
+      chalk.yellow(compatibleNonStrictEntry.remoteVersion ? compatibleNonStrictEntry.remoteVersion : ''),
+      chalk.yellow(compatibleNonStrictEntry.localVersion ? compatibleNonStrictEntry.localVersion : '')
     ])
   }
 
@@ -157,6 +167,14 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
 //       remoteVersion: "1.0.0"
 //     }
 //   ],
+//   compatibleNonStrict: [
+//     {
+//       dependencyName: "react-native-cookie-api",
+//       scope: "walmart",
+//       localVersion: "1.0.0",
+//       remoteVersion: "1.3.0"
+//     }
+//   ],
 //   incompatible: [
 //     {
 //       dependencyName: "react-native",
@@ -180,7 +198,7 @@ export function getCompatibility (
 } : {
     uncompatibleIfARemoteDepIsMissing?: boolean
 }= {}) {
-  let result = { compatible: [], incompatible: [] }
+  let result = { compatible: [], compatibleNonStrict: [], incompatible: [] }
 
   for (const remoteDep of remoteDeps) {
     const localDep = _.find(localDeps, d => Dependency.same(d, remoteDep, { ignoreVersion: true }))
@@ -193,9 +211,32 @@ export function getCompatibility (
       remoteVersion: remoteDep.version
     }
 
-    if ((localDepVersion) &&
+    // If a remote dependency exists locally the following applies in term
+    // of compatibility
+    // If same exact version : COMPATIBLE
+    // If different version :
+    //    - If API or BRIDGE :
+    //      + If local version < remote version but MAJOR is same :
+    //          => COMPATIBLE (backward compatibility of APIs / Bridge)
+    //      + If local version < remove version but MAJOR is different :
+    //          => INCOMPATIBLE (breaking change)
+    //      + If local version > remote version
+    //          => INCOMPATIBLE (could be using feature not present in older)
+    //    - If third party plugin :
+    //      => INCOMPATIBLE
+    if (localDep && localDepVersion &&
       (localDepVersion !== remoteDep.version)) {
-      result.incompatible.push(entry)
+      if (localDep.name.endsWith('-api') || (localDep.name === 'react-native-electrode-bridge')) {
+        if (semver.major(localDepVersion) === semver.major(remoteDep.version)) {
+          result.compatibleNonStrict.push(entry)
+        } else if (semver.lt(localDepVersion, remoteDep.version)) {
+          result.compatibleNonStrict.push(entry)
+        } else {
+          result.incompatible.push(entry)
+        }
+      } else {
+        result.incompatible.push(entry)
+      }
     } else if ((localDepVersion) &&
       (localDepVersion === remoteDep.version)) {
       result.compatible.push(entry)
