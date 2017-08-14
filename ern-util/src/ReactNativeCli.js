@@ -6,15 +6,15 @@ import {
 import fs from 'fs'
 import path from 'path'
 
-export default class ReactNativeCommands {
-  _reactNativeBinaryPath: string
+export default class ReactNativeCli {
+  _binaryPath: ?string
 
-  constructor (reactNativeBinaryPath?: string) {
-    if (reactNativeBinaryPath) {
-      this._reactNativeBinaryPath = reactNativeBinaryPath
-    } else {
-      this._reactNativeBinaryPath = `react-native`
-    }
+  constructor (binaryPath?: string) {
+    this._binaryPath = binaryPath
+  }
+
+  get binaryPath () : string {
+    return this._binaryPath ? this._binaryPath : `react-native`
   }
 
   async init (appName: string, rnVersion: string) {
@@ -25,7 +25,7 @@ export default class ReactNativeCommands {
         return reject(new Error(`Path already exists will not override ${dir}`))
       }
 
-      exec(`${this._reactNativeBinaryPath} init ${appName} --version react-native@${rnVersion} --skip-jest`,
+      exec(`${this.binaryPath} init ${appName} --version react-native@${rnVersion} --skip-jest`,
                 (err, stdout, stderr) => {
                   if (err) {
                     return reject(err)
@@ -49,7 +49,7 @@ export default class ReactNativeCommands {
     platform: 'android' | 'ios'
   }) {
     return new Promise((resolve, reject) => {
-      exec(`${this._reactNativeBinaryPath} bundle \
+      exec(`${this.binaryPath} bundle \
         ${entryFile ? `--entry-file=${entryFile}` : ''} \
         ${dev ? '--dev=true' : '--dev=false'} \
         ${platform ? `--platform=${platform}` : ''} \

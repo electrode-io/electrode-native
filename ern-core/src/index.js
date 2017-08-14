@@ -8,6 +8,11 @@ import _cauldron from './cauldron'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 import * as _ModuleTypes from './ModuleTypes'
+import {
+  yarn as _yarn,
+  reactnative as _reactnative,
+  codepush as _codepush
+} from './clients'
 
 export const pluginUtil = _pluginUtil
 export const handleCopyDirective = _handleCopyDirective
@@ -17,6 +22,9 @@ export const cauldron = _cauldron
 export const compatibility = _compatibility
 export const MiniApp = _MiniApp
 export const ModuleTypes = _ModuleTypes
+export const yarn = _yarn
+export const reactnative = _reactnative
+export const codepush = _codepush
 
 export default ({
   pluginUtil: _pluginUtil,
@@ -26,5 +34,8 @@ export default ({
   cauldron: _cauldron,
   compatibility: _compatibility,
   MiniApp: _MiniApp,
-  ModuleTypes: _ModuleTypes
+  ModuleTypes: _ModuleTypes,
+  yarn: _yarn,
+  reactnative: _reactnative,
+  codepush: _codepush
 })

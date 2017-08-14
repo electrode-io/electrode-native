@@ -18,7 +18,7 @@ export class ErnConfig {
   }
 
   getValue (key: string, defaultValue: any) : any {
-    return this.obj[key] || defaultValue
+    return this.obj[key] !== undefined ? this.obj[key] : defaultValue
   }
 
   setValue (key: string, value: any) {

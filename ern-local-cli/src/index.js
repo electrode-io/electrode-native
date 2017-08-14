@@ -5,6 +5,7 @@ import {
   Platform
 } from 'ern-core'
 import {
+  config as ernConfig,
   coloredLog
 } from 'ern-util'
 import chalk from 'chalk'
@@ -27,11 +28,29 @@ function showBanner () {
 // Entry point
 // ==============================================================================
 export default function run () {
+  process.env['ERN_LOG_LEVEL'] = ernConfig.getValue('loglevel', 'info')
+
   global.log = coloredLog
-  showBanner()
+
+  if (ernConfig.getValue('banner', true)) {
+    showBanner()
+  }
+
   return yargs.commandDir('commands')
-        .demandCommand(1, 'Need a command')
-        .help()
-        .wrap(yargs.terminalWidth())
-        .argv
+    .command('*', 'top level command handler', () => {}, (argv) => {
+      if (argv['show-banner']) {
+        ernConfig.setValue('banner', true)
+      } else if (argv['hide-banner']) {
+        ernConfig.setValue('banner', false)
+      } else if (argv['log-level']) {
+        ernConfig.setValue('loglevel', argv['log-level'])
+      } else {
+        log.error(`Command does not exists. Typo ?`)
+      }
+    })
+    .demandCommand(1, 'Need a command')
+    .help()
+    .wrap(yargs.terminalWidth())
+    .strict()
+    .argv
 }

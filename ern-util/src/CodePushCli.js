@@ -5,15 +5,15 @@ import {
 } from 'child_process'
 import inquirer from 'inquirer'
 
-export default class CodePushCommands {
-  codePushPath: ?string
+export default class CodePushCli {
+  _binaryPath: ?string
 
-  constructor (codePushPath?: string) {
-    this.codePushPath = codePushPath
+  constructor (binaryPath?: string) {
+    this._binaryPath = binaryPath
   }
 
-  get codePushBinaryPath () : string {
-    return this.codePushPath ? this.codePushPath : `code-push`
+  get binaryPath () : string {
+    return this._binaryPath ? this._binaryPath : `code-push`
   }
 
   async releaseReact (
@@ -32,7 +32,7 @@ export default class CodePushCommands {
       askForConfirmation?: boolean
     }) : Promise<boolean> {
     const codePushCommand =
-      `${this.codePushBinaryPath} release-react \
+      `${this.binaryPath} release-react \
 ${appName} \
 ${platform} \
 ${targetBinaryVersion ? `-t ${targetBinaryVersion}` : ''} \

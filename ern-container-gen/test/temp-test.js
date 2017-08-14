@@ -14,16 +14,19 @@ import {
   runYarnUsingMiniAppDeltas
 } from '../src/utils'
 import * as ernUtil from 'ern-util'
-
 const {
   Dependency,
-  DependencyPath
+  DependencyPath,
+  YarnCli
 } = ernUtil
 
 // Spies
-const yarnAddSpy = sinon.stub(ernUtil.yarn, 'yarnAdd').callsFake(() => {})
-const yarnUpgradeSpy = sinon.stub(ernUtil.yarn, 'yarnUpgrade').callsFake(() => {})
-const yarnInstallSpy = sinon.stub(ernUtil.yarn, 'yarnInstall').callsFake(() => {})
+const yarnAddSpy = sinon.stub(YarnCli.prototype, 'add').callsFake(() => {})
+const yarnUpgradeSpy = sinon.stub(YarnCli.prototype, 'upgrade').callsFake(() => {})
+const yarnInstallSpy = sinon.stub(YarnCli.prototype, 'install').callsFake(() => {})
+//const yarnAddSpy = sinon.stub(ernUtil.yarn, 'yarnAdd').callsFake(() => {})
+//const yarnUpgradeSpy = sinon.stub(ernUtil.yarn, 'yarnUpgrade').callsFake(() => {})
+//const yarnInstallSpy = sinon.stub(ernUtil.yarn, 'yarnInstall').callsFake(() => {})
 sinon.stub(ernUtil, 'spin').callsFake(async (msg, prom) => { await prom })
 
 // Intercept log calls

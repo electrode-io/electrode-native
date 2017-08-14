@@ -8,18 +8,18 @@ import {
 } from 'ern-container-gen'
 import {
   cauldron,
+  codepush,
   compatibility,
   MiniApp,
-  Platform
+  Platform,
+  yarn
 } from 'ern-core'
 import {
-  CodePushCommands,
   Dependency,
   DependencyPath,
   findNativeDependencies,
   NativeApplicationDescriptor,
-  spin,
-  yarn
+  spin
 } from 'ern-util'
 import inquirer from 'inquirer'
 import _ from 'lodash'
@@ -80,7 +80,7 @@ platform: 'android' | 'ios', {
       // Create temporary directory and yarn add the miniapp from within it
       const tmpDirPath = tmp.dirSync({ unsafeCleanup: true }).name
       process.chdir(tmpDirPath)
-      await yarn.yarnAdd(miniappPackagePath)
+      await yarn.add(miniappPackagePath)
 
       // Extract full name of miniapp package from the package.json resulting from yarn add command
       const packageJson = require(`${tmpDirPath}/package.json`)
@@ -273,9 +273,7 @@ miniApps: Array<Dependency>, {
   codePushAppName = codePushAppName || await askUserForCodePushAppName()
   codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
 
-  const codePushCommands = new CodePushCommands(`${Platform.currentPlatformVersionPath}/node_modules/.bin/code-push`)
-
-  const codePushWasDone = await codePushCommands.releaseReact(
+  const codePushWasDone = await codepush.releaseReact(
     codePushAppName,
     codePushPlatformName, {
       targetBinaryVersion: codePushTargetVersionName,
