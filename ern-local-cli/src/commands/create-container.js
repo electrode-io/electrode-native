@@ -119,15 +119,15 @@ exports.handler = async function ({
 
     completeNapDescriptor = userSelectedCompleteNapDescriptor
   }
+
   if (completeNapDescriptor) {
     napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-    // get container version from, update patch version and write it to cauldron
-    const containerGeneratorConfig: any = await cauldron.getContainerGeneratorConfig(napDescriptor)
-    cauldronContainerVersion = _.get(containerGeneratorConfig, 'containerVersion')
+    cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
     if (cauldronContainerVersion) {
       cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
     }
   }
+
   //
   // If the user wants to generates a complete container (not --jsOnly)
   // user has to provide a container version

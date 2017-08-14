@@ -297,16 +297,28 @@ export default class CauldronApi {
       }
     }
   }
+
   async updateContainerVersion (
     nativeApplicationName: string,
     platformName: string,
-    containerVersion: string) {
-   // do get config and update the version of containerVersion property in cauldron
-    const platform = await this.getPlatform(nativeApplicationName, platformName)
-    if (platform && platform.config) {
-      const currentContainerVersion = platform.config.containerGenerator.containerVersion
-      platform.config.containerGenerator.containerVersion = containerVersion
-      await this.commit(`Update ${currentContainerVersion} currentContainerVersion to v${containerVersion} for ${nativeApplicationName} ${platformName}`)
+    versionName: string,
+    newContainerVersion: string) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version) {
+      const currentContainerVersion = version.containerVersion
+      version.containerVersion = newContainerVersion
+      await this.commit(`Update ${currentContainerVersion} currentContainerVersion to v${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
+    }
+  }
+
+  async getContainerVersion (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string
+  ) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version) {
+      return version.containerVersion
     }
   }
 

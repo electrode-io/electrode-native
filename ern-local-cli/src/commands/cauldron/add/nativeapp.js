@@ -39,14 +39,14 @@ exports.handler = async function ({
     return log.error('You need to provide a complete native application descriptor to this command !')
   }
 
-  const previousApp = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
+  const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
 
   await cauldron.addNativeApp(napDescriptor, platformVersion
     ? platformVersion.toString().replace('v', '')
     : undefined)
 
-  if (previousApp && (copyPreviousVersionData || await askUserCopyPreviousVersionData())) {
-    const previousNativeAppVersion = _.last(previousApp.versions)
+  if (previousApps && (copyPreviousVersionData || await askUserCopyPreviousVersionData())) {
+    const previousNativeAppVersion = _.last(previousApps.versions)
     // Copy over previous native application version native dependencies
     for (const nativeDep of previousNativeAppVersion.nativeDeps) {
       await cauldron.addNativeDependency(napDescriptor, Dependency.fromString(nativeDep))
@@ -58,6 +58,10 @@ exports.handler = async function ({
     // Copy over previous yarn lock if any
     if (previousNativeAppVersion.yarnlock) {
       await cauldron.setYarnLockId(napDescriptor, previousNativeAppVersion.yarnlock)
+    }
+    // Copy over container version
+    if (previousNativeAppVersion.containerVersion) {
+      await cauldron.updateContainerVersion(napDescriptor, previousNativeAppVersion.containerVersion)
     }
   }
 }

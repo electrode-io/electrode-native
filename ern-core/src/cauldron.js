@@ -509,10 +509,27 @@ class Cauldron {
       return this.cauldron.updateContainerVersion(
         napDescriptor.name,
         napDescriptor.platform,
+        napDescriptor.version,
         containerVersion
       )
     } catch (e) {
       log.error(`[updateContainerVersion] ${e}`)
+      throw e
+    }
+  }
+
+  async getContainerVersion (
+    napDescriptor: NativeApplicationDescriptor
+  ) {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      return this.cauldron.getContainerVersion(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version
+      )
+    } catch (e) {
+      log.error(`[getContainerVersion] ${e}`)
       throw e
     }
   }

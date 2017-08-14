@@ -23,7 +23,8 @@ type TypeCauldronVersion = {
   yarnlock: ?string,
   nativeDeps: Array<string>,
   miniApps: TypeCauldronMiniApps,
-  config?: Object
+  config?: Object,
+  containerVersion: string
 }
 
 type TypeCauldronPlatform = {
