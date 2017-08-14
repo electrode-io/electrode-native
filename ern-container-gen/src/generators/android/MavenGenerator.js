@@ -149,12 +149,13 @@ export default class MavenGenerator {
     try {
       log.debug(`[=== Starting container hull filling ===]`)
 
+      log.debug(`> cd ${ROOT_DIR}`)
       shell.cd(`${ROOT_DIR}`)
       throwIfShellCommandFailed()
 
       const outputFolder = `${paths.outFolder}/android`
 
-      log.debug(`Creating out folder and copying Container Hull to it`)
+      log.debug(`> cp -R ${paths.containerHull}/android/* ${outputFolder}`)
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
       throwIfShellCommandFailed()
 
@@ -162,13 +163,18 @@ export default class MavenGenerator {
       await this.addAndroidPluginHookClasses(plugins, paths)
 
       const reactNativeAarFileName = `react-native-${mustacheView.reactNativeVersion}.aar`
-      log.debug(`Injecting ${reactNativeAarFileName}`)
+      log.debug(`> cp ${paths.reactNativeAars}/${reactNativeAarFileName} ${outputFolder}/lib/libs`)
       shell.cp(`${paths.reactNativeAars}/${reactNativeAarFileName}`, `${outputFolder}/lib/libs`)
       throwIfShellCommandFailed()
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
         let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        if (!pluginConfig.android) {
+          log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
+          continue
+        }
+        log.debug(`> cd ${paths.pluginsDownloadFolder}`)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
         let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
@@ -176,12 +182,15 @@ export default class MavenGenerator {
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
+        log.debug(`> cd ${pluginSourcePath}/${pluginConfig.android.root}`)
         shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`)
         throwIfShellCommandFailed()
         if (pluginConfig.android.moduleName) {
+          log.debug(`> cp -R ${pluginConfig.android.moduleName}/src/main/java ${outputFolder}/lib/src/main`)
           shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${outputFolder}/lib/src/main`)
           throwIfShellCommandFailed()
         } else {
+          log.debug(`> cp -R src/main/java ${outputFolder}/lib/src/main`)
           shell.cp('-R', `src/main/java`, `${outputFolder}/lib/src/main`)
           throwIfShellCommandFailed()
         }
@@ -276,7 +285,12 @@ export default class MavenGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
+        log.debug(`Handling ${plugin.name}`)
         let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        if (!pluginConfig.android) {
+          log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
+          continue
+        }
         let androidPluginHook = pluginConfig.android.pluginHook
         if (androidPluginHook) {
           log.debug(`Adding ${androidPluginHook.name}.java`)
