@@ -85,9 +85,10 @@ exports.handler = async function ({
   mandatory: boolean,
   rollout: string
 }) {
-  const pathToYarnLock = await cauldron.getPathToYarnLock(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
   await performCodePushOtaUpdate(
-    NativeApplicationDescriptor.fromString(completeNapDescriptor),
+    napDescriptor,
     _.map(miniapps, Dependency.fromString), {
       force: force,
       codePushAppName: appName,
