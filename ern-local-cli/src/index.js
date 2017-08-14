@@ -51,6 +51,5 @@ export default function run () {
     .demandCommand(1, 'Need a command')
     .help()
     .wrap(yargs.terminalWidth())
-    .strict()
     .argv
 }
