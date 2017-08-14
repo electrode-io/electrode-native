@@ -196,12 +196,16 @@ static dispatch_semaphore_t semaphore;
         if ([notification.object isKindOfClass:[RCTBridge class]] ) {
             id localModuleInstance = notification.userInfo[@"module"];
             SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
+            SEL transceiverReadySelector = NSSelectorFromString(@"onTransceiverModuleInitialized");
             if ([localModuleInstance  respondsToSelector:selector]) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        dispatch_semaphore_wait(semaphore, 5000);
-                        ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);                    });
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   dispatch_semaphore_wait(semaphore, 5000);
+                    ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
                 });
+            }
+
+            if ([localModuleInstance  respondsToSelector:transceiverReadySelector]) {
+                ((void (*)(id, SEL))[localModuleInstance methodForSelector:transceiverReadySelector])(localModuleInstance, transceiverReadySelector);
             }
         }
     }

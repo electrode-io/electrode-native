@@ -16,7 +16,7 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
      {{{description}}}
      */
     {{/description}}
-    let {{name}}: {{{datatype}}}{{^required}}?{{/required}}{{#defaultValue}} = {{{defaultValue}}}{{/defaultValue}}
+    public let {{name}}: {{{datatype}}}{{^required}}?{{/required}}{{#defaultValue}} = {{{defaultValue}}}{{/defaultValue}}
     {{/isEnum}}
     {{/vars}}
 
