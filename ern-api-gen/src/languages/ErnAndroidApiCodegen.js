@@ -16,16 +16,6 @@ export default class ErnAndroidApiCodegen extends AndroidClientCodegen {
         this.__apiTemplateFiles.put("apirequests.mustache", ".java");
         this.__apiTemplateFiles.put("apievents.mustache", ".java");
         this.__apiDataTemplateFile.put("apidatamodel.mustache", ".java");
-
-        this.__supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
-        this.__supportingFiles.add(new SupportingFile("settings.gradle.mustache", "", "settings.gradle"));
-        this.__supportingFiles.add(new SupportingFile("build.mustache", "", "build.gradle"));
-        this.__supportingFiles.add(new SupportingFile("lib.build.mustache", "lib", "build.gradle"));
-        this.__supportingFiles.add(new SupportingFile("_gitignore", "", ".gitignore"));
-        this.__supportingFiles.add(new SupportingFile("gradlew.mustache", "", "gradlew"));
-        this.__supportingFiles.add(new SupportingFile("gradle-wrapper.properties.mustache", this.gradleWrapperPackage.split(".").join(File.separator), "gradle-wrapper.properties"));
-        this.__supportingFiles.add(new SupportingFile("gradle-wrapper.jar", this.gradleWrapperPackage.split(".").join(File.separator), "gradle-wrapper.jar"));
-        this.__supportingFiles.add(new SupportingFile("AndroidManifest.mustache", "lib/src/main", "AndroidManifest.xml"))
     }
 
     getName() {
