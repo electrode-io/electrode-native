@@ -136,6 +136,20 @@ export default class GithubGenerator {
         this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
       }
     }
+    this.addResources(outputFolder)
+  }
+
+  async addResources (outputFolder: any) {
+    log.debug(`=== ios: adding resources for miniapps`)
+    const containerProjectPath = `${outputFolder}/ElectrodeContainer.xcodeproj/project.pbxproj`
+    const containerIosProject = await this.getIosContainerProject(containerProjectPath)
+
+    readDir(`${outputFolder}/ElectrodeContainer/Resources`, (resourceFile) => {
+      containerIosProject.addResourceFile(`${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
+    })
+    log.debug(`---iOS: Finished adding resource files. `)
+
+    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
   }
 
   copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
@@ -153,7 +167,6 @@ export default class GithubGenerator {
     paths: any,
     mustacheView: any) : Promise<*> {
     log.debug(`[=== Starting container hull filling ===]`)
-
     shell.cd(`${ROOT_DIR}`)
     throwIfShellCommandFailed()
 
@@ -265,12 +278,6 @@ export default class GithubGenerator {
         }
       }
     }
-
-    log.debug(`---iOS: adding resource files. `)
-    readDir(`${outputFolder}/ElectrodeContainer/Resources`, (resourceFile) => {
-      log.debug(`---iOS: reading directory file ${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`)
-      containerIosProject.addResourceFile(`${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
-    })
 
     await this.addiOSPluginHookClasses(containerIosProject, plugins, paths)
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
