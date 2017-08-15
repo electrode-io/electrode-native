@@ -13,6 +13,7 @@ import {
   reactnative as _reactnative,
   codepush as _codepush
 } from './clients'
+import * as _dependencyLookup from './dependencyLookup'
 
 export const pluginUtil = _pluginUtil
 export const handleCopyDirective = _handleCopyDirective
@@ -25,6 +26,7 @@ export const ModuleTypes = _ModuleTypes
 export const yarn = _yarn
 export const reactnative = _reactnative
 export const codepush = _codepush
+export const dependencyLookup = _dependencyLookup
 
 export default ({
   pluginUtil: _pluginUtil,
@@ -37,5 +39,6 @@ export default ({
   ModuleTypes: _ModuleTypes,
   yarn: _yarn,
   reactnative: _reactnative,
-  codepush: _codepush
+  codepush: _codepush,
+  dependencyLookup: _dependencyLookup
 })
