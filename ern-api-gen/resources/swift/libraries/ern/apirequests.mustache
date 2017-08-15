@@ -5,7 +5,10 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{^isEvent}}
 
     public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) {
-        let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}}, reqClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self, respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self, requestCompletionHandler: handler)
+        let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
+    reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}Array<Any>{{/isList}}{{/requestParam}}.self, {{#requestParam}}{{#isList}}reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
+    respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
+    requestCompletionHandler: handler)
         requestHandlerProcessor.execute()
     }
     {{/isEvent}}
