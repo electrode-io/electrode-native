@@ -597,8 +597,7 @@ class Cauldron {
   async throwIfNativeApplicationNotInCauldron (
     napDescriptor: NativeApplicationDescriptor
   ) : Promise<*> {
-    if (!await spin(`Checking if ${napDescriptor.toString()} is declared in the Cauldron`,
-        this.isNativeApplicationInCauldron(napDescriptor))) {
+    if (!await this.isNativeApplicationInCauldron(napDescriptor)) {
       throw new Error(`${napDescriptor.toString()} is not declared in the Cauldron !`)
     }
   }
@@ -606,12 +605,10 @@ class Cauldron {
   async throwIfNativeAppVersionIsReleased (
     napDescriptor: NativeApplicationDescriptor,
     errorMessage: string) : Promise<*> {
-    const nativeAppVersion =
-            await spin(`Checking if ${napDescriptor.toString} is release`,
-            this.cauldron.getVersion(
-              napDescriptor.name,
-              napDescriptor.platform,
-              napDescriptor.version))
+    const nativeAppVersion = await this.cauldron.getVersion(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version)
 
     if (nativeAppVersion.isReleased) {
       throw new Error(errorMessage)
