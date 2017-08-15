@@ -139,10 +139,12 @@ async function addMiniAppToNativeAppInCauldron (
     // Set the container version to use for container generation
     let cauldronContainerVersion
     if (containerVersion) {
+      log.debug(`Using user provided container version : ${containerVersion}`)
       cauldronContainerVersion = containerVersion
     } else {
-      await cauldron.getContainerVersion(napDescriptor)
+      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
       cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
+      log.debug(`Bumping container version from cauldron : ${cauldronContainerVersion}`)
     }
 
     // Run container generator
