@@ -15,7 +15,7 @@ export const nativeApplicationVersion = Joi.object({
   yarnlock: Joi.string().default(null),
   nativeDeps: Joi.array().default([]),
   miniApps: miniApps.default(),
-  containerVersion: Joi.string().required()
+  containerVersion: Joi.string().default('1.0.0')
 })
 
 export const nativeAplicationVersionPatch = Joi.object({
