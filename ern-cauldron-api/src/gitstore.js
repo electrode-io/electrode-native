@@ -23,7 +23,8 @@ type TypeCauldronVersion = {
   yarnlock: ?string,
   nativeDeps: Array<string>,
   miniApps: TypeCauldronMiniApps,
-  config?: Object
+  config?: Object,
+  containerVersion: string
 }
 
 type TypeCauldronPlatform = {
@@ -72,7 +73,9 @@ export default class GitStore extends BaseGit {
     await writeJSON(this._jsonPath, this.cauldron)
     await this.git.addAsync(CAULDRON_FILENAME)
     await this.git.commitAsync(message)
-    await this.push()
+    if (!this._pendingTransaction) {
+      await this.push()
+    }
   }
 
   async getCauldron () : Promise<TypeCauldron> {

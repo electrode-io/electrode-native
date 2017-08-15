@@ -40,6 +40,25 @@ export default class CauldronApi {
   }
 
   // =====================================================================================
+  // TRANSACTION MANAGEMENT
+  // =====================================================================================
+
+  async beginTransaction () {
+    await this._db.beginTransaction()
+    await this._yarnlockStore.beginTransaction()
+  }
+
+  async discardTransaction () {
+    await this._db.discardTransaction()
+    await this._yarnlockStore.discardTransaction()
+  }
+
+  async commitTransaction () {
+    await this._db.commitTransaction()
+    await this._yarnlockStore.commitTransaction()
+  }
+
+  // =====================================================================================
   // READ OPERATIONS
   // =====================================================================================
 
@@ -297,16 +316,33 @@ export default class CauldronApi {
       }
     }
   }
+
   async updateContainerVersion (
     nativeApplicationName: string,
     platformName: string,
-    containerVersion: string) {
-   // do get config and update the version of containerVersion property in cauldron
-    const platform = await this.getPlatform(nativeApplicationName, platformName)
-    if (platform && platform.config) {
-      const currentContainerVersion = platform.config.containerGenerator.containerVersion
-      platform.config.containerGenerator.containerVersion = containerVersion
-      await this.commit(`Update ${currentContainerVersion} currentContainerVersion to v${containerVersion} for ${nativeApplicationName} ${platformName}`)
+    versionName: string,
+    newContainerVersion: string) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version) {
+      version.containerVersion = newContainerVersion
+      await this.commit(`Update container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
+    }
+  }
+
+  async getContainerVersion (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string
+  ) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version && version.containerVersion) {
+      return version.containerVersion
+    } else {
+      // Backward compatibility (when version was stored at platform config level). To deprecate at some point
+      const config = await this.getConfig({ appName: nativeApplicationName, platformName: platformName })
+      if (config && config.containerGenerator) {
+        return config.containerGenerator.containerVersion
+      }
     }
   }
 
@@ -329,7 +365,7 @@ export default class CauldronApi {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version && !version.nativeDeps.includes(dependency.toString())) {
       version.nativeDeps.push(dependency.toString())
-      await this.commit(`Add native dependency ${dependency.name} to ${nativeApplicationName} ${platformName} ${versionName}`)
+      await this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
 
