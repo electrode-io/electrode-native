@@ -2737,6 +2737,43 @@ export default class DefaultCodegen {
         else {
             Log.debug("Property type is not primitive: " + property.datatype);
         }
+
+      if (property.isListContainer && property.items) {
+        if (property.items.isString) {
+          parameter.isItemString = true
+        }
+        else if (property.items.isBoolean) {
+          parameter.isItemBoolean = true
+        }
+        else if (property.items.isLong) {
+          parameter.isItemLong = true
+        }
+        else if (property.items.isInteger) {
+          parameter.isItemInteger = true
+        }
+        else if (property.items.isDouble) {
+          parameter.isItemDouble = true
+        }
+        else if (property.items.isFloat) {
+          parameter.isItemFloat = true
+        }
+        else if (property.items.isByteArray) {
+          parameter.isItemByteArray = true
+        }
+        else if (property.items.isBinary) {
+          parameter.isItemByteArray = true
+        }
+        else if (property.items.isDate) {
+          parameter.isItemDate = true
+        }
+        else if (property.items.isDateTime) {
+          parameter.isItemDateTime = true
+        }
+        else {
+          Log.debug('Property item type is not primitive: ' + property.datatype)
+        }
+      }
+
     }
 
     /**
