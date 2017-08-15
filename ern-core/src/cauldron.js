@@ -30,6 +30,18 @@ class Cauldron {
     return this.cauldron !== undefined
   }
 
+  async beginTransaction () {
+    return this.cauldron.beginTransaction()
+  }
+
+  async discardTransaction () {
+    return this.cauldron.discardTransaction()
+  }
+
+  async commitTransaction () {
+    return this.cauldron.commitTransaction()
+  }
+
   async addNativeApp (
     napDescriptor: NativeApplicationDescriptor,
     ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {

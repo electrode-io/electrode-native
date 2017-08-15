@@ -40,6 +40,25 @@ export default class CauldronApi {
   }
 
   // =====================================================================================
+  // TRANSACTION MANAGEMENT
+  // =====================================================================================
+
+  async beginTransaction () {
+    await this._db.beginTransaction()
+    await this._yarnlockStore.beginTransaction()
+  }
+
+  async discardTransaction () {
+    await this._db.discardTransaction()
+    await this._yarnlockStore.discardTransaction()
+  }
+
+  async commitTransaction () {
+    await this._db.commitTransaction()
+    await this._yarnlockStore.commitTransaction()
+  }
+
+  // =====================================================================================
   // READ OPERATIONS
   // =====================================================================================
 
@@ -339,7 +358,9 @@ export default class CauldronApi {
     versionName: string,
     dependency: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    console.log('here')
     if (version && !version.nativeDeps.includes(dependency.toString())) {
+      console.log('there')
       version.nativeDeps.push(dependency.toString())
       await this.commit(`Add native dependency ${dependency.name} to ${nativeApplicationName} ${platformName} ${versionName}`)
     }

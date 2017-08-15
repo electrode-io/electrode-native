@@ -17,6 +17,7 @@ export default class BaseGit {
   repository: string
   branch: string
   git: any
+  _pendingTransaction: boolean
 
   constructor (
     cauldronPath: string,
@@ -31,6 +32,34 @@ export default class BaseGit {
     let simpleGitInstance = simpleGit(this.path)
     simpleGitInstance.silent(true)
     this.git = Prom.promisifyAll(simpleGitInstance)
+    this._pendingTransaction = false
+  }
+
+  async beginTransaction () {
+    if (this._pendingTransaction) {
+      throw new Error('A transaction is already pending')
+    }
+
+    await this.sync()
+    this._pendingTransaction = true
+  }
+
+  async discardTransaction () {
+    if (!this._pendingTransaction) {
+      throw new Error('No pending transaction to discard')
+    }
+
+    await this.git.resetAsync(['--hard'])
+    this._pendingTransaction = false
+  }
+
+  async commitTransaction () {
+    if (!this._pendingTransaction) {
+      throw new Error('No pending transaction to commit')
+    }
+
+    await this.push()
+    this._pendingTransaction = false
   }
 
   async push () {
@@ -38,6 +67,9 @@ export default class BaseGit {
   }
 
   async sync () {
+    if (this._pendingTransaction) {
+      return Promise.resolve()
+    }
     if (!fs.existsSync(path.resolve(this.path, '.git'))) {
       await this.git.initAsync()
       await this.git.addRemoteAsync(GIT_REMOTE_NAME, this.repository)
