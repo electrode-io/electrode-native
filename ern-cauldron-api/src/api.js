@@ -336,8 +336,14 @@ export default class CauldronApi {
     versionName: string
   ) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
+    if (version && version.containerVersion) {
       return version.containerVersion
+    } else {
+      // Backward compatibility (when version was stored at platform config level). To deprecate at some point
+      const config = await this.getConfig({ appName: nativeApplicationName, platformName: platformName })
+      if (config && config.containerGenerator) {
+        return config.containerGenerator.containerVersion
+      }
     }
   }
 
