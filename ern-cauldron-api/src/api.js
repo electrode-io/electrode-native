@@ -324,9 +324,8 @@ export default class CauldronApi {
     newContainerVersion: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version) {
-      const currentContainerVersion = version.containerVersion
       version.containerVersion = newContainerVersion
-      await this.commit(`Update ${currentContainerVersion} currentContainerVersion to v${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
+      await this.commit(`Update container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
     }
   }
 
@@ -364,11 +363,9 @@ export default class CauldronApi {
     versionName: string,
     dependency: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    console.log('here')
     if (version && !version.nativeDeps.includes(dependency.toString())) {
-      console.log('there')
       version.nativeDeps.push(dependency.toString())
-      await this.commit(`Add native dependency ${dependency.name} to ${nativeApplicationName} ${platformName} ${versionName}`)
+      await this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
 
