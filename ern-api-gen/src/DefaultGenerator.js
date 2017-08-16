@@ -501,33 +501,39 @@ export default class DefaultGenerator extends AbstractGenerator {
           rethrow(e, "Could not generate supporting file \'" + support + "\'", e)
         }
       }
-      let swaggerCodegenIgnore = '.swagger-codegen-ignore'
 
-      let ignoreFileNameTarget = this.config.outputFolder() + File.separator + swaggerCodegenIgnore
-      let ignoreFile = new File(ignoreFileNameTarget)
-      if (!ignoreFile.exists()) {
-        let ignoreFileNameSource = this._resolveFilePath(this.config.getCommonTemplateDir(), swaggerCodegenIgnore)
-        let ignoreFileContents = this.readResourceContents(ignoreFileNameSource)
+      if (this.config.addSwaggerIgnoreFile()) {
+        let swaggerCodegenIgnore = '.swagger-codegen-ignore'
+
+        let ignoreFileNameTarget = this.config.outputFolder() + File.separator + swaggerCodegenIgnore
+        let ignoreFile = new File(ignoreFileNameTarget)
+        if (!ignoreFile.exists()) {
+          let ignoreFileNameSource = this._resolveFilePath(this.config.getCommonTemplateDir(), swaggerCodegenIgnore)
+          let ignoreFileContents = this.readResourceContents(ignoreFileNameSource)
+          try {
+            this.writeToFile(ignoreFileNameTarget, ignoreFileContents)
+          } catch (e) {
+            rethrow(e, 'Could not generate supporting file \'' + swaggerCodegenIgnore + '\'', e)
+          }
+
+          files.push(ignoreFile)
+        }
+      }
+
+      if (this.config.addLicenseFile()) {
+        let apache2License = 'LICENSE'
+        let licenseFileNameTarget = this.config.outputFolder() + File.separator + apache2License
+        let licenseFile = new File(licenseFileNameTarget)
+        let licenseFileNameSource = File.separator + this.config.getCommonTemplateDir() + File.separator + apache2License
+        let licenseFileContents = this.readResourceContents(licenseFileNameSource)
         try {
-          this.writeToFile(ignoreFileNameTarget, ignoreFileContents)
+          this.writeToFile(licenseFileNameTarget, licenseFileContents)
         } catch (e) {
-          rethrow(e, "Could not generate supporting file \'" + swaggerCodegenIgnore + "\'", e)
+          rethrow(e, 'Could not generate LICENSE file \'' + apache2License + '\'', e)
         }
 
-        files.push(ignoreFile)
+        files.push(licenseFile)
       }
-      let apache2License = 'LICENSE'
-      let licenseFileNameTarget = this.config.outputFolder() + File.separator + apache2License
-      let licenseFile = new File(licenseFileNameTarget)
-      let licenseFileNameSource = File.separator + this.config.getCommonTemplateDir() + File.separator + apache2License
-      let licenseFileContents = this.readResourceContents(licenseFileNameSource)
-      try {
-        this.writeToFile(licenseFileNameTarget, licenseFileContents)
-      } catch (e) {
-        rethrow(e, "Could not generate LICENSE file \'" + apache2License + "\'", e)
-      }
-
-      files.push(licenseFile)
     }
     this.config.processSwagger(this.swagger)
     return files

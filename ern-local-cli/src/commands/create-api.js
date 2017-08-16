@@ -59,6 +59,6 @@ exports.handler = async function ({
     apiVersion: apiVersion,
     apiAuthor: apiAuthor
   }).then(() => {
-    log.info(`Done!`)
+    log.info(`Success!`)
   })
 }

@@ -7,7 +7,6 @@ export const BRDIGE_VERSION = 'bridgeVersion'
 export default function mixit (clz, overide) {
   const {processOpts, fromOperation, initalizeCliOptions} = clz.prototype
   Object.assign(clz.prototype, {
-    platformVersion: '1.3.0',
     setBridgeVersion (version) {
       this.bridgeVersion = version
     },
@@ -19,7 +18,6 @@ export default function mixit (clz, overide) {
       if (this.__additionalProperties.containsKey(BRDIGE_VERSION)) {
         this.setBridgeVersion(this.__additionalProperties.get(BRDIGE_VERSION))
       }
-      this.__additionalProperties.put(CodegenConstants.PLATFORM_VERSION, this.platformVersion)
     },
     initalizeCliOptions () {
       initalizeCliOptions && initalizeCliOptions.call(this)
@@ -105,6 +103,14 @@ export default function mixit (clz, overide) {
         return operation.get('hasEvent')
       }
       return true
+    },
+
+    addLicenseFile() {
+        return false;
+    },
+
+    addSwaggerIgnoreFile() {
+        return false;
     },
 
     postProcessOperations (operations) {

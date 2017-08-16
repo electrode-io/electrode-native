@@ -15,18 +15,20 @@ export default class ErnSwiftCodegen extends SwiftCodegen {
         super();
         this.__typeMapping.put("int", "Int");
         this.__typeMapping.put("integer", "Int");
+        this.sourceFolder = ""
     }
 
     modelFileFolder() {
-        return this.__outputFolder + File.separator + this.sourceFolder + 'APIs'
+        return this.__outputFolder
     }
 
     apiFileFolder() {
-        return this.__outputFolder + File.separator + this.sourceFolder + 'APIs'
+        return this.__outputFolder
     }
 
     processOpts() {
         super.processOpts();
+        //Events and Requests files.
         const f = this[`addSupportingFilesFor${SwiftCodegen.camelize(this.getLibrary())}`];
         f && f.call(this);
     }
