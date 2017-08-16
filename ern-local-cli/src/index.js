@@ -34,20 +34,23 @@ export default function run () {
     showBanner()
   }
 
-  return yargs.commandDir('commands')
-    .command('*', 'top level command handler', () => {}, (argv) => {
-      if (argv['show-banner']) {
-        ernConfig.setValue('banner', true)
-      } else if (argv['hide-banner']) {
-        ernConfig.setValue('banner', false)
-      } else if (argv['log-level']) {
-        ernConfig.setValue('loglevel', argv['log-level'])
-      } else {
-        log.error(`Command does not exists. Typo ?`)
-      }
-    })
+  const argv = yargs.argv
+  if (argv['show-banner']) {
+    ernConfig.setValue('banner', true)
+    return log.info(`Banner is now enabled`)
+  } else if (argv['hide-banner']) {
+    ernConfig.setValue('banner', false)
+    return log.info(`Banner is now disabled`)
+  } else if (argv['log-level']) {
+    ernConfig.setValue('loglevel', argv['log-level'])
+    return log.info(`Log level is now set to ${argv['log-level']}`)
+  }
+
+  return yargs
+    .commandDir('commands')
     .demandCommand(1, 'Need a command')
-    .help()
+    .help('help')
     .wrap(yargs.terminalWidth())
+    .strict()
     .argv
 }
