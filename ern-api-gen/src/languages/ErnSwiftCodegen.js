@@ -19,11 +19,11 @@ export default class ErnSwiftCodegen extends SwiftCodegen {
     }
 
     modelFileFolder() {
-        return this.__outputFolder + File.separator + 'APIs'
+        return this.__outputFolder
     }
 
     apiFileFolder() {
-        return this.__outputFolder + File.separator + 'APIs'
+        return this.__outputFolder
     }
 
     processOpts() {

@@ -207,6 +207,7 @@ export default class GithubGenerator {
         if (pluginConfig.ios.copy) {
           for (let copy of pluginConfig.ios.copy) {
             if (this.switchToOldDirectoryStructure(pluginSourcePath, copy.source)) {
+              log.info(`Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`)
               copy.source = 'IOS/IOS/Classes/SwaggersAPIs/*'
             }
           }
@@ -227,6 +228,7 @@ export default class GithubGenerator {
               // Multiple source files
               if (source.from) {
                 if (this.switchToOldDirectoryStructure(pluginSourcePath, source.from)) {
+                  log.info(`Source Copy: Falling back to old directory structure for API(Backward compatibility)`)
                   source.from = 'IOS/IOS/Classes/SwaggersAPIs/*.swift'
                 }
                 const relativeSourcePath = path.dirname(source.from)
@@ -296,10 +298,8 @@ export default class GithubGenerator {
   // Code to keep backward compatibility
   switchToOldDirectoryStructure (pluginSourcePath: string, tail: string): boolean {
     // This is to check if the api referenced during container generation is created using the old or new directory structure to help keep the backward compatibility.
-    if (path.dirname(tail) === `IOS/APIs` && !fs.existsSync(path.join(pluginSourcePath, path.dirname(tail)))) {
-      if (fs.existsSync(path.join(pluginSourcePath, path.dirname('IOS/IOS/Classes/SwaggersAPIs')))) {
-        return true
-      }
+    if (path.dirname(tail) === `IOS` && fs.existsSync(path.join(pluginSourcePath, path.dirname('IOS/IOS/Classes/SwaggersAPIs')))) {
+      return true
     }
     return false
   }

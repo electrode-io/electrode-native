@@ -105,6 +105,10 @@ export default function mixit (clz, overide) {
       return true
     },
 
+    addLicenseFile() {
+        return false;
+    },
+
     postProcessOperations (operations) {
       let ops = operations.get('operations').get('operation')
       let requestDataObjects = []

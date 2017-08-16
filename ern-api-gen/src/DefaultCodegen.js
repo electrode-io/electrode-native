@@ -178,6 +178,10 @@ export default class DefaultCodegen {
         }
     }
 
+    addLicenseFile() {
+        return true;
+    }
+
     postProcessAllModels(objs) {
         if (this.supportsInheritance) {
             const allModels = newHashMap();

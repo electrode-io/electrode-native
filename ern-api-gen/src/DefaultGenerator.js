@@ -516,18 +516,21 @@ export default class DefaultGenerator extends AbstractGenerator {
 
         files.push(ignoreFile)
       }
-      let apache2License = 'LICENSE'
-      let licenseFileNameTarget = this.config.outputFolder() + File.separator + apache2License
-      let licenseFile = new File(licenseFileNameTarget)
-      let licenseFileNameSource = File.separator + this.config.getCommonTemplateDir() + File.separator + apache2License
-      let licenseFileContents = this.readResourceContents(licenseFileNameSource)
-      try {
-        this.writeToFile(licenseFileNameTarget, licenseFileContents)
-      } catch (e) {
-        rethrow(e, "Could not generate LICENSE file \'" + apache2License + "\'", e)
-      }
 
-      files.push(licenseFile)
+      if (this.config.addLicenseFile()) {
+        let apache2License = 'LICENSE'
+        let licenseFileNameTarget = this.config.outputFolder() + File.separator + apache2License
+        let licenseFile = new File(licenseFileNameTarget)
+        let licenseFileNameSource = File.separator + this.config.getCommonTemplateDir() + File.separator + apache2License
+        let licenseFileContents = this.readResourceContents(licenseFileNameSource)
+        try {
+          this.writeToFile(licenseFileNameTarget, licenseFileContents)
+        } catch (e) {
+          rethrow(e, 'Could not generate LICENSE file \'' + apache2License + '\'', e)
+        }
+
+        files.push(licenseFile)
+      }
     }
     this.config.processSwagger(this.swagger)
     return files
