@@ -38,9 +38,32 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         if(bundle.get("{{baseName}}") == null){
             throw new IllegalArgumentException("{{baseName}} property is required");
         }
-
     {{/requiredParams}}
     {{#allParams}}
+        {{#isListContainer}}
+        {{#isItemString}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getStringArray("{{baseName}}"), String.class) : null;
+        {{/isItemString}}
+        {{#isItemInteger}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getIntArray("{{baseName}}"), Integer.class) : null;
+        {{/isItemInteger}}
+        {{#isItemBoolean}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getBooleanArray("{{baseName}}"), Boolean.class) : null;
+        {{/isItemBoolean}}
+        {{#isItemLong}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getLongArray("{{baseName}}"), Long.class) : null;
+        {{/isItemLong}}
+        {{#isItemDouble}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getDoubleArray("{{baseName}}"), Double.class) : null;
+        {{/isItemDouble}}
+        {{#isItemFloat}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getFloatArray("{{baseName}}"), Float.class) : null;
+        {{/isItemFloat}}
+        {{^isPrimitiveType}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getParcelableArray("{{baseName}}"), {{baseType}}.class) : null;
+        {{/isPrimitiveType}}
+        {{/isListContainer}}
+        {{^isListContainer}}
         {{#isString}}
         this.{{baseName}} = bundle.getString("{{baseName}}");
         {{/isString}}
@@ -48,10 +71,10 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
         {{/isInteger}}
         {{#isLong}}
-            this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").longValue();
+        this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").longValue();
         {{/isLong}}
         {{#isFloat}}
-            this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").floatValue();
+        this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").floatValue();
         {{/isFloat}}
         {{#isBoolean}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
@@ -59,6 +82,7 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         {{^isPrimitiveType}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
         {{/isPrimitiveType}}
+        {{/isListContainer}}
     {{/allParams}}
     }
 

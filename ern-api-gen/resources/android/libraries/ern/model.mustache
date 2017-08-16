@@ -41,6 +41,32 @@ public class {{classname}} implements Parcelable, Bridgeable {
 
     {{/requiredVars}}
     {{#allVars}}
+        {{#isListContainer}}
+        {{#items}}
+        {{#isString}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getStringArray("{{baseName}}"), String.class) : null;
+        {{/isString}}
+        {{#isInteger}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getIntArray("{{baseName}}"), Integer.class) : null;
+        {{/isInteger}}
+        {{#isBoolean}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getBooleanArray("{{baseName}}"), Boolean.class) : null;
+        {{/isBoolean}}
+        {{#isLong}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getLongArray("{{baseName}}"), Long.class) : null;
+        {{/isLong}}
+        {{#isDouble}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getDoubleArray("{{baseName}}"), Double.class) : null;
+        {{/isDouble}}
+        {{#isFloat}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getFloatArray("{{baseName}}"), Float.class) : null;
+        {{/isFloat}}
+        {{^isPrimitiveType}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getParcelableArray("{{baseName}}"), {{datatype}}.class) : null;
+        {{/isPrimitiveType}}
+        {{/items}}
+        {{/isListContainer}}
+        {{^isListContainer}}
         {{#isString}}
         this.{{name}} = bundle.getString("{{name}}");
         {{/isString}}
@@ -62,6 +88,7 @@ public class {{classname}} implements Parcelable, Bridgeable {
         {{^isPrimitiveType}}
         this.{{name}} = bundle.containsKey("{{name}}") ? new {{{datatype}}}(bundle.getBundle("{{name}}")) : null;
         {{/isPrimitiveType}}
+        {{/isListContainer}}
     {{/allVars}}
     }
 

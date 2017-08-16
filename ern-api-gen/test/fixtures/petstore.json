@@ -636,6 +636,27 @@
                 "$ref": "#/definitions/User"
               }
             }
+          },
+          {
+            "in": "body",
+            "name": "testParam",
+            "description": "dummy variable",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "body",
+            "name": "testIntArray",
+            "description": "List of integers object",
+            "required": false,
+            "schema": {
+              "type" : "array",
+              "items": {
+                "type": "integer"
+              }
+            }
           }
         ],
         "responses": {
