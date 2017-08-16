@@ -2,7 +2,7 @@
 
 import { generateMiniAppsComposite as _generateMiniAppsComposite } from './utils'
 import _generateContainer from './generateContainer'
-import _GithubGenerator from './generators/ios/GithubGenerator'
+import _GithubGenerator from './generators/ios/IosGenerator'
 import _MavenGenerator from './generators/android/AndroidGenerator'
 
 export const MavenGenerator = _MavenGenerator
