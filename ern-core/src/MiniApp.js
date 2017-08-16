@@ -60,8 +60,15 @@ export default class MiniApp {
 
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
     if (packageJson.ernPlatformVersion) {
-      log.warn(`ernPlatformVersion in ${packageJson.name} MiniApp package.json will be deprecated in next ern version. 
-Please replace with "ern" : { "version" : "${packageJson.ernPlatformVersion}" } instead`)
+      log.warn(`
+=================================================================
+ernPlatformVersion will be deprecated in next ern version. 
+Please replace 
+  "ernPlatformVersion" : "${packageJson.ernPlatformVersion}" 
+with 
+  "ern" : { "version" : "${packageJson.ernPlatformVersion}" }
+in the package.json of ${packageJson.name} MiniApp
+=================================================================`)
     } else if (!packageJson.ern) {
       throw new Error(tagOneLine`No ern section found in ${packageJson.name} package.json. 
 Are you sure this is a MiniApp ?`)
