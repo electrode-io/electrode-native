@@ -94,16 +94,21 @@ exports.handler = async function ({
     // Transform native apps from the cauldron to an Array
     // of completeNapDescriptor strings
     // [Should probably move to a Cauldron util class for reusability]
-    let result = _.flattenDeep(
-      _.map(nativeApps, nativeApp =>
-        _.map(nativeApp.platforms, p =>
-          _.map(p.versions, version =>
-            `${nativeApp.name}:${p.name}:${version.name}`))))
+    let result =
+    _.filter(
+      _.flattenDeep(
+        _.map(nativeApps, nativeApp =>
+          _.map(nativeApp.platforms, p =>
+            _.map(p.versions, version => {
+              if (!version.isReleased) {
+                return `${nativeApp.name}:${p.name}:${version.name}`
+              }
+            })))), elt => elt !== undefined)
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',
       name: 'userSelectedCompleteNapDescriptor',
-      message: 'Choose a native application version for which to generate container',
+      message: 'Choose a non released native application version for which to generate container',
       choices: result
     }])
 
