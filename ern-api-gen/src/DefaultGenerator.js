@@ -501,20 +501,23 @@ export default class DefaultGenerator extends AbstractGenerator {
           rethrow(e, "Could not generate supporting file \'" + support + "\'", e)
         }
       }
-      let swaggerCodegenIgnore = '.swagger-codegen-ignore'
 
-      let ignoreFileNameTarget = this.config.outputFolder() + File.separator + swaggerCodegenIgnore
-      let ignoreFile = new File(ignoreFileNameTarget)
-      if (!ignoreFile.exists()) {
-        let ignoreFileNameSource = this._resolveFilePath(this.config.getCommonTemplateDir(), swaggerCodegenIgnore)
-        let ignoreFileContents = this.readResourceContents(ignoreFileNameSource)
-        try {
-          this.writeToFile(ignoreFileNameTarget, ignoreFileContents)
-        } catch (e) {
-          rethrow(e, "Could not generate supporting file \'" + swaggerCodegenIgnore + "\'", e)
+      if (this.config.addSwaggerIgnoreFile()) {
+        let swaggerCodegenIgnore = '.swagger-codegen-ignore'
+
+        let ignoreFileNameTarget = this.config.outputFolder() + File.separator + swaggerCodegenIgnore
+        let ignoreFile = new File(ignoreFileNameTarget)
+        if (!ignoreFile.exists()) {
+          let ignoreFileNameSource = this._resolveFilePath(this.config.getCommonTemplateDir(), swaggerCodegenIgnore)
+          let ignoreFileContents = this.readResourceContents(ignoreFileNameSource)
+          try {
+            this.writeToFile(ignoreFileNameTarget, ignoreFileContents)
+          } catch (e) {
+            rethrow(e, 'Could not generate supporting file \'' + swaggerCodegenIgnore + '\'', e)
+          }
+
+          files.push(ignoreFile)
         }
-
-        files.push(ignoreFile)
       }
 
       if (this.config.addLicenseFile()) {

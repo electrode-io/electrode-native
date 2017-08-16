@@ -178,9 +178,13 @@ export default class DefaultCodegen {
         }
     }
 
-    addLicenseFile() {
-        return true;
-    }
+  addLicenseFile () {
+    return true
+  }
+
+  addSwaggerIgnoreFile () {
+    return true
+  }
 
     postProcessAllModels(objs) {
         if (this.supportsInheritance) {

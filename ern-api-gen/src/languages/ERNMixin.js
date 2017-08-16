@@ -109,6 +109,10 @@ export default function mixit (clz, overide) {
         return false;
     },
 
+    addSwaggerIgnoreFile() {
+        return false;
+    },
+
     postProcessOperations (operations) {
       let ops = operations.get('operations').get('operation')
       let requestDataObjects = []
