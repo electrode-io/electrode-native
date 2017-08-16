@@ -5,6 +5,7 @@ import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
 import _Manifest from './Manifest'
 import _cauldron from './cauldron'
+import _GitUtils from './GitUtils'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 import * as _ModuleTypes from './ModuleTypes'
@@ -27,6 +28,7 @@ export const yarn = _yarn
 export const reactnative = _reactnative
 export const codepush = _codepush
 export const dependencyLookup = _dependencyLookup
+export const GitUtils = _GitUtils
 
 export default ({
   pluginUtil: _pluginUtil,
@@ -40,5 +42,6 @@ export default ({
   yarn: _yarn,
   reactnative: _reactnative,
   codepush: _codepush,
-  dependencyLookup: _dependencyLookup
+  dependencyLookup: _dependencyLookup,
+  GitUtils: _GitUtils
 })

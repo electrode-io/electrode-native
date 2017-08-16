@@ -2,23 +2,21 @@
 
 import {
   pluginUtil,
-  handleCopyDirective
+  handleCopyDirective,
+  GitUtils
 } from 'ern-core'
 import {
   Dependency,
   mustacheUtils,
   spin
 } from 'ern-util'
+
 import {
   bundleMiniApps,
   downloadPluginSource,
-  gitAdd,
-  gitClone,
-  gitCommit,
-  gitPush,
-  gitTag,
   throwIfShellCommandFailed
 } from '../../utils.js'
+
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
@@ -77,7 +75,7 @@ export default class GithubGenerator {
       shell.cd(paths.outFolder)
       throwIfShellCommandFailed()
       if (mustacheView.ios.targetRepoUrl) {
-        await gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
+        await GitUtils.gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
       }
 
       shell.rm('-rf', `${paths.outFolder}/ios/*`)
@@ -104,10 +102,7 @@ export default class GithubGenerator {
 
       // Publish resulting container to git repo
       if (mustacheView.ios.targetRepoUrl) {
-        await gitAdd()
-        await gitCommit(`Container v${containerVersion}`)
-        await gitTag(`v${containerVersion}`)
-        await gitPush({force: true, tags: true})
+        await GitUtils.gitPublish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
       // Finally, container hull project is fully generated, now let's just
