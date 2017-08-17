@@ -350,7 +350,9 @@ class Cauldron {
         napDescriptor.platform,
         napDescriptor.version,
         dependencyName)
-      return convertToObject ? Dependency.fromString(dependency) : dependency
+      if (dependency) {
+        return convertToObject ? Dependency.fromString(dependency) : dependency
+      }
     } catch (e) {
       log.error(`[getNativeDependency] ${e}`)
       throw e
