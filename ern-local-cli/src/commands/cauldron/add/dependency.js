@@ -14,7 +14,7 @@ import {
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
-exports.command = 'dependency <dependencies>'
+exports.command = 'dependency [dependency]'
 exports.desc = 'Add one or more native dependency(ies) to the Cauldron'
 
 exports.builder = function (yargs: any) {
@@ -34,15 +34,26 @@ exports.builder = function (yargs: any) {
     alias: 'd',
     describe: 'A complete native application descriptor'
   })
+  .option('completeNapDescritor', {
+    type: 'string',
+    alias: 'd',
+    describe: 'A complete native application descriptor'
+  })
+  .option('dependencies', {
+    type: 'array',
+    describe: 'One or more dependencies'
+  })
 }
 
 exports.handler = async function ({
+  dependency,
   dependencies,
   completeNapDescriptor,
   containerVersion,
   force
 }: {
-  dependencies: Array<string>,
+  dependency?: string,
+  dependencies?: Array<string>,
   completeNapDescriptor?: string,
   containerVersion?: string,
   force?: boolean
@@ -84,7 +95,9 @@ exports.handler = async function ({
 
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
 
-  const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+  const dependenciesObjs = dependency
+    ? [ Dependency.fromString(dependency) ]
+    : _.map(dependencies, d => Dependency.fromString(d))
 
   try {
     // Begin a Cauldron transaction
