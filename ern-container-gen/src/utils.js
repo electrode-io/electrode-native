@@ -63,6 +63,7 @@ export async function bundleMiniApps (
     log.debug(`[=== Completed mini apps bundling ===]`)
   } catch (e) {
     log.error('[bundleMiniApps] Something went wrong: ' + e)
+    throw e
   }
 }
 
