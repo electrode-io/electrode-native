@@ -21,6 +21,9 @@ allprojects {
             dirs 'libs'
         }
     }
+    tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked"
+    }
 }
 
 task clean(type: Delete) {
