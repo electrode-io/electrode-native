@@ -1,16 +1,14 @@
 // @flow
 
 import * as ernUtil from 'ern-util'
-import {
-  exec
-} from 'child_process'
 import fs from 'fs'
 import shell from 'shelljs'
 import _ from 'lodash'
 import path from 'path'
 import {
   reactnative,
-  yarn
+  yarn,
+  GitUtils
 } from 'ern-core'
 
 const {
@@ -363,7 +361,7 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
     }
   } else if (pluginOrigin.type === 'git') {
     if (pluginOrigin.version) {
-      await gitClone(pluginOrigin.url, { branch: pluginOrigin.version })
+      await GitUtils.gitClone(pluginOrigin.url, { branch: pluginOrigin.version })
       downloadPath = gitFolderRe.exec(`${pluginOrigin.url}`)[1]
     }
   } else {
@@ -380,122 +378,6 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
 // Given a string returns the same string with its first letter capitalized
 export function capitalizeFirstLetter (str: string) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
-}
-
-// =============================================================================
-// GIT utils
-// =============================================================================
-
-export async function gitClone (
-  url: string,
-  {
-    branch,
-    destFolder
-  } : {
-    branch?: string,
-    destFolder?: string
-  } = {}) {
-  let cmd = branch
-    ? `git clone --branch ${branch} --depth 1 ${url}`
-    : `git clone ${url}`
-
-  if (destFolder) {
-    cmd += ` ${destFolder}`
-  }
-
-  return new Promise((resolve, reject) => {
-    exec(cmd,
-      (err, stdout, stderr) => {
-        // Git seems to send stuff to stderr :(
-        if (err) {
-          log.error(err)
-          reject(err)
-        } else {
-          log.debug(stdout || stderr)
-          resolve(stdout || stderr)
-        }
-      })
-  })
-}
-
-export async function gitAdd () {
-  return new Promise((resolve, reject) => {
-    exec('git add .',
-      (err, stdout, stderr) => {
-        // Git seems to send stuff to stderr :(
-        if (err) {
-          log.error(err)
-          reject(err)
-        } else {
-          log.debug(stdout || stderr)
-          resolve(stdout || stderr)
-        }
-      })
-  })
-}
-
-export async function gitCommit (message: string) {
-  let cmd = message
-          ? `git commit -m '${message}'`
-          : `git commit -m 'no message'`
-
-  return new Promise((resolve, reject) => {
-    exec(cmd,
-      (err, stdout, stderr) => {
-        // Git seems to send stuff to stderr :(
-        if (err) {
-          log.error(err)
-          reject(err)
-        } else {
-          log.debug(stdout || stderr)
-          resolve(stdout || stderr)
-        }
-      })
-  })
-}
-
-export async function gitTag (tag: string) {
-  return new Promise((resolve, reject) => {
-    exec(`git tag ${tag}`,
-      (err, stdout, stderr) => {
-        // Git seems to send stuff to stderr :(
-        if (err) {
-          log.error(err)
-          reject(err)
-        } else {
-          log.debug(stdout || stderr)
-          resolve(stdout || stderr)
-        }
-      })
-  })
-}
-
-export async function gitPush ({
-  remote = 'origin',
-  branch = 'master',
-  force = false,
-  tags = false
-} : {
-  remote?: string,
-  branch?: string,
-  force: boolean,
-  tags: boolean
-} = {}) {
-  let cmd = `git push ${remote} ${branch} ${force ? '--force' : ''} ${tags ? '--tags' : ''}`
-
-  return new Promise((resolve, reject) => {
-    exec(cmd,
-      (err, stdout, stderr) => {
-        // Git seems to send stuff to stderr :(
-        if (err) {
-          log.error(err)
-          reject(err)
-        } else {
-          log.debug(stdout || stderr)
-          resolve(stdout || stderr)
-        }
-      })
-  })
 }
 
 // =============================================================================
