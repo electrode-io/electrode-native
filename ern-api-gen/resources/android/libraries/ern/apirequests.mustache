@@ -20,7 +20,18 @@ final class {{{requestsImplClassName}}} implements {{{classname}}}.Requests {
     {{#operations}}
     {{#operation}}
     {{^isEvent}}
+
     @Override
+    {{#requestParam}}
+    {{#isList}}
+    @SuppressWarnings("unchecked")
+    {{/isList}}
+    {{/requestParam}}
+    {{#responseParam}}
+    {{#isList}}
+    @SuppressWarnings("unchecked")
+    {{/isList}}
+    {{/responseParam}}
     public void register{{{camelizedNickName}}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}> handler) {
         new RequestHandlerProcessor<>(REQUEST_{{{nickNameConstant}}}, {{#requestParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/requestParam}}, {{#responseParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/responseParam}}, handler).execute();
     }
@@ -34,6 +45,11 @@ final class {{{requestsImplClassName}}} implements {{{classname}}}.Requests {
     {{#operation}}
     {{^isEvent}}
     @Override
+    {{#responseParam}}
+    {{#isList}}
+    @SuppressWarnings("unchecked")
+    {{/isList}}
+    {{/responseParam}}
     public void {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{dataType}}} {{paramName}},{{/requestParam}}{{/hasRequestParam}}@NonNull final ElectrodeBridgeResponseListener<{{#responseParam}}{{{dataType}}}{{/responseParam}}> responseListener) {
         new RequestProcessor<>(REQUEST_{{{nickNameConstant}}}, {{#hasRequestParam}} {{#requestParam}}{{paramName}}{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}null{{/hasRequestParam}}, {{#responseParam}}{{#isList}}(Class) List.class, {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/responseParam}}, responseListener).execute();
     }

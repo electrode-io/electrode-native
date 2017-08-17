@@ -20,6 +20,11 @@ final class {{{eventsImplClassName}}} implements {{{classname}}}.Events {
     {{#operation}}
     {{#isEvent}}
     @Override
+    {{#requestParam}}
+    {{#isList}}
+    @SuppressWarnings("unchecked")
+    {{/isList}}
+    {{/requestParam}}
     public void add{{{camelizedNickName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener) {
         new EventListenerProcessor<>(EVENT_{{{nickNameConstant}}}, {{#requestParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/requestParam}}, eventListener).execute();
     }

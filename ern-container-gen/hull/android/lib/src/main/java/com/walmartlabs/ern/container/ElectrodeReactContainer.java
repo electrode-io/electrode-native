@@ -59,7 +59,7 @@ public class ElectrodeReactContainer {
         // developper mode is enabled and android version is Marshmallow
         // or above
         if (reactContainerConfig.isReactNativeDeveloperSupport &&
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 !Settings.canDrawOverlays(application)) {
           Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
           serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
