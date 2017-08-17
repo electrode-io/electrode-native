@@ -532,16 +532,10 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
 
       const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
 
-      const currentMiniAppEntryInCauldronAtSameVersion = nativeApp.isReleased
-                    ? false
-                    : await cauldron.getContainerMiniApp(napDescriptor, miniApp)
-
        // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
-        log.info(`Checking if ${miniApp.toString()} is not already in ${napDescriptor.toString()}`)
-
-        if (currentMiniAppEntryInCauldronAtSameVersion) {
-          throw new Error(`${miniApp.toString()} already in ${napDescriptor.toString()}`)
+        if (nativeApp.isReleased) {
+          throw new Error(`${napDescriptor.toString()} is released. You cannot add or update MiniApps in its container.`)
         }
 
         /* log.info(`Checking that container version match native app version`)
