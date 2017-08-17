@@ -3,8 +3,8 @@
 import {
   generateContainer,
   generateMiniAppsComposite,
-  GithubGenerator,
-  MavenGenerator
+  IosGenerator,
+  AndroidGenerator
 } from 'ern-container-gen'
 import {
   cauldron,
@@ -30,9 +30,9 @@ function createContainerGenerator (platform, config) {
   if (config) {
     switch (config.name) {
       case 'maven':
-        return new MavenGenerator({ mavenRepositoryUrl: config.mavenRepositoryUrl })
+        return new AndroidGenerator({ mavenRepositoryUrl: config.mavenRepositoryUrl })
       case 'github':
-        return new GithubGenerator({ targetRepoUrl: config.targetRepoUrl })
+        return new IosGenerator({ targetRepoUrl: config.targetRepoUrl })
     }
   }
 
@@ -40,9 +40,9 @@ function createContainerGenerator (platform, config) {
   // Create default generator for target native platform
   switch (platform) {
     case 'android':
-      return new MavenGenerator()
+      return new AndroidGenerator()
     case 'ios':
-      return new GithubGenerator()
+      return new IosGenerator()
   }
 }
 

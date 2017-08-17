@@ -25,7 +25,7 @@ import readDir from 'fs-readdir-recursive'
 
 const ROOT_DIR = shell.pwd()
 
-export default class GithubGenerator {
+export default class IosGenerator {
   _targetRepoUrl: string
 
   constructor ({
@@ -37,7 +37,7 @@ export default class GithubGenerator {
   }
 
   get name () : string {
-    return 'GithubGenerator'
+    return 'IosGenerator'
   }
 
   get platform () : string {
