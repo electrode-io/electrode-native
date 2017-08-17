@@ -2,7 +2,6 @@
 
 import {
   cauldron,
-  compatibility,
   MiniApp
 } from 'ern-core'
 import {
@@ -12,25 +11,15 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
-import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'
+import _ from 'lodash'
 
-exports.command = 'miniapp [completeNapDescriptor] [miniappName]'
-exports.desc = 'Publish mini app to given native app'
+exports.command = 'miniapp'
+exports.desc = 'Add one or more MiniApp(s) to a given native application version in the Cauldron'
 
 exports.builder = function (yargs: any) {
   return yargs
-  .option('miniappName', {
-    alias: 'm',
-    describe: 'miniapp that needs to be added to cauldron',
-    example: 'miniapp1@1.0.0 || git@x.y.z.com:Electrode-Mobile-Platform/MiniApp1.git || file://Users/workspace/MiniApp1'
-  })
-  .option('completeNapDescriptor', {
-    alias: 'd',
-    describe: 'Complete native application descriptor',
-    example: 'walmart:android:17.8.0'
-  })
   .option('force', {
     alias: 'f',
     type: 'bool',
@@ -46,18 +35,28 @@ exports.builder = function (yargs: any) {
     type: 'string',
     describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
   })
+  .option('miniapps', {
+    type: 'array',
+    alias: 'm',
+    describe: 'A list of one or more miniapps'
+  })
+  .option('completeNapDescritor', {
+    type: 'string',
+    alias: 'd',
+    describe: 'A complete native application descriptor'
+  })
 }
 
-/// Most/All of the logic here should be moved to the MiniApp class
-/// Commands should remain as much logic less as possible
+// Most/All of the logic here should be moved to the MiniApp class
+// Commands should remain as much logic less as possible
 exports.handler = async function ({
-  miniappName,
+  miniapps,
   completeNapDescriptor,
   force = false,
   ignoreNpmPublish = false,
   containerVersion
 } : {
-  miniappName: string,
+  miniapps?: Array<string>,
   completeNapDescriptor: string,
   force: boolean,
   ignoreNpmPublish: boolean,
@@ -66,75 +65,88 @@ exports.handler = async function ({
   if (containerVersion) {
     ensureValidContainerVersion(containerVersion)
   }
-  if (!completeNapDescriptor && containerVersion) {
-    return log.error(`You can only specify a container version if you provide a specific target native application descriptor`)
-  }
 
-  const miniapp = await getMiniApp(miniappName)
-
-  const miniappPackage = `${miniapp.packageJson.name}@${miniapp.packageJson.version}`
-
-  if (!ignoreNpmPublish && !await miniapp.isPublishedToNpm()) {
-    const {publishToNpm} = await inquirer.prompt({
-      type: 'confirm',
-      name: 'publishToNpm',
-      message: `${miniappPackage} not published to npm. Do you want to publish it`,
-      default: true
-    })
-    if (publishToNpm) {
-      log.info(`Publishing MiniApp to npm`)
-      miniapp.publishToNpm()
-    } else {
-      return log.error(`Sorry you cannot add a MiniApp version that was not published to NPM to the Cauldron.`)
+  //
+  // Construct MiniApp objects array
+  let miniAppsObjs = []
+  if (miniapps) {
+    const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
+    if (_.some(miniAppsDependencyPaths, p => p.isAFileSystemPath || p.isAGitPath)) {
+      return log.error(`You cannot use git or file system paths for MiniApp(s) to be added to the Cauldrom`)
     }
-  }
-
-  if (!completeNapDescriptor) {
-    const compatibilityReport = await compatibility.getNativeAppCompatibilityReport(miniapp)
-    const compatibleVersionsChoices = _.map(compatibilityReport, entry => {
-      if (entry.isCompatible) {
-        const value = `${entry.appName}:${entry.appPlatform}:${entry.appVersion}`
-        const name = entry.isReleased ? `${value} [OTA]` : `${value} [IN-APP]`
-        return {name, value}
-      }
-    }).filter(e => e !== undefined)
-
-    if (compatibleVersionsChoices.length === 0) {
-      return console.log('No compatible native application versions were found :(')
-    }
-
-    const {completeNapDescriptors} = await inquirer.prompt({
-      type: 'checkbox',
-      name: 'completeNapDescriptors',
-      message: 'Select one or more compatible native application version(s)',
-      choices: compatibleVersionsChoices
-    })
-
-    for (const completeNapDescriptor of completeNapDescriptors) {
-      const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-      await addMiniAppToNativeAppInCauldron(napDescriptor, miniapp, { force })
+    for (const miniAppDependencyPath of miniAppsDependencyPaths) {
+      const m = await MiniApp.fromPackagePath(miniAppDependencyPath)
+      miniAppsObjs.push(m)
     }
   } else {
-    const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-    await addMiniAppToNativeAppInCauldron(napDescriptor, miniapp, { force, containerVersion })
+    log.info(`No MiniApps were explicitly provided. Assuming that this command is run from within a MiniApp directory`)
+    miniAppsObjs = [ MiniApp.fromCurrentPath() ]
   }
-}
 
-async function addMiniAppToNativeAppInCauldron (
-  napDescriptor: NativeApplicationDescriptor,
-  miniapp: MiniApp, {
-    containerVersion,
-    force
-  } : {
-    containerVersion?: string,
-    force?: boolean
-  } = {}) {
+  //
+  // If the 'ignoreNpmPublish' flag was not provided, ensure that all
+  // MiniApps versions have been published to NPM
+  if (!ignoreNpmPublish) {
+    log.info(`Ensuring that MiniApp(s) versions have been published to NPM`)
+    for (const miniAppObj of miniAppsObjs) {
+      if (!await miniAppObj.isPublishedToNpm()) {
+        const {publishToNpm} = await inquirer.prompt({
+          type: 'confirm',
+          name: 'publishToNpm',
+          message: `${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} is not published to npm. Do you want to publish it ?`,
+          default: true
+        })
+        if (publishToNpm) {
+          log.info(`Publishing ${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} to npm`)
+          miniAppObj.publishToNpm()
+        } else {
+          return log.error(`Sorry you cannot add a MiniApp version that was not published to NPM to the Cauldron.`)
+        }
+      }
+    }
+  }
+
+  //
+  // If no 'completeNapDescriptor' was provided, list all non released
+  // native application versions from the Cauldron, so that user can
+  // choose one of them to add the MiniApp(s) to
+  if (!completeNapDescriptor) {
+    const nativeApps = await cauldron.getAllNativeApps()
+
+    // Transform native apps from the cauldron to an Array
+    // of completeNapDescriptor strings
+    // [Should probably move to a Cauldron util class for reusability]
+    let result =
+    _.filter(
+      _.flattenDeep(
+        _.map(nativeApps, nativeApp =>
+          _.map(nativeApp.platforms, p =>
+            _.map(p.versions, version => {
+              if (!version.isReleased) {
+                return `${nativeApp.name}:${p.name}:${version.name}`
+              }
+            })))), elt => elt !== undefined)
+
+    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
+      type: 'list',
+      name: 'userSelectedCompleteNapDescriptor',
+      message: 'Choose a non released native application version in which you want to add this MiniApp',
+      choices: result
+    }])
+
+    completeNapDescriptor = userSelectedCompleteNapDescriptor
+  }
+
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+
   try {
     // Begin a Cauldron transaction
     await cauldron.beginTransaction()
 
-    // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-    await miniapp.addToNativeAppInCauldron(napDescriptor, force)
+    for (const miniAppObj of miniAppsObjs) {
+       // Add the MiniApp (and all it's dependencies if needed) to Cauldron
+      await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
+    }
 
     // Set the container version to use for container generation
     let cauldronContainerVersion
@@ -159,20 +171,11 @@ async function addMiniAppToNativeAppInCauldron (
     // Commit Cauldron transaction
     await cauldron.commitTransaction()
 
-    log.info(`MiniApp ${miniapp.name} was succesfully added to ${napDescriptor.toString()} !`)
+    log.info(`MiniApp(s) was/were succesfully added to ${napDescriptor.toString()} in the Cauldron !`)
     log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`An error happened while trying to add MiniApp ${miniapp.name} to ${napDescriptor.toString()}`)
+    log.error(`An error occured while trying to add MiniApp(s) to Cauldron`)
     cauldron.discardTransaction()
-  }
-}
-
-async function getMiniApp (miniappName) {
-  if (miniappName) {
-    return MiniApp.fromPackagePath(DependencyPath.fromString(miniappName))
-  } else {
-    log.debug('Miniapp name was not provided. Will proceed if the command is executed from MiniApp\'s root folder')
-    return MiniApp.fromCurrentPath()
   }
 }
 
