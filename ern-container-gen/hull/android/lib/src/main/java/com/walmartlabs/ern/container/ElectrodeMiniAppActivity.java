@@ -30,7 +30,7 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     @Override
     protected void onPause() {
         super.onPause();
-        mReactActivityDelegate.onPause();
+        mReactActivityDelegate.onPause(this);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mReactActivityDelegate.onDestroy();
+        mReactActivityDelegate.onDestroy(this);
     }
 
     @Override

@@ -67,9 +67,9 @@ public class ElectrodeReactActivityDelegate {
         //
         // Ask for overlay permission. This is required only during development and is needed for
         // ReactNative to display the Debug menu as an overlay
-        if (ElectrodeReactContainer.getInstance().isReactNativeDeveloperSupport() &&
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) &&
-                !Settings.canDrawOverlays(activity)) {
+         if (ElectrodeReactContainer.getInstance().isReactNativeDeveloperSupport()
+                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        && !Settings.canDrawOverlays(activity)) {
             Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(serviceIntent);
@@ -93,19 +93,19 @@ public class ElectrodeReactActivityDelegate {
     /**
      * Call this method from within your Activity onPause
      */
-    public void onPause() {
-        mReactInstanceManager.onHostPause();
+    public void onPause(@NonNull Activity activity) {
+        mReactInstanceManager.onHostPause(activity);
     }
 
     /**
      * Call this method from within your Activity onDestroy
      */
-    public void onDestroy() {
+    public void onDestroy(@NonNull Activity activity) {
         if (mRootView != null) {
             mRootView.unmountReactApplication();
         }
 
-        mReactInstanceManager.onHostDestroy();
+        mReactInstanceManager.onHostDestroy(activity);
     }
 
     /**
