@@ -9,6 +9,7 @@ import {
 } from 'ern-core'
 import inquirer from 'inquirer'
 import _ from 'lodash'
+import Ensure from '../../../lib/Ensure'
 
 exports.command = 'nativeapp <completeNapDescriptor> [platformVersion]'
 exports.desc = 'Add a native application to the cauldron'
@@ -34,10 +35,11 @@ exports.handler = async function ({
   platformVersion?: string,
   copyPreviousVersionData?: boolean
 }) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-  if (napDescriptor.isPartial) {
-    return log.error('You need to provide a complete native application descriptor to this command !')
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
   }
+
+  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
 
   const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
 

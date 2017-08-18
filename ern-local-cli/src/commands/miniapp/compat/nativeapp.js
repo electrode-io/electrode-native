@@ -7,8 +7,9 @@ import {
   compatibility,
   MiniApp
 } from 'ern-core'
+import Ensure from '../../../lib/Ensure'
 
-exports.command = 'nativeapp <napDescriptor>'
+exports.command = 'nativeapp <completeNapDescriptor>'
 exports.desc = 'Check the compatibility of the miniapp with given native app(s)'
 
 exports.builder = function (yargs: any) {
@@ -16,10 +17,11 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function ({
-  napDescriptor
+  completeNapDescriptor
 } : {
-  napDescriptor: string
+  completeNapDescriptor: string
 }) {
-  const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
+  Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  const descriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   compatibility.checkCompatibilityWithNativeApp(MiniApp.fromCurrentPath(), descriptor.name, descriptor.platform, descriptor.version)
 }

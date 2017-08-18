@@ -49,6 +49,9 @@ exports.handler = async function ({
   if (containerVersion) {
     Ensure.isValidContainerVersion(containerVersion)
   }
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
 
    //
   // If no 'completeNapDescriptor' was provided, list all non released

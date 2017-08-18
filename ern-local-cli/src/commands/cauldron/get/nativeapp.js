@@ -6,18 +6,19 @@ import {
 import {
   cauldron
 } from 'ern-core'
+import Ensure from '../../../lib/Ensure'
 
-exports.command = 'nativeapp <napDescriptor>'
+exports.command = 'nativeapp <completeNapDescriptor>'
 exports.desc = 'Get a native application from the cauldron'
 
 exports.builder = {}
 
-exports.handler = function ({
-  napDescriptor
+exports.handler = async function ({
+  completeNapDescriptor
 } : {
-  napDescriptor: string
+  completeNapDescriptor: string
 }) {
-  cauldron.getNativeApp(NativeApplicationDescriptor.fromString(napDescriptor)).then(res => {
-    log.info(JSON.stringify(res, null, 1))
-  })
+  Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  const nativeApp = await cauldron.getNativeApp(NativeApplicationDescriptor.fromString(completeNapDescriptor))
+  log.info(JSON.stringify(nativeApp, null, 1))
 }

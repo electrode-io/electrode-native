@@ -67,6 +67,9 @@ exports.handler = async function ({
   if (containerVersion) {
     Ensure.isValidContainerVersion(containerVersion)
   }
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
 
   //
   // Construct MiniApp objects array
