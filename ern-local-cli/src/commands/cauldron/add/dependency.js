@@ -65,6 +65,7 @@ exports.handler = async function ({
   if (completeNapDescriptor) {
     Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
   }
+  Ensure.noGitOrFilesystemPath(dependency || dependencies)
 
   //
   // If no 'completeNapDescriptor' was provided, list all non released
@@ -100,8 +101,8 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
 
   const dependenciesObjs = dependency
-    ? [ Dependency.fromString(dependency) ]
-    : _.map(dependencies, d => Dependency.fromString(d))
+  ? [ Dependency.fromString(dependency) ]
+  : _.map(dependencies, d => Dependency.fromString(d))
 
   try {
     // Begin a Cauldron transaction

@@ -37,6 +37,7 @@ exports.handler = async function ({
   if (completeNapDescriptor) {
     Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
   }
+  Ensure.noGitOrFilesystemPath(dependency)
 
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   const dependencyObj = Dependency.fromString(dependency)

@@ -61,6 +61,7 @@ exports.handler = async function ({
   if (completeNapDescriptor) {
     Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
   }
+  Ensure.noGitOrFilesystemPath(dependency || dependencies)
 
   //
   // If no 'completeNapDescriptor' was provided, list all non released

@@ -69,15 +69,15 @@ exports.handler = async function ({
   if (completeNapDescriptor) {
     Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
   }
+  if (miniapps) {
+    Ensure.noGitOrFilesystemPath(miniapps)
+  }
 
   //
   // Construct MiniApp objects array
   let miniAppsObjs = []
   if (miniapps) {
     const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
-    if (_.some(miniAppsDependencyPaths, p => p.isAFileSystemPath || p.isAGitPath)) {
-      return log.error(`You cannot use git or file system paths for MiniApp(s) to be added to the Cauldrom`)
-    }
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
       const m = await MiniApp.fromPackagePath(miniAppDependencyPath)
       miniAppsObjs.push(m)
