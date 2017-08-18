@@ -12,6 +12,7 @@ import {
   runCauldronContainerGen
 } from '../../../lib/publication'
 import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import _ from 'lodash'
@@ -115,27 +116,13 @@ exports.handler = async function ({
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
   if (!completeNapDescriptor) {
-    const nativeApps = await cauldron.getAllNativeApps()
-
-    // Transform native apps from the cauldron to an Array
-    // of completeNapDescriptor strings
-    // [Should probably move to a Cauldron util class for reusability]
-    let result =
-    _.filter(
-      _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
-              if (!version.isReleased) {
-                return `${nativeApp.name}:${p.name}:${version.name}`
-              }
-            })))), elt => elt !== undefined)
+    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',
       name: 'userSelectedCompleteNapDescriptor',
       message: 'Choose a non released native application version in which you want to add this MiniApp',
-      choices: result
+      choices: napDescriptorStrings
     }])
 
     completeNapDescriptor = userSelectedCompleteNapDescriptor
