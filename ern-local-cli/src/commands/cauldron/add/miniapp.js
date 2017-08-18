@@ -11,6 +11,7 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import _ from 'lodash'
@@ -63,7 +64,7 @@ exports.handler = async function ({
   containerVersion?: string
 }) {
   if (containerVersion) {
-    ensureValidContainerVersion(containerVersion)
+    Ensure.isValidContainerVersion(containerVersion)
   }
 
   //
@@ -176,11 +177,5 @@ exports.handler = async function ({
   } catch (e) {
     log.error(`An error occured while trying to add MiniApp(s) to Cauldron`)
     cauldron.discardTransaction()
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if ((/^\d+.\d+.\d+$/.test(version) === false) && (version !== 'auto')) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }

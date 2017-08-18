@@ -10,6 +10,7 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
 import semver from 'semver'
 import inquirer from 'inquirer'
 import _ from 'lodash'
@@ -46,7 +47,7 @@ exports.handler = async function ({
   containerVersion?: string
 }) {
   if (containerVersion) {
-    ensureValidContainerVersion(containerVersion)
+    Ensure.isValidContainerVersion(containerVersion)
   }
 
    //
@@ -129,11 +130,5 @@ exports.handler = async function ({
   } catch (e) {
     log.error(`An error happened while trying to remove MiniApp(s) from ${napDescriptor.toString()}`)
     cauldron.discardTransaction()
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if (/^\d+.\d+.\d+$/.test(version) === false) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }

@@ -11,6 +11,7 @@ import semver from 'semver'
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
@@ -59,7 +60,7 @@ exports.handler = async function ({
   force?: boolean
 }) {
   if (containerVersion) {
-    ensureValidContainerVersion(containerVersion)
+    Ensure.isValidContainerVersion(containerVersion)
   }
 
   //
@@ -133,11 +134,5 @@ exports.handler = async function ({
   } catch (e) {
     log.error(`An error happened while trying to add a dependency to ${napDescriptor.toString()}`)
     cauldron.discardTransaction()
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if ((/^\d+.\d+.\d+$/.test(version) === false) && (version !== 'auto')) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }
