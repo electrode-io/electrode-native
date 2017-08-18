@@ -11,6 +11,8 @@ import semver from 'semver'
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
@@ -59,35 +61,25 @@ exports.handler = async function ({
   force?: boolean
 }) {
   if (containerVersion) {
-    ensureValidContainerVersion(containerVersion)
+    Ensure.isValidContainerVersion(containerVersion)
   }
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
+  Ensure.noGitOrFilesystemPath(dependency || dependencies)
 
   //
   // If no 'completeNapDescriptor' was provided, list all non released
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
   if (!completeNapDescriptor) {
-    const nativeApps = await cauldron.getAllNativeApps()
-
-    // Transform native apps from the cauldron to an Array
-    // of completeNapDescriptor strings
-    // [Should probably move to a Cauldron util class for reusability]
-    let result =
-    _.filter(
-      _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
-              if (!version.isReleased) {
-                return `${nativeApp.name}:${p.name}:${version.name}`
-              }
-            })))), elt => elt !== undefined)
+    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',
       name: 'userSelectedCompleteNapDescriptor',
       message: 'Choose a non released native application version to which you want to add this/these dependency(ies)',
-      choices: result
+      choices: napDescriptorStrings
     }])
 
     completeNapDescriptor = userSelectedCompleteNapDescriptor
@@ -96,8 +88,8 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
 
   const dependenciesObjs = dependency
-    ? [ Dependency.fromString(dependency) ]
-    : _.map(dependencies, d => Dependency.fromString(d))
+  ? [ Dependency.fromString(dependency) ]
+  : _.map(dependencies, d => Dependency.fromString(d))
 
   try {
     // Begin a Cauldron transaction
@@ -133,11 +125,5 @@ exports.handler = async function ({
   } catch (e) {
     log.error(`An error happened while trying to add a dependency to ${napDescriptor.toString()}`)
     cauldron.discardTransaction()
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if ((/^\d+.\d+.\d+$/.test(version) === false) && (version !== 'auto')) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }

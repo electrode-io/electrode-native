@@ -11,6 +11,8 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import _ from 'lodash'
@@ -63,7 +65,13 @@ exports.handler = async function ({
   containerVersion?: string
 }) {
   if (containerVersion) {
-    ensureValidContainerVersion(containerVersion)
+    Ensure.isValidContainerVersion(containerVersion)
+  }
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
+  if (miniapps) {
+    Ensure.noGitOrFilesystemPath(miniapps)
   }
 
   //
@@ -71,9 +79,6 @@ exports.handler = async function ({
   let miniAppsObjs = []
   if (miniapps) {
     const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
-    if (_.some(miniAppsDependencyPaths, p => p.isAFileSystemPath || p.isAGitPath)) {
-      return log.error(`You cannot use git or file system paths for MiniApp(s) to be added to the Cauldrom`)
-    }
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
       const m = await MiniApp.fromPackagePath(miniAppDependencyPath)
       miniAppsObjs.push(m)
@@ -111,27 +116,13 @@ exports.handler = async function ({
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
   if (!completeNapDescriptor) {
-    const nativeApps = await cauldron.getAllNativeApps()
-
-    // Transform native apps from the cauldron to an Array
-    // of completeNapDescriptor strings
-    // [Should probably move to a Cauldron util class for reusability]
-    let result =
-    _.filter(
-      _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
-              if (!version.isReleased) {
-                return `${nativeApp.name}:${p.name}:${version.name}`
-              }
-            })))), elt => elt !== undefined)
+    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',
       name: 'userSelectedCompleteNapDescriptor',
       message: 'Choose a non released native application version in which you want to add this MiniApp',
-      choices: result
+      choices: napDescriptorStrings
     }])
 
     completeNapDescriptor = userSelectedCompleteNapDescriptor
@@ -176,11 +167,5 @@ exports.handler = async function ({
   } catch (e) {
     log.error(`An error occured while trying to add MiniApp(s) to Cauldron`)
     cauldron.discardTransaction()
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if ((/^\d+.\d+.\d+$/.test(version) === false) && (version !== 'auto')) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }

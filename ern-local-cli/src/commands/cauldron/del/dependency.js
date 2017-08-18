@@ -11,6 +11,8 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 import _ from 'lodash'
 import semver from 'semver'
 import inquirer from 'inquirer'
@@ -55,35 +57,25 @@ exports.handler = async function ({
   containerVersion?: string
 }) {
   if (containerVersion) {
-    ensureValidContainerVersion(containerVersion)
+    Ensure.isValidContainerVersion(containerVersion)
   }
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
+  Ensure.noGitOrFilesystemPath(dependency || dependencies)
 
   //
   // If no 'completeNapDescriptor' was provided, list all non released
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
   if (!completeNapDescriptor) {
-    const nativeApps = await cauldron.getAllNativeApps()
-
-    // Transform native apps from the cauldron to an Array
-    // of completeNapDescriptor strings
-    // [Should probably move to a Cauldron util class for reusability]
-    let result =
-    _.filter(
-      _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
-              if (!version.isReleased) {
-                return `${nativeApp.name}:${p.name}:${version.name}`
-              }
-            })))), elt => elt !== undefined)
+    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
       type: 'list',
       name: 'userSelectedCompleteNapDescriptor',
       message: 'Choose a non released native application version to which you want to add this/these dependency(ies)',
-      choices: result
+      choices: napDescriptorStrings
     }])
 
     completeNapDescriptor = userSelectedCompleteNapDescriptor
@@ -154,11 +146,5 @@ exports.handler = async function ({
   } catch (e) {
     log.error(`An error happened while trying to remove dependency(ies) from ${napDescriptor.toString()}`)
     cauldron.discardTransaction()
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if (/^\d+.\d+.\d+$/.test(version) === false) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }

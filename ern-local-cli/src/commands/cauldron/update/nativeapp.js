@@ -6,6 +6,7 @@ import {
 import {
   cauldron
 } from 'ern-core'
+import Ensure from '../../../lib/Ensure'
 
 exports.command = 'nativeapp <completeNapDescriptor> [isReleased]'
 exports.desc = 'Update a native application info in cauldron'
@@ -26,6 +27,9 @@ exports.handler = async function ({
   completeNapDescriptor: string,
   isReleased?: boolean
 }) {
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   if (isReleased !== undefined) {
     cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)

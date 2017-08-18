@@ -10,6 +10,7 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
+import Ensure from '../../../lib/Ensure'
 import semver from 'semver'
 
 exports.command = 'dependency <completeNapDescriptor> <dependency>'
@@ -33,6 +34,11 @@ exports.handler = async function ({
   dependency: string,
   containerVersion?: string
 }) {
+  if (completeNapDescriptor) {
+    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  }
+  Ensure.noGitOrFilesystemPath(dependency)
+
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   const dependencyObj = Dependency.fromString(dependency)
 

@@ -68,7 +68,8 @@
     "inquirer": "^3.0.6"
   },
   "devDependencies": {
-    "ern-util-dev": "0.0.1"
+    "ern-util-dev": "0.0.1",
+    "sinon": "3.1.0"
   },
   "engines": {
     "node": ">4"

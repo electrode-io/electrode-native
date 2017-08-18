@@ -15,6 +15,7 @@ import {
   runLocalContainerGen,
   runCauldronContainerGen
 } from '../lib/publication'
+import Ensure from '../lib/Ensure'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
@@ -81,7 +82,7 @@ exports.handler = async function ({
 }) {
   let napDescriptor: ?NativeApplicationDescriptor
 
-  ensureValidContainerVersion(version)
+  Ensure.isValidContainerVersion(version)
 
   //
   // Full native application selector was not provided.
@@ -166,11 +167,5 @@ exports.handler = async function ({
         version,
         { publish: false, outDir })
     }
-  }
-}
-
-function ensureValidContainerVersion (version: string) {
-  if ((/^\d+.\d+.\d+$/.test(version) === false) && (version !== 'auto')) {
-    throw new Error(`Invalid version (${version}) for container. Please use a valid version in the form x.y.z`)
   }
 }

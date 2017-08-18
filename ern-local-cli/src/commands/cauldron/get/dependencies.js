@@ -6,6 +6,7 @@ import {
 import {
   cauldron
 } from 'ern-core'
+import Ensure from '../../../lib/Ensure'
 
 exports.command = 'dependencies <completeNapDescriptor>'
 exports.desc = 'Get all the native dependencies of a given native application'
@@ -17,6 +18,7 @@ exports.handler = async function ({
 } : {
   completeNapDescriptor: string
 }) {
+  Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   const dependencies = await cauldron.getNativeDependencies(napDescriptor)
   for (const dependency of dependencies) {
