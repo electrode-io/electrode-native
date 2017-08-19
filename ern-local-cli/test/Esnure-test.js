@@ -2,8 +2,45 @@ import {
   assert,
   expect
 } from 'chai'
+import {
+  cauldron
+} from 'ern-core'
+import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
 import * as fixtures from './fixtures/common'
+
+const getNativeAppStub = sinon.stub(cauldron, 'getNativeApp')
+
+function resolveCauldronGetNativeAppWith(data) {
+  getNativeAppStub.resolves(data)
+}
+
+after(() => {
+  getNativeAppStub.restore()
+})
+
+// Utility function that returns true if a given async function execution
+// throws an exception, false otherwise
+// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
+async function doesThrow (asyncFn, ...args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === true
+}
+
+async function doesNotThrow (asyncFn, ... args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === false
+}
 
 describe('Ensure.js', () => {
   // ==========================================================
@@ -54,6 +91,21 @@ describe('Ensure.js', () => {
       it('should throw if git or file system path', () => {
         expect(() => Ensure.noGitOrFilesystemPath(obj), `does not throw for ${obj}`).to.throw
       })
+    })
+  })
+
+  // ==========================================================
+  // napDescritorExistsInCauldron
+  // ==========================================================
+  describe('napDescritorExistsInCauldron', () => {
+    it('should not throw if nap descriptor exists in Cauldron', async () => {
+      resolveCauldronGetNativeAppWith({})
+      assert(await doesNotThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
+    })
+
+    it('should throw if nap descriptor does not exist in Cauldron', async () => {
+      resolveCauldronGetNativeAppWith(undefined)
+      assert(await doesThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
     })
   })
 })

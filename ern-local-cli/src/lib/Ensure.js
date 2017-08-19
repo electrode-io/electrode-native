@@ -4,6 +4,9 @@ import {
   DependencyPath,
   NativeApplicationDescriptor
 } from 'ern-util'
+import {
+  cauldron
+} from 'ern-core'
 
 export default class Ensure {
   static isValidContainerVersion (version: string) {
@@ -26,6 +29,14 @@ export default class Ensure {
       if (dependencyPath.isAFileSystemPath || dependencyPath.isAGitPath) {
         throw new Error(`You cannot use git or file system paths`)
       }
+    }
+  }
+
+  static async napDescritorExistsInCauldron (napDescriptor: string) {
+    const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
+    const result = await cauldron.getNativeApp(descriptor)
+    if (!result) {
+      throw new Error(`${descriptor.toString()} descriptor does not exist in Cauldron`)
     }
   }
 }

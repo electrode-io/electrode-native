@@ -31,6 +31,11 @@ function useCauldronFixture(fixture) {
   getAllNativeAppsStub.resolves(fixture.nativeApps)
 }
 
+after(() => {
+  getAllNativeAppsStub.restore()
+  processExitStub.restore()
+})
+
 describe('utils.js', () => {
   // ==========================================================
   // getNapDescriptorStringsFromCauldron
