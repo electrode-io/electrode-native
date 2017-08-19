@@ -14,7 +14,7 @@ export default class Ensure {
 
   static isCompleteNapDescriptorString (str: string) {
     if (NativeApplicationDescriptor.fromString(str).isPartial) {
-      throw new Error(`Please use a valid native application complete descriptor in the form name:platform:version`)
+      throw new Error(`Please use a complete native application descriptor in the form name:platform:version`)
     }
   }
 

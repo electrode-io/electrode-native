@@ -10,7 +10,6 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
 import utils from '../../../lib/utils'
 import semver from 'semver'
 import inquirer from 'inquirer'
@@ -31,34 +30,38 @@ exports.builder = function (yargs: any) {
     alias: 'm',
     describe: 'A list of one or more miniapps'
   })
+  .option('descriptor', {
+    type: 'string',
+    alias: 'd',
+    describe: 'A complete native application descriptor'
+  })
 }
 
 // This command does not actually removes or offers to remove dependencies that were
 // only used by this MiniApp
 // It could be done as a future improvement to this command
 exports.handler = async function ({
-  completeNapDescriptor,
+  descriptor,
   miniapp,
   miniapps,
   containerVersion
 } : {
-  completeNapDescriptor?: string,
+  descriptor?: string,
   miniapp?: string,
-  miniapps?: Array<String>,
+  miniapps?: Array<string>,
   containerVersion?: string
 }) {
-  if (containerVersion) {
-    Ensure.isValidContainerVersion(containerVersion)
-  }
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
+  utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: miniapp || miniapps
+  })
 
    //
   // If no 'completeNapDescriptor' was provided, list all non released
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
-  if (!completeNapDescriptor) {
+  if (!descriptor) {
     const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
@@ -68,10 +71,10 @@ exports.handler = async function ({
       choices: napDescriptorStrings
     }])
 
-    completeNapDescriptor = userSelectedCompleteNapDescriptor
+    descriptor = userSelectedCompleteNapDescriptor
   }
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   const miniAppsAsDeps = miniapp
     ? [ Dependency.fromString(miniapp) ]
@@ -80,7 +83,7 @@ exports.handler = async function ({
   for (const miniAppAsDep of miniAppsAsDeps) {
     const miniAppString = await cauldron.getContainerMiniApp(napDescriptor, miniAppAsDep.toString())
     if (!miniAppString) {
-      return log.error(`${miniAppAsDep.toString()} MiniApp is not present in ${completeNapDescriptor} container !`)
+      return log.error(`${miniAppAsDep.toString()} MiniApp is not present in ${descriptor} container !`)
     }
   }
 

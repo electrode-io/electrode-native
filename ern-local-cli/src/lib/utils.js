@@ -4,6 +4,7 @@ import {
   cauldron
 } from 'ern-core'
 import _ from 'lodash'
+import Ensure from './Ensure'
 
 async function getNapDescriptorStringsFromCauldron ({
   platform,
@@ -26,6 +27,32 @@ async function getNapDescriptorStringsFromCauldron ({
                 })))), elt => elt !== undefined)
 }
 
+function logErrorAndExitIfNotSatisfied ({
+  noGitOrFilesystemPath,
+  isValidContainerVersion,
+  isCompleteNapDescriptorString
+} : {
+  noGitOrFilesystemPath?: string | Array<string>,
+  isValidContainerVersion?: string,
+  isCompleteNapDescriptorString?: string
+} = {}) {
+  try {
+    if (isValidContainerVersion) {
+      Ensure.isValidContainerVersion(isValidContainerVersion)
+    }
+    if (isCompleteNapDescriptorString) {
+      Ensure.isCompleteNapDescriptorString(isCompleteNapDescriptorString)
+    }
+    if (noGitOrFilesystemPath) {
+      Ensure.noGitOrFilesystemPath(noGitOrFilesystemPath)
+    }
+  } catch (e) {
+    log.error(e.message)
+    process.exit(1)
+  }
+}
+
 export default {
-  getNapDescriptorStringsFromCauldron
+  getNapDescriptorStringsFromCauldron,
+  logErrorAndExitIfNotSatisfied
 }

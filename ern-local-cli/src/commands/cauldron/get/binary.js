@@ -6,6 +6,7 @@ import {
 import {
   cauldron
 } from 'ern-core'
+import utils from '../../../lib/utils'
 
 exports.command = 'binary <completeNapDescriptor>'
 exports.desc = 'Get the native binary of a given native application'
@@ -17,5 +18,9 @@ exports.handler = async function ({
 } : {
   completeNapDescriptor: string
 }) {
+  utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: completeNapDescriptor
+  })
+
   await cauldron.getNativeBinary(NativeApplicationDescriptor.fromString(completeNapDescriptor))
 }

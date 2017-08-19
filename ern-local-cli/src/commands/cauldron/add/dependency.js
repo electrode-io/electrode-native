@@ -11,7 +11,6 @@ import semver from 'semver'
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 import inquirer from 'inquirer'
@@ -31,12 +30,7 @@ exports.builder = function (yargs: any) {
     type: 'bool',
     describe: 'Force adding the dependency(ies) (if you really know what you\'re doing)'
   })
-  .option('completeNapDescritor', {
-    type: 'string',
-    alias: 'd',
-    describe: 'A complete native application descriptor'
-  })
-  .option('completeNapDescritor', {
+  .option('descriptor', {
     type: 'string',
     alias: 'd',
     describe: 'A complete native application descriptor'
@@ -50,29 +44,26 @@ exports.builder = function (yargs: any) {
 exports.handler = async function ({
   dependency,
   dependencies,
-  completeNapDescriptor,
+  descriptor,
   containerVersion,
   force
 }: {
   dependency?: string,
   dependencies?: Array<string>,
-  completeNapDescriptor?: string,
+  descriptor?: string,
   containerVersion?: string,
   force?: boolean
 }) {
-  if (containerVersion) {
-    Ensure.isValidContainerVersion(containerVersion)
-  }
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
-  Ensure.noGitOrFilesystemPath(dependency || dependencies)
+  utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: dependency || dependencies
+  })
 
-  //
   // If no 'completeNapDescriptor' was provided, list all non released
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
-  if (!completeNapDescriptor) {
+  if (!descriptor) {
     const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
@@ -82,10 +73,10 @@ exports.handler = async function ({
       choices: napDescriptorStrings
     }])
 
-    completeNapDescriptor = userSelectedCompleteNapDescriptor
+    descriptor = userSelectedCompleteNapDescriptor
   }
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   const dependenciesObjs = dependency
   ? [ Dependency.fromString(dependency) ]

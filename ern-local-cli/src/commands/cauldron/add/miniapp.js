@@ -11,7 +11,6 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
 import utils from '../../../lib/utils'
 import inquirer from 'inquirer'
 import semver from 'semver'
@@ -42,7 +41,7 @@ exports.builder = function (yargs: any) {
     alias: 'm',
     describe: 'A list of one or more miniapps'
   })
-  .option('completeNapDescritor', {
+  .option('descriptor', {
     type: 'string',
     alias: 'd',
     describe: 'A complete native application descriptor'
@@ -53,26 +52,22 @@ exports.builder = function (yargs: any) {
 // Commands should remain as much logic less as possible
 exports.handler = async function ({
   miniapps,
-  completeNapDescriptor,
+  descriptor,
   force = false,
   ignoreNpmPublish = false,
   containerVersion
 } : {
   miniapps?: Array<string>,
-  completeNapDescriptor: string,
+  descriptor: string,
   force: boolean,
   ignoreNpmPublish: boolean,
   containerVersion?: string
 }) {
-  if (containerVersion) {
-    Ensure.isValidContainerVersion(containerVersion)
-  }
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
-  if (miniapps) {
-    Ensure.noGitOrFilesystemPath(miniapps)
-  }
+  utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: miniapps
+  })
 
   //
   // Construct MiniApp objects array
@@ -115,7 +110,7 @@ exports.handler = async function ({
   // If no 'completeNapDescriptor' was provided, list all non released
   // native application versions from the Cauldron, so that user can
   // choose one of them to add the MiniApp(s) to
-  if (!completeNapDescriptor) {
+  if (!descriptor) {
     const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
 
     const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
@@ -125,10 +120,10 @@ exports.handler = async function ({
       choices: napDescriptorStrings
     }])
 
-    completeNapDescriptor = userSelectedCompleteNapDescriptor
+    descriptor = userSelectedCompleteNapDescriptor
   }
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   try {
     // Begin a Cauldron transaction

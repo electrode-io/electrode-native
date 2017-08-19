@@ -6,7 +6,7 @@ import {
 import {
   cauldron
 } from 'ern-core'
-import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 
 exports.command = 'nativeapp <completeNapDescriptor>'
 exports.desc = 'Remove a native application from the cauldron'
@@ -18,6 +18,9 @@ exports.handler = async function ({
 } : {
   completeNapDescriptor: string
 }) {
-  Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: completeNapDescriptor
+  })
+
   await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(completeNapDescriptor))
 }
