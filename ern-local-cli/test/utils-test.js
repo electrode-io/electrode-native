@@ -100,8 +100,8 @@ describe('utils.js', () => {
 
   describe('logErrorAndExitIfNotSatisfied', () => {
     fixtures.invalidContainerVersions.forEach(version => {
-      it('[isValidContainerVersion] Shoud log error and exit process for invalid container version', () => {
-        utils.logErrorAndExitIfNotSatisfied({
+      it('[isValidContainerVersion] Shoud log error and exit process for invalid container version', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
           isValidContainerVersion: version
         })
         assertLoggedErrorAndExitedProcess()
@@ -109,8 +109,8 @@ describe('utils.js', () => {
     })
 
     fixtures.validContainerVersions.forEach(version => {
-      it('[isValidContainerVersion] Should not log error nor exit process for valid container version', () => {
-        utils.logErrorAndExitIfNotSatisfied({
+      it('[isValidContainerVersion] Should not log error nor exit process for valid container version', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
           isValidContainerVersion: version
         })
         assertNoErrorLoggedAndNoProcessExit()
@@ -118,8 +118,8 @@ describe('utils.js', () => {
     })
 
     fixtures.incompleteNapDescriptors.forEach(napDescriptor => {
-      it('[isCompleteNapDescriptorString] Should log error and exit process for incomplete nap descriptor', () => {
-        utils.logErrorAndExitIfNotSatisfied({
+      it('[isCompleteNapDescriptorString] Should log error and exit process for incomplete nap descriptor', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
           isCompleteNapDescriptorString: napDescriptor
         })
         assertLoggedErrorAndExitedProcess()
@@ -127,8 +127,8 @@ describe('utils.js', () => {
     })
 
     fixtures.completeNapDescriptors.forEach(napDescriptor => {
-      it('[isCompleteNapDescriptorString] Should not log error nor exit process for complete nap descriptor', () => {
-        utils.logErrorAndExitIfNotSatisfied({
+      it('[isCompleteNapDescriptorString] Should not log error nor exit process for complete nap descriptor', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
           isCompleteNapDescriptorString: napDescriptor
         })
         assertNoErrorLoggedAndNoProcessExit()
@@ -136,8 +136,8 @@ describe('utils.js', () => {
     })
 
     fixtures.withGitOrFileSystemPath.forEach(napDescriptor => {
-      it('[noGitOrFilesystemPath] Should log error and exit process if path is/contains a git or file system scheme', () => {
-        utils.logErrorAndExitIfNotSatisfied({
+      it('[noGitOrFilesystemPath] Should log error and exit process if path is/contains a git or file system scheme', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
           noGitOrFilesystemPath: napDescriptor
         })
         assertLoggedErrorAndExitedProcess()
@@ -145,8 +145,8 @@ describe('utils.js', () => {
     })
 
     fixtures.withoutGitOrFileSystemPath.forEach(napDescriptor => {
-      it('[noGitOrFilesystemPath] Should not log error not exit process if path is not/ does not contain a git or file system scheme', () => {
-        utils.logErrorAndExitIfNotSatisfied({
+      it('[noGitOrFilesystemPath] Should not log error not exit process if path is not/ does not contain a git or file system scheme', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
           noGitOrFilesystemPath: napDescriptor
         })
         assertNoErrorLoggedAndNoProcessExit()

@@ -27,14 +27,16 @@ async function getNapDescriptorStringsFromCauldron ({
                 })))), elt => elt !== undefined)
 }
 
-function logErrorAndExitIfNotSatisfied ({
+async function logErrorAndExitIfNotSatisfied ({
   noGitOrFilesystemPath,
   isValidContainerVersion,
-  isCompleteNapDescriptorString
+  isCompleteNapDescriptorString,
+  napDescriptorExistInCauldron
 } : {
   noGitOrFilesystemPath?: string | Array<string>,
   isValidContainerVersion?: string,
-  isCompleteNapDescriptorString?: string
+  isCompleteNapDescriptorString?: string,
+  napDescriptorExistInCauldron?: string
 } = {}) {
   try {
     if (isValidContainerVersion) {
@@ -45,6 +47,9 @@ function logErrorAndExitIfNotSatisfied ({
     }
     if (noGitOrFilesystemPath) {
       Ensure.noGitOrFilesystemPath(noGitOrFilesystemPath)
+    }
+    if (napDescriptorExistInCauldron) {
+      await Ensure.napDescritorExistsInCauldron(napDescriptorExistInCauldron)
     }
   } catch (e) {
     log.error(e.message)

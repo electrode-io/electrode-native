@@ -75,6 +75,7 @@ after(() => {
 
 // Utility function that returns true if a given async function execution
 // throws an exception, false otherwise
+// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
 async function doesThrow (asyncFn, ...args) {
   let threwError = false
   try {

@@ -63,7 +63,7 @@ exports.handler = async function ({
   ignoreNpmPublish: boolean,
   containerVersion?: string
 }) {
-  utils.logErrorAndExitIfNotSatisfied({
+  await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapps

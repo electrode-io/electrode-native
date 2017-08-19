@@ -18,7 +18,7 @@ exports.handler = async function ({
 } : {
   descriptor: string
 }) {
-  utils.logErrorAndExitIfNotSatisfied({
+  await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor
   })
 

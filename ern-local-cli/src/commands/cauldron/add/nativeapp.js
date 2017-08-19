@@ -35,7 +35,7 @@ exports.handler = async function ({
   platformVersion?: string,
   copyPreviousVersionData?: boolean
 }) {
-  utils.logErrorAndExitIfNotSatisfied({
+  await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: completeNapDescriptor
   })
 
