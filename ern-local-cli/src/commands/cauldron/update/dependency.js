@@ -10,10 +10,10 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 import semver from 'semver'
 
-exports.command = 'dependency <completeNapDescriptor> <dependency>'
+exports.command = 'dependency <descriptor> <dependency>'
 exports.desc = 'Update a native dependency version'
 
 exports.builder = function (yargs: any) {
@@ -26,20 +26,22 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-  completeNapDescriptor,
+  descriptor,
   dependency,
   containerVersion
 } : {
-  completeNapDescriptor: string,
+  descriptor: string,
   dependency: string,
   containerVersion?: string
 }) {
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
-  Ensure.noGitOrFilesystemPath(dependency)
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: dependency
+  })
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   const dependencyObj = Dependency.fromString(dependency)
 
   if (!dependencyObj.isVersioned) {

@@ -23,5 +23,5 @@ exports.handler = async function ({
     napDescriptorExistInCauldron: descriptor
   })
 
-  await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(completeNapDescriptor))
+  await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(descriptor))
 }
