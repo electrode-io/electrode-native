@@ -12,7 +12,6 @@ import {
 } from '../../../lib/publication'
 import utils from '../../../lib/utils'
 import semver from 'semver'
-import inquirer from 'inquirer'
 import _ from 'lodash'
 
 exports.command = 'miniapp [miniapp]'
@@ -58,21 +57,8 @@ exports.handler = async function ({
     napDescriptorExistInCauldron: descriptor
   })
 
-   //
-  // If no 'completeNapDescriptor' was provided, list all non released
-  // native application versions from the Cauldron, so that user can
-  // choose one of them to add the MiniApp(s) to
   if (!descriptor) {
-    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
-
-    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
-      type: 'list',
-      name: 'userSelectedCompleteNapDescriptor',
-      message: 'Choose a non released native application version in which you want to add this MiniApp',
-      choices: napDescriptorStrings
-    }])
-
-    descriptor = userSelectedCompleteNapDescriptor
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)

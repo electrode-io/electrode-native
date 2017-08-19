@@ -12,7 +12,6 @@ import {
 import {
   runCauldronContainerGen
 } from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
 import utils from '../../../lib/utils'
 import inquirer from 'inquirer'
 import semver from 'semver'
@@ -43,7 +42,7 @@ exports.builder = function (yargs: any) {
     alias: 'm',
     describe: 'A list of one or more miniapps'
   })
-  .option('completeNapDescritor', {
+  .option('descriptor', {
     type: 'string',
     alias: 'd',
     describe: 'A complete native application descriptor'
@@ -54,26 +53,23 @@ exports.builder = function (yargs: any) {
 // Commands should remain as much logic less as possible
 exports.handler = async function ({
   miniapps,
-  completeNapDescriptor,
+  descriptor,
   force = false,
   ignoreNpmPublish = false,
   containerVersion
 } : {
   miniapps?: Array<string>,
-  completeNapDescriptor: string,
+  descriptor: string,
   force: boolean,
   ignoreNpmPublish: boolean,
   containerVersion?: string
 }) {
-  if (containerVersion) {
-    Ensure.isValidContainerVersion(containerVersion)
-  }
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
-  if (miniapps) {
-    Ensure.noGitOrFilesystemPath(miniapps)
-  }
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: miniapps
+  })
 
   //
   // Construct MiniApp objects array
@@ -112,24 +108,11 @@ exports.handler = async function ({
     }
   }
 
-  //
-  // If no 'completeNapDescriptor' was provided, list all non released
-  // native application versions from the Cauldron, so that user can
-  // choose one of them to add the MiniApp(s) to
-  if (!completeNapDescriptor) {
-    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
-
-    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
-      type: 'list',
-      name: 'userSelectedCompleteNapDescriptor',
-      message: 'Choose a non released native application version in which you want to add this MiniApp',
-      choices: napDescriptorStrings
-    }])
-
-    completeNapDescriptor = userSelectedCompleteNapDescriptor
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   //
   // Make sure that MiniApp(s) exist in the native application version

@@ -14,7 +14,6 @@ import {
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 import semver from 'semver'
-import inquirer from 'inquirer'
 
 exports.command = 'dependency [dependency]'
 exports.desc = 'Remove one or more dependency(ies) from the cauldron'
@@ -62,21 +61,8 @@ exports.handler = async function ({
     napDescriptorExistInCauldron: descriptor
   })
 
-  //
-  // If no 'completeNapDescriptor' was provided, list all non released
-  // native application versions from the Cauldron, so that user can
-  // choose one of them to add the MiniApp(s) to
   if (!descriptor) {
-    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
-
-    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
-      type: 'list',
-      name: 'userSelectedCompleteNapDescriptor',
-      message: 'Choose a non released native application version to which you want to add this/these dependency(ies)',
-      choices: napDescriptorStrings
-    }])
-
-    descriptor = userSelectedCompleteNapDescriptor
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)

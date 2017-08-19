@@ -4,14 +4,21 @@ import {
   cauldron
 } from 'ern-core'
 import _ from 'lodash'
+import inquirer from 'inquirer'
 import Ensure from './Ensure'
 
+//
+// Retrieves all native applications versions from the Cauldron, optionaly
+// filtered by platform/and or release status and returns them as an array
+// of native application descriptor strings
 async function getNapDescriptorStringsFromCauldron ({
   platform,
-  onlyReleasedVersions
+  onlyReleasedVersions,
+  onlyNonReleasedVersions
 } : {
   platform?: 'ios' | 'android',
-  onlyReleasedVersions?: boolean
+  onlyReleasedVersions?: boolean,
+  onlyNonReleasedVersions?: boolean
 } = {}) {
   const nativeApps = await cauldron.getAllNativeApps()
   return _.filter(
@@ -20,13 +27,17 @@ async function getNapDescriptorStringsFromCauldron ({
                 _.map(nativeApp.platforms, p =>
                 _.map(p.versions, version => {
                   if (!platform || platform === p.name) {
-                    if (!onlyReleasedVersions || version.isReleased) {
+                    if ((version.isReleased && !onlyNonReleasedVersions) ||
+                       (!version.isReleased && !onlyReleasedVersions)) {
                       return `${nativeApp.name}:${p.name}:${version.name}`
                     }
                   }
                 })))), elt => elt !== undefined)
 }
 
+//
+// Ensure that some conditions are satisifed
+// If not, log exception error message and exit process
 async function logErrorAndExitIfNotSatisfied ({
   noGitOrFilesystemPath,
   isValidContainerVersion,
@@ -57,7 +68,37 @@ async function logErrorAndExitIfNotSatisfied ({
   }
 }
 
+//
+// Inquire user to choose a native application version from the Cauldron, optionaly
+// filtered by platform/and or release status and returns them as an array
+// of native application descriptor strings
+async function askUserToChooseANapDescriptorFromCauldron ({
+  platform,
+  onlyReleasedVersions,
+  onlyNonReleasedVersions
+} : {
+  platform?: 'ios' | 'android',
+  onlyReleasedVersions?: boolean,
+  onlyNonReleasedVersions?: boolean
+} = {}) : Promise<string> {
+  const napDescriptorStrings = await getNapDescriptorStringsFromCauldron({
+    platform,
+    onlyReleasedVersions,
+    onlyNonReleasedVersions
+  })
+
+  const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
+    type: 'list',
+    name: 'userSelectedCompleteNapDescriptor',
+    message: 'Choose a native application version',
+    choices: napDescriptorStrings
+  }])
+
+  return userSelectedCompleteNapDescriptor
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
-  logErrorAndExitIfNotSatisfied
+  logErrorAndExitIfNotSatisfied,
+  askUserToChooseANapDescriptorFromCauldron
 }
