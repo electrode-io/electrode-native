@@ -19,7 +19,8 @@ exports.handler = async function ({
   descriptor: string
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor
   })
 
   const nativeApp = await cauldron.getNativeApp(NativeApplicationDescriptor.fromString(descriptor))

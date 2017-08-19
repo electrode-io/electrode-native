@@ -58,7 +58,8 @@ exports.handler = async function ({
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependency || dependencies
+    noGitOrFilesystemPath: dependency || dependencies,
+    napDescriptorExistInCauldron: descriptor
   })
 
   //
