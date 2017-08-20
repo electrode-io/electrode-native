@@ -58,9 +58,11 @@ run(`ern cauldron add nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron add miniapp -d ${androidNativeApplicationDescriptor} --ignoreNpmPublish`)
+// ignoreNpmPublish was removed
+// run(`ern cauldron add miniapp -d ${androidNativeApplicationDescriptor} --ignoreNpmPublish`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add miniapp -d ${iosNativeApplicationDescriptor} --ignoreNpmPublish`)
+// ignoreNpmPublish
+// run(`ern cauldron add miniapp -d ${iosNativeApplicationDescriptor} --ignoreNpmPublish`)
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron add dependency ${androidNativeApplicationDescriptor} react-native-stack-tracer@0.1.1`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)

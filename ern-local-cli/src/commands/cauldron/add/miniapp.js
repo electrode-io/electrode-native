@@ -21,11 +21,6 @@ exports.builder = function (yargs: any) {
     type: 'bool',
     describe: 'Force publish'
   })
-  .option('ignoreNpmPublish', {
-    alias: 'i',
-    type: 'bool',
-    describe: 'Ignore npm publication step'
-  })
   .option('containerVersion', {
     alias: 'v',
     type: 'string',
@@ -49,13 +44,11 @@ exports.handler = async function ({
   miniapps,
   descriptor,
   force = false,
-  ignoreNpmPublish = false,
   containerVersion
 } : {
   miniapps?: Array<string>,
   descriptor: string,
   force: boolean,
-  ignoreNpmPublish: boolean,
   containerVersion?: string
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
@@ -79,25 +72,20 @@ exports.handler = async function ({
     miniAppsObjs = [ MiniApp.fromCurrentPath() ]
   }
 
-  //
-  // If the 'ignoreNpmPublish' flag was not provided, ensure that all
-  // MiniApps versions have been published to NPM
-  if (!ignoreNpmPublish) {
-    log.info(`Ensuring that MiniApp(s) versions have been published to NPM`)
-    for (const miniAppObj of miniAppsObjs) {
-      if (!await miniAppObj.isPublishedToNpm()) {
-        const {publishToNpm} = await inquirer.prompt({
-          type: 'confirm',
-          name: 'publishToNpm',
-          message: `${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} is not published to npm. Do you want to publish it ?`,
-          default: true
-        })
-        if (publishToNpm) {
-          log.info(`Publishing ${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} to npm`)
-          miniAppObj.publishToNpm()
-        } else {
-          return log.error(`Sorry you cannot add a MiniApp version that was not published to NPM to the Cauldron.`)
-        }
+  log.info(`Ensuring that MiniApp(s) versions have been published to NPM`)
+  for (const miniAppObj of miniAppsObjs) {
+    if (!await miniAppObj.isPublishedToNpm()) {
+      const {publishToNpm} = await inquirer.prompt({
+        type: 'confirm',
+        name: 'publishToNpm',
+        message: `${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} is not published to npm. Do you want to publish it ?`,
+        default: true
+      })
+      if (publishToNpm) {
+        log.info(`Publishing ${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} to npm`)
+        miniAppObj.publishToNpm()
+      } else {
+        return log.error(`Sorry you cannot add a MiniApp version that was not published to NPM to the Cauldron.`)
       }
     }
   }
