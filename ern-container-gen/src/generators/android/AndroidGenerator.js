@@ -177,8 +177,7 @@ export default class MavenGenerator {
         log.debug(`> cd ${paths.pluginsDownloadFolder}`)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
-        let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
-            downloadPluginSource(pluginConfig.origin))
+        let pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }

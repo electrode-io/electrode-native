@@ -4,7 +4,8 @@ import {
   cauldron
 } from 'ern-core'
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  spin
 } from 'ern-util'
 import {
   runCauldronContainerGen
@@ -137,16 +138,16 @@ async function performContainerStateUpdateInCauldron (
     await stateUpdateFunc()
 
     // Run container generator
-    await runCauldronContainerGen(
+    await spin(`Generating new container version ${cauldronContainerVersion}`, runCauldronContainerGen(
       napDescriptor,
       cauldronContainerVersion,
-      { publish: true })
+      { publish: true }))
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
 
     // Commit Cauldron transaction
-    await cauldron.commitTransaction()
+    await spin(`Updating Cauldron`, cauldron.commitTransaction())
 
     log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
