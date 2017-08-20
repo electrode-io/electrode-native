@@ -5,7 +5,8 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
-  cauldron
+  cauldron,
+  utils
 } from 'ern-core'
 
 export default class Ensure {
@@ -37,6 +38,15 @@ export default class Ensure {
     const result = await cauldron.getNativeApp(descriptor)
     if (!result) {
       throw new Error(`${descriptor.toString()} descriptor does not exist in Cauldron`)
+    }
+  }
+
+  static async publishedToNpm (obj: string | Array<string>) {
+    const dependencies = obj instanceof Array ? obj : [ obj ]
+    for (const dependency of dependencies) {
+      if (!await utils.isPublishedToNpm(dependency)) {
+        throw new Error(`${dependency} version is not published to NPM`)
+      }
     }
   }
 }

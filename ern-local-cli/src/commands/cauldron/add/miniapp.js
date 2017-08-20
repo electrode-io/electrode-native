@@ -8,7 +8,6 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import utils from '../../../lib/utils'
-import inquirer from 'inquirer'
 import _ from 'lodash'
 
 exports.command = 'miniapp'
@@ -38,8 +37,6 @@ exports.builder = function (yargs: any) {
   })
 }
 
-// Most/All of the logic here should be moved to the MiniApp class
-// Commands should remain as much logic less as possible
 exports.handler = async function ({
   miniapps,
   descriptor,
@@ -55,7 +52,8 @@ exports.handler = async function ({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapps,
-    napDescriptorExistInCauldron: descriptor
+    napDescriptorExistInCauldron: descriptor,
+    publishedToNpm: miniapps
   })
 
   //
@@ -70,24 +68,6 @@ exports.handler = async function ({
   } else {
     log.info(`No MiniApps were explicitly provided. Assuming that this command is run from within a MiniApp directory`)
     miniAppsObjs = [ MiniApp.fromCurrentPath() ]
-  }
-
-  log.info(`Ensuring that MiniApp(s) versions have been published to NPM`)
-  for (const miniAppObj of miniAppsObjs) {
-    if (!await miniAppObj.isPublishedToNpm()) {
-      const {publishToNpm} = await inquirer.prompt({
-        type: 'confirm',
-        name: 'publishToNpm',
-        message: `${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} is not published to npm. Do you want to publish it ?`,
-        default: true
-      })
-      if (publishToNpm) {
-        log.info(`Publishing ${miniAppObj.packageJson.name} MiniApp version ${miniAppObj.version} to npm`)
-        miniAppObj.publishToNpm()
-      } else {
-        return log.error(`Sorry you cannot add a MiniApp version that was not published to NPM to the Cauldron.`)
-      }
-    }
   }
 
   if (!descriptor) {

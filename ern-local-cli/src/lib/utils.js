@@ -49,12 +49,14 @@ async function logErrorAndExitIfNotSatisfied ({
   noGitOrFilesystemPath,
   isValidContainerVersion,
   isCompleteNapDescriptorString,
-  napDescriptorExistInCauldron
+  napDescriptorExistInCauldron,
+  publishedToNpm
 } : {
   noGitOrFilesystemPath?: string | Array<string>,
   isValidContainerVersion?: string,
   isCompleteNapDescriptorString?: string,
-  napDescriptorExistInCauldron?: string
+  napDescriptorExistInCauldron?: string,
+  publishedToNpm?: string | Array<string>
 } = {}) {
   try {
     if (isValidContainerVersion) {
@@ -68,6 +70,9 @@ async function logErrorAndExitIfNotSatisfied ({
     }
     if (napDescriptorExistInCauldron) {
       await Ensure.napDescritorExistsInCauldron(napDescriptorExistInCauldron)
+    }
+    if (publishedToNpm) {
+      await Ensure.publishedToNpm(publishedToNpm)
     }
   } catch (e) {
     log.error(e.message)
