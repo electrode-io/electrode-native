@@ -7,11 +7,7 @@ import {
 import {
   cauldron
 } from 'ern-core'
-import {
-  runCauldronContainerGen
-} from '../../../lib/publication'
 import utils from '../../../lib/utils'
-import semver from 'semver'
 import _ from 'lodash'
 
 exports.command = 'miniapp [miniapp]'
@@ -75,40 +71,13 @@ exports.handler = async function ({
   }
 
   try {
-    // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
-
-    // Set the container version to use for container generation
-    let cauldronContainerVersion
-    if (containerVersion) {
-      log.debug(`Using user provided container version : ${containerVersion}`)
-      cauldronContainerVersion = containerVersion
-    } else {
-      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-      log.debug(`Bumping container version from cauldron : ${cauldronContainerVersion}`)
-    }
-
-    for (const miniAppAsDep of miniAppsAsDeps) {
-      await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
-    }
-
-    // Run container generator
-    await runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true })
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await cauldron.commitTransaction()
-
+    await utils.performContainerStateUpdateInCauldron(async () => {
+      for (const miniAppAsDep of miniAppsAsDeps) {
+        await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
+      }
+    }, napDescriptor, { containerVersion })
     log.info(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove MiniApp(s) from ${napDescriptor.toString()}`)
-    cauldron.discardTransaction()
   }
 }

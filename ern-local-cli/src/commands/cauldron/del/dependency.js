@@ -8,12 +8,8 @@ import {
   cauldron,
   dependencyLookup
 } from 'ern-core'
-import {
-  runCauldronContainerGen
-} from '../../../lib/publication'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
-import semver from 'semver'
 
 exports.command = 'dependency [dependency]'
 exports.desc = 'Remove one or more dependency(ies) from the cauldron'
@@ -95,40 +91,13 @@ exports.handler = async function ({
 
   // OK, no MiniApp are currently using this/these dependency(ies), it is safe to remove it/them
   try {
-    // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
-
-    // Set the container version to use for container generation
-    let cauldronContainerVersion
-    if (containerVersion) {
-      log.debug(`Using user provided container version : ${containerVersion}`)
-      cauldronContainerVersion = containerVersion
-    } else {
-      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-      log.debug(`Bumping container version from cauldron : ${cauldronContainerVersion}`)
-    }
-
-    for (const dependencyObj of dependenciesObjs) {
-      await cauldron.removeNativeDependency(napDescriptor, dependencyObj)
-    }
-
-    // Run container generator
-    await runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true })
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await cauldron.commitTransaction()
-
+    await utils.performContainerStateUpdateInCauldron(async () => {
+      for (const dependencyObj of dependenciesObjs) {
+        await cauldron.removeNativeDependency(napDescriptor, dependencyObj)
+      }
+    }, napDescriptor, { containerVersion })
     log.info(`Dependency(ies) was/were succesfully removed from ${napDescriptor.toString()}`)
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove dependency(ies) from ${napDescriptor.toString()}`)
-    cauldron.discardTransaction()
   }
 }

@@ -9,12 +9,8 @@ import {
   DependencyPath,
   NativeApplicationDescriptor
 } from 'ern-util'
-import {
-  runCauldronContainerGen
-} from '../../../lib/publication'
 import utils from '../../../lib/utils'
 import inquirer from 'inquirer'
-import semver from 'semver'
 import _ from 'lodash'
 
 exports.command = 'miniapp'
@@ -130,41 +126,14 @@ exports.handler = async function ({
   }
 
   try {
-    // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
-
-    for (const miniAppObj of miniAppsObjs) {
-       // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-      await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
-    }
-
-    // Set the container version to use for container generation
-    let cauldronContainerVersion
-    if (containerVersion) {
-      log.debug(`Using user provided container version : ${containerVersion}`)
-      cauldronContainerVersion = containerVersion
-    } else {
-      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-      log.debug(`Bumping container version from cauldron : ${cauldronContainerVersion}`)
-    }
-
-    // Run container generator
-    await runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true })
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await cauldron.commitTransaction()
-
+    await utils.performContainerStateUpdateInCauldron(async() => {
+      for (const miniAppObj of miniAppsObjs) {
+        // Add the MiniApp (and all it's dependencies if needed) to Cauldron
+        await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
+      }
+    }, napDescriptor, { containerVersion })
     log.info(`MiniApp(s) version(s) was/were succesfully updated for ${napDescriptor.toString()} in Cauldron !`)
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error occured while trying to update MiniApp(s) version(s) in Cauldron`)
-    cauldron.discardTransaction()
   }
 }

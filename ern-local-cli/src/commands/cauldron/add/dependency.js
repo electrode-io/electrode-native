@@ -7,10 +7,6 @@ import {
 import {
   cauldron
 } from 'ern-core'
-import semver from 'semver'
-import {
-  runCauldronContainerGen
-} from '../../../lib/publication'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
@@ -71,38 +67,14 @@ exports.handler = async function ({
   : _.map(dependencies, d => Dependency.fromString(d))
 
   try {
-    // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
-
-    let cauldronContainerVersion
-    if (containerVersion) {
-      cauldronContainerVersion = containerVersion
-    } else {
-      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-    }
-
-    for (const dependencyObj of dependenciesObjs) {
-      // Add the dependency to Cauldron
-      await cauldron.addNativeDependency(napDescriptor, dependencyObj)
-    }
-
-    // Run container generator
-    await runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true })
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await cauldron.commitTransaction()
-
+    await utils.performContainerStateUpdateInCauldron(async () => {
+      for (const dependencyObj of dependenciesObjs) {
+        // Add the dependency to Cauldron
+        await cauldron.addNativeDependency(napDescriptor, dependencyObj)
+      }
+    }, napDescriptor, { containerVersion })
     log.info(`Dependency(ies) was/were succesfully added to ${napDescriptor.toString()} !`)
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to add a dependency to ${napDescriptor.toString()}`)
-    cauldron.discardTransaction()
   }
 }
