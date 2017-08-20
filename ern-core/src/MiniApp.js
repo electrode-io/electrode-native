@@ -26,6 +26,7 @@ import * as ModuleTypes from './ModuleTypes'
 import {
   checkCompatibilityWithNativeApp
 } from './compatibility'
+import * as utils from './utils'
 import {
   execSync,
   spawn
@@ -60,6 +61,7 @@ export default class MiniApp {
 
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
     if (packageJson.ernPlatformVersion) {
+      // TO REMOVE IN ERN 0.5.0
       log.warn(`
 =================================================================
 ernPlatformVersion will be deprecated in next ern version. 
@@ -207,23 +209,12 @@ Are you sure this is a MiniApp ?`)
   }
 
   async isPublishedToNpm () : Promise<boolean> {
-    let publishedVersionsInfo
-    try {
-      publishedVersionsInfo = await yarn.info(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
-        field: 'versions',
-        json: true
-      })
-    } catch (e) {
-      log.debug(e)
-      return false
-    }
-    let publishedVersions: Array<string> = publishedVersionsInfo.data
-    return publishedVersions.includes(this.packageJson.version)
+    return utils.isPublishedToNpm(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`))
   }
 
-    // Return all javascript (non native) dependencies currently used by the mini-app
-    // This method checks dependencies from the pa2ckage.json of the miniapp and
-    // exclude native dependencies (plugins).
+  // Return all javascript (non native) dependencies currently used by the mini-app
+  // This method checks dependencies from the pa2ckage.json of the miniapp and
+  // exclude native dependencies (plugins).
   get jsDependencies () : Array<Dependency> {
     const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
     let result = _.map(this.packageJson.dependencies, (val: string, key: string) =>
