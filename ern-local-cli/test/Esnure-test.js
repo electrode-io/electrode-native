@@ -3,20 +3,27 @@ import {
   expect
 } from 'chai'
 import {
-  cauldron
+  cauldron,
+  utils
 } from 'ern-core'
 import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
 import * as fixtures from './fixtures/common'
 
 const getNativeAppStub = sinon.stub(cauldron, 'getNativeApp')
+const isPublishedToNpmStub = sinon.stub(utils, 'isPublishedToNpm')
 
 function resolveCauldronGetNativeAppWith(data) {
   getNativeAppStub.resolves(data)
 }
 
+beforeEach(() => {
+  isPublishedToNpmStub.reset()
+})
+
 after(() => {
   getNativeAppStub.restore()
+  isPublishedToNpmStub.restore()
 })
 
 // Utility function that returns true if a given async function execution
@@ -106,6 +113,22 @@ describe('Ensure.js', () => {
     it('should throw if nap descriptor does not exist in Cauldron', async () => {
       resolveCauldronGetNativeAppWith(undefined)
       assert(await doesThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
+    })
+  })
+
+
+  // ==========================================================
+  // publishedToNpm
+  // ==========================================================
+  describe('publishedToNpm', () => {
+    it('should not throw if dependency is published to npm', async () => {
+      isPublishedToNpmStub.resolves(true)
+      assert(await doesNotThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
+    })
+
+    it('should throw if dependency is not published to npm', async () => {
+      isPublishedToNpmStub.resolves(false)
+      assert(await doesThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
     })
   })
 })
