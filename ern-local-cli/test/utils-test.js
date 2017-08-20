@@ -12,6 +12,7 @@ import * as publication from '../src/lib/publication'
 import sinon from 'sinon'
 import utils from '../src/lib/utils'
 import * as fixtures from './fixtures/common'
+import ora from 'ora'
 
 // Fixtures
 const basicCauldronFixture = require('./fixtures/cauldron.json')
@@ -28,6 +29,14 @@ const updateContainerVersionStub = sinon.stub(cauldron, 'updateContainerVersion'
 // Logging stubs
 const logErrorStub = sinon.stub()
 const logInfoStub = sinon.stub()
+
+// Ora stubs
+const oraProto = Object.getPrototypeOf(ora())
+const oraFailStub = sinon.stub()
+const oraStartStub = sinon.stub(oraProto, 'start').returns({
+  fail: oraFailStub,
+  succeed: sinon.stub()
+})
 
 // Other stubs
 const runCauldronContainerGenStub = sinon.stub(publication, 'runCauldronContainerGen')
@@ -49,6 +58,7 @@ beforeEach(() => {
   commitTransactionStub.reset()
   discardTransactionStub.reset()
   updateContainerVersionStub.reset()
+  oraFailStub.reset()
 })
 
 function useCauldronFixture(fixture) {
@@ -64,6 +74,7 @@ after(() => {
   discardTransactionStub.restore()
   getContainerVersionStub.restore()
   updateContainerVersionStub.restore()
+  oraStartStub.restore()
 })
 
 describe('utils.js', () => {
@@ -136,13 +147,13 @@ describe('utils.js', () => {
   // logErrorAndExitIfNotSatisfied
   // ==========================================================
   function assertLoggedErrorAndExitedProcess() {
-    sinon.assert.calledOnce(logErrorStub)
+    sinon.assert.calledOnce(oraFailStub)
     sinon.assert.calledOnce(processExitStub)
-    assert(logErrorStub.calledBefore(processExitStub))
+    assert(oraFailStub.calledBefore(processExitStub))
   }
 
   function assertNoErrorLoggedAndNoProcessExit() {
-    sinon.assert.notCalled(logErrorStub)
+    sinon.assert.notCalled(oraFailStub)
     sinon.assert.notCalled(processExitStub)
   }
 
