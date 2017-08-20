@@ -5,19 +5,37 @@ import {
 import {
   cauldron
 } from 'ern-core'
+import {
+  NativeApplicationDescriptor
+} from 'ern-util'
+import * as publication from '../src/lib/publication'
 import sinon from 'sinon'
 import utils from '../src/lib/utils'
 import * as fixtures from './fixtures/common'
 
+// Fixtures
 const basicCauldronFixture = require('./fixtures/cauldron.json')
 const emptyCauldronFixture = require('./fixtures/empty-cauldron.json')
-const getAllNativeAppsStub = sinon.stub(cauldron, 'getAllNativeApps')
 
-const processExitStub = sinon.stub(process, 'exit')
+// Cauldron stubs
+const getAllNativeAppsStub = sinon.stub(cauldron, 'getAllNativeApps')
+const beginTransactionStub = sinon.stub(cauldron, 'beginTransaction')
+const commitTransactionStub = sinon.stub(cauldron, 'commitTransaction')
+const discardTransactionStub = sinon.stub(cauldron, 'discardTransaction')
+const getContainerVersionStub = sinon.stub(cauldron, 'getContainerVersion').resolves('1.2.3')
+const updateContainerVersionStub = sinon.stub(cauldron, 'updateContainerVersion')
+
+// Logging stubs
 const logErrorStub = sinon.stub()
+const logInfoStub = sinon.stub()
+
+// Other stubs
+const runCauldronContainerGenStub = sinon.stub(publication, 'runCauldronContainerGen')
+const processExitStub = sinon.stub(process, 'exit')
 
 global.log = {
-  error: logErrorStub
+  error: logErrorStub,
+  info: logInfoStub
 }
 
 // Before each test
@@ -25,6 +43,12 @@ beforeEach(() => {
   // Reset the state of all stubs/spies
   processExitStub.reset()
   logErrorStub.reset()
+  logInfoStub.reset()
+  runCauldronContainerGenStub.reset()
+  beginTransactionStub.reset()
+  commitTransactionStub.reset()
+  discardTransactionStub.reset()
+  updateContainerVersionStub.reset()
 })
 
 function useCauldronFixture(fixture) {
@@ -34,6 +58,12 @@ function useCauldronFixture(fixture) {
 after(() => {
   getAllNativeAppsStub.restore()
   processExitStub.restore()
+  runCauldronContainerGenStub.restore()
+  beginTransactionStub.restore()
+  commitTransactionStub.restore()
+  discardTransactionStub.restore()
+  getContainerVersionStub.restore()
+  updateContainerVersionStub.restore()
 })
 
 describe('utils.js', () => {
@@ -169,6 +199,60 @@ describe('utils.js', () => {
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
+    })
+  })
+
+  // ==========================================================
+  // performContainerStateUpdateInCauldron
+  // ==========================================================
+  describe('performContainerStateUpdateInCauldron', () => {
+    const napDescriptor = NativeApplicationDescriptor.fromString('testapp:android:1.0.0')
+
+    it('should uppdate container version with provided one', async () => {
+      await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true), 
+      napDescriptor , { containerVersion: '1.0.0' })
+      sinon.assert.calledWith(updateContainerVersionStub, 
+        napDescriptor,
+        '1.0.0')
+    })
+
+    it('should bump existing container version if not provided one', async () => {
+      await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true), napDescriptor)
+      sinon.assert.calledWith(updateContainerVersionStub, 
+        napDescriptor,
+        '1.2.4')
+    })
+
+    it('should call beginTransaction and commitTransaction', async () => {
+      await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true), napDescriptor)
+      sinon.assert.calledOnce(beginTransactionStub)
+      sinon.assert.calledOnce(commitTransactionStub)
+    })
+
+    it('should call state update function during the transaction', async () => {
+      const stateUpdateFunc = sinon.stub().resolves(true)
+      await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor)
+      sinon.assert.callOrder(beginTransactionStub, stateUpdateFunc, commitTransactionStub)
+    })
+
+    it('should discard transaction if an error happens during the transaction', async () => {
+      const stateUpdateFunc = sinon.stub().rejects(new Error('boum'))
+      try {
+        await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor)
+      } catch (e) {}
+      sinon.assert.calledOnce(discardTransactionStub)
+      sinon.assert.notCalled(commitTransactionStub)
+    })
+
+    it('should rethrow error that is thrown during a transaction', async () => {
+      const stateUpdateFunc = sinon.stub().rejects(new Error('boum'))
+      let hasRethrowError = false
+      try {
+        await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor)
+      } catch (e) {
+        if (e.message === 'boum') { hasRethrowError = true }
+      }
+      expect(hasRethrowError).to.be.true
     })
   })
 })
