@@ -3,8 +3,6 @@
 import {
   config,
   Dependency,
-  spin,
-  tagOneLine,
   NativeApplicationDescriptor,
   fileUtils
 } from 'ern-util'
@@ -46,11 +44,7 @@ class Cauldron {
     napDescriptor: NativeApplicationDescriptor,
     ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {
     try {
-      return spin(tagOneLine`Adding ${napDescriptor.name} app
-          ${napDescriptor.version ? `at version ${napDescriptor.version}` : ''}
-          ${napDescriptor.platform ? `for ${napDescriptor.platform} platform` : ''}
-          to cauldron`,
-            this._createNativeApp(napDescriptor, ernPlatformVersion))
+      return this._createNativeApp(napDescriptor, ernPlatformVersion)
     } catch (e) {
       log.error(`[addNativeApp] ${e}`)
       throw e
@@ -72,11 +66,7 @@ class Cauldron {
 
   async removeNativeApp (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     try {
-      return spin(tagOneLine`Removing ${napDescriptor.name} app
-          ${napDescriptor.version ? `at version ${napDescriptor.version}` : ''}
-          ${napDescriptor.platform ? `for ${napDescriptor.platform} platform` : ''}
-          from cauldron`,
-              this._removeNativeApp(napDescriptor))
+      return this._removeNativeApp(napDescriptor)
     } catch (e) {
       log.error(`[removeNativeApp] ${e}`)
       throw e
@@ -108,17 +98,14 @@ class Cauldron {
       await this.throwIfNativeAppVersionIsReleased(napDescriptor,
         'Cannot add a native dependency to a released native app version')
 
-      const isInCauldron = await spin(`Checking is ${napDescriptor.toString()} exists in Cauldron`,
-        this.isNativeApplicationInCauldron(napDescriptor))
+      const isInCauldron = await this.isNativeApplicationInCauldron(napDescriptor)
 
       if (!isInCauldron) {
         return log.error(`${napDescriptor.toString()} does not exist in Cauldron`)
       }
 
-      return spin(tagOneLine`Adding dependency ${dependency.toString()}
-        to ${napDescriptor.toString()}`,
-        this.cauldron.createNativeDependency(
-        napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependency.toString()))
+      return this.cauldron.createNativeDependency(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependency.toString())
     } catch (e) {
       log.error(`[addNativeDependency] ${e}`)
       throw e
@@ -135,11 +122,8 @@ class Cauldron {
       await this.throwIfNativeAppVersionIsReleased(napDescriptor,
                 'Cannot remove a native dependency from a released native app version')
 
-      return spin(
-                tagOneLine`Removing dependency ${versionLessDependencyString} from
-                  ${napDescriptor.toString()}`,
-                this.cauldron.removeNativeDependency(
-                    napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessDependencyString))
+      return this.cauldron.removeNativeDependency(
+          napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessDependencyString)
     } catch (e) {
       log.error(`[removeNativeDependency] ${e}`)
       throw e
@@ -155,10 +139,8 @@ class Cauldron {
       const versionLessMiniAppString = miniAppName.withoutVersion().toString()
       await this.throwIfNativeAppVersionIsReleased(napDescriptor,
       'Cannot remove a MiniApp for a released native app version')
-      return spin(
-                tagOneLine`Removing miniApp ${versionLessMiniAppString} from
-                  ${napDescriptor.toString()}`,
-                this.cauldron.removeContainerMiniApp(napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessMiniAppString))
+      return this.cauldron.removeContainerMiniApp(
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessMiniAppString)
     } catch (e) {
       log.error(`[removeMiniAppFromContainer] ${e}`)
       throw e
@@ -369,13 +351,12 @@ class Cauldron {
       await this.throwIfNativeAppVersionIsReleased(napDescriptor,
         'Cannot update a native dependency for a released native app version')
 
-      return spin(`Updating dependency ${dependencyName} version to ${newVersion}`,
-        this.cauldron.updateNativeDependency(
+      return this.cauldron.updateNativeDependency(
           napDescriptor.name,
           napDescriptor.platform,
           napDescriptor.version,
           dependencyName,
-          newVersion))
+          newVersion)
     } catch (e) {
       log.error(`[updateNativeAppDependency] ${e}`)
       throw e
@@ -440,13 +421,11 @@ class Cauldron {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       const miniAppsAsStrings = _.map(miniApps, x => x.toString())
-      return spin(tagOneLine`Adding miniapps to
-               ${napDescriptor.toString()} codePush`,
-            this.cauldron.addCodePushMiniApps(
+      return this.cauldron.addCodePushMiniApps(
               napDescriptor.name,
               napDescriptor.platform,
               napDescriptor.version,
-              miniAppsAsStrings))
+              miniAppsAsStrings)
     } catch (e) {
       log.error(`[addOtaMiniApp] ${e}`)
       throw e
@@ -459,13 +438,11 @@ class Cauldron {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      return spin(tagOneLine`Adding ${miniApp.toString()} to
-               ${napDescriptor.toString()} container`,
-            this.cauldron.addContainerMiniApp(
+      return this.cauldron.addContainerMiniApp(
               napDescriptor.name,
               napDescriptor.platform,
               napDescriptor.version,
-              miniApp))
+              miniApp)
     } catch (e) {
       log.error(`[addContainerMiniApp] ${e}`)
       throw e
