@@ -18,7 +18,7 @@ exports.builder = function (yargs: any) {
   .option('containerVersion', {
     alias: 'v',
     type: 'string',
-    describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
+    describe: 'Version to use for generated container. If none provided, version will be patch bumped by default'
   })
   .option('miniapps', {
     type: 'array',
@@ -46,6 +46,10 @@ exports.handler = async function ({
   miniapps?: Array<string>,
   containerVersion?: string
 }) {
+  if (!miniapp && !miniapps) {
+    return log.error(`You need to provide a MiniApp or an array of MiniApps to this command`)
+  }
+
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,

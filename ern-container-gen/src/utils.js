@@ -55,9 +55,11 @@ export async function bundleMiniApps (
     clearReactPackagerCache()
 
     if (platform === 'android') {
-      await ernUtil.spin(`Bundling miniapp(s) for Android`, reactNativeBundleAndroid(paths))
+      log.debug(`Bundling miniapp(s) for Android`)
+      await reactNativeBundleAndroid(paths)
     } else if (platform === 'ios') {
-      await ernUtil.spin(`Bundling miniapp(s) for iOS`, reactNativeBundleIos(paths))
+      log.debug(`Bundling miniapp(s) for iOS`)
+      await reactNativeBundleIos(paths)
     }
 
     log.debug(`[=== Completed mini apps bundling ===]`)
