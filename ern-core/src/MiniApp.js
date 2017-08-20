@@ -203,6 +203,10 @@ Are you sure this is a MiniApp ?`)
     return this.packageJson.ernHeadLess
   }
 
+  get packageDescriptor () : string {
+    return `${this.packageJson.name}@${this.packageJson.version}`
+  }
+
   // Return all native dependencies currently used by the mini-app
   get nativeDependencies () : Array<Dependency> {
     return findNativeDependencies(`${this.path}/node_modules`)

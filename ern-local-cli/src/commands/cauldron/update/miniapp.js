@@ -52,12 +52,22 @@ exports.handler = async function ({
   force: boolean,
   containerVersion?: string
 }) {
+  let miniapp
+  if (!miniapps) {
+    try {
+      const miniappObj = MiniApp.fromCurrentPath()
+      miniapp = miniappObj.packageDescriptor
+    } catch (e) {
+      return log.error(e)
+    }
+  }
+
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     napDescriptorExistInCauldron: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapps,
-    publishedToNpm: miniapps
+    publishedToNpm: miniapp || miniapps
   })
 
   //

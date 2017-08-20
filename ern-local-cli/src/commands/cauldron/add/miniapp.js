@@ -23,7 +23,7 @@ exports.builder = function (yargs: any) {
   .option('containerVersion', {
     alias: 'v',
     type: 'string',
-    describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
+    describe: 'Version to use for generated container. If none provided, version will be patched bumped by default.'
   })
   .option('miniapps', {
     type: 'array',
@@ -48,12 +48,22 @@ exports.handler = async function ({
   force: boolean,
   containerVersion?: string
 }) {
+  let miniapp
+  if (!miniapps) {
+    try {
+      const miniappObj = MiniApp.fromCurrentPath()
+      miniapp = miniappObj.packageDescriptor
+    } catch (e) {
+      return log.error(e)
+    }
+  }
+
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapps,
     napDescriptorExistInCauldron: descriptor,
-    publishedToNpm: miniapps
+    publishedToNpm: miniapp || miniapps
   })
 
   //
@@ -66,7 +76,6 @@ exports.handler = async function ({
       miniAppsObjs.push(m)
     }
   } else {
-    log.info(`No MiniApps were explicitly provided. Assuming that this command is run from within a MiniApp directory`)
     miniAppsObjs = [ MiniApp.fromCurrentPath() ]
   }
 
