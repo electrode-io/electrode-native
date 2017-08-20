@@ -14,6 +14,7 @@ import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import Ensure from './Ensure'
+import ora from 'ora'
 
 //
 // Retrieves all native applications versions from the Cauldron, optionaly
@@ -59,24 +60,31 @@ async function logErrorAndExitIfNotSatisfied ({
   napDescriptorExistInCauldron?: string,
   publishedToNpm?: string | Array<string>
 } = {}) {
+  const spinner = ora('Performing initial checks').start()
   try {
     if (isValidContainerVersion) {
+      spinner.text = 'Ensuring that container version is valid'
       Ensure.isValidContainerVersion(isValidContainerVersion)
     }
     if (isCompleteNapDescriptorString) {
+      spinner.text = 'Ensuring that native application descriptor is complete'
       Ensure.isCompleteNapDescriptorString(isCompleteNapDescriptorString)
     }
     if (noGitOrFilesystemPath) {
+      spinner.text = 'Ensuring that not git or file system path(s) is/are used'
       Ensure.noGitOrFilesystemPath(noGitOrFilesystemPath)
     }
     if (napDescriptorExistInCauldron) {
+      spinner.text = 'Ensuring that native application descriptor exists in Cauldron'
       await Ensure.napDescritorExistsInCauldron(napDescriptorExistInCauldron)
     }
     if (publishedToNpm) {
+      spinner.text = 'Ensuring that package(s) version(s) have been publised to NPM'
       await Ensure.publishedToNpm(publishedToNpm)
     }
+    spinner.succeed('All initial checks have passed')
   } catch (e) {
-    log.error(e.message)
+    spinner.fail(e.message)
     process.exit(1)
   }
 }
@@ -138,10 +146,11 @@ async function performContainerStateUpdateInCauldron (
     await stateUpdateFunc()
 
     // Run container generator
-    await spin(`Generating new container version ${cauldronContainerVersion}`, runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true }))
+    await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
+      runCauldronContainerGen(
+        napDescriptor,
+        cauldronContainerVersion,
+        { publish: true }))
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)

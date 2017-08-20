@@ -226,7 +226,7 @@ export function getCompatibility (
     //      => INCOMPATIBLE
     if (localDep && localDepVersion &&
       (localDepVersion !== remoteDep.version)) {
-      if (localDep.name.endsWith('-api') || (localDep.name === 'react-native-electrode-bridge')) {
+      if (localDep.name.endsWith('-api') || localDep.name.endsWith('-api-impl') || (localDep.name === 'react-native-electrode-bridge')) {
         if (semver.major(localDepVersion) === semver.major(remoteDep.version)) {
           result.compatibleNonStrict.push(entry)
         } else if (semver.lt(localDepVersion, remoteDep.version)) {

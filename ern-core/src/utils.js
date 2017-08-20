@@ -4,6 +4,7 @@ import {
   yarn
 } from './clients'
 import {
+  Dependency,
   DependencyPath
 } from 'ern-util'
 
@@ -14,7 +15,7 @@ export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<
 
   let publishedVersionsInfo
   try {
-    publishedVersionsInfo = await yarn.info(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`), {
+    publishedVersionsInfo = await yarn.info(pkg, {
       field: 'versions',
       json: true
     })
@@ -23,5 +24,5 @@ export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<
     return false
   }
   let publishedVersions: Array<string> = publishedVersionsInfo.data
-  return publishedVersions.includes(this.packageJson.version)
+  return publishedVersions.includes(Dependency.fromString(pkg).version)
 }

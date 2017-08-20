@@ -125,9 +125,11 @@ export async function getPluginConfig (
       }
     }
     result.path = pluginConfigPath
-  } else {
-    log.debug(`No config.json file for ${plugin.name}. Will use default config`)
+  } else if (plugin.name.endsWith('-api') || plugin.name.endsWith('-api-impl')) {
+    log.debug(`API or API IMPL detected. Returning API default config`)
     result = getApiPluginDefaultConfig(projectName)
+  } else {
+    throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.toString()}`)
   }
 
   if (!result.origin) {

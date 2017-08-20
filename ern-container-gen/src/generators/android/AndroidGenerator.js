@@ -6,8 +6,7 @@ import {
 } from 'ern-core'
 import {
   mustacheUtils,
-  Dependency,
-  spin
+  Dependency
 } from 'ern-util'
 import {
   bundleMiniApps,
@@ -359,8 +358,7 @@ export default class MavenGenerator {
 
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
-      await spin(`Building container and publishing archive`,
-          this.buildAndUploadArchive('lib'))
+      await this.buildAndUploadArchive('lib')
 
       log.debug(`[=== Completed build and publication of the container ===]`)
     } catch (e) {

@@ -542,7 +542,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
         [${appName}:${platformName}:${versionName} => ${nativeAppPlatformVersion}]`);
         } */
 
-        log.info('Checking compatibility with each native dependency')
+        log.debug('Checking compatibility with each native dependency')
         let report = await checkCompatibilityWithNativeApp(
           this,
           napDescriptor.name,
@@ -560,27 +560,13 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
                         `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
         const remoteDependency =
                     await cauldron.getNativeDependency(napDescriptor, localNativeDependencyString, { convertToObject: true })
-        if (remoteDependency && (remoteDependency.version === localNativeDependency.version)) {
-          continue
-        }
 
-        if (!force) {
-          await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
-        } else {
-          let nativeDepInCauldron
-          try {
-            nativeDepInCauldron = await cauldron
-                            .getNativeDependency(napDescriptor, localNativeDependencyString)
-          } catch (e) {
-                        // 404 most probably, swallow, need to improve cauldron cli to return null
-                        // instead in case of 404
-          }
-
-          if (nativeDepInCauldron) {
-            await cauldron.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
-          } else {
-            await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
-          }
+        // Update dependency version in Cauldron, only if local dependency version is a newer version compared to Cauldron
+        // This will only apply for API/API-IMPLS and bridge due to backward compatibility (if no major version update)
+        // This does not apply to other third party native dependencies (anyway in that case the code should not react this
+        // point as compatibility checks would have failed unless force flag is used)
+        if (remoteDependency && (remoteDependency.version < localNativeDependency.version)) {
+          await cauldron.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
         }
       }
 

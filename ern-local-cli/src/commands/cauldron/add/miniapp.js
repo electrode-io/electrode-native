@@ -5,12 +5,13 @@ import {
 } from 'ern-core'
 import {
   DependencyPath,
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  spin
 } from 'ern-util'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'miniapp'
+exports.command = 'miniapp [miniapp]'
 exports.desc = 'Add one or more MiniApp(s) to a given native application version in the Cauldron'
 
 exports.builder = function (yargs: any) {
@@ -38,30 +39,22 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
+  miniapp,
   miniapps,
   descriptor,
   force = false,
   containerVersion
 } : {
+  miniapp?: string,
   miniapps?: Array<string>,
   descriptor: string,
   force: boolean,
   containerVersion?: string
 }) {
-  let miniapp
-  if (!miniapps) {
-    try {
-      const miniappObj = MiniApp.fromCurrentPath()
-      miniapp = miniappObj.packageDescriptor
-    } catch (e) {
-      return log.error(e)
-    }
-  }
-
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: miniapps,
+    noGitOrFilesystemPath: miniapp || miniapps,
     napDescriptorExistInCauldron: descriptor,
     publishedToNpm: miniapp || miniapps
   })
@@ -70,12 +63,20 @@ exports.handler = async function ({
   // Construct MiniApp objects array
   let miniAppsObjs = []
   if (miniapps) {
+    // An array of miniapps strings was provided
     const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
-      const m = await MiniApp.fromPackagePath(miniAppDependencyPath)
+      const m = await spin(`Retrieving ${miniAppDependencyPath} MiniApp`,
+        MiniApp.fromPackagePath(miniAppDependencyPath))
       miniAppsObjs.push(m)
     }
+  } else if (miniapp) {
+    // A single miniapp string was provided
+    const m = await spin(`Retrieving ${miniapp} MiniApp`,
+      MiniApp.fromPackagePath(DependencyPath.fromString(miniapp)))
+    miniAppsObjs.push(m)
   } else {
+    // No miniapp(s) stringg(s) was/were provided. asumme local miniapp
     miniAppsObjs = [ MiniApp.fromCurrentPath() ]
   }
 
