@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  Dependency,
   DependencyPath,
   NativeApplicationDescriptor
 } from 'ern-util'
@@ -8,6 +9,7 @@ import {
   cauldron,
   utils
 } from 'ern-core'
+import _ from 'lodash'
 
 export default class Ensure {
   static isValidContainerVersion (version: string) {
@@ -46,6 +48,47 @@ export default class Ensure {
     for (const dependency of dependencies) {
       if (!await utils.isPublishedToNpm(dependency)) {
         throw new Error(`${dependency} version is not published to NPM`)
+      }
+    }
+  }
+
+  static async miniAppNotInNativeApplicationVersionContainer (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor) {
+    if (!obj) return
+    const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
+    for (const miniAppString of miniAppsStrings) {
+      if (await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
+        throw new Error(`${miniAppString} exists in ${napDescriptor.toString()}`)
+      }
+    }
+  }
+
+  static async miniAppIsInNativeApplicationVersionContainer (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor) {
+    if (!obj) return
+    const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
+    for (const miniAppString of miniAppsStrings) {
+      if (!await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
+        throw new Error(`${miniAppString} does not exist in ${napDescriptor.toString()}`)
+      }
+    }
+  }
+
+  static async miniAppIsInNativeApplicationVersionContainerWithDifferentVersion (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor) {
+    if (!obj) return
+    const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
+    const versionLessMiniAppsStrings = _.map(miniAppsStrings, m => Dependency.fromString(m).withoutVersion().toString())
+    await this.miniAppIsInNativeApplicationVersionContainer(versionLessMiniAppsStrings, napDescriptor)
+    for (const miniAppString of miniAppsStrings) {
+      const miniAppFromCauldron = await cauldron.getContainerMiniApp(napDescriptor, miniAppString)
+      const cauldronMiniApp = Dependency.fromString(miniAppFromCauldron)
+      const givenMiniApp = Dependency.fromString(miniAppString)
+      if (cauldronMiniApp.version === givenMiniApp.version) {
+        throw new Error(`${cauldronMiniApp.withoutVersion().toString()} is already at version ${givenMiniApp.version} in ${napDescriptor.toString()}`)
       }
     }
   }

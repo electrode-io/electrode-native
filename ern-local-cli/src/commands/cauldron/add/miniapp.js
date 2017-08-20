@@ -51,12 +51,22 @@ exports.handler = async function ({
   force: boolean,
   containerVersion?: string
 }) {
+  if (!miniapp && !miniapps) {
+    miniapp = MiniApp.fromCurrentPath().packageDescriptor
+  }
+
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+  }
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapp || miniapps,
     napDescriptorExistInCauldron: descriptor,
-    publishedToNpm: miniapp || miniapps
+    publishedToNpm: miniapp || miniapps,
+    miniAppNotInNativeApplicationVersionContainer: { miniApp: miniapp || miniapps, napDescriptor }
   })
 
   //
@@ -71,20 +81,11 @@ exports.handler = async function ({
       miniAppsObjs.push(m)
     }
   } else if (miniapp) {
-    // A single miniapp string was provided
+    // A single miniapp string was provided (or local miniapp)
     const m = await spin(`Retrieving ${miniapp} MiniApp`,
       MiniApp.fromPackagePath(DependencyPath.fromString(miniapp)))
     miniAppsObjs.push(m)
-  } else {
-    // No miniapp(s) stringg(s) was/were provided. asumme local miniapp
-    miniAppsObjs = [ MiniApp.fromCurrentPath() ]
   }
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {

@@ -52,13 +52,28 @@ async function logErrorAndExitIfNotSatisfied ({
   isValidContainerVersion,
   isCompleteNapDescriptorString,
   napDescriptorExistInCauldron,
-  publishedToNpm
+  publishedToNpm,
+  miniAppNotInNativeApplicationVersionContainer,
+  miniAppIsInNativeApplicationVersionContainer,
+  miniAppIsInNativeApplicationVersionContainerWithDifferentVersion
 } : {
   noGitOrFilesystemPath?: string | Array<string>,
   isValidContainerVersion?: string,
   isCompleteNapDescriptorString?: string,
   napDescriptorExistInCauldron?: string,
-  publishedToNpm?: string | Array<string>
+  publishedToNpm?: string | Array<string>,
+  miniAppNotInNativeApplicationVersionContainer?: {
+    miniApp: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  },
+  miniAppIsInNativeApplicationVersionContainer?: {
+    miniApp: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  },
+  miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
+    miniApp: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  }
 } = {}) {
   const spinner = ora('Performing initial checks').start()
   try {
@@ -79,8 +94,26 @@ async function logErrorAndExitIfNotSatisfied ({
       await Ensure.napDescritorExistsInCauldron(napDescriptorExistInCauldron)
     }
     if (publishedToNpm) {
-      spinner.text = 'Ensuring that package(s) version(s) have been publised to NPM'
+      spinner.text = 'Ensuring that package(s) version(s) have been published to NPM'
       await Ensure.publishedToNpm(publishedToNpm)
+    }
+    if (miniAppNotInNativeApplicationVersionContainer) {
+      spinner.text = 'Ensuring that MiniApp(s) is/are not present in native application version container'
+      await Ensure.miniAppNotInNativeApplicationVersionContainer(
+        miniAppNotInNativeApplicationVersionContainer.miniApp,
+        miniAppNotInNativeApplicationVersionContainer.napDescriptor)
+    }
+    if (miniAppIsInNativeApplicationVersionContainer) {
+      spinner.text = 'Ensuring that MiniApp(s) is/are present in native application version container'
+      await Ensure.miniAppIsInNativeApplicationVersionContainer(
+        miniAppIsInNativeApplicationVersionContainer.miniApp,
+        miniAppIsInNativeApplicationVersionContainer.napDescriptor)
+    }
+    if (miniAppIsInNativeApplicationVersionContainerWithDifferentVersion) {
+      spinner.text = 'Ensuring that MiniApp(s) is/are present in native application version container with different version(s)'
+      await Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
+        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.miniApp,
+        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor)
     }
     spinner.succeed('All initial checks have passed')
   } catch (e) {

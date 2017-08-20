@@ -5,7 +5,8 @@ import {
   Dependency
 } from 'ern-util'
 import {
-  cauldron
+  cauldron,
+  MiniApp
 } from 'ern-core'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
@@ -47,32 +48,25 @@ exports.handler = async function ({
   containerVersion?: string
 }) {
   if (!miniapp && !miniapps) {
-    return log.error(`You need to provide a MiniApp or an array of MiniApps to this command`)
+    miniapp = MiniApp.fromCurrentPath().packageDescriptor
   }
+
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+  }
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapp || miniapps,
-    napDescriptorExistInCauldron: descriptor
+    napDescriptorExistInCauldron: descriptor,
+    miniAppIsInNativeApplicationVersionContainer: { miniApp: miniapp || miniapps, napDescriptor }
   })
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   const miniAppsAsDeps = miniapp
     ? [ Dependency.fromString(miniapp) ]
     : _.map(miniapps, m => Dependency.fromString(m))
-
-  for (const miniAppAsDep of miniAppsAsDeps) {
-    const miniAppString = await cauldron.getContainerMiniApp(napDescriptor, miniAppAsDep.toString())
-    if (!miniAppString) {
-      return log.error(`${miniAppAsDep.toString()} MiniApp is not present in ${descriptor} container !`)
-    }
-  }
 
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {

@@ -372,7 +372,6 @@ class Cauldron {
     miniApp: Object) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
-      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       return this.cauldron.getContainerMiniApp(
         napDescriptor.name,
         napDescriptor.platform,

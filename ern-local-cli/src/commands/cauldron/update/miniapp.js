@@ -1,19 +1,18 @@
 // @flow
 
 import {
-  cauldron,
   MiniApp
 } from 'ern-core'
 import {
-  Dependency,
   DependencyPath,
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  spin
 } from 'ern-util'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'miniapp'
-exports.desc = 'Update version(s) of ongit ce or more MiniApp(s) in the Cauldron'
+exports.command = 'miniapp [miniapp]'
+exports.desc = 'Update version(s) of one or more MiniApp(s) in the Cauldron'
 
 exports.builder = function (yargs: any) {
   return yargs
@@ -42,32 +41,34 @@ exports.builder = function (yargs: any) {
 // Most/All of the logic here should be moved to the MiniApp class
 // Commands should remain as much logic less as possible
 exports.handler = async function ({
+  miniapp,
   miniapps,
   descriptor,
   force = false,
   containerVersion
 } : {
+  miniapp?: string,
   miniapps?: Array<string>,
   descriptor: string,
   force: boolean,
   containerVersion?: string
 }) {
-  let miniapp
-  if (!miniapps) {
-    try {
-      const miniappObj = MiniApp.fromCurrentPath()
-      miniapp = miniappObj.packageDescriptor
-    } catch (e) {
-      return log.error(e)
-    }
+  if (!miniapp && !miniapps) {
+    miniapp = MiniApp.fromCurrentPath().packageDescriptor
   }
+
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+  }
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     napDescriptorExistInCauldron: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapps,
-    publishedToNpm: miniapp || miniapps
+    publishedToNpm: miniapp || miniapps,
+    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: { miniApp: miniapp || miniapps, napDescriptor }
   })
 
   //
@@ -76,33 +77,15 @@ exports.handler = async function ({
   if (miniapps) {
     const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
-      const m = await MiniApp.fromPackagePath(miniAppDependencyPath)
+      const m = await spin(`Retrieving ${miniAppDependencyPath} MiniApp`,
+         MiniApp.fromPackagePath(miniAppDependencyPath))
       miniAppsObjs.push(m)
     }
-  } else {
-    log.info(`No MiniApps were explicitly provided. Assuming that this command is run from within a MiniApp directory`)
-    miniAppsObjs = [ MiniApp.fromCurrentPath() ]
-  }
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-  //
-  // Make sure that MiniApp(s) exist in the native application version
-  // and that their versions are different than the ones to update to
-  const miniAppsAsDependencies = _.map(miniapps, m => Dependency.fromString(m))
-  for (const miniAppAsDependency of miniAppsAsDependencies) {
-    const versionLessMiniAppDependencyString = miniAppAsDependency.withoutVersion().toString()
-    const miniApp = await cauldron.getContainerMiniApp(napDescriptor, versionLessMiniAppDependencyString)
-    if (!miniApp) {
-      return log.error(`${versionLessMiniAppDependencyString} MiniApp does not exist in ${napDescriptor.toString()}`)
-    }
-    if (Dependency.fromString(miniApp).version === miniAppAsDependency.version) {
-      return log.error(`${versionLessMiniAppDependencyString} MiniApp is already at version ${miniAppAsDependency.version}`)
-    }
+  } else if (miniapp) {
+    // A single miniapp string was provided (or local miniapp)
+    const m = await spin(`Retrieving ${miniapp} MiniApp`,
+      MiniApp.fromPackagePath(DependencyPath.fromString(miniapp)))
+    miniAppsObjs.push(m)
   }
 
   try {
