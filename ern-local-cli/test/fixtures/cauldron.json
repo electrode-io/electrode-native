@@ -27,7 +27,7 @@
             {
               "name": "17.15",
               "ernPlatformVersion": "1000.0.0",
-              "isReleased": false,
+              "isReleased": true,
               "binary": null,
               "yarnlock": null,
               "nativeDeps": [
@@ -40,6 +40,26 @@
                 "container": [
                   "react-native-awesome-app@1.0.0",
                   "react-native-cool-app@2.0.0"
+                ],
+                "ota": []
+              }
+            },
+            {
+              "name": "17.16",
+              "ernPlatformVersion": "1000.0.0",
+              "isReleased": false,
+              "binary": null,
+              "yarnlock": null,
+              "nativeDeps": [
+                "@walmart/react-native-electrode-bridge@1.5.0",
+                "react-native@0.42.0",
+                "react-native-code-push@1.17.1-beta",
+                "react-native-maps@1.17.1"
+              ],
+              "miniApps": {
+                "container": [
+                  "react-native-awesome-app@2.0.0",
+                  "react-native-cool-app@3.0.0"
                 ],
                 "ota": []
               }

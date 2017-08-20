@@ -50,12 +50,18 @@ describe('utils.js', () => {
     it('should return all native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
       const result = await utils.getNapDescriptorStringsFromCauldron()
-      expect(result).to.have.lengthOf(4)
+      expect(result).to.have.lengthOf(5)
     })
 
     it('should return only released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
       const result = await utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true})
+      expect(result).to.have.lengthOf(3)
+    })
+
+    it('should return only non released native apps descriptors', async () => {
+      useCauldronFixture(basicCauldronFixture)
+      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyNonReleasedVersions: true})
       expect(result).to.have.lengthOf(2)
     })
 
@@ -68,7 +74,7 @@ describe('utils.js', () => {
     it('should return only ios platform native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
       const result = await utils.getNapDescriptorStringsFromCauldron({ platform: 'ios'})
-      expect(result).to.have.lengthOf(2)
+      expect(result).to.have.lengthOf(3)
     })
 
     it('should return only android platform released native apps descriptors', async () => {
@@ -77,9 +83,21 @@ describe('utils.js', () => {
       expect(result).to.have.lengthOf(1)
     })
 
+    it('should return only android platform non released native apps descriptors', async () => {
+      useCauldronFixture(basicCauldronFixture)
+      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyNonReleasedVersions: true, platform: 'android'})
+      expect(result).to.have.lengthOf(1)
+    })
+
     it('should return only ios platform released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
       const result = await utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true, platform: 'ios'})
+      expect(result).to.have.lengthOf(2)
+    })
+
+    it('should return only ios platform non released native apps descriptors', async () => {
+      useCauldronFixture(basicCauldronFixture)
+      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyNonReleasedVersions: true, platform: 'ios'})
       expect(result).to.have.lengthOf(1)
     })
   })
