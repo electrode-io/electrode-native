@@ -43,6 +43,14 @@ export default class Ensure {
     }
   }
 
+  static async napDescritorDoesNotExistsInCauldron (napDescriptor: string) {
+    const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
+    const result = await cauldron.getNativeApp(descriptor)
+    if (result) {
+      throw new Error(`${descriptor.toString()} descriptor already exist in Cauldron`)
+    }
+  }
+
   static async publishedToNpm (obj: string | Array<string>) {
     const dependencies = obj instanceof Array ? obj : [ obj ]
     for (const dependency of dependencies) {

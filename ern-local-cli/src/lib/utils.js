@@ -52,6 +52,7 @@ async function logErrorAndExitIfNotSatisfied ({
   isValidContainerVersion,
   isCompleteNapDescriptorString,
   napDescriptorExistInCauldron,
+  napDescritorDoesNotExistsInCauldron,
   publishedToNpm,
   miniAppNotInNativeApplicationVersionContainer,
   miniAppIsInNativeApplicationVersionContainer,
@@ -61,6 +62,7 @@ async function logErrorAndExitIfNotSatisfied ({
   isValidContainerVersion?: string,
   isCompleteNapDescriptorString?: string,
   napDescriptorExistInCauldron?: string,
+  napDescritorDoesNotExistsInCauldron?: string,
   publishedToNpm?: string | Array<string>,
   miniAppNotInNativeApplicationVersionContainer?: {
     miniApp: string | Array<string> | void,
@@ -92,6 +94,10 @@ async function logErrorAndExitIfNotSatisfied ({
     if (napDescriptorExistInCauldron) {
       spinner.text = 'Ensuring that native application descriptor exists in Cauldron'
       await Ensure.napDescritorExistsInCauldron(napDescriptorExistInCauldron)
+    }
+    if (napDescritorDoesNotExistsInCauldron) {
+      spinner.text = 'Ensuring that native application descriptor does not already exist in Cauldron'
+      await Ensure.napDescritorDoesNotExistsInCauldron(napDescritorDoesNotExistsInCauldron)
     }
     if (publishedToNpm) {
       spinner.text = 'Ensuring that package(s) version(s) have been published to NPM'

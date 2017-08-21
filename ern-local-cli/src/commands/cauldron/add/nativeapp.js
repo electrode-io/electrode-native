@@ -38,7 +38,8 @@ exports.handler = async function ({
   copyPreviousVersionData?: boolean
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: completeNapDescriptor
+    isCompleteNapDescriptorString: completeNapDescriptor,
+    napDescritorDoesNotExistsInCauldron: completeNapDescriptor
   })
 
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
