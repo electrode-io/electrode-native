@@ -72,6 +72,7 @@ exports.handler = async function ({
   const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
   const miniAppsPaths = _.map(miniApps, m => m.path)
   if (!force) {
+    log.info(`This might take a while. The more MiniApps, the longer.`)
     for (const dependencyObj of dependenciesObjs) {
       const miniAppsUsingDependency = await dependencyLookup.getMiniAppsUsingNativeDependency(miniAppsPaths, dependencyObj)
       if (miniAppsUsingDependency && miniAppsUsingDependency.length > 0) {

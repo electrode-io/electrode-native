@@ -27,6 +27,7 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
   const miniAppsPaths = _.map(miniApps, m => m.path)
+  log.info(`This might take a while. The more MiniApps, the longer.`)
   const result = await dependencyLookup.getMiniAppsUsingNativeDependency(miniAppsPaths, Dependency.fromString(dependency))
   if (!result || result.length === 0) {
     log.info(`${dependency} dependency is not directly used by any MiniApps`)
