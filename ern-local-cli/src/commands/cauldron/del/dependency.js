@@ -50,18 +50,18 @@ exports.handler = async function ({
   force?: boolean,
   containerVersion?: string
 }) {
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+  }
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: dependency || dependencies,
-    napDescriptorExistInCauldron: descriptor
+    napDescriptorExistInCauldron: descriptor,
+    dependencyIsInNativeApplicationVersionContainer: { dependency: dependency || dependencies, napDescriptor }
   })
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   const dependenciesObjs = dependency
   ? [ Dependency.fromString(dependency) ]

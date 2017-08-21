@@ -9,7 +9,7 @@ import {
 } from 'ern-core'
 import utils from '../../../lib/utils'
 
-exports.command = 'dependency <descriptor> <dependency>'
+exports.command = 'dependency <dependency>'
 exports.desc = 'Update a native dependency version'
 
 exports.builder = function (yargs: any) {
@@ -19,6 +19,11 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
     })
+    .option('descriptor', {
+      type: 'string',
+      alias: 'd',
+      describe: 'A complete native application descriptor'
+    })
 }
 
 exports.handler = async function ({
@@ -26,41 +31,35 @@ exports.handler = async function ({
   dependency,
   containerVersion
 } : {
-  descriptor: string,
+  descriptor?: string,
   dependency: string,
   containerVersion?: string
 }) {
-  await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor,
-    isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependency
-  })
-
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+  }
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-  const dependencyObj = Dependency.fromString(dependency)
 
+  const dependencyObj = Dependency.fromString(dependency)
   if (!dependencyObj.isVersioned) {
     return log.error(`You need to provide a versioned dependency`)
   }
 
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: dependency,
+    dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: { dependency, napDescriptor }
+  })
+
   const versionLessDependencyString = dependencyObj.withoutVersion().toString()
-  const dependencyObFromCauldron =
-    await cauldron.getNativeDependency(napDescriptor, versionLessDependencyString)
-
-  if (!dependencyObFromCauldron) {
-    return log.error(`${versionLessDependencyString} dependency was not found in ${napDescriptor.toString()}`)
-  }
-
-  if (dependencyObFromCauldron.version === dependencyObj.version) {
-    return log.error(`${versionLessDependencyString} dependency is already using version ${dependencyObj.version}`)
-  }
 
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {
       await cauldron.updateNativeAppDependency(
         napDescriptor,
-        dependencyObj.withoutVersion(),
+        dependencyObj.withoutVersion().toString(),
         dependencyObj.version)
     }, napDescriptor, { containerVersion })
     log.info(`${versionLessDependencyString} dependency version was succesfully updated to ${dependencyObj.version} !`)

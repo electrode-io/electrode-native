@@ -56,7 +56,10 @@ async function logErrorAndExitIfNotSatisfied ({
   publishedToNpm,
   miniAppNotInNativeApplicationVersionContainer,
   miniAppIsInNativeApplicationVersionContainer,
-  miniAppIsInNativeApplicationVersionContainerWithDifferentVersion
+  miniAppIsInNativeApplicationVersionContainerWithDifferentVersion,
+  dependencyNotInNativeApplicationVersionContainer,
+  dependencyIsInNativeApplicationVersionContainer,
+  dependencyIsInNativeApplicationVersionContainerWithDifferentVersion
 } : {
   noGitOrFilesystemPath?: string | Array<string>,
   isValidContainerVersion?: string,
@@ -74,6 +77,18 @@ async function logErrorAndExitIfNotSatisfied ({
   },
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     miniApp: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  },
+  dependencyNotInNativeApplicationVersionContainer?: {
+    dependency: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  },
+  dependencyIsInNativeApplicationVersionContainer?: {
+    dependency: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  },
+  dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
+    dependency: string | Array<string> | void,
     napDescriptor: NativeApplicationDescriptor
   }
 } = {}) {
@@ -120,6 +135,24 @@ async function logErrorAndExitIfNotSatisfied ({
       await Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.miniApp,
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor)
+    }
+    if (dependencyNotInNativeApplicationVersionContainer) {
+      spinner.text = 'Ensuring that dependency(ies) is/are not present in native application version container'
+      await Ensure.dependencyNotInNativeApplicationVersionContainer(
+        dependencyNotInNativeApplicationVersionContainer.dependency,
+        dependencyNotInNativeApplicationVersionContainer.napDescriptor)
+    }
+    if (dependencyIsInNativeApplicationVersionContainer) {
+      spinner.text = 'Ensuring that dependency(ies) is/are present in native application version container'
+      await Ensure.dependencyIsInNativeApplicationVersionContainer(
+        dependencyIsInNativeApplicationVersionContainer.dependency,
+        dependencyIsInNativeApplicationVersionContainer.napDescriptor)
+    }
+    if (dependencyIsInNativeApplicationVersionContainerWithDifferentVersion) {
+      spinner.text = 'Ensuring that dependency(ies) is/are present in native application version container with different version(s)'
+      await Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
+        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.dependency,
+        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor)
     }
     spinner.succeed('All initial checks have passed')
   } catch (e) {

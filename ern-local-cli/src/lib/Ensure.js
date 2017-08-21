@@ -72,6 +72,20 @@ export default class Ensure {
     }
   }
 
+  static async dependencyNotInNativeApplicationVersionContainer (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  ) {
+    if (!obj) return
+    const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
+    for (const dependencyString of dependenciesStrings) {
+      if (await cauldron.getNativeDependency(napDescriptor,
+          Dependency.fromString(dependencyString).withoutVersion().toString())) {
+        throw new Error(`${dependencyString} exists in ${napDescriptor.toString()}`)
+      }
+    }
+  }
+
   static async miniAppIsInNativeApplicationVersionContainer (
     obj: string | Array<string> | void,
     napDescriptor: NativeApplicationDescriptor) {
@@ -80,6 +94,20 @@ export default class Ensure {
     for (const miniAppString of miniAppsStrings) {
       if (!await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
         throw new Error(`${miniAppString} does not exist in ${napDescriptor.toString()}`)
+      }
+    }
+  }
+
+  static async dependencyIsInNativeApplicationVersionContainer (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  ) {
+    if (!obj) return
+    const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
+    for (const dependencyString of dependenciesStrings) {
+      if (!await cauldron.getNativeDependency(napDescriptor,
+          Dependency.fromString(dependencyString).withoutVersion().toString())) {
+        throw new Error(`${dependencyString} does not exists in ${napDescriptor.toString()}`)
       }
     }
   }
@@ -97,6 +125,22 @@ export default class Ensure {
       const givenMiniApp = Dependency.fromString(miniAppString)
       if (cauldronMiniApp.version === givenMiniApp.version) {
         throw new Error(`${cauldronMiniApp.withoutVersion().toString()} is already at version ${givenMiniApp.version} in ${napDescriptor.toString()}`)
+      }
+    }
+  }
+
+  static async dependencyIsInNativeApplicationVersionContainerWithDifferentVersion (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor
+  ) {
+    if (!obj) return
+    await this.dependencyIsInNativeApplicationVersionContainer(obj, napDescriptor)
+    const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
+    for (const dependencyString of dependenciesStrings) {
+      const dependencyFromCauldron = await cauldron.getNativeDependency(napDescriptor,
+        Dependency.fromString(dependencyString).withoutVersion().toString())
+      if (dependencyFromCauldron.version === Dependency.fromString(dependencyString).version) {
+        throw new Error(`${Dependency.fromString(dependencyString).withoutVersion().toString()} is already at version ${dependencyFromCauldron.version} in ${napDescriptor.toString()}`)
       }
     }
   }
