@@ -14,5 +14,9 @@ exports.handler = function ({
 } : {
   platformVersion: string
 }) {
-  return Platform.switchToVersion(platformVersion.toString().replace('v', ''))
+  try {
+    Platform.switchToVersion(platformVersion.toString().replace('v', ''))
+  } catch (e) {
+    log.error(e.message)
+  }
 }
