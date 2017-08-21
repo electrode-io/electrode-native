@@ -14,7 +14,7 @@ const fs = require('fs')
 // ....
 // |_ .ernrc
 
-const PLATFORM_VERSION = '0.3.0'
+const PLATFORM_VERSION = '1000.0.0'
 // Path to ern platform root folder
 const ERN_PATH = process.env['ERN_HOME'] || `${process.env['HOME']}/.ern`
 // Path to ern platform cloned git repo
