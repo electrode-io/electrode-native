@@ -7,8 +7,7 @@ import {
 } from 'ern-core'
 import {
   Dependency,
-  mustacheUtils,
-  spin
+  mustacheUtils
 } from 'ern-util'
 
 import {
@@ -193,8 +192,8 @@ export default class GithubGenerator {
       shell.cd(`${paths.pluginsDownloadFolder}`)
       throwIfShellCommandFailed()
       if (pluginConfig.ios) {
-        const pluginSourcePath = await spin(`Retrieving ${plugin.scopedName}`,
-          downloadPluginSource(pluginConfig.origin))
+        log.debug(`Retrieving ${plugin.scopedName}`)
+        const pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.scopedName}`)
         }
@@ -202,7 +201,7 @@ export default class GithubGenerator {
         if (pluginConfig.ios.copy) {
           for (let copy of pluginConfig.ios.copy) {
             if (this.switchToOldDirectoryStructure(pluginSourcePath, copy.source)) {
-              log.info(`Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`)
+              log.debug(`Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`)
               copy.source = 'IOS/IOS/Classes/SwaggersAPIs/*'
             }
           }
@@ -223,7 +222,7 @@ export default class GithubGenerator {
               // Multiple source files
               if (source.from) {
                 if (this.switchToOldDirectoryStructure(pluginSourcePath, source.from)) {
-                  log.info(`Source Copy: Falling back to old directory structure for API(Backward compatibility)`)
+                  log.debug(`Source Copy: Falling back to old directory structure for API(Backward compatibility)`)
                   source.from = 'IOS/IOS/Classes/SwaggersAPIs/*.swift'
                 }
                 const relativeSourcePath = path.dirname(source.from)
