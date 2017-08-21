@@ -5,15 +5,10 @@ import {
   Dependency
 } from 'ern-util'
 import {
-  cauldron
+  cauldron,
+  MiniApp
 } from 'ern-core'
-import {
-  runCauldronContainerGen
-} from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
 import utils from '../../../lib/utils'
-import semver from 'semver'
-import inquirer from 'inquirer'
 import _ from 'lodash'
 
 exports.command = 'miniapp [miniapp]'
@@ -24,12 +19,17 @@ exports.builder = function (yargs: any) {
   .option('containerVersion', {
     alias: 'v',
     type: 'string',
-    describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
+    describe: 'Version to use for generated container. If none provided, version will be patch bumped by default'
   })
   .option('miniapps', {
     type: 'array',
     alias: 'm',
     describe: 'A list of one or more miniapps'
+  })
+  .option('descriptor', {
+    type: 'string',
+    alias: 'd',
+    describe: 'A complete native application descriptor'
   })
 }
 
@@ -37,88 +37,49 @@ exports.builder = function (yargs: any) {
 // only used by this MiniApp
 // It could be done as a future improvement to this command
 exports.handler = async function ({
-  completeNapDescriptor,
+  descriptor,
   miniapp,
-  miniapps,
+  miniapps = [],
   containerVersion
 } : {
-  completeNapDescriptor?: string,
+  descriptor?: string,
   miniapp?: string,
-  miniapps?: Array<String>,
+  miniapps: Array<string>,
   containerVersion?: string
 }) {
-  if (containerVersion) {
-    Ensure.isValidContainerVersion(containerVersion)
-  }
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
-
-   //
-  // If no 'completeNapDescriptor' was provided, list all non released
-  // native application versions from the Cauldron, so that user can
-  // choose one of them to add the MiniApp(s) to
-  if (!completeNapDescriptor) {
-    const napDescriptorStrings = utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true })
-
-    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
-      type: 'list',
-      name: 'userSelectedCompleteNapDescriptor',
-      message: 'Choose a non released native application version in which you want to add this MiniApp',
-      choices: napDescriptorStrings
-    }])
-
-    completeNapDescriptor = userSelectedCompleteNapDescriptor
-  }
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-
-  const miniAppsAsDeps = miniapp
-    ? [ Dependency.fromString(miniapp) ]
-    : _.map(miniapps, m => Dependency.fromString(m))
-
-  for (const miniAppAsDep of miniAppsAsDeps) {
-    const miniAppString = await cauldron.getContainerMiniApp(napDescriptor, miniAppAsDep.toString())
-    if (!miniAppString) {
-      return log.error(`${miniAppAsDep.toString()} MiniApp is not present in ${completeNapDescriptor} container !`)
+  if (!miniapp && miniapps.length === 0) {
+    try {
+      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
+    } catch (e) {
+      return log.error(e.message)
     }
+  } else if (miniapp && miniapps.length === 0) {
+    miniapps.push(miniapp)
   }
+
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+  }
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: miniapps,
+    napDescriptorExistInCauldron: descriptor,
+    miniAppIsInNativeApplicationVersionContainer: { miniApp: miniapps, napDescriptor }
+  })
+
+  const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))
 
   try {
-    // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
-
-    // Set the container version to use for container generation
-    let cauldronContainerVersion
-    if (containerVersion) {
-      log.debug(`Using user provided container version : ${containerVersion}`)
-      cauldronContainerVersion = containerVersion
-    } else {
-      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-      log.debug(`Bumping container version from cauldron : ${cauldronContainerVersion}`)
-    }
-
-    for (const miniAppAsDep of miniAppsAsDeps) {
-      await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
-    }
-
-    // Run container generator
-    await runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true })
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await cauldron.commitTransaction()
-
+    await utils.performContainerStateUpdateInCauldron(async () => {
+      for (const miniAppAsDep of miniAppsAsDeps) {
+        await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
+      }
+    }, napDescriptor, { containerVersion })
     log.info(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove MiniApp(s) from ${napDescriptor.toString()}`)
-    cauldron.discardTransaction()
   }
 }

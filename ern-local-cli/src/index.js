@@ -28,7 +28,8 @@ function showBanner () {
 // Entry point
 // ==============================================================================
 export default function run () {
-  global.log = new ColoredLog(ernConfig.getValue('loglevel', 'info'))
+  const logLevel = process.env['ERN_LOG_LEVEL'] ? process.env['ERN_LOG_LEVEL'] : ernConfig.getValue('loglevel', 'info')
+  global.log = new ColoredLog(logLevel)
 
   if (ernConfig.getValue('banner', true)) {
     showBanner()

@@ -2,35 +2,65 @@ import {
   assert,
   expect
 } from 'chai'
+import {
+  cauldron,
+  utils
+} from 'ern-core'
+import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
+import * as fixtures from './fixtures/common'
+
+const getNativeAppStub = sinon.stub(cauldron, 'getNativeApp')
+const isPublishedToNpmStub = sinon.stub(utils, 'isPublishedToNpm')
+
+function resolveCauldronGetNativeAppWith(data) {
+  getNativeAppStub.resolves(data)
+}
+
+beforeEach(() => {
+  isPublishedToNpmStub.reset()
+})
+
+after(() => {
+  getNativeAppStub.restore()
+  isPublishedToNpmStub.restore()
+})
+
+// Utility function that returns true if a given async function execution
+// throws an exception, false otherwise
+// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
+async function doesThrow (asyncFn, ...args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === true
+}
+
+async function doesNotThrow (asyncFn, ... args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === false
+}
 
 describe('Ensure.js', () => {
   // ==========================================================
   // isValidContainerVersion
   // ==========================================================
-  const validContainerVersions = [ 
-    '1.2.3', 
-    '0.0.0', 
-    '123.456.789'
-  ]
-  const invalidContainerVersions = [ 
-    '123',
-    '1.2',
-    '1.2.x',
-    'x.y.z',
-    undefined,
-    null,
-    0
-  ]
-
   describe('isValidContainerVersion', () => {
-    validContainerVersions.forEach(version => {
+    fixtures.validContainerVersions.forEach(version => {
       it('shoud not throw if version is valid', () => {
         expect(() => Ensure.isValidContainerVersion(version), `throw for ${version}`).to.not.throw
       })
     })
 
-    invalidContainerVersions.forEach(version => {
+    fixtures.invalidContainerVersions.forEach(version => {
       it('should throw if version is invalid', () => {
         expect(() => Ensure.isValidContainerVersion(version), `does not throw for ${version}`).to.throw
       })
@@ -40,24 +70,14 @@ describe('Ensure.js', () => {
   // ==========================================================
   // isCompleteNapDescriptorString
   // ==========================================================
-  const completeNapDescriptors = [
-    'myapp:android:17.14.0',
-    'myapp:ios:1'
-  ]
-
-  const incompleteNapDescriptors = [
-    'myapp',
-    'myapp:android'
-  ]
-
   describe('isCompleteNapDescriptorString', () => {
-    completeNapDescriptors.forEach(napDescriptor => {
+    fixtures.completeNapDescriptors.forEach(napDescriptor => {
       it('shoud not throw if given a complete napDescriptor string', () => {
         expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `throw for ${napDescriptor}`).to.not.throw
       })
     })
 
-    incompleteNapDescriptors.forEach(napDescriptor => {
+    fixtures.incompleteNapDescriptors.forEach(napDescriptor => {
       it('should throw if given a partial napDescriptor string', () => {
         expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `does not throw for ${napDescriptor}`).to.throw
       })
@@ -67,32 +87,48 @@ describe('Ensure.js', () => {
   // ==========================================================
   // noGitOrFilesystemPath
   // ==========================================================
-  const withoutGitOrFileSystemPath = [
-    'package@1.2.3',
-    '@scope/package@1.2.3',
-    [ 'package@1.2.3', '@scope/package@1.2.3' ]
-  ]
-
-  const withGitOrFileSystemPath = [
-    'git+ssh://github.com:electrode/react-native.git',
-    'git@github.com:electrode/react-native.git',
-    'file:/Users/username',
-    [ 'package@1.2.3', '@scope/package@1.2.3', 'git+ssh://github.com:electrode/react-native.git' ],
-    [ 'package@1.2.3', '@scope/package@1.2.3', 'file:/Users/username' ],
-    [ 'git+ssh://github.com:electrode/react-native.git', 'file:/Users/username' ]
-  ]
-
   describe('noGitOrFilesystemPath', () => {
-    withoutGitOrFileSystemPath.forEach(obj => {
+    fixtures.withoutGitOrFileSystemPath.forEach(obj => {
       it('shoud not throw if no git or file system path', () => {
         expect(() => Ensure.noGitOrFilesystemPath(obj), `throw for ${obj}`).to.not.throw
       })
     })
 
-    withGitOrFileSystemPath.forEach(obj => {
+    fixtures.withGitOrFileSystemPath.forEach(obj => {
       it('should throw if git or file system path', () => {
         expect(() => Ensure.noGitOrFilesystemPath(obj), `does not throw for ${obj}`).to.throw
       })
+    })
+  })
+
+  // ==========================================================
+  // napDescritorExistsInCauldron
+  // ==========================================================
+  describe('napDescritorExistsInCauldron', () => {
+    it('should not throw if nap descriptor exists in Cauldron', async () => {
+      resolveCauldronGetNativeAppWith({})
+      assert(await doesNotThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
+    })
+
+    it('should throw if nap descriptor does not exist in Cauldron', async () => {
+      resolveCauldronGetNativeAppWith(undefined)
+      assert(await doesThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
+    })
+  })
+
+
+  // ==========================================================
+  // publishedToNpm
+  // ==========================================================
+  describe('publishedToNpm', () => {
+    it('should not throw if dependency is published to npm', async () => {
+      isPublishedToNpmStub.resolves(true)
+      assert(await doesNotThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
+    })
+
+    it('should throw if dependency is not published to npm', async () => {
+      isPublishedToNpmStub.resolves(false)
+      assert(await doesThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
     })
   })
 })

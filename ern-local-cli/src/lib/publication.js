@@ -171,7 +171,7 @@ version: string, {
     // Only update yarn lock if container is getting published
     if (publish) {
       const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
-      await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
+      await cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock)
     }
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)

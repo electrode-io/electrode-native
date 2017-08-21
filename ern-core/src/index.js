@@ -9,6 +9,7 @@ import _GitUtils from './GitUtils'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 import * as _ModuleTypes from './ModuleTypes'
+import * as _utils from './utils'
 import {
   yarn as _yarn,
   reactnative as _reactnative,
@@ -29,6 +30,7 @@ export const reactnative = _reactnative
 export const codepush = _codepush
 export const dependencyLookup = _dependencyLookup
 export const GitUtils = _GitUtils
+export const utils = _utils
 
 export default ({
   pluginUtil: _pluginUtil,
@@ -43,5 +45,6 @@ export default ({
   reactnative: _reactnative,
   codepush: _codepush,
   dependencyLookup: _dependencyLookup,
-  GitUtils: _GitUtils
+  GitUtils: _GitUtils,
+  utils: _utils
 })

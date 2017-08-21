@@ -5,25 +5,25 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
-  cauldron
+  cauldron,
+  MiniApp
 } from 'ern-core'
 import {
   performCodePushOtaUpdate
 } from '../lib/publication'
+import utils from '../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'code-push'
+exports.command = 'code-push [miniapp]'
 exports.desc = 'CodePush one or more MiniApp(s) versions to a target native application version'
 
 exports.builder = function (yargs: any) {
   return yargs
-    .option('completeNapDescriptor', {
-      alias: 'n',
-      required: true,
+    .option('descriptor', {
+      alias: 'd',
       describe: 'Full native application selector (target native application version for the push)'
     })
     .option('miniapps', {
-      required: true,
       type: 'array',
       describe: 'The list of MiniApps to include in this CodePush bundle'
     })
@@ -66,8 +66,9 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   force,
+  miniapp,
   miniapps,
-  completeNapDescriptor,
+  descriptor,
   appName,
   deploymentName,
   platform,
@@ -76,8 +77,9 @@ exports.handler = async function ({
   rollout
 } : {
   force: boolean,
-  miniapps: Array<string>,
-  completeNapDescriptor: string,
+  miniapp?: string,
+  miniapps?: Array<string>,
+  descriptor?: string,
   appName: string,
   deploymentName: string,
   platform: 'android' | 'ios',
@@ -85,7 +87,25 @@ exports.handler = async function ({
   mandatory: boolean,
   rollout: string
 }) {
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  if (!miniapp && !miniapps) {
+    try {
+      miniapp = MiniApp.fromCurrentPath().packageDescriptor
+    } catch (e) {
+      return log.error(e.message)
+    }
+  }
+
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyReleasedVersions: true })
+  }
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    noGitOrFilesystemPath: miniapp || miniapps,
+    publishedToNpm: miniapp || miniapps
+  })
+
   const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
   await performCodePushOtaUpdate(
     napDescriptor,

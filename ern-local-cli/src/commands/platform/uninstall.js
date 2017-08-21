@@ -14,5 +14,9 @@ exports.handler = function ({
 } : {
   platformVersion: string
 }) {
-  Platform.uninstallPlatform(platformVersion.toString().replace('v', ''))
+  try {
+    Platform.uninstallPlatform(platformVersion.toString().replace('v', ''))
+  } catch (e) {
+    log.error(e)
+  }
 }

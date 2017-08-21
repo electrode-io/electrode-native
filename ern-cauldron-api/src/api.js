@@ -338,7 +338,8 @@ export default class CauldronApi {
     if (version && version.containerVersion) {
       return version.containerVersion
     } else {
-      // Backward compatibility (when version was stored at platform config level). To deprecate at some point
+      // Backward compatibility (when version was stored at platform config level).
+      // REMOVE IN ERN 0.5.0
       const config = await this.getConfig({ appName: nativeApplicationName, platformName: platformName })
       if (config && config.containerGenerator) {
         return config.containerGenerator.containerVersion

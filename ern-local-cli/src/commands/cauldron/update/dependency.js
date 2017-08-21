@@ -7,13 +7,9 @@ import {
 import {
   cauldron
 } from 'ern-core'
-import {
-  runCauldronContainerGen
-} from '../../../lib/publication'
-import Ensure from '../../../lib/Ensure'
-import semver from 'semver'
+import utils from '../../../lib/utils'
 
-exports.command = 'dependency <completeNapDescriptor> <dependency>'
+exports.command = 'dependency <dependency>'
 exports.desc = 'Update a native dependency version'
 
 exports.builder = function (yargs: any) {
@@ -23,74 +19,51 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
     })
+    .option('descriptor', {
+      type: 'string',
+      alias: 'd',
+      describe: 'A complete native application descriptor'
+    })
 }
 
 exports.handler = async function ({
-  completeNapDescriptor,
+  descriptor,
   dependency,
   containerVersion
 } : {
-  completeNapDescriptor: string,
+  descriptor?: string,
   dependency: string,
   containerVersion?: string
 }) {
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
+  if (!descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
-  Ensure.noGitOrFilesystemPath(dependency)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
   const dependencyObj = Dependency.fromString(dependency)
-
   if (!dependencyObj.isVersioned) {
     return log.error(`You need to provide a versioned dependency`)
   }
 
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor,
+    isValidContainerVersion: containerVersion,
+    noGitOrFilesystemPath: dependency,
+    dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: { dependency, napDescriptor }
+  })
+
   const versionLessDependencyString = dependencyObj.withoutVersion().toString()
-  const dependencyObFromCauldron =
-    await cauldron.getNativeDependency(napDescriptor, versionLessDependencyString)
-
-  if (!dependencyObFromCauldron) {
-    return log.error(`${versionLessDependencyString} dependency was not found in ${napDescriptor.toString()}`)
-  }
-
-  if (dependencyObFromCauldron.version === dependencyObj.version) {
-    return log.error(`${versionLessDependencyString} dependency is already using version ${dependencyObj.version}`)
-  }
 
   try {
-    // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
-
-    let cauldronContainerVersion
-    if (containerVersion) {
-      cauldronContainerVersion = containerVersion
-    } else {
-      cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-    }
-
-    await cauldron.updateNativeAppDependency(
-      napDescriptor,
-      dependencyObj.withoutVersion(),
-      dependencyObj.version)
-
-    // Run container generator
-    await runCauldronContainerGen(
-      napDescriptor,
-      cauldronContainerVersion,
-      { publish: true })
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await cauldron.commitTransaction()
-
+    await utils.performContainerStateUpdateInCauldron(async () => {
+      await cauldron.updateNativeAppDependency(
+        napDescriptor,
+        dependencyObj.withoutVersion().toString(),
+        dependencyObj.version)
+    }, napDescriptor, { containerVersion })
     log.info(`${versionLessDependencyString} dependency version was succesfully updated to ${dependencyObj.version} !`)
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to update ${versionLessDependencyString} dependency to v${dependencyObj.version}`)
-    cauldron.discardTransaction()
   }
 }

@@ -29,6 +29,6 @@ exports.handler = function ({
     const versionWithoutPrefix = version.toString().replace('v', '')
     miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
   } catch (e) {
-    log.error(`${e}`)
+    log.error(e.message)
   }
 }

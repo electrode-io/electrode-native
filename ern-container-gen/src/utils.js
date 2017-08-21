@@ -55,9 +55,11 @@ export async function bundleMiniApps (
     clearReactPackagerCache()
 
     if (platform === 'android') {
-      await ernUtil.spin(`Bundling miniapp(s) for Android`, reactNativeBundleAndroid(paths))
+      log.debug(`Bundling miniapp(s) for Android`)
+      await reactNativeBundleAndroid(paths)
     } else if (platform === 'ios') {
-      await ernUtil.spin(`Bundling miniapp(s) for iOS`, reactNativeBundleIos(paths))
+      log.debug(`Bundling miniapp(s) for iOS`)
+      await reactNativeBundleIos(paths)
     }
 
     log.debug(`[=== Completed mini apps bundling ===]`)
@@ -137,13 +139,13 @@ export async function generateMiniAppsComposite (
     // Now that the composite package.json is similar to the one used to generated yarn.lock
     // we can run yarn install to get back to the exact same dependency graph as the previously
     // generated composite
-    await ernUtil.spin(`Installing initial MiniApps`, yarn.install())
+    await yarn.install()
     await runYarnUsingMiniAppDeltas(miniAppsDeltas)
   } else {
     // No yarn.lock path was provided, just add miniapps one by one
     log.debug(`[generateMiniAppsComposite] no yarn lock provided`)
     for (const miniappPath of miniappsPaths) {
-      await ernUtil.spin(`Retrieving and installing ${miniappPath.toString()}`, yarn.add(miniappPath))
+      await yarn.add(miniappPath)
     }
   }
 
@@ -313,14 +315,16 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
   if (miniAppsDeltas.new) {
     for (const m of miniAppsDeltas.new) {
       const miniappPackage = Dependency.fromObject(m)
-      await ernUtil.spin(`Adding new MiniApp ${miniappPackage.toString()}`, yarn.add(miniappPackage.path))
+      log.debug(`Adding new MiniApp ${miniappPackage.toString()}`)
+      await yarn.add(miniappPackage.path)
     }
   }
 
   if (miniAppsDeltas.upgraded) {
     for (const m of miniAppsDeltas.upgraded) {
       const miniappPackage = Dependency.fromObject(m)
-      await ernUtil.spin(`Upgrading MiniApp ${miniappPackage.toString()}`, yarn.upgrade(miniappPackage.path))
+      log.debug(`Upgrading MiniApp ${miniappPackage.toString()}`)
+      await yarn.upgrade(miniappPackage.path)
     }
   }
 }

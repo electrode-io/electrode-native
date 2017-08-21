@@ -6,8 +6,7 @@ import {
 } from 'ern-core'
 import {
   mustacheUtils,
-  Dependency,
-  spin
+  Dependency
 } from 'ern-util'
 import {
   bundleMiniApps,
@@ -177,8 +176,7 @@ export default class MavenGenerator {
         log.debug(`> cd ${paths.pluginsDownloadFolder}`)
         shell.cd(`${paths.pluginsDownloadFolder}`)
         throwIfShellCommandFailed()
-        let pluginSourcePath = await spin(`Injecting ${plugin.name} code in container`,
-            downloadPluginSource(pluginConfig.origin))
+        let pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
@@ -360,8 +358,7 @@ export default class MavenGenerator {
 
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
-      await spin(`Building container and publishing archive`,
-          this.buildAndUploadArchive('lib'))
+      await this.buildAndUploadArchive('lib')
 
       log.debug(`[=== Completed build and publication of the container ===]`)
     } catch (e) {

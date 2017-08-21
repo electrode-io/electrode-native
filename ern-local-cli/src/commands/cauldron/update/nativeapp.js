@@ -6,31 +6,33 @@ import {
 import {
   cauldron
 } from 'ern-core'
-import Ensure from '../../../lib/Ensure'
+import utils from '../../../lib/utils'
 
-exports.command = 'nativeapp <completeNapDescriptor> [isReleased]'
+exports.command = 'nativeapp <descriptor> [isReleased]'
 exports.desc = 'Update a native application info in cauldron'
 
 exports.builder = function (yargs: any) {
   return yargs
-        .option('isReleased', {
-          alias: 'r',
-          type: 'bool',
-          describe: 'true if version is released, false otherwise'
-        })
+    .option('isReleased', {
+      alias: 'r',
+      type: 'bool',
+      describe: 'true if version is released, false otherwise'
+    })
 }
 
 exports.handler = async function ({
-  completeNapDescriptor,
+  descriptor,
   isReleased
 } : {
-  completeNapDescriptor: string,
+  descriptor: string,
   isReleased?: boolean
 }) {
-  if (completeNapDescriptor) {
-    Ensure.isCompleteNapDescriptorString(completeNapDescriptor)
-  }
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  await utils.logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor
+  })
+
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   if (isReleased !== undefined) {
     cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
   }
