@@ -15,7 +15,7 @@ import {
   runLocalContainerGen,
   runCauldronContainerGen
 } from '../lib/publication'
-import Ensure from '../lib/Ensure'
+import utils from '../lib/utils'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
@@ -24,12 +24,12 @@ exports.desc = 'Create a container locally'
 
 exports.builder = function (yargs: any) {
   return yargs
-    .option('completeNapDescriptor', {
+    .option('descriptor', {
       type: 'string',
       alias: 'n',
       describe: 'Full native application selector'
     })
-    .option('version', {
+    .option('containerVersion', {
       type: 'string',
       alias: 'v',
       describe: 'Version of the generated container. Default to 1.0.0'
@@ -62,8 +62,8 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-  completeNapDescriptor,
-  version = '1.0.0',
+  descriptor,
+  containerVersion = '1.0.0',
   jsOnly,
   outDir,
   miniapps,
@@ -71,8 +71,8 @@ exports.handler = async function ({
   containerName,
   publicationUrl
 } : {
-  completeNapDescriptor?: string,
-  version: string,
+  descriptor?: string,
+  containerVersion: string,
   jsOnly?: boolean,
   outDir?: string,
   miniapps?: Array<string>,
@@ -82,14 +82,18 @@ exports.handler = async function ({
 }) {
   let napDescriptor: ?NativeApplicationDescriptor
 
-  Ensure.isValidContainerVersion(version)
+  await utils.logErrorAndExitIfNotSatisfied({
+    isValidContainerVersion: containerVersion,
+    isCompleteNapDescriptorString: descriptor,
+    napDescriptorExistInCauldron: descriptor
+  })
 
   //
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
   // containing all the native applications versions in the cauldron
   // Not needed if miniapps are directly provided
-  if (!completeNapDescriptor && !miniapps) {
+  if (!descriptor && !miniapps) {
     const nativeApps = await cauldron.getAllNativeApps()
 
     // Transform native apps from the cauldron to an Array
@@ -113,11 +117,11 @@ exports.handler = async function ({
       choices: result
     }])
 
-    completeNapDescriptor = userSelectedCompleteNapDescriptor
+    descriptor = userSelectedCompleteNapDescriptor
   }
 
-  if (completeNapDescriptor) {
-    napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  if (descriptor) {
+    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   }
 
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
@@ -156,15 +160,15 @@ exports.handler = async function ({
       await runLocalContainerGen(
         miniAppsPaths,
         platform, {
-          containerVersion: version,
+          containerVersion,
           nativeAppName: containerName,
           outDir
         }
       )
-    } else if (napDescriptor && version) {
+    } else if (napDescriptor && containerVersion) {
       await runCauldronContainerGen(
         napDescriptor,
-        version,
+        containerVersion,
         { publish: false, outDir })
     }
   }

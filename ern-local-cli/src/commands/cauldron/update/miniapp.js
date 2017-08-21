@@ -42,19 +42,25 @@ exports.builder = function (yargs: any) {
 // Commands should remain as much logic less as possible
 exports.handler = async function ({
   miniapp,
-  miniapps,
+  miniapps = [],
   descriptor,
   force = false,
   containerVersion
 } : {
   miniapp?: string,
-  miniapps?: Array<string>,
+  miniapps: Array<string>,
   descriptor: string,
   force: boolean,
   containerVersion?: string
 }) {
-  if (!miniapp && !miniapps) {
-    miniapp = MiniApp.fromCurrentPath().packageDescriptor
+  if (!miniapp && miniapps.length === 0) {
+    try {
+      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
+    } catch (e) {
+      return log.error(e.message)
+    }
+  } else if (miniapp && miniapps.length === 0) {
+    miniapps.push(miniapp)
   }
 
   if (!descriptor) {
@@ -67,24 +73,17 @@ exports.handler = async function ({
     napDescriptorExistInCauldron: descriptor,
     isValidContainerVersion: containerVersion,
     noGitOrFilesystemPath: miniapps,
-    publishedToNpm: miniapp || miniapps,
-    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: { miniApp: miniapp || miniapps, napDescriptor }
+    publishedToNpm: miniapps,
+    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: { miniApp: miniapps, napDescriptor }
   })
 
   //
   // Construct MiniApp objects array
   let miniAppsObjs = []
-  if (miniapps) {
-    const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
-    for (const miniAppDependencyPath of miniAppsDependencyPaths) {
-      const m = await spin(`Retrieving ${miniAppDependencyPath} MiniApp`,
-         MiniApp.fromPackagePath(miniAppDependencyPath))
-      miniAppsObjs.push(m)
-    }
-  } else if (miniapp) {
-    // A single miniapp string was provided (or local miniapp)
-    const m = await spin(`Retrieving ${miniapp} MiniApp`,
-      MiniApp.fromPackagePath(DependencyPath.fromString(miniapp)))
+  const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
+  for (const miniAppDependencyPath of miniAppsDependencyPaths) {
+    const m = await spin(`Retrieving ${miniAppDependencyPath} MiniApp`,
+        MiniApp.fromPackagePath(miniAppDependencyPath))
     miniAppsObjs.push(m)
   }
 

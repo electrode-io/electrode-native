@@ -39,16 +39,22 @@ exports.builder = function (yargs: any) {
 exports.handler = async function ({
   descriptor,
   miniapp,
-  miniapps,
+  miniapps = [],
   containerVersion
 } : {
   descriptor?: string,
   miniapp?: string,
-  miniapps?: Array<string>,
+  miniapps: Array<string>,
   containerVersion?: string
 }) {
-  if (!miniapp && !miniapps) {
-    miniapp = MiniApp.fromCurrentPath().packageDescriptor
+  if (!miniapp && miniapps.length === 0) {
+    try {
+      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
+    } catch (e) {
+      return log.error(e.message)
+    }
+  } else if (miniapp && miniapps.length === 0) {
+    miniapps.push(miniapp)
   }
 
   if (!descriptor) {
@@ -59,14 +65,12 @@ exports.handler = async function ({
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: miniapp || miniapps,
+    noGitOrFilesystemPath: miniapps,
     napDescriptorExistInCauldron: descriptor,
-    miniAppIsInNativeApplicationVersionContainer: { miniApp: miniapp || miniapps, napDescriptor }
+    miniAppIsInNativeApplicationVersionContainer: { miniApp: miniapps, napDescriptor }
   })
 
-  const miniAppsAsDeps = miniapp
-    ? [ Dependency.fromString(miniapp) ]
-    : _.map(miniapps, m => Dependency.fromString(m))
+  const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))
 
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {

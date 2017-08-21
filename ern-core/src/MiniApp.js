@@ -55,8 +55,7 @@ export default class MiniApp {
 
     const packageJsonPath = `${miniAppPath}/package.json`
     if (!fs.existsSync(packageJsonPath)) {
-      throw new Error(tagOneLine`No package.json found.
-      This command should be run at the root of a mini-app`)
+      throw new Error(`This command should be run at the root of a mini-app`)
     }
 
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
@@ -116,7 +115,7 @@ Are you sure this is a MiniApp ?`)
         Platform.switchToVersion(platformVersion)
       }
 
-      log.info(`Creating application ${appName} at platform version ${platformVersion}`)
+      log.info(`Creating ${appName} MiniApp using platform version ${platformVersion}`)
 
       const reactNativeDependency = await Manifest.getPlugin('react-native')
       if (!reactNativeDependency) {
