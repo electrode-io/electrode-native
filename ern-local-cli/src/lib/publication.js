@@ -12,7 +12,8 @@ import {
   compatibility,
   MiniApp,
   Platform,
-  yarn
+  yarn,
+  ContainerGeneratorConfig
 } from 'ern-core'
 import {
   Dependency,
@@ -21,28 +22,20 @@ import {
   NativeApplicationDescriptor,
   spin
 } from 'ern-util'
+
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
 import path from 'path'
 
-function createContainerGenerator (platform, config) {
-  if (config) {
-    switch (config.name) {
-      case 'maven':
-        return new AndroidGenerator({ mavenRepositoryUrl: config.mavenRepositoryUrl })
-      case 'github':
-        return new IosGenerator({ targetRepoUrl: config.targetRepoUrl })
-    }
-  }
-
-  // No generator configuration was provided
-  // Create default generator for target native platform
-  switch (platform) {
+function createContainerGenerator (config: ContainerGeneratorConfig) {
+  switch (config.platform) {
     case 'android':
-      return new AndroidGenerator()
+      log.debug('Creating an AndroidGenerator')
+      return new AndroidGenerator({containerGeneratorConfig: config})
     case 'ios':
-      return new IosGenerator()
+      log.debug('Creating an IOSGenerator')
+      return new IosGenerator(config)
   }
 }
 
@@ -71,9 +64,16 @@ platform: 'android' | 'ios', {
     let config
 
     if (publicationUrl) {
-      config = platform === 'android' ? { name: 'maven', mavenRepositoryUrl: publicationUrl } : { name: 'github', targetRepoUrl: publicationUrl }
+      config = platform === 'android' ? {
+        publishers: [{
+          name: 'maven',
+          url: publicationUrl
+        }]
+      } : {
+        publishers: [{name: 'github', url: publicationUrl}]}
     }
-
+    let containerGeneratorConfig = new ContainerGeneratorConfig(platform, config)
+    log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
     for (const miniappPackagePath of miniappPackagesPaths) {
       log.info(`Processing ${miniappPackagePath.toString()}`)
 
@@ -120,7 +120,7 @@ platform: 'android' | 'ios', {
       containerVersion,
       nativeAppName,
       platformPath: Platform.currentPlatformVersionPath,
-      generator: createContainerGenerator(platform, config),
+      generator: createContainerGenerator(containerGeneratorConfig),
       plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
       miniapps,
       workingFolder: outDir,
@@ -152,15 +152,19 @@ version: string, {
     let config
     if (publish) {
       config = await cauldron.getConfig(napDescriptor)
+      log.debug(`Cauldron config: ${config ? JSON.stringify(config.containerGenerator) : 'undefined'}`)
     } else {
       log.info('Container publication is disabled. Will generate the container locally.')
     }
+
+    let containerGeneratorConfig = new ContainerGeneratorConfig(napDescriptor.platform, config ? config.containerGenerator : undefined)
+    log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
 
     const paths = await generateContainer({
       containerVersion: version,
       nativeAppName: napDescriptor.name,
       platformPath: Platform.currentPlatformVersionPath,
-      generator: createContainerGenerator(napDescriptor.platform, config ? config.containerGenerator : undefined),
+      generator: createContainerGenerator(containerGeneratorConfig),
       plugins,
       miniapps,
       workingFolder: outDir,

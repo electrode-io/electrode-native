@@ -3,7 +3,8 @@
 import {
   pluginUtil,
   handleCopyDirective,
-  GitUtils
+  GitUtils,
+  ContainerGeneratorConfig
 } from 'ern-core'
 import {
   Dependency,
@@ -26,14 +27,10 @@ import readDir from 'fs-readdir-recursive'
 const ROOT_DIR = shell.pwd()
 
 export default class IosGenerator {
-  _targetRepoUrl: string
+  _containerGeneratorConfig : ContainerGeneratorConfig
 
-  constructor ({
-    targetRepoUrl
-  } : {
-    targetRepoUrl: string
-  } = {}) {
-    this._targetRepoUrl = targetRepoUrl
+  constructor (containerGeneratorConfig: ContainerGeneratorConfig) {
+    this._containerGeneratorConfig = containerGeneratorConfig
   }
 
   get name () : string {
@@ -42,10 +39,6 @@ export default class IosGenerator {
 
   get platform () : string {
     return 'ios'
-  }
-
-  get targetRepoUrl () : string {
-    return this._targetRepoUrl
   }
 
   async generateContainer (
@@ -60,25 +53,29 @@ export default class IosGenerator {
       pathToYarnLock?: string
     } = {}) : Promise<*> {
     try {
-      log.debug(`\n === Using github generator
-          targetRepoUrl: ${this.targetRepoUrl}
-          containerVersion: ${containerVersion}`)
-
-      // Enhance mustache view with ios specifics
-      mustacheView.ios = {
-        targetRepoUrl: this.targetRepoUrl,
-        containerVersion
-      }
-
-      // Clone target output Git repo
       shell.cd(paths.outFolder)
       throwIfShellCommandFailed()
-      if (mustacheView.ios.targetRepoUrl) {
-        await GitUtils.gitClone(mustacheView.ios.targetRepoUrl, { destFolder: 'ios' })
-      }
 
-      shell.rm('-rf', `${paths.outFolder}/ios/*`)
-      throwIfShellCommandFailed()
+      let gitHubPublisher
+      if (this._containerGeneratorConfig.shouldPublish()) {
+        // TODO: The logic below should be fixed to support multiple publishers. Only GitHub publisher is support for now for iOS
+        if ((gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher)) {
+          let repoUrl = gitHubPublisher.url
+          log.debug(`\n === Using github publisher
+          targetRepoUrl: ${repoUrl}
+          containerVersion: ${containerVersion}`)
+
+          log.debug(`First lets clone the repo so we can update it with the newly generated container. Location: ${paths.outFolder}`)
+          await GitUtils.gitClone(repoUrl, {destFolder: 'ios'})
+
+          shell.rm('-rf', `${paths.outFolder}/ios/*`)
+          throwIfShellCommandFailed()
+        } else {
+          log.warn('Looks like we are missing a GitHub publisher. Currently only GitHub publisher is supported.')
+        }
+      } else {
+        log.debug('Will not publish since there is no publisher provided to generator.')
+      }
 
       //
       // Go through all ern-container-gen steps
@@ -100,7 +97,8 @@ export default class IosGenerator {
       throwIfShellCommandFailed()
 
       // Publish resulting container to git repo
-      if (mustacheView.ios.targetRepoUrl) {
+      if (this._containerGeneratorConfig.shouldPublish()) {
+        log.debug('Publish generated container to git repo')
         await GitUtils.gitPublish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
