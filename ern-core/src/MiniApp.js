@@ -566,6 +566,8 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
         // point as compatibility checks would have failed unless force flag is used)
         if (remoteDependency && (remoteDependency.version < localNativeDependency.version)) {
           await cauldron.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
+        } else if (!remoteDependency) {
+          await cauldron.addNativeDependency(napDescriptor, localNativeDependency)
         }
       }
 
