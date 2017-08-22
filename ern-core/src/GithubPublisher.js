@@ -15,6 +15,10 @@ export default class GithubPublisher implements Publisher {
   }
 
   async publish ({commitMessage, tag}: { commitMessage: string, tag: string } = {}) {
-    GitUtils.publish(commitMessage, tag)
+    await GitUtils.gitPublish({commitMessage: commitMessage, tag: tag}).then((success) => {
+      log.info(`Successfully pushed to git ${success}`)
+    }, (failure) => {
+      log.error(`Git push failed ${failure}`)
+    })
   }
 }
