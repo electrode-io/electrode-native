@@ -6,6 +6,9 @@ import _Platform from './Platform'
 import _Manifest from './Manifest'
 import _cauldron from './cauldron'
 import _GitUtils from './GitUtils'
+import _MavenUtils from './MavenUtils'
+import _Publisher from './Publisher'
+import _ContainerGeneratorConfig from './ContainerGeneratorConfig'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 import * as _ModuleTypes from './ModuleTypes'
@@ -31,6 +34,9 @@ export const codepush = _codepush
 export const dependencyLookup = _dependencyLookup
 export const GitUtils = _GitUtils
 export const utils = _utils
+export const MavenUtils = _MavenUtils
+export const Publisher = _Publisher
+export const ContainerGeneratorConfig = _ContainerGeneratorConfig
 
 export default ({
   pluginUtil: _pluginUtil,
@@ -46,5 +52,8 @@ export default ({
   codepush: _codepush,
   dependencyLookup: _dependencyLookup,
   GitUtils: _GitUtils,
-  utils: _utils
+  utils: _utils,
+  MavenUtils: _MavenUtils,
+  Publisher: _Publisher,
+  ContainerGeneratorConfig: _ContainerGeneratorConfig
 })
