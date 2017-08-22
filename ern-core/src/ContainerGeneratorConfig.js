@@ -8,9 +8,8 @@ import MavenUtils from './MavenUtils'
 /**
  * {
   "containerGenerator": {
-    "name": "maven", //This entry is kept for backward compatibility(08/17/2017)
-    "mavenRepositoryUrl": "http://mobile-fix-mebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted",//This entry is kept for backward compatibility(08/17/2017)
-    "containerVersion": "1.16.4",
+    "mavenRepositoryUrl": "http://repo-url",
+    "containerVersion": "1.0.0",
     "publishers": [
       {
         "name": "github",

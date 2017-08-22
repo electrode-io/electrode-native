@@ -8,7 +8,8 @@ import {
 } from 'ern-core'
 import {
   mustacheUtils,
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import {
   bundleMiniApps,
@@ -71,6 +72,7 @@ export default class AndroidGenerator {
       }
     } else {
       log.warn('Something does not look right, android should always have a default maven publisher.')
+      Utils.logErrorAndExitProcess(`Something does not look right, android should always have a default maven publisher. ${mavenPublisher}`)
     }
 
     // Enhance mustache view with android specifics
