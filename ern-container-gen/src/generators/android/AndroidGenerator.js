@@ -4,7 +4,8 @@ import {
   pluginUtil,
   handleCopyDirective,
   ContainerGeneratorConfig,
-  MavenUtils
+  MavenUtils,
+  GitUtils
 } from 'ern-core'
 import {
   mustacheUtils,
@@ -64,6 +65,9 @@ export default class AndroidGenerator {
     } : {
       pathToYarnLock?: string
     } = {}) {
+    shell.cd(paths.outFolder)
+    throwIfShellCommandFailed()
+
     const mavenPublisher = this._containerGeneratorConfig.firstAvailableMavenPublisher
     if (this._containerGeneratorConfig.shouldPublish()) {
       log.debug(`Container will be published to ${mavenPublisher.url}`)
@@ -73,6 +77,25 @@ export default class AndroidGenerator {
     } else {
       log.warn('Something does not look right, android should always have a default maven publisher.')
       Utils.logErrorAndExitProcess(`Something does not look right, android should always have a default maven publisher. ${mavenPublisher}`)
+    }
+
+    const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
+    if (gitHubPublisher) {
+      try {
+        log.debug(`GitHub publisher found. Lets clone the repo before generating the container.`)
+        let repoUrl = gitHubPublisher.url
+        log.debug(`\n === Generated container will also be published to github
+          targetRepoUrl: ${repoUrl}
+          containerVersion: ${containerVersion}`)
+
+        log.debug(`First lets clone the repo so we can update it with the newly generated container. Location: ${paths.outFolder}`)
+        await GitUtils.gitClone(repoUrl, {destFolder: 'android'})
+
+        shell.rm('-rf', `${paths.outFolder}/android/*`)
+        throwIfShellCommandFailed()
+      } catch (e) {
+        Utils.logErrorAndExitProcess('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct')
+      }
     }
 
     // Enhance mustache view with android specifics
@@ -104,6 +127,11 @@ export default class AndroidGenerator {
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
     await mavenPublisher.publish({workingDir: `${paths.outFolder}/android`, moduleName: `lib`})
+    if (gitHubPublisher) {
+      shell.cd(`${paths.outFolder}/android`)
+      throwIfShellCommandFailed()
+      gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+    }
 
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
     log.info(`To ${this._containerGeneratorConfig.publishers[0].url}`)
