@@ -98,7 +98,7 @@ export default class IosGenerator {
         shell.cd(`${paths.outFolder}/ios`)
         throwIfShellCommandFailed()
         log.debug('Publish generated container to git repo')
-        gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+        await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
       // Finally, container hull project is fully generated, now let's just

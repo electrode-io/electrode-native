@@ -130,7 +130,7 @@ export default class AndroidGenerator {
     if (gitHubPublisher) {
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
-      gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+      await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
     }
 
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
