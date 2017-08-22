@@ -2,20 +2,21 @@
 
 import {
   pluginUtil,
-  handleCopyDirective
+  handleCopyDirective,
+  ContainerGeneratorConfig,
+  MavenUtils,
+  GitUtils
 } from 'ern-core'
 import {
   mustacheUtils,
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import {
   bundleMiniApps,
   downloadPluginSource,
   throwIfShellCommandFailed
 } from '../../utils.js'
-import {
-  exec
-} from 'child_process'
 import _ from 'lodash'
 import fs from 'fs'
 import http from 'http'
@@ -23,66 +24,34 @@ import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
-const HOME_DIRECTORY = process.env['HOME']
 const ROOT_DIR = shell.pwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
-const FILE_REGEX = /^file:\/\//
 
-const getDefaultMavenLocalDirectory = () => {
-  if (!HOME_DIRECTORY) {
-    throw new Error(`process.env['HOME'] is undefined !!!`)
-  }
-  return `file://${HOME_DIRECTORY}/.m2/repository`
-}
-
-export default class MavenGenerator {
-  _mavenRepositoryUrl : string
+export default class AndroidGenerator {
+  _containerGeneratorConfig : ContainerGeneratorConfig
   _namespace : string
 
   constructor ({
-    mavenRepositoryUrl = getDefaultMavenLocalDirectory(),
+    containerGeneratorConfig,
     namespace = DEFAULT_NAMESPACE
    } : {
-    mavenRepositoryUrl?: string,
+    containerGeneratorConfig: ContainerGeneratorConfig,
     namespace?: string
    } = {}) {
-    this._mavenRepositoryUrl = mavenRepositoryUrl
+    this._containerGeneratorConfig = containerGeneratorConfig
     this._namespace = namespace
   }
 
   get name () : string {
-    return 'MavenGenerator'
+    return 'AndroidGenerator'
   }
 
   get platform (): string {
     return 'android'
   }
 
-  get mavenRepositoryUrl () : string {
-    return this._mavenRepositoryUrl
-  }
-
   get namespace () : string {
     return this._namespace
-  }
-
-  get mavenRepositoryType () : 'http' | 'file' | 'unknown' {
-    if (this.mavenRepositoryUrl.startsWith('http')) {
-      return 'http'
-    } else if (this.mavenRepositoryUrl.startsWith('file')) {
-      return 'file'
-    }
-    return 'unknown'
-  }
-
-  get targetRepositoryGradleStatement () : ?string {
-    // Build repository statement to be injected in Android build.gradle for
-    // publication target of generated container
-    if (this.mavenRepositoryType === 'file') {
-      return `repository(url: "${this.mavenRepositoryUrl}")`
-    } else if (this.mavenRepositoryType === 'http') {
-      return `repository(url: "${this.mavenRepositoryUrl}") { authentication(userName: mavenUser, password: mavenPassword) }`
-    }
   }
 
   async generateContainer (
@@ -96,19 +65,42 @@ export default class MavenGenerator {
     } : {
       pathToYarnLock?: string
     } = {}) {
-    // If no maven repository url (for publication) is provided part of the generator config,
-    // we just fall back to standard maven local repository location.
-    // If folder does not exists yet, we create it
-    const defaultMavenLocalDirectory = getDefaultMavenLocalDirectory()
-    if ((this.mavenRepositoryUrl === defaultMavenLocalDirectory) &&
-      (!fs.existsSync(defaultMavenLocalDirectory))) {
-      shell.mkdir('-p', defaultMavenLocalDirectory.replace(FILE_REGEX, ''))
-      throwIfShellCommandFailed()
+    shell.cd(paths.outFolder)
+    throwIfShellCommandFailed()
+
+    const mavenPublisher = this._containerGeneratorConfig.firstAvailableMavenPublisher
+    if (this._containerGeneratorConfig.shouldPublish()) {
+      log.debug(`Container will be published to ${mavenPublisher.url}`)
+      if (MavenUtils.isLocalMavenRepo(mavenPublisher.url)) {
+        MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
+      }
+    } else {
+      log.warn('Something does not look right, android should always have a default maven publisher.')
+      Utils.logErrorAndExitProcess(`Something does not look right, android should always have a default maven publisher. ${mavenPublisher}`)
+    }
+
+    const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
+    if (gitHubPublisher) {
+      try {
+        log.debug(`GitHub publisher found. Lets clone the repo before generating the container.`)
+        let repoUrl = gitHubPublisher.url
+        log.debug(`\n === Generated container will also be published to github
+          targetRepoUrl: ${repoUrl}
+          containerVersion: ${containerVersion}`)
+
+        log.debug(`First lets clone the repo so we can update it with the newly generated container. Location: ${paths.outFolder}`)
+        await GitUtils.gitClone(repoUrl, {destFolder: 'android'})
+
+        shell.rm('-rf', `${paths.outFolder}/android/*`)
+        throwIfShellCommandFailed()
+      } catch (e) {
+        Utils.logErrorAndExitProcess('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct')
+      }
     }
 
     // Enhance mustache view with android specifics
     mustacheView.android = {
-      repository: this.targetRepositoryGradleStatement,
+      repository: MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url),
       namespace: this.namespace
     }
 
@@ -134,10 +126,15 @@ export default class MavenGenerator {
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
-    await this.buildAndPublishContainer(paths)
+    await mavenPublisher.publish({workingDir: `${paths.outFolder}/android`, moduleName: `lib`})
+    if (gitHubPublisher) {
+      shell.cd(`${paths.outFolder}/android`)
+      throwIfShellCommandFailed()
+      await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+    }
 
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
-    log.info(`To ${this.mavenRepositoryUrl}`)
+    log.info(`To ${this._containerGeneratorConfig.publishers[0].url}`)
   }
 
   async fillContainerHull (
@@ -350,41 +347,6 @@ export default class MavenGenerator {
       log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
       throw e
     }
-  }
-
-  async buildAndPublishContainer (paths: any) : Promise<*> {
-    try {
-      log.debug(`[=== Starting build and publication of the container ===]`)
-
-      shell.cd(`${paths.outFolder}/android`)
-      throwIfShellCommandFailed()
-      await this.buildAndUploadArchive('lib')
-
-      log.debug(`[=== Completed build and publication of the container ===]`)
-    } catch (e) {
-      log.error('[buildAndPublishAndroidContainer] Something went wrong: ' + e)
-      throw e
-    }
-  }
-
-  async buildAndUploadArchive (moduleName: string) : Promise<*> {
-    let cmd = `./gradlew ${moduleName}:uploadArchives `
-    return new Promise((resolve, reject) => {
-      exec(cmd,
-        (err, stdout, stderr) => {
-          if (err) {
-            log.error(err)
-            reject(err)
-          }
-          if (stderr) {
-            log.error(stderr)
-          }
-          if (stdout) {
-            log.debug(stdout)
-            resolve(stdout)
-          }
-        })
-    })
   }
 
   // Not used for now, but kept here. Might need it
