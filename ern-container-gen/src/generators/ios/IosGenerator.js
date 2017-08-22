@@ -93,13 +93,12 @@ export default class IosGenerator {
       // Handle resources copying
       this.copyRnpmAssets(miniapps, paths)
 
-      shell.cd(`${paths.outFolder}/ios`)
-      throwIfShellCommandFailed()
-
       // Publish resulting container to git repo
-      if (this._containerGeneratorConfig.shouldPublish()) {
+      if (gitHubPublisher) {
+        shell.cd(`${paths.outFolder}/ios`)
+        throwIfShellCommandFailed()
         log.debug('Publish generated container to git repo')
-        await GitUtils.gitPublish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+        gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
       // Finally, container hull project is fully generated, now let's just
