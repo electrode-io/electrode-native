@@ -97,13 +97,11 @@ export default class IosGenerator {
       if (gitHubPublisher) {
         shell.cd(`${paths.outFolder}/ios`)
         throwIfShellCommandFailed()
-        log.debug('Publish generated container to git repo')
+        log.debug(`Publish generated container[v${containerVersion}] to git repo: ${gitHubPublisher.url}`)
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
-      // Finally, container hull project is fully generated, now let's just
-      // build it and publish resulting AAR
-      // await publishIosContainer(paths)
+      log.info(`Container generation completed!`)
     } catch (e) {
       log.error(`Something went wrong. Aborting ern-container-gen: ${e}`)
       console.trace(e)

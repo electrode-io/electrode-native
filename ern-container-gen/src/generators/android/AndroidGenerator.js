@@ -128,10 +128,11 @@ export default class AndroidGenerator {
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
       await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+      log.info(`Code pushed to ${gitHubPublisher.url}`)
     }
 
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
-    log.info(`To ${this._containerGeneratorConfig.publishers[0].url}`)
+    log.info(`To ${mavenPublisher.url}`)
   }
 
   async fillContainerHull (
