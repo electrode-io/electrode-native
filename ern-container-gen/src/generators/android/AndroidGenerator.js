@@ -153,6 +153,7 @@ export default class AndroidGenerator {
 
       log.debug(`> cp -R ${paths.containerHull}/android/* ${outputFolder}`)
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
+      shell.cp('-R', `${paths.containerHull}/android/.*`, outputFolder)
       throwIfShellCommandFailed()
 
       await this.buildAndroidPluginsViews(plugins, mustacheView)
@@ -207,7 +208,7 @@ export default class AndroidGenerator {
       }
 
       log.debug(`Patching hull`)
-      const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar')))
+      const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
       for (const file of files) {
         if (file.startsWith(`lib/src/main/java/com`) && !file.startsWith(`lib/src/main/java/com/walmartlabs/ern/container`)) {
           // We don't want to Mustache process library files. It can lead to bad things
