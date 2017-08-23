@@ -19,7 +19,6 @@ import {
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
-import http from 'http'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
@@ -116,9 +115,7 @@ export default class AndroidGenerator {
     //   to specify publication repository target
     await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
-    // Todo : move to utils .js as it is crossplatform
-    // Bundle all the miniapps together and store resulting bundle in container
-    // project
+    // Bundle all the miniapps together and store resulting bundle in container project
     await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
 
     // Rnpm handling
@@ -131,10 +128,11 @@ export default class AndroidGenerator {
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
       await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+      log.info(`Code pushed to ${gitHubPublisher.url}`)
     }
 
     log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
-    log.info(`To ${this._containerGeneratorConfig.publishers[0].url}`)
+    log.info(`To ${mavenPublisher.url}`)
   }
 
   async fillContainerHull (
@@ -348,45 +346,5 @@ export default class AndroidGenerator {
       log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
       throw e
     }
-  }
-
-  // Not used for now, but kept here. Might need it
-  async isArtifactInMavenRepo (artifactDescriptor: string, mavenRepoUrl: string) : Promise<?boolean> {
-    // An artifact follows the format group:name:version
-    // i.e com.walmartlabs.ern:react-native-electrode-bridge:1.0.0
-    // Split it !
-    const explodedArtifactDescriptor = artifactDescriptor.split(':')
-    // We replace all '.' in the group with `/`
-    // i.e: com.walmartlabs.ern => com/walmartlabs/ern
-    // As it corresponds to the path where artifact is stored
-    explodedArtifactDescriptor[0] = explodedArtifactDescriptor[0].replace(/[.]/g, '/')
-    // And we join everything together to get full path in the repository
-    // i.e: com.walmartlabs.ern:react-native-electrode-bridge:1.0.0
-    // => com/walmartlabs/ern/react-native-electrode-bridge/1.0.0
-    const pathToArtifactInRepository = explodedArtifactDescriptor.join('/')
-
-    // Remote maven repo
-    // Just do an HTTP GET to the url of the artifact.
-    // If it returns '200' status code, it means the artifact exists, otherwise
-    // it doesn't
-    if (this.mavenRepositoryType === 'http') {
-      // Last `/` is important here, otherwise we'll get an HTTP 302 instead of 200
-      // in case the artifact does exists !
-      const res = await this.httpGet(`${mavenRepoUrl}/${pathToArtifactInRepository}/`)
-      return res.statusCode === 200
-    } else if (this.mavenRepositoryType === 'file') {
-      const mavenRepositoryPath = mavenRepoUrl.replace('file://', '')
-      return fs.existsSync(`${mavenRepositoryPath}/${pathToArtifactInRepository}`)
-    }
-  }
-
-  async httpGet (url: string) : Promise<http.IncomingMessage> {
-    return new Promise((resolve, reject) => {
-      http.get(url, res => {
-        resolve(res)
-      }).on('error', e => {
-        reject(e)
-      })
-    })
   }
 }
