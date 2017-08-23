@@ -153,6 +153,7 @@ export default class AndroidGenerator {
 
       log.debug(`> cp -R ${paths.containerHull}/android/* ${outputFolder}`)
       shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
+      shell.cp('-R', `${paths.containerHull}/android/.*`, outputFolder)
       throwIfShellCommandFailed()
 
       await this.buildAndroidPluginsViews(plugins, mustacheView)
