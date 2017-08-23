@@ -115,9 +115,7 @@ export default class AndroidGenerator {
     //   to specify publication repository target
     await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
-    // Todo : move to utils .js as it is crossplatform
-    // Bundle all the miniapps together and store resulting bundle in container
-    // project
+    // Bundle all the miniapps together and store resulting bundle in container project
     await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
 
     // Rnpm handling
