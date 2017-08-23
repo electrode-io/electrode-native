@@ -7,6 +7,7 @@ import {
   Dependency,
   DependencyPath
 } from 'ern-util'
+import http from 'http'
 
 export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<boolean> {
   if (pkg instanceof DependencyPath || typeof pkg === 'string') {
@@ -25,4 +26,14 @@ export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<
   }
   let publishedVersions: Array<string> = publishedVersionsInfo.data
   return publishedVersions.includes(Dependency.fromString(pkg).version)
+}
+
+export async function httpGet (url: string): Promise<http.IncomingMessage> {
+  return new Promise((resolve, reject) => {
+    http.get(url, res => {
+      resolve(res)
+    }).on('error', e => {
+      reject(e)
+    })
+  })
 }
