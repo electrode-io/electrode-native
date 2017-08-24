@@ -9,7 +9,7 @@ import {
 import shell from 'shelljs'
 import utils from '../../../lib/utils'
 
-exports.command = 'use <repoAlias>'
+exports.command = 'use <alias>'
 exports.desc = 'Select a Cauldron repository to use'
 
 exports.builder = function (yargs: any) {
@@ -17,18 +17,18 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function ({
-  repoAlias
+  alias
 } : {
-  repoAlias: string
+  alias: string
 }) {
   let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
   if (!cauldronRepositories) {
     return console.log('No Cauldron repositories have been added yet')
   }
-  if (!cauldronRepositories[repoAlias]) {
-    return console.log(`No Cauldron repository exists with ${repoAlias} alias`)
+  if (!cauldronRepositories[alias]) {
+    return console.log(`No Cauldron repository exists with ${alias} alias`)
   }
-  ernConfig.setValue('cauldronRepoInUse', repoAlias)
+  ernConfig.setValue('cauldronRepoInUse', alias)
   shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-  console.log(`${repoAlias} Cauldron is now in use`)
+  console.log(`${alias} Cauldron is now in use`)
 }
