@@ -2,13 +2,16 @@
 
 import {
   generateContainer,
-  GithubGenerator,
-  MavenGenerator
+  IosGenerator,
+  AndroidGenerator
 } from 'ern-container-gen'
 import {
   Dependency,
   mustacheUtils
 } from 'ern-util'
+import {
+  ContainerGeneratorConfig
+} from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
 
@@ -122,9 +125,10 @@ export async function generateContainerForRunner ({
   outFolder: string,
   reactNativeAarsPath: string
 }) {
+  const generatorConfig = new ContainerGeneratorConfig(platform)
   const generator = (platform === 'android')
-        ? new MavenGenerator()
-        : new GithubGenerator()
+    ? new AndroidGenerator({containerGeneratorConfig: generatorConfig})
+    : new IosGenerator(generatorConfig)
 
   await generateContainer({
     containerVersion: RUNNER_CONTAINER_VERSION,
