@@ -3,7 +3,7 @@ public class {{{eventsImplClassName}}}:  {{{classname}}}Events {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    public override func add{{{camelizedNickName}}}EventListener(eventListener: ElectrodeBridgeEventListener) {
+    public override func add{{{camelizedNickName}}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
         let listenerProcessor = EventListenerProcessor(
                                 eventName: {{{classname}}}.kEvent{{{camelizedNickName}}},
                                 eventPayloadClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self,

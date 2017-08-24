@@ -28,7 +28,7 @@ public class {{classname}}Events: NSObject {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    public func add{{camelizedNickName}}EventListener(eventListener: ElectrodeBridgeEventListener) {
+    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
         assertionFailure("should override")
     }
     {{/isEvent}}
