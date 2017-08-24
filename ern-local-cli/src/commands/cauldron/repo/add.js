@@ -10,7 +10,7 @@ import shell from 'shelljs'
 import inquirer from 'inquirer'
 import utils from '../../../lib/utils'
 
-exports.command = 'add <repoAlias> <repoUrl> [current]'
+exports.command = 'add <alias> <url> [current]'
 exports.desc = 'Add a Cauldron git repository'
 
 exports.builder = function (yargs: any) {
@@ -24,38 +24,38 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function ({
-  repoAlias,
-  repoUrl,
+  alias,
+  url,
   current
 } : {
-  repoAlias: string,
-  repoUrl: string,
+  alias: string,
+  url: string,
   current: boolean,
 }) {
   let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
-  if (cauldronRepositories[repoAlias]) {
-    return console.log(`A Cauldron repository is already associated to ${repoAlias} alias`)
+  if (cauldronRepositories[alias]) {
+    return console.log(`A Cauldron repository is already associated to ${alias} alias`)
   }
-  cauldronRepositories[repoAlias] = repoUrl
+  cauldronRepositories[alias] = url
   ernConfig.setValue('cauldronRepositories', cauldronRepositories)
-  console.log(`Added Cauldron repository ${repoUrl} with alias ${repoAlias}`)
+  console.log(`Added Cauldron repository ${url} with alias ${alias}`)
   if (current) {
-    useCauldronRepository(repoAlias)
+    useCauldronRepository(alias)
   } else if (!(current === false)) {
     inquirer.prompt([{
       type: 'confirm',
       name: 'current',
-      message: `Set ${repoAlias} as the current Cauldron repository`
+      message: `Set ${alias} as the current Cauldron repository`
     }]).then(answers => {
       if (answers.current) {
-        useCauldronRepository(repoAlias)
+        useCauldronRepository(alias)
       }
     })
   }
 }
 
-function useCauldronRepository (repoAlias: string) {
-  ernConfig.setValue('cauldronRepoInUse', repoAlias)
+function useCauldronRepository (alias: string) {
+  ernConfig.setValue('cauldronRepoInUse', alias)
   shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-  log.info(`${repoAlias} Cauldron is now activated`)
+  log.info(`${alias} Cauldron is now activated`)
 }
