@@ -16,16 +16,18 @@ exports.builder = function (yargs: any) {
     .option('isReleased', {
       alias: 'r',
       type: 'bool',
+      default: true,
       describe: 'true if version is released, false otherwise'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
   descriptor,
-  isReleased
+  isReleased = true
 } : {
   descriptor: string,
-  isReleased?: boolean
+  isReleased: boolean
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
@@ -33,7 +35,5 @@ exports.handler = async function ({
   })
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-  if (isReleased !== undefined) {
-    cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
-  }
+  cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
 }

@@ -3,11 +3,14 @@
 import {
   config as ernConfig
 } from 'ern-util'
+import utils from '../../../lib/utils'
 
 exports.command = 'current'
 exports.desc = 'Display the currently activated Cauldron repository'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = function () {
   const cauldronRepoInUse = ernConfig.getValue('cauldronRepoInUse')

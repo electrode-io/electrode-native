@@ -18,6 +18,7 @@ import _ from 'lodash'
 import tmp from 'tmp'
 import path from 'path'
 import childProcess from 'child_process'
+import utils from '../lib/utils'
 
 exports.command = 'start'
 exports.desc = 'Start a composite MiniApp'
@@ -34,6 +35,7 @@ exports.builder = function (yargs: any) {
       alias: 'm',
       describe: 'A list of one or more miniapps'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

@@ -12,7 +12,7 @@ import inquirer from 'inquirer'
 import _ from 'lodash'
 import utils from '../../../lib/utils'
 
-exports.command = 'nativeapp <completeNapDescriptor> [platformVersion]'
+exports.command = 'nativeapp <descriptor> [platformVersion]'
 exports.desc = 'Add a native application to the cauldron'
 
 exports.builder = function (yargs: any) {
@@ -26,30 +26,31 @@ exports.builder = function (yargs: any) {
     describe: 'Copy previous version data',
     type: 'boolean'
   })
+  .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
-  completeNapDescriptor,
+  descriptor,
   platformVersion,
   copyPreviousVersionData
 } : {
-  completeNapDescriptor: string,
+  descriptor: string,
   platformVersion?: string,
   copyPreviousVersionData?: boolean
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: completeNapDescriptor,
-    napDescritorDoesNotExistsInCauldron: completeNapDescriptor
+    isCompleteNapDescriptorString: descriptor,
+    napDescritorDoesNotExistsInCauldron: descriptor
   })
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   try {
     await cauldron.beginTransaction()
 
     const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
 
-    await spin(`Adding ${completeNapDescriptor}`, cauldron.addNativeApp(napDescriptor, platformVersion
+    await spin(`Adding ${descriptor}`, cauldron.addNativeApp(napDescriptor, platformVersion
       ? platformVersion.toString().replace('v', '')
       : undefined))
 

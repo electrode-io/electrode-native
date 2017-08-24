@@ -8,6 +8,7 @@ import {
 } from 'ern-util'
 import shell from 'shelljs'
 import inquirer from 'inquirer'
+import utils from '../../../lib/utils'
 
 exports.command = 'add <repoAlias> <repoUrl> [current]'
 exports.desc = 'Add a Cauldron git repository'
@@ -19,6 +20,7 @@ exports.builder = function (yargs: any) {
       describe: 'Set repo as the current Cauldron repository',
       default: undefined
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = function ({

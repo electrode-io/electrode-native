@@ -23,6 +23,7 @@ exports.builder = function (yargs: any) {
       alias: 'd',
       describe: 'Full native application selector (target native application version for the push)'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

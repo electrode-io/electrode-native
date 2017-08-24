@@ -11,7 +11,9 @@ import utils from '../../../lib/utils'
 exports.command = 'nativeapp <descriptor>'
 exports.desc = 'Get a native application from the cauldron'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = async function ({
   descriptor

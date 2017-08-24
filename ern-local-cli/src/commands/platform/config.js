@@ -3,16 +3,18 @@
 import {
   config as ernConfig
 } from 'ern-util'
+import utils from '../../lib/utils'
 
 exports.command = 'config <key> [value]'
 exports.desc = 'Get or set a configuration key'
 
 exports.builder = function (yargs: any) {
   return yargs
-        .option('value', {
-          alias: 'v',
-          describe: 'Value to set for the key'
-        })
+    .option('value', {
+      alias: 'v',
+      describe: 'Value to set for the key'
+    })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = function ({

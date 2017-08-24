@@ -6,6 +6,7 @@ import {
 import {
   Manifest
 } from 'ern-core'
+import utils from '../lib/utils'
 
 exports.command = 'create-api <apiName>'
 exports.desc = 'Create a new api'
@@ -24,6 +25,7 @@ exports.builder = function (yargs: any) {
     alias: 'm',
     describe: 'Path to schema(swagger)'
   })
+  .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

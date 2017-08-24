@@ -3,11 +3,14 @@
 import {
   config as ernConfig
 } from 'ern-util'
+import utils from '../../../lib/utils'
 
 exports.command = 'remove <repoAlias>'
 exports.desc = 'Remove a cauldron repository given its alias'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = function ({
   repoAlias

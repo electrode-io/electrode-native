@@ -10,6 +10,7 @@ import {
 import {
   DependencyPath
 } from 'ern-util'
+import utils from '../lib/utils'
 
 import inquirer from 'inquirer'
 
@@ -38,6 +39,7 @@ exports.builder = function (yargs: any) {
     alias: 'o',
     describe: 'Path to output folder'
   })
+  .epilog(utils.epilog(exports))
 }
 
 const WORKING_FOLDER = path.join(Platform.rootDirectory, `api-impl-gen`)

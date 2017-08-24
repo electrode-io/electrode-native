@@ -6,18 +6,20 @@ import {
 import {
   cauldron
 } from 'ern-core'
+import utils from '../../../lib/utils'
 
-exports.command = 'config <napDescriptor>'
-exports.desc = 'Get a configuration from the cauldron'
+exports.command = 'config <descriptor>'
+exports.desc = 'Get configuration from the cauldron'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
-exports.handler = function ({
-  napDescriptor
+exports.handler = async function ({
+  descriptor
 } : {
-  napDescriptor: string
+  descriptor: string
 }) {
-  cauldron.getConfig(NativeApplicationDescriptor.fromString(napDescriptor)).then(res => {
-    log.info(JSON.stringify(res, null, 1))
-  })
+  const config = await cauldron.getConfig(NativeApplicationDescriptor.fromString(descriptor))
+  log.info(JSON.stringify(config, null, 2))
 }

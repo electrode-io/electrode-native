@@ -7,10 +7,11 @@ import {
 import {
   Dependency
 } from 'ern-util'
+import utils from '../../../lib/utils'
 
 import chalk from 'chalk'
 
-exports.command = 'search <pluginName> [platformVersion]'
+exports.command = 'search <name> [platformVersion]'
 exports.desc = 'Search a plugin'
 
 exports.builder = function (yargs: any) {
@@ -19,18 +20,19 @@ exports.builder = function (yargs: any) {
       alias: 'v',
       describe: 'Specific platform version for which to list supported plugins'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
-  pluginName,
+  name,
   platformVersion = Platform.currentVersion
 } : {
-  pluginName: string,
+  name: string,
   platformVersion?: string
 }) {
-  const plugin = await Manifest.getTargetNativeDependency(Dependency.fromString(pluginName), platformVersion)
+  const plugin = await Manifest.getTargetNativeDependency(Dependency.fromString(name), platformVersion)
   if (!plugin) {
-    return log.warn(`No plugin named ${pluginName} was found for platform version $platformVersion}`)
+    return log.warn(`No plugin named ${name} was found for platform version $platformVersion}`)
   }
 
   const scopeStr = `${plugin.scope ? `${plugin.scope}@` : ''}`

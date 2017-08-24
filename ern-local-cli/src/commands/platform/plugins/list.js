@@ -4,6 +4,7 @@ import {
   Manifest,
   Platform
 } from 'ern-core'
+import utils from '../../../lib/utils'
 
 import chalk from 'chalk'
 import Table from 'cli-table'
@@ -17,6 +18,7 @@ exports.builder = function (yargs: any) {
       alias: 'v',
       describe: 'Specific platform version for which to list supported plugins'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

@@ -6,15 +6,22 @@ import {
 import {
   Manifest
 } from 'ern-core'
+import utils from '../lib/utils'
 
 exports.command = 'regen-api'
 exports.desc = 'Regenerates an existing api'
 
 exports.builder = function (yargs: any) {
-  return yargs.option('updatePlugin', {
-    alias: 'u',
-    describe: 'Update plugin version'
-  }).option('bridgeVersion', {alias: 'b', describe: 'Bridge version to use'})
+  return yargs
+    .option('updatePlugin', {
+      alias: 'u',
+      describe: 'Update plugin version'
+    })
+    .option('bridgeVersion', {
+      alias: 'b',
+      describe: 'Bridge version to use'
+    })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

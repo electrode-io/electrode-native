@@ -3,19 +3,22 @@
 import {
   Platform
 } from 'ern-core'
+import utils from '../../lib/utils'
 
-exports.command = 'use <platformVersion>'
+exports.command = 'use <version>'
 exports.desc = 'Switch to a given ern platform version'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = function ({
-  platformVersion
+  version
 } : {
-  platformVersion: string
+  version: string
 }) {
   try {
-    Platform.switchToVersion(platformVersion.toString().replace('v', ''))
+    Platform.switchToVersion(version.toString().replace('v', ''))
   } catch (e) {
     log.error(e.message)
   }

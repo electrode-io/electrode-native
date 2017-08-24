@@ -15,6 +15,7 @@ import inquirer from 'inquirer'
 import semver from 'semver'
 import Ensure from './Ensure'
 import ora from 'ora'
+import chalk from 'chalk'
 
 //
 // Retrieves all native applications versions from the Cauldron, optionaly
@@ -238,9 +239,19 @@ async function performContainerStateUpdateInCauldron (
   }
 }
 
+function epilog ({command} : {command: string}) {
+  const rootUrl = 'https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/blob/master/docs/cli'
+  const commandWithoutOptions = command.split(' ')[0]
+  const idx = _.indexOf(process.argv, commandWithoutOptions)
+  let commandPath = _.slice(process.argv, 2, idx).join('/')
+  commandPath = commandPath ? `/${commandPath}` : ''
+  return `More info about this command @ ${chalk.bold(`${rootUrl}${commandPath}/${commandWithoutOptions}.md`)}`
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
-  performContainerStateUpdateInCauldron
+  performContainerStateUpdateInCauldron,
+  epilog
 }

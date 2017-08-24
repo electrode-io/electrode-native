@@ -9,12 +9,13 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import _ from 'lodash'
+import utils from '../lib/utils'
 
 exports.command = 'why <dependency> <completeNapDescriptor>'
 exports.desc = 'Why is a given native dependency included in a native application version ?'
 
 exports.builder = function (yargs: any) {
-  return yargs
+  return yargs.epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

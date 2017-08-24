@@ -7,11 +7,14 @@ import {
   tagOneLine
 } from 'ern-util'
 import chalk from 'chalk'
+import utils from '../../lib/utils'
 
-exports.command = 'ls'
+exports.command = 'list'
 exports.desc = 'List platform versions'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = function () {
   log.info(tagOneLine`
