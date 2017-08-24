@@ -24,6 +24,7 @@ exports.builder = function (yargs: any) {
       alias: 'd',
       describe: 'A complete native application descriptor'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

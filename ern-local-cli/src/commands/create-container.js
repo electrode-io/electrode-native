@@ -26,10 +26,10 @@ exports.builder = function (yargs: any) {
   return yargs
     .option('descriptor', {
       type: 'string',
-      alias: 'n',
-      describe: 'Full native application selector'
+      alias: 'd',
+      describe: 'Full native application descriptor'
     })
-    .option('containerVersion', {
+    .option('version', {
       type: 'string',
       alias: 'v',
       describe: 'Version of the generated container. Default to 1.0.0'
@@ -59,11 +59,12 @@ exports.builder = function (yargs: any) {
       alias: 'out',
       describe: 'Directory to output the generated container to'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
   descriptor,
-  containerVersion = '1.0.0',
+  version = '1.0.0',
   jsOnly,
   outDir,
   miniapps,
@@ -72,7 +73,7 @@ exports.handler = async function ({
   publicationUrl
 } : {
   descriptor?: string,
-  containerVersion: string,
+  version: string,
   jsOnly?: boolean,
   outDir?: string,
   miniapps?: Array<string>,
@@ -83,7 +84,7 @@ exports.handler = async function ({
   let napDescriptor: ?NativeApplicationDescriptor
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isValidContainerVersion: containerVersion,
+    isValidContainerVersion: version,
     isCompleteNapDescriptorString: descriptor,
     napDescriptorExistInCauldron: descriptor
   })
@@ -160,15 +161,15 @@ exports.handler = async function ({
       await runLocalContainerGen(
         miniAppsPaths,
         platform, {
-          containerVersion,
+          version,
           nativeAppName: containerName,
           outDir
         }
       )
-    } else if (napDescriptor && containerVersion) {
+    } else if (napDescriptor && version) {
       await runCauldronContainerGen(
         napDescriptor,
-        containerVersion,
+        version,
         { publish: false, outDir })
     }
   }

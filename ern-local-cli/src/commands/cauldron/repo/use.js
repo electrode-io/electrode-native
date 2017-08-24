@@ -7,11 +7,14 @@ import {
   config as ernConfig
 } from 'ern-util'
 import shell from 'shelljs'
+import utils from '../../../lib/utils'
 
 exports.command = 'use <repoAlias>'
 exports.desc = 'Select a Cauldron repository to use'
 
-exports.builder = {}
+exports.builder = function (yargs: any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = function ({
   repoAlias

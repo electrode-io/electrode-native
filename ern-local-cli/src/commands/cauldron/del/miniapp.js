@@ -31,6 +31,7 @@ exports.builder = function (yargs: any) {
     alias: 'd',
     describe: 'A complete native application descriptor'
   })
+  .epilog(utils.epilog(exports))
 }
 
 // This command does not actually removes or offers to remove dependencies that were

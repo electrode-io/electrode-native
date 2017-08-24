@@ -8,10 +8,12 @@ import {
 } from 'ern-core'
 import utils from '../../../lib/utils'
 
-exports.command = 'dependencies <descriptor>'
+exports.command = 'dependency <descriptor>'
 exports.desc = 'Get all the native dependencies of a given native application'
 
-exports.builder = {}
+exports.builder = function (yargs:any) {
+  return yargs.epilog(utils.epilog(exports))
+}
 
 exports.handler = async function ({
   descriptor

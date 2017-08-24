@@ -1,6 +1,6 @@
 **Upgrades a MiniApp**
 
-### Commands
+### Command
 
 #### `ern upgrade`
 
@@ -8,4 +8,4 @@ This will upgrade a MiniApp to the currently activated platform version.
 
 #### `ern upgrade --version/-v <version>`  
 
-Use to specify a specific platform version to upgrade the MiniApp to.  
+Upgrade the MiniApp to a specific platform version.

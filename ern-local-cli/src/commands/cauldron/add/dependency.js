@@ -34,6 +34,7 @@ exports.builder = function (yargs: any) {
     type: 'array',
     describe: 'One or more dependencies'
   })
+  .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

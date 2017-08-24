@@ -3,6 +3,7 @@
 import {
   MiniApp
 } from 'ern-core'
+import utils from '../lib/utils'
 
 exports.command = 'create-miniapp <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application(miniapp)'
@@ -17,6 +18,7 @@ exports.builder = function (yargs: any) {
     .option('scope', {
       describe: 'specify npm scope to group related packages together'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

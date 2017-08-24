@@ -62,6 +62,7 @@ exports.builder = function (yargs: any) {
       type: 'string',
       default: '100%'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({

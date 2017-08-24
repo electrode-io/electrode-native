@@ -6,6 +6,7 @@ import {
 import {
   Dependency
 } from 'ern-util'
+import utils from '../lib/utils'
 
 // Note : We use `pkg` instead of `package` because `package` is
 // a reserved JavaScript word
@@ -24,6 +25,7 @@ exports.builder = function (yargs: any) {
       alias: 'p',
       describe: 'Add this package to peerDependencies'
     })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = function ({

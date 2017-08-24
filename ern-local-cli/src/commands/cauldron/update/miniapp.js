@@ -36,6 +36,7 @@ exports.builder = function (yargs: any) {
     alias: 'd',
     describe: 'A complete native application descriptor'
   })
+  .epilog(utils.epilog(exports))
 }
 
 // Most/All of the logic here should be moved to the MiniApp class
