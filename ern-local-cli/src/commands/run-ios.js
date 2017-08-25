@@ -1,11 +1,5 @@
 // @flow
 
-import {
-  MiniApp
-} from 'ern-core'
-import {
-  DependencyPath
-} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'run-ios [miniapp]'
@@ -21,10 +15,7 @@ exports.handler = async function ({
   miniapp?: string
 }) {
   try {
-    const miniappObj = miniapp
-      ? await MiniApp.fromPackagePath(DependencyPath.fromString(miniapp))
-      : MiniApp.fromCurrentPath()
-    miniappObj.runInIosRunner()
+    await utils.runMiniApp('ios', { miniapp })
   } catch (e) {
     log.error(`${e}`)
   }
