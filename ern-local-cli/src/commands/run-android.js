@@ -3,18 +3,28 @@
 import {
   MiniApp
 } from 'ern-core'
+import {
+  DependencyPath
+} from 'ern-util'
 import utils from '../lib/utils'
 
-exports.command = 'run-android'
-exports.desc = 'Run miniapp in android runner project'
+exports.command = 'run-android [miniapp]'
+exports.desc = 'Run a MiniApp in the android Runner application'
 
 exports.builder = function (yargs: any) {
   return yargs.epilog(utils.epilog(exports))
 }
 
-exports.handler = async function () {
+exports.handler = async function ({
+  miniapp
+} : {
+  miniapp?: string
+}) {
   try {
-    MiniApp.fromCurrentPath().runInAndroidRunner()
+    const miniappObj = miniapp
+      ? await MiniApp.fromPackagePath(DependencyPath.fromString(miniapp))
+      : MiniApp.fromCurrentPath()
+    miniappObj.runInAndroidRunner()
   } catch (e) {
     log.error(`${e}`)
   }
