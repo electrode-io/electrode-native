@@ -44,7 +44,8 @@ export async function generateRunner ({
   outDir,
   platform,
   containerGenWorkingDir,
-  reactNativeAarsPath
+  reactNativeAarsPath,
+  reactNativeDevSupportEnabled = true
 } : {
   platformPath: string,
   plugins: Array<Object>,
@@ -52,17 +53,25 @@ export async function generateRunner ({
   outDir: string,
   platform: 'android' | 'ios',
   containerGenWorkingDir: string,
-  reactNativeAarsPath: string
+  reactNativeAarsPath: string,
+  reactNativeDevSupportEnabled: boolean
 }) {
   try {
     if (!miniapp.localPath) {
       throw new Error('Miniapp must come with a local path !')
     }
 
+    let isReactNativeDevSupportEnabled
+    if (platform === 'android') {
+      isReactNativeDevSupportEnabled = reactNativeDevSupportEnabled ? 'true' : 'false'
+    } else if (platform === 'ios') {
+      isReactNativeDevSupportEnabled = reactNativeDevSupportEnabled ? 'YES' : 'NO'
+    }
+
     const mustacheView = {
       miniAppName: miniapp.name,
       pascalCaseMiniAppName: pascalCase(miniapp.name),
-      isReactNativeDevSupportEnabled: platform === 'android' ? 'true' : 'YES'
+      isReactNativeDevSupportEnabled
     }
 
     shell.mkdir(outDir)
