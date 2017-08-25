@@ -26,11 +26,6 @@ function pascalCase (str: string) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
 }
 
-// Given a string returns the same string with its first letter in lower case
-function camelCase (str: string) {
-  return `${str.charAt(0).toLowerCase()}${str.slice(1)}`
-}
-
 // =============================================================================
 // Main
 // =============================================================================
@@ -66,8 +61,7 @@ export async function generateRunner ({
 
     const mustacheView = {
       miniAppName: miniapp.name,
-      pascalCaseMiniAppName: pascalCase(miniapp.name),
-      camelCaseMiniAppName: camelCase(miniapp.name)
+      pascalCaseMiniAppName: pascalCase(miniapp.name)
     }
 
     shell.mkdir(outDir)
