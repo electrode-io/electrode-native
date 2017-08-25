@@ -47,7 +47,6 @@ export async function generateRunner ({
   plugins,
   miniapp,
   outDir,
-  headless,
   platform,
   containerGenWorkingDir,
   reactNativeAarsPath
@@ -56,7 +55,6 @@ export async function generateRunner ({
   plugins: Array<Object>,
   miniapp: Object,
   outDir: string,
-  headless: boolean,
   platform: 'android' | 'ios',
   containerGenWorkingDir: string,
   reactNativeAarsPath: string
@@ -69,8 +67,7 @@ export async function generateRunner ({
     const mustacheView = {
       miniAppName: miniapp.name,
       pascalCaseMiniAppName: pascalCase(miniapp.name),
-      camelCaseMiniAppName: camelCase(miniapp.name),
-      headless
+      camelCaseMiniAppName: camelCase(miniapp.name)
     }
 
     shell.mkdir(outDir)
