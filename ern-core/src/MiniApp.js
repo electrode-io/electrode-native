@@ -243,10 +243,10 @@ Are you sure this is a MiniApp ?`)
       platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
-      outFolder: `${this.path}/ios`,
+      outDir: `${this.path}/ios`,
       headless: this.isHeadLess,
       platform: 'ios',
-      containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
+      containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     }
 
@@ -312,10 +312,10 @@ Are you sure this is a MiniApp ?`)
       platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
-      outFolder: `${this.path}/android`,
+      outDir: `${this.path}/android`,
       headless: this.isHeadLess,
       platform: 'android',
-      containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
+      containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
     }
 
