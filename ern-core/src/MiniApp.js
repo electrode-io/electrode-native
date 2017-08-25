@@ -10,7 +10,6 @@ import {
   findNativeDependencies,
   Dependency,
   DependencyPath,
-  fileUtils,
   NativeApplicationDescriptor,
   spin,
   tagOneLine
@@ -28,8 +27,7 @@ import {
 } from './compatibility'
 import * as utils from './utils'
 import {
-  execSync,
-  spawn
+  execSync
 } from 'child_process'
 import fs from 'fs'
 import inquirer from 'inquirer'
@@ -40,7 +38,6 @@ import path from 'path'
 import ora from 'ora'
 
 const simctl = require('node-simctl')
-const fetch = require('node-fetch')
 
 const {
   runAndroid
@@ -217,7 +214,7 @@ Are you sure this is a MiniApp ?`)
   } : {
     reactNativeDevSupportEnabled: boolean
   } = {}) : Promise<*> {
-    this.startPackagerInNewWindow()
+    reactnative.startPackagerInNewWindow()
 
     // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
     // (no code injection for plugins yet :()), it has hard-coded references to
@@ -296,7 +293,7 @@ Are you sure this is a MiniApp ?`)
   } : {
     reactNativeDevSupportEnabled: boolean
   } = {}) : Promise<*> {
-    this.startPackagerInNewWindow()
+    reactnative.startPackagerInNewWindow()
 
     const runnerConfig = {
       platformPath: Platform.currentPlatformVersionPath,
@@ -321,38 +318,6 @@ Are you sure this is a MiniApp ?`)
       projectPath: `${this.path}/android`,
       packageName: 'com.walmartlabs.ern'
     })
-  }
-
-  startPackagerInNewWindow () {
-    return this.isPackagerRunning().then((result) => {
-      if (!result) {
-        log.info('starting packager')
-        const scriptFile = `launchPackager.command`
-
-        const scriptsDir = path.resolve(__dirname, '..', 'scripts')
-        const launchPackagerScript = path.resolve(scriptsDir, scriptFile)
-        const procConfig = {cwd: scriptsDir, detached: true}
-
-        fileUtils.writeFile(`${scriptsDir}/packageRunner.config`, `cwd="${shell.pwd()}"`).then(() => {
-          try {
-            return spawn(`open`, [launchPackagerScript], procConfig)
-          } catch (e) {
-            log.error(`Error: ${e}`)
-          }
-        })
-      } else {
-        log.info('Packager is already running, will continue to run the app')
-      }
-    })
-  }
-
-  isPackagerRunning () {
-    return fetch('http://localhost:8081/status').then(
-      res => res.text().then(body =>
-        body === 'packager-status:running'
-      ),
-      () => false
-    )
   }
 
   async addDependency (
