@@ -212,7 +212,11 @@ Are you sure this is a MiniApp ?`)
     return [...this.jsDependencies, ...this.nativeDependencies]
   }
 
-  async runInIosRunner () : Promise<*> {
+  async runInIosRunner ({
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled: boolean
+  } = {}) : Promise<*> {
     this.startPackagerInNewWindow()
 
     // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
@@ -228,7 +232,8 @@ Are you sure this is a MiniApp ?`)
       outDir: `${this.path}/ios`,
       platform: 'ios',
       containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeDevSupportEnabled
     }
 
     const iosDevices = await simctl.getDevices()
@@ -286,7 +291,11 @@ Are you sure this is a MiniApp ?`)
     }
   }
 
-  async runInAndroidRunner () : Promise<*> {
+  async runInAndroidRunner ({
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled: boolean
+  } = {}) : Promise<*> {
     this.startPackagerInNewWindow()
 
     const runnerConfig = {
@@ -296,7 +305,8 @@ Are you sure this is a MiniApp ?`)
       outDir: `${this.path}/android`,
       platform: 'android',
       containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeDevSupportEnabled
     }
 
     if (!fs.existsSync('android')) {

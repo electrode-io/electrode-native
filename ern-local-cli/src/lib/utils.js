@@ -251,18 +251,24 @@ function epilog ({command} : {command: string}) {
 }
 
 async function runMiniApp (platform: 'android' | 'ios', {
-  miniapp
+  miniapp,
+  dev
 } : {
-  miniapp?: string
-}) {
+  miniapp?: string,
+  dev: boolean
+} = {}) {
   const miniappObj = miniapp
     ? await MiniApp.fromPackagePath(DependencyPath.fromString(miniapp))
     : MiniApp.fromCurrentPath()
 
   if (platform === 'android') {
-    return miniappObj.runInAndroidRunner()
+    return miniappObj.runInAndroidRunner({
+      reactNativeDevSupportEnabled: dev
+    })
   } else if (platform === 'ios') {
-    return miniappObj.runInIosRunner()
+    return miniappObj.runInIosRunner({
+      reactNativeDevSupportEnabled: dev
+    })
   }
 }
 

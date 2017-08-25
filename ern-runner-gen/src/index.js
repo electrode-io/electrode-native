@@ -45,7 +45,7 @@ export async function generateRunner ({
   platform,
   containerGenWorkingDir,
   reactNativeAarsPath,
-  reactNativeDevSupportEnabled = true
+  reactNativeDevSupportEnabled
 } : {
   platformPath: string,
   plugins: Array<Object>,
