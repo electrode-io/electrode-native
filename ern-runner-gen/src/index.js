@@ -61,7 +61,8 @@ export async function generateRunner ({
 
     const mustacheView = {
       miniAppName: miniapp.name,
-      pascalCaseMiniAppName: pascalCase(miniapp.name)
+      pascalCaseMiniAppName: pascalCase(miniapp.name),
+      isReactNativeDevSupportEnabled: platform === 'android' ? 'true' : 'YES'
     }
 
     shell.mkdir(outDir)

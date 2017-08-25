@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.walmartlabs.ern.container.miniapps.{{{pascalCaseMiniAppName}}}Activity;
+import com.walmartlabs.ern.RunnerConfig;
 
 // This is the main activity that gets launched upon app start
 // It just launches the activity containing the miniapp
@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent i = new Intent(this, {{{pascalCaseMiniAppName}}}Activity.class);
+        Intent i = new Intent(this, RunnerConfig.MAIN_MINIAPP_ACTIVITY_CLASS);
         this.startActivity(i);
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22D397211F50C6FE00C40FE2 /* RunnerConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 22D397201F50C6FE00C40FE2 /* RunnerConfig.m */; };
 		302CACDF1EF0A6D600B1ED18 /* ElectrodeContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 302CACDC1EF0A6CF00B1ED18 /* ElectrodeContainer.framework */; };
 		302CACE01EF0A6D600B1ED18 /* ElectrodeContainer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 302CACDC1EF0A6CF00B1ED18 /* ElectrodeContainer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		304F3E9A1EEF455C00F1E36B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 304F3E991EEF455C00F1E36B /* main.m */; };
@@ -56,6 +57,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		22D3971F1F50C6FE00C40FE2 /* RunnerConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunnerConfig.h; sourceTree = "<group>"; };
+		22D397201F50C6FE00C40FE2 /* RunnerConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RunnerConfig.m; sourceTree = "<group>"; };
 		302CACCA1EF0A6CF00B1ED18 /* ElectrodeContainer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ElectrodeContainer.xcodeproj; path = "{{{pathToElectrodeContainerXcodeProj}}}/ElectrodeContainer.xcodeproj"; sourceTree = "<group>"; };
 		304F3E951EEF455C00F1E36B /* ErnRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ErnRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		304F3E991EEF455C00F1E36B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -110,6 +113,8 @@
 		304F3E971EEF455C00F1E36B /* ErnRunner */ = {
 			isa = PBXGroup;
 			children = (
+				22D3971F1F50C6FE00C40FE2 /* RunnerConfig.h */,
+				22D397201F50C6FE00C40FE2 /* RunnerConfig.m */,
 				304F3ED01EEF5AE500F1E36B /* ViewController.h */,
 				304F3ED11EEF5AE500F1E36B /* ViewController.m */,
 				304F3E9B1EEF455C00F1E36B /* AppDelegate.h */,
@@ -236,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				304F3ED21EEF5AE500F1E36B /* ViewController.m in Sources */,
+				22D397211F50C6FE00C40FE2 /* RunnerConfig.m in Sources */,
 				304F3E9D1EEF455C00F1E36B /* AppDelegate.m in Sources */,
 				304F3E9A1EEF455C00F1E36B /* main.m in Sources */,
 			);

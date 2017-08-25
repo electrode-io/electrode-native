@@ -3,6 +3,7 @@ package com.walmartlabs.ern;
 import android.app.Application;
 
 import com.walmartlabs.ern.container.ElectrodeReactContainer;
+import com.walmartlabs.ern.RunnerConfig;
 
 public class MainApplication extends Application {
 
@@ -12,7 +13,7 @@ public class MainApplication extends Application {
 
     ElectrodeReactContainer.initialize(
             this,
-            new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(true)
+            new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(RunnerConfig.RN_DEV_SUPPORT_ENABLED)
             /* Add your additional plugins configuration here */);
   }
 
