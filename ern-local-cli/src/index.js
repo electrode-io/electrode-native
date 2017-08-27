@@ -20,7 +20,11 @@ function showBanner () {
   console.log(chalk.yellow('| __| |___ __| |_ _ _ ___  __| |___') + chalk.green('| _ \\___ __ _ __| |_| \\| |__ _| |_(_)_ _____'))
   console.log(chalk.yellow("| _|| / -_) _|  _| '_/ _ \\/ _` / -_") + chalk.green(')   / -_) _` / _|  _| .` / _` |  _| \\ V / -_)'))
   console.log(chalk.yellow('|___|_\\___\\__|\\__|_| \\___/\\__,_\\___') + chalk.green('|_|_\\___\\__,_\\__|\\__|_|\\_\\__,_|\\__|_|\\_/\\___|'))
-  console.log(chalk.cyan(`[v${Platform.currentVersion}]`) + chalk.gray(`[${Platform.currentGitCommitSha}]`))
+}
+
+function showInfo () {
+  const currentCauldronRepo = ernConfig.getValue('cauldronRepoInUse') || '-NONE-'
+  console.log(chalk.cyan(`[v${Platform.currentVersion}]`) + chalk.cyan(` [Cauldron: ${currentCauldronRepo}]`))
   console.log('')
 }
 
@@ -31,9 +35,8 @@ export default function run () {
   const logLevel = process.env['ERN_LOG_LEVEL'] ? process.env['ERN_LOG_LEVEL'] : ernConfig.getValue('loglevel', 'info')
   global.log = new ColoredLog(logLevel)
 
-  if (ernConfig.getValue('banner', true)) {
-    showBanner()
-  }
+  if (ernConfig.getValue('banner', true)) { showBanner() }
+  showInfo()
 
   const argv = yargs.argv
   if (argv['show-banner']) {
