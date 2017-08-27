@@ -11,30 +11,25 @@ import {
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'miniapp [miniapp]'
-exports.desc = 'Update version(s) of one or more MiniApp(s) in the Cauldron'
+exports.command = 'miniapps <miniapps..>'
+exports.desc = 'Update the version(s) of one or more MiniApp(s) in the Cauldron'
 
 exports.builder = function (yargs: any) {
   return yargs
-  .option('force', {
-    alias: 'f',
-    type: 'bool',
-    describe: 'Force'
-  })
   .option('containerVersion', {
     alias: 'v',
     type: 'string',
     describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
   })
-  .option('miniapps', {
-    type: 'array',
-    alias: 'm',
-    describe: 'A list of one or more miniapps'
-  })
   .option('descriptor', {
     type: 'string',
     alias: 'd',
     describe: 'A complete native application descriptor'
+  })
+  .option('force', {
+    alias: 'f',
+    type: 'bool',
+    describe: 'Force'
   })
   .epilog(utils.epilog(exports))
 }
@@ -42,28 +37,16 @@ exports.builder = function (yargs: any) {
 // Most/All of the logic here should be moved to the MiniApp class
 // Commands should remain as much logic less as possible
 exports.handler = async function ({
-  miniapp,
-  miniapps = [],
+  miniapps,
   descriptor,
-  force = false,
+  force,
   containerVersion
 } : {
-  miniapp?: string,
   miniapps: Array<string>,
-  descriptor: string,
-  force: boolean,
-  containerVersion?: string
+  containerVersion?: string,
+  descriptor?: string,
+  force?: boolean
 }) {
-  if (!miniapp && miniapps.length === 0) {
-    try {
-      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
-    } catch (e) {
-      return log.error(e.message)
-    }
-  } else if (miniapp && miniapps.length === 0) {
-    miniapps.push(miniapp)
-  }
-
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
