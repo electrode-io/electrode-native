@@ -5,13 +5,12 @@ import {
   Dependency
 } from 'ern-util'
 import {
-  cauldron,
-  MiniApp
+  cauldron
 } from 'ern-core'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'miniapp [miniapp]'
+exports.command = 'miniapps <miniapps..>'
 exports.desc = 'Remove one or more MiniApp(s) from the cauldron'
 
 exports.builder = function (yargs: any) {
@@ -20,11 +19,6 @@ exports.builder = function (yargs: any) {
     alias: 'v',
     type: 'string',
     describe: 'Version to use for generated container. If none provided, version will be patch bumped by default'
-  })
-  .option('miniapps', {
-    type: 'array',
-    alias: 'm',
-    describe: 'A list of one or more miniapps'
   })
   .option('descriptor', {
     type: 'string',
@@ -38,26 +32,14 @@ exports.builder = function (yargs: any) {
 // only used by this MiniApp
 // It could be done as a future improvement to this command
 exports.handler = async function ({
-  descriptor,
-  miniapp,
-  miniapps = [],
-  containerVersion
+  miniapps,
+  containerVersion,
+  descriptor
 } : {
-  descriptor?: string,
-  miniapp?: string,
   miniapps: Array<string>,
-  containerVersion?: string
+  containerVersion?: string,
+  descriptor?: string
 }) {
-  if (!miniapp && miniapps.length === 0) {
-    try {
-      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
-    } catch (e) {
-      return log.error(e.message)
-    }
-  } else if (miniapp && miniapps.length === 0) {
-    miniapps.push(miniapp)
-  }
-
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
