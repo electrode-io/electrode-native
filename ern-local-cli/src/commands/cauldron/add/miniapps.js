@@ -11,7 +11,7 @@ import {
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'miniapp [miniapp]'
+exports.command = 'miniapps <miniapps..>'
 exports.desc = 'Add one or more MiniApp(s) to a given native application version in the Cauldron'
 
 exports.builder = function (yargs: any) {
@@ -26,11 +26,6 @@ exports.builder = function (yargs: any) {
     type: 'string',
     describe: 'Version to use for generated container. If none provided, version will be patched bumped by default.'
   })
-  .option('miniapps', {
-    type: 'array',
-    alias: 'm',
-    describe: 'A list of one or more miniapps'
-  })
   .option('descriptor', {
     type: 'string',
     alias: 'd',
@@ -40,28 +35,16 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-  miniapp,
-  miniapps = [],
+  miniapps,
   descriptor,
   force = false,
   containerVersion
 } : {
-  miniapp?: string,
   miniapps: Array<string>,
-  descriptor: string,
-  force: boolean,
+  descriptor?: string,
+  force?: boolean,
   containerVersion?: string
 }) {
-  if (!miniapp && miniapps.length === 0) {
-    try {
-      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
-    } catch (e) {
-      return log.error(e.message)
-    }
-  } else if (miniapp && miniapps.length === 0) {
-    miniapps.push(miniapp)
-  }
-
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }
