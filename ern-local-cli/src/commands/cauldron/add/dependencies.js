@@ -10,7 +10,7 @@ import {
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'dependency [dependency]'
+exports.command = 'dependencies <dependencies..>'
 exports.desc = 'Add one or more native dependency(ies) to the Cauldron'
 
 exports.builder = function (yargs: any) {
@@ -20,35 +20,22 @@ exports.builder = function (yargs: any) {
     type: 'string',
     describe: 'Version to use for generated container. If none provided, patch version will be bumped by default.'
   })
-  .option('force', {
-    alias: 'f',
-    type: 'bool',
-    describe: 'Force adding the dependency(ies) (if you really know what you\'re doing)'
-  })
   .option('descriptor', {
     type: 'string',
     alias: 'd',
     describe: 'A complete native application descriptor'
   })
-  .option('dependencies', {
-    type: 'array',
-    describe: 'One or more dependencies'
-  })
   .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
-  dependency,
   dependencies,
-  descriptor,
   containerVersion,
-  force
+  descriptor
 }: {
-  dependency?: string,
-  dependencies?: Array<string>,
-  descriptor?: string,
+  dependencies: Array<string>,
   containerVersion?: string,
-  force?: boolean
+  descriptor?: string
 }) {
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
@@ -58,14 +45,12 @@ exports.handler = async function ({
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependency || dependencies,
+    noGitOrFilesystemPath: dependencies,
     napDescriptorExistInCauldron: descriptor,
-    dependencyNotInNativeApplicationVersionContainer: { dependency: dependency || dependencies, napDescriptor }
+    dependencyNotInNativeApplicationVersionContainer: { dependency: dependencies, napDescriptor }
   })
 
-  const dependenciesObjs = dependency
-  ? [ Dependency.fromString(dependency) ]
-  : _.map(dependencies, d => Dependency.fromString(d))
+  const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
 
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {
