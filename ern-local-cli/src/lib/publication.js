@@ -51,15 +51,17 @@ platform: 'android' | 'ios', {
   containerVersion = '1.0.0',
   nativeAppName = 'local',
   publicationUrl,
-  outDir = `${Platform.rootDirectory}/containergen`
+  outDir = `${Platform.rootDirectory}/containergen`,
+  extraNativeDependencies = []
 }: {
   containerVersion?: string,
   nativeAppName?: string,
   publicationUrl?: string,
-  outDir?: string
+  outDir?: string,
+  extraNativeDependencies: Array<Dependency>
 } = {}) {
   try {
-    const nativeDependencies: Set < string > = new Set()
+    const nativeDependenciesStrings: Set < string > = new Set()
     let miniapps = []
     let config
 
@@ -96,21 +98,22 @@ platform: 'android' | 'ios', {
       // and remove the miniapp itself, wrongly considered as a native dependency
       let miniappNativeDependencies = findNativeDependencies(`${tmpDirPath}/node_modules`)
       _.remove(miniappNativeDependencies,
-      d => (d.scope === miniappDependency.scope) && (d.name === miniappDependency.name))
+        d => (d.scope === miniappDependency.scope) && (d.name === miniappDependency.name))
 
       // Add all native dependencies as strings to the set of native dependencies
       // of all miniapps
-      miniappNativeDependencies.forEach(d => nativeDependencies.add(d.toString()))
+      miniappNativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
     }
 
-    const nativeDependenciesArray = Array.from(nativeDependencies)
+    let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => Dependency.fromString(d))
+    nativeDependencies = nativeDependencies.concat(extraNativeDependencies)
 
     // Verify uniqueness of native dependencies (that all miniapps are using the same
     // native dependencies version). This is a requirement in order to generate a proper container
-    const nativeDependenciesWithoutVersion: Array < string > = _.map(
-    nativeDependenciesArray, d => Dependency.fromString(d).withoutVersion().toString())
+    const nativeDependenciesWithoutVersion: Array<string> = _.map(
+      nativeDependencies, d => d.withoutVersion().toString())
     const duplicateNativeDependencies =
-    _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
+      _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
     if (duplicateNativeDependencies.length > 0) {
       throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
     }
@@ -121,7 +124,7 @@ platform: 'android' | 'ios', {
       nativeAppName,
       platformPath: Platform.currentPlatformVersionPath,
       generator: createContainerGenerator(containerGeneratorConfig),
-      plugins: _.map(nativeDependenciesArray, d => Dependency.fromString(d)),
+      plugins: nativeDependencies,
       miniapps,
       workingFolder: outDir,
       reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
