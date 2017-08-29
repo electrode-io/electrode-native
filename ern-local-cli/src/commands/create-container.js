@@ -8,6 +8,7 @@ import {
   Platform
 } from 'ern-core'
 import {
+  Dependency,
   DependencyPath,
   NativeApplicationDescriptor
 } from 'ern-util'
@@ -46,7 +47,7 @@ exports.builder = function (yargs: any) {
     })
     .option('dependencies', {
       type: 'array',
-      alias: 'd',
+      alias: 'deps',
       describe: 'A list of one or more extra native dependencies to include in this container'
     })
     .option('platform', {
@@ -73,7 +74,7 @@ exports.handler = async function ({
   jsOnly,
   outDir,
   miniapps,
-  dependencies,
+  dependencies = [],
   platform,
   containerName,
   publicationUrl
@@ -83,18 +84,23 @@ exports.handler = async function ({
   jsOnly?: boolean,
   outDir?: string,
   miniapps?: Array<string>,
-  dependencies?: Array<string>,
+  dependencies: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
   publicationUrl?: string
-}) {
+} = {}) {
   let napDescriptor: ?NativeApplicationDescriptor
 
   await utils.logErrorAndExitIfNotSatisfied({
     isValidContainerVersion: version,
     isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor
+    napDescriptorExistInCauldron: descriptor,
+    noGitOrFilesystemPath: dependencies
   })
+
+  if ((dependencies.length > 0) && (jsOnly || descriptor)) {
+    return log.error(`You can only provide extra native dependencies when generating a non JS only / non Cauldron based container`)
+  }
 
   //
   // Full native application selector was not provided.
@@ -133,7 +139,6 @@ exports.handler = async function ({
   }
 
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
-
   //
   // --jsOnly switch
   // Ony generates the composite miniapp to a provided output folder
@@ -170,7 +175,8 @@ exports.handler = async function ({
         platform, {
           version,
           nativeAppName: containerName,
-          outDir
+          outDir,
+          extraNativeDependencies: _.map(dependencies, d => Dependency.fromString(d))
         }
       )
     } else if (napDescriptor && version) {
