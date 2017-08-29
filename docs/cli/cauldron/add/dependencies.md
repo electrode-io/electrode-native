@@ -1,6 +1,6 @@
 **Adds one or more native dependency(ies) to a Cauldron**
 
-The following command can be used to add one or more new `native dependency(ies)` to a given non released native application version in a Cauldron. If you instead want to update the version(s) of already existing `native dependency(ies)`, you should use `ern cauldron update dependency` command.
+The following command can be used to add one or more new `native dependency(ies)` to a given non released native application version in a Cauldron. If you instead want to update the version(s) of already existing `native dependency(ies)`, you should use `ern cauldron update dependencies` command.
 
 Upon sucessful execution of this command, a new `Container` version will automatically be generated and published.  
 
@@ -10,20 +10,16 @@ Please note that you can only add `native dependency(ies)` versions that have be
 
 ### Command
 
-#### `ern cauldron add dependency <dependency>`
-
-Adds a single `native dependency` to a target native application version container.  
-
-#### `ern cauldron add dependency --dependencies <dependencies>`
+#### `ern cauldron add dependencies <dependencies..>`
 
 Adds one or more `native dependency(ies)` to a target native application version container. 
 
-#### `ern cauldron add dependency --containerVersion/-v <version>`
+#### `ern cauldron add dependencies <dependencies..> --containerVersion/-v <version>`
 
 Use a specific version for the newly generated container upon succesful execution of this command.  
 If not using this option, the command will, by default, increment the patch number of the current container version (i.e if current container version is `1.2.3`, upon succesful execution of this command, new container version will be set as `1.2.4`).
 
-#### `ern cauldron add dependency --descriptor/-d <descriptor>`
+#### `ern cauldron add dependencies <dependencies..> --descriptor/-d <descriptor>`
 
 Will add the `native dependency(ies)` to a given target native application version in the Cauldron matching the provided native application descriptor. You can only pass a `complete native application descriptor` as the `native dependency(ies)` added through this command target only a specific single native application version.  
 If this option is not used, the command will list all the non released native application versions from the Cauldron and will prompt you to choose one to add the `native dependency(ies)` to.

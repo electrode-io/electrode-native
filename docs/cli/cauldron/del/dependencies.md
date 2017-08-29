@@ -9,25 +9,21 @@ Upon sucessful execution of this command, a new `Container` version will automat
 
 ### Command
 
-#### `ern cauldron del dependency <dependency>`
+#### `ern cauldron del dependencies <dependencies..>`
 
-Removes a single `native dependency` from a target native application version container.  
+Removes one or more `native dependency(ies)` from a native application version container. 
 
-#### `ern cauldron del dependency --dependencies <dependencies>`
-
-Removes one or more `native dependency(ies)` from a target native application version container. 
-
-#### `ern cauldron del dependency --containerVersion/-v <version>`
+#### `ern cauldron del dependencies <dependencies..> --containerVersion/-v <version>`
 
 Use a specific version for the newly generated container upon succesful execution of this command.  
 If not using this option, the command will, by default, increment the patch number of the current container version (i.e if current container version is `1.2.3`, upon succesful execution of this command, new container version will be set as `1.2.4`).
 
-#### `ern cauldron add dependency --descriptor/-d <descriptor>`
+#### `ern cauldron add dependencies <dependencies..> --descriptor/-d <descriptor>`
 
 Will remove the `native dependency(ies)` from a given target native application version in the Cauldron, matching the provided native application descriptor. You can only pass a `complete native application descriptor` as the `native dependency(ies)` removed through this command can target only a single native application version, as of now.
 If this option is not used, the command will list all the non released native application versions from the Cauldron and will prompt you to choose one to remove the `native dependency(ies)` from.
 
-#### `ern cauldron del dependency --force/-f`
+#### `ern cauldron del dependencie <dependencies..> --force/-f`
 
 Bypass compatibility checks and force remove the `native dependency(ies)` from the Cauldron.  
 Only to be used if you really know what you're doing !

@@ -11,16 +11,11 @@ import {
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'dependency [dependency]'
+exports.command = 'dependencies <dependencies..>'
 exports.desc = 'Remove one or more dependency(ies) from the cauldron'
 
 exports.builder = function (yargs: any) {
   return yargs
-  .option('force', {
-    alias: 'f',
-    type: 'bool',
-    describe: 'Force publish'
-  })
   .option('containerVersion', {
     alias: 'v',
     type: 'string',
@@ -31,25 +26,24 @@ exports.builder = function (yargs: any) {
     alias: 'd',
     describe: 'A complete native application descriptor'
   })
-  .option('dependencies', {
-    type: 'array',
-    describe: 'One or more dependencies'
+  .option('force', {
+    alias: 'f',
+    type: 'bool',
+    describe: 'Force publish'
   })
   .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
-  descriptor,
-  dependency,
   dependencies,
-  force,
-  containerVersion
+  containerVersion,
+  descriptor,
+  force
 } : {
-  descriptor?: string,
-  dependency?: string,
   dependencies?: Array<string>,
-  force?: boolean,
-  containerVersion?: string
+  descriptor?: string,
+  containerVersion?: string,
+  force?: boolean
 }) {
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
@@ -59,14 +53,12 @@ exports.handler = async function ({
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependency || dependencies,
+    noGitOrFilesystemPath: dependencies,
     napDescriptorExistInCauldron: descriptor,
-    dependencyIsInNativeApplicationVersionContainer: { dependency: dependency || dependencies, napDescriptor }
+    dependencyIsInNativeApplicationVersionContainer: { dependency: dependencies, napDescriptor }
   })
 
-  const dependenciesObjs = dependency
-  ? [ Dependency.fromString(dependency) ]
-  : _.map(dependencies, d => Dependency.fromString(d))
+  const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
 
   // First let's figure out if any of the MiniApps are using this/these dependency(ies)
   // to make sure that we don't remove any dependency currently used by any MiniApp

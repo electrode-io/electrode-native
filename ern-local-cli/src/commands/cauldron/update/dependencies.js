@@ -8,9 +8,10 @@ import {
   cauldron
 } from 'ern-core'
 import utils from '../../../lib/utils'
+import _ from 'lodash'
 
-exports.command = 'dependency <dependency>'
-exports.desc = 'Update a native dependency version'
+exports.command = 'dependencies <dependencies..>'
+exports.desc = 'Update one or more native dependency(ies) version(s)'
 
 exports.builder = function (yargs: any) {
   return yargs
@@ -28,12 +29,12 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
+  dependencies,
   descriptor,
-  dependency,
   containerVersion
 } : {
+  dependencies: Array<string>,
   descriptor?: string,
-  dependency: string,
   containerVersion?: string
 }) {
   if (!descriptor) {
@@ -41,30 +42,27 @@ exports.handler = async function ({
   }
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-  const dependencyObj = Dependency.fromString(dependency)
-  if (!dependencyObj.isVersioned) {
-    return log.error(`You need to provide a versioned dependency`)
-  }
+  const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
 
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: descriptor,
     napDescriptorExistInCauldron: descriptor,
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependency,
-    dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: { dependency, napDescriptor }
+    noGitOrFilesystemPath: dependencies,
+    dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: { dependency: dependencies, napDescriptor }
   })
-
-  const versionLessDependencyString = dependencyObj.withoutVersion().toString()
 
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {
-      await cauldron.updateNativeAppDependency(
-        napDescriptor,
-        dependencyObj.withoutVersion().toString(),
-        dependencyObj.version)
+      for (const dependencyObj of dependenciesObjs) {
+        await cauldron.updateNativeAppDependency(
+          napDescriptor,
+          dependencyObj.withoutVersion().toString(),
+          dependencyObj.version)
+      }
     }, napDescriptor, { containerVersion })
-    log.info(`${versionLessDependencyString} dependency version was succesfully updated to ${dependencyObj.version} !`)
+    log.info(`Dependency(ies) was/were succesfully updated in ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`An error happened while trying to update ${versionLessDependencyString} dependency to v${dependencyObj.version}`)
+    log.error(`An error happened while trying to update dependency(ies) in ${napDescriptor.toString()}`)
   }
 }
