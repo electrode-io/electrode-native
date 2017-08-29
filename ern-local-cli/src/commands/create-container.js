@@ -44,6 +44,11 @@ exports.builder = function (yargs: any) {
       alias: 'm',
       describe: 'A list of one or more miniapps'
     })
+    .option('dependencies', {
+      type: 'array',
+      alias: 'd',
+      describe: 'A list of one or more extra native dependencies to include in this container'
+    })
     .option('platform', {
       type: 'string',
       alias: 'p',
@@ -68,6 +73,7 @@ exports.handler = async function ({
   jsOnly,
   outDir,
   miniapps,
+  dependencies,
   platform,
   containerName,
   publicationUrl
@@ -77,6 +83,7 @@ exports.handler = async function ({
   jsOnly?: boolean,
   outDir?: string,
   miniapps?: Array<string>,
+  dependencies?: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
   publicationUrl?: string
