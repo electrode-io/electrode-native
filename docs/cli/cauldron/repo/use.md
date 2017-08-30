@@ -2,7 +2,7 @@
 
 ### Command
 
-#### `ern cauldron repository use <alias>`
+#### `ern cauldron repo use <alias>`
 
 Set the `Cauldron` repository associated to the given `alias` as the currently activated `Cauldron`. 
 
