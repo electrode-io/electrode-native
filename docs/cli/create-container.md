@@ -15,7 +15,7 @@ For Android, in addition of being generated, the `Container` will also get publi
 Specify the `version` to use for the Container. The version should comply with the form `x.y.z` where x, y and z are integers (for example `version=1.2.30`)  
 If you don't provide an explicit version, the default version `1.0.0` will be used.
 
-#### `ern create-container [--jsOnly/--js]`
+#### `ern create-container --jsOnly/--js`
 
 This will create a JavaScript only container (a.k.a MiniApps composite). If not specified, a full native container (including the JS bundle containing all MiniApps) will be generated.
 
@@ -28,11 +28,17 @@ This is useful if you want to locally generate a container that mirrors the one 
 
 This will create a new custom container including all the given `MiniApps`. The `MiniApps` passed to this command can be any valid `yarn` package format (you can even use git and/or file scheme).
 
+#### `ern create-container --dependencies/-deps <dependencies>`
+
+This will inject the provided extra native dependencies in your locally generated container. 
+This option can only be used when generating a container that is not JS only (`--js` switch), nor based on a native application version from Cauldron (`--descriptor` option). For the latter, if you want to add extra native dependencies to your container, that are not listed as dependencies of any of the `MiniApps`, you can instead use `ern cauldron add dependencies` command to add the extra native dependencies directly in the native application version stored in Cauldron.
+You can only provided published dependencies to this command (i.e you cannot use git or file package descriptors for reffering to the dependencies).
+
 #### `ern create-container --platform/-p <android|ios>`
 
 Specify the target platform for this container. 
 If not explicitely provided, the command will prompt you to choose between `ios` and `android` platform before execution.
 
-#### `ern create-container [--outDir/-o] <directory>`
+#### `ern create-container --outDir/-o <directory>`
 
 Specify the output directory where the container generated project should be stored upon creation. If not provided, the container will be generated in the default platform directory `~/.ern/containergen/out`.
