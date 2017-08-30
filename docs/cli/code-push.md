@@ -1,4 +1,4 @@
-**Update one or more MiniApp(s) over the air**
+Update one or more MiniApp(s) over the air
 
 This command can be used to update one or more `MiniApp(s)` over the air (without having to go through a native application store release) in a target released native application version. 
 
