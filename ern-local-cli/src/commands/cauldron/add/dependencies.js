@@ -43,11 +43,25 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
+    isCompleteNapDescriptorString: { descriptor },
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependencies,
-    napDescriptorExistInCauldron: descriptor,
-    dependencyNotInNativeApplicationVersionContainer: { dependency: dependencies, napDescriptor }
+    noGitOrFilesystemPath: {
+      obj: dependencies,
+      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form dependency@version is allowed.'
+    },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'This command cannot work on a non existing native application version'
+    },
+    dependencyNotInNativeApplicationVersionContainer: {
+      dependency: dependencies,
+      napDescriptor,
+      extraErrorMessage: 'If you want to update dependency(ies) version(s), use -ern cauldron update dependencies- instead'
+    },
+    publishedToNpm: {
+      obj: dependencies,
+      extraErrorMessage: 'You can only add dependencies versions that have been published to NPM'
+    }
   })
 
   const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))

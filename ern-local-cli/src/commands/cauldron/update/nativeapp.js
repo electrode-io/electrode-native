@@ -30,8 +30,11 @@ exports.handler = async function ({
   isReleased: boolean
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor
+    isCompleteNapDescriptorString: { descriptor },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'You cannot update the release status of a non existing native application version'
+    }
   })
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)

@@ -51,7 +51,7 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor
+    isCompleteNapDescriptorString: { descriptor }
   })
 
   for (const miniappPath of miniapps) {

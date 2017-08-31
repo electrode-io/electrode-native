@@ -39,8 +39,11 @@ exports.handler = async function ({
   copyPreviousVersionData?: boolean
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    napDescritorDoesNotExistsInCauldron: descriptor
+    isCompleteNapDescriptorString: { descriptor },
+    napDescritorDoesNotExistsInCauldron: {
+      descriptor,
+      extraErrorMessage: 'This version of the native application already exist in Cauldron.'
+    }
   })
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)

@@ -93,9 +93,10 @@ exports.handler = async function ({
 
   await utils.logErrorAndExitIfNotSatisfied({
     isValidContainerVersion: version,
-    isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor,
-    noGitOrFilesystemPath: dependencies
+    noGitOrFilesystemPath: {
+      obj: dependencies,
+      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+    }
   })
 
   if ((dependencies.length > 0) && (jsOnly || descriptor)) {
@@ -135,6 +136,14 @@ exports.handler = async function ({
   }
 
   if (descriptor) {
+    await utils.logErrorAndExitIfNotSatisfied({
+      isCompleteNapDescriptorString: { descriptor },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'You cannot create a container for a non existin native application version.'
+      }
+    })
+
     napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   }
 

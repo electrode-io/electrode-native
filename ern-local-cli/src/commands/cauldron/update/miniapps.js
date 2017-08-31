@@ -53,12 +53,30 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor,
+    isCompleteNapDescriptorString: { descriptor },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'This command cannot work on a non existing native application version'
+    },
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: miniapps,
-    publishedToNpm: miniapps,
-    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: { miniApp: miniapps, napDescriptor }
+    noGitOrFilesystemPath: {
+      obj: miniapps,
+      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+    },
+    publishedToNpm: {
+      obj: miniapps,
+      extraErrorMessage: 'You can only update MiniApp(s) version(s) with version(s) that have been published to NPM'
+    },
+    miniAppIsInNativeApplicationVersionContainer: {
+      miniApp: miniapps,
+      napDescriptor,
+      extraErrorMessage: 'If you want to add a new MiniApp(s), use -ern cauldron add miniapps- instead'
+    },
+    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
+      miniApp: miniapps,
+      napDescriptor,
+      extraErrorMessage: 'It seems like you are trying to update a MiniApp to a version that is already the one in use.'
+    }
   })
 
   //

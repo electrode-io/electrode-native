@@ -21,8 +21,11 @@ exports.handler = async function ({
   descriptor: string
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor
+    isCompleteNapDescriptorString: { descriptor },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'This command cannot work on a non existing native application version'
+    }
   })
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
