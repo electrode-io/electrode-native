@@ -18,18 +18,25 @@ exports.builder = function (yargs: any) {
       alias: 'm',
       describe: 'A list of one or more miniapps'
     })
+    .option('watchNodeModules', {
+      type: 'array',
+      alias: 'w',
+      describe: 'A list of one or more folder name from node_modules that should be watched for changes'
+    })
     .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
   completeNapDescriptor,
-  miniapps
+  miniapps,
+  watchNodeModules
 } : {
   completeNapDescriptor?: string,
-  miniapps?: Array<string>
+  miniapps?: Array<string>,
+  watchNodeModules?: Array<string>
 }) {
   try {
-    await start({ miniapps, completeNapDescriptor })
+    await start({ miniapps, completeNapDescriptor, watchNodeModules })
   } catch (e) {
     log.error(e.message)
   }

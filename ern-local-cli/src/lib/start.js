@@ -19,10 +19,12 @@ import shell from 'shelljs'
 
 export async function start ({
   miniapps,
-  completeNapDescriptor
+  completeNapDescriptor,
+  watchNodeModules = []
 } : {
   miniapps?: Array<string>,
-  completeNapDescriptor?: string
+  completeNapDescriptor?: string,
+  watchNodeModules: Array<string>
 } = {}) {
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
 
@@ -58,7 +60,7 @@ export async function start ({
   })
 
   const reactNativePackagerProcess = childProcess.spawn(reactnative.binaryPath, [
-    'start', '--reset-cache', '--providesModuleNodeModules', `react-native,${Object.keys(miniAppsLinks).join(',')}`])
+    'start', '--reset-cache', '--providesModuleNodeModules', `react-native,${Object.keys(miniAppsLinks).concat(watchNodeModules).join(',')}`])
   reactNativePackagerProcess.stdout.on('data', data => log.info(data.toString()))
   reactNativePackagerProcess.stderr.on('data', data => log.error(data.toString()))
 }
