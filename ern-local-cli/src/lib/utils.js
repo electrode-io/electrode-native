@@ -62,35 +62,56 @@ async function logErrorAndExitIfNotSatisfied ({
   dependencyIsInNativeApplicationVersionContainer,
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion
 } : {
-  noGitOrFilesystemPath?: string | Array<string>,
+  noGitOrFilesystemPath?: {
+    obj: string | Array<string>,
+    extraErrorMessage?: string
+  },
   isValidContainerVersion?: string,
-  isCompleteNapDescriptorString?: string,
-  napDescriptorExistInCauldron?: string,
-  napDescritorDoesNotExistsInCauldron?: string,
-  publishedToNpm?: string | Array<string>,
+  isCompleteNapDescriptorString?: {
+    descriptor: string,
+    extraErrorMessage?: string
+  },
+  napDescriptorExistInCauldron?: {
+    descriptor: string,
+    extraErrorMessage?: string
+  },
+  napDescritorDoesNotExistsInCauldron?: {
+    descriptor: string,
+    extraErrorMessage?: string
+  },
+  publishedToNpm?: {
+    obj: string | Array<string>,
+    extraErrorMessage?: string
+  },
   miniAppNotInNativeApplicationVersionContainer?: {
     miniApp: string | Array<string> | void,
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
   },
   miniAppIsInNativeApplicationVersionContainer?: {
     miniApp: string | Array<string> | void,
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
   },
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     miniApp: string | Array<string> | void,
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
   },
   dependencyNotInNativeApplicationVersionContainer?: {
     dependency: string | Array<string> | void,
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
   },
   dependencyIsInNativeApplicationVersionContainer?: {
     dependency: string | Array<string> | void,
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
   },
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     dependency: string | Array<string> | void,
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
   }
 } = {}) {
   const spinner = ora('Performing initial checks').start()
@@ -101,59 +122,75 @@ async function logErrorAndExitIfNotSatisfied ({
     }
     if (isCompleteNapDescriptorString) {
       spinner.text = 'Ensuring that native application descriptor is complete'
-      Ensure.isCompleteNapDescriptorString(isCompleteNapDescriptorString)
+      Ensure.isCompleteNapDescriptorString(
+        isCompleteNapDescriptorString.descriptor,
+        isCompleteNapDescriptorString.extraErrorMessage)
     }
     if (noGitOrFilesystemPath) {
       spinner.text = 'Ensuring that not git or file system path(s) is/are used'
-      Ensure.noGitOrFilesystemPath(noGitOrFilesystemPath)
+      Ensure.noGitOrFilesystemPath(
+        noGitOrFilesystemPath.obj,
+        noGitOrFilesystemPath.extraErrorMessage)
     }
     if (napDescriptorExistInCauldron) {
       spinner.text = 'Ensuring that native application descriptor exists in Cauldron'
-      await Ensure.napDescritorExistsInCauldron(napDescriptorExistInCauldron)
+      await Ensure.napDescritorExistsInCauldron(
+        napDescriptorExistInCauldron.descriptor,
+        napDescriptorExistInCauldron.extraErrorMessage)
     }
     if (napDescritorDoesNotExistsInCauldron) {
       spinner.text = 'Ensuring that native application descriptor does not already exist in Cauldron'
-      await Ensure.napDescritorDoesNotExistsInCauldron(napDescritorDoesNotExistsInCauldron)
+      await Ensure.napDescritorDoesNotExistsInCauldron(
+        napDescritorDoesNotExistsInCauldron.descriptor,
+        napDescritorDoesNotExistsInCauldron.extraErrorMessage)
     }
     if (publishedToNpm) {
       spinner.text = 'Ensuring that package(s) version(s) have been published to NPM'
-      await Ensure.publishedToNpm(publishedToNpm)
+      await Ensure.publishedToNpm(
+        publishedToNpm.obj,
+        publishedToNpm.extraErrorMessage)
     }
     if (miniAppNotInNativeApplicationVersionContainer) {
       spinner.text = 'Ensuring that MiniApp(s) is/are not present in native application version container'
       await Ensure.miniAppNotInNativeApplicationVersionContainer(
         miniAppNotInNativeApplicationVersionContainer.miniApp,
-        miniAppNotInNativeApplicationVersionContainer.napDescriptor)
+        miniAppNotInNativeApplicationVersionContainer.napDescriptor,
+        miniAppNotInNativeApplicationVersionContainer.extraErrorMessage)
     }
     if (miniAppIsInNativeApplicationVersionContainer) {
       spinner.text = 'Ensuring that MiniApp(s) is/are present in native application version container'
       await Ensure.miniAppIsInNativeApplicationVersionContainer(
         miniAppIsInNativeApplicationVersionContainer.miniApp,
-        miniAppIsInNativeApplicationVersionContainer.napDescriptor)
+        miniAppIsInNativeApplicationVersionContainer.napDescriptor,
+        miniAppIsInNativeApplicationVersionContainer.extraErrorMessage)
     }
     if (miniAppIsInNativeApplicationVersionContainerWithDifferentVersion) {
       spinner.text = 'Ensuring that MiniApp(s) is/are present in native application version container with different version(s)'
       await Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.miniApp,
-        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor)
+        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
+        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage)
     }
     if (dependencyNotInNativeApplicationVersionContainer) {
       spinner.text = 'Ensuring that dependency(ies) is/are not present in native application version container'
       await Ensure.dependencyNotInNativeApplicationVersionContainer(
         dependencyNotInNativeApplicationVersionContainer.dependency,
-        dependencyNotInNativeApplicationVersionContainer.napDescriptor)
+        dependencyNotInNativeApplicationVersionContainer.napDescriptor,
+        dependencyNotInNativeApplicationVersionContainer.extraErrorMessage)
     }
     if (dependencyIsInNativeApplicationVersionContainer) {
       spinner.text = 'Ensuring that dependency(ies) is/are present in native application version container'
       await Ensure.dependencyIsInNativeApplicationVersionContainer(
         dependencyIsInNativeApplicationVersionContainer.dependency,
-        dependencyIsInNativeApplicationVersionContainer.napDescriptor)
+        dependencyIsInNativeApplicationVersionContainer.napDescriptor,
+        dependencyIsInNativeApplicationVersionContainer.extraErrorMessage)
     }
     if (dependencyIsInNativeApplicationVersionContainerWithDifferentVersion) {
       spinner.text = 'Ensuring that dependency(ies) is/are present in native application version container with different version(s)'
       await Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.dependency,
-        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor)
+        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
+        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage)
     }
     spinner.succeed('All initial checks have passed')
   } catch (e) {
