@@ -16,7 +16,7 @@ export default class Ensure {
     version: string,
     extraErrorMessage: string = '') {
     if (/^\d+.\d+.\d+$/.test(version) === false) {
-      throw new Error(`Invalid container version (${version}). Please use a valid version in the form x.y.z.\n${extraErrorMessage}`)
+      throw new Error(`${version} is not a valid container version.\n${extraErrorMessage}`)
     }
   }
 
@@ -24,7 +24,7 @@ export default class Ensure {
     str: string,
     extraErrorMessage: string = '') {
     if (NativeApplicationDescriptor.fromString(str).isPartial) {
-      throw new Error(`Please use a complete native application descriptor in the form name:platform:version.\n${extraErrorMessage}`)
+      throw new Error(`${str} is not a complete native application descriptor, in the form application:platform:version\n${extraErrorMessage}`)
     }
   }
 
@@ -36,7 +36,7 @@ export default class Ensure {
     for (const path of paths) {
       const dependencyPath = DependencyPath.fromString(path)
       if (dependencyPath.isAFileSystemPath || dependencyPath.isAGitPath) {
-        throw new Error(`You cannot use git or file system paths.\n${extraErrorMessage}`)
+        throw new Error(`Found a git or file system path.\n${extraErrorMessage}`)
       }
     }
   }
@@ -57,7 +57,7 @@ export default class Ensure {
     const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
     const result = await cauldron.getNativeApp(descriptor)
     if (result) {
-      throw new Error(`${descriptor.toString()} descriptor already exist in Cauldron.\n${extraErrorMessage}`)
+      throw new Error(`${descriptor.toString()} descriptor exist in Cauldron.\n${extraErrorMessage}`)
     }
   }
 
@@ -80,7 +80,7 @@ export default class Ensure {
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
       if (await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
-        throw new Error(`${miniAppString} exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+        throw new Error(`${miniAppString} MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
@@ -94,7 +94,7 @@ export default class Ensure {
     for (const dependencyString of dependenciesStrings) {
       const unversionedDependencyString = Dependency.fromString(dependencyString).withoutVersion().toString()
       if (await cauldron.getNativeDependency(napDescriptor, unversionedDependencyString)) {
-        throw new Error(`${unversionedDependencyString} already exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+        throw new Error(`${unversionedDependencyString} dependency exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
@@ -107,7 +107,7 @@ export default class Ensure {
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
       if (!await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
-        throw new Error(`${miniAppString} does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+        throw new Error(`${miniAppString} MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
