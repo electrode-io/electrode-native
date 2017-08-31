@@ -92,9 +92,9 @@ export default class Ensure {
     if (!obj) return
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
-      if (await cauldron.getNativeDependency(napDescriptor,
-          Dependency.fromString(dependencyString).withoutVersion().toString())) {
-        throw new Error(`${dependencyString} already exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+      const unversionedDependencyString = Dependency.fromString(dependencyString).withoutVersion().toString()
+      if (await cauldron.getNativeDependency(napDescriptor, unversionedDependencyString)) {
+        throw new Error(`${unversionedDependencyString} already exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
@@ -119,9 +119,9 @@ export default class Ensure {
     if (!obj) return
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
-      if (!await cauldron.getNativeDependency(napDescriptor,
-          Dependency.fromString(dependencyString).withoutVersion().toString())) {
-        throw new Error(`${dependencyString} does not exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+      const unversionedDependencyString = Dependency.fromString(dependencyString).withoutVersion().toString()
+      if (!await cauldron.getNativeDependency(napDescriptor, unversionedDependencyString)) {
+        throw new Error(`${unversionedDependencyString} does not exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
