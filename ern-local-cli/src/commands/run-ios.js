@@ -1,30 +1,33 @@
 // @flow
 
-import {
-  MiniApp
-} from 'ern-core'
-import {
-  DependencyPath
-} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'run-ios [miniapp]'
 exports.desc = 'Run a MiniApp in the ios Runner application'
 
 exports.builder = function (yargs: any) {
-  return yargs.epilog(utils.epilog(exports))
+  return yargs
+    .option('dev', {
+      type: 'bool',
+      alias: 'p',
+      default: true,
+      describe: 'Enable or disable React Native dev support'
+    })
+    .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
-  miniapp
+  miniapp,
+  dev = true
 } : {
-  miniapp?: string
+  miniapp?: string,
+  dev: boolean
 }) {
   try {
-    const miniappObj = miniapp
-      ? await MiniApp.fromPackagePath(DependencyPath.fromString(miniapp))
-      : MiniApp.fromCurrentPath()
-    miniappObj.runInIosRunner()
+    await utils.runMiniApp('ios', {
+      miniapp,
+      dev
+    })
   } catch (e) {
     log.error(`${e}`)
   }

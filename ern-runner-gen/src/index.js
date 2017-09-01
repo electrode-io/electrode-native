@@ -26,18 +26,13 @@ function pascalCase (str: string) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
 }
 
-// Given a string returns the same string with its first letter in lower case
-function camelCase (str: string) {
-  return `${str.charAt(0).toLowerCase()}${str.slice(1)}`
-}
-
 // =============================================================================
 // Main
 // =============================================================================
 
 const RUNNER_CONTAINER_VERSION = '1.0.0'
 
-// Generate the runner project (Android only as of now)
+// Generate the runner project
 // platformPath : Path to the ern-platform to use
 // plugins : Array containing all plugins to be included in the generated container
 // miniapp : The miniapp to attach to this runner. Needs to have localPath set !
@@ -46,51 +41,45 @@ export async function generateRunner ({
   platformPath,
   plugins,
   miniapp,
-  outFolder,
-  headless,
+  outDir,
   platform,
-  containerGenWorkingFolder,
-  reactNativeAarsPath
+  containerGenWorkingDir,
+  reactNativeAarsPath,
+  reactNativeDevSupportEnabled
 } : {
   platformPath: string,
   plugins: Array<Object>,
   miniapp: Object,
-  outFolder: string,
-  headless: boolean,
+  outDir: string,
   platform: 'android' | 'ios',
-  containerGenWorkingFolder: string,
-  reactNativeAarsPath: string
+  containerGenWorkingDir: string,
+  reactNativeAarsPath: string,
+  reactNativeDevSupportEnabled: boolean
 }) {
   try {
     if (!miniapp.localPath) {
       throw new Error('Miniapp must come with a local path !')
     }
 
-    const view = {
-      miniAppName: miniapp.name,
-      pathToElectrodeContainerXcodeProj: `${containerGenWorkingFolder}/out/ios`,
-      pascalCaseMiniAppName: pascalCase(miniapp.name),
-      camelCaseMiniAppName: camelCase(miniapp.name),
-      headless
+    let isReactNativeDevSupportEnabled
+    if (platform === 'android') {
+      isReactNativeDevSupportEnabled = reactNativeDevSupportEnabled ? 'true' : 'false'
+    } else if (platform === 'ios') {
+      isReactNativeDevSupportEnabled = reactNativeDevSupportEnabled ? 'YES' : 'NO'
     }
 
-    shell.mkdir(outFolder)
+    const mustacheView = {
+      miniAppName: miniapp.name,
+      pascalCaseMiniAppName: pascalCase(miniapp.name),
+      isReactNativeDevSupportEnabled
+    }
+
+    shell.mkdir(outDir)
 
     if (platform === 'android') {
-      shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outFolder)
-      const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
-                (f) => (!f.endsWith('.jar') && !f.endsWith('.png')))
-      for (const file of files) {
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-                    `${outFolder}/${file}`, view, `${outFolder}/${file}`)
-      }
+      await generateAndroidRunnerProject(platformPath, outDir, mustacheView)
     } else if (platform === 'ios') {
-      shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/ios/*`, outFolder)
-      const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/ios`)
-      for (const file of files) {
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-                    `${outFolder}/${file}`, view, `${outFolder}/${file}`)
-      }
+      await generateIosRunnerProject(platformPath, outDir, mustacheView, containerGenWorkingDir)
     }
 
     await generateContainerForRunner({
@@ -98,8 +87,7 @@ export async function generateRunner ({
       plugins,
       miniapp,
       platform,
-      containerGenWorkingFolder,
-      outFolder,
+      containerGenWorkingDir,
       reactNativeAarsPath
     })
   } catch (e) {
@@ -108,21 +96,48 @@ export async function generateRunner ({
   }
 }
 
+export async function generateAndroidRunnerProject (
+  platformPath: string,
+  outDir: string,
+  mustacheView: Object) {
+  shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outDir)
+  const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
+            (f) => (!f.endsWith('.jar') && !f.endsWith('.png')))
+  for (const file of files) {
+    await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+                `${outDir}/${file}`, mustacheView, `${outDir}/${file}`)
+  }
+}
+
+export async function generateIosRunnerProject (
+  platformPath: string,
+  outDir: string,
+  mustacheView: Object,
+  containerGenWorkingDir: string) {
+  // Enhance mustacheView with iOS specifics
+  mustacheView.pathToElectrodeContainerXcodeProj = `${containerGenWorkingDir}/out/ios`
+
+  shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/ios/*`, outDir)
+  const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/ios`)
+  for (const file of files) {
+    await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+                `${outDir}/${file}`, mustacheView, `${outDir}/${file}`)
+  }
+}
+
 export async function generateContainerForRunner ({
   platformPath,
   plugins,
   miniapp,
   platform,
-  containerGenWorkingFolder,
-  outFolder,
+  containerGenWorkingDir,
   reactNativeAarsPath
 } : {
   platformPath: string,
   plugins: Array<Dependency>,
   miniapp: Object,
   platform: 'android' | 'ios',
-  containerGenWorkingFolder: string,
-  outFolder: string,
+  containerGenWorkingDir: string,
   reactNativeAarsPath: string
 }) {
   const generatorConfig = new ContainerGeneratorConfig(platform)
@@ -137,7 +152,7 @@ export async function generateContainerForRunner ({
     platformPath,
     plugins,
     miniapps: [miniapp],
-    workingFolder: containerGenWorkingFolder,
+    workingFolder: containerGenWorkingDir,
     reactNativeAarsPath
   })
 }

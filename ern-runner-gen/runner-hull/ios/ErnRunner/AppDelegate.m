@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "RunnerConfig.h"
 #import <ElectrodeContainer/ElectrodeContainer.h>
 
 
@@ -20,7 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Start the container
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] init];
-    containerConfig.debugEnabled = YES;
+    containerConfig.debugEnabled = RnDevSupportEnabled;
     [ElectrodeReactNative startWithConfigurations:containerConfig];
 
     return YES;

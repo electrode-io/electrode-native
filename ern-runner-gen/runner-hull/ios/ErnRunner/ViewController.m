@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "RunnerConfig.h"
 #import <ElectrodeContainer/ElectrodeContainer.h>
 
 @interface ViewController ()
@@ -19,7 +20,7 @@
     // Do any additional setup after loading the view.
 
     UIViewController *viewController =
-    [[ElectrodeReactNative sharedInstance] miniAppWithName:@"{{{miniAppName}}}" properties:nil];
+    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
     viewController.view.frame = [UIScreen mainScreen].bounds;
     [self.view addSubview:viewController.view];
 }

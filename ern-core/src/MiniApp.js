@@ -10,7 +10,6 @@ import {
   findNativeDependencies,
   Dependency,
   DependencyPath,
-  fileUtils,
   NativeApplicationDescriptor,
   spin,
   tagOneLine
@@ -28,8 +27,7 @@ import {
 } from './compatibility'
 import * as utils from './utils'
 import {
-  execSync,
-  spawn
+  execSync
 } from 'child_process'
 import fs from 'fs'
 import inquirer from 'inquirer'
@@ -40,7 +38,6 @@ import path from 'path'
 import ora from 'ora'
 
 const simctl = require('node-simctl')
-const fetch = require('node-fetch')
 
 const {
   runAndroid
@@ -103,12 +100,10 @@ Are you sure this is a MiniApp ?`)
   static async create (
     appName: string, {
       platformVersion = Platform.currentVersion,
-      scope,
-      headless
+      scope
     } : {
       platformVersion: string,
-      scope?: string,
-      headless?: boolean
+      scope?: string
     }) {
     try {
       if (Platform.currentVersion !== platformVersion) {
@@ -140,7 +135,6 @@ Are you sure this is a MiniApp ?`)
         version: `${platformVersion}`,
         moduleType: `${ModuleTypes.MINIAPP}`
       }
-      appPackageJson.ernHeadLess = headless
       appPackageJson.private = false
       appPackageJson.dependencies['react'] = reactDependency.version
       appPackageJson.keywords
@@ -160,17 +154,6 @@ Are you sure this is a MiniApp ?`)
       shell.cd(miniAppPath)
       shell.rm('-rf', 'android')
       shell.rm('-rf', 'ios')
-
-      //
-      /// If it's a headless miniapp (no ui), just override index.android.js / index.ios.js
-      // with our own and create index.source.js
-      // Later on it might be done in a better way by retrieving our own structured
-      // project rather than using react-native generated on and patching it !
-      if (headless) {
-        fs.writeFileSync(`${miniAppPath}/index.android.js`, "require('./index.source');", 'utf-8')
-        fs.writeFileSync(`${miniAppPath}/index.ios.js`, "require('./index.source');", 'utf-8')
-        fs.writeFileSync(`${miniAppPath}/index.source.js`, '// Add your implementation here', 'utf-8')
-      }
 
       return new MiniApp(miniAppPath)
     } catch (e) {
@@ -196,10 +179,6 @@ Are you sure this is a MiniApp ?`)
 
   get platformVersion () : string {
     return this.packageJson.ern ? this.packageJson.ern.version : this.packageJson.ernPlatformVersion
-  }
-
-  get isHeadLess () : boolean {
-    return this.packageJson.ernHeadLess
   }
 
   get packageDescriptor () : string {
@@ -230,8 +209,12 @@ Are you sure this is a MiniApp ?`)
     return [...this.jsDependencies, ...this.nativeDependencies]
   }
 
-  async runInIosRunner () : Promise<*> {
-    this.startPackagerInNewWindow()
+  async runInIosRunner ({
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled: boolean
+  } = {}) : Promise<*> {
+    reactnative.startPackagerInNewWindow()
 
     // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
     // (no code injection for plugins yet :()), it has hard-coded references to
@@ -243,11 +226,11 @@ Are you sure this is a MiniApp ?`)
       platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
-      outFolder: `${this.path}/ios`,
-      headless: this.isHeadLess,
+      outDir: `${this.path}/ios`,
       platform: 'ios',
-      containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeDevSupportEnabled
     }
 
     const iosDevices = await simctl.getDevices()
@@ -305,18 +288,22 @@ Are you sure this is a MiniApp ?`)
     }
   }
 
-  async runInAndroidRunner () : Promise<*> {
-    this.startPackagerInNewWindow()
+  async runInAndroidRunner ({
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled: boolean
+  } = {}) : Promise<*> {
+    reactnative.startPackagerInNewWindow()
 
     const runnerConfig = {
       platformPath: Platform.currentPlatformVersionPath,
       plugins: this.nativeDependencies,
       miniapp: {name: this.name, localPath: this.path},
-      outFolder: `${this.path}/android`,
-      headless: this.isHeadLess,
+      outDir: `${this.path}/android`,
       platform: 'android',
-      containerGenWorkingFolder: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
+      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeDevSupportEnabled
     }
 
     if (!fs.existsSync('android')) {
@@ -331,38 +318,6 @@ Are you sure this is a MiniApp ?`)
       projectPath: `${this.path}/android`,
       packageName: 'com.walmartlabs.ern'
     })
-  }
-
-  startPackagerInNewWindow () {
-    return this.isPackagerRunning().then((result) => {
-      if (!result) {
-        log.info('starting packager')
-        const scriptFile = `launchPackager.command`
-
-        const scriptsDir = path.resolve(__dirname, '..', 'scripts')
-        const launchPackagerScript = path.resolve(scriptsDir, scriptFile)
-        const procConfig = {cwd: scriptsDir, detached: true}
-
-        fileUtils.writeFile(`${scriptsDir}/packageRunner.config`, `cwd="${shell.pwd()}"`).then(() => {
-          try {
-            return spawn(`open`, [launchPackagerScript], procConfig)
-          } catch (e) {
-            log.error(`Error: ${e}`)
-          }
-        })
-      } else {
-        log.info('Packager is already running, will continue to run the app')
-      }
-    })
-  }
-
-  isPackagerRunning () {
-    return fetch('http://localhost:8081/status').then(
-      res => res.text().then(body =>
-        body === 'packager-status:running'
-      ),
-      () => false
-    )
   }
 
   async addDependency (

@@ -1,9 +1,11 @@
 // @flow
 
 import {
-  cauldron
+  cauldron,
+  MiniApp
 } from 'ern-core'
 import {
+  DependencyPath,
   NativeApplicationDescriptor,
   spin
 } from 'ern-util'
@@ -248,10 +250,33 @@ function epilog ({command} : {command: string}) {
   return `More info about this command @ ${chalk.bold(`${rootUrl}${commandPath}/${commandWithoutOptions}.md`)}`
 }
 
+async function runMiniApp (platform: 'android' | 'ios', {
+  miniapp,
+  dev
+} : {
+  miniapp?: string,
+  dev: boolean
+} = {}) {
+  const miniappObj = miniapp
+    ? await MiniApp.fromPackagePath(DependencyPath.fromString(miniapp))
+    : MiniApp.fromCurrentPath()
+
+  if (platform === 'android') {
+    return miniappObj.runInAndroidRunner({
+      reactNativeDevSupportEnabled: dev
+    })
+  } else if (platform === 'ios') {
+    return miniappObj.runInIosRunner({
+      reactNativeDevSupportEnabled: dev
+    })
+  }
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   performContainerStateUpdateInCauldron,
-  epilog
+  epilog,
+  runMiniApp
 }
