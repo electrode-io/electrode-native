@@ -5,8 +5,7 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
-  cauldron,
-  MiniApp
+  cauldron
 } from 'ern-core'
 import {
   performCodePushOtaUpdate
@@ -14,7 +13,7 @@ import {
 import utils from '../lib/utils'
 import _ from 'lodash'
 
-exports.command = 'code-push [miniapp]'
+exports.command = 'code-push <miniapps..>'
 exports.desc = 'CodePush one or more MiniApp(s) versions to a target native application version'
 
 exports.builder = function (yargs: any) {
@@ -22,10 +21,6 @@ exports.builder = function (yargs: any) {
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application selector (target native application version for the push)'
-    })
-    .option('miniapps', {
-      type: 'array',
-      describe: 'The list of MiniApps to include in this CodePush bundle'
     })
     .option('force', {
       alias: 'f',
@@ -67,7 +62,6 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   force,
-  miniapp,
   miniapps,
   descriptor,
   appName,
@@ -78,8 +72,7 @@ exports.handler = async function ({
   rollout
 } : {
   force: boolean,
-  miniapp?: string,
-  miniapps?: Array<string>,
+  miniapps: Array<string>,
   descriptor?: string,
   appName: string,
   deploymentName: string,
@@ -88,23 +81,21 @@ exports.handler = async function ({
   mandatory: boolean,
   rollout: string
 }) {
-  if (!miniapp && !miniapps) {
-    try {
-      miniapp = MiniApp.fromCurrentPath().packageDescriptor
-    } catch (e) {
-      return log.error(e.message)
-    }
-  }
-
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyReleasedVersions: true })
   }
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    noGitOrFilesystemPath: miniapp || miniapps,
-    publishedToNpm: miniapp || miniapps
+    isCompleteNapDescriptorString: { descriptor },
+    noGitOrFilesystemPath: {
+      obj: miniapps,
+      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+    },
+    publishedToNpm: {
+      obj: miniapps,
+      extraErrorMessage: 'You can only CodePush MiniApps versions that have been published to NPM'
+    }
   })
 
   const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)

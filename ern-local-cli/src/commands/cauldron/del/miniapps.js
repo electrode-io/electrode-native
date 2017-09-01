@@ -46,11 +46,21 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
+    isCompleteNapDescriptorString: { descriptor },
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: miniapps,
-    napDescriptorExistInCauldron: descriptor,
-    miniAppIsInNativeApplicationVersionContainer: { miniApp: miniapps, napDescriptor }
+    noGitOrFilesystemPath: {
+      obj: miniapps,
+      extraErrorMessage: 'You cannot provide MiniApp(s) using git or file scheme for this command. Only the form miniapp@version is allowed.'
+    },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'This command cannot work on a non existing native application version'
+    },
+    miniAppIsInNativeApplicationVersionContainer: {
+      miniApp: miniapps,
+      napDescriptor,
+      extraErrorMessahe: 'This command cannot remove MiniApp(s) that do not exist in Cauldron.'
+    }
   })
 
   const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))

@@ -40,7 +40,7 @@ exports.handler = async function ({
   descriptor,
   force
 } : {
-  dependencies?: Array<string>,
+  dependencies: Array<string>,
   descriptor?: string,
   containerVersion?: string,
   force?: boolean
@@ -51,11 +51,21 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
+    isCompleteNapDescriptorString: { descriptor },
     isValidContainerVersion: containerVersion,
-    noGitOrFilesystemPath: dependencies,
-    napDescriptorExistInCauldron: descriptor,
-    dependencyIsInNativeApplicationVersionContainer: { dependency: dependencies, napDescriptor }
+    noGitOrFilesystemPath: {
+      obj: dependencies,
+      extraErrorMessage: 'You cannot provide dependency(ies) using git or file schme for this command. Only the form dependency@version is allowed.'
+    },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'This command cannot work on a non existing native application version'
+    },
+    dependencyIsInNativeApplicationVersionContainer: {
+      dependency: dependencies,
+      napDescriptor,
+      extraErrorMessahe: 'This command cannot remove dependency(ies) that do not exist in Cauldron.'
+    }
   })
 
   const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))

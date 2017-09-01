@@ -21,8 +21,11 @@ exports.handler = async function ({
   descriptor: string
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: descriptor,
-    napDescriptorExistInCauldron: descriptor
+    isCompleteNapDescriptorString: { descriptor },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessahe: 'This command cannot remove a native application version that do not exist in Cauldron.'
+    }
   })
 
   await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(descriptor))
