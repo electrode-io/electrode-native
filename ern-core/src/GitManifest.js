@@ -1,40 +1,40 @@
 // @flow
 
-import {
-  Dependency
-} from 'ern-util'
-import Platform from './Platform'
-import _ from 'lodash'
 import fs from 'fs'
+import path from 'path'
 import Prom from 'bluebird'
-import semver from 'semver'
+import shell from 'shelljs'
 import simpleGit from 'simple-git'
 
 export default class GitManifest {
   _git: any
-  _repoPath: string
+  _repoRemotePath: string
+  _repoAbsoluteLocalPath: string
   _cachedManifest: any
   _remote: string
   _branch: string
 
   constructor (
-    repoPath: string,
+    repoLocalPath: string,
+    _repoRemotePath: string,
     remote: string = 'origin',
     branch: string = 'master') {
-    if (!fs.existsSync(repoPath)) {
-      throw new Error(`No git repository was found in ${repoPath}`)
-    }
-    let simpleGitInstance = simpleGit(repoPath)
-    simpleGitInstance.silent(global.ernLogLevel !== 'trace' && global.ernLogLevel !== 'debug')
+    this._repoAbsoluteLocalPath = path.resolve(repoLocalPath)
+    let simpleGitInstance = simpleGit(this._repoAbsoluteLocalPath)
+    simpleGitInstance.silent(global.ernLogLevel === 'trace' || global.ernLogLevel === 'debug')
     this._git = Prom.promisifyAll(simpleGitInstance)
-    this._repoPath = repoPath
+    this._repoRemotePath = _repoRemotePath
     this._remote = remote
     this._branch = branch
     this._cachedManifest = null
   }
 
-  get repoPath () : string {
-    return this._repoPath
+  get localRepoPath () : string {
+    return this._repoAbsoluteLocalPath
+  }
+
+  get remoteRepoPath () : string {
+    return this._repoRemotePath
   }
 
   get remote () : string {
@@ -46,12 +46,35 @@ export default class GitManifest {
   }
 
   async sync () {
-    log.debug(`[GitManifest] Syncing ${this._repoPath}`)
+    log.debug(`[GitManifest] Syncing ${this._repoRemotePath}`)
+
+    if (!fs.existsSync(path.join(this._repoAbsoluteLocalPath, '.git'))) {
+      log.debug(`[GitManifest] Creating local repository in ${this._repoAbsoluteLocalPath}`)
+      shell.mkdir('-p', this._repoAbsoluteLocalPath)
+      await this._git.initAsync()
+      await this._git.addRemoteAsync(this._remote, this._repoRemotePath)
+    }
+
+    await this._git.rawAsync([ 'remote', 'set-url', this._remote, this._repoRemotePath ])
+
+    try {
+      log.debug(`[GitManifest] Fetching from ${this._remote} master`)
+      await this._git.fetchAsync(this._remote, 'master')
+    } catch (e) {
+      if (e.message.includes(`Couldn't find remote ref master`)) {
+        throw new Error(`It looks like no remote Manifest repository exist at ${this._repoRemotePath}`)
+      } else {
+        throw e
+      }
+    }
+
+    await this._git.resetAsync(['--hard', `${this._remote}/master`])
     await this._git.pullAsync(this._remote, this._branch)
-    this._cachedManifest = JSON.parse(fs.readFileSync(`${this._repoPath}/manifest.json`, 'utf-8'))
+    const pathToManifestJson = path.join(this._repoAbsoluteLocalPath, 'manifest.json')
+    this._cachedManifest = JSON.parse(fs.readFileSync(pathToManifestJson, 'utf-8'))
   }
 
-  async getManifestData (platformVersion: string) : Promise<?Object> {
+  async getManifest () : Promise<Object> {
     // We only sync once during a whole "session" (in our context : "an ern command exection")
     // This is done to speed up things as during a single command execution, multiple manifest
     // access can be performed.
@@ -60,30 +83,6 @@ export default class GitManifest {
     if (!this._cachedManifest) {
       await this.sync()
     }
-    return _.find(this._cachedManifest, m => semver.satisfies(platformVersion, m.platformVersion))
-  }
-
-  async getNativeDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<Dependency>> {
-    const manifest = await this.getManifestData(platformVersion)
-    return manifest
-      ? _.map(manifest.targetNativeDependencies, d => Dependency.fromString(d))
-      : []
-  }
-
-  async getJsDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<Dependency>> {
-    const manifest = await this.getManifestData(platformVersion)
-    return manifest
-      ? _.map(manifest.targetJsDependencies, d => Dependency.fromString(d))
-      : []
-  }
-
-  async getNativeDependency (dependency: Dependency, platformVersion: string = Platform.currentVersion) : Promise<?Dependency> {
-    const nativeDependencies = await this.getNativeDependencies(platformVersion)
-    return _.find(nativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
-  }
-
-  async getJsDependency (dependency: Dependency, platformVersion: string = Platform.currentVersion) : Promise<?Dependency> {
-    const jsDependencies = await this.getJsDependencies(platformVersion)
-    return _.find(jsDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
+    return this._cachedManifest
   }
 }
