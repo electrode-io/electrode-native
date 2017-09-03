@@ -1,14 +1,16 @@
 
 // @flow
 
-import generateProject, {generateSwagger} from './generateProject'
+import generateProject, {generateSwagger, generateFlowConfig} from './generateProject'
 import normalizeConfig from './normalizeConfig'
 import fs from 'fs'
 import shell from 'shelljs'
 import path from 'path'
 import semver from 'semver'
 import {
-  PKG_FILE
+  PKG_FILE,
+  FLOW_CONFIG_FILE,
+  FLOW_BIN_VERSION
 } from './Constants'
 import {
   Dependency,
@@ -67,11 +69,26 @@ export async function regenerateCode (options: Object = {}) {
     }
   }
   await _checkDependencyVersion(pkg, options.targetDependencies || [])
+
+  //check if flow script is initialized
+  if(pkg.scripts && pkg.scripts.flow === undefined){
+    pkg.scripts["flow"] = "flow"
+  }
+
+  //check flow-bin
+  if(pkg.devDependencies === undefined){
+    pkg["devDependencies"] = {}
+    pkg.devDependencies["flow-bin"] = FLOW_BIN_VERSION
+  }
   const isNewVersion = semver.lt(curVersion, newPluginVer)
   if (isNewVersion) {
     pkg.version = newPluginVer
     // should call npm version ${} as it tags and does good stuff.
     fileUtils.writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)) // Write the new package properties
+  }
+
+  if(!fs.existsSync(`${process.cwd()}/${FLOW_CONFIG_FILE}`)){
+    fileUtils.writeFile(`${process.cwd()}/${FLOW_CONFIG_FILE}`, generateFlowConfig())
   }
   const extra = (pkg.ern && pkg.ern.message) || {}
   const config = normalizeConfig({

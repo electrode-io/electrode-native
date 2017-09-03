@@ -942,13 +942,7 @@ binary-extensions@^1.0.0:
   version "1.9.0"
   resolved "http://npme.walmart.com/binary-extensions/-/binary-extensions-1.9.0.tgz#66506c16ce6f4d6928a5b3cd6a33ca41e941e37b"
 
-bl@^1.0.0:
-  version "1.2.1"
-  resolved "http://npme.walmart.com/bl/-/bl-1.2.1.tgz#cac328f7bee45730d404b692203fcb590e172d5e"
-  dependencies:
-    readable-stream "^2.0.5"
-
-bl@~1.1.2:
+bl@^1.0.0, bl@~1.1.2:
   version "1.1.2"
   resolved "http://npme.walmart.com/bl/-/bl-1.1.2.tgz#fdca871a99713aa00d19e3bbba41c44787a65398"
   dependencies:
@@ -2125,7 +2119,7 @@ escape-string-regexp@1.0.5, escape-string-regexp@^1.0.2, escape-string-regexp@^1
   version "1.0.5"
   resolved "http://npme.walmart.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
-escodegen@1.7.x:
+escodegen@1.7.x, escodegen@1.x.x:
   version "1.7.1"
   resolved "http://npme.walmart.com/escodegen/-/escodegen-1.7.1.tgz#30ecfcf66ca98dc67cd2fd162abeb6eafa8ce6fc"
   dependencies:
@@ -2133,17 +2127,6 @@ escodegen@1.7.x:
     estraverse "^1.9.1"
     esutils "^2.0.2"
     optionator "^0.5.0"
-  optionalDependencies:
-    source-map "~0.2.0"
-
-escodegen@1.x.x:
-  version "1.8.1"
-  resolved "http://npme.walmart.com/escodegen/-/escodegen-1.8.1.tgz#5a5b53af4693110bebb0867aa3430dd3b70a1018"
-  dependencies:
-    esprima "^2.7.1"
-    estraverse "^1.9.1"
-    esutils "^2.0.2"
-    optionator "^0.8.1"
   optionalDependencies:
     source-map "~0.2.0"
 
@@ -2286,10 +2269,6 @@ esprima@3.x.x:
 esprima@^1.2.2:
   version "1.2.5"
   resolved "http://npme.walmart.com/esprima/-/esprima-1.2.5.tgz#0993502feaf668138325756f30f9a51feeec11e9"
-
-esprima@^2.7.1:
-  version "2.7.3"
-  resolved "http://npme.walmart.com/esprima/-/esprima-2.7.3.tgz#96e3b70d5779f6ad49cd032673d1c312767ba581"
 
 esprima@^4.0.0:
   version "4.0.0"
@@ -3059,11 +3038,7 @@ home-or-tmp@^2.0.0:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.1"
 
-hosted-git-info@^2.1.4, hosted-git-info@^2.1.5, hosted-git-info@^2.4.2:
-  version "2.5.0"
-  resolved "http://npme.walmart.com/hosted-git-info/-/hosted-git-info-2.5.0.tgz#6d60e34b3abbc8313062c3b798ef8d901a07af3c"
-
-hosted-git-info@~2.4.2:
+hosted-git-info@^2.1.4, hosted-git-info@^2.1.5, hosted-git-info@~2.4.2:
   version "2.4.2"
   resolved "http://npme.walmart.com/hosted-git-info/-/hosted-git-info-2.4.2.tgz#0076b9f46a270506ddbaaea56496897460612a67"
 
@@ -4096,7 +4071,7 @@ minimatch@3.0.2:
   dependencies:
     brace-expansion "^1.0.0"
 
-minimist@0.0.8:
+minimist@0.0.8, minimist@~0.0.1:
   version "0.0.8"
   resolved "http://npme.walmart.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
@@ -4107,10 +4082,6 @@ minimist@^0.1.0:
 minimist@^1.1.0, minimist@^1.1.1, minimist@^1.1.3, minimist@^1.2.0:
   version "1.2.0"
   resolved "http://npme.walmart.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
-
-minimist@~0.0.1:
-  version "0.0.10"
-  resolved "http://npme.walmart.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
 
 mississippi@~1.3.0:
   version "1.3.0"
@@ -4329,16 +4300,7 @@ normalize-git-url@~3.0.2:
   version "3.0.2"
   resolved "http://npme.walmart.com/normalize-git-url/-/normalize-git-url-3.0.2.tgz#8e5f14be0bdaedb73e07200310aa416c27350fc4"
 
-normalize-package-data@^2.0.0, normalize-package-data@^2.3.0, normalize-package-data@^2.3.2, normalize-package-data@^2.3.4, normalize-package-data@^2.3.5, "normalize-package-data@~1.0.1 || ^2.0.0":
-  version "2.4.0"
-  resolved "http://npme.walmart.com/normalize-package-data/-/normalize-package-data-2.4.0.tgz#12f95a307d58352075a04907b84ac8be98ac012f"
-  dependencies:
-    hosted-git-info "^2.1.4"
-    is-builtin-module "^1.0.0"
-    semver "2 || 3 || 4 || 5"
-    validate-npm-package-license "^3.0.1"
-
-normalize-package-data@~2.3.8:
+normalize-package-data@^2.0.0, normalize-package-data@^2.3.0, normalize-package-data@^2.3.2, normalize-package-data@^2.3.4, normalize-package-data@^2.3.5, "normalize-package-data@~1.0.1 || ^2.0.0", normalize-package-data@~2.3.8:
   version "2.3.8"
   resolved "http://npme.walmart.com/normalize-package-data/-/normalize-package-data-2.3.8.tgz#d819eda2a9dedbd1ffa563ea4071d936782295bb"
   dependencies:
@@ -4367,16 +4329,7 @@ npm-install-checks@~3.0.0:
   dependencies:
     semver "^2.3.0 || 3.x || 4 || 5"
 
-"npm-package-arg@^3.0.0 || ^4.0.0 || ^5.0.0", "npm-package-arg@^4.0.0 || ^5.0.0":
-  version "5.1.2"
-  resolved "http://npme.walmart.com/npm-package-arg/-/npm-package-arg-5.1.2.tgz#fb18d17bb61e60900d6312619919bd753755ab37"
-  dependencies:
-    hosted-git-info "^2.4.2"
-    osenv "^0.1.4"
-    semver "^5.1.0"
-    validate-npm-package-name "^3.0.0"
-
-npm-package-arg@^4.1.1, npm-package-arg@~4.2.1:
+"npm-package-arg@^3.0.0 || ^4.0.0 || ^5.0.0", "npm-package-arg@^4.0.0 || ^5.0.0", npm-package-arg@^4.1.1, npm-package-arg@~4.2.1:
   version "4.2.1"
   resolved "http://npme.walmart.com/npm-package-arg/-/npm-package-arg-4.2.1.tgz#593303fdea85f7c422775f17f9eb7670f680e3ec"
   dependencies:
@@ -4634,7 +4587,7 @@ optionator@^0.5.0:
     type-check "~0.3.1"
     wordwrap "~0.0.2"
 
-optionator@^0.8.1, optionator@^0.8.2:
+optionator@^0.8.2:
   version "0.8.2"
   resolved "http://npme.walmart.com/optionator/-/optionator-0.8.2.tgz#364c5e409d3f4d6301d6c0b4c05bba50180aeb64"
   dependencies:
@@ -5041,11 +4994,7 @@ punycode@^1.4.1:
   version "1.4.1"
   resolved "http://npme.walmart.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
-q@^1.2.0, q@^1.4.1:
-  version "1.5.0"
-  resolved "http://npme.walmart.com/q/-/q-1.5.0.tgz#dd01bac9d06d30e6f219aecb8253ee9ebdc308f1"
-
-q@~1.4.1:
+q@^1.2.0, q@^1.4.1, q@~1.4.1:
   version "1.4.1"
   resolved "http://npme.walmart.com/q/-/q-1.4.1.tgz#55705bcd93c5f3673530c2c2cbc0c2b3addc286e"
 
@@ -5177,16 +5126,16 @@ read@1, read@1.0.x, read@^1.0.7, read@~1.0.1, read@~1.0.7:
   dependencies:
     mute-stream "~0.0.4"
 
-"readable-stream@1 || 2", readable-stream@2, readable-stream@^2.0.0, readable-stream@^2.0.2, readable-stream@^2.0.4, readable-stream@^2.0.5, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2:
-  version "2.3.3"
-  resolved "http://npme.walmart.com/readable-stream/-/readable-stream-2.3.3.tgz#368f2512d79f9d46fdfc71349ae7878bbc1eb95c"
+"readable-stream@1 || 2", readable-stream@2, readable-stream@^2.0.0, readable-stream@^2.0.2, readable-stream@^2.0.4, readable-stream@^2.0.5, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@~2.2.9:
+  version "2.2.11"
+  resolved "http://npme.walmart.com/readable-stream/-/readable-stream-2.2.11.tgz#0796b31f8d7688007ff0b93a8088d34aa17c0f72"
   dependencies:
     core-util-is "~1.0.0"
-    inherits "~2.0.3"
+    inherits "~2.0.1"
     isarray "~1.0.0"
     process-nextick-args "~1.0.6"
-    safe-buffer "~5.1.1"
-    string_decoder "~1.0.3"
+    safe-buffer "~5.0.1"
+    string_decoder "~1.0.0"
     util-deprecate "~1.0.1"
 
 readable-stream@1.0.27-1:
@@ -5216,18 +5165,6 @@ readable-stream@~2.0.5:
     isarray "~1.0.0"
     process-nextick-args "~1.0.6"
     string_decoder "~0.10.x"
-    util-deprecate "~1.0.1"
-
-readable-stream@~2.2.9:
-  version "2.2.11"
-  resolved "http://npme.walmart.com/readable-stream/-/readable-stream-2.2.11.tgz#0796b31f8d7688007ff0b93a8088d34aa17c0f72"
-  dependencies:
-    core-util-is "~1.0.0"
-    inherits "~2.0.1"
-    isarray "~1.0.0"
-    process-nextick-args "~1.0.6"
-    safe-buffer "~5.0.1"
-    string_decoder "~1.0.0"
     util-deprecate "~1.0.1"
 
 readdir-scoped-modules@^1.0.0:
@@ -5538,7 +5475,7 @@ rx-lite@^3.1.2:
   version "3.1.2"
   resolved "http://npme.walmart.com/rx-lite/-/rx-lite-3.1.2.tgz#19ce502ca572665f3b647b10939f97fd1615f102"
 
-safe-buffer@^5.0.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+safe-buffer@^5.0.1, safe-buffer@~5.1.0:
   version "5.1.1"
   resolved "http://npme.walmart.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
@@ -5920,7 +5857,7 @@ string_decoder@~0.10.x:
   version "0.10.31"
   resolved "http://npme.walmart.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
 
-string_decoder@~1.0.0, string_decoder@~1.0.3:
+string_decoder@~1.0.0:
   version "1.0.3"
   resolved "http://npme.walmart.com/string_decoder/-/string_decoder-1.0.3.tgz#0fc67d7c141825de94282dd536bec6b9bce860ab"
   dependencies:
@@ -6009,7 +5946,7 @@ superagent@^1.7.2:
     readable-stream "1.0.27-1"
     reduce-component "1.0.1"
 
-supports-color@3.1.2:
+supports-color@3.1.2, supports-color@^3.1.0, supports-color@^3.1.2:
   version "3.1.2"
   resolved "http://npme.walmart.com/supports-color/-/supports-color-3.1.2.tgz#72a262894d9d408b956ca05ff37b2ed8a6e2a2d5"
   dependencies:
@@ -6018,12 +5955,6 @@ supports-color@3.1.2:
 supports-color@^2.0.0:
   version "2.0.0"
   resolved "http://npme.walmart.com/supports-color/-/supports-color-2.0.0.tgz#535d045ce6b6363fa40117084629995e9df324c7"
-
-supports-color@^3.1.0, supports-color@^3.1.2:
-  version "3.2.3"
-  resolved "http://npme.walmart.com/supports-color/-/supports-color-3.2.3.tgz#65ac0504b3954171d8a64946b2ae3cbb8a5f54f6"
-  dependencies:
-    has-flag "^1.0.0"
 
 supports-color@^4.0.0:
   version "4.2.1"
@@ -6394,17 +6325,13 @@ utile@0.2.x:
     ncp "0.4.x"
     rimraf "2.x.x"
 
-uuid@3.0.1, uuid@~3.0.1:
+uuid@3.0.1, uuid@^3.0.0, uuid@^3.0.1, uuid@~3.0.1:
   version "3.0.1"
   resolved "http://npme.walmart.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 
 uuid@^2.0.1:
   version "2.0.3"
   resolved "http://npme.walmart.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
-
-uuid@^3.0.0, uuid@^3.0.1:
-  version "3.1.0"
-  resolved "http://npme.walmart.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 
 v8-compile-cache@^1.1.0:
   version "1.1.0"
