@@ -449,13 +449,11 @@ class Cauldron {
   }
 
   async getContainerGeneratorConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
-    let config = await this.cauldron.getConfig({
-      appName: napDescriptor.name,
-      platformName: napDescriptor.platform
-    })
-    if (config) {
-      return _.get(config, 'containerGenerator') || null
-    }
+    return this.getConfigForKey(napDescriptor, 'containerGenerator')
+  }
+
+  async getManifestConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
+    return this.getConfigForKey(napDescriptor, 'manifest')
   }
 
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
@@ -474,6 +472,24 @@ class Cauldron {
       }
     }
     return config
+  }
+
+  async getConfigForKey (napDescriptor: NativeApplicationDescriptor, key: string) : Promise<*> {
+    let config = await this.cauldron.getConfig({
+      appName: napDescriptor.name,
+      platformName: napDescriptor.platform,
+      versionName: napDescriptor.version
+    })
+    if (!config || !config[key]) {
+      config = await this.cauldron.getConfig({
+        appName: napDescriptor.name,
+        platformName: napDescriptor.platform
+      })
+      if (!config || !config[key]) {
+        config = await this.cauldron.getConfig({appName: napDescriptor.name})
+      }
+    }
+    return config ? config.key : undefined
   }
 
   async updateNativeAppIsReleased (
