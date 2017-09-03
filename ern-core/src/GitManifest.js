@@ -21,7 +21,12 @@ export default class GitManifest {
     repoPath: string,
     remote: string = 'origin',
     branch: string = 'master') {
-    this._git = Prom.promisifyAll(simpleGit(repoPath))
+    if (!fs.existsSync(repoPath)) {
+      throw new Error(`No git repository was found in ${repoPath}`)
+    }
+    let simpleGitInstance = simpleGit(repoPath)
+    simpleGitInstance.silent(global.ernLogLevel !== 'trace' && global.ernLogLevel !== 'debug')
+    this._git = Prom.promisifyAll(simpleGitInstance)
     this._repoPath = repoPath
     this._remote = remote
     this._branch = branch
@@ -47,6 +52,11 @@ export default class GitManifest {
   }
 
   async getManifestData (platformVersion: string) : Promise<?Object> {
+    // We only sync once during a whole "session" (in our context : "an ern command exection")
+    // This is done to speed up things as during a single command execution, multiple manifest
+    // access can be performed.
+    // If you need to access a `Manifest` in a different context, a long session, you might
+    // want to improve the code to act a bit smarter.
     if (!this._cachedManifest) {
       await this.sync()
     }
