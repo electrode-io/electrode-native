@@ -540,32 +540,6 @@ class Cauldron {
     }
   }
 
-  async getManifest () {
-    if (this.cauldron) {
-      return this.cauldron.getManifest()
-    }
-  }
-
-  async addTargetJsDependencyToManifest (dependency: Dependency) {
-    return this.cauldron.addTargetJsDependencyToManifest(dependency)
-  }
-
-  async addTargetNativeDependencyToManifest (dependency: Dependency) {
-    return this.cauldron.addTargetNativeDependencyToManifest(dependency)
-  }
-
-  async updateTargetDependencyVersionInManifest (dependency: Dependency) {
-    return this.cauldron.updateTargetDependencyVersionInManifest(dependency)
-  }
-
-  async updateTargetJsDependencyVersionInManifest (dependency: Dependency) {
-    return this.cauldron.updateTargetJsDependencyVersionInManifest(dependency)
-  }
-
-  async updateTargetNativeDependencyVersionInManifest (dependency: Dependency) {
-    return this.cauldron.updateTargetNativeDependencyVersionInManifest(dependency)
-  }
-
   throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {
     if (napDescriptor.isPartial) {
       throw new Error(`Cannot work with a partial native application descriptor`)
