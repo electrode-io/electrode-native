@@ -30,7 +30,7 @@ export default class BaseGit {
     this.repository = repository
     this.branch = branch
     let simpleGitInstance = simpleGit(this.path)
-    simpleGitInstance.silent(true)
+    simpleGitInstance.silent(global.ernLogLevel !== 'trace' && global.ernLogLevel !== 'debug')
     this.git = Prom.promisifyAll(simpleGitInstance)
     this._pendingTransaction = false
   }
