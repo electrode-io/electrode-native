@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Manifest,
+  manifest,
   Platform
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -26,7 +26,7 @@ exports.handler = async function ({
 } : {
   platformVersion?: string
 }) {
-  const plugins = await Manifest.getTargetNativeDependencies(platformVersion)
+  const plugins = await manifest.getNativeDependencies(platformVersion)
 
   log.info(`Platform v${platformVersion} suports the following plugins`)
   var table = new Table({

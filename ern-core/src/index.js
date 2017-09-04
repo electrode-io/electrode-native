@@ -1,9 +1,8 @@
 // @flow
 
-import * as _pluginUtil from './pluginUtil'
 import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
-import _Manifest from './Manifest'
+import _manifest from './manifest'
 import _cauldron from './cauldron'
 import _GitUtils from './GitUtils'
 import _MavenUtils from './MavenUtils'
@@ -20,10 +19,9 @@ import {
 } from './clients'
 import * as _dependencyLookup from './dependencyLookup'
 
-export const pluginUtil = _pluginUtil
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
-export const Manifest = _Manifest
+export const manifest = _manifest
 export const cauldron = _cauldron
 export const compatibility = _compatibility
 export const MiniApp = _MiniApp
@@ -39,10 +37,9 @@ export const Publisher = _Publisher
 export const ContainerGeneratorConfig = _ContainerGeneratorConfig
 
 export default ({
-  pluginUtil: _pluginUtil,
   handleCopyDirective: _handleCopyDirective,
   Platform: _Platform,
-  Manifest: _Manifest,
+  manifest: _manifest,
   cauldron: _cauldron,
   compatibility: _compatibility,
   MiniApp: _MiniApp,

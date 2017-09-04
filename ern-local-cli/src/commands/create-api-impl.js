@@ -1,13 +1,14 @@
 // @flow
 
 import {
-  Manifest,
+  manifest,
   Platform
 } from 'ern-core'
 import {
   generateApiImpl
 } from 'ern-api-impl-gen'
 import {
+  Dependency,
   DependencyPath
 } from 'ern-util'
 import utils from '../lib/utils'
@@ -61,7 +62,7 @@ exports.handler = async function ({
 }) {
   console.log(`Generating API implementation for  ${api}`)
 
-  let reactNativeVersion = await Manifest.getReactNativeVersionFromManifest()
+  let reactNativeVersion = await manifest.getNativeDependency(Dependency.fromString('react-native')).version
   if (!reactNativeVersion) {
     return log.error('Could not retrieve react native version from manifest')
   }

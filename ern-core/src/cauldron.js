@@ -453,7 +453,7 @@ class Cauldron {
   }
 
   async getManifestConfig () : Promise<*> {
-    await await this.cauldron.getConfig()
+    const config = await this.cauldron.getConfig()
     return config ? config.manifest : undefined
   }
 

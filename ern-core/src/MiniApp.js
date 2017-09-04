@@ -15,7 +15,7 @@ import {
   tagOneLine
 } from 'ern-util'
 import cauldron from './cauldron'
-import Manifest from './Manifest'
+import manifest from './manifest'
 import Platform from './Platform'
 import {
   reactnative,
@@ -112,12 +112,12 @@ Are you sure this is a MiniApp ?`)
 
       log.info(`Creating ${appName} MiniApp using platform version ${platformVersion}`)
 
-      const reactNativeDependency = await Manifest.getPlugin('react-native')
+      const reactNativeDependency = await manifest.getNativeDependency(Dependency.fromString('react-native'))
       if (!reactNativeDependency) {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactDependency = await Manifest.getTargetJsDependency('react')
+      const reactDependency = await manifest.getJsDependency(Dependency.fromString('react'))
       if (!reactDependency) {
         throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
       }
@@ -338,7 +338,7 @@ Are you sure this is a MiniApp ?`)
       // Dependency is not a development dependency
       // In that case we need to perform additional checks and operations
       const versionLessDependency = dependency.withoutVersion()
-      const manifestDependency = await Manifest.getDependency(versionLessDependency)
+      const manifestDependency = await manifest.getNativeDependency(versionLessDependency) || await manifest.getJsDependency(versionLessDependency)
 
       if (!manifestDependency) {
         // Dependency is not declared in manifest
@@ -415,7 +415,7 @@ Are you sure this is a MiniApp ?`)
 
   async upgradeToPlatformVersion (versionToUpgradeTo: string) : Promise<*> {
     // Update all modules versions in package.json
-    const manifestDependencies = await Manifest.getTargetNativeAndJsDependencies(versionToUpgradeTo)
+    const manifestDependencies = await manifest.getJsAndNativeDependencies(versionToUpgradeTo)
 
     for (const manifestDependency of manifestDependencies) {
       const nameWithScope = `${manifestDependency.scope ? `@${manifestDependency.scope}/` : ''}${manifestDependency.name}`
