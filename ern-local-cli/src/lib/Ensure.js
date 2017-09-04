@@ -10,6 +10,7 @@ import {
   utils
 } from 'ern-core'
 import _ from 'lodash'
+import semver from 'semver'
 
 export default class Ensure {
   static isValidContainerVersion (
@@ -17,6 +18,16 @@ export default class Ensure {
     extraErrorMessage: string = '') {
     if (/^\d+.\d+.\d+$/.test(version) === false) {
       throw new Error(`${version} is not a valid container version.\n${extraErrorMessage}`)
+    }
+  }
+
+  static async isNewerContainerVersion (
+    napDescriptor: string,
+    containerVersion: string,
+    extraErrorMessage: string = '') {
+    const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
+    if (!semver.gt(containerVersion, cauldronContainerVersion)) {
+      throw new Error(`Container version ${containerVersion} is older than ${cauldronContainerVersion}`)
     }
   }
 
