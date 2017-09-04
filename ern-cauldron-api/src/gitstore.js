@@ -40,6 +40,7 @@ type TypeCauldronNativeApp = {
 }
 
 type TypeCauldron = {
+  config?: Object,
   nativeApps: Array<TypeCauldronNativeApp>
 }
 

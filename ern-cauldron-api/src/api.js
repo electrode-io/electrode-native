@@ -174,6 +174,8 @@ export default class CauldronApi {
       const app = await this.getNativeApplication(appName)
       return app == null ? undefined : app.config
     }
+    const cauldron = await this.getCauldron()
+    return cauldron.config
   }
 
   // =====================================================================================
