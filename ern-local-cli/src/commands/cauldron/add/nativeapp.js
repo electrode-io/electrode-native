@@ -21,10 +21,10 @@ exports.builder = function (yargs: any) {
     alias: 'v',
     describe: 'Platform version'
   })
-  .option('copyPreviousVersionData', {
+  .option('copyFromVersion', {
     alias: 'c',
-    describe: 'Copy previous version data',
-    type: 'boolean'
+    describe: 'Copy Cauldron data from a previous native application version',
+    type: 'string'
   })
   .epilog(utils.epilog(exports))
 }
@@ -32,11 +32,11 @@ exports.builder = function (yargs: any) {
 exports.handler = async function ({
   descriptor,
   platformVersion,
-  copyPreviousVersionData
+  copyFromVersion
 } : {
   descriptor: string,
   platformVersion?: string,
-  copyPreviousVersionData?: boolean
+  copyFromVersion?: string
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: { descriptor },
@@ -52,13 +52,22 @@ exports.handler = async function ({
     await cauldron.beginTransaction()
 
     const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
+    const latestVersion = _.last(previousApps.versions)
+    const latestVersionName = latestVersion.name
 
     await spin(`Adding ${descriptor}`, cauldron.addNativeApp(napDescriptor, platformVersion
       ? platformVersion.toString().replace('v', '')
       : undefined))
 
-    if (previousApps && (copyPreviousVersionData || await askUserCopyPreviousVersionData())) {
-      await spin(`Copying data over from previous version`, copyOverPreviousVersionData(napDescriptor, previousApps))
+    if (previousApps && copyFromVersion) {
+      if (copyFromVersion === 'latest') {
+        await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion))
+      } else {
+        const version = _.find(previousApps.versions, v => v.name === copyFromVersion)
+        await spin(`Copying data over from version ${copyFromVersion}`, copyOverPreviousVersionData(napDescriptor, version))
+      }
+    } else if (previousApps && await askUserCopyPreviousVersionData(latestVersionName)) {
+      await spin(`Copying data over from previous version`, copyOverPreviousVersionData(napDescriptor, latestVersion))
     }
 
     await spin(`Updating Cauldron`, cauldron.commitTransaction())
@@ -69,31 +78,30 @@ exports.handler = async function ({
   }
 }
 
-async function copyOverPreviousVersionData (napDescriptor: NativeApplicationDescriptor, previousApps: any) {
-  const previousNativeAppVersion = _.last(previousApps.versions)
+async function copyOverPreviousVersionData (napDescriptor: NativeApplicationDescriptor, nativeAppVersion: any) {
   // Copy over previous native application version native dependencies
-  for (const nativeDep of previousNativeAppVersion.nativeDeps) {
+  for (const nativeDep of nativeAppVersion.nativeDeps) {
     await cauldron.addNativeDependency(napDescriptor, Dependency.fromString(nativeDep))
   }
   // Copy over previous native application version container MiniApps
-  for (const containerMiniApp of previousNativeAppVersion.miniApps.container) {
+  for (const containerMiniApp of nativeAppVersion.miniApps.container) {
     await cauldron.addContainerMiniApp(napDescriptor, Dependency.fromString(containerMiniApp))
   }
   // Copy over previous yarn lock if any
-  if (previousNativeAppVersion.yarnlock) {
-    await cauldron.setYarnLockId(napDescriptor, previousNativeAppVersion.yarnlock)
+  if (nativeAppVersion.yarnlock) {
+    await cauldron.setYarnLockId(napDescriptor, nativeAppVersion.yarnlock)
   }
   // Copy over container version
-  if (previousNativeAppVersion.containerVersion) {
-    await cauldron.updateContainerVersion(napDescriptor, previousNativeAppVersion.containerVersion)
+  if (nativeAppVersion.containerVersion) {
+    await cauldron.updateContainerVersion(napDescriptor, nativeAppVersion.containerVersion)
   }
 }
 
-async function askUserCopyPreviousVersionData () {
+async function askUserCopyPreviousVersionData (version: string) {
   const { userCopyPreviousVersionData } = await inquirer.prompt({
     type: 'confirm',
     name: 'userCopyPreviousVersionData',
-    message: 'Do you want to copy data from previous version ?'
+    message: `Do you want to copy data from the previous version (${version}) ?`
   })
 
   return userCopyPreviousVersionData
