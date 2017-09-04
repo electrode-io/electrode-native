@@ -20,8 +20,12 @@ export default class Platform {
     return `${HOME_DIRECTORY}/.ern`
   }
 
-  static get manifestDirectory () : string {
+  static get masterManifestDirectory () : string {
     return `${this.rootDirectory}/ern-master-manifest`
+  }
+
+  static get overrideManifestDirectory () : string {
+    return `${this.rootDirectory}/ern-override-manifest`
   }
 
   static get repositoryDirectory () : string {

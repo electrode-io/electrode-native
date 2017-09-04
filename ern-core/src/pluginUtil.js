@@ -23,9 +23,9 @@ const pluginConfigFileName = 'config.json'
 const ERN_VERSION_DIRECTORY_RE = /ern_v(.+)\+/
 
 function getPluginsConfigurationDirectories (maxVersion: string = Platform.currentVersion) : Array<string> {
-  return _(fs.readdirSync(`${Platform.manifestDirectory}/plugins`))
+  return _(fs.readdirSync(`${Platform.masterManifestDirectory}/plugins`))
           .filter(d => ERN_VERSION_DIRECTORY_RE.test(d) && ERN_VERSION_DIRECTORY_RE.exec(d)[1] <= maxVersion)
-          .map(d => `${Platform.manifestDirectory}/plugins/${d}`)
+          .map(d => `${Platform.masterManifestDirectory}/plugins/${d}`)
           .value()
 }
 

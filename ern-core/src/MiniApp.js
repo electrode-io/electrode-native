@@ -229,7 +229,7 @@ Are you sure this is a MiniApp ?`)
       outDir: `${this.path}/ios`,
       platform: 'ios',
       containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
       reactNativeDevSupportEnabled
     }
 
@@ -302,7 +302,7 @@ Are you sure this is a MiniApp ?`)
       outDir: `${this.path}/android`,
       platform: 'android',
       containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
       reactNativeDevSupportEnabled
     }
 

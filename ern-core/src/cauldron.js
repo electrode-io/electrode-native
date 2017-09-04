@@ -452,8 +452,9 @@ class Cauldron {
     return this.getConfigForKey(napDescriptor, 'containerGenerator')
   }
 
-  async getManifestConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
-    return this.getConfigForKey(napDescriptor, 'manifest')
+  async getManifestConfig () : Promise<*> {
+    await await this.cauldron.getConfig()
+    return config ? config.manifest : undefined
   }
 
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
