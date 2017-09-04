@@ -317,6 +317,17 @@ export default class CauldronApi {
     }
   }
 
+  async updateTopLevelContainerVersion (
+    nativeApplicationName: string,
+    platformName: string,
+    newContainerVersion: string) {
+    const config = await this.getConfig({ appName: nativeApplicationName, platformName })
+    if (config && config.containerGenerator && config.containerGenerator.containerVersion) {
+      config.containerGenerator.containerVersion = newContainerVersion
+      await this.commit(`Update top level container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}`)
+    }
+  }
+
   async updateContainerVersion (
     nativeApplicationName: string,
     platformName: string,
@@ -329,6 +340,16 @@ export default class CauldronApi {
     }
   }
 
+  async getTopLevelContainerVersion (
+    nativeApplicationName: string,
+    platformName: string
+  ) {
+    const config = await this.getConfig({ appName: nativeApplicationName, platformName: platformName })
+    if (config && config.containerGenerator) {
+      return config.containerGenerator.containerVersion
+    }
+  }
+
   async getContainerVersion (
     nativeApplicationName: string,
     platformName: string,
@@ -337,13 +358,6 @@ export default class CauldronApi {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version && version.containerVersion) {
       return version.containerVersion
-    } else {
-      // Backward compatibility (when version was stored at platform config level).
-      // REMOVE IN ERN 0.5.0
-      const config = await this.getConfig({ appName: nativeApplicationName, platformName: platformName })
-      if (config && config.containerGenerator) {
-        return config.containerGenerator.containerVersion
-      }
     }
   }
 

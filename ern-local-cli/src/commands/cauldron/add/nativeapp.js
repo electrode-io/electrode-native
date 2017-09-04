@@ -86,10 +86,6 @@ async function copyOverPreviousVersionData (napDescriptor: NativeApplicationDesc
   // Copy over container version
   if (previousNativeAppVersion.containerVersion) {
     await cauldron.updateContainerVersion(napDescriptor, previousNativeAppVersion.containerVersion)
-  } else {
-    // Backward compatibility. REMOVE IN ERN 0.5.0
-    const containerVersion = await cauldron.getContainerVersion(napDescriptor)
-    await cauldron.updateContainerVersion(napDescriptor, containerVersion)
   }
 }
 
