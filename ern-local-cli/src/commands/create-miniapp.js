@@ -30,9 +30,13 @@ exports.handler = async function ({
   platformVersion: string,
   scope?: string,
 }) {
-  await MiniApp.create(appName, {
-    platformVersion: platformVersion && platformVersion.replace('v', ''),
-    scope
-  })
-  log.info(`${appName} MiniApp was created`)
+  try {
+    await MiniApp.create(appName, {
+      platformVersion: platformVersion && platformVersion.replace('v', ''),
+      scope
+    })
+    log.info(`${appName} MiniApp was created`)
+  } catch (e) {
+    log.error(e.message)
+  }
 }
