@@ -63,7 +63,8 @@ async function logErrorAndExitIfNotSatisfied ({
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion,
   dependencyNotInNativeApplicationVersionContainer,
   dependencyIsInNativeApplicationVersionContainer,
-  dependencyIsInNativeApplicationVersionContainerWithDifferentVersion
+  dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
+  dependencyNotInUseByAMiniApp
 } : {
   noGitOrFilesystemPath?: {
     obj: string | Array<string>,
@@ -120,6 +121,11 @@ async function logErrorAndExitIfNotSatisfied ({
     extraErrorMessage?: string
   },
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
+    dependency: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage?: string
+  },
+  dependencyNotInUseByAMiniApp? : {
     dependency: string | Array<string> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage?: string
@@ -211,6 +217,13 @@ async function logErrorAndExitIfNotSatisfied ({
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.dependency,
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage)
+    }
+    if (dependencyNotInUseByAMiniApp) {
+      spinner.text = 'Ensuring that no MiniApp(s) is/are using a dependency'
+      await Ensure.dependencyNotInUseByAMiniApp(
+        dependencyNotInUseByAMiniApp.dependency,
+        dependencyNotInUseByAMiniApp.napDescriptor,
+        dependencyNotInUseByAMiniApp.extraErrorMessage)
     }
     spinner.succeed('All initial checks have passed')
   } catch (e) {
