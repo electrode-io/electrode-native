@@ -1,3 +1,43 @@
+## `command name`
+#### Description
+
+* <Action>...
+
+#### Syntax
+`command syntax`
+
+**Options**
+
+`--option name`
+
+* description
+<br><br>
+**Default**  default description
+<br>Example: example if available
+
+`--option name`
+
+* description
+
+* description
+<br><br>
+**Default**  default description
+
+
+#### Remarks
+* remark 1
+* remark 2
+
+
+#### Related commands
+ `command name` | description
+
+#### Examples
+(Add example code text here if applicable)
+
+-------
+
+
 **Adds a package/dependency to a `MiniApp` and any package it depends on**
 
 When working with a `MiniApp`, you should always use `ern add` to add packages to your `MiniApp` in place of `yarn add` or `npm install`.

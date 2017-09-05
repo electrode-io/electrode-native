@@ -2,7 +2,7 @@
 #### Description
 * <Action> ....
 
-* <Action>...
+* <Action>....
 
 #### Syntax
 `command syntax`
@@ -11,17 +11,17 @@
 
 `--option name`
 
-* description
-<br><br>
-**Default**  default description
-<br>Example: example if available
+* description  
+
+**Default**  default description  
+Example: example if available
 
 `--option name`
 
 * description
 
-* description
-<br><br>
+* description  
+
 **Default**  default description
 
 
