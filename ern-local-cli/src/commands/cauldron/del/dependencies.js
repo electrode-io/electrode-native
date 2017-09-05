@@ -52,7 +52,12 @@ exports.handler = async function ({
 
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: { descriptor },
-    isValidContainerVersion: containerVersion,
+    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+    isNewerContainerVersion: containerVersion ? {
+      containerVersion,
+      descriptor,
+      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+    } : undefined,
     noGitOrFilesystemPath: {
       obj: dependencies,
       extraErrorMessage: 'You cannot provide dependency(ies) using git or file schme for this command. Only the form dependency@version is allowed.'

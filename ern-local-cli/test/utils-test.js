@@ -23,7 +23,8 @@ const getAllNativeAppsStub = sinon.stub(cauldron, 'getAllNativeApps')
 const beginTransactionStub = sinon.stub(cauldron, 'beginTransaction')
 const commitTransactionStub = sinon.stub(cauldron, 'commitTransaction')
 const discardTransactionStub = sinon.stub(cauldron, 'discardTransaction')
-const getContainerVersionStub = sinon.stub(cauldron, 'getContainerVersion').resolves('1.2.3')
+const getContainerVersionStub = sinon.stub(cauldron, 'getContainerVersion').resolves('1.0.0')
+const getTopLevelContainerVersionStub = sinon.stub(cauldron, 'getTopLevelContainerVersion').resolves('1.2.3')
 const updateContainerVersionStub = sinon.stub(cauldron, 'updateContainerVersion')
 
 // Logging stubs
@@ -73,6 +74,7 @@ after(() => {
   commitTransactionStub.restore()
   discardTransactionStub.restore()
   getContainerVersionStub.restore()
+  getTopLevelContainerVersionStub.restore()
   updateContainerVersionStub.restore()
   oraStartStub.restore()
 })
@@ -158,55 +160,55 @@ describe('utils.js', () => {
   }
 
   describe('logErrorAndExitIfNotSatisfied', () => {
-    fixtures.invalidContainerVersions.forEach(version => {
+    fixtures.invalidContainerVersions.forEach(containerVersion => {
       it('[isValidContainerVersion] Shoud log error and exit process for invalid container version', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidContainerVersion: version
+          isValidContainerVersion: { containerVersion }
         })
         assertLoggedErrorAndExitedProcess()
       })
     })
 
-    fixtures.validContainerVersions.forEach(version => {
+    fixtures.validContainerVersions.forEach(containerVersion => {
       it('[isValidContainerVersion] Should not log error nor exit process for valid container version', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidContainerVersion: version
+          isValidContainerVersion: { containerVersion }
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
     })
 
-    fixtures.incompleteNapDescriptors.forEach(napDescriptor => {
+    fixtures.incompleteNapDescriptors.forEach(descriptor => {
       it('[isCompleteNapDescriptorString] Should log error and exit process for incomplete nap descriptor', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isCompleteNapDescriptorString: napDescriptor
+          isCompleteNapDescriptorString: { descriptor }
         })
         assertLoggedErrorAndExitedProcess()
       })
     })
 
-    fixtures.completeNapDescriptors.forEach(napDescriptor => {
+    fixtures.completeNapDescriptors.forEach(descriptor => {
       it('[isCompleteNapDescriptorString] Should not log error nor exit process for complete nap descriptor', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isCompleteNapDescriptorString: napDescriptor
+          isCompleteNapDescriptorString: { descriptor }
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
     })
 
-    fixtures.withGitOrFileSystemPath.forEach(napDescriptor => {
+    fixtures.withGitOrFileSystemPath.forEach(obj => {
       it('[noGitOrFilesystemPath] Should log error and exit process if path is/contains a git or file system scheme', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          noGitOrFilesystemPath: napDescriptor
+          noGitOrFilesystemPath: { obj }
         })
         assertLoggedErrorAndExitedProcess()
       })
     })
 
-    fixtures.withoutGitOrFileSystemPath.forEach(napDescriptor => {
+    fixtures.withoutGitOrFileSystemPath.forEach(obj => {
       it('[noGitOrFilesystemPath] Should not log error not exit process if path is not/ does not contain a git or file system scheme', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          noGitOrFilesystemPath: napDescriptor
+          noGitOrFilesystemPath: { obj }
         })
         assertNoErrorLoggedAndNoProcessExit()
       })

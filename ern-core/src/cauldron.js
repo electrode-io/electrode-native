@@ -496,12 +496,15 @@ class Cauldron {
     containerVersion: string) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
-      return this.cauldron.updateContainerVersion(
+      await this.cauldron.updateContainerVersion(
         napDescriptor.name,
         napDescriptor.platform,
         napDescriptor.version,
-        containerVersion
-      )
+        containerVersion)
+      await this.cauldron.updateTopLevelContainerVersion(
+        napDescriptor.name,
+        napDescriptor.platform,
+        containerVersion)
     } catch (e) {
       log.error(`[updateContainerVersion] ${e}`)
       throw e
@@ -520,6 +523,20 @@ class Cauldron {
       )
     } catch (e) {
       log.error(`[getContainerVersion] ${e}`)
+      throw e
+    }
+  }
+
+  async getTopLevelContainerVersion (
+    napDescriptor: NativeApplicationDescriptor
+  ) {
+    try {
+      return this.cauldron.getTopLevelContainerVersion(
+        napDescriptor.name,
+        napDescriptor.platform
+      )
+    } catch (e) {
+      log.error(`[getTopLevelContainerVersion] ${e}`)
       throw e
     }
   }

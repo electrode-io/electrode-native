@@ -53,6 +53,7 @@ async function getNapDescriptorStringsFromCauldron ({
 async function logErrorAndExitIfNotSatisfied ({
   noGitOrFilesystemPath,
   isValidContainerVersion,
+  isNewerContainerVersion,
   isCompleteNapDescriptorString,
   napDescriptorExistInCauldron,
   napDescritorDoesNotExistsInCauldron,
@@ -68,7 +69,15 @@ async function logErrorAndExitIfNotSatisfied ({
     obj: string | Array<string>,
     extraErrorMessage?: string
   },
-  isValidContainerVersion?: string,
+  isValidContainerVersion?: {
+    containerVersion: string,
+    extraErrorMessage?: string
+  },
+  isNewerContainerVersion?: {
+    descriptor: string,
+    containerVersion: string,
+    extraErrorMessage?: string
+  },
   isCompleteNapDescriptorString?: {
     descriptor: string,
     extraErrorMessage?: string
@@ -120,7 +129,16 @@ async function logErrorAndExitIfNotSatisfied ({
   try {
     if (isValidContainerVersion) {
       spinner.text = 'Ensuring that container version is valid'
-      Ensure.isValidContainerVersion(isValidContainerVersion)
+      Ensure.isValidContainerVersion(
+        isValidContainerVersion.containerVersion,
+        isValidContainerVersion.extraErrorMessage)
+    }
+    if (isNewerContainerVersion) {
+      spinner.text = 'Ensuring that container version is newer compared to the current one'
+      await Ensure.isNewerContainerVersion(
+        isNewerContainerVersion.descriptor,
+        isNewerContainerVersion.containerVersion,
+        isNewerContainerVersion.extraErrorMessage)
     }
     if (isCompleteNapDescriptorString) {
       spinner.text = 'Ensuring that native application descriptor is complete'
@@ -246,7 +264,7 @@ async function performContainerStateUpdateInCauldron (
   if (containerVersion) {
     cauldronContainerVersion = containerVersion
   } else {
-    cauldronContainerVersion = await cauldron.getContainerVersion(napDescriptor)
+    cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
     cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
   }
 
