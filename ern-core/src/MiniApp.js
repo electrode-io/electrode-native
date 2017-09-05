@@ -15,7 +15,7 @@ import {
   tagOneLine
 } from 'ern-util'
 import cauldron from './cauldron'
-import Manifest from './Manifest'
+import manifest from './manifest'
 import Platform from './Platform'
 import {
   reactnative,
@@ -116,12 +116,12 @@ Are you sure this is a MiniApp ?`)
 
       log.info(`Creating ${appName} MiniApp using platform version ${platformVersion}`)
 
-      const reactNativeDependency = await Manifest.getPlugin('react-native')
+      const reactNativeDependency = await manifest.getNativeDependency(Dependency.fromString('react-native'))
       if (!reactNativeDependency) {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactDependency = await Manifest.getTargetJsDependency('react')
+      const reactDependency = await manifest.getJsDependency(Dependency.fromString('react'))
       if (!reactDependency) {
         throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
       }
@@ -234,7 +234,7 @@ Are you sure this is a MiniApp ?`)
       outDir: `${this.path}/ios`,
       platform: 'ios',
       containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
       reactNativeDevSupportEnabled
     }
 
@@ -307,7 +307,7 @@ Are you sure this is a MiniApp ?`)
       outDir: `${this.path}/android`,
       platform: 'android',
       containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
       reactNativeDevSupportEnabled
     }
 
@@ -343,7 +343,7 @@ Are you sure this is a MiniApp ?`)
       // Dependency is not a development dependency
       // In that case we need to perform additional checks and operations
       const versionLessDependency = dependency.withoutVersion()
-      const manifestDependency = await Manifest.getDependency(versionLessDependency)
+      const manifestDependency = await manifest.getNativeDependency(versionLessDependency) || await manifest.getJsDependency(versionLessDependency)
 
       if (!manifestDependency) {
         // Dependency is not declared in manifest
@@ -365,13 +365,8 @@ Are you sure this is a MiniApp ?`)
             // Let's check if this is an API (or API implementation) or a third party native dependency
             if (/^react-native-.+-api$|^react-native-.+-api-impl$/.test(dependency.name)) {
               // This is a native API or API implementation
-              // Just ask user if wants to add it to Cauldron manifest (if a Cauldron is active)
-              if (cauldron.isActive() && await this.doesUserWantsToAddDependencyToManifest(versionLessDependency)) {
-                const pathToDependencyPackageJson = path.join(tmpPath, 'node_modules', versionLessDependency.toString(), 'package.json')
-                const dependencyPackageJson = JSON.parse(fs.readFileSync(pathToDependencyPackageJson, 'utf-8'))
-                finalDependency = new Dependency(dependency.name, { scope: dependency.scope, version: dependencyPackageJson.version })
-                await cauldron.addTargetNativeDependencyToManifest(finalDependency)
-              }
+              // Just tell user he/she should consider adding it to manifest
+              log.warn(`${versionLessDependency.toString()} is not declared in the Manifest. You might consider adding it.`)
             } else {
               // This is a third party native dependency. If it's not in the master manifest,
               // then it means that it is not supported by the platform yet. Fail.
@@ -400,17 +395,14 @@ Are you sure this is a MiniApp ?`)
         } else {
           // Version is provided for this dependency, check that version match manifest
           if (dependency.version !== manifestDependency.version) {
-            // Dependency version mismatch. Let the user know of potential impacts and ask
-            // if user wants to proceed with version update in manifest
+            // Dependency version mismatch. Let the user know of potential impacts and suggest user to
+            // updat the version in the manifest
             // TODO : If not API/API impl, we need to ensure that plugin is supported by platform
             // for the provided plugin version
             log.warn(`${dependency.toString()} version mismatch.`)
             log.warn(`Manifest version: ${manifestDependency.version}`)
             log.warn(`Wanted version: ${dependency.version}`)
-            if (cauldron.isActive() && await this.doesUserWantsToUpdateDependencyVersionInManifest(versionLessDependency)) {
-              finalDependency = dependency
-              await cauldron.updateTargetDependencyVersionInManifest(finalDependency)
-            }
+            log.warn(`You might want to update the version in your Manifest`)
           } else {
             // Dependency version match
             finalDependency = manifestDependency
@@ -426,29 +418,9 @@ Are you sure this is a MiniApp ?`)
     }
   }
 
-  async doesUserWantsToAddDependencyToManifest (dependency: Dependency) : Promise<boolean> {
-    const { shouldAddDependencyToManifest } = await inquirer.prompt([{
-      type: 'confirm',
-      name: 'shouldAddDependencyToManifest',
-      message: `Would you like to add ${dependency.toString()} to the current Caudron manifest ?`,
-      default: true
-    }])
-    return shouldAddDependencyToManifest
-  }
-
-  async doesUserWantsToUpdateDependencyVersionInManifest (dependency: Dependency) : Promise<boolean> {
-    const { shouldUpdateDependencyVersionInManifest } = await inquirer.prompt([{
-      type: 'confirm',
-      name: 'shouldUpdateDependencyVersionInManifest',
-      message: `Would you like to update ${dependency.toString()} in the current Caudron manifest (this could impact other MiniApps) ?`,
-      default: true
-    }])
-    return shouldUpdateDependencyVersionInManifest
-  }
-
   async upgradeToPlatformVersion (versionToUpgradeTo: string) : Promise<*> {
     // Update all modules versions in package.json
-    const manifestDependencies = await Manifest.getTargetNativeAndJsDependencies(versionToUpgradeTo)
+    const manifestDependencies = await manifest.getJsAndNativeDependencies(versionToUpgradeTo)
 
     for (const manifestDependency of manifestDependencies) {
       const nameWithScope = `${manifestDependency.scope ? `@${manifestDependency.scope}/` : ''}${manifestDependency.name}`

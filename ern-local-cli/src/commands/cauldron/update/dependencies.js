@@ -50,7 +50,12 @@ exports.handler = async function ({
       descriptor,
       extraErrorMessage: 'This command cannot work on a non existing native application version'
     },
-    isValidContainerVersion: containerVersion,
+    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+    isNewerContainerVersion: containerVersion ? {
+      containerVersion,
+      descriptor,
+      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+    } : undefined,
     noGitOrFilesystemPath: {
       obj: dependencies,
       extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form dependency@version is allowed.'

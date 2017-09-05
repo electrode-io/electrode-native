@@ -92,7 +92,7 @@ exports.handler = async function ({
   let napDescriptor: ?NativeApplicationDescriptor
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isValidContainerVersion: version,
+    isValidContainerVersion: version ? { containerVersion: version } : undefined,
     noGitOrFilesystemPath: {
       obj: dependencies,
       extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'

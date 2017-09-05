@@ -18,13 +18,20 @@ export default function findNativeDependencies (path: string) : Array<Dependency
 
   const nativeDependenciesNames = new Set()
 
-  // Get all folders that are containing a build.gradle or .pbxproj file
-  const nodeModulesFoldersWithBuildGradle = readDir(path)
-          .filter(a => a.includes('build.gradle') || a.includes('.pbxproj'))
+  // The following resolution algorithm assumes that all API implementations
+  // are native.
+  // This is OK for now but algorithm should be updated in case of pure
+  // JS API implementations
+  const nodeModulesFoldersWithNativeCode = readDir(path)
+          .filter(a =>
+            a.includes('build.gradle') ||
+            a.includes('.pbxproj') ||
+            /react-native-.+-api\//.test(a) ||
+            /react-native-.+-api-impl\//.test(a))
 
   // By convention we only assume react native plugins to be in folders
   // which names are starting with 'react-native' (excluding scope)
-  const nativeDepsFolders = _.filter(nodeModulesFoldersWithBuildGradle,
+  const nativeDepsFolders = _.filter(nodeModulesFoldersWithNativeCode,
           d => d.includes('react-native') && !/sample|demo|example/i.test(d))
 
   for (const nativeDepsFolder of nativeDepsFolders) {
