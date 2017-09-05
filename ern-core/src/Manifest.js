@@ -4,138 +4,241 @@ import {
   Dependency
 } from 'ern-util'
 import cauldron from './cauldron'
+import path from 'path'
 import Platform from './Platform'
-
-import Prom from 'bluebird'
+import GitManifest from './GitManifest'
+import Mustache from 'mustache'
 import _ from 'lodash'
 import fs from 'fs'
-import semver from 'semver'
-import simpleGit from 'simple-git'
+import shell from 'shelljs'
 
-const git = Prom.promisifyAll(simpleGit(Platform.manifestDirectory))
+export type PluginConfig = {
+  android: Object,
+  ios: Object,
+  origin?: Object,
+  path?: string
+}
 
-const npmModuleRe = /(.*)@(.*)/
+const pluginConfigFileName = 'config.json'
+const npmScopeModuleRe = /@(.*)\/(.*)/
 
-export default class Manifest {
-  // Gets the merged manifest of a given platform version
-  static async getMergedManifest (version) : Promise<?Object> {
-    let mergedManifest = {}
+const ERN_MANIFEST_MASTER_GIT_REPO = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-master-manifest.git`
 
-    const localManifest = this.getLocalManifest(version)
-    const cauldronManifest = await cauldron.getManifest()
-    const masterManifest = await this.getMasterManifest(version)
+export class Manifest {
+  _masterManifest: GitManifest
+  _overrideManifest: GitManifest
+  _manifestOverrideType: 'partial' | 'full'
 
-    mergedManifest.targetNativeDependencies = _.unionBy(
-      localManifest ? localManifest.targetNativeDependencies : [],
-      cauldronManifest ? cauldronManifest.targetNativeDependencies : [],
-      masterManifest ? masterManifest.targetNativeDependencies : [],
-      d => Dependency.fromString(d).withoutVersion().toString())
-
-    mergedManifest.targetJsDependencies = _.unionBy(
-      localManifest ? localManifest.targetJsDependencies : [],
-      cauldronManifest ? cauldronManifest.targetJsDependencies : [],
-      masterManifest ? masterManifest.targetJsDependencies : [],
-      d => Dependency.fromString(d).withoutVersion().toString())
-
-    return mergedManifest
+  constructor (masterManifest: GitManifest) {
+    this._masterManifest = masterManifest
   }
 
-  // Is there a local manifest for a given platform version ?
-  static hasLocalManifest (version: string) : boolean {
-    return fs.existsSync(`${Platform.getPlatformVersionPath(version)}/manifest.json`)
-  }
-
-  // Gets the local manifest of a given platform version
-  static getLocalManifest (version: string) : ?Object {
-    if (this.hasLocalManifest(version)) {
-      return JSON.parse(fs.readFileSync(`${Platform.getPlatformVersionPath(version)}/manifest.json`, 'utf-8'))
+  async initOverrideManifest () {
+    if (!this._overrideManifest && cauldron.isActive()) {
+      const manifestConfig = await cauldron.getManifestConfig()
+      if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
+        this._overrideManifest = new GitManifest(Platform.overrideManifestDirectory, manifestConfig.override.url)
+        this._manifestOverrideType = manifestConfig.override.type || 'partial'
+      }
     }
   }
 
-  // Is there an official master manifest for a given platform version ?
-  static async hasMasterManifest (version: string) : Promise<boolean> {
-    return this.getMasterManifest(version) !== undefined
-  }
+  async getManifestData (platformVersion: string) {
+    await this.initOverrideManifest()
+    let manifestData = {}
+    if (this._overrideManifest && this._manifestOverrideType === 'partial') {
+      // Merge both manifests. If a dependency exists at two different versions in both
+      // manifest, the ovveride will take precedence for the version
+      const overrideManifestData = await this._overrideManifest.getManifestData(platformVersion)
+      const masterManifestData = await this._masterManifest.getManifestData(platformVersion)
 
-  // Gets the offical master manifest of a given platform version
-  static async getMasterManifest (version: string) : Promise<?Object> {
-    return _.find(await this.getMasterManifests(), m => semver.satisfies(version, m.platformVersion))
-  }
+      manifestData.targetNativeDependencies = _.unionBy(
+        overrideManifestData ? overrideManifestData.targetNativeDependencies : [],
+        masterManifestData ? masterManifestData.targetNativeDependencies : [],
+        d => Dependency.fromString(d).withoutVersion().toString())
 
-  // Sync the master manifest local repository with the remote one
-  static async syncMasterManifest () {
-    return git ? git.pullAsync('origin', 'master') : Promise.resolve()
-  }
-
-  // Get the offical master manifests
-  static async getMasterManifests () : Promise<Array<Object>> {
-    let result = []
-    if (git) {
-      await this.syncMasterManifest()
-      result = JSON.parse(fs.readFileSync(`${Platform.manifestDirectory}/manifest.json`, 'utf-8'))
+      manifestData.targetJsDependencies = _.unionBy(
+        overrideManifestData ? overrideManifestData.targetJsDependencies : [],
+        masterManifestData ? masterManifestData.targetJsDependencies : [],
+        d => Dependency.fromString(d).withoutVersion().toString())
+    } else if (this._overrideManifest && this._manifestOverrideType === 'full') {
+      manifestData = await this._overrideManifest.getManifestData(platformVersion)
+    } else {
+      manifestData = await this._masterManifest.getManifestData(platformVersion)
     }
-    return result
+    return manifestData
   }
 
-  //
-  // Manifest data access
-  //
-
-  static async getTargetNativeDependencies (version: string) : Promise<Array<Dependency>> {
-    const manifest = await this.getMergedManifest(version)
+  async getNativeDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<Dependency>> {
+    const manifest = await this.getManifestData(platformVersion)
     return manifest
       ? _.map(manifest.targetNativeDependencies, d => Dependency.fromString(d))
       : []
   }
 
-  static async getTargetJsDependencies (version: string) : Promise<Array<Dependency>> {
-    const manifest = await this.getMergedManifest(version)
+  async getJsDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<Dependency>> {
+    const manifest = await this.getManifestData(platformVersion)
     return manifest
       ? _.map(manifest.targetJsDependencies, d => Dependency.fromString(d))
       : []
   }
 
-  static async getTargetNativeAndJsDependencies (version: string) : Promise<Array<Dependency>> {
-    const manifest = await this.getMergedManifest(version)
+  async getNativeDependency (dependency: Dependency, platformVersion: string = Platform.currentVersion) : Promise<?Dependency> {
+    const nativeDependencies = await this.getNativeDependencies(platformVersion)
+    return _.find(nativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
+  }
+
+  async getJsDependency (dependency: Dependency, platformVersion: string = Platform.currentVersion) : Promise<?Dependency> {
+    const jsDependencies = await this.getJsDependencies(platformVersion)
+    return _.find(jsDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
+  }
+
+  async getJsAndNativeDependencies (platformVersion: string) {
+    const manifest = await this.getManifestData(platformVersion)
     const manifestDeps = manifest
       ? _.union(manifest.targetJsDependencies, manifest.targetNativeDependencies)
       : []
     return _.map(manifestDeps, d => Dependency.fromString(d))
   }
 
-  static async getPlugin (pluginString: string) : Promise<?Dependency> {
-    const plugin = Dependency.fromString(pluginString)
-    return _.find(await this.getTargetNativeDependencies(Platform.currentVersion),
-      d => (d.name === plugin.name) && (d.scope === plugin.scope))
+  // Tp be refactored !
+  async getPluginConfig (
+    plugin: Dependency,
+    projectName: string = 'ElectrodeContainer',
+    platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
+    await this.initOverrideManifest()
+    let result = {}
+    let pluginConfigPath
+
+    if (this._overrideManifest && this._manifestOverrideType === 'partial') {
+      pluginConfigPath = await this._overrideManifest.getPluginConfigurationPath(plugin, platformVersion)
+      if (!pluginConfigPath) {
+        pluginConfigPath = await this._masterManifest.getPluginConfigurationPath(plugin, platformVersion)
+      }
+    } else if (this._overrideManifest && this._manifestOverrideType === 'full') {
+      pluginConfigPath = await this._overrideManifest.getPluginConfigurationPath(plugin, platformVersion)
+    } else {
+      pluginConfigPath = await this._masterManifest.getPluginConfigurationPath(plugin, platformVersion)
+    }
+
+    if (pluginConfigPath) {
+      let configFile = await fs.readFileSync(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
+      configFile = Mustache.render(configFile, { projectName })
+      result = JSON.parse(configFile)
+
+      // Add default value (convention) for Android subsection for missing fields
+      if (result.android) {
+        if (result.android.root === undefined) {
+          result.android.root = 'android'
+        }
+
+        if (!result.android.pluginHook) {
+          result.android.pluginHook = {}
+          const matchedFiles =
+            shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
+          this.throwIfShellCommandFailed()
+          if (matchedFiles && matchedFiles.length === 1) {
+            const pluginHookClass = path.basename(matchedFiles[0], '.java')
+            result.android.pluginHook.name = pluginHookClass
+            if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
+              result.android.pluginHook.configurable = true
+            }
+          }
+        }
+      }
+      if (result.ios) {
+        if (result.ios.root === undefined) {
+          result.ios.root = 'ios'
+        }
+
+        if (!result.ios.pluginHook) {
+          const matchedHeaderFiles =
+            shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
+          this.throwIfShellCommandFailed()
+          const matchedSourceFiles =
+            shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
+          if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
+            result.ios.pluginHook = {}
+            const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
+            result.ios.pluginHook.name = pluginHookClass
+            result.ios.pluginHook.configurable = true // TODO: CLAIRE change if it should be true on different types of plugins
+            result.ios.pluginHook.header = matchedHeaderFiles[0]
+            result.ios.pluginHook.source = matchedSourceFiles[0]
+          } else {
+            result.ios.pluginHook = {}
+            result.ios.pluginHook.configurable = false
+          }
+        }
+      }
+      result.path = pluginConfigPath
+    } else if (plugin.name.endsWith('-api') || plugin.name.endsWith('-api-impl')) {
+      log.debug(`API or API IMPL detected. Returning API default config`)
+      result = this.getApiPluginDefaultConfig(projectName)
+    } else {
+      throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.toString()}`)
+    }
+
+    if (!result.origin) {
+      if (npmScopeModuleRe.test(plugin.scopedName)) {
+        result.origin = {
+          type: 'npm',
+          scope: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[1]}`,
+          name: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[2]}`,
+          version: plugin.version
+        }
+      } else {
+        result.origin = {
+          type: 'npm',
+          name: plugin.name,
+          version: plugin.version
+        }
+      }
+    } else if (!result.origin.version) {
+      result.origin.version = plugin.version
+    }
+
+    return result
   }
 
-  static async getTargetNativeDependency (dependency: Dependency, platformVersion?: string = Platform.currentVersion) : Promise<?Dependency> {
-    const targetNativeDependencies = await this.getTargetNativeDependencies(platformVersion)
-    return _.find(targetNativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
-  }
-
-  static async getTargetJsDependency (dependencyString: string) : Promise<?Dependency> {
-    const jsDependency = Dependency.fromString(dependencyString)
-    return _.find(await this.getTargetJsDependencies(Platform.currentVersion),
-      d => (d.name === jsDependency.name) && (d.scope === jsDependency.scope))
-  }
-
-  static async getDependency (dependency: Dependency) : Promise<?Dependency> {
-    return _.find(await this.getTargetNativeAndJsDependencies(Platform.currentVersion),
-      d => (d.name === dependency.name) && (d.scope === dependency.scope))
-  }
-
-  static async getReactNativeVersionFromManifest (platformVersion?: string = Platform.currentVersion) : Promise<?string> {
-    const reactNativeDependencyFromManifest = await this.getReactNativeDependencyFromManifest(platformVersion)
-    if (reactNativeDependencyFromManifest) {
-      return npmModuleRe.exec(reactNativeDependencyFromManifest)[2]
+  getApiPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginConfig {
+    return {
+      android: {
+        root: 'android',
+        moduleName: 'lib',
+        transform: [
+          { file: 'android/lib/build.gradle' }
+        ]
+      },
+      ios: {
+        pluginHook: {
+          configurable: false
+        },
+        copy: [
+          {
+            source: 'IOS/*',
+            dest: `${projectName}/APIs`
+          }
+        ],
+        pbxproj: {
+          addSource: [
+            {
+              from: 'IOS/*.swift',
+              path: 'APIs',
+              group: 'APIs'
+            }
+          ]
+        }
+      }
     }
   }
 
-  static async getReactNativeDependencyFromManifest (platformVersion?: string = Platform.currentVersion) : Promise<?string> {
-    const currentVersionManifest = await this.getMergedManifest(platformVersion)
-    return currentVersionManifest
-      ? _.find(currentVersionManifest.targetNativeDependencies, d => d.startsWith('react-native@'))
-      : undefined
+  // Should not be here
+  throwIfShellCommandFailed () {
+    const shellError = shell.error()
+    if (shellError) {
+      throw new Error(shellError)
+    }
   }
 }
+
+export default new Manifest(new GitManifest(Platform.masterManifestDirectory, ERN_MANIFEST_MASTER_GIT_REPO))

@@ -127,7 +127,7 @@ platform: 'android' | 'ios', {
       plugins: nativeDependencies,
       miniapps,
       workingFolder: outDir,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`
     })
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
@@ -173,7 +173,7 @@ version: string, {
       plugins,
       miniapps,
       workingFolder: outDir,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
       pathToYarnLock
     })
 

@@ -62,11 +62,6 @@ export default class CauldronApi {
   // READ OPERATIONS
   // =====================================================================================
 
-  async getManifest () {
-    const cauldron = await this.getCauldron()
-    return cauldron.manifest
-  }
-
   async getNativeApplications () {
     const cauldron = await this.getCauldron()
     return cauldron.nativeApps
@@ -179,6 +174,8 @@ export default class CauldronApi {
       const app = await this.getNativeApplication(appName)
       return app == null ? undefined : app.config
     }
+    const cauldron = await this.getCauldron()
+    return cauldron.config
   }
 
   // =====================================================================================
@@ -405,46 +402,6 @@ export default class CauldronApi {
     if (version && !version.miniApps.container.includes(miniapp.toString())) {
       version.miniApps.container.push(miniapp.toString())
       await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
-    }
-  }
-
-  async addTargetJsDependencyToManifest (dependency: Dependency) {
-    const manifest = await this.getManifest()
-    if (!_.find(manifest.targetJsDependencies, d => Dependency.same(dependency, Dependency.fromString(d), { ignoreVersion: true }))) {
-      manifest.targetJsDependencies.push(dependency.toString())
-      await this.commit(`Add JS dependency ${dependency.toString()} to manifest`)
-    }
-  }
-
-  async addTargetNativeDependencyToManifest (dependency: Dependency) {
-    const manifest = await this.getManifest()
-    if (!_.find(manifest.targetNativeDependencies, d => Dependency.same(dependency, Dependency.fromString(d), { ignoreVersion: true }))) {
-      manifest.targetNativeDependencies.push(dependency.toString())
-      await this.commit(`Add Native dependency ${dependency.toString()} to manifest`)
-    }
-  }
-
-  async updateTargetDependencyVersionInManifest (dependency: Dependency) {
-    // Dumb way ... call both
-    await this.updateTargetJsDependencyVersionInManifest(dependency)
-    await this.updateTargetNativeDependencyVersionInManifest(dependency)
-  }
-
-  async updateTargetJsDependencyVersionInManifest (dependency: Dependency) {
-    const manifest = await this.getManifest()
-    let targetJsDependency = _.find(manifest.targetJsDependencies, d => Dependency.same(Dependency.fromString(d), dependency, { ignoreVersion: true }))
-    if (targetJsDependency && (targetJsDependency.version !== dependency.version)) {
-      manifest.targetJsDependencies = _.map(manifest.targetJsDependencies, t => (t === targetJsDependency) ? dependency.toString() : t)
-      await this.commit(`Update version of JS dependency ${dependency.name} to ${dependency.version} in manifest`)
-    }
-  }
-
-  async updateTargetNativeDependencyVersionInManifest (dependency: Dependency) {
-    const manifest = await this.getManifest()
-    let targetNativeDependency = _.find(manifest.targetNativeDependencies, d => Dependency.same(Dependency.fromString(d), dependency, { ignoreVersion: true }))
-    if (targetNativeDependency && (targetNativeDependency.version !== dependency.version)) {
-      manifest.targetNativeDependencies = _.map(manifest.targetNativeDependencies, t => (t === targetNativeDependency) ? dependency.toString() : t)
-      await this.commit(`Update version of native dependency ${dependency.name} to ${dependency.version} in manifest`)
     }
   }
 

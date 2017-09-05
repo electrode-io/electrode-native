@@ -18,7 +18,7 @@ class Cauldron {
 
   constructor (cauldronRepoAlias: string, cauldronPath: string) {
     if (!cauldronRepoAlias) {
-      return console.log('!!! No Cauldron repository currently activated !!!')
+      return log.debug('[Cauldron ctor] cauldronRepoAlias is undefined')
     }
     const cauldronRepositories = config.getValue('cauldronRepositories')
     this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias], cauldronPath)
@@ -449,13 +449,12 @@ class Cauldron {
   }
 
   async getContainerGeneratorConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
-    let config = await this.cauldron.getConfig({
-      appName: napDescriptor.name,
-      platformName: napDescriptor.platform
-    })
-    if (config) {
-      return _.get(config, 'containerGenerator') || null
-    }
+    return this.getConfigForKey(napDescriptor, 'containerGenerator')
+  }
+
+  async getManifestConfig () : Promise<*> {
+    const config = await this.cauldron.getConfig()
+    return config ? config.manifest : undefined
   }
 
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
@@ -474,6 +473,24 @@ class Cauldron {
       }
     }
     return config
+  }
+
+  async getConfigForKey (napDescriptor: NativeApplicationDescriptor, key: string) : Promise<*> {
+    let config = await this.cauldron.getConfig({
+      appName: napDescriptor.name,
+      platformName: napDescriptor.platform,
+      versionName: napDescriptor.version
+    })
+    if (!config || !config[key]) {
+      config = await this.cauldron.getConfig({
+        appName: napDescriptor.name,
+        platformName: napDescriptor.platform
+      })
+      if (!config || !config[key]) {
+        config = await this.cauldron.getConfig({appName: napDescriptor.name})
+      }
+    }
+    return config ? config.key : undefined
   }
 
   async updateNativeAppIsReleased (
@@ -555,32 +572,6 @@ class Cauldron {
       log.error(`[updateMiniAppVersion] ${e}`)
       throw e
     }
-  }
-
-  async getManifest () {
-    if (this.cauldron) {
-      return this.cauldron.getManifest()
-    }
-  }
-
-  async addTargetJsDependencyToManifest (dependency: Dependency) {
-    return this.cauldron.addTargetJsDependencyToManifest(dependency)
-  }
-
-  async addTargetNativeDependencyToManifest (dependency: Dependency) {
-    return this.cauldron.addTargetNativeDependencyToManifest(dependency)
-  }
-
-  async updateTargetDependencyVersionInManifest (dependency: Dependency) {
-    return this.cauldron.updateTargetDependencyVersionInManifest(dependency)
-  }
-
-  async updateTargetJsDependencyVersionInManifest (dependency: Dependency) {
-    return this.cauldron.updateTargetJsDependencyVersionInManifest(dependency)
-  }
-
-  async updateTargetNativeDependencyVersionInManifest (dependency: Dependency) {
-    return this.cauldron.updateTargetNativeDependencyVersionInManifest(dependency)
   }
 
   throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {

@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Manifest,
+  manifest,
   Platform
 } from 'ern-core'
 import {
@@ -30,7 +30,7 @@ exports.handler = async function ({
   name: string,
   platformVersion?: string
 }) {
-  const plugin = await Manifest.getTargetNativeDependency(Dependency.fromString(name), platformVersion)
+  const plugin = await manifest.getNativeDependency(Dependency.fromString(name), platformVersion)
   if (!plugin) {
     return log.warn(`No plugin named ${name} was found for platform version $platformVersion}`)
   }

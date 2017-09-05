@@ -39,13 +39,8 @@ type TypeCauldronNativeApp = {
   config?: Object
 }
 
-type TypeCauldronManifest = {
-  targetNativeDependencies: Array<string>,
-  targetJsDependencies: Array<string>
-}
-
 type TypeCauldron = {
-  manifest: TypeCauldronManifest,
+  config?: Object,
   nativeApps: Array<TypeCauldronNativeApp>
 }
 
