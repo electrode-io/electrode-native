@@ -6,7 +6,7 @@ import {
   spin
 } from 'ern-util'
 import cauldron from './cauldron.js'
-import Manifest from './manifest.js'
+import manifest from './manifest.js'
 import MiniApp from './miniapp.js'
 import _ from 'lodash'
 import chalk from 'chalk'
@@ -39,7 +39,7 @@ export async function checkCompatibilityWithNativeApp (
 // Check compatibility of a given miniapp against a given platform version
 export async function checkCompatibilityWithPlatform (miniApp: MiniApp, platformVersion: string) {
   const miniappDependencies = miniApp.nativeAndJsDependencies
-  const platformDependencies = await Manifest.getTargetNativeAndJsDependencies(platformVersion)
+  const platformDependencies = await manifest.getJsAndNativeDependencies(platformVersion)
 
   const report = getCompatibility(miniappDependencies, platformDependencies)
   const isCompatible = report.incompatible.length === 0

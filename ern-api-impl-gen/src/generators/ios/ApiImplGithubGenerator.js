@@ -1,6 +1,6 @@
 import shell from 'shelljs'
 import {
-  pluginUtil,
+  manifest,
   handleCopyDirective
 } from 'ern-core'
 import {
@@ -13,10 +13,6 @@ import fs from 'fs'
 import path from 'path'
 import _ from 'lodash'
 import xcode from '@walmart/xcode-ern'
-
-const {
-  getPluginConfig
-} = pluginUtil
 
 export const ROOT_DIR = shell.pwd()
 
@@ -64,7 +60,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       })
       plugins.push(reactnativeplugin)
       for (const plugin of plugins) {
-        const pluginConfig = await getPluginConfig(plugin, `ElectrodeApiImpl`)
+        const pluginConfig = await manifest.getPluginConfig(plugin, `ElectrodeApiImpl`)
         Utils.throwIfShellCommandFailed()
         if (pluginConfig.ios) {
           let pluginSourcePath

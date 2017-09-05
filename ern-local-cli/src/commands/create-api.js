@@ -4,8 +4,11 @@ import {
   ApiGen
 } from 'ern-api-gen'
 import {
-  Manifest
+  manifest
 } from 'ern-core'
+import {
+  Dependency
+} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'create-api <apiName>'
@@ -41,12 +44,12 @@ exports.handler = async function ({
   apiAuthor?: string,
   schemaPath?: string
 }) {
-  const bridgeDep = await Manifest.getPlugin('@walmart/react-native-electrode-bridge')
+  const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('@walmart/react-native-electrode-bridge'))
   if (!bridgeDep) {
     return log.error(`@walmart/react-native-electrode-bridge not found in manifest. cannot infer version to use`)
   }
 
-  const reactNative = await Manifest.getPlugin('react-native')
+  const reactNative = await manifest.getNativeDependency(Dependency.fromString('react-native'))
   if (!reactNative) {
     return log.error(`react-native not found in manifest. cannot infer version to use`)
   }

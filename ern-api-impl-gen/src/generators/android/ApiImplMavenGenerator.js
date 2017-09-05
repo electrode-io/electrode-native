@@ -2,20 +2,22 @@
 
 import shell from 'shelljs'
 import {
-  pluginUtil
-} from 'ern-core'
-import {
   Dependency,
   Utils,
   mustacheUtils
 } from 'ern-util'
+import {
+  manifest
+} from 'ern-core'
 
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 
-const {
-  PluginConfig,
-  getPluginConfig
-} = pluginUtil
+type PluginConfig = {
+  android: Object,
+  ios: Object,
+  origin?: Object,
+  path?: string
+}
 
 const path = require('path')
 
@@ -63,7 +65,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
-        await getPluginConfig(plugin).then((pluginConfig) => {
+        await manifest.getPluginConfig(plugin).then((pluginConfig) => {
           this.copyPluginToOutput(paths, outputFolder, plugin, pluginConfig)
         })
       }

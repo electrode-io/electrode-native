@@ -4,8 +4,11 @@ import {
   ApiGen
 } from 'ern-api-gen'
 import {
-  Manifest
+  manifest
 } from 'ern-core'
+import {
+  Dependency
+} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'regen-api'
@@ -32,7 +35,7 @@ exports.handler = async function ({
   bridgeVersion: string
 } = {}) {
   if (!bridgeVersion) {
-    const bridgeDep = await Manifest.getPlugin('@walmart/react-native-electrode-bridge')
+    const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('@walmart/react-native-electrode-bridge'))
     if (!bridgeDep) {
       return log.error(`@walmart/react-native-electrode-bridge not found in manifest. please provide explicit version`)
     }

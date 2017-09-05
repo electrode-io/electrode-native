@@ -127,7 +127,7 @@ platform: 'android' | 'ios', {
       plugins: nativeDependencies,
       miniapps,
       workingFolder: outDir,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`
     })
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
@@ -140,10 +140,12 @@ export async function runCauldronContainerGen (
 napDescriptor: NativeApplicationDescriptor,
 version: string, {
   publish,
-  outDir = `${Platform.rootDirectory}/containergen`
+  outDir = `${Platform.rootDirectory}/containergen`,
+  containerName
 }: {
   publish?: boolean,
-  outDir?: string
+  outDir?: string,
+  containerName?: string
 } = {}) {
   try {
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
@@ -165,13 +167,13 @@ version: string, {
 
     const paths = await generateContainer({
       containerVersion: version,
-      nativeAppName: napDescriptor.name,
+      nativeAppName: containerName || napDescriptor.name,
       platformPath: Platform.currentPlatformVersionPath,
       generator: createContainerGenerator(containerGeneratorConfig),
       plugins,
       miniapps,
       workingFolder: outDir,
-      reactNativeAarsPath: `${Platform.manifestDirectory}/react-native_aars`,
+      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
       pathToYarnLock
     })
 

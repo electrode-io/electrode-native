@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  pluginUtil,
+  manifest,
   handleCopyDirective,
   ContainerGeneratorConfig,
   MavenUtils,
@@ -164,7 +164,7 @@ export default class AndroidGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.android) {
           log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
           continue
@@ -280,7 +280,7 @@ export default class AndroidGenerator {
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
         log.debug(`Handling ${plugin.name}`)
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.android) {
           log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
           continue
@@ -314,7 +314,7 @@ export default class AndroidGenerator {
         if (plugin.name === 'react-native') {
           continue
         }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.android) {
           log.warn(`${plugin.name} does not have any injection configuration for Android`)
           continue

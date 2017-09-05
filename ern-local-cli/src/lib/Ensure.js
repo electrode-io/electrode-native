@@ -7,9 +7,11 @@ import {
 } from 'ern-util'
 import {
   cauldron,
+  dependencyLookup,
   utils
 } from 'ern-core'
 import _ from 'lodash'
+import semver from 'semver'
 
 export default class Ensure {
   static isValidContainerVersion (
@@ -17,6 +19,16 @@ export default class Ensure {
     extraErrorMessage: string = '') {
     if (/^\d+.\d+.\d+$/.test(version) === false) {
       throw new Error(`${version} is not a valid container version.\n${extraErrorMessage}`)
+    }
+  }
+
+  static async isNewerContainerVersion (
+    napDescriptor: string,
+    containerVersion: string,
+    extraErrorMessage: string = '') {
+    const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
+    if (!semver.gt(containerVersion, cauldronContainerVersion)) {
+      throw new Error(`Container version ${containerVersion} is older than ${cauldronContainerVersion}`)
     }
   }
 
@@ -156,6 +168,37 @@ export default class Ensure {
         Dependency.fromString(dependencyString).withoutVersion().toString())
       if (dependencyFromCauldron.version === Dependency.fromString(dependencyString).version) {
         throw new Error(`${Dependency.fromString(dependencyString).withoutVersion().toString()} is already at version ${dependencyFromCauldron.version} in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+      }
+    }
+  }
+
+  static async dependencyNotInUseByAMiniApp (
+    obj: string | Array<string> | void,
+    napDescriptor: NativeApplicationDescriptor,
+    extraErrorMessage: string = '') {
+    if (!obj) return
+    const dependencies = obj instanceof Array ? obj : [ obj ]
+    const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+
+    // First let's figure out if any of the MiniApps are using this/these dependency(ies)
+    // to make sure that we don't remove any dependency currently used by any MiniApp
+    const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
+    const miniAppsPaths = _.map(miniApps, m => m.path)
+
+    for (const dependencyObj of dependenciesObjs) {
+      const miniAppsUsingDependency = await dependencyLookup.getMiniAppsUsingNativeDependency(miniAppsPaths, dependencyObj)
+      if (miniAppsUsingDependency && miniAppsUsingDependency.length > 0) {
+        let errorMessage = ''
+        errorMessage += 'The following MiniApp(s) are using this dependency\n'
+        for (const miniApp of miniAppsUsingDependency) {
+          errorMessage += `=> ${miniApp.name}\n`
+        }
+        errorMessage += 'You cannot remove a native dependency that is being used by at least a MiniApp\n'
+        errorMessage += 'To properly remove this native dependency, you cant either :\n'
+        errorMessage += '- Remove the native dependency from the MiniApp(s) that are using it\n'
+        errorMessage += '- Remove the MiniApps that are using this dependency\n'
+        errorMessage += '- Provide the force flag to this command (if you really now what you are doing !)'
+        throw new Error(errorMessage)
       }
     }
   }

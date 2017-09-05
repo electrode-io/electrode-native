@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  pluginUtil,
+  manifest,
   handleCopyDirective,
   GitUtils,
   ContainerGeneratorConfig
@@ -183,7 +183,7 @@ export default class IosGenerator {
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
     for (const plugin of plugins) {
-      const pluginConfig = await pluginUtil.getPluginConfig(plugin)
+      const pluginConfig = await manifest.getPluginConfig(plugin)
       shell.cd(`${paths.pluginsDownloadFolder}`)
       throwIfShellCommandFailed()
       if (pluginConfig.ios) {
@@ -303,7 +303,7 @@ export default class IosGenerator {
         if (plugin.name === 'react-native') {
           continue
         }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        let pluginConfig = await manifest.getPluginConfig(plugin)
         let iosPluginHook = pluginConfig.ios.pluginHook
         let containerHeader = pluginConfig.ios.containerPublicHeader
         if (iosPluginHook.configurable) {
@@ -337,7 +337,7 @@ export default class IosGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        let pluginConfig = await pluginUtil.getPluginConfig(plugin)
+        let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.ios) {
           log.warn(`${plugin.name} does not have any injection configuration for iOS`)
           continue

@@ -47,7 +47,12 @@ exports.handler = async function ({
 
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: { descriptor },
-    isValidContainerVersion: containerVersion,
+    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+    isNewerContainerVersion: containerVersion ? {
+      containerVersion,
+      descriptor,
+      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+    } : undefined,
     noGitOrFilesystemPath: {
       obj: miniapps,
       extraErrorMessage: 'You cannot provide MiniApp(s) using git or file scheme for this command. Only the form miniapp@version is allowed.'
