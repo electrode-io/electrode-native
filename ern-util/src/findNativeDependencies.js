@@ -26,8 +26,7 @@ export default function findNativeDependencies (path: string) : Array<Dependency
           .filter(a =>
             a.includes('build.gradle') ||
             a.includes('.pbxproj') ||
-            /react-native-.+-api\//.test(a) ||
-            /react-native-.+-api-impl\//.test(a))
+            /react-native-.+-api\//.test(a))
 
   // By convention we only assume react native plugins to be in folders
   // which names are starting with 'react-native' (excluding scope)
