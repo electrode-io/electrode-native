@@ -106,6 +106,10 @@ Are you sure this is a MiniApp ?`)
       scope?: string
     }) {
     try {
+      if (fs.existsSync(path.join('node_modules', 'react-native'))) {
+        throw new Error('It seems like there is already a react native app in this directory. Use another directory.')
+      }
+
       if (Platform.currentVersion !== platformVersion) {
         Platform.switchToVersion(platformVersion)
       }
@@ -157,7 +161,8 @@ Are you sure this is a MiniApp ?`)
 
       return new MiniApp(miniAppPath)
     } catch (e) {
-      log.error(`[MiniApp.create] ${e}`)
+      log.debug(`[MiniApp.create] ${e}`)
+      throw e
     }
   }
 
