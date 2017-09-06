@@ -8,27 +8,27 @@ For example, if you'd like to update some dependencies versions in a `Container`
 
 ### Command
 
-#### `ern cauldron --addDependencies <dependencies..>`  
+#### `ern cauldron batch --addDependencies <dependencies..>`  
 
 Adds one or more native dependency(ies) version(s) to a target mobile application version `Container`
 
-#### `ern cauldron --updateDependencies <dependencies..>`  
+#### `ern cauldron batch --updateDependencies <dependencies..>`  
 
 Updates the version(s) of one or more native dependency(ies) in a target mobile application version `Container`
 
-#### `ern cauldron --delDependencies <dependencies..>`
+#### `ern cauldron batch --delDependencies <dependencies..>`
 
 Removes one or more native dependency(ies) from a target mobile application version `Container`
 
-#### `ern cauldron --addMiniapps <miniapps..>`  
+#### `ern cauldron batch --addMiniapps <miniapps..>`  
 
 Adds one or more MiniApp(s) version(s) to a target mobile application version `Container`
 
-#### `ern cauldron --updateMiniapps <miniapps..>`  
+#### `ern cauldron batch --updateMiniapps <miniapps..>`  
 
 Updates the version(s) of one or more MiniApp(s) in a target mobile application version `Container`
 
-#### `ern cauldron --delMiniapps <miniapps..>`
+#### `ern cauldron batch --delMiniapps <miniapps..>`
 
 Removes one or more MiniApp(s) from a target mobile application version `Container`
 
