@@ -2,7 +2,7 @@
     {{#hasOptionalParams}}
         opts = opts || {};
     {{/hasOptionalParams}}
-     const data =  {{#bodyParam}}{{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}}{{/bodyParam}}{{^bodyParam}}{}{{/bodyParam}};
+     const data =  {}
     {{#allParams}}{{#required}}
         // verify the required parameter '{{paramName}}' is set
         if ({{paramName}}  == null) {
@@ -21,4 +21,7 @@
     {{#formParams}}
            data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
     {{/formParams}}
+    {{#bodyParams}}
+        data['{{baseName}}'] = {{#required}}{{paramName}}{{/required}}{{^required}}opts['{{paramName}}']{{/required}};
+    {{/bodyParams}}
 {{/hasParams}}
