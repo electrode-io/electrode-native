@@ -49,7 +49,8 @@ export default class MavenPublisher implements Publisher {
             reject(err)
           }
           if (stderr) {
-            log.error(stderr)
+            // Supress Lint warning as auto generated code isn't meant to be modified by the developer
+            stderr && stderr.includes('unchecked') ? log.warn('') : log.warn('\n' + stderr)
           }
           if (stdout) {
             log.debug(stdout)

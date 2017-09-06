@@ -21,8 +21,10 @@ allprojects {
             dirs 'libs'
         }
     }
+
     tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked"
+        options.compilerArgs << '-Xlint:none'
+        options.compilerArgs << '-nowarn'
     }
 }
 
