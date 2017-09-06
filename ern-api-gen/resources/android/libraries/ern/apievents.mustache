@@ -3,11 +3,13 @@ package {{{package}}};
 import android.support.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
 import com.walmartlabs.electrode.reactnative.bridge.EventListenerProcessor;
 import com.walmartlabs.electrode.reactnative.bridge.EventProcessor;
 import com.walmartlabs.electrode.reactnative.bridge.None;
 import java.util.*;
+import java.util.UUID;
 
 {{#imports}}
     import {{import}};
@@ -20,11 +22,22 @@ final class {{{eventsImplClassName}}} implements {{{classname}}}.Events {
     {{#operation}}
     {{#isEvent}}
     @Override
-    public void add{{{camelizedNickName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener) {
-        new EventListenerProcessor<>(EVENT_{{{nickNameConstant}}}, {{#requestParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/requestParam}}, eventListener).execute();
+    public UUID add{{{camelizedNickName}}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener) {
+        return new EventListenerProcessor<>(EVENT_{{{nickNameConstant}}}, {{#requestParam}}{{#isList}}(Class) {{{baseType}}}.class{{/isList}}{{^isList}}{{{dataType}}}.class{{/isList}}{{/requestParam}}, eventListener).execute();
     }
     {{/isEvent}}
     {{/operation}}
+    {{/operations}}
+
+    {{#operations}}
+        {{#operation}}
+            {{#isEvent}}
+                @Override
+                public ElectrodeBridgeEventListener<ElectrodeBridgeEvent> remove{{{camelizedNickName}}}EventListener(@NonNull final UUID uuid) {
+                    return ElectrodeBridgeHolder.removeEventListener(uuid);
+                }
+            {{/isEvent}}
+        {{/operation}}
     {{/operations}}
 
     //------------------------------------------------------------------------------------------------------------------------------------
