@@ -26,9 +26,9 @@ export default class Ensure {
     napDescriptor: string,
     containerVersion: string,
     extraErrorMessage: string = '') {
-    const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
+    const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(NativeApplicationDescriptor.fromString(napDescriptor))
     if (!semver.gt(containerVersion, cauldronContainerVersion)) {
-      throw new Error(`Container version ${containerVersion} is older than ${cauldronContainerVersion}`)
+      throw new Error(`Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`)
     }
   }
 
@@ -93,7 +93,7 @@ export default class Ensure {
     for (const miniAppString of miniAppsStrings) {
       const versionLessMiniAppString = Dependency.fromString(miniAppString).withoutVersion().toString()
       if (await cauldron.getContainerMiniApp(napDescriptor, versionLessMiniAppString)) {
-        throw new Error(`${miniAppString} MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+        throw new Error(`${versionLessMiniAppString} MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
@@ -119,8 +119,9 @@ export default class Ensure {
     if (!obj) return
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
-      if (!await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
-        throw new Error(`${miniAppString} MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
+      const versionLessMiniAppString = Dependency.fromString(miniAppString).withoutVersion().toString()
+      if (!await cauldron.getContainerMiniApp(napDescriptor, versionLessMiniAppString)) {
+        throw new Error(`${versionLessMiniAppString} MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
   }
