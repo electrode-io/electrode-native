@@ -91,7 +91,8 @@ export default class Ensure {
     if (!obj) return
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
-      if (await cauldron.getContainerMiniApp(napDescriptor, miniAppString)) {
+      const versionLessMiniAppString = Dependency.fromString(miniAppString).withoutVersion().toString()
+      if (await cauldron.getContainerMiniApp(napDescriptor, versionLessMiniAppString)) {
         throw new Error(`${miniAppString} MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
