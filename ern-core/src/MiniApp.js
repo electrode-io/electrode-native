@@ -367,6 +367,7 @@ Are you sure this is a MiniApp ?`)
               // This is a native API or API implementation
               // Just tell user he/she should consider adding it to manifest
               log.warn(`${versionLessDependency.toString()} is not declared in the Manifest. You might consider adding it.`)
+              finalDependency = dependency
             } else {
               // This is a third party native dependency. If it's not in the master manifest,
               // then it means that it is not supported by the platform yet. Fail.

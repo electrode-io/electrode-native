@@ -5,10 +5,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import java.util.List;
 
 import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 
-import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.getNumberValue;
+import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.*;
 {{#models}}
 {{#model}}
 {{#description}}
@@ -141,6 +142,10 @@ public class {{classname}} implements Parcelable, Bridgeable {
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         {{#requiredVars}}
+        {{#isListContainer}}
+        updateBundleWithList(this.{{name}}, bundle, "{{name}}");
+        {{/isListContainer}}
+        {{^isListContainer}}
         {{#isString}}
         bundle.putString("{{name}}", this.{{name}});
         {{/isString}}
@@ -162,8 +167,15 @@ public class {{classname}} implements Parcelable, Bridgeable {
         {{^isPrimitiveType}}
         bundle.putBundle("{{name}}", this.{{name}}.toBundle());
         {{/isPrimitiveType}}
+        {{/isListContainer}}
         {{/requiredVars}}
         {{#optionalVars}}
+        {{#isListContainer}}
+        if(this.{{name}} != null) {
+            updateBundleWithList(this.{{name}}, bundle, "{{name}}");
+        }
+        {{/isListContainer}}
+        {{^isListContainer}}
         {{#isString}}
         if({{name}} != null) {
             bundle.putString("{{name}}", this.{{name}} );
@@ -199,6 +211,7 @@ public class {{classname}} implements Parcelable, Bridgeable {
             bundle.putBundle("{{name}}", this.{{name}}.toBundle());
         }
         {{/isPrimitiveType}}
+        {{/isListContainer}}
         {{/optionalVars}}
         return bundle;
     }

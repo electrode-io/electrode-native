@@ -18,6 +18,7 @@ import {
   runLocalContainerGen,
   runCauldronContainerGen
 } from '../lib/publication'
+import fs from 'fs'
 import utils from '../lib/utils'
 import _ from 'lodash'
 import shell from 'shelljs'
@@ -107,26 +108,30 @@ exports.handler = async function ({
         case 'android': {
           await generateContainer(platform, { napDescriptor, dependenciesObjs, miniAppsPaths })
           const pathToAndroidRunner = path.join(commandCwd, platform)
-          shell.mkdir('-p', pathToAndroidRunner)
-          await spin('Generating Android Runner project',
-            generateAndroidRunnerProject(
-              Platform.currentPlatformVersionPath,
-              pathToAndroidRunner,
-              mainMiniAppName,
-              false))
+          if (!fs.existsSync(pathToAndroidRunner)) {
+            shell.mkdir('-p', pathToAndroidRunner)
+            await spin('Generating Android Runner project',
+              generateAndroidRunnerProject(
+                Platform.currentPlatformVersionPath,
+                pathToAndroidRunner,
+                mainMiniAppName,
+                false))
+          }
           break
         }
         case 'ios': {
           await generateContainer(platform, { napDescriptor, dependenciesObjs, miniAppsPaths })
           const pathToIosRunner = path.join(commandCwd, platform)
-          shell.mkdir('-p', pathToIosRunner)
-          await spin('Generating iOS Runner project',
+          if (!fs.existsSync(pathToIosRunner)) {
+            shell.mkdir('-p', pathToIosRunner)
+            await spin('Generating iOS Runner project',
             generateIosRunnerProject(
               Platform.currentPlatformVersionPath,
               pathToIosRunner,
               path.join(Platform.rootDirectory, 'containergen'),
               mainMiniAppName,
               false))
+          }
           break
         }
         default: {
