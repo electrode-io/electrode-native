@@ -79,6 +79,12 @@ Are you sure this is a MiniApp ?`)
     return new MiniApp(process.cwd())
   }
 
+  static existInPath (p) {
+    // Need to improve this one to check in the package.json if it contains the
+    // ern object with miniapp type
+    return fs.existsSync(path.join(p, 'package.json'))
+  }
+
   static fromPath (path) {
     return new MiniApp(path)
   }
