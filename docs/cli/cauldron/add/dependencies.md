@@ -1,7 +1,7 @@
 ## `ern cauldron add dependencies <dependencies..>`
 #### Description
 * Add one or more new native dependencies to a target native application version container (Cauldron)  
-* Generate and publish a new Container version
+* Create and publish a new Container version
 
 #### Syntax
 `ern cauldron add dependencies <dependencies..>`
