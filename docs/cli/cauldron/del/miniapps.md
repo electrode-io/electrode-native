@@ -1,28 +1,32 @@
-**Removes one or more MiniApp(s) from a Cauldron**
+## `ern cauldron del miniapps <miniapps..>`
+#### Description
+* Remove one or more MiniApps from a given non-released native application version in a Cauldron  
+* Generate and publish a new Container version—so that the native applications can use the new Container version to access the new MiniApp that was added  
+**Note** The `ern cauldron del miniapps <miniapps..>` command can remove (from the native application version container) all native dependencies that are only used by the removed MiniApps. The `ern cauldron del miniapps <miniapps..>` command does not do native dependency cleanup.
 
-The following command can be used to remove one or more `MiniApp(s)` from a given non released native application version in a Cauldron.  
+#### Syntax
+`ern cauldron del miniapps <miniapps..>`  
 
-Upon sucessful execution of this command, a new `Container` version will automatically be generated and published, so that the native application can use this new `Container` version to effectively get access to the new `MiniApp(s)` that have been added to it.  
+**Options**  
 
-### Caveeats
+`--containerVersion/-v <version>`
 
-This command could remove from the native application version container, all `native dependency(ies)` that are only used by the `MiniApp(s)` that are removed. However as of now, the command does not do any `native dependency(ies)` cleanup. If you need to cleanup `native dependency(ies)` that were only used by this/these `MiniApp(s)`, you should do it manually through `ern del dependencies`  command.
+* Specify a version for the new container  
+* **Default**  Incremental patch number of the current container version  
+Example: If the current container version is 1.2.3 and a version is not included in the command, the new container version will be 1.2.4.  
 
-### Command
+`--descriptor/-d <descriptor>`
 
-#### `ern cauldron del miniapps <miniapps..>`
-
-Removes one or more `MiniApp(s)` from a target native application version container.  
-This command does not have to be run from within a `MiniApp` working directory.  
-You do not have to provide version(s) of the `MiniApp(s)` to this command, it/they will be ignored anyway, as only one version of a given `MiniApp` can be present in a container at any given time, the version is of no need to find the `MiniApp(s)` in the Cauldron.
-
-#### `ern cauldron del miniapps <miniapps..> --containerVersion/-v <version>`
-
-Use a specific version for the newly generated container upon succesful execution of this command.  
-If not using this option, the command will, by default, increment the patch number of the current container version (i.e if current container version is `1.2.3`, upon succesful execution of this command, new container version will be set as `1.2.4`).
+* Remove the MiniApps from a given target native application version in the Cauldron matching the provided native application descriptor  
+* You can only pass a complete native application descriptor as the native dependencies removed using this command target only a specific single native application version.  
+**Default**  Lists all non-released native application versions from the Cauldron and prompts you to choose one to remove from the MiniApps  
 
 
-#### `ern cauldron del miniapps <miniapps..> --descriptor/-d <descriptor>`
+#### Remarks
+* You don't need to run the `ern cauldron del miniapps <miniapps..>` command from within a MiniApp working directory.    
+* You don't need to provide a version for the MiniApp when using the `ern cauldron del miniapps <miniapps..>` command. The version is ignored because only one version of a given MiniApp can be present in a container at any given time.  
 
-Will remove the `MiniApp(s))` from a given target native application version in the Cauldron, matching the provided native application descriptor. You can only pass a `complete native application descriptor` as the `MiniApp(s)` removed through this command can target only a single native application version, as of now.  
-If this option is not used, the command will list all the non released native application versions from the Cauldron and will prompt you to choose one to remove the `MiniApp(s)` from.
+#### Related commands
+ `ern del dependencies` | Manually cleanup native dependencies that are only used by the specified MiniApp
+
+____

@@ -1,44 +1,45 @@
-**Batch multiple container state update operations**
+## `ern cauldron batch [--option <value..>]`
+#### Description
+* Combine multiple Cauldron operations in a single command  
 
-This command allows to combine multiple Cauldron operations in a single execution.  
+#### Syntax
+`ern cauldron batch [--option <value..>]`  
 
-Due to the fact that a new `Container` is getting re-generated and published upon any `Cauldron` commands affecting the state of `Container`, it can be sometimes desired to combine multiple operations in a single batch so that `Container` is re-generated only once.
+**Options**  
 
-For example, if you'd like to update some dependencies versions in a `Container` while also adding new `MiniApps` to the container, without this command you would have to go through `ern cauldron update dependencies` and `ern cauldron add miniapps` commands, resulting in two operations and two `Container` generations.  
+`--addDependencies <dependencies..>`
 
-### Command
+* Add one or more native dependency versions to a target mobile application version Container  
 
-#### `ern cauldron batch --addDependencies <dependencies..>`  
+`--updateDependencies <dependencies..>`  
 
-Adds one or more native dependency(ies) version(s) to a target mobile application version `Container`
+* Update the version of one or more native dependencies in a target mobile application version Container
 
-#### `ern cauldron batch --updateDependencies <dependencies..>`  
+`--delDependencies <dependencies..>`
 
-Updates the version(s) of one or more native dependency(ies) in a target mobile application version `Container`
+* Remove one or more native dependencies from a target mobile application version Container
 
-#### `ern cauldron batch --delDependencies <dependencies..>`
 
-Removes one or more native dependency(ies) from a target mobile application version `Container`
+`--addMiniapps <miniapps..>`
 
-#### `ern cauldron batch --addMiniapps <miniapps..>`  
+* Add one or more MiniApp versions to a target mobile application version Container
 
-Adds one or more MiniApp(s) version(s) to a target mobile application version `Container`
 
-#### `ern cauldron batch --updateMiniapps <miniapps..>`  
+`--updateMiniapps <miniapps..>`
 
-Updates the version(s) of one or more MiniApp(s) in a target mobile application version `Container`
+* Update the version of one or more MiniApps in a target mobile application version Container
 
-#### `ern cauldron batch --delMiniapps <miniapps..>`
 
-Removes one or more MiniApp(s) from a target mobile application version `Container`
+`--delMiniapps <miniapps..>`
 
-### Remarks
+* Remove one or more MiniApps from a target mobile application version Container  
 
-This command performs the operations in the following order :
+#### Remarks
+* The `ern cauldron batch [--option <value..>]` command performs operations in the following order:  
 
-1) `delDependencies`
-2) `delMiniapps`
-3) `updateDependencies`
-4) `updateMiniapps`
-5) `addDependencies`
+1) `delDependencies`  
+2) `delMiniapps`  
+3) `updateDependencies`  
+4) `updateMiniapps`  
+5) `addDependencies`  
 6) `addMiniapps`
