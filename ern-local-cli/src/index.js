@@ -1,6 +1,7 @@
 // @flow
 
 import 'babel-polyfill'
+import './lib/log-noop.js'
 import {
   Platform
 } from 'ern-core'
