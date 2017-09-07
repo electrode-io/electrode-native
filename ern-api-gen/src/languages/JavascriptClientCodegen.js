@@ -73,6 +73,13 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         ["binary", "String"],
         ["UUID", "String"]);
 
+    _swaggerToFlowMapping =  new newHashMap(
+        ["Integer", "number"],
+        ["Number", "number"],
+        ["String", "string"],
+        ["Boolean", "boolean"]
+    )
+
     __languageSpecificPrimitives = newHashSet("String", "Boolean", "Integer", "Number", "Array", "Object", "Date", "File");
 
     constructor() {
@@ -630,17 +637,24 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
                 let hasOptionalParams = false;
                 for (const p of operation.allParams) {
                     if (p.required) {
-                        argList.push(p.paramName);
+                        let flowsify = p.paramName;
+                        const swaggerType = p.dataType;
+                        if(this._swaggerToFlowMapping.containsKey(swaggerType)){
+                            flowsify += `: ${this._swaggerToFlowMapping.get(swaggerType)}`;
+                        } else {
+                            flowsify += ": any";
+                        }
+                        argList.push(flowsify);
                     }
                     else {
                         hasOptionalParams = true;
                     }
                 }
                 if (hasOptionalParams) {
-                    argList.push("opts");
+                    argList.push("opts: any");
                 }
                 if (!this.usePromises) {
-                    argList.push("callback");
+                    argList.push("callback: Function");
                 }
                 operation._argList = argList.join(", ");
                 for (const cp of operation.allParams) {
