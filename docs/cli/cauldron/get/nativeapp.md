@@ -1,11 +1,17 @@
-**Get native application details from the Cauldron**
+## `ern cauldron get nativeapp <descriptor>`
+#### Description
+* Retrieve the data stored in the Cauldron for a given partial or complete native application descriptor
+* Log the data as a JSON formatted string in your terminal    
 
-This command can be used to get the details/data associated to a given native application, native application platform or native application version from the Cauldron.
+#### Syntax
+`ern cauldron get nativeapp <descriptor>`  
 
-As an alternative to this command, you can directly take a look in the `Cauldron` document stored in your git repository to see the native application(s) data.
+#### Remarks
+* The `ern cauldron get nativeapp <descriptor>` command is used to get the details and data associated to:
+  - A specified native application  
+  - A native application platform  
+  - A native application version  
 
-### Command
+* You can view the native application data in the Cauldron document stored in your Git repository.  
 
-#### `ern cauldron get nativeapp <descriptor>`
-
-Retrieves the data stored in the `Cauldron` for a given `partial or complete native application descriptor`, and log it as a JSON formatted string in your terminal.
+____

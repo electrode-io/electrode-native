@@ -1,25 +1,31 @@
-**Adds one or more native dependency(ies) to a Cauldron**
+## `ern cauldron add dependencies <dependencies..>`
+#### Description
+* Add one or more new native dependencies to a target native application version container (Cauldron)  
+* Create and publish a new Container version
 
-The following command can be used to add one or more new `native dependency(ies)` to a given non released native application version in a Cauldron. If you instead want to update the version(s) of already existing `native dependency(ies)`, you should use `ern cauldron update dependencies` command.
+#### Syntax
+`ern cauldron add dependencies <dependencies..>`
 
-Upon sucessful execution of this command, a new `Container` version will automatically be generated and published.  
+**Options**  
+`--containerVersion/-v <version>`
+* Specify a version for the new container  
+* **Default**  Incremental patch number of the current container version  
+Example: If the current container version is 1.2.3 and a version is not included in the command, the new container version will be 1.2.4.
 
-This command should be of rare use. Indeed, `native dependency(ies)` used by the `MiniApp(s)` are automatically added to the native application version `Container` if they are not yet present in the `Container`. This command can be used to add react native `native dependency(ies)` that are not directly used by the `MiniApp(s)` but only used on the native side. This is not a common scenario, therfore this command should be of limited use.
+`--descriptor/-d <descriptor>`
+* Add the native dependencies to a given target native application version in the Cauldron matching the provided native application descriptor  
+* You can only pass a complete native application descriptor as the native dependencies added using this command target only a specific single native application version.  
+**Default**  Lists all non-released native application versions from the Cauldron and  prompts you to choose one to add to the native dependencies
 
-Please note that you can only add `native dependency(ies)` versions that have been published to NPM, and cannot use `file` or `git` scheme for the `dependency(ies)` you add through this command. If one of these conditions is not met, the command will fail with an error.
+#### Remarks
+* The `ern cauldron add dependencies <dependencies..>` command is rarely used.  
+* Native dependencies used by the MiniApps are automatically added to the native application version Container if they are not yet present in the Container.  
+* This command can be used to add react-native `native dependencies` that are not directly used by the MiniApp but only used on the native side.  
+* You can only add native dependency versions that have been published to NPM.  
+* You cannot use the `file` or `git` scheme for the dependency that you add using this command.  
+* An error message is displayed if the command is not formatted correctly.
 
-### Command
+#### Related commands
+ `ern cauldron update dependencies` | Update the version of an existing native dependency
 
-#### `ern cauldron add dependencies <dependencies..>`
-
-Adds one or more `native dependency(ies)` to a target native application version container. 
-
-#### `ern cauldron add dependencies <dependencies..> --containerVersion/-v <version>`
-
-Use a specific version for the newly generated container upon succesful execution of this command.  
-If not using this option, the command will, by default, increment the patch number of the current container version (i.e if current container version is `1.2.3`, upon succesful execution of this command, new container version will be set as `1.2.4`).
-
-#### `ern cauldron add dependencies <dependencies..> --descriptor/-d <descriptor>`
-
-Will add the `native dependency(ies)` to a given target native application version in the Cauldron matching the provided native application descriptor. You can only pass a `complete native application descriptor` as the `native dependency(ies)` added through this command target only a specific single native application version.  
-If this option is not used, the command will list all the non released native application versions from the Cauldron and will prompt you to choose one to add the `native dependency(ies)` to.
+___  

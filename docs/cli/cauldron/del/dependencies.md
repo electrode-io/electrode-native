@@ -1,29 +1,32 @@
-**Removes one or more native dependency(ies) from a Cauldron**
+## `ern cauldron del dependencies <dependencies..>`
+#### Description
+* Remove one or more native dependencies from a non-released native application version container (Cauldron)  
+* Perform multiple checks to ensure that MiniApps in the current container, for this native application version, are not using the native dependencies  
+**Note** If one of the MiniApps is relying on one of the native dependencies, the command fails. In this situation, a list is displayed showing you the MiniApps that are depending on the native dependency. To resolve this, do one of the following:
+ - Remove the MiniApps that are relying on the dependency
+ - Remove the dependency from the MiniApp  
+* Create and publish a new Container version to account for the removal of the native dependencies
 
-This command can be used to remove one or more `native dependency(ies)` from a given non released native application version.  
+#### Syntax
+`ern cauldron del dependencies <dependencies..>`  
 
-The command will perform some checks during execution, to mainly make sure that no `MiniApp(s)` in the current container for this native application version, are using this/these `native dependency(ies)`. If at least one of the `MiniApp(s)` is relying on one of the native dependency(ies), the command will fail and list you the `MiniApp(s)` that are depending on it.  
-If that is the case, the solution is to either remove the `MiniApp(s)` that are relying on this/these dependency(ies), or to remove the dependency(ies) from the incriminated `MiniApp(s)`.
+**Options**  
 
-Upon sucessful execution of this command, a new `Container` version will automatically be generated and published to acount for the removal of this/these native dependency(ies).
+`--containerVersion/-v <version>`
 
-### Command
+* Specify a version for the new container  
+* **Default**  Incremental patch number of the current container version  
+Example: If the current container version is 1.2.3 and a version is not included in the command, the new container version will be 1.2.4.
 
-#### `ern cauldron del dependencies <dependencies..>`
+`--descriptor/-d <descriptor>`
 
-Removes one or more `native dependency(ies)` from a native application version container. 
+* Remove the native dependencies from a given target native application version in the Cauldron matching the provided native application descriptor  
+* You can only pass a complete native application descriptor as the native dependencies removed using this command target only a specific single native application version.  
+**Default**  Lists all non-released native application versions from the Cauldron and  prompts you to choose one to remove from the native dependencies  
 
-#### `ern cauldron del dependencies <dependencies..> --containerVersion/-v <version>`
+`--force/-f`
 
-Use a specific version for the newly generated container upon succesful execution of this command.  
-If not using this option, the command will, by default, increment the patch number of the current container version (i.e if current container version is `1.2.3`, upon succesful execution of this command, new container version will be set as `1.2.4`).
+* Bypass compatibility checks and force-remove the native dependencies from the Cauldron.  
+**Caution**  Before using the `--force/-f` option, be sure that you can bypass compatibility checks.
 
-#### `ern cauldron add dependencies <dependencies..> --descriptor/-d <descriptor>`
-
-Will remove the `native dependency(ies)` from a given target native application version in the Cauldron, matching the provided native application descriptor. You can only pass a `complete native application descriptor` as the `native dependency(ies)` removed through this command can target only a single native application version, as of now.
-If this option is not used, the command will list all the non released native application versions from the Cauldron and will prompt you to choose one to remove the `native dependency(ies)` from.
-
-#### `ern cauldron del dependencie <dependencies..> --force/-f`
-
-Bypass compatibility checks and force remove the `native dependency(ies)` from the Cauldron.  
-Only to be used if you really know what you're doing !
+______

@@ -1,11 +1,13 @@
-**Get the native dependency(ies) from the Cauldrom**
+## `ern cauldron get dependency <descriptor>`
+#### Description
+* Retrieve the native dependencies present in a native application version container
+* Log the native dependencies in your terminal    
 
-The following command can be used to list the native dependency(ies) currently present in a given native application version container.  
+#### Syntax
+`ern cauldron get dependency <descriptor>`  
 
-As an alternative to this command, you can directly take a look in the `Cauldron` document stored in your git repository to see the native dependency(ies).
+#### Remarks
+* The `ern cauldron get nativeapp <descriptor>` command is used to list the native dependencies currently in a native application version container.  
+* You can view the native dependencies in the Cauldron document stored in your Git repository.  
 
-### Command
-
-#### `ern cauldron get dependency <descriptor>`
-
-Retrieves the native dependency(ies) present in a given native application version container and log them to your terminal.
+____

@@ -1,73 +1,34 @@
-## `command name`
+## `ern add <dependency>`
 #### Description
-
-* <Action>...
+* Add the dependency to the MiniApp package.json when all checks pass
 
 #### Syntax
-`command syntax`
+`ern add <dependency>`
 
-**Options**
+**Options**  
+`--dev/-d`
 
-`--option name`
+* Add the dependency to the MiniApp package.json `devDependencies`  
+* Checks are not performed to add development dependencies  
 
-* description
-<br><br>
-**Default**  default description
-<br>Example: example if available
+`--peer/-p`
 
-`--option name`
-
-* description
-
-* description
-<br><br>
-**Default**  default description
-
+* Add the dependency to the MiniApp package.json `peerDependencies`  
+* Checks are not performed to add peer dependencies
 
 #### Remarks
-* remark 1
-* remark 2
+* The `ern add <dependency>` command is the `ern` equivalent of `yarn add` and `npm install`
+When you work with a MiniApp, always use `ern add` to add packages in place of `yarn add` or `npm install`.
 
+* The `ern add <dependency>` command runs `yarn add` and it performs important additional compatibility checks.
 
-#### Related commands
- `command name` | description
+* You don't need to specify an explicit version for a package that you add using `ern add`. If you add an explicit version for a package, it is ignored.
 
-#### Examples
-(Add example code text here if applicable)
+* If the package is declared in the current platform manifest, then the version from the manifest is used.  
 
+* The `ern add <dependency>` command performs the following checks:  
+ - If the package is declared in the manifest, then `ern` installs the package at the version declared in the manifest.
+ - If the package is not declared in the manifest, then additional checks are performed:
+    - If the package contains native code in any way (the package itself is a native module or it transitively contains one or more native dependencies, the command denies the package installation until a configuration is added to the manifest for this package.
+    - If the package contains only JavaScript code, then the command proceeds with the package installation without further checks.  
 -------
-
-
-**Adds a package/dependency to a `MiniApp` and any package it depends on**
-
-When working with a `MiniApp`, you should always use `ern add` to add packages to your `MiniApp` in place of `yarn add` or `npm install`.
-
-This command will run `yarn add` for you under the hood, but it will perform important additional compatibility checks beforehand. 
-
-You should not specify any explicit version for a package you add through `ern add`. It will be ignored anyway.  
-If the package is declared in the current platform `manifest`, then the version from the `manifest` will be used.  
-The checks performed by this command are as follow :  
-- If the package is declared in the manifest, then `ern` will install the package at the version declared in the manifest.
-- If the package is not declared in the manifest, then additional checks will be performed :
-  - If the package contains native code in any way (the package itself is a native module or it transitively contains one or more native dependency(ies)), the command will deny installation of the package until a configuration is added to the `manifest` for this package. 
-  - If the package contains only JS code, then the command will proceed with package installation with no further checks.
-
-### Command
-
-#### `ern add <dependency>`
-
-Given that all checks are passing, this will add the dependency to the `MiniApp` package.json `dependencies`
-
-#### `ern add <dependency> [--dev/-d]`
-
-This will add the dependency to the `MiniApp` package.json `devDependencies`  
-No checks are currently performed to add development dependencies.
-
-#### `ern add <dependency> [--peer/-p]`
-
-This will add the dpenedency to the `MiniApp` package.json `peerDependencies`  
-No checks are currently performed to add peer dependencies.
-
-### Remarks
-
-This command is the `ern` equivalent of `yarn add` / `npm install`
