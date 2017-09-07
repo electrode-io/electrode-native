@@ -1,10 +1,6 @@
 // @flow
 
 import {
-  generateContainerForRunner,
-  generateRunner
-} from 'ern-runner-gen'
-import {
   android,
   config as ernConfig,
   findNativeDependencies,
@@ -30,18 +26,10 @@ import {
   execSync
 } from 'child_process'
 import fs from 'fs'
-import inquirer from 'inquirer'
 import _ from 'lodash'
 import shell from 'shelljs'
 import tmp from 'tmp'
 import path from 'path'
-import ora from 'ora'
-
-const simctl = require('node-simctl')
-
-const {
-  runAndroid
-} = android
 
 export default class MiniApp {
   _path: string
@@ -218,117 +206,6 @@ Are you sure this is a MiniApp ?`)
 
   get nativeAndJsDependencies () : Array<Dependency> {
     return [...this.jsDependencies, ...this.nativeDependencies]
-  }
-
-  async runInIosRunner ({
-    reactNativeDevSupportEnabled
-  } : {
-    reactNativeDevSupportEnabled: boolean
-  } = {}) : Promise<*> {
-    reactnative.startPackagerInNewWindow()
-
-    // Unfortunately, for now, because Container for IOS is not as dynamic as Android one
-    // (no code injection for plugins yet :()), it has hard-coded references to
-    // our bridge and code-push ... so we absolutely need them in the miniapp for
-    // iOS container project to build
-    // Ensure that they are present
-    // This block should be removed once iOS container is improved to be more flexbile
-    const runnerConfig = {
-      platformPath: Platform.currentPlatformVersionPath,
-      plugins: this.nativeDependencies,
-      miniapp: {name: this.name, localPath: this.path},
-      outDir: `${this.path}/ios`,
-      platform: 'ios',
-      containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
-      reactNativeDevSupportEnabled
-    }
-
-    const iosDevices = await simctl.getDevices()
-    let iosDevicesChoices = _.filter(
-                                    _.flattenDeep(
-                                       _.map(iosDevices, (val, key) => val)
-                                        ), (device) => device.name.match(/^iPhone/))
-    const inquirerChoices = _.map(iosDevicesChoices, (val, key) => ({
-      name: `${val.name} (UDID ${val.udid})`,
-      value: val
-    }))
-
-    const answer = await inquirer.prompt([{
-      type: 'list',
-      name: 'device',
-      message: 'Choose iOS simulator',
-      choices: inquirerChoices
-    }])
-    try {
-      execSync(`killall "Simulator" `)
-    } catch (e) {
-      // do nothing if there is no simulator launched
-    }
-
-    try {
-      execSync(`xcrun instruments -w ${answer.device.udid}`)
-    } catch (e) {
-      // Apple will always throw some exception because we don't provide a -t.
-      // but we just care about launching simulator with chosen UDID
-    }
-
-    if (!fs.existsSync('ios')) {
-      log.info(`Generating runner iOS project`)
-      await generateRunner(runnerConfig)
-    } else {
-      log.info(`Re-generating runner container`)
-      await generateContainerForRunner(runnerConfig)
-    }
-
-    const device = answer.device
-    shell.cd(`${this.path}/ios`)
-
-    const spinner = ora(`Compiling runner project`).start()
-
-    try {
-      execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${this.path}/ios/build" build`)
-      spinner.text = 'Installing runner project on device'
-      await simctl.installApp(device.udid, `${this.path}/ios/build/Debug-iphonesimulator/ErnRunner.app`)
-      spinner.text = 'Launching runner project'
-      await simctl.launch(device.udid, 'com.yourcompany.ernrunner')
-      spinner.succeed('Done')
-    } catch (e) {
-      spinner.fail(e.message)
-      throw e
-    }
-  }
-
-  async runInAndroidRunner ({
-    reactNativeDevSupportEnabled
-  } : {
-    reactNativeDevSupportEnabled: boolean
-  } = {}) : Promise<*> {
-    reactnative.startPackagerInNewWindow()
-
-    const runnerConfig = {
-      platformPath: Platform.currentPlatformVersionPath,
-      plugins: this.nativeDependencies,
-      miniapp: {name: this.name, localPath: this.path},
-      outDir: `${this.path}/android`,
-      platform: 'android',
-      containerGenWorkingDir: `${Platform.rootDirectory}/containergen`,
-      reactNativeAarsPath: `${Platform.masterManifestDirectory}/react-native_aars`,
-      reactNativeDevSupportEnabled
-    }
-
-    if (!fs.existsSync('android')) {
-      log.info(`Generating runner android project`)
-      await generateRunner(runnerConfig)
-    } else {
-      log.info(`Re-generating runner container`)
-      await generateContainerForRunner(runnerConfig)
-    }
-
-    await runAndroid({
-      projectPath: `${this.path}/android`,
-      packageName: 'com.walmartlabs.ern'
-    })
   }
 
   async addDependency (
