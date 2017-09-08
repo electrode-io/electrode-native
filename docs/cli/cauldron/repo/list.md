@@ -1,8 +1,10 @@
-**Lists all the Cauldron repositories**
+## `ern cauldron repo list`
+#### Description
+* Lists all Cauldron repositories present in the local collection of repositories   
 
-### Command
+#### Syntax
+`ern cauldron repo list`
 
-#### `ern cauldron repo list`
 
-Will list all the `Cauldron` repositories currently present in the local collection of repositories. Basically, it will list all the `Cauldron` repositories (url and alias) that have been added through `ern cauldron repo add`.
-
+#### Remarks
+* The `ern cauldron repo list` command lists all Cauldron repositories, including the url and alias name, that have been added using the `ern cauldron repo add` command.

@@ -1,9 +1,10 @@
-**Use a Cauldron repository**
+## `ern cauldron repo use <alias>`
+#### Description
+* Set the Cauldron repository associated to the given alias as the currently activated Cauldron  
 
-### Command
+#### Syntax
+`ern cauldron repo use <alias>`  
 
-#### `ern cauldron repo use <alias>`
 
-Set the `Cauldron` repository associated to the given `alias` as the currently activated `Cauldron`. 
-
-This command will fail if the provided `alias` does not exist in the local collection of `Cauldron` repositories.
+#### Remarks
+* This command fails if the `alias` does not exist in the local collection of Cauldron repositories.  

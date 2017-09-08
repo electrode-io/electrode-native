@@ -1,8 +1,7 @@
-**List all platform versions**
+## `ern platform list`
+#### Description
+* List all released versions of the platform
+* Highlight the versions that are installed locally and indicate the active version
 
-### Command
-
-#### `ern platform list`
-
-Will list all the released versions of the platform. 
-It will highlight the versions that are installed locally, as well as indicate the currently actived version.
+#### Syntax
+`ern platform list`  

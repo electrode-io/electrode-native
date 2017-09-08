@@ -1,11 +1,14 @@
-**Removes a Cauldron repository**
+## `ern cauldron repo remove <alias>`
+#### Description
+* Remove an existing Cauldron repository, identified by its `alias`, from a local collection of Cauldron repositories    
 
-### Command
+#### Syntax
+`ern cauldron repo remove <alias>`  
 
-#### `ern cauldron repo remove <alias>`
 
-Will remove an existing Cauldron repository, given its `alias`, from a local collection of Cauldron repositories.  
-
-If the `alias` does not exists, the command will fail.  
-
-You also cannot remove a repository that is the currently activated one. If that is the case, you'll need to first switch to another repository using `ern cauldron repo use` before executing this command.
+#### Remarks
+* This command fails if the `alias` does not exist in the local collection of Cauldron repositories.  
+* You cannot remove a currently active repository.  
+To remove a currently active repository:  
+1) Switch to another repository using the `ern cauldron repo use` command.  
+2) Use the `ern cauldron repo remove <alias>` command.
