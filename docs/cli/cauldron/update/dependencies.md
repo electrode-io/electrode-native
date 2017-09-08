@@ -1,24 +1,30 @@
-**Updates the version of one or more native dependency(ies) in Cauldron**
+## `ern cauldron update dependencies <dependencies..>`
+#### Description
+* Update the versions of one or more native dependencies in a non-released target native application version container (Cauldron)  
+* Generate and publish a new Container version
 
-The following command can be used to update the version(s) of one or more existing `native dependency(ies)` in a non released native application version. If you instead want to add one or more new `native dependency(ies)`, you should use `ern cauldron add dependencies`. 
+#### Syntax
+`ern cauldron update dependencies <dependencies..>`
 
-Upon sucessful execution of this command, a new `Container` version will automatically be generated and published.  
+**Example**  
+`ern cauldron update dependencies MyDependency@1.2.3`  
+This example shows how to update the version of `MyDependency` to 1.2.3 in the native application version.  
 
-This command should be of rare use, considering that `native dependency(ies)` versions are automatically updated if necessary when adding or updating `MiniApps` through `ern cauldron add miniapps` and `ern cauldron update miniapps` commands.
+**Options**  
+`--containerVersion/-v <version>`
+* Specify a version for the new container  
+* **Default**  Incremental patch number of the current container version  
+Example: If the current container version is 1.2.3 and a version is not included in the command, the new container version will be 1.2.4.
 
-### Command
+`--descriptor/-d <descriptor>`
+* Update the native dependencies in a given target native application version in the Cauldron matching the provided native application descriptor  
+* You can only pass a *complete native application descriptor* as the native dependencies updated using this command target only a specific single native application version.  
+**Default**  Lists all non-released native application versions from the Cauldron and  prompts you to choose one to update.
 
-#### `ern cauldron update dependencies <dependencies..>`
+#### Remarks
+* The `ern cauldron update dependencies <dependencies..>` command is rarely used.  
+* Native dependency versions are automatically updated if necessary when adding or updating MiniApps using the `ern cauldron add miniapps` command and the `ern cauldron update miniapps` command  
+* The `dependencies` value should specify the version to update to.
 
-Update the version(s) of one or more given dependency(ies) in a non released native application version.  
-The `dependencies` provided should include the version to update to. For example `ern cauldron update dependencies MyDependency@1.2.3` will update the  version of `MyDependency` to `1.2.3` in the native application version.
-
-#### `ern cauldron update dependencies <dependencies..> --containerVersion/-v <version>`
-
-Use a specific version for the newly generated container upon succesful execution of this command.  
-If not using this option, the command will, by default, increment the patch number of the current container version (i.e if current container version is `1.2.3`, upon succesful execution of this command, new container version will be set as `1.2.4`).
-
-#### `ern cauldron update dependencies <dependencies..> --descriptor/-d <descriptor>`
-
-Will update the `native dependency(ies)` contained in a given target native application version in the Cauldron that matches the provided native application descriptor. You can only pass a `complete native application descriptor` as this command target can only a specific single native application version.  
-If this option is not used, the command will list all the non released native application versions from the Cauldron and will prompt you to choose one in which to update the `native dependency((ies)` version(s).
+#### Related commands
+ `ern cauldron add dependencies` | Add one or more new native dependencies

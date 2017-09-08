@@ -1,7 +1,6 @@
-**Display the currently activated Cauldron**
+## `ern cauldron repo current`
+#### Description
+* Display the alias and the repository URL of the currently active Cauldron   
 
-### Command
-
-#### `ern cauldron repo current`  
-
-This will display the `alias` and the repository `url` of the currently activated Cauldron.
+#### Syntax
+`ern cauldron repo current`

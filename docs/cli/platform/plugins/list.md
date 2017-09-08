@@ -1,12 +1,16 @@
-**List all plugins supported by a platform version**
+## `ern platform plugins list`
+#### Description
+* List all plugins (native dependencies) and their versions supported by the active platform version
 
-### Command
+#### Syntax
+`ern platform plugins list`  
 
-#### `ern platform plugins list`  
+**Options**  
 
-Will list all the plugins (native dependencies), and their versions, supported by the currently activated platform version.
-This data is retrieved from the platform `Manifest`.
+`[platformVersion]`
 
-#### `ern platform plugins list [platformVersion]`  
+* List all plugins (native dependencies) and their versions supported by a specified platform version
 
-Will list all the plugins (native dependencies), and their versions, supported by a given platform version.
+
+#### Remarks
+* This data is retrieved from the platform Manifest.

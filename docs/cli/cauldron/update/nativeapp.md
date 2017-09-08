@@ -1,13 +1,19 @@
-**Update native application data in the Cauldron**
+## `ern cauldron update nativeapp <descriptor> [isReleased]`
+#### Description
+* Update the release status of a native application version in the Cauldron.  
 
-This command can currently only update the release status of a given native application version in the Cauldron. 
+#### Syntax
+`ern cauldron update nativeapp <descriptor> [isReleased]`
 
-### Command
+**Options**  
 
-#### `ern cauldron update nativeapp <descriptor> [isReleased]`
+`isReleased`
 
-Updates the release status of a given native application version. 
-The `descriptor` should be a `complete native application descriptor` as this command can only work on a given native application version.  
-`isReleased` is optional, and is set to `true` by default.  
+* The release status is optional.  
+* **Default**  The release status is true.  
 
-Switching a native application version from `non released` status to `released` status will  change the behavior of some commands. When a native application version is released, on one hand, its container is frozen, nothing can be added or removed from it. On the other hand, it acivates the possibility to perform `CodePush` updates targeting this native application version, through the `ern code-push` command.
+#### Remarks
+* The `descriptor` value should be a *complete native application descriptor*.  
+* The `ern cauldron update nativeapp <descriptor> [isReleased]` command works only on a specified native application version.  
+* Switching a native application version from `non released` status to `released` status changes the behavior of some commands.  
+* When a native application version is released, its container is frozen and nothing can be added or removed from the container. However, you can use `CodePush` updates targeting this native application version using the `ern code-push` command.

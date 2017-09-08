@@ -1,8 +1,15 @@
-**Uninstalls a platform version**
+## `ern platform uninstall <version>`
+#### Description
+* Uninstall a platform version  
 
-### Command
+#### Syntax
+`ern platform uninstall <version>`
 
-#### `ern platform uninstall <version>`
+#### Remarks
+* You cannot uninstall the active platform version.  
+* To uninstall an active version:  
+1) Switch to a different version using the `ern platform use` command.  
+2) Run the `ern platform uninstall <version>` command.
 
-This will uninstall a given platform version.  
-Please note that this command will fail if you try to uninstall the currently activated platform version. If that is what you're trying to do, you'll need to first switch to a different version using `ern platform use` command.
+#### Related commands
+ `ern platform use` | Switch to an installed version if the version was installed previously or install a version and immediately switch to that version

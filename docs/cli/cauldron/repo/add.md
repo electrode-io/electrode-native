@@ -1,19 +1,20 @@
-**Adds a Cauldron repository**
+## `ern cauldron repo add <alias> <url>`
+#### Description
+* Add a Cauldron repository to a local collection of Cauldron repositories  
 
-### Command
+#### Syntax
+`ern cauldron repo add <alias> <url>`  
 
-#### `ern cauldron repo add <alias> <url>`
+**Example**  
+`ern cauldron repo add git@github.com:User/Cauldron.git my-cauldron`  
+This example shows how to add the Cauldron repository titled `my-cauldron`, that is located in `git@github.com:User/Cauldron.git`, to your local collection of Cauldron repositories.    
 
-Will add a Cauldron repository to a local collection of Cauldron repositories.  
+**Options**  
 
-The `alias` should be a given custom alias of your choice to easily refer to this Cauldron repository.
-The `url` should be the git repository url (ssh or https) of the Cauldron. 
+`--current true/false`
 
-For example, `ern cauldron repo add git@github.com:User/Cauldron.git my-cauldron` will add the Cauldron repository located in `git@github.com:User/Cauldron.git` to your local collection of Cauldron repositories, and associate the `alias` `my-cauldron` to it.  
+* Set the repository as the active repository after adding it to the collection of repositories.  
+* If this option is not provided, you are prompted to choose if you want to set the repository as the active repository.  
 
-If the `alias` is already used, the command will fail.
-
-#### `ern cauldron repo add <alias> <url> --current true/false`
-
-This will set the repository as the current activated one after adding it. 
-If this flag is not provided, you will be prompted by the command to choose if you want to set it as the currently activated repository or not.
+#### Remarks
+* If the `alias` exists, the command fails.  

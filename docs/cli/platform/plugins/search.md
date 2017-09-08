@@ -1,13 +1,17 @@
-**Search for a specific plugin **
+## `ern platform plugins search <name>`
+#### Description
+* Search for a specified plugin for the active platform version
+* Log search results to the terminal
 
-### Command
+#### Syntax
+`ern platform plugins search <name>`  
 
-#### `ern platform plugins search <name>`
+**Options**  
 
-Search for a `plugin` given its `name` for the current activated platform version.
-This will log to the terminal the plugin (if supported by current platform version) along with its version.
+`[platformVersion]`
 
-#### `ern platform plugins search <name> [platformVersion]`
+* Search for a specified plugin for a specific platform version
 
-Search for a `plugin` given its `name` for a specific `platformVersion`.
-This will log to the terminal the plugin (if supported by current platform version) along with its version.
+
+#### Remarks
+* The search results include the plugin (if supported by the current platform version) and its version.

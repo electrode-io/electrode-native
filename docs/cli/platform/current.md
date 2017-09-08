@@ -1,8 +1,9 @@
-**Display the current platform version**
+## `ern platform current`
+#### Description
+* Display the current platform version  
 
-### Command
+#### Syntax
+`ern platform current`  
 
-#### `ern platform current`
-
-Will log the currently activated platform version in your terminal. 
-You can switch to a different platform version using `ern platform use` command.
+#### Related commands
+ `ern platform use` | Switch to an installed version if the version was installed previously or install a version and immediately switch to that version
