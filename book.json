@@ -1,0 +1,23 @@
+{
+  "root": "./docs",
+  "gitbook": "3.2.3",
+  "title": "Electrode React Native Developer's Guide",
+  "description": "Electrode React Native Platform Developer's Guide",
+  "plugins": [
+    "edit-link",
+    "prism",
+    "-highlight",
+    "github",
+    "anchorjs",
+    "add-path-to-parent"
+  ],
+  "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/electrode-io/electrode-react-native/tree/master/docs",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/electrode-io/electrode-react-native"
+    }
+  }
+}
