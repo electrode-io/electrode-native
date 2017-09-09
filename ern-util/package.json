@@ -49,19 +49,18 @@
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^1.1.3",
-    "cli-table": "^0.3.1",
     "console-log-level": "^1.4.0",
     "fs-readdir-recursive": "^1.0.0",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
-    "node-emoji": "^1.5.1",
     "node-fetch": "^1.7.1",
     "ora": "^1.1.0",
-    "react-native-cli": "^2.0.1",
-    "semver": "^5.3.0",
     "shelljs": "^0.7.6",
-    "yargs": "^6.6.0"
+    "tmp": "^0.0.31",
+    "code-push-cli": "1.12.9-beta",
+    "react-native-cli": "^2.0.1",
+    "yarn": "^1.0.1"
   },
   "devDependencies": {
     "ern-util-dev": "0.0.1"

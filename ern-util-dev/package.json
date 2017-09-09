@@ -42,6 +42,11 @@
   "scripts": {
     "test": "./bin/ern-mocha.js"
   },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "shelljs": "^0.7.6",
+    "tmp": "^0.0.31"
+  },
   "bin": {
     "ern-babel": "bin/ern-babel.js",
     "ern-mocha": "bin/ern-mocha.js",

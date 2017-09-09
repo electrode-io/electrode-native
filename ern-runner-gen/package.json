@@ -51,7 +51,11 @@
   "dependencies": {
     "ern-container-gen": "0.0.1",
     "ern-util": "0.0.1",
-    "ern-core": "0.0.1"
+    "ern-core": "0.0.1",
+    "mustache": "^2.3.0",
+    "shelljs": "^0.7.6",
+    "tmp": "^0.0.31",
+    "fs-readdir-recursive": "^1.0.0"
   },
   "devDependencies": {
     "ern-util-dev": "0.0.1"

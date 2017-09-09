@@ -51,16 +51,13 @@
     "ern-runner-gen": "0.0.1",
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
-    "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
-    "inquirer": "^3.0.6",
     "mustache": "^2.3.0",
     "shelljs": "^0.7.6", 
-    "path": "^0.12.7",
     "tmp": "^0.0.31",
-    "lodash": "^4.17.3",
-    "ora": "^1.1.0",
-    "semver": "^5.4.1"
+    "lodash": "^4.17.4",
+    "semver": "^5.4.1",
+    "simple-git": "^1.70.0"
   },
   "devDependencies": {
     "ern-util-dev": "0.0.1"
