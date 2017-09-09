@@ -61,6 +61,6 @@
     "ern-util-dev": "0.0.1"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=4.5"
   }
 }

@@ -52,6 +52,9 @@
     "ern-mocha": "bin/ern-mocha.js",
     "ern-nyc": "bin/ern-nyc.js"
   },
+  "engines": {
+    "node": ">=4.5"
+  },
   "author": "",
   "license": "Apache-2.0"
 }
