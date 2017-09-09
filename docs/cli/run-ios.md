@@ -1,21 +1,20 @@
-**Runs a `MiniApp` on an iOS simulator or connected device**  
+## `ern run-ios`
+#### Description
+* Runs a MiniApp on an iOS emulator or connected device  
 
-### Command
+#### Syntax
+`ern run-ios`
 
-#### `ern run-ios`  
+**Options**  
 
-This will launch the `MiniApp` located in the current working directory, in the platform `Runner` application, on a connected ios device or running simulator (if any).  
-If there is no connected ios device, the command will ask to select a simulator to launch from the list of installed images.  
+`ern run-ios <miniapp>`
 
-Please note that the first time this command is run from within a `MiniApp` directory, it will generate an `ios` directory containing the `iOS runner` application project. If the `ios` folder already exist (not first run of `ern run-ios` command for this `MiniApp`), the existing `runner` project will be used. 
-After the `runner` project is generated, you can safely make native code modifications to it, knowing that on next runs of `ern run-ios`, the project and your changes will be left untouched.  
-If you want to regenerate the `runner` project from scratch, just remove the `ios` directory.
+* Launch a specified MiniApp in the Runner application  
 
-#### `ern run-ios <miniapp>`
-
-Will launch the given `miniapp` in the Runner application. 
-The `miniapp` can be any `yarn` package descriptor, including `git` or `file system` path schemes.
-
-### Remarks
-
-This command is the `ern` equivalent of `react-native run-ios`
+#### Remarks
+* You can launch the MiniApp located in the current working directory or on a connected iOS device or running emulator if available. If a connected iOS device is not available, the command prompts you to select an emulator to launch from the list of installed emulator images.  
+* The first time you run this command from within a MiniApp directory, it generates an iOS directory containing the iOS Runner application project. If the iOS folder already exists (it is not the first run of the `ern run-ios` command for this MiniApp), the existing runner project is used.  
+* After the runner project is generated, you can safely make native code modifications to it, knowing that the next time the `ern run-ios` command is issued, the project and your changes will remain.  
+* If you want to regenerate the runner project from scratch, remove the iOS directory.  
+* The miniapp can be any Yarn package descriptor, including Git or other file system path schemes.  
+* The `ern run-ios` command is the `ern` equivalent of the `react-native run-ios` command.

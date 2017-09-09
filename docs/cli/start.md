@@ -1,27 +1,30 @@
-**Starts the react-native packager for a composite bundle**
+## `ern start`
+#### Description
+* Create a composite bundle out of multiple MiniApps and start the react-native local packager to serve this bundle so that it can be loaded within the native host application  
 
-This command can be used to package multiple `MiniApp(s)` inside a single composite bundle and automatically starts the react-native local packager to serve this bundle.
+#### Syntax
+`ern start`  
 
-It can be useful during development, if ever you need to launch and develop/debug your `MiniApp(s)` from within a native host application which contains other `MiniApp(s)` along with yours.
+**Note**
+If you do not pass an argument to this command, you are prompted to select a native application version from the Cauldron. The command uses whatever MiniApp versions are currently declared in this native application version container to launch the command.  
 
-This command works in symbiosis with the `ern link` command, please refer to this command for more details.
+**Options**  
 
-### Command
+`--descriptor/-d <descriptor>`
 
-#### `ern start`
+* Target a specific native application version, associated to the provided *complete native application descriptor*.  
+* This option uses whatever MiniApp versions are currently declared in this native application version container to launch the command.  
 
-Create a composite bundle out of multiple `MiniApp(s)` and start the react-native local packager to serve this bundle so that it can be loaded within the native host application.  
-If you do not pass any argument to this command, it will prompt you to select a native application version from the `Cauldron`. It will use all the `MiniApp(s)` versions present in the `Container` of this native application version to run the command.
+`--miniapps/m <miniapps>`
 
-#### `ern start --descriptor/-d <descriptor>`
+* Specify one or more MiniApps to launch this command  
+* The command packages all the provided MiniApps in a composite bundle and starts the react-native packager.  
+* You can use any valid Yarn package descriptor for the MiniApps provided to this command, including Git and other file system path schemes.  
 
-Target a specific native application version, associated to the provided `complete native application descriptor`. This will use whatever `MiniApp(s)` version(s) are currently declared in this native application version container to launch the command.
+#### Remarks
+* This command can be used to package multiple MiniApps inside a single composite bundle and automatically start the react-native local packager to serve this bundle.  
+* Use this command when you need to launch and develop or debug your MiniApps from within a native host application which contains other MiniApps along with your MiniApp.  
+* This command works with the `ern link` command. For additional information, see the documentation for the `ern link` command.  
 
-#### `ern start --miniapps/m <miniapps>`
-
-Provide one or more `MiniApp(s)` to launch this command. The command will package all the provided `MiniApp(s)` in a composite bundle and start the react-native packager out of it. 
-You can use any valid `yarn` package descriptor for the `MiniApp(s)` provided to this command, including git and file system path schemes.
-
-### Remarks
-
-This command can be considered as the `ern` equivalent of `react-native start`
+#### Related commands
+ `ern link` | Link to a MiniApp directory

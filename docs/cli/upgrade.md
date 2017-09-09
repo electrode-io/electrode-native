@@ -1,11 +1,12 @@
-**Upgrades a MiniApp**
+## `ern upgrade`
+#### Description
+* Upgrades a MiniApp to the currently activated platform version
 
-### Command
+#### Syntax
+`ern upgrade`
 
-#### `ern upgrade`
+**Options**  
 
-This will upgrade a MiniApp to the currently activated platform version.  
+`--version/-v <version>`
 
-#### `ern upgrade --version/-v <version>`  
-
-Upgrade the MiniApp to a specific platform version.
+* Upgrade the MiniApp to a specific platform version  

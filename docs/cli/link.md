@@ -1,31 +1,35 @@
-**Links a given MiniApp directory**
+## `ern link`
+___  
+**Caution** Read through all sections below before using this command.
+___  
+#### Description
+* Link to a specified MiniApp directory  
 
-This command can be of great use during development of your `MiniApp(s)` if you're looking for a way to develop/debug and even use react-native `hot reload` feature for your `MiniApp(s)` when it is run inside a host application, along with other `MiniApp(s)`.   
+The `ern link` command is helpful during development of your MiniApps as a way to develop and debug your application. The command is also helpful as a way to use the react-native hot reload feature for your MiniApps when the command is run inside a host application along with other MiniApps.   
 
-The issue in this scenario is that, because multiple `MiniApp(s)` are running together in the native application, you cannot just use `react-native start` from within your `MiniApp` folder and load the `bundle` from the local react-native packager as you would usually do when running your MiniApp standalone in the runner.
+The `ern link` command was developed to help with developing and debugging MiniApps when running them inside a target native host application. This benefit is realized in the following scenario: When you run multiple MiniApps together in the native application, you cannot use the `react-native start` command from within your MiniApp directory and load the bundle from the local react-native packager as you would normally do when running your MiniApp standalone in the runner.
 
-Indeed, using the local packager just for your `MiniApp` will make the native application crash (or display react-native red screen) whenever it will try to load another `MiniApp`, due to the fact that it won't find the other `MiniApp` in your own `MiniApp` bundle served through the local packager.  
+Using the local packager for your MiniApp makes the native application fail whenever it attempts to load another MiniApp—due to the fact that it doesn't find the other MiniApps in your own MiniApp bundle served through the local packager. And, if running a single MiniApp, the react-native packager does not function well with symbolic links.
 
-Also even if running a single `MiniApp`, react-native packager does not play well with symbolic links. 
+In response to this scenario, you can use the `ern link` command to help with developing and debugging MiniApps when running them inside a target native host application.
 
-For all these reasons, we had to introduce a dedicated command to help with developping/debugging `MiniApp(s)` when running them inside a target native host application.
+The `ern link` or the `ern unlink` plus the `ern start` commands are used together to achieve this.
 
-`ern link` / `ern unlink` and `ern start` are used together to achieve this.
+#### Syntax
+`ern link`  
 
-### Command 
 
-#### `ern link`
+#### Caveats
+1) Due to the current simple-watching mechanism used by this command, the working directory of the MiniApp should contain the exact same code and the exact same dependencies as the MiniApp that is going to be retrieved by the `ern start` command.   
+2) In order to add a JavaScript dependency to your MiniApp or change a JavaScript dependency version, you must relaunch the bundling from the start after adding or updating the dependencies using the `ern start` command.
 
-This command needs to be executed within a `MiniApp` working directory. It will `link` the `MiniApp` so that any changes to the code of the `MiniApp`, inside its working directory will be available in the native host application through a manual react-native reload of the `MiniApp` or through the `live/hot reload` feature of react-native.
 
-After running `ern link`, the linking of the `MiniApp` will remain in effect until you `unlink` it through `ern unlink` command.
+#### Remarks
+* This command must be executed within a MiniApp working directory.  
+* Any changes to the code of the MiniApp, inside its working directory, are available in the native host application through a manual react-native reload of the MiniApp or through the live/hot reload feature of react-native.  
+* After running the `ern link` command, the link to the MiniApp directory remains in effect until you unlink it using the `ern unlink` command.  
+* The MiniApps link is used when you use the `ern start` command. This command creates a composite bundle with all the MiniApps contained within the native application and starts the react-native packager for this bundle.
 
-The `MiniApp(s)` links will only be used when you use the `ern start` command. This command will actually create a composite bundle with all the `MiniApp(s)` contained within the native application and will start the react-native packager for this bundle.
-
-### Caeveats
-
-This command is still an **experimental** command. We are actively working on making it better, but as of now it comes with some important limitations that you should be aware of. 
-
-First, due to the current simple watching mecanism used by this command, the working directory of the `MiniApp` should contain the exact same code and the exact same dependencies as the `MiniApp` that is going to be retrieved by the `ern start` command.
-
-Secondly, if you want to add any JS dependency to your `MiniApp` or change a JS dependency version, you'll need to relaunch the bundling from the start after adding/updating the dependencies, through `ern start` command.
+#### Related commands
+ `ern start` | Start the ERN platform  
+ `ern unlink` | Remove the link associated to a MiniApp directory
