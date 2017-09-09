@@ -9,7 +9,8 @@
     "-highlight",
     "github",
     "anchorjs",
-    "add-path-to-parent"
+    "add-path-to-parent",
+    "versions"
   ],
   "pluginsConfig": {
     "edit-link": {
@@ -18,6 +19,9 @@
     },
     "github": {
       "url": "https://github.com/electrode-io/electrode-react-native"
+    },
+     "versions": {
+       "type": "tags"
     }
   }
 }
