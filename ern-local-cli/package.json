@@ -45,7 +45,8 @@
     "build": "ern-babel",
     "test": "ern-mocha",
     "coverage":"ern-nyc",
-    "prepublish": "yarn run build"
+    "prepublish": "yarn run build",
+    "postinstall": "scripts/postinstall.js"
   },
   "license": "Apache-2.0",
   "dependencies": {

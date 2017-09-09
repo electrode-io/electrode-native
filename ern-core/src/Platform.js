@@ -33,7 +33,7 @@ export default class Platform {
   }
 
   static get versionCacheDirectory () : string {
-    return `${this.rootDirectory}/cache`
+    return `${this.rootDirectory}/versions`
   }
 
   static get latestVersion () : string {

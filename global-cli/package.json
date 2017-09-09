@@ -1,10 +1,10 @@
 {
-  "name": "@walmart/electrode-react-native",
-  "version": "0.0.15",
+  "name": "electrode-react-native",
+  "version": "0.0.1",
   "description": "ERN global client",
   "main": "./dist/index.js",
   "bin": {
-    "ern": "bin/ern.js"
+    "ern-oss": "bin/ern.js"
   },
   "homepage": "http://www.electrode.io",
   "repository": {
