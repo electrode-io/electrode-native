@@ -1,26 +1,29 @@
-**MiniApp(s) compatibility checking**
+## `ern compat-check`
+#### Description
+* Check the compatibility of one or more MiniApps with a given native application version.   
+* Display a compatibility report indicating if the MiniApps are compatible with the given native application version  
+* Display a formatted table listing all compatible dependencies and their versions as well as incompatible dependencies to help you pinpoint any problematic non-compatible native dependencies  
 
-This command allows to check the compatibility of one or more `MiniApp(s)` wtih a given native application version. 
+#### Syntax
+`ern compat-check`  
 
-Upon successful execution, this command will display a compatibility report indicating if the `MiniApp(s)` is/are compatible with the given native application version, as well as a formatted table, listing all compatible dependency and their versions as well as incompatible dependencies to help you precisely pinpoint what are the problematic non compatible native dependencies, if any.
+* You can run the `ern compat-check` command without arguments if you are in a MiniApp directory.  
+* If you run the `ern compat-check` command without arguments and you are not in a MiniApp directory, the command logs an error and exits.  
 
-### Command
+`ern compat-check <miniapp>`
 
-#### `ern compat-check`
+* Check the compatibility of a specified MiniApp with a native application version  
+The MiniApp can be any valid Yarn package descriptor or you can use Git or other file system path scheme.  
 
-Check the compatibility of the current `MiniApp` with a native application version.
-Running this command without any arguments will assume that the command is executed from within a `MiniApp` directory and will run compatibility checks for this `MiniApp`. If that is not the case, the command will log an error and exit.  
 
-#### `ern compat-check <miniapp>`
+**Options**  
 
-Check the compatibility of a given `MiniApp` with a native application version.  
-The `MiniApp` can be any valid `yarn` package descriptor, you can even use git or file system path schemes.
+`--miniapps/-m`
 
-#### `ern compat-check --miniapps/-m`
+* Check the compatibility of one or more MiniApps with a native application version  
+The MiniApps can be any valid Yarn package descriptor or you can use Git or other file system path scheme.  
 
-Check the compatibility of one or more `MiniApp(s)` with a native application version. 
-The `MiniApp(s)` can be any valid `yarn` package descriptor(s), you can even use git or file system path schemes.
+`--descriptor/-d`
 
-#### `ern compat-check --descriptor/-d`
-
-Specify the native application version, as a `complete native application descriptor` for which to check compatibility with the `MiniApp(s)`
+* Check the compatibility of one or more MiniApps with a native application version  
+Specify the native application version as a *complete native application descriptor* for which to check compatibility with the MiniApps  

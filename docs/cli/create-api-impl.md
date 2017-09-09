@@ -1,35 +1,39 @@
-**Creates an API implementation for Native <-> MiniApp communication**
+## `ern create-api-impl <api>`
+#### Description
+* Create an implementation skeleton project for a specified API  
+**Note** This command does not require that you are the author of the API that you are planning to implement, but it requires that the API has been created first.  
 
-This command can be used to kickstart the native or JS implementation of an `API`, by generating a skeleton project. You can then just fill in the gaps with your implementation !
+#### Syntax
+`ern create-api-impl <api>`  
 
-You might or might not be the author of the `API` that you are planning to implement, but in any case a pre-requisite of generating an `API` implementation is to have an `API` to create an implementation for.  
+**Options**  
 
-If you haven't created an `API` yet, you'll need to do that first before jumping into implementation. You can create an `API` using the `ern create-api` command.
+`--nativeOnly/-n`
 
-### Command
+* Generate an implementation skeleton project for a native implementation of the API  
 
-#### `ern create-api-impl <api>` 
+`--jsOnly/-j`
 
-This will create an implementation skeleton project for the given API.
+* Generate an implementation skeleton project for a JavaScript implementation of the API  
 
-The name of the implementation will mirror the name of the `api` package, with the `-impl` suffix added to it.  
-For example, `ern create-api-impl react-native-weather-api`, will generate an implementation project named `react-native-weather-api-impl`.
-Running this command without specifying a platform (native v.s js in the case of this command), will prompt for platform selection.
+`--outputDirectory/-o <directory>`
 
-#### `ern create-api-impl <api> --nativeOnly/-n`
+* Generate the project in a specified output directory  
+* **Default**  The project is generated in a new directory named as the API implementation project. The new directory is created in the current working directory.  
 
-Will generate an implementation skeleton project for a native implementation of the `api`.
+`--force/-f`
 
-#### `ern create-api-impl <api> --jsOnly/-j`
+* Force the creation of an API implementation project  
+* **Caution**  If there is already an implementation project in the target directory, the new project will overwrite the existing project completely. Use this option only if you are sure that you can overwrite any existing project.  
 
-Will generate an implementation skeleton project for a JavaScript implementation of the `api`
 
-#### `ern create-api-impl <api> --outputDirectory/-o <directory>`
+#### Remarks
+* The name of the implementation mirrors the name of the API package with the `-impl` suffix.  
+* If you do not specify a platform (for example, native v.s JavaScript), you are prompted to select a platform.    
 
-Generate the project in a specific provided output `directory`. 
-By default, the project will be generated in a new directory, named as the `api` implementation project, and created at the location the command is run from.
+#### Related commands
+ `ern create-api` | Create an API
 
-#### `ern create-api-impl <api> --force/-f`
-
-Force creation of the `api` implementation project, even if there is already an implementation project in the target directory (it will overwrite it completely).  
-Use this flag only if you know what you're doing.
+#### Examples
+`ern create-api-impl react-native-weather-api`  
+This example shows how to create an API skeleton project named `react-native-weather-api-impl`.

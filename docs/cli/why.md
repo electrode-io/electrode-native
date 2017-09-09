@@ -1,11 +1,9 @@
-**List the MiniApp(s) using a given native dependency**
+## `ern why <dependency> <descriptor>`
+#### Description
+* List all (or none) of the MiniApps using a specified native dependency
 
-### Command
+#### Syntax
+`ern why <dependency> <descriptor>`
 
-#### `ern why <dependency> <descriptor>`
-
-This commnad will list all (or none) of the `MiniApp(s)` that are using a given native `dependency`. 
-
-### Remarks
-
-This command is somewhat the `ern` equivalent of `yarn why`, for native dependencies.
+#### Remarks
+* This command is similar to the `ern` equivalent of the `yarn why` command for native dependencies.  

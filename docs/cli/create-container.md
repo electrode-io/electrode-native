@@ -1,44 +1,56 @@
-**Creates a new Native or JS only container**
+## `ern create-container`
+#### Description
+* Create a new container (native or JavaScript only) locally to the workstation  
 
-This command can be used to create a `Container` locally, for development, debugging and experimentation purposes. 
-If you instead want to create a container that gets published, so that your native application team can use it, you should instead use one of the `Cauldron` commands to add your `MiniApp(s)` to a given native application version in the `Cauldron`, which will in turn trigger the generation and publication of a `Container`. Check out `ern cauldron add miniapp` for more details.
+#### Syntax
+`ern create-container`  
 
-### Command
+**Options**  
 
-#### `ern create-container`
+`--version/-v <version>`
 
-This will create a new container, locally to the workstation.
-For Android, in addition of being generated, the `Container` will also get published to your local Maven repository.  
+* Specify the version to use for the Container  
+* The version must be in the format: `x.y.z` where x, y and z are integers. For example `version=1.2.30`.
+* **Default**  If you don't provide an explicit version, the default version 1.0.0 is used.  
 
-#### `ern create-container --version/-v <version>`
+`--jsOnly/--js`
 
-Specify the `version` to use for the Container. The version should comply with the form `x.y.z` where x, y and z are integers (for example `version=1.2.30`)  
-If you don't provide an explicit version, the default version `1.0.0` will be used.
+* Create a JavaScript-only container  
+* A JavaScript-only container is also known as a *MiniApps composite*.   
+* **Default**  If this option is not used, a full native container including the JavaScript bundle containing all MiniApps, is generated.
 
-#### `ern create-container --jsOnly/--js`
+`--decriptor/-d <descriptor>`
 
-This will create a JavaScript only container (a.k.a MiniApps composite). If not specified, a full native container (including the JS bundle containing all MiniApps) will be generated.
+* Create a new container including all the MiniApps listed in the Cauldron for the given *complete native application descriptor*  
+* Use this option if you want to locally generate a container that mirrors the container of a given native application version.  
 
-#### `ern create-container --decriptor/-d <descriptor>`
+`--miniapps/-m <miniapps>`
 
-This will create a new container including all the `MiniApps` listed in the `Cauldron` for the given `complete native application descriptor`.
-This is useful if you want to locally generate a container that mirrors the one of a given native application version.  
+* Create a new custom container including all the given MiniApps  
+* The MiniApps passed to this command can be a valid Yarn package format or a Git format or file scheme.  
 
-#### `ern create-container --miniapps/-m <miniapps>`
+`--dependencies/-deps <dependencies>`
 
-This will create a new custom container including all the given `MiniApps`. The `MiniApps` passed to this command can be any valid `yarn` package format (you can even use git and/or file scheme).
+* Inject the provided extra native dependencies in your locally generated container  
+* This option can only be used when generating a container that is not JavaScript only (`--js` switch), or based on a native application version from Cauldron (`--descriptor` option).  
+For the latter, if you want to add extra native dependencies to your container that are not listed as dependencies of any of the MiniApps, you can instead use the `ern cauldron add dependencies` command to add the extra native dependencies directly in the native application version stored in Cauldron.  
+You can only provide published dependencies to this command.  
+You cannot use the Git or file package descriptors for referring to the dependencies.
 
-#### `ern create-container --dependencies/-deps <dependencies>`
+`--platform/-p <android|ios>`
 
-This will inject the provided extra native dependencies in your locally generated container. 
-This option can only be used when generating a container that is not JS only (`--js` switch), nor based on a native application version from Cauldron (`--descriptor` option). For the latter, if you want to add extra native dependencies to your container, that are not listed as dependencies of any of the `MiniApps`, you can instead use `ern cauldron add dependencies` command to add the extra native dependencies directly in the native application version stored in Cauldron.
-You can only provided published dependencies to this command (i.e you cannot use git or file package descriptors for reffering to the dependencies).
+* Specify the target platform for this container   
+* If not explicitely provided, the command prompts you to choose between the iOS or the Android platform before execution.  
 
-#### `ern create-container --platform/-p <android|ios>`
+`--outDir/-o <directory>`
 
-Specify the target platform for this container. 
-If not explicitely provided, the command will prompt you to choose between `ios` and `android` platform before execution.
+* Specify the output directory where the container generated project should be stored upon creation  
+* **Default**  If this option is not provided, the container is generated in the default platform directory `~/.ern/containergen/out`.
 
-#### `ern create-container --outDir/-o <directory>`
+#### Remarks
+* The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  
+* To create a container that is published so that your native application team can use the container, you should use one of the Cauldron commands to add your MiniApps to a specified native application version in the Cauldron, which will trigger the generation and publication of a Container. See *Related commands*.  
+* For Android OS, the Container is also published to your local Maven repository.  
 
-Specify the output directory where the container generated project should be stored upon creation. If not provided, the container will be generated in the default platform directory `~/.ern/containergen/out`.
+#### Related commands
+ `ern cauldron add miniapp` | Add one or more MiniApps to a non-released native application version in a Cauldron

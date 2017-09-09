@@ -1,9 +1,14 @@
-**Unlinks a given MiniApp directory**
+## `ern unlink`
+#### Description
+* Remove the link associated to a MiniApp directory  
 
-Please refer to `ern link` command documentation to get the context about this command, as it can only be executed withing a `MiniApp` directory that was previously linked using `ern link` command.
+#### Syntax
+`ern unlink`
 
-### Command
 
-#### `ern unlink`
+#### Remarks
+* You must run this command from within a MiniApp working directory that was linked using the `ern link` command.  
+* When you remove the link associated to a MiniApp directory, the package launched using the `ern start` command, won't use this MiniApp directory any longer to load the code of the MiniApp.  
 
-This command needs to be run from within a `MiniApp` working directory that was linked through `ern link`. It removes the link associated to this `MiniApp` so that the packager launched through `ern start` won't use this `MiniApp` folder any longer to load the code of the `MiniApp`.
+#### Related commands
+ `ern link` | Link to a MiniApp directory
