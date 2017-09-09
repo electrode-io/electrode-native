@@ -2,9 +2,6 @@
   "name": "ern-cauldron-api",
   "version": "0.5.1",
   "description": "ERN module to create, access and manage Cauldrons",
-  "bin": {
-    "ern-cauldron-server": "index.js"
-  },
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
   "repository": {

@@ -3,9 +3,6 @@
   "version": "0.5.1",
   "description": "ERN module to generate containers",
   "main": "./dist/index.js",
-  "bin": {
-    "ern-container-gen": "dist/launchbin.js"
-  },
   "homepage": "http://www.electrode.io",
   "repository": {
     "type": "git",
