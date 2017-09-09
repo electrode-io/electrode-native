@@ -18,8 +18,7 @@
     "flow"
   ],
   "bin": {
-    "ern": "ern-global-cli/bin/ern.js",
-    "ern-dev": "ern-global-cli/bin/ern-dev.js"
+    "ern": "ern-global-cli/bin/ern.js"
   },
   "dependencies": {
     "chalk": "^1.1.3"
