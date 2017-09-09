@@ -29,20 +29,20 @@
       "email": "blemaire@walmartlabs.com"
     },
     {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
       "name": "Bharath Marulasiddappa",
       "email": "BMarulasiddappa@walmartlabs.com"
     },
     {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
     },
     {
       "name": "Krunal Shah",
       "email": "KShah1@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
     }
   ],
   "scripts": {
