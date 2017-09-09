@@ -24,9 +24,6 @@ npm-debug.log
 # VSCode
 .vscode
 
-# libgen
-.libgencache.json
-
 # distrib
 distrib
 
