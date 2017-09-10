@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const childProcess = require('child_process')
 const execSync = childProcess.execSync
 const fs = require('fs')

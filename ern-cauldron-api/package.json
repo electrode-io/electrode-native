@@ -42,7 +42,6 @@
     }
   ],
   "scripts": {
-    "start": "node index.js",
     "test": "ern-mocha",
     "build": "ern-babel",
     "coverage": "ern-nyc",

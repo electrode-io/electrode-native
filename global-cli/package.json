@@ -5,6 +5,10 @@
   "main": "./dist/index.js",
   "bin": {
     "ern-oss": "bin/ern.js"
+    "ern": "bin/ern.js"
+  },
+  "scripts": {
+    "postinstall": "scripts/postinstall.js"
   },
   "homepage": "http://www.electrode.io",
   "repository": {
