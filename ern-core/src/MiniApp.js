@@ -1,7 +1,6 @@
 // @flow
 
 import {
-  android,
   config as ernConfig,
   findNativeDependencies,
   Dependency,
