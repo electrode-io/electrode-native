@@ -28,6 +28,7 @@ npm-debug.log
 distrib
 
 */dist
+*/tmp
 
 ern-cauldron-api/test/.cauldron-test
 
