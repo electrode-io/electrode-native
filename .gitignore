@@ -24,13 +24,11 @@ npm-debug.log
 # VSCode
 .vscode
 
-# libgen
-.libgencache.json
-
 # distrib
 distrib
 
 */dist
+*/tmp
 
 ern-cauldron-api/test/.cauldron-test
 

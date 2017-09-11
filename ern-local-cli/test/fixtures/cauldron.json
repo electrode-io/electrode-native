@@ -12,7 +12,7 @@
               "isReleased": true,
               "binary": null,
               "nativeDeps": [
-                "@walmart/react-native-electrode-bridge@1.5.0",
+                "react-native-electrode-bridge@1.5.0",
                 "react-native@0.42.0",
                 "react-native-code-push@1.17.1-beta"
               ],
@@ -31,7 +31,7 @@
               "binary": null,
               "yarnlock": null,
               "nativeDeps": [
-                "@walmart/react-native-electrode-bridge@1.5.0",
+                "react-native-electrode-bridge@1.5.0",
                 "react-native@0.42.0",
                 "react-native-code-push@1.17.1-beta",
                 "react-native-maps@1.17.1"
@@ -51,7 +51,7 @@
               "binary": null,
               "yarnlock": null,
               "nativeDeps": [
-                "@walmart/react-native-electrode-bridge@1.5.0",
+                "react-native-electrode-bridge@1.5.0",
                 "react-native@0.42.0",
                 "react-native-code-push@1.17.1-beta",
                 "react-native-maps@1.17.1"
@@ -75,7 +75,7 @@
               "isReleased": true,
               "binary": null,
               "nativeDeps": [
-                "@walmart/react-native-electrode-bridge@1.5.0",
+                "react-native-electrode-bridge@1.5.0",
                 "react-native@0.42.0",
                 "react-native-code-push@1.17.1-beta"
               ],
@@ -94,7 +94,7 @@
               "binary": null,
               "yarnlock": null,
               "nativeDeps": [
-                "@walmart/react-native-electrode-bridge@1.5.0",
+                "react-native-electrode-bridge@1.5.0",
                 "react-native@0.42.0",
                 "react-native-code-push@1.17.1-beta",
                 "react-native-maps@1.17.1"

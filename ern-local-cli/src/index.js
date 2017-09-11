@@ -1,6 +1,5 @@
 // @flow
 
-import 'babel-polyfill'
 import './lib/log-noop.js'
 import {
   Platform

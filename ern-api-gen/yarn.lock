@@ -2,6 +2,20 @@
 # yarn lockfile v1
 
 
+ansi-escapes@^2.0.0:
+  version "2.0.0"
+  resolved "http://localhost:4873/ansi-escapes/-/ansi-escapes-2.0.0.tgz#5bae52be424878dd9783e8910e3fc2922e83c81b"
+
+ansi-regex@^3.0.0:
+  version "3.0.0"
+  resolved "http://localhost:4873/ansi-regex/-/ansi-regex-3.0.0.tgz#ed0317c322064f79466c02966bddb605ab37d998"
+
+ansi-styles@^3.1.0:
+  version "3.2.0"
+  resolved "http://localhost:4873/ansi-styles/-/ansi-styles-3.2.0.tgz#c159b8d5be0f9e5a6f346dab94f16ce022161b88"
+  dependencies:
+    color-convert "^1.9.0"
+
 argparse@^1.0.7:
   version "1.0.9"
   resolved "http://npme.walmart.com/argparse/-/argparse-1.0.9.tgz#73d83bc263f86e97f8cc4f6bae1b0e90a7d22c86"
@@ -23,15 +37,43 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
+chalk@^2.0.0:
+  version "2.1.0"
+  resolved "http://localhost:4873/chalk/-/chalk-2.1.0.tgz#ac5becf14fa21b99c6c92ca7a7d7cfd5b17e743e"
+  dependencies:
+    ansi-styles "^3.1.0"
+    escape-string-regexp "^1.0.5"
+    supports-color "^4.0.0"
+
 chance@~1.0.1:
   version "1.0.6"
   resolved "http://npme.walmart.com/chance/-/chance-1.0.6.tgz#4734f62d02b738cdc2882d8b5d41f89af49e7bfd"
+
+cli-cursor@^2.1.0:
+  version "2.1.0"
+  resolved "http://localhost:4873/cli-cursor/-/cli-cursor-2.1.0.tgz#b35dac376479facc3e94747d41d0d0f5238ffcb5"
+  dependencies:
+    restore-cursor "^2.0.0"
+
+cli-width@^2.0.0:
+  version "2.2.0"
+  resolved "http://localhost:4873/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
 
 collections@^5.0.6:
   version "5.0.6"
   resolved "http://npme.walmart.com/collections/-/collections-5.0.6.tgz#539c0ec6f300cec8f1da207cba8d165cbbbb6992"
   dependencies:
     weak-map "~1.0.x"
+
+color-convert@^1.9.0:
+  version "1.9.0"
+  resolved "http://localhost:4873/color-convert/-/color-convert-1.9.0.tgz#1accf97dd739b983bf994d56fec8f95853641b7a"
+  dependencies:
+    color-name "^1.1.1"
+
+color-name@^1.1.1:
+  version "1.1.3"
+  resolved "http://localhost:4873/color-name/-/color-name-1.1.3.tgz#a7d0558bd89c42f795dd42328f740831ca53bc25"
 
 combined-stream@^1.0.5:
   version "1.0.5"
@@ -61,21 +103,6 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "http://npme.walmart.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-cross-env@^3.2.4:
-  version "3.2.4"
-  resolved "http://npme.walmart.com/cross-env/-/cross-env-3.2.4.tgz#9e0585f277864ed421ce756f81a980ff0d698aba"
-  dependencies:
-    cross-spawn "^5.1.0"
-    is-windows "^1.0.0"
-
-cross-spawn@^5.1.0:
-  version "5.1.0"
-  resolved "http://npme.walmart.com/cross-spawn/-/cross-spawn-5.1.0.tgz#e8bd0efee58fcff6f8f94510a0a554bbfa235449"
-  dependencies:
-    lru-cache "^4.0.1"
-    shebang-command "^1.2.0"
-    which "^1.2.9"
-
 debug@2, debug@^2.2.0:
   version "2.6.1"
   resolved "http://npme.walmart.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
@@ -100,6 +127,10 @@ discontinuous-range@1.0.0:
   version "1.0.0"
   resolved "http://npme.walmart.com/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
 
+escape-string-regexp@^1.0.5:
+  version "1.0.5"
+  resolved "http://localhost:4873/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
+
 esprima@^3.1.1:
   version "3.1.3"
   resolved "http://npme.walmart.com/esprima/-/esprima-3.1.3.tgz#fdca51cee6133895e3c88d535ce49dbff62a4633"
@@ -108,9 +139,23 @@ extend@3.0.0:
   version "3.0.0"
   resolved "http://npme.walmart.com/extend/-/extend-3.0.0.tgz#5a474353b9f3353ddd8176dfd37b91c83a46f1d4"
 
+external-editor@^2.0.4:
+  version "2.0.4"
+  resolved "http://localhost:4873/external-editor/-/external-editor-2.0.4.tgz#1ed9199da9cbfe2ef2f7a31b2fde8b0d12368972"
+  dependencies:
+    iconv-lite "^0.4.17"
+    jschardet "^1.4.2"
+    tmp "^0.0.31"
+
 faker@~3.1.0:
   version "3.1.0"
   resolved "http://npme.walmart.com/faker/-/faker-3.1.0.tgz#0f908faf4e6ec02524e54a57e432c5c013e08c9f"
+
+figures@^2.0.0:
+  version "2.0.0"
+  resolved "http://localhost:4873/figures/-/figures-2.0.0.tgz#3ab1a2d2a62c8bfb431a0c94cb797a2fce27c962"
+  dependencies:
+    escape-string-regexp "^1.0.5"
 
 form-data@1.0.0-rc3:
   version "1.0.0-rc3"
@@ -124,25 +169,78 @@ formidable@~1.0.14:
   version "1.0.17"
   resolved "http://npme.walmart.com/formidable/-/formidable-1.0.17.tgz#ef5491490f9433b705faa77249c99029ae348559"
 
+fs.realpath@^1.0.0:
+  version "1.0.0"
+  resolved "http://localhost:4873/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
+
+glob@^7.0.0:
+  version "7.1.2"
+  resolved "http://localhost:4873/glob/-/glob-7.1.2.tgz#c19c9df9a028702d678612384a6552404c636d15"
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^3.0.4"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
 "graceful-readlink@>= 1.0.0":
   version "1.0.1"
   resolved "http://npme.walmart.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
-inherits@~2.0.1:
+has-flag@^2.0.0:
+  version "2.0.0"
+  resolved "http://localhost:4873/has-flag/-/has-flag-2.0.0.tgz#e8207af1cc7b30d446cc70b734b5e8be18f88d51"
+
+iconv-lite@^0.4.17:
+  version "0.4.18"
+  resolved "http://localhost:4873/iconv-lite/-/iconv-lite-0.4.18.tgz#23d8656b16aae6742ac29732ea8f0336a4789cf2"
+
+inflight@^1.0.4:
+  version "1.0.6"
+  resolved "http://localhost:4873/inflight/-/inflight-1.0.6.tgz#49bd6331d7d02d0c09bc910a1075ba8165b56df9"
+  dependencies:
+    once "^1.3.0"
+    wrappy "1"
+
+inherits@2, inherits@~2.0.1:
   version "2.0.3"
   resolved "http://npme.walmart.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
 
-is-windows@^1.0.0:
-  version "1.0.1"
-  resolved "http://npme.walmart.com/is-windows/-/is-windows-1.0.1.tgz#310db70f742d259a16a369202b51af84233310d9"
+inquirer@^3.0.6:
+  version "3.2.3"
+  resolved "http://localhost:4873/inquirer/-/inquirer-3.2.3.tgz#1c7b1731cf77b934ec47d22c9ac5aa8fe7fbe095"
+  dependencies:
+    ansi-escapes "^2.0.0"
+    chalk "^2.0.0"
+    cli-cursor "^2.1.0"
+    cli-width "^2.0.0"
+    external-editor "^2.0.4"
+    figures "^2.0.0"
+    lodash "^4.3.0"
+    mute-stream "0.0.7"
+    run-async "^2.2.0"
+    rx-lite "^4.0.8"
+    rx-lite-aggregates "^4.0.8"
+    string-width "^2.1.0"
+    strip-ansi "^4.0.0"
+    through "^2.3.6"
+
+interpret@^1.0.0:
+  version "1.0.3"
+  resolved "http://localhost:4873/interpret/-/interpret-1.0.3.tgz#cbc35c62eeee73f19ab7b10a801511401afc0f90"
+
+is-fullwidth-code-point@^2.0.0:
+  version "2.0.0"
+  resolved "http://localhost:4873/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz#a3b30a5c4f199183167aaab93beefae3ddfb654f"
+
+is-promise@^2.1.0:
+  version "2.1.0"
+  resolved "http://localhost:4873/is-promise/-/is-promise-2.1.0.tgz#79a2a9ece7f096e80f36d2b2f3bc16c1ff4bf3fa"
 
 isarray@0.0.1:
   version "0.0.1"
   resolved "http://npme.walmart.com/isarray/-/isarray-0.0.1.tgz#8a18acfca9a8f4177e09abfc6038939b05d1eedf"
-
-isexe@^2.0.0:
-  version "2.0.0"
-  resolved "http://npme.walmart.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
 
 js-base64@^2.1.9:
   version "2.1.9"
@@ -154,6 +252,10 @@ js-yaml@^3.5.2:
   dependencies:
     argparse "^1.0.7"
     esprima "^3.1.1"
+
+jschardet@^1.4.2:
+  version "1.5.1"
+  resolved "http://localhost:4873/jschardet/-/jschardet-1.5.1.tgz#c519f629f86b3a5bedba58a88d311309eec097f9"
 
 json-refs@^2.1.5:
   version "2.1.6"
@@ -193,16 +295,9 @@ lodash.isequal@^4.4.0:
   version "4.5.0"
   resolved "http://npme.walmart.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
 
-lodash@^4.17.4, lodash@^4.2.0:
+lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.4"
   resolved "http://npme.walmart.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
-
-lru-cache@^4.0.1:
-  version "4.1.1"
-  resolved "http://npme.walmart.com/lru-cache/-/lru-cache-4.1.1.tgz#622e32e82488b49279114a4f9ecf45e7cd6bba55"
-  dependencies:
-    pseudomap "^1.0.2"
-    yallist "^2.1.2"
 
 methods@~1.1.1:
   version "1.1.2"
@@ -222,7 +317,11 @@ mime@1.3.4:
   version "1.3.4"
   resolved "http://npme.walmart.com/mime/-/mime-1.3.4.tgz#115f9e3b6b3daf2959983cb38f149a2d40eb5d53"
 
-minimatch@^3.0.3:
+mimic-fn@^1.0.0:
+  version "1.1.0"
+  resolved "http://localhost:4873/mimic-fn/-/mimic-fn-1.1.0.tgz#e667783d92e89dbd342818b5230b9d62a672ad18"
+
+minimatch@^3.0.3, minimatch@^3.0.4:
   version "3.0.4"
   resolved "http://npme.walmart.com/minimatch/-/minimatch-3.0.4.tgz#5166e286457f03306064be5497e8dbb0c3d32083"
   dependencies:
@@ -246,9 +345,33 @@ mustache@^2.3.0:
   version "2.3.0"
   resolved "http://npme.walmart.com/mustache/-/mustache-2.3.0.tgz#4028f7778b17708a489930a6e52ac3bca0da41d0"
 
+mute-stream@0.0.7:
+  version "0.0.7"
+  resolved "http://localhost:4873/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
+
 native-promise-only@^0.8.1:
   version "0.8.1"
   resolved "http://npme.walmart.com/native-promise-only/-/native-promise-only-0.8.1.tgz#20a318c30cb45f71fe7adfbf7b21c99c1472ef11"
+
+once@^1.3.0:
+  version "1.4.0"
+  resolved "http://localhost:4873/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
+  dependencies:
+    wrappy "1"
+
+onetime@^2.0.0:
+  version "2.0.1"
+  resolved "http://localhost:4873/onetime/-/onetime-2.0.1.tgz#067428230fd67443b2794b22bba528b6867962d4"
+  dependencies:
+    mimic-fn "^1.0.0"
+
+os-tmpdir@~1.0.1:
+  version "1.0.2"
+  resolved "http://localhost:4873/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
+
+path-is-absolute@^1.0.0:
+  version "1.0.1"
+  resolved "http://localhost:4873/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"
 
 path-loader@^1.0.1:
   version "1.0.1"
@@ -257,15 +380,15 @@ path-loader@^1.0.1:
     native-promise-only "^0.8.1"
     superagent "^1.6.1"
 
+path-parse@^1.0.5:
+  version "1.0.5"
+  resolved "http://localhost:4873/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
+
 path-to-regexp@^1.2.1:
   version "1.7.0"
   resolved "http://npme.walmart.com/path-to-regexp/-/path-to-regexp-1.7.0.tgz#59fde0f435badacba103a84e9d3bc64e96b9937d"
   dependencies:
     isarray "0.0.1"
-
-pseudomap@^1.0.2:
-  version "1.0.2"
-  resolved "http://npme.walmart.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
 
 qs@2.3.3:
   version "2.3.3"
@@ -287,23 +410,64 @@ readable-stream@1.0.27-1:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
+rechoir@^0.6.2:
+  version "0.6.2"
+  resolved "http://localhost:4873/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
+  dependencies:
+    resolve "^1.1.6"
+
 reduce-component@1.0.1:
   version "1.0.1"
   resolved "http://npme.walmart.com/reduce-component/-/reduce-component-1.0.1.tgz#e0c93542c574521bea13df0f9488ed82ab77c5da"
+
+resolve@^1.1.6:
+  version "1.4.0"
+  resolved "http://localhost:4873/resolve/-/resolve-1.4.0.tgz#a75be01c53da25d934a98ebd0e4c4a7312f92a86"
+  dependencies:
+    path-parse "^1.0.5"
+
+restore-cursor@^2.0.0:
+  version "2.0.0"
+  resolved "http://localhost:4873/restore-cursor/-/restore-cursor-2.0.0.tgz#9f7ee287f82fd326d4fd162923d62129eee0dfaf"
+  dependencies:
+    onetime "^2.0.0"
+    signal-exit "^3.0.2"
 
 ret@~0.1.10:
   version "0.1.13"
   resolved "http://npme.walmart.com/ret/-/ret-0.1.13.tgz#38c2702ece654978941edd8b7dfac6aeeef4067d"
 
-shebang-command@^1.2.0:
-  version "1.2.0"
-  resolved "http://npme.walmart.com/shebang-command/-/shebang-command-1.2.0.tgz#44aac65b695b03398968c39f363fee5deafdf1ea"
+run-async@^2.2.0:
+  version "2.3.0"
+  resolved "http://localhost:4873/run-async/-/run-async-2.3.0.tgz#0371ab4ae0bdd720d4166d7dfda64ff7a445a6c0"
   dependencies:
-    shebang-regex "^1.0.0"
+    is-promise "^2.1.0"
 
-shebang-regex@^1.0.0:
-  version "1.0.0"
-  resolved "http://npme.walmart.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
+rx-lite-aggregates@^4.0.8:
+  version "4.0.8"
+  resolved "http://localhost:4873/rx-lite-aggregates/-/rx-lite-aggregates-4.0.8.tgz#753b87a89a11c95467c4ac1626c4efc4e05c67be"
+  dependencies:
+    rx-lite "*"
+
+rx-lite@*, rx-lite@^4.0.8:
+  version "4.0.8"
+  resolved "http://localhost:4873/rx-lite/-/rx-lite-4.0.8.tgz#0b1e11af8bc44836f04a6407e92da42467b79444"
+
+semver@^5.3.0:
+  version "5.4.1"
+  resolved "http://localhost:4873/semver/-/semver-5.4.1.tgz#e059c09d8571f0540823733433505d3a2f00b18e"
+
+shelljs@^0.7.6:
+  version "0.7.8"
+  resolved "http://localhost:4873/shelljs/-/shelljs-0.7.8.tgz#decbcf874b0d1e5fb72e14b164a9683048e9acb3"
+  dependencies:
+    glob "^7.0.0"
+    interpret "^1.0.0"
+    rechoir "^0.6.2"
+
+signal-exit@^3.0.2:
+  version "3.0.2"
+  resolved "http://localhost:4873/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
 slash@^1.0.0:
   version "1.0.0"
@@ -313,9 +477,22 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "http://npme.walmart.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
+string-width@^2.1.0:
+  version "2.1.1"
+  resolved "http://localhost:4873/string-width/-/string-width-2.1.1.tgz#ab93f27a8dc13d28cac815c462143a6d9012ae9e"
+  dependencies:
+    is-fullwidth-code-point "^2.0.0"
+    strip-ansi "^4.0.0"
+
 string_decoder@~0.10.x:
   version "0.10.31"
   resolved "http://npme.walmart.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
+
+strip-ansi@^4.0.0:
+  version "4.0.0"
+  resolved "http://localhost:4873/strip-ansi/-/strip-ansi-4.0.0.tgz#a8479022eb1ac368a871389b635262c505ee368f"
+  dependencies:
+    ansi-regex "^3.0.0"
 
 superagent@^1.6.1:
   version "1.8.5"
@@ -332,6 +509,12 @@ superagent@^1.6.1:
     qs "2.3.3"
     readable-stream "1.0.27-1"
     reduce-component "1.0.1"
+
+supports-color@^4.0.0:
+  version "4.4.0"
+  resolved "http://localhost:4873/supports-color/-/supports-color-4.4.0.tgz#883f7ddabc165142b2a61427f3352ded195d1a3e"
+  dependencies:
+    has-flag "^2.0.0"
 
 swagger-methods@^1.0.0:
   version "1.0.0"
@@ -357,6 +540,16 @@ sway@^1.0.0:
     swagger-schema-official "2.0.0-bab6bed"
     z-schema "^3.16.1"
 
+through@^2.3.6:
+  version "2.3.8"
+  resolved "http://localhost:4873/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
+
+tmp@^0.0.31:
+  version "0.0.31"
+  resolved "http://localhost:4873/tmp/-/tmp-0.0.31.tgz#8f38ab9438e17315e5dbd8b3657e8bfb277ae4a7"
+  dependencies:
+    os-tmpdir "~1.0.1"
+
 uri-js@^2.1.1:
   version "2.1.1"
   resolved "http://npme.walmart.com/uri-js/-/uri-js-2.1.1.tgz#eb3f8505f468969bf92cb79ce8ceaac2ed667661"
@@ -369,15 +562,9 @@ weak-map@~1.0.x:
   version "1.0.5"
   resolved "http://npme.walmart.com/weak-map/-/weak-map-1.0.5.tgz#79691584d98607f5070bd3b70a40e6bb22e401eb"
 
-which@^1.2.9:
-  version "1.3.0"
-  resolved "http://npme.walmart.com/which/-/which-1.3.0.tgz#ff04bdfc010ee547d780bec38e1ac1c2777d253a"
-  dependencies:
-    isexe "^2.0.0"
-
-yallist@^2.1.2:
-  version "2.1.2"
-  resolved "http://npme.walmart.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
+wrappy@1:
+  version "1.0.2"
+  resolved "http://localhost:4873/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
 
 z-schema@^3.16.1:
   version "3.18.2"

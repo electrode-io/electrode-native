@@ -44,9 +44,9 @@ exports.handler = async function ({
   apiAuthor?: string,
   schemaPath?: string
 }) {
-  const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('@walmart/react-native-electrode-bridge'))
+  const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
   if (!bridgeDep) {
-    return log.error(`@walmart/react-native-electrode-bridge not found in manifest. cannot infer version to use`)
+    return log.error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
   }
 
   const reactNative = await manifest.getNativeDependency(Dependency.fromString('react-native'))

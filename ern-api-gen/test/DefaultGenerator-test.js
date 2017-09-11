@@ -85,8 +85,8 @@ describe('DefaultGenerator', function () {
   it("should generate: 'uber.json' for 'javascript'", generate('uber.json', 'javascript', 'uber/js')
         .then(compare('uber/js', 'fixtures/uber/js')))
 
-  it("should generate: 'uber.json' for 'swift'", generate('uber.json', 'Swift', 'uber/swift')
-        .then(compare('uber/swift', 'fixtures/uber/swift')))
+  //it("should generate: 'uber.json' for 'swift'", generate('uber.json', 'Swift', 'uber/swift')
+  //      .then(compare('uber/swift', 'fixtures/uber/swift')))
 
   it("should generate: 'baseType.json' for 'ern-android'", generate('baseType.json', 'ERNAndroid', 'ern-android-baseType'))
   it("should generate: 'isListContainer.json' for 'ern-android'", generate('isListContainer.json', 'ERNAndroid', 'ern-android-isListContainer'))

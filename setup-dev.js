@@ -9,7 +9,7 @@ const shell = require('shelljs')
 // Path to ern platform root folder
 const ERN_PATH = `${process.env['HOME']}/.ern`
 // Path to ern platform cache folder (containing all installed cached versions of the platform)
-const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/cache`
+const ERN_VERSIONS_CACHE_PATH = `${ERN_PATH}/versions`
 // Path from where this script is run (wherever the user cloned the repo locally)
 const WORKING_DIR = process.cwd()
 

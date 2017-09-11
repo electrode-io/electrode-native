@@ -1,10 +1,13 @@
 {
-  "name": "@walmart/electrode-react-native",
-  "version": "0.0.15",
+  "name": "electrode-react-native",
+  "version": "1.0.4",
   "description": "ERN global client",
   "main": "./dist/index.js",
   "bin": {
     "ern": "bin/ern.js"
+  },
+  "scripts": {
+    "postinstall": "scripts/postinstall.js"
   },
   "homepage": "http://www.electrode.io",
   "repository": {
@@ -26,25 +29,28 @@
       "email": "blemaire@walmartlabs.com"
     },
     {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
       "name": "Bharath Marulasiddappa",
       "email": "BMarulasiddappa@walmartlabs.com"
     },
     {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
     },
     {
       "name": "Krunal Shah",
       "email": "KShah1@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
     }
   ],
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^1.1.3",
     "update-notifier": "^1.0.3"
+  },
+  "engines": {
+    "node": ">=4.5"
   }
 }

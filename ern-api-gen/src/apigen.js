@@ -96,7 +96,7 @@ export async function regenerateCode (options: Object = {}) {
     apiVersion: pkg.version,
     apiDescription: pkg.description,
     apiAuthor: pkg.author,
-    bridgeVersion: options.bridgeVersion || pkg.peerDependencies['@walmart/react-native-electrode-bridge'],
+    bridgeVersion: options.bridgeVersion || pkg.peerDependencies['react-native-electrode-bridge'],
     ...extra,
     ...options
   })

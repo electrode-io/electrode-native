@@ -1,10 +1,7 @@
 {
   "name": "ern-cauldron-api",
-  "version": "0.0.1",
+  "version": "0.5.1",
   "description": "ERN module to create, access and manage Cauldrons",
-  "bin": {
-    "ern-cauldron-server": "index.js"
-  },
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
   "repository": {
@@ -28,24 +25,23 @@
       "email": "blemaire@walmartlabs.com"
     },
     {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
       "name": "Bharath Marulasiddappa",
       "email": "BMarulasiddappa@walmartlabs.com"
     },
     {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
     },
     {
       "name": "Krunal Shah",
       "email": "KShah1@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
     }
   ],
   "scripts": {
-    "start": "node index.js",
     "test": "ern-mocha",
     "build": "ern-babel",
     "coverage": "ern-nyc",
@@ -53,18 +49,17 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-util": "0.0.1",
+    "ern-util": "0.5.1",
     "bluebird": "^3.5.0",
     "joi": "^10.1.0",
-    "lodash": "^4.17.3",
-    "rmdir": "^1.2.0",
+    "lodash": "^4.17.4",
     "shelljs": "^0.7.6",
     "simple-git": "^1.70.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.0.1"
+    "ern-util-dev": "0.5.1"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=4.5"
   }
 }

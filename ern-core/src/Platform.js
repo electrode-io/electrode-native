@@ -8,9 +8,11 @@ import {
 } from 'child_process'
 
 import fs from 'fs'
-import _ from 'lodash'
+import shell from 'shelljs'
 
 const HOME_DIRECTORY = process.env['HOME']
+// Name of ern local client NPM package
+const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
 export default class Platform {
   static get rootDirectory () : string {
@@ -28,12 +30,8 @@ export default class Platform {
     return `${this.rootDirectory}/ern-override-manifest`
   }
 
-  static get repositoryDirectory () : string {
-    return `${this.rootDirectory}/ern-platform`
-  }
-
   static get versionCacheDirectory () : string {
-    return `${this.rootDirectory}/cache`
+    return `${this.rootDirectory}/versions`
   }
 
   static get latestVersion () : string {
@@ -52,15 +50,6 @@ export default class Platform {
     return execSync(`git -C ${this.currentPlatformVersionPath} rev-parse HEAD`).slice(0, 7).toString()
   }
 
-  static switchPlatformRepositoryToMaster () {
-    execSync(`git -C ${this.repositoryDirectory} checkout master`)
-  }
-
-  static switchPlatformRepositoryToVersion (version: string) {
-    execSync(`git -C ${this.repositoryDirectory} fetch origin --tags`)
-    execSync(`git -C ${this.repositoryDirectory} checkout tags/v${version}`)
-  }
-
   static isPlatformVersionAvailable (version: string) {
     return this.versions.includes('' + version)
   }
@@ -70,26 +59,16 @@ export default class Platform {
   }
 
   static getPlatformVersionPath (version: string) {
-    return `${this.versionCacheDirectory}/v${version}`
+    return `${this.versionCacheDirectory}/${version}`
   }
 
   // Return an array of versions (ex: [1,2,3,4,5])
-  // representing all the available versions of the platform
-  // Doing this by looking at all remote branches of the platform
-  // matching `vX` where x is a number.
+  // representing all the available versions of the platform local cli
   static get versions () : Array<string> {
-    const branchVersionRe = /tags\/v(\d+.\d+.*\d*)/
-    const versions = execSync(`git --git-dir ${this.repositoryDirectory}/.git ls-remote --tags`)
-      .toString()
-      .split('\n')
-      .filter(v => branchVersionRe.test(v))
-
-    return _.map(versions, v => branchVersionRe.exec(v)[1])
+    return JSON.parse(execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`).toString())
   }
 
   // Install a given platform version
-  // If version is not installed yet and available it will just checkout
-  // the version branch in the platform repository and call its install script
   static installPlatform (version: string) {
     if (this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is already installed`)
@@ -99,15 +78,25 @@ export default class Platform {
       throw new Error(`Version ${version} of ern platform is not available`)
     }
 
-    this.switchPlatformRepositoryToVersion(version)
+    const pathToVersion = this.getPlatformVersionPath(version)
 
-    require(`${this.repositoryDirectory}/install.js`).install()
+    try {
+      shell.mkdir('-p', pathToVersion)
+      process.chdir(pathToVersion)
+      if (this.isYarnInstalled()) {
+        // Favor yarn if it is installed as it will greatly speed up install
+        execSync(`yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`)
+      } else {
+        execSync(`npm install ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`)
+      }
+    } catch (e) {
+      console.log('Soemthing went wrong during installation. Performing clean up.')
+      shell.rm('-rf', pathToVersion)
+      throw e
+    }
   }
 
   // Uninstall a given platform version
-  // If version is installed yet and not the currently activated version it will
-  // just checkout the version branch in the platform repository and call its
-  // uninstall script
   static uninstallPlatform (version: string) {
     if (!this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is not installed`)
@@ -117,9 +106,7 @@ export default class Platform {
       return log.error(`Version ${version} is currently activated. Cannot uninstall`)
     }
 
-    this.switchPlatformRepositoryToVersion(version)
-
-    require(`${this.repositoryDirectory}/uninstall.js`).uninstall()
+    shell.rm('-rf', this.getPlatformVersionPath(version))
   }
 
   // Switch to / activate a given version
@@ -137,5 +124,14 @@ export default class Platform {
 
     config.setValue('platformVersion', version)
     log.info(`ern v${version} is now activated.`)
+  }
+
+  static isYarnInstalled () {
+    try {
+      execSync('yarn --version 1>/dev/null 2>/dev/null')
+      return true
+    } catch (e) {
+      return false
+    }
   }
 }

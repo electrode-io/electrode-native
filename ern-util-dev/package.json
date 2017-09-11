@@ -1,6 +1,6 @@
 {
   "name": "ern-util-dev",
-  "version": "0.0.1",
+  "version": "0.5.1",
   "description": "ERN module containing platform development utilities",
   "main": "index.js",
   "homepage": "http://www.electrode.io",
@@ -23,29 +23,37 @@
       "email": "blemaire@walmartlabs.com"
     },
     {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
       "name": "Bharath Marulasiddappa",
       "email": "BMarulasiddappa@walmartlabs.com"
     },
     {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
     },
     {
       "name": "Krunal Shah",
       "email": "KShah1@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
     }
   ],
   "scripts": {
     "test": "./bin/ern-mocha.js"
   },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "shelljs": "^0.7.6",
+    "tmp": "^0.0.31"
+  },
   "bin": {
     "ern-babel": "bin/ern-babel.js",
     "ern-mocha": "bin/ern-mocha.js",
     "ern-nyc": "bin/ern-nyc.js"
+  },
+  "engines": {
+    "node": ">=4.5"
   },
   "author": "",
   "license": "Apache-2.0"

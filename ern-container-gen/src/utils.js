@@ -168,7 +168,13 @@ export async function generateMiniAppsComposite (
   let moduleResolverAliases = {}
   for (const dependency of Object.keys(compositePackageJson.dependencies)) {
     const miniAppPackageJsonPath = `${outDir}/node_modules/${dependency}/package.json`
-    const miniAppPackageJson = JSON.parse(fs.readFileSync(miniAppPackageJsonPath, 'utf-8'))
+    let miniAppPackageJson
+    try {
+      miniAppPackageJson = JSON.parse(fs.readFileSync(miniAppPackageJsonPath, 'utf-8'))
+    } catch (e) {
+      // swallow (for test. to be fixed)
+      continue
+    }
     const miniAppName = miniAppPackageJson.name
     if (miniAppPackageJson.babel) {
       if (miniAppPackageJson.babel.plugins) {

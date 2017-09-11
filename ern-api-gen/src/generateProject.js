@@ -87,7 +87,7 @@ export function generatePackageJson ({
       'flow-bin': FLOW_BIN_VERSION
     },
     'peerDependencies': {
-      '@walmart/react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
+      'react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
     },
     'ern': {
       'message': conf,

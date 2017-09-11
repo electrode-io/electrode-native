@@ -49,7 +49,7 @@ run(`ern create-miniapp ${miniAppName}`)
 const miniAppPath = path.join(process.cwd(), miniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(`${miniAppPath}`)
-run(`ern add @walmart/react-native-electrode-bridge`)
+run(`ern add react-native-electrode-bridge`)
 run(`ern add react-native-code-push`)
 
 //

@@ -1,6 +1,6 @@
 {
   "name": "ern-api-gen",
-  "version": "0.0.1",
+  "version": "0.5.1",
   "description": "ERN module used to generate APIs",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -31,20 +31,20 @@
       "email": "blemaire@walmartlabs.com"
     },
     {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
       "name": "Bharath Marulasiddappa",
       "email": "BMarulasiddappa@walmartlabs.com"
     },
     {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
     },
     {
       "name": "Krunal Shah",
       "email": "KShah1@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
     }
   ],
   "scripts": {
@@ -55,19 +55,24 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-core": "0.0.1",
-    "ern-util": "0.0.1",
+    "ern-core": "0.5.1",
+    "ern-util": "0.5.1",
     "collections": "^5.0.6",
+    "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.4",
     "minimatch": "^3.0.3",
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
+    "shelljs": "^0.7.6",
+    "semver": "^5.3.0",
     "sway": "^1.0.0",
     "swagger-methods": "^1.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.0.1",
-    "cross-env": "^3.2.4"
+    "ern-util-dev": "0.5.1"
+  },
+  "engines": {
+    "node": ">=4.5"
   }
 }

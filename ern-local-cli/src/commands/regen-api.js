@@ -35,9 +35,9 @@ exports.handler = async function ({
   bridgeVersion: string
 } = {}) {
   if (!bridgeVersion) {
-    const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('@walmart/react-native-electrode-bridge'))
+    const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
     if (!bridgeDep) {
-      return log.error(`@walmart/react-native-electrode-bridge not found in manifest. please provide explicit version`)
+      return log.error(`react-native-electrode-bridge not found in manifest. please provide explicit version`)
     }
     bridgeVersion = bridgeDep.version
   }
