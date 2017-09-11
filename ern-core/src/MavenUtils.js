@@ -28,7 +28,7 @@ export default class MavenUtils {
     const repoType = this.mavenRepositoryType(mavenRepositoryUrl)
     if (repoType === 'file') {
       return `repository(url: "${mavenRepositoryUrl}")`
-    } else if (this.mavenRepositoryType === 'http') {
+    } else if (repoType === 'http') {
       return `repository(url: "${mavenRepositoryUrl}") { authentication(userName: mavenUser, password: mavenPassword) }`
     }
   }
