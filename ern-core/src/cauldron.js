@@ -18,7 +18,7 @@ class Cauldron {
 
   constructor (cauldronRepoAlias: string, cauldronPath: string) {
     if (!cauldronRepoAlias) {
-      return log.debug('[Cauldron ctor] cauldronRepoAlias is undefined')
+      return
     }
     const cauldronRepositories = config.getValue('cauldronRepositories')
     this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias], cauldronPath)
