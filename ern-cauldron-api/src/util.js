@@ -56,7 +56,7 @@ export function removeVersionFromDependency (dependency: string) {
 //
 // Check if a dependency is present in a given array of dependencies
 // nativeDependencies : An array containing the native dependencies as strings
-//   Sample : [ "@walmart/react-native-electrode-bridge@1.0.0" , "react-native@0.42.0" ]
+//   Sample : [ "react-native-electrode-bridge@1.0.0" , "react-native@0.42.0" ]
 //
 // dependency : A dependency string
 //   Sample : "react-native@0.42.0"

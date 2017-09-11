@@ -1,5 +1,5 @@
 // Following test breaks because react-native-electrode-bridge is not downloaded before hand
-// cp: no such file or directory: node_modules/@walmart/react-native-electrode-bridge/ios/ElectrodeReactNativeBridge/*
+// cp: no such file or directory: node_modules/react-native-electrode-bridge/ios/ElectrodeReactNativeBridge/*
 // Error while generating api impl hull for ios: {"errno":-2,"code":"ENOENT","syscall":"open","path":"/Users/blemair/Code/ern-platform/ern-api-impl-gen/tmp/react-native-movie-api-impl/ios/ElectrodeApiImpl/ElectrodeReactNativeBridge/ElectrodeBridgeMessage.m"}
 
 /* import { generateApiImpl } from '../src/index'
