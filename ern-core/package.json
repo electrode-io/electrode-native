@@ -59,7 +59,10 @@
     "tmp": "^0.0.31",
     "lodash": "^4.17.4",
     "semver": "^5.4.1",
-    "simple-git": "^1.70.0"
+    "simple-git": "^1.70.0",
+    "code-push-cli": "1.12.9-beta",
+    "react-native-cli": "^2.0.1",
+    "yarn": "^1.0.1"
   },
   "devDependencies": {
     "ern-util-dev": "0.5.1"

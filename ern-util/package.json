@@ -57,10 +57,7 @@
     "node-fetch": "^1.7.1",
     "ora": "^1.1.0",
     "shelljs": "^0.7.6",
-    "tmp": "^0.0.31",
-    "code-push-cli": "1.12.9-beta",
-    "react-native-cli": "^2.0.1",
-    "yarn": "^1.0.1"
+    "tmp": "^0.0.31"
   },
   "devDependencies": {
     "ern-util-dev": "0.5.1"

@@ -15,7 +15,7 @@ const WORKING_DIR = process.cwd()
 
 // Create the cache folder for this version as a symlink to current working folder
 shell.cd(ERN_VERSIONS_CACHE_PATH)
-shell.ln('-sf', WORKING_DIR, 'v1000.0.0')
+shell.ln('-sf', WORKING_DIR, '1000.0.0')
 
 console.log(
     chalk.green(`
