@@ -1,6 +1,6 @@
 {
   "name": "ern-api-gen",
-  "version": "0.5.2",
+  "version": "0.5.4",
   "description": "ERN module used to generate APIs",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -50,8 +50,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "collections": "^5.0.6",
-    "ern-core": "0.5.2",
-    "ern-util": "0.5.2",
+    "ern-core": "0.5.4",
+    "ern-util": "0.5.4",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.4",
@@ -64,7 +64,7 @@
     "sway": "^1.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.5.2"
+    "ern-util-dev": "0.5.4"
   },
   "engines": {
     "node": ">=4.5"

@@ -15,7 +15,7 @@ const path = require('path')
 // ....
 // |_ .ernrc
 
-const PLATFORM_VERSION = '1000.0.0'
+const PLATFORM_VERSION = '0.5.4'
 // Path to ern platform root folder
 const ERN_PATH = process.env['ERN_HOME'] || path.join(process.env['HOME'], '.ern')
 // Path to ern global configuration file
@@ -23,7 +23,8 @@ const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
 // Path to ern platform manifest repo
 const ERN_MANIFEST_REPO_PATH = path.join(ERN_PATH, 'ern-master-manifest')
 // Remote git path to ern manifest repo
-const ERN_MANIFEST_DEFAULT_GIT_REPO = 'https://github.com/electrode-io/electrode-react-native-manifest.git'
+//const ERN_MANIFEST_DEFAULT_GIT_REPO = 'https://github.com/electrode-io/electrode-react-native-manifest.git'
+const ERN_MANIFEST_DEFAULT_GIT_REPO = 'git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-master-manifest.git'
 
 // Clone ern manifest repository if not done already
 if (!fs.existsSync(ERN_MANIFEST_REPO_PATH)) {
