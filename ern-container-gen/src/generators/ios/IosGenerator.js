@@ -134,7 +134,7 @@ export default class IosGenerator {
     const containerIosProject = await this.getIosContainerProject(containerProjectPath)
 
     readDir(`${outputFolder}/ElectrodeContainer/Resources`, (resourceFile) => {
-      containerIosProject.addResourceFile(`${outputFolder}/ElectrodeContainer/Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
+      containerIosProject.addResourceFile(`Resources/${resourceFile}`, null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
     })
     log.debug(`---iOS: Finished adding resource files. `)
 

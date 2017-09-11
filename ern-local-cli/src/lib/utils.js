@@ -2,22 +2,45 @@
 
 import {
   cauldron,
-  MiniApp
+  MiniApp,
+  Platform,
+  reactnative
 } from 'ern-core'
 import {
+  generateAndroidRunnerProject,
+  generateIosRunnerProject,
+  regenerateAndroidRunnerConfig,
+  regenerateIosRunnerConfig
+} from 'ern-runner-gen'
+import {
+  android,
+  Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
   spin
 } from 'ern-util'
 import {
+  runLocalContainerGen,
   runCauldronContainerGen
 } from './publication'
+import {
+  execSync
+} from 'child_process'
+import utils from './utils'
+import shell from 'shelljs'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import Ensure from './Ensure'
 import ora from 'ora'
 import chalk from 'chalk'
+import fs from 'fs'
+import path from 'path'
+const simctl = require('node-simctl')
+
+const {
+  runAndroid
+} = android
 
 //
 // Retrieves all native applications versions from the Cauldron, optionaly
@@ -319,24 +342,207 @@ function epilog ({command} : {command: string}) {
 }
 
 async function runMiniApp (platform: 'android' | 'ios', {
-  miniapp,
+  mainMiniAppName,
+  miniapps,
+  dependencies,
+  descriptor,
   dev
 } : {
-  miniapp?: string,
-  dev: boolean
+  mainMiniAppName?: string,
+  miniapps?: Array<string>,
+  dependencies?: Array<string>,
+  descriptor?: string,
+  dev?: boolean
 } = {}) {
-  const miniappObj = miniapp
-    ? await MiniApp.fromPackagePath(DependencyPath.fromString(miniapp))
-    : MiniApp.fromCurrentPath()
+  const cwd = process.cwd()
+
+  let napDescriptor: ?NativeApplicationDescriptor
+
+  if (miniapps && miniapps.length > 1 && !mainMiniAppName) {
+    throw new Error(`If you provide multiple MiniApps you need to provide the name of the MiniApp to launch`)
+  }
+
+  if (miniapps && miniapps.length > 1 && dev) {
+    throw new Error(`You cannot enable development mode yet when running multiple MiniApps`)
+  }
+
+  if (dependencies && (dependencies.length > 0) && descriptor) {
+    throw new Error(`You cannot pass extra native dependencies when using a Native Application Descriptor`)
+  }
+
+  if (miniapps && descriptor) {
+    throw new Error(`You cannot use miniapps and descriptor at the same time`)
+  }
+
+  if (descriptor) {
+    await utils.logErrorAndExitIfNotSatisfied({
+      isCompleteNapDescriptorString: { descriptor },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'You cannot create a Runner for a non existing native application version.'
+      }
+    })
+
+    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+  }
+
+  let dependenciesObjs = []
+  let miniAppsPaths = []
+  if (miniapps) {
+    if (MiniApp.existInPath(cwd)) {
+      const miniapp = MiniApp.fromPath(cwd)
+      miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
+      log.info(`This command is being run from the ${miniapp.name} MiniApp directory.`)
+      log.info(`All provided extra MiniApps will be included in the Runner container along with ${miniapp.name}`)
+      if (!mainMiniAppName) {
+        log.info(`${miniapp.name} MiniApp will be set as the main MiniApp. You can choose another one instead through 'mainMiniAppName' option`)
+        mainMiniAppName = miniapp.name
+      }
+    }
+    dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+    miniAppsPaths = miniAppsPaths.concat(_.map(miniapps, m => DependencyPath.fromString(m)))
+  } else if (!miniapps && !descriptor) {
+    mainMiniAppName = MiniApp.fromCurrentPath().name
+    log.info(`This command is being run from the ${mainMiniAppName} MiniApp directory.`)
+    log.info(`Launching ${mainMiniAppName} standalone in the Runner.`)
+    dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+    miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
+    if (dev === undefined) { // If dev is not defined it will default to true in the case of standalone MiniApp runner
+      dev = true
+      reactnative.startPackager(cwd)
+    }
+  }
 
   if (platform === 'android') {
-    return miniappObj.runInAndroidRunner({
-      reactNativeDevSupportEnabled: dev
-    })
+    await generateContainerForRunner(platform, { napDescriptor, dependenciesObjs, miniAppsPaths })
+    const pathToAndroidRunner = path.join(cwd, platform)
+    if (!fs.existsSync(pathToAndroidRunner)) {
+      shell.mkdir('-p', pathToAndroidRunner)
+      await spin('Generating Android Runner project',
+        generateAndroidRunnerProject(
+          Platform.currentPlatformVersionPath,
+          pathToAndroidRunner,
+          mainMiniAppName,
+          { reactNativeDevSupportEnabled: dev }))
+    } else {
+      await spin('Regenerating Android Runner Configuration',
+        regenerateAndroidRunnerConfig(Platform.currentPlatformVersionPath,
+          pathToAndroidRunner,
+          mainMiniAppName,
+          { reactNativeDevSupportEnabled: dev }))
+    }
+    await launchAndroidRunner(pathToAndroidRunner)
   } else if (platform === 'ios') {
-    return miniappObj.runInIosRunner({
-      reactNativeDevSupportEnabled: dev
-    })
+    await generateContainerForRunner(platform, { napDescriptor, dependenciesObjs, miniAppsPaths })
+    const pathToIosRunner = path.join(cwd, platform)
+    if (!fs.existsSync(pathToIosRunner)) {
+      shell.mkdir('-p', pathToIosRunner)
+      await spin('Generating iOS Runner project',
+      generateIosRunnerProject(
+        Platform.currentPlatformVersionPath,
+        pathToIosRunner,
+        path.join(Platform.rootDirectory, 'containergen'),
+        mainMiniAppName,
+        { reactNativeDevSupportEnabled: dev }))
+    } else {
+      await spin('Regeneration iOS Runner Configuration',
+        regenerateIosRunnerConfig(
+          Platform.currentPlatformVersionPath,
+          pathToIosRunner,
+          path.join(Platform.rootDirectory, 'containergen'),
+          mainMiniAppName,
+          { reactNativeDevSupportEnabled: dev }))
+    }
+    await launchIosRunner(pathToIosRunner)
+  } else {
+    throw new Error(`Unsupported platform : ${platform}`)
+  }
+}
+
+async function generateContainerForRunner (
+  platform: 'android' | 'ios', {
+    napDescriptor,
+    dependenciesObjs = [],
+    miniAppsPaths = []
+  } : {
+    napDescriptor?: NativeApplicationDescriptor,
+    dependenciesObjs: Array<Dependency>,
+    miniAppsPaths: Array<DependencyPath>
+  } = {}) {
+  if (napDescriptor) {
+    await spin(`Generating runner Container based on ${napDescriptor.toString()}`,
+    runCauldronContainerGen(
+      napDescriptor,
+      '1.0.0', {
+        publish: false,
+        containerName: 'runner'
+      }))
+  } else {
+    await spin(`Gennerating runner Container with MiniApps`,
+    runLocalContainerGen(
+      miniAppsPaths,
+      platform, {
+        containerVersion: '1.0.0',
+        nativeAppName: 'runner',
+        extraNativeDependencies: dependenciesObjs
+      }
+    ))
+  }
+}
+
+async function launchAndroidRunner (pathToAndroidRunner: string) {
+  await runAndroid({
+    projectPath: pathToAndroidRunner,
+    packageName: 'com.walmartlabs.ern'
+  })
+}
+
+async function launchIosRunner (pathToIosRunner: string) {
+  const iosDevices = await simctl.getDevices()
+  let iosDevicesChoices = _.filter(
+                                  _.flattenDeep(
+                                     _.map(iosDevices, (val, key) => val)
+                                      ), (device) => device.name.match(/^iPhone/))
+  const inquirerChoices = _.map(iosDevicesChoices, (val, key) => ({
+    name: `${val.name} (UDID ${val.udid})`,
+    value: val
+  }))
+
+  const answer = await inquirer.prompt([{
+    type: 'list',
+    name: 'device',
+    message: 'Choose iOS simulator',
+    choices: inquirerChoices
+  }])
+
+  try {
+    execSync(`killall "Simulator" `)
+  } catch (e) {
+    // do nothing if there is no simulator launched
+  }
+
+  try {
+    execSync(`xcrun instruments -w ${answer.device.udid}`)
+  } catch (e) {
+    // Apple will always throw some exception because we don't provide a -t.
+    // but we just care about launching simulator with chosen UDID
+  }
+
+  const device = answer.device
+  shell.cd(pathToIosRunner)
+
+  const spinner = ora(`Compiling runner project`).start()
+
+  try {
+    execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${pathToIosRunner}/build" build`)
+    spinner.text = 'Installing runner project on device'
+    await simctl.installApp(device.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
+    spinner.text = 'Launching runner project'
+    await simctl.launch(device.udid, 'com.yourcompany.ernrunner')
+    spinner.succeed('Done')
+  } catch (e) {
+    spinner.fail(e.message)
+    throw e
   }
 }
 

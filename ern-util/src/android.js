@@ -173,8 +173,22 @@ async function getDevices () {
       if (err || stderr) {
         reject(err || stderr)
       } else {
-        const deviceList = stdout.trim().split('\n')
-        resolve(deviceList.splice(1))
+        /*
+         stdout for running command  $adb devices
+         List of devices attached
+         * daemon not running. starting it now at tcp:5037 *
+         * daemon started successfully *
+        */
+        let stdOutArr = stdout.trim().split('\n')
+        stdOutArr.splice(0, 1) // remove stdout 'List of devices attached'
+        let result = []
+        // remove stdout related to daemon
+        stdOutArr.forEach((entry) => {
+          if (!entry.includes('* daemon')) {
+            result.push(entry)
+          }
+        })
+        resolve(result)
       }
     })
   })

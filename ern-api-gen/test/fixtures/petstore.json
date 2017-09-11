@@ -629,7 +629,7 @@
             "in": "body",
             "name": "body",
             "description": "List of user object",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "array",
               "items": {

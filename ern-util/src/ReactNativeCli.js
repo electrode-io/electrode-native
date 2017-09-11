@@ -75,6 +75,22 @@ export default class ReactNativeCli {
     })
   }
 
+  startPackager (cwd: string) {
+    const packager = spawn(this.binaryPath, [ 'start' ], { cwd })
+
+    packager.stdout.on('data', (data) => {
+      log.info(data)
+    })
+
+    packager.stderr.on('data', (data) => {
+      log.error(data)
+    })
+
+    packager.on('close', (code) => {
+      log.info(`React Native Packager exited with code ${code}`)
+    })
+  }
+
   startPackagerInNewWindow () {
     return this.isPackagerRunning().then((result) => {
       if (!result) {
@@ -97,7 +113,7 @@ export default class ReactNativeCli {
     })
   }
 
-  isPackagerRunning () {
+  async isPackagerRunning () {
     return fetch('http://localhost:8081/status').then(
       res => res.text().then(body =>
         body === 'packager-status:running'

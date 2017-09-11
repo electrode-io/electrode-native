@@ -12,7 +12,9 @@ import {
 
 import {
   PKG_FILE,
-  MODEL_FILE
+  MODEL_FILE,
+  FLOW_CONFIG_FILE,
+  FLOW_BIN_VERSION
 } from './Constants'
 import {
   ModuleTypes
@@ -78,7 +80,11 @@ export function generatePackageJson ({
     'author': apiAuthor,
     'license': apiLicense,
     'scripts': {
-      'prepublish': 'ern regen-api -u same'
+      'prepublish': 'ern regen-api -u same',
+      'flow': 'flow'
+    },
+    'devDependencies': {
+      'flow-bin': FLOW_BIN_VERSION
     },
     'peerDependencies': {
       '@walmart/react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
@@ -203,8 +209,23 @@ export function generateInitialSchema ({
   `
 }
 
+export function generateFlowConfig(): string  {
+  return `
+  [ignore]
+  
+  [include]
+  
+  [libs]
+  
+  [lints]
+  
+  [options]
+  `
+}
+
 export default async function generateProject (config: Object = {}, outFolder: string) {
   await fileUtils.writeFile(path.join(outFolder, PKG_FILE), generatePackageJson(config))
   await fileUtils.writeFile(path.join(outFolder, MODEL_FILE), generateInitialSchema(config))
+  await fileUtils.writeFile(path.join(outFolder, FLOW_CONFIG_FILE), generateFlowConfig())
   await generateSwagger(config, outFolder)
 }

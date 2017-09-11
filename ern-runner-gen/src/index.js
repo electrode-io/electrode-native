@@ -14,6 +14,7 @@ import {
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
+import path from 'path'
 
 let log
 
@@ -65,10 +66,10 @@ export async function generateRunner ({
 
     if (platform === 'android') {
       await generateAndroidRunnerProject(
-        platformPath, outDir, miniapp.name, reactNativeDevSupportEnabled)
+        platformPath, outDir, miniapp.name, { reactNativeDevSupportEnabled })
     } else if (platform === 'ios') {
       await generateIosRunnerProject(
-        platformPath, outDir, containerGenWorkingDir, miniapp.name, reactNativeDevSupportEnabled)
+        platformPath, outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
     }
 
     await generateContainerForRunner({
@@ -88,14 +89,16 @@ export async function generateRunner ({
 export async function generateAndroidRunnerProject (
   platformPath: string,
   outDir: string,
-  mainMiniAppName: string,
-  reactNativeDevSupportEnabled: boolean) {
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled ? 'true' : 'false'
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
   }
-  console.log(`${platformPath}/ern-runner-gen/runner-hull/android/*`)
   shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outDir)
   const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
             (f) => (!f.endsWith('.jar') && !f.endsWith('.png')))
@@ -105,16 +108,38 @@ export async function generateAndroidRunnerProject (
   }
 }
 
+export async function regenerateAndroidRunnerConfig (
+  platformPath: string,
+  pathToRunnerProject: string,
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
+  const mustacheView = {
+    miniAppName: mainMiniAppName,
+    pascalCaseMiniAppName: pascalCase(mainMiniAppName),
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
+  }
+  const pathToRunnerConfig = path.join(pathToRunnerProject, 'app/src/main/java/com/walmartlabs/ern/RunnerConfig.java')
+  shell.cp(`${platformPath}/ern-runner-gen/runner-hull/android/app/src/main/java/com/walmartlabs/ern/RunnerConfig.java`, pathToRunnerConfig)
+  await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+    pathToRunnerConfig, mustacheView, pathToRunnerConfig)
+}
+
 export async function generateIosRunnerProject (
   platformPath: string,
   outDir: string,
   containerGenWorkingDir: string,
-  mainMiniAppName: string,
-  reactNativeDevSupportEnabled: boolean) {
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled ? 'YES' : 'NO',
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
     pathToElectrodeContainerXcodeProj: `${containerGenWorkingDir}/out/ios`
   }
 
@@ -124,6 +149,28 @@ export async function generateIosRunnerProject (
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
                 `${outDir}/${file}`, mustacheView, `${outDir}/${file}`)
   }
+}
+
+export async function regenerateIosRunnerConfig (
+  platformPath: string,
+  pathToRunnerProject: string,
+  containerGenWorkingDir: string,
+  mainMiniAppName: string,
+  {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
+  const mustacheView = {
+    miniAppName: mainMiniAppName,
+    pascalCaseMiniAppName: pascalCase(mainMiniAppName),
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
+    pathToElectrodeContainerXcodeProj: `${containerGenWorkingDir}/out/ios`
+  }
+  const pathToRunnerConfig = path.join(pathToRunnerProject, 'ErnRunner/RunnerConfig.m')
+  shell.cp(`${platformPath}/ern-runner-gen/runner-hull/ios/ErnRunner/RunnerConfig.m`, pathToRunnerConfig)
+  await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+    pathToRunnerConfig, mustacheView, pathToRunnerConfig)
 }
 
 export async function generateContainerForRunner ({

@@ -1,3 +1,5 @@
+// @flow
+
 {{#isClassy}}
 import ApiClient from '../ApiClient';
 
@@ -18,7 +20,7 @@ export default class {{{baseName}}}Requests {
          * Registers a handler for a particular api.  This allows javascript to handle a request from native.
          * @param The handler function, taking a single parameter being the data of the request and returning a Promise. Implementer of the handler should either resolve the promise with an object being the response data (if any) or reject the promise with an Error
          */
-    register{{{camelizedNickName}}}RequestHandler( handler) {
+    register{{{camelizedNickName}}}RequestHandler( handler : Function): Promise<any> {
         this._bridge.registerRequestHandler("{{package}}.request.{{operationId}}", handler);
     }
     {{/isEvent}}
@@ -43,7 +45,7 @@ export default class {{{baseName}}}Requests {
       */
     {{/emitJSDoc}}
 
-     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}timeout) {
+     {{nickname}}({{_argList}}{{#_argList}},{{/_argList}}timeout: number): Promise<any> {
         {{^hasParams}}
             return this._bridge.sendRequest("{{package}}.request.{{operationId}}", {timeout});
         {{/hasParams}}

@@ -6,6 +6,7 @@
 `ern cauldron repo add <alias> <url>`  
 
 **Example**  
+
 `ern cauldron repo add my-cauldron git@github.com:User/Cauldron.git`  
 This example shows how to add the Cauldron repository titled `my-cauldron`, that is located in the `git@github.com:User/Cauldron.git` directory, to your local collection of Cauldron repositories.    
 
