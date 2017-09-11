@@ -32,7 +32,6 @@ exports.builder = function (yargs: any) {
     })
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
-      alias: 'd',
       type: 'string'
     })
     .option('platform', {
@@ -88,6 +87,10 @@ exports.handler = async function ({
 
   await utils.logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: { descriptor },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage: 'You cannot CodePush to a non existin native application version.'
+    },
     noGitOrFilesystemPath: {
       obj: miniapps,
       extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
