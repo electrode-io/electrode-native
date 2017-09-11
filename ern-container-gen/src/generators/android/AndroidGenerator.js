@@ -100,7 +100,9 @@ export default class AndroidGenerator {
     // Enhance mustache view with android specifics
     mustacheView.android = {
       repository: MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url),
-      namespace: this.namespace
+      namespace: this.namespace,
+      hasMultipleMiniApps: miniapps.length > 1,
+      miniapps: miniapps
     }
 
     //
