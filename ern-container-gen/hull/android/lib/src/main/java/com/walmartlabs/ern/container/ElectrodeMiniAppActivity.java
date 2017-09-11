@@ -9,7 +9,18 @@ import android.view.View;
 
 public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReactActivityDelegate.BackKeyHandler {
 
+    private static final String INITIAL_PROPS = "props";
     private ElectrodeReactActivityDelegate mReactActivityDelegate;
+
+    /**
+     * Method that helps to pass bundle to react native side.
+     *
+     * @param intent Intent that will start the activity
+     * @param bundle Bundle that you would like to pass to react native.
+     */
+    public static void addInitialProps(@NonNull Intent intent, @NonNull Bundle bundle) {
+        intent.putExtra(INITIAL_PROPS, bundle);
+    }
 
     protected String getMiniAppName() {
         return null;
@@ -20,7 +31,7 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
         super.onCreate(savedInstanceState);
         mReactActivityDelegate = new ElectrodeReactActivityDelegate();
         mReactActivityDelegate.setBackKeyHandler(this);
-        View reactRootView = mReactActivityDelegate.onCreate(this, getMiniAppName(), null);
+        View reactRootView = mReactActivityDelegate.onCreate(this, getMiniAppName(), getIntent().getBundleExtra(INITIAL_PROPS));
 
         if (reactRootView != null) {
             setContentView(reactRootView);
