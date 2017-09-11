@@ -80,7 +80,7 @@ joi@^10.1.0:
 
 lodash@^4.17.4:
   version "4.17.4"
-  resolved "http://localhost:4873/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
+  resolved "http://npme.walmart.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
 minimatch@^3.0.4:
   version "3.0.4"
@@ -127,8 +127,8 @@ shelljs@^0.7.6:
     rechoir "^0.6.2"
 
 simple-git@^1.70.0:
-  version "1.75.0"
-  resolved "http://npme.walmart.com/simple-git/-/simple-git-1.75.0.tgz#eaddc90118b40a1dca3837d51c50ac064ee1d288"
+  version "1.77.0"
+  resolved "http://npme.walmart.com/simple-git/-/simple-git-1.77.0.tgz#526537470b946e5f6f93d103ef54b46949600939"
   dependencies:
     debug "^2.6.7"
 
