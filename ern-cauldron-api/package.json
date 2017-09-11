@@ -1,6 +1,6 @@
 {
   "name": "ern-cauldron-api",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "ERN module to create, access and manage Cauldrons",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -49,15 +49,15 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-util": "0.5.1",
     "bluebird": "^3.5.0",
+    "ern-util": "0.5.2",
     "joi": "^10.1.0",
     "lodash": "^4.17.4",
     "shelljs": "^0.7.6",
     "simple-git": "^1.70.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.5.1"
+    "ern-util-dev": "0.5.2"
   },
   "engines": {
     "node": ">=4.5"
