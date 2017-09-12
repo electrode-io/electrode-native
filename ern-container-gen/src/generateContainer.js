@@ -45,7 +45,6 @@ export default async function generateContainer ({
   plugins,
   miniapps,
   workingFolder,
-  reactNativeAarsPath,
   pathToYarnLock
 } : {
   containerVersion: string,
@@ -55,7 +54,6 @@ export default async function generateContainer ({
   plugins: Array<Dependency>,
   miniapps: Array<any>,
   workingFolder: string,
-  reactNativeAarsPath: string,
   pathToYarnLock?: string
 } = {}) {
   if (!generator.generateContainer) {
@@ -80,9 +78,7 @@ export default async function generateContainer ({
     // Where we download plugins
     pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
     // Where we output final generated container
-    outFolder: OUT_FOLDER,
-    // Where the AARs of react-native are located
-    reactNativeAars: reactNativeAarsPath
+    outFolder: OUT_FOLDER
   }
 
   // Clean up to start fresh

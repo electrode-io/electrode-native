@@ -14,6 +14,7 @@ import {
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
+import fs from 'fs'
 import path from 'path'
 
 let log
@@ -45,7 +46,6 @@ export async function generateRunner ({
   outDir,
   platform,
   containerGenWorkingDir,
-  reactNativeAarsPath,
   reactNativeDevSupportEnabled
 } : {
   platformPath: string,
@@ -54,7 +54,6 @@ export async function generateRunner ({
   outDir: string,
   platform: 'android' | 'ios',
   containerGenWorkingDir: string,
-  reactNativeAarsPath: string,
   reactNativeDevSupportEnabled: boolean
 }) {
   try {
@@ -66,7 +65,7 @@ export async function generateRunner ({
 
     if (platform === 'android') {
       await generateAndroidRunnerProject(
-        platformPath, outDir, miniapp.name, { reactNativeDevSupportEnabled })
+        platformPath, outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
     } else if (platform === 'ios') {
       await generateIosRunnerProject(
         platformPath, outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
@@ -77,8 +76,7 @@ export async function generateRunner ({
       plugins,
       miniapp,
       platform,
-      containerGenWorkingDir,
-      reactNativeAarsPath
+      containerGenWorkingDir
     })
   } catch (e) {
     log.error('Something went wrong: ' + e)
@@ -89,15 +87,21 @@ export async function generateRunner ({
 export async function generateAndroidRunnerProject (
   platformPath: string,
   outDir: string,
+  containerGenWorkingDir: string,
   mainMiniAppName: string, {
     reactNativeDevSupportEnabled
   } : {
     reactNativeDevSupportEnabled?: boolean
   } = {}) {
+  const pathToReactNativeNodeModule = path.join(
+      containerGenWorkingDir, 'plugins', 'node_modules', 'react-native', 'android', 'com', 'facebook', 'react', 'react-native')
+  const reactNativeVersion = fs.readdirSync(pathToReactNativeNodeModule).filter(f => /\d+.\d+.\d+/.test(f))[0]
+  console.log(`reactNativeVersion is ${reactNativeVersion}`)
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false',
+    reactNativeVersion
   }
   shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outDir)
   const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
@@ -106,6 +110,9 @@ export async function generateAndroidRunnerProject (
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
                 `${outDir}/${file}`, mustacheView, `${outDir}/${file}`)
   }
+  const pathToReactNativeAar = path.join(pathToReactNativeNodeModule, reactNativeVersion, `react-native-${reactNativeVersion}.aar`)
+  console.log(`pathToReactNativeAar is ${pathToReactNativeAar}`)
+  shell.cp(pathToReactNativeAar, path.join(outDir, 'app', 'libs'))
 }
 
 export async function regenerateAndroidRunnerConfig (
@@ -178,15 +185,13 @@ export async function generateContainerForRunner ({
   plugins,
   miniapp,
   platform,
-  containerGenWorkingDir,
-  reactNativeAarsPath
+  containerGenWorkingDir
 } : {
   platformPath: string,
   plugins: Array<Dependency>,
   miniapp: Object,
   platform: 'android' | 'ios',
-  containerGenWorkingDir: string,
-  reactNativeAarsPath: string
+  containerGenWorkingDir: string
 }) {
   const generatorConfig = new ContainerGeneratorConfig(platform)
   const generator = (platform === 'android')
@@ -200,7 +205,6 @@ export async function generateContainerForRunner ({
     platformPath,
     plugins,
     miniapps: [miniapp],
-    workingFolder: containerGenWorkingDir,
-    reactNativeAarsPath
+    workingFolder: containerGenWorkingDir
   })
 }

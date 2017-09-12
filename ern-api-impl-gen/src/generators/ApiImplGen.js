@@ -25,14 +25,13 @@ export default class ApiImplGen {
       workingFolder: string,
       pluginsDownloadFolder: string,
       apiImplHull: string,
-      reactNativeAarsPath: string,
       outFolder: string
     },
     reactNativeVersion: string,
     platforms: Array<string>) {
     log.debug(`Inside generateApiImplementation for api:${apiDependencyPath.toString()},  platforms:${platforms.toString()}`)
 
-    await this.downloadApiAndDependencies(apiDependencyPath, paths.pluginsDownloadFolder)
+    await this.downloadApiAndDependencies(apiDependencyPath, paths.pluginsDownloadFolder, reactNativeVersion)
 
     const generators: Array<ApiImplGeneratable> = this.getGenerators(platforms)
     for (let generator of generators) {
@@ -48,7 +47,7 @@ export default class ApiImplGen {
     log.info(chalk.green(`API implementation project was successfully generated in ${paths.outFolder}`))
   }
 
-  async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string) {
+  async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string, reactNativeVersion: string) {
     try {
       shell.cd(path)
       Utils.throwIfShellCommandFailed()
@@ -61,6 +60,8 @@ export default class ApiImplGen {
           await this.spinAndDownload(DependencyPath.fromString(dependency.toString()))
         }
       }
+      log.debug('Downloading react-native dependency')
+      await this.spinAndDownload(DependencyPath.fromString(`react-native@${reactNativeVersion}`))
     } catch (e) {
       Utils.logErrorAndExitProcess(`Error while retrieving API: ${e}`)
     }

@@ -36,7 +36,6 @@ export async function generateApiImpl ({
     workingFolder: string,
     pluginsDownloadFolder: string,
     apiImplHull: string,
-    reactNativeAarsPath: string,
     outFolder: string
   }
 } = {}) {

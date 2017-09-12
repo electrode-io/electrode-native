@@ -37,7 +37,6 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       workingFolder: string,
       pluginsDownloadFolder: string,
       apiImplHull: string,
-      reactNativeAarsPath: string,
       outFolder: string
     },
     reactNativeVersion: string,
@@ -65,6 +64,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
+        console.log(`handle pluing ${plugin.name}`)
         await manifest.getPluginConfig(plugin).then((pluginConfig) => {
           this.copyPluginToOutput(paths, outputFolder, plugin, pluginConfig)
         })
@@ -86,7 +86,9 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     log.debug(`injecting react-native@${paths.reactNativeVersion} dependency`)
     let mustacheView = {}
     mustacheView.reactNativeVersion = reactNativeVersion
-    shell.cp(path.join(paths.reactNativeAarsPath, `/react-native-${reactNativeVersion}.aar`), path.join(outputFolder, `/lib/libs/`))
+    const pathToReactNativeAar = path.join(
+      paths.pluginsDownloadFolder, 'node_modules', 'react-native', 'android', 'com', 'facebook', 'react', 'react-native', reactNativeVersion, `react-native-${reactNativeVersion}.aar`)
+    shell.cp(pathToReactNativeAar, path.join(outputFolder, `/lib/libs/`))
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(paths.apiImplHull, `/android/lib/build.gradle`),
       mustacheView,
