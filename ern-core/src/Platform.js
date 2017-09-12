@@ -55,8 +55,12 @@ export default class Platform {
     return this.versions.includes('' + version)
   }
 
+  static getRootPlatformVersionPath (version: string) {
+    return path.join(this.versionCacheDirectory, version)
+  }
+
   static isPlatformVersionInstalled (version: string) {
-    return fs.existsSync(this.getPlatformVersionPath(version))
+    return fs.existsSync(this.getRootPlatformVersionPath(version))
   }
 
   static getPlatformVersionPath (version: string) {
@@ -81,7 +85,7 @@ export default class Platform {
       throw new Error(`Version ${version} of ern platform is not available`)
     }
 
-    const pathToVersion = this.getPlatformVersionPath(version)
+    const pathToVersion = this.getRootPlatformVersionPath(version)
 
     try {
       shell.mkdir('-p', pathToVersion)
@@ -109,7 +113,7 @@ export default class Platform {
       return log.error(`Version ${version} is currently activated. Cannot uninstall`)
     }
 
-    shell.rm('-rf', this.getPlatformVersionPath(version))
+    shell.rm('-rf', this.getRootPlatformVersionPath(version))
   }
 
   // Switch to / activate a given version

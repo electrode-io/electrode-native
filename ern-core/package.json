@@ -1,6 +1,6 @@
 {
   "name": "ern-core",
-  "version": "0.5.4",
+  "version": "0.5.7",
   "description": "ERN module contain core platform types",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -52,9 +52,9 @@
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
     "code-push-cli": "1.12.9-beta",
-    "ern-cauldron-api": "0.5.4",
-    "ern-runner-gen": "0.5.4",
-    "ern-util": "0.5.4",
+    "ern-cauldron-api": "0.5.7",
+    "ern-runner-gen": "0.5.7",
+    "ern-util": "0.5.7",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
     "react-native-cli": "^2.0.1",
@@ -65,7 +65,7 @@
     "yarn": "^1.0.1"
   },
   "devDependencies": {
-    "ern-util-dev": "0.5.4"
+    "ern-util-dev": "0.5.7"
   },
   "engines": {
     "node": ">=4.5"
