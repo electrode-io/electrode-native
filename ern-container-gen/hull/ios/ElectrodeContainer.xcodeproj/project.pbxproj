@@ -12,11 +12,8 @@
 		22BF1FEB1E8DAAF800E7F500 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 22BF1FEA1E8DAAF800E7F500 /* assets */; };
 		301CB9021F33F3450048C58B /* NSBundle+frameworkBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 301CB9001F33F3450048C58B /* NSBundle+frameworkBundle.m */; };
 		301CB9031F33F3450048C58B /* NSBundle+frameworkBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 301CB9011F33F3450048C58B /* NSBundle+frameworkBundle.h */; };
-		30B77DD61E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */; };
-		30F8CDE41E677D7C00413247 /* ElectrodeReactNativeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */; };
 		30F8CDEE1E67946E00413247 /* ElectrodeReactNative_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */; };
 		485009ED1E2FF23C009B6610 /* ElectrodeContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 485009E31E2FF23B009B6610 /* ElectrodeContainer.framework */; };
-		485009F21E2FF23C009B6610 /* ElectrodeContainerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 485009F11E2FF23C009B6610 /* ElectrodeContainerTests.m */; };
 		485009F41E2FF23C009B6610 /* ElectrodeContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 485009E61E2FF23B009B6610 /* ElectrodeContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48500A981E2FF55B009B6610 /* ElectrodeReactNative.h in Headers */ = {isa = PBXBuildFile; fileRef = 48500A961E2FF55B009B6610 /* ElectrodeReactNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48500A991E2FF55B009B6610 /* ElectrodeReactNative.m in Sources */ = {isa = PBXBuildFile; fileRef = 48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */; };
@@ -40,13 +37,10 @@
 		22BF1FEA1E8DAAF800E7F500 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		301CB9001F33F3450048C58B /* NSBundle+frameworkBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+frameworkBundle.m"; sourceTree = "<group>"; };
 		301CB9011F33F3450048C58B /* NSBundle+frameworkBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+frameworkBundle.h"; sourceTree = "<group>"; };
-		30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegateTests.m; sourceTree = "<group>"; };
-		30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeReactNativeTests.m; sourceTree = "<group>"; };
 		30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeReactNative_Internal.h; sourceTree = "<group>"; };
 		485009E31E2FF23B009B6610 /* ElectrodeContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElectrodeContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		485009E61E2FF23B009B6610 /* ElectrodeContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElectrodeContainer.h; sourceTree = "<group>"; };
 		485009EC1E2FF23C009B6610 /* ElectrodeContainerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElectrodeContainerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		485009F11E2FF23C009B6610 /* ElectrodeContainerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ElectrodeContainerTests.m; sourceTree = "<group>"; };
 		485009F31E2FF23C009B6610 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		48500A961E2FF55B009B6610 /* ElectrodeReactNative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeReactNative.h; sourceTree = "<group>"; };
 		48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeReactNative.m; sourceTree = "<group>"; wrapsLines = 0; };
@@ -144,10 +138,7 @@
 		485009F01E2FF23C009B6610 /* ElectrodeContainerTests */ = {
 			isa = PBXGroup;
 			children = (
-				485009F11E2FF23C009B6610 /* ElectrodeContainerTests.m */,
 				485009F31E2FF23C009B6610 /* Info.plist */,
-				30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */,
-				30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */,
 			);
 			path = ElectrodeContainerTests;
 			sourceTree = "<group>";
@@ -308,9 +299,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				485009F21E2FF23C009B6610 /* ElectrodeContainerTests.m in Sources */,
-				30B77DD61E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m in Sources */,
-				30F8CDE41E677D7C00413247 /* ElectrodeReactNativeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
