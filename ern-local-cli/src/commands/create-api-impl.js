@@ -62,7 +62,9 @@ exports.handler = async function ({
 }) {
   console.log(`Generating API implementation for  ${api}`)
 
-  let reactNativeVersion = await manifest.getNativeDependency(Dependency.fromString('react-native')).version
+  const reactNativeVersionLessDependency = Dependency.fromString('react-native')
+  let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
+  let reactNativeVersion = Dependency.fromString(reactNativeDependency).version
   if (!reactNativeVersion) {
     return log.error('Could not retrieve react native version from manifest')
   }
@@ -84,7 +86,6 @@ exports.handler = async function ({
     reactNativeVersion,
     paths: {
       apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
-      reactNativeAarsPath: path.join(Platform.masterManifestDirectory, `react-native_aars`),
       pluginsDownloadFolder: PLUGIN_FOLDER,
       workingFolder: WORKING_FOLDER,
       outFolder: ''
