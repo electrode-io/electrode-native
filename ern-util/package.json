@@ -1,6 +1,6 @@
 {
   "name": "ern-util",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "ERN module containing non platform bounded utility code",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -60,7 +60,7 @@
     "tmp": "^0.0.31"
   },
   "devDependencies": {
-    "ern-util-dev": "0.5.7"
+    "ern-util-dev": "0.5.8"
   },
   "engines": {
     "node": ">=4.5"
