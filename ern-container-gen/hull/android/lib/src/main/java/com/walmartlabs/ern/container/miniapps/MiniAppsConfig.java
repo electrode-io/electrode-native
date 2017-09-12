@@ -14,7 +14,7 @@ public class MiniAppsConfig {
     {{#hasMultipleMiniApps}}
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{=<% %>=}}{{<%={{ }}=%>
         {{#miniapps}}
-        put("{{unscopedName}}", {{unscopedName}}Activity.class);
+        put("{{unscopedName}}", {{pascalCaseName}}Activity.class);
         {{/miniapps}}
     {{=<% %>=}}}};<%={{ }}=%>
     {{/hasMultipleMiniApps}}
