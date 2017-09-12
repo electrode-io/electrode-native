@@ -37,7 +37,6 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       workingFolder: string,
       pluginsDownloadFolder: string,
       apiImplHull: string,
-      reactNativeAarsPath: string,
       outFolder: string
     },
     reactNativeVersion: string,

@@ -422,6 +422,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
         generateAndroidRunnerProject(
           Platform.currentPlatformVersionPath,
           pathToAndroidRunner,
+          path.join(Platform.rootDirectory, 'containergen'),
           mainMiniAppName,
           { reactNativeDevSupportEnabled: dev }))
     } else {
