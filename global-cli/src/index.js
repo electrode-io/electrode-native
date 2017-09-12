@@ -1,9 +1,7 @@
 'use strict'
 
-const childProcess = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const execSync = childProcess.execSync
 
 // Version update notifier
 const updateNotifier = require('update-notifier')
