@@ -15,7 +15,6 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
-        maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
         jcenter()
     }
 }
