@@ -8,6 +8,7 @@ import {
 } from 'child_process'
 
 import fs from 'fs'
+import path from 'path'
 import shell from 'shelljs'
 
 const HOME_DIRECTORY = process.env['HOME']
@@ -59,7 +60,9 @@ export default class Platform {
   }
 
   static getPlatformVersionPath (version: string) {
-    return `${this.versionCacheDirectory}/${version}`
+    return version === '1000.0.0'
+      ? path.join(this.versionCacheDirectory, version)
+      : path.join(this.versionCacheDirectory, version, 'node_modules')
   }
 
   // Return an array of versions (ex: [1,2,3,4,5])
