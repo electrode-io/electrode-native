@@ -64,10 +64,12 @@ exports.handler = async function ({
 
   const reactNativeVersionLessDependency = Dependency.fromString('react-native')
   let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
-  let reactNativeVersion = Dependency.fromString(reactNativeDependency).version
-  if (!reactNativeVersion) {
-    return log.error('Could not retrieve react native version from manifest')
+
+  if (!reactNativeDependency) {
+    return log.error('Could not retrieve react native dependency from manifest')
   }
+
+  let reactNativeVersion = reactNativeDependency.version
 
   if (jsOnly && nativeOnly) {
     log.warn('Looks like both js and native are selected, should be only one')

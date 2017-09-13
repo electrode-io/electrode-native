@@ -168,7 +168,7 @@ export default class Ensure {
     for (const dependencyString of dependenciesStrings) {
       const dependencyFromCauldron = await cauldron.getNativeDependency(napDescriptor,
         Dependency.fromString(dependencyString).withoutVersion().toString())
-      if (dependencyFromCauldron.version === Dependency.fromString(dependencyString).version) {
+      if (dependencyFromCauldron && dependencyFromCauldron.version === Dependency.fromString(dependencyString).version) {
         throw new Error(`${Dependency.fromString(dependencyString).withoutVersion().toString()} is already at version ${dependencyFromCauldron.version} in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }

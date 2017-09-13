@@ -335,7 +335,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
 
   async addToNativeAppInCauldron (
     napDescriptor: NativeApplicationDescriptor,
-    force: boolean) {
+    force?: boolean) {
     try {
       const nativeApp = await cauldron.getNativeApp(napDescriptor)
 

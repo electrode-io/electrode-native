@@ -9,8 +9,8 @@ export default class NativeApplicationDescriptor {
 
   constructor (
     name: string,
-    platform?: string,
-    version?: string) {
+    platform: ?string,
+    version: ?string) {
     this._name = name
     this._platform = platform
     this._version = version

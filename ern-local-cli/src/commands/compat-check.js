@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  DependencyPath,
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
@@ -55,7 +56,7 @@ exports.handler = async function ({
   })
 
   for (const miniappPath of miniapps) {
-    const miniapp = await MiniApp.fromPackagePath(miniappPath)
+    const miniapp = await MiniApp.fromPackagePath(DependencyPath.fromString(miniappPath))
     log.info(`=> ${miniapp.name}`)
     await compatibility.checkCompatibilityWithNativeApp(
     miniapp, napDescriptor.name, napDescriptor.platform, napDescriptor.version)
