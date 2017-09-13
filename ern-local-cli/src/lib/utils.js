@@ -301,7 +301,12 @@ async function performContainerStateUpdateInCauldron (
     cauldronContainerVersion = containerVersion
   } else {
     cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
-    cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
+    if (cauldronContainerVersion) {
+      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
+    } else {
+      // Default to 1.0.0 for Container version
+      cauldronContainerVersion = '1.0.0'
+    }
   }
 
   try {
