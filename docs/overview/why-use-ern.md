@@ -2,7 +2,7 @@
 
 Don't get us wrong, `React Native` is great ! Otherwise we would not put so much efforts in actually building a platform on top of it, right ? ;)
 
-It is great to create mobile applications from scratch, using only `React Native`  ('pure' `React Native` application). It allows `JavaScript` developers to leverage thei existing knowledge of `React` and let them deal with a single `JavaScript` code base to develop mobile applications targeting muplitple platforms, while at the same time offering them the power to transparently update their code as over the air updates without having to go through the standard store release process and delays (not to mention actual adoption of updates by the users).
+It is great to create mobile applications from scratch, using only `React Native`  ('pure' `React Native` application). It allows `JavaScript` developers to leverage their existing knowledge of `React` and let them deal with a single `JavaScript` code base to develop mobile applications targeting muplitple platforms, while at the same time offering them the power to transparently update their code as over the air updates without having to go through the standard store release process and delays (not to mention actual adoption of updates by the users).
 
 It -can- also be great for building and reusing some components, written in React Native and 'plug' them inside your existing mobile application. *Can it* or *Could it* ?  
  
