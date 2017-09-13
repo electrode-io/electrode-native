@@ -2,14 +2,6 @@
 # yarn lockfile v1
 
 
-"@walmart/xcode-ern@1.0.2":
-  version "1.0.2"
-  resolved "http://npme.walmart.com/@walmart/xcode-ern/-/xcode-ern-1.0.2.tgz#789f0884bccf6f7eb6d34653dd16320004f7bcb4"
-  dependencies:
-    pegjs "0.9.0"
-    simple-plist "0.1.4"
-    uuid "3.0.1"
-
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "http://npme.walmart.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
@@ -167,6 +159,14 @@ uuid@3.0.1:
 wrappy@1:
   version "1.0.2"
   resolved "http://npme.walmart.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
+
+xcode-ern@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/xcode-ern/-/xcode-ern-1.0.0.tgz#2b9a4ad66d8a2cd78d82df7d3ce790f0405fd213"
+  dependencies:
+    pegjs "0.9.0"
+    simple-plist "0.1.4"
+    uuid "3.0.1"
 
 xmlbuilder@4.0.0:
   version "4.0.0"

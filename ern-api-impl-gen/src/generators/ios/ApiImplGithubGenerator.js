@@ -12,7 +12,7 @@ import ApiImplGeneratable from '../../ApiImplGeneratable'
 import fs from 'fs'
 import path from 'path'
 import _ from 'lodash'
-import xcode from '@walmart/xcode-ern'
+import xcode from 'xcode-ern'
 
 export const ROOT_DIR = shell.pwd()
 

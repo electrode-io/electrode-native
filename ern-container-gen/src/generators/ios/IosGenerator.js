@@ -21,7 +21,7 @@ import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import shell from 'shelljs'
-import xcode from '@walmart/xcode-ern'
+import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
 
 const ROOT_DIR = shell.pwd()
