@@ -391,6 +391,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
     napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   }
 
+  let entryMiniAppName = ''
   let dependenciesObjs = []
   let miniAppsPaths = []
   if (miniapps) {
@@ -401,15 +402,15 @@ async function runMiniApp (platform: 'android' | 'ios', {
       log.info(`All provided extra MiniApps will be included in the Runner container along with ${miniapp.name}`)
       if (!mainMiniAppName) {
         log.info(`${miniapp.name} MiniApp will be set as the main MiniApp. You can choose another one instead through 'mainMiniAppName' option`)
-        mainMiniAppName = miniapp.name
+        entryMiniAppName = miniapp.name
       }
     }
     dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
     miniAppsPaths = miniAppsPaths.concat(_.map(miniapps, m => DependencyPath.fromString(m)))
   } else if (!miniapps && !descriptor) {
-    mainMiniAppName = MiniApp.fromCurrentPath().name
-    log.info(`This command is being run from the ${mainMiniAppName} MiniApp directory.`)
-    log.info(`Launching ${mainMiniAppName} standalone in the Runner.`)
+    entryMiniAppName = MiniApp.fromCurrentPath().name
+    log.info(`This command is being run from the ${entryMiniAppName} MiniApp directory.`)
+    log.info(`Launching ${entryMiniAppName} standalone in the Runner.`)
     dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
     miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
     if (dev === undefined) { // If dev is not defined it will default to true in the case of standalone MiniApp runner
@@ -419,7 +420,11 @@ async function runMiniApp (platform: 'android' | 'ios', {
   }
 
   if (platform === 'android') {
-    await generateContainerForRunner(platform, { napDescriptor, dependenciesObjs, miniAppsPaths })
+    await generateContainerForRunner(platform, {
+      napDescriptor: napDescriptor || undefined,
+      dependenciesObjs,
+      miniAppsPaths
+    })
     const pathToAndroidRunner = path.join(cwd, platform)
     if (!fs.existsSync(pathToAndroidRunner)) {
       shell.mkdir('-p', pathToAndroidRunner)
@@ -428,18 +433,22 @@ async function runMiniApp (platform: 'android' | 'ios', {
           Platform.currentPlatformVersionPath,
           pathToAndroidRunner,
           path.join(Platform.rootDirectory, 'containergen'),
-          mainMiniAppName,
+          entryMiniAppName,
           { reactNativeDevSupportEnabled: dev }))
     } else {
       await spin('Regenerating Android Runner Configuration',
         regenerateAndroidRunnerConfig(Platform.currentPlatformVersionPath,
           pathToAndroidRunner,
-          mainMiniAppName,
+          entryMiniAppName,
           { reactNativeDevSupportEnabled: dev }))
     }
     await launchAndroidRunner(pathToAndroidRunner)
   } else if (platform === 'ios') {
-    await generateContainerForRunner(platform, { napDescriptor, dependenciesObjs, miniAppsPaths })
+    await generateContainerForRunner(
+      platform, {
+        napDescriptor: napDescriptor || undefined,
+        dependenciesObjs,
+        miniAppsPaths })
     const pathToIosRunner = path.join(cwd, platform)
     if (!fs.existsSync(pathToIosRunner)) {
       shell.mkdir('-p', pathToIosRunner)
@@ -448,7 +457,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
         Platform.currentPlatformVersionPath,
         pathToIosRunner,
         path.join(Platform.rootDirectory, 'containergen'),
-        mainMiniAppName,
+        entryMiniAppName,
         { reactNativeDevSupportEnabled: dev }))
     } else {
       await spin('Regeneration iOS Runner Configuration',
@@ -456,7 +465,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
           Platform.currentPlatformVersionPath,
           pathToIosRunner,
           path.join(Platform.rootDirectory, 'containergen'),
-          mainMiniAppName,
+          entryMiniAppName,
           { reactNativeDevSupportEnabled: dev }))
     }
     await launchIosRunner(pathToIosRunner)

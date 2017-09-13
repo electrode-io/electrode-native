@@ -165,7 +165,10 @@ exports.handler = async function ({
       pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
     }
 
-    await generateMiniAppsComposite(miniAppsPaths, outDir || `${Platform.rootDirectory}/miniAppsComposite`, {pathToYarnLock})
+    await generateMiniAppsComposite(
+      miniAppsPaths,
+      outDir || `${Platform.rootDirectory}/miniAppsComposite`,
+      pathToYarnLock ? { pathToYarnLock } : {})
   } else {
     if (!napDescriptor && miniapps) {
       if (!platform) {

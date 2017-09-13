@@ -10,7 +10,7 @@ import {
 import http from 'http'
 
 export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<boolean> {
-  if (pkg instanceof DependencyPath || typeof pkg === 'string') {
+  if (typeof pkg === 'string') {
     pkg = DependencyPath.fromString(pkg)
   }
 
@@ -25,7 +25,7 @@ export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<
     return false
   }
   let publishedVersions: Array<string> = publishedVersionsInfo.data
-  return publishedVersions.includes(Dependency.fromString(pkg).version)
+  return publishedVersions.includes(Dependency.fromString(pkg.toString()).version)
 }
 
 export async function httpGet (url: string): Promise<http.IncomingMessage> {

@@ -112,6 +112,6 @@ exports.handler = async function ({
       codePushTargetVersionName: targetBinaryVersion,
       codePushIsMandatoryRelease: mandatory,
       codePushRolloutPercentage: rollout,
-      pathToYarnLock
+      pathToYarnLock: pathToYarnLock || undefined
     })
 }

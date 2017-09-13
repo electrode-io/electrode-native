@@ -89,7 +89,7 @@ exports.handler = async function ({
   let miniAppsObjs = []
   const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
   for (const miniAppDependencyPath of miniAppsDependencyPaths) {
-    const m = await spin(`Retrieving ${miniAppDependencyPath} MiniApp`,
+    const m = await spin(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
         MiniApp.fromPackagePath(miniAppDependencyPath))
     miniAppsObjs.push(m)
   }

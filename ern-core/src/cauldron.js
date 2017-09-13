@@ -323,7 +323,7 @@ class Cauldron {
     napDescriptor: NativeApplicationDescriptor,
     dependencyName: string,
     { convertToObject = true } :
-    { convertToObject: boolean } = {}) : Promise<Dependency> {
+    { convertToObject: boolean } = {}) : Promise<?Dependency> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
@@ -369,7 +369,7 @@ class Cauldron {
 
   async getContainerMiniApp (
     napDescriptor: NativeApplicationDescriptor,
-    miniApp: Object) : Promise<*> {
+    miniApp: string | Object) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       return this.cauldron.getContainerMiniApp(

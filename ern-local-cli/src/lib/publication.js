@@ -161,6 +161,10 @@ version: string, {
       log.info('Container publication is disabled. Will generate the container locally.')
     }
 
+    if (!napDescriptor.platform) {
+      throw new Error(`napDescriptor (${napDescriptor.toString()}) does not contain a platform`)
+    }
+
     let containerGeneratorConfig = new ContainerGeneratorConfig(napDescriptor.platform, config ? config.containerGenerator : undefined)
     log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
 
@@ -172,7 +176,7 @@ version: string, {
       plugins,
       miniapps,
       workingFolder: outDir,
-      pathToYarnLock
+      pathToYarnLock: pathToYarnLock || undefined
     })
 
     // Only update yarn lock if container is getting published

@@ -68,14 +68,14 @@ export default class AndroidGenerator {
     throwIfShellCommandFailed()
 
     const mavenPublisher = this._containerGeneratorConfig.firstAvailableMavenPublisher
-    if (this._containerGeneratorConfig.shouldPublish()) {
+    if (this._containerGeneratorConfig.shouldPublish() && mavenPublisher) {
       log.debug(`Container will be published to ${mavenPublisher.url}`)
       if (MavenUtils.isLocalMavenRepo(mavenPublisher.url)) {
         MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
       }
     } else {
       log.warn('Something does not look right, android should always have a default maven publisher.')
-      Utils.logErrorAndExitProcess(`Something does not look right, android should always have a default maven publisher. ${mavenPublisher}`)
+      Utils.logErrorAndExitProcess(`Something does not look right, android should always have a default maven publisher.`)
     }
 
     const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
@@ -99,7 +99,7 @@ export default class AndroidGenerator {
 
     // Enhance mustache view with android specifics
     mustacheView.android = {
-      repository: MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url),
+      repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
       namespace: this.namespace,
       hasMultipleMiniApps: miniapps.length > 1,
       miniapps: miniapps
@@ -125,16 +125,17 @@ export default class AndroidGenerator {
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
-    await mavenPublisher.publish({workingDir: `${paths.outFolder}/android`, moduleName: `lib`})
+    if (mavenPublisher) {
+      await mavenPublisher.publish({workingDir: `${paths.outFolder}/android`, moduleName: `lib`})
+      log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
+      log.info(`To ${mavenPublisher.url}`)
+    }
     if (gitHubPublisher) {
       shell.cd(`${paths.outFolder}/android`)
       throwIfShellCommandFailed()
       await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       log.info(`Code pushed to ${gitHubPublisher.url}`)
     }
-
-    log.info(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
-    log.info(`To ${mavenPublisher.url}`)
   }
 
   async fillContainerHull (

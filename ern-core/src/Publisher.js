@@ -1,6 +1,6 @@
 // @flow
 export interface Publisher {
-  publish(): any;
+  publish(any): any;
   + name: string;
   + url: string
 }
