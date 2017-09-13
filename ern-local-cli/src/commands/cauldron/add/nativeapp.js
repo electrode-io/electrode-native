@@ -52,22 +52,25 @@ exports.handler = async function ({
     await cauldron.beginTransaction()
 
     const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
-    const latestVersion = _.last(previousApps.versions)
-    const latestVersionName = latestVersion.name
 
     await spin(`Adding ${descriptor}`, cauldron.addNativeApp(napDescriptor, platformVersion
       ? platformVersion.toString().replace('v', '')
       : undefined))
 
-    if (previousApps && copyFromVersion) {
-      if (copyFromVersion === 'latest') {
-        await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion))
-      } else {
-        const version = _.find(previousApps.versions, v => v.name === copyFromVersion)
-        await spin(`Copying data over from version ${copyFromVersion}`, copyOverPreviousVersionData(napDescriptor, version))
+    if (previousApps) {
+      const latestVersion = _.last(previousApps.versions)
+      const latestVersionName = latestVersion.name
+
+      if (copyFromVersion) {
+        if (copyFromVersion === 'latest') {
+          await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion))
+        } else {
+          const version = _.find(previousApps.versions, v => v.name === copyFromVersion)
+          await spin(`Copying data over from version ${copyFromVersion}`, copyOverPreviousVersionData(napDescriptor, version))
+        }
+      } else if (await askUserCopyPreviousVersionData(latestVersionName)) {
+        await spin(`Copying data over from previous version`, copyOverPreviousVersionData(napDescriptor, latestVersion))
       }
-    } else if (previousApps && await askUserCopyPreviousVersionData(latestVersionName)) {
-      await spin(`Copying data over from previous version`, copyOverPreviousVersionData(napDescriptor, latestVersion))
     }
 
     await spin(`Updating Cauldron`, cauldron.commitTransaction())
