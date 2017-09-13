@@ -32,12 +32,13 @@ export default class ReactNativeCli {
       }
 
       exec(`${this.binaryPath} init ${appName} --version react-native@${rnVersion} --skip-jest`,
-                (err, stdout, stderr) => {
-                  if (err) {
-                    return reject(err)
-                  }
-                  resolve(stdout)
-                })
+        (err, stdout, stderr) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(stdout)
+          }
+        })
     })
   }
 
@@ -61,17 +62,15 @@ export default class ReactNativeCli {
         ${platform ? `--platform=${platform}` : ''} \
         ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
         ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`,
-                (err, stdout, stderr) => {
-                  if (err) {
-                    return reject(err)
-                  }
-                  if (stderr) {
-                    return reject(stderr)
-                  }
-                  if (stdout) {
-                    resolve(stdout)
-                  }
-                })
+          (err, stdout, stderr) => {
+            if (err) {
+              reject(err)
+            } else if (stderr) {
+              reject(stderr)
+            } else if (stdout) {
+              resolve(stdout)
+            }
+          })
     })
   }
 
