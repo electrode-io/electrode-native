@@ -36,12 +36,12 @@ console.log(info(`Creating GitHub repository (${gitHubCauldronRepositoryName})`)
 run(`curl -u ernplatformtest:${gitHubPesonalToken} -d '{"name": "${gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
 //
-// Cauldron repository
-run(`ern cauldron repository remove ${cauldronName}`)
-run(`ern cauldron repository add ${cauldronName} https://${gitUserName}:${gitPassword}@github.com/${gitUserName}/${gitHubCauldronRepositoryName}.git --current=false`)
-run(`ern cauldron repository use ${cauldronName}`)
-run(`ern cauldron repository current`)
-run(`ern cauldron repository list`)
+// Cauldron repo
+run(`ern cauldron repo remove ${cauldronName}`)
+run(`ern cauldron repo add ${cauldronName} https://${gitUserName}:${gitPassword}@github.com/${gitUserName}/${gitHubCauldronRepositoryName}.git --current=false`)
+run(`ern cauldron repo use ${cauldronName}`)
+run(`ern cauldron repo current`)
+run(`ern cauldron repo list`)
 
 //
 // Miniapp commands
@@ -64,17 +64,10 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 // ignoreNpmPublish
 // run(`ern cauldron add miniapp -d ${iosNativeApplicationDescriptor} --ignoreNpmPublish`)
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron add dependency ${androidNativeApplicationDescriptor} react-native-stack-tracer@0.1.1`)
+run(`ern cauldron add dependencies ${androidNativeApplicationDescriptor} react-native-stack-tracer@0.1.1 -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron del dependency ${androidNativeApplicationDescriptor} react-native-stack-tracer`)
+run(`ern cauldron del dependencies ${androidNativeApplicationDescriptor} react-native-stack-tracer -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-
-//
-// Container generation commands
-// Two following commands will fail cause MiniApp is not published to NPM, but it'll test
-// nap selector based command usage.
-run(`ern create-container -n ${androidNativeApplicationDescriptor} -v 1.0.0`)
-run(`ern create-container -n ${iosNativeApplicationDescriptor} -v 1.0.0`)
 
 // Container gen should be successful for the two following commands
 run(`ern create-container -m file:${miniAppPath} -p android -v 1.0.0`)
@@ -83,7 +76,7 @@ run(`ern create-container -m file:${miniAppPath} -p ios -v 1.0.0`)
 //
 // Platform commands
 run(`ern platform current`)
-run(`ern platform ls`)
+run(`ern platform list`)
 run(`ern platform plugins list`)
 run(`ern platform plugins search react-native`)
 
