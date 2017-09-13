@@ -42,9 +42,9 @@ function createContainerGenerator (config: ContainerGeneratorConfig) {
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
 // For example, the following miniapp strings are all valid
-// FROM NPM => @walmart/react-native-cart@1.2.3
-// FROM GIT => git@gecgithub01.walmart.com:react-native/Cart.git
-// FROM FS  => file:/Users/blemair/Code/Cart
+// FROM NPM => react-native-miniapp@1.2.3
+// FROM GIT => git@github.com:username/MiniAppp.git
+// FROM FS  => file:/Users/username/Code/MiniApp
 export async function runLocalContainerGen (
 miniappPackagesPaths: Array<DependencyPath>,
 platform: 'android' | 'ios', {
