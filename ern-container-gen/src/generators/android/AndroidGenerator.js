@@ -163,31 +163,7 @@ export default class AndroidGenerator {
       for (const plugin of plugins) {
         let pluginConfig = await manifest.getPluginConfig(plugin)
         let pluginSourcePath
-        if (plugin.name === 'react-native') {
-          // For react-native plugin we just handle dependencies
-          // No other config injection should be done as its a very
-          // specific plugin
-          // Some duplication here that we'll need to refactor
-          for (const dependency of pluginConfig.android.dependencies) {
-            log.debug(`Adding compile '${dependency}'`)
-            mustacheView.pluginCompile.push({
-              'compileStatement': `compile '${dependency}'`
-            })
-          }
-          log.debug(`> cd ${paths.pluginsDownloadFolder}`)
-          shell.cd(`${paths.pluginsDownloadFolder}`)
-          throwIfShellCommandFailed()
-          pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
-          if (!pluginSourcePath) {
-            throw new Error(`Was not able to download ${plugin.name}`)
-          }
-          const pathToReactNativeAar = path.join(
-            pluginSourcePath, 'android', 'com', 'facebook', 'react', 'react-native', mustacheView.reactNativeVersion, `react-native-${mustacheView.reactNativeVersion}.aar`)
-          log.debug(`> cp ${pathToReactNativeAar} ${outputFolder}/lib/libs`)
-          shell.cp(pathToReactNativeAar, `${outputFolder}/lib/libs`)
-          throwIfShellCommandFailed()
-          continue
-        }
+        if (plugin.name === 'react-native') { continue }
         if (!pluginConfig.android) {
           log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
           continue
@@ -360,9 +336,9 @@ export default class AndroidGenerator {
       mustacheView.pluginCompile = []
       const reactNativePlugin = _.find(plugins, p => p.name === 'react-native')
       if (reactNativePlugin) {
-        log.debug(`Will inject: compile 'com.facebook.react:react-native:${reactNativePlugin.version}'`)
+        log.debug(`Will inject: compile 'com.walmartlabs.ern:react-native:${reactNativePlugin.version}'`)
         mustacheView.pluginCompile.push({
-          'compileStatement': `compile ('com.facebook.react:react-native:${reactNativePlugin.version}@aar') { transitive=true }`
+          'compileStatement': `compile 'com.walmartlabs.ern:react-native:${reactNativePlugin.version}'`
         })
       }
     } catch (e) {
