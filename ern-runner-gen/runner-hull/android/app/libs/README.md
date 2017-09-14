@@ -1,1 +1,0 @@
-React Native AAR will be injected in this directory
