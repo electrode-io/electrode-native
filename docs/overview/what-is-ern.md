@@ -66,7 +66,7 @@ The `Manifest` is not shipped within the platform but is stored in a `GitHub` re
 
 ### Runner
 
-Finally, the `Runner` have your back if you are working on a `MiniApp` and would like to launch it in isolation, in an Android or iOS emulator or real device, for development, testing and debugging purpposes. It will generate a minimalistic moible Android and/or iOS application project to hold your `MiniApp`. It is somewhat the platform equivalent of React Native `run-ios` and `run-android` commands.
+Finally, the `Runner` have your back if you are working on a `MiniApp` and would like to launch it in isolation, in an Android or iOS emulator or real device, for development, testing and debugging purposes. It will generate a minimalistic mobile Android and/or iOS application project to hold your `MiniApp`. It is somewhat the platform equivalent of React Native `run-ios` and `run-android` commands.
 The major difference being that it will actually create a `Container` locally, containing your `MiniApp`, and the `Runner` application project will actually depend on and consume this `Container` the same way any mobile application integrating with it would do.
 
 [Learn More about the Runner](url)
