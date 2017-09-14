@@ -7,8 +7,18 @@ export default class {{{baseName}}}Events {
 {{#operations}}
     {{#operation}}
         {{#isEvent}}
-            add{{{camelizedNickName}}}EventListener( eventListener: Function): void {
+            add{{{camelizedNickName}}}EventListener( eventListener: Function): string {
             return   this._bridge.registerEventListener("{{package}}.event.{{operationId}}", eventListener);
+            }
+        {{/isEvent}}
+    {{/operation}}
+{{/operations}}
+
+{{#operations}}
+    {{#operation}}
+        {{#isEvent}}
+            remove{{{camelizedNickName}}}EventListener( uuid: string): any {
+            return   this._bridge.removeEventListener(uuid);
             }
         {{/isEvent}}
     {{/operation}}
