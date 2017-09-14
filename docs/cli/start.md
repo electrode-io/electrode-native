@@ -15,7 +15,7 @@ If you do not pass an argument to this command, you are prompted to select a nat
 * Target a specific native application version, associated to the provided *complete native application descriptor*.  
 * This option uses whatever MiniApp versions are currently declared in this native application version container to launch the command.  
 
-`--miniapps/m <miniapps>`
+`--miniapps/-m <miniapps>`
 
 * Specify one or more MiniApps to launch this command  
 * The command packages all the provided MiniApps in a composite bundle and starts the react-native packager.  
