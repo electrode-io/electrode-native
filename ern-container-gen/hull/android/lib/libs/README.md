@@ -1,1 +1,0 @@
-react-native AAR is injected into this folder by the generator

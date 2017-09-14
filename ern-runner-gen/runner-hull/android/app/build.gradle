@@ -68,7 +68,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
 
-    compile ('com.facebook.react:react-native:{{{reactNativeVersion}}}@aar')
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
     compile('com.walmartlabs.ern:runner-ern-container:1.0.0') { changing = true }
 }

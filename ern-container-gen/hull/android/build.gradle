@@ -17,9 +17,6 @@ allprojects {
         mavenLocal()
         jcenter()
         mavenCentral()
-        flatDir {
-            dirs 'libs'
-        }
     }
 
     tasks.withType(JavaCompile) {

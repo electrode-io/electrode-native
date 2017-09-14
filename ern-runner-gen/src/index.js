@@ -93,15 +93,10 @@ export async function generateAndroidRunnerProject (
   } : {
     reactNativeDevSupportEnabled?: boolean
   } = {}) {
-  const pathToReactNativeNodeModule = path.join(
-      containerGenWorkingDir, 'plugins', 'node_modules', 'react-native', 'android', 'com', 'facebook', 'react', 'react-native')
-  const reactNativeVersion = fs.readdirSync(pathToReactNativeNodeModule).filter(f => /\d+.\d+.\d+/.test(f))[0]
-  console.log(`reactNativeVersion is ${reactNativeVersion}`)
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false',
-    reactNativeVersion
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
   }
   shell.cp('-R', `${platformPath}/ern-runner-gen/runner-hull/android/*`, outDir)
   const files = readDir(`${platformPath}/ern-runner-gen/runner-hull/android`,
@@ -110,9 +105,6 @@ export async function generateAndroidRunnerProject (
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
                 `${outDir}/${file}`, mustacheView, `${outDir}/${file}`)
   }
-  const pathToReactNativeAar = path.join(pathToReactNativeNodeModule, reactNativeVersion, `react-native-${reactNativeVersion}.aar`)
-  console.log(`pathToReactNativeAar is ${pathToReactNativeAar}`)
-  shell.cp(pathToReactNativeAar, path.join(outDir, 'app', 'libs'))
 }
 
 export async function regenerateAndroidRunnerConfig (

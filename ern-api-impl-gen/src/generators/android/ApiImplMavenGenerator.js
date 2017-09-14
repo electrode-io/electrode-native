@@ -70,7 +70,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
         })
       }
 
-      await this.copyReactNativeAarAndUpdateGradle(paths, reactNativeVersion, outputFolder)
+      this.updateBuildGradle(paths, reactNativeVersion, outputFolder)
     } catch (e) {
       Utils.logErrorAndExitProcess(`Error while generating api impl hull for android: ${e}`)
     }
@@ -82,13 +82,9 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     shell.cp(`-R`, pluginSrcFolder, path.join(outputFolder, `/lib/src/main/java`))
   }
 
-  copyReactNativeAarAndUpdateGradle (paths: Object, reactNativeVersion: string, outputFolder: string): Promise<*> {
-    log.debug(`injecting react-native@${paths.reactNativeVersion} dependency`)
+  updateBuildGradle (paths: Object, reactNativeVersion: string, outputFolder: string): Promise<*> {
     let mustacheView = {}
     mustacheView.reactNativeVersion = reactNativeVersion
-    const pathToReactNativeAar = path.join(
-      paths.pluginsDownloadFolder, 'node_modules', 'react-native', 'android', 'com', 'facebook', 'react', 'react-native', reactNativeVersion, `react-native-${reactNativeVersion}.aar`)
-    shell.cp(pathToReactNativeAar, path.join(outputFolder, `/lib/libs/`))
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(paths.apiImplHull, `/android/lib/build.gradle`),
       mustacheView,
