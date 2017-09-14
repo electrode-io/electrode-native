@@ -88,6 +88,8 @@ export default class ReactNativeCli {
     packager.on('close', (code) => {
       log.info(`React Native Packager exited with code ${code}`)
     })
+
+    process.on('SIGINT', () => { packager.kill(); process.exit() })
   }
 
   startPackagerInNewWindow () {
