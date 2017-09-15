@@ -391,7 +391,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
     napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   }
 
-  let entryMiniAppName = ''
+  let entryMiniAppName = mainMiniAppName || ''
   let dependenciesObjs = []
   let miniAppsPaths = []
   if (miniapps) {
