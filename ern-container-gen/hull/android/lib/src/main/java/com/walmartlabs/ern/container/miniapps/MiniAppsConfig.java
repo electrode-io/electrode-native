@@ -11,12 +11,10 @@ import java.util.HashMap;
 public class MiniAppsConfig {
 
     {{#android}}
-    {{#hasMultipleMiniApps}}
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{=<% %>=}}{{<%={{ }}=%>
         {{#miniapps}}
         put("{{unscopedName}}", {{pascalCaseName}}Activity.class);
         {{/miniapps}}
     {{=<% %>=}}}};<%={{ }}=%>
-    {{/hasMultipleMiniApps}}
     {{/android}}
 }

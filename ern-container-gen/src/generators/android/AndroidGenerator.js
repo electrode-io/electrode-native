@@ -101,7 +101,6 @@ export default class AndroidGenerator {
     mustacheView.android = {
       repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
       namespace: this.namespace,
-      hasMultipleMiniApps: miniapps.length > 1,
       miniapps: miniapps
     }
 
