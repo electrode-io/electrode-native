@@ -14,7 +14,6 @@ import {
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import shell from 'shelljs'
-import fs from 'fs'
 import path from 'path'
 
 let log
