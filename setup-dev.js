@@ -2,6 +2,12 @@
 // Script to setup development environment
 // Only meant to be used by ern-platform developers/contributors
 // ==============================================================================
+const childProcess = require('child_process')
+const execSync = childProcess.execSync
+
+console.log('Performing install and rebuild, this may take a few minutes, please wait..')
+execSync(`yarn install`)
+execSync(`npm run rebuild`)
 
 const chalk = require('chalk')
 const shell = require('shelljs')
