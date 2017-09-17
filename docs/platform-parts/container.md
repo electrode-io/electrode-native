@@ -90,12 +90,156 @@ mavenPassword=password
 
 ### Adding a `Container` to your mobile application
 
-#### TODO
+This is a one time procedure blablabla
+
+#### Android
+
+A Container library can be added to a mobile Android application project in two different ways. Either by directly adding the Container module to the Android project, as a git submodule, or by adding a dependency on the Container AAR (recommended way).
+
+In both cases, you'll also need to slightly update your `build.gradle` files, to address the following :
+
+- jcenter repository
+
+We publish `react-native` maven artifact to `jcenter`. Therefore, you need to make sure that `jcenter` is present in your list of `repositories` (repositories as most commonly defined in your top level project `build.gradle`)
+
+```groovy
+repositories {
+  jcenter()
+  //...
+}
+```
+
+- resolution strategy
+
+React native comes with some third party libraries that might conflict with the versions you are using. You might have issues with `jsr305`. If that is the case, just add the following to your application module `build.gradle`
+
+ ```groovy
+configurations.all {
+  resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
+  //...
+}
+```
+
+You might also need some more resolution strategies. Indeed, React Native depends on a specific version of a very popular networking library, `OkHttp`. If you are using this library in your application, you might be forced to align your version of `OkHttp` with the one shipped with the React Native version you are using (or use a resolution strategy, which is somehwat similar).  
+This is quite a bummer, but it's due to React Native design, and not easily fixable, unless React Native goes into deep refactorings to not tightly depend on `OkHttp`.
+
+- okio linting
+
+You might run into some problems with `okio` third party library which comes with React Native. It is a known "issue". If that is the case, just diable the lint check for `InvalidPackage` (other solutions can be found by googling this okio problem).
+
+```groovy
+lintOptions {
+  disable 'InvalidPackage'
+  //...
+}
+```
+
+That being said, and done, let's look into the two ways of adding the Container to a mobile application project
+
+**As an AAR dependency**
+
+If a `maven` publisher has been configured in the Cauldron, Electrode React Native will package and publish the Container project as a maven artifact containing the AAR, either to maven local or to a remote Maven repository. 
+
+By default, if no publisher is configured in the Cauldron, Electrode React Native will publish the container to your maven local repository (located in `~/.m2/repository`)
+
+The Container maven artifact will have the following group ID, artifact ID and version string :
+
+- Group ID : `com.walmartlabs.ern`
+- Artifact ID : `{mobile-app-name}-ern-container`
+- Version string : `{container-version}`
+
+`{mobile-app-name}` will be replaced by the name of the mobile application in the Cauldron for which the Container is being generated. For example, if the application name is `walmart`, the Container artifact ID will be `walmart-ern-container`.
+ 
+`{container-version}` will be the version of the generated Container. Container versions can only take the form `x.y.z` where x, y and z are integers. For example `1.2.3` is a vaid Container version. You can explictely specify a version for a Container, otherwise the current version will be patched bumped upon new generation.
+
+To add a dependency on the Container, in your mobile application, just add the following to the `dependencies` object of your application module `build.gradle` 
+
+```groovy
+dependencies {
+  compile('com.walmartlabs.ern:{mobile-app-name}-ern-container:{container-version}')
+  //...
+}
+```
+
+Just substitute the `{mobile-app-name}` and `{container-version}` accordingly.
+
+Also, if you are using, or wish to use a locally generated Container, make sure to declare `mavenLocal` repository in the list of `repositories` (top level project `build.gradle`)
+
+```groovy
+repositories {
+  mavenLocal()
+  //...
+}
+```
+
+**As a module in the project**
+
+The second way to include a Container in a mobile application, is adding it as an Android module. This is not the recommended way to add third party dependencies (Container being one) to an Android project, but this is still possible, and might be the easiest way if you don't have a rremote Maven repository that you can publish the Container to.
+
+To achieve this, you should add a `GitHub` publisher to the Cauldron. This way, upon generation of a new Container version, Electrode React Native will publish the resulting project to a private or public `GitHub` repository. It will create a git `tag` for each version of a Container.  
+From there, you can just add the Container Android module to your application project (managed as a git submodule most probably).  
+
+If you are going down this road, please be wary that you should not edit the code of Container. Indeed, adding the Container directly in your project, will make its code editable. The Container code should not be modified manually, as any custom modification will be lost upon next generation of the Container.
+
+You'll need to `include` the module in your project `settings.gradle`, and add a `compile project` directive to your application module `build.gradle`.
+
+### Initializing a `Container`
+
+Before accessing MiniApps stored within a Container, it needs to be initialized.
+
+Initialization of a Container should ideally take place during startup of your mobile application. If you are using a class extending `Application` you should place the Container initialization call in the `onCreate` method of this class. If you are not using an `Application` class to initialize all libraries used by your mobile application, you should place the Container initialization code wherever you see fit. The sooner it gets initialized, the better.
+
+Initialization of Container is done as a single call of the `initialize` static method of `ElectrodeReactContainer` class.
+
+```java
+ElectrodeReactContainer.initialize(
+            this /* Application instance */,
+            new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(BuildConfig.DEBUG)
+            /* Aditional plugins configuration here */);
+```
+
+The first parameter to this method is the `Application` instance. In the sample call above we use `this` as this call is made from an `Application` extending class).  
+The second parameter is the configuration of the `Container` and React Native. In the sample above we juse enable React Native developper support. In the sample call above, we make use of `BuildConfig.DEBUG` to enable developer mode for debug builds only. You might want to adapt it for your application needs.  
+
+The `initialize` method might also contain additional parameters. Repectively, one parameter per plugin confgiuration. Not all plugins (APIs or third party native modules) are `configurable`, so most of them (>90%) won't add an extra parameter to the `initialize` method. One configurable plugin is `react-native-code-push` for example, as you need to pass a `deployment key` to initialize this plugin, and it also has a `debug mode` that you can enable or disable.
+
+To learn more about configurable plugins, please refer to the section [url](url)
+
+
+### Launching a MiniApp
+
+When a Container is generated, it will create one `Activity` for each MiniApp included in the Container. For example, if you have a MiniApp named `Hello`, the container will create an Activity extending class named `HelloActivity`. It will also be declared in the `AndroidManifest.xml` of the Container, so that you can launch it from your mobile application without extra setup.  
+
+All of these Activties are stored in the `com.walmartlabs.ern.container.miniapps` namespace.
+
+To launch a MiniApp, all you have to do then, is start its corresponding `Activity`.
+
+You can also pass initial properties to a MiniApp, which will be provided to the JS MiniApp as props in `componentWillMount` React lifecycle. This might be useful if the MiniApp needs some data upon first launch.  
+
+To do this, just call the following static method of `ElectrodeMiniAppActivity` class. The first parameter is the `Intent` instance that you will pass to `startActivity`, while the second parameter is a `Bundle` instance containing the data to provide to the MiniApp as key/value pairs.
+
+```java
+public static void addInitialProps(@NonNull Intent intent, @NonNull Bundle bundle)
+```
+
+These generated Activities are very basic, and might not fullfil your more advanced needs. If you would like instead to use your own `Activity` subclass to "host" a `MiniApp`, you can directly extend the `ElectrodeMiniAppActivity` class and override the methods to your needs.  
+
+If you go down this road, please make sure to override the following method, and return the String correspoding to the MiniApp name hosted by this Activity (using the previous example, we would return "Hello")
+
+```java
+protected String getMiniAppName()
+```
+
+If you cannot extend your own `Activity` from this one (you might already have a deep inheritance chain and Java does not support multiple inheritance) but roll your own, or host the MiniApp in a `Fragment` instead, then you'll have to take a closer look to `ElectrodeMiniAppActivity` and use it as a template to roll your own class.
+
+#### iOS
+
+**TODO**
 
 ### Related commands
 
 - `ern create-container`  
-Create (generate) a container locally without publishing it. It should rarely be of use in your workflow. This command will mostly be used for specific development/experimentation purposes.
+Create (generate) a Container locally without publishing it. It should rarely be of use in your workflow as it does not allow remote publication of the generated Container. This command will mostly be used for specific development/experimentation purposes.
 
 - `ern cauldron add/del/update dependencies` and `ern cauldron add/del/update miniapps`  
 Given that a `Container` contains `MiniApps` and `native dependencies`, every time you'll want to add/delete/update `MiniApps` or `native dependencies` to your `Container`, it will be regenerated, and published (with a new version) to correctly reflect the changes.  
