@@ -1,9 +1,3 @@
-**-----------------------------------------------------------------------------------------------------------------**  
-**EDITING REMARKS :** The following content should probably be lightened.
-This page is probably meant to be more of a mere high level brief overview of the different pieces of the platform but not lose itself in technical details.
-Some content might be extracted to be rather use in dedicated parts pages.  
-**-----------------------------------------------------------------------------------------------------------------**
-
 ## What is Electrode React Native
 
 Electrode React Native (ern), is a platform, built for React Native JavaScript and mobile developpers, aiming to simplify and reduce the friction of integrating React Native components into existing mobile applications, with minimal changes to existing moible code bases and infrascrutures.

@@ -1,4 +1,4 @@
-## What's a MiniApp ?
+## What is a MiniApp ?
 
 You'll notice that throuhgout this documentation and within the platform itself, we use the term `MiniApp` quite extensively. It surely calls for a definition.
 
