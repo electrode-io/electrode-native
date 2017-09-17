@@ -32,7 +32,32 @@ However, considering that there can be multiple implementations for a given `API
 
 ### Versioning APIs
 
-#### TODO
+APIs offers a few advantages compared to React Native native modules. First of all, because they are generated, they don't need any specific Container injection (linking) configuration. Also, Electrode React Native is less strict when it comes to API native compabitily checks compared to native modules.  
+
+Indeed, for native modules versions, the platform will not allow versions mismatch. If two different versions (even patch versions) of an identical native module are used by two different MiniApps, platform won't allow adding both MiniApps. Native modules versions needs to be an exact match, down to the patch version.
+
+However, for APIs (and API implementations), Electrode React Native is less strict with versions checks, as long as you adopt the following guidelines for versioning your APIs :  
+
+- **Patch version bump** *(i.e 1.0.0 => 1.0.1)*   
+When your API does not contain any changes to its public surface, but only to its internals. Because APIs are fully generated, and not to be modified manually, this should only happen when you regenerate an API following a platform version update which contain some internal changes (bug fixes or improvements) to our API generator.   
+For API implementations, you should patch bump if you are making modifications to your implementation.  
+
+- **Minor version bump** *(i.e 1.0.0 => 1.1.0)*
+When your API contains new requests or new events.
+
+- **Major version bump** *(i.e 1.0.0 => 2.0.0)*
+When your API contains breaking changes to its public surface. For example if you remove (or rename) an existing request or event.
+
+Electrode React Native will offer more flexibility for deploying MiniApps that are using APIs versions not striclty aligned with APIs versions present in the Container.
+
+- **API with a different patch version**  
+When trying to deploy a MiniApp that contains an API version that exists in the Container with a different patch version (greater or lower), Electrode React Native will assume binary compatibility in any case.  
+
+- **API with a different minor version**
+When trying to deploy a MiniApp that contains an API version that exists in the Container with a different minor version, Electrode React Native will assume binary compatibility only if the version stored in the container is greater than the one used by the MiniApp.
+
+- **API with a different major version**
+When trying to deploy a MiniApp that contains an API version that exists in the Container with a different major version, Electrode React Native will consider binary incompability and will not allow deployment.
 
 ### API guidelines
 
