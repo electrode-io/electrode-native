@@ -32,7 +32,9 @@
 * The generated API project contains the API client-code for the three platforms (JavaScript, Android, and iOS) as well as any models and code to guide the implementation of the API.  
 * The generated API project is meant to be published to npm and it contains the `package.json` file.  
 * Once you have a version of your API ready, you should publish it to npm to make it available for people to use. Considering that the API is published to npm, you should make sure before generating the API, that the name is not already used by another API otherwise you won't be able to publish an API with a duplicate name.  
+{% raw %}
 * API projects are created with the `react-native` prefix added to the name in the format: `react-native-{{{name}}}-api`.  
+{% endraw %}
 * The API project is created in a new directory named after the complete API project name.  
 
 #### Related commands
