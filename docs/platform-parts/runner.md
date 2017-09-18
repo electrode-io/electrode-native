@@ -14,10 +14,13 @@ Behind the scene, every time you run one of these commands, a new local `Contain
 
 By default, when launching the runner through these two commands, a local `React Native Packager` will be launched and your `MiniApp` bundle will be served from this packager. This is the normal development workflow, but if you wish to serve your `MiniApp` directly from the `Container` stored within the binary of the application, these commands aceept options to take care of this.
 
+### Multi MiniApps support 
+
+The runner does not only allow to launch a MiniApp on its own. Because it relies on a locally generated Container and use it the same way a mobile application would, it can also use a Container that contains multiple MiniApps.  
+
+However, only one MiniApp can be launched upon startup of the Runner application. Therefore, if you provide multiple MiniApps to the Runner, you'll need to specify the main MiniApp that should be launched when the Runner application starts.
+
 ### Related commands
 
 - `ern run-ios` and `ern run-android`  
-These commands will lauch a `MiniApp` in the `Runner` application. 
-
-- `ern create-runner`  
-This command can be used to generate a `Runner` project that is not bound to a single `MiniApp`. It should be of limited use.
+These commands will lauch one or more `MiniApp(s)` in the `Runner` application. 

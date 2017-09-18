@@ -130,7 +130,45 @@ That's it, your `Cauldron` is ready to roll ! The next step will then be to add 
 
 ### Cauldron compatibility checks
 
-#### TDOO
+Any MiniApp or native dependency that needs to be added to a mobile application version stored in the Cauldron, will go through a suite of versions compatibility checks. If any of these checks is failing, the MiniApp or dependency won't be added to the Cauldron. (as a side note, this is also why one should not modify the Cauldron repository manually, as it effectively results in bypassing compatibility checks). 
+
+The Cauldron perform these checks to make sure that any MiniApp, or native dependency version added to a mobile application version, will not lead to runtime issues, and play nicely with the other MiniApps and dependencies already part of the Container of the mobile application.
+
+In reality, the checks are mostly looking at native dependencies versions proper alignment (react-native itself and any native module or API / API implementation that the MiniApp is using).
+
+Here are some of the compatibility checks, and logic, performed by Electrode React Native, when running an operation changing the state of a Container (what it will contain will change, following the operation), or the state of the composite JS bundle (in the case of an OTA update through CodePush)
+
+- Adding a new MiniApp
+    - To a in development mobile application version  
+For each of the native dependencies included in the MiniApp :
+        - Nothing to do if the native dependency is already in the Container, using the same version.
+        - If the native dependency is not already in the Container, add it.
+        - If the native dependency is already in the Container, but with a different version, ensure that the versions are backward compatible (for third party native modules we don't consider backward compatibility, the platform will require exact version match, whereas APIs follow more flexible rules). If that is the case and the version of the dependency used by the MiniApp is greater than the one in the Container, just bump the version of the dependency in the Container, to the one used by the MiniApp. If that is not the case, fail.
+
+    - To a released mobile application version
+For each of the native dependencies included in the MiniApp :
+       - Nothing to do if the native dependency is already in the Container, using the same version.
+       - If the native dependency is not already in the Container, fail. It is not possible to add native dependency through OTA updates (for third party native modules we don't consider backward compatibility, the platform will require exact version match, whereas APIs follow more flexible rules). If that is the case and the version of the dependency used by the MiniApp is lower than the one in the Container, proceed. Otherwise, fail.
+
+- Removing a MiniApp  
+The checks are relatively straightforward here. Indeed, Electrode React Native currently does not try to remove any of the native dependencies used by the MiniApp. Therefore, removing a MiniApp is not going through any compatibility checks right now.
+
+- Updating a MiniApp version  
+The checks will be exactly the same as the ones done when Adding a new MiniApp.
+
+When it comes to directly adding/updating or removing native dependencies in a mobile application version, the following wll apply only for in development mobile application versions, as it's not possible to add/remove or update a native dependency version through an OTA update.
+
+- Adding a new native dependency
+
+No checks performed here. If this is a new native dependency, just add it as it won't conflict with any versions.
+
+- Updating a native dependency version
+
+Ensure of backward compatibility and only allows forward version update.
+
+- Removing a native dependency
+
+Verify that no MiniApp part of the Container is using this native dependency.
 
 ### Who should get access to the Cauldron ?
 

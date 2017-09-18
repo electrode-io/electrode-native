@@ -1,9 +1,3 @@
-**-----------------------------------------------------------------------------------------------------------------**  
-**EDITING REMARKS :** The following content should probably be lightened.
-Some content might be extracted to be rather use in dedicated parts pages, or maybe we should break the different 
-stages in different sub-sections in the TOC
-**-----------------------------------------------------------------------------------------------------------------**
-
 ## The Electode React Native Workflow
 
 `Electrode React Native` encapsulate a set of tools to streamline a complete mobile production line, from the development of MiniApps in React Native using JavasScript, to their actual delivery and integration in existing mobile application(s).
