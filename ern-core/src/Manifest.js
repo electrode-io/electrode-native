@@ -22,7 +22,7 @@ export type PluginConfig = {
 const pluginConfigFileName = 'config.json'
 const npmScopeModuleRe = /@(.*)\/(.*)/
 
-const ERN_MANIFEST_MASTER_GIT_REPO = `git@gecgithub01.walmart.com:Electrode-Mobile-Platform/ern-master-manifest.git`
+const ERN_MANIFEST_MASTER_GIT_REPO = `https://github.com/electrode-io/electrode-react-native-manifest.git`
 
 export class Manifest {
   _masterManifest: GitManifest
