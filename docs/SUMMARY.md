@@ -21,12 +21,32 @@
 ### REFERENCE
 
 - [Container](platform-parts/container.md)
+  - [Publication](platform-parts/container.md#container-publication)
+  - [Import in mobile application](platform-parts/container.md#adding-a-container-to-your-mobile-application)
+  - [Initialization](platform-parts/container.md#initializing-a-container)
+  - [Launching MiniApps](platform-parts/container.md#launching-a-miniapp)
 - [Cauldron](platform-parts/cauldron.md)
+  - [Setup](platform-parts/cauldron.md#setting-up-a-cauldron)
+  - [Document structure](platform-parts/cauldron.md#a-look-inside-the-cauldron)
+  - [Compatibility checks](platform-parts/cauldron.md#cauldron-compatibility-checks)
 - [Manifest](platform-parts/manifest.md)
+  - [Override](platform-parts/manifest.md#overriding-the-master-manifest)
+  - [Reusing Native Modules](platform-parts/manifest.md#reusing-exiting-native-modules)
+  - [Configurable Modules](platform-parts/manifest.md#configurable-native-modules)
 - [Runner](platform-parts/runner.md)
+  - [Multi MiniApps support](platform-part/runner.md#multi-miniapps-support)
 - [APIs](platform-parts/apis.md)
+  - [API project](platform-parts/apis.md#the-api-project)
+  - [Implementation](platform-parts/apis.md#api-implementation)
+  - [Versioning](platform-parts/apis.md#versioning-apis)
+  - [Guidelines](platform-parts/apis.md#api-guidelines)
 - [Bridge](platform-parts/bridge.md)
+  - [Message types](platform-parts/bridge.md#bridge-messages-types)
+  - [Communication](platform-parts/bridge.md#bridge-communication)
+  - [APIs leveraging](platform-parts/bridge.md#leveraging-the-bridge-with-apis)
 - [CLI](platform-parts/cli.md)
+  - [Global client](platform-parts/cli.md#ern-global-client)
+  - [Local client](platform-parts/cli.md#ern-local-client)
 
 ### CLI COMMANDS
 
