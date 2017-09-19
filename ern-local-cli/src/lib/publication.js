@@ -109,7 +109,9 @@ platform: 'android' | 'ios', {
     }
 
     await spin(
-      'Creating local Container and publishing AAR to maven local'
+      platform === 'android'
+      ? 'Creating local Container and publishing AAR to maven local'
+      : 'Creating local Container'
       , generateContainer({
         containerVersion,
         nativeAppName,
