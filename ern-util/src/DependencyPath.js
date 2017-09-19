@@ -1,5 +1,8 @@
 // @flow
 
+const FILE_PATH_RE = /^file:(.+)/
+const GIT_PATH_RE = /^git:(.+)/
+
 export default class DependencyPath {
   path: string
 
@@ -16,11 +19,21 @@ export default class DependencyPath {
   }
 
   get isAFileSystemPath () : boolean {
-    return /^file:/.test(this.path)
+    return FILE_PATH_RE.test(this.path)
   }
 
   get isAGitPath () : boolean {
-    return /^git/.test(this.path)
+    return GIT_PATH_RE.test(this.path)
+  }
+
+  get unprefixedPath () : string {
+    let result = this.path
+    if (this.isAFileSystemPath) {
+      result = FILE_PATH_RE.exec(this.path)[1]
+    } else if (this.isAGitPath) {
+      result = GIT_PATH_RE.exec(this.path)[1]
+    }
+    return result
   }
 
   toString () : string {
