@@ -7,7 +7,8 @@ import {
 } from 'ern-container-gen'
 import {
   Dependency,
-  mustacheUtils
+  mustacheUtils,
+  spin
 } from 'ern-util'
 import {
   ContainerGeneratorConfig
@@ -189,7 +190,7 @@ export async function generateContainerForRunner ({
     ? new AndroidGenerator({containerGeneratorConfig: generatorConfig})
     : new IosGenerator(generatorConfig)
 
-  await generateContainer({
+  await spin('Generating Runner Container project', generateContainer({
     containerVersion: RUNNER_CONTAINER_VERSION,
     nativeAppName: 'runner',
     generator,
@@ -197,5 +198,5 @@ export async function generateContainerForRunner ({
     plugins,
     miniapps: [miniapp],
     workingFolder: containerGenWorkingDir
-  })
+  }))
 }

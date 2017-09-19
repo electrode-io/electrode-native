@@ -398,10 +398,11 @@ async function runMiniApp (platform: 'android' | 'ios', {
     if (MiniApp.existInPath(cwd)) {
       const miniapp = MiniApp.fromPath(cwd)
       miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
-      log.info(`This command is being run from the ${miniapp.name} MiniApp directory.`)
-      log.info(`All provided extra MiniApps will be included in the Runner container along with ${miniapp.name}`)
+      log.debug(`This command is being run from the ${miniapp.name} MiniApp directory.`)
+      log.info(`All extra MiniApps will be included in the Runner container along with ${miniapp.name}`)
       if (!mainMiniAppName) {
-        log.info(`${miniapp.name} MiniApp will be set as the main MiniApp. You can choose another one instead through 'mainMiniAppName' option`)
+        log.info(`${miniapp.name} will be set as the main MiniApp`)
+        log.info(`You can select another one instead through '--mainMiniAppName' option`)
         entryMiniAppName = miniapp.name
       }
     }
@@ -409,8 +410,8 @@ async function runMiniApp (platform: 'android' | 'ios', {
     miniAppsPaths = miniAppsPaths.concat(_.map(miniapps, m => DependencyPath.fromString(m)))
   } else if (!miniapps && !descriptor) {
     entryMiniAppName = MiniApp.fromCurrentPath().name
-    log.info(`This command is being run from the ${entryMiniAppName} MiniApp directory.`)
-    log.info(`Launching ${entryMiniAppName} standalone in the Runner.`)
+    log.debug(`This command is being run from the ${entryMiniAppName} MiniApp directory.`)
+    log.debug(`Initializing Runner`)
     dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
     miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
     if (dev === undefined) { // If dev is not defined it will default to true in the case of standalone MiniApp runner
@@ -485,23 +486,20 @@ async function generateContainerForRunner (
     miniAppsPaths: Array<DependencyPath>
   } = {}) {
   if (napDescriptor) {
-    await spin(`Generating runner Container based on ${napDescriptor.toString()}`,
-    runCauldronContainerGen(
+    await runCauldronContainerGen(
       napDescriptor,
       '1.0.0', {
         publish: false,
         containerName: 'runner'
-      }))
+      })
   } else {
-    await spin(`Gennerating runner Container with MiniApps`,
-    runLocalContainerGen(
+    await runLocalContainerGen(
       miniAppsPaths,
       platform, {
         containerVersion: '1.0.0',
         nativeAppName: 'runner',
         extraNativeDependencies: dependenciesObjs
-      }
-    ))
+      })
   }
 }
 

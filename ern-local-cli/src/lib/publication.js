@@ -27,6 +27,7 @@ import inquirer from 'inquirer'
 import _ from 'lodash'
 import tmp from 'tmp'
 import path from 'path'
+import ora from 'ora'
 
 function createContainerGenerator (config: ContainerGeneratorConfig) {
   switch (config.platform) {
@@ -76,8 +77,11 @@ platform: 'android' | 'ios', {
     }
     let containerGeneratorConfig = new ContainerGeneratorConfig(platform, config)
     log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
+
+    const spinner = ora('Preparing MiniApp(s) and running compatibility checks').start()
+
     for (const miniappPackagePath of miniappPackagesPaths) {
-      log.info(`Processing ${miniappPackagePath.toString()}`)
+      log.debug(`Retrieving ${miniappPackagePath.toString()}`)
 
       // Create temporary directory and yarn add the miniapp from within it
       const tmpDirPath = tmp.dirSync({ unsafeCleanup: true }).name
@@ -105,6 +109,8 @@ platform: 'android' | 'ios', {
       miniappNativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
     }
 
+    spinner.succeed()
+
     let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => Dependency.fromString(d))
     nativeDependencies = nativeDependencies.concat(extraNativeDependencies)
 
@@ -115,19 +121,21 @@ platform: 'android' | 'ios', {
     const duplicateNativeDependencies =
       _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
     if (duplicateNativeDependencies.length > 0) {
+      spinner.fail()
       throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
     }
 
-    log.info(`Generating container`)
-    await generateContainer({
-      containerVersion,
-      nativeAppName,
-      platformPath: Platform.currentPlatformVersionPath,
-      generator: createContainerGenerator(containerGeneratorConfig),
-      plugins: nativeDependencies,
-      miniapps,
-      workingFolder: outDir
-    })
+    await spin(
+      'Creating local Container and publishing AAR to maven local'
+      , generateContainer({
+        containerVersion,
+        nativeAppName,
+        platformPath: Platform.currentPlatformVersionPath,
+        generator: createContainerGenerator(containerGeneratorConfig),
+        plugins: nativeDependencies,
+        miniapps,
+        workingFolder: outDir
+      }))
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
     throw e
@@ -168,16 +176,18 @@ version: string, {
     let containerGeneratorConfig = new ContainerGeneratorConfig(napDescriptor.platform, config ? config.containerGenerator : undefined)
     log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
 
-    const paths = await generateContainer({
-      containerVersion: version,
-      nativeAppName: containerName || napDescriptor.name,
-      platformPath: Platform.currentPlatformVersionPath,
-      generator: createContainerGenerator(containerGeneratorConfig),
-      plugins,
-      miniapps,
-      workingFolder: outDir,
-      pathToYarnLock: pathToYarnLock || undefined
-    })
+    const paths = await spin(
+      `Creating Container for ${napDescriptor.toString()} from Cauldron`,
+      generateContainer({
+        containerVersion: version,
+        nativeAppName: containerName || napDescriptor.name,
+        platformPath: Platform.currentPlatformVersionPath,
+        generator: createContainerGenerator(containerGeneratorConfig),
+        plugins,
+        miniapps,
+        workingFolder: outDir,
+        pathToYarnLock: pathToYarnLock || undefined
+      }))
 
     // Only update yarn lock if container is getting published
     if (publish) {

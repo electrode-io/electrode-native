@@ -44,7 +44,7 @@ export async function runAndroid ({
   const devices = await getDevices()
   if (devices.length === 1) {
         // If 1 device is running install and launch the application
-    log.info(devices[0].split('\t')[0], ' is running ...')
+    log.debug(devices[0].split('\t')[0], ' is running ...')
     installAndLaunchApp(projectPath, packageName)
   } else if (devices.length > 1) {
     log.error('error: more than one device/emulator')
@@ -135,7 +135,7 @@ export async function installApp (projectPath: string) {
   })
 }
 
-// Utility method to launch a specific activity in a given package
+// Utility method to launch a specific activity from a given package
 // Params :
 // - packageName : name of the package containing the application
 // - activityName : name of the Activity to launch
