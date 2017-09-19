@@ -107,20 +107,22 @@ Are you sure this is a MiniApp ?`)
         Platform.switchToVersion(platformVersion)
       }
 
-      log.info(`Creating ${appName} MiniApp using platform version ${platformVersion}`)
+      log.info(`Creating ${appName} MiniApp`)
 
-      const reactNativeDependency = await manifest.getNativeDependency(Dependency.fromString('react-native'))
+      const reactNativeDependency = await spin(
+        `Retrieving react-native version from Manifest`,
+        manifest.getNativeDependency(Dependency.fromString('react-native')))
+
       if (!reactNativeDependency) {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      //
-      // Create application using react-native init command
-      await spin(`Running react-native init using react-native v${reactNativeDependency.version}`,
-                reactnative.init(appName, reactNativeDependency.version))
+      await spin(
+        `Creating ${appName} project using react-native v${reactNativeDependency.version}. This might take a while.`,
+        reactnative.init(appName, reactNativeDependency.version))
 
       //
-      // Patch package.json file of application
+      // Inject ern specific data in MiniApp package.json
       const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
       appPackageJson.ern = {
