@@ -415,7 +415,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
     miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
     if (dev === undefined) { // If dev is not defined it will default to true in the case of standalone MiniApp runner
       dev = true
-      reactnative.startPackager(cwd)
+      await reactnative.startPackagerInNewWindow(cwd)
     }
   }
 
