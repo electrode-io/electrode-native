@@ -114,11 +114,6 @@ Are you sure this is a MiniApp ?`)
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
-      const reactDependency = await manifest.getJsDependency(Dependency.fromString('react'))
-      if (!reactDependency) {
-        throw new Error('react dependency is not defined in manifest. cannot infer version to be used')
-      }
-
       //
       // Create application using react-native init command
       await spin(`Running react-native init using react-native v${reactNativeDependency.version}`,
@@ -133,7 +128,6 @@ Are you sure this is a MiniApp ?`)
         moduleType: `${ModuleTypes.MINIAPP}`
       }
       appPackageJson.private = false
-      appPackageJson.dependencies['react'] = reactDependency.version
       appPackageJson.keywords
         ? appPackageJson.keywords.push(ModuleTypes.MINIAPP)
         : appPackageJson.keywords = [ModuleTypes.MINIAPP]
