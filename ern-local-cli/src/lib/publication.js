@@ -12,20 +12,17 @@ import {
   compatibility,
   MiniApp,
   Platform,
-  yarn,
   ContainerGeneratorConfig
 } from 'ern-core'
 import {
   Dependency,
   DependencyPath,
-  findNativeDependencies,
   NativeApplicationDescriptor,
   spin
 } from 'ern-util'
 
 import inquirer from 'inquirer'
 import _ from 'lodash'
-import tmp from 'tmp'
 import path from 'path'
 import ora from 'ora'
 
@@ -63,7 +60,7 @@ platform: 'android' | 'ios', {
 } = {}) {
   try {
     const nativeDependenciesStrings: Set < string > = new Set()
-    let miniapps = []
+    let miniapps: Array<MiniApp> = []
     let config
 
     if (publicationUrl) {
@@ -83,30 +80,16 @@ platform: 'android' | 'ios', {
     for (const miniappPackagePath of miniappPackagesPaths) {
       log.debug(`Retrieving ${miniappPackagePath.toString()}`)
 
-      // Create temporary directory and yarn add the miniapp from within it
-      const tmpDirPath = tmp.dirSync({ unsafeCleanup: true }).name
-      process.chdir(tmpDirPath)
-      await yarn.add(miniappPackagePath)
+      let currentMiniApp
+      if (miniappPackagePath.isAFileSystemPath) {
+        currentMiniApp = MiniApp.fromPath(miniappPackagePath.unprefixedPath)
+      } else {
+        currentMiniApp = await MiniApp.fromPackagePath(miniappPackagePath)
+      }
 
-      // Extract full name of miniapp package from the package.json resulting from yarn add command
-      const packageJson = require(`${tmpDirPath}/package.json`)
-      const miniappDependency = Dependency.fromString(_.keys(packageJson.dependencies)[0])
+      miniapps.push(currentMiniApp)
 
-      miniapps.push({
-        scope: miniappDependency.scope,
-        name: miniappDependency.name,
-        packagePath: miniappPackagePath
-      })
-
-      // Find all native dependencies of this miniapp in the node_modules folder
-      // and remove the miniapp itself, wrongly considered as a native dependency
-      let miniappNativeDependencies = findNativeDependencies(`${tmpDirPath}/node_modules`)
-      _.remove(miniappNativeDependencies,
-        d => (d.scope === miniappDependency.scope) && (d.name === miniappDependency.name))
-
-      // Add all native dependencies as strings to the set of native dependencies
-      // of all miniapps
-      miniappNativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
+      currentMiniApp.nativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
     }
 
     spinner.succeed()
@@ -176,6 +159,11 @@ version: string, {
     let containerGeneratorConfig = new ContainerGeneratorConfig(napDescriptor.platform, config ? config.containerGenerator : undefined)
     log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
 
+    const miniAppsInstances = []
+    for (const miniapp of miniapps) {
+      miniAppsInstances.push(await MiniApp.fromPackagePath(miniapp.path))
+    }
+
     const paths = await spin(
       `Creating Container for ${napDescriptor.toString()} from Cauldron`,
       generateContainer({
@@ -184,7 +172,7 @@ version: string, {
         platformPath: Platform.currentPlatformVersionPath,
         generator: createContainerGenerator(containerGeneratorConfig),
         plugins,
-        miniapps,
+        miniapps: miniAppsInstances,
         workingFolder: outDir,
         pathToYarnLock: pathToYarnLock || undefined
       }))
