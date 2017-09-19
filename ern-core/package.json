@@ -53,7 +53,6 @@
     "cli-table": "^0.3.1",
     "code-push-cli": "1.12.9-beta",
     "ern-cauldron-api": "0.5.9",
-    "ern-runner-gen": "0.5.9",
     "ern-util": "0.5.9",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",

@@ -4,6 +4,7 @@ import {
   MiniApp
 } from 'ern-core'
 import utils from '../lib/utils'
+import chalk from 'chalk'
 
 exports.command = 'create-miniapp <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application(miniapp)'
@@ -35,7 +36,17 @@ exports.handler = async function ({
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope
     })
-    log.info(`${appName} MiniApp was created`)
+    log.info(`${appName} MiniApp was successfully created !`)
+    log.info(`================================================`)
+    log.info(chalk.bold.white('To run your MiniApp on Android :'))
+    log.info(chalk.white(`    > cd ${appName}`))
+    log.info(chalk.white(`followed by :`))
+    log.info(chalk.white(`    > ern run-android`))
+    log.info(chalk.bold.white('To run your MiniApp on iOS :'))
+    log.info(chalk.white(`    > cd ${appName}`))
+    log.info(chalk.white(`followed by :`))
+    log.info(chalk.white(`    > ern run-ios`))
+    log.info(`================================================`)
   } catch (e) {
     log.error(e.message)
   }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set terminal title
-echo -en "Starting React Packager\n"
+echo -en "Starting React Native Packager\n"
 
 THIS_DIR=$(dirname "$0")
 cd $THIS_DIR

@@ -1,6 +1,7 @@
 // @flow
 
 import exec from './exec'
+import { spawn } from 'child_process'
 import inquirer from 'inquirer'
 import shell from 'shelljs'
 import spin from './spin.js'
@@ -43,7 +44,7 @@ export async function runAndroid ({
   const devices = await getDevices()
   if (devices.length === 1) {
         // If 1 device is running install and launch the application
-    log.info(devices[0].split('\t')[0], ' is running ...')
+    log.debug(devices[0].split('\t')[0], ' is running ...')
     installAndLaunchApp(projectPath, packageName)
   } else if (devices.length > 1) {
     log.error('error: more than one device/emulator')
@@ -66,7 +67,7 @@ export async function runAndroid ({
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
 // - avdImageName : name of the avd image to use (emulator image)
-async function runAndroidUsingAvdImage (
+export async function runAndroidUsingAvdImage (
   projectPath: string,
   packageName: string,
   avdImageName: string) {
@@ -81,17 +82,17 @@ async function runAndroidUsingAvdImage (
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
-async function installAndLaunchApp (
+export async function installAndLaunchApp (
   projectPath: string,
   packageName: string) {
   await spin('Installing application', installApp(projectPath))
-  await spin('Launching application',
-        launchAndroidActivity(packageName, 'MainActivity'))
+  await spin('Launching Android Application', Promise.resolve())
+  launchAndroidActivityDetached(packageName, 'MainActivity', projectPath)
 }
 
 // Utility method that basically completes whenever the android device is ready
 // It check device readiness every 2 sec (poll way)
-async function waitForAndroidDevice () {
+export async function waitForAndroidDevice () {
   let androidBootAnimProp = await androidGetBootAnimProp()
   while (!androidBootAnimProp.startsWith('stopped')) {
     await delay(2000)
@@ -101,7 +102,7 @@ async function waitForAndroidDevice () {
 
 // Utility method to know when the prop init.svc.bootanim is there
 // which indicates somehow that device is ready to install APK and such
-async function androidGetBootAnimProp () {
+export async function androidGetBootAnimProp () {
   return new Promise((resolve, reject) => {
     exec(`${androidAdbPath()} wait-for-device shell getprop init.svc.bootanim`,
             (err, stdout, stderr) => {
@@ -119,7 +120,7 @@ async function androidGetBootAnimProp () {
 // params :
 // - projectPath : Absolute or relative path to the root of the Android project
 // containing the application
-async function installApp (projectPath: string) {
+export async function installApp (projectPath: string) {
   return new Promise((resolve, reject) => {
     shell.cd(projectPath)
     exec(`./gradlew installDebug`,
@@ -134,11 +135,11 @@ async function installApp (projectPath: string) {
   })
 }
 
-// Utility method to launch a specific activity in a given package
+// Utility method to launch a specific activity from a given package
 // Params :
 // - packageName : name of the package containing the application
 // - activityName : name of the Activity to launch
-async function launchAndroidActivity (
+export async function launchAndroidActivity (
   packageName: string,
   activityName: string) {
   return new Promise((resolve, reject) => {
@@ -153,8 +154,23 @@ async function launchAndroidActivity (
   })
 }
 
+// Utility method to launch a specific activity from a given packager
+// Will spawn the command (detached mode)
+export async function launchAndroidActivityDetached (
+  packageName: string,
+  activityName: string,
+  cwd: string) {
+  const adbShellCommand = spawn(androidAdbPath(),
+      [ 'shell', 'am', 'start', '-n', `${packageName}/.${activityName}` ],
+    { cwd })
+
+  adbShellCommand.stderr.on('data', (data) => {
+    log.error(`${data}`)
+  })
+}
+
 // Utility method to list all available android avd images (emulator images)
-async function getAndroidAvds () {
+export async function getAndroidAvds () {
   return new Promise((resolve, reject) => {
     exec(`${androidEmulatorPath()} -list-avds`, (err, stdout, stderr) => {
       if (err || stderr) {
@@ -167,7 +183,7 @@ async function getAndroidAvds () {
 }
 
 // Utility method to query what device instances are connected to the adb server
-async function getDevices () {
+export async function getDevices () {
   return new Promise((resolve, reject) => {
     exec(`${androidAdbPath()} devices`, (err, stdout, stderr) => {
       if (err || stderr) {
@@ -194,13 +210,13 @@ async function getDevices () {
   })
 }
 
-function androidAdbPath () : string {
+export function androidAdbPath () : string {
   return process.env.ANDROID_HOME
         ? `${process.env.ANDROID_HOME}/platform-tools/adb`
         : 'adb'
 }
 
-function androidEmulatorPath () : string {
+export function androidEmulatorPath () : string {
   return process.env.ANDROID_HOME
         ? `${process.env.ANDROID_HOME}/tools/emulator`
         : 'emulator'
