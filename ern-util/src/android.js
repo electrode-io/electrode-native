@@ -1,6 +1,7 @@
 // @flow
 
 import exec from './exec'
+import { spawn } from 'child_process'
 import inquirer from 'inquirer'
 import shell from 'shelljs'
 import spin from './spin.js'
@@ -81,12 +82,12 @@ async function runAndroidUsingAvdImage (
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
-async function installAndLaunchApp (
+export async function installAndLaunchApp (
   projectPath: string,
   packageName: string) {
   await spin('Installing application', installApp(projectPath))
-  await spin('Launching application',
-        launchAndroidActivity(packageName, 'MainActivity'))
+  await spin('Launching Android Application', Promise.resolve())
+  launchAndroidActivityDetached(packageName, 'MainActivity', projectPath)
 }
 
 // Utility method that basically completes whenever the android device is ready
@@ -150,6 +151,21 @@ async function launchAndroidActivity (
                 resolve()
               }
             })
+  })
+}
+
+// Utility method to launch a specific activity from a given packager
+// Will spawn the command (detached mode)
+export async function launchAndroidActivityDetached (
+  packageName: string,
+  activityName: string,
+  cwd: string) {
+  const adbShellCommand = spawn(androidAdbPath(),
+      [ 'shell', 'am', 'start', '-n', `${packageName}/.${activityName}` ],
+    { cwd })
+
+  adbShellCommand.stderr.on('data', (data) => {
+    log.error(`${data}`)
   })
 }
 
