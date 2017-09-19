@@ -60,6 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return A UIViewController containing the view of the miniapp.
  */
 - (UIViewController *)miniAppWithName:(NSString *)name
-                           properties:(NSDictionary *)properties;
+                           properties:(NSDictionary _Nullable*)properties;
 @end
 NS_ASSUME_NONNULL_END
