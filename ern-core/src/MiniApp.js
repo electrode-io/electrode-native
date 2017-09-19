@@ -163,8 +163,15 @@ Are you sure this is a MiniApp ?`)
     return this._path
   }
 
-  get name (): string {
+  get name () : string {
     return this.getUnscopedModuleName(this.packageJson.name)
+  }
+
+  get scope () : ?string {
+    const scopeCapture = /^@(.*)\//.exec(this.packageJson.name)
+    if (scopeCapture) {
+      return scopeCapture[1]
+    }
   }
 
   get version () : string {
