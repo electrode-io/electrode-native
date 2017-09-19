@@ -9,6 +9,7 @@ import {
 import * as fileUtils from './fileUtil'
 import fs from 'fs'
 import path from 'path'
+import spin from './spin'
 const fetch = require('node-fetch')
 
 export default class ReactNativeCli {
@@ -95,7 +96,7 @@ export default class ReactNativeCli {
     const isPackagerRunning = await this.isPackagerRunning()
 
     if (!isPackagerRunning) {
-      log.info('Starting React Native packager')
+      await spin('Starting React Native packager', Promise.resolve())
       const scriptFile = `launchPackager.command`
       const scriptsDir = path.resolve(__dirname, '..', 'scripts')
       const launchPackagerScript = path.resolve(scriptsDir, scriptFile)

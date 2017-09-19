@@ -101,7 +101,7 @@ export default class IosGenerator {
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
-      log.info(`Container generation completed!`)
+      log.debug(`Container generation completed!`)
     } catch (e) {
       log.error(`Something went wrong. Aborting ern-container-gen: ${e}`)
       console.trace(e)
