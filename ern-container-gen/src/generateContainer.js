@@ -4,6 +4,9 @@ import {
   Dependency
 } from 'ern-util'
 import {
+  MiniApp
+} from 'ern-core'
+import {
   capitalizeFirstLetter,
   throwIfShellCommandFailed
 } from './utils.js'
@@ -52,7 +55,7 @@ export default async function generateContainer ({
   platformPath: string,
   generator: any,
   plugins: Array<Dependency>,
-  miniapps: Array<any>,
+  miniapps: Array<MiniApp>,
   workingFolder: string,
   pathToYarnLock?: string
 } = {}) {
@@ -106,8 +109,8 @@ export default async function generateContainer ({
     version: miniapp.version,
     unscopedName: getUnscopedModuleName(miniapp.name).replace(/-/g, ''),
     pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)).replace(/-/g, ''),
-    localPath: miniapp.localPath,
-    packagePath: miniapp.packagePath
+    localPath: miniapps.length === 1 ? miniapp.path : undefined,
+    packagePath: miniapp.packageDescriptor
   }))
 
   mustacheView = {
