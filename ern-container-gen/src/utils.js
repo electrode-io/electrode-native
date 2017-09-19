@@ -150,7 +150,6 @@ export async function generateMiniAppsComposite (
     let packageJson = JSON.parse(fs.readFileSync(`${outDir}/package.json`, 'utf-8'))
     packageJson.scripts = {'start': 'node node_modules/react-native/local-cli/cli.js start'}
     fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(packageJson, null, 2), 'utf8')
-
   }
 
   let entryIndexJsContent = ''
