@@ -90,8 +90,10 @@ export default class IosGenerator {
         await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock})
       }
 
-      // Handle resources copying
-      this.copyRnpmAssets(miniapps, paths)
+      // Copy potential rnpm provided assets
+      if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
+        this.copyRnpmAssets(miniapps, paths)
+      }
 
       // Publish resulting container to git repo
       if (gitHubPublisher) {

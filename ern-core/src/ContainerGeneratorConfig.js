@@ -27,6 +27,7 @@ export default class ContainerGeneratorConfig {
   publishers: Array<Publisher>
   containerVersion: string
   platform: string
+  ignoreRnpmAssets: boolean
 
   constructor (platform: string, config: any) {
     this.platform = platform
@@ -44,6 +45,9 @@ export default class ContainerGeneratorConfig {
         for (const p of config.publishers) {
           this.publishers.push(ContainerGeneratorConfig.createPublisher(p.name, p.url))
         }
+      }
+      if (config.ignoreRnpmAssets) {
+        this.ignoreRnpmAssets = config.ignoreRnpmAssets
       }
     } else if (platform === 'android') {
       // No container config provided. Lets create a default maven publisher for android
