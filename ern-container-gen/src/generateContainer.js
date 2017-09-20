@@ -109,7 +109,7 @@ export default async function generateContainer ({
     version: miniapp.version,
     unscopedName: getUnscopedModuleName(miniapp.name).replace(/-/g, ''),
     pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)).replace(/-/g, ''),
-    localPath: miniapps.length === 1 ? miniapp.path : undefined,
+    localPath: miniapp.path,
     packagePath: miniapp.packageDescriptor
   }))
 
