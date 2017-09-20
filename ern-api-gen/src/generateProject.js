@@ -80,7 +80,6 @@ export function generatePackageJson ({
     'author': apiAuthor,
     'license': apiLicense,
     'scripts': {
-      'prepublish': 'ern regen-api -u same',
       'flow': 'flow'
     },
     'devDependencies': {
