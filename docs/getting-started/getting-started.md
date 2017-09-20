@@ -304,6 +304,79 @@ public class MainApplication extends Application {
 
 Once updated run the application directly from Android Studio, or run `ern run-android` again from your terminal, and you will see that the UI now shows the movies that are returned by your native app.
 
+### Implementing the MovieApi on iOS
+
+Open the generated ios project in xcode(`Location: /MovieListApp/ios`) and replace the `ViewController.m` code as below
+
+```ios
+#import "ViewController.h"
+#import "RunnerConfig.h"
+#import <ElectrodeContainer/ElectrodeContainer.h>
+
+@interface ViewController ()
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+
+    MoviesAPI* moviesApi = [[MoviesAPI alloc] init];
+
+    [moviesApi.requests registerGetTopRatedMoviesRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
+        NSLog(@"Invoking request handler");
+        NSMutableArray<Movie *> *movies = [[NSMutableArray alloc] init];
+        [movies addObject:[self createMovie:@"1" title:@"The Shawshank Redemption" releaseYear:@1994 rating:@9.2 imageUrl:@"http://cdn.playbuzz.com/cdn/61e69b26-aaa2-48a7-975a-29421b606abc/8c1acb1d-d9d9-4314-b7f9-589ffcef25cf.jpg"]];
+        [movies addObject:[self createMovie:@"2" title:@"The Godfather" releaseYear:@1972 rating:@9.2 imageUrl:@"https://i.ytimg.com/vi/rt-r-w7Z2Ag/maxresdefault.jpg"]];
+        [movies addObject:[self createMovie:@"3" title:@"The Godfather: Part II" releaseYear:@1974 rating:@9 imageUrl:@"https://historygoestothemovies.files.wordpress.com/2016/02/the-godfather-part-ii-1974-3e490.jpg"]];
+        [movies addObject:[self createMovie:@"4" title:@"The Dark Knight" releaseYear:@2008 rating:@9 imageUrl:@"https://static.comicvine.com/uploads/original/11116/111162392/3849508-8520764306-TDK06.jpg"]];
+        [movies addObject:[self createMovie:@"5" title:@"12 Angry Men" releaseYear:@1957 rating:@8.9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMTk0MDEzMjI3NV5BMl5BanBnXkFtZTcwODg4NDc3Mw@@._V1_.jpg"]];
+
+        block(movies, nil);
+
+
+    }];
+
+
+    UIViewController *viewController =
+    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
+    viewController.view.frame = [UIScreen mainScreen].bounds;
+    [self.view addSubview:viewController.view];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (Movie *) createMovie : (NSString*) movieId title: (NSString*) title releaseYear: (NSNumber*) releaseYear rating: (NSNumber*) rating imageUrl: (NSString*) imageUrl {
+
+    NSMutableDictionary* movieDict = [[NSMutableDictionary alloc]init];
+    [movieDict setObject:movieId forKey:@"id"];
+    [movieDict setObject:title forKey:@"title"];
+    [movieDict setObject:releaseYear forKey:@"releaseYear"];
+    [movieDict setObject:imageUrl forKey:@"imageUrl"];
+
+    Movie *movie =[[Movie alloc] initWithDictionary:movieDict];
+    return movie;
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end
+
+```
+
+
 ## Navigating to another MiniApp to show movie details
 
 Now let's make it more fun, add some navigation to our MiniApp !
@@ -369,11 +442,20 @@ Now whenever you click on a movie in the list, it will invoke the navigation API
 
 Let's do that magic now.
 
+###### Android:
+
 ```
 $ ern run-android --miniapps MovieDetailsApp --mainMiniAppName MovieListApp
 ```
 
+###### iOS:
+
+```
+$ ern run-ios --miniapps MovieDetailsApp --mainMiniAppName MovieListApp
+```
 The above command now includes the `MovieDetailsApp` inside the generated contianer. This is how easy it is to combine multiple MiniApps. Just by running an `ern` command.
+
+### Implementing the NavigationApi on Android
 
 Now, let's open Android Studio, perform a project sync to ensure that the new container.aar is refreshed so that we can add an implementation for the navigation API.
 
@@ -442,5 +524,40 @@ public class MainActivity extends AppCompatActivity {
 ```
 
 Launch the app again from Android Studio, and click on a movie in the list. You will see that the movie details page is now displaying the details of the movie that you clicked.
+
+### Implementing the NavigationApi on iOS
+
+Now, let's open the project in Xcode and add the following implemenation inside `ViewController.m` right below the movie api implementation.
+
+```objective-c
+ NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
+    [navigationAPI.requests registerNavigateRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+
+        NavigateData *navData = (NavigateData *)data;
+        NSMutableDictionary *initialPapyload = [[NSMutableDictionary alloc]init];
+        [initialPapyload setObject:navData.initialPayload forKey:@"payload"];
+
+        UIViewController *viewController = [[ElectrodeReactNative sharedInstance] miniAppWithName:navData.miniAppName properties:initialPapyload];
+        viewController.view.frame = [UIScreen mainScreen].bounds;
+        [self.view addSubview:viewController.view];
+
+        UINavigationController *navController = (UINavigationController *) appDelegate.window.rootViewController;
+        [navController pushViewController:viewController animated:NO];
+
+        block(nil, nil);
+    }];
+
+```
+
+Ensure that you add the `appDelegate` import statement to `ViewController.m` file as well
+
+```objective-c
+#import "AppDelegate.h"
+```
+
+Now run the project from Xcode and you shall see the magic.
+
+
 
 There you go. Now that you have successfully used `Electrode React Native` platform to build your first app and integrate multiple apps to it, it's time for you go and challenge yourself to build more fun stuffs with it.
