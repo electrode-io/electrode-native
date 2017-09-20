@@ -37,9 +37,14 @@ export async function bundleMiniApps (
     } else {
       let miniAppsPaths : Array<DependencyPath> = []
       for (const miniapp of miniapps) {
-        if (miniapp.packagePath) {
+        if (miniapp.localPath) {
+          log.debug(`[bundleMiniApps] Using local path ${miniapp.localPath} for ${miniapp.name}`)
+          miniAppsPaths.push(DependencyPath.fromFileSystemPath(miniapp.localPath))
+        } else if (miniapp.packagePath) {
+          log.debug(`[bundleMiniApps] Using package path ${miniapp.packagePath} for ${miniapp.name}`)
           miniAppsPaths.push(miniapp.packagePath)
         } else {
+          log.debug(`[bundleMiniApps] Using built path for ${miniapp.name}`)
           miniAppsPaths.push(new DependencyPath(new Dependency(miniapp.name, {
             scope: miniapp.scope,
             version: miniapp.version
