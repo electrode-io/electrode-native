@@ -37,6 +37,8 @@ public class ElectrodeReactContainer {
     private static ReactInstanceManager sReactInstanceManager;
 
     private final boolean isReactNativeDeveloperSupport;
+    private static boolean sIsReactNativeReady;
+    private static List<ReactNativeReadyListener> reactNativeReadyListeners = new ArrayList<>();
 
     private static List<ReactPackage> sReactPackages = new ArrayList<>();
 
@@ -90,6 +92,8 @@ public class ElectrodeReactContainer {
           sReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
             @Override
             public void onReactContextInitialized(ReactContext context) {
+              sIsReactNativeReady = true;
+              notifyReactNativeReadyListeners();
               for (ReactPackage instance : sReactPackages) {
                 try {
                   Method onReactNativeInitialized =
@@ -164,6 +168,10 @@ public class ElectrodeReactContainer {
         return this.isReactNativeDeveloperSupport;
     }
 
+    public static boolean isReactNativeReady() {
+            return sIsReactNativeReady;
+    }
+
     public static class Config {
         private boolean isReactNativeDeveloperSupport;
         private OkHttpClient okHttpClient;
@@ -185,4 +193,31 @@ public class ElectrodeReactContainer {
                     '}';
         }
     }
+
+    public static void registerReactNativeReadyListener(ReactNativeReadyListener listener) {
+        // If react native initialization is already completed, just call listener
+        // immediately
+        if (sIsReactNativeReady) {
+            listener.onReactNativeReady();
+        }
+        // Else it will get invoked whenever react native initialization is done
+        else {
+            reactNativeReadyListeners.add(listener);
+        }
+    }
+
+    private static void notifyReactNativeReadyListeners() {
+        for (ReactNativeReadyListener listener : reactNativeReadyListeners) {
+            listener.onReactNativeReady();
+        }
+    }
+
+    public static void resetReactNativeReadyListeners() {
+        reactNativeReadyListeners.clear();
+    }
+
+    public interface ReactNativeReadyListener {
+            void onReactNativeReady();
+    }
+
 }
