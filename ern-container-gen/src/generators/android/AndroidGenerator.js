@@ -120,7 +120,9 @@ export default class AndroidGenerator {
     await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
 
     // Rnpm handling
-    this.copyRnpmAssets(miniapps, paths)
+    if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
+      this.copyRnpmAssets(miniapps, paths)
+    }
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
