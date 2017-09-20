@@ -242,7 +242,17 @@ Then, just replace the constructor method with the following code:
 }
 ```
 
-You can now reload the MiniApp so that it uses this updated code.  
+You can now relaunch the MiniApp so that it uses this updated code.
+
+###### Android:
+```bash
+ern run-android
+```
+###### iOS:
+```bash
+ern run-ios
+```
+
 You will see that the UI is showing the movie names defined in the catch block. This means there was no API implementation registered to serve the `getTopRatedMovies` request.   
 
 Let's see how we can actually write an implementation of this API.
@@ -288,11 +298,11 @@ public class MainApplication extends Application {
             @Override
             public void onRequest(@Nullable None payload, @NonNull ElectrodeBridgeResponseListener<List<Movie>> responseListener) {
                 List<Movie> movies = new ArrayList<Movie>() {{
-                    add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(9.2f).build());
-                    add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(9.2f).build());
-                    add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(9.0f).build());
-                    add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(9.0f).build());
-                    add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(8.9f).build());
+                     add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(9.2f).imageUrl("http://cdn.playbuzz.com/cdn/61e69b26-aaa2-48a7-975a-29421b606abc/8c1acb1d-d9d9-4314-b7f9-589ffcef25cf.jpg").build());
+                     add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(9.2f).imageUrl("https://i.ytimg.com/vi/rt-r-w7Z2Ag/maxresdefault.jpg").build());
+                     add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(9.0f).imageUrl("https://historygoestothemovies.files.wordpress.com/2016/02/the-godfather-part-ii-1974-3e490.jpg").build());
+                     add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(9.0f).imageUrl("https://static.comicvine.com/uploads/original/11116/111162392/3849508-8520764306-TDK06.jpg").build());
+                     add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(8.9f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMTk0MDEzMjI3NV5BMl5BanBnXkFtZTcwODg4NDc3Mw@@._V1_.jpg").build());
                 }};
                 responseListener.onSuccess(movies);
             }

@@ -35,7 +35,7 @@ android {
         ignoreWarnings true
     }
     compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    buildToolsVersion "26.0.1"
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 24
