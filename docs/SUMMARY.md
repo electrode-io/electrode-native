@@ -2,8 +2,7 @@
 
 ### INTRODUCTION
 
-- [Read Me](README.md)
-- [Overview](overview.md)
+- [Overview](overview/what-is-ern.md)
   - [What is Electrode React Native](overview/what-is-ern.md)
   - [Why use Electrode React Native](overview/why-use-ern.md)
   - [What is a MiniApp](overview/what-is-a-miniapp.md)
