@@ -63,62 +63,60 @@ Open `index.android.js` or `index.ios.js` in your favorite JavaScript editor and
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   AppRegistry,
   StyleSheet,
   Text,
   View,
   ListView,
-  TouchableHighlight,
-  Image
-} from 'react-native';
+  Image,
+  TouchableHighlight
+} from 'react-native'
 
 export default class MovieListApp extends Component {
 
-  constructor() {
-    super();
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+  constructor () {
+    super()
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
     this.state = {
       dataSource: ds.cloneWithRows([{
-        title: "Fast and Furious 1",
-        release: 2010,
-        ratings: "4.5",
-        description: "This is the first movie ever released"
+        title: 'The Fast and Furious',
+        releaseYear: 2010,
+        ratings: '4.5',
+        imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BNzlkNzVjMDMtOTdhZC00MGE1LTkxODctMzFmMjkwZmMxZjFhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,672,1000_AL_.jpg`,
+        description: 'The Fast and the Furious'
       }, {
-        title: "Fast and Furious 2",
-        release: 2011,
-        ratings: "4.0",
-        description: "This is the second movie ever released"
+        title: '2 Fast 2 Furious',
+        releaseYear: 2011,
+        ratings: '4.0',
+        imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BMzExYjcyYWMtY2JkOC00NDUwLTg2OTgtMDI3MGY2OWQzMDE2XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SY1000_CR0,0,666,1000_AL_.jpg`,
+        description: 'How fast do you like it ?'
       }
       ]),
     }
   }
 
-  render() {
+  render () {
     return (
-      <ListView style = {styles.container} dataSource={this.state.dataSource}
-        renderRow={(rowData) =>
-          <TouchableHighlight underlayColor = "grey">
-            <View>
-              <View style = {styles.rowtop}>
-                <Text style = {styles.title}>{rowData.title}</Text>
-                <Text style = {styles.rating}>{rowData.rating}</Text>
-              </View>
-              <Image
-                style = {styles.icon}
-                source = {{uri: 'http://facebook.github.io/react/img/logo_og.png'}}
-              />
-              <View >
-                <Text style = {styles.subtitle}>{rowData.title}</Text>
-              </View>
-
-            </View>
-          </TouchableHighlight>
-      }
-      renderSeparator={(sectionId, rowId)=> <View key={rowId} style={styles.separator}/>}
+      <ListView style={styles.container} dataSource={this.state.dataSource}
+                renderRow={(movie) =>
+                  <View style={styles.row}>
+                    <Image
+                      style={styles.icon}
+                      source={{
+                        uri: movie.imageUrl ? movie.imageUrl : 'http://image10.bizrate-images.com/resize?sq=60&uid=2216744464?odnHeight=100&odnWidth=100&odnBg=FFFFFF'
+                      }}
+                    />
+                    <View style={styles.row2}>
+                      <Text style={styles.title}>{movie.title}</Text>
+                      <Text style={styles.subtitle}>{movie.releaseYear}</Text>
+                    </View>
+                  </View>
+                }
+                renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
       />
-    );
+    )
   }
 }
 
@@ -126,12 +124,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
+    padding: 5,
+    backgroundColor: 'black'
   },
-  rowtop: {
+
+  row: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor:'blue',
+    backgroundColor: 'white',
+    padding: 12
+  },
+  row2: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
     padding: 12
   },
   listview: {
@@ -143,34 +151,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    backgroundColor:'red',
-  },
-  ratings: {
-    fontSize: 15,
-    backgroundColor:'yellow',
-
   },
   subtitle: {
-    marginLeft: 12,
-    marginRight: 12,
-    flex:1,
+    paddingTop: 5,
+    flex: 1,
     fontSize: 12
   },
   separator: {
-    padding: 1,
     flex: 1,
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#8E8E8E',
+    height: 0,
+    paddingTop: 2,
+    paddingBottom: 2
   },
   icon: {
-    justifyContent: 'center',
-    flex: 1,
-    height: 50,
-    width: 50
+    width: 50,
+    height: 70,
+    flexShrink: 1,
+    alignSelf: 'center'
   }
-});
+})
 
-AppRegistry.registerComponent('MovieListApp', () => MovieListApp);
+AppRegistry.registerComponent('MovieListApp', () => MovieListApp)
 ```
 
 Once done, let's reload the MiniApp in the emulator/simulator, for it to pick up the new code. 
@@ -203,46 +204,48 @@ import { MoviesApi } from 'react-native-ernmovie-api'
 Then, just replace the constructor method with the following code:
 
 ```javascript
- constructor() {
-  super();
-  const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+   constructor () {
+     super()
+     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-  let topMovies = []
-  MoviesApi.requests().getTopRatedMovies().then((movies) => {
-    console.log(`Top movies fetched ${movies}`)
-    if(movies) {
-      this.setState(previousState => {
-        return {dataSource: ds.cloneWithRows(movies)}
-      })
-    }
-  }).catch(error => {
-      console.log(`Error: ${error}`);
-      topMovies = [{
-        title: "Default - FF1",
-        release: 2010,
-        ratings: "4.5",
-        description: "This is the first movie ever released"
-      }, {
-        title: "Default - FF2",
-        release: 2011,
-        ratings: "4.0",
-        description: "This is the second movie ever released"
-      }
-    ];
+     let topMovies = []
+     MoviesApi.requests().getTopRatedMovies().then((movies) => {
+       console.log(`Top movies fetched ${movies}`)
+       if (movies) {
+         this.setState(previousState => {
+           return {dataSource: ds.cloneWithRows(movies)}
+         })
+       }
+     }).catch(error => {
+       console.log(`Error: ${error}`)
+       topMovies = [{
+         title: 'Titanic',
+         releaseYear: 1997,
+         ratings: '4.5',
+         imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SY1000_CR0,0,671,1000_AL_.jpg`,
+         description: 'Titanic'
+       }, {
+         title: 'Avatar',
+         releaseYear: 2009,
+         ratings: '4.0',
+         imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BMTYwOTEwNjAzMl5BMl5BanBnXkFtZTcwODc5MTUwMw@@._V1_.jpg`,
+         description: 'Avatar'
+       }
+       ]
 
-    this.setState(previousState => {
-      return {dataSource: ds.cloneWithRows(topMovies)}
-    })
+       this.setState(previousState => {
+         return {dataSource: ds.cloneWithRows(topMovies)}
+       })
 
-  })
+     })
 
-  this.state = {
-    dataSource: ds.cloneWithRows(topMovies),
-  }
-}
+     this.state = {
+       dataSource: ds.cloneWithRows(topMovies),
+     }
+   }
 ```
 
-You can now relaunch the MiniApp so that it uses this updated code.
+You can now relaunch the MiniApp by running the command below so that it uses this updated code.
 
 ###### Android:
 ```bash
@@ -298,11 +301,11 @@ public class MainApplication extends Application {
             @Override
             public void onRequest(@Nullable None payload, @NonNull ElectrodeBridgeResponseListener<List<Movie>> responseListener) {
                 List<Movie> movies = new ArrayList<Movie>() {{
-                     add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(9.2f).imageUrl("http://cdn.playbuzz.com/cdn/61e69b26-aaa2-48a7-975a-29421b606abc/8c1acb1d-d9d9-4314-b7f9-589ffcef25cf.jpg").build());
-                     add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(9.2f).imageUrl("https://i.ytimg.com/vi/rt-r-w7Z2Ag/maxresdefault.jpg").build());
-                     add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(9.0f).imageUrl("https://historygoestothemovies.files.wordpress.com/2016/02/the-godfather-part-ii-1974-3e490.jpg").build());
-                     add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(9.0f).imageUrl("https://static.comicvine.com/uploads/original/11116/111162392/3849508-8520764306-TDK06.jpg").build());
-                     add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(8.9f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMTk0MDEzMjI3NV5BMl5BanBnXkFtZTcwODg4NDc3Mw@@._V1_.jpg").build());
+                     add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(5f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ1ODM2MjY3OV5BMl5BanBnXkFtZTgwMTU2MjEyMDE@._V1_.jpg").build());
+                     add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(4.9f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BZTRmNjQ1ZDYtNDgzMy00OGE0LWE4N2YtNTkzNWQ5ZDhlNGJmL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,704,1000_AL_.jpg").build());
+                     add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(4f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMGM0MzkxM2MtYWQ2My00NjYyLThhYmYtMTdkNTMyNmFmYTY1XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,701,1000_AL_.jpg").build());
+                     add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(4f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg").build());
+                     add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(3f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SY1000_CR0,0,649,1000_AL_.jpg").build());
                 }};
                 responseListener.onSuccess(movies);
             }
@@ -337,11 +340,11 @@ Open the generated ios project in xcode(`Location: /MovieListApp/ios`) and repla
     [moviesApi.requests registerGetTopRatedMoviesRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
         NSLog(@"Invoking request handler");
         NSMutableArray<Movie *> *movies = [[NSMutableArray alloc] init];
-        [movies addObject:[self createMovie:@"1" title:@"The Shawshank Redemption" releaseYear:@1994 rating:@9.2 imageUrl:@"http://cdn.playbuzz.com/cdn/61e69b26-aaa2-48a7-975a-29421b606abc/8c1acb1d-d9d9-4314-b7f9-589ffcef25cf.jpg"]];
-        [movies addObject:[self createMovie:@"2" title:@"The Godfather" releaseYear:@1972 rating:@9.2 imageUrl:@"https://i.ytimg.com/vi/rt-r-w7Z2Ag/maxresdefault.jpg"]];
-        [movies addObject:[self createMovie:@"3" title:@"The Godfather: Part II" releaseYear:@1974 rating:@9 imageUrl:@"https://historygoestothemovies.files.wordpress.com/2016/02/the-godfather-part-ii-1974-3e490.jpg"]];
-        [movies addObject:[self createMovie:@"4" title:@"The Dark Knight" releaseYear:@2008 rating:@9 imageUrl:@"https://static.comicvine.com/uploads/original/11116/111162392/3849508-8520764306-TDK06.jpg"]];
-        [movies addObject:[self createMovie:@"5" title:@"12 Angry Men" releaseYear:@1957 rating:@8.9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMTk0MDEzMjI3NV5BMl5BanBnXkFtZTcwODg4NDc3Mw@@._V1_.jpg"]];
+        [movies addObject:[self createMovie:@"1" title:@"The Shawshank Redemption" releaseYear:@1994 rating:@9.2 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ1ODM2MjY3OV5BMl5BanBnXkFtZTgwMTU2MjEyMDE@._V1_.jpg"]];
+        [movies addObject:[self createMovie:@"2" title:@"The Godfather" releaseYear:@1972 rating:@9.2 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BZTRmNjQ1ZDYtNDgzMy00OGE0LWE4N2YtNTkzNWQ5ZDhlNGJmL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,704,1000_AL_.jpg"]];
+        [movies addObject:[self createMovie:@"3" title:@"The Godfather: Part II" releaseYear:@1974 rating:@9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMGM0MzkxM2MtYWQ2My00NjYyLThhYmYtMTdkNTMyNmFmYTY1XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,701,1000_AL_.jpg"]];
+        [movies addObject:[self createMovie:@"4" title:@"The Dark Knight" releaseYear:@2008 rating:@9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg"]];
+        [movies addObject:[self createMovie:@"5" title:@"12 Angry Men" releaseYear:@1957 rating:@8.9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SY1000_CR0,0,649,1000_AL_.jpg"]];
 
         block(movies, nil);
 
@@ -349,10 +352,11 @@ Open the generated ios project in xcode(`Location: /MovieListApp/ios`) and repla
     }];
 
 
-    UIViewController *viewController =
-    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
-    viewController.view.frame = [UIScreen mainScreen].bounds;
-    [self.view addSubview:viewController.view];
+   UIViewController *viewController =
+   [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
+   [viewController setTitle:@"Top Movies List"];
+   viewController.view.frame = [UIScreen mainScreen].bounds;
+   [self pushViewController:viewController animated:NO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -414,39 +418,37 @@ import { NavigationApi } from 'react-native-navigation-api'
 And then just replace the `render` method with the following one:
 
 ```javascript
-render () {
+  render () {
     return (
       <ListView style={styles.container} dataSource={this.state.dataSource}
-          renderRow={(rowData) =>
-            <TouchableHighlight onPress={() => this._onPressRow(rowData)} underlayColor="grey">
-              <View>
-                <View style={styles.rowtop}>
-                  <Text style={styles.title}>{rowData.title}</Text>
-                  <Text style={styles.rating}>{rowData.rating}</Text>
-                </View>
-                <Image
-                  style={styles.icon}
-                  source={{uri: 'http://facebook.github.io/react/img/logo_og.png'}}
-                />
-                <View >
-                  <Text style={styles.subtitle}>{rowData.title}</Text>
-                </View>
-
-              </View>
-            </TouchableHighlight>
-          }
-          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
+                renderRow={(movie) =>
+                <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="grey">
+                  <View style={styles.row} onPress={() => this._onPressRow(movie)}>
+                    <Image
+                      style={styles.icon}
+                      source={{
+                        uri: movie.imageUrl ? movie.imageUrl : 'http://image10.bizrate-images.com/resize?sq=60&uid=2216744464?odnHeight=100&odnWidth=100&odnBg=FFFFFF'
+                      }}
+                    />
+                    <View style={styles.row2}>
+                      <Text style={styles.title}>{movie.title}</Text>
+                      <Text style={styles.subtitle}>{movie.releaseYear}</Text>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+                }
+                renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
       />
     )
   }
 
-  _onPressRow (rowData) {
-    rowData.isSelect = !rowData.isSelect
-    console.log('----------')
-    console.log(rowData)
-    NavigationApi.requests().navigate('MovieDetailsApp', {'initialPayload': JSON.stringify(rowData)}, 5000)
+  _onPressRow (movie) {
+    movie.isSelect = !movie.isSelect
+    NavigationApi.requests().navigate('MovieDetailsApp', {'initialPayload': JSON.stringify(movie)}).catch(() => {
+      console.log("Navigation failed.");
+    })
   }
-```
+  ```
 
 Now whenever you click on a movie in the list, it will invoke the navigation API to navigate to MovieDetails app.
 
@@ -537,7 +539,19 @@ Launch the app again from Android Studio, and click on a movie in the list. You 
 
 ### Implementing the NavigationApi on iOS
 
-Now, let's open the project in Xcode and add the following implemenation inside `ViewController.m` right below the movie api implementation.
+Now, let's open the project in Xcode
+
+Replace the content of `ViewController.h` as below,
+
+```
+#import <UIKit/UIKit.h>
+
+@interface ViewController : UINavigationController
+
+@end
+```
+
+Add the following implementation inside `ViewController.m` right below the movie api implementation.
 
 ```objective-c
  NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
@@ -550,7 +564,6 @@ Now, let's open the project in Xcode and add the following implemenation inside 
 
         UIViewController *viewController = [[ElectrodeReactNative sharedInstance] miniAppWithName:navData.miniAppName properties:initialPapyload];
         viewController.view.frame = [UIScreen mainScreen].bounds;
-        [self.view addSubview:viewController.view];
 
         UINavigationController *navController = (UINavigationController *) appDelegate.window.rootViewController;
         [navController pushViewController:viewController animated:NO];
