@@ -115,6 +115,7 @@ export async function cleanGenerated (outFolder: string = process.cwd()) {
   shell.rm('-rf', path.join(outFolder, 'javascript'))
   shell.rm('-rf', path.join(outFolder, 'swift'))
   shell.rm('-rf', path.join(outFolder, 'android'))
+  shell.rm('-rf', path.join(outFolder, 'IOS'))
   return pkg
 }
 
