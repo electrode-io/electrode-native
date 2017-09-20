@@ -12,37 +12,54 @@ This will help us understand how easy it is to integrate multiple react native a
 
 Before we start, we assume that you have already completed the electrode react native platform setup. If not please follow the instructions [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/wiki/Getting-started) before proceeding with the getting started guide.
 
-* Your first Miniapp
-Lets first create a MiniApp( nothing but a react native app) using ern platform. Now would be a good time to create a workspace folder for keeping all the projects that we are going to create using the platform.
+## Creating your first Miniapp
 
+Lets first create a MiniApp using ern platform.  
+Now would be a good time to create a working directory for keeping all the projects that we are going to create using the platform.  
+Once you have your work directory, just `cd` into it:
+
+```bash
+$ cd <your-working-directory>
 ```
-cd <your-workspace>
+
+and run the following `ern` command to create a new MiniApp. We'll name this one as `MovieListApp`.
+
+```bash
 $ ern create-miniapp MovieListApp
 ```
-You will see a new folder created in your workspace. Now let's try to run it and see how it looks on an android or ios device. The assumption is that you have already setup android or ios emulator/simulator, if not please proceed [here]() to complete the setup.
+
+The MiniApp will be created in a new directory `MovieListApp`.   
+Now let's try to run it and see how it looks on an Android or iOS device.   
+The assumption is that you have already setup Android or iOS emulator/simulator, if not please proceed [here]() to complete the setup.
+
+## Launching the Miniapp
+
+Just `cd` into the `MovieListApp` MiniApp directory:
+
+```bash
+$ cd MovieListApp
+```
+
+And then launch the MiniApp using `ern`:
 
 ```
-$ cd MovieListApp
 Android:
 $ ern run-android
 
 iOS:
 $ ern run-ios
 ```
-Please pick one emulator or device when prompted. At the end, you will see that your first miniapp is launched. AS we stated before, a miniapp is nothing but a react native app, so you will see your first react native app.!
 
-Now let's make it an app that lists top movies. Open the project in your favorite JS editor and copy and paste the below code inside `index.android.js` and `index.ios.js`.
+Please pick one emulator or device when prompted.   
+Once `ern` command execution is complete, you will see your first `MovieListApp` MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app.
 
-Use vi or any editor of your choice
-```
-$ vi index.android.js
-$ vi index.ios.js
-```
-Copy and paste below code
-```
+## Creating the Miniapp UI
+
+Now let's make it an app that lists top movies.  
+Open `index.android.js` or `index.ios.js` in your favorite JavaScript editor and just replace all of the code in this file, with the following code:
+
+```javascript
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
  * @flow
  */
 
@@ -75,34 +92,34 @@ export default class MovieListApp extends Component {
         description: "This is the second movie ever released"
       }
       ]),
-    };
+    }
   }
 
-render() {
-   return (
-     <ListView style = {styles.container} dataSource={this.state.dataSource}
-       renderRow={(rowData) =>
-         <TouchableHighlight underlayColor = "grey">
-           <View>
-             <View style = {styles.rowtop}>
-               <Text style = {styles.title}>{rowData.title}</Text>
-               <Text style = {styles.rating}>{rowData.rating}</Text>
-             </View>
-             <Image
-               style = {styles.icon}
-               source = {{uri: 'http://facebook.github.io/react/img/logo_og.png'}}
-             />
-             <View >
-               <Text style = {styles.subtitle}>{rowData.title}</Text>
-             </View>
+  render() {
+    return (
+      <ListView style = {styles.container} dataSource={this.state.dataSource}
+        renderRow={(rowData) =>
+          <TouchableHighlight underlayColor = "grey">
+            <View>
+              <View style = {styles.rowtop}>
+                <Text style = {styles.title}>{rowData.title}</Text>
+                <Text style = {styles.rating}>{rowData.rating}</Text>
+              </View>
+              <Image
+                style = {styles.icon}
+                source = {{uri: 'http://facebook.github.io/react/img/logo_og.png'}}
+              />
+              <View >
+                <Text style = {styles.subtitle}>{rowData.title}</Text>
+              </View>
 
-           </View>
-         </TouchableHighlight>
-     }
-     renderSeparator={(sectionId, rowId)=> <View key={rowId} style={styles.separator}/>}
-     />
-   );
- }
+            </View>
+          </TouchableHighlight>
+      }
+      renderSeparator={(sectionId, rowId)=> <View key={rowId} style={styles.separator}/>}
+      />
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -154,81 +171,92 @@ const styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('MovieListApp', () => MovieListApp);
-
 ```
 
-. Go and reload the UI
+Once done, let's reload the MiniApp in the emulator/simulator, for it to pick up the new code. 
 
 ```
 Android: CMD+M --> Reload
 IOS: CMD+M
 ```
 
-You can now see a new UI. Now let's add an API so that we can fetch some movie names provided by the native app instead of hard coding them inside `index.android/ios.js`
+You can now see the initial UI of the `MovieListApp`.
 
-. Add movie API to MovieListApp
+## Retrieving Movies from the Native side
 
-```
+Let's now add an API so that we can fetch some movie names provided by the native app instead of hard coding them inside `index.android/ios.js`
+
+```bash
 $ cd ../MovieListApp
 $ ern add react-native-ernmovie-api
 $ ern add react-native-electrode-bridge
 ```
 
-Now let's invoke this API from our react native app. Let's update `index.android/ios.js` code.
+Now let's use this API from our react native app. For this, we'll have to update `index.android/ios.js` code as follow:
 
+Add the following `import` statement under other `import` statements located at the top of the JavaScript file:
+
+```javascript
+import { MoviesApi } from 'react-native-ernmovie-api'
 ```
-import {MoviesApi} from "react-native-ernmovie-api"
-.
-.
-.
+
+Then, just replace the constructor method with the following code:
+
+```javascript
  constructor() {
-    super();
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+  super();
+  const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-    let topMovies = []
-    MoviesApi.requests().getTopRatedMovies().then((movies) => {
-      console.log(`Top movies fetcehd ${movies}`);
-      if(movies) {
-        this.setState(previousState => {
-          return {dataSource: ds.cloneWithRows(movies)}
-        })
+  let topMovies = []
+  MoviesApi.requests().getTopRatedMovies().then((movies) => {
+    console.log(`Top movies fetched ${movies}`)
+    if(movies) {
+      this.setState(previousState => {
+        return {dataSource: ds.cloneWithRows(movies)}
+      })
+    }
+  }).catch(error => {
+      console.log(`Error: ${error}`);
+      topMovies = [{
+        title: "Default - FF1",
+        release: 2010,
+        ratings: "4.5",
+        description: "This is the first movie ever released"
+      }, {
+        title: "Default - FF2",
+        release: 2011,
+        ratings: "4.0",
+        description: "This is the second movie ever released"
       }
-    }).catch(error => {
-       console.log(`Error: ${error}`);
-       topMovies = [{
-         title: "Default - FF1",
-         release: 2010,
-         ratings: "4.5",
-         description: "This is the first movie ever released"
-       }, {
-         title: "Default - FF2",
-         release: 2011,
-         ratings: "4.0",
-         description: "This is the second movie ever released"
-       }
-     ];
+    ];
 
-     this.setState(previousState => {
-       return {dataSource: ds.cloneWithRows(topMovies)}
-     })
-
+    this.setState(previousState => {
+      return {dataSource: ds.cloneWithRows(topMovies)}
     })
 
-    this.state = {
-      dataSource: ds.cloneWithRows(topMovies),
-    };
+  })
+
+  this.state = {
+    dataSource: ds.cloneWithRows(topMovies),
   }
-
+}
 ```
 
-When you reload the API, you can see that the UI is showing the movie names that was returned inside the catch block, which means there was no implementation available to show the top movies. Now let's see how we can write an implementation of this API.
+You can now reload the MiniApp so that it uses this updated code.  
+You will see that the UI is showing the movie names defined in the catch block. This means there was no API implementation registered to serve the `getTopRatedMovies` request.   
 
-This can be done in two ways, either on JS side or Native side. To make it more fun lets see how we can do this on the native side.
+Let's see how we can actually write an implementation of this API.
 
-#### Android:
-Open the generated android project in android studio(`Location: /MovieListApp/android`) and replace the `MainApplication.java` code as below
+An API implementation can either be done on the JavaScript side or the Native side.  
+To make it more fun lets see how we can do this on the Native side.
 
-```
+### Implementing the MovieApi on Android
+
+Open `MainApplication.java` in your favorite IDE (this file is located in `android/app/src/main/java/com/walmartlabs/ern/`), or just open the Android project (in `android/`) in Android Studio to edit this file.
+
+Replace the whole content of this file with the following code:
+
+```java
 package com.walmartlabs.ern;
 
 import android.app.Application;
@@ -272,55 +300,59 @@ public class MainApplication extends Application {
     }
 
 }
-
 ```
 
-Once updated run the app from Android studio and you can see that UI now shows the movies that are returned by your native app.
+Once updated run the application directly from Android Studio, or run `ern run-android` again from your terminal, and you will see that the UI now shows the movies that are returned by your native app.
 
-Now let's make it more fun, add some click actions to our app!.
+## Navigating to another MiniApp to show movie details
 
-When a user clicks on a movie it should take you to the details page. For this, we need few things,
+Now let's make it more fun, add some navigation to our MiniApp !
 
-1. A movie details page, which we have developed and published for you already and we are going to reuse it. This is nothing but another miniapp that we created.
-2. An API that helps you navigate between these apps, we have created this API as well. If you would like to create your own API, please follow the instructions (here)[].
+When tapping a movie in the list, we would like to navigate to this movie details screen.
+For this, we need few things:
 
-Now let's add the navigation API to MovieListApp.
+1. A movie details screen, that we have already implemented and published to npm so that you can just reuse it. This "screen" is actually another MiniApp that we created.
+2. An API that helps you navigate between these two MiniApps. We have created this API as well. If you would like to create your own API, please follow the instructions (here)[].
 
-```
-$ cd MovieListApp
+First let's add our very basic Navigation API to the `MovieListApp` MiniApp. From the `MovieListApp` directory, execute the following `ern` command, that should be used to add any dependency (native or JavaScript) to a MiniApp. We'll use it to add a dependency on the Navigation API in our `MovieListApp`:
+
+```bash
 $ ern add react-native-navigation-api
 ```
 
-Once the api is added, let's make some code changes in `index.android/ios.js` file.
+Once the API is added, we'll just make some code changes in `index.android/ios.js` file of our MiniApp.
 
-```
+First, add the following import statement:
+
+```javascript
 import { NavigationApi } from 'react-native-navigation-api'
-.
-.
-.
-.
+```
+
+And then just replace the `render` method with the following one:
+
+```javascript
 render () {
     return (
       <ListView style={styles.container} dataSource={this.state.dataSource}
-                renderRow={(rowData) =>
-                  <TouchableHighlight onPress={() => this._onPressRow(rowData)} underlayColor="grey">
-                    <View>
-                      <View style={styles.rowtop}>
-                        <Text style={styles.title}>{rowData.title}</Text>
-                        <Text style={styles.rating}>{rowData.rating}</Text>
-                      </View>
-                      <Image
-                        style={styles.icon}
-                        source={{uri: 'http://facebook.github.io/react/img/logo_og.png'}}
-                      />
-                      <View >
-                        <Text style={styles.subtitle}>{rowData.title}</Text>
-                      </View>
+          renderRow={(rowData) =>
+            <TouchableHighlight onPress={() => this._onPressRow(rowData)} underlayColor="grey">
+              <View>
+                <View style={styles.rowtop}>
+                  <Text style={styles.title}>{rowData.title}</Text>
+                  <Text style={styles.rating}>{rowData.rating}</Text>
+                </View>
+                <Image
+                  style={styles.icon}
+                  source={{uri: 'http://facebook.github.io/react/img/logo_og.png'}}
+                />
+                <View >
+                  <Text style={styles.subtitle}>{rowData.title}</Text>
+                </View>
 
-                    </View>
-                  </TouchableHighlight>
-                }
-                renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
+              </View>
+            </TouchableHighlight>
+          }
+          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
       />
     )
   }
@@ -333,21 +365,21 @@ render () {
   }
 ```
 
-So with this implementation when you click on a  movie item it invokes the navigation API and asks to navigate to MovieDetails app.
+Now whenever you click on a movie in the list, it will invoke the navigation API to navigate to MovieDetails app.
 
 Let's do that magic now.
 
 ```
-$cd MovieListApp
-$ern run-android --miniapps MovieDetailsApp --mainMiniAppName MovieListApp
+$ ern run-android --miniapps MovieDetailsApp --mainMiniAppName MovieListApp
 ```
-The above command now includes the MovieDetailsApp inside the generated contianer. This is how easy it is to combine multiple miniapps. Just by running a command.
+
+The above command now includes the `MovieDetailsApp` inside the generated contianer. This is how easy it is to combine multiple MiniApps. Just by running an `ern` command.
 
 Now, let's open Android Studio, perform a project sync to ensure that the new container.aar is refreshed so that we can add an implementation for the navigation API.
 
-Add the following inside `onCreate` of the `MainActivity.java`
+Replace the `MainActivity.java` whole content with the following:
 
-```
+```java
 package com.walmartlabs.ern;
 
 import android.content.Intent;
@@ -364,10 +396,13 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandle
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
 import com.walmartlabs.ern.container.miniapps.MiniAppsConfig;
-.
-.
-.
- @Override
+import com.walmartlabs.ern.container.miniapps.MovieListAppActivity;
+
+// This is the main activity that gets launched upon app start
+// It just launches the activity containing the miniapp
+// Feel free to modify it at your convenience.
+public class MainActivity extends AppCompatActivity {
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -402,8 +437,10 @@ import com.walmartlabs.ern.container.miniapps.MiniAppsConfig;
             }
         });
     }
+}
+
 ```
 
-Launch the app again from android and click on a movie and you will see that the movie details page is now displaying the details of the movie that you clicked.
+Launch the app again from Android Studio, and click on a movie in the list. You will see that the movie details page is now displaying the details of the movie that you clicked.
 
-There you go. Now that you have successfully used `Electrode react native` platform to build your first app and integrate multiple apps to it, it's time for you go and challenge yourself to build more fun stuffs with it.
+There you go. Now that you have successfully used `Electrode React Native` platform to build your first app and integrate multiple apps to it, it's time for you go and challenge yourself to build more fun stuffs with it.
