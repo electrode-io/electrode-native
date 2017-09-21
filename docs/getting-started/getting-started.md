@@ -4,8 +4,8 @@ This guide will walk you through steps to build react native apps using ern plat
 
 For the purpose of the tutorial, we are going to create a Movie application that lists top rated movies and clicking on any movie will take the user to the details page. Let's break this down into two miniapps.
 
-1. MovieListApp: To list the top movies.
-2. MovieDetailsApp: Show the details of a movie. 
+1. MovieListMiniApp: To list the top movies.
+2. MovieDetailsMiniApp: Show the details of a movie.
 
 This will help us understand how easy it is to integrate multiple react native applications into a native application. Let's get started.
 
@@ -22,22 +22,22 @@ Once you have your work directory, just `cd` into it:
 $ cd <your-working-directory>
 ```
 
-and run the following `ern` command to create a new MiniApp. We'll name this one as `MovieListApp`.
+and run the following `ern` command to create a new MiniApp. We'll name this one as `MovieListMiniApp`.
 
 ```bash
-$ ern create-miniapp MovieListApp
+$ ern create-miniapp MovieListMiniApp
 ```
 
-The MiniApp will be created in a new directory `MovieListApp`.   
+The MiniApp will be created in a new directory `MovieListMiniApp`.
 Now let's try to run it and see how it looks on an Android or iOS device.   
 The assumption is that you have already setup Android or iOS emulator/simulator, if not please proceed [here]() to complete the setup.
 
 ## Launching the Miniapp
 
-Just `cd` into the `MovieListApp` MiniApp directory:
+Just `cd` into the `MovieListMiniApp` MiniApp directory:
 
 ```bash
-$ cd MovieListApp
+$ cd MovieListMiniApp
 ```
 
 And then launch the MiniApp using `ern`:
@@ -51,7 +51,7 @@ $ ern run-ios
 ```
 
 Please pick one emulator or device when prompted.   
-Once `ern` command execution is complete, you will see your first `MovieListApp` MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app.
+Once `ern` command execution is complete, you will see your first `MovieListMiniApp` MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app.
 
 ## Creating the Miniapp UI
 
@@ -74,7 +74,7 @@ import {
   TouchableHighlight
 } from 'react-native'
 
-export default class MovieListApp extends Component {
+export default class MovieListMiniApp extends Component {
 
   constructor () {
     super()
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   }
 })
 
-AppRegistry.registerComponent('MovieListApp', () => MovieListApp)
+AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 ```
 
 Once done, let's reload the MiniApp in the emulator/simulator, for it to pick up the new code. 
@@ -181,14 +181,14 @@ Android: CMD+M --> Reload
 IOS: CMD+M
 ```
 
-You can now see the initial UI of the `MovieListApp`.
+You can now see the initial UI of the `MovieListMiniApp`.
 
 ## Retrieving Movies from the Native side
 
 Let's now add an API so that we can fetch some movie names provided by the native app instead of hard coding them inside `index.android/ios.js`
 
 ```bash
-$ cd ../MovieListApp
+$ cd ../MovieListMiniApp
 $ ern add react-native-ernmovie-api
 $ ern add react-native-electrode-bridge
 ```
@@ -319,7 +319,7 @@ Once updated run the application directly from Android Studio, or run `ern run-a
 
 ### Implementing the MovieApi on iOS
 
-Open the generated ios project in xcode(`Location: /MovieListApp/ios`) and replace the `ViewController.m` code as below
+Open the generated ios project in xcode(`Location: /MovieListMiniApp/ios`) and replace the `ViewController.m` code as below
 
 ```ios
 #import "ViewController.h"
@@ -401,10 +401,10 @@ For this, we need few things:
 1. A movie details screen, that we have already implemented and published to npm so that you can just reuse it. This "screen" is actually another MiniApp that we created.
 2. An API that helps you navigate between these two MiniApps. We have created this API as well. If you would like to create your own API, please follow the instructions (here)[].
 
-First let's add our very basic Navigation API to the `MovieListApp` MiniApp. From the `MovieListApp` directory, execute the following `ern` command, that should be used to add any dependency (native or JavaScript) to a MiniApp. We'll use it to add a dependency on the Navigation API in our `MovieListApp`:
+First let's add our very basic Navigation API to the `MovieListMiniApp` MiniApp. From the `MovieListMiniApp` directory, execute the following `ern` command, that should be used to add any dependency (native or JavaScript) to a MiniApp. We'll use it to add a dependency on the Navigation API in our `MovieListMiniApp`:
 
 ```bash
-$ ern add react-native-navigation-api
+$ ern add react-native-ernnavigation-api
 ```
 
 Once the API is added, we'll just make some code changes in `index.android/ios.js` file of our MiniApp.
@@ -412,7 +412,7 @@ Once the API is added, we'll just make some code changes in `index.android/ios.j
 First, add the following import statement:
 
 ```javascript
-import { NavigationApi } from 'react-native-navigation-api'
+import { NavigationApi } from 'react-native-ernnavigation-api'
 ```
 
 And then just replace the `render` method with the following one:
@@ -444,7 +444,7 @@ And then just replace the `render` method with the following one:
 
   _onPressRow (movie) {
     movie.isSelect = !movie.isSelect
-    NavigationApi.requests().navigate('MovieDetailsApp', {'initialPayload': JSON.stringify(movie)}).catch(() => {
+    NavigationApi.requests().navigate('MovieDetailsMiniApp', {'initialPayload': JSON.stringify(movie)}).catch(() => {
       console.log("Navigation failed.");
     })
   }
@@ -457,15 +457,15 @@ Let's do that magic now.
 ###### Android:
 
 ```
-$ ern run-android --miniapps MovieDetailsApp --mainMiniAppName MovieListApp
+$ ern run-android --miniapps MovieDetailsMiniApp --mainMiniAppName MovieListMiniApp
 ```
 
 ###### iOS:
 
 ```
-$ ern run-ios --miniapps MovieDetailsApp --mainMiniAppName MovieListApp
+$ ern run-ios --miniapps MovieDetailsMiniApp --mainMiniAppName MovieListMiniApp
 ```
-The above command now includes the `MovieDetailsApp` inside the generated contianer. This is how easy it is to combine multiple MiniApps. Just by running an `ern` command.
+The above command now includes the `MovieDetailsMiniApp` inside the generated contianer. This is how easy it is to combine multiple MiniApps. Just by running an `ern` command.
 
 ### Implementing the NavigationApi on Android
 
@@ -490,7 +490,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandle
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
 import com.walmartlabs.ern.container.miniapps.MiniAppsConfig;
-import com.walmartlabs.ern.container.miniapps.MovieListAppActivity;
+import com.walmartlabs.ern.container.miniapps.MovieListMiniAppActivity;
 
 // This is the main activity that gets launched upon app start
 // It just launches the activity containing the miniapp
@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
 
         getIntent().getBundleExtra("data");
 
-        Intent i = new Intent(this, MovieListAppActivity.class);
+        Intent i = new Intent(this, MovieListMiniAppActivity.class);
         this.startActivity(i);
 
         NavigationApi.requests().registerNavigateRequestHandler(new ElectrodeBridgeRequestHandler<NavigateData, Boolean>() {
