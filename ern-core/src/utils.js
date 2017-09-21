@@ -8,6 +8,7 @@ import {
   DependencyPath
 } from 'ern-util'
 import http from 'http'
+import camelCase from 'lodash/camelCase'
 
 export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<boolean> {
   if (typeof pkg === 'string') {
@@ -36,4 +37,16 @@ export async function httpGet (url: string): Promise<http.IncomingMessage> {
       reject(e)
     })
   })
+}
+
+/**
+ * Camelize name (parameter, property, method, etc)
+ *
+ * @param word string to be camelize
+ * @param lowercaseFirstLetter lower case for first letter if set to true
+ * @return camelized string
+ */
+export function camelize (word: string, lowercaseFirstLetter: boolean = false): string {
+  word = camelCase(word)
+  return word && word[0][lowercaseFirstLetter ? 'toLowerCase' : 'toUpperCase']() + word.substring(1)
 }
