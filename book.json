@@ -3,6 +3,9 @@
   "gitbook": "3.2.3",
   "title": "Electrode React Native Developer's Guide",
   "description": "Electrode React Native Platform Developer's Guide",
+  "styles": {
+    "website": "styles/website.css",
+  },
   "plugins": [
     "edit-link",
     "prism",
