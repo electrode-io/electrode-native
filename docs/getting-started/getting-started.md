@@ -484,8 +484,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.navigation.ern.api.NavigateData;
-import com.navigation.ern.api.NavigationApi;
+import com.ernnavigation.ern.api.NavigateData;
+import com.ernnavigation.ern.api.NavigationApi;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
