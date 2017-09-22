@@ -15,6 +15,21 @@
     "scripts"
   ],
   "pluginsConfig": {
+    "theme-api": {
+      "split": false,
+      "theme": "dark",
+      "languages": [
+        {
+          "lang": "iOS",
+          "name": "iOS",
+          "default": true
+        },
+        {
+        "lang": "Android",
+        "name": "Android"
+        }
+      ]
+    },
     "edit-link": {
       "base": "https://github.com/belemaire/electrode-react-native/tree/master/docs",
       "label": "Edit This Page"
@@ -31,21 +46,6 @@
       ],
       "css": [
         "./styles/website.css"
-      ]
-    },
-    "theme-api": {
-      "split": false,
-      "theme": "dark",
-      "languages": [
-        {
-          "lang": "iOS",
-          "name": "iOS",
-          "default": true
-        },
-        {
-        "lang": "Android",
-        "name": "Android"
-        }
       ]
     }
   }
