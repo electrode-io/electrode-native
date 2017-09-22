@@ -28,7 +28,7 @@
         }
       ],
       "split": false,
-      "theme": "dark",
+      "theme": "dark"
     },
     "edit-link": {
       "base": "https://github.com/belemaire/electrode-react-native/tree/master/docs",
