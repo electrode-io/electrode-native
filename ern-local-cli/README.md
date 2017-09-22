@@ -1,1 +1,1 @@
-# Electrode React Native (ern) local client
+# Electrode Native local CLI
