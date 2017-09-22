@@ -1,6 +1,5 @@
-## What is Electrode React Native
-
 {% method %}
+## What is Electrode React Native
 
 {% sample lang="iOS" %}
 Electrode React Native (ern), is a platform, built for React Native JavaScript and mobile developpers, aiming to simplify and reduce the friction of integrating React Native components into existing mobile applications, with minimal changes to existing moible code bases and infrascrutures.
@@ -69,5 +68,4 @@ Finally, the `Runner` have your back if you are working on a `MiniApp` and would
 The major difference being that it will actually create a `Container` locally, containing your `MiniApp`, and the `Runner` application project will actually depend on and consume this `Container` the same way any mobile application integrating with it would do.
 
 [Learn More about the Runner](url)
-
 {% endmethod %}
