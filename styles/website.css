@@ -1,7 +1,7 @@
 .book-summary {
-  width: auto;
+  width: auto !important;
 }
 
 h2 {
-  font-size: 40px;
+  font-size: 40px !important;
 }
