@@ -16,19 +16,19 @@
   ],
   "pluginsConfig": {
     "theme-api": {
-      "split": false,
-      "theme": "dark",
       "languages": [
         {
-          "lang": "iOS",
+          "lang": "ios",
           "name": "iOS",
           "default": true
         },
         {
-        "lang": "Android",
+        "lang": "android",
         "name": "Android"
         }
-      ]
+      ],
+      "split": false,
+      "theme": "dark",
     },
     "edit-link": {
       "base": "https://github.com/belemaire/electrode-react-native/tree/master/docs",
