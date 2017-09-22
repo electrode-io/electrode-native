@@ -21,8 +21,7 @@
         "name": "Android"
         }
       ],
-      "split": false,
-      "theme": "dark"
+      "split": false
     },
     "edit-link": {
       "base": "https://github.com/belemaire/electrode-react-native/tree/master/docs",
