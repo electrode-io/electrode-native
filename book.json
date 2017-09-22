@@ -4,7 +4,6 @@
   "title": "Electrode React Native Developer's Guide",
   "description": "Electrode React Native Platform Developer's Guide",
   "plugins": [
-    "-search",
     "theme-api",
     "edit-link",
     "prism",
@@ -13,7 +12,6 @@
     "anchorjs",
     "add-path-to-parent",
     "versions",
-    "scripts"
   ],
   "pluginsConfig": {
     "theme-api": {
@@ -40,14 +38,6 @@
     },
      "versions": {
        "type": "tags"
-    },
-    "scripts-styles": {
-      "js": [
-        "./js/gitbook.js"
-      ],
-      "css": [
-        "./styles/website.css"
-      ]
     }
   }
 }
