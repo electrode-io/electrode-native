@@ -15,8 +15,6 @@ import shell from 'shelljs'
 
 let mustacheView = {}
 
-const npmScopeModuleRe = /(@.*)\/(.*)/
-
 // =============================================================================
 // ern-container-gen entry point
 // =============================================================================
@@ -103,38 +101,31 @@ export default async function generateContainer ({
     throw new Error('react-native was not found in plugins list !')
   }
 
-  let miniApps = _.map(miniapps, miniapp => ({
-    name: miniapp.name,
-    scope: miniapp.scope,
-    version: miniapp.version,
-    unscopedName: getUnscopedModuleName(miniapp.name).replace(/-/g, ''),
-    pascalCaseName: capitalizeFirstLetter(getUnscopedModuleName(miniapp.name)).replace(/-/g, ''),
-    localPath: miniapp.path,
-    packagePath: miniapp.packageDescriptor
-  }))
-
   mustacheView = {
     reactNativeVersion: reactNativePlugin.version,
     nativeAppName,
-    miniApps,
-    containerVersion
+    containerVersion,
+    miniApps: _.map(miniapps, miniapp => ({
+      name: miniapp.name,
+      scope: miniapp.scope,
+      version: miniapp.version,
+      unscopedName: miniapp.name.replace(/-/g, ''),
+      pascalCaseName: capitalizeFirstLetter(miniapp.name.replace(/-/g, '')),
+      localPath: miniapp.path,
+      packagePath: miniapp.packageDescriptor
+    }))
   }
+
   await generator.generateContainer(
     containerVersion,
     nativeAppName,
     plugins,
-    miniApps,
+    miniapps,
     paths,
     mustacheView,
     {pathToYarnLock})
 
   return paths
-}
-
-function getUnscopedModuleName (moduleName) {
-  return npmScopeModuleRe.test(moduleName)
-      ? npmScopeModuleRe.exec(`${moduleName}`)[2]
-      : moduleName
 }
 
 function sortPlugins (plugins: Array<Dependency>) {
