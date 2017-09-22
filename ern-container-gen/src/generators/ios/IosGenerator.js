@@ -4,7 +4,8 @@ import {
   manifest,
   handleCopyDirective,
   GitUtils,
-  ContainerGeneratorConfig
+  ContainerGeneratorConfig,
+  MiniApp
 } from 'ern-core'
 import {
   Dependency,
@@ -45,7 +46,7 @@ export default class IosGenerator {
     containerVersion: string,
     nativeAppName: string,
     plugins: Array<Dependency>,
-    miniapps: any,
+    miniapps: Array<MiniApp>,
     paths: any,
     mustacheView: any, {
       pathToYarnLock
@@ -111,12 +112,12 @@ export default class IosGenerator {
   }
 
   copyRnpmAssets (
-    miniApps: any,
+    miniApps: Array<MiniApp>,
     paths: any) {
     const outputFolder = path.join(paths.outFolder, 'ios')
     // Case of local container for runner
-    if ((miniApps.length === 1) && (miniApps[0].localPath)) {
-      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].localPath, outputFolder)
+    if ((miniApps.length === 1) && (miniApps[0].path)) {
+      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outputFolder)
     } else {
       for (const miniApp of miniApps) {
         const miniAppPath = path.join(
@@ -154,7 +155,7 @@ export default class IosGenerator {
 
   async fillContainerHull (
     plugins: Array<Dependency>,
-    miniApps: any,
+    miniApps: Array<MiniApp>,
     paths: any,
     mustacheView: any) : Promise<*> {
     log.debug(`[=== Starting container hull filling ===]`)
