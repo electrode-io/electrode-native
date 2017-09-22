@@ -13,6 +13,11 @@
     "scripts"
   ],
   "pluginsConfig": {
+    "prism": {
+      "css": [
+        "./styles/prism-themes.css"
+      ]
+    },
     "theme-api": {
       "languages": [
         {
@@ -42,8 +47,7 @@
         "./js/gitbook.js"
       ],
       "css": [
-        "./styles/website.css",
-        "./styles/prism-themes.css"
+        "./styles/website.css"
       ]
     }
   }
