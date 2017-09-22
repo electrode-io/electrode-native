@@ -33,9 +33,11 @@ import path from 'path'
 export default class MiniApp {
   _path: string
   _packageJson: Object
+  _isLocal: boolean
 
-  constructor (miniAppPath: string) {
+  constructor (miniAppPath: string, isLocal: boolean) {
     this._path = miniAppPath
+    this._isLocal = isLocal
 
     const packageJsonPath = `${miniAppPath}/package.json`
     if (!fs.existsSync(packageJsonPath)) {
@@ -47,7 +49,7 @@ export default class MiniApp {
       // TO REMOVE IN ERN 0.5.0
       log.warn(`
 =================================================================
-ernPlatformVersion will be deprecated in next ern version. 
+ernPlatformVersion will be deprecated soon
 Please replace 
   "ernPlatformVersion" : "${packageJson.ernPlatformVersion}" 
 with 
@@ -63,7 +65,7 @@ Are you sure this is a MiniApp ?`)
   }
 
   static fromCurrentPath () {
-    return new MiniApp(process.cwd())
+    return MiniApp.fromPath(process.cwd())
   }
 
   static existInPath (p) {
@@ -73,11 +75,11 @@ Are you sure this is a MiniApp ?`)
   }
 
   static fromPath (path) {
-    return new MiniApp(path)
+    return new MiniApp(path, true /* isLocal */)
   }
 
   // Create a MiniApp object given a valid package path to the MiniApp
-  // package path can be any valid git/npm or file path to the MiniApp
+  // package path can be any valid git or npm path to the MiniApp
   // package
   static async fromPackagePath (packagePath: DependencyPath) {
     const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
@@ -87,7 +89,7 @@ Are you sure this is a MiniApp ?`)
     const packageName = Object.keys(packageJson.dependencies)[0]
     shell.rm(path.join(tmpMiniAppPath, 'package.json'))
     shell.mv(path.join(tmpMiniAppPath, 'node_modules', packageName, '*'), tmpMiniAppPath)
-    return this.fromPath(tmpMiniAppPath)
+    return new MiniApp(tmpMiniAppPath, false /* isLocal */)
   }
 
   static async create (
@@ -153,11 +155,15 @@ Are you sure this is a MiniApp ?`)
       shell.rm('-rf', 'android')
       shell.rm('-rf', 'ios')
 
-      return new MiniApp(miniAppPath)
+      return MiniApp.fromPath(miniAppPath)
     } catch (e) {
       log.debug(`[MiniApp.create] ${e}`)
       throw e
     }
+  }
+
+  get isLocal () : boolean {
+    return this._isLocal
   }
 
   get packageJson () : Object {
