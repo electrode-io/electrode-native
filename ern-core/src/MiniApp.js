@@ -142,7 +142,9 @@ Are you sure this is a MiniApp ?`)
       } else {
         appPackageJson.name = appName.toLowerCase()
       }
-      log.info(`Note that you application name when published to npm will be ${appPackageJson.name}. NPM package name does not allow uppercase, hence all the name of the app is converted to lowercase`)
+
+      log.info(`Your MiniApp name when published to npm will be ${appPackageJson.name}.`)
+      log.info(`This is because NPM does not allow package names containing upper case letters.`)
 
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2))
 
