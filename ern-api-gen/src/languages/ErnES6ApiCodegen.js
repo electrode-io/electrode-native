@@ -27,11 +27,11 @@ export default class ErnES6ApiCodegen extends ES6Codegen {
         this.__apiTemplateFiles.put("apirequests.mustache", ".js");
         this.__apiTemplateFiles.put("apievents.mustache", ".js");
         this.__apiTestTemplateFiles.put("api_test.mustache", ".js");
-        this.__apiDocTemplateFiles.put("api_doc.mustache", ".md");
+        // this.__apiDocTemplateFiles.put("api_doc.mustache", ".md");
         if (this.classy) {
             this.__additionalProperties.put("isClassy", this.classy);
             this.__modelTemplateFiles.put("model.mustache", ".js");
-            this.__modelDocTemplateFiles.put("model_doc.mustache", ".md");
+            // this.__modelDocTemplateFiles.put("model_doc.mustache", ".md");
         }
     }
 

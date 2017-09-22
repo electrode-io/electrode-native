@@ -50,7 +50,7 @@ There are a few reasons why you might want to do that :
 
 Overriding a Manifest is easy. Here are the actual steps involved :
 
-1) Create your own Manifest repository on GitHub (just fork this [starter one](url))
+1) Create your own Manifest repository on GitHub. You can clone this [starter one](https://github.com/electrode-io/electrode-react-native-starter-manifest))
 2) Create a Manifest override config in your Cauldron (so that it is correctly applied to all users of this Cauldron)
 3) Update your Manifest for your needs and maintain it over time
 
