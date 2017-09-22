@@ -23,5 +23,8 @@
      "versions": {
        "type": "tags"
     }
+  },
+  "styles": {
+  "website": "styles/website.css",
   }
 }
