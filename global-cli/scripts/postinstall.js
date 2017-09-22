@@ -33,14 +33,14 @@ if (!fs.existsSync(ERN_PATH)) {
     // Create cached versions folder
     fs.mkdirSync(ERN_VERSIONS_CACHE_PATH)
 
-    // List all available versions from electrode-react-native git repository
+    // List all available versions from electrode-native git repository
     const latestVersion = getLatestErnLocalCliVersion()
 
     // Create the version directory
     const pathToVersionDirectory = path.join(ERN_VERSIONS_CACHE_PATH, latestVersion)
     fs.mkdirSync(pathToVersionDirectory)
     process.chdir(pathToVersionDirectory)
-    console.log(`Installing Electrode React Native ${latestVersion}`)
+    console.log(`Installing Electrode Native ${latestVersion}`)
     if (isYarnInstalled()) {
       // Favor yarn if it is installed as it will greatly speed up install
       execSync(`yarn add ${ERN_LOCAL_CLI_PACKAGE}@${latestVersion} --exact`)

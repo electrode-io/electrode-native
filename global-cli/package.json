@@ -1,7 +1,7 @@
 {
-  "name": "electrode-react-native",
-  "version": "1.0.4",
-  "description": "ERN global client",
+  "name": "electrode-native",
+  "version": "1.0.0",
+  "description": "Electrode Native Global CLI",
   "main": "./dist/index.js",
   "bin": {
     "ern": "bin/ern.js"
@@ -12,12 +12,13 @@
   "homepage": "http://www.electrode.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/electrode-io/electrode-react-native.git"
+    "url": "https://github.com/electrode-io/electrode-native.git"
   },
   "bugs": {
-    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+    "url": "https://github.com/electrode-io/electrode-native/issues"
   },
   "keywords": [
+    "electrode",
     "ern",
     "react-native",
     "client",

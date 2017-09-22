@@ -1,8 +1,8 @@
-# Electrode React Native (ern) global client
+# Electrode Native Global CLI
 
 This is a node project meant to be installed globally on the user workstation through :
 
-`npm install -g electrode-react-native`
+`npm install -g electrode-native`
 
 This will make the `ern` binary available globally.
 
@@ -26,7 +26,7 @@ For example, here is how the current notification looks like :
 ╭────────────────────────────────────────────────────────────╮
 │                                                            │
 │              Update available 0.0.3 → 0.0.4                │
-│   Run npm i -g electrode-react-native to update            │
+│          Run npm i -g electrode-native to update           │
 │                                                            │
 ╰────────────────────────────────────────────────────────────╯
 ```  

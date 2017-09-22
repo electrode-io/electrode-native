@@ -8,11 +8,11 @@
 
 -   Visit our site at <http://native.electrode.io>.
 
--   See [What is Electrode React Native] for more details on features and technologies supported.
+-   See [What is Electrode Native] for more details on features and technologies supported.
 
 # Documentation
 
-The documentation of Electrode React Native is maintained as GitBook documents in the [docs](/docs) directory.
+The documentation of Electrode Native is maintained as GitBook documents in the [docs](/docs) directory.
 
 Check [gitbook] for more info about gitbook.
 
@@ -42,6 +42,6 @@ Licensed under the [Apache License, Version 2.0].
 
 [gitbook]: https://www.gitbook.com/
 
-[what is electrode react native]: https://url
+[what is electrode native]: https://url
 
-[Getting Started with Electrode React Native]: https://url
+[Getting Started with Electrode Native]: https://url
