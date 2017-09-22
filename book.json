@@ -10,7 +10,8 @@
     "github",
     "anchorjs",
     "add-path-to-parent",
-    "versions"
+    "versions",
+    "scripts"
   ],
   "pluginsConfig": {
     "edit-link": {
@@ -22,9 +23,14 @@
     },
      "versions": {
        "type": "tags"
+    },
+    "scripts-styles": {
+      "js": [
+        "./js/gitbook.js"
+      ],
+      "css": [
+        "./styles/website.css"
+      ]
     }
-  },
-  "styles": {
-    "website": "./styles/website.css"
   }
 }
