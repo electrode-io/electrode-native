@@ -9,7 +9,9 @@
     "prism",
     "github",
     "versions",
-    "-highlight"
+    "-highlight",
+    "anchorjs",
+    "add-path-to-parent"
   ],
   "pluginsConfig": {
     "theme-api": {
