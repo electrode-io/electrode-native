@@ -5,7 +5,8 @@
   "description": "Electrode React Native Platform Developer's Guide",
   "plugins": [
     "theme-api",
-    "edit-link"
+    "edit-link",
+    "prism"
   ],
   "pluginsConfig": {
     "theme-api": {
