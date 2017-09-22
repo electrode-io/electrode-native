@@ -4,6 +4,7 @@
   "title": "Electrode React Native Developer's Guide",
   "description": "Electrode React Native Platform Developer's Guide",
   "plugins": [
+    "theme-api",
     "edit-link",
     "prism",
     "-highlight",
@@ -30,6 +31,21 @@
       ],
       "css": [
         "./styles/website.css"
+      ]
+    },
+    "theme-api": {
+      "split": false,
+      "theme": "dark",
+      "languages": [
+        {
+          "lang": "iOS",
+          "name": "iOS",
+          "default": true
+        },
+        {
+        "lang": "Android",
+        "name": "Android"
+        }
       ]
     }
   }
