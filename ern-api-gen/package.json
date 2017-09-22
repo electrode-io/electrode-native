@@ -1,15 +1,15 @@
 {
   "name": "ern-api-gen",
-  "version": "0.6.0",
-  "description": "ERN module used to generate APIs",
+  "version": "0.6.2",
+  "description": "Electrode Native API generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/electrode-io/electrode-react-native.git"
+    "url": "https://github.com/electrode-io/electrode-native.git"
   },
   "bugs": {
-    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+    "url": "https://github.com/electrode-io/electrode-native/issues"
   },
   "scripts": {
     "build": "ern-babel",
@@ -18,6 +18,7 @@
     "prepublish": "npm run build"
   },
   "keywords": [
+    "electrode",
     "ern",
     "react-native",
     "api",
@@ -50,8 +51,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "collections": "^5.0.6",
-    "ern-core": "0.6.0",
-    "ern-util": "0.6.0",
+    "ern-core": "0.6.2",
+    "ern-util": "0.6.2",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.4",
@@ -64,7 +65,7 @@
     "sway": "^1.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.6.0"
+    "ern-util-dev": "0.6.2"
   },
   "engines": {
     "node": ">=4.5"

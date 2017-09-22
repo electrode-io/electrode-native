@@ -1,17 +1,18 @@
 {
   "name": "ern-cauldron-api",
-  "version": "0.6.0",
-  "description": "ERN module to create, access and manage Cauldrons",
+  "version": "0.6.2",
+  "description": "Electrode Native Cauldron Client",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/electrode-io/electrode-react-native.git"
+    "url": "https://github.com/electrode-io/electrode-native.git"
   },
   "bugs": {
-    "url": "https://github.com/electrode-io/electrode-react-native/issues"
+    "url": "https://github.com/electrode-io/electrode-native/issues"
   },
   "keywords": [
+    "electrode",
     "ern",
     "react-native",
     "cauldron",
@@ -50,14 +51,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "ern-util": "0.6.0",
+    "ern-util": "0.6.2",
     "joi": "^10.1.0",
     "lodash": "^4.17.4",
     "shelljs": "^0.7.6",
     "simple-git": "^1.70.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.6.0"
+    "ern-util-dev": "0.6.2"
   },
   "engines": {
     "node": ">=4.5"
