@@ -13,11 +13,6 @@
     "scripts"
   ],
   "pluginsConfig": {
-    "prism": {
-      "css": [
-        "prismjs/themes/prism-okaidia.css"
-      ]
-    },
     "theme-api": {
       "languages": [
         {
@@ -47,7 +42,8 @@
         "./js/gitbook.js"
       ],
       "css": [
-        "./styles/website.css"
+        "./styles/website.css",
+        "./styles/prism-themes.css"
       ]
     }
   }
