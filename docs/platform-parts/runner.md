@@ -1,26 +1,22 @@
 ## Electrode React Native Runner
 
-Actually, to be more specific, there is not one, but two `Runners` part of the platform : one for `iOS` and one for `Android`. Both have the same role, they just do not target the same platform. We'll use the singular form, `Runner` throughout this documentation, as what will be said about it, applies to both platforms.
+The ERN platform contains two runners, one for each mobile platform (Android and iOS). Both runners are very simple and light-weight mobile applications--similar to new application projects in Android Studio or XCode.
 
-The `Runner` is a very simple and light mobile application project. It really does not contain much more than what you would get by creating a new application project in `Android Studio` or `XCode`. 
+The ERN runner application is used to run your standalone MiniApp so that you can effectively develop, debug, and test your MiniApp--before releasing a new or updated version of the MiniApp.
 
-It is used to run your `MiniApp` standalone, so that you can effectively develop, debug, and test it, before releasing the first version, or new versions of it.
+An ERN runner application is automatically generated the first time you use the `ern run-ios` or `ern run-android` commands for your MiniApp. Relative to your MiniApp root directory, the runner application is generated in new Android and iOS directories.
 
-A `Runner` project will automatically be generated the first time you use `ern run-ios` or `ern run-android` command for your `MiniApp`. Relative to your `MiniApp` root directory, it will be generated in new `android` and `ios` directories.
+When the ERN runner application is generated, you can make manual code modifications to it, if needed--they aren't overwritten the next time you run the `ern run-ios` or `ern run-android` commands. The only way to trigger a complete regeneration of the ERN runner is to remove the Android or iOS directories.
 
-Once the `Runner` project is generated, you can make manual code modifications to it, if needed, they won't get overwritten upon next execution of `ern run-ios` or `ern run-android` commands (only way to actually trigger a complete regeneration is to remove the `android` or `ios` directories).
+Each time you run the `ern run-ios` or `ern run-android` commands, a new local container is generated to include your MiniApp along with all of its native dependencies. The ERN runner mobile application depends on the local container in order to launch the MiniApp.
 
-Behind the scene, every time you run one of these commands, a new local `Container` will be generated to include your `MiniApp` along with all of its `native dependencies`. The `Runner` mobile application project just depends on this local `Container` and initalize it the same way any other mobile application would. Then it just asks the `Container` for the the `MiniApp` and launch it.
+By default, when launching the ERN runner using the `ern run-ios` or `ern run-android` commands, a local React Native Packager is launched and your MiniApp bundle is served from this packager. This is the normal development workflow. However, you can also serve your MiniApp directly from the container stored within the binary of the application using additional command options.
 
-By default, when launching the runner through these two commands, a local `React Native Packager` will be launched and your `MiniApp` bundle will be served from this packager. This is the normal development workflow, but if you wish to serve your `MiniApp` directly from the `Container` stored within the binary of the application, these commands aceept options to take care of this.
+### Multiple MiniApp support
 
-### Multi MiniApps support 
-
-The runner does not only allow to launch a MiniApp on its own. Because it relies on a locally generated Container and use it the same way a mobile application would, it can also use a Container that contains multiple MiniApps.  
-
-However, only one MiniApp can be launched upon startup of the Runner application. Therefore, if you provide multiple MiniApps to the Runner, you'll need to specify the main MiniApp that should be launched when the Runner application starts.
+The ERN runner supports containers that include multiple MiniApps. However, since only one MiniApp can be launched when the ERN runner starts, you'll need to specify the primary MiniApp that should be launched when the ERN runner application starts.
 
 ### Related commands
 
-- `ern run-ios` and `ern run-android`  
-These commands will lauch one or more `MiniApp(s)` in the `Runner` application. 
+- `ern run-ios` and `ern run-android`
+Lauches one or more MiniApps in the ERN runner application.
