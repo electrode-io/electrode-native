@@ -10,8 +10,7 @@
     "github",
     "versions",
     "-highlight",
-    "anchorjs",
-    "add-path-to-parent"
+    "scripts"
   ],
   "pluginsConfig": {
     "theme-api": {
@@ -37,6 +36,14 @@
     },
      "versions": {
        "type": "tags"
+    },
+    "scripts-styles": {
+      "js": [
+        "./js/gitbook.js"
+      ],
+      "css": [
+        "./styles/website.css"
+      ]
     }
   }
 }
