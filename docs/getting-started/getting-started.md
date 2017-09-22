@@ -321,7 +321,7 @@ Once updated run the application directly from Android Studio, or run `ern run-a
 
 Open the generated ios project in xcode(`Location: /MovieListMiniApp/ios`) and replace the `ViewController.m` code as below
 
-```ios
+```objectivec
 #import "ViewController.h"
 #import "RunnerConfig.h"
 #import <ElectrodeContainer/ElectrodeContainer.h>
@@ -543,7 +543,7 @@ Now, let's open the project in Xcode
 
 Replace the content of `ViewController.h` as below,
 
-```
+```objectivec
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UINavigationController
@@ -553,7 +553,7 @@ Replace the content of `ViewController.h` as below,
 
 Add the following implementation inside `ViewController.m` right below the movie api implementation.
 
-```objective-c
+```objectivec
  NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
     [navigationAPI.requests registerNavigateRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -575,7 +575,7 @@ Add the following implementation inside `ViewController.m` right below the movie
 
 Ensure that you add the `appDelegate` import statement to `ViewController.m` file as well
 
-```objective-c
+```objectivec
 #import "AppDelegate.h"
 ```
 
