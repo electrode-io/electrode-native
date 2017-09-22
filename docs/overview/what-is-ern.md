@@ -1,12 +1,15 @@
 ## What is Electrode React Native
 
 {% method %}
+
 {% sample lang="iOS" %}
 Electrode React Native (ern), is a platform, built for React Native JavaScript and mobile developpers, aiming to simplify and reduce the friction of integrating React Native components into existing mobile applications, with minimal changes to existing moible code bases and infrascrutures.
+
 {% sample lang="Android" %}
 It is built on top of [React Native](https://facebook.github.io/react-native/) (and other awesome tools such as [yarn](https://yarnpkg.com/en/) and [CodePush](https://microsoft.github.io/code-push/)).
 That being said, Electrode React Native does not contain any code modifications to these projects. It just sits on top of them and rely on them to perform the different features it offers.
-{ common %}
+
+{% common %}
 The core of the platform is written in JavaScript (ES6). Some parts of the platform contain 'native' code (Java/Swift), mostly in the form of [Mustache](https://mustache.github.io/) templates, used for native code generation, but some components are also mostly pure native projects (for example our bridge is a pure Android/iOS project). 
 
 If we were to do a breakdown of how much Javascript code v.s Native code forms the platform, a good approximation would be in the order of 70% JS and 30% native as of now.  
@@ -66,4 +69,5 @@ Finally, the `Runner` have your back if you are working on a `MiniApp` and would
 The major difference being that it will actually create a `Container` locally, containing your `MiniApp`, and the `Runner` application project will actually depend on and consume this `Container` the same way any mobile application integrating with it would do.
 
 [Learn More about the Runner](url)
+
 {% endmethod %}
