@@ -1,7 +1,7 @@
 {
-  "name": "electrode-react-native",
-  "version": "1.0.4",
-  "description": "ERN global client",
+  "name": "electrode-native",
+  "version": "1.0.0",
+  "description": "Electrode Native Global CLI",
   "main": "./dist/index.js",
   "bin": {
     "ern": "bin/ern.js"
