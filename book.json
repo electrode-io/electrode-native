@@ -11,7 +11,7 @@
     "github",
     "anchorjs",
     "add-path-to-parent",
-    "versions",
+    "versions"
   ],
   "pluginsConfig": {
     "theme-api": {
