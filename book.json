@@ -4,7 +4,8 @@
   "title": "Electrode React Native Developer's Guide",
   "description": "Electrode React Native Platform Developer's Guide",
   "plugins": [
-    "theme-api"
+    "theme-api",
+    "edit-link"
   ],
   "pluginsConfig": {
     "theme-api": {
@@ -21,6 +22,10 @@
       ],
       "split": false,
       "theme": "dark"
+    },
+    "edit-link": {
+      "base": "https://github.com/belemaire/electrode-react-native/tree/master/docs",
+      "label": "Edit This Page"
     }
   }
 }
