@@ -33,9 +33,11 @@ import path from 'path'
 export default class MiniApp {
   _path: string
   _packageJson: Object
+  _isLocal: boolean
 
-  constructor (miniAppPath: string) {
+  constructor (miniAppPath: string, isLocal: boolean) {
     this._path = miniAppPath
+    this._isLocal = isLocal
 
     const packageJsonPath = `${miniAppPath}/package.json`
     if (!fs.existsSync(packageJsonPath)) {
@@ -47,7 +49,7 @@ export default class MiniApp {
       // TO REMOVE IN ERN 0.5.0
       log.warn(`
 =================================================================
-ernPlatformVersion will be deprecated in next ern version. 
+ernPlatformVersion will be deprecated soon
 Please replace 
   "ernPlatformVersion" : "${packageJson.ernPlatformVersion}" 
 with 
@@ -63,7 +65,7 @@ Are you sure this is a MiniApp ?`)
   }
 
   static fromCurrentPath () {
-    return new MiniApp(process.cwd())
+    return MiniApp.fromPath(process.cwd())
   }
 
   static existInPath (p) {
@@ -73,11 +75,11 @@ Are you sure this is a MiniApp ?`)
   }
 
   static fromPath (path) {
-    return new MiniApp(path)
+    return new MiniApp(path, true /* isLocal */)
   }
 
   // Create a MiniApp object given a valid package path to the MiniApp
-  // package path can be any valid git/npm or file path to the MiniApp
+  // package path can be any valid git or npm path to the MiniApp
   // package
   static async fromPackagePath (packagePath: DependencyPath) {
     const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
@@ -87,7 +89,7 @@ Are you sure this is a MiniApp ?`)
     const packageName = Object.keys(packageJson.dependencies)[0]
     shell.rm(path.join(tmpMiniAppPath, 'package.json'))
     shell.mv(path.join(tmpMiniAppPath, 'node_modules', packageName, '*'), tmpMiniAppPath)
-    return this.fromPath(tmpMiniAppPath)
+    return new MiniApp(tmpMiniAppPath, false /* isLocal */)
   }
 
   static async create (
@@ -127,7 +129,8 @@ Are you sure this is a MiniApp ?`)
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
       appPackageJson.ern = {
         version: `${platformVersion}`,
-        moduleType: `${ModuleTypes.MINIAPP}`
+        moduleType: `${ModuleTypes.MINIAPP}`,
+        miniAppName: utils.camelize(appName, false)
       }
       appPackageJson.private = false
       appPackageJson.keywords
@@ -135,8 +138,14 @@ Are you sure this is a MiniApp ?`)
         : appPackageJson.keywords = [ModuleTypes.MINIAPP]
 
       if (scope) {
-        appPackageJson.name = `@${scope}/${appName}`
+        appPackageJson.name = `@${scope}/${appName.toLowerCase()}`
+      } else {
+        appPackageJson.name = appName.toLowerCase()
       }
+
+      log.info(`Your MiniApp name when published to npm will be ${appPackageJson.name}.`)
+      log.info(`This is because NPM does not allow package names containing upper case letters.`)
+
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2))
 
       //
@@ -148,11 +157,15 @@ Are you sure this is a MiniApp ?`)
       shell.rm('-rf', 'android')
       shell.rm('-rf', 'ios')
 
-      return new MiniApp(miniAppPath)
+      return MiniApp.fromPath(miniAppPath)
     } catch (e) {
       log.debug(`[MiniApp.create] ${e}`)
       throw e
     }
+  }
+
+  get isLocal () : boolean {
+    return this._isLocal
   }
 
   get packageJson () : Object {
@@ -163,8 +176,8 @@ Are you sure this is a MiniApp ?`)
     return this._path
   }
 
-  get name () : string {
-    return this.getUnscopedModuleName(this.packageJson.name)
+  get name (): string {
+    return (this.packageJson.ern && this.packageJson.ern.miniAppName) ? this.packageJson.ern.miniAppName : this.getUnscopedModuleName(this.packageJson.name)
   }
 
   get scope () : ?string {
@@ -228,7 +241,9 @@ Are you sure this is a MiniApp ?`)
       // Dependency is not a development dependency
       // In that case we need to perform additional checks and operations
       const versionLessDependency = dependency.withoutVersion()
-      const manifestDependency = await manifest.getNativeDependency(versionLessDependency) || await manifest.getJsDependency(versionLessDependency)
+      const manifestNativeDependency = await manifest.getNativeDependency(versionLessDependency)
+      let hasNativeDependency = !!manifestNativeDependency
+      const manifestDependency = manifestNativeDependency || await manifest.getJsDependency(versionLessDependency)
 
       if (!manifestDependency) {
         // Dependency is not declared in manifest
@@ -244,6 +259,7 @@ Are you sure this is a MiniApp ?`)
           // This is a pure JS dependency. Not much to do here -yet-
           finalDependency = versionLessDependency
         } else if (nativeDependencies.length === 1) {
+          hasNativeDependency = true
           // This is a native dependency or it contains a single native dependency as a transitive one
           if (Dependency.same(nativeDependencies[0], dependency, { ignoreVersion: true })) {
             // This dependency is itself the native dependency.
@@ -299,6 +315,9 @@ Are you sure this is a MiniApp ?`)
       if (finalDependency) {
         process.chdir(this.path)
         await spin(`Adding ${finalDependency.toString()} to MiniApp`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
+        if (hasNativeDependency) {
+          log.info(`Because you added a native dependency, a new Container needs to be generated. \nThis can be done through running 'ern run-android' or 'ern run-ios' command.`)
+        }
         return finalDependency
       }
     }

@@ -8,7 +8,8 @@ import path from 'path'
 import {
   reactnative,
   yarn,
-  GitUtils
+  GitUtils,
+  MiniApp
 } from 'ern-core'
 
 const {
@@ -19,7 +20,7 @@ const {
 const gitFolderRe = /.*\/(.*).git/
 
 export async function bundleMiniApps (
-  miniapps: Array<any>,
+  miniapps: Array<MiniApp>,
   paths: any,
   platform: 'android' | 'ios', {
     pathToYarnLock
@@ -31,19 +32,18 @@ export async function bundleMiniApps (
 
     // Specific case where we use container gen to generate
     // container for runner and we want to bundle the local miniapp
-    if ((miniapps.length === 1) && (miniapps[0].localPath)) {
-      shell.cd(miniapps[0].localPath)
+    if ((miniapps.length === 1) && (miniapps[0].isLocal)) {
+      shell.cd(miniapps[0].path)
       throwIfShellCommandFailed()
     } else {
       let miniAppsPaths : Array<DependencyPath> = []
       for (const miniapp of miniapps) {
-        if (miniapp.packagePath) {
-          miniAppsPaths.push(miniapp.packagePath)
+        if (miniapp.isLocal) {
+          log.debug(`[bundleMiniApps] MiniApp is local. Using local path ${miniapp.path} for ${miniapp.name}`)
+          miniAppsPaths.push(DependencyPath.fromFileSystemPath(miniapp.path))
         } else {
-          miniAppsPaths.push(new DependencyPath(new Dependency(miniapp.name, {
-            scope: miniapp.scope,
-            version: miniapp.version
-          }).toString()))
+          log.debug(`[bundleMiniApps] MiniApp is not local. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
+          miniAppsPaths.push(DependencyPath.fromString(miniapp.packageDescriptor))
         }
       }
       await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock})

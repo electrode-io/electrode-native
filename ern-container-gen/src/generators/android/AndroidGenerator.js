@@ -5,6 +5,7 @@ import {
   handleCopyDirective,
   ContainerGeneratorConfig,
   MavenUtils,
+  MiniApp,
   GitUtils
 } from 'ern-core'
 import {
@@ -14,6 +15,7 @@ import {
 } from 'ern-util'
 import {
   bundleMiniApps,
+  capitalizeFirstLetter,
   downloadPluginSource,
   throwIfShellCommandFailed
 } from '../../utils.js'
@@ -57,7 +59,7 @@ export default class AndroidGenerator {
     containerVersion: string,
     nativeAppName: string,
     plugins: Array<Dependency>,
-    miniapps: any,
+    miniapps: Array<MiniApp>,
     paths: any,
     mustacheView: any, {
       pathToYarnLock
@@ -101,7 +103,7 @@ export default class AndroidGenerator {
     mustacheView.android = {
       repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
       namespace: this.namespace,
-      miniapps: miniapps
+      miniapps: mustacheView.miniApps
     }
 
     //
@@ -120,7 +122,9 @@ export default class AndroidGenerator {
     await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
 
     // Rnpm handling
-    this.copyRnpmAssets(miniapps, paths)
+    if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
+      this.copyRnpmAssets(miniapps, paths)
+    }
 
     // Finally, container hull project is fully generated, now let's just
     // build it and publish resulting AAR
@@ -139,7 +143,7 @@ export default class AndroidGenerator {
 
   async fillContainerHull (
     plugins: Array<Dependency>,
-    miniApps: any,
+    miniApps: Array<MiniApp>,
     paths: any,
     mustacheView: any) : Promise<*> {
     try {
@@ -221,8 +225,8 @@ export default class AndroidGenerator {
       log.debug(`Creating miniapp activities`)
       for (const miniApp of miniApps) {
         let tmpMiniAppView = {
-          miniAppName: miniApp.unscopedName,
-          pascalCaseMiniAppName: miniApp.pascalCaseName
+          miniAppName: miniApp.name,
+          pascalCaseMiniAppName: capitalizeFirstLetter(miniApp.name.replace(/-/g, ''))
         }
 
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
@@ -242,19 +246,18 @@ export default class AndroidGenerator {
   }
 
   copyRnpmAssets (
-    miniApps: any,
+    miniApps: Array<MiniApp>,
     paths: any) {
     const outputFolder = path.join(paths.outFolder, 'android')
     // Case of local container for runner
-    if ((miniApps.length === 1) && (miniApps[0].localPath)) {
-      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].localPath, outputFolder)
+    if ((miniApps.length === 1) && (miniApps[0].path)) {
+      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outputFolder)
     } else {
       for (const miniApp of miniApps) {
         const miniAppPath = path.join(
           paths.compositeMiniApp,
           'node_modules',
-          miniApp.scope ? `@${miniApp.scope}` : '',
-          miniApp.name)
+          miniApp.packageJson.name)
         this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
       }
     }

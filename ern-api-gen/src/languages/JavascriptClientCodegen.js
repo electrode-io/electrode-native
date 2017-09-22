@@ -98,7 +98,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         this.__supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
         this.__supportingFiles.add(new SupportingFile("mocha.opts", "", "mocha.opts"));
         this.__supportingFiles.add(new SupportingFile("travis.yml", "", ".travis.yml"));
-        this.__supportingFiles.add(new SupportingFile("package.mustache", "", "package.json"));
+        // this.__supportingFiles.add(new SupportingFile("package.mustache", "", "package.json"));
 
         this.setReservedWordsLowerCase(["abstract", "arguments", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "debugger", "default", "delete", "do", "double", "else", "enum", "eval", "export", "extends", "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", "import", "in", "instanceof", "int", "interface", "let", "long", "native", "new", "null", "package", "private", "protected", "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield", "Array", "Date", "eval", "function", "hasOwnProperty", "Infinity", "isFinite", "isNaN", "isPrototypeOf", "Math", "NaN", "Number", "Object", "prototype", "String", "toString", "undefined", "valueOf"]);
     }

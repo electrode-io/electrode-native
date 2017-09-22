@@ -4,7 +4,8 @@ import {
   manifest,
   handleCopyDirective,
   GitUtils,
-  ContainerGeneratorConfig
+  ContainerGeneratorConfig,
+  MiniApp
 } from 'ern-core'
 import {
   Dependency,
@@ -45,7 +46,7 @@ export default class IosGenerator {
     containerVersion: string,
     nativeAppName: string,
     plugins: Array<Dependency>,
-    miniapps: any,
+    miniapps: Array<MiniApp>,
     paths: any,
     mustacheView: any, {
       pathToYarnLock
@@ -90,8 +91,10 @@ export default class IosGenerator {
         await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock})
       }
 
-      // Handle resources copying
-      this.copyRnpmAssets(miniapps, paths)
+      // Copy potential rnpm provided assets
+      if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
+        this.copyRnpmAssets(miniapps, paths)
+      }
 
       // Publish resulting container to git repo
       if (gitHubPublisher) {
@@ -101,7 +104,7 @@ export default class IosGenerator {
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
 
-      log.info(`Container generation completed!`)
+      log.debug(`Container generation completed!`)
     } catch (e) {
       log.error(`Something went wrong. Aborting ern-container-gen: ${e}`)
       console.trace(e)
@@ -109,19 +112,18 @@ export default class IosGenerator {
   }
 
   copyRnpmAssets (
-    miniApps: any,
+    miniApps: Array<MiniApp>,
     paths: any) {
     const outputFolder = path.join(paths.outFolder, 'ios')
     // Case of local container for runner
-    if ((miniApps.length === 1) && (miniApps[0].localPath)) {
-      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].localPath, outputFolder)
+    if ((miniApps.length === 1) && (miniApps[0].path)) {
+      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outputFolder)
     } else {
       for (const miniApp of miniApps) {
         const miniAppPath = path.join(
           paths.compositeMiniApp,
           'node_modules',
-          miniApp.scope ? `@${miniApp.scope}` : '',
-          miniApp.name)
+          miniApp.packageJson.name)
         this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
       }
     }
@@ -152,7 +154,7 @@ export default class IosGenerator {
 
   async fillContainerHull (
     plugins: Array<Dependency>,
-    miniApps: any,
+    miniApps: Array<MiniApp>,
     paths: any,
     mustacheView: any) : Promise<*> {
     log.debug(`[=== Starting container hull filling ===]`)
