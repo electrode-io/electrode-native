@@ -32,18 +32,18 @@ export async function bundleMiniApps (
 
     // Specific case where we use container gen to generate
     // container for runner and we want to bundle the local miniapp
-    if ((miniapps.length === 1) && (miniapps[0].path)) {
+    if ((miniapps.length === 1) && (miniapps[0].isLocal)) {
       shell.cd(miniapps[0].path)
       throwIfShellCommandFailed()
     } else {
       let miniAppsPaths : Array<DependencyPath> = []
       for (const miniapp of miniapps) {
-        if (await miniapp.isPublishedToNpm()) {
-          log.debug(`[bundleMiniApps] MiniApp is published to NPM. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
-          miniAppsPaths.push(DependencyPath.fromString(miniapp.packageDescriptor))
-        } else {
-          log.debug(`[bundleMiniApps] MiniApp is not published to NPM. Using local path ${miniapp.path} for ${miniapp.name}`)
+        if (miniapp.isLocal) {
+          log.debug(`[bundleMiniApps] MiniApp is local. Using local path ${miniapp.path} for ${miniapp.name}`)
           miniAppsPaths.push(DependencyPath.fromFileSystemPath(miniapp.path))
+        } else {
+          log.debug(`[bundleMiniApps] MiniApp is not local. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
+          miniAppsPaths.push(DependencyPath.fromString(miniapp.packageDescriptor))
         }
       }
       await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock})

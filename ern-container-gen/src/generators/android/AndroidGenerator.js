@@ -257,8 +257,7 @@ export default class AndroidGenerator {
         const miniAppPath = path.join(
           paths.compositeMiniApp,
           'node_modules',
-          miniApp.scope ? `@${miniApp.scope}` : '',
-          miniApp.name)
+          miniApp.packageJson.name)
         this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
       }
     }
