@@ -127,7 +127,8 @@ Are you sure this is a MiniApp ?`)
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
       appPackageJson.ern = {
         version: `${platformVersion}`,
-        moduleType: `${ModuleTypes.MINIAPP}`
+        moduleType: `${ModuleTypes.MINIAPP}`,
+        miniAppName: utils.camelize(appName, false)
       }
       appPackageJson.private = false
       appPackageJson.keywords
@@ -135,8 +136,12 @@ Are you sure this is a MiniApp ?`)
         : appPackageJson.keywords = [ModuleTypes.MINIAPP]
 
       if (scope) {
-        appPackageJson.name = `@${scope}/${appName}`
+        appPackageJson.name = `@${scope}/${appName.toLowerCase()}`
+      } else {
+        appPackageJson.name = appName.toLowerCase()
       }
+      log.info(`Note that you application name when published to npm will be ${appPackageJson.name}. NPM package name does not allow uppercase, hence all the name of the app is converted to lowercase`)
+
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2))
 
       //
@@ -163,8 +168,8 @@ Are you sure this is a MiniApp ?`)
     return this._path
   }
 
-  get name () : string {
-    return this.getUnscopedModuleName(this.packageJson.name)
+  get name (): string {
+    return (this.packageJson.ern && this.packageJson.ern.miniAppName) ? this.packageJson.ern.miniAppName : this.getUnscopedModuleName(this.packageJson.name)
   }
 
   get scope () : ?string {
