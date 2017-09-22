@@ -4,6 +4,7 @@
   "title": "Electrode React Native Developer's Guide",
   "description": "Electrode React Native Platform Developer's Guide",
   "plugins": [
+    "-search",
     "theme-api",
     "edit-link",
     "prism",
