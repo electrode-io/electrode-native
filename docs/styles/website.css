@@ -2,3 +2,10 @@
   border-top: none;
   border-bottom: none;
 }
+
+/** To make block code take all page width
+ * pre[class*="language-"] {
+ *	margin-left: -30px;
+ *	margin-right: -30px;
+ * }
+ */

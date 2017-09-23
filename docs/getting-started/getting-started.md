@@ -1,62 +1,65 @@
-# Getting started
+{% method %}
+{% common %}
+## Getting started with Electrode Native
 
-This guide will walk you through steps to build react native apps using ern platform and other features that the platform offers.
+This tutorial will walk you through creating a simple Movie aplication using `Electrode Native`.  
+This application will be composed of two React Native MiniApps:
 
-For the purpose of the tutorial, we are going to create a Movie application that lists top rated movies and clicking on any movie will take the user to the details page. Let's break this down into two miniapps.
+- **MovieListMiniApp** : This MiniApp will display a list of movies.
+- **MovieDetailsMiniApp** : This MiniApp will show the details of a movie.
 
-1. MovieListMiniApp: To list the top movies.
-2. MovieDetailsMiniApp: Show the details of a movie.
+And two APIs:
 
-This will help us understand how easy it is to integrate multiple react native applications into a native application. Let's get started.
+- **MoviesApi** : An API to retrieve a list of movies.
+- **NavigationApi** : An API to navigate from one MiniApp to another.
 
+This will show you how easy it is to integrate multiple React Native applications into a native application, and how to easily communicate between the JavaScript and the native side using APIs.
 
-Before we start, we assume that you have already completed the electrode react native platform setup. If not please follow the instructions [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/wiki/Getting-started) before proceeding with the getting started guide.
+## Before you begin
+{% sample lang="android" %}
+- If not already done, install `Android Studio` and `Electrode Native`.
 
-## Creating your first Miniapp
+- If you want to run the application in an emulator, make sure you have created one.
+For more information on how to setup an emulator, you can check [the Android documentation][https://developer.android.com/studio/run/managing-avds.html]
+{% sample lang="ios" %}
+-  If not already done, install `XCode` and `Electrode Native`.
+{% common %}
+- Create a working directory named `ElectrodeNativeTutorial` to hold all tutorial project files
 
-Lets first create a MiniApp using ern platform.  
-Now would be a good time to create a working directory for keeping all the projects that we are going to create using the platform.  
-Once you have your work directory, just `cd` into it:
+## Creating the MovieList MiniApp
+
+- Move to the working directory and create a MiniApp named `MovieListMiniApp` using `ern create-miniapp` command.
 
 ```bash
-$ cd <your-working-directory>
-```
-
-and run the following `ern` command to create a new MiniApp. We'll name this one as `MovieListMiniApp`.
-
-```bash
+$ cd ElectrodeNativeTutorial
 $ ern create-miniapp MovieListMiniApp
 ```
 
-The MiniApp will be created in a new directory `MovieListMiniApp`.
-Now let's try to run it and see how it looks on an Android or iOS device.   
-The assumption is that you have already setup Android or iOS emulator/simulator, if not please proceed [here]() to complete the setup.
-
-## Launching the Miniapp
-
-Just `cd` into the `MovieListMiniApp` MiniApp directory:
+- Move to the `MovieListMiniApp` directory and run the MiniApp to see how it looks like, using `ern run` command.
 
 ```bash
 $ cd MovieListMiniApp
-```
-
-And then launch the MiniApp using `ern`:
-
-```
-Android:
+{% sample lang="android" %}
 $ ern run-android
-
-iOS:
+{% sample lang="ios" %}
 $ ern run-ios
 ```
 
-Please pick one emulator or device when prompted.   
-Once `ern` command execution is complete, you will see your first `MovieListMiniApp` MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app.
+{% common %}
+Pick one emulator (or device) from the list when prompted. 
+Once the command completes, you will see your first MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app. After all, a MiniApp is nothing more than a React Native application !
 
-## Creating the Miniapp UI
+Now let's update the UI of this MiniApp for it to display a list of movies.
 
-Now let's make it an app that lists top movies.  
-Open `index.android.js` or `index.ios.js` in your favorite JavaScript editor and just replace all of the code in this file, with the following code:
+## Updating the MovieList MiniApp UI
+
+{% sample lang="android" %}
+- Open`index.android.js` in your favorite JavaScript editor
+{% sample lang="ios" %}
+- Open `index.ios.js` in your favorite JavaScript editor
+
+{% common %}
+- Replace the whole content of this source file with the following code.
 
 ```javascript
 /**
@@ -84,37 +87,39 @@ export default class MovieListMiniApp extends Component {
         title: 'The Fast and Furious',
         releaseYear: 2010,
         ratings: '4.5',
-        imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BNzlkNzVjMDMtOTdhZC00MGE1LTkxODctMzFmMjkwZmMxZjFhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,672,1000_AL_.jpg`,
+        imageUrl: 'http://bit.ly/2jRUZwE',
         description: 'The Fast and the Furious'
       }, {
         title: '2 Fast 2 Furious',
         releaseYear: 2011,
         ratings: '4.0',
-        imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BMzExYjcyYWMtY2JkOC00NDUwLTg2OTgtMDI3MGY2OWQzMDE2XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SY1000_CR0,0,666,1000_AL_.jpg`,
+        imageUrl: 'http://bit.ly/2jTfYPF',
         description: 'How fast do you like it ?'
       }
-      ]),
+      ])
     }
   }
 
   render () {
     return (
-      <ListView style={styles.container} dataSource={this.state.dataSource}
-                renderRow={(movie) =>
-                  <View style={styles.row}>
-                    <Image
-                      style={styles.icon}
-                      source={{
-                        uri: movie.imageUrl ? movie.imageUrl : 'http://image10.bizrate-images.com/resize?sq=60&uid=2216744464?odnHeight=100&odnWidth=100&odnBg=FFFFFF'
-                      }}
-                    />
-                    <View style={styles.row2}>
-                      <Text style={styles.title}>{movie.title}</Text>
-                      <Text style={styles.subtitle}>{movie.releaseYear}</Text>
-                    </View>
-                  </View>
-                }
-                renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
+      <ListView
+        style={styles.container}
+        dataSource={this.state.dataSource}
+        renderRow={(movie) =>
+          <View style={styles.row}>
+            <Image
+              style={styles.icon}
+              source={{
+                uri: movie.imageUrl ? movie.imageUrl : 'http://bit.ly/2yz3AYe'
+              }}
+            />
+            <View style={styles.row2}>
+              <Text style={styles.title}>{movie.title}</Text>
+              <Text style={styles.subtitle}>{movie.releaseYear}</Text>
+            </View>
+          </View>
+        }
+        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
       />
     )
   }
@@ -127,7 +132,6 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: 'black'
   },
-
   row: {
     flex: 1,
     flexDirection: 'row',
@@ -174,27 +178,44 @@ const styles = StyleSheet.create({
 AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 ```
 
-Once done, let's reload the MiniApp in the emulator/simulator, for it to pick up the new code. 
+- Reload the application to see the updated UI.
 
+Inside the emulator window or on you device, do the following
+
+{% sample lang="android" %}
 ```
-Android: CMD+M --> Reload
-IOS: CMD+M
+CMD+M --> Reload
 ```
+{% sample lang="ios" %}
+```
+CMD+M
+```
+{% common %}
 
-You can now see the initial UI of the `MovieListMiniApp`.
+You will see the initial UI of the MovieList MiniApp.  
 
-## Retrieving Movies from the Native side
+Now let's add an API to this MiniApp so that we can retrieve movies from the native application instead of manually hardcoding them in the source code of our MiniApp.
 
-Let's now add an API so that we can fetch some movie names provided by the native app instead of hard coding them inside `index.android/ios.js`
+## Adding the MoviesApi to the MovieList MiniApp
+
+We have already created and published the MoviesApi for the needs of this tutorial. If you want to take a look at the generated API code, you can have a look to the [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) where we keep this API.
+
+- Using `ern add` command, add the MoviesApi
 
 ```bash
-$ cd ../MovieListMiniApp
 $ ern add react-native-ernmovie-api
 $ ern add react-native-electrode-bridge
 ```
 
-Now let's use this API from our react native app. For this, we'll have to update `index.android/ios.js` code as follow:
+This will install the MoviesApi from NPM and add it as a dependency of your MiniApp. We also need to add the bridge, because it is not a direct dependency of APIs.
 
+- Update the MovieList MiniApp code to use the API
+
+{% sample lang="android" %}
+Open the `index.android.js` file and modify it as follow
+{% sample lang="ios" %}
+Open the `index.ios.js` file and modify it as follow
+{% common %}
 Add the following `import` statement under other `import` statements located at the top of the JavaScript file:
 
 ```javascript
@@ -210,64 +231,62 @@ Then, just replace the constructor method with the following code:
 
      let topMovies = []
      MoviesApi.requests().getTopRatedMovies().then((movies) => {
-       console.log(`Top movies fetched ${movies}`)
        if (movies) {
          this.setState(previousState => {
            return {dataSource: ds.cloneWithRows(movies)}
          })
        }
      }).catch(error => {
-       console.log(`Error: ${error}`)
        topMovies = [{
          title: 'Titanic',
          releaseYear: 1997,
          ratings: '4.5',
-         imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SY1000_CR0,0,671,1000_AL_.jpg`,
+         imageUrl: 'http://bit.ly/2hnU8mq',
          description: 'Titanic'
        }, {
          title: 'Avatar',
          releaseYear: 2009,
          ratings: '4.0',
-         imageUrl: `https://images-na.ssl-images-amazon.com/images/M/MV5BMTYwOTEwNjAzMl5BMl5BanBnXkFtZTcwODc5MTUwMw@@._V1_.jpg`,
+         imageUrl: 'http://bit.ly/2xAX0Cv',
          description: 'Avatar'
-       }
-       ]
+       }]
 
        this.setState(previousState => {
          return {dataSource: ds.cloneWithRows(topMovies)}
        })
-
      })
 
      this.state = {
-       dataSource: ds.cloneWithRows(topMovies),
+       dataSource: ds.cloneWithRows(topMovies)
      }
    }
 ```
 
-You can now relaunch the MiniApp by running the command below so that it uses this updated code.
+- Reload the UI
 
-###### Android:
-```bash
-ern run-android
+Inside the emulator window or on you device, do the following
+
+{% sample lang="android" %}
 ```
-###### iOS:
-```bash
-ern run-ios
+CMD+M --> Reload
 ```
+{% sample lang="ios" %}
+```
+CMD+M
+```
+{% common %}
 
-You will see that the UI is showing the movie names defined in the catch block. This means there was no API implementation registered to serve the `getTopRatedMovies` request.   
+You can see that the UI is showing the movie names that are set in the `catch` block.  
+This means there was no API implementation available to serve the `getTopRatedMovies` request.   
 
-Let's see how we can actually write an implementation of this API.
+Let's now see write an implementation of this API. Although you can write the implementation either on the JavaScript side or Native side, this tutorial shows the implementation on the native side.
 
-An API implementation can either be done on the JavaScript side or the Native side.  
-To make it more fun lets see how we can do this on the Native side.
+### Implementing the MovieApi on the native side
 
-### Implementing the MovieApi on Android
+{% sample lang="android" %}
+- Open `MainApplication.java` in your favorite IDE (this file is located in `android/app/src/main/java/com/walmartlabs/ern/`), or just open the Android project (in `android/`) in Android Studio to edit this file.
 
-Open `MainApplication.java` in your favorite IDE (this file is located in `android/app/src/main/java/com/walmartlabs/ern/`), or just open the Android project (in `android/`) in Android Studio to edit this file.
-
-Replace the whole content of this file with the following code:
+- Replace `MainApplication.java` code with the following
 
 ```java
 package com.walmartlabs.ern;
@@ -292,34 +311,37 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ElectrodeReactContainer.initialize(
-                this,
-                new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(RunnerConfig.RN_DEV_SUPPORT_ENABLED)
-            /* Add your additional plugins configuration here */);
+        ElectrodeReactContainer.initialize(this,
+          new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(RunnerConfig.RN_DEV_SUPPORT_ENABLED));
 
         MoviesApi.requests().registerGetTopRatedMoviesRequestHandler(new ElectrodeBridgeRequestHandler<None, List<Movie>>() {
             @Override
             public void onRequest(@Nullable None payload, @NonNull ElectrodeBridgeResponseListener<List<Movie>> responseListener) {
-                List<Movie> movies = new ArrayList<Movie>() {{
-                     add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(5f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ1ODM2MjY3OV5BMl5BanBnXkFtZTgwMTU2MjEyMDE@._V1_.jpg").build());
-                     add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(4.9f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BZTRmNjQ1ZDYtNDgzMy00OGE0LWE4N2YtNTkzNWQ5ZDhlNGJmL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,704,1000_AL_.jpg").build());
-                     add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(4f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMGM0MzkxM2MtYWQ2My00NjYyLThhYmYtMTdkNTMyNmFmYTY1XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,701,1000_AL_.jpg").build());
-                     add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(4f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg").build());
-                     add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(3f).imageUrl("https://images-na.ssl-images-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SY1000_CR0,0,649,1000_AL_.jpg").build());
-                }};
-                responseListener.onSuccess(movies);
+              List<Movie> movies = new ArrayList<Movie>() {{
+                add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(5f).imageUrl("http://bit.ly/2xZm1Zr").build());
+                add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(4.9f).imageUrl("http://bit.ly/2wK5TuA").build());
+                add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(4f).imageUrl("http://bit.ly/2yysiIA").build());
+                add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(4f).imageUrl("http://bit.ly/2iZPBqw").build());
+                add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(3f).imageUrl("http://bit.ly/2xwkt7r").build());
+              }};
+              responseListener.onSuccess(movies);
             }
         });
     }
-
 }
 ```
 
-Once updated run the application directly from Android Studio, or run `ern run-android` again from your terminal, and you will see that the UI now shows the movies that are returned by your native app.
+- Relaunch the application
 
-### Implementing the MovieApi on iOS
+Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the `run-android` command which will recreate a new local Container and launch the application.
 
-Open the generated ios project in xcode(`Location: /MovieListMiniApp/ios`) and replace the `ViewController.m` code as below
+```bash
+$ ern run-android
+```
+{% sample lang="ios" %}
+- Open the generated ios project (in `ios` folder) in XCode.
+
+- Replace the `ViewController.m` code with the following code.
 
 ```objectivec
 #import "ViewController.h"
@@ -333,24 +355,20 @@ Open the generated ios project in xcode(`Location: /MovieListMiniApp/ios`) and r
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
 
     MoviesAPI* moviesApi = [[MoviesAPI alloc] init];
 
     [moviesApi.requests registerGetTopRatedMoviesRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
-        NSLog(@"Invoking request handler");
         NSMutableArray<Movie *> *movies = [[NSMutableArray alloc] init];
-        [movies addObject:[self createMovie:@"1" title:@"The Shawshank Redemption" releaseYear:@1994 rating:@9.2 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ1ODM2MjY3OV5BMl5BanBnXkFtZTgwMTU2MjEyMDE@._V1_.jpg"]];
-        [movies addObject:[self createMovie:@"2" title:@"The Godfather" releaseYear:@1972 rating:@9.2 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BZTRmNjQ1ZDYtNDgzMy00OGE0LWE4N2YtNTkzNWQ5ZDhlNGJmL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,704,1000_AL_.jpg"]];
-        [movies addObject:[self createMovie:@"3" title:@"The Godfather: Part II" releaseYear:@1974 rating:@9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMGM0MzkxM2MtYWQ2My00NjYyLThhYmYtMTdkNTMyNmFmYTY1XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SY1000_CR0,0,701,1000_AL_.jpg"]];
-        [movies addObject:[self createMovie:@"4" title:@"The Dark Knight" releaseYear:@2008 rating:@9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg"]];
-        [movies addObject:[self createMovie:@"5" title:@"12 Angry Men" releaseYear:@1957 rating:@8.9 imageUrl:@"https://images-na.ssl-images-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SY1000_CR0,0,649,1000_AL_.jpg"]];
+
+        [movies addObject:[self createMovie:@"1" title:@"The Shawshank Redemption" releaseYear:@1994 rating:@9.2 imageUrl:@"http://bit.ly/2xZm1Zr"]];
+        [movies addObject:[self createMovie:@"2" title:@"The Godfather" releaseYear:@1972 rating:@9.2 imageUrl:@"http://bit.ly/2wK5TuA"]];
+        [movies addObject:[self createMovie:@"3" title:@"The Godfather: Part II" releaseYear:@1974 rating:@9 imageUrl:@"http://bit.ly/2yysiIA"]];
+        [movies addObject:[self createMovie:@"4" title:@"The Dark Knight" releaseYear:@2008 rating:@9 imageUrl:@"http://bit.ly/2iZPBqw"]];
+        [movies addObject:[self createMovie:@"5" title:@"12 Angry Men" releaseYear:@1957 rating:@8.9 imageUrl:@"http://bit.ly/2xwkt7r"]];
 
         block(movies, nil);
-
-
     }];
-
 
    UIViewController *viewController =
    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
@@ -361,7 +379,6 @@ Open the generated ios project in xcode(`Location: /MovieListMiniApp/ios`) and r
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (Movie *) createMovie : (NSString*) movieId title: (NSString*) title releaseYear: (NSNumber*) releaseYear rating: (NSNumber*) rating imageUrl: (NSString*) imageUrl {
@@ -376,39 +393,35 @@ Open the generated ios project in xcode(`Location: /MovieListMiniApp/ios`) and r
     return movie;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end
 
 ```
 
+- Relaunch the application
 
-## Navigating to another MiniApp to show movie details
+Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the `run-ios` command which will recreate a new local Container and launch the application.
 
-Now let's make it more fun, add some navigation to our MiniApp !
+```bash
+$ ern run-ios
+```
 
-When tapping a movie in the list, we would like to navigate to this movie details screen.
-For this, we need few things:
+{% common %}
+You will see that the UI now shows the movies that are stored in the native application.
 
-1. A movie details screen, that we have already implemented and published to npm so that you can just reuse it. This "screen" is actually another MiniApp that we created.
-2. An API that helps you navigate between these two MiniApps. We have created this API as well. If you would like to create your own API, please follow the instructions (here)[].
+## Adding the Navigation API
 
-First let's add our very basic Navigation API to the `MovieListMiniApp` MiniApp. From the `MovieListMiniApp` directory, execute the following `ern` command, that should be used to add any dependency (native or JavaScript) to a MiniApp. We'll use it to add a dependency on the Navigation API in our `MovieListMiniApp`:
+We have created this API for you for this tutorial, if you wish to have a look to it, you can see it in [this GitHub repository](https://github.com/electrode-io/react-native-ernnavigation-api). This very simple API will be used to navigation from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
+
+- Add the NavigationAPI to the `MovieListMiniApp`.
 
 ```bash
 $ ern add react-native-ernnavigation-api
 ```
-
-Once the API is added, we'll just make some code changes in `index.android/ios.js` file of our MiniApp.
-
+{% sample lang="android" %}
+- Mofify `index.android.js` file as follow, so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
+{% sample lang="ios" %}
+- Modify `index.ios.js` file as follow, so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
+{% common %}
 First, add the following import statement:
 
 ```javascript
@@ -420,57 +433,47 @@ And then just replace the `render` method with the following one:
 ```javascript
   render () {
     return (
-      <ListView style={styles.container} dataSource={this.state.dataSource}
-                renderRow={(movie) =>
-                <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="grey">
-                  <View style={styles.row} onPress={() => this._onPressRow(movie)}>
-                    <Image
-                      style={styles.icon}
-                      source={{
-                        uri: movie.imageUrl ? movie.imageUrl : 'http://image10.bizrate-images.com/resize?sq=60&uid=2216744464?odnHeight=100&odnWidth=100&odnBg=FFFFFF'
-                      }}
-                    />
-                    <View style={styles.row2}>
-                      <Text style={styles.title}>{movie.title}</Text>
-                      <Text style={styles.subtitle}>{movie.releaseYear}</Text>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-                }
-                renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
+      <ListView 
+        style={styles.container} 
+        dataSource={this.state.dataSource}
+        renderRow={(movie) =>
+        <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="grey">
+          <View style={styles.row} onPress={() => this._onPressRow(movie)}>
+            <Image
+              style={styles.icon}
+              source={{
+                uri: movie.imageUrl ? movie.imageUrl : 'http://bit.ly/2yz3AYe'
+              }}
+            />
+            <View style={styles.row2}>
+              <Text style={styles.title}>{movie.title}</Text>
+              <Text style={styles.subtitle}>{movie.releaseYear}</Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+        }
+        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
       />
     )
   }
+```
 
+We'll also add a method, below the `render` method to send the `navigate` request whn a movie is selected in the list of movies :
+
+```javascript
   _onPressRow (movie) {
     movie.isSelect = !movie.isSelect
     NavigationApi.requests().navigate('MovieDetailsMiniApp', {'initialPayload': JSON.stringify(movie)}).catch(() => {
       console.log("Navigation failed.");
     })
   }
-  ```
-
-Now whenever you click on a movie in the list, it will invoke the navigation API to navigate to MovieDetails app.
-
-Let's do that magic now.
-
-###### Android:
-
-```
-$ ern run-android --miniapps MovieDetailsMiniApp --mainMiniAppName MovieListMiniApp
 ```
 
-###### iOS:
+- Implement the `NavigationAPI`
 
-```
-$ ern run-ios --miniapps MovieDetailsMiniApp --mainMiniAppName MovieListMiniApp
-```
-The above command now includes the `MovieDetailsMiniApp` inside the generated contianer. This is how easy it is to combine multiple MiniApps. Just by running an `ern` command.
+The `navigate` method of the `NavigationApi` is not yet implemented. We'll implement it in the native application, as we did for the `MovieApi`.
 
-### Implementing the NavigationApi on Android
-
-Now, let's open Android Studio, perform a project sync to ensure that the new container.aar is refreshed so that we can add an implementation for the navigation API.
-
+{% sample lang="android" %}
 Replace the `MainActivity.java` whole content with the following:
 
 ```java
@@ -511,9 +514,6 @@ public class MainActivity extends AppCompatActivity {
             public void onRequest(@Nullable NavigateData navigateData, @NonNull ElectrodeBridgeResponseListener<Boolean> responseListener) {
                 if (!MainActivity.this.isFinishing()) {
                     if (navigateData != null) {
-                        Log.d("NAVIGATION", "" + navigateData.getminiAppName());
-                        Log.d("NAVIGATION", "" + navigateData.getinitialPayload());
-
                         Class activityClass = MiniAppsConfig.MINIAPP_ACTIVITIES.get(navigateData.getminiAppName());
                         if (activityClass != null) {
                             Bundle bundle = new Bundle();
@@ -525,22 +525,15 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "No activity found to navigate for: " + navigateData.getminiAppName(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Log.d("NAVIGATION", "Not enough data provided to navigate");
+                        Log.e("NAVIGATION", "Not enough data provided to navigate");
                     }
                 }
             }
         });
     }
 }
-
 ```
-
-Launch the app again from Android Studio, and click on a movie in the list. You will see that the movie details page is now displaying the details of the movie that you clicked.
-
-### Implementing the NavigationApi on iOS
-
-Now, let's open the project in Xcode
-
+{% sample lang="ios" %}
 Replace the content of `ViewController.h` as below,
 
 ```objectivec
@@ -570,7 +563,6 @@ Add the following implementation inside `ViewController.m` right below the movie
 
         block(nil, nil);
     }];
-
 ```
 
 Ensure that you add the `appDelegate` import statement to `ViewController.m` file as well
@@ -578,9 +570,35 @@ Ensure that you add the `appDelegate` import statement to `ViewController.m` fil
 ```objectivec
 #import "AppDelegate.h"
 ```
+{% common %}
+## Adding the MovieDetailsMiniApp
 
-Now run the project from Xcode and you shall see the magic.
+All that remains now is to add the `MovieDetailsMiniApp` to our application.
 
+We've developed and published this MiniApp so you can just reuse it. If you want to have a look at the code of this MiniApp, you can see it in [this GitHub repository](https://github.com/electrode-io/MovieDetailsMiniApp)
 
+We can simply add this MiniApp to the local Container used by the native application, using a variation of the `ern run` command that allows to include extra MiniApps to the local Container.
 
-There you go. Now that you have successfully used `Electrode React Native` platform to build your first app and integrate multiple apps to it, it's time for you go and challenge yourself to build more fun stuffs with it.
+Let's do that magic now.
+{% sample lang="android" %}
+```bash
+$ ern run-android --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
+```
+{% sample lang="ios" %}
+```bash
+$ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
+```
+{% common %}
+This is how easy it is to combine multiple MiniApps in a local Container.
+
+There you go !
+
+You've successfully used `Electrode Native` to build your first native application, composed of multiple MiniApps.
+
+In this tutorial, we've only covered a small part of what `Electrode Native` offers. 
+
+```
+TODO : <add What's next?...or lead them into the next section>
+```
+
+{% endmethod %}
