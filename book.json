@@ -13,6 +13,11 @@
     "scripts"
   ],
   "pluginsConfig": {
+    "prism": {
+      "css": [
+        "prismjs/themes/prism-tomorrow.css"
+      ]
+    },
     "theme-api": {
       "languages": [
         {

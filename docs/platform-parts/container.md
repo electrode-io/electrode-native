@@ -265,7 +265,7 @@ Before accessing MiniApps stored within a Container, it needs to be initialized.
 Initialization of a Container should ideally take place during startup of your mobile application. Ideally it should take place in your `AppDelegate.m` in `didFinishLaunchingWithOptions:` method. Otherwise, you shoud call Container initialization wherever you see fit. The sooner it gets initialized, the better. 
 
 Initialization of Container is done through the static method `startWithConfigurations:` of `ElectrodeReactNative`. 
-```ObjC
+```objectivec
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] init];
     containerConfig.debugEnabled = RnDevSupportEnabled;
     [ElectrodeReactNative startWithConfigurations:containerConfig];
@@ -315,7 +315,7 @@ To do this, just pass a `NSDictionary` to the parameter `property`
 
 These generated `UIViewController` are very basic and might not fullfil your advanced need. If you would like to use your own subclass of `UIViewController` you just need to override `viewDidLoad:` in your `UIViewController`. 
 
-```ObjC
+```objectivec
 - (void)viewDidLoad {
     [super viewDidLoad];    
     UIViewController *viewController =
