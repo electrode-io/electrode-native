@@ -43,21 +43,21 @@ export async function runAndroid ({
 }) {
   const devices = await getDevices()
   if (devices.length === 1) {
-        // If 1 device is running install and launch the application
+    // If 1 device is running install and launch the application
     log.debug(devices[0].split('\t')[0], ' is running ...')
     installAndLaunchApp(projectPath, packageName)
   } else if (devices.length > 1) {
     log.error('error: more than one device/emulator')
   } else {
     const avdImageNames = await getAndroidAvds()
-    inquirer.prompt([{
+    const { avdImageName } = await inquirer.prompt([{
       type: 'list',
       name: 'avdImageName',
       message: 'Choose Android emulator image',
       choices: avdImageNames
-    }]).then(answers => {
-      runAndroidUsingAvdImage(projectPath, packageName, answers.avdImageName)
-    })
+    }])
+
+    return runAndroidUsingAvdImage(projectPath, packageName, avdImageName)
   }
 }
 
@@ -72,9 +72,17 @@ export async function runAndroidUsingAvdImage (
   packageName: string,
   avdImageName: string) {
   // https://issuetracker.google.com/issues/37137213
-  exec(`${androidEmulatorPath()} -avd ${avdImageName}`)
+  const launchEmulatorCmd = spawn(
+    androidEmulatorPath(),
+    ['-avd', avdImageName],
+    { detached: true })
+
+  launchEmulatorCmd.stderr.on('data', (data) => {
+    log.debug(`${data}`)
+  })
+  launchEmulatorCmd.unref()
   await spin('Waiting for device to start', waitForAndroidDevice())
-  installAndLaunchApp(projectPath, packageName)
+  await installAndLaunchApp(projectPath, packageName)
 }
 
 // Does the job of installing and running the app
@@ -105,14 +113,14 @@ export async function waitForAndroidDevice () {
 export async function androidGetBootAnimProp () {
   return new Promise((resolve, reject) => {
     exec(`${androidAdbPath()} wait-for-device shell getprop init.svc.bootanim`,
-            (err, stdout, stderr) => {
-              if (err || stderr) {
-                log.error(err || stderr)
-                reject(err || stderr)
-              } else {
-                resolve(stdout)
-              }
-            })
+    (err, stdout, stderr) => {
+      if (err || stderr) {
+        log.error(err || stderr)
+        reject(err || stderr)
+      } else {
+        resolve(stdout)
+      }
+    })
   })
 }
 
@@ -124,14 +132,14 @@ export async function installApp (projectPath: string) {
   return new Promise((resolve, reject) => {
     shell.cd(projectPath)
     exec(`./gradlew installDebug`,
-            (err, stdout, stderr) => {
-              if (err || stderr) {
-                log.error(err || stderr)
-                reject(err || stderr)
-              } else {
-                resolve(stdout)
-              }
-            })
+    (err, stdout, stderr) => {
+      if (err || stderr) {
+        log.error(err || stderr)
+        reject(err || stderr)
+      } else {
+        resolve(stdout)
+      }
+    })
   })
 }
 
@@ -144,25 +152,25 @@ export async function launchAndroidActivity (
   activityName: string) {
   return new Promise((resolve, reject) => {
     exec(`${androidAdbPath()} shell am start -n ${packageName}/.${activityName}`,
-            (err, stdout, stderr) => {
-              if (err || stderr) {
-                reject(err || stderr)
-              } else {
-                resolve()
-              }
-            })
+    (err, stdout, stderr) => {
+      if (err || stderr) {
+        reject(err || stderr)
+      } else {
+        resolve()
+      }
+    })
   })
 }
 
 // Utility method to launch a specific activity from a given packager
 // Will spawn the command (detached mode)
-export async function launchAndroidActivityDetached (
+export function launchAndroidActivityDetached (
   packageName: string,
   activityName: string,
   cwd: string) {
   const adbShellCommand = spawn(androidAdbPath(),
       [ 'shell', 'am', 'start', '-n', `${packageName}/.${activityName}` ],
-    { cwd })
+    { cwd, detached: true })
 
   adbShellCommand.stderr.on('data', (data) => {
     log.error(`${data}`)

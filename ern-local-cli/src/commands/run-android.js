@@ -54,6 +54,7 @@ exports.handler = async function ({
       descriptor,
       dev
     })
+    process.exit(0)
   } catch (e) {
     log.error(`${e}`)
   }

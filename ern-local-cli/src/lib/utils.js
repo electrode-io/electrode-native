@@ -504,7 +504,7 @@ async function generateContainerForRunner (
 }
 
 async function launchAndroidRunner (pathToAndroidRunner: string) {
-  await runAndroid({
+  return runAndroid({
     projectPath: pathToAndroidRunner,
     packageName: 'com.walmartlabs.ern'
   })
