@@ -1,10 +1,12 @@
 // @flow
 
 import {
-  MiniApp
+  MiniApp,
+  utils as core
 } from 'ern-core'
 import utils from '../lib/utils'
 import chalk from 'chalk'
+import inquirer from 'inquirer'
 
 exports.command = 'create-miniapp <appName> [platformVersion] [scope]'
 exports.desc = 'Create a new ern application(miniapp)'
@@ -32,10 +34,20 @@ exports.handler = async function ({
   scope?: string,
 }) {
   try {
+    if (!appName) {
+      log.error('MiniApp must contain a value')
+      return
+    }
+    let packageName = appName
+    if (packageName !== packageName.toLowerCase()) {
+      log.info(`NPM does not allow package names containing upper case letters.`)
+      const answer = await _promptForPackageName(core.splitCamelCaseString(appName).join('-'))
+      packageName = answer.packageName
+    }
     await MiniApp.create(appName, {
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope
-    })
+    }, packageName)
     log.info(`${appName} MiniApp was successfully created !`)
     log.info(`================================================`)
     log.info(chalk.bold.white('To run your MiniApp on Android :'))
@@ -50,4 +62,21 @@ exports.handler = async function ({
   } catch (e) {
     log.error(e.message)
   }
+}
+
+function _promptForPackageName (packageName: string) {
+  return inquirer.prompt([{
+    type: 'input',
+    name: 'packageName',
+    message: `Please type package name to publish to npm. Press Enter to use the default.`,
+    default: () => {
+      return `${packageName}`
+    },
+    validate: (value) => {
+      if (value && value === value.toLowerCase()) {
+        return true
+      }
+      return 'Please check npm package name rules https://docs.npmjs.com/files/package.json'
+    }
+  }])
 }

@@ -99,7 +99,8 @@ Are you sure this is a MiniApp ?`)
     } : {
       platformVersion: string,
       scope?: string
-    }) {
+    },
+    packageName: string) {
     try {
       if (fs.existsSync(path.join('node_modules', 'react-native'))) {
         throw new Error('It seems like there is already a react native app in this directory. Use another directory.')
@@ -123,7 +124,6 @@ Are you sure this is a MiniApp ?`)
         `Creating ${appName} project using react-native v${reactNativeDependency.version}. This might take a while.`,
         reactnative.init(appName, reactNativeDependency.version))
 
-      //
       // Inject ern specific data in MiniApp package.json
       const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
@@ -138,17 +138,12 @@ Are you sure this is a MiniApp ?`)
         : appPackageJson.keywords = [ModuleTypes.MINIAPP]
 
       if (scope) {
-        appPackageJson.name = `@${scope}/${appName.toLowerCase()}`
+        appPackageJson.name = `@${scope}/${packageName}`
       } else {
-        appPackageJson.name = appName.toLowerCase()
+        appPackageJson.name = packageName
       }
 
-      log.info(`Your MiniApp name when published to npm will be ${appPackageJson.name}.`)
-      log.info(`This is because NPM does not allow package names containing upper case letters.`)
-
       fs.writeFileSync(appPackageJsonPath, JSON.stringify(appPackageJson, null, 2))
-
-      //
       // Remove react-native generated android and ios projects
       // They will be replaced with our owns when user uses `ern run android`
       // or `ern run ios` command
