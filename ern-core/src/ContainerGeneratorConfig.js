@@ -31,16 +31,17 @@ export default class ContainerGeneratorConfig {
 
   constructor (platform: string, config: any) {
     this.platform = platform
+    this.publishers = []
+
     if (config && config.containerVersion) {
       this.containerVersion = config.containerVersion
     }
 
     if (config) { // containerGenerator entry in JSON
-      this.publishers = []
       if (!config.publishers && config.name && (config.mavenRepositoryUrl || config.targetRepoUrl)) {
         log.debug('cauldron still has old way of ContainerGeneratorConfig declaration. Trying to generate publishers using old schema type')
         this.publishers.push(ContainerGeneratorConfig.createPublisher(config.name, config.mavenRepositoryUrl ? config.mavenRepositoryUrl : config.targetRepoUrl))
-      } else {
+      } else if (config.publishers) {
         log.debug('cauldron has new way of ContainerGeneratorConfig declaration. Trying to generate publishers')
         for (const p of config.publishers) {
           this.publishers.push(ContainerGeneratorConfig.createPublisher(p.name, p.url))
@@ -49,9 +50,10 @@ export default class ContainerGeneratorConfig {
       if (config.ignoreRnpmAssets) {
         this.ignoreRnpmAssets = config.ignoreRnpmAssets
       }
-    } else if (platform === 'android') {
+    }
+
+    if ((this.publishers.length === 0) && (platform === 'android')) {
       // No container config provided. Lets create a default maven publisher for android
-      this.publishers = []
       this.publishers.push(ContainerGeneratorConfig.createPublisher('maven', MavenUtils.getDefaultMavenLocalDirectory()))
     }
   }

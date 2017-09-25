@@ -242,7 +242,6 @@ Are you sure this is a MiniApp ?`)
       // In that case we need to perform additional checks and operations
       const versionLessDependency = dependency.withoutVersion()
       const manifestNativeDependency = await manifest.getNativeDependency(versionLessDependency)
-      let hasNativeDependency = !!manifestNativeDependency
       const manifestDependency = manifestNativeDependency || await manifest.getJsDependency(versionLessDependency)
 
       if (!manifestDependency) {
@@ -259,7 +258,6 @@ Are you sure this is a MiniApp ?`)
           // This is a pure JS dependency. Not much to do here -yet-
           finalDependency = versionLessDependency
         } else if (nativeDependencies.length === 1) {
-          hasNativeDependency = true
           // This is a native dependency or it contains a single native dependency as a transitive one
           if (Dependency.same(nativeDependencies[0], dependency, { ignoreVersion: true })) {
             // This dependency is itself the native dependency.
@@ -315,9 +313,6 @@ Are you sure this is a MiniApp ?`)
       if (finalDependency) {
         process.chdir(this.path)
         await spin(`Adding ${finalDependency.toString()} to MiniApp`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
-        if (hasNativeDependency) {
-          log.info(`Because you added a native dependency, a new Container needs to be generated. \nThis can be done through running 'ern run-android' or 'ern run-ios' command.`)
-        }
         return finalDependency
       }
     }

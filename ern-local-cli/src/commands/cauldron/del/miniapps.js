@@ -76,7 +76,7 @@ exports.handler = async function ({
         await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
       }
     }, napDescriptor, { containerVersion })
-    log.info(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
+    log.debug(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove MiniApp(s) from ${napDescriptor.toString()}`)
   }

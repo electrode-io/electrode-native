@@ -106,8 +106,8 @@ export default class IosGenerator {
 
       log.debug(`Container generation completed!`)
     } catch (e) {
-      log.error(`Something went wrong. Aborting ern-container-gen: ${e}`)
-      console.trace(e)
+      log.error(`[generateContainer] Something went wrong. Aborting Container Generation`)
+      throw e
     }
   }
 

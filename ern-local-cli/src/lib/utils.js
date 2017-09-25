@@ -24,6 +24,7 @@ import {
   runCauldronContainerGen
 } from './publication'
 import {
+  spawn,
   execSync
 } from 'child_process'
 import utils from './utils'
@@ -329,7 +330,7 @@ async function performContainerStateUpdateInCauldron (
     // Commit Cauldron transaction
     await spin(`Updating Cauldron`, cauldron.commitTransaction())
 
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
+    log.debug(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`[performContainerStateUpdateInCauldron] An error happened ${e}`)
     cauldron.discardTransaction()
@@ -461,7 +462,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
         entryMiniAppName,
         { reactNativeDevSupportEnabled: dev }))
     } else {
-      await spin('Regeneration iOS Runner Configuration',
+      await spin('Regenerating iOS Runner Configuration',
         regenerateIosRunnerConfig(
           Platform.currentPlatformVersionPath,
           pathToIosRunner,
@@ -504,7 +505,7 @@ async function generateContainerForRunner (
 }
 
 async function launchAndroidRunner (pathToAndroidRunner: string) {
-  await runAndroid({
+  return runAndroid({
     projectPath: pathToAndroidRunner,
     packageName: 'com.walmartlabs.ern'
   })
@@ -521,7 +522,7 @@ async function launchIosRunner (pathToIosRunner: string) {
     value: val
   }))
 
-  const answer = await inquirer.prompt([{
+  const { device } = await inquirer.prompt([{
     type: 'list',
     name: 'device',
     message: 'Choose iOS simulator',
@@ -534,20 +535,15 @@ async function launchIosRunner (pathToIosRunner: string) {
     // do nothing if there is no simulator launched
   }
 
-  try {
-    execSync(`xcrun instruments -w ${answer.device.udid}`)
-  } catch (e) {
-    // Apple will always throw some exception because we don't provide a -t.
-    // but we just care about launching simulator with chosen UDID
-  }
+  const spinner = ora(`Wating for device to boot`).start()
 
-  const device = answer.device
+  await launchSimulator(device.udid)
+
   shell.cd(pathToIosRunner)
 
-  const spinner = ora(`Compiling runner project`).start()
-
   try {
-    execSync(`xcodebuild -scheme ErnRunner -destination 'platform=iOS Simulator,name=${device.name}' SYMROOT="${pathToIosRunner}/build" build`)
+    spinner.text = 'Building iOS Runner project'
+    await buildIosRunner(pathToIosRunner, device.name)
     spinner.text = 'Installing runner project on device'
     await simctl.installApp(device.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
     spinner.text = 'Launching runner project'
@@ -557,6 +553,41 @@ async function launchIosRunner (pathToIosRunner: string) {
     spinner.fail(e.message)
     throw e
   }
+}
+
+async function launchSimulator (udid: string) {
+  return new Promise((resolve, reject) => {
+    const xcrunProc = spawn('xcrun', [ 'instruments', '-w', udid ])
+    xcrunProc.stdout.on('data', data => {
+      log.debug(data)
+    })
+    xcrunProc.stderr.on('data', data => {
+      log.debug(data)
+    })
+    xcrunProc.on('close', code => {
+      code === (0 || 255 /* 255 code because we don't provide -t option */) ? resolve() : reject(code)
+    })
+  })
+}
+
+async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
+  return new Promise((resolve, reject) => {
+    const xcodebuildProc = spawn('xcodebuild', [
+      `-scheme`, 'ErnRunner', 'build',
+      `-destination`, `platform=iOS Simulator,name=${deviceName}`,
+      `SYMROOT=${pathToIosRunner}/build` ],
+       { cwd: pathToIosRunner })
+
+    xcodebuildProc.stdout.on('data', data => {
+      log.debug(data)
+    })
+    xcodebuildProc.stderr.on('data', data => {
+      log.debug(data)
+    })
+    xcodebuildProc.on('close', code => {
+      code === 0 ? resolve() : reject(code)
+    })
+  })
 }
 
 export default {

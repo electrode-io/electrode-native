@@ -8,19 +8,16 @@ const info = chalk.bold.blue
 const gitHubPesonalToken = `32207e94b79acaeb8bc7e82bcd0cd0c29ac0437f`
 const gitUserName = `ernplatformtest`
 const gitPassword = `ernplatformtest12345`
-const gitHubCauldronRepositoryName = `cauldron-${getRandomInt(0, 100000)}`
+const gitHubCauldronRepositoryName = `cauldron-system-tests`
 const cauldronName = `cauldron-automation`
-const miniAppName = `miniapp${getRandomInt(0, 100000)}`
-const nativeApplicationName = `walmart-test-${getRandomInt(0, 100000)}`
+const miniAppName = `MiniAppSystemTest`
+const apiName = `TestApi`
+const nativeApplicationName = `system-test-app`
 const nativeApplicationVersion = '1.0.0'
 const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${nativeApplicationVersion}`
 const iosNativeApplicationDescriptor = `${nativeApplicationName}:ios:${nativeApplicationVersion}`
-
-function getRandomInt (min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min)) + min
-}
+const movieListMiniAppVersion = '0.0.4'
+const movieDetailsMiniAppVersion = '0.0.3'
 
 function run (command) {
   console.log('===========================================================================')
@@ -35,9 +32,12 @@ process.chdir(`${workingDirectoryPath}`)
 console.log(info(`Creating GitHub repository (${gitHubCauldronRepositoryName})`))
 run(`curl -u ernplatformtest:${gitHubPesonalToken} -d '{"name": "${gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
+run(`ern --hide-banner`)
+run(`ern --log-level info`)
+
 //
 // Cauldron repo
-run(`ern cauldron repo remove ${cauldronName}`)
+run(`ern cauldron repo clear`)
 run(`ern cauldron repo add ${cauldronName} https://${gitUserName}:${gitPassword}@github.com/${gitUserName}/${gitHubCauldronRepositoryName}.git --current=false`)
 run(`ern cauldron repo use ${cauldronName}`)
 run(`ern cauldron repo current`)
@@ -50,7 +50,6 @@ const miniAppPath = path.join(process.cwd(), miniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(`${miniAppPath}`)
 run(`ern add react-native-electrode-bridge`)
-run(`ern add react-native-code-push`)
 
 //
 // Cauldron access commands
@@ -58,22 +57,49 @@ run(`ern cauldron add nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-// ignoreNpmPublish was removed
-// run(`ern cauldron add miniapp -d ${androidNativeApplicationDescriptor} --ignoreNpmPublish`)
+run(`ern cauldron add miniapps movielistminiapp@${movieListMiniAppVersion} -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-// ignoreNpmPublish
-// run(`ern cauldron add miniapp -d ${iosNativeApplicationDescriptor} --ignoreNpmPublish`)
+run(`ern cauldron add miniapps movielistminiapp@${movieListMiniAppVersion} -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron add dependencies ${androidNativeApplicationDescriptor} react-native-stack-tracer@0.1.1 -d ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron add miniapps moviedetailsminiapp@${movieDetailsMiniAppVersion} -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron del dependencies ${androidNativeApplicationDescriptor} react-native-stack-tracer -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron add miniapps moviedetailsminiapp@${movieDetailsMiniAppVersion} -d ${iosNativeApplicationDescriptor}`)
+run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
+
+// Already existing miniapp
+run(`ern cauldron add miniapps moviedetailsminiapp@${movieDetailsMiniAppVersion} -d ${androidNativeApplicationDescriptor}`)
+// Non published miniapp
+run(`ern cauldron add miniapps ewkljrlwjerjlwjrl@0.0.3 -d ${androidNativeApplicationDescriptor}`)
+// File system miniapp
+run(`ern cauldron add miniapps file:${miniAppPath} -d ${androidNativeApplicationDescriptor}`)
 
 // Container gen should be successful for the two following commands
-run(`ern create-container -m file:${miniAppPath} -p android -v 1.0.0`)
-run(`ern create-container -m file:${miniAppPath} -p ios -v 1.0.0`)
+run(`ern create-container --miniapps file:${miniAppPath} -p android -v 1.0.0`)
+run(`ern create-container --miniapps file:${miniAppPath} -p ios -v 1.0.0`)
 
-//
+run(`ern create-container --miniapps file:${miniAppPath} movielistminiapp@${movieListMiniAppVersion} -p android -v 1.0.0`)
+run(`ern create-container --miniapps file:${miniAppPath} movielistminiapp@${movieListMiniAppVersion} -p ios -v 1.0.0`)
+
+run(`ern create-container --descriptor ${androidNativeApplicationDescriptor}`)
+run(`ern create-container --descriptor ${iosNativeApplicationDescriptor}`)
+
+run(`ern why ern react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
+
+// Del dependency should fail because its still used by MovieListMiniApp
+run(`ern cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
+
+// Del miniapp
+run(`ern cauldron del miniapps moviedetailsminiapp-d ${androidNativeApplicationDescriptor}`)
+
+// Del dependency should succeed
+run(`ern cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+
+process.chdir(workingDirectoryPath)
+
+// api
+run(`ern create-api ${apiName}`)
+
 // Platform commands
 run(`ern platform current`)
 run(`ern platform list`)
@@ -82,3 +108,6 @@ run(`ern platform plugins search react-native`)
 
 console.log(info(`Removing GitHub repository (${gitHubCauldronRepositoryName})`))
 run(`curl -u ernplatformtest:${gitHubPesonalToken} -X DELETE https://api.github.com/repos/${gitUserName}/${gitHubCauldronRepositoryName}`)
+
+run(`ern cauldron repo clear`)
+run(`ern cauldron repo remove ${cauldronName}`)
