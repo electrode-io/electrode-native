@@ -1,4 +1,4 @@
-import _Android from './languages/ErnAndroidApiCodeGen'
+import _Android from './languages/ErnAndroidApiCodegen'
 import _Swift from './languages/SwiftCodegen'
 import _ES6 from './languages/ES6Codegen'
 import _DefaultGenerator from './DefaultGenerator'

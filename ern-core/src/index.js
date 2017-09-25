@@ -2,7 +2,7 @@
 
 import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
-import _manifest from './manifest'
+import _manifest from './Manifest'
 import _cauldron from './cauldron'
 import _GitUtils from './GitUtils'
 import _MavenUtils from './MavenUtils'
