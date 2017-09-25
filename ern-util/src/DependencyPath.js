@@ -1,7 +1,7 @@
 // @flow
 
 const FILE_PATH_RE = /^file:(.+)/
-const GIT_PATH_RE = /^git:(.+)/
+const GIT_PATH_RE = /^git(.+)/
 
 export default class DependencyPath {
   path: string
