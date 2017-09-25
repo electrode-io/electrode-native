@@ -1,4 +1,5 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+![travis ci](https://travis-ci.org/electrode-io/electrode-native.svg?branch=master)
 
 # Getting Started
 
