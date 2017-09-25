@@ -82,9 +82,6 @@ describe('DefaultGenerator', function () {
         .then(compare('petstore/android', 'fixtures/petstore/android'))
     )
 
-  it("should generate: 'uber.json' for 'javascript'", generate('uber.json', 'javascript', 'uber/js')
-        .then(compare('uber/js', 'fixtures/uber/js')))
-
   //it("should generate: 'uber.json' for 'swift'", generate('uber.json', 'Swift', 'uber/swift')
   //      .then(compare('uber/swift', 'fixtures/uber/swift')))
 

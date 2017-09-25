@@ -13,17 +13,13 @@ export const invalidContainerVersions = [
 
 export const withoutGitOrFileSystemPath = [
   'package@1.2.3',
-  '@scope/package@1.2.3',
-  [ 'package@1.2.3', '@scope/package@1.2.3' ]
+  '@scope/package@1.2.3'
 ]
 
 export const withGitOrFileSystemPath = [
   'git+ssh://github.com:electrode/react-native.git',
   'git@github.com:electrode/react-native.git',
-  'file:/Users/username',
-  [ 'package@1.2.3', '@scope/package@1.2.3', 'git+ssh://github.com:electrode/react-native.git' ],
-  [ 'package@1.2.3', '@scope/package@1.2.3', 'file:/Users/username' ],
-  [ 'git+ssh://github.com:electrode/react-native.git', 'file:/Users/username' ]
+  'file:/Users/username'
 ]
 
 export const completeNapDescriptors = [

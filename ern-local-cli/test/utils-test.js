@@ -30,6 +30,7 @@ const updateContainerVersionStub = sinon.stub(cauldron, 'updateContainerVersion'
 // Logging stubs
 const logErrorStub = sinon.stub()
 const logInfoStub = sinon.stub()
+const logDebugStub = sinon.stub()
 
 // Ora stubs
 const oraProto = Object.getPrototypeOf(ora())
@@ -45,7 +46,8 @@ const processExitStub = sinon.stub(process, 'exit')
 
 global.log = {
   error: logErrorStub,
-  info: logInfoStub
+  info: logInfoStub,
+  debug: logDebugStub
 }
 
 // Before each test
