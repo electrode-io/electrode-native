@@ -53,10 +53,6 @@ export default class GitStore extends BaseGit {
     repository: string,
     branch: string = 'master',
     cauldron: Object = {
-      'manifest': {
-        'targetNativeDependencies': [],
-        'targetJsDependencies': []
-      },
       'nativeApps': []
     }) {
     super(cauldronPath, repository, branch)
