@@ -329,7 +329,7 @@ async function performContainerStateUpdateInCauldron (
     // Commit Cauldron transaction
     await spin(`Updating Cauldron`, cauldron.commitTransaction())
 
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
+    log.debug(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`[performContainerStateUpdateInCauldron] An error happened ${e}`)
     cauldron.discardTransaction()
