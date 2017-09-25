@@ -2,7 +2,7 @@
 
 import * as _android from './android'
 import * as _mustacheUtils from './mustacheUtils'
-import _ColoredLog from './ColoredLog'
+import _ColoredLog from './coloredLog'
 import _config from './config'
 import _npm from './npm'
 import _ReactNativeCli from './ReactNativeCli'

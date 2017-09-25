@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- '8'
+sudo: enabled
+install:
+- npm install
+script:
+- npm run rebuild
+- npm run standard
+- npm run flow
+- npm run test
+notifications:
+  slack:
+    secure: Ccv7knkrsp4gEQoE/MOqAICq785+G28pJOCsHKJyMRh7SFezT4nOYV0L60gus2JQmi1ap0/rG0GlkmZ1NWQnmhrbcstylPWmCgAM43SMInXxameD8hrbm5dHtJAeq5bsN/Fb8EkW/EFHthKSVgoESqdjvWM7timdg5mCL7ObsADZx30VBZ44rF9nEP7yvwS5LCfmHNakG7R9hbmLBlYoQgYimxEjyCmYoMP2eG+jdfTUWYYJVtW7Mf8BLIdb8jZLX882QXOHNjsIJ96n7gQGyZSozPBU/435+VI8oU3gR00TcYuUuNUKFQHebMNCMA8unRGLy8PZm4TGQgLl0qYSB6nGE0n8gN3pMGQlLP/x8uJOyh0vZXa9lKHhZeFrpXv+RJfUOjtMyYNrD7Ko7wIeqy/lqLkfuPNy0KIND9aAK/Sz/Muo/nx2z7ZWA1n8o//+DgpInt1I6K5KILIYMpu5udrmm+U9HB+WAdB75RmNc7d9uImskcEhbqGKoRwjhTXapX/e95MnTC4p1e2eFCwruvgR/vyclpMgOMQywfab6WlHRqZqLpezgH1PI2o/U7D4NygLPK1W5fAgwFOa5LsyEaU47RUHOwIqr820klL+gfS9+dXqPM3D0PsW1fufOY0859Ba8N11kj53ll1zYi1onWB1zRSLY4XIhjMCqQgah+Y=

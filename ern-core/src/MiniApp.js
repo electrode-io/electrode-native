@@ -10,7 +10,7 @@ import {
   tagOneLine
 } from 'ern-util'
 import cauldron from './cauldron'
-import manifest from './manifest'
+import manifest from './Manifest'
 import Platform from './Platform'
 import {
   reactnative,
