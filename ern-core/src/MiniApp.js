@@ -93,7 +93,7 @@ Are you sure this is a MiniApp ?`)
   }
 
   static async create (
-    appName: string,
+    miniAppName: string,
     packageName: string, {
       platformVersion = Platform.currentVersion,
       scope
@@ -110,7 +110,7 @@ Are you sure this is a MiniApp ?`)
         Platform.switchToVersion(platformVersion)
       }
 
-      log.info(`Creating ${appName} MiniApp`)
+      log.info(`Creating ${miniAppName} MiniApp`)
 
       const reactNativeDependency = await spin(
         `Retrieving react-native version from Manifest`,
@@ -121,16 +121,16 @@ Are you sure this is a MiniApp ?`)
       }
 
       await spin(
-        `Creating ${appName} project using react-native v${reactNativeDependency.version}. This might take a while.`,
-        reactnative.init(appName, reactNativeDependency.version))
+        `Creating ${miniAppName} project using react-native v${reactNativeDependency.version}. This might take a while.`,
+        reactnative.init(miniAppName, reactNativeDependency.version))
 
       // Inject ern specific data in MiniApp package.json
-      const appPackageJsonPath = `${process.cwd()}/${appName}/package.json`
+      const appPackageJsonPath = `${process.cwd()}/${miniAppName}/package.json`
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
       appPackageJson.ern = {
         version: `${platformVersion}`,
         moduleType: `${ModuleTypes.MINIAPP}`,
-        miniAppName: utils.camelize(appName, false)
+        miniAppName
       }
       appPackageJson.private = false
       appPackageJson.keywords
@@ -147,7 +147,7 @@ Are you sure this is a MiniApp ?`)
       // Remove react-native generated android and ios projects
       // They will be replaced with our owns when user uses `ern run android`
       // or `ern run ios` command
-      const miniAppPath = `${process.cwd()}/${appName}`
+      const miniAppPath = `${process.cwd()}/${miniAppName}`
       shell.cd(miniAppPath)
       shell.rm('-rf', 'android')
       shell.rm('-rf', 'ios')
