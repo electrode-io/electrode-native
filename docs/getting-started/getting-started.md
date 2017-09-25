@@ -3,6 +3,11 @@
 ## Getting started with Electrode Native
 
 This tutorial will walk you through creating a simple Movie aplication using `Electrode Native`.  
+{% sample lang="android" %}
+We'll use Android for this tutorial. If you wish to use iOS instead, please click the iOS tab on the top right of this page.
+{% sample lang="ios" %}
+We'll use iOS for this tutorial. If you wish to use Android instead, please click the Android tab on the top right of this page.
+{% common %}
 This application will be composed of two React Native MiniApps:
 
 - **MovieListMiniApp** : This MiniApp will display a list of movies.
@@ -37,11 +42,14 @@ $ ern create-miniapp MovieListMiniApp
 
 - Move to the `MovieListMiniApp` directory and run the MiniApp to see how it looks like, using `ern run` command.
 
+{% sample lang="android" %}
 ```bash
 $ cd MovieListMiniApp
-{% sample lang="android" %}
 $ ern run-android
+```
 {% sample lang="ios" %}
+```bash
+$ cd MovieListMiniApp
 $ ern run-ios
 ```
 
