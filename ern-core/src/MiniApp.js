@@ -93,14 +93,14 @@ Are you sure this is a MiniApp ?`)
   }
 
   static async create (
-    appName: string, {
+    appName: string,
+    packageName: string, {
       platformVersion = Platform.currentVersion,
       scope
     } : {
       platformVersion: string,
       scope?: string
-    },
-    packageName: string) {
+    }) {
     try {
       if (fs.existsSync(path.join('node_modules', 'react-native'))) {
         throw new Error('It seems like there is already a react native app in this directory. Use another directory.')

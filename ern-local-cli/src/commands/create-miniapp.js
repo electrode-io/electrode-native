@@ -41,13 +41,17 @@ exports.handler = async function ({
     let packageName = appName
     if (packageName !== packageName.toLowerCase()) {
       log.info(`NPM does not allow package names containing upper case letters.`)
-      const answer = await _promptForPackageName(core.splitCamelCaseString(appName).join('-'))
-      packageName = answer.packageName
+      let appNameToken = core.splitCamelCaseString(appName)
+      if (appNameToken) {
+        const answer = await _promptForPackageName(appNameToken.join('-'))
+        packageName = answer.packageName
+      }
     }
-    await MiniApp.create(appName, {
-      platformVersion: platformVersion && platformVersion.replace('v', ''),
-      scope
-    }, packageName)
+    await MiniApp.create(appName,
+      packageName, {
+        platformVersion: platformVersion && platformVersion.replace('v', ''),
+        scope
+      })
     log.info(`${appName} MiniApp was successfully created !`)
     log.info(`================================================`)
     log.info(chalk.bold.white('To run your MiniApp on Android :'))
@@ -68,7 +72,7 @@ function _promptForPackageName (packageName: string) {
   return inquirer.prompt([{
     type: 'input',
     name: 'packageName',
-    message: `Please type package name to publish to npm. Press Enter to use the default.`,
+    message: `Type package name to publish to npm. Press Enter to use the default.`,
     default: () => {
       return `${packageName}`
     },
@@ -76,7 +80,7 @@ function _promptForPackageName (packageName: string) {
       if (value && value === value.toLowerCase()) {
         return true
       }
-      return 'Please check npm package name rules https://docs.npmjs.com/files/package.json'
+      return 'Check npm package name rules https://docs.npmjs.com/files/package.json'
     }
   }])
 }

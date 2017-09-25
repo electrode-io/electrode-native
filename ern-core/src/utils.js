@@ -58,10 +58,7 @@ export function camelize (word: string, lowercaseFirstLetter: boolean = false): 
  * @returns {string}
  */
 export function splitCamelCaseString (camelCaseString: string) {
-  if (!camelCaseString) {
-    return camelCaseString
-  }
-  return camelCaseString.split(/(?=[A-Z])/).map((token) => {
+  return camelCaseString && camelCaseString.split(/(?=[A-Z])/).map((token) => {
     return token.toLowerCase()
   })
 }
