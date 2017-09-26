@@ -15,7 +15,7 @@ const path = require('path')
 // ....
 // |_ .ernrc
 
-const PLATFORM_VERSION = '0.6.4'
+const PLATFORM_VERSION = '0.6.8'
 // Path to ern platform root folder
 const ERN_PATH = process.env['ERN_HOME'] || path.join(process.env['HOME'], '.ern')
 // Path to ern global configuration file
