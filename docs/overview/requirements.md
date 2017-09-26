@@ -2,10 +2,23 @@
 
 Considering that `Electrode React Native` is actually built on top of `React Native`, its requirements are mostly identical with `React Native` ones. If you have already installed `React Native` on your machine and played with it or actually developped some projects using it, then you should be good to go already. In any case case, please make sure to check the following list of requirements to start using `Electrode React Native`.
 
-### [Node.JS](https://nodejs.org/en/) (>= 4.5)
+### [NodeJS](https://nodejs.org/en/) (>= 4.5)
 
-Electrode React Native platform is actually for the most part a `Node.js` application, and therefore requires the `Node.js` runtime to be present on your workstation. If you don't have a `Node.js` runtime already installed on your mahcine, you'll have to instal it in order to use the platform. Juse make sure to use a version of `Node.js >= 4.5`, as it is the lowest version of `Node.js` that Electrode React Native can run in.
-You'll also need `npm` (or `yarn`) in order to actually install the platform itself. Luckily, `npm` comes along with `Node.js`, so you'll be good to go just by installing `Node.js`.
+Electrode React Native platform is actually for the most part a `NodeJS` application, and therefore requires the `NodeJS` runtime to be present on your workstation. If you don't have a `NodeJS` runtime already installed on your mahcine, you'll have to instal it in order to use the platform. Juse make sure to use a version of `NodeJS >= 4.5`, as it is the lowest version of `NodeJS` that Electrode React Native can run in.
+
+You'll also need `npm` (or `yarn`) in order to actually install the platform itself. Luckily, `npm` comes along with `NodeJS`, so you'll be good to go just by installing `NodeJS`.
+
+### NPM >= 3 or Yarn
+
+**Electrode Native requires npm version >= 3**
+
+`NodeJS` v6.x already comes with npm@3 by default, but if you are using `NodeJS` v4 for some reason, make sure you install npm@3 with the following command:
+
+```bash
+npm install -g npm@3
+```
+
+You can also use `yarn` instead of `npm`
 
 ### [Android Studio](htps://developer.android.com/studio/index.html)
 
