@@ -6,8 +6,8 @@ import {
   spin
 } from 'ern-util'
 import cauldron from './cauldron.js'
-import manifest from './manifest.js'
-import MiniApp from './miniapp.js'
+import manifest from './Manifest.js'
+import MiniApp from './MiniApp.js'
 import _ from 'lodash'
 import chalk from 'chalk'
 import Table from 'cli-table'
