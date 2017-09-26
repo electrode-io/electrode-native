@@ -39,6 +39,7 @@ For more information on how to setup an emulator, you can check [the Android doc
 $ cd ElectrodeNativeTutorial
 $ ern create-miniapp MovieListMiniApp
 ```
+When asked to enter a package name for this MiniApp, just hit enter to use the default one. You may check the [package name requirements](https://docs.npmjs.com/files/package.json#name)
 
 - Move to the `MovieListMiniApp` directory and run the MiniApp to see how it looks like, using `ern run` command.
 
@@ -53,11 +54,14 @@ $ ern run-android
 $ cd MovieListMiniApp
 $ ern run-ios
 ```
+{% sample lang="android" %}
+First time users please grant the `SYSTEM_ALERT_WINDOW` permission. [Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)
+![Overlay Permission Window](/images/OverlayPermissionWindow.png)
+![Select ErnRunner](/images/ErnRunnerSelected.png)
 
 {% common %}
-When asked to enter a package name for this MiniApp, just hit enter to use the default one.  
 
-Pick one emulator (or device) from the list when prompted. 
+Pick one emulator (or device) from the list when prompted.
 Once the command completes, you will see your first MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app. After all, a MiniApp is nothing more than a React Native application !
 
 Now let's update the UI of this MiniApp for it to display a list of movies.
