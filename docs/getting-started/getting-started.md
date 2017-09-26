@@ -273,22 +273,22 @@ Then, just replace the constructor method with the following code:
    }
 ```
 
-- Reload the UI
+- Relaunch the application
 
-Inside the emulator window or on you device, do the following
+Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the run command which will recreate a new local Container and launch the application.
 
 {% sample lang="android" %}
-```
-CMD+M --> Reload
+```bash
+$ ern run-android
 ```
 {% sample lang="ios" %}
-```
-CMD+M
+```bash
+$ ern run-ios
 ```
 {% common %}
 
-You can see that the UI is showing the movie names that are set in the `catch` block.  
-This means there was no API implementation available to serve the `getTopRatedMovies` request.   
+You can see that the UI is showing the movie names that are set in the `catch` block.
+This means there was no API implementation available to serve the `getTopRatedMovies` request.
 
 Let's now see write an implementation of this API. Although you can write the implementation either on the JavaScript side or Native side, this tutorial shows the implementation on the native side.
 
@@ -341,14 +341,14 @@ public class MainApplication extends Application {
     }
 }
 ```
-
 - Relaunch the application
 
-Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the `run-android` command which will recreate a new local Container and launch the application.
+If you are using android studio you can run the app directly from there or by running the command below.
 
 ```bash
 $ ern run-android
 ```
+
 {% sample lang="ios" %}
 - Open the generated ios project (in `ios` folder) in XCode.
 
@@ -410,7 +410,7 @@ $ ern run-android
 
 - Relaunch the application
 
-Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the `run-ios` command which will recreate a new local Container and launch the application.
+You can launch the app directly from xcode or by running the command below
 
 ```bash
 $ ern run-ios
