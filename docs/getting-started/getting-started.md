@@ -56,8 +56,7 @@ $ ern run-ios
 ```
 {% sample lang="android" %}
 First time users please grant the `SYSTEM_ALERT_WINDOW` permission. [Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)
-![Overlay Permission Window](/images/OverlayPermissionWindow.png)
-![Select ErnRunner](/images/ErnRunnerSelected.png)
+![Overlay Permission Window](/images/OverlayPermissionWindow.png) ![Select ErnRunner](/images/ErnRunnerSelected.png)
 
 {% common %}
 
