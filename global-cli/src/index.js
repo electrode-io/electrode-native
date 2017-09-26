@@ -44,6 +44,8 @@ if (!fs.existsSync(ERN_PATH)) {
 // Create all folders and install/activate current platform version
 function firstTimeInstall () {
   try {
+    const isDebug = process.argv.includes('--debug')
+
     const spinner = ora('Performing first time install of Electrode Native').start()
 
     // Create path platform root folder
@@ -71,9 +73,17 @@ function firstTimeInstall () {
     } else {
       spinner.text = `Installing Electrode Native v${latestVersion} using npm. This might take a while`
       installProc = spawn('npm',
-        [ 'install', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact' ],
+        [ 'install', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}` ],
         { cwd: pathToVersionDirectory })
     }
+
+    installProc.stdout.on('data', function (data) {
+      isDebug && console.log(data.toString())
+    })
+
+    installProc.stderr.on('data', function (data) {
+      isDebug && console.log(data.toString())
+    })
 
     installProc.on('close', function (code) {
       if (code === 0) {
