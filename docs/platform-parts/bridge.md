@@ -1,6 +1,6 @@
 ## Electrode React Native Bridge
 
-The Electrode React Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the ERN platform itself--it resides in it's own open source GitHub repository [URL HERE]. The ERN bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the ERN bridge code is native (95% native/5% Javascript).
+The Electrode React Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the ERN platform itself--it resides in it's own open source GitHub repository [URL HERE]. The ERN bridge is a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the ERN bridge code is native (95% native/5% Javascript).
 
 Communication through the ERN bridge is based on message exchanges between JavaScript and the Native mobile application. The ERN bridge processes three message types: Request, Response, and Events.
 

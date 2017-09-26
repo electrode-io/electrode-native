@@ -3,7 +3,7 @@
 A Cauldron is a centralized database or configuration file that is used to store information about mobile application versions, native dependencies, and information about MiniApps. One cauldron file exists for each mobile application. With appropriate permissions, you can use the ERN CLI commands to access and modify the configuration settings in the cauldron file.
 
 The cauldron file also contains:
-* One record for each mobile application version, for example: walmart ios 17.15 and walmart android 17.10.0.
+* One record for each mobile application version, for example: `walmart ios 17.15` and `walmart android 17.10.0`.
 * Data pertaining to a specific mobile application version including all MiniApps (and their versions) that are currently part of the version
 * A list of all native dependencies and their versions--that are used by the MiniApps
 * A list of native dependencies that are not dependent upon by any MiniApp such as native API implementations

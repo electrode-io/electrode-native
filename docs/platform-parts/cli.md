@@ -1,6 +1,6 @@
 ## Electrode React Native CLI
 
-The ERN CLI is the ERN platform command line client. The ERN CLI is written in JavaScript (ES6) and runs in Node.js 4.5.0 and later.
+The ERN CLI is the ERN platform command line client. The ERN CLI is written in JavaScript (ES6) and runs in Node.js 4.5.0 and later.  
 
 Use the ERN CLI to access platform functions. However, if you are working only on the mobile application side, you may not need to use the ERN CLI.
 
