@@ -89,12 +89,13 @@ export default class Platform {
 
     try {
       shell.mkdir('-p', pathToVersion)
+      shell.mkdir('-p', path.join(pathToVersion, 'node_modules'))
       process.chdir(pathToVersion)
       if (this.isYarnInstalled()) {
         // Favor yarn if it is installed as it will greatly speed up install
-        execSync(`yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`)
+        execSync(`yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, { cwd: pathToVersion })
       } else {
-        execSync(`npm install ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`)
+        execSync(`npm install ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, { cwd: pathToVersion })
       }
     } catch (e) {
       console.log('Soemthing went wrong during installation. Performing clean up.')
