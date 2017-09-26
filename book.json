@@ -40,7 +40,7 @@
       "url": "https://github.com/belemaire/electrode-react-native"
     },
      "versions": {
-       "type": "tags"
+       "type": "branches"
     },
     "scripts-styles": {
       "js": [
