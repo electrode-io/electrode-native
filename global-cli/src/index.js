@@ -1,7 +1,11 @@
 'use strict'
 
+const childProcess = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const ora = require('ora')
+const spawn = childProcess.spawn
+const execSync = childProcess.execSync
 
 // Version update notifier
 const updateNotifier = require('update-notifier')
@@ -26,22 +30,104 @@ const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
 const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
 // Path to potential ern local configuration file (local to the folder where ern command is run)
 const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc')
+// Name of ern local client NPM package
+const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
+// Entry point
+if (!fs.existsSync(ERN_PATH)) {
+  firstTimeInstall()
+} else {
+  runLocalCli()
+}
+
+// First run ever of ern (no versions installed at all yet)
+// Create all folders and install/activate current platform version
+function firstTimeInstall () {
+  try {
+    const spinner = ora('Performing first time install of Electrode Native').start()
+
+    // Create path platform root folder
+    fs.mkdirSync(ERN_PATH)
+
+    // Create cached versions folder
+    fs.mkdirSync(ERN_VERSIONS_CACHE_PATH)
+
+    // List all available versions from electrode-native git repository
+    const latestVersion = getLatestErnLocalCliVersion()
+
+    // Create the version directory
+    const pathToVersionDirectory = path.join(ERN_VERSIONS_CACHE_PATH, latestVersion)
+    fs.mkdirSync(pathToVersionDirectory)
+    fs.mkdirSync(path.join(pathToVersionDirectory, 'node_modules'))
+    process.chdir(pathToVersionDirectory)
+    let installProc
+
+    if (isYarnInstalled()) {
+      // Favor yarn if it is installed as it will greatly speed up install
+      spinner.text = `Installing Electrode Native v${latestVersion} using yarn. This might take a while`
+      installProc = spawn('yarn',
+        [ 'add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact' ],
+        { cwd: pathToVersionDirectory })
+    } else {
+      spinner.text = `Installing Electrode Native v${latestVersion} using npm. This might take a while`
+      installProc = spawn('npm',
+        [ 'install', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact' ],
+        { cwd: pathToVersionDirectory })
+    }
+
+    installProc.on('close', function (code) {
+      if (code === 0) {
+        spinner.succeed(`Hurray ! Electrode Native v${latestVersion} was successfully installed.`)
+      } else {
+        spinner.fail(`Oops. Something went wrong.`)
+        execSync(`rm -rf ${ERN_PATH}`)
+      }
+    })
+  } catch (e) {
+    // If something went wrong, we just clean up everything.
+    // Don't want to create and leave the .ern global folder hanging around
+    // in a bad state
+    console.log(`Something went wrong ! ${e}`)
+    execSync(`rm -rf ${ERN_PATH}`)
+  }
+}
+
+// At least a version of ern-local-cli is installed locally
 // Just select the version of ern currently in use (stored in the .ernrc file)
 // and call the default exported method
 // Basically, it just proxy the ern command to the ern-local-cli (local client)
 // of the version currently in use
-let ernRcPath
-if (fs.existsSync(ERN_RC_LOCAL_FILE_PATH)) {
-  ernRcPath = ERN_RC_LOCAL_FILE_PATH
-} else {
-  ernRcPath = ERN_RC_GLOBAL_FILE_PATH
+function runLocalCli () {
+  let ernRcPath
+  if (fs.existsSync(ERN_RC_LOCAL_FILE_PATH)) {
+    ernRcPath = ERN_RC_LOCAL_FILE_PATH
+  } else {
+    ernRcPath = ERN_RC_GLOBAL_FILE_PATH
+  }
+
+  const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'))
+
+  if ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0')) {
+    require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/ern-local-cli/src/index.dev.js`)
+  } else {
+    require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/node_modules/ern-local-cli/src/index.prod.js`)
+  }
 }
 
-const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'))
+function getLatestErnLocalCliVersion () {
+  try {
+    let versions = JSON.parse(execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`))
+    return versions.pop()
+  } catch (e) {
+    console.log(e)
+  }
+}
 
-if ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0')) {
-  require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/ern-local-cli/src/index.dev.js`)
-} else {
-  require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/node_modules/ern-local-cli/src/index.prod.js`)
+function isYarnInstalled () {
+  try {
+    execSync('yarn --version 1>/dev/null 2>/dev/null')
+    return true
+  } catch (e) {
+    return false
+  }
 }

@@ -1,13 +1,10 @@
 {
   "name": "electrode-native",
-  "version": "1.0.1",
+  "version": "1.0.7",
   "description": "Electrode Native Global CLI",
   "main": "./dist/index.js",
   "bin": {
     "ern": "bin/ern.js"
-  },
-  "scripts": {
-    "postinstall": "scripts/postinstall.js"
   },
   "homepage": "http://www.electrode.io",
   "repository": {
@@ -49,9 +46,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^1.1.3",
+    "ora": "^1.3.0",
     "update-notifier": "^1.0.3"
   },
   "engines": {
-    "node": ">=4.5"
+    "node": ">=4.5",
+    "npm": ">=3"
   }
 }
