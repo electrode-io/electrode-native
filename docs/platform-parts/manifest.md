@@ -1,8 +1,8 @@
-## Electrode React Native Manifest
+## Electrode Native Manifest
 
-While one of the Cauldron responsibility is to ensure that no mis-aligned, or non supported native dependency version makes its way in your mobile application, to avoid breaking things; the Manifest is there to help aligning native dependencies versions accross many different MiniApps in the first place.
+While the Electrode Native cauldron makes sure that no mis-aligned or non-supported native dependency version makes it into your mobile application--the Electrode Native  manifest aligns native dependency versions across multiple MiniApps.
 
-Each Electrode React Native platform version is associated an array of supported native dependencies, along with their versions, such as the following :
+Each Electrode Native platform version is associated to an array of supported native dependencies along with their versions. For example:
 
 ```json
 [
@@ -14,47 +14,60 @@ Each Electrode React Native platform version is associated an array of supported
 ]
 ```
 
-This array contains the list of all third party native dependencies (everything but APIs and APIs implementations) supported by a given Electrode React Native platform version, along with the versions that should be used.
+The array contains the list of all third-party native dependencies (everything except APIs and API implementations) supported by a given Electrode Native platform version along with the versions that should be used.
 
-Whenever native dependencies are added to a MiniApp through ern add command, based on the Electrode React Native version used, the command will know if the dependency is supported and if that's the case use the version declared in the manifest.
+When native dependencies are added to a MiniApp using the `ern add` command (based on the Electrode Native version used), the command verifies if the dependency is supported and if it is supported, the the version declared in the Electrode Native manifest is used.
 
-This way, the platform can guarantee that any MiniApp targeting a given Electrode React Native version will only include supported dependencies, at the same versions, making it effectively possible to add all these MiniApps in a single Container.
+The Electrode Native platform guarantees that any MiniApp targeting a given Electrode Native version will only include supported dependencies, at the same versions--making it possible to add all MiniApps to a single Electrode Native container.
 
-The platform stores its master manifest in a GitHub repository. You case see it [here](url).  
-The master manifest is the one that will be used by Electrode React Native by default. For more advanced use cases, it is possible to override the master manifest as described later in this documentation.
+The Electrode Native platform stores its master manifest in a GitHub repository. You can see an example here [here](url).  
+By default, Electrode Native uses the master manifest. For more advanced use cases, it is possible to override the master manifest as described later in this documentation.
 
-The choice of not shipping the master manifest inside Electrode React Native itself, but keeping it in a git repository instead, is to allow for updating the manifest at any time. This is particularly useful to add new supported dependencies for a given Electrode React Native version, without having to wait for a next version of Electrode React Native to be released to include these dependencies support.
+In order to update the manifest at any time, it is stored in a Git repository. This allows you to add new supported dependencies for an Electrode Native version at any time, without having to wait for a future version to be released.
 
-The master manifest is public and open sourced as well, so that anyone can contribute to it, mostly to add more native dependencies support (explained in more details later in this documentation).
-That being said, once a native dependency version is stored in the manifest for a given Electrode React Native version, it should never be changed. Otherwise we'll lose the version alignment guarantee offered by the manifest. Nor can you remove native dependencies. Basically, it's only possible to add new native dependencies support.
+The master manifest is public and open sourced so that anyone can add native dependency support. See [master manifest](link/url).
 
-In addition to the manifest itself (manifest.json), the Manifest repository also contains some configuration for all supported third party native modules, used by the Container generator to properly add these native modules to the Container.
+When a native dependency version is stored in the manifest for a Electrode Native version:  
+* You can add new native dependencies support.  
+* You cannot change or remove the native dependencies.
 
-If you are an open source MiniApp developer, you should always make sure to use the master manifest. This is the default operating mode of the platform, so you're good.
-Ideally, on each new Electrode React Native version release, you should use the ern upgrade command to align your native dependencies on this new version of the platform. This way you can be sure that your MiniApp will be able to be added to any mobile application using any given Electrode React Native version. If your MiniApp is succesful, some contributors might even take care of that for you ;)
+If you change or remove the native dependencies, the version alignment guarantee offered by the manifest will be lost.
 
-If you are a mobile application developper or team, and want to add MiniApps to your mobile application, you might want to consider sticking to a given version of react-native for a few releases of your mobile application before upgrading to a new version of it. Indeed, the problem of upgrading too frequently the version of react-native or associated native modules is that you won't be able to CodePush updates to these versions of your mobile application that have been shipped with a different version of react-native. 
+The Electrode Native manifest repository contains:  
+* The Electrode Native manifest file: `manifest.json`  
+* Configurations for all supported third-party native modules (The configurations are used by the container generator to add the native modules to the container.)
 
-The problem here is that, for each new Electrode React Native version, the master manifest will contain updated versions of most of the native dependencies, including the version of react-native itself. The master manifest will always use the latest version of react-native for each new Electrode React Native release.
+Open source MiniApp developers should always use the master manifest.
 
-In that context, it would be though to ask you to stick to a given Electrode React Native version for weeks or months. You won't get all the bug fixes and new goodies delivered in every release of Electrode React Native. That's where overriding the master manifest comes in handy.
+This is the default operating mode of the platform.
+
+To align your native dependencies to a new Electrode Native version, use the `ern upgrade` command.
+
+When you align the native dependencies to a new Electrode Native version, your MiniApp will be able to be added to any mobile application using any Electrode Native version.
+
+And if your MiniApp is successful, an open source contributor might even take care of that for you!
+
+As a best practice, consider using the same version of React Native for a couple of your mobile application releases before upgrading to a new version of React Native.
+
+Upgrading (the version of react-native or associated native modules) too frequently can interrupt the release process because you cannot use CodePush to release updates to versions of your mobile application that have already been released with a different version of React Native.
+
+For each new Electrode Native version, the master manifest contains updated versions of most of the native dependencies, including the version of React Native itself. The master manifest always uses the latest version of React Native for each new Electrode Native release.
 
 ### Overriding the master Manifest
 
-It is possible to override the master Manifest with your own Manifest.  
-There are a few reasons why you might want to do that :
+You can override the master manifest with your own manifest file:
 
-- To stick to specific native dependencies versions for some time, while still allowing for Electrode React Native versions updates.
-- To allow for the use of non open-sourced (private) native modules in your MiniApps
-- To ease contributions to master manifest to add support for open sources native modules 
+- To keep specific native dependencies versions over time while allowing for Electrode Native version updates
+- To allow for the use of non open-sourced (private) native modules in your MiniApps.
+- To allow contributions to the master manifest in order to add support for open sources native modules
 
-Overriding a Manifest is easy. Here are the actual steps involved :
+To override a manifest:
 
-1) Create your own Manifest repository on GitHub. You can clone this [starter one](https://github.com/electrode-io/electrode-react-native-starter-manifest))
-2) Create a Manifest override config in your Cauldron (so that it is correctly applied to all users of this Cauldron)
-3) Update your Manifest for your needs and maintain it over time
+1) Create your own manifest repository on GitHub (you can fork this [starter manifest](url)).
+2) Create a manifest override configuration in your cauldron--so that it is correctly applied to all users of this cauldron.
+3) Update and maintain your manifest as needed, over time.
 
-For the second step, here is a configuration sample desribing a manifest override :
+The following example shows a configuration that includes a manifest override.
 
 ```json
 "config": {
@@ -67,61 +80,56 @@ For the second step, here is a configuration sample desribing a manifest overrid
   }
 ```
 
-The configuration object should be manually added to your Cauldron, at the same level as the nativeApps array.
+The configuration object should be manually added to your cauldron at the same level as the `nativeApps` array.  
 
-The override url is the url of the GitHub repository containing your own Manifest  
-The orrride type value can be either partial or full. For most use cases you'll want to use the partial type. full can be useful in fringe cases.
-
-Here is the distinction between partial and full overrides :
+* The `override url` is the url of the GitHub repository containing your own Manifest  
+* The `orrride type` value can be either partial or full. For most use cases you'll use the partial; full can be useful in rare cases.  
 
 #### Partial override
 
-The array of dependencies and their versions used by a given Electrode React Native version, will be the union of both override Manifest and master Manifest. If a dependency is defined in both Manifests for a different version, the override version will take precedence, hiding the version defined in the master Manifest.
+The array of dependencies and the versions used by a given Electrode Native version will be the combination of both the override manifest and the master manifest. If a dependency is defined in both manifests for a different version, the override version takes precedence, masking the version defined in the master manifest.
 
-For the plugins (native modules) configurations, using the partial override type, Electrode React Native will look first for a matching plugin configuration inside the override Manifest and return the matching one if found. If none is found there, it will then look in the master Manifest.
+For plugins (native modules) configurations using the partial override type, Electrode Native first checks for a matching plugin configuration inside the override manifest and then returns the matching configuration if found. If a matching configuration is not found, it then checks the master manifest.
 
 #### Full override
 
-Be it for dependencies, or plugin configurations, a full override means that only the override manifest will be queried by Electrode React Native. The master manifest will never be consumed. This kind of override actually completely hide the master manifest.
+For dependencies or plugin configurations, a full override means that Electrode Native only queires the override manifest. The master manifest is never used. A full override  completely masks the master manifest.
+
 
 #### Guidelines for overriding Manifest use cases
- 
-If you want to override the master Manifest to stick to specific native dependencies versions for some time, you should choose a given Electrode React Native version and reuse the native dependencies versions associated with it to override the ones defined in newer versions of Electrode React Native. This way users can still update their Electrode React Native version while sticking to the same native dependencies versions as used with a previous version of Electrode React Native.
 
-For example, you use the array of native dependencies versions declared for ern 0.4.0 to re-use it as such for versions 0.5.0 and 0.6.0 of Electrode React Native, overriding the native dependencies array of 0.5.0 and 0.6.0 defined in the master Manifest.
+If you want to override the master manifest in order to keep specific native dependencies versions over time, you should choose a Electrode Native version and reuse the native dependencies versions associated with it--to override the native dependencies in newer versions of Electrode Native. This practice allows users to update their Electrode Native version-while keeping the same native dependencies versions used with a previous version of Electrode Native.
 
-You can choose to change a native dependency version from the one used by the master manifest. However please be aware that doing so will most probably makes it harder to add open-sourced MiniApps to your mobile application, as alignment guarantees are lost.
+For example, you use the array of native dependencies versions declared for ern 0.4.0 to re-use it as such for versions 0.5.0 and 0.6.0 of Electrode Native, overriding the native dependencies array of 0.5.0 and 0.6.0 defined in the master Manifest.
 
-If you want to override the master Manifest to use non open-sourced (private) native modules in your MiniApps, or want to contribute to Electrode React Native by adding the support for an non already supported open-sourced native module to the master Manifest, you'll need to know how to create native modules (plugins) configuration in the Manifest.
+You can also choose to change a native dependency version from the version used by the master manifest; however, this type of change loses the version alignment guarantee and makes it difficult to add open-sourced MiniApps to your mobile application.
+
+If you want to override the master manifest to use private (not open sourced) native modules in your MiniApps, or if you want to contribute to Electrode Native by adding the support for an not-already supported open source native module to the master Manifest, you'll need to create native modules (plugins) configuration in the manifest file.
 
 ### Reusing exiting native modules
 
-Electrode React Native comes with support for some popluar native modules, such as react-native-vector-icons, react-native-code-push or react-native-maps to name a few.  
+Electrode Native supports some popular native modules such as `react-native-vector-icons`, `react-native-code-push` or `react-native-maps` for example. And the React Native open source community provides many additional native modules that could be used in your MiniApps.  
 
-Thanks to the React Native community there are tons of other open sourced useful native modules that could be used in your MiniApps.  
+If the Electrode Native version you are using does not yet support a native module that you would like to use, you can add support for it to Electrode Native by creating a plugin configuration in the manifest--this would be your override manifest in the case of a private native module or the master manifest for an open source native module.
 
-If the Electrode React Native version you are using does not yet support a native module you would like to use, you can add support for it to Electrode React Native by creating a plugin configuration in the Manifest (your override Manifest in case of a private native module or the master Manifest for an open sourced native module).
+**Why does Electrode Native require a plugin configuration?**  
+In a pure React Native mobile application, you can use the `react-native link` command (formerly the `rnpm` command) to add a React Native plugin (native module) to your React Native application. However, Electrode Native requires that you add the native modules to a container library--not directly to a mobile application.  
 
-Why does Electrode React Native needs a plugin configuration ?  
-Well, react-native comes with an awesome command : `react-native link` (formerly `rnpm`), that can be used to add any react native plugin (native module) to you react native application. Unfortunately this command is working fine in the context of a "pure" react native mobile application but won't work with Electrode React Native that needs to add the native modules to a Container library, not directly to a mobile application.  
-We're working on improving plugin configurations to rely more on convention over configuration, and reduce manual work involved.
+**Note**  Electrode Native generated APIs and API implementations have a specific structure
+and additional configuration is not needed to support them in Electrode Native. However, if you plan to work on a new native module, it's recommended that you consider using Electrode Native APIs.
 
-Also please note that because Electrode React Native generated APIs and APIs Implementations have a precisely known structure, we don't need to write any configuration to support them in Electrode React Native. So if you plan to work on a new native module, please rather consider Electrode React Native APIs.
+In the manifest repository, the supported plugin configurations are located in the plugins directory. This plugins directory contains sub-directories that follow a specific naming convention that is used by Electrode Native to correcly match a plugin version with a plugin configuration--for a specific Electrode Native version.
 
-In the Manifest repository, the supported plugins configurations can be found in the plugins directory.
-
-This plugins directory contains directories that follow a certain naming convention, used by Electrode React Native to correcly match a plugin version with a plugin configuration given an Electrode React Native version
-
-At the root of the plugins directory, are directories that will match a given Electrode React Native version, for example :
+The list below shows an example of the directory naming convention that matches Electrode Native versions.
 
 ```
 plugins/ern_v0.2.0+
 plugins/ern_v0.4.0+
 ```
 
-For example, if you are using ern `0.3.0`, the platform will look for a matching plugin configuration in `plugins/ern_v0.2.0+` directory. If you are using ern `0.5.0`, the platform will look for a matching plugin configuration first in `plugins/ern_v0.4.0+`, and if none found there, it will look in `plugins/ern_v0.2.0+`.
+Considering the example above, if you are using version `ern` `0.3.0`, the Electrode Native platform looks for a matching plugin configuration in the `plugins/ern_v0.2.0+` directory. If you are using version ern `0.5.0`, the Electrode Native platform looks for a matching plugin configuration first in the `plugins/ern_v0.4.0+` directory and if the configuration is not found that directory, the platform looks in the `plugins/ern_v0.2.0+` directory.
 
-Inside platform versions directories, you will find directories that are holding the plugin configurations. These directories also follow a naming convention, used by platform to lookup a plugin configuration, for example :
+In addition, the plugin configuration files are located in directories within the version directories. These directories also follow a naming convention used by the Electrode Native platform to lookup a plugin configuration, for example:
 
 ```
 plugins/ern_v0.2.0+/react-native-code-push_v1.17.0+
@@ -130,13 +138,14 @@ plugins/ern_v0.2.0+/react-native-maps_v0.13.1+
 plugins/ern_v0.2.0+/react-native-maps_v0.14.0+
 ```
 
-The naming of these directories include the minimum version of the plugin that the configuration targets. If a newer version needs a different configuration, a new directory can be created accordingly. (in the above example, you can see this is the case for react-native-maps).
+The naming of these directories includes the minimum version of the plugin that the configuration targets. If a newer version needs a different configuration, a new directory can be created. This is shown in the above example for the `react-native-maps`.
 
-Inside these directories lies the actual configuration of the plugin.
+The plugin configuration file is located within these sub-directories.
 
-Let's take a closer look at a configuration, for example the one we use for react-native-code-push. The directory can be seen [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/tree/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B)
+####Configuration example  
+The following example shows the configuration files for the `react-native-code-push` plugin.  
+The directory is viewable [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/tree/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B)
 
-Here are the files that we can see in this directory :
 
 ```
 CodePushPlugin.java
@@ -145,60 +154,70 @@ ElectrodeCodePushConfig.m
 config.json
 ```
 
-This plugin has support for both iOS and Android. Your native module could only have support for one platform.
+Although the plugin has support for both iOS and Android platforms. Your native module can support only one platform.
 
-The CodePushPlugin.java contains some code to add the CodePush native module package to the list of native modules to be loaded by React Native upon initialization of the Android Container library. It can optionally hold some code to allow the mobile app to configure the native module.
+The `CodePushPlugin.java` file contains configuration information to add the CodePush native module package to the list of native modules--to be loaded by React Native upon initialization of the Android Container library. The file can optionally include the configuration to allow the mobile app to configure the native module.
 
-The ElectrodeCodePushConfig.h and ElectrodeCodePushConfig.m contains similar code, for iOS.
+The `ElectrodeCodePushConfig.h` file and `ElectrodeCodePushConfig.m` file contains similar code for the iOS platform.
 
-The config.json document holds the actual configuration of the plugin. It contains instructions that the Container generator will use to properly add the plugin to the Container.
+The `config.json` file holds the actual plugin configuration. It contains instructions that the container generator will use to add the plugin to the container.
 
-The document can contain one or two top level objects : `android` and/or `ios`. If a plugin is only supported on one platform, it will only contain the specific platform object.  
+The document can contain one or two top-level objects: `android` and/or `ios`. If a plugin is only supported on one platform, it will only contain that specific platform object.  
 
-Supported injection configuration directives come in two different kinds : `platform agnostic directives` that can be used for both iOS and Android platforms, and `platform specific directives`, that can only be used in the context of a given platform.  
+There are two supported injection configuration directives:  
+* The `platform agnostic directives` can be used for both iOS and Android platforms.  
+* The `platform specific directives` can be used only in the context of a specific platform.  
 
-#### Platform agnostic directives
+#### Platform-agnostic directives
+The platform-agnostic directives are described in this section.
 
 - `copy`
 
-Can be used to copy one or more files/directories to the target Container path.   
+Used to copy one or more files or directories to the target container directory.   
 The `copy` directive is an array of objects, each containing a specific copy statement.  
-The objects contain a `source` property and a `dest` property :  
-    - `source` : A single file path or directory glob, indicating which files to copy  
-    - `dest` : A target directory path where to copy the file(s)  
+The objects contain a `source` property and a `dest` property:  
+    - `source` : A single file path or directory glob indicating the files to copy  
+    - `dest` : A target directory where the files will be copied to  
 
-Example:  
+**Example**  
 
 ```json
-"copy": [
-  { "source": "ios/**", "dest": "{{{projectName}}}/Libraries/CodePush" }
+"copy":[
+   {
+      "source":"ios/**",
+      "dest":"{{{projectName}}}/Libraries/CodePush"
+   }
 ]
 ```
 
-Will copy the entire content (files and directories recursively) of the plugin `ios` directory to the Container `/Libraries/CodePush` directory.
+The example above shows how to copy the entire content (files and directories) of the plugin `ios` directory to the container `/Libraries/CodePush` directory.
 
-All plugins code need to be injected in the Container. That's why all plugins will have at least one `copy` statement in the `config.json` file. For the most part, on iOS the `dest` will be `"{{{projectName}}}/Libraries/{PLUGIN_NAME}"`.
-`projectName` will be replaced during Container generation, by the name of the project (ElectrodeContainer in the case of Container generation), while `PLUGIN_NAME` should be the name of the plugin itself.
+All plugin code needs to be injected in the container--therefore they will have at least one `copy` statement in the `config.json` file. For the most part, in iOS, the `dest` will be `"{{{projectName}}}/Libraries/{PLUGIN_NAME}"`.  
+`projectName` will be replaced during Container generation by the name of the project (`ElectrodeContainer` in the case of container generation), while `PLUGIN_NAME` should be the name of the plugin itself.  
 
 - `replaceInFile`
 
-Can be used to perform string replacements in given files. This is useful on iOS as for some plugins we sometime need to replace the way imports are performed. 
+Used to perform string replacements in specified files. This is useful for the iOS platform as some plugins are sometimes needed to replace the way imports are performed.  
 The `replaceInFile` directive is an array of objects, each containing a specific replacement statement.  
-The objects contain a `path` property, a `string` property and a `replaceWith` property :   
+The objects contain a `path` property, a `string` property and a `replaceWith` property:   
     - `path` : Path to the file that contains a string to be replaced  
     - `string` : String to be replaced  
     - `replaceWith` : The new string
 
-
-Example:  
+**Example**  
 
 ```json
-{ "path": "{{{projectName}}}/Libraries/RNLocation/RNLocation.h", "string": "\"RCTBridgeModule.h\"", "replaceWith": "<React/RCTBridgeModule.h>" }
+{
+   "path":"{{{projectName}}}/Libraries/RNLocation/RNLocation.h",
+   "string":"\"RCTBridgeModule.h\"",
+   "replaceWith":"<React/RCTBridgeModule.h>"
+}
 ```
 
-This will replace the string `"RCTBridgeModule.h"` with `<React/RCTBridgeModule.h>` in the `/Libraries/RNLocation/RNLocation.h` file in the Container.
+This example shows how to replace the string `"RCTBridgeModule.h"` with `<React/RCTBridgeModule.h>` in the `/Libraries/RNLocation/RNLocation.h` file in the container.
 
-#### Platform specific directives
+#### Platform-specific directives
+The platform-specific directives for Android and iOS are described in this section.
 
 #### Android
 
@@ -206,17 +225,17 @@ The following directives can only be used inside an `android` configuration obje
 
 - `moduleName`  
 
-The name of the Android `module` containing the plugin. If not specified, the plugin configuration will use `lib`, which is the convention most Android plugins adopt to name the module containing the plugin code.  
+The name of the Android `module` containing the plugin. By default, the plugin configuration uses `lib`, which is the convention most Android plugins adopt to name the module containing the plugin code.  
 
 - `root`  
 
-The root directory containing the Android module. If not specified, the plugin configuration will use `android`, which is the convention followed by most third party native modules.  
+The root directory containing the Android module. By default, the plugin configuration uses `android`, which is the convention followed by most third-party native modules.  
 
 - `dependencies`  
 
-An array of one or more dependencies to add to the Container when injecting this plugin. Some plugins might have dependencies on extra libraries that needs to be included in the Container. The Container generation will add all of these extra dependencies as `compile` statements to its `build.gradle` file.
+An array of one or more dependencies used to add to the container when injecting this plugin. Some plugins might have dependencies on extra libraries that need to be included in the container. The container generation adds all of these extra dependencies as `compile` statements to its `build.gradle` file.
 
-Example:  
+**Example**
 
 ```json
 "dependencies": [
@@ -231,9 +250,9 @@ The following directives can only be used inside an `ios` configuration object.
 
 - `containerPublicHeader`
 
-Specifies one or more header to surface in the Container umbrella header. This is only needed for specific headers that needs to be accessed from outside the Container, by the application itself.
+Specifies one or more header to surface in the Container umbrella header. This is used only for specific headers that must be accessed from outside the container by the application itself.
 
-Example: 
+**Example**
 
 ```json
  "containerPublicHeader":[
@@ -241,26 +260,37 @@ Example:
  ]
  ```
 
-iOS also offer an addition directive object: `pbxProj`, which can include different directives to manipulate the Container `.pbxproj` file.
+iOS also provides an additional directive object: `pbxProj`. The `pbxProj` directive can include directives used to manipulate the container `.pbxproj` file.
 
 - `addProject`
 
-Adds a plugin `xcodeproj` along with its target lib, to the Container.   
+Adds a plugin `xcodeproj` and its target libray to the Container.   
     - `path` : Path to the `xcodeproj` of the plugin   
     - `group` : Group to add the project to (`Libraries` should be used)  
-    - `staticLibs` : An array of static libraries, targets of the plugin project, to link with the Container 
+    - `staticLibs` : An array of static libraries, targets of the plugin project, to link with the Container
 
-Example:  
+**Example**
+
 
 ```json
-"addProject": [
-  { "path": "AirMaps/AirMaps.xcodeproj", "group": "Libraries", "staticLibs": [ { "name": "libAIRMaps.a", "target": "AirMaps" } ] }
+
+"addProject":[
+   {
+      "path":"AirMaps/AirMaps.xcodeproj",
+      "group":"Libraries",
+      "staticLibs":[
+         {
+            "name":"libAIRMaps.a",
+            "target":"AirMaps"
+         }
+      ]
+   }
 ]
 ```
 
 - `addHeaderSearchPath`  
 
-Adds an header search path to the Container, mostly to add the proper path to the plugin headers. This is just an array of strings, each string being a specific path.
+Adds a header search path to the container. This directive is used to add the proper path to the plugin headers. This is an array of strings--each string is a specific path.
 
 ```json
 "addHeaderSearchPath": [
@@ -270,18 +300,22 @@ Adds an header search path to the Container, mostly to add the proper path to th
 
 - `addHeader`
 
-Adds an header from the plugin project, to the Container headers.   
+Adds a header from the plugin project to the container headers.   
     - `path` : Path to the header file to add  
     - `group` : Group containing the header
     - `public` : Boolean indicated whether the header should be public or not (default to false)
 
 ```json
- { "path": "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.h", "group": "ElectrodeReactNativeBridge", "public": true }
+{
+   "path":"ElectrodeReactNativeBridge/ElectrodeBridgeEvent.h",
+   "group":"ElectrodeReactNativeBridge",
+   "public":true
+}
 ```
 
 - `addSource`
 
-Adds a source file from the plugin project, to the Container list of sources.  
+Adds a source file from the plugin project to the container list of sources.  
     - `path` : Path to the source file to add
     - `group` : Group containing the source file
 
@@ -291,20 +325,23 @@ Adds a source file from the plugin project, to the Container list of sources.
 
 ### Configurable native modules
 
-Some native modules might need some extra configuration to be used at runtime. This is relatively rare, but for example this is the case for `react-native-code-push` native module that needs to be provided a deployment key upon initialization. Configurable plugins have some source code associated to them in the manifest plugin configuration, in addition to the `config.json` file.
+At runtime, some native modiles require additional configuration settings. For example, the `react-native-code-push` native module requires a deployment key upon initialization.
 
-For each Configurable plugin added to a Container, an extra parameter will be added to the Container initialization method that is called by the mobile application. This extra parameter will allow the client code, to pass the configuration of the plugin at Container initialization time.
+Configurable plugins have some source code associated to them in the manifest plugin configuration file  in addition to the `config.json` file.
 
-Lets take a closer a closer look to these source files for both Android and iOS.
+For each configurable plugin added to a container, an extra parameter must be added to the container initialization method that is called by the mobile application. This extra parameter allows the client code to pass the configuration of the plugin--at the time the container is initialized.
+
+This section describes these source files for both Android and iOS.
 
 #### Android
+The following example describes an Android source file.
 
 `{PLUGIN_NAME}Plugin.java`
 
-For example, for CodePush plugin, this file is named `CodePushPlugin.java`.   
-You can see the content of this file, in the current master manifest [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/CodePushPlugin.java)
+In this example, the CodePush plugin file is named `CodePushPlugin.java`.   
+You can view the configuration in the current master manifest file located  [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/CodePushPlugin.java)
 
-The core of this source file is the `hook` method. This method will get invoked by the Container during initialization. The last parameter is the actual `Config` instance of this plugin, as provided by the user when calling `ElectrodeReactContainer` `initialize` method.
+The core of the source file is the `hook` method. The container invokes the `hook` method during initialization. The last parameter is the actual `Config` instance of the plugin as provided by the user when calling the `ElectrodeReactContainer` `initialize` method.
 
 ```java
  public ReactPackage hook(
@@ -313,16 +350,17 @@ The core of this source file is the `hook` method. This method will get invoked 
   @NonNull Config config)
 ```
 
-The `Config` class for the plugin is declared in the same `.java` source file. It should follow the JAVA `builder` pattern. Mandatory configuration properties should be passed in the constructor, whereas optional properties should be provided through setter methods returning the Config instance to allow chaining. 
+The `Config` class for the plugin is declared in the same `.java` source file. The class should follow the JAVA `builder` pattern. Mandatory configuration properties should be passed in the constructor, whereas optional properties should be provided using setter methods returning the `Config` instance to allow chaining.
 
 #### iOS
+The following example describes an iOS source file.
+
 
 `Electrode{PLUGIN_NAME}Config.h` and `Electrode{PLUGIN_NAME}Config.m`
 
-Two `ObjectiveC` files. For example, for CodePush plugin these files are named `ElectrodeCodePushConfig.h` and `ElectrodeCodePushConfig.m`.  
-You can see the content of these files, in the current master manifest, [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.h) and [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.m).
+This example includes two `ObjectiveC` files for for CodePush plugin: `ElectrodeCodePushConfig.h` and `ElectrodeCodePushConfig.m`.  
+You can view the configuration in these files in the current master manifest file located  [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.h) and [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.m).
 
 A configuration class should use the `ElectrodePluginConfig` protocol.  
 
-The `(void)setupConfigWithDelegate: (id<RCTBridgeDelegate>)` method will be called during Container initialization.
-
+The `(void)setupConfigWithDelegate: (id<RCTBridgeDelegate>)` method is called during the container initialization.
