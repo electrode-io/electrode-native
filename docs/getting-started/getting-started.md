@@ -25,7 +25,7 @@ This will show you how easy it is to integrate multiple React Native application
 - If not already done, install `Android Studio` and `Electrode Native`.
 
 - If you want to run the application in an emulator, make sure you have created one.
-For more information on how to setup an emulator, you can check [the Android documentation][https://developer.android.com/studio/run/managing-avds.html]
+For more information on how to setup an emulator, you can check [the Android documentation](https://developer.android.com/studio/run/managing-avds.html)
 {% sample lang="ios" %}
 -  If not already done, install `XCode` and `Electrode Native`.
 {% common %}
