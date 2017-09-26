@@ -5,28 +5,23 @@
 
 -   [Getting Started with Electrode Native]
 
--   Read the [Announcement Blog] Post.
+-   Visit our site at <http://www.electrode.io>.
 
--   Visit our site at <http://native.electrode.io>.
-
--   See [What is Electrode Native] for more details on features and technologies supported.
+-   See [What is Electrode Native] for more details on Electrode Native.
 
 # Documentation
 
-The documentation of Electrode Native is maintained as GitBook documents in the [docs](/docs) directory.
-
-Check [gitbook] for more info about gitbook.
+The [documentation of Electrode Native] is maintained as [GitBook] pages in the [docs](/docs) directory.  
 
 # Contributing
 
-Please see the [CONTRIBUTING guide](/contributing.md)
+Please see the [CONTRIBUTING guide](docs/overview/contributing.md)
 
 # Support and Acknowledgement
 
-We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects.  
-We love the public community and the support we get, and we address your requests as much as we could.  
-We are always excited to get feedback, bug reports, and PRs.  
-Even if you just show us your support and encouragement, or help us promote Electrode Native, and we love to make it work better for everyone.  
+We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects. 
+We love the public community and the support we get, and we address your requests as much as we can.  
+We are always excited to get feedback, bug reports, and pull requests.  
 Thank you.
 
 # License
@@ -35,14 +30,12 @@ Copyright 2017 WalmartLabs
 
 Licensed under the [Apache License, Version 2.0].
 
-[Getting Started with Electrode Native]: https://url
+[documentation of electrode native]: https://electrode.gitbooks.io/electrode-native/
+
+[Getting Started with Electrode Native]: https://electrode.gitbooks.io/electrode-native/content/getting-started/getting-started.html
 
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
 
-[announcement blog]: https://url
-
 [gitbook]: https://www.gitbook.com/
 
-[what is electrode native]: https://url
-
-[Getting Started with Electrode Native]: https://url
+[what is electrode native]: https://electrode.gitbooks.io/electrode-native/overview/what-is-ern.html

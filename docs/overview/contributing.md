@@ -6,17 +6,17 @@ There are a few different ways you can contribute to Electrode React Native:
 
 - While reading the documentation, if you notice any typo (even minor), any misleading or wrong information or even missing content, you can edit the documentation and issue a Pull Request. Thanks to GitHub, this process can entirely be done online without even having to fork the repository on your workstation.
 
-- If you want to suggest a new feature, or an improvement for an existing one, you can just create a [new issue]. We will use labels at some point to easily filter things out. 
+- If you want to suggest a new feature, or an improvement for an existing one, you can just create a [new issue]. We will create labels over time to easily classify issues.
 
-- In case you'd like to use a native module that is not currently supported by Electrode React Native, 
+- In case you'd like to use a native module that is not currently supported by Electrode React Native, you can contribute a plugin configuration in the master Manifest to bring support of this native module for the community. Check the documentation on [reusing existing native modules](https://electrode.gitbooks.io/electrode-native/content/platform-parts/manifest.html#reusing-exiting-native-modules) for more information.
 
-- By taking care of an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code.
+- By taking care of an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code, as explained below.
 
-- You can also contribute to the [Electrode React Native Bridge] library.
+- You can also contribute to the [Electrode React Native Bridge](https://github.com/electrode-io/react-native-electrode-bridge) library.
 
 ## Electrode React Native development setup
 
-In the case you want to contribute some code to the platform, you'll need to setup a development environment to work on Electrode React Native.
+If you want to contribute some code to the platform, you'll first need to setup a development environment to work on Electrode React Native.
 
 It's actually quite easy to start working on the platform.
 
@@ -40,11 +40,19 @@ This special version will point to your `Electrode React Native`  working folder
 
 With this setup, you can also still use `Electrode React Native` as any other non developer user. You can install new platform versions or switch between versions. The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is your development version.
 
+## Continuous Integration
+
+We are using [Travis] for our CI.
+
+The CI job will be run on every opened Pull Request. It will run `standard` and `flow` checks along with running the whole platform test suite. 
+
+We will only merge PRs that pass the CI (green status). `standard` and `flow` are automatically run for you on every commit, so you should not have any suprise for these checks on the CI. However the tests are not automatically run on every commit, so before opening a PR please ensure that all tests are passing on your workstation by running `npm run test`.
+
 ## Guidelines for code contribution
 
 ### Coding style
 
-We are currently using [Standard JS] for our JavaScript code style rules.
+We are using [Standard JS] for our JavaScript code style rules.
 
 If you want to see Standard warnings during development, you might consider configuring your JavaScript editor accordingly. Many editors have built-in support for [Standard JS]. Just check out their documentation regarding [editor plugins].
 
@@ -69,6 +77,8 @@ Tests can be run through running `npm test` from the root of `electrode-react-na
 Our tests are written using [mocha], [chai] and [sinon].
 
 The tests are not executed on every commit. Ideally, you should run the test suite before opening a PR.
+
+[travis]: https://travis-ci.org/
 
 [new issue]: https://github.com/electrode-io/electrode-react-native/issues/new
 

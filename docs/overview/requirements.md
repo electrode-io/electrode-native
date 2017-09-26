@@ -6,7 +6,11 @@ Depending on whether you are building Android or iOS apps, the following tools a
 * Android Studio for Android apps
 * Xcode 8.3.2 or later for iOS apps
 
-If you are already set up with React Native, then you probably have the required tools  installed.
+If you are already set up with React Native, then you probably have the required tools installed.
+
+### OS X 
+
+Electrode Native is supported on OS X (Mac) only. It can also run on Linux, though it has not been thoroughfuly tested with it. We'll be working on Windows support soon.
 
 ### [Node.JS](https://nodejs.org/en/)
 
