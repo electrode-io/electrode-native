@@ -1,26 +1,27 @@
-## JavaScript <-> Native communication
+## Communication between your  MiniApp and native modules
 
-Because the code of your `MiniApps` written in `JavaScript` will be executing inside a `JavaScript` virtual machine in the mobile application, they don't have direct access to your mobile application data, nor can they invoke any methods in the mobile application. The same is true the other way arround.
+Because your MiniApps (written in JavaScript) execute inside a JavaScript virtual machine in the mobile application--they don't have direct access to your mobile application data and they can't invoke methods in the mobile application. And your mobile application doesn't have direct access to you MiniApp code.
 
-`React Native` offers communication between the JavaScript side and the Native side through its internal bridge, mostly surfaced to the developpers trhough `Native Modules`.
+However, React Native offers communication between the JavaScript side and the native side using its internal bridge--accessed through native modules.
 
-`Electrode React Native`, in addition to allow you to reuse existing React Native `Native Modules`, comes with its own bridge (which is actually nothing more than a `Native Module`), built on top of exiting communication constructs offered by `React Native` out of the box.
+Electrode Native allows you to reuse existing React Native native modules and it comes with its own bridge--Which is actually a native module built on top of existing communication constructs offered by React Native out of the box.
 
-`Electrode React Native` bridge offers bi-directional type safe communication, exposed as `events` and `requests/responses` constructs, and can be used directly in your `mobile application` or `MiniApp` to help communication between the two sides; however, using `Electrode React Native`, you will mostly not interact directly with the bridge, but rather with what we call `APIs`.
+The Electrode Native bridge offers bi-directional communication exposed as events and requests/response constructs. Although this can be used directly in your mobile application or MiniApp to help communication between the two sides, you will primarily use APIs instead of interacting directly with the bridge.
 
-`Electrode React Native` `APIs` are in some sense equivalent to React Native `Native Modules`.  
- As for `Native Modules`, you can create your own `APIs` and distribute them, or re-use existing ones.  
+### Electrode Native APIs
+You can create and distribute your own Electrode Native APIs or re-use existing APIs.
 
-While you can create new `Native Modules` and use them with `Electrode React Native`, this is not the recommended approach. Indeed, you'll want to create `APIs` instead as they are well integrated with the platform and offer a few advantages compared to native modules when it comes to working with the platform :
+While Electrode Native APIs are similar to React Native native modules (which you can also create) we don't recommend that you create new native modules. As a best practice, we recommend that you create APIs because of the advantages of using APIs.
 
-- `APIs` are fully generated. Just define the interactions it will offers, as a `Swagger` schema, in terms of `events` and `requests` and the necessary `API` client code, and implementation support code, will be generated for JavaScript/iOS and Android.
+#### Advantages of using APIs
+* APIs are fully generated--just define the interactions your API will offer as a Swagger schema (in terms of events and requests, the necessary API client code, and implementation support code) and the necessary APIs will be generated for JavaScript, iOS, and Android.
 
-- `APIs` also support the generation of model classes. Just define your models in your `Swagger` schema and the necessary classes will be generated. Relying on `Electrode React Native` bridge support, this means that on the mobile application side, developers will be able to work with real models, and will be able to properly leverage their compilation time checks when dealing with `APIs`.
+* APIs also support the generation of model classes--just define your models in your Swagger schema and the necessary classes will be generated. Relying on the Electrode Native bridge support means that on the mobile application side, developers are able to work with real models and they will be able to properly leverage their compilation time checks when dealing with APIs.
 
-- `APIs` decouple the client code of the `API` from its implementation. You are free to implement the `API` on the `native` side or the `JavaScript` side. Because of this decoupling, it is also possible to write multiple implementations for a single `API`.
+* APIs decouple the client code of the API from its implementation. You can implement the API on the native side or the JavaScript side. Because of this decoupling, it is also possible to write multiple implementations for a single API.
 
-- `APIs` are not `Native Modules`. They are clients of the `Electrode React Native` bridge which is the `Native Module`. In that sense, there is no "linking" required for `APIs`.
+* APIs are not native modules, they are clients of the Electrode Native bridge which is the native module. There is no linking required for APIs.
 
-- `APIs` are generated and therefore will all follow the exact same file system structure. This means that they don't need any specific configuration to be written for `Electrode React Native` to properly add them to a container.
+* APIs are generated and therefore will follow the exact same file system structure. This means that APIs don't need any customized configuration to be written for Electrode Native to properly add them to a container.
 
-- `APIs` are expected to follow a certain versioning convention, offering more flexibility it terms of compatibility checks between different versions.
+* APIs are expected to follow a certain versioning convention, which offers more flexibility in terms of compatibility checks between different versions.
