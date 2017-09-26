@@ -1,6 +1,6 @@
 {
   "name": "ern-core",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Electrode Native Core",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -53,8 +53,8 @@
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
     "code-push-cli": "1.12.9-beta",
-    "ern-cauldron-api": "0.6.3",
-    "ern-util": "0.6.3",
+    "ern-cauldron-api": "0.6.4",
+    "ern-util": "0.6.4",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
     "react-native-cli": "^2.0.1",
@@ -65,7 +65,7 @@
     "yarn": "^0.27.5"
   },
   "devDependencies": {
-    "ern-util-dev": "0.6.3"
+    "ern-util-dev": "0.6.4"
   },
   "engines": {
     "node": ">=4.5"
