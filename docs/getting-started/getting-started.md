@@ -47,6 +47,7 @@ $ ern create-miniapp MovieListMiniApp
 $ cd MovieListMiniApp
 $ ern run-android
 ```
+
 {% sample lang="ios" %}
 ```bash
 $ cd MovieListMiniApp
@@ -54,6 +55,8 @@ $ ern run-ios
 ```
 
 {% common %}
+When asked to enter a package name for this MiniApp, just hit enter to use the default one.  
+
 Pick one emulator (or device) from the list when prompted. 
 Once the command completes, you will see your first MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app. After all, a MiniApp is nothing more than a React Native application !
 
