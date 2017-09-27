@@ -19,7 +19,7 @@
 * A JavaScript-only container is also known as a *MiniApps composite*.   
 * **Default**  If this option is not used, a full native container including the JavaScript bundle containing all MiniApps, is generated.
 
-`--decriptor/-d <descriptor>`
+`--descriptor/-d <descriptor>`
 
 * Create a new container including all the MiniApps listed in the Cauldron for the given *complete native application descriptor*  
 * Use this option if you want to locally generate a container that mirrors the container of a given native application version.  
@@ -40,7 +40,7 @@ You cannot use the Git or file package descriptors for referring to the dependen
 `--platform/-p <android|ios>`
 
 * Specify the target platform for this container   
-* If not explicitely provided, the command prompts you to choose between the iOS or the Android platform before execution.  
+* If not explicitly provided, the command prompts you to choose between the iOS or the Android platform before execution.
 
 `--outDir/-o <directory>`
 

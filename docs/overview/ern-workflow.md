@@ -1,6 +1,6 @@
 ## The Electrode Native Workflow
 
-Electrode Native encapsulates the set of tools used to streamline a complete mobile app production line--from the development of MiniApps in React Native using JavasScript, to their delivery and integration in existing mobile applications.
+Electrode Native encapsulates the set of tools used to streamline a complete mobile app production line--from the development of MiniApps in React Native using JavaScript, to their delivery and integration in existing mobile applications.
 
 There are three main stages in the Electrode Native workflow:
 * Stage 1: Create MiniApps
@@ -74,7 +74,7 @@ Flagging a mobile application version as being released, actually 'freezes' the 
 ### Stage 3. Integrate MiniApps in a mobile application
 **Developer Role**  Mobile Application Developers
 
-Stage 3 does not require the use of the Electrode Native platform CLI commands.  And Mobile developers do not need to install any JavaScript tools or the platfom itself.  
+Stage 3 does not require the use of the Electrode Native platform CLI commands.  And Mobile developers do not need to install any JavaScript tools or the platform itself.
 
 At Stage 3, Mobile Application Developers interact with the Container library only--which is shipped as an AAR file for Android, and as an umbrella framework for iOS.
 
@@ -94,19 +94,19 @@ Also included in the container are the MiniApps assets (images and fonts mostly)
 
 **Developer Role**  JavaScript React Native Developers and Mobile Application Developers
 
-This stage is very similar to Stage 1: Create MiniApps, but it can be performed by either JavaScript React Native Developers or Mobile Application Developers--dependending on whether the implementation of the API is done on the JavaScript side or the native side. This stage may be performed by JavaScript React Native Developers--on the JavaScript side, or Mobile Application Developers--on the native side.
+This stage is very similar to Stage 1: Create MiniApps, but it can be performed by either JavaScript React Native Developers or Mobile Application Developers--depending on whether the implementation of the API is done on the JavaScript side or the native side. This stage may be performed by JavaScript React Native Developers--on the JavaScript side, or Mobile Application Developers--on the native side.
 
-APIs facililate secure interaction and communication between your MiniApps and your mobile application:  
+APIs facilitate secure interaction and communication between your MiniApps and your mobile application:
 
 * For MiniApps, a native API can be used to access data or functionality from the native side or it can be used to trigger actions on the native side.  
 
-* For a Mobile Application or another MiniApp, a JavaScript API can be used to access data or functionality from the JavasScript side, or it can be used to trigger actions on the JavaScript side.
+* For a Mobile Application or another MiniApp, a JavaScript API can be used to access data or functionality from the JavaScript side, or it can be used to trigger actions on the JavaScript side.
 
 
 **Bonus Stage: Generate and implement APIs workflow**
 
 - Create or generate a new API using the `ern create-api` command.  
-The complete Javascript, Android, and iOS client API code is generated along with optional models. You need only to publish the API version on npm. The API code should not be modified. The implementation of the API is kept separate as is the code you actually will need to manual create. We keep implementation separate from the API itself to allow for multiple implementations--that can be easily switched dependending on your context, for example, development vs production.
+The complete JavaScript, Android, and iOS client API code is generated along with optional models. You need only to publish the API version on npm. The API code should not be modified. The implementation of the API is kept separate as is the code you actually will need to manual create. We keep implementation separate from the API itself to allow for multiple implementations--that can be easily switched depending on your context, for example, development vs production.
 
 - Update or regenerate an existing API using the `ern regen-api` command.  
 This should be done if you are adding new requests, events, or models to your existing API. Simply update the Swagger schema accordingly and invoke the command. You can then publish this new version of the API to npm.
@@ -114,4 +114,4 @@ This should be done if you are adding new requests, events, or models to your ex
 - Implement an API.  
 Because API generation and implementation are decoupled, the person in charge of the API generation might not be the person actually implementing the API.  
 You can kickstart an API implementation project using the `ern create-api-impl` command.
-Then, add the code to implement the API functionality--either as a native implementation (which can then be consumed by any MiniApp depending on this API) or as a JavaScript implementation (which can be consumed by any MiniApp or Mobile Application dependening on this API). Implementations can be standalone (not bound to a specific mobile application or MiniApp), which is the recommended approach. Implementations can also be directly done in the mobile application or MiniApp itself.
+Then, add the code to implement the API functionality--either as a native implementation (which can then be consumed by any MiniApp depending on this API) or as a JavaScript implementation (which can be consumed by any MiniApp or Mobile Application depending on this API). Implementations can be standalone (not bound to a specific mobile application or MiniApp), which is the recommended approach. Implementations can also be directly done in the mobile application or MiniApp itself.

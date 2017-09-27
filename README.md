@@ -17,7 +17,7 @@ The [documentation of Electrode Native] is maintained as [GitBook] pages in the 
 
 Please see the [CONTRIBUTING guide](docs/overview/contributing.md)
 
-# Support and Acknowledgement
+# Support and Acknowledgment
 
 We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects. 
 We love the public community and the support we get, and we address your requests as much as we can.  

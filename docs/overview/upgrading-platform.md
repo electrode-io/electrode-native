@@ -17,7 +17,7 @@ The intent of a maintenance release is to fix a major bug that may impact multip
 
 Upgrading the platform is actually quite easy. That being said, before upgrading to a new platform version, you should always ensure to get aware of the `release notes`(url) of this new version.
 
-Indeed, while we will do our best to remtain backward compatibility as much as possible, some new versions might contain `breaking changes` that could impact your current workflow.
+Indeed, while we will do our best to retain backward compatibility as much as possible, some new versions might contain `breaking changes` that could impact your current workflow.
 
 #### Before you upgrade
 When you upgrade to a newer version of Electrode Native, you install the latest version of Electrode Native on our system and activate the latest version. Previous versions of Electrode Native remain on your system; an upgrade does not overwrite the older versions.
@@ -25,7 +25,7 @@ When you upgrade to a newer version of Electrode Native, you install the latest 
 Before you upgrade to a newer version of Electrode Native, read through the following upgrade guidelines.  
 
 * Be sure to read the Release Notes for the new version.  
-* An upgrade is usually backward compatible although backwards compatibility with every release is not guarranteed. Check to see if upgrading will impact your current workflow.  
+* An upgrade is usually backward compatible although backwards compatibility with every release is not guaranteed. Check to see if upgrading will impact your current workflow.
 * Electrode Native contains a built-in platform version management system--similar to what [nvm](https://github.com/creationix/nvm) uses for `Node.js`--which allows you to keep multiple versions of the platform installed on your local system. The system allows you to easy rollback to a previous platform version or to actually switch back to an older version for some use cases.  
 * Only one version of the platform can be active at any given time.   
 

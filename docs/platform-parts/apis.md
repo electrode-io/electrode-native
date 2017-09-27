@@ -54,7 +54,7 @@ Used when trying to deploy a MiniApp that contains an API version that exists in
 Used when trying to deploy a MiniApp that contains an API version that exists in the container with a different minor version--Electrode Native assumes binary compatibility only if the version stored in the container is greater than the one used by the MiniApp.
 
 - **API with a different major version**
-Used when trying to deploy a MiniApp that contains an API version that exists in the container with a different major version--Electrode Native considers binary incompability and does not allow deployment.
+Used when trying to deploy a MiniApp that contains an API version that exists in the container with a different major version--Electrode Native considers binary incompatibility and does not allow deployment.
 
 ### API guidelines
 

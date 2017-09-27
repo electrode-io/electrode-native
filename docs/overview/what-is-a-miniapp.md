@@ -2,7 +2,7 @@
 
 A MiniApp is a JavaScript React Native application. That's it!  
 
-We made the choice to distinguish a MiniApp from a full-fledge application considering that a MiniApp is not a complete application on its own--but rather a "mini" application that can be combined with and composed of other MiniApps to form parts of a mobile application.
+We made the choice to distinguish a MiniApp from a full-fledged application considering that a MiniApp is not a complete application on its own--but rather a "mini" application that can be combined with and composed of other MiniApps to form parts of a mobile application.
 
 * A MiniApp is a JavaScript React native project representing a specific feature or component.  
 * A MiniApp can be a single, simple UI component with minimal logic or it can be a single page application that includes business logic and can communication with the native side.  

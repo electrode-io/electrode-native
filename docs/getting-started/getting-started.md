@@ -207,7 +207,7 @@ CMD+M
 
 The initial UI of the MovieList MiniApp is displayed.  
 
-Now let's add an API to the MiniApp so that we can retrieve movies from the native application instead of manually hardcoding them in the source code of our MiniApp.
+Now let's add an API to the MiniApp so that we can retrieve movies from the native application instead of manually hard coding them in the source code of our MiniApp.
 
 ## Adding the MoviesApi to the MovieList MiniApp
 
@@ -434,7 +434,7 @@ We created this API for you for this tutorial--you can view it in the GitHub rep
 $ ern add react-native-ernnavigation-api
 ```  
 {% sample lang="android" %}  
-2) Mofify the `index.android.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.  
+2) Modify the `index.android.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.  
 
 {% sample lang="ios" %}  
 2) Modify the `index.ios.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.  
@@ -454,7 +454,7 @@ import { NavigationApi } from 'react-native-ernnavigation-api'
         style={styles.container}
         dataSource={this.state.dataSource}
         renderRow={(movie) =>
-        <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="grey">
+        <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="gray">
           <View style={styles.row} onPress={() => this._onPressRow(movie)}>
             <Image
               style={styles.icon}

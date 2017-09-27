@@ -42,7 +42,7 @@ We are using [Travis] for our Continuous Integration (CI).
 
 The CI job is run on every opened Pull Request (PR). It runs standard and flow checks along with running the whole platform test suite.
 
-We only merge PRs that pass the CI (green status). Standard and flow checks are automatically run for you on every commit, so you should not have any suprise for these checks on the CI. However the tests are not automatically run on every commit, so before opening a PR please make sure that all tests are passing on your workstation by running the `npm run test` command.
+We only merge PRs that pass the CI (green status). Standard and flow checks are automatically run for you on every commit, so you should not have any surprise for these checks on the CI. However the tests are not automatically run on every commit, so before opening a PR please make sure that all tests are passing on your workstation by running the `npm run test` command.
 
 ## Guidelines for code contribution
 
@@ -58,7 +58,7 @@ Electrode Native has a pre-commit hook setup, that runs standard for every commi
 
 ### Type checking
 
-Electrode Native uses [flow] accross all of its modules.
+Electrode Native uses [flow] across all of its modules.
 
 [flow] comes with integration support for many JavaScript editors. If you want to see [flow] errors from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
 
