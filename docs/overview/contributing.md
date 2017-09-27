@@ -1,22 +1,22 @@
-# Contributing to Electrode React Native
+# Contributing to Electrode Native
 
-There are a few different ways you can contribute to Electrode React Native:
+There are a few different ways you can contribute to Electrode Native:
 
-- As a user of Electrode React Native, if you face any issue with the platform, you can open a [new issue].  
+- As a user of Electrode Native, if you face any issue with the platform, you can open a [new issue].  
 
 - While reading the documentation, if you notice any typo (even minor), any misleading or wrong information or even missing content, you can edit the documentation and issue a Pull Request. Thanks to GitHub, this process can entirely be done online without even having to fork the repository on your workstation.
 
 - If you want to suggest a new feature, or an improvement for an existing one, you can just create a [new issue]. We will create labels over time to easily classify issues.
 
-- In case you'd like to use a native module that is not currently supported by Electrode React Native, you can contribute a plugin configuration in the master Manifest to bring support of this native module for the community. Check the documentation on [reusing existing native modules](https://electrode.gitbooks.io/electrode-native/content/platform-parts/manifest.html#reusing-exiting-native-modules) for more information.
+- In case you'd like to use a native module that is not currently supported by Electrode Native, you can contribute a plugin configuration in the master Manifest to bring support of this native module for the community. Check the documentation on [reusing existing native modules](https://electrode.gitbooks.io/electrode-native/content/platform-parts/manifest.html#reusing-exiting-native-modules) for more information.
 
 - By taking care of an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code, as explained below.
 
-- You can also contribute to the [Electrode React Native Bridge](https://github.com/electrode-io/react-native-electrode-bridge) library.
+- You can also contribute to the [Electrode Native Bridge](https://github.com/electrode-io/react-native-electrode-bridge) library.
 
-## Electrode React Native development setup
+## Electrode Native development setup
 
-If you want to contribute some code to the platform, you'll first need to setup a development environment to work on Electrode React Native.
+If you want to contribute some code to the platform, you'll first need to setup a development environment to work on Electrode Native.
 
 It's actually quite easy to start working on the platform.
 
@@ -36,9 +36,9 @@ Upon completion, you'll be able to switch to this local development by running
 
 `$ ern platform use 1000.0.0`
 
-This special version will point to your `Electrode React Native`  working folder. It is also setup to run transpilation of the code on the fly, which means that any code modification you'll make to any of the modules will be reflected upon next run of `ern` command.
+This special version will point to your `Electrode Native`  working folder. It is also setup to run transpilation of the code on the fly, which means that any code modification you'll make to any of the modules will be reflected upon next run of `ern` command.
 
-With this setup, you can also still use `Electrode React Native` as any other non developer user. You can install new platform versions or switch between versions. The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is your development version.
+With this setup, you can also still use `Electrode Native` as any other non developer user. You can install new platform versions or switch between versions. The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is your development version.
 
 ## Continuous Integration
 
@@ -56,19 +56,19 @@ We are using [Standard JS] for our JavaScript code style rules.
 
 If you want to see Standard warnings during development, you might consider configuring your JavaScript editor accordingly. Many editors have built-in support for [Standard JS]. Just check out their documentation regarding [editor plugins].
 
-You can also run [Standard JS] manually on `Electrode React Native` through `npm standard`.
+You can also run [Standard JS] manually on `Electrode Native` through `npm standard`.
 
-`Electrode React Native` has a pre-commit hook setup, that will run `standard` for every commit. In case a commit is not meeting some `standard` rules, it won't go through. You'll have to fix the issue(s) first before being able to commit your changes.
+`Electrode Native` has a pre-commit hook setup, that will run `standard` for every commit. In case a commit is not meeting some `standard` rules, it won't go through. You'll have to fix the issue(s) first before being able to commit your changes.
 
 ### Type checking
 
-`Electrode React Native` is using [flow] accross all of its modules. 
+`Electrode Native` is using [flow] accross all of its modules. 
 
 [flow] comes with integration support for many JavaScript editors. If you want to see [flow] erros from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
 
-You can also run [flow] manually on `Electrode React Native` through `npm flow`.
+You can also run [flow] manually on `Electrode Native` through `npm flow`.
 
-`Electrode React Native` has a pre-commit hook setup, that will run `flow` for every commit. In case a commit contains some `flow` errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
+`Electrode Native` has a pre-commit hook setup, that will run `flow` for every commit. In case a commit contains some `flow` errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
 
 ### Tests
 
@@ -84,7 +84,7 @@ The tests are not executed on every commit. Ideally, you should run the test sui
 
 [open issue]: https://github.com/electrode-io/electrode-react-native/issues
 
-[Electrode React Native Bridge]:https://github.com/electrode-io/react-native-electrode-bridge
+[Electrode Native Bridge]:https://github.com/electrode-io/react-native-electrode-bridge
 
 [CLI]: https://github.com/electrode-io/electrode-react-native/blob/master/docs/platform-parts/cli.md#ern-local-client
 

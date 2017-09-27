@@ -1,6 +1,6 @@
-## Electrode React Native Cauldron
+## Electrode Native Cauldron
 
-A Cauldron is a centralized database or configuration file that is used to store information about mobile application versions, native dependencies, and information about MiniApps. One cauldron file exists for each mobile application. With appropriate permissions, you can use the ERN CLI commands to access and modify the configuration settings in the cauldron file.
+A Cauldron is a centralized database or configuration file that is used to store information about mobile application versions, native dependencies, and information about MiniApps. One cauldron file exists for each mobile application. With appropriate permissions, you can use the Electrode Native CLI commands to access and modify the configuration settings in the cauldron file.
 
 The cauldron file also contains:
 * One record for each mobile application version, for example: walmart ios 17.15 and walmart android 17.10.0.
@@ -17,7 +17,7 @@ If compatibility checks pass, a new container version is generated and published
 
 The cauldron can store `yarn.lock` files that are used internally to guarantee consistency of non-updated MiniApp versions.
 
-Using the ERN CLI, you can access multiple cauldron files. There can however be only one cauldron file activated at a time.
+Using the Electrode Native CLI, you can access multiple cauldron files. There can however be only one cauldron file activated at a time.
 
 
 ### The cauldron configuration file
@@ -96,17 +96,17 @@ This example `cauldron.json` file shows the following:
 The configuration also shows the different objects stored in the cauldron--level by level.
 
 * A config object (optional) and a nativeApps array  
-* Currently the cauldron contains only a manifest configuration. For details about the manifest and its configuration, see the information about the  [ERN Manifest](url).  
+* Currently the cauldron contains only a manifest configuration. For details about the manifest and its configuration, see the information about the  [Electrode Native Manifest](url).  
 
 * The `nativeapps` array contains the data of all mobile applications that are part of the cauldron. A cauldron file can store multiple mobile applications, however it is not recommended that a cauldron file contains data for multiple mobile applications--instead, we recommend that you use one cauldron per mobile application.  
 
-* For each mobile application, the second level is the platforms array. ERN supports two platforms: Android and iOS. For each platform, there can be multiple versions of a mobile application. At this level (mobile application + platform + version), most of the Cauldron data resides.  
+* For each mobile application, the second level is the platforms array. Electrode Native supports two platforms: Android and iOS. For each platform, there can be multiple versions of a mobile application. At this level (mobile application + platform + version), most of the Cauldron data resides.  
 
 * At the Android platform level of the `MyWeatherApp` application, a configuration object contains data that applies to every version of the `MyWeatherApp` for the Android platform. It also contains CodePush configurations. For information about CodePush, see the [CodePush documentation](url) for more details. For information about the containuer generator configuration, see the [Container documentation](url).
 
 For each unique version of a mobile application, the cauldron stores the following:
 
-- `ernPlatformVersion` : The version of Electrode React Native used.
+- `ernPlatformVersion` : The version of Electrode Native used.
 - `isReleased` : `true` if this version is released to users and `false` if not (the release is in development)
 - `yarnlock` : The SHA of the `yarn.lock` file stored in the cauldron filestore - this should be used for generating the composite JavaSript bundle.
 - `nativeDeps` : An array of native dependencies descriptors, corresponding to the native dependencies stored in the current container of this version
@@ -124,7 +124,7 @@ While there are no repository naming conventions, we recommend that you name it:
 
 Note: A cauldron is bound to one mobile application--even though it can hold multiple mobile applications. We do not recommend holding multiple mobile applications within a cauldron.
 
-2) Add the cauldron to the repository using the ERN CLI.  
+2) Add the cauldron to the repository using the Electrode Native CLI.  
 `ern cauldron repo add`
 
 3) Add your first mobile application version in the cauldron.  
@@ -138,7 +138,7 @@ The Cauldron performs the compatibility checks to make sure that any MiniApp or 
 
 The compatibility checks are primarily checking the native dependency versions proper alignment--React Native and any native module or API or API implementation that the MiniApp uses.
 
-Listed below are some of the compatibility checks and logic that is performed by Electrode React Native, when running an operation changing the state of a container--what it will contain will change, following the operation, or the state of the composite JavaScript bundle--in the case of an OTA update using CodePush.
+Listed below are some of the compatibility checks and logic that is performed by Electrode Native, when running an operation changing the state of a container--what it will contain will change, following the operation, or the state of the composite JavaScript bundle--in the case of an OTA update using CodePush.
 
 - Adding a new MiniApp
     - To a in-development mobile application version  
@@ -153,7 +153,7 @@ For each of the native dependencies included in the MiniApp:
        - If the native dependency is not already in the Container, fail. It is not possible to add a native dependency using OTA updates (for third-party native modules we don't consider backward compatibility, the platform requires an exact version match, whereas APIs follow more flexible rules). If that is the case and the version of the dependency used by the MiniApp is lower than the one in the Container, proceed. Otherwise, fail.
 
 - Removing a MiniApp  
-Compatibility checks are not performed and ERN does not try to remove any of the native dependencies used by the MiniApp.
+Compatibility checks are not performed and Electrode Native does not try to remove any of the native dependencies used by the MiniApp.
 
 - Updating a MiniApp version  
 Compatibility checks are the same as the checks performed when adding a new MiniApp. See information in the Adding a new MiniApp bullet item above.
@@ -171,7 +171,7 @@ Verify that there are no MiniApps in the the Container using the native dependen
 
 ### Granting access to the cauldron
 
-Depending on the size of your organization and team, and your intended ERN workflow, it's possible that only one person should be granted Write access to the Cauldron. This person is usually a Release Manager or Mobile App Lead. In this scenario, MiniApp developers are granted Read access--because ERN needs some data from the cauldron. If there are dedicated MiniApps developers for the mobile application, they will need to publish new versions of their MiniApps to npm, and the Release Manager manages the Cauldron.
+Depending on the size of your organization and team, and your intended Electrode Native workflow, it's possible that only one person should be granted Write access to the Cauldron. This person is usually a Release Manager or Mobile App Lead. In this scenario, MiniApp developers are granted Read access--because Electrode Native needs some data from the cauldron. If there are dedicated MiniApps developers for the mobile application, they will need to publish new versions of their MiniApps to npm, and the Release Manager manages the Cauldron.
 
 Alternatively, you can give Write access to the cauldron--to MiniApp developers as well. In this scenario, as soon as the MiniApp developers publish new versions of their MiniApps, they can add them directly to the Cauldron.
 
@@ -179,9 +179,9 @@ Alternatively, you can give Write access to the cauldron--to MiniApp developers 
 
 * While Git offers many benefits compared to a large database system, developers who are familiar with Git repositories are also familiar with the Git repository workflow--which doesn't match the workflow when working with a cauldron repository. For example, developers working in a Git repository might be tempted to fork, branch, and issue pull requests for a cauldron. Doing so will result in compatibility check failures.
 
-* A Cauldron can only be updated using the ERN CLI commands. You should not update the Cauldron 'manually'. If you update a cauldron manually, you bypass all compatibility checks performed by Electrode React Native and you risk desynchronizing the container version and the yarn locks.
+* A Cauldron can only be updated using the Electrode Native CLI commands. You should not update the Cauldron 'manually'. If you update a cauldron manually, you bypass all compatibility checks performed by Electrode Native and you risk desynchronizing the container version and the yarn locks.
 
-Note: Open a support ticket if you aren't able to update information in the cauldron using the ERN CLI commands. It's possible that an existing command can be updated or a new command may be issued.
+Note: Open a support ticket if you aren't able to update information in the cauldron using the Electrode Native CLI commands. It's possible that an existing command can be updated or a new command may be issued.
 
 ### Related commands
 

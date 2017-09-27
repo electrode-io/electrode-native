@@ -3,14 +3,14 @@
 ### INTRODUCTION
 
 - [Overview](overview/what-is-ern.md)
-  - [What is Electrode React Native](overview/what-is-ern.md)
-  - [Why use Electrode React Native](overview/why-use-ern.md)
+  - [What is Electrode Native](overview/what-is-ern.md)
+  - [Why use Electrode Native](overview/why-use-ern.md)
   - [What is a MiniApp](overview/what-is-a-miniapp.md)
-  - [Electrode React Native workflow](overview/ern-workflow.md)
+  - [Electrode Native workflow](overview/ern-workflow.md)
   - [Native dependencies management](overview/dependency-management.md)
   - [JS/Native communication](overview/js-native-communication.md)
   - [Requirements](overview/requirements.md)
-  - [Upgrading Electrode React Native](overview/upgrading-platform.md)
+  - [Upgrading Electrode Native](overview/upgrading-platform.md)
   - [Contributing](overview/contributing.md)
 
 ### QUICK START
