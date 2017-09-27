@@ -1,6 +1,6 @@
 {
   "name": "ern-runner-gen",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "description": "Electrode Native Runner Project Generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -50,16 +50,16 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-container-gen": "0.6.8",
-    "ern-core": "0.6.8",
-    "ern-util": "0.6.8",
+    "ern-container-gen": "0.6.9",
+    "ern-core": "0.6.9",
+    "ern-util": "0.6.9",
     "fs-readdir-recursive": "^1.0.0",
     "mustache": "^2.3.0",
     "shelljs": "^0.7.6",
     "tmp": "^0.0.31"
   },
   "devDependencies": {
-    "ern-util-dev": "0.6.8"
+    "ern-util-dev": "0.6.9"
   },
   "engines": {
     "node": ">=4.5"
