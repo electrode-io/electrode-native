@@ -56,9 +56,7 @@ $ ern run-ios
 ```
 {% sample lang="android" %}
 
-4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission([Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)).
-
-Select ErnRunner app and enable drawing over the apps, see images below. Once done exit from the ErnRunner app and launch it again from applications.
+4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission for ErnRunner app . ([Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)).
 
 ![Overlay Permission Window](/images/OverlayPermissionWindow.png) ![Select ErnRunner](/images/ErnRunnerSelected.png)
 
@@ -205,16 +203,10 @@ const styles = StyleSheet.create({
 AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 ```
 
-3) Reload the application to view the updated UI. Inside the emulator window or on your device, press Command + M and select on Reload
-
-{% sample lang="android" %}
-```
-CMD + M --> Reload
-```
 {% sample lang="ios" %}
-```
-CMD + R
-```
+3) Reload the application to see the updated UI. Hit ⌘R in your iOS Simulator to reload the app and see your changes.
+{% sample lang="android" %}
+3) Reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
 
 {% common %}
 Congratulations! You've successfully run and modified the initial UI of the MovieList MiniApp.
@@ -223,9 +215,10 @@ Now let's add an API to the MiniApp so that we can retrieve movies from the nati
 
 ## Adding the MoviesApi to the MovieList MiniApp
 
-We already created and published the MoviesApi in this tutorial. If you want to view the generated API code, you can view it in the GitHub repository here: [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api).
+We have already generated and published the `MoviesApi` in this tutorial.
+You may view the generated API code at [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) and [ern add react-native-ernnavigation-api](https://github.com/electrode-io/react-native-ernnavigation-api) repo.
 
-1) Using the `ern add` command, add the `MoviesApi` and other two APIs that we will be using later in this tutorial.
+1) Using the `ern add` command add `MoviesApi` , other dependent APIs and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as a dependency of MovieListMiniApp.
 
 ```bash
 $ ern add react-native-ernmovie-api
@@ -233,15 +226,12 @@ $ ern add react-native-electrode-bridge
 $ ern add react-native-ernnavigation-api
 ```
 
-This step shows how to install the MoviesApi from NPM and add it as a dependency of your MiniApp.  
-We also need to add the bridge, because it's not a direct dependency of APIs.
-
 {% sample lang="android" %}
 2) Open the `index.android.js` file and modify it as described in the next step.
 {% sample lang="ios" %}  
 2) Open the `index.ios.js` file and modify it as described in the next step.
 {% common %}  
-3) Add the following `import` statement under other `import` statements located at the top of the JavaScript file:
+3) Import MoviesApi and add it below other `import` statements of the JavaScript file:
 
 ```javascript
 import { MoviesApi } from 'react-native-ernmovie-api'
