@@ -3,7 +3,6 @@
   "version": "0.5.1",
   "description": "",
   "keywords": [],
-  "author": "Walmart Labs <http://walmartlabs.com/>",
   "license": "Apache-2.0",
   "scripts": {
     "setup-dev": "node setup-dev.js",
