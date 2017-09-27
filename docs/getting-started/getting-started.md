@@ -22,12 +22,12 @@ This will show you how easy it is to integrate multiple React Native application
 
 ## Before you begin
 {% sample lang="android" %}
-- If not already done, install `Android Studio` and `Electrode Native`.
+- If not already done, install [Android Studio](https://developer.android.com/studio/index.html) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation).
 
 - If you want to run the application in an emulator, make sure you have created one.
-For more information on how to setup an emulator, you can check [the Android documentation][https://developer.android.com/studio/run/managing-avds.html]
+For more information on how to setup an emulator, you can check [the Android documentation](https://developer.android.com/studio/run/managing-avds.html)
 {% sample lang="ios" %}
--  If not already done, install `XCode` and `Electrode Native`.
+-  If not already done, install [Xcode](https://developer.apple.com/xcode/) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation).
 {% common %}
 - Create a working directory named `ElectrodeNativeTutorial` to hold all tutorial project files
 
@@ -39,6 +39,7 @@ For more information on how to setup an emulator, you can check [the Android doc
 $ cd ElectrodeNativeTutorial
 $ ern create-miniapp MovieListMiniApp
 ```
+When asked to enter a package name for this MiniApp, just hit enter to use the default one. You may check the [package name requirements](https://docs.npmjs.com/files/package.json#name)
 
 - Move to the `MovieListMiniApp` directory and run the MiniApp to see how it looks like, using `ern run` command.
 
@@ -53,11 +54,13 @@ $ ern run-android
 $ cd MovieListMiniApp
 $ ern run-ios
 ```
+{% sample lang="android" %}
+First time users please grant the `SYSTEM_ALERT_WINDOW` permission. [Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)
+![Overlay Permission Window](/images/OverlayPermissionWindow.png) ![Select ErnRunner](/images/ErnRunnerSelected.png)
 
 {% common %}
-When asked to enter a package name for this MiniApp, just hit enter to use the default one.  
 
-Pick one emulator (or device) from the list when prompted. 
+Pick one emulator (or device) from the list when prompted.
 Once the command completes, you will see your first MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app. After all, a MiniApp is nothing more than a React Native application !
 
 Now let's update the UI of this MiniApp for it to display a list of movies.
@@ -273,22 +276,22 @@ Then, just replace the constructor method with the following code:
    }
 ```
 
-- Reload the UI
+- Relaunch the application
 
-Inside the emulator window or on you device, do the following
+Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the run command which will recreate a new local Container and launch the application.
 
 {% sample lang="android" %}
-```
-CMD+M --> Reload
+```bash
+$ ern run-android
 ```
 {% sample lang="ios" %}
-```
-CMD+M
+```bash
+$ ern run-ios
 ```
 {% common %}
 
-You can see that the UI is showing the movie names that are set in the `catch` block.  
-This means there was no API implementation available to serve the `getTopRatedMovies` request.   
+You can see that the UI is showing the movie names that are set in the `catch` block.
+This means there was no API implementation available to serve the `getTopRatedMovies` request.
 
 Let's now see write an implementation of this API. Although you can write the implementation either on the JavaScript side or Native side, this tutorial shows the implementation on the native side.
 
@@ -341,14 +344,14 @@ public class MainApplication extends Application {
     }
 }
 ```
-
 - Relaunch the application
 
-Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the `run-android` command which will recreate a new local Container and launch the application.
+If you are using android studio you can run the app directly from there or by running the command below.
 
 ```bash
 $ ern run-android
 ```
+
 {% sample lang="ios" %}
 - Open the generated ios project (in `ios` folder) in XCode.
 
@@ -410,7 +413,7 @@ $ ern run-android
 
 - Relaunch the application
 
-Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the `run-ios` command which will recreate a new local Container and launch the application.
+You can launch the app directly from xcode or by running the command below
 
 ```bash
 $ ern run-ios

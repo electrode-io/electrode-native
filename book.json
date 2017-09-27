@@ -1,8 +1,8 @@
 {
   "root": "./docs",
   "gitbook": "3.2.3",
-  "title": "Electrode React Native Developer's Guide",
-  "description": "Electrode React Native Platform Developer's Guide",
+  "title": "Electrode Native Documentation",
+  "description": "Electrode Native Documentation",
   "plugins": [
     "theme-api",
     "edit-link",
