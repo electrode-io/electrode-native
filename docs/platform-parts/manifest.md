@@ -71,13 +71,13 @@ The following example shows a configuration that includes a manifest override.
 
 ```json
 "config": {
-    "manifest": {
-      "override": {
-         "url": "git@github.com:user/ern-custom-manifest.git",
-         "type": "partial"
-       }
-     }
+  "manifest": {
+    "override": {
+      "url": "git@github.com:user/ern-custom-manifest.git",
+      "type": "partial"
+    }
   }
+}
 ```
 
 The configuration object should be manually added to your cauldron at the same level as the `nativeApps` array.  
@@ -255,10 +255,10 @@ Specifies one or more header to surface in the Container umbrella header. This i
 **Example**
 
 ```json
- "containerPublicHeader":[
-   "ElectrodeBridgeHolder.h"
- ]
- ```
+"containerPublicHeader": [
+  "ElectrodeBridgeHolder.h"
+]
+```
 
 iOS also provides an additional directive object: `pbxProj`. The `pbxProj` directive can include directives used to manipulate the container `.pbxproj` file.
 
@@ -273,18 +273,17 @@ Adds a plugin `xcodeproj` and its target library to the Container.
 
 
 ```json
-
-"addProject":[
-   {
-      "path":"AirMaps/AirMaps.xcodeproj",
-      "group":"Libraries",
-      "staticLibs":[
-         {
-            "name":"libAIRMaps.a",
-            "target":"AirMaps"
-         }
-      ]
-   }
+"addProject": [
+  {
+    "path": "AirMaps/AirMaps.xcodeproj",
+    "group": "Libraries",
+    "staticLibs": [
+      {
+        "name":"libAIRMaps.a",
+        "target":"AirMaps"
+      }
+    ]
+  }
 ]
 ```
 
@@ -294,7 +293,7 @@ Adds a header search path to the container. This directive is used to add the pr
 
 ```json
 "addHeaderSearchPath": [
- "\"$(SRCROOT)/{{{projectName}}}/Libraries/AirMaps/**\""
+  "\"$(SRCROOT)/{{{projectName}}}/Libraries/AirMaps/**\""
 ]
 ```
 
@@ -320,7 +319,10 @@ Adds a source file from the plugin project to the container list of sources.
     - `group` : Group containing the source file
 
 ```json
-{ "path": "ElectrodeReactNativeBridge/ElectrodeObject.swift", "group": "ElectrodeReactNativeBridge" }
+{
+  "path": "ElectrodeReactNativeBridge/ElectrodeObject.swift",
+  "group": "ElectrodeReactNativeBridge"
+}
 ```
 
 ### Configurable native modules
@@ -344,7 +346,7 @@ You can view the configuration in the current master manifest file located  [her
 The core of the source file is the `hook` method. The container invokes the `hook` method during initialization. The last parameter is the actual `Config` instance of the plugin as provided by the user when calling the `ElectrodeReactContainer` `initialize` method.
 
 ```java
- public ReactPackage hook(
+public ReactPackage hook(
   @NonNull Application application,
   @NonNull ReactInstanceManagerBuilder reactInstanceManagerBuilder,
   @NonNull Config config)
