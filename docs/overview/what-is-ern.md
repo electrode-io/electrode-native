@@ -6,21 +6,21 @@ Electrode Native is built on top of [React Native](https://facebook.github.io/re
 
 The core of the platform is written in JavaScript (ES6). Some parts of the platform contain native code: Java and Swift--mostly in the form of [Mustache](https://mustache.github.io/) templates used for native code generation. Some components are primarily pure native projects--for example our Electrode Native bridge is a pure Android/iOS project.
 
-To view the platform code percentage of Javascript code versus Native code, a good approximation would be 70% JavaScript and 30% native code.  
+To view the platform code percentage of JavaScript code versus Native code, a good approximation would be 70% JavaScript and 30% native code.
 
-Electrode Native is composed of several modules that are accessed using the Electrode Native CLI client. The CLI client is the only tool that developers need when using Electrode Native. Electrode Native runs on Node v4.5 or later. Electrode Native runs on Mac OSX only. Windows support is scheduled to follow. Electrode Native also runs on Linux; however only minimal testing has verified this support.
+Electrode Native is composed of several modules that are accessed using the Electrode Native CLI client. The CLI client is the only tool that developers need when using Electrode Native. Electrode Native runs on Node v4.5 or later. Electrode Native runs on Mac OS X only. Windows support is scheduled to follow. Electrode Native also runs on Linux; however only minimal testing has verified this support.
 
 Electrode Native modules and features are briefly described below. You can find more information about each module in the specific module documentation.
 
 ### Electrode Native CLI
 
-The Electrode Native CLI is the command line tool that contains the commands and subcommands that developers use to work with the Electrode Native platform. The commands are very similar to React Native commands. For example, instead of using the `react-native start` command, you'll use the `ern start` command. For information about using the Electrode Native CLI commands, see the Electrode Native CLI documentation.
+The Electrode Native CLI is the command line tool that contains the commands and sub-commands that developers use to work with the Electrode Native platform. The commands are very similar to React Native commands. For example, instead of using the `react-native start` command, you'll use the `ern start` command. For information about using the Electrode Native CLI commands, see the Electrode Native CLI documentation.
 
 [Learn More about the CLI](url)
 
 ### Electrode Native Bridge
 
-The Electrode Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the Electrode Native platform itself--it resides in it's own open source GitHub repository [URL HERE]. The Electrode Native bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the Electrode Native bridge code is native (95% native/5% Javascript).
+The Electrode Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the Electrode Native platform itself--it resides in it's own open source GitHub repository [URL HERE]. The Electrode Native bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the Electrode Native bridge code is native (95% native/5% JavaScript).
 
 Even though the Electrode Native bridge is a standalone native module that can be used in your React Native projects (even without Electrode Native), if you are using Electrode Native, you do not directly interact with the Electrode Native bridge in your MiniApps or in your mobile applications. Instead, you use the Electrode Native APIs to make a call to the Electrode Native bridge. The Electrode Native APIs are generated from a Swagger schema--so they are predefined. Check out our Electrode Native API documentation HERE.
 
@@ -57,7 +57,7 @@ Setting up a cauldron is basically the same process as creating a Git repository
 
 ### Manifest
 
-While the Electrode Native cauldron makes sure that no mis-aligned or non-supported native dependency version makes it into your mobile application--the Electrode Native manifest aligns native dependency versions across multiple MiniApps.
+While the Electrode Native cauldron makes sure that no misaligned or non-supported native dependency version makes it into your mobile application--the Electrode Native manifest aligns native dependency versions across multiple MiniApps.
 
 Each Electrode Native platform version is associated to an array of supported native dependencies along with their versions.
 
@@ -67,7 +67,7 @@ The Electrode Native platform stores its master manifest in a GitHub repository.
 
 ### Runner
 
-The Electrode Native platform contains two runners, one for each mobile platform (Android and iOS). Both runners are very simple and light-weight mobile applications--similar to new application projects in Android Studio or XCode.
+The Electrode Native platform contains two runners, one for each mobile platform (Android and iOS). Both runners are very simple and light-weight mobile applications--similar to new application projects in Android Studio or Xcode.
 
 The Electrode Native runner application is used to run your standalone MiniApp so that you can effectively develop, debug, and test your MiniApp--before releasing a new or updated version of the MiniApp.
 

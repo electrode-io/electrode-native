@@ -1,6 +1,6 @@
 ## Electrode Native Manifest
 
-While the Electrode Native cauldron makes sure that no mis-aligned or non-supported native dependency version makes it into your mobile application--the Electrode Native  manifest aligns native dependency versions across multiple MiniApps.
+While the Electrode Native cauldron makes sure that no misaligned-aligned or non-supported native dependency version makes it into your mobile application--the Electrode Native  manifest aligns native dependency versions across multiple MiniApps.
 
 Each Electrode Native platform version is associated to an array of supported native dependencies along with their versions. For example:
 
@@ -83,7 +83,7 @@ The following example shows a configuration that includes a manifest override.
 The configuration object should be manually added to your cauldron at the same level as the `nativeApps` array.  
 
 * The `override url` is the url of the GitHub repository containing your own Manifest  
-* The `orrride type` value can be either partial or full. For most use cases you'll use the partial; full can be useful in rare cases.  
+* The `override type` value can be either partial or full. For most use cases you'll use the partial; full can be useful in rare cases.
 
 #### Partial override
 
@@ -93,7 +93,7 @@ For plugins (native modules) configurations using the partial override type, Ele
 
 #### Full override
 
-For dependencies or plugin configurations, a full override means that Electrode Native only queires the override manifest. The master manifest is never used. A full override  completely masks the master manifest.
+For dependencies or plugin configurations, a full override means that Electrode Native only queries the override manifest. The master manifest is never used. A full override  completely masks the master manifest.
 
 
 #### Guidelines for overriding Manifest use cases
@@ -118,7 +118,7 @@ In a pure React Native mobile application, you can use the `react-native link` c
 **Note**  Electrode Native generated APIs and API implementations have a specific structure
 and additional configuration is not needed to support them in Electrode Native. However, if you plan to work on a new native module, it's recommended that you consider using Electrode Native APIs.
 
-In the manifest repository, the supported plugin configurations are located in the plugins directory. This plugins directory contains sub-directories that follow a specific naming convention that is used by Electrode Native to correcly match a plugin version with a plugin configuration--for a specific Electrode Native version.
+In the manifest repository, the supported plugin configurations are located in the plugins directory. This plugins directory contains sub-directories that follow a specific naming convention that is used by Electrode Native to correctly match a plugin version with a plugin configuration--for a specific Electrode Native version.
 
 The list below shows an example of the directory naming convention that matches Electrode Native versions.
 
@@ -144,7 +144,7 @@ The plugin configuration file is located within these sub-directories.
 
 ####Configuration example  
 The following example shows the configuration files for the `react-native-code-push` plugin.  
-The directory is viewable [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/tree/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B)
+The directory is view-able [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/tree/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B)
 
 
 ```
@@ -264,7 +264,7 @@ iOS also provides an additional directive object: `pbxProj`. The `pbxProj` direc
 
 - `addProject`
 
-Adds a plugin `xcodeproj` and its target libray to the Container.   
+Adds a plugin `xcodeproj` and its target library to the Container.
     - `path` : Path to the `xcodeproj` of the plugin   
     - `group` : Group to add the project to (`Libraries` should be used)  
     - `staticLibs` : An array of static libraries, targets of the plugin project, to link with the Container
@@ -325,7 +325,7 @@ Adds a source file from the plugin project to the container list of sources.
 
 ### Configurable native modules
 
-At runtime, some native modiles require additional configuration settings. For example, the `react-native-code-push` native module requires a deployment key upon initialization.
+At runtime, some native modules require additional configuration settings. For example, the `react-native-code-push` native module requires a deployment key upon initialization.
 
 Configurable plugins have some source code associated to them in the manifest plugin configuration file  in addition to the `config.json` file.
 

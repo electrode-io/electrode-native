@@ -3,7 +3,7 @@
 A Cauldron is a centralized database or configuration file that is used to store information about mobile application versions, native dependencies, and information about MiniApps. One cauldron file exists for each mobile application. With appropriate permissions, you can use the Electrode Native CLI commands to access and modify the configuration settings in the cauldron file.
 
 The cauldron file also contains:
-* One record for each mobile application version, for example: walmart ios 17.15 and walmart android 17.10.0.
+* One record for each mobile application version, for example: Walmart ios 17.15 and Walmart android 17.10.0.
 * Data pertaining to a specific mobile application version including all MiniApps (and their versions) that are currently part of the version
 * A list of all native dependencies and their versions--that are used by the MiniApps
 * A list of native dependencies that are not dependent upon by any MiniApp such as native API implementations
@@ -102,13 +102,13 @@ The configuration also shows the different objects stored in the cauldron--level
 
 * For each mobile application, the second level is the platforms array. Electrode Native supports two platforms: Android and iOS. For each platform, there can be multiple versions of a mobile application. At this level (mobile application + platform + version), most of the Cauldron data resides.  
 
-* At the Android platform level of the `MyWeatherApp` application, a configuration object contains data that applies to every version of the `MyWeatherApp` for the Android platform. It also contains CodePush configurations. For information about CodePush, see the [CodePush documentation](url) for more details. For information about the containuer generator configuration, see the [Container documentation](url).
+* At the Android platform level of the `MyWeatherApp` application, a configuration object contains data that applies to every version of the `MyWeatherApp` for the Android platform. It also contains CodePush configurations. For information about CodePush, see the [CodePush documentation](url) for more details. For information about the container generator configuration, see the [Container documentation](url).
 
 For each unique version of a mobile application, the cauldron stores the following:
 
 - `ernPlatformVersion` : The version of Electrode Native used.
 - `isReleased` : `true` if this version is released to users and `false` if not (the release is in development)
-- `yarnlock` : The SHA of the `yarn.lock` file stored in the cauldron filestore - this should be used for generating the composite JavaSript bundle.
+- `yarnlock` : The SHA of the `yarn.lock` file stored in the cauldron filestore - this should be used for generating the composite JavaScript bundle.
 - `nativeDeps` : An array of native dependencies descriptors, corresponding to the native dependencies stored in the current container of this version
 - `miniApps` : MiniApps package descriptors  corresponding to the MiniApps currently part of the container of this version or released through CodePush updates
 
@@ -161,7 +161,7 @@ Compatibility checks are the same as the checks performed when adding a new Mini
 When directly adding, updating, or removing native dependencies in a mobile application version, the following applies only for in-development mobile application versions. It is not possible to add, remove, or update a native dependency version using an OTA update.
 
 - Adding a new native dependency
-Compatibility checks are not performed. If this is a new native dependency, add it as it won't conflict with existin versions.
+Compatibility checks are not performed. If this is a new native dependency, add it as it won't conflict with existing versions.
 
 - Updating a native dependency version  
 Ensure of backward compatibility--only forward version updates are allowed.
@@ -179,7 +179,7 @@ Alternatively, you can give Write access to the cauldron--to MiniApp developers 
 
 * While Git offers many benefits compared to a large database system, developers who are familiar with Git repositories are also familiar with the Git repository workflow--which doesn't match the workflow when working with a cauldron repository. For example, developers working in a Git repository might be tempted to fork, branch, and issue pull requests for a cauldron. Doing so will result in compatibility check failures.
 
-* A Cauldron can only be updated using the Electrode Native CLI commands. You should not update the Cauldron 'manually'. If you update a cauldron manually, you bypass all compatibility checks performed by Electrode Native and you risk desynchronizing the container version and the yarn locks.
+* A Cauldron can only be updated using the Electrode Native CLI commands. You should not update the Cauldron 'manually'. If you update a cauldron manually, you bypass all compatibility checks performed by Electrode Native and you risk de-synchronizing the container version and the yarn locks.
 
 Note: Open a support ticket if you aren't able to update information in the cauldron using the Electrode Native CLI commands. It's possible that an existing command can be updated or a new command may be issued.
 

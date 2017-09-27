@@ -10,7 +10,7 @@ The job of this binary is solely to bootstrap the platform and also proxy all co
 
 These two responsibilities can be summarized as follow :
 
-- `Bootstraping` : Whenever the user run `ern` comand for the first time ever on his/her workstation, the global client will create the platform folders and initial configuration file and will install the latest platform version.  
+- `Bootstrapping` : Whenever the user run `ern` command for the first time ever on his/her workstation, the global client will create the platform folders and initial configuration file and will install the latest platform version.
 
 - `Proxy to local client` : If there is at least a version of the platform installed, this global client will just act as a proxy to the local client ([ern-local-cli](../ern-local-cli)) of the currently activated platform version.
 

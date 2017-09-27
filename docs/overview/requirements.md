@@ -10,7 +10,7 @@ If you have React Native already installed, then you probably have the required 
 
 ### OS X
 
-Electrode Native supports Mac OS X only. Electrode Native also runs on Linux; however, it has not been thoroughly tested on the Linux platform. Windows support is on our roadmap.
+Electrode Native supports Mac OS X only. Electrode Native also runs on Linux; however, it has not been thoroughly tested on the Linux platform. Windows support is on our road map.
 
 ### [Node.JS](https://nodejs.org/en/)
 
@@ -20,7 +20,7 @@ Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or la
 
 ### NPM (version 3.0 or later) or Yarn
 
-NodeJS v6.x includes npm@3 by default, but if you are using NodeJS v4, be sure to install npm@3 with the using the following command:
+Node.js v6.x includes npm@3 by default, but if you are using Node.js v4, be sure to install npm@3 with the using the following command:
 
 ```bash
 npm install -g npm@3
@@ -36,11 +36,11 @@ After you install Android Studio, set the `ANDROID_SDK env` variable to point to
 export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
 ````
 
-### [XCode](https://developer.apple.com/xcode/)
+### [Xcode](https://developer.apple.com/xcode/)
 
-You need to install [XCode](https://developer.apple.com/xcode/) if you want your MiniApp to target the iOS platform  or if you need to generate containers targeting iOS mobile applications.  
+You need to install [Xcode](https://developer.apple.com/xcode/) if you want your MiniApp to target the iOS platform  or if you need to generate containers targeting iOS mobile applications.
 
-XCode 8.3.2 or later is required to ensure compatibility with Electrode Native.
+Xcode 8.3.2 or later is required to ensure compatibility with Electrode Native.
 
 ### Additional optional requirements
 

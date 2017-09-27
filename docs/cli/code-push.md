@@ -1,7 +1,7 @@
 ## `ern code-push <miniapps..>`
 #### Description
 * Update/publish one or more MiniApps in a target released native application version Over the Air (OTA)  
-* Perform compatiblity checks to ensure that the new MiniApp versions are compatible with the target native application version  
+* Perform compatibility checks to ensure that the new MiniApp versions are compatible with the target native application version
 **Note** The `ern code-push <miniapps..>` command pushes JavaScript code changes only, not native changes. Therefore the compatibility checks must ensure that the MiniApp's native dependencies are compatible with the versions running in the target native application version.  
 *  Update the Cauldron with a new `CodePush` entry containing the versions of all MiniApps that are part of this publication  
 
