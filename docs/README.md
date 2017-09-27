@@ -38,9 +38,9 @@ Copyright 2017 WalmartLabs
 
 Licensed under the [Apache License, Version 2.0].
 
-[CONTRIBUTING guide]: https://electrode.gitbooks.io/electrode-native//overview/contributing.md
+[CONTRIBUTING guide]: https://electrode.gitbooks.io/electrode-native/overview/contributing.html
 
-[requirements]: https://electrode.gitbooks.io/electrode-native//overview/requirements.md
+[requirements]: https://electrode.gitbooks.io/electrode-native/overview/requirements.html
 
 [Getting Started with Electrode Native]: https://electrode.gitbooks.io/electrode-native/content/getting-started/getting-started.html
 
