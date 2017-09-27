@@ -1,52 +1,48 @@
-# Contributing to Electrode Native
+# Contributing to the Electrode Native Open Source Project
 
-There are a few different ways you can contribute to Electrode Native:
+You can contribute to the Electrode Native open source project in several ways:
 
-- As a user of Electrode Native, if you face any issue with the platform, you can open a [new issue].  
+- As an Electrode Native user, if you face any issue with the platform, you can open a [new issue].  
 
-- While reading the documentation, if you notice any typo (even minor), any misleading or wrong information or even missing content, you can edit the documentation and issue a Pull Request. Thanks to GitHub, this process can entirely be done online without even having to fork the repository on your workstation.
+- While reading the documentation, if you notice any typo (even a minor typpo ;), any misleading or wrong information or missing content, you can edit the documentation directly and issue a Pull Request. Using GitHub, this can be done online without having to fork the repository on your workstation.
 
-- If you want to suggest a new feature, or an improvement for an existing one, you can just create a [new issue]. We will create labels over time to easily classify issues.
+- If you want to suggest a new feature or an improvement for an existing one, you can create a [new issue]. Over time, we will create labels to easily classify issues.
 
-- In case you'd like to use a native module that is not currently supported by Electrode Native, you can contribute a plugin configuration in the master Manifest to bring support of this native module for the community. Check the documentation on [reusing existing native modules](https://electrode.gitbooks.io/electrode-native/content/platform-parts/manifest.html#reusing-exiting-native-modules) for more information.
+- In case you would like to use a native module that is not currently supported by Electrode Native, you can contribute a plugin configuration in the master manifest to add support for this native module. Check the documentation on [Reusing existing native modules](https://electrode.gitbooks.io/electrode-native/content/platform-parts/manifest.html#reusing-exiting-native-modules) for more information.
 
-- By taking care of an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code, as explained below.
+- By resolving an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code, as explained below.
 
 - You can also contribute to the [Electrode Native Bridge](https://github.com/electrode-io/react-native-electrode-bridge) library.
 
 ## Electrode Native development setup
 
-If you want to contribute some code to the platform, you'll first need to setup a development environment to work on Electrode Native.
+If you want to contribute code to the Electrode Native platform, you'll first need to setup a development environment to work on Electrode Native. It's actually quite easy to start working on the platform.
 
-It's actually quite easy to start working on the platform.
+1) Using Terminal, enter the following command to make sure that you install the platform:  
+ `$ npm install -g electrode-react-native`  
 
-What you'll need first is to make sure that you have installed the platform, as any user, through:   
+2) When installation is complete, enter `ern` to enter the [CLI] command mode.  
 
-`$ npm install -g electrode-react-native`
+3) Using the Electrode Native CLI, use the `fork` command and the `electrode-react-native` command to fork the repository.  
 
-Once done, make sure that you can run the [CLI] by running `ern` in a terminal. If that is the case, good news, you are almost setup for development.
+4) From your local working directory of the `electrode-react-native` repository (change directories if necessary), enter the `node setup-dev` command.
 
-The next thing you'll want to do is to `fork` the `electrode-react-native` repository.
+This little script takes care of installing all the needed dependencies for all Electrode Native modules, and creates a new local version `1000.0.0` of the platform.
 
-Then, all you are left with is to run `node setup-dev` from your local working directory of `electrode-react-native` repository.
-
-This little script will take care of installing all the needed dependencies for all ern modules, and will create a new local version `1000.0.0` of the platform.
-
-Upon completion, you'll be able to switch to this local development by running  
-
+5) Upon completion, use the following command to switch to this local development.    
 `$ ern platform use 1000.0.0`
 
-This special version will point to your `Electrode Native`  working folder. It is also setup to run transpilation of the code on the fly, which means that any code modification you'll make to any of the modules will be reflected upon next run of `ern` command.
+Version `1000.0.0` is the development version and it points to your Electrode Native  working folder. It is also setup to run transpilation of the code on the fly, which means that any code modification you'll make to any of the modules will be reflected in the next run of the `ern` command.
 
-With this setup, you can also still use `Electrode Native` as any other non developer user. You can install new platform versions or switch between versions. The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is your development version.
+With this setup, you can also use Electrode Native as any other non-developer user. You can install new platform versions or switch between versions. The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is your development version.
 
 ## Continuous Integration
 
-We are using [Travis] for our CI.
+We are using [Travis] for our Continuous Integration (CI).
 
-The CI job will be run on every opened Pull Request. It will run `standard` and `flow` checks along with running the whole platform test suite. 
+The CI job is run on every opened Pull Request (PR). It runs standard and flow checks along with running the whole platform test suite.
 
-We will only merge PRs that pass the CI (green status). `standard` and `flow` are automatically run for you on every commit, so you should not have any suprise for these checks on the CI. However the tests are not automatically run on every commit, so before opening a PR please ensure that all tests are passing on your workstation by running `npm run test`.
+We only merge PRs that pass the CI (green status). Standard and flow checks are automatically run for you on every commit, so you should not have any suprise for these checks on the CI. However the tests are not automatically run on every commit, so before opening a PR please make sure that all tests are passing on your workstation by running the `npm run test` command.
 
 ## Guidelines for code contribution
 
@@ -56,23 +52,23 @@ We are using [Standard JS] for our JavaScript code style rules.
 
 If you want to see Standard warnings during development, you might consider configuring your JavaScript editor accordingly. Many editors have built-in support for [Standard JS]. Just check out their documentation regarding [editor plugins].
 
-You can also run [Standard JS] manually on `Electrode Native` through `npm standard`.
+You can also run [Standard JS] manually on Electrode Native through npm standard.
 
-`Electrode Native` has a pre-commit hook setup, that will run `standard` for every commit. In case a commit is not meeting some `standard` rules, it won't go through. You'll have to fix the issue(s) first before being able to commit your changes.
+Electrode Native has a pre-commit hook setup, that runs standard for every commit. In case a commit is not meeting some standard rules, it won't go through. You'll have to fix the issue(s) first before being able to commit your changes.
 
 ### Type checking
 
-`Electrode Native` is using [flow] accross all of its modules. 
+Electrode Native uses [flow] accross all of its modules.
 
-[flow] comes with integration support for many JavaScript editors. If you want to see [flow] erros from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
+[flow] comes with integration support for many JavaScript editors. If you want to see [flow] errors from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
 
-You can also run [flow] manually on `Electrode Native` through `npm flow`.
+You can also run [flow] manually on Electrode Native using the `npm flow` command.
 
-`Electrode Native` has a pre-commit hook setup, that will run `flow` for every commit. In case a commit contains some `flow` errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
+Electrode Native has a pre-commit hook setup, that will run flow for every commit. In case a commit contains some flow errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
 
 ### Tests
 
-Tests can be run through running `npm test` from the root of `electrode-react-native` directory. Tests from all modules will be executed.
+Tests can be run by running the `npm test` command from the root of the `electrode-react-native` directory. Tests from all modules will be executed.
 
 Our tests are written using [mocha], [chai] and [sinon].
 
