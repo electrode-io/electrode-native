@@ -33,11 +33,11 @@
       "split": false
     },
     "edit-link": {
-      "base": "https://github.com/belemaire/electrode-react-native/tree/master/docs",
+      "base": "https://github.com/electrode-io/electrode-native/tree/master/docs",
       "label": "Edit This Page"
     },
     "github": {
-      "url": "https://github.com/belemaire/electrode-react-native"
+      "url": "https://github.com/electrode-io/electrode-native"
     },
      "versions": {
        "type": "branches"
