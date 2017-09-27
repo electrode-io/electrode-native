@@ -219,6 +219,7 @@ We have already created and published the MoviesApi for the needs of this tutori
 ```bash
 $ ern add react-native-ernmovie-api
 $ ern add react-native-electrode-bridge
+$ ern add react-native-ernnavigation-api
 ```
 
 This will install the MoviesApi from NPM and add it as a dependency of your MiniApp. We also need to add the bridge, because it is not a direct dependency of APIs.
@@ -428,9 +429,6 @@ We have created this API for you for this tutorial, if you wish to have a look t
 
 - Add the NavigationAPI to the `MovieListMiniApp`.
 
-```bash
-$ ern add react-native-ernnavigation-api
-```
 {% sample lang="android" %}
 - Mofify `index.android.js` file as follow, so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
 {% sample lang="ios" %}
