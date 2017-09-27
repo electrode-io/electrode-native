@@ -17,9 +17,6 @@
     "standard",
     "flow"
   ],
-  "bin": {
-    "ern": "ern-global-cli/bin/ern.js"
-  },
   "dependencies": {
     "chalk": "^1.1.3",
     "shelljs": "^0.7.6"
