@@ -45,7 +45,7 @@ export async function runAndroid ({
   if (devices.length === 1) {
     // If 1 device is running install and launch the application
     log.debug(devices[0].split('\t')[0], ' is running ...')
-    installAndLaunchApp(projectPath, packageName)
+    await installAndLaunchApp(projectPath, packageName)
   } else if (devices.length > 1) {
     log.error('error: more than one device/emulator')
   } else {

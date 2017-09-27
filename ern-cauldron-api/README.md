@@ -1,1 +1,1 @@
-### ERN Cauldron API
+### Electrode Native Cauldron API
