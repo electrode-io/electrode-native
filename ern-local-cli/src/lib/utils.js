@@ -339,12 +339,12 @@ async function performContainerStateUpdateInCauldron (
 }
 
 function epilog ({command} : {command: string}) {
-  const rootUrl = 'https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/blob/master/docs/cli'
+  const rootUrl = 'https://electrode.gitbooks.io/electrode-native/content/cli'
   const commandWithoutOptions = command.split(' ')[0]
   const idx = _.indexOf(process.argv, commandWithoutOptions)
   let commandPath = _.slice(process.argv, 2, idx).join('/')
   commandPath = commandPath ? `/${commandPath}` : ''
-  return `More info about this command @ ${chalk.bold(`${rootUrl}${commandPath}/${commandWithoutOptions}.md`)}`
+  return `More info about this command @ ${chalk.bold(`${rootUrl}${commandPath}/${commandWithoutOptions}.html`)}`
 }
 
 async function runMiniApp (platform: 'android' | 'ios', {
