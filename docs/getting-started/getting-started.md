@@ -2,78 +2,79 @@
 {% common %}
 ## Getting started with Electrode Native
 
-This tutorial will walk you through creating a simple Movie aplication using `Electrode Native`.  
-{% sample lang="android" %}
-We'll use Android for this tutorial. If you wish to use iOS instead, please click the iOS tab on the top right of this page.
-{% sample lang="ios" %}
-We'll use iOS for this tutorial. If you wish to use Android instead, please click the Android tab on the top right of this page.
-{% common %}
-This application will be composed of two React Native MiniApps:
+The Getting Started tutorial walks you through creating a simple movie application using Electrode Native.  
+{% sample lang="android" %}  
+We'll use Android for this tutorial. If you wish to use iOS instead, click the iOS tab on the top-right of this page.  
+{% sample lang="ios" %}  
+We'll use iOS for this tutorial. If you wish to use Android instead, click the Android tab on the top-right of this page.  
+{% common %}  
+The movie application includes two React Native MiniApps and two APIs:
 
-- **MovieListMiniApp** : This MiniApp will display a list of movies.
-- **MovieDetailsMiniApp** : This MiniApp will show the details of a movie.
+- **MovieListMiniApp** | This MiniApp displays a list of movies.
+- **MovieDetailsMiniApp** | This MiniApp displays the details of a selected movie.  
 
-And two APIs:
+- **MoviesApi** | An API used to retrieve a list of movies.
+- **NavigationApi** | An API used to navigate from one MiniApp to another.
 
-- **MoviesApi** : An API to retrieve a list of movies.
-- **NavigationApi** : An API to navigate from one MiniApp to another.
-
-This will show you how easy it is to integrate multiple React Native applications into a native application, and how to easily communicate between the JavaScript and the native side using APIs.
+The tutorial shows how easy it is to integrate multiple React Native applications into a native application, and how to easily communicate between the JavaScript and the native side using APIs.
 
 ## Before you begin
 {% sample lang="android" %}
-- If not already done, install [Android Studio](https://developer.android.com/studio/index.html) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation).
 
-- If you want to run the application in an emulator, make sure you have created one.
+- Install [Android Studio](https://developer.android.com/studio/index.html) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation) if they're not already installed.
+
+- Set up an emulator if you want to run the application in an emulator.
 For more information on how to setup an emulator, you can check [the Android documentation](https://developer.android.com/studio/run/managing-avds.html)
 {% sample lang="ios" %}
--  If not already done, install [Xcode](https://developer.apple.com/xcode/) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation).
+-  Install [Xcode](https://developer.apple.com/xcode/) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation) if they're not already installed.
 {% common %}
 - Create a working directory named `ElectrodeNativeTutorial` to hold all tutorial project files
 
 ## Creating the MovieList MiniApp
 
-- Move to the working directory and create a MiniApp named `MovieListMiniApp` using `ern create-miniapp` command.
+1) Move to the working directory and create a MiniApp named `MovieListMiniApp` using the `ern create-miniapp` command.
 
 ```bash
 $ cd ElectrodeNativeTutorial
 $ ern create-miniapp MovieListMiniApp
-```
-When asked to enter a package name for this MiniApp, just hit enter to use the default one. You may check the [package name requirements](https://docs.npmjs.com/files/package.json#name)
+```  
 
-- Move to the `MovieListMiniApp` directory and run the MiniApp to see how it looks like, using `ern run` command.
+2) When asked to enter a package name for this MiniApp, hit enter to use the default name. You may check the [package name requirements](https://docs.npmjs.com/files/package.json#name)
+
+3) Move to the `MovieListMiniApp` directory and run the MiniApp to view it, using the `ern run` command.  
 
 {% sample lang="android" %}
 ```bash
 $ cd MovieListMiniApp
 $ ern run-android
-```
+```  
 
 {% sample lang="ios" %}
 ```bash
 $ cd MovieListMiniApp
 $ ern run-ios
-```
-{% sample lang="android" %}
-First time users please grant the `SYSTEM_ALERT_WINDOW` permission. [Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)
+```  
+{% sample lang="android" %}  
+4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission. [Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)
 ![Overlay Permission Window](/images/OverlayPermissionWindow.png) ![Select ErnRunner](/images/ErnRunnerSelected.png)
 
 {% common %}
 
-Pick one emulator (or device) from the list when prompted.
-Once the command completes, you will see your first MiniApp running. If you have already used React Native, you'll notice that this MiniApp is just the same as the React Native default starter app. After all, a MiniApp is nothing more than a React Native application !
+5) Select an emulator (or device) from the list when prompted.  
 
-Now let's update the UI of this MiniApp for it to display a list of movies.
+Once the command completes, you will see your first MiniApp running. If you used React Native previously, you'll notice that this MiniApp is the same as the React Native default starter app--after all, a MiniApp is nothing more than a React Native application!
+
+Now let's update the UI of this MiniApp to display a list of movies.
 
 ## Updating the MovieList MiniApp UI
 
-{% sample lang="android" %}
-- Open`index.android.js` in your favorite JavaScript editor
-{% sample lang="ios" %}
-- Open `index.ios.js` in your favorite JavaScript editor
+{% sample lang="android" %}  
+1) Open the `index.android.js` file in your favorite JavaScript editor.  
+{% sample lang="ios" %}  
+1) Open the `index.ios.js` file in your favorite JavaScript editor.
 
-{% common %}
-- Replace the whole content of this source file with the following code.
+{% common %}  
+2) Replace all of the content in this source file with the following code.
 
 ```javascript
 /**
@@ -190,11 +191,9 @@ const styles = StyleSheet.create({
 })
 
 AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
-```
+```  
 
-- Reload the application to see the updated UI.
-
-Inside the emulator window or on you device, do the following
+3) Reload the application to view the updated UI. Inside the emulator window or on your device, press Command + M to reload.
 
 {% sample lang="android" %}
 ```
@@ -206,37 +205,38 @@ CMD+M
 ```
 {% common %}
 
-You will see the initial UI of the MovieList MiniApp.  
+The initial UI of the MovieList MiniApp is displayed.  
 
-Now let's add an API to this MiniApp so that we can retrieve movies from the native application instead of manually hardcoding them in the source code of our MiniApp.
+Now let's add an API to the MiniApp so that we can retrieve movies from the native application instead of manually hardcoding them in the source code of our MiniApp.
 
 ## Adding the MoviesApi to the MovieList MiniApp
 
-We have already created and published the MoviesApi for the needs of this tutorial. If you want to take a look at the generated API code, you can have a look to the [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) where we keep this API.
+We already created and published the MoviesApi in this tutorial. If you want to view the generated API code, you can view it in the GitHub repository here: [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api).
 
-- Using `ern add` command, add the MoviesApi
+1) Using the `ern add` command, add the `MoviesApi`.
 
 ```bash
 $ ern add react-native-ernmovie-api
 $ ern add react-native-electrode-bridge
 ```
 
-This will install the MoviesApi from NPM and add it as a dependency of your MiniApp. We also need to add the bridge, because it is not a direct dependency of APIs.
+This step shows how to install the MoviesApi from NPM and add it as a dependency of your MiniApp.  
+We also need to add the bridge, because it's not a direct dependency of APIs.
 
-- Update the MovieList MiniApp code to use the API
+2) Update the MovieList MiniApp code to use the API.
 
-{% sample lang="android" %}
-Open the `index.android.js` file and modify it as follow
-{% sample lang="ios" %}
-Open the `index.ios.js` file and modify it as follow
-{% common %}
-Add the following `import` statement under other `import` statements located at the top of the JavaScript file:
+{% sample lang="android" %}  
+3) Open the `index.android.js` file and modify it described in the next step.
+{% sample lang="ios" %}  
+3) Open the `index.ios.js` file and modify it described in the next step.
+{% common %}  
+4) Add the following `import` statement under other `import` statements located at the top of the JavaScript file:
 
 ```javascript
 import { MoviesApi } from 'react-native-ernmovie-api'
 ```
 
-Then, just replace the constructor method with the following code:
+5) Replace the constructor method with the following code:
 
 ```javascript
    constructor () {
@@ -276,31 +276,32 @@ Then, just replace the constructor method with the following code:
    }
 ```
 
-- Relaunch the application
+6) Relaunch the application.
 
-Because we added an API, that contains some native code, we'll need to regenerate the Container used by the native application, for it to include the native code of the API. This can be done by the run command which will recreate a new local Container and launch the application.
+Because we added an API, that contains some native code, we'll need to regenerate the container used by the native application, in order for it to include the native code of the API. This can be done using the `run` command which recreates a new local container and launches the application.  
 
-{% sample lang="android" %}
+7) Enter the following `run` command:
+
+{% sample lang="android" %}  
 ```bash
 $ ern run-android
 ```
-{% sample lang="ios" %}
+{% sample lang="ios" %}  
 ```bash
 $ ern run-ios
 ```
 {% common %}
 
-You can see that the UI is showing the movie names that are set in the `catch` block.
-This means there was no API implementation available to serve the `getTopRatedMovies` request.
+The UI displays the movie names that are set in the catch block. This means there was no API implementation available to serve the `getTopRatedMovies` request.
 
-Let's now see write an implementation of this API. Although you can write the implementation either on the JavaScript side or Native side, this tutorial shows the implementation on the native side.
+Now let's write an implementation of this API. Although you can write the implementation either on the JavaScript side or Native side, this tutorial shows how to write the implementation on the native side.
 
 ### Implementing the MovieApi on the native side
 
-{% sample lang="android" %}
-- Open `MainApplication.java` in your favorite IDE (this file is located in `android/app/src/main/java/com/walmartlabs/ern/`), or just open the Android project (in `android/`) in Android Studio to edit this file.
+{% sample lang="android" %}  
+1) Open the `MainApplication.java` file in your favorite IDE. The `MainApplication.java` file is located in the  `android/app/src/main/java/com/walmartlabs/ern/`) directory. Alternatively, you can use Android Studio to open the Android project (in the `android/` directory) and to edit this file.
 
-- Replace `MainApplication.java` code with the following
+2) Replace the code in the `MainApplication.java` file with the following code:
 
 ```java
 package com.walmartlabs.ern;
@@ -344,18 +345,18 @@ public class MainApplication extends Application {
     }
 }
 ```
-- Relaunch the application
+3) Relaunch the application
 
-If you are using android studio you can run the app directly from there or by running the command below.
+If you are using Android Studio, you can run the app directly from there or you can use the `run` command as shown below.
 
 ```bash
 $ ern run-android
 ```
 
 {% sample lang="ios" %}
-- Open the generated ios project (in `ios` folder) in XCode.
+1) In Xcode, open the generated iOS project (in the `ios` directory).  
 
-- Replace the `ViewController.m` code with the following code.
+2) Replace the code in the `ViewController.m` file with the following code.
 
 ```objectivec
 #import "ViewController.h"
@@ -411,44 +412,45 @@ $ ern run-android
 
 ```
 
-- Relaunch the application
+3) Relaunch the application
 
-You can launch the app directly from xcode or by running the command below
+You can launch the app directly from Xcode or you can use the `run` command as shown below.
 
 ```bash
 $ ern run-ios
 ```
 
 {% common %}
-You will see that the UI now shows the movies that are stored in the native application.
+You can see that the UI now shows the movies that are stored in the native application.
 
 ## Adding the Navigation API
 
-We have created this API for you for this tutorial, if you wish to have a look to it, you can see it in [this GitHub repository](https://github.com/electrode-io/react-native-ernnavigation-api). This very simple API will be used to navigation from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
+We created this API for you for this tutorial--you can view it in the GitHub repository located here: [this GitHub repository](https://github.com/electrode-io/react-native-ernnavigation-api). This very simple API will be used for navigating from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
 
-- Add the NavigationAPI to the `MovieListMiniApp`.
+1) Add the NavigationAPI to the `MovieListMiniApp`.
 
 ```bash
 $ ern add react-native-ernnavigation-api
-```
-{% sample lang="android" %}
-- Mofify `index.android.js` file as follow, so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
-{% sample lang="ios" %}
-- Modify `index.ios.js` file as follow, so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
-{% common %}
-First, add the following import statement:
+```  
+{% sample lang="android" %}  
+2) Mofify the `index.android.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.  
+
+{% sample lang="ios" %}  
+2) Modify the `index.ios.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.  
+{% common %}  
+3) Add the following import statement:  
 
 ```javascript
 import { NavigationApi } from 'react-native-ernnavigation-api'
 ```
 
-And then just replace the `render` method with the following one:
+4) Replace the `render` method with the following method:
 
 ```javascript
   render () {
     return (
-      <ListView 
-        style={styles.container} 
+      <ListView
+        style={styles.container}
         dataSource={this.state.dataSource}
         renderRow={(movie) =>
         <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="grey">
@@ -470,9 +472,9 @@ And then just replace the `render` method with the following one:
       />
     )
   }
-```
+```  
 
-We'll also add a method, below the `render` method to send the `navigate` request whn a movie is selected in the list of movies :
+5) Add a method below the `render` method to send the `navigate` request when a movie is selected in the list of movies:  
 
 ```javascript
   _onPressRow (movie) {
@@ -483,12 +485,11 @@ We'll also add a method, below the `render` method to send the `navigate` reques
   }
 ```
 
-- Implement the `NavigationAPI`
+6) Implement the `NavigationAPI`.  
+The `navigate` method of the `NavigationApi` is not yet implemented. We'll implement it in the native application, as we did for the `MovieApi`.  
 
-The `navigate` method of the `NavigationApi` is not yet implemented. We'll implement it in the native application, as we did for the `MovieApi`.
-
-{% sample lang="android" %}
-Replace the `MainActivity.java` whole content with the following:
+{% sample lang="android" %}  
+* Replace all of the `MainActivity.java` content with the following code:
 
 ```java
 package com.walmartlabs.ern;
@@ -509,9 +510,9 @@ import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
 import com.walmartlabs.ern.container.miniapps.MiniAppsConfig;
 import com.walmartlabs.ern.container.miniapps.MovieListMiniAppActivity;
 
-// This is the main activity that gets launched upon app start
-// It just launches the activity containing the miniapp
-// Feel free to modify it at your convenience.
+// This is the main activity that gets launched upon app start  
+// It just launches the activity containing the miniapp  
+// Feel free to modify it at your convenience.  
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -546,9 +547,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-```
-{% sample lang="ios" %}
-Replace the content of `ViewController.h` as below,
+```  
+{% sample lang="ios" %}  
+* Replace the content of the `ViewController.h` file with the content shown below:
 
 ```objectivec
 #import <UIKit/UIKit.h>
@@ -556,9 +557,9 @@ Replace the content of `ViewController.h` as below,
 @interface ViewController : UINavigationController
 
 @end
-```
+```  
 
-Add the following implementation inside `ViewController.m` right below the movie api implementation.
+* Add the following implementation inside the `ViewController.m` file right below the movie api implementation.  
 
 ```objectivec
  NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
@@ -577,42 +578,38 @@ Add the following implementation inside `ViewController.m` right below the movie
 
         block(nil, nil);
     }];
-```
+```  
 
-Ensure that you add the `appDelegate` import statement to `ViewController.m` file as well
+* Make sure that you add the `appDelegate` import statement to `ViewController.m` file as well.  
 
 ```objectivec
 #import "AppDelegate.h"
 ```
-{% common %}
+{% common %}  
+
 ## Adding the MovieDetailsMiniApp
 
-All that remains now is to add the `MovieDetailsMiniApp` to our application.
+To complete the tutorial, add the `MovieDetailsMiniApp` to the application.
 
-We've developed and published this MiniApp so you can just reuse it. If you want to have a look at the code of this MiniApp, you can see it in [this GitHub repository](https://github.com/electrode-io/MovieDetailsMiniApp)
+We've developed and published this MiniApp so you can reuse it for this tutorial. If you want to view the code of the MiniApp, you can view it in [this GitHub repository](https://github.com/electrode-io/MovieDetailsMiniApp)
 
-We can simply add this MiniApp to the local Container used by the native application, using a variation of the `ern run` command that allows to include extra MiniApps to the local Container.
+* To add this MiniApp to the local container used by the native application, use a variation of the `ern run` command that allows you to include extra MiniApps to the local Container. Let's do that magic now.  
 
-Let's do that magic now.
-{% sample lang="android" %}
+{% sample lang="android" %}  
 ```bash
 $ ern run-android --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
-```
-{% sample lang="ios" %}
+```  
+{% sample lang="ios" %}  
 ```bash
 $ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
-```
+```  
+
 {% common %}
-This is how easy it is to combine multiple MiniApps in a local Container.
+This is how easy it is to combine multiple MiniApps in a local container!
 
-There you go !
+You've successfully used Electrode Native to build your first native application, composed of multiple MiniApps.
 
-You've successfully used `Electrode Native` to build your first native application, composed of multiple MiniApps.
+In this tutorial, we've covered only a small part of what Electrode Native offers. Be sure to check the rest of the Electrode Native documentation to learn about all the features that Electrode Native offers.
 
-In this tutorial, we've only covered a small part of what `Electrode Native` offers. 
-
-```
-TODO : <add What's next?...or lead them into the next section>
-```
 
 {% endmethod %}
