@@ -19,13 +19,13 @@ You can contribute to the Electrode Native open source project in several ways:
 If you want to contribute code to the Electrode Native platform, you'll first need to setup a development environment to work on Electrode Native. It's actually quite easy to start working on the platform.
 
 1) Using Terminal, enter the following command to make sure that you install the platform:  
- `$ npm install -g electrode-react-native`  
+ `$ npm install -g electrode-native`  
 
 2) When installation is complete, enter `ern` to enter the [CLI] command mode.  
 
-3) Using the Electrode Native CLI, use the `fork` command and the `electrode-react-native` command to fork the repository.  
+3) Using the Electrode Native CLI, use the `fork` command and the `electrode-native` command to fork the repository.  
 
-4) From your local working directory of the `electrode-react-native` repository (change directories if necessary), enter the `node setup-dev` command.
+4) From your local working directory of the `electrode-native` repository (change directories if necessary), enter the `node setup-dev` command.
 
 This little script takes care of installing all the needed dependencies for all Electrode Native modules, and creates a new local version `1000.0.0` of the platform.
 
