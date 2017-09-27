@@ -1,66 +1,76 @@
-## What is Electrode React Native
+## What is Electrode Native
 
-Electrode React Native (ern), is a platform, built for React Native JavaScript and mobile developpers, aiming to simplify and reduce the friction of integrating React Native components into existing mobile applications, with minimal changes to existing moible code bases and infrascrutures.
+Electrode Native is a React Native JavaScript and mobile developer platform that simplifies development and reduces the friction of integrating React Native components into existing mobile applications. Electrode Native requires minimal changes to the existing mobile code base and infrastructure.
 
-It is built on top of [React Native](https://facebook.github.io/react-native/) (and other awesome tools such as [yarn](https://yarnpkg.com/en/) and [CodePush](https://microsoft.github.io/code-push/)).
-That being said, Electrode React Native does not contain any code modifications to these projects. It just sits on top of them and rely on them to perform the different features it offers.
+Electrode Native is built on top of [React Native](https://facebook.github.io/react-native/) and other tools such as [Yarn](https://yarnpkg.com/en/) and [CodePush](https://microsoft.github.io/code-push/). However, Electrode Native does not contain any code modifications to these tools.
 
-The core of the platform is written in JavaScript (ES6). Some parts of the platform contain 'native' code (Java/Swift), mostly in the form of [Mustache](https://mustache.github.io/) templates, used for native code generation, but some components are also mostly pure native projects (for example our bridge is a pure Android/iOS project). 
+The core of the platform is written in JavaScript (ES6). Some parts of the platform contain native code: Java and Swift--mostly in the form of [Mustache](https://mustache.github.io/) templates used for native code generation. Some components are primarily pure native projects--for example our Electrode Native bridge is a pure Android/iOS project.
 
-If we were to do a breakdown of how much Javascript code v.s Native code forms the platform, a good approximation would be in the order of 70% JS and 30% native as of now.  
+To view the platform code percentage of Javascript code versus Native code, a good approximation would be 70% JavaScript and 30% native code.  
 
-Electrode React Native is composed of several modules, conveniently orchestrated and surfaced through the ern client. This client is a command line tool, and the only tool that developers will have to deal with when using the platform. It is running on Node (v4.5+). ern only runs on OSX as of now (Windows support is on our roadmap).
+Electrode Native is composed of several modules that are accessed using the Electrode Native CLI client. The CLI client is the only tool that developers need when using Electrode Native. Electrode Native runs on Node v4.5 or later. Electrode Native runs on Mac OSX only. Windows support is scheduled to follow. Electrode Native also runs on Linux; however only minimal testing has verified this support.
 
-Here is an high level overview of the different modules/features of Electrode React Native platform. Each of these are further detailed and explored in our `platform parts` section.
+Electrode Native modules and features are briefly described below. You can find more information about each module in the specific module documentation.
 
-### Electrode React Native CLI (ern)
+### Electrode Native CLI
 
-The CLI is the user facade, the gateway to the platform. As a user of the platform, you'll only interact with all platform modules through this client. It is a command line tool that contains many commands and subcommands to effectively work with the platform. 
-If you want to see the list of all commands exposed by this CLI as well as getting help regarding the usage of the CLI commands, make sure to check out our `CLI documentation`.
+The Electrode Native CLI is the command line tool that contains the commands and subcommands that developers use to work with the Electrode Native platform. The commands are very similar to React Native commands. For example, instead of using the `react-native start` command, you'll use the `ern start` command. For information about using the Electrode Native CLI commands, see the Electrode Native CLI documentation.
 
 [Learn More about the CLI](url)
 
-### Electrode React Native Bridge
+### Electrode Native Bridge
 
-The platform bridge is a React Native `native module`. It is not part of the platform core itself and is developped and shipped as a separate project living in its own GitHub repoistory. As most `native modules` it is composed of three 'facades', an iOS one an Android one and a Javascript one.  
-The bridge is a low level communication helper library to help with exchanging messages between the JavaScript and the native sides. It can be used on it's own, without even having to use the rest of the platform, but withing the platform it is what powers our APIs generators as all generated APIs are thin wrappers around the bridge.
+The Electrode React Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the ERN platform itself--it resides in it's own open source GitHub repository [URL HERE]. The ERN bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the ERN bridge code is native (95% native/5% Javascript).
+
+Even though the ERN bridge is a standalone native module that can be used in your React Native projects (even without Electrode React Native), if you are using ERN, you do not directly interact with the ERN bridge in your MiniApps or in your mobile applications. Instead, you use the ERN APIs to make a call to the ERN bridge. The ERN APIs are generated from a Swagger schema--so they are predefined. Check out our ERN API documentation HERE.
 
 [Learn More about the Bridge](url)
 
 ### APIs
 
-APIs are the high level counterpart of the `bridge`. 
-While the `bridge` is a low level communication library, the APIs are mostly high level and are the modules your MiniApps or mobile applications will directly consume to communicate with the other side. APIs are actually using the bridge itself for low level message exchange, but they abstract away from you most of the low level boilerplate code.
-Interactions, in the form of requests and events, as well as models are defined using a Swagger schema. From there our API generators will produce all the client code for JavaScript, Android and iOS as well as implementation templates, so that all you are left with is actually writing the implementation of your API and using it in your awesome projects.
+At some point you'll need one or more MiniApps to interact with your mobile application--to access data or to trigger an action. Or, your mobile application may need to interact with your MiniApps. That's where ERN APIs come into play.
+
+Powered by the ERN bridge and automatically generated by Electrode React Native from a Swagger schema, ERN APIs provide clearly defined methods of communication between the native Android or iOS side and the JavaScript side.
+
+There are two components to ERN APIs: the API project itself and the API implementation.
+For information about the Electrode Native APIs, see Working with Electrode Native APIs section.
 
 [Learn More about the APIs](url)
 
 ### Container
 
-The `Container` is what ultimately ends up in your mobile application. It is actually a native library, packaged and shipped in the form of an `AAR` for Android and a `Framework` for iOS.  
-Conforming to its name, the `Container` actually contains quite a few things. First of all, it contains Electrode React Native engine initialization code, as well as a few utilities. But foremost, it contains all the JavaScript React Native MiniApps that you want to include to your mobile application, along with all the native dependencies that they depends upon.
-Each mobile application gets its own `Container`, tailored for its own needs. The `Container` is generated by the platform and versioned.
+The Electrode Native container is a native library similar to common third-party libraries that Android and iOS developers are familiar with. The container is generated entirely by the Electrode Native platform and packaged as an Android Archive (AAR) library for Android and as a framework for iOS.
+
+The container includes the Electrode Native engine initialization code as well as all the JavaScript React Native MiniApps that you want to include in your mobile application--along with all the MiniApps native dependencies.
+
+Each mobile application has its own custom Electrode Native container.
 
 [Learn More about the Container](url)
 
 ### Cauldron
 
-The `Cauldron` can be considered as a database holding some information about your native application(s). Mostly it holds some details about all your mobile application(s) version(s) and what `MiniApps` are currently present in each mobile application version `Container`. The `Cauldron` can also be considered as a version control engine as all `MiniApps` needs to pass some native ompatibility checks before they can make their way inside a `Cauldron`.  One major difference with a fully fledged database is that the `Cauldron` actually requires no complicated setup or dedicated box as it actually stores its data inside a GitHub repository. All you need is to create a dedicated repository for your `Cauldron` and you're good to go !
+A Cauldron is a centralized database or configuration file that is used to store information about mobile application versions, native dependencies, and information about MiniApps. One cauldron file exists for each mobile application. With appropriate permissions, you can use the ERN CLI commands to access and modify the configuration settings in the cauldron file.
+
+Setting up a cauldron is basically the same process as creating a Git repository and storing the data in the repository. To host your cauldron, you can use any provider offering Git repository storage. GitHub and BitBucket are probably two of the most popular providers. Within our documentation, we mention GitHub but you can use your own provider.
 
 [Learn More about the Cauldron](url)
 
 ### Manifest
 
-When it comes to dependency version control and management, on the one hand we have the `Cauldron` which performs some final compatibility checks before a `MiniApp` can make its way inside a mobile application version, and on the other hand we have the `Manifest` which mostly make sure that you start your `MiniApp` development on a good foot, to avoid bad news when you actually try to add it to a `Cauldron`. 
-The `Manifest` is not that fancy. Actually it is solely a single JSON document that contains the native dependencies supported by the platform as well as the versions of these native dependencies that should be used by `MiniApps` if they need some of these. It can be seen as the platform 'conductor', ensuring that all `MiniApps` are aligned on the same version of native dependencies they might share.
-The platform expose its own public 'master' manifest, on which open sourced `MiniApps` should rely, but it also offers you to define you own `Manifest` to override the master one. 
-The `Manifest` is not shipped within the platform but is stored in a `GitHub` repository, making it possible to actually update it at any time, even in-between ern platform releases.
+While the Electrode Native cauldron makes sure that no mis-aligned or non-supported native dependency version makes it into your mobile application--the Electrode Native manifest aligns native dependency versions across multiple MiniApps.
+
+Each Electrode Native platform version is associated to an array of supported native dependencies along with their versions.
+
+The Electrode Native platform stores its master manifest in a GitHub repository. You can see an example here [here](url). The master manifest is public and open sourced so that anyone can add native dependency support. By default, Electrode Native uses the master manifest. For more advanced use cases, it is possible to override the master manifest as described later in this documentation.
 
 [Learn More about the Manifest](url)
 
 ### Runner
 
-Finally, the `Runner` have your back if you are working on a `MiniApp` and would like to launch it in isolation, in an Android or iOS emulator or real device, for development, testing and debugging purposes. It will generate a minimalistic mobile Android and/or iOS application project to hold your `MiniApp`. It is somewhat the platform equivalent of React Native `run-ios` and `run-android` commands.
-The major difference being that it will actually create a `Container` locally, containing your `MiniApp`, and the `Runner` application project will actually depend on and consume this `Container` the same way any mobile application integrating with it would do.
+The ERN platform contains two runners, one for each mobile platform (Android and iOS). Both runners are very simple and light-weight mobile applications--similar to new application projects in Android Studio or XCode.
+
+The ERN runner application is used to run your standalone MiniApp so that you can effectively develop, debug, and test your MiniApp--before releasing a new or updated version of the MiniApp.
+
+An ERN runner application is automatically generated the first time you use the Electrode Native `ern run-ios` or `ern run-android` commands for your MiniApp. Relative to your MiniApp root directory, the runner application is generated in new Android and iOS directories.
 
 [Learn More about the Runner](url)
