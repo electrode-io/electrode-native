@@ -339,12 +339,12 @@ async function performContainerStateUpdateInCauldron (
 }
 
 function epilog ({command} : {command: string}) {
-  const rootUrl = 'https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-platform/blob/master/docs/cli'
+  const rootUrl = 'https://electrode.gitbooks.io/electrode-native/content/cli'
   const commandWithoutOptions = command.split(' ')[0]
   const idx = _.indexOf(process.argv, commandWithoutOptions)
   let commandPath = _.slice(process.argv, 2, idx).join('/')
   commandPath = commandPath ? `/${commandPath}` : ''
-  return `More info about this command @ ${chalk.bold(`${rootUrl}${commandPath}/${commandWithoutOptions}.md`)}`
+  return `More info about this command @ ${chalk.bold(`${rootUrl}${commandPath}/${commandWithoutOptions}.html`)}`
 }
 
 async function runMiniApp (platform: 'android' | 'ios', {
@@ -565,7 +565,9 @@ async function launchSimulator (udid: string) {
       log.debug(data)
     })
     xcrunProc.on('close', code => {
-      code === (0 || 255 /* 255 code because we don't provide -t option */) ? resolve() : reject(code)
+      code === (0 || 255 /* 255 code because we don't provide -t option */)
+        ? resolve()
+        : reject(new Error(`XCode xcrun command failed with exit code ${code}`))
     })
   })
 }
@@ -585,7 +587,9 @@ async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
       log.debug(data)
     })
     xcodebuildProc.on('close', code => {
-      code === 0 ? resolve() : reject(code)
+      code === 0
+        ? resolve()
+        : reject(new Error(`XCode xcbuild command failed with exit code ${code}`))
     })
   })
 }

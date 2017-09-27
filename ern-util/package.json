@@ -1,6 +1,6 @@
 {
   "name": "ern-util",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "description": "Electrode Native Utilities",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -60,7 +60,7 @@
     "tmp": "^0.0.31"
   },
   "devDependencies": {
-    "ern-util-dev": "0.6.9"
+    "ern-util-dev": "0.6.10"
   },
   "engines": {
     "node": ">=4.5"

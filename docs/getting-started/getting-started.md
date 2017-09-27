@@ -218,6 +218,7 @@ We already created and published the MoviesApi in this tutorial. If you want to 
 ```bash
 $ ern add react-native-ernmovie-api
 $ ern add react-native-electrode-bridge
+$ ern add react-native-ernnavigation-api
 ```
 
 This step shows how to install the MoviesApi from NPM and add it as a dependency of your MiniApp.  

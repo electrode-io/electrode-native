@@ -1,28 +1,28 @@
-## Electrode React Native CLI
+## Electrode Native CLI
 
-The ERN CLI is the ERN platform command line client. The ERN CLI is written in JavaScript (ES6) and runs in Node.js 4.5.0 and later.
+The Electrode Native CLI is the Electrode Native platform command line client. The Electrode Native CLI is written in JavaScript (ES6) and runs in Node.js 4.5.0 and later.
 
-Use the ERN CLI to access platform functions. However, if you are working only on the mobile application side, you may not need to use the ERN CLI.
+Use the Electrode Native CLI to access platform functions. However, if you are working only on the mobile application side, you may not need to use the Electrode Native CLI.
 
-The ERN CLI has two clients: a global client and a local client.
+The Electrode Native CLI has two clients: a global client and a local client.
 
-### ERN global CLI client
+### Electrode Native global CLI client
 
-The ERN  global client is installed globally on your machine using the `npm install -g electrode-react-native` command.  
+The Electrode Native  global client is installed globally on your machine using the `npm install -g electrode-react-native` command.  
 * The global client is a lightweight client that contains the `ern` binary.   
 * When you enter an `ern` command in your terminal, the command first passes through the global client before reaching the local client.  
 * The global client role is used to bootstrap first-time platform installation as well as redirect commands to the currently activated local client version.  
 * The global client is rarely updated.  
 
-### ERN local client
+### Electrode Native local client
 
-The ERN local CLI client
+The Electrode Native local CLI client
 
-The ERN local CLI client is installed automatically by the ERN platform when you run the `ern platform install` command.
+The Electrode Native local CLI client is installed automatically by the Electrode Native platform when you run the `ern platform install` command.
 
-When you issue ERN CLI commands, you use the local client.
-You can have multiple local client versions on your workstation as each ERN platform version that you install on your system will have it's own version of the ERN CLI installed.
+When you issue Electrode Native CLI commands, you use the local client.
+You can have multiple local client versions on your workstation as each Electrode Native platform version that you install on your system will have it's own version of the Electrode Native CLI installed.
 Only a single version can be active at any given time.
 You can switch between versions of the local client using the `ern platform use` command.
 
-For information about available Electrode React Native CLI commands, checkout our [CLI documentation](url)
+For information about available Electrode Native CLI commands, checkout our [CLI documentation](url)
