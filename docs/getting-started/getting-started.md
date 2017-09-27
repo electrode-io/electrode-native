@@ -353,9 +353,18 @@ $ ern run-android
 ```
 
 {% sample lang="ios" %}
-1) In Xcode, open the generated iOS project (in the `ios` directory).  
+1) In Xcode, open the generated iOS project (in the `ios` directory).
+2) Replace the content of the `ViewController.h` file with the content shown below:
 
-2) Replace the code in the `ViewController.m` file with the following code.
+```objectivec
+#import <UIKit/UIKit.h>
+
+@interface ViewController : UINavigationController
+
+@end
+```
+
+3) Replace the code in the `ViewController.m` file with the following code.
 
 ```objectivec
 #import "ViewController.h"
@@ -542,18 +551,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-```  
-{% sample lang="ios" %}  
-* Replace the content of the `ViewController.h` file with the content shown below:
-
-```objectivec
-#import <UIKit/UIKit.h>
-
-@interface ViewController : UINavigationController
-
-@end
-```  
-
+```
+{% sample lang="ios" %}
 * Add the following implementation inside the `ViewController.m` file right below the movie api implementation.  
 
 ```objectivec
