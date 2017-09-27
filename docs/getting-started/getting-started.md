@@ -74,7 +74,7 @@ Now let's update the UI of this MiniApp to display a list of movies.
 1) Open the `index.ios.js` file in your favorite JavaScript editor.
 
 {% common %}  
-2) Replace all of the content in this source file with the following code.
+2) Replace the content of this source file with the following code.
 
 ```javascript
 /**
@@ -192,20 +192,13 @@ const styles = StyleSheet.create({
 
 AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 ```  
-
-3) Reload the application to view the updated UI. Inside the emulator window or on your device, press Command + M to reload.
-
-{% sample lang="android" %}
-```
-CMD+M --> Reload
-```
 {% sample lang="ios" %}
-```
-CMD+M
-```
-{% common %}
+3) Reload the application to see the updated UI. Hit ⌘R in your iOS Simulator to reload the app and see your changes.
+{% sample lang="android" %}
+3) Reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
 
-The initial UI of the MovieList MiniApp is displayed.  
+{% common %}
+Congratulations! You've successfully run and modified the initial UI of the MovieList MiniApp.
 
 Now let's add an API to the MiniApp so that we can retrieve movies from the native application instead of manually hard coding them in the source code of our MiniApp.
 
