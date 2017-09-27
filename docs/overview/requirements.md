@@ -1,27 +1,26 @@
 ## Requirements
 
-Depending on whether you are building Android or iOS apps, the following tools are required: 
+Depending on whether you are building Android or iOS apps, the following tools are required:
 * Node.js 4.5 or later
-* NPM >= 3 or Yarn 
+* NPM (version 3.0 or later) or Yarn
 * Android Studio for Android apps
 * Xcode 8.3.2 or later for iOS apps
 
-If you are already set up with React Native, then you probably have the required tools installed.
+If you have React Native already installed, then you probably have the required tools installed.
 
-### OS X 
+### OS X
 
-Electrode Native is supported on OS X (Mac) only. It can also run on Linux, though it has not been thoroughfuly tested with it. We'll be working on Windows support soon.
+Electrode Native supports Mac OS X only. Electrode Native also runs on Linux; however, it has not been thoroughly tested on the Linux platform. Windows support is on our roadmap.
 
 ### [Node.JS](https://nodejs.org/en/)
 
-Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or later must be installed on your workstation.
+Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or later must be installed on your workstation.  
 
-You also need to install NPM or Yarn in order to install the Electrode Native platform.   
-**Note** When you install npm, Node.js is automatically installed.
+**Note** You also need to install NPM or Yarn in order to install the Electrode Native platform. When you install NPM, Node.js is automatically installed.
 
-### NPM >= 3 or Yarn
+### NPM (version 3.0 or later) or Yarn
 
-`NodeJS` v6.x already comes with npm@3 by default, but if you are using `NodeJS` v4 for some reason, make sure you install npm@3 with the following command:
+NodeJS v6.x includes npm@3 by default, but if you are using NodeJS v4, be sure to install npm@3 with the using the following command:
 
 ```bash
 npm install -g npm@3
