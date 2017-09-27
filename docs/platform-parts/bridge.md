@@ -1,6 +1,6 @@
 ## Electrode Native Bridge
 
-The Electrode Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the Electrode Native platform itself--it resides in it's own open source GitHub repository [URL HERE]. The Electrode Native bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the Electrode Native bridge code is native (95% native/5% JavaScript).
+The Electrode Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the Electrode Native platform itself--it resides in it's own [open source GitHub repository](https://github.com/electrode-io/react-native-electrode-bridge). The Electrode Native bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the Electrode Native bridge code is native (95% native/5% JavaScript).
 
 Communication through the Electrode Native bridge is based on message exchanges between JavaScript and the Native mobile application. The Electrode Native bridge processes three message types: Request, Response, and Events.
 
@@ -38,4 +38,4 @@ Even though the Electrode Native bridge is a standalone native module that can b
 
 Because the Electrode Native bridge is a library that is not shipped with the Electrode Native platform, Electrode Native CLI commands are not used to communicate with the Electrode Native bridge.
 
-For more information about the Electrode Native bridge, check out the internal documentation stored within its repository. [URL HERE]
+For more information about the Electrode Native bridge, check out the [internal documentation stored within its repository](https://github.com/electrode-io/react-native-electrode-bridge/blob/master/README.md).

@@ -97,13 +97,13 @@ This example `cauldron.json` file shows the following:
 The configuration also shows the different objects stored in the cauldron--level by level.
 
 * A config object (optional) and a nativeApps array  
-* Currently the cauldron contains only a manifest configuration. For details about the manifest and its configuration, see the information about the  [Electrode Native Manifest](url).  
+* Currently the cauldron contains only a manifest configuration. For details about the manifest and its configuration, see the information about the  [Electrode Native Manifest](./manifest.md).  
 
 * The `nativeapps` array contains the data of all mobile applications that are part of the cauldron. A cauldron file can store multiple mobile applications, however it is not recommended that a cauldron file contains data for multiple mobile applications--instead, we recommend that you use one cauldron per mobile application.  
 
 * For each mobile application, the second level is the platforms array. Electrode Native supports two platforms: Android and iOS. For each platform, there can be multiple versions of a mobile application. At this level (mobile application + platform + version), most of the Cauldron data resides.  
 
-* At the Android platform level of the `MyWeatherApp` application, a configuration object contains data that applies to every version of the `MyWeatherApp` for the Android platform. It also contains CodePush configurations. For information about CodePush, see the [CodePush documentation](url) for more details. For information about the container generator configuration, see the [Container documentation](url).
+* At the Android platform level of the `MyWeatherApp` application, a configuration object contains data that applies to every version of the `MyWeatherApp` for the Android platform. It also contains CodePush configurations. For information about CodePush, see the [CodePush documentation](https://microsoft.github.io/code-push/) for more details. For information about the container generator configuration, see the [Container documentation](./container.md).
 
 For each unique version of a mobile application, the cauldron stores the following:
 

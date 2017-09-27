@@ -20,12 +20,12 @@ When native dependencies are added to a MiniApp using the `ern add` command (bas
 
 The Electrode Native platform guarantees that any MiniApp targeting a given Electrode Native version will only include supported dependencies, at the same versions--making it possible to add all MiniApps to a single Electrode Native container.
 
-The Electrode Native platform stores its master manifest in a GitHub repository. You can see an example here [here](url).  
+The Electrode Native platform stores its master manifest in a GitHub repository. You can see an example here [here](https://github.com/electrode-io/electrode-native-starter-manifest).  
 By default, Electrode Native uses the master manifest. For more advanced use cases, it is possible to override the master manifest as described later in this documentation.
 
 In order to update the manifest at any time, it is stored in a Git repository. This allows you to add new supported dependencies for an Electrode Native version at any time, without having to wait for a future version to be released.
 
-The master manifest is public and open sourced so that anyone can add native dependency support. See [master manifest](link/url).
+The master manifest is public and open sourced so that anyone can add native dependency support. See [master manifest](https://github.com/electrode-io/electrode-native-manifest).
 
 When a native dependency version is stored in the manifest for a Electrode Native version:  
 * You can add new native dependencies support.  
@@ -63,7 +63,7 @@ You can override the master manifest with your own manifest file:
 
 To override a manifest:
 
-1) Create your own manifest repository on GitHub (you can fork this [starter manifest](url)).
+1) Create your own manifest repository on GitHub (you can fork this [starter manifest](https://github.com/electrode-io/electrode-native-starter-manifest)).
 2) Create a manifest override configuration in your cauldron--so that it is correctly applied to all users of this cauldron.
 3) Update and maintain your manifest as needed, over time.
 
