@@ -56,8 +56,9 @@ $ ern run-ios
 ```
 {% sample lang="android" %}
 
-4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission. [Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)
-Select ErnRunner app and enable drawing over the apps, see images below.
+4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission([Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)).
+
+Select ErnRunner app and enable drawing over the apps, see images below. Once done exit from the ErnRunner app and launch it again from applications.
 
 ![Overlay Permission Window](/images/OverlayPermissionWindow.png) ![Select ErnRunner](/images/ErnRunnerSelected.png)
 
