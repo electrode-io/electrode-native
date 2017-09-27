@@ -3,7 +3,7 @@
   "version": "0.5.1",
   "description": "",
   "keywords": [],
-  "author": "",
+  "author": "Walmart Labs <http://walmartlabs.com/>",
   "license": "Apache-2.0",
   "scripts": {
     "setup-dev": "node setup-dev.js",
@@ -77,8 +77,13 @@
   },
   "engines": {
     "node": ">=4.5"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-native/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-native.git"
-  }
+  },
+  "homepage": "http://www.electrode.io"
 }
