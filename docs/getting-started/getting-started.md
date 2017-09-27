@@ -148,6 +148,8 @@ export default class MovieListMiniApp extends Component {
       />
     )
   }
+  
+
 }
 
 const styles = StyleSheet.create({
