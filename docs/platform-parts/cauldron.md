@@ -86,6 +86,7 @@ The following is an example of a `cauldron.json` file.
       ]
     }
   ]
+}
 ```
 
 This example `cauldron.json` file shows the following:  

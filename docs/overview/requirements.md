@@ -34,7 +34,7 @@ After you install Android Studio, set the `ANDROID_SDK env` variable to point to
 
 ```
 export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
-````
+```
 
 ### [Xcode](https://developer.apple.com/xcode/)
 

@@ -252,9 +252,9 @@ The initialization of a container is done as a single call of the `initialize st
 
 ```java
 ElectrodeReactContainer.initialize(
-            this /* Application instance */,
-            new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(BuildConfig.DEBUG)
-            /* Additional plugins configuration here */);
+    this /* Application instance */,
+    new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(BuildConfig.DEBUG)
+    /* Additional plugins configuration here */);
 ```
 
 The first parameter to this method is the `Application` instance. In the sample call above, we use `this` as the call is made from an `Application` extending class.  
