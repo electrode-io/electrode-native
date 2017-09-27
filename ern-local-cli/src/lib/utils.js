@@ -565,7 +565,9 @@ async function launchSimulator (udid: string) {
       log.debug(data)
     })
     xcrunProc.on('close', code => {
-      code === (0 || 255 /* 255 code because we don't provide -t option */) ? resolve() : reject(code)
+      code === (0 || 255 /* 255 code because we don't provide -t option */)
+        ? resolve()
+        : reject(new Error(`XCode xcrun command failed with exit code ${code}`))
     })
   })
 }
@@ -585,7 +587,9 @@ async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
       log.debug(data)
     })
     xcodebuildProc.on('close', code => {
-      code === 0 ? resolve() : reject(code)
+      code === 0
+        ? resolve()
+        : reject(new Error(`XCode xcbuild command failed with exit code ${code}`))
     })
   })
 }
