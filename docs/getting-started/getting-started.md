@@ -215,8 +215,8 @@ Now let's add an API to the MiniApp so that we can retrieve movies from the nati
 
 ## Adding the MoviesApi to the MovieList MiniApp
 
-We have already generated and published the `MoviesApi` in this tutorial.
-You may view the generated API code at [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) and [ern add react-native-ernnavigation-api](https://github.com/electrode-io/react-native-ernnavigation-api) repo.
+We have already created and published the `MoviesApi` in this tutorial.
+You may view the created API code at [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) and [ern add react-native-ernnavigation-api](https://github.com/electrode-io/react-native-ernnavigation-api) repo.
 
 1) Using the `ern add` command add `MoviesApi` , other dependent APIs and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as a dependency of MovieListMiniApp.
 
@@ -434,15 +434,15 @@ You can see that the UI now shows the movies that are stored in the native appli
 
 ## Adding the Navigation API
 
-We created this API for you for this tutorial--you can view it in the GitHub repository located here: [this GitHub repository](https://github.com/electrode-io/react-native-ernnavigation-api). This very simple API will be used for navigating from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
+We created this API for you for this tutorial--you can view it in the [NavigationApi repository](https://github.com/electrode-io/react-native-ernnavigation-api). This very simple API will be used for navigating from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
 
-{% sample lang="android" %}  
-
+{% sample lang="android" %}
 1) Mofify the `index.android.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
 
 {% sample lang="ios" %}  
-1) Modify the `index.ios.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
-{% common %}  
+1) Mofify the `index.ios.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
+
+{% common %}
 2) Add the following import statement:
 
 ```javascript
@@ -490,11 +490,10 @@ import { NavigationApi } from 'react-native-ernnavigation-api'
   }
 ```
 
-5) Implement the `NavigationAPI`.
-The `navigate` method of the `NavigationApi` is not yet implemented. We'll implement it in the native application, as we did for the `MovieApi`.  
+5) Implement the `NavigationApi` in the native application, as we did for the `MovieApi`.
 
 {% sample lang="android" %}  
-* Replace all of the `MainActivity.java` content with the following code:
+* Replace the content of `MainActivity.java` with the following code:
 
 ```java
 package com.walmartlabs.ern;
@@ -588,7 +587,7 @@ public class MainActivity extends AppCompatActivity {
 
 To complete the tutorial, add the `MovieDetailsMiniApp` to the application.
 
-We've developed and published this MiniApp so you can reuse it for this tutorial. If you want to view the code of the MiniApp, you can view it in [this GitHub repository](https://github.com/electrode-io/MovieDetailsMiniApp)
+We've developed and published this MiniApp to reuse it in this tutorial. You may view the code of this MiniApp in the [MovieDetailsMiniApp repository](https://github.com/electrode-io/MovieDetailsMiniApp).
 
 * To add this MiniApp to the local container used by the native application, use a variation of the `ern run` command that allows you to include extra MiniApps to the local Container. Let's do that magic now.  
 
