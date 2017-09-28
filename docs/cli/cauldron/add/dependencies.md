@@ -26,6 +26,7 @@ Example: If the current container version is 1.2.3 and a version is not included
 * An error message is displayed if the command is not formatted correctly.
 
 #### Related commands
- `ern cauldron update dependencies` | Update the version of an existing native dependency
+ [ern cauldron update dependencies] | Update the version of an existing native dependency
 
 ___  
+[ern cauldron update dependencies]: ../update/dependencies.md

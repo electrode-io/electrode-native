@@ -27,6 +27,7 @@ Example: If the current container version is 1.2.3 and a version is not included
 * You don't need to provide a version for the MiniApp when using the `ern cauldron del miniapps <miniapps..>` command. The version is ignored because only one version of a given MiniApp can be present in a container at any given time.  
 
 #### Related commands
- `ern del dependencies` | Manually cleanup native dependencies that are only used by the specified MiniApp
+ [ern cauldron del dependencies] | Manually cleanup native dependencies that are only used by the specified MiniApp
 
 ____
+[ern cauldron del dependencies]: ./dependencies.md

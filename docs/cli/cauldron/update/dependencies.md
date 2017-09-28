@@ -27,4 +27,6 @@ Example: If the current container version is 1.2.3 and a version is not included
 * The `dependencies` value should specify the version to update to.
 
 #### Related commands
- `ern cauldron add dependencies` | Add one or more new native dependencies
+ [ern cauldron add dependencies] | Add one or more new native dependencies
+
+[ern cauldron add dependencies]: ../add/dependencies.md

@@ -33,4 +33,6 @@ Example: If the current container version is 1.2.3 and a version is not included
 * If one MiniApp does not pass compatibility checks, the MiniApp is not updated.
 
 #### Related commands
- `ern cauldron add miniapps` | Add one or more new MiniApps to a native application version
+ [ern cauldron add miniapps] | Add one or more new MiniApps to a native application version
+
+[ern cauldron add miniapps]: ../add/miniapps.md

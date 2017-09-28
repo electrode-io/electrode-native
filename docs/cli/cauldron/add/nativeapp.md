@@ -22,4 +22,7 @@
 * The `ern cauldron add nativeapp <descriptor>` command is usually used when the development of a new version of the native application is started.  
 * The new native application version is identified by the *complete native application description* in the Cauldron.
 
+#### Related commands
+ [ern cauldron update nativeapp] | Add a new native application version to the currently activated Cauldron
 ___
+[ern cauldron update nativeapp]: ../update/nativeapp.md
