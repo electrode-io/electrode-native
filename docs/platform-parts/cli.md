@@ -2,9 +2,9 @@
 
 The Electrode Native CLI is the Electrode Native platform command line client. The Electrode Native CLI is written in JavaScript (ES6) and runs in Node.js 4.5.0 and later.
 
-Use the Electrode Native CLI to access platform functions. However, if you are working only on the mobile application side, you may not need to use the Electrode Native CLI.
+Use the Electrode Native CLI to access platform functionality. However, if you are working only on the mobile application side, you may not need to use the Electrode Native CLI at all.
 
-The Electrode Native CLI has two clients: a global client and a local client.
+The Electrode Native CLI is actually composed of two clients: a `global client` and a `local client`.
 
 ### Electrode Native global CLI client
 
@@ -22,7 +22,7 @@ The Electrode Native local CLI client is installed automatically by the Electrod
 
 When you issue Electrode Native CLI commands, you use the local client.
 You can have multiple local client versions on your workstation as each Electrode Native platform version that you install on your system will have it's own version of the Electrode Native CLI installed.
-Only a single version can be active at any given time.
+Only a single version of an Electrode Native CLI can be active at any given time.
 You can switch between versions of the local client using the `ern platform use` command.
 
-For information about available Electrode Native CLI commands, checkout our [CLI documentation](url)
+For information about available Electrode Native CLI commands, checkout our CLI documentation.
