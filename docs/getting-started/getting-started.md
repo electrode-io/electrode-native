@@ -11,8 +11,7 @@ We'll use iOS for this tutorial. If you wish to use Android instead, click the A
 The movie application includes two React Native MiniApps and two APIs:
 
 - **MovieListMiniApp** | This MiniApp displays a list of movies.
-- **MovieDetailsMiniApp** | This MiniApp displays the details of a selected movie.  
-
+- **MovieDetailsMiniApp** | This MiniApp displays the details of a selected movie.
 - **MoviesApi** | An API used to retrieve a list of movies.
 - **NavigationApi** | An API used to navigate from one MiniApp to another.
 
@@ -604,6 +603,8 @@ $ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
 ```  
 
 {% common %}
+Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
+
 This is how easy it is to combine multiple MiniApps in a local container!
 
 You've successfully used Electrode Native to build your first native application, composed of multiple MiniApps.
