@@ -204,7 +204,7 @@ AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 ```
 
 {% sample lang="ios" %}
-3) Reload the application to see the updated UI. Hit ⌘R in your iOS Simulator to reload the app and see your changes.
+3) Save your changes in `index.ios.js` and reload the application to see the updated UI. Hit ⌘ + R in your iOS Simulator to reload the app and see your changes.
 {% sample lang="android" %}
 3) Reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
 
@@ -479,7 +479,8 @@ import { NavigationApi } from 'react-native-ernnavigation-api'
   }
 ```  
 
-4) Add a method below the `render` method to send the `navigate` request when a movie is selected in the list of movies:
+4) Add a method below the `render` method to send the `navigate` request when a movie is selected in the list of movies,
+Command + S to save your JS change afterwards.
 
 ```javascript
   _onPressRow (movie) {
@@ -598,6 +599,7 @@ $ ern run-android --miniapps moviedetailsminiapp --mainMiniAppName MovieListMini
 ```  
 {% sample lang="ios" %}  
 ```bash
+$ cd MovieListMiniApp //make sure you are in root dir of MovieListMiniApp
 $ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
 ```  
 
