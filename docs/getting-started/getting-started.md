@@ -57,6 +57,7 @@ $ ern run-ios
 {% sample lang="android" %}
 
 4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission for ErnRunner app . ([Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)).
+Once done exit from the ErnRunner app and launch it again from applications.
 
 ![Overlay Permission Window](/images/OverlayPermissionWindow.png) ![Select ErnRunner](/images/ErnRunnerSelected.png)
 
@@ -206,7 +207,7 @@ AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 {% sample lang="ios" %}
 3) Save your changes in `index.ios.js` and reload the application to see the updated UI. Hit ⌘ + R in your iOS Simulator to reload the app and see your changes.
 {% sample lang="android" %}
-3) Reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
+3) Save your changes in `index.android.js` and reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
 
 {% common %}
 Congratulations! You've successfully run and modified the initial UI of the MovieList MiniApp.
