@@ -603,6 +603,8 @@ $ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
 ```  
 
 {% common %}
+Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
+
 This is how easy it is to combine multiple MiniApps in a local container!
 
 You've successfully used Electrode Native to build your first native application, composed of multiple MiniApps.
