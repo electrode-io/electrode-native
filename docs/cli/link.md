@@ -31,5 +31,8 @@ The `ern link` or the `ern unlink` plus the `ern start` commands are used togeth
 * The MiniApps link is used when you use the `ern start` command. This command creates a composite bundle with all the MiniApps contained within the native application and starts the react-native packager for this bundle.
 
 #### Related commands
- `ern start` | Start the Electrode Native platform  
- `ern unlink` | Remove the link associated to a MiniApp directory
+ [ern start] | Start the Electrode Native platform  
+ [ern unlink] | Remove the link associated to a MiniApp directory
+ 
+ [ern start]: ./start.md
+ [ern unlink]: ./unlink.md

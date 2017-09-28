@@ -53,4 +53,6 @@
 * You do not need to run the `ern code-push <miniapps..>` command from within a MiniApp working directory.  The MiniApp is retrieved from npm and therefore should have a versioned npm package descriptor corresponding to the published MiniApp version.  
 
 #### Related commands
- `code-push release-react` | description
+ [code-push release-react] | Release a React Native update to an app development.
+ 
+ [code-push release-react]: https://github.com/Microsoft/code-push/tree/master/cli

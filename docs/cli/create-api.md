@@ -38,8 +38,8 @@
 * The API project is created in a new directory named after the complete API project name.  
 
 #### Related commands
- `ern regen-api` | Add a new request, event, or model to an existing API project schema and regenerate the API  
- `ern create-api-impl` | Create an implementation skeleton project for a specified API
+ [ern regen-api] | Add a new request, event, or model to an existing API project schema and regenerate the API  
+ [ern create-api-impl] | Create an implementation skeleton project for a specified API
 
 
 #### Examples
@@ -48,3 +48,6 @@ This example shows how to create an API project named `react-native-weather-api`
 
 `ern create-api weather --scope MyCompany`  
 This example shows how to create a scoped package named `@MyCompany/react-native-weather-api`.  
+
+[ern regen-api]: ./regen-api.md
+[ern create-api-impl]: ./create-api-impl.md
