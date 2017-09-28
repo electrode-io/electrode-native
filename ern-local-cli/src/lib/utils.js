@@ -535,7 +535,7 @@ async function launchIosRunner (pathToIosRunner: string) {
     // do nothing if there is no simulator launched
   }
 
-  const spinner = ora(`Wating for device to boot`).start()
+  const spinner = ora(`Waiting for device to boot`).start()
 
   await launchSimulator(device.udid)
 
