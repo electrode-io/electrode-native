@@ -18,31 +18,33 @@ You can contribute to the Electrode Native open source project in several ways:
 
 If you want to contribute code to the Electrode Native platform, you'll first need to setup a development environment to work on Electrode Native. It's actually quite easy to start working on the platform.
 
-1) Using Terminal, enter the following command to make sure that you install the platform:  
- `$ npm install -g electrode-native`  
+1) If you have not already installed the platform, install by running the following command:  
 
-2) When installation is complete, enter `ern` to enter the [CLI] command mode.  
+ ```bash
+ $ npm install -g electrode-native && ern
+ ```  
 
-3) Using the Electrode Native CLI, use the `fork` command and the `electrode-native` command to fork the repository.  
+2) Fork the `electrode-native` repository to your GitHub user account and clone this fork on your workstation.
 
-4) From your local working directory of the `electrode-native` repository (change directories if necessary), enter the `node setup-dev` command.
+3) From your local working directory of `electrode-native` repository, run the following command:
 
-This little script takes care of installing all the needed dependencies for all Electrode Native modules, and creates a new local version `1000.0.0` of the platform.
+```bash
+$ node setup-dev
+```  
 
-5) Upon completion, use the following command to switch to this local development.    
-`$ ern platform use 1000.0.0`
+This little command takes care of installing all the needed dependencies for all Electrode Native modules, and creates a new local version `1000.0.0` of the platform.
 
-Version `1000.0.0` is the development version and it points to your Electrode Native  working folder. It is also setup to run transpilation of the code on the fly, which means that any code modification you'll make to any of the modules will be reflected in the next run of the `ern` command.
+4) Upon completion, use the following command to switch Electrode Native to this version:  
 
-With this setup, you can also use Electrode Native as any other non-developer user. You can install new platform versions or switch between versions. The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is your development version.
+```bash
+$ ern platform use 1000.0.0
+```
 
-## Continuous Integration
+Version `1000.0.0` is the development version and it points to your Electrode Native working folder.  
+This version is also taking care of running transpilation of the code on the fly, which means that any code modification you'll make to any of the modules will be immediately reflected when running any `ern` command.  
 
-We are using [Travis] for our Continuous Integration (CI).
-
-The CI job is run on every opened Pull Request (PR). It runs standard and flow checks along with running the whole platform test suite.
-
-We only merge PRs that pass the CI (green status). Standard and flow checks are automatically run for you on every commit, so you should not have any surprise for these checks on the CI. However the tests are not automatically run on every commit, so before opening a PR please make sure that all tests are passing on your workstation by running the `npm run test` command.
+With this setup, you can also use Electrode Native as any other non-developer user. You can install new released platform versions or even switch between versions.  
+The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is the development version.
 
 ## Guidelines for code contribution
 
@@ -68,21 +70,30 @@ Electrode Native has a pre-commit hook setup, that will run flow for every commi
 
 ### Tests
 
-Tests can be run by running the `npm test` command from the root of the `electrode-react-native` directory. Tests from all modules will be executed.
+Tests can be run by running the `npm test` command from the root of the `electrode-native` directory. Tests from all modules will be executed.
 
 Our tests are written using [mocha], [chai] and [sinon].
 
 The tests are not executed on every commit. Ideally, you should run the test suite before opening a PR.
 
+## Continuous Integration
+
+We are using [Travis] for our Continuous Integration (CI).
+
+The CI job is run on every opened Pull Request (PR). It runs [Standard JS] and [flow] checks along with running the whole platform test suite.
+
+We will only merge PRs that pass the CI (green status). [Standard JS] and [flow] checks are automatically run for you on every commit, so you should not have any surprise for these checks when it comes to the CI.
+However the tests are not automatically run on every commit, so before opening a PR please ensure that all tests are passing on your workstation by running the `npm run test` command.
+
 [travis]: https://travis-ci.org/
 
-[new issue]: https://github.com/electrode-io/electrode-react-native/issues/new
+[new issue]: https://github.com/electrode-io/electrode-native/issues/new
 
-[open issue]: https://github.com/electrode-io/electrode-react-native/issues
+[open issue]: https://github.com/electrode-io/electrode-native/issues
 
 [Electrode Native Bridge]:https://github.com/electrode-io/react-native-electrode-bridge
 
-[CLI]: https://github.com/electrode-io/electrode-react-native/blob/master/docs/platform-parts/cli.md#ern-local-client
+[CLI]: https://github.com/electrode-io/electrode-native/blob/master/docs/platform-parts/cli.md#ern-local-client
 
 [editor plugins]: https://standardjs.com/awesome.html#editor-plugins
 

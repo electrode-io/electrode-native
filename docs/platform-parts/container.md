@@ -1,7 +1,5 @@
 ## Electrode Native Container
 
-
-
 The Electrode Native container is a native library similar to common third-party libraries that Android and iOS developers are familiar with. The container is generated entirely by the Electrode Native platform and packaged as an Android Archive (AAR) library for Android and as a framework for iOS.
 
 Each mobile application has its own custom Electrode Native container.
@@ -272,7 +270,7 @@ Initialization of a Container should ideally take place during startup of your m
 
 Initialization of Container is performed through the static method `startWithConfigurations:` of `ElectrodeReactNative`.  
 
-```ObjC
+```objectivec
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] init];
     containerConfig.debugEnabled = RnDevSupportEnabled;
     [ElectrodeReactNative startWithConfigurations:containerConfig];
@@ -322,7 +320,7 @@ To launch a MiniApp, all you have to do then, is
 
 The generated `UIViewController` is basic and might not fulfill your advanced needs. If you would like to use your own subclass of the `UIViewController`, you must override `viewDidLoad:` in your `UIViewController` as shown below:
 
-```ObjC
+```objectivec
 - (void)viewDidLoad {
     [super viewDidLoad];    
     UIViewController *viewController* =
