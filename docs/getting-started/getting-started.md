@@ -395,8 +395,9 @@ $ ern run-android
 
    UIViewController *viewController =
    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
-   [viewController setTitle:@"Top Movies List"];
+   [viewController setTitle:@"MovieList MiniApp"];
    viewController.view.frame = [UIScreen mainScreen].bounds;
+   self.navigationBar.translucent = NO;
    [self pushViewController:viewController animated:NO];
 }
 
@@ -566,6 +567,8 @@ public class MainActivity extends AppCompatActivity {
 
         UIViewController *viewController = [[ElectrodeReactNative sharedInstance] miniAppWithName:navData.miniAppName properties:initialPapyload];
         viewController.view.frame = [UIScreen mainScreen].bounds;
+        [viewController setTitle:@"MovieDetails MiniApp"];
+
 
         UINavigationController *navController = (UINavigationController *) appDelegate.window.rootViewController;
         [navController pushViewController:viewController animated:NO];
