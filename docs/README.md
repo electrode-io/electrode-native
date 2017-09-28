@@ -25,7 +25,7 @@ npm install -g electrode-native && ern
 
 Please see the [CONTRIBUTING guide]
 
-## Support and Acknowledgement
+## Support and Acknowledgment
 
 We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects. 
 We love the public community and the support we get, and we address your requests as much as we can.  
@@ -38,9 +38,9 @@ Copyright 2017 WalmartLabs
 
 Licensed under the [Apache License, Version 2.0].
 
-[CONTRIBUTING guide]: https://electrode.gitbooks.io/electrode-native//overview/contributing.md
+[CONTRIBUTING guide]: https://electrode.gitbooks.io/electrode-native/overview/contributing.html
 
-[requirements]: https://electrode.gitbooks.io/electrode-native//overview/requirements.md
+[requirements]: https://electrode.gitbooks.io/electrode-native/overview/requirements.html
 
 [Getting Started with Electrode Native]: https://electrode.gitbooks.io/electrode-native/content/getting-started/getting-started.html
 

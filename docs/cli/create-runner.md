@@ -25,4 +25,4 @@
 * The projects are generated in Android and the iOS directories from the current working directory.  
 * The `platforms` argument is a list of platforms for which to generate the runner. It can either be iOS, Android, or both.  
 * The `mainMiniAppName` argument is the name of the main MiniApp. This is the MiniApp that should get launched when the Runner is started.  
-* There isn't an `ern` command that launches the generated Runners.  To manually launch the generated Runner projects, use Android Studio or XCode to compile and launch the Runners—or use appropriate commands to open the generated Runner projects.  
+* There isn't an `ern` command that launches the generated Runners.  To manually launch the generated Runner projects, use Android Studio or Xcode to compile and launch the Runners—or use appropriate commands to open the generated Runner projects.

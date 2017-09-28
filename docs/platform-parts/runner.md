@@ -1,6 +1,6 @@
 ## Electrode Native Runner
 
-The Electrode Native platform contains two runners, one for each mobile platform (Android and iOS). Both runners are very simple and light-weight mobile applications--similar to new application projects in Android Studio or XCode.
+The Electrode Native platform contains two runners, one for each mobile platform (Android and iOS). Both runners are very simple and light-weight mobile applications--similar to new application projects in Android Studio or Xcode.
 
 The Electrode Native runner application is used to run your standalone MiniApp so that you can effectively develop, debug, and test your MiniApp--before releasing a new or updated version of the MiniApp.
 
@@ -19,4 +19,4 @@ The Electrode Native runner supports containers that include multiple MiniApps. 
 ### Related commands
 
 - `ern run-ios` and `ern run-android`
-Lauches one or more MiniApps in the Electrode Native runner application.
+Launches one or more MiniApps in the Electrode Native runner application.

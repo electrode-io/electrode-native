@@ -1,7 +1,7 @@
 ## `ern code-push <miniapps..>`
 #### Description
 * Update/publish one or more MiniApps in a target released native application version Over the Air (OTA)  
-* Perform compatiblity checks to ensure that the new MiniApp versions are compatible with the target native application version  
+* Perform compatibility checks to ensure that the new MiniApp versions are compatible with the target native application version
 **Note** The `ern code-push <miniapps..>` command pushes JavaScript code changes only, not native changes. Therefore the compatibility checks must ensure that the MiniApp's native dependencies are compatible with the versions running in the target native application version.  
 *  Update the Cauldron with a new `CodePush` entry containing the versions of all MiniApps that are part of this publication  
 
@@ -53,4 +53,6 @@
 * You do not need to run the `ern code-push <miniapps..>` command from within a MiniApp working directory.  The MiniApp is retrieved from npm and therefore should have a versioned npm package descriptor corresponding to the published MiniApp version.  
 
 #### Related commands
- `code-push release-react` | description
+ [code-push release-react] | Release a React Native update to an app development.
+ 
+ [code-push release-react]: https://github.com/Microsoft/code-push/tree/master/cli
