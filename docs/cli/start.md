@@ -27,4 +27,6 @@ If you do not pass an argument to this command, you are prompted to select a nat
 * This command works with the `ern link` command. For additional information, see the documentation for the `ern link` command.  
 
 #### Related commands
- `ern link` | Link to a MiniApp directory
+ [ern link] | Link to a MiniApp directory
+
+[ern link]: ./link.md
