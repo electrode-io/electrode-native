@@ -1,6 +1,6 @@
 {
   "name": "ern-container-gen",
-  "version": "0.6.10",
+  "version": "0.7.0",
   "description": "Electrode Native Container Generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -51,8 +51,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-core": "0.6.10",
-    "ern-util": "0.6.10",
+    "ern-core": "0.7.0",
+    "ern-util": "0.7.0",
     "fs-readdir-recursive": "^1.0.0",
     "mustache": "^2.3.0",
     "shelljs": "^0.7.6",
@@ -60,7 +60,7 @@
     "xcode-ern": "1.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.6.10"
+    "ern-util-dev": "0.7.0"
   },
   "engines": {
     "node": ">=4.5"
