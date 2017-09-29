@@ -5,7 +5,7 @@
 
 -   Check out our [Announcement Blog Post]
 
--   [Techcrunch article]
+-   [TechCrunch article]
 
 -   [Getting Started with Electrode Native]
 
@@ -34,7 +34,7 @@ Copyright 2017 WalmartLabs
 
 Licensed under the [Apache License, Version 2.0].
 
-[Techcrunch article]: https://techcrunch.com/2017/09/29/walmart-labs-open-sources-its-tool-for-bringing-react-native-to-existing-mobile-apps/?ncid=mobilenavtrend
+[TechCrunch article]: https://techcrunch.com/2017/09/29/walmart-labs-open-sources-its-tool-for-bringing-react-native-to-existing-mobile-apps/?ncid=mobilenavtrend
 
 [Announcement Blog Post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
 
