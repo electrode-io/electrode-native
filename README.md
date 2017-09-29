@@ -3,6 +3,8 @@
 
 # Getting Started
 
+-   Check out our [Announcement Blog Post]
+
 -   [Getting Started with Electrode Native]
 
 -   Visit our site at <http://www.electrode.io>.
@@ -29,6 +31,8 @@ Thank you.
 Copyright 2017 WalmartLabs
 
 Licensed under the [Apache License, Version 2.0].
+
+[Announcement Blog Post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
 
 [documentation of electrode native]: https://electrode.gitbooks.io/electrode-native/
 
