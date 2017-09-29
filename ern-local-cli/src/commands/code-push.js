@@ -47,7 +47,7 @@ exports.builder = function (yargs: any) {
     .option('mandatory', {
       describe: 'Specifies whether this release should be considered mandatory',
       alias: 'm',
-      type: 'boolean',
+      type: 'bool',
       default: false
     })
     .option('rollout', {
@@ -55,6 +55,11 @@ exports.builder = function (yargs: any) {
       alias: 'r',
       type: 'string',
       default: '100%'
+    })
+    .option('skipConfirmation', {
+      describe: 'Skip final confirmation prompt if no compatibility issues are detected',
+      alias: 's',
+      type: 'bool'
     })
     .epilog(utils.epilog(exports))
 }
@@ -68,7 +73,8 @@ exports.handler = async function ({
   platform,
   targetBinaryVersion,
   mandatory,
-  rollout
+  rollout,
+  skipConfirmation
 } : {
   force: boolean,
   miniapps: Array<string>,
@@ -78,7 +84,8 @@ exports.handler = async function ({
   platform: 'android' | 'ios',
   targetBinaryVersion: string,
   mandatory: boolean,
-  rollout: string
+  rollout: string,
+  skipConfirmation?: boolean
 }) {
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyReleasedVersions: true })
@@ -112,6 +119,7 @@ exports.handler = async function ({
       codePushTargetVersionName: targetBinaryVersion,
       codePushIsMandatoryRelease: mandatory,
       codePushRolloutPercentage: rollout,
-      pathToYarnLock: pathToYarnLock || undefined
+      pathToYarnLock: pathToYarnLock || undefined,
+      skipConfirmation
     })
 }

@@ -45,6 +45,11 @@
 * Specify the percentage of users who will have immediate access to this release  
 * **Default**  100%  
 
+`--skipConfirmation/-s`
+
+* Skip final confirmation prompt if no compatibility issues are detected and proceeed with CodePush
+* **Default** Do not skip confirmation prompt
+
 #### Remarks
 * When you update OTA, you don't need to use a native application store release.  
 * You can only use MiniApp versions that have been published to npm and cannot use the `file` or `git` scheme for the MiniApps that you add using the `ern code-push <miniapps..>` command.  
