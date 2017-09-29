@@ -339,6 +339,7 @@ $ ern run-android
 
 {% sample lang="ios" %}
 1) In Xcode, open the generated iOS project (in the `ios` directory).
+
 2) Replace the content of the `ViewController.h` file with the content shown below:
 
 ```objectivec
