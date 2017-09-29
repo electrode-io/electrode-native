@@ -17,7 +17,7 @@ import tmp from 'tmp'
 import path from 'path'
 import shell from 'shelljs'
 
-export async function start ({
+export default async function start ({
   miniapps,
   completeNapDescriptor,
   watchNodeModules = []
