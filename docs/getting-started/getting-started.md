@@ -21,7 +21,14 @@ The tutorial shows how easy it is to integrate multiple React Native application
 {% sample lang="android" %}
 
 - Install [Android Studio](https://developer.android.com/studio/index.html) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation) if they're not already installed.
+- Download Android 7.0 (Nougat) and accept it's license:
+    1. In Android Studio go to Tools → Android → SDK Manager
+    2. Select the “Android 7.0 (Nougat)” checkbox
+    3. Click “Apply” and follow the prompts:
 
+    ![Android Studio SDK Manager download](/images/AndroidStudioSDKManager.jpg)
+
+    The manager will download all the dependencies:
 - Set up an emulator if you want to run the application in an emulator.
 For more information on how to setup an emulator, you can check [the Android documentation](https://developer.android.com/studio/run/managing-avds.html)
 {% sample lang="ios" %}
