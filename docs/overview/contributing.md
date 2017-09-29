@@ -46,7 +46,7 @@ This version is also taking care of running transpilation of the code on the fly
 With this setup, you can also use Electrode Native as any other non-developer user. You can install new released platform versions or even switch between versions.  
 The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is the development version.
 
-## Guidelines for code contribution
+## Guidelines for code contributions
 
 ### Coding style
 
@@ -75,6 +75,42 @@ Tests can be run by running the `npm test` command from the root of the `electro
 Our tests are written using [mocha], [chai] and [sinon].
 
 The tests are not executed on every commit. Ideally, you should run the test suite before opening a PR.
+
+## Guidelines for documentation contributions
+
+We are using [GitBook] for our documentation.  
+
+All our documentation pages are stored as markdown files withing the `/docs` directory.
+
+If you need to make light edits to our documentation, such as simple rewording or fixing a few typos in a page, the simplest way is to just edit the page directly from GitHub. Just navigate to the page in our GitHub repository, or if you are looking at the documentation online, just click the `Edit this page` button in the top left corner of the page, which will take you to the page in GitHub.  
+
+From there, just click the `Edit this file` button and make your modifications. You can then select the option `Create a new branch for this commit and start a pull request` at the bottom of the page to automatically issue a Pull Request for your change.
+
+In case you need to go through more heavy edits (reformatting, adding pages, adding images, working on templatized content -android v.s ios-), you might want to visualize your changes before actually opening a Pull Request, just to make sure the updated content is properly rendered by GitBook. 
+
+Thanks to the [GitBook CLI], it is actually quite simple to setup a GitBook server locally, so that you can see how your changes will look like in the online documentation once processed by GitBook. Here are the steps:
+
+1) Install the GitBook CLI 
+
+```bash
+$ npm install -g gitbook-cli
+```
+
+2) Install the GitBook plugins used for Electrode Native documentation. Make sure you’re in the `electrode-native` directory:
+
+```bash
+$ gitbook install
+```
+
+3) Run the GitBook server locally
+
+```bash
+$ gitbook serve
+```
+
+4) Navigate to http://localhost:4000 to view the GitBook with your changes
+
+You can keep the server running. Any time you'll do a change in the documentation, the content will be automatically regenerated.
 
 ## Continuous Integration
 
@@ -108,3 +144,7 @@ However the tests are not automatically run on every commit, so before opening a
 [chai]: http://chaijs.com/
 
 [sinon]: http://sinonjs.org/
+
+[gitbook]: https://www.gitbook.com
+
+[gitbook cli]: https://github.com/GitbookIO/gitbook-cli
