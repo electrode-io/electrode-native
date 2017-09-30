@@ -44,7 +44,7 @@ if (!fs.existsSync(ERN_PATH)) {
 // Create all folders and install/activate current platform version
 function firstTimeInstall () {
   try {
-    const isDebug = process.argv.includes('--debug')
+    const isDebug = process.argv.indexOf('--debug') !== -1
 
     const spinner = ora('Performing first time install of Electrode Native').start()
 
@@ -68,7 +68,7 @@ function firstTimeInstall () {
       // Favor yarn if it is installed as it will greatly speed up install
       spinner.text = `Installing Electrode Native v${latestVersion} using yarn. This might take a while`
       installProc = spawn('yarn',
-        [ 'add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact' ],
+        [ 'add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact', '--ignore-engines' ],
         { cwd: pathToVersionDirectory })
     } else {
       spinner.text = `Installing Electrode Native v${latestVersion} using npm. This might take a while`
@@ -89,7 +89,7 @@ function firstTimeInstall () {
       if (code === 0) {
         spinner.succeed(`Hurray ! Electrode Native v${latestVersion} was successfully installed.`)
       } else {
-        spinner.fail(`Oops. Something went wrong.`)
+        spinner.fail(`Something went wrong :( Run the command again with --debug flag for more info.`)
         execSync(`rm -rf ${ERN_PATH}`)
       }
     })
@@ -97,7 +97,7 @@ function firstTimeInstall () {
     // If something went wrong, we just clean up everything.
     // Don't want to create and leave the .ern global folder hanging around
     // in a bad state
-    console.log(`Something went wrong ! ${e}`)
+    console.log(`Something went wrong :( Run the command again with --debug flag for more info.`)
     execSync(`rm -rf ${ERN_PATH}`)
   }
 }
