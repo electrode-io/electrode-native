@@ -200,7 +200,8 @@ miniApps: Array<Dependency>, {
   codePushTargetVersionName,
   codePushIsMandatoryRelease,
   codePushRolloutPercentage,
-  pathToYarnLock
+  pathToYarnLock,
+  skipConfirmation
 }: {
   force: boolean,
   codePushAppName: string,
@@ -209,7 +210,8 @@ miniApps: Array<Dependency>, {
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
   codePushRolloutPercentage: string,
-  pathToYarnLock?: string
+  pathToYarnLock?: string,
+  skipConfirmation?: boolean
 } = {}) {
   const plugins = await cauldron.getNativeDependencies(napDescriptor)
 
@@ -264,9 +266,9 @@ miniApps: Array<Dependency>, {
   const miniAppsToBeCodePushed = _.unionBy(
     miniApps, referenceMiniAppsToCodePush, x => x.withoutVersion().toString())
 
-  // If force was not provided as option, we ask user for confirmation before proceeding
+  // If force or skipFinalConfirmation was not provided as option, we ask user for confirmation before proceeding
   // with code-push publication
-  const userConfirmedCodePushPublication = force || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed)
+  const userConfirmedCodePushPublication = force || skipConfirmation || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed)
 
   if (!userConfirmedCodePushPublication) {
     return log.info('CodePush publication aborted')
@@ -291,7 +293,7 @@ miniApps: Array<Dependency>, {
       mandatory: codePushIsMandatoryRelease,
       deploymentName: codePushDeploymentName,
       rolloutPercentage: codePushRolloutPercentage,
-      askForConfirmation: !force
+      askForConfirmation: !force && !skipConfirmation
     })
 
   if (codePushWasDone) {
