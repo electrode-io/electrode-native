@@ -40,12 +40,11 @@ ${mandatory ? `-m` : ''} \
 ${deploymentName ? `-d ${deploymentName}` : ''} \
 ${rolloutPercentage ? `-r ${rolloutPercentage}` : ''} \
 ${platform === 'ios' ? `-b MiniApp.jsbundle` : ''}`
-    console.log(`CodePush command : ${codePushCommand}`)
 
     let shouldExecuteCodePushCommand = true
 
     if (askForConfirmation) {
-      console.log(`Will run:\n${codePushCommand}`)
+      log.info(`Will run:\n${codePushCommand}`)
       const {userConfirmedCodePushCommand} = await inquirer.prompt({
         type: 'confirm',
         name: 'userConfirmedCodePushCommand',
@@ -57,6 +56,7 @@ ${platform === 'ios' ? `-b MiniApp.jsbundle` : ''}`
 
     if (shouldExecuteCodePushCommand) {
       await new Promise((resolve, reject) => {
+        log.debug(`[releaseReact] Running ${codePushCommand}`)
         exec(codePushCommand,
             (err, stdout, stderr) => {
               if (err) {
