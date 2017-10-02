@@ -42,14 +42,14 @@ Licensed under the [Apache License, Version 2.0].
 
 [Announcement Blog Post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
 
-[CONTRIBUTING guide]: https://electrode.gitbooks.io/electrode-native/overview/contributing.html
+[CONTRIBUTING guide]: ./overview/contributing.md
 
-[requirements]: https://electrode.gitbooks.io/electrode-native/overview/requirements.html
+[requirements]: ./overview/requirements.md
 
-[Getting Started with Electrode Native]: https://electrode.gitbooks.io/electrode-native/content/getting-started/getting-started.html
+[Getting Started with Electrode Native]: ./getting-started/getting-started.md
 
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
 
 [gitbook]: https://www.gitbook.com/
 
-[what is electrode native]: https://electrode.gitbooks.io/electrode-native/overview/what-is-ern.html
+[what is electrode native]: ./overview/what-is-ern.md
