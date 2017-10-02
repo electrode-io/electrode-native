@@ -55,13 +55,17 @@ export default class ReactNativeCli {
     assetsDest: string,
     platform: 'android' | 'ios'
   }) {
+    const bundleCommand =
+    `${this.binaryPath} bundle \
+${entryFile ? `--entry-file=${entryFile}` : ''} \
+${dev ? '--dev=true' : '--dev=false'} \
+${platform ? `--platform=${platform}` : ''} \
+${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
+${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
+
     return new Promise((resolve, reject) => {
-      exec(`${this.binaryPath} bundle \
-        ${entryFile ? `--entry-file=${entryFile}` : ''} \
-        ${dev ? '--dev=true' : '--dev=false'} \
-        ${platform ? `--platform=${platform}` : ''} \
-        ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
-        ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`,
+      log.debug(`[bundle] Running ${bundleCommand}`)
+      exec(bundleCommand,
           (err, stdout, stderr) => {
             if (err) {
               reject(err)

@@ -32,8 +32,10 @@
 * If you do not specify a platform (for example, native v.s JavaScript), you are prompted to select a platform.    
 
 #### Related commands
- `ern create-api` | Create an API
+ [ern create-api] | Create an API
 
 #### Examples
 `ern create-api-impl react-native-weather-api`  
 This example shows how to create an API skeleton project named `react-native-weather-api-impl`.
+
+[ern create-api]: ./create-api.md

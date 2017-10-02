@@ -1,6 +1,7 @@
 ## Requirements
 
 Depending on whether you are building Android or iOS apps, the following tools are required:
+
 * Node.js 4.5 or later
 * NPM (version 3.0 or later) or Yarn
 * Android Studio for Android apps

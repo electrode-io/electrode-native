@@ -11,8 +11,7 @@ We'll use iOS for this tutorial. If you wish to use Android instead, click the A
 The movie application includes two React Native MiniApps and two APIs:
 
 - **MovieListMiniApp** | This MiniApp displays a list of movies.
-- **MovieDetailsMiniApp** | This MiniApp displays the details of a selected movie.  
-
+- **MovieDetailsMiniApp** | This MiniApp displays the details of a selected movie.
 - **MoviesApi** | An API used to retrieve a list of movies.
 - **NavigationApi** | An API used to navigate from one MiniApp to another.
 
@@ -22,7 +21,14 @@ The tutorial shows how easy it is to integrate multiple React Native application
 {% sample lang="android" %}
 
 - Install [Android Studio](https://developer.android.com/studio/index.html) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation) if they're not already installed.
+- Download Android 7.0 (Nougat) and accept it's license:
+    1. In Android Studio go to Tools → Android → SDK Manager
+    2. Select the “Android 7.0 (Nougat)” checkbox
+    3. Click “Apply” and follow the prompts:
 
+    ![Android Studio SDK Manager download](/images/AndroidStudioSDKManager.jpg)
+
+    The manager will download all the dependencies:
 - Set up an emulator if you want to run the application in an emulator.
 For more information on how to setup an emulator, you can check [the Android documentation](https://developer.android.com/studio/run/managing-avds.html)
 {% sample lang="ios" %}
@@ -96,18 +102,19 @@ import {
   StyleSheet,
   Text,
   View,
-  ListView,
+  FlatList,
   Image,
   TouchableHighlight
 } from 'react-native'
 
 export default class MovieListMiniApp extends Component {
 
+  _keyExtractor = (item, index) => item.title;
+
   constructor () {
     super()
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
     this.state = {
-      dataSource: ds.cloneWithRows([{
+      movies: [{
         title: 'The Fast and Furious',
         releaseYear: 2010,
         ratings: '4.5',
@@ -119,31 +126,30 @@ export default class MovieListMiniApp extends Component {
         ratings: '4.0',
         imageUrl: 'http://bit.ly/2jTfYPF',
         description: 'How fast do you like it ?'
-      }
-      ])
+      }]
     }
   }
 
   render () {
     return (
-      <ListView
+      <FlatList
         style={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={(movie) =>
+        data={this.state.movies}
+        keyExtractor={this._keyExtractor}
+        renderItem={({item}) =>
           <View style={styles.row}>
             <Image
               style={styles.icon}
               source={{
-                uri: movie.imageUrl ? movie.imageUrl : 'http://bit.ly/2yz3AYe'
+                uri: item.imageUrl ? item.imageUrl : 'http://bit.ly/2yz3AYe'
               }}
             />
             <View style={styles.row2}>
-              <Text style={styles.title}>{movie.title}</Text>
-              <Text style={styles.subtitle}>{movie.releaseYear}</Text>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.subtitle}>{item.releaseYear}</Text>
             </View>
           </View>
         }
-        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
       />
     )
   }
@@ -172,13 +178,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 12
   },
-  listview: {
-    flex: 1,
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
   title: {
     fontSize: 20,
   },
@@ -186,12 +185,6 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     flex: 1,
     fontSize: 12
-  },
-  separator: {
-    flex: 1,
-    height: 0,
-    paddingTop: 2,
-    paddingBottom: 2
   },
   icon: {
     width: 50,
@@ -241,41 +234,39 @@ import { MoviesApi } from 'react-native-ernmovie-api'
 4) Replace the constructor method with the following code:
 
 ```javascript
-   constructor () {
-     super()
-     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+constructor () {
+  super()
 
-     let topMovies = []
-     MoviesApi.requests().getTopRatedMovies().then((movies) => {
-       if (movies) {
-         this.setState(previousState => {
-           return {dataSource: ds.cloneWithRows(movies)}
-         })
-       }
-     }).catch(error => {
-       topMovies = [{
-         title: 'Titanic',
-         releaseYear: 1997,
-         ratings: '4.5',
-         imageUrl: 'http://bit.ly/2hnU8mq',
-         description: 'Titanic'
-       }, {
-         title: 'Avatar',
-         releaseYear: 2009,
-         ratings: '4.0',
-         imageUrl: 'http://bit.ly/2xAX0Cv',
-         description: 'Avatar'
-       }]
+  MoviesApi.requests().getTopRatedMovies().then((movies) => {
+    if (movies) {
+      this.setState(previousState => {
+        return {movies}
+      })
+    }
+  }).catch(error => {
+    let movies = [{
+      title: 'Titanic',
+      releaseYear: 1997,
+      ratings: '4.5',
+      imageUrl: 'http://bit.ly/2hnU8mq',
+      description: 'Titanic'
+    }, {
+      title: 'Avatar',
+      releaseYear: 2009,
+      ratings: '4.0',
+      imageUrl: 'http://bit.ly/2xAX0Cv',
+      description: 'Avatar'
+    }]
 
-       this.setState(previousState => {
-         return {dataSource: ds.cloneWithRows(topMovies)}
-       })
-     })
+    this.setState(previousState => {
+      return {movies}
+    })
+  })
 
-     this.state = {
-       dataSource: ds.cloneWithRows(topMovies)
-     }
-   }
+  this.state = {
+    movies: []
+  }
+}
 ```
 5) Save file
 
@@ -355,6 +346,7 @@ $ ern run-android
 
 {% sample lang="ios" %}
 1) In Xcode, open the generated iOS project (in the `ios` directory).
+
 2) Replace the content of the `ViewController.h` file with the content shown below:
 
 ```objectivec
@@ -453,43 +445,42 @@ import { NavigationApi } from 'react-native-ernnavigation-api'
 3) Replace the `render` method with the following method:
 
 ```javascript
-  render () {
-    return (
-      <ListView
-        style={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={(movie) =>
-        <TouchableHighlight onPress={() => this._onPressRow(movie)} underlayColor="gray">
-          <View style={styles.row} onPress={() => this._onPressRow(movie)}>
-            <Image
-              style={styles.icon}
-              source={{
-                uri: movie.imageUrl ? movie.imageUrl : 'http://bit.ly/2yz3AYe'
-              }}
-            />
-            <View style={styles.row2}>
-              <Text style={styles.title}>{movie.title}</Text>
-              <Text style={styles.subtitle}>{movie.releaseYear}</Text>
-            </View>
+render () {
+  return (
+    <FlatList
+      style={styles.container}
+      data={this.state.movies}
+      keyExtractor={this._keyExtractor}
+      renderItem={({item}) =>
+      <TouchableHighlight onPress={() => this._onPressRow(item)} underlayColor="gray">
+        <View style={styles.row} onPress={() => this._onPressRow(item)}>
+          <Image
+            style={styles.icon}
+            source={{
+              uri: item.imageUrl ? item.imageUrl : 'http://bit.ly/2yz3AYe'
+            }}
+          />
+          <View style={styles.row2}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.subtitle}>{item.releaseYear}</Text>
           </View>
-        </TouchableHighlight>
-        }
-        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}
-      />
-    )
-  }
+        </View>
+        </TouchableHighlight>}
+    />
+  )
+}
 ```  
 
 4) Add a method below the `render` method to send the `navigate` request when a movie is selected in the list of movies,
 Command + S to save your JS change afterwards.
 
 ```javascript
-  _onPressRow (movie) {
-    movie.isSelect = !movie.isSelect
-    NavigationApi.requests().navigate('MovieDetailsMiniApp', {'initialPayload': JSON.stringify(movie)}).catch(() => {
-      console.log("Navigation failed.");
-    })
-  }
+_onPressRow (movie) {
+   movie.isSelect = !movie.isSelect
+   NavigationApi.requests().navigate('MovieDetailsMiniApp', {'initialPayload': JSON.stringify(movie)}).catch(() => {
+     console.log("Navigation failed.");
+   })
+ }
 ```
 
 5) Implement the `NavigationApi` in the native application, as we did for the `MovieApi`.
@@ -604,6 +595,8 @@ $ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
 ```  
 
 {% common %}
+Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
+
 This is how easy it is to combine multiple MiniApps in a local container!
 
 You've successfully used Electrode Native to build your first native application, composed of multiple MiniApps.

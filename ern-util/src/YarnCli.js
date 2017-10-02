@@ -83,6 +83,7 @@ export default class YarnCli {
     json?: boolean
   } = {}) {
     const cmd = `${this.binaryPath} ${command}`
+    log.debug(`[runYarnCommand] Running ${cmd}`)
     return new Promise((resolve, reject) => {
       exec(cmd, (err, stdout, stderr) => {
         if (err) {

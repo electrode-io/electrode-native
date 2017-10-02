@@ -45,6 +45,11 @@
 * Specify the percentage of users who will have immediate access to this release  
 * **Default**  100%  
 
+`--skipConfirmation/-s`
+
+* Skip final confirmation prompt if no compatibility issues are detected and proceeed with CodePush
+* **Default** Do not skip confirmation prompt
+
 #### Remarks
 * When you update OTA, you don't need to use a native application store release.  
 * You can only use MiniApp versions that have been published to npm and cannot use the `file` or `git` scheme for the MiniApps that you add using the `ern code-push <miniapps..>` command.  
@@ -53,4 +58,6 @@
 * You do not need to run the `ern code-push <miniapps..>` command from within a MiniApp working directory.  The MiniApp is retrieved from npm and therefore should have a versioned npm package descriptor corresponding to the published MiniApp version.  
 
 #### Related commands
- `code-push release-react` | description
+ [code-push release-react] | Release a React Native update to an app development.
+ 
+ [code-push release-react]: https://github.com/Microsoft/code-push/tree/master/cli

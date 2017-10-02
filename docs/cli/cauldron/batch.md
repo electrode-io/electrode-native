@@ -37,9 +37,16 @@
 #### Remarks
 * The `ern cauldron batch [--option <value..>]` command performs operations in the following order:  
 
-1) `delDependencies`  
-2) `delMiniapps`  
-3) `updateDependencies`  
-4) `updateMiniapps`  
-5) `addDependencies`  
-6) `addMiniapps`
+1) [delDependencies]  
+2) [delMiniapps]  
+3) [updateDependencies]  
+4) [updateMiniapps]  
+5) [addDependencies]  
+6) [addMiniapps]
+
+[delDependencies]: del/dependencies.md
+[delMiniapps]: del/miniapps.md
+[updateDependencies]: update/dependencies.md
+[updateMiniapps]: update/miniapps.md
+[addDependencies]: add/dependencies.md
+[addMiniapps]: add/miniapps.md

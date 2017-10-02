@@ -53,4 +53,6 @@ You cannot use the Git or file package descriptors for referring to the dependen
 * For Android OS, the Container is also published to your local Maven repository.  
 
 #### Related commands
- `ern cauldron add miniapp` | Add one or more MiniApps to a non-released native application version in a Cauldron
+ [ern cauldron add miniapp] | Add one or more MiniApps to a non-released native application version in a Cauldron
+
+[ern cauldron add miniapp]: ./cauldron/add/miniapps.md

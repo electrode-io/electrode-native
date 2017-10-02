@@ -215,8 +215,10 @@ export default class AndroidGenerator {
       log.debug(`Patching hull`)
       const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
       for (const file of files) {
-        if (file.startsWith(`lib/src/main/java/com`) && !file.startsWith(`lib/src/main/java/com/walmartlabs/ern/container`)) {
+        if ((file.startsWith(`lib/src/main/java/com`) && !file.startsWith(`lib/src/main/java/com/walmartlabs/ern/container`)) ||
+          file.startsWith(`lib/src/main/assets`)) {
           // We don't want to Mustache process library files. It can lead to bad things
+          // We also don't want to process assets files ...
           // We just want to process container specific code (which contains mustache templates)
           log.debug(`Skipping mustaching of ${file}`)
           continue
