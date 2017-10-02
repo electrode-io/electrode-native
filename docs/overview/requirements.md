@@ -24,7 +24,7 @@ Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or la
 Node.js v6.x includes npm@3 by default, but if you are using Node.js v4, be sure to install npm@3 with the using the following command:
 
 ```bash
-npm install -g npm@3
+$ npm install -g npm@3
 ```
 
 ### [Android Studio](htps://developer.android.com/studio/index.html)
@@ -33,8 +33,8 @@ You need to install [Android Studio](htps://developer.android.com/studio/index.h
 
 After you install Android Studio, set the `ANDROID_SDK env` variable to point to the location of the Android SDK--if it has not been set already. An example of the SDK path is shown below.  
 
-```
-export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
+```bash
+$ export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
 ```
 
 ### [Xcode](https://developer.apple.com/xcode/)
