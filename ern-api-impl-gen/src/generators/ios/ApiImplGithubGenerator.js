@@ -59,15 +59,17 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       })
       log.debug(`Manually injecting react-native(${reactnativeplugin}) plugin to dependencies.`)
       plugins.push(reactnativeplugin)
-      for (const plugin of plugins) {
+
+      for (const plugin: Dependency of plugins) {
+        log.debug(`Copying ${plugin.name}`)
         const pluginConfig = await manifest.getPluginConfig(plugin, `ElectrodeApiImpl`)
         Utils.throwIfShellCommandFailed()
         if (pluginConfig.ios) {
           let pluginSourcePath
           if (pluginConfig.origin.scope) {
-            pluginSourcePath = `node_modules/@${pluginConfig.origin.scope}/${pluginConfig.origin.name}`
+            pluginSourcePath = `${paths.pluginsDownloadFolder}/node_modules/@${pluginConfig.origin.scope}/${pluginConfig.origin.name}`
           } else {
-            pluginSourcePath = `node_modules/${pluginConfig.origin.name}`
+            pluginSourcePath = `${paths.pluginsDownloadFolder}/node_modules/${pluginConfig.origin.name}`
           }
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.scopedName}`)
