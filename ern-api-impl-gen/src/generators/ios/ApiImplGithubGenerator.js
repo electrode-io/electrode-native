@@ -54,10 +54,10 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       const apiImplProject = await this.getIosApiImplProject(apiImplProjectPath)
       const apiImplTarget = apiImplProject.findTargetKey('ElectrodeApiImpl')
 
-      // For now react-native plugin is added manually for ios. There's another story to make it automatic
       const reactnativeplugin = new Dependency('react-native', {
-        version: '0.42.0'
+        version: reactNativeVersion
       })
+      log.debug(`Manually injecting react-native(${reactnativeplugin}) plugin to dependencies.`)
       plugins.push(reactnativeplugin)
       for (const plugin of plugins) {
         const pluginConfig = await manifest.getPluginConfig(plugin, `ElectrodeApiImpl`)
