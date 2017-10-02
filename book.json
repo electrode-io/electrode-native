@@ -10,7 +10,8 @@
     "github",
     "versions",
     "-highlight",
-    "scripts"
+    "scripts",
+    "copy-code-button"
   ],
   "pluginsConfig": {
     "prism": {
