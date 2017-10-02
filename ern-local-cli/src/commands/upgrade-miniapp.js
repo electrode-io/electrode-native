@@ -6,7 +6,7 @@ import {
 } from 'ern-core'
 import utils from '../lib/utils'
 
-exports.command = 'upgrade'
+exports.command = 'upgrade-miniapp'
 exports.desc = 'Upgrade a MiniApp to current or specific platform version'
 
 exports.builder = function (yargs: any) {
