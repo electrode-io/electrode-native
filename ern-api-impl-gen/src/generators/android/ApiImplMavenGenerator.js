@@ -64,7 +64,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
-        console.log(`handle pluing ${plugin.name}`)
+        log.debug(`Copying ${plugin.name} to ${outputFolder}`)
         await manifest.getPluginConfig(plugin).then((pluginConfig) => {
           this.copyPluginToOutput(paths, outputFolder, plugin, pluginConfig)
         })
