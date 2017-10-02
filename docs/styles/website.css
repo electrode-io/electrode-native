@@ -12,6 +12,11 @@
   color: #fff;
 }
 
+/* Remove copy button over bash code */
+.lang-bash + .copy-code-button {
+  display: none;
+}
+
 /** To make block code take all page width
  * pre[class*="language-"] {
  *  margin-left: -30px;
