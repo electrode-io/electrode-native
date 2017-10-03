@@ -22,8 +22,18 @@
   padding-left: 5px !important;
 }
 
+/* Match copy code button to content font */
 .copy-code-button {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+/* Restore original gitbook padding fron content */
+.page-inner {
+  padding: 20px 15px 40px 15px;
+}
+
+#getting-started-with-electrode-native {
+  margin-top: 0;
 }
 
 /** To make block code take all page width
