@@ -17,6 +17,11 @@
   display: none;
 }
 
+/* Fix left side navigation indentation */
+.chapter span .articles {
+  padding-left: 5px !important;
+}
+
 /** To make block code take all page width
  * pre[class*="language-"] {
  *  margin-left: -30px;
