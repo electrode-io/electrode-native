@@ -10,6 +10,7 @@ import {
 } from 'ern-util'
 import chalk from 'chalk'
 import yargs from 'yargs'
+import { execSync } from 'child_process'
 
 // ==============================================================================
 // Geeky eye candy
@@ -26,6 +27,18 @@ function showInfo () {
   const currentCauldronRepo = ernConfig.getValue('cauldronRepoInUse') || '-NONE-'
   console.log(chalk.cyan(`[v${Platform.currentVersion}]`) + chalk.cyan(` [Cauldron: ${currentCauldronRepo}]`))
   console.log('')
+}
+
+function showVersion () {
+  // get electrode-native local-cli version
+  if (ernConfig.getValue('platformVersion')) {
+    log.info(`ern-local-cli : ${ernConfig.getValue('platformVersion')}`)
+  }
+  // get electrode-native global-cli version
+  const packageInfo = JSON.parse(execSync(`npm ls -g electrode-native --json`).toString())
+  if (packageInfo && packageInfo.dependencies) {
+    log.info(`electrode-native : ${packageInfo.dependencies['electrode-native'].version}`)
+  }
 }
 
 // ==============================================================================
@@ -49,6 +62,8 @@ export default function run () {
   } else if (argv['log-level']) {
     ernConfig.setValue('loglevel', argv['log-level'])
     return log.info(`Log level is now set to ${argv['log-level']}`)
+  } else if (argv['version']) {
+    return showVersion()
   }
 
   return yargs
