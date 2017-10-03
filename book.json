@@ -41,7 +41,18 @@
       "url": "https://github.com/electrode-io/electrode-native"
     },
      "versions": {
-       "type": "branches"
+       "type": "branches",
+       "options": [
+        {
+            "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.7",
+            "text": "Electrode Native [v0.7]",
+            "selected": true
+        },
+        {
+            "value": "https://electrode.gitbooks.io/electrode-native/content/v/master",
+            "text": "Electrode Native [master]"
+        }
+      ]
     },
     "scripts-styles": {
       "js": [
