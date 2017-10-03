@@ -132,7 +132,10 @@ $ ern cauldron repo add <cauldron-alias> <cauldron-url>
 
 ```bash
 $ ern cauldron add <native-app-descriptor>
+// for example
+// ern cauldron add nativeapp MyApp:ios:0.0.1
 ```
+
 
 ### Cauldron compatibility checks
 
