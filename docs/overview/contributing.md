@@ -1,4 +1,4 @@
-# Contributing to Electrode Native
+## Contributing to Electrode Native
 
 You can contribute to the Electrode Native open source project in several ways:
 
