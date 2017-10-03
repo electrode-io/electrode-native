@@ -179,32 +179,6 @@ class Cauldron {
     }
   }
 
-  async addNativeBinary (
-    napDescriptor: NativeApplicationDescriptor,
-    binaryPath: string) : Promise<*> {
-    try {
-      this.throwIfPartialNapDescriptor(napDescriptor)
-      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      return this.cauldron.createNativeBinary(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version, binaryPath)
-    } catch (e) {
-      log.error(`[addNativeBinary] ${e}`)
-      throw e
-    }
-  }
-
-  async getNativeBinary (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
-    try {
-      this.throwIfPartialNapDescriptor(napDescriptor)
-      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      return this.cauldron.getNativeBinary(
-        napDescriptor.name, napDescriptor.platform, napDescriptor.version)
-    } catch (e) {
-      log.error(`[getNativeBinary] ${e}`)
-      throw e
-    }
-  }
-
   async hasYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)

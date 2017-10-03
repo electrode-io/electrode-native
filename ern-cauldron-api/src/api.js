@@ -4,7 +4,6 @@ import * as schemas from './schemas'
 import { Dependency } from 'ern-util'
 import {
   alreadyExists,
-  buildNativeBinaryFileName,
   buildReactNativeSourceMapFileName,
   checkNotFound,
   joiValidate,
@@ -16,17 +15,14 @@ import GitStore from './gitstore'
 
 export default class CauldronApi {
   _db: GitStore
-  _nativeBinariesStore: FileStore
   _sourceMapStore: FileStore
   _yarnlockStore: FileStore
 
   constructor (
     db: GitStore,
-    binaryStore: FileStore,
     sourcemapStore: FileStore,
     yarnlockStore: FileStore) {
     this._db = db
-    this._nativeBinariesStore = binaryStore
     this._sourceMapStore = sourcemapStore
     this._yarnlockStore = yarnlockStore
   }
@@ -437,28 +433,6 @@ export default class CauldronApi {
   // FILE OPERATIONS (TO DEPRECATE OR IMPROVE)
   // =====================================================================================
 
-  async getNativeBinary (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
-    return this._nativeBinariesStore.getFile(filename)
-  }
-
-  async removeNativeBinary (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version) {
-      const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
-      this._nativeBinariesStore.removeFile(filename)
-      version.binary = null
-      this.commit(`Remove binary of ${nativeApplicationName} ${platformName} ${versionName}`)
-    }
-  }
-
   async createSourceMap (
     nativeApplicationName: string,
     versionName: string,
@@ -482,21 +456,6 @@ export default class CauldronApi {
     const filename = buildReactNativeSourceMapFileName(nativeApplicationName, versionName)
     const fileExists = this._sourceMapStore.hasFile(filename)
     return fileExists ? this._sourceMapStore.removeFile(filename) : false
-  }
-
-  async createNativeBinary (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    payload: any) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version) {
-      const filename = buildNativeBinaryFileName(nativeApplicationName, platformName, versionName)
-      await this._nativeBinariesStore.storeFile(filename, payload)
-      version.binary = shasum(payload)
-      this.commit(`Add binary for ${nativeApplicationName} ${platformName} ${versionName}`)
-    }
   }
 
   async hasYarnLock (
