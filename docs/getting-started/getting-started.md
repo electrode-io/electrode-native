@@ -1,5 +1,4 @@
 {% method %}
-{% common %}
 ## Getting started with Electrode Native
 
 The Getting Started tutorial walks you through creating a simple movie application using Electrode Native.  
