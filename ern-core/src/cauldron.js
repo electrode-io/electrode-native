@@ -431,6 +431,11 @@ class Cauldron {
     return config ? config.manifest : undefined
   }
 
+  async getBinaryStoreConfig () : Promise<*> {
+    const config = await this.cauldron.getConfig()
+    return config ? config.binaryStore : undefined
+  }
+
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
     let config = await this.cauldron.getConfig({
       appName: napDescriptor.name,
