@@ -65,7 +65,6 @@
     "ern-util": "0.7.0",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.4",
-    "node-simctl": "^3.5.5",
     "ora": "^1.1.0",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",

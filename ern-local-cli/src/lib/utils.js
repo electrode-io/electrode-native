@@ -14,6 +14,7 @@ import {
 } from 'ern-runner-gen'
 import {
   android,
+  ios,
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
@@ -24,8 +25,7 @@ import {
   runCauldronContainerGen
 } from './publication'
 import {
-  spawn,
-  execSync
+  spawn
 } from 'child_process'
 import utils from './utils'
 import shell from 'shelljs'
@@ -37,7 +37,6 @@ import ora from 'ora'
 import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
-const simctl = require('node-simctl')
 
 const {
   runAndroid
@@ -522,64 +521,25 @@ async function launchAndroidRunner (pathToAndroidRunner: string) {
 }
 
 async function launchIosRunner (pathToIosRunner: string) {
-  const iosDevices = await simctl.getDevices()
-  let iosDevicesChoices = _.filter(
-                                  _.flattenDeep(
-                                     _.map(iosDevices, (val, key) => val)
-                                      ), (device) => device.name.match(/^iPhone/))
-  const inquirerChoices = _.map(iosDevicesChoices, (val, key) => ({
-    name: `${val.name} (UDID ${val.udid})`,
-    value: val
-  }))
-
-  const { device } = await inquirer.prompt([{
-    type: 'list',
-    name: 'device',
-    message: 'Choose iOS simulator',
-    choices: inquirerChoices
-  }])
-
-  try {
-    execSync(`killall "Simulator" `)
-  } catch (e) {
-    // do nothing if there is no simulator launched
-  }
-
+  const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice()
+  await ios.killAllRunningSimulators()
   const spinner = ora(`Waiting for device to boot`).start()
-
-  await launchSimulator(device.udid)
+  await ios.launchSimulator(iPhoneDevice.udid)
 
   shell.cd(pathToIosRunner)
 
   try {
     spinner.text = 'Building iOS Runner project'
-    await buildIosRunner(pathToIosRunner, device.name)
+    await buildIosRunner(pathToIosRunner, iPhoneDevice.name)
     spinner.text = 'Installing runner project on device'
-    await simctl.installApp(device.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
+    await ios.installApplicationOnDevice(iPhoneDevice.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
     spinner.text = 'Launching runner project'
-    await simctl.launch(device.udid, 'com.yourcompany.ernrunner')
+    await ios.launchApplication(iPhoneDevice.udid, 'com.yourcompany.ernrunner')
     spinner.succeed('Done')
   } catch (e) {
     spinner.fail(e.message)
     throw e
   }
-}
-
-async function launchSimulator (udid: string) {
-  return new Promise((resolve, reject) => {
-    const xcrunProc = spawn('xcrun', [ 'instruments', '-w', udid ])
-    xcrunProc.stdout.on('data', data => {
-      log.debug(data)
-    })
-    xcrunProc.stderr.on('data', data => {
-      log.debug(data)
-    })
-    xcrunProc.on('close', code => {
-      code === (0 || 255 /* 255 code because we don't provide -t option */)
-        ? resolve()
-        : reject(new Error(`XCode xcrun command failed with exit code ${code}`))
-    })
-  })
 }
 
 async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
