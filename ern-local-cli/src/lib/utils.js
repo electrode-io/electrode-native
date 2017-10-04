@@ -39,7 +39,7 @@ import fs from 'fs'
 import path from 'path'
 
 const {
-  runAndroid
+  runAndroidProject
 } = android
 
 //
@@ -514,7 +514,7 @@ async function generateContainerForRunner (
 }
 
 async function launchAndroidRunner (pathToAndroidRunner: string) {
-  return runAndroid({
+  return runAndroidProject({
     projectPath: pathToAndroidRunner,
     packageName: 'com.walmartlabs.ern'
   })

@@ -25,29 +25,79 @@ async function delay (ms: number) {
 // ==============================================================================
 
 //
-// Build and run a project on Android emulator
+// Build and run a project on an Android emulator or connected device
 // The `devDebug` variant will be built and launched on an emulator selected by
 // the user (this function prompts the user with a list of available avd to choose from)
+//
 // Assumptions :
 // - devDebug variant exists in the project
-// - activity to launch is named MainActivity
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
-// - packageName : name of the package containing the application
-export async function runAndroid ({
+// - packageName : Name of the package containing the application
+// Options :
+// - activityName : The name of the Activity to start (default "MainActivity")
+export async function runAndroidProject ({
   projectPath,
-  packageName
+  packageName,
+  activityName = 'MainActivity'
 } : {
   projectPath: string,
-  packageName: string
+  packageName: string,
+  activityName?: string
+}) {
+  return runAndroid({
+    projectPath,
+    packageName,
+    activityName
+  })
+}
+
+//
+// Run an android APK on an Android emulator or connected device
+//
+// Params :
+// - apkPath : Absolute or relative path to the APK
+// - packageName : Name of the package containing the application
+// Options :
+// - activityName : The name of the Activity to start (default "MainActivity")
+export async function runAndroidApk ({
+  apkPath,
+  packageName,
+  activityName = 'MainActivity'
+} : {
+  apkPath: string,
+  packageName: string,
+  activityName?: string
+}) {
+  return runAndroid({
+    apkPath,
+    packageName,
+    activityName
+  })
+}
+
+export async function runAndroid ({
+  packageName,
+  activityName,
+  apkPath,
+  projectPath
+} : {
+  packageName: string,
+  activityName: string,
+  apkPath?: string,
+  projectPath?: string
 }) {
   const devices = await getDevices()
   if (devices.length === 1) {
-    // If 1 device is running install and launch the application
     log.debug(devices[0].split('\t')[0], ' is running ...')
-    await installAndLaunchApp(projectPath, packageName)
+    await installAndLaunchApp({
+      projectPath,
+      packageName,
+      apkPath,
+      activityName
+    })
   } else if (devices.length > 1) {
-    log.error('error: more than one device/emulator')
+    throw new Error('More than one device/emulator is running !')
   } else {
     const avdImageNames = await getAndroidAvds()
     const { avdImageName } = await inquirer.prompt([{
@@ -57,7 +107,13 @@ export async function runAndroid ({
       choices: avdImageNames
     }])
 
-    return runAndroidUsingAvdImage(projectPath, packageName, avdImageName)
+    return runAndroidUsingAvdImage({
+      projectPath,
+      packageName,
+      avdImageName,
+      apkPath,
+      activityName
+    })
   }
 }
 
@@ -67,10 +123,17 @@ export async function runAndroid ({
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
 // - avdImageName : name of the avd image to use (emulator image)
-export async function runAndroidUsingAvdImage (
-  projectPath: string,
+export async function runAndroidUsingAvdImage ({
+  projectPath,
+  packageName,
+  avdImageName,
+  activityName
+} : {
+  projectPath?: string,
   packageName: string,
-  avdImageName: string) {
+  avdImageName: string,
+  activityName: string
+}) {
   // https://issuetracker.google.com/issues/37137213
   const launchEmulatorCmd = spawn(
     androidEmulatorPath(),
@@ -82,7 +145,7 @@ export async function runAndroidUsingAvdImage (
   })
   launchEmulatorCmd.unref()
   await spin('Waiting for device to start', waitForAndroidDevice())
-  await installAndLaunchApp(projectPath, packageName)
+  await installAndLaunchApp({ projectPath, packageName, activityName })
 }
 
 // Does the job of installing and running the app
@@ -90,12 +153,24 @@ export async function runAndroidUsingAvdImage (
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
-export async function installAndLaunchApp (
-  projectPath: string,
-  packageName: string) {
-  await spin('Installing application', installApp(projectPath))
+async function installAndLaunchApp ({
+  projectPath,
+  apkPath,
+  packageName,
+  activityName
+} : {
+  projectPath?: string,
+  apkPath?: string,
+  packageName: string,
+  activityName: string
+}) {
+  if (projectPath) {
+    await spin('Building and installing application', buildAndInstallApp(projectPath))
+  } else if (apkPath) {
+    await spin('Installing APK', installApk(apkPath))
+  }
   await spin('Launching Android Application', Promise.resolve())
-  launchAndroidActivityDetached(packageName, 'MainActivity', projectPath)
+  launchAndroidActivityDetached(packageName, activityName)
 }
 
 // Utility method that basically completes whenever the android device is ready
@@ -128,7 +203,7 @@ export async function androidGetBootAnimProp () {
 // params :
 // - projectPath : Absolute or relative path to the root of the Android project
 // containing the application
-export async function installApp (projectPath: string) {
+export async function buildAndInstallApp (projectPath: string) {
   return new Promise((resolve, reject) => {
     shell.cd(projectPath)
     exec(`./gradlew installDebug`,
@@ -166,11 +241,10 @@ export async function launchAndroidActivity (
 // Will spawn the command (detached mode)
 export function launchAndroidActivityDetached (
   packageName: string,
-  activityName: string,
-  cwd: string) {
+  activityName: string) {
   const adbShellCommand = spawn(androidAdbPath(),
       [ 'shell', 'am', 'start', '-n', `${packageName}/.${activityName}` ],
-    { cwd, detached: true })
+    { detached: true })
 
   adbShellCommand.stderr.on('data', (data) => {
     log.error(`${data}`)
@@ -218,6 +292,19 @@ export async function getDevices () {
   })
 }
 
+export async function installApk (pathToApk: string) {
+  return new Promise((resolve, reject) => {
+    exec(`${androidAdbPath()} install -r ${pathToApk}`, (err, stdout, stderr) => {
+      if (err || stderr) {
+        reject(err || stderr)
+      } else {
+        log.debug(stdout)
+        resolve()
+      }
+    })
+  })
+}
+
 export function androidAdbPath () : string {
   return process.env.ANDROID_HOME
         ? `${process.env.ANDROID_HOME}/platform-tools/adb`
@@ -229,86 +316,3 @@ export function androidEmulatorPath () : string {
         ? `${process.env.ANDROID_HOME}/tools/emulator`
         : 'emulator'
 }
-
-// ==============================================================================
-// Following code is not in use ! It was done at some point when we wanted
-// to launch the real native application binary instead of the runner project
-// We keep it here, as we might want to bring back this feature
-// ==============================================================================
-
-/* async function runAndroid() {
- let compatibleVersions = [];
- let compatibilityReport =
- await getNativeAppCompatibilityReport({ platformName: 'android' });
-
- for (const app of compatibilityReport) {
- if (app.compatibility.incompatible.length === 0) {
- compatibleVersions.push(
- `${app.appName}:${app.appPlatform}:${app.appVersion}:${app.appBinary}`);
- }
- }
-
- let avdImageNames = await getAndroidAvds();
-
- inquirer.prompt([{
- type: 'list',
- name: 'nativeAppBinaryVersion',
- message: 'Choose compatible version to launch',
- choices: compatibleVersions
- }, {
- type: 'list',
- name: 'avdImageName',
- message: 'Choose Android emulator image',
- choices: avdImageNames
- }]).then(answers => {
- doRunAndroid(answers.nativeAppBinaryVersion, answers.avdImageName);
- });
- }
-
- async function doRunAndroid(nativeAppBinaryVersion, avdImageName) {
- let x = explodeBinaryFilename(nativeAppBinaryVersion);
- if (!isBinaryInCache(x.app, x.platform, x.version, x.hash)) {
- const appBinary = await cauldron.getNativeAppBinary(x.app, x.platform, x.version);
- fs.writeFileSync(`${CACHE_PATH}/binaries/\
- ${buildBinaryFileName(x.app, x.platform, x.version, x.hash)}`, appBinary, 'ascii');
- }
-
- const pathToApk = `${CACHE_PATH}/binaries/\
- ${buildBinaryFileName(x.app, x.platform, x.version, x.hash)}`;
- exec(`emulator -avd ${avdImageName}`);
- await spin('Waiting for device to start', waitForAndroidDevice());
- await spin('Installing APK', installApk(pathToApk));
- await spin('Launching application',
- launchAndroidActivity("com.walmart.android.cauldrontestapp", "MainActivity"));
- }
-
- //
- // Given a binary file name, explode it to get back
- // details about the binary
- function explodeBinaryFilename(binaryFilename) {
- const explodedBinaryFilename = binaryFilename.split(':');
- return {
- app: explodedBinaryFilename[0],
- platform: explodedBinaryFilename[1],
- version: explodedBinaryFilename[2],
- hash: explodedBinaryFilename[3]
- };
- }
-
- //
- // Return binary file name
- // Format : app:platform:version:hash.apk
- function buildBinaryFileName(app, platform, version, hash) {
- return `${app}:${platform}:${version}:${hash}.${platform === 'android' ? 'apk' : 'app'}`;
- }
-
- function isBinaryInCache(app, platform, version, hash) {
- try {
- fs.statSync(`${CACHE_PATH}/binaries/\
- ${buildBinaryFileName(app, platform, version, hash)}`);
- return true;
- } catch (e) {
- }
-
- return false;
- } */
