@@ -20,6 +20,12 @@ exports.handler = async function ({
 } : {
   descriptor: string
 }) {
+  await utils.logErrorAndExitIfNotSatisfied({
+    cauldronIsActive: {
+      extraErrorMessage: 'A Cauldron must be active in order to use this command'
+    }
+  })
+
   const config = await cauldron.getConfig(NativeApplicationDescriptor.fromString(descriptor))
   log.info(JSON.stringify(config, null, 2))
 }
