@@ -41,7 +41,6 @@
       "url": "https://github.com/electrode-io/electrode-native"
     },
      "versions": {
-       "type": "branches",
        "options": [
         {
             "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.7",
