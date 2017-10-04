@@ -55,6 +55,7 @@
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
     "node-fetch": "^1.7.1",
+    "node-simctl": "^3.5.5",
     "ora": "^1.1.0",
     "shelljs": "^0.7.6",
     "tmp": "^0.0.31"

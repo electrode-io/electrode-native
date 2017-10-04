@@ -1,6 +1,7 @@
 // @flow
 
 import * as _android from './android'
+import * as _ios from './ios'
 import * as _mustacheUtils from './mustacheUtils'
 import _ColoredLog from './coloredLog'
 import _config from './config'
@@ -20,6 +21,7 @@ import * as _fileUtils from './fileUtil'
 import _YarnCli from './YarnCli'
 
 export const android = _android
+export const ios = _ios
 export const ColoredLog = _ColoredLog
 export const config = _config
 export const npm = _npm
@@ -40,6 +42,7 @@ export const YarnCli = _YarnCli
 
 export default ({
   android: _android,
+  ios: _ios,
   ColoredLog: _ColoredLog,
   config: _config,
   npm: _npm,
