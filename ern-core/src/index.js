@@ -18,6 +18,7 @@ import {
   codepush as _codepush
 } from './clients'
 import * as _dependencyLookup from './dependencyLookup'
+import _ErnBinaryStore from './ErnBinaryStore'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -35,6 +36,7 @@ export const utils = _utils
 export const MavenUtils = _MavenUtils
 export const Publisher = _Publisher
 export const ContainerGeneratorConfig = _ContainerGeneratorConfig
+export const ErnBinaryStore = _ErnBinaryStore
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -52,5 +54,6 @@ export default ({
   utils: _utils,
   MavenUtils: _MavenUtils,
   Publisher: _Publisher,
-  ContainerGeneratorConfig: _ContainerGeneratorConfig
+  ContainerGeneratorConfig: _ContainerGeneratorConfig,
+  ErnBinaryStore: _ErnBinaryStore
 })
