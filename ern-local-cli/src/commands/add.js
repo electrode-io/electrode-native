@@ -39,6 +39,7 @@ exports.handler = async function ({
 }) {
   try {
     for (const pkg of packages) {
+      log.debug(`Adding package: ${pkg}`)
       await MiniApp.fromCurrentPath().addDependency(Dependency.fromString(pkg), {dev, peer})
     }
   } catch (e) {
