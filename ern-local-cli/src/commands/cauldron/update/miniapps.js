@@ -47,6 +47,12 @@ exports.handler = async function ({
   descriptor?: string,
   force?: boolean
 }) {
+  await utils.logErrorAndExitIfNotSatisfied({
+    cauldronIsActive: {
+      extraErrorMessage: 'A Cauldron must be active in order to use this command'
+    }
+  })
+
   if (!descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
   }

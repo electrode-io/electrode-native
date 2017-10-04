@@ -39,6 +39,9 @@ exports.handler = async function ({
   copyFromVersion?: string
 }) {
   await utils.logErrorAndExitIfNotSatisfied({
+    cauldronIsActive: {
+      extraErrorMessage: 'A Cauldron must be active in order to use this command'
+    },
     isCompleteNapDescriptorString: { descriptor },
     napDescritorDoesNotExistsInCauldron: {
       descriptor,
