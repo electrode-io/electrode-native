@@ -232,7 +232,6 @@ Are you sure this is a MiniApp ?`)
       }
     } else {
       let finalDependency
-
       // Dependency is not a development dependency
       // In that case we need to perform additional checks and operations
       const versionLessDependency = dependency.withoutVersion()
@@ -250,67 +249,76 @@ Are you sure this is a MiniApp ?`)
 
         const nativeDependencies = findNativeDependencies(path.join(tmpPath, 'node_modules'))
         if (nativeDependencies.length === 0) {
+          log.debug('Pure JS dependency')
           // This is a pure JS dependency. Not much to do here -yet-
           finalDependency = versionLessDependency
-        } else if (nativeDependencies.length === 1) {
-          // This is a native dependency or it contains a single native dependency as a transitive one
-          if (Dependency.same(nativeDependencies[0], dependency, { ignoreVersion: true })) {
-            // This dependency is itself the native dependency.
-            // Let's check if this is an API (or API implementation) or a third party native dependency
-            if (/^react-native-.+-api$|^react-native-.+-api-impl$/.test(dependency.name)) {
-              // This is a native API or API implementation
-              // Just tell user he/she should consider adding it to manifest
-              log.warn(`${versionLessDependency.toString()} is not declared in the Manifest. You might consider adding it.`)
-              finalDependency = dependency
+        } else if (nativeDependencies.length >= 1) {
+          log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies)}`)
+          for (let dep: Dependency of nativeDependencies) {
+            if (Dependency.same(dep.withoutVersion(), dependency, {ignoreVersion: true})) {
+              if (MiniApp.isDependencyApiOrApiImpl(dep.name)) {
+                log.debug(`This is an api or api-impl`)
+                log.warn(`${dep.toString()} is not declared in the Manifest. You might consider adding it.`)
+                finalDependency = dep
+              } else {
+                // This is a third party native dependency. If it's not in the master manifest,
+                // then it means that it is not supported by the platform yet. Fail.
+                return log.error(`${dep.toString()} plugin is not yet supported. Consider adding support for it to the master manifest`)
+              }
             } else {
-              // This is a third party native dependency. If it's not in the master manifest,
-              // then it means that it is not supported by the platform yet. Fail.
-              return log.error(`${dependency.toString()} plugin is not yet supported. Consider adding support for it to the master manifest`)
-            }
-          } else {
-            // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
-            // Recurse with this native dependency
-            if (!await this.addDependency(nativeDependencies[0])) {
-              return log.error(`${dependency.toString()} was not added to the MiniApp.`)
+              // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
+              // Recurse with this native dependency
+              if (!await this.addDependency(dep)) {
+                return log.error(`${dep.toString()} was not added to the MiniApp.`)
+              }
             }
           }
-        } else {
-          // Multiple native dependencies ! (example '@shoutem/ui')
-          // It might be a pure JS dependency which contains transitive native dependencies
-          // Or a native dependency which also contains transitive native dependencies
-          // We don't support this scenario just yet
-          return log.error(`${dependency.toString()} contains multiple plugins. This is not supported yet.`)
         }
       } else {
-        // Dependency is defined in manifest. But does the version match the one from manifest ?
-        if (!dependency.version) {
-          // If no version was specified for this dependency, we're good, just use the version
-          // declared in the manifest
-          finalDependency = manifestDependency
-        } else {
-          // Version is provided for this dependency, check that version match manifest
-          if (dependency.version !== manifestDependency.version) {
-            // Dependency version mismatch. Let the user know of potential impacts and suggest user to
-            // updat the version in the manifest
-            // TODO : If not API/API impl, we need to ensure that plugin is supported by platform
-            // for the provided plugin version
-            log.warn(`${dependency.toString()} version mismatch.`)
-            log.warn(`Manifest version: ${manifestDependency.version}`)
-            log.warn(`Wanted version: ${dependency.version}`)
-            log.warn(`You might want to update the version in your Manifest`)
-          } else {
-            // Dependency version match
-            finalDependency = manifestDependency
-          }
+        log.debug(`Dependency:${dependency.toString()} defined in manifest, performing version match`)
+        let d = this.manifestConformingDependency(dependency, manifestDependency)
+        if (d) {
+          finalDependency = d
         }
       }
 
       if (finalDependency) {
         process.chdir(this.path)
-        await spin(`Adding ${finalDependency.toString()} to MiniApp`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
+        await spin(`Adding ${finalDependency.toString()} to ${this.name}`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
         return finalDependency
+      } else {
+        log.debug(`No final dependency? expected?`)
       }
     }
+  }
+
+  /**
+   * Perform checks to ensure that proper dependency version is picked based on manifest entry.
+   *
+   * @param dependency dependency to be added
+   * @param manifestDependency dependency defined in manifest
+   * @returns {Dependency} Dependency with proper version number
+   */
+  manifestConformingDependency (dependency: Dependency, manifestDependency: Dependency): ? Dependency {
+    if (!dependency.version || dependency.version === manifestDependency.version) {
+      // If no version was specified for this dependency, we're good, just use the version
+      // declared in the manifest
+      return manifestDependency
+    } else {
+      // Dependency version mismatch. Let the user know of potential impacts and suggest user to
+      // updat the version in the manifest
+      // TODO : If not API/API impl, we need to ensure that plugin is supported by platform
+      // for the provided plugin version
+      log.warn(`${dependency.toString()} version mismatch.`)
+      log.warn(`Manifest version: ${manifestDependency.version}`)
+      log.warn(`Wanted version: ${dependency.version}`)
+      log.warn(`You might want to update the version in your Manifest to add this dependency to ${this.name}`)
+      return dependency
+    }
+  }
+
+  static isDependencyApiOrApiImpl (dependencyName: string): boolean {
+    return (/^react-native-.+-api$|^react-native-.+-api-impl$/.test(dependencyName))
   }
 
   async upgradeToPlatformVersion (versionToUpgradeTo: string) : Promise<*> {
