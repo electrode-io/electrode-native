@@ -12,6 +12,7 @@ import * as fixtures from './fixtures/common'
 
 const getNativeAppStub = sinon.stub(cauldron, 'getNativeApp')
 const isPublishedToNpmStub = sinon.stub(utils, 'isPublishedToNpm')
+let cauldronIsActiveStub
 
 function resolveCauldronGetNativeAppWith(data) {
   getNativeAppStub.resolves(data)
@@ -19,6 +20,10 @@ function resolveCauldronGetNativeAppWith(data) {
 
 beforeEach(() => {
   isPublishedToNpmStub.reset()
+})
+
+afterEach(() => {
+  cauldronIsActiveStub && cauldronIsActiveStub.restore()
 })
 
 after(() => {
@@ -56,13 +61,13 @@ describe('Ensure.js', () => {
   describe('isValidContainerVersion', () => {
     fixtures.validContainerVersions.forEach(version => {
       it('shoud not throw if version is valid', () => {
-        expect(() => Ensure.isValidContainerVersion(version), `throw for ${version}`).to.not.throw
+        expect(() => Ensure.isValidContainerVersion(version), `throw for ${version}`).to.not.throw()
       })
     })
 
     fixtures.invalidContainerVersions.forEach(version => {
       it('should throw if version is invalid', () => {
-        expect(() => Ensure.isValidContainerVersion(version), `does not throw for ${version}`).to.throw
+        expect(() => Ensure.isValidContainerVersion(version), `does not throw for ${version}`).to.throw()
       })
     })
   })
@@ -73,13 +78,13 @@ describe('Ensure.js', () => {
   describe('isCompleteNapDescriptorString', () => {
     fixtures.completeNapDescriptors.forEach(napDescriptor => {
       it('shoud not throw if given a complete napDescriptor string', () => {
-        expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `throw for ${napDescriptor}`).to.not.throw
+        expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `throw for ${napDescriptor}`).to.not.throw()
       })
     })
 
     fixtures.incompleteNapDescriptors.forEach(napDescriptor => {
       it('should throw if given a partial napDescriptor string', () => {
-        expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `does not throw for ${napDescriptor}`).to.throw
+        expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `does not throw for ${napDescriptor}`).to.throw()
       })
     })
   })
@@ -90,13 +95,13 @@ describe('Ensure.js', () => {
   describe('noGitOrFilesystemPath', () => {
     fixtures.withoutGitOrFileSystemPath.forEach(obj => {
       it('shoud not throw if no git or file system path', () => {
-        expect(() => Ensure.noGitOrFilesystemPath(obj), `throw for ${obj}`).to.not.throw
+        expect(() => Ensure.noGitOrFilesystemPath(obj), `throw for ${obj}`).to.not.throw()
       })
     })
 
     fixtures.withGitOrFileSystemPath.forEach(obj => {
       it('should throw if git or file system path', () => {
-        expect(() => Ensure.noGitOrFilesystemPath(obj), `does not throw for ${obj}`).to.throw
+        expect(() => Ensure.noGitOrFilesystemPath(obj), `does not throw for ${obj}`).to.throw()
       })
     })
   })
@@ -129,6 +134,21 @@ describe('Ensure.js', () => {
     it('should throw if dependency is not published to npm', async () => {
       isPublishedToNpmStub.resolves(false)
       assert(await doesThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
+    })
+  })
+
+  // ==========================================================
+  // cauldronIsActive
+  // ==========================================================
+  describe('cauldronIsActive', () => {
+    it('should not throw if a cauldron is active', () => {
+      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(true)
+      expect(() => Ensure.cauldronIsActive(), `does throw when cauldron is active`).to.not.throw()
+    })
+
+    it('should throw if no cauldron is active', () => {
+      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(false)
+      expect(() => Ensure.cauldronIsActive(), `does not throw when cauldron is not active`).to.throw()
     })
   })
 })

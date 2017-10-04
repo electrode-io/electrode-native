@@ -204,4 +204,10 @@ export default class Ensure {
       }
     }
   }
+
+  static cauldronIsActive (extraErrorMessage: string = '') {
+    if (!cauldron.isActive()) {
+      throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
+    }
+  }
 }

@@ -64,6 +64,12 @@ beforeEach(() => {
   oraFailStub.reset()
 })
 
+let cauldronIsActiveStub
+
+afterEach(() => {
+  cauldronIsActiveStub && cauldronIsActiveStub.restore()
+})
+
 function useCauldronFixture(fixture) {
   getAllNativeAppsStub.resolves(fixture.nativeApps)
 }
@@ -214,6 +220,22 @@ describe('utils.js', () => {
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
+    })
+
+    it('[cauldronIsActive] Shoud log error and exit process if cauldron is not active', async () => {
+      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(false)
+      await utils.logErrorAndExitIfNotSatisfied({
+        cauldronIsActive: {}
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[cauldronIsActive] Shoud not log error not exit process if cauldron is active', async () => {
+      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(true)
+      await utils.logErrorAndExitIfNotSatisfied({
+        cauldronIsActive: {}
+      })
+      assertNoErrorLoggedAndNoProcessExit()
     })
   })
 
