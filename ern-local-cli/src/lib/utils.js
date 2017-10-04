@@ -88,7 +88,8 @@ async function logErrorAndExitIfNotSatisfied ({
   dependencyNotInNativeApplicationVersionContainer,
   dependencyIsInNativeApplicationVersionContainer,
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
-  dependencyNotInUseByAMiniApp
+  dependencyNotInUseByAMiniApp,
+  cauldronIsActive
 } : {
   noGitOrFilesystemPath?: {
     obj: string | Array<string>,
@@ -153,10 +154,19 @@ async function logErrorAndExitIfNotSatisfied ({
     dependency: string | Array<string> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage?: string
+  },
+  cauldronIsActive?: {
+    extraErrorMessage?: string
   }
 } = {}) {
   const spinner = ora('Performing initial checks').start()
   try {
+    if (cauldronIsActive) {
+      spinner.text = 'Ensuring that a Cauldron is active'
+      Ensure.cauldronIsActive(
+        cauldronIsActive.extraErrorMessage
+      )
+    }
     if (isValidContainerVersion) {
       spinner.text = 'Ensuring that container version is valid'
       Ensure.isValidContainerVersion(
