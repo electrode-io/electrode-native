@@ -8,7 +8,7 @@ cd $THIS_DIR
 
 source packageRunner.config
 rm -f packageRunner.config
-cd $cwd
+cd "$cwd"
 
 npm start
 
