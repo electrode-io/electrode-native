@@ -55,6 +55,7 @@
     "ern-util": "0.7.0",
     "fs-readdir-recursive": "^1.0.0",
     "mustache": "^2.3.0",
+    "semver": "^5.4.1",
     "shelljs": "^0.7.6",
     "tmp": "^0.0.31",
     "xcode-ern": "1.0.0"
