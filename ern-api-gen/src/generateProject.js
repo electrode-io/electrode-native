@@ -85,7 +85,7 @@ export function generatePackageJson ({
     'devDependencies': {
       'flow-bin': FLOW_BIN_VERSION
     },
-    'peerDependencies': {
+    'dependencies': {
       'react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.x`
     },
     'ern': {
