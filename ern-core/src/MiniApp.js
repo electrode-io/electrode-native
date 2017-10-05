@@ -220,7 +220,7 @@ Are you sure this is a MiniApp ?`)
 
   async addDependency (
     dependency: Dependency,
-    { dev, peer } : { dev?: boolean, peer?: boolean } = {}) : Promise<?Dependency> {
+    { dev, peer } : { dev?: boolean, peer?: boolean } = {}, addedDependencies: Array<string> = []) : Promise<?Dependency> {
     if (dev || peer) {
       // Dependency is a devDependency or peerDependency
       // In that case we don't perform any checks at all (for now)
@@ -268,7 +268,7 @@ Are you sure this is a MiniApp ?`)
             } else {
               // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
               // Recurse with this native dependency
-              if (!await this.addDependency(dep)) {
+              if (!addedDependencies.includes(dep.name) && !await this.addDependency(dep, {dev: false, peer: false}, addedDependencies)) {
                 return log.error(`${dep.toString()} was not added to the MiniApp.`)
               }
             }
@@ -285,6 +285,7 @@ Are you sure this is a MiniApp ?`)
       if (finalDependency) {
         process.chdir(this.path)
         await spin(`Adding ${finalDependency.toString()} to ${this.name}`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
+        addedDependencies.push(finalDependency.name)
         return finalDependency
       } else {
         log.debug(`No final dependency? expected?`)
