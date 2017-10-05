@@ -84,7 +84,12 @@ public class ElectrodeReactContainer {
         reactInstanceManagerBuilder = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
+                {{#RN_VERSION_GTE_49}}
+                .setJSMainModulePath("index.android")
+                {{/RN_VERSION_GTE_49}}
+                {{#RN_VERSION_LT_49}}
                 .setJSMainModuleName("index.android")
+                {{/RN_VERSION_LT_49}}
                 .addPackage(new MainReactPackage())
                 .setUseDeveloperSupport(reactContainerConfig.isReactNativeDeveloperSupport)
                 .setInitialLifecycleState(LifecycleState.BEFORE_CREATE);

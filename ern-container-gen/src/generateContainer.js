@@ -12,6 +12,7 @@ import {
 } from './utils.js'
 import _ from 'lodash'
 import shell from 'shelljs'
+import semver from 'semver'
 
 let mustacheView = {}
 
@@ -102,7 +103,6 @@ export default async function generateContainer ({
   }
 
   mustacheView = {
-    reactNativeVersion: reactNativePlugin.version,
     nativeAppName,
     containerVersion,
     miniApps: _.map(miniapps, miniapp => ({
@@ -116,6 +116,10 @@ export default async function generateContainer ({
     }))
   }
 
+  mustacheView = addReactNativeVersionKeysToMustacheView(
+    mustacheView,
+    reactNativePlugin.version)
+
   await generator.generateContainer(
     containerVersion,
     nativeAppName,
@@ -126,6 +130,16 @@ export default async function generateContainer ({
     {pathToYarnLock})
 
   return paths
+}
+
+function addReactNativeVersionKeysToMustacheView (
+  mustacheView: Object,
+  reactNativeVersion: string) {
+  return Object.assign(mustacheView, {
+    reactNativeVersion,
+    RN_VERSION_GTE_49: semver.gte(reactNativeVersion, '0.49.0'),
+    RN_VERSION_LT_49: semver.lt(reactNativeVersion, '0.49.0')
+  })
 }
 
 function sortPlugins (plugins: Array<Dependency>) {
