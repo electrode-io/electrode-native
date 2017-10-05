@@ -214,9 +214,9 @@ You may view the created API code at [react-native-ernmovie-api](https://github.
 1) Using the `ern add` command add `MoviesApi` , other dependent APIs and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as a dependency of MovieListMiniApp.
 
 ```bash
-$ ern add react-native-ernmovie-api
+$ ern add react-native-ernmovie-api@0.0.9
+$ ern add react-native-ernnavigation-api@0.0.3
 $ ern add react-native-electrode-bridge
-$ ern add react-native-ernnavigation-api
 ```
 
 {% sample lang="android" %}
@@ -585,12 +585,12 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
 
 {% sample lang="android" %}  
 ```bash
-$ ern run-android --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
+$ ern run-android --miniapps moviedetailsminiapp0.0.3 --mainMiniAppName MovieListMiniApp
 ```  
 {% sample lang="ios" %}  
 ```bash
 $ cd MovieListMiniApp //make sure you are in root dir of MovieListMiniApp
-$ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
+$ ern run-ios --miniapps moviedetailsminiapp0.0.3 --mainMiniAppName MovieListMiniApp
 ```  
 
 {% common %}
