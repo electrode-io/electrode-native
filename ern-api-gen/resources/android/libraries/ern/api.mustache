@@ -16,10 +16,13 @@ package {{package}};
 import android.support.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;
+import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.electrode.reactnative.bridge.None;
 import java.util.*;
+import java.util.UUID;
+
 {{#imports}}
 import {{import}};
 {{/imports}}
@@ -65,7 +68,13 @@ public final class {{classname}} {
     {{#operations}}
     {{#operation}}
         {{#isEvent}}
-        void add{{camelizedNickName}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener);
+        UUID add{{camelizedNickName}}EventListener(@NonNull final ElectrodeBridgeEventListener<{{#requestParam}}{{{dataType}}}{{/requestParam}}> eventListener);
+        {{/isEvent}}
+    {{/operation}}
+
+    {{#operation}}
+        {{#isEvent}}
+            ElectrodeBridgeEventListener<ElectrodeBridgeEvent> remove{{{camelizedNickName}}}EventListener(@NonNull final UUID uuid);
         {{/isEvent}}
     {{/operation}}
 
