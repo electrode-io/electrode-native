@@ -27,9 +27,9 @@ Node.js v6.x includes npm@3 by default, but if you are using Node.js v4, be sure
 $ npm install -g npm@3
 ```
 
-### [Android Studio](htps://developer.android.com/studio/index.html)
+### [Android Studio](https://developer.android.com/studio/index.html)
 
-You need to install [Android Studio](htps://developer.android.com/studio/index.html) if you want your MiniApp to target the Android platform or if you need to generate containers targeting Android mobile applications.
+You need to install [Android Studio](https://developer.android.com/studio/index.html) if you want your MiniApp to target the Android platform or if you need to generate containers targeting Android mobile applications.
 
 After you install Android Studio, set the `ANDROID_SDK env` variable to point to the location of the Android SDK--if it has not been set already. An example of the SDK path is shown below.  
 
