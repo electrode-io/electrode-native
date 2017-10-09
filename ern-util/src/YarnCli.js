@@ -5,6 +5,8 @@ import {
 } from 'child_process'
 import tmp from 'tmp'
 import shell from 'shelljs'
+import path from 'path'
+import fs from 'fs'
 import DependencyPath from './DependencyPath'
 
 export default class YarnCli {
@@ -67,21 +69,24 @@ export default class YarnCli {
   async info (dependencyPath: DependencyPath, {
     field,
     json
-  } : {
+  }: {
     field?: string,
     json?: boolean
   } = {}) {
-    const cmd = `info ${dependencyPath.toString()} ${field || ''} ${json ? '--json' : ''}`
-    const output = await this.runYarnCommand(cmd)
-    // Assume single line of yarn JSON output in stdout for yarn info
-    return JSON.parse(output)
+    if (dependencyPath.isAFileSystemPath) {
+      const packageJsonPath = path.join(dependencyPath.toString().substr(5), `package.json`)
+      log.debug(`[runYarnCommand] Running info: returning ${packageJsonPath} `)
+      return JSON.parse(fs.readFileSync(packageJsonPath, `utf-8`))
+    } else {
+      const cmd = `info ${dependencyPath.toString()} ${field || ''} ${json ? '--json' : ''}`
+      const output = await this.runYarnCommand(cmd)
+
+      // Assume single line of yarn JSON output in stdout for yarn info
+      return JSON.parse(output)
+    }
   }
 
-  async runYarnCommand (command: string, {
-    json
-  } : {
-    json?: boolean
-  } = {}) {
+  async runYarnCommand (command: string) {
     const cmd = `${this.binaryPath} ${command}`
     log.debug(`[runYarnCommand] Running ${cmd}`)
     return new Promise((resolve, reject) => {
