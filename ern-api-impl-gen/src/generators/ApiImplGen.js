@@ -40,7 +40,7 @@ export default class ApiImplGen {
           await generator.generate(paths, reactNativeVersion, plugins)
         }
       } catch (e) {
-        Utils.logErrorAndExitProcess(`Error executing generators, error: ${e}, generator: ${generator.name.toString()}`)
+        throw new Error(`API implementation project generation failed: ${e}`)
       }
     }
 
@@ -63,7 +63,7 @@ export default class ApiImplGen {
       log.debug('Downloading react-native dependency')
       await this.spinAndDownload(DependencyPath.fromString(`react-native@${reactNativeVersion}`))
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while retrieving API: ${e}`)
+      throw new Error(`Api dependency download failed: ${e}`)
     }
   }
 
@@ -88,8 +88,7 @@ export default class ApiImplGen {
       }
       return dependencies
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while retrieving dependencies: ${e}`)
-      throw e
+      throw new Error(`getDependencies: ${e}`)
     }
   }
 

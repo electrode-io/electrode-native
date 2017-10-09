@@ -60,13 +60,15 @@ exports.handler = async function ({
   force: boolean,
   outputFolder: string,
 }) {
-  console.log(`Generating API implementation for  ${api}`)
+  log.info(`Generating API implementation for  ${api}`)
 
   const reactNativeVersionLessDependency = Dependency.fromString('react-native')
   let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
 
   if (!reactNativeDependency) {
     return log.error('Could not retrieve react native dependency from manifest')
+  } else {
+    log.debug(`Will generate api implementation using react native version: ${reactNativeDependency.version}`)
   }
 
   let reactNativeVersion = reactNativeDependency.version
@@ -80,21 +82,24 @@ exports.handler = async function ({
     nativeOnly = await promptPlatformSelection()
   }
 
-  await generateApiImpl({
-    apiDependencyPath: DependencyPath.fromString(api),
-    outputFolder,
-    nativeOnly,
-    forceGenerate: force,
-    reactNativeVersion,
-    paths: {
-      apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
-      pluginsDownloadFolder: PLUGIN_FOLDER,
-      workingFolder: WORKING_FOLDER,
-      outFolder: ''
-    }
-  }).then(() => {
+  try {
+    await generateApiImpl({
+      apiDependencyPath: DependencyPath.fromString(api),
+      outputFolder,
+      nativeOnly,
+      forceGenerate: force,
+      reactNativeVersion,
+      paths: {
+        apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
+        pluginsDownloadFolder: PLUGIN_FOLDER,
+        workingFolder: WORKING_FOLDER,
+        outFolder: ''
+      }
+    })
     log.info('Success!')
-  })
+  } catch (e) {
+    log.error(`${e} \n\nAPI implementation generation failed.`)
+  }
 }
 
 async function promptPlatformSelection () {
