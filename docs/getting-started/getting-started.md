@@ -545,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 {% sample lang="ios" %}
-* Add the following implementation inside the `ViewController.m` file right below the movie api implementation.  
+* Add the following implementation inside the `ViewController.m` file's `viewDidLoad` method right below `UIViewController` initialization.
 
 ```objectivec
  NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
@@ -585,12 +585,12 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
 
 {% sample lang="android" %}  
 ```bash
-$ ern run-android --miniapps moviedetailsminiapp0.0.3 --mainMiniAppName MovieListMiniApp
+$ ern run-android --miniapps moviedetailsminiapp@0.0.3 --mainMiniAppName MovieListMiniApp
 ```  
 {% sample lang="ios" %}  
 ```bash
 $ cd MovieListMiniApp //make sure you are in root dir of MovieListMiniApp
-$ ern run-ios --miniapps moviedetailsminiapp0.0.3 --mainMiniAppName MovieListMiniApp
+$ ern run-ios --miniapps moviedetailsminiapp@0.0.3 --mainMiniAppName MovieListMiniApp
 ```  
 
 {% common %}
