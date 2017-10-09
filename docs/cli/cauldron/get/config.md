@@ -1,6 +1,6 @@
 ## `ern cauldron get config <descriptor>`
 #### Description
-* Retrieve the configuration stored in the Cauldron for a given partial or complete native application descriptor
+* Retrieve the configuration stored in the Cauldron for a given partial native application descriptor or complete native application descriptor
 * Log the configuration as a JSON formatted string in your terminal  
 
 #### Syntax

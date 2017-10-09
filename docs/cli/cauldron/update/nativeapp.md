@@ -1,6 +1,6 @@
 ## `ern cauldron update nativeapp <descriptor> [isReleased]`
 #### Description
-* Update the release status of a native application version in the Cauldron.  
+* Update the release status of a native application version in the Cauldron. 
 
 #### Syntax
 `ern cauldron update nativeapp <descriptor> [isReleased]`

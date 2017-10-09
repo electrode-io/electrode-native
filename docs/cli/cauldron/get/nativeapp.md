@@ -1,6 +1,6 @@
 ## `ern cauldron get nativeapp <descriptor>`
 #### Description
-* Retrieve the data stored in the Cauldron for a given partial or complete native application descriptor
+* Retrieve the data stored in the Cauldron for a given partial native application descriptor or complete native application descriptor
 * Log the data as a JSON formatted string in your terminal    
 
 #### Syntax

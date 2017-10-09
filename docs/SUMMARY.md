@@ -46,6 +46,8 @@
 - [CLI](platform-parts/cli.md)
   - [Global client](platform-parts/cli.md#ern-global-client)
   - [Local client](platform-parts/cli.md#ern-local-client)
+  
+- [GLOSSARY](GLOSSARY.md)
 
 ### CLI COMMANDS
 
