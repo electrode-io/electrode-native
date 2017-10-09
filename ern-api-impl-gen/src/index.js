@@ -2,6 +2,7 @@
 
 import fs from 'fs'
 import shell from 'shelljs'
+import inquirer from 'inquirer'
 
 import {
   Dependency,
@@ -44,7 +45,7 @@ export async function generateApiImpl ({
   try {
     // get the folder to output the generated project.
     paths.outFolder = outputFolder = formOutputFolderName(apiDependencyPath, outputFolder)
-    createOutputFolder(outputFolder, forceGenerate)
+    await createOutputFolder(outputFolder, forceGenerate)
     await createNodePackage(outputFolder, apiDependencyPath, nativeOnly)
 
     let platforms = getPlatforms(nativeOnly)
@@ -55,22 +56,37 @@ export async function generateApiImpl ({
 
     await new ApiImplGen().generateApiImplementation(apiDependencyPath, paths, reactNativeVersion, platforms)
   } catch (e) {
-    Utils.logErrorAndExitProcess(`Unable to start project generation: ${e}`)
+    log.debug('command failed performing cleanup.')
+    throw new Error(e)
   }
 }
 
-function createOutputFolder (outputFolderPath: string, forceGenerate) {
+async function createOutputFolder (outputFolderPath: string, forceGenerate) {
   if (!forceGenerate && fs.existsSync(outputFolderPath)) {
-    Utils.logErrorAndExitProcess(`An implementation directory already exists in ${outputFolderPath}. \nIf you want to force the creation of this API implementation project use -f option in your command.`)
-    // RETURN
-  } else {
-    if (forceGenerate && fs.existsSync(outputFolderPath)) {
-      log.info(`Deleting the existing directory and recreating a new one in ${outputFolderPath}`)
-      shell.rm('-R', outputFolderPath)
+    const {shouldRegenerate} = await inquirer.prompt(
+      {
+        type: `confirm`,
+        name: `shouldRegenerate`,
+        message: `An implementation directory already exists in ${outputFolderPath}. Do you want to delete this and regenerate this project?`,
+        default: false
+      }
+    )
+
+    if (!shouldRegenerate) {
+      throw Error(`An implementation directory already exists`)
+    } else {
+      forceGenerate = true
     }
-    shell.mkdir('-p', outputFolderPath)
-    Utils.throwIfShellCommandFailed()
   }
+
+  if (forceGenerate && fs.existsSync(outputFolderPath)) {
+    log.info(`Deleting the existing directory and recreating a new one in ${outputFolderPath}`)
+    shell.rm('-R', outputFolderPath)
+  } else {
+    log.debug(`creating output dir: ${outputFolderPath}`)
+  }
+  shell.mkdir('-p', outputFolderPath)
+  Utils.throwIfShellCommandFailed()
 }
 
 async function createNodePackage (
@@ -100,9 +116,11 @@ async function createNodePackage (
 function createWorkingFolder (workingFolderPath: string) {
   shell.rm('-rf', workingFolderPath)
   shell.mkdir('-p', workingFolderPath)
+  log.debug(`Working folder created: ${workingFolderPath}`)
 }
 
 function createPluginsDownloadFolder (pluginsDownloadPath: string) {
+  shell.rm('-rf', pluginsDownloadPath)
   shell.mkdir('-p', pluginsDownloadPath)
 }
 

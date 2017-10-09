@@ -72,7 +72,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
       this.updateBuildGradle(paths, reactNativeVersion, outputFolder)
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while generating api impl hull for android: ${e}`)
+      throw new Error(`Error during apiimpl hull: ${e}`)
     }
   }
 
