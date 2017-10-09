@@ -92,7 +92,7 @@ exports.handler = async function ({
   let napDescriptor: ?NativeApplicationDescriptor
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isValidContainerVersion: version ? { containerVersion: version } : undefined,
+    isValidContainerVersion: version ? {containerVersion: version} : undefined,
     noGitOrFilesystemPath: {
       obj: dependencies,
       extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
@@ -115,17 +115,17 @@ exports.handler = async function ({
     // of completeNapDescriptor strings
     // [Should probably move to a Cauldron util class for reusability]
     let result =
-    _.filter(
-      _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
-              if (!version.isReleased) {
-                return `${nativeApp.name}:${p.name}:${version.name}`
-              }
-            })))), elt => elt !== undefined)
+      _.filter(
+        _.flattenDeep(
+          _.map(nativeApps, nativeApp =>
+            _.map(nativeApp.platforms, p =>
+              _.map(p.versions, version => {
+                if (!version.isReleased) {
+                  return `${nativeApp.name}:${p.name}:${version.name}`
+                }
+              })))), elt => elt !== undefined)
 
-    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
+    const {userSelectedCompleteNapDescriptor} = await inquirer.prompt([{
       type: 'list',
       name: 'userSelectedCompleteNapDescriptor',
       message: 'Choose a non released native application version for which to generate container',
@@ -137,7 +137,7 @@ exports.handler = async function ({
 
   if (descriptor) {
     await utils.logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
+      isCompleteNapDescriptorString: {descriptor},
       napDescriptorExistInCauldron: {
         descriptor,
         extraErrorMessage: 'You cannot create a container for a non existin native application version.'
@@ -168,11 +168,11 @@ exports.handler = async function ({
     await generateMiniAppsComposite(
       miniAppsPaths,
       outDir || `${Platform.rootDirectory}/miniAppsComposite`,
-      pathToYarnLock ? { pathToYarnLock } : {})
+      pathToYarnLock ? {pathToYarnLock} : {})
   } else {
     if (!napDescriptor && miniapps) {
       if (!platform) {
-        const { userSelectedPlatform } = await inquirer.prompt([{
+        const {userSelectedPlatform} = await inquirer.prompt([{
           type: 'list',
           name: 'userSelectedPlatform',
           message: 'Choose platform to generate container for',
@@ -195,7 +195,7 @@ exports.handler = async function ({
       await runCauldronContainerGen(
         napDescriptor,
         version,
-        { publish: false, outDir })
+        {publish: false, outDir})
     }
   }
 }
