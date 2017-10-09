@@ -52,13 +52,13 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor }
+    isCompleteNapDescriptorString: {descriptor}
   })
 
   for (const miniappPath of miniapps) {
     const miniapp = await MiniApp.fromPackagePath(DependencyPath.fromString(miniappPath))
     log.info(`=> ${miniapp.name}`)
     await compatibility.checkCompatibilityWithNativeApp(
-    miniapp, napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+      miniapp, napDescriptor.name, napDescriptor.platform, napDescriptor.version)
   }
 }

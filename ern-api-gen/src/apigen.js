@@ -1,7 +1,6 @@
-
 // @flow
 
-import generateProject, {generateSwagger, generateFlowConfig} from './generateProject'
+import generateProject, { generateSwagger, generateFlowConfig } from './generateProject'
 import normalizeConfig from './normalizeConfig'
 import fs from 'fs'
 import shell from 'shelljs'
@@ -31,7 +30,7 @@ export async function generateApi (options: Object) {
 
   const outFolder = `${process.cwd()}/${config.moduleName}`
   if (fs.existsSync(outFolder)) {
-    log.warn(`${outFolder} directory already exists`)
+    log.error(`${outFolder} directory already exists`)
     process.exit(1)
   }
 
@@ -71,14 +70,14 @@ export async function regenerateCode (options: Object = {}) {
   await _checkDependencyVersion(pkg, options.targetDependencies || [])
 
   //check if flow script is initialized
-  if(pkg.scripts && pkg.scripts.flow === undefined){
-    pkg.scripts["flow"] = "flow"
+  if (pkg.scripts && pkg.scripts.flow === undefined) {
+    pkg.scripts['flow'] = 'flow'
   }
 
   //check flow-bin
-  if(pkg.devDependencies === undefined){
-    pkg["devDependencies"] = {}
-    pkg.devDependencies["flow-bin"] = FLOW_BIN_VERSION
+  if (pkg.devDependencies === undefined) {
+    pkg['devDependencies'] = {}
+    pkg.devDependencies['flow-bin'] = FLOW_BIN_VERSION
   }
   const isNewVersion = semver.lt(curVersion, newPluginVer)
   if (isNewVersion) {
@@ -87,7 +86,7 @@ export async function regenerateCode (options: Object = {}) {
     fileUtils.writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)) // Write the new package properties
   }
 
-  if(!fs.existsSync(`${process.cwd()}/${FLOW_CONFIG_FILE}`)){
+  if (!fs.existsSync(`${process.cwd()}/${FLOW_CONFIG_FILE}`)) {
     fileUtils.writeFile(`${process.cwd()}/${FLOW_CONFIG_FILE}`, generateFlowConfig())
   }
   const extra = (pkg.ern && pkg.ern.message) || {}
@@ -201,7 +200,7 @@ function _promptForMissMatchOfSupportedPlugins (curVersion: any, pluginName: str
   }])
 }
 
-async function publish ({version} : {version: string}) {
+async function publish ({version}: { version: string }) {
   const answers = await inquirer.prompt([{
     type: 'confirm',
     name: 'confirmNpmPublish',
