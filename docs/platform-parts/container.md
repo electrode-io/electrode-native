@@ -224,22 +224,23 @@ $ carthage bootstrap --no-build --platform ios
 
 To manually add a container:
 
-1) Clone the container to `<Your-WorkSpace>`.
+1. Clone the container to `<Your-WorkSpace>`.
 
-```bash
-$ git@github.com:user/myweatherapp-ios-container.git
-```
-
-2) Open your project in Xcode and right click on Libraries.
-3) Select **Add Files** to <your project name>. Look for `ElectrodeContainer.xcodeproj` in the file directory where you cloned the repo above.
+    ```bash
+    $ git@github.com:user/myweatherapp-ios-container.git
+    ```
+2. Open your project in Xcode and right click on Libraries.
+3. Select **Add Files** to `<your project name>`. Look for `ElectrodeContainer.xcodeproj` in the file directory where you cloned the repo above.
 
 **Additional Configuration**
+
 After installing the dependency, you will need to add additional configurations.
-1) In Xcode, choose <your project> from the Project Navigator panel.
-2) Click <your project> under TARGETS.
-3) From the General tab, locate **Embedded Binaries** and click **+**
-4) Select `ElectrodeContainer.framework` and click Add.
-5) In Build Phases, verify that `ElectrodeContainer` is in Target Dependencies, Link Binary With Libraries, and Embed Frameworks.
+
+1. In Xcode, choose `<your project name>` from the Project Navigator panel.
+2. Click `<your project name>` under TARGETS.
+3. From the General tab, locate **Embedded Binaries** and click **+**
+4. Select `ElectrodeContainer.framework` and click Add.
+5. In Build Phases, verify that `ElectrodeContainer` is in Target Dependencies, Link Binary With Libraries, and Embed Frameworks.
 
 ### Initializing a Container
 
