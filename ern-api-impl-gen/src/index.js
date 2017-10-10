@@ -6,7 +6,6 @@ import inquirer from 'inquirer'
 
 import {
   Dependency,
-  DependencyPath,
   Utils
 } from 'ern-util'
 import {
@@ -21,14 +20,14 @@ const API_NAME_RE = /([^/]*)$/
 const path = require('path')
 
 export async function generateApiImpl ({
-  apiDependencyPath,
+  apiDependency,
   outputFolder,
   nativeOnly,
   forceGenerate,
   reactNativeVersion,
   paths
 } : {
-  apiDependencyPath: DependencyPath,
+  apiDependency: Dependency,
   outputFolder: string,
   nativeOnly: boolean,
   forceGenerate: boolean,
@@ -44,9 +43,9 @@ export async function generateApiImpl ({
 
   try {
     // get the folder to output the generated project.
-    paths.outFolder = outputFolder = formOutputFolderName(apiDependencyPath, outputFolder)
+    paths.outFolder = outputFolder = formOutputFolderName(apiDependency, outputFolder)
     await createOutputFolder(outputFolder, forceGenerate)
-    await createNodePackage(outputFolder, apiDependencyPath, nativeOnly)
+    await createNodePackage(outputFolder, apiDependency, nativeOnly)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -54,7 +53,7 @@ export async function generateApiImpl ({
     createWorkingFolder(paths.workingFolder)
     createPluginsDownloadFolder(paths.pluginsDownloadFolder)
 
-    await new ApiImplGen().generateApiImplementation(apiDependencyPath, paths, reactNativeVersion, platforms)
+    await new ApiImplGen().generateApiImplementation(apiDependency, paths, reactNativeVersion, platforms)
   } catch (e) {
     log.debug('command failed performing cleanup.')
     throw new Error(e)
@@ -91,12 +90,12 @@ async function createOutputFolder (outputFolderPath: string, forceGenerate) {
 
 async function createNodePackage (
   outputFolderPath: string,
-  apiDependencyPath: DependencyPath,
+  apiDependency: Dependency,
   nativeOnly: boolean) {
   let currentFolder = shell.pwd()
   shell.cd(outputFolderPath)
   await yarn.init()
-  await yarn.add(apiDependencyPath)
+  await yarn.add(apiDependency.path)
   shell.rm('-rf', `${outputFolderPath}/node_modules/`)
   Utils.throwIfShellCommandFailed()
   log.debug('Removed node modules folder')
@@ -124,9 +123,8 @@ function createPluginsDownloadFolder (pluginsDownloadPath: string) {
   shell.mkdir('-p', pluginsDownloadPath)
 }
 
-function formOutputFolderName (apiDependencyPath, outputFolderPath: string) {
-  let apiDependencyObj = Dependency.fromPath(apiDependencyPath)
-  let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
+function formOutputFolderName (apiDependency:Dependency, outputFolderPath: string) {
+  let apiName = API_NAME_RE.exec(apiDependency.name)[1]
 
   return outputFolderPath
     ? path.join(`${outputFolderPath}`, `${apiName}-impl`)
