@@ -135,7 +135,7 @@ $ ern cauldron add <native-app-descriptor>
 // for example
 // ern cauldron add nativeapp MyApp:ios:0.0.1
 ```
-
+The descriptor provided to this command should be a complete native application descriptor.
 
 ### Cauldron compatibility checks
 
