@@ -72,7 +72,7 @@ Once done exit from the ErnRunner app and launch it again from applications.
 
 {% sample lang="ios" %}
 
-4) Select an emulator (or device) from the list when prompted.
+4) Select a simulator from the list when prompted.
 
 {% common %}
 
@@ -81,13 +81,9 @@ Once the command completes, you will see your first MiniApp running. If you used
 Now let's update the UI of this MiniApp to display a list of movies.
 
 ## Updating the MovieList MiniApp UI
+ 
+1) Open the `App.js` file in your favorite JavaScript editor.  
 
-{% sample lang="android" %}  
-1) Open the `index.android.js` file in your favorite JavaScript editor.  
-{% sample lang="ios" %}  
-1) Open the `index.ios.js` file in your favorite JavaScript editor.
-
-{% common %}  
 2) Replace the content of this source file with the following code.
 
 ```javascript
@@ -97,7 +93,6 @@ Now let's update the UI of this MiniApp to display a list of movies.
 
 import React, { Component } from 'react'
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
@@ -192,14 +187,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   }
 })
-
-AppRegistry.registerComponent('MovieListMiniApp', () => MovieListMiniApp)
 ```
 
 {% sample lang="ios" %}
-3) Save your changes in `index.ios.js` and reload the application to see the updated UI. Hit ⌘ + R in your iOS Simulator to reload the app and see your changes.
+3) Save your changes to `App.js` and reload the application to see the updated UI. Hit ⌘ + R in your iOS Simulator to reload the app and see your changes.
 {% sample lang="android" %}
-3) Save your changes in `index.android.js` and reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
+3) Save your changes to `App.js` and reload the application to see the updated UI. Press the R key twice or select Reload from the Developer Menu (⌘M).
 
 {% common %}
 Congratulations! You've successfully run and modified the initial UI of the MovieList MiniApp.
@@ -208,22 +201,18 @@ Now let's add an API to the MiniApp so that we can retrieve movies from the nati
 
 ## Adding the MoviesApi to the MovieList MiniApp
 
-We have already created and published the `MoviesApi` in this tutorial.
-You may view the created API code at [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) and [ern add react-native-ernnavigation-api](https://github.com/electrode-io/react-native-ernnavigation-api) repo.
+We have already created and published the `MoviesApi` for the needs of this tutorial.
+You may view the created API code in [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) repository.  
+We also created a `NavigationApi` that will be of use later in this tutorial, you can view its code in the [react-native-ernnavigation-api](https://github.com/electrode-io/react-native-ernnavigation-api) repository.
 
-1) Using the `ern add` command add `MoviesApi` , other dependent APIs and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as a dependency of MovieListMiniApp.
+1) Add the `MoviesApi`, the `NavigationApi` and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as dependencies of MovieListMiniApp, using the `ern add` command.
 
 ```bash
-$ ern add react-native-ernmovie-api
-$ ern add react-native-electrode-bridge
-$ ern add react-native-ernnavigation-api
+$ ern add react-native-ernmovie-api react-native-ernnavigation-api react-native-electrode-bridge
 ```
 
-{% sample lang="android" %}
-2) Open the `index.android.js` file and modify it as described in the next step.
-{% sample lang="ios" %}  
-2) Open the `index.ios.js` file and modify it as described in the next step.
-{% common %}  
+2) Open the `App.js` file and modify it as described in the next steps.
+
 3) Import MoviesApi and add it below other `import` statements of the JavaScript file:
 
 ```javascript
@@ -267,7 +256,7 @@ constructor () {
   }
 }
 ```
-5) Save file
+5) Save the `App.js` file
 
 6) Because we added an API, that contains some native code, we'll need to regenerate the container used by the native application, in order for it to include the native code of the API. This can be done using the `run` command which recreates a new local container and launches the application.
 Enter the following `run` command:
@@ -289,7 +278,7 @@ Now let's write an implementation of this API. Although you can write the implem
 ### Implementing the MovieApi on the native side
 
 {% sample lang="android" %}  
-1) Open the `MainApplication.java` file in your favorite IDE. The `MainApplication.java` file is located in the  `android/app/src/main/java/com/walmartlabs/ern/`) directory. Alternatively, you can use Android Studio to open the Android project (in the `android/` directory) and to edit this file.
+1) Open the `MainApplication.java` file in your favorite editor. The `MainApplication.java` file is located in the  `android/app/src/main/java/com/walmartlabs/ern/`) directory. Alternatively, you can use Android Studio to open the Android project (in the `android/` directory) and to edit this file.
 
 2) Replace the code in the `MainApplication.java` file with the following code:
 
@@ -424,17 +413,12 @@ $ ern run-ios
 {% common %}
 You can see that the UI now shows the movies that are stored in the native application.
 
-## Adding the Navigation API
+## Using the Navigation API
 
-We created this API for you for this tutorial--you can view it in the [NavigationApi repository](https://github.com/electrode-io/react-native-ernnavigation-api). This very simple API will be used for navigating from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
+We will use the `NavigationApi` that we already added to our MiniApp earlier on. This very simple API will be used for navigating from the `MovieListMiniApp` to the `MovieDetailsMiniApp`.
 
-{% sample lang="android" %}
-1) Mofify the `index.android.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
+1) Mofify the `App.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` to display the details of the selected Movie.
 
-{% sample lang="ios" %}  
-1) Mofify the `index.ios.js` file as follows so that when selecting a movie in the list, the `MovieListMiniApp` will call the navigation API to navigate to the `MovieDetailsMiniApp` for this movie.
-
-{% common %}
 2) Add the following import statement:
 
 ```javascript
@@ -470,8 +454,7 @@ render () {
 }
 ```  
 
-4) Add a method below the `render` method to send the `navigate` request when a movie is selected in the list of movies,
-Command + S to save your JS change afterwards.
+4) Add a method below the `render` method to send the `navigate` request when a movie is selected in the list of movies
 
 ```javascript
 _onPressRow (movie) {
@@ -482,7 +465,9 @@ _onPressRow (movie) {
  }
 ```
 
-5) Implement the `NavigationApi` in the native application, as we did for the `MovieApi`.
+5) Save your modification to the `App.js` file
+
+6) Implement the `NavigationApi` in the native application, as we did for the `MovieApi`.
 
 {% sample lang="android" %}  
 * Replace the content of `MainActivity.java` with the following code:
