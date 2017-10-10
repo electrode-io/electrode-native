@@ -89,7 +89,7 @@ exports.handler = async function ({
 
   try {
     await generateApiImpl({
-      apiDependencyPath: DependencyPath.fromString(api),
+      apiDependency: Dependency.fromPath(DependencyPath.fromString(api)),
       outputFolder,
       nativeOnly,
       forceGenerate: force,

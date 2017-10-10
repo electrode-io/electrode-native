@@ -3,7 +3,6 @@
 import {
   spin,
   Dependency,
-  DependencyPath,
   Utils
 } from 'ern-util'
 import {
@@ -20,7 +19,7 @@ let plugins: Array<Dependency>
 
 export default class ApiImplGen {
   async generateApiImplementation (
-    apiDependencyPath: DependencyPath,
+    apiDependency: Dependency,
     paths: {
       workingFolder: string,
       pluginsDownloadFolder: string,
@@ -29,9 +28,9 @@ export default class ApiImplGen {
     },
     reactNativeVersion: string,
     platforms: Array<string>) {
-    log.debug(`Inside generateApiImplementation for api:${apiDependencyPath.toString()},  platforms:${platforms.toString()}`)
+    log.debug(`Inside generateApiImplementation for api:${apiDependency.toString()},  platforms:${platforms.toString()}`)
 
-    await this.downloadApiAndDependencies(apiDependencyPath, paths.pluginsDownloadFolder, reactNativeVersion)
+    await this.downloadApiAndDependencies(apiDependency, paths.pluginsDownloadFolder, reactNativeVersion)
 
     const generators: Array<ApiImplGeneratable> = this.getGenerators(platforms)
     for (let generator of generators) {
@@ -47,34 +46,34 @@ export default class ApiImplGen {
     log.info(chalk.green(`API implementation project was successfully generated in ${paths.outFolder}`))
   }
 
-  async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string, reactNativeVersion: string) {
+  async downloadApiAndDependencies (apiDependency: Dependency, path: string, reactNativeVersion: string) {
     try {
       shell.cd(path)
       Utils.throwIfShellCommandFailed()
-      await this.spinAndDownload(apiDependencyPath)
-      plugins = await this.getDependencies(apiDependencyPath)
-      plugins.push(Dependency.fromPath(apiDependencyPath))// Also add the api as a plugin so it's src files will get copied.
+      await this.spinAndDownload(apiDependency)
+      plugins = await this.getDependencies(apiDependency)
+      plugins.push(apiDependency)// Also add the api as a plugin so it's src files will get copied.
       if (plugins) {
         log.info('Downloading dependencies')
         for (let dependency of plugins) {
-          await this.spinAndDownload(DependencyPath.fromString(dependency.toString()))
+          await this.spinAndDownload(dependency)
         }
       }
       log.debug('Downloading react-native dependency')
-      await this.spinAndDownload(DependencyPath.fromString(`react-native@${reactNativeVersion}`))
+      await this.spinAndDownload(Dependency.fromString(`react-native@${reactNativeVersion}`))
     } catch (e) {
       throw new Error(`Api dependency download failed: ${e}`)
     }
   }
 
-  async spinAndDownload (dependencyPath: DependencyPath) {
-    await spin(`Downloading ${dependencyPath.toString()}`, yarn.add(dependencyPath))
+  async spinAndDownload (dependency: Dependency) {
+    await spin(`Downloading ${dependency.toString()}`, yarn.add(dependency.path))
   }
 
-  async getDependencies (apiDependencyPath: DependencyPath) : Promise<Array<Dependency>> {
+  async getDependencies (apiDependency: Dependency) : Promise<Array<Dependency>> {
     try {
       log.info(`Looking for peerDependencies`)
-      const apiPackageInfo = await yarn.info(apiDependencyPath, {json: true})
+      const apiPackageInfo = await yarn.info(apiDependency.path, {json: true})
 
       let dependencies = []
       if (apiPackageInfo.data.peerDependencies) {
