@@ -134,8 +134,9 @@ $ ern cauldron repo add <cauldron-alias> <cauldron-url>
 $ ern cauldron add <native-app-descriptor>
 // for example
 // ern cauldron add nativeapp MyApp:ios:0.0.1
+// ern cauldron add nativeapp MyApp:android:0.0.1
 ```
-
+The descriptor provided to this command should be a complete native application descriptor.
 
 ### Cauldron compatibility checks
 
