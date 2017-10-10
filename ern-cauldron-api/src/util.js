@@ -2,7 +2,6 @@
 
 import _ from 'lodash'
 import crypto from 'crypto'
-import Boom from 'boom'
 import Joi from 'joi'
 
 // ====================================
@@ -37,11 +36,6 @@ export function buildReactNativeSourceMapFileName (
   appName: string,
   versionName: string) {
   return `${appName}@${versionName}.map`
-}
-
-export function checkNotFound (val: any, message: string, ...data: any) {
-  if (val == null) { throw Boom.notFound(message, data) }
-  return val
 }
 
 //

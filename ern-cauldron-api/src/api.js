@@ -5,7 +5,6 @@ import { Dependency } from 'ern-util'
 import {
   alreadyExists,
   buildReactNativeSourceMapFileName,
-  checkNotFound,
   joiValidate,
   shasum
 } from './util'
@@ -249,7 +248,6 @@ export default class CauldronApi {
     if (!platform) {
       throw new Error(`Cannot remove version from unexisting ${nativeApplicationName}:${platformName}`)
     }
-    checkNotFound(platform, `No platform named ${platformName}`)
     if (_.remove(platform.versions, x => x.name === versionName).length > 0) {
       await this.commit(`Remove version ${versionName} from ${nativeApplicationName} ${platformName}`)
     }
