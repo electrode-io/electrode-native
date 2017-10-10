@@ -16,7 +16,6 @@ import {
 } from 'ern-core'
 import _ from 'lodash'
 import chokidar from 'chokidar'
-import childProcess from 'child_process'
 import tmp from 'tmp'
 import path from 'path'
 import shell from 'shelljs'
@@ -83,14 +82,11 @@ export default async function start ({
     startLinkSynchronization(workingDir, linkName, miniAppsLinks[linkName])
   })
 
-  const reactNativePackagerProcess = childProcess.spawn(reactnative.binaryPath, [
-    'start',
+  reactnative.startPackagerInNewWindow(workingDir, [
     '--reset-cache',
     '--providesModuleNodeModules',
     `react-native,${Object.keys(miniAppsLinks).concat(watchNodeModules).join(',')}`
   ])
-  reactNativePackagerProcess.stdout.on('data', data => log.info(data.toString()))
-  reactNativePackagerProcess.stderr.on('data', data => log.error(data.toString()))
 
   if (descriptor) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
@@ -113,6 +109,11 @@ export default async function start ({
       }
     }
   }
+
+  log.warn('=========================================================')
+  log.warn('Ending this process will stop monitoring linked MiniApps.')
+  log.warn('You can end this process once you are done, using CTRL+C.')
+  log.warn('=========================================================')
 }
 
 function startLinkSynchronization (workingDir, linkName, sourceLinkDir) {
