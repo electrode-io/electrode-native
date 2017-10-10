@@ -5,7 +5,6 @@ import inquirer from 'inquirer'
 
 import {
   Dependency,
-  DependencyPath,
   shell
 } from 'ern-util'
 import {
@@ -20,14 +19,14 @@ const API_NAME_RE = /([^/]*)$/
 const path = require('path')
 
 export async function generateApiImpl ({
-  apiDependencyPath,
+  apiDependency,
   outputDirectory,
   nativeOnly,
   forceGenerate,
   reactNativeVersion,
   paths
 } : {
-  apiDependencyPath: DependencyPath,
+  apiDependency: Dependency,
   outputDirectory: string,
   nativeOnly: boolean,
   forceGenerate: boolean,
@@ -43,9 +42,9 @@ export async function generateApiImpl ({
 
   try {
     // get the directory to output the generated project.
-    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiDependencyPath, outputDirectory)
+    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiDependency, outputDirectory)
     await createOutputDirectory(outputDirectory, forceGenerate)
-    await createNodePackage(outputDirectory, apiDependencyPath, nativeOnly)
+    await createNodePackage(outputDirectory, apiDependency, nativeOnly)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -53,7 +52,7 @@ export async function generateApiImpl ({
     createWorkingDirectory(paths.workingDirectory)
     createPluginsDownloadDirectory(paths.pluginsDownloadDirectory)
 
-    await new ApiImplGen().generateApiImplementation(apiDependencyPath, paths, reactNativeVersion, platforms)
+    await new ApiImplGen().generateApiImplementation(apiDependency, paths, reactNativeVersion, platforms)
   } catch (e) {
     log.debug('command failed performing cleanup.')
     throw new Error(e)
@@ -89,12 +88,12 @@ async function createOutputDirectory (outputDirectoryPath: string, forceGenerate
 
 async function createNodePackage (
   outputDirectoryPath: string,
-  apiDependencyPath: DependencyPath,
+  apiDependency: Dependency,
   nativeOnly: boolean) {
   let currentDirectory = shell.pwd()
   shell.cd(outputDirectoryPath)
   await yarn.init()
-  await yarn.add(apiDependencyPath)
+  await yarn.add(apiDependency.path)
   shell.rm('-rf', path.join(outputDirectoryPath, 'node_modules'))
   log.debug('Removed node modules directory')
   const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
@@ -121,10 +120,8 @@ function createPluginsDownloadDirectory (pluginsDownloadPath: string) {
   shell.mkdir('-p', pluginsDownloadPath)
 }
 
-function formOutputDirectoryName (apiDependencyPath, outputDirectoryPath: string) {
-  let apiDependencyObj = Dependency.fromPath(apiDependencyPath)
-  let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
-
+function formOutputDirectoryName (apiDependency: Dependency, outputDirectoryPath: string) {
+  let apiName = API_NAME_RE.exec(apiDependency.name)[1]
   return outputDirectoryPath
     ? path.join(outputDirectoryPath, `${apiName}-impl`)
     : path.join(shell.pwd(), `${apiName}-impl`)
