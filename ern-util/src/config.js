@@ -24,7 +24,7 @@ export class ErnConfig {
   setValue (key: string, value: any) {
     let c = this.obj
     c[key] = value
-    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c))
+    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c, null, 2))
   }
 
   writeConfig (obj: Object) {
