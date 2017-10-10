@@ -2,11 +2,12 @@
 
 import _ from 'lodash'
 import inquirer from 'inquirer'
-import simctl from 'node-simctl'
 import {
   execSync,
   spawn
 } from 'child_process'
+import ora from 'ora'
+const simctl = require('node-simctl')
 
 export async function getiPhoneDevices () {
   const iosDevices = await simctl.getDevices()
@@ -25,7 +26,7 @@ export async function askUserToSelectAniPhoneDevice () {
 
   const { selectedDevice } = await inquirer.prompt([{
     type: 'list',
-    name: 'device',
+    name: 'selectedDevice',
     message: 'Choose an iOS simulator',
     choices
   }])
@@ -56,6 +57,30 @@ export async function launchSimulator (deviceUdid: string) {
         : reject(new Error(`XCode xcrun command failed with exit code ${code}`))
     })
   })
+}
+
+export async function runIosApp ({
+  appPath,
+  bundleId
+} : {
+  appPath: string,
+  bundleId: string
+}) {
+  const iPhoneDevice = await askUserToSelectAniPhoneDevice()
+  await killAllRunningSimulators()
+  const spinner = ora(`Waiting for device to boot`).start()
+  await launchSimulator(iPhoneDevice.udid)
+
+  try {
+    spinner.text = 'Installing application on simulator'
+    await installApplicationOnDevice(iPhoneDevice.udid, appPath)
+    spinner.text = 'Launching application'
+    await launchApplication(iPhoneDevice.udid, bundleId)
+    spinner.succeed('Done')
+  } catch (e) {
+    spinner.fail(e.message)
+    throw e
+  }
 }
 
 export async function installApplicationOnDevice (deviceUdid: string, pathToAppFile: string) {

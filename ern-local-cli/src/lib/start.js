@@ -1,14 +1,18 @@
 import {
+  android,
+  ios,
   config as ernConfig,
   DependencyPath,
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  spin
 } from 'ern-util'
 import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
   cauldron,
-  reactnative
+  reactnative,
+  ErnBinaryStore
 } from 'ern-core'
 import _ from 'lodash'
 import chokidar from 'chokidar'
@@ -17,22 +21,41 @@ import tmp from 'tmp'
 import path from 'path'
 import shell from 'shelljs'
 
+const {
+  runAndroidApk
+} = android
+
+const {
+  runIosApp
+} = ios
+
 export default async function start ({
   miniapps,
-  completeNapDescriptor,
-  watchNodeModules = []
+  descriptor,
+  watchNodeModules = [],
+  packageName,
+  activityName,
+  bundleId
 } : {
   miniapps?: Array<string>,
-  completeNapDescriptor?: string,
-  watchNodeModules: Array<string>
+  descriptor?: string,
+  watchNodeModules: Array<string>,
+  packageName?: string,
+  activityName?: string,
+  bundleId?: string
 } = {}) {
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
+  let napDescriptor
+
+  if (descriptor) {
+    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+  }
 
   if (!miniapps) {
-    if (!completeNapDescriptor) {
-      return log.error('You need to provide a completeNapDescriptor if not providing miniapps')
+    if (!descriptor) {
+      return log.error('You need to provide a descriptor if not providing miniapps')
     }
-    const miniAppsObjs = await cauldron.getContainerMiniApps(NativeApplicationDescriptor.fromString(completeNapDescriptor))
+    const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
     miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
   }
 
@@ -47,10 +70,11 @@ export default async function start ({
   log.debug(`Temporary working directory is ${workingDir}`)
 
   let pathToYarnLock
-  if (completeNapDescriptor) {
-    pathToYarnLock = await cauldron.getPathToYarnLock(completeNapDescriptor)
+  if (descriptor) {
+    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
   }
-  await generateMiniAppsComposite(miniAppsPaths, workingDir, {pathToYarnLock})
+  await spin('Generating MiniApps composite',
+    generateMiniAppsComposite(miniAppsPaths, workingDir, {pathToYarnLock}))
 
   let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
 
@@ -60,9 +84,35 @@ export default async function start ({
   })
 
   const reactNativePackagerProcess = childProcess.spawn(reactnative.binaryPath, [
-    'start', '--reset-cache', '--providesModuleNodeModules', `react-native,${Object.keys(miniAppsLinks).concat(watchNodeModules).join(',')}`])
+    'start',
+    '--reset-cache',
+    '--providesModuleNodeModules',
+    `react-native,${Object.keys(miniAppsLinks).concat(watchNodeModules).join(',')}`
+  ])
   reactNativePackagerProcess.stdout.on('data', data => log.info(data.toString()))
   reactNativePackagerProcess.stderr.on('data', data => log.error(data.toString()))
+
+  if (descriptor) {
+    const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
+    if (binaryStoreConfig) {
+      const binaryStore = new ErnBinaryStore(binaryStoreConfig)
+      if (await binaryStore.hasBinary(napDescriptor)) {
+        if (napDescriptor.platform === 'android') {
+          if (!packageName) {
+            return log.error('You need to provide an Android package name')
+          }
+          const apkPath = await binaryStore.getBinary(napDescriptor)
+          await runAndroidApk({apkPath, packageName, activityName})
+        } else if (napDescriptor.platform === 'ios') {
+          if (!bundleId) {
+            return log.error('You need to provide an iOS bundle ID')
+          }
+          const appPath = await binaryStore.getBinary(napDescriptor)
+          await runIosApp({appPath, bundleId})
+        }
+      }
+    }
+  }
 }
 
 function startLinkSynchronization (workingDir, linkName, sourceLinkDir) {
