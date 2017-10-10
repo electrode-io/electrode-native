@@ -9,7 +9,9 @@ import {
 import * as fileUtils from './fileUtil'
 import fs from 'fs'
 import path from 'path'
+import shell from 'shelljs'
 import spin from './spin'
+import tmp from 'tmp'
 const fetch = require('node-fetch')
 
 export default class ReactNativeCli {
@@ -96,18 +98,21 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
     process.on('SIGINT', () => { packager.kill(); process.exit() })
   }
 
-  async startPackagerInNewWindow (cwd: string) {
+  async startPackagerInNewWindow (cwd: string, args: Array<string> = []) {
     const isPackagerRunning = await this.isPackagerRunning()
 
     if (!isPackagerRunning) {
       await spin('Starting React Native packager', Promise.resolve())
-      const scriptFile = `launchPackager.command`
-      const scriptsDir = path.resolve(__dirname, '..', 'scripts')
-      const launchPackagerScript = path.resolve(scriptsDir, scriptFile)
-      const procConfig = {cwd: scriptsDir, detached: true}
-
-      await fileUtils.writeFile(`${scriptsDir}/packageRunner.config`, `cwd="${cwd}"`)
-      spawn('open', [launchPackagerScript], procConfig)
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+      const tmpScriptPath = path.join(tmpDir, 'packager.sh')
+      await fileUtils.writeFile(tmpScriptPath,
+`
+cd "${cwd}"; 
+echo "Running ${this.binaryPath} start ${args.join(' ')}";
+${this.binaryPath} start ${args.join(' ')};
+`)
+      shell.chmod('+x', tmpScriptPath)
+      spawn('open', ['-a', 'Terminal', tmpScriptPath])
     } else {
       log.warn('A React Native Packager is already running in a different process')
     }
