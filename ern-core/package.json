@@ -54,6 +54,7 @@
     "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
     "code-push-cli": "1.12.9-beta",
+    "decompress-zip": "^0.3.0",
     "ern-cauldron-api": "0.7.0",
     "ern-util": "0.7.0",
     "lodash": "^4.17.4",
