@@ -4,7 +4,8 @@ import {
   cauldron,
   MiniApp,
   Platform,
-  reactnative
+  reactnative,
+  yarn
 } from 'ern-core'
 import {
   generateAndroidRunnerProject,
@@ -564,11 +565,25 @@ async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
   })
 }
 
+async function doesPackageExistInNpm (packageName: string) {
+  try {
+    const result = await yarn.info(DependencyPath.fromString(packageName), {field: 'versions', json: true})
+    if (result && result.type === `inspect`) {
+      return true
+    }
+  } catch (e) {
+    // If the package name doesn't exist in the NPM registry, Do nothing
+    // {"type":"error","data":"Received invalid response from npm."}
+  }
+  return false
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   performContainerStateUpdateInCauldron,
   epilog,
-  runMiniApp
+  runMiniApp,
+  doesPackageExistInNpm
 }

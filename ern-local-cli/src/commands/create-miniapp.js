@@ -47,6 +47,11 @@ exports.handler = async function ({
         packageName = answer.packageName
       }
     }
+    const isPackageNameInNpm = await utils.doesPackageExistInNpm(packageName)
+    if (isPackageNameInNpm) {
+      log.error(`The package with name ${packageName} is already published in NPM registry. Use a different name.`)
+      return
+    }
     await MiniApp.create(appName,
       packageName, {
         platformVersion: platformVersion && platformVersion.replace('v', ''),
