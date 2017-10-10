@@ -11,6 +11,8 @@ import {
 import fs from 'fs'
 import path from 'path'
 import tmp from 'tmp'
+import archiver from 'archiver'
+const DecompressZip = require('decompress-zip')
 
 export default class ErnBinaryStore implements BinaryStore {
   _config: Object
@@ -20,8 +22,9 @@ export default class ErnBinaryStore implements BinaryStore {
   }
 
   async addBinary (descriptor: NativeApplicationDescriptor, binaryPath: string) : Promise<boolean> {
+    const pathToBinary = await this.zipBinary(descriptor, binaryPath)
     return new Promise((resolve, reject) => {
-      exec(`curl -XPOST ${this._config.url} -F file=@"${binaryPath};filename=${this.buildNativeBinaryFileName(descriptor)}"`,
+      exec(`curl -XPOST ${this._config.url} -F file=@"${pathToBinary}"`,
         (error, stdout, stderr) => {
           if (error) {
             reject(error)
@@ -50,15 +53,8 @@ export default class ErnBinaryStore implements BinaryStore {
   } : {
     outDir?: string
   } = {}) : Promise<string> {
-    return new Promise((resolve, reject) => {
-      const tmpOutDir = outDir || tmp.dirSync({ unsafeCleanup: true }).name
-      const outputFilePath = path.join(tmpOutDir, this.buildNativeBinaryFileName(descriptor))
-      const outputFile = fs.createWriteStream(outputFilePath)
-      const curl = spawn('curl', [ this.urlToBinary(descriptor) ])
-      curl.stdout.pipe(outputFile)
-      outputFile.on('error', err => reject(err))
-      curl.on('close', err => err ? reject(err) : resolve(outputFilePath))
-    })
+    const pathToZippedBinary = await this.getZippedBinary(descriptor)
+    return this.unzipBinary(descriptor, pathToZippedBinary, { outDir })
   }
 
   async hasBinary (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
@@ -74,8 +70,66 @@ export default class ErnBinaryStore implements BinaryStore {
     })
   }
 
+  async getZippedBinary (descriptor: NativeApplicationDescriptor) : Promise<string> {
+    return new Promise((resolve, reject) => {
+      const tmpOutDir = tmp.dirSync({ unsafeCleanup: true }).name
+      const outputFilePath = path.join(tmpOutDir, this.buildZipBinaryFileName(descriptor))
+      const outputFile = fs.createWriteStream(outputFilePath)
+      const curl = spawn('curl', [ this.urlToBinary(descriptor) ])
+      curl.stdout.pipe(outputFile)
+      outputFile.on('error', err => reject(err))
+      curl.on('close', err => err ? reject(err) : resolve(outputFilePath))
+    })
+  }
+
   urlToBinary (descriptor: NativeApplicationDescriptor) {
-    return `${this._config.url}/${this.buildNativeBinaryFileName(descriptor)}`
+    return `${this._config.url}/${this.buildZipBinaryFileName(descriptor)}`
+  }
+
+  async zipBinary (descriptor: NativeApplicationDescriptor, binaryPath: string) : Promise<string> {
+    return new Promise((resolve, reject) => {
+      const tmpOutDir = tmp.dirSync({ unsafeCleanup: true }).name
+      const pathToZipFile = path.join(tmpOutDir, this.buildZipBinaryFileName(descriptor))
+      const outputZipStream = fs.createWriteStream(pathToZipFile)
+      const archive = archiver('zip', { zlib: { level: 9 } })
+      outputZipStream.on('close', () => resolve(pathToZipFile))
+      archive.on('error', err => reject(err))
+      archive.pipe(outputZipStream)
+      if (descriptor.platform === 'android') {
+        archive.file(binaryPath, { name: path.basename(binaryPath) })
+      } else {
+        archive.glob('**/*', { cwd: binaryPath })
+      }
+      archive.finalize()
+    })
+  }
+
+  async unzipBinary (
+    descriptor: NativeApplicationDescriptor,
+     zippedBinaryPath: string, {
+      outDir
+    } : {
+      outDir?: string
+    } = {}) : Promise<string> {
+    return new Promise((resolve, reject) => {
+      const outputDirectory = outDir || tmp.dirSync({ unsafeCleanup: true }).name
+      const pathToOutputBinary = path.join(outputDirectory, this.buildNativeBinaryFileName(descriptor))
+      const unzipper = new DecompressZip(zippedBinaryPath)
+      unzipper.on('error', err => reject(err))
+      unzipper.on('extract', () => resolve(pathToOutputBinary))
+      if (descriptor.platform === 'android') {
+        unzipper.extract({ path: path.dirname(pathToOutputBinary) })
+      } else {
+        unzipper.extract({ path: pathToOutputBinary })
+      }
+    })
+  }
+
+  buildZipBinaryFileName (descriptor: NativeApplicationDescriptor) {
+    if (!descriptor.version || !descriptor.platform) {
+      throw new Error('[buildZipBinaryFileName] Require a complete native application descriptor')
+    }
+    return `${descriptor.name}-${descriptor.platform}-${descriptor.version}.zip`
   }
 
   buildNativeBinaryFileName (descriptor: NativeApplicationDescriptor) {
