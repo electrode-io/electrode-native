@@ -4,10 +4,12 @@ import shell from 'shelljs'
 import {
   Dependency,
   Utils,
-  mustacheUtils
+  mustacheUtils,
+  fileUtils
 } from 'ern-util'
 import {
-  manifest
+  manifest,
+  utils
 } from 'ern-core'
 
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
@@ -33,6 +35,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   }
 
   async generate (
+    apiDependency: Dependency,
     paths: {
       workingFolder: string,
       pluginsDownloadFolder: string,
@@ -43,10 +46,11 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     plugins: Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
 
-    await this.fillHull(paths, reactNativeVersion, plugins)
+    await this.fillHull(apiDependency, paths, reactNativeVersion, plugins)
   }
 
-  async fillHull (paths: Object,
+  async fillHull (apiDependency: Dependency,
+                  paths: Object,
                   reactNativeVersion: string,
                   plugins: Array<Dependency>) {
     try {
@@ -69,6 +73,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
           this.copyPluginToOutput(paths, outputFolder, plugin, pluginConfig)
         })
       }
+      await this.updateRequestHandlerClass(apiDependency, paths)
 
       this.updateBuildGradle(paths, reactNativeVersion, outputFolder)
     } catch (e) {
@@ -90,5 +95,30 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       path.join(paths.apiImplHull, `/android/lib/build.gradle`),
       mustacheView,
       path.join(outputFolder, `/lib/build.gradle`))
+  }
+
+  async updateRequestHandlerClass (apiDependency: Dependency, paths: Object) {
+    log.debug(`=== updating request handler implementation class ===`)
+    let mustacheView = {}
+    try {
+      let jsonPath = path.join(paths.pluginsDownloadFolder, 'node_modules', apiDependency.scopedName, `package.json`)
+      const packageJson = await fileUtils.readJSON(jsonPath)
+      if (packageJson && packageJson.ern && packageJson.ern.message) {
+        log.debug(`Generating RequestHandler implementation class`)
+        mustacheView.apiName = utils.camelize(packageJson.ern.message.apiName)
+        const outputDir = path.join(paths.outFolder, `/android/lib/src/main/java/com/ern/api/impl/`)
+        shell.mkdir(`-p`, outputDir)
+        shell.cp(path.join(paths.apiImplHull, `RequestHandlerProvider.java`), outputDir)
+
+        return await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+          path.join(paths.apiImplHull, `requesthandlers.mustache`),
+          mustacheView,
+          path.join(outputDir, `${mustacheView.apiName}ApiRequestHandlers.java`))
+      } else {
+        log.warn(`package.json does not have an \`ern\` entry, implementation class will not be generated.`)
+      }
+    } catch (e) {
+      throw new Error(`Failed to update RequestHandlerClass: ${e}`)
+    }
   }
 }

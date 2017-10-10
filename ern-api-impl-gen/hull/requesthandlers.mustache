@@ -1,0 +1,26 @@
+package com.ern.api.impl;
+
+/**
+ * This class is simply a generated place holder for your request handler implementations.!
+ * When a container is generated the init method of this class will be automatically called when Electrode Native is initialized
+ */
+public class {{{apiName}}}RequestHandlers implements RequestHandlerProvider {
+
+    public MoviesApiRequestHandlers() {
+
+    }
+
+    @Override
+    public void init() {
+        {{#requests}}
+        {{requestName}}();
+        {{/requests}}
+    }
+
+    {{#requests}}
+    private void {{requestName}}() {
+        //TODO Implement {{{ApiName}}}.requests().{{requestName}}(...) here.
+    }
+    {{/requests}}
+
+}
