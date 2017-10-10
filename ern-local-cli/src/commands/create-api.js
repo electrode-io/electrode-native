@@ -44,6 +44,11 @@ exports.handler = async function ({
   apiAuthor?: string,
   schemaPath?: string
 }) {
+  const isPackageNameInNpm = await utils.doesPackageExistInNpm(apiName)
+  if (isPackageNameInNpm) {
+    log.error(`The package with name ${apiName} is already published in NPM registry. Use a different name.`)
+    return
+  }
   const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
   if (!bridgeDep) {
     return log.error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)

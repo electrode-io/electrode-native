@@ -60,6 +60,11 @@ exports.handler = async function ({
   force: boolean,
   outputFolder: string,
 }) {
+  const isPackageNameInNpm = await utils.doesPackageExistInNpm(api)
+  if (isPackageNameInNpm) {
+    log.error(`The package with name ${api} is already published in NPM registry. Use a different name.`)
+    return
+  }
   log.info(`Generating API implementation for  ${api}`)
 
   const reactNativeVersionLessDependency = Dependency.fromString('react-native')
