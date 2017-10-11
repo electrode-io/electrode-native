@@ -49,12 +49,12 @@
         },
         {
           "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.8/",
-          "text": "Electrode Native [v0.8]"
+          "text": "Electrode Native [v0.8]",
+          "selected": true
         },
         {
           "value": "https://electrode.gitbooks.io/electrode-native/content/v/master/",
-          "text": "Electrode Native [master]",
-          "selected": true
+          "text": "Electrode Native [master]"
         }
       ]
     },
