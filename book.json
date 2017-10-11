@@ -44,13 +44,17 @@
        "gitbookConfigURL": "https://raw.githubusercontent.com/electrode-io/electrode-native/master/book.json",
        "options": [
         {
-            "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.7/",
-            "text": "Electrode Native [v0.7]"
+          "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.7/",
+          "text": "Electrode Native [v0.7]"
         },
         {
-            "value": "https://electrode.gitbooks.io/electrode-native/content/v/master/",
-            "text": "Electrode Native [master]",
-            "selected": true
+          "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.8/",
+          "text": "Electrode Native [v0.8]"
+        },
+        {
+          "value": "https://electrode.gitbooks.io/electrode-native/content/v/master/",
+          "text": "Electrode Native [master]",
+          "selected": true
         }
       ]
     },
