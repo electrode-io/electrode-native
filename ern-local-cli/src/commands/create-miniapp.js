@@ -48,9 +48,13 @@ exports.handler = async function ({
       }
     }
     const isPackageNameInNpm = await utils.doesPackageExistInNpm(packageName)
+    // If package name exists in the npm
     if (isPackageNameInNpm) {
-      log.error(`The package with name ${packageName} is already published in NPM registry. Use a different name.`)
-      return
+      const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(packageName)
+      // If user wants to stop execution if npm package name conflicts
+      if (!skipNpmNameConflict) {
+        return
+      }
     }
     await MiniApp.create(appName,
       packageName, {

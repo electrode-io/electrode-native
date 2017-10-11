@@ -578,6 +578,16 @@ async function doesPackageExistInNpm (packageName: string) {
   return false
 }
 
+async function promptSkipNpmNameConflictCheck (name: string) {
+  const {skipPackageExistsOnNpmCheck} = await inquirer.prompt([{
+    type: 'confirm',
+    name: 'skipPackageExistsOnNpmCheck',
+    message: `The package with name ${name} is already published in NPM registry. Do you wish to continue?`,
+    default: false
+  }])
+  return skipPackageExistsOnNpmCheck
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
@@ -585,5 +595,6 @@ export default {
   performContainerStateUpdateInCauldron,
   epilog,
   runMiniApp,
-  doesPackageExistInNpm
+  doesPackageExistInNpm,
+  promptSkipNpmNameConflictCheck
 }

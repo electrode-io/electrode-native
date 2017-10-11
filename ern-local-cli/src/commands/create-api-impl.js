@@ -61,11 +61,15 @@ exports.handler = async function ({
   outputFolder: string,
 }) {
   const isPackageNameInNpm = await utils.doesPackageExistInNpm(api)
+  // If package name exists in the npm
   if (isPackageNameInNpm) {
-    log.error(`The package with name ${api} is already published in NPM registry. Use a different name.`)
-    return
+    const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(api)
+    // If user wants to stop execution if npm package name conflicts
+    if (!skipNpmNameConflict) {
+      return
+    }
   }
-  log.info(`Generating API implementation for  ${api}`)
+  log.info(`Generating API implementation for ${api}`)
 
   const reactNativeVersionLessDependency = Dependency.fromString('react-native')
   let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
@@ -86,7 +90,6 @@ exports.handler = async function ({
   if (!jsOnly && !nativeOnly) {
     nativeOnly = await promptPlatformSelection()
   }
-
   try {
     await generateApiImpl({
       apiDependencyPath: DependencyPath.fromString(api),
@@ -108,13 +111,12 @@ exports.handler = async function ({
 }
 
 async function promptPlatformSelection () {
-  return inquirer.prompt([{
+  const {targetPlatform} = await inquirer.prompt([{
     type: 'list',
     name: 'targetPlatform',
     message: `Choose a platform that you are planning to write this api implementation in?`,
     default: `js`,
     choices: [`js`, `native`]
-  }]).then((answers) => {
-    return answers.targetPlatform !== `js`
-  })
+  }])
+  return targetPlatform !== `js`
 }
