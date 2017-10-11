@@ -25,8 +25,14 @@ export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<
     log.debug(e)
     return false
   }
+
   let publishedVersions: Array<string> = publishedVersionsInfo.data
-  return publishedVersions.includes(Dependency.fromString(pkg.toString()).version)
+  const pkgVersion: string = Dependency.fromString(pkg.toString()).version
+  if (publishedVersions && pkgVersion) {
+    return publishedVersions.includes(pkgVersion)
+  } else {
+    return true
+  }
 }
 
 export async function httpGet (url: string): Promise<http.IncomingMessage> {
