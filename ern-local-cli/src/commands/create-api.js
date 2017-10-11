@@ -45,9 +45,13 @@ exports.handler = async function ({
   schemaPath?: string
 }) {
   const isPackageNameInNpm = await utils.doesPackageExistInNpm(apiName)
+  // If package name exists in the npm
   if (isPackageNameInNpm) {
-    log.error(`The package with name ${apiName} is already published in NPM registry. Use a different name.`)
-    return
+    const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(apiName)
+    // If user wants to stop execution if npm package name conflicts
+    if (!skipNpmNameConflict) {
+      return
+    }
   }
   const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
   if (!bridgeDep) {
