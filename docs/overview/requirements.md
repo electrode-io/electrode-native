@@ -17,7 +17,7 @@ Electrode Native supports Mac OS X only. Electrode Native also runs on Linux; ho
 
 Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or later must be installed on your workstation.  
 
-**Note** You also need to install NPM or Yarn in order to install the Electrode Native platform. When you install NPM, Node.js is automatically installed.
+**Note** You also need to install NPM or Yarn in order to install the Electrode Native platform. When you install Node.js, NPM is automatically installed.
 
 ### NPM (version 3.0 or later) or Yarn
 
