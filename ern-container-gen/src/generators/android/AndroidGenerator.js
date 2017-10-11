@@ -77,8 +77,7 @@ export default class AndroidGenerator {
           MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
         }
       } else {
-        log.warn('Something does not look right, android should always have a default maven publisher.')
-        Utils.logErrorAndExitProcess(`Something does not look right, android should always have a default maven publisher.`)
+        log.debug('Something does not look right, android should always have a default maven publisher.')
       }
 
       const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
