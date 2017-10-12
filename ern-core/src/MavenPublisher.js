@@ -39,7 +39,8 @@ export default class MavenPublisher implements Publisher {
   }
 
   async buildAndUploadArchive (moduleName: string): Promise<*> {
-    let cmd = `./gradlew ${moduleName}:uploadArchives `
+    const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
+    let cmd = `${gradlew} ${moduleName}:uploadArchives `
     return new Promise((resolve, reject) => {
       exec(cmd,
         (err, stdout, stderr) => {
