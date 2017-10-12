@@ -103,19 +103,54 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
 
     if (!isPackagerRunning) {
       await spin('Starting React Native packager', Promise.resolve())
-      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
-      const tmpScriptPath = path.join(tmpDir, 'packager.sh')
-      await fileUtils.writeFile(tmpScriptPath,
+      if (process.platform === 'darwin') {
+        return this.darwinStartPackagerInNewWindow({ cwd, args })
+      } else if (/^win/.test(process.platform)) {
+        return this.windowsStartPackagerInNewWindow({ cwd, args })
+      } else {
+        throw new Error(`${process.platform} is not supported yet`)
+      }
+    } else {
+      log.warn('A React Native Packager is already running in a different process')
+    }
+  }
+
+  async darwinStartPackagerInNewWindow ({
+    cwd = process.cwd(),
+    args = []
+  } : {
+    cwd?: string,
+    args?: Array<string>
+  }) {
+    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpScriptPath = path.join(tmpDir, 'packager.sh')
+    await fileUtils.writeFile(tmpScriptPath,
 `
 cd "${cwd}"; 
 echo "Running ${this.binaryPath} start ${args.join(' ')}";
 ${this.binaryPath} start ${args.join(' ')};
 `)
-      shell.chmod('+x', tmpScriptPath)
-      spawn('open', ['-a', 'Terminal', tmpScriptPath])
-    } else {
-      log.warn('A React Native Packager is already running in a different process')
-    }
+    shell.chmod('+x', tmpScriptPath)
+    spawn('open', ['-a', 'Terminal', tmpScriptPath])
+  }
+
+  async windowsStartPackagerInNewWindow ({
+    cwd = process.cwd(),
+    args = []
+  }: {
+      cwd?: string,
+      args?: Array<string>
+    }) {
+    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpScriptPath = path.join(tmpDir, 'packager.bat')
+    await fileUtils.writeFile(tmpScriptPath,
+`
+cd "${cwd}"; 
+echo "Running ${this.binaryPath} start ${args.join(' ')}";
+${this.binaryPath} start ${args.join(' ')};
+`)
+    shell.chmod('+x', tmpScriptPath)
+    spawn('cmd.exe', ['/C', tmpScriptPath], { detached: true })
   }
 
   async isPackagerRunning () {
