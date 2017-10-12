@@ -5,8 +5,9 @@ import {
 import {httpGet} from './utils'
 import fs from 'fs'
 import shell from 'shelljs'
+import os from 'os'
 
-const HOME_DIRECTORY = process.env['HOME']
+const HOME_DIRECTORY = os.homedir()
 const FILE_REGEX = /^file:\/\//
 
 export default class MavenUtils {
@@ -34,9 +35,6 @@ export default class MavenUtils {
   }
 
   static getDefaultMavenLocalDirectory = () => {
-    if (!HOME_DIRECTORY) {
-      throw new Error(`process.env['HOME'] is undefined !!!`)
-    }
     return `file://${HOME_DIRECTORY}/.m2/repository`
   }
 

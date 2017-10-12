@@ -10,16 +10,14 @@ import {
 import fs from 'fs'
 import path from 'path'
 import shell from 'shelljs'
+import os from 'os'
 
-const HOME_DIRECTORY = process.env['HOME']
+const HOME_DIRECTORY = os.homedir()
 // Name of ern local client NPM package
 const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
 export default class Platform {
   static get rootDirectory () : string {
-    if (!HOME_DIRECTORY) {
-      throw new Error(`process.env['HOME'] is undefined !!!`)
-    }
     return `${HOME_DIRECTORY}/.ern`
   }
 
