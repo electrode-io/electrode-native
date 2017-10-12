@@ -6,6 +6,7 @@ import {httpGet} from './utils'
 import fs from 'fs'
 import shell from 'shelljs'
 import os from 'os'
+import path from 'path'
 
 const HOME_DIRECTORY = os.homedir()
 const FILE_REGEX = /^file:\/\//
@@ -28,14 +29,16 @@ export default class MavenUtils {
   static targetRepositoryGradleStatement (mavenRepositoryUrl: string): ?string {
     const repoType = this.mavenRepositoryType(mavenRepositoryUrl)
     if (repoType === 'file') {
-      return `repository(url: "${mavenRepositoryUrl}")`
+      // Replace \ by \\ for Windows
+      return `repository(url: "${mavenRepositoryUrl.replace(/\\/g, '\\\\')}")`
     } else if (repoType === 'http') {
       return `repository(url: "${mavenRepositoryUrl}") { authentication(userName: mavenUser, password: mavenPassword) }`
     }
   }
 
   static getDefaultMavenLocalDirectory = () => {
-    return `file://${HOME_DIRECTORY}/.m2/repository`
+    const pathToRepository = path.join(HOME_DIRECTORY, '.m2', 'repository')
+    return `file://${pathToRepository}`
   }
 
   static isLocalMavenRepo (repoUrl: string): boolean {
