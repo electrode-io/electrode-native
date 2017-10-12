@@ -23,6 +23,18 @@ async function delay (ms: number) {
   })
 }
 
+function execp (cmd: string) {
+  return new Promise((resolve, reject) => {
+    exec(cmd, (err, stdout, stderr) => {
+      if (err || stderr) {
+        reject(err || stderr)
+      } else {
+        resolve(stdout)
+      }
+    })
+  })
+}
+
 // ==============================================================================
 // Core android stuff
 // ==============================================================================
@@ -214,17 +226,11 @@ export async function waitForAndroidDevice () {
 // Utility method to know when the prop init.svc.bootanim is there
 // which indicates somehow that device is ready to install APK and such
 export async function androidGetBootAnimProp () {
-  return new Promise((resolve, reject) => {
-    exec(`${androidAdbPath()} wait-for-device shell getprop init.svc.bootanim`,
-    (err, stdout, stderr) => {
-      if (err || stderr) {
-        log.error(err || stderr)
-        reject(err || stderr)
-      } else {
-        resolve(stdout)
-      }
+  return execp(`${androidAdbPath()} wait-for-device shell getprop init.svc.bootanim`)
+    .catch(err => {
+      log.error(err)
+      return Promise.reject(err)
     })
-  })
 }
 
 // Build & install application on the device
@@ -232,19 +238,13 @@ export async function androidGetBootAnimProp () {
 // - projectPath : Absolute or relative path to the root of the Android project
 // containing the application
 export async function buildAndInstallApp (projectPath: string) {
-  return new Promise((resolve, reject) => {
-    shell.cd(projectPath)
-    const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
-    exec(`${gradlew} installDebug`,
-    (err, stdout, stderr) => {
-      if (err || stderr) {
-        log.error(err || stderr)
-        reject(err || stderr)
-      } else {
-        resolve(stdout)
-      }
+  shell.cd(projectPath)
+  const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
+  return execp(`${gradlew} installDebug`)
+    .catch(err => {
+      log.error(err)
+      return Promise.reject(err)
     })
-  })
 }
 
 // Utility method to launch a specific activity from a given package
@@ -254,16 +254,7 @@ export async function buildAndInstallApp (projectPath: string) {
 export async function launchAndroidActivity (
   packageName: string,
   activityName: string) {
-  return new Promise((resolve, reject) => {
-    exec(`${androidAdbPath()} shell am start -n ${packageName}/.${activityName}`,
-    (err, stdout, stderr) => {
-      if (err || stderr) {
-        reject(err || stderr)
-      } else {
-        resolve()
-      }
-    })
-  })
+  return execp(`${androidAdbPath()} shell am start -n ${packageName}/.${activityName}`)
 }
 
 // Utility method to launch a specific activity from a given packager
@@ -282,56 +273,33 @@ export function launchAndroidActivityDetached (
 
 // Utility method to list all available android avd images (emulator images)
 export async function getAndroidAvds () {
-  return new Promise((resolve, reject) => {
-    exec(`${androidEmulatorPath()} -list-avds`, (err, stdout, stderr) => {
-      if (err || stderr) {
-        reject(err || stderr)
-      } else {
-        resolve(stdout.trim().split('\n'))
-      }
-    })
-  })
+  return execp(`${androidEmulatorPath()} -list-avds`)
+    .then(stdout => stdout.trim().split('\n'))
 }
 
 // Utility method to query what device instances are connected to the adb server
 export async function getDevices () {
-  return new Promise((resolve, reject) => {
-    exec(`${androidAdbPath()} devices`, (err, stdout, stderr) => {
-      if (err || stderr) {
-        reject(err || stderr)
-      } else {
-        /*
-         stdout for running command  $adb devices
-         List of devices attached
-         * daemon not running. starting it now at tcp:5037 *
-         * daemon started successfully *
-        */
-        let stdOutArr = stdout.trim().split('\n')
-        stdOutArr.splice(0, 1) // remove stdout 'List of devices attached'
-        let result = []
-        // remove stdout related to daemon
-        stdOutArr.forEach((entry) => {
-          if (!entry.includes('* daemon')) {
-            result.push(entry)
-          }
-        })
-        resolve(result)
-      }
+  return execp(`${androidAdbPath()} devices`)
+    .then(stdout => {
+      /*
+       stdout for running command  $adb devices
+       List of devices attached
+       * daemon not running. starting it now at tcp:5037 *
+       * daemon started successfully *
+      */
+      let stdOutArr = stdout.trim().split('\n')
+      // remove stdout 'List of devices attached' (position 0)
+      // and remove stdout related to daemon
+      return stdOutArr.filter((entry, i) => i > 0 && !entry.includes('* daemon'))
     })
-  })
 }
 
 export async function installApk (pathToApk: string) {
-  return new Promise((resolve, reject) => {
-    exec(`${androidAdbPath()} install -r ${pathToApk}`, (err, stdout, stderr) => {
-      if (err || stderr) {
-        reject(err || stderr)
-      } else {
-        log.debug(stdout)
-        resolve()
-      }
+  return execp(`${androidAdbPath()} install -r ${pathToApk}`)
+    .then(stdout => {
+      log.debug(stdout)
+      return stdout
     })
-  })
 }
 
 export function androidAdbPath () : string {
