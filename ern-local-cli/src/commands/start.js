@@ -2,6 +2,10 @@
 
 import utils from '../lib/utils'
 import start from '../lib/start'
+import _ from 'lodash'
+import {
+  DependencyPath
+} from 'ern-util'
 
 exports.command = 'start'
 exports.desc = 'Start a composite MiniApp'
@@ -22,6 +26,11 @@ exports.builder = function (yargs: any) {
       type: 'array',
       alias: 'w',
       describe: 'A list of one or more folder name from node_modules that should be watched for changes'
+    })
+    .option('extraJsDependencies', {
+      type: 'array',
+      alias: 'e',
+      describe: 'Additional JavaScript dependencies to add to the composite JavaScript bundle'
     })
     .group(['packageName', 'activityName'], 'Android binary specific options:')
     .option('packageName', {
@@ -49,15 +58,17 @@ exports.handler = async function ({
   watchNodeModules,
   packageName,
   activityName,
-  bundleId
+  bundleId,
+  extraJsDependencies = []
 } : {
   descriptor?: string,
   miniapps?: Array<string>,
   watchNodeModules?: Array<string>,
   packageName?: string,
   activityName?: string,
-  bundleId?: string
-}) {
+  bundleId?: string,
+  extraJsDependencies?: Array<string>
+} = {}) {
   try {
     await start({
       miniapps,
@@ -65,7 +76,8 @@ exports.handler = async function ({
       watchNodeModules,
       packageName,
       activityName,
-      bundleId
+      bundleId,
+      extraJsDependencies: _.map(extraJsDependencies, d => DependencyPath.fromString(d))
     })
   } catch (e) {
     log.error(e.message)
