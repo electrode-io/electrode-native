@@ -13,7 +13,7 @@ We made the choice to distinguish a MiniApp from a full-fledged React Native app
 
 As a JavaScript developer, it means that there is no real change to your workflow or your current knowledge of React Native. You'll continue to write JavaScript, you'll continue to use React Native framework and, you'll be able to use third-party JavaScript packages in your application. In fact developing a MiniApp is exactly the same as developing an application or component using React Native on it's own.  
 
-While your actual coding experience won't change, the CLI commands you'll interact with will be slighlty different.
+While your actual coding experience won't change, the CLI commands you'll interact with will be slightly different.
 Some of the commands from the React Native CLI have been replaced with a few Electrode Native CLI commands.  
 
 For example, instead of running the `react-native run-ios` command to launch your React Native MiniApp inside an iOS simulator or real device, you will use the `ern run-ios` command.  
@@ -23,7 +23,7 @@ Instead of using the `react-native start` command, you'll use the `ern start` co
 
 As a mobile app developer, you won't directly deal with the JavaScript MiniApps. Selected MiniApps are packaged inside the Electrode Native container library that you'll add to your mobile application project. The container includes the MiniApps as native Views that you can embed inside their own `Activities` on Android and `ViewControllers` on iOS--and launch them when appropriate, based on your overall mobile application UX flow.
 
-Interactions and communication between the MiniApps and your mobile application are conducted using APIs that are also part of your container. The APIs can be consummed in your mobile application in a way that is very intuitive and mobile-development friendly--while also leveraging a high degree of type-safety at compile time.
+Interactions and communication between the MiniApps and your mobile application are conducted using APIs that are also part of your container. The APIs can be consumed in your mobile application in a way that is very intuitive and mobile-development friendly--while also leveraging a high degree of type-safety at compile time.
 
 ### Considerations and MiniApp recommendations
 
