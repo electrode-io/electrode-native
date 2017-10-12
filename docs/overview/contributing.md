@@ -14,6 +14,11 @@ You can contribute to the Electrode Native open source project in several ways:
 
 - You can also contribute to the [Electrode Native Bridge](https://github.com/electrode-io/react-native-electrode-bridge) library.
 
+## Electrode native development prerequisites
+
+- You'll need to install [yarn] client on your workstation.  
+Electrode Native is using [lerna] to manage `ern-` modules, which in turn is using [yarn] client instead of npm to install all `ern-` modules dependencies.
+
 ## Electrode Native development setup
 
 If you want to contribute code to the Electrode Native platform, you'll first need to setup a development environment to work on Electrode Native. It's actually quite easy to start working on the platform.
@@ -45,6 +50,13 @@ This version is also taking care of running transpilation of the code on the fly
 
 With this setup, you can also use Electrode Native as any other non-developer user. You can install new released platform versions or even switch between versions.  
 The only difference with a regular user will be that you'll have access to version `1000.0.0` of the platform, which is the development version.
+
+## Electrode Native development remarks
+
+Electrode Native workspace is composed of multiple independent packages (all prefixed by `ern-`) that are managed by [lerna].  
+When using the development vesion, after pulling the latest from our `master`, you might sometime experience some errors such as `Cannot find module ...` when running `ern` again. This is because some new package dependencies might have been added to one or more `ern-` modules and needs to be installed. The same apply if you add a new package dependency to the `package.json` of one of the `ern-` module project, you'll need to install it through [lerna].
+
+The way to do this is to just run `npm run rebuild` command from the root directory of your Electrode Native clone.
 
 ## Guidelines for code contributions
 
@@ -148,3 +160,7 @@ However the tests are not automatically run on every commit, so before opening a
 [gitbook]: https://www.gitbook.com
 
 [gitbook cli]: https://github.com/GitbookIO/gitbook-cli
+
+[lerna]: https://github.com/lerna/lerna
+
+[yarn]: https://github.com/yarnpkg/yarn
