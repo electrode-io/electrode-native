@@ -34,14 +34,16 @@ export default async function start ({
   watchNodeModules = [],
   packageName,
   activityName,
-  bundleId
+  bundleId,
+  extraJsDependencies
 } : {
   miniapps?: Array<string>,
   descriptor?: string,
   watchNodeModules: Array<string>,
   packageName?: string,
   activityName?: string,
-  bundleId?: string
+  bundleId?: string,
+  extraJsDependencies?: Array<DependencyPath>
 } = {}) {
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
   let napDescriptor
@@ -73,7 +75,10 @@ export default async function start ({
     pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
   }
   await spin('Generating MiniApps composite',
-    generateMiniAppsComposite(miniAppsPaths, workingDir, {pathToYarnLock}))
+    generateMiniAppsComposite(miniAppsPaths, workingDir, {
+      pathToYarnLock,
+      extraJsDependencies
+    }))
 
   let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
 
