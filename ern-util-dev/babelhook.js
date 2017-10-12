@@ -8,7 +8,6 @@ const babelRegister = require('babel-register')
 const oload = Module._load
 
 if (process.env.COVERAGE) {
-  console.log('Has Coverage')
   conf.plugins.push([
     'istanbul',
     {
@@ -18,50 +17,37 @@ if (process.env.COVERAGE) {
     }
   ])
 }
-const project = path.join(__dirname, '..')
 
-// only look into ern- projects that have a src directory.
+const projectPath = path.join(__dirname, '..')
+
 conf.only = /ern-[^/]*\/(src|test|lib)/
 
-/**
- * Babelify all ern- projects.  And if they
- * are an ern- project than use the src.
- *
- * @param file
- * @param parent
- * @private
- */
 function normalizePath (file, parent) {
   if (/^\./.test(file)) {
     return file
   }
-    // fixes issue with globa-cli calling local-cli.
-  if (/\/ern-local-cli$/.test(file)) {
-    return 'ern-local-cli'
+
+  const pathToErnModule = path.join(projectPath, 'ern-')
+  if (file.startsWith(pathToErnModule)) {
+    return file.replace(pathToErnModule, '')
   }
-  if (/^\//.test(file)) {
-    if (file.startsWith(project + '/ern-')) {
-      return file.replace(project + '/', '')
-    }
-    return file
-  }
-  if (/(@walmart\/)?ern-/.test(file)) {
-    return file.replace('@walmart/', '')
-  }
+  return file
 }
+
 Module._load = function (file, parent) {
   let absFile = normalizePath(file, parent)
   if (absFile) {
-    let parts = absFile.split('/')
+    let parts = absFile.split(path.sep)
     let scope = parts[0]
     let pkg = parts[1]
     let rest = parts.slice(2).join(path.sep)
     if (/ern-/.test(scope)) {
       if (!pkg || pkg === 'dist') pkg = 'src'
-      file = path.join(project, scope, pkg, rest || 'index')// `${project}/${pkg}/${rest ? '/' + rest : ''}`
+      file = path.join(projectPath, scope, pkg, rest || 'index')
     }
   }
 
   return oload(file, parent)
 }
+
 babelRegister(conf)
