@@ -206,7 +206,8 @@ export async function androidGetBootAnimProp () {
 export async function buildAndInstallApp (projectPath: string) {
   return new Promise((resolve, reject) => {
     shell.cd(projectPath)
-    exec(`./gradlew installDebug`,
+    const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
+    exec(`${gradlew} installDebug`,
     (err, stdout, stderr) => {
       if (err || stderr) {
         log.error(err || stderr)
