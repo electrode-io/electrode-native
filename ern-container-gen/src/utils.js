@@ -97,9 +97,11 @@ export async function reactNativeBundleIos (paths: any) {
 export async function generateMiniAppsComposite (
   miniappsPaths: Array<DependencyPath>,
   outDir: string, {
-    pathToYarnLock
+    pathToYarnLock,
+    extraJsDependencies = []
   } : {
-    pathToYarnLock?: string
+    pathToYarnLock?: string,
+    extraJsDependencies?: Array<DependencyPath>
   } = {}) {
   shell.mkdir('-p', outDir)
   shell.cd(outDir)
@@ -134,6 +136,7 @@ export async function generateMiniAppsComposite (
     compositePackageJson.dependencies = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, yarnLock)
     // This helps to start the local packager withing the comopsiteMiniApps folder for debugging multiple miniapps
     compositePackageJson.scripts = {'start': 'node node_modules/react-native/local-cli/cli.js start'}
+
     fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(compositePackageJson, null, 2), 'utf8')
 
     // Now that the composite package.json is similar to the one used to generated yarn.lock
@@ -150,6 +153,11 @@ export async function generateMiniAppsComposite (
     let packageJson = JSON.parse(fs.readFileSync(`${outDir}/package.json`, 'utf-8'))
     packageJson.scripts = {'start': 'node node_modules/react-native/local-cli/cli.js start'}
     fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(packageJson, null, 2), 'utf8')
+  }
+
+  // Add optional extra JavaScript dependencies
+  for (const extraJsDependency of extraJsDependencies) {
+    await yarn.add(extraJsDependency)
   }
 
   let entryIndexJsContent = ''
