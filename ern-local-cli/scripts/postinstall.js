@@ -3,6 +3,7 @@ const childProcess = require('child_process')
 const execSync = childProcess.execSync
 const fs = require('fs')
 const path = require('path')
+const os = require('os')
 
 //
 // Directory structure (stored in user home folder)
@@ -17,7 +18,7 @@ const path = require('path')
 
 const PLATFORM_VERSION = '0.8.0'
 // Path to ern platform root folder
-const ERN_PATH = process.env['ERN_HOME'] || path.join(process.env['HOME'], '.ern')
+const ERN_PATH = process.env['ERN_HOME'] || path.join(os.homedir(), '.ern')
 // Path to ern global configuration file
 const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
 // Path to ern platform manifest repo

@@ -6,6 +6,7 @@ const path = require('path')
 const ora = require('ora')
 const spawn = childProcess.spawn
 const execSync = childProcess.execSync
+const os = require('os')
 
 // Version update notifier
 const updateNotifier = require('update-notifier')
@@ -23,7 +24,7 @@ updateNotifier({ pkg }).notify()
 // |_ .ernrc
 
 // Path to ern platform root folder
-const ERN_PATH = path.join(process.env['HOME'], '.ern')
+const ERN_PATH = path.join(os.homedir(), '.ern')
 // Path to ern platform versions folder (containing all installed versions of the platform)
 const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
 // Path to ern global configuration file
