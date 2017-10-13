@@ -134,7 +134,7 @@ export default class AndroidGenerator {
         log.debug(`To ${mavenPublisher.url}`)
       }
       if (gitHubPublisher) {
-        shell.cd(`${paths.outFolder}/android`)
+        shell.cd(path.join(paths.outFolder, 'android'))
         throwIfShellCommandFailed()
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
         log.debug(`Code pushed to ${gitHubPublisher.url}`)
@@ -153,15 +153,15 @@ export default class AndroidGenerator {
     try {
       log.debug(`[=== Starting container hull filling ===]`)
 
-      log.debug(`> cd ${ROOT_DIR}`)
-      shell.cd(`${ROOT_DIR}`)
+      log.debug(`$ cd ${ROOT_DIR}`)
+      shell.cd(ROOT_DIR)
       throwIfShellCommandFailed()
 
-      const outputFolder = `${paths.outFolder}/android`
+      const outputFolder = path.join(paths.outFolder, 'android')
+      const copyFromPath = path.join(paths.containerHull, 'android', '{.*,*}')
 
-      log.debug(`> cp -R ${paths.containerHull}/android/* ${outputFolder}`)
-      shell.cp('-R', `${paths.containerHull}/android/*`, outputFolder)
-      shell.cp('-R', `${paths.containerHull}/android/.*`, outputFolder)
+      log.debug(`$ cp -R ${copyFromPath} ${outputFolder}`)
+      shell.cp('-R', copyFromPath, outputFolder)
       throwIfShellCommandFailed()
 
       await this.buildAndroidPluginsViews(plugins, mustacheView)
@@ -175,25 +175,25 @@ export default class AndroidGenerator {
           log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
           continue
         }
-        log.debug(`> cd ${paths.pluginsDownloadFolder}`)
-        shell.cd(`${paths.pluginsDownloadFolder}`)
+        log.debug(`$ cd ${paths.pluginsDownloadFolder}`)
+        shell.cd(paths.pluginsDownloadFolder)
         throwIfShellCommandFailed()
         pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
-        log.debug(`> cd ${pluginSourcePath}/${pluginConfig.android.root}`)
-        shell.cd(`${pluginSourcePath}/${pluginConfig.android.root}`)
+        const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)
+        log.debug(`$ cd ${pathToPluginProject}`)
+        shell.cd(pathToPluginProject)
         throwIfShellCommandFailed()
-        if (pluginConfig.android.moduleName) {
-          log.debug(`> cp -R ${pluginConfig.android.moduleName}/src/main/java ${outputFolder}/lib/src/main`)
-          shell.cp('-R', `${pluginConfig.android.moduleName}/src/main/java`, `${outputFolder}/lib/src/main`)
-          throwIfShellCommandFailed()
-        } else {
-          log.debug(`> cp -R src/main/java ${outputFolder}/lib/src/main`)
-          shell.cp('-R', `src/main/java`, `${outputFolder}/lib/src/main`)
-          throwIfShellCommandFailed()
-        }
+
+        const relPathToPluginSource = pluginConfig.android.moduleName
+          ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
+          : path.join('src', 'main', 'java')
+        const absPathToCopyPluginSourceTo = path.join(outputFolder, 'lib', 'src', 'main')
+        log.debug(`$ cp -R ${relPathToPluginSource} ${absPathToCopyPluginSourceTo}`)
+        shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
+        throwIfShellCommandFailed()
 
         if (pluginConfig.android) {
           if (pluginConfig.android.copy) {
@@ -212,10 +212,14 @@ export default class AndroidGenerator {
       }
 
       log.debug(`Patching hull`)
-      const files = readDir(`${outputFolder}`, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
+      const files = readDir(outputFolder, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
+      const pathLibSrcMain = path.join('lib', 'src', 'main')
+      const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
+      const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java', 'com')
+      const pathLibSrcMainJavaComWalmartlabsErnContainer = path.join(pathLibSrcMainJavaCom, 'walmartlabs', 'ern', 'container')
       for (const file of files) {
-        if ((file.startsWith(`lib/src/main/java/com`) && !file.startsWith(`lib/src/main/java/com/walmartlabs/ern/container`)) ||
-          file.startsWith(`lib/src/main/assets`)) {
+        if ((file.startsWith(pathLibSrcMainJavaCom) && !file.startsWith(pathLibSrcMainJavaComWalmartlabsErnContainer)) ||
+          file.startsWith(pathLibSrcMainAssets)) {
           // We don't want to Mustache process library files. It can lead to bad things
           // We also don't want to process assets files ...
           // We just want to process container specific code (which contains mustache templates)
@@ -223,8 +227,8 @@ export default class AndroidGenerator {
           continue
         }
         log.debug(`Mustaching ${file}`)
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-            `${outputFolder}/${file}`, mustacheView, `${outputFolder}/${file}`)
+        const pathToFile = path.join(outputFolder, file)
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(pathToFile, mustacheView, pathToFile)
       }
 
       // Create mini app activities
@@ -238,10 +242,12 @@ export default class AndroidGenerator {
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
 
         log.debug(`Creating ${activityFileName}`)
+        const pathToMiniAppActivityMustacheTemplate = path.join(paths.containerTemplates, 'android', 'MiniAppActivity.mustache')
+        const pathToOutputActivityFile = path.join(outputFolder, pathLibSrcMainJavaComWalmartlabsErnContainer, 'miniapps', activityFileName)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-            `${paths.containerTemplates}/android/MiniAppActivity.mustache`,
+            pathToMiniAppActivityMustacheTemplate,
             tmpMiniAppView,
-            `${outputFolder}/lib/src/main/java/com/walmartlabs/ern/container/miniapps/${activityFileName}`)
+            pathToOutputActivityFile)
       }
 
       log.debug(`[=== Completed container hull filling ===]`)
@@ -273,7 +279,9 @@ export default class AndroidGenerator {
     const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
     if (packageJson.rnpm && packageJson.rnpm.assets) {
       for (const assetDirectoryName of packageJson.rnpm.assets) {
-        handleCopyDirective(miniAppPath, outputPath, [{ source: `${assetDirectoryName}/*`, dest: `lib/src/main/assets/${assetDirectoryName.toLowerCase()}` }])
+        const source = path.join(assetDirectoryName, '*')
+        const dest = path.join('lib', 'src', 'main', 'assets', assetDirectoryName.toLowerCase())
+        handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
       }
     }
   }
@@ -298,8 +306,10 @@ export default class AndroidGenerator {
           if (!pluginConfig.path) {
             throw new Error(`No plugin config path was set. Cannot proceed.`)
           }
-          shell.cp(`${pluginConfig.path}/${androidPluginHook.name}.java`,
-              `${paths.outFolder}/android/lib/src/main/java/com/walmartlabs/ern/container/plugins/`)
+          const pathToPluginConfigHook = path.join(pluginConfig.path, `${androidPluginHook.name}.java`)
+          const pathToCopyPluginConfigHookTo =
+            path.join(paths.outFolder, 'android', 'lib', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'container', 'plugins')
+          shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo)
           throwIfShellCommandFailed()
         }
       }
