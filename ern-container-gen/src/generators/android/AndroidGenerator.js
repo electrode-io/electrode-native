@@ -23,11 +23,12 @@ import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
+import type { ContainerGenerator } from '../../ContainerGenerator'
 
 const ROOT_DIR = shell.pwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 
-export default class AndroidGenerator {
+export default class AndroidGenerator implements ContainerGenerator {
   _containerGeneratorConfig : ContainerGeneratorConfig
   _namespace : string
 

@@ -13,32 +13,10 @@ import {
 import _ from 'lodash'
 import semver from 'semver'
 import path from 'path'
+import type { ContainerGenerator } from './ContainerGenerator'
 
 let mustacheView = {}
 
-// =============================================================================
-// ern-container-gen entry point
-// =============================================================================
-
-// generator: The generator to use along with its config
-//  ex :
-//  {
-//    platform: "android",
-//    name: "maven",
-//    containerVersion: "1.2.3",
-//    mavenRepositoryUrl = ...
-//  }
-// plugins: Array containing all plugins to be included in the container
-//  ex :
-//  [{ name: "react-native", version: "0.40.0"}, {name: "react-native-code-push"}]
-// miniApps: Array of mini apps to be included in the container
-//  ex :
-//  [
-//    {
-//      name: "RnDemoApp",
-//      version: "1.0.0"
-//    }
-//  ]
 export default async function generateContainer ({
   containerVersion,
   nativeAppName,
@@ -52,16 +30,12 @@ export default async function generateContainer ({
   containerVersion: string,
   nativeAppName: string,
   platformPath: string,
-  generator: any,
+  generator: ContainerGenerator,
   plugins: Array<Dependency>,
   miniapps: Array<MiniApp>,
   workingFolder: string,
   pathToYarnLock?: string
 } = {}) {
-  if (!generator.generateContainer) {
-    throw new Error('The generator miss a generateContainer function !')
-  }
-
   // Folder from which we download all plugins sources (from npm or git)
   const PLUGINS_DOWNLOAD_FOLDER = path.join(workingFolder, 'plugins')
   // Folder where the resulting container project is stored in
