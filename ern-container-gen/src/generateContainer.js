@@ -1,17 +1,16 @@
 // @flow
 
 import {
-  Dependency
+  Dependency,
+  shell
 } from 'ern-util'
 import {
   MiniApp
 } from 'ern-core'
 import {
-  capitalizeFirstLetter,
-  throwIfShellCommandFailed
+  capitalizeFirstLetter
 } from './utils.js'
 import _ from 'lodash'
-import shell from 'shelljs'
 import semver from 'semver'
 import path from 'path'
 
@@ -91,7 +90,6 @@ export default async function generateContainer ({
   shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER)
   shell.mkdir('-p', path.join(OUT_FOLDER, 'android'))
   shell.mkdir('-p', path.join(OUT_FOLDER, 'ios'))
-  throwIfShellCommandFailed()
 
   // Sort the plugin to have consistent ElectrodeContainer.java generated code
   sortPlugins(plugins)

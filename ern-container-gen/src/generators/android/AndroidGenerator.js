@@ -11,19 +11,18 @@ import {
 import {
   mustacheUtils,
   Dependency,
-  Utils
+  Utils,
+  shell
 } from 'ern-util'
 import {
   bundleMiniApps,
   capitalizeFirstLetter,
-  downloadPluginSource,
-  throwIfShellCommandFailed
+  downloadPluginSource
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
-import shell from 'shelljs'
 
 const ROOT_DIR = shell.pwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
@@ -68,7 +67,6 @@ export default class AndroidGenerator {
     } = {}) {
     try {
       shell.cd(paths.outFolder)
-      throwIfShellCommandFailed()
 
       const mavenPublisher = this._containerGeneratorConfig.firstAvailableMavenPublisher
       if (this._containerGeneratorConfig.shouldPublish() && mavenPublisher) {
@@ -93,7 +91,6 @@ export default class AndroidGenerator {
           await GitUtils.gitClone(repoUrl, {destFolder: 'android'})
 
           shell.rm('-rf', `${paths.outFolder}/android/*`)
-          throwIfShellCommandFailed()
         } catch (e) {
           Utils.logErrorAndExitProcess('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct')
         }
@@ -135,7 +132,6 @@ export default class AndroidGenerator {
       }
       if (gitHubPublisher) {
         shell.cd(path.join(paths.outFolder, 'android'))
-        throwIfShellCommandFailed()
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
         log.debug(`Code pushed to ${gitHubPublisher.url}`)
       }
@@ -153,16 +149,12 @@ export default class AndroidGenerator {
     try {
       log.debug(`[=== Starting container hull filling ===]`)
 
-      log.debug(`$ cd ${ROOT_DIR}`)
       shell.cd(ROOT_DIR)
-      throwIfShellCommandFailed()
 
       const outputFolder = path.join(paths.outFolder, 'android')
       const copyFromPath = path.join(paths.containerHull, 'android', '{.*,*}')
 
-      log.debug(`$ cp -R ${copyFromPath} ${outputFolder}`)
       shell.cp('-R', copyFromPath, outputFolder)
-      throwIfShellCommandFailed()
 
       await this.buildAndroidPluginsViews(plugins, mustacheView)
       await this.addAndroidPluginHookClasses(plugins, paths)
@@ -175,25 +167,20 @@ export default class AndroidGenerator {
           log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
           continue
         }
-        log.debug(`$ cd ${paths.pluginsDownloadFolder}`)
+
         shell.cd(paths.pluginsDownloadFolder)
-        throwIfShellCommandFailed()
         pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
         const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)
-        log.debug(`$ cd ${pathToPluginProject}`)
         shell.cd(pathToPluginProject)
-        throwIfShellCommandFailed()
 
         const relPathToPluginSource = pluginConfig.android.moduleName
           ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
           : path.join('src', 'main', 'java')
         const absPathToCopyPluginSourceTo = path.join(outputFolder, 'lib', 'src', 'main')
-        log.debug(`$ cp -R ${relPathToPluginSource} ${absPathToCopyPluginSourceTo}`)
         shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
-        throwIfShellCommandFailed()
 
         if (pluginConfig.android) {
           if (pluginConfig.android.copy) {
@@ -310,7 +297,6 @@ export default class AndroidGenerator {
           const pathToCopyPluginConfigHookTo =
             path.join(paths.outFolder, 'android', 'lib', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'container', 'plugins')
           shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo)
-          throwIfShellCommandFailed()
         }
       }
 

@@ -1,8 +1,6 @@
 // @flow
 
-import * as ernUtil from 'ern-util'
 import fs from 'fs'
-import shell from 'shelljs'
 import _ from 'lodash'
 import path from 'path'
 import {
@@ -11,11 +9,11 @@ import {
   GitUtils,
   MiniApp
 } from 'ern-core'
-
-const {
+import {
   Dependency,
-  DependencyPath
-} = ernUtil
+  DependencyPath,
+  shell
+} from 'ern-util'
 
 const gitFolderRe = /.*\/(.*).git/
 
@@ -34,7 +32,6 @@ export async function bundleMiniApps (
     // container for runner and we want to bundle the local miniapp
     if ((miniapps.length === 1) && (miniapps[0].isLocal)) {
       shell.cd(miniapps[0].path)
-      throwIfShellCommandFailed()
     } else {
       let miniAppsPaths : Array<DependencyPath> = []
       for (const miniapp of miniapps) {
@@ -88,7 +85,6 @@ export async function reactNativeBundleIos (paths: any) {
 
   if (!fs.existsSync(miniAppOutPath)) {
     shell.mkdir('-p', miniAppOutPath)
-    throwIfShellCommandFailed()
   }
 
   return reactnative.bundle({
@@ -111,7 +107,6 @@ export async function generateMiniAppsComposite (
   } = {}) {
   shell.mkdir('-p', outDir)
   shell.cd(outDir)
-  throwIfShellCommandFailed()
 
   let compositePackageJson = {}
 
@@ -131,7 +126,6 @@ export async function generateMiniAppsComposite (
 
     log.debug(`Copying yarn.lock to ${outDir}`)
     shell.cp(pathToYarnLock, outDir)
-    throwIfShellCommandFailed()
 
     const yarnLock = fs.readFileSync(pathToYarnLock, 'utf8')
     const miniAppsDeltas = getMiniAppsDeltas(miniAppsPackages, yarnLock)
@@ -177,7 +171,6 @@ export async function generateMiniAppsComposite (
 
   log.debug(`Removing .babelrc files from all modules`)
   shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
-  throwIfShellCommandFailed()
 
   log.debug(`Creating top level composite .babelrc`)
   const compositeBabelRc = { 'presets': ['react-native'], 'plugins': [] }
@@ -288,7 +281,6 @@ export function clearReactPackagerCache () {
   const TMPDIR = process.env['TMPDIR']
   if (TMPDIR) {
     shell.rm('-rf', `${TMPDIR}/react-*`)
-    throwIfShellCommandFailed()
   }
 }
 
@@ -422,15 +414,4 @@ async function writeFile (
       else resolve(res)
     })
   })
-}
-
-// =============================================================================
-// Shell error helper
-// =============================================================================
-
-export function throwIfShellCommandFailed () {
-  const shellError = shell.error()
-  if (shellError) {
-    throw new Error(shellError)
-  }
 }

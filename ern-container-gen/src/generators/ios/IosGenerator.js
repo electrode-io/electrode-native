@@ -9,19 +9,18 @@ import {
 } from 'ern-core'
 import {
   Dependency,
-  mustacheUtils
+  mustacheUtils,
+  shell
 } from 'ern-util'
 
 import {
   bundleMiniApps,
-  downloadPluginSource,
-  throwIfShellCommandFailed
+  downloadPluginSource
 } from '../../utils.js'
 
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
-import shell from 'shelljs'
 import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
 
@@ -55,7 +54,6 @@ export default class IosGenerator {
     } = {}) : Promise<*> {
     try {
       shell.cd(paths.outFolder)
-      throwIfShellCommandFailed()
 
       let gitHubPublisher
       if (this._containerGeneratorConfig.shouldPublish()) {
@@ -70,7 +68,6 @@ export default class IosGenerator {
           await GitUtils.gitClone(repoUrl, {destFolder: 'ios'})
 
           shell.rm('-rf', `${paths.outFolder}/ios/*`)
-          throwIfShellCommandFailed()
         } else {
           log.warn('Looks like we are missing a GitHub publisher. Currently only GitHub publisher is supported.')
         }
@@ -99,7 +96,6 @@ export default class IosGenerator {
       // Publish resulting container to git repo
       if (gitHubPublisher) {
         shell.cd(path.join(paths.outFolder, 'ios'))
-        throwIfShellCommandFailed()
         log.debug(`Publish generated container[v${containerVersion}] to git repo: ${gitHubPublisher.url}`)
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
@@ -162,14 +158,12 @@ export default class IosGenerator {
     mustacheView: any) : Promise<*> {
     log.debug(`[=== Starting container hull filling ===]`)
     shell.cd(`${ROOT_DIR}`)
-    throwIfShellCommandFailed()
 
     const iosContainerHullPath = path.join(paths.containerHull, 'ios')
     const outputFolder = path.join(paths.outFolder, 'ios')
 
     log.debug(`Creating out folder and copying Container Hull to it`)
     shell.cp('-R', iosContainerHullPath, paths.outFolder)
-    throwIfShellCommandFailed()
 
     await this.buildiOSPluginsViews(plugins, mustacheView)
 
@@ -192,7 +186,6 @@ export default class IosGenerator {
     for (const plugin of plugins) {
       const pluginConfig = await manifest.getPluginConfig(plugin)
       shell.cd(paths.pluginsDownloadFolder)
-      throwIfShellCommandFailed()
       if (pluginConfig.ios) {
         log.debug(`Retrieving ${plugin.scopedName}`)
         const pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
@@ -367,7 +360,6 @@ export default class IosGenerator {
             const pathToPluginHookHeader = path.join(pluginConfig.path, `${iOSPluginHook.name}.h`)
             const pathToCopyPluginHookHeaderTo = path.join(paths.outFolder, 'ios', 'ElectrodeContainer')
             shell.cp(pathToPluginHookHeader, pathToCopyPluginHookHeaderTo)
-            throwIfShellCommandFailed()
             containerIosProject.addHeaderFile(`${iOSPluginHook.name}.h`, { public: true }, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
             containerIosProject.addSourceFile(`${iOSPluginHook.name}.m`, null, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
           }
@@ -380,7 +372,6 @@ export default class IosGenerator {
             const pathToPluginHookSource = path.join(pluginConfig.path, `${iOSPluginHook.name}.m`)
             const pathToCopyPluginHookSourceTo = path.join(paths.outFolder, 'ios', 'ElectrodeContainer')
             shell.cp(pathToPluginHookSource, pathToCopyPluginHookSourceTo)
-            throwIfShellCommandFailed()
           }
         }
       }

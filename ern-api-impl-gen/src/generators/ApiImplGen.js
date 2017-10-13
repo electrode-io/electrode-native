@@ -4,12 +4,11 @@ import {
   spin,
   Dependency,
   DependencyPath,
-  Utils
+  shell
 } from 'ern-util'
 import {
   yarn
 } from 'ern-core'
-import shell from 'shelljs'
 import _ from 'lodash'
 import chalk from 'chalk'
 import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
@@ -50,7 +49,7 @@ export default class ApiImplGen {
   async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string, reactNativeVersion: string) {
     try {
       shell.cd(path)
-      Utils.throwIfShellCommandFailed()
+
       await this.spinAndDownload(apiDependencyPath)
       plugins = await this.getDependencies(apiDependencyPath)
       plugins.push(Dependency.fromPath(apiDependencyPath))// Also add the api as a plugin so it's src files will get copied.

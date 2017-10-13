@@ -1,8 +1,9 @@
 // @flow
 import type { Publisher } from './Publisher'
 import { MavenUtils } from './MavenUtils'
-import shell from 'shelljs'
-import { Utils } from 'ern-util'
+import {
+  shell
+} from 'ern-util'
 import { exec } from 'child_process'
 
 export default class MavenPublisher implements Publisher {
@@ -29,7 +30,6 @@ export default class MavenPublisher implements Publisher {
     try {
       log.debug(`[=== Starting build and publication ===]`)
       shell.cd(`${workingDir}`)
-      Utils.throwIfShellCommandFailed()
       await this.buildAndUploadArchive(moduleName)
       log.debug(`[=== Completed build and publication of the module ===]`)
     } catch (e) {

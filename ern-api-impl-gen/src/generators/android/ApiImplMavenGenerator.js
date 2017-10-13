@@ -1,10 +1,9 @@
 // @flow
 
-import shell from 'shelljs'
 import {
   Dependency,
-  Utils,
-  mustacheUtils
+  mustacheUtils,
+  shell
 } from 'ern-util'
 import {
   manifest
@@ -53,15 +52,12 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
 
       shell.cd(`${ROOT_DIR}`)
-      Utils.throwIfShellCommandFailed()
 
       const outputFolder = path.join(paths.outFolder, `android`)
       log.debug(`Creating out folder(${outputFolder}) for android and copying container hull to it.`)
       shell.mkdir(outputFolder)
-      Utils.throwIfShellCommandFailed()
 
       shell.cp(`-R`, path.join(paths.apiImplHull, `/android/*`), outputFolder)
-      Utils.throwIfShellCommandFailed()
 
       for (let plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name} to ${outputFolder}`)
