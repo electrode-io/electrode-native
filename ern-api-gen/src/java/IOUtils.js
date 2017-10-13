@@ -1,4 +1,6 @@
-import shell from 'shelljs'
+import {
+  shell
+} from 'ern-util'
 import File from './File'
 
 export default ({

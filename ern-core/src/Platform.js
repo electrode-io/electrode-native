@@ -1,7 +1,8 @@
 // @flow
 
 import {
-    config
+    config,
+    shell
 } from 'ern-util'
 import {
   execSync
@@ -9,7 +10,6 @@ import {
 
 import fs from 'fs'
 import path from 'path'
-import shell from 'shelljs'
 import os from 'os'
 
 const HOME_DIRECTORY = os.homedir()

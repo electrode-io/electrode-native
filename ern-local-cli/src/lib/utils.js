@@ -19,7 +19,8 @@ import {
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
-  spin
+  spin,
+  shell
 } from 'ern-util'
 import {
   runLocalContainerGen,
@@ -29,7 +30,6 @@ import {
   spawn
 } from 'child_process'
 import utils from './utils'
-import shell from 'shelljs'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'

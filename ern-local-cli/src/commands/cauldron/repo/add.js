@@ -4,9 +4,9 @@ import {
   Platform
 } from 'ern-core'
 import {
-  config as ernConfig
+  config as ernConfig,
+  shell
 } from 'ern-util'
-import shell from 'shelljs'
 import inquirer from 'inquirer'
 import utils from '../../../lib/utils'
 

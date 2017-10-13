@@ -6,7 +6,9 @@ import {
 import Prom from 'bluebird'
 import fs from 'fs'
 import path from 'path'
-import shell from 'shelljs'
+import {
+  shell
+} from 'ern-util'
 import simpleGit from 'simple-git'
 
 const GIT_REMOTE_NAME = 'upstream'

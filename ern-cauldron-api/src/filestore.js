@@ -6,7 +6,9 @@ import {
 import BaseGit from './base-git'
 import fs from 'fs'
 import path from 'path'
-import shell from 'shelljs'
+import {
+  shell
+} from 'ern-util'
 
 export default class FileStore extends BaseGit {
   _prefix : string

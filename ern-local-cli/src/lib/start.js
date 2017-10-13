@@ -4,7 +4,8 @@ import {
   config as ernConfig,
   DependencyPath,
   NativeApplicationDescriptor,
-  spin
+  spin,
+  shell
 } from 'ern-util'
 import {
   generateMiniAppsComposite
@@ -18,7 +19,6 @@ import _ from 'lodash'
 import chokidar from 'chokidar'
 import tmp from 'tmp'
 import path from 'path'
-import shell from 'shelljs'
 
 const {
   runAndroidApk

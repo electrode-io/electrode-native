@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  shell
 } from 'ern-util'
 import {
   cauldron,
@@ -10,7 +11,6 @@ import {
 import utils from '../../lib/utils'
 import fs from 'fs'
 import path from 'path'
-import shell from 'shelljs'
 
 exports.command = 'get <descriptor> <outDir>'
 exports.desc = 'Get a mobile application binary from the binary store'
