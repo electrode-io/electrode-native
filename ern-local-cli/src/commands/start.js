@@ -25,7 +25,7 @@ exports.builder = function (yargs: any) {
     .option('watchNodeModules', {
       type: 'array',
       alias: 'w',
-      describe: 'A list of one or more folder name from node_modules that should be watched for changes'
+      describe: 'A list of one or more directory name from node_modules that should be watched for changes'
     })
     .option('extraJsDependencies', {
       type: 'array',

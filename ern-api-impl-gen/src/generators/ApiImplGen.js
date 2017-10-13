@@ -21,16 +21,16 @@ export default class ApiImplGen {
   async generateApiImplementation (
     apiDependencyPath: DependencyPath,
     paths: {
-      workingFolder: string,
-      pluginsDownloadFolder: string,
+      workingDirectory: string,
+      pluginsDownloadDirectory: string,
       apiImplHull: string,
-      outFolder: string
+      outDirectory: string
     },
     reactNativeVersion: string,
     platforms: Array<string>) {
     log.debug(`Inside generateApiImplementation for api:${apiDependencyPath.toString()},  platforms:${platforms.toString()}`)
 
-    await this.downloadApiAndDependencies(apiDependencyPath, paths.pluginsDownloadFolder, reactNativeVersion)
+    await this.downloadApiAndDependencies(apiDependencyPath, paths.pluginsDownloadDirectory, reactNativeVersion)
 
     const generators: Array<ApiImplGeneratable> = this.getGenerators(platforms)
     for (let generator of generators) {
@@ -43,7 +43,7 @@ export default class ApiImplGen {
       }
     }
 
-    log.info(chalk.green(`API implementation project was successfully generated in ${paths.outFolder}`))
+    log.info(chalk.green(`API implementation project was successfully generated in ${paths.outDirectory}`))
   }
 
   async downloadApiAndDependencies (apiDependencyPath: DependencyPath, path: string, reactNativeVersion: string) {

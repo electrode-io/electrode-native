@@ -14,7 +14,7 @@ const pkg = require('../package.json')
 updateNotifier({ pkg }).notify()
 
 //
-// Directory structure (stored in user home folder)
+// Directory structure (stored in user home directory)
 //
 // .ern
 // |_ versions
@@ -23,13 +23,13 @@ updateNotifier({ pkg }).notify()
 // ....
 // |_ .ernrc
 
-// Path to ern platform root folder
+// Path to ern platform root directory
 const ERN_PATH = path.join(os.homedir(), '.ern')
-// Path to ern platform versions folder (containing all installed versions of the platform)
+// Path to ern platform versions directory (containing all installed versions of the platform)
 const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
 // Path to ern global configuration file
 const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
-// Path to potential ern local configuration file (local to the folder where ern command is run)
+// Path to potential ern local configuration file (local to the directory where ern command is run)
 const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc')
 // Name of ern local client NPM package
 const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
@@ -42,17 +42,17 @@ if (!fs.existsSync(ERN_PATH)) {
 }
 
 // First run ever of ern (no versions installed at all yet)
-// Create all folders and install/activate current platform version
+// Create all directories and install/activate current platform version
 function firstTimeInstall () {
   try {
     const isDebug = process.argv.indexOf('--debug') !== -1
 
     const spinner = ora('Performing first time install of Electrode Native').start()
 
-    // Create path platform root folder
+    // Create path platform root directory
     fs.mkdirSync(ERN_PATH)
 
-    // Create cached versions folder
+    // Create cached versions directory
     fs.mkdirSync(ERN_VERSIONS_CACHE_PATH)
 
     // List all available versions from electrode-native git repository
@@ -96,7 +96,7 @@ function firstTimeInstall () {
     })
   } catch (e) {
     // If something went wrong, we just clean up everything.
-    // Don't want to create and leave the .ern global folder hanging around
+    // Don't want to create and leave the .ern global directory hanging around
     // in a bad state
     console.log(`Something went wrong :( Run the command again with --debug flag for more info.`)
     execSync(`rm -rf ${ERN_PATH}`)

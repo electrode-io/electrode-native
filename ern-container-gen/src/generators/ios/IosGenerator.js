@@ -54,7 +54,7 @@ export default class IosGenerator implements ContainerGenerator {
       pathToYarnLock?: string
     } = {}) : Promise<*> {
     try {
-      shell.cd(paths.outFolder)
+      shell.cd(paths.outDirectory)
 
       let gitHubPublisher
       if (this._containerGeneratorConfig.shouldPublish()) {
@@ -65,10 +65,10 @@ export default class IosGenerator implements ContainerGenerator {
           targetRepoUrl: ${repoUrl}
           containerVersion: ${containerVersion}`)
 
-          log.debug(`First lets clone the repo so we can update it with the newly generated container. Location: ${paths.outFolder}`)
-          await GitUtils.gitClone(repoUrl, {destFolder: 'ios'})
+          log.debug(`First lets clone the repo so we can update it with the newly generated container. Location: ${paths.outDirectory}`)
+          await GitUtils.gitClone(repoUrl, {destDirectory: 'ios'})
 
-          shell.rm('-rf', `${paths.outFolder}/ios/*`)
+          shell.rm('-rf', `${paths.outDirectory}/ios/*`)
         } else {
           log.warn('Looks like we are missing a GitHub publisher. Currently only GitHub publisher is supported.')
         }
@@ -80,7 +80,7 @@ export default class IosGenerator implements ContainerGenerator {
       // Go through all ern-container-gen steps
       //
 
-      // Copy iOS container hull to generation ios output folder
+      // Copy iOS container hull to generation ios output directory
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
       // Bundle all the miniapps together and store resulting bundle in container
@@ -96,7 +96,7 @@ export default class IosGenerator implements ContainerGenerator {
 
       // Publish resulting container to git repo
       if (gitHubPublisher) {
-        shell.cd(path.join(paths.outFolder, 'ios'))
+        shell.cd(path.join(paths.outDirectory, 'ios'))
         log.debug(`Publish generated container[v${containerVersion}] to git repo: ${gitHubPublisher.url}`)
         await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
       }
@@ -111,28 +111,28 @@ export default class IosGenerator implements ContainerGenerator {
   copyRnpmAssets (
     miniApps: Array<MiniApp>,
     paths: any) {
-    const outputFolder = path.join(paths.outFolder, 'ios')
+    const outputDirectory = path.join(paths.outDirectory, 'ios')
     // Case of local container for runner
     if ((miniApps.length === 1) && (miniApps[0].path)) {
-      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outputFolder)
+      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outputDirectory)
     } else {
       for (const miniApp of miniApps) {
         const miniAppPath = path.join(
           paths.compositeMiniApp,
           'node_modules',
           miniApp.packageJson.name)
-        this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputFolder)
+        this.copyRnpmAssetsFromMiniAppPath(miniAppPath, outputDirectory)
       }
     }
-    this.addResources(outputFolder)
+    this.addResources(outputDirectory)
   }
 
-  async addResources (outputFolder: any) {
+  async addResources (outputDirectory: any) {
     log.debug(`=== ios: adding resources for miniapps`)
-    const containerProjectPath = path.join(outputFolder, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
+    const containerProjectPath = path.join(outputDirectory, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
     const containerIosProject = await this.getIosContainerProject(containerProjectPath)
 
-    const containerResourcesPath = path.join(outputFolder, 'ElectrodeContainer', 'Resources')
+    const containerResourcesPath = path.join(outputDirectory, 'ElectrodeContainer', 'Resources')
     readDir(containerResourcesPath, resourceFile => {
       containerIosProject.addResourceFile(path.join('Resources', resourceFile), null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
     })
@@ -161,32 +161,32 @@ export default class IosGenerator implements ContainerGenerator {
     shell.cd(`${ROOT_DIR}`)
 
     const iosContainerHullPath = path.join(paths.containerHull, 'ios')
-    const outputFolder = path.join(paths.outFolder, 'ios')
+    const outputDirectory = path.join(paths.outDirectory, 'ios')
 
-    log.debug(`Creating out folder and copying Container Hull to it`)
-    shell.cp('-R', iosContainerHullPath, paths.outFolder)
+    log.debug(`Creating out directory and copying Container Hull to it`)
+    shell.cp('-R', iosContainerHullPath, paths.outDirectory)
 
     await this.buildiOSPluginsViews(plugins, mustacheView)
 
     log.debug(`---iOS: reading template files to be rendered for plugins`)
-    const files = readDir(outputFolder, (f) => (f))
+    const files = readDir(outputDirectory, (f) => (f))
     for (const file of files) {
       if ((file.endsWith('.h') || file.endsWith('.m'))) {
-        const pathToOutputFile = path.join(outputFolder, file)
+        const pathToOutputFile = path.join(outputDirectory, file)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
           pathToOutputFile, mustacheView, pathToOutputFile)
       }
     }
 
-    const containerProjectPath = path.join(outputFolder, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
-    const containerLibrariesPath = path.join(outputFolder, 'ElectrodeContainer', 'Libraries')
+    const containerProjectPath = path.join(outputDirectory, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
+    const containerLibrariesPath = path.join(outputDirectory, 'ElectrodeContainer', 'Libraries')
 
     const containerIosProject = await this.getIosContainerProject(containerProjectPath)
     const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
 
     for (const plugin of plugins) {
       const pluginConfig = await manifest.getPluginConfig(plugin)
-      shell.cd(paths.pluginsDownloadFolder)
+      shell.cd(paths.pluginsDownloadDirectory)
       if (pluginConfig.ios) {
         log.debug(`Retrieving ${plugin.scopedName}`)
         const pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
@@ -201,12 +201,12 @@ export default class IosGenerator implements ContainerGenerator {
               copy.source = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs')
             }
           }
-          handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.ios.copy)
+          handleCopyDirective(pluginSourcePath, outputDirectory, pluginConfig.ios.copy)
         }
 
         if (pluginConfig.ios.replaceInFile) {
           for (const r of pluginConfig.ios.replaceInFile) {
-            const pathToFile = path.join(outputFolder, r.path)
+            const pathToFile = path.join(outputDirectory, r.path)
             const fileContent = fs.readFileSync(pathToFile, 'utf8')
             const patchedFileContent = fileContent.replace(RegExp(r.string, 'g'), r.replaceWith)
             fs.writeFileSync(pathToFile, patchedFileContent, { encoding: 'utf8' })
@@ -359,7 +359,7 @@ export default class IosGenerator implements ContainerGenerator {
               throw new Error(`No plugin config path was set. Cannot proceed.`)
             }
             const pathToPluginHookHeader = path.join(pluginConfig.path, `${iOSPluginHook.name}.h`)
-            const pathToCopyPluginHookHeaderTo = path.join(paths.outFolder, 'ios', 'ElectrodeContainer')
+            const pathToCopyPluginHookHeaderTo = path.join(paths.outDirectory, 'ios', 'ElectrodeContainer')
             shell.cp(pathToPluginHookHeader, pathToCopyPluginHookHeaderTo)
             containerIosProject.addHeaderFile(`${iOSPluginHook.name}.h`, { public: true }, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
             containerIosProject.addSourceFile(`${iOSPluginHook.name}.m`, null, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
@@ -371,7 +371,7 @@ export default class IosGenerator implements ContainerGenerator {
               throw new Error(`No plugin config path was set. Cannot proceed.`)
             }
             const pathToPluginHookSource = path.join(pluginConfig.path, `${iOSPluginHook.name}.m`)
-            const pathToCopyPluginHookSourceTo = path.join(paths.outFolder, 'ios', 'ElectrodeContainer')
+            const pathToCopyPluginHookSourceTo = path.join(paths.outDirectory, 'ios', 'ElectrodeContainer')
             shell.cp(pathToPluginHookSource, pathToCopyPluginHookSourceTo)
           }
         }

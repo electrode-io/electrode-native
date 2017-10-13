@@ -7,17 +7,17 @@ export default class GitHubPublisher {
     url: string,
     {
       branch,
-      destFolder
+      destDirectory
     }: {
       branch?: string,
-      destFolder?: string
+      destDirectory?: string
     } = {}) {
     let cmd = branch
       ? `git clone --branch ${branch} --depth 1 ${url}`
       : `git clone ${url}`
 
-    if (destFolder) {
-      cmd += ` ${destFolder}`
+    if (destDirectory) {
+      cmd += ` ${destDirectory}`
     }
 
     return new Promise((resolve, reject) => {

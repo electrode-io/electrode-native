@@ -6,7 +6,7 @@ const path = require('path')
 const os = require('os')
 
 //
-// Directory structure (stored in user home folder)
+// Directory structure (stored in user home directory)
 //
 // .ern
 // |_ ern-master-manifest (git)
@@ -17,7 +17,7 @@ const os = require('os')
 // |_ .ernrc
 
 const PLATFORM_VERSION = '0.8.0'
-// Path to ern platform root folder
+// Path to ern platform root directory
 const ERN_PATH = process.env['ERN_HOME'] || path.join(os.homedir(), '.ern')
 // Path to ern global configuration file
 const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')

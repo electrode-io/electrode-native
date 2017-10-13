@@ -38,7 +38,7 @@ const RUNNER_CONTAINER_VERSION = '1.0.0'
 // platformPath : Path to the ern-platform to use
 // plugins : Array containing all plugins to be included in the generated container
 // miniapp : The miniapp to attach to this runner. Needs to have localPath set !
-// outFolder : Where the generated project will be outputed
+// outDirectory : Where the generated project will be outputed
 export async function generateRunner ({
   platformPath,
   plugins,
@@ -197,6 +197,6 @@ export async function generateContainerForRunner ({
     platformPath,
     plugins,
     miniapps: [miniapp],
-    workingFolder: containerGenWorkingDir
+    workingDirectory: containerGenWorkingDir
   }))
 }

@@ -121,7 +121,7 @@ platform: 'android' | 'ios', {
         generator: createContainerGenerator(containerGeneratorConfig),
         plugins: nativeDependencies,
         miniapps,
-        workingFolder: outDir
+        workingDirectory: outDir
       }))
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
@@ -177,7 +177,7 @@ version: string, {
         generator: createContainerGenerator(containerGeneratorConfig),
         plugins,
         miniapps: miniAppsInstances,
-        workingFolder: outDir,
+        workingDirectory: outDir,
         pathToYarnLock: pathToYarnLock || undefined
       }))
 
@@ -248,7 +248,7 @@ miniApps: Array<Dependency>, {
     }
   }
 
-  const workingFolder = `${Platform.rootDirectory}/CompositeOta`
+  const workingDirectory = `${Platform.rootDirectory}/CompositeOta`
   const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
   const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
 
@@ -280,9 +280,9 @@ miniApps: Array<Dependency>, {
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
   await spin('Generating composite bundle to be published through CodePush',
-     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingFolder, {pathToYarnLock}))
+     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingDirectory, {pathToYarnLock}))
 
-  process.chdir(workingFolder)
+  process.chdir(workingDirectory)
 
   codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
   codePushAppName = codePushAppName || await askUserForCodePushAppName()
@@ -300,7 +300,7 @@ miniApps: Array<Dependency>, {
 
   if (codePushWasDone) {
     await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
-    const pathToNewYarnLock = path.join(workingFolder, 'yarn.lock')
+    const pathToNewYarnLock = path.join(workingDirectory, 'yarn.lock')
     await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
   }
 }

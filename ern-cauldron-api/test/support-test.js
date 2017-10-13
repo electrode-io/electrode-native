@@ -11,9 +11,9 @@ export function rimraf (path) {
 }
 export function mkdtemp () {
   return new Promise((resolve, reject) => {
-    fs.mkdtemp('/tmp/cauldron-test-', (err, folder) => {
+    fs.mkdtemp('/tmp/cauldron-test-', (err, directory) => {
       if (err) return reject(err)
-      resolve(folder)
+      resolve(directory)
     })
   })
 }

@@ -150,7 +150,7 @@ exports.handler = async function ({
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
   //
   // --jsOnly switch
-  // Ony generates the composite miniapp to a provided output folder
+  // Ony generates the composite miniapp to a provided output directory
   if (jsOnly) {
     if (!miniapps) {
       if (!napDescriptor) {

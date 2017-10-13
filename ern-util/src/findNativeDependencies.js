@@ -13,19 +13,19 @@ export default function findNativeDependencies (p: string) : Array<Dependency> {
 
   const nativeDependenciesNames = new Set()
 
-  const nodeModulesFoldersWithNativeCode = readDir(p)
+  const nodeModulesDirectoriesWithNativeCode = readDir(p)
           .filter(a =>
             a.includes('build.gradle') ||
             a.includes('.pbxproj') ||
             API_PATH_RE.test(a))
 
-  // By convention we only assume react native plugins to be in folders
+  // By convention we only assume react native plugins to be in directories
   // which names are starting with 'react-native' (excluding scope)
-  const nativeDepsFolders = _.filter(nodeModulesFoldersWithNativeCode,
+  const nativeDepsDirectories = _.filter(nodeModulesDirectoriesWithNativeCode,
           d => d.includes('react-native') && !/sample|demo|example/i.test(d))
 
-  for (const nativeDepsFolder of nativeDepsFolders) {
-    const pathSegments = nativeDepsFolder.split(path.sep)
+  for (const nativeDepsDirectory of nativeDepsDirectories) {
+    const pathSegments = nativeDepsDirectory.split(path.sep)
     if (pathSegments[0].startsWith('@')) {
       nativeDependenciesNames.add(`${pathSegments[0]}/${pathSegments[1]}`)
     } else {

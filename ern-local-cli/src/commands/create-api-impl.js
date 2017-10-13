@@ -36,15 +36,15 @@ exports.builder = function (yargs: any) {
     alias: 'f',
     type: 'bool',
     describe: 'Forces a project creation even if an imlemenation already present inside the output location'
-  }).option('outputFolder', {
+  }).option('outputDirectory', {
     alias: 'o',
-    describe: 'Path to output folder'
+    describe: 'Path to output directory'
   })
   .epilog(utils.epilog(exports))
 }
 
-const WORKING_FOLDER = path.join(Platform.rootDirectory, `api-impl-gen`)
-const PLUGIN_FOLDER = path.join(WORKING_FOLDER, `plugins`)
+const WORKING_DIRECTORY = path.join(Platform.rootDirectory, `api-impl-gen`)
+const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, `plugins`)
 const platformPath = `${Platform.currentPlatformVersionPath}`
 
 exports.handler = async function ({
@@ -52,13 +52,13 @@ exports.handler = async function ({
   nativeOnly,
   jsOnly,
   force,
-  outputFolder
+  outputDirectory
 } : {
   api: string,
   nativeOnly: boolean,
   jsOnly: boolean,
   force: boolean,
-  outputFolder: string,
+  outputDirectory: string,
 }) {
   const isPackageNameInNpm = await utils.doesPackageExistInNpm(api)
   // If package name exists in the npm
@@ -93,15 +93,15 @@ exports.handler = async function ({
   try {
     await generateApiImpl({
       apiDependencyPath: DependencyPath.fromString(api),
-      outputFolder,
+      outputDirectory,
       nativeOnly,
       forceGenerate: force,
       reactNativeVersion,
       paths: {
         apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
-        pluginsDownloadFolder: PLUGIN_FOLDER,
-        workingFolder: WORKING_FOLDER,
-        outFolder: ''
+        pluginsDownloadDirectory: PLUGIN_DIRECTORY,
+        workingDirectory: WORKING_DIRECTORY,
+        outDirectory: ''
       }
     })
     log.info('Success!')
