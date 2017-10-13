@@ -4,7 +4,6 @@ import {
 } from 'chai'
 import sinon from 'sinon'
 import tmp from 'tmp'
-import shell from 'shelljs'
 import path from 'path'
 import fs from 'fs'
 import {
@@ -17,7 +16,8 @@ import * as ernUtil from 'ern-util'
 const {
   Dependency,
   DependencyPath,
-  YarnCli
+  YarnCli,
+  shell
 } = ernUtil
 
 // Spies

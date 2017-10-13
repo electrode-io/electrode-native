@@ -3,7 +3,6 @@
 import generateProject, { generateSwagger, generateFlowConfig } from './generateProject'
 import normalizeConfig from './normalizeConfig'
 import fs from 'fs'
-import shell from 'shelljs'
 import path from 'path'
 import semver from 'semver'
 import {
@@ -14,7 +13,8 @@ import {
 import {
   Dependency,
   fileUtils,
-  npm
+  npm,
+  shell
 } from 'ern-util'
 import inquirer from 'inquirer'
 

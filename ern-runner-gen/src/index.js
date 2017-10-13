@@ -8,13 +8,13 @@ import {
 import {
   Dependency,
   mustacheUtils,
-  spin
+  spin,
+  shell
 } from 'ern-util'
 import {
   ContainerGeneratorConfig
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
-import shell from 'shelljs'
 import path from 'path'
 
 let log

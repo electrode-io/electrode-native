@@ -1,6 +1,8 @@
 import DefaultGenerator from '../src/DefaultGenerator'
 import path from 'path'
-import shell from 'shelljs'
+import {
+  shell 
+}from 'ern-util'
 import ernUtilDev from 'ern-util-dev'
 import {CONFIG} from '../src/java/Logger'
 import File from '../src/java/File'

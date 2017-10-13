@@ -3,7 +3,9 @@
 // Error while generating api impl hull for ios: {"errno":-2,"code":"ENOENT","syscall":"open","path":"/Users/blemair/Code/ern-platform/ern-api-impl-gen/tmp/react-native-movie-api-impl/ios/ElectrodeApiImpl/ElectrodeReactNativeBridge/ElectrodeBridgeMessage.m"}
 
 /* import { generateApiImpl } from '../src/index'
-import shell from 'shelljs'
+import {
+  shell 
+}from 'ern-util'
 import fs from 'fs'
 import { assert } from 'chai'
 

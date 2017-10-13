@@ -1,14 +1,14 @@
 // @flow
 
 import {
-  Dependency
+  Dependency,
+  shell
 } from 'ern-util'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import Prom from 'bluebird'
 import semver from 'semver'
-import shell from 'shelljs'
 import simpleGit from 'simple-git'
 import Platform from './Platform'
 

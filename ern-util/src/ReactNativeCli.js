@@ -9,7 +9,7 @@ import {
 import * as fileUtils from './fileUtil'
 import fs from 'fs'
 import path from 'path'
-import shell from 'shelljs'
+import shell from './shell'
 import spin from './spin'
 import tmp from 'tmp'
 const fetch = require('node-fetch')

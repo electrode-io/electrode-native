@@ -4,7 +4,7 @@ import {
   exec
 } from 'child_process'
 import tmp from 'tmp'
-import shell from 'shelljs'
+import shell from './shell'
 import path from 'path'
 import fs from 'fs'
 import DependencyPath from './DependencyPath'

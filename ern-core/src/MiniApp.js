@@ -7,7 +7,8 @@ import {
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  tagOneLine
+  tagOneLine,
+  shell
 } from 'ern-util'
 import cauldron from './cauldron'
 import manifest from './Manifest'
@@ -26,7 +27,6 @@ import {
 } from 'child_process'
 import fs from 'fs'
 import _ from 'lodash'
-import shell from 'shelljs'
 import tmp from 'tmp'
 import path from 'path'
 import semver from 'semver'
