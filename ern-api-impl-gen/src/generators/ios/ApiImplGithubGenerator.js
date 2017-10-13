@@ -77,7 +77,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
           if (pluginConfig.ios.replaceInFile) {
             for (const r of pluginConfig.ios.replaceInFile) {
               const fileContent = fs.readFileSync(`${outputFolder}/${r.path}`, 'utf8')
-              const patchedFileContent = fileContent.replace(r.string, r.replaceWith)
+              const patchedFileContent = fileContent.replace(RegExp(r.string, 'g'), r.replaceWith)
               fs.writeFileSync(`${outputFolder}/${r.path}`, patchedFileContent, {encoding: 'utf8'})
             }
           }

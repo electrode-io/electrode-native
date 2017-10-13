@@ -207,7 +207,7 @@ export default class IosGenerator {
           for (const r of pluginConfig.ios.replaceInFile) {
             const pathToFile = path.join(outputFolder, r.path)
             const fileContent = fs.readFileSync(pathToFile, 'utf8')
-            const patchedFileContent = fileContent.replace(r.string, r.replaceWith)
+            const patchedFileContent = fileContent.replace(RegExp(r.string, 'g'), r.replaceWith)
             fs.writeFileSync(pathToFile, patchedFileContent, { encoding: 'utf8' })
           }
         }
