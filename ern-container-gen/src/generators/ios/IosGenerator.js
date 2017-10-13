@@ -23,7 +23,10 @@ import fs from 'fs'
 import path from 'path'
 import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
-import type { ContainerGenerator } from '../../ContainerGenerator'
+import type {
+  ContainerGenerator,
+  ContainerGeneratorPaths
+} from '../../FlowTypes'
 
 const ROOT_DIR = shell.pwd()
 
@@ -47,7 +50,7 @@ export default class IosGenerator implements ContainerGenerator {
     nativeAppName: string,
     plugins: Array<Dependency>,
     miniapps: Array<MiniApp>,
-    paths: any,
+    paths: ContainerGeneratorPaths,
     mustacheView: any, {
       pathToYarnLock
     } : {

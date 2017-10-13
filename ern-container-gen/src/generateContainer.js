@@ -13,7 +13,10 @@ import {
 import _ from 'lodash'
 import semver from 'semver'
 import path from 'path'
-import type { ContainerGenerator } from './ContainerGenerator'
+import type {
+  ContainerGenerator,
+  ContainerGeneratorPaths
+} from './FlowTypes'
 
 let mustacheView = {}
 
@@ -43,7 +46,7 @@ export default async function generateContainer ({
   // Directory from which we assemble the miniapps together / run the bundling
   const COMPOSITE_MINIAPP_DIRECTORY = path.join(workingDirectory, 'compositeMiniApp')
 
-  // Contains all interesting directories paths
+  // Contains all interesting directorys paths
   const paths : ContainerGeneratorPaths = {
     // Where the container project hull is stored
     containerHull: path.join(platformPath, 'ern-container-gen', 'hull'),
