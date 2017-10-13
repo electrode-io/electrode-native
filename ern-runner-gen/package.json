@@ -55,7 +55,6 @@
     "ern-util": "0.8.0",
     "fs-readdir-recursive": "^1.0.0",
     "mustache": "^2.3.0",
-    "shelljs": "^0.7.6",
     "tmp": "^0.0.31"
   },
   "devDependencies": {
