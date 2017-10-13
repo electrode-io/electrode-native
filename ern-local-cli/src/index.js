@@ -6,7 +6,8 @@ import {
 } from 'ern-core'
 import {
   ColoredLog,
-  config as ernConfig
+  config as ernConfig,
+  shell
 } from 'ern-util'
 import chalk from 'chalk'
 import yargs from 'yargs'
@@ -48,6 +49,8 @@ export default function run () {
   const logLevel = process.env['ERN_LOG_LEVEL'] ? process.env['ERN_LOG_LEVEL'] : ernConfig.getValue('loglevel', 'info')
   global.log = new ColoredLog(logLevel)
   global.ernLogLevel = logLevel
+  shell.config.fatal = true
+  shell.config.verbose = logLevel === 'debug' || logLevel === 'trace'
 
   if (ernConfig.getValue('banner', true)) { showBanner() }
   showInfo()
