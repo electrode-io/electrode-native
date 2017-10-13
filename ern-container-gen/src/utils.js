@@ -68,29 +68,35 @@ export async function bundleMiniApps (
 }
 
 export async function reactNativeBundleAndroid (paths: any) {
+  const libSrcMainPath = path.join(paths.outFolder, 'android', 'lib', 'src', 'main')
+  const bundleOutput = path.join(libSrcMainPath, 'assets', 'index.android.bundle')
+  const assetsDest = path.join(libSrcMainPath, 'res')
+
   return reactnative.bundle({
     entryFile: 'index.android.js',
     dev: false,
-    bundleOutput: `${paths.outFolder}/android/lib/src/main/assets/index.android.bundle`,
+    bundleOutput,
     platform: 'android',
-    assetsDest: `${paths.outFolder}/android/lib/src/main/res`
+    assetsDest
   })
 }
 
 export async function reactNativeBundleIos (paths: any) {
-  const miniAppOutFolder = `${paths.outFolder}/ios/ElectrodeContainer/Libraries/MiniApp`
+  const miniAppOutPath = path.join(paths.outFolder, 'ios', 'ElectrodeContainer', 'Libraries', 'MiniApp')
+  const bundleOutput = path.join(miniAppOutPath, 'MiniApp.jsbundle')
+  const assetsDest = miniAppOutPath
 
-  if (!fs.existsSync(miniAppOutFolder)) {
-    shell.mkdir('-p', miniAppOutFolder)
+  if (!fs.existsSync(miniAppOutPath)) {
+    shell.mkdir('-p', miniAppOutPath)
     throwIfShellCommandFailed()
   }
 
   return reactnative.bundle({
     entryFile: 'index.ios.js',
     dev: false,
-    bundleOutput: `${miniAppOutFolder}/MiniApp.jsbundle`,
+    bundleOutput,
     platform: 'ios',
-    assetsDest: `${miniAppOutFolder}`
+    assetsDest
   })
 }
 
@@ -150,9 +156,11 @@ export async function generateMiniAppsComposite (
     for (const miniappPath of miniappsPaths) {
       await yarn.add(miniappPath)
     }
-    let packageJson = JSON.parse(fs.readFileSync(`${outDir}/package.json`, 'utf-8'))
+
+    const packageJsonPath = path.join(outDir, 'package.json')
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
     packageJson.scripts = {'start': 'node node_modules/react-native/local-cli/cli.js start'}
-    fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(packageJson, null, 2), 'utf8')
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8')
   }
 
   // Add optional extra JavaScript dependencies
@@ -168,7 +176,7 @@ export async function generateMiniAppsComposite (
   }
 
   log.debug(`Removing .babelrc files from all modules`)
-  shell.rm('-rf', 'node_modules/**/.babelrc')
+  shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
   throwIfShellCommandFailed()
 
   log.debug(`Creating top level composite .babelrc`)
@@ -180,7 +188,7 @@ export async function generateMiniAppsComposite (
   log.debug(`Taking care of potential Babel plugins used by MiniApps`)
   let moduleResolverAliases = {}
   for (const dependency of Object.keys(compositePackageJson.dependencies)) {
-    const miniAppPackageJsonPath = `${outDir}/node_modules/${dependency}/package.json`
+    const miniAppPackageJsonPath = path.join(outDir, 'node_modules', dependency, 'package.json')
     let miniAppPackageJson
     try {
       miniAppPackageJson = JSON.parse(fs.readFileSync(miniAppPackageJsonPath, 'utf-8'))
@@ -238,11 +246,12 @@ export async function generateMiniAppsComposite (
 
   await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
 
-  const pathToCodePushNodeModuleDir = `${outDir}/node_modules/react-native-code-push`
-  const pathToReactNativeNodeModuleDir = `${outDir}/node_modules/react-native`
+  const pathToCodePushNodeModuleDir = path.join(outDir, 'node_modules', 'react-native-code-push')
+  const pathToReactNativeNodeModuleDir = path.join(outDir, 'node_modules', 'react-native')
+  const pathToReactNativePackageJson = path.join(pathToReactNativeNodeModuleDir, 'package.json')
   // If code push plugin is present we need to do some additional work
   if (fs.existsSync(pathToCodePushNodeModuleDir)) {
-    const reactNativePackageJson = JSON.parse(fs.readFileSync(`${pathToReactNativeNodeModuleDir}/package.json`, 'utf8'))
+    const reactNativePackageJson = JSON.parse(fs.readFileSync(pathToReactNativePackageJson, 'utf8'))
 
     //
     // The following code will need to be uncommented and properly reworked or included
@@ -274,6 +283,7 @@ export async function generateMiniAppsComposite (
   await writeFile('index.ios.js', entryIndexJsContent)
 }
 
+// TODO : [WINDOWS SUPPORT]
 export function clearReactPackagerCache () {
   const TMPDIR = process.env['TMPDIR']
   if (TMPDIR) {
@@ -374,9 +384,9 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
     const dependency = new Dependency(pluginOrigin.name, { scope: pluginOrigin.scope, version: pluginOrigin.version })
     await yarn.add(DependencyPath.fromString(dependency.toString()))
     if (pluginOrigin.scope) {
-      downloadPath = `node_modules/@${pluginOrigin.scope}/${pluginOrigin.name}`
+      downloadPath = path.join('node_modules', `@${pluginOrigin.scope}`, pluginOrigin.name)
     } else {
-      downloadPath = `node_modules/${pluginOrigin.name}`
+      downloadPath = path.join('node_modules', pluginOrigin.name)
     }
   } else if (pluginOrigin.type === 'git') {
     if (pluginOrigin.version) {
@@ -387,7 +397,7 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
     throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
   }
 
-  return Promise.resolve(`${shell.pwd()}/${downloadPath}`)
+  return Promise.resolve(path.join(process.cwd(), downloadPath))
 }
 
 // =============================================================================

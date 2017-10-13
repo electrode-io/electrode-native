@@ -13,6 +13,7 @@ import {
 import _ from 'lodash'
 import shell from 'shelljs'
 import semver from 'semver'
+import path from 'path'
 
 let mustacheView = {}
 
@@ -63,18 +64,18 @@ export default async function generateContainer ({
   }
 
   // Folder from which we download all plugins sources (from npm or git)
-  const PLUGINS_DOWNLOAD_FOLDER = `${workingFolder}/plugins`
+  const PLUGINS_DOWNLOAD_FOLDER = path.join(workingFolder, 'plugins')
   // Folder where the resulting container project is stored in
-  const OUT_FOLDER = `${workingFolder}/out`
+  const OUT_FOLDER = path.join(workingFolder, 'out')
   // Folder from which we assemble the miniapps together / run the bundling
-  const COMPOSITE_MINIAPP_FOLDER = `${workingFolder}/compositeMiniApp`
+  const COMPOSITE_MINIAPP_FOLDER = path.join(workingFolder, 'compositeMiniApp')
 
   // Contains all interesting folders paths
   const paths = {
     // Where the container project hull is stored
-    containerHull: `${platformPath}/ern-container-gen/hull`,
+    containerHull: path.join(platformPath, 'ern-container-gen', 'hull'),
     // Where the templates to be used during container generation are stored
-    containerTemplates: `${platformPath}/ern-container-gen/templates`,
+    containerTemplates: path.join(platformPath, 'ern-container-gen', 'templates'),
     // Where we assemble the miniapps together
     compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
     // Where we download plugins
@@ -88,8 +89,8 @@ export default async function generateContainer ({
   shell.rm('-rf', OUT_FOLDER)
   shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER)
   shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER)
-  shell.mkdir('-p', `${OUT_FOLDER}/android`)
-  shell.mkdir('-p', `${OUT_FOLDER}/ios`)
+  shell.mkdir('-p', path.join(OUT_FOLDER, 'android'))
+  shell.mkdir('-p', path.join(OUT_FOLDER, 'ios'))
   throwIfShellCommandFailed()
 
   // Sort the plugin to have consistent ElectrodeContainer.java generated code
