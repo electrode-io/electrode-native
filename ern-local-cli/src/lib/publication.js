@@ -34,6 +34,8 @@ function createContainerGenerator (config: ContainerGeneratorConfig) {
     case 'ios':
       log.debug('Creating an IOSGenerator')
       return new IosGenerator(config)
+    default:
+      throw new Error(`No Container Generator exists for ${config.platform} platform`)
   }
 }
 

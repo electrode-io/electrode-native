@@ -23,10 +23,11 @@ import fs from 'fs'
 import path from 'path'
 import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
+import type { ContainerGenerator } from '../../ContainerGenerator'
 
 const ROOT_DIR = shell.pwd()
 
-export default class IosGenerator {
+export default class IosGenerator implements ContainerGenerator {
   _containerGeneratorConfig : ContainerGeneratorConfig
 
   constructor (containerGeneratorConfig: ContainerGeneratorConfig) {
