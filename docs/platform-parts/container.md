@@ -329,7 +329,7 @@ The generated `UIViewController` is basic and might not fulfill your advanced ne
 ```objectivec
 - (void)viewDidLoad {
     [super viewDidLoad];    
-    UIViewController *viewController* =
+    UIViewController *viewController =
     [[ElectrodeReactNative sharedInstance] miniAppWithName:@"<YourMiniAppName>" properties:nil];
     viewController.view.frame = [UIScreen mainScreen].bounds;
     [self.view addSubview:viewController.view];
