@@ -40,13 +40,13 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
       shell.cd(`${ROOT_DIR}`)
 
-      const outputFolder = path.join(paths.outFolder, `ios`)
-      log.debug(`Creating out folder(${outputFolder}) for ios and copying container hull to it.`)
-      shell.mkdir(outputFolder)
-      shell.cp(`-R`, path.join(paths.apiImplHull, `/ios/*`), outputFolder)
+      const outputDirectory = path.join(paths.outDirectory, `ios`)
+      log.debug(`Creating out directory(${outputDirectory}) for ios and copying container hull to it.`)
+      shell.mkdir(outputDirectory)
+      shell.cp(`-R`, path.join(paths.apiImplHull, `/ios/*`), outputDirectory)
 
-      const apiImplProjectPath = `${outputFolder}/ElectrodeApiImpl.xcodeproj/project.pbxproj`
-      const apiImplLibrariesPath = `${outputFolder}/ElectrodeApiImpl/Libraries`
+      const apiImplProjectPath = `${outputDirectory}/ElectrodeApiImpl.xcodeproj/project.pbxproj`
+      const apiImplLibrariesPath = `${outputDirectory}/ElectrodeApiImpl/Libraries`
       const apiImplProject = await this.getIosApiImplProject(apiImplProjectPath)
       const apiImplTarget = apiImplProject.findTargetKey('ElectrodeApiImpl')
 
@@ -62,23 +62,23 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
         if (pluginConfig.ios) {
           let pluginSourcePath
           if (pluginConfig.origin.scope) {
-            pluginSourcePath = `${paths.pluginsDownloadFolder}/node_modules/@${pluginConfig.origin.scope}/${pluginConfig.origin.name}`
+            pluginSourcePath = `${paths.pluginsDownloadDirectory}/node_modules/@${pluginConfig.origin.scope}/${pluginConfig.origin.name}`
           } else {
-            pluginSourcePath = `${paths.pluginsDownloadFolder}/node_modules/${pluginConfig.origin.name}`
+            pluginSourcePath = `${paths.pluginsDownloadDirectory}/node_modules/${pluginConfig.origin.name}`
           }
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.scopedName}`)
           }
 
           if (pluginConfig.ios.copy) {
-            handleCopyDirective(pluginSourcePath, outputFolder, pluginConfig.ios.copy)
+            handleCopyDirective(pluginSourcePath, outputDirectory, pluginConfig.ios.copy)
           }
 
           if (pluginConfig.ios.replaceInFile) {
             for (const r of pluginConfig.ios.replaceInFile) {
-              const fileContent = fs.readFileSync(`${outputFolder}/${r.path}`, 'utf8')
+              const fileContent = fs.readFileSync(`${outputDirectory}/${r.path}`, 'utf8')
               const patchedFileContent = fileContent.replace(RegExp(r.string, 'g'), r.replaceWith)
-              fs.writeFileSync(`${outputFolder}/${r.path}`, patchedFileContent, {encoding: 'utf8'})
+              fs.writeFileSync(`${outputDirectory}/${r.path}`, patchedFileContent, {encoding: 'utf8'})
             }
           }
 

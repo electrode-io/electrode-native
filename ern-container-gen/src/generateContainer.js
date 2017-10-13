@@ -24,7 +24,7 @@ export default async function generateContainer ({
   generator,
   plugins,
   miniapps,
-  workingFolder,
+  workingDirectory,
   pathToYarnLock
 } : {
   containerVersion: string,
@@ -33,37 +33,37 @@ export default async function generateContainer ({
   generator: ContainerGenerator,
   plugins: Array<Dependency>,
   miniapps: Array<MiniApp>,
-  workingFolder: string,
+  workingDirectory: string,
   pathToYarnLock?: string
 } = {}) {
-  // Folder from which we download all plugins sources (from npm or git)
-  const PLUGINS_DOWNLOAD_FOLDER = path.join(workingFolder, 'plugins')
-  // Folder where the resulting container project is stored in
-  const OUT_FOLDER = path.join(workingFolder, 'out')
-  // Folder from which we assemble the miniapps together / run the bundling
-  const COMPOSITE_MINIAPP_FOLDER = path.join(workingFolder, 'compositeMiniApp')
+  // Directory from which we download all plugins sources (from npm or git)
+  const PLUGINS_DOWNLOAD_DIRECTORY = path.join(workingDirectory, 'plugins')
+  // Directory where the resulting container project is stored in
+  const OUT_DIRECTORY = path.join(workingDirectory, 'out')
+  // Directory from which we assemble the miniapps together / run the bundling
+  const COMPOSITE_MINIAPP_DIRECTORY = path.join(workingDirectory, 'compositeMiniApp')
 
-  // Contains all interesting folders paths
-  const paths = {
+  // Contains all interesting directories paths
+  const paths : ContainerGeneratorPaths = {
     // Where the container project hull is stored
     containerHull: path.join(platformPath, 'ern-container-gen', 'hull'),
     // Where the templates to be used during container generation are stored
     containerTemplates: path.join(platformPath, 'ern-container-gen', 'templates'),
     // Where we assemble the miniapps together
-    compositeMiniApp: COMPOSITE_MINIAPP_FOLDER,
+    compositeMiniApp: COMPOSITE_MINIAPP_DIRECTORY,
     // Where we download plugins
-    pluginsDownloadFolder: PLUGINS_DOWNLOAD_FOLDER,
+    pluginsDownloadDirectory: PLUGINS_DOWNLOAD_DIRECTORY,
     // Where we output final generated container
-    outFolder: OUT_FOLDER
+    outDirectory: OUT_DIRECTORY
   }
 
   // Clean up to start fresh
-  shell.rm('-rf', PLUGINS_DOWNLOAD_FOLDER)
-  shell.rm('-rf', OUT_FOLDER)
-  shell.rm('-rf', COMPOSITE_MINIAPP_FOLDER)
-  shell.mkdir('-p', PLUGINS_DOWNLOAD_FOLDER)
-  shell.mkdir('-p', path.join(OUT_FOLDER, 'android'))
-  shell.mkdir('-p', path.join(OUT_FOLDER, 'ios'))
+  shell.rm('-rf', PLUGINS_DOWNLOAD_DIRECTORY)
+  shell.rm('-rf', OUT_DIRECTORY)
+  shell.rm('-rf', COMPOSITE_MINIAPP_DIRECTORY)
+  shell.mkdir('-p', PLUGINS_DOWNLOAD_DIRECTORY)
+  shell.mkdir('-p', path.join(OUT_DIRECTORY, 'android'))
+  shell.mkdir('-p', path.join(OUT_DIRECTORY, 'ios'))
 
   // Sort the plugin to have consistent ElectrodeContainer.java generated code
   sortPlugins(plugins)

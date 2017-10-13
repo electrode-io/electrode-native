@@ -50,10 +50,10 @@ export default class MavenUtils {
   static createLocalMavenDirectoryIfDoesNotExist () {
     const dir = MavenUtils.getDefaultMavenLocalDirectory().replace(FILE_REGEX, '')
     if (!fs.existsSync(dir)) {
-      log.debug(`Local Maven repository folder does not exist, creating one.`)
+      log.debug(`Local Maven repository directory does not exist, creating one.`)
       shell.mkdir('-p', dir)
     } else {
-      log.debug(`Local Maven repository folder already exists`)
+      log.debug(`Local Maven repository directory already exists`)
     }
   }
 

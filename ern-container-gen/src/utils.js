@@ -15,7 +15,7 @@ import {
   shell
 } from 'ern-util'
 
-const gitFolderRe = /.*\/(.*).git/
+const gitDirectoryRe = /.*\/(.*).git/
 
 export async function bundleMiniApps (
   miniapps: Array<MiniApp>,
@@ -65,7 +65,7 @@ export async function bundleMiniApps (
 }
 
 export async function reactNativeBundleAndroid (paths: any) {
-  const libSrcMainPath = path.join(paths.outFolder, 'android', 'lib', 'src', 'main')
+  const libSrcMainPath = path.join(paths.outDirectory, 'android', 'lib', 'src', 'main')
   const bundleOutput = path.join(libSrcMainPath, 'assets', 'index.android.bundle')
   const assetsDest = path.join(libSrcMainPath, 'res')
 
@@ -79,7 +79,7 @@ export async function reactNativeBundleAndroid (paths: any) {
 }
 
 export async function reactNativeBundleIos (paths: any) {
-  const miniAppOutPath = path.join(paths.outFolder, 'ios', 'ElectrodeContainer', 'Libraries', 'MiniApp')
+  const miniAppOutPath = path.join(paths.outDirectory, 'ios', 'ElectrodeContainer', 'Libraries', 'MiniApp')
   const bundleOutput = path.join(miniAppOutPath, 'MiniApp.jsbundle')
   const assetsDest = miniAppOutPath
 
@@ -134,7 +134,7 @@ export async function generateMiniAppsComposite (
 
     // Create initial package.json
     compositePackageJson.dependencies = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, yarnLock)
-    // This helps to start the local packager withing the comopsiteMiniApps folder for debugging multiple miniapps
+    // This helps to start the local packager withing the comopsiteMiniApps directory for debugging multiple miniapps
     compositePackageJson.scripts = {'start': 'node node_modules/react-native/local-cli/cli.js start'}
 
     fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(compositePackageJson, null, 2), 'utf8')
@@ -364,9 +364,9 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
 //  "version": "1.16.1-beta"
 // }
 //
-// Note: The plugin will be downloaded locally to the current folder
-// For npm origin it will be put in node_modules folder
-// For git origin it will be put directly at the root in a folder named after
+// Note: The plugin will be downloaded locally to the current directory
+// For npm origin it will be put in node_modules directory
+// For git origin it will be put directly at the root in a directory named after
 // the git repo as one would expect
 //
 // Returns: Absolute path to where the plugin was installed
@@ -383,7 +383,7 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
   } else if (pluginOrigin.type === 'git') {
     if (pluginOrigin.version) {
       await GitUtils.gitClone(pluginOrigin.url, { branch: pluginOrigin.version })
-      downloadPath = gitFolderRe.exec(`${pluginOrigin.url}`)[1]
+      downloadPath = gitDirectoryRe.exec(`${pluginOrigin.url}`)[1]
     }
   } else {
     throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)

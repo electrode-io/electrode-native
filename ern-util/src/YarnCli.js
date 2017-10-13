@@ -29,7 +29,7 @@ export default class YarnCli {
     peer?: boolean
   } = {}) {
     // Special handling with yarn add when the dependency is a local file path
-    // In that case, for some reason it copies the node_modules folder of this path, which
+    // In that case, for some reason it copies the node_modules directory of this path, which
     // is not a wanted behavior, especially for react-native bundling as it will create
     // haste module naming collisions
     // As a temporaray work-around, we copy the whole package directory to a temporary one

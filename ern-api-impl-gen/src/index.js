@@ -21,37 +21,37 @@ const path = require('path')
 
 export async function generateApiImpl ({
   apiDependencyPath,
-  outputFolder,
+  outputDirectory,
   nativeOnly,
   forceGenerate,
   reactNativeVersion,
   paths
 } : {
   apiDependencyPath: DependencyPath,
-  outputFolder: string,
+  outputDirectory: string,
   nativeOnly: boolean,
   forceGenerate: boolean,
   reactNativeVersion: string,
   paths: {
-    workingFolder: string,
-    pluginsDownloadFolder: string,
+    workingDirectory: string,
+    pluginsDownloadDirectory: string,
     apiImplHull: string,
-    outFolder: string
+    outDirectory: string
   }
 } = {}) {
   log.debug('Entering generate API IMPL')
 
   try {
-    // get the folder to output the generated project.
-    paths.outFolder = outputFolder = formOutputFolderName(apiDependencyPath, outputFolder)
-    await createOutputFolder(outputFolder, forceGenerate)
-    await createNodePackage(outputFolder, apiDependencyPath, nativeOnly)
+    // get the directory to output the generated project.
+    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiDependencyPath, outputDirectory)
+    await createOutputDirectory(outputDirectory, forceGenerate)
+    await createNodePackage(outputDirectory, apiDependencyPath, nativeOnly)
 
     let platforms = getPlatforms(nativeOnly)
 
-    // Creates a working folder to collect all the necessary files/folders for the api-impl generation.
-    createWorkingFolder(paths.workingFolder)
-    createPluginsDownloadFolder(paths.pluginsDownloadFolder)
+    // Creates a working directory to collect all the necessary files/directories for the api-impl generation.
+    createWorkingDirectory(paths.workingDirectory)
+    createPluginsDownloadDirectory(paths.pluginsDownloadDirectory)
 
     await new ApiImplGen().generateApiImplementation(apiDependencyPath, paths, reactNativeVersion, platforms)
   } catch (e) {
@@ -60,13 +60,13 @@ export async function generateApiImpl ({
   }
 }
 
-async function createOutputFolder (outputFolderPath: string, forceGenerate) {
-  if (!forceGenerate && fs.existsSync(outputFolderPath)) {
+async function createOutputDirectory (outputDirectoryPath: string, forceGenerate) {
+  if (!forceGenerate && fs.existsSync(outputDirectoryPath)) {
     const {shouldRegenerate} = await inquirer.prompt(
       {
         type: `confirm`,
         name: `shouldRegenerate`,
-        message: `An implementation directory already exists in ${outputFolderPath}. Do you want to delete this and regenerate this project?`,
+        message: `An implementation directory already exists in ${outputDirectoryPath}. Do you want to delete this and regenerate this project?`,
         default: false
       }
     )
@@ -78,26 +78,26 @@ async function createOutputFolder (outputFolderPath: string, forceGenerate) {
     }
   }
 
-  if (forceGenerate && fs.existsSync(outputFolderPath)) {
-    log.info(`Deleting the existing directory and recreating a new one in ${outputFolderPath}`)
-    shell.rm('-R', outputFolderPath)
+  if (forceGenerate && fs.existsSync(outputDirectoryPath)) {
+    log.info(`Deleting the existing directory and recreating a new one in ${outputDirectoryPath}`)
+    shell.rm('-R', outputDirectoryPath)
   } else {
-    log.debug(`creating output dir: ${outputFolderPath}`)
+    log.debug(`creating output dir: ${outputDirectoryPath}`)
   }
-  shell.mkdir('-p', outputFolderPath)
+  shell.mkdir('-p', outputDirectoryPath)
 }
 
 async function createNodePackage (
-  outputFolderPath: string,
+  outputDirectoryPath: string,
   apiDependencyPath: DependencyPath,
   nativeOnly: boolean) {
-  let currentFolder = shell.pwd()
-  shell.cd(outputFolderPath)
+  let currentDirectory = shell.pwd()
+  shell.cd(outputDirectoryPath)
   await yarn.init()
   await yarn.add(apiDependencyPath)
-  shell.rm('-rf', `${outputFolderPath}/node_modules/`)
-  log.debug('Removed node modules folder')
-  const packageJsonPath = path.join(outputFolderPath, 'package.json')
+  shell.rm('-rf', `${outputDirectoryPath}/node_modules/`)
+  log.debug('Removed node modules directory')
+  const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
   const moduleType = nativeOnly ? `${ModuleTypes.NATIVE_API_IMPL}` : `${ModuleTypes.JS_API_IMPL}`
   packageJson.ern = {
@@ -107,26 +107,26 @@ async function createNodePackage (
     ? packageJson.keywords.push(moduleType)
     : packageJson.keywords = [moduleType]
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
-  shell.cd(currentFolder)
+  shell.cd(currentDirectory)
 }
 
-function createWorkingFolder (workingFolderPath: string) {
-  shell.rm('-rf', workingFolderPath)
-  shell.mkdir('-p', workingFolderPath)
-  log.debug(`Working folder created: ${workingFolderPath}`)
+function createWorkingDirectory (workingDirectoryPath: string) {
+  shell.rm('-rf', workingDirectoryPath)
+  shell.mkdir('-p', workingDirectoryPath)
+  log.debug(`Working directory created: ${workingDirectoryPath}`)
 }
 
-function createPluginsDownloadFolder (pluginsDownloadPath: string) {
+function createPluginsDownloadDirectory (pluginsDownloadPath: string) {
   shell.rm('-rf', pluginsDownloadPath)
   shell.mkdir('-p', pluginsDownloadPath)
 }
 
-function formOutputFolderName (apiDependencyPath, outputFolderPath: string) {
+function formOutputDirectoryName (apiDependencyPath, outputDirectoryPath: string) {
   let apiDependencyObj = Dependency.fromPath(apiDependencyPath)
   let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
 
-  return outputFolderPath
-    ? path.join(`${outputFolderPath}`, `${apiName}-impl`)
+  return outputDirectoryPath
+    ? path.join(`${outputDirectoryPath}`, `${apiName}-impl`)
     : path.join(`${shell.pwd()}`, `${apiName}-impl`)
 }
 
