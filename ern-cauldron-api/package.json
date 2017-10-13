@@ -54,7 +54,6 @@
     "ern-util": "0.8.0",
     "joi": "^10.1.0",
     "lodash": "^4.17.4",
-    "shelljs": "^0.7.6",
     "simple-git": "^1.70.0"
   },
   "devDependencies": {

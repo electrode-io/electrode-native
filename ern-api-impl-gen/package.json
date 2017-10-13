@@ -56,7 +56,6 @@
     "ern-util": "0.8.0",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
-    "shelljs": "^0.7.6",
     "xcode": "^0.9.1",
     "xcode-ern": "1.0.0"
   },

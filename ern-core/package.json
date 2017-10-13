@@ -61,7 +61,6 @@
     "mustache": "^2.3.0",
     "react-native-cli": "^2.0.1",
     "semver": "^5.4.1",
-    "shelljs": "^0.7.6",
     "simple-git": "^1.70.0",
     "tmp": "^0.0.31",
     "yarn": "^0.27.5"
