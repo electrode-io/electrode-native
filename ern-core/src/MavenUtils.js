@@ -1,10 +1,9 @@
 import {
-  Utils
+  shell
 } from 'ern-util'
 
 import {httpGet} from './utils'
 import fs from 'fs'
-import shell from 'shelljs'
 import os from 'os'
 import path from 'path'
 
@@ -53,7 +52,6 @@ export default class MavenUtils {
     if (!fs.existsSync(dir)) {
       log.debug(`Local Maven repository folder does not exist, creating one.`)
       shell.mkdir('-p', dir)
-      Utils.throwIfShellCommandFailed()
     } else {
       log.debug(`Local Maven repository folder already exists`)
     }

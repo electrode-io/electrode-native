@@ -1,13 +1,12 @@
 // @flow
 
 import fs from 'fs'
-import shell from 'shelljs'
 import inquirer from 'inquirer'
 
 import {
   Dependency,
   DependencyPath,
-  Utils
+  shell
 } from 'ern-util'
 import {
   ModuleTypes,
@@ -86,7 +85,6 @@ async function createOutputFolder (outputFolderPath: string, forceGenerate) {
     log.debug(`creating output dir: ${outputFolderPath}`)
   }
   shell.mkdir('-p', outputFolderPath)
-  Utils.throwIfShellCommandFailed()
 }
 
 async function createNodePackage (
@@ -98,7 +96,6 @@ async function createNodePackage (
   await yarn.init()
   await yarn.add(apiDependencyPath)
   shell.rm('-rf', `${outputFolderPath}/node_modules/`)
-  Utils.throwIfShellCommandFailed()
   log.debug('Removed node modules folder')
   const packageJsonPath = path.join(outputFolderPath, 'package.json')
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))

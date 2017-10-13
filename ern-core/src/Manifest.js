@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  Dependency
+  Dependency,
+  shell
 } from 'ern-util'
 import cauldron from './cauldron'
 import path from 'path'
@@ -10,7 +11,6 @@ import GitManifest from './GitManifest'
 import Mustache from 'mustache'
 import _ from 'lodash'
 import fs from 'fs'
-import shell from 'shelljs'
 
 export type PluginConfig = {
   android: Object,
@@ -136,7 +136,6 @@ export class Manifest {
           result.android.pluginHook = {}
           const matchedFiles =
             shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
-          this.throwIfShellCommandFailed()
           if (matchedFiles && matchedFiles.length === 1) {
             const pluginHookClass = path.basename(matchedFiles[0], '.java')
             result.android.pluginHook.name = pluginHookClass
@@ -154,7 +153,6 @@ export class Manifest {
         if (!result.ios.pluginHook) {
           const matchedHeaderFiles =
             shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
-          this.throwIfShellCommandFailed()
           const matchedSourceFiles =
             shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
           if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
@@ -229,14 +227,6 @@ export class Manifest {
           ]
         }
       }
-    }
-  }
-
-  // Should not be here
-  throwIfShellCommandFailed () {
-    const shellError = shell.error()
-    if (shellError) {
-      throw new Error(shellError)
     }
   }
 }

@@ -1,9 +1,8 @@
 // @flow
 
 import fs from 'fs'
-import shell from 'shelljs'
 import {
-  Utils
+  shell
 } from 'ern-util'
 
 export default function handleCopyDirective (
@@ -15,9 +14,7 @@ export default function handleCopyDirective (
     const destPath = `${destRoot}/${cp.dest}`
     if (!fs.existsSync(destPath)) {
       shell.mkdir('-p', destPath)
-      Utils.throwIfShellCommandFailed()
     }
     shell.cp('-R', sourcePath, destPath)
-    Utils.throwIfShellCommandFailed()
   }
 }

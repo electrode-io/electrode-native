@@ -1,11 +1,12 @@
-import shell from 'shelljs'
+
 import {
   manifest,
   handleCopyDirective
 } from 'ern-core'
 import {
   Dependency,
-  Utils
+  Utils,
+  shell
 } from 'ern-util'
 
 import ApiImplGeneratable from '../../ApiImplGeneratable'
@@ -38,16 +39,11 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
     try {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
       shell.cd(`${ROOT_DIR}`)
-      Utils.throwIfShellCommandFailed()
 
       const outputFolder = path.join(paths.outFolder, `ios`)
       log.debug(`Creating out folder(${outputFolder}) for ios and copying container hull to it.`)
       shell.mkdir(outputFolder)
-
-      Utils.throwIfShellCommandFailed()
-
       shell.cp(`-R`, path.join(paths.apiImplHull, `/ios/*`), outputFolder)
-      Utils.throwIfShellCommandFailed()
 
       const apiImplProjectPath = `${outputFolder}/ElectrodeApiImpl.xcodeproj/project.pbxproj`
       const apiImplLibrariesPath = `${outputFolder}/ElectrodeApiImpl/Libraries`
@@ -63,7 +59,6 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       for (const plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name}`)
         const pluginConfig = await manifest.getPluginConfig(plugin, `ElectrodeApiImpl`)
-        Utils.throwIfShellCommandFailed()
         if (pluginConfig.ios) {
           let pluginSourcePath
           if (pluginConfig.origin.scope) {
