@@ -23,7 +23,10 @@ import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
-import type { ContainerGenerator } from '../../ContainerGenerator'
+import type {
+  ContainerGenerator,
+  ContainerGeneratorPaths
+} from '../../FlowTypes'
 
 const ROOT_DIR = shell.pwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
@@ -60,7 +63,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     nativeAppName: string,
     plugins: Array<Dependency>,
     miniapps: Array<MiniApp>,
-    paths: any,
+    paths: ContainerGeneratorPaths,
     mustacheView: any, {
       pathToYarnLock
     } : {
