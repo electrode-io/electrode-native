@@ -173,13 +173,11 @@ export async function regenerateIosRunnerConfig (
 }
 
 export async function generateContainerForRunner ({
-  platformPath,
   plugins,
   miniapp,
   platform,
   containerGenWorkingDir
 } : {
-  platformPath: string,
   plugins: Array<Dependency>,
   miniapp: Object,
   platform: 'android' | 'ios',
@@ -194,7 +192,6 @@ export async function generateContainerForRunner ({
     containerVersion: RUNNER_CONTAINER_VERSION,
     nativeAppName: 'runner',
     generator,
-    platformPath,
     plugins,
     miniapps: [miniapp],
     workingDirectory: containerGenWorkingDir

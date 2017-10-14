@@ -5,7 +5,8 @@ import {
   shell
 } from 'ern-util'
 import {
-  MiniApp
+  MiniApp,
+  Platform
 } from 'ern-core'
 import {
   capitalizeFirstLetter
@@ -23,7 +24,6 @@ let mustacheView = {}
 export default async function generateContainer ({
   containerVersion,
   nativeAppName,
-  platformPath,
   generator,
   plugins,
   miniapps,
@@ -32,7 +32,6 @@ export default async function generateContainer ({
 } : {
   containerVersion: string,
   nativeAppName: string,
-  platformPath: string,
   generator: ContainerGenerator,
   plugins: Array<Dependency>,
   miniapps: Array<MiniApp>,
@@ -44,8 +43,8 @@ export default async function generateContainer ({
   const COMPOSITE_MINIAPP_DIRECTORY = path.join(workingDirectory, 'compositeMiniApp')
 
   const paths : ContainerGeneratorPaths = {
-    containerHull: path.join(platformPath, 'ern-container-gen', 'hull'),
-    containerTemplates: path.join(platformPath, 'ern-container-gen', 'templates'),
+    containerHull: path.join(Platform.currentPlatformVersionPath, 'ern-container-gen', 'hull'),
+    containerTemplates: path.join(Platform.currentPlatformVersionPath, 'ern-container-gen', 'templates'),
     compositeMiniApp: COMPOSITE_MINIAPP_DIRECTORY,
     pluginsDownloadDirectory: PLUGINS_DOWNLOAD_DIRECTORY,
     outDirectory: OUT_DIRECTORY
