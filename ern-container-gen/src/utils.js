@@ -46,7 +46,6 @@ export async function bundleMiniApps (
       await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock})
     }
 
-    // Clear react packager cache beforehand to avoid surprises ...
     clearReactPackagerCache()
 
     if (platform === 'android') {
@@ -132,9 +131,7 @@ export async function generateMiniAppsComposite (
 
     log.debug(`[generateMiniAppsComposite] miniAppsDeltas: ${JSON.stringify(miniAppsDeltas)}`)
 
-    // Create initial package.json
     compositePackageJson.dependencies = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, yarnLock)
-    // This helps to start the local packager withing the comopsiteMiniApps directory for debugging multiple miniapps
     compositePackageJson.scripts = {'start': 'node node_modules/react-native/local-cli/cli.js start'}
 
     fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(compositePackageJson, null, 2), 'utf8')
@@ -157,7 +154,6 @@ export async function generateMiniAppsComposite (
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8')
   }
 
-  // Add optional extra JavaScript dependencies
   for (const extraJsDependency of extraJsDependencies) {
     await yarn.add(extraJsDependency)
   }

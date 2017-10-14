@@ -79,25 +79,16 @@ export default class IosGenerator implements ContainerGenerator {
         log.debug('Will not publish since there is no publisher provided to generator.')
       }
 
-      //
-      // Go through all ern-container-gen steps
-      //
-
-      // Copy iOS container hull to generation ios output directory
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
-      // Bundle all the miniapps together and store resulting bundle in container
-      // project
       if (miniapps.length > 0) {
         await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock})
       }
 
-      // Copy potential rnpm provided assets
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
         this.copyRnpmAssets(miniapps, paths)
       }
 
-      // Publish resulting container to git repo
       if (gitHubPublisher) {
         shell.cd(path.join(paths.outDirectory, 'ios'))
         log.debug(`Publish generated container[v${containerVersion}] to git repo: ${gitHubPublisher.url}`)
