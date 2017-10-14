@@ -100,35 +100,20 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
       }
 
-      // Enhance mustache view with android specifics
       mustacheView.android = {
         repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
         namespace: this.namespace,
         miniapps: mustacheView.miniApps
       }
 
-      //
-      // Go through all ern-container-gen steps
-
-      // Copy the container hull to output directory and patch it
-      // - Retrieves (download) each plugin from npm or git and inject
-      //   plugin source in container
-      // - Inject configuration code for plugins that expose configuration
-      // - Create activities for MiniApps
-      // - Patch build.gradle for versioning of the container project and
-      //   to specify publication repository target
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
-      // Bundle all the miniapps together and store resulting bundle in container project
       await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
 
-      // Rnpm handling
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
         this.copyRnpmAssets(miniapps, paths)
       }
 
-      // Finally, container hull project is fully generated, now let's just
-      // build it and publish resulting AAR
       if (mavenPublisher) {
         await mavenPublisher.publish({workingDir: `${paths.outDirectory}/android`, moduleName: `lib`})
         log.debug(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
@@ -222,7 +207,6 @@ export default class AndroidGenerator implements ContainerGenerator {
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(pathToFile, mustacheView, pathToFile)
       }
 
-      // Create mini app activities
       log.debug(`Creating miniapp activities`)
       for (const miniApp of miniApps) {
         let tmpMiniAppView = {
