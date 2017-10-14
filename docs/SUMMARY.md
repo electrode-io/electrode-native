@@ -66,6 +66,7 @@
 - [unlink](cli/unlink.md)
 - [upgrade-miniapp](cli/upgrade-miniapp.md)
 - [why](cli/why.md)
+
 - [cauldron add](cli/cauldron/add.md)
   - [dependencies](cli/cauldron/add/dependencies.md)
   - [miniapps](cli/cauldron/add/miniapps.md)
@@ -89,6 +90,7 @@
   - [miniapps](cli/cauldron/update/miniapps.md)
   - [nativeapp](cli/cauldron/update/nativeapp.md)
 - [cauldron batch](cli/cauldron/batch.md)
+- [cauldron regen-api](cli/cauldron/regen-api.md))
 - [platform](cli/platform.md)
   - [plugins](cli/platform/plugin.mds)
     - [list](cli/platform/plugins/list.md)
