@@ -153,8 +153,8 @@ export default class IosGenerator implements ContainerGenerator {
     log.debug(`[=== Starting container hull filling ===]`)
     shell.cd(`${ROOT_DIR}`)
 
-    const copyFromPath = path.join(paths.containerHull, 'ios', '{.*,*}')
-    
+    const copyFromPath = path.join(paths.containerHull, '{.*,*}')
+
     shell.cp('-R', copyFromPath, paths.outDirectory)
     await this.buildiOSPluginsViews(plugins, mustacheView)
 

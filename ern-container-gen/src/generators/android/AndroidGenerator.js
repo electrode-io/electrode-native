@@ -140,7 +140,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       shell.cd(ROOT_DIR)
 
-      const copyFromPath = path.join(paths.containerHull, 'android', '{.*,*}')
+      const copyFromPath = path.join(paths.containerHull, '{.*,*}')
 
       shell.cp('-R', copyFromPath, paths.outDirectory)
 
@@ -216,7 +216,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
 
         log.debug(`Creating ${activityFileName}`)
-        const pathToMiniAppActivityMustacheTemplate = path.join(paths.containerTemplates, 'android', 'MiniAppActivity.mustache')
+        const pathToMiniAppActivityMustacheTemplate = path.join(paths.containerTemplates, 'MiniAppActivity.mustache')
         const pathToOutputActivityFile = path.join(paths.outDirectory, pathLibSrcMainJavaComWalmartlabsErnContainer, 'miniapps', activityFileName)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             pathToMiniAppActivityMustacheTemplate,
