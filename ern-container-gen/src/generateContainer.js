@@ -39,7 +39,7 @@ export default async function generateContainer ({
   pathToYarnLock?: string
 } = {}) {
   const PLUGINS_DOWNLOAD_DIRECTORY = path.join(workingDirectory, 'plugins')
-  const OUT_DIRECTORY = path.join(workingDirectory, 'out')
+  const OUT_DIRECTORY = path.join(workingDirectory, 'out', generator.platform)
   const COMPOSITE_MINIAPP_DIRECTORY = path.join(workingDirectory, 'compositeMiniApp')
 
   const paths : ContainerGeneratorPaths = {
@@ -54,8 +54,8 @@ export default async function generateContainer ({
   shell.rm('-rf', OUT_DIRECTORY)
   shell.rm('-rf', COMPOSITE_MINIAPP_DIRECTORY)
   shell.mkdir('-p', PLUGINS_DOWNLOAD_DIRECTORY)
-  shell.mkdir('-p', path.join(OUT_DIRECTORY, generator.platform))
-  shell.mkdir('-p', path.join(OUT_DIRECTORY, 'ios'))
+  shell.mkdir('-p', OUT_DIRECTORY)
+  shell.mkdir('-p', COMPOSITE_MINIAPP_DIRECTORY)
 
   sortPlugins(plugins)
 

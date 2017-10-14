@@ -64,7 +64,7 @@ export async function bundleMiniApps (
 }
 
 export async function reactNativeBundleAndroid (paths: any) {
-  const libSrcMainPath = path.join(paths.outDirectory, 'android', 'lib', 'src', 'main')
+  const libSrcMainPath = path.join(paths.outDirectory, 'lib', 'src', 'main')
   const bundleOutput = path.join(libSrcMainPath, 'assets', 'index.android.bundle')
   const assetsDest = path.join(libSrcMainPath, 'res')
 
@@ -78,7 +78,7 @@ export async function reactNativeBundleAndroid (paths: any) {
 }
 
 export async function reactNativeBundleIos (paths: any) {
-  const miniAppOutPath = path.join(paths.outDirectory, 'ios', 'ElectrodeContainer', 'Libraries', 'MiniApp')
+  const miniAppOutPath = path.join(paths.outDirectory, 'ElectrodeContainer', 'Libraries', 'MiniApp')
   const bundleOutput = path.join(miniAppOutPath, 'MiniApp.jsbundle')
   const assetsDest = miniAppOutPath
 
