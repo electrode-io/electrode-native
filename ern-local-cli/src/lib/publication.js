@@ -117,7 +117,6 @@ platform: 'android' | 'ios', {
       , generateContainer({
         containerVersion,
         nativeAppName,
-        platformPath: Platform.currentPlatformVersionPath,
         generator: createContainerGenerator(containerGeneratorConfig),
         plugins: nativeDependencies,
         miniapps,
@@ -173,7 +172,6 @@ version: string, {
       generateContainer({
         containerVersion: version,
         nativeAppName: containerName || napDescriptor.name,
-        platformPath: Platform.currentPlatformVersionPath,
         generator: createContainerGenerator(containerGeneratorConfig),
         plugins,
         miniapps: miniAppsInstances,
