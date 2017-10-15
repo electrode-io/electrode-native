@@ -8,6 +8,7 @@ import {
 import {
   manifest
 } from 'ern-core'
+import path from 'path'
 
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 
@@ -17,8 +18,6 @@ type PluginConfig = {
   origin?: Object,
   path?: string
 }
-
-const path = require('path')
 
 export const ROOT_DIR = shell.pwd()
 
@@ -51,13 +50,13 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     try {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
 
-      shell.cd(`${ROOT_DIR}`)
+      shell.cd(ROOT_DIR)
 
       const outputDirectory = path.join(paths.outDirectory, `android`)
       log.debug(`Creating out directory(${outputDirectory}) for android and copying container hull to it.`)
       shell.mkdir(outputDirectory)
 
-      shell.cp(`-R`, path.join(paths.apiImplHull, `/android/*`), outputDirectory)
+      shell.cp(`-R`, path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
 
       for (let plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name} to ${outputDirectory}`)
@@ -74,17 +73,18 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
   copyPluginToOutput (paths: Object, outputDirectory: string, plugin: Dependency, pluginConfig: PluginConfig) {
     log.debug(`injecting ${plugin.name} code.`)
-    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, `node_modules`, plugin.scopedName, `android`, pluginConfig.android.moduleName, pluginConfig.android.moduleName === `lib` ? `src/main/java/*` : `src/main/java/`)
-    log.debug(`Copying ${plugin.name} code from ${pluginSrcDirectory} to ${path.join(outputDirectory, `/lib/src/main/java`)}`)
-    shell.cp(`-R`, pluginSrcDirectory, path.join(outputDirectory, `/lib/src/main/java/`))
+    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName,
+      pluginConfig.android.moduleName === `lib` ? path.join('src', 'main', 'java', '*') : path.join('src', 'main', 'java'))
+    log.debug(`Copying ${plugin.name} code from ${pluginSrcDirectory} to ${path.join(outputDirectory, 'lib', 'src', 'main', 'java')}`)
+    shell.cp(`-R`, pluginSrcDirectory, path.join(outputDirectory, 'lib', 'src', 'main', 'java'))
   }
 
   updateBuildGradle (paths: Object, reactNativeVersion: string, outputDirectory: string): Promise<*> {
     let mustacheView = {}
     mustacheView.reactNativeVersion = reactNativeVersion
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      path.join(paths.apiImplHull, `/android/lib/build.gradle`),
+      path.join(paths.apiImplHull, 'android', 'lib', 'build.gradle'),
       mustacheView,
-      path.join(outputDirectory, `/lib/build.gradle`))
+      path.join(outputDirectory, 'lib', 'build.gradle'))
   }
 }

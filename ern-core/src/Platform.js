@@ -18,19 +18,19 @@ const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
 export default class Platform {
   static get rootDirectory () : string {
-    return `${HOME_DIRECTORY}/.ern`
+    return path.join(HOME_DIRECTORY, '.ern')
   }
 
   static get masterManifestDirectory () : string {
-    return `${this.rootDirectory}/ern-master-manifest`
+    return path.join(this.rootDirectory, 'ern-master-manifest')
   }
 
   static get overrideManifestDirectory () : string {
-    return `${this.rootDirectory}/ern-override-manifest`
+    return path.join(this.rootDirectory, 'ern-override-manifest')
   }
 
   static get versionCacheDirectory () : string {
-    return `${this.rootDirectory}/versions`
+    return path.join(this.rootDirectory, 'versions')
   }
 
   static get latestVersion () : string {

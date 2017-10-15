@@ -248,7 +248,7 @@ miniApps: Array<Dependency>, {
     }
   }
 
-  const workingDirectory = `${Platform.rootDirectory}/CompositeOta`
+  const workingDirectory = path.join(Platform.rootDirectory, 'CompositeOta')
   const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
   const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
 

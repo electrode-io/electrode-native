@@ -43,7 +43,7 @@ export default class YarnCli {
     if (dependencyPath.isAFileSystemPath) {
       const tmpDirPath = tmp.dirSync({unsafeCleanup: true}).name
       shell.cp('-R', `${/file:(.+)/.exec(dependencyPath.toString())[1]}/*`, tmpDirPath)
-      shell.rm('-rf', `${tmpDirPath}/node_modules`)
+      shell.rm('-rf', path.join(tmpDirPath, 'node_modules'))
       dependencyPath = DependencyPath.fromFileSystemPath(tmpDirPath)
     }
 

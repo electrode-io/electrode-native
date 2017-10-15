@@ -29,7 +29,7 @@ export default class MavenPublisher implements Publisher {
   async buildAndPublishContainer (workingDir: string, moduleName: string): Promise<*> {
     try {
       log.debug(`[=== Starting build and publication ===]`)
-      shell.cd(`${workingDir}`)
+      shell.cd(workingDir)
       await this.buildAndUploadArchive(moduleName)
       log.debug(`[=== Completed build and publication of the module ===]`)
     } catch (e) {

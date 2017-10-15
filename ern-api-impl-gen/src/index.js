@@ -95,7 +95,7 @@ async function createNodePackage (
   shell.cd(outputDirectoryPath)
   await yarn.init()
   await yarn.add(apiDependencyPath)
-  shell.rm('-rf', `${outputDirectoryPath}/node_modules/`)
+  shell.rm('-rf', path.join(outputDirectoryPath, 'node_modules'))
   log.debug('Removed node modules directory')
   const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
@@ -126,8 +126,8 @@ function formOutputDirectoryName (apiDependencyPath, outputDirectoryPath: string
   let apiName = API_NAME_RE.exec(apiDependencyObj.name)[1]
 
   return outputDirectoryPath
-    ? path.join(`${outputDirectoryPath}`, `${apiName}-impl`)
-    : path.join(`${shell.pwd()}`, `${apiName}-impl`)
+    ? path.join(outputDirectoryPath, `${apiName}-impl`)
+    : path.join(shell.pwd(), `${apiName}-impl`)
 }
 
 function getPlatforms (nativeOnly: boolean): Array<string> {

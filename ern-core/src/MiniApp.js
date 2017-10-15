@@ -40,7 +40,7 @@ export default class MiniApp {
     this._path = miniAppPath
     this._isLocal = isLocal
 
-    const packageJsonPath = `${miniAppPath}/package.json`
+    const packageJsonPath = path.join(miniAppPath, 'package.json')
     if (!fs.existsSync(packageJsonPath)) {
       throw new Error(`This command should be run at the root of a mini-app`)
     }
@@ -128,11 +128,11 @@ Are you sure this is a MiniApp ?`)
         reactnative.init(miniAppName, reactNativeVersion))
 
       // Inject ern specific data in MiniApp package.json
-      const appPackageJsonPath = `${process.cwd()}/${miniAppName}/package.json`
+      const appPackageJsonPath = path.join(process.cwd(), miniAppName, 'package.json')
       const appPackageJson = JSON.parse(fs.readFileSync(appPackageJsonPath, 'utf-8'))
       appPackageJson.ern = {
-        version: `${platformVersion}`,
-        moduleType: `${ModuleTypes.MINIAPP}`,
+        version: platformVersion,
+        moduleType: ModuleTypes.MINIAPP,
         miniAppName
       }
       appPackageJson.private = false
@@ -150,7 +150,7 @@ Are you sure this is a MiniApp ?`)
       // Remove react-native generated android and ios projects
       // They will be replaced with our owns when user uses `ern run android`
       // or `ern run ios` command
-      const miniAppPath = `${process.cwd()}/${miniAppName}`
+      const miniAppPath = path.join(process.cwd(), miniAppName)
       shell.cd(miniAppPath)
       shell.rm('-rf', 'android')
       shell.rm('-rf', 'ios')
@@ -210,7 +210,7 @@ Are you sure this is a MiniApp ?`)
 
   // Return all native dependencies currently used by the mini-app
   get nativeDependencies () : Array<Dependency> {
-    return findNativeDependencies(`${this.path}/node_modules`)
+    return findNativeDependencies(path.join(this.path, 'node_modules'))
   }
 
   async isPublishedToNpm () : Promise<boolean> {
@@ -361,7 +361,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     this.packageJson.ern.version = versionToUpgradeTo
 
     // Write back package.json
-    const appPackageJsonPath = `${this.path}/package.json`
+    const appPackageJsonPath = path.join(this.path, 'package.json')
     fs.writeFileSync(appPackageJsonPath, JSON.stringify(this.packageJson, null, 2))
 
     process.chdir(this.path)
