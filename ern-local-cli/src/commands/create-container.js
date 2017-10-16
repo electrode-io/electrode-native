@@ -10,7 +10,8 @@ import {
 import {
   Dependency,
   DependencyPath,
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  spin
 } from 'ern-util'
 import {
   runLocalContainerGen,
@@ -182,7 +183,7 @@ exports.handler = async function ({
         platform = userSelectedPlatform
       }
 
-      await runLocalContainerGen(
+      await spin('Generating Container locally', runLocalContainerGen(
         miniAppsPaths,
         platform, {
           version,
@@ -190,7 +191,7 @@ exports.handler = async function ({
           outDir,
           extraNativeDependencies: _.map(dependencies, d => Dependency.fromString(d))
         }
-      )
+      ))
     } else if (napDescriptor && version) {
       await runCauldronContainerGen(
         napDescriptor,
