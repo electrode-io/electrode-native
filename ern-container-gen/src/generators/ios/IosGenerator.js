@@ -28,7 +28,7 @@ import type {
   ContainerGeneratorPaths
 } from '../../FlowTypes'
 
-const ROOT_DIR = shell.pwd()
+const ROOT_DIR = process.cwd()
 
 export default class IosGenerator implements ContainerGenerator {
   _containerGeneratorConfig : ContainerGeneratorConfig

@@ -98,7 +98,7 @@ export async function generateAndroidRunnerProject (
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
   }
-  shell.cp('-R', path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'android', '*', outDir))
+  shell.cp('-R', path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'android', '*'), outDir)
   const files = readDir(path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'android'),
             (f) => (!f.endsWith('.jar') && !f.endsWith('.png')))
   for (const file of files) {
