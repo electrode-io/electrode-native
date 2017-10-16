@@ -50,7 +50,7 @@ export default function run () {
   global.log = new ColoredLog(logLevel)
   global.ernLogLevel = logLevel
   shell.config.fatal = true
-  shell.config.verbose = logLevel === 'debug' || logLevel === 'trace'
+  shell.config.verbose = (logLevel === 'trace')
 
   if (ernConfig.getValue('banner', true)) { showBanner() }
   showInfo()
