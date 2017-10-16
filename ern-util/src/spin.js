@@ -17,7 +17,8 @@ export default async function spin<T> (
     spinner = ora({
       text,
       enabled: global.ernLogLevel !== 'debug' &&
-               global.ernLogLevel !== 'trace'
+               global.ernLogLevel !== 'trace' &&
+               !process.env.__ERN_TEST__
     })
   }
 

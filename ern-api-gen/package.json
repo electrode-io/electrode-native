@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "ern-babel",
-    "test": "ern-mocha",
+    "test": "cross-env __ERN_TEST__=true ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "npm run build"
   },
