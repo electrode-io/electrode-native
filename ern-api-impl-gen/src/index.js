@@ -90,7 +90,7 @@ async function createNodePackage (
   outputDirectoryPath: string,
   apiDependency: Dependency,
   nativeOnly: boolean) {
-  let currentDirectory = shell.pwd()
+  let currentDirectory = process.cwd()
   shell.cd(outputDirectoryPath)
   await yarn.init()
   await yarn.add(apiDependency.path)
@@ -124,7 +124,7 @@ function formOutputDirectoryName (apiDependency: Dependency, outputDirectoryPath
   let apiName = API_NAME_RE.exec(apiDependency.name)[1]
   return outputDirectoryPath
     ? path.join(outputDirectoryPath, `${apiName}-impl`)
-    : path.join(shell.pwd(), `${apiName}-impl`)
+    : path.join(process.cwd(), `${apiName}-impl`)
 }
 
 function getPlatforms (nativeOnly: boolean): Array<string> {
