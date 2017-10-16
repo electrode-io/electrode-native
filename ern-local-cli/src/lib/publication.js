@@ -24,7 +24,6 @@ import {
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import path from 'path'
-import ora from 'ora'
 
 function createContainerGenerator (config: ContainerGeneratorConfig) {
   switch (config.platform) {
@@ -77,8 +76,6 @@ platform: 'android' | 'ios', {
     let containerGeneratorConfig = new ContainerGeneratorConfig(platform, config)
     log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
 
-    const spinner = ora('Preparing MiniApp(s) and running compatibility checks').start()
-
     for (const miniappPackagePath of miniappPackagesPaths) {
       log.debug(`Retrieving ${miniappPackagePath.toString()}`)
 
@@ -94,8 +91,6 @@ platform: 'android' | 'ios', {
       currentMiniApp.nativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
     }
 
-    spinner.succeed()
-
     let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => Dependency.fromString(d))
     nativeDependencies = nativeDependencies.concat(extraNativeDependencies)
 
@@ -106,7 +101,6 @@ platform: 'android' | 'ios', {
     const duplicateNativeDependencies =
       _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
     if (duplicateNativeDependencies.length > 0) {
-      spinner.fail()
       throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
     }
 
@@ -246,7 +240,7 @@ miniApps: Array<Dependency>, {
     }
   }
 
-  const workingDirectory = `${Platform.rootDirectory}/CompositeOta`
+  const workingDirectory = path.join(Platform.rootDirectory, 'CompositeOta')
   const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
   const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
 

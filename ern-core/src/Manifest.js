@@ -122,7 +122,7 @@ export class Manifest {
     }
 
     if (pluginConfigPath) {
-      let configFile = await fs.readFileSync(`${pluginConfigPath}/${pluginConfigFileName}`, 'utf-8')
+      let configFile = await fs.readFileSync(path.join(pluginConfigPath, pluginConfigFileName), 'utf-8')
       configFile = Mustache.render(configFile, { projectName })
       result = JSON.parse(configFile)
 

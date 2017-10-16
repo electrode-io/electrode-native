@@ -504,13 +504,13 @@ async function generateContainerForRunner (
         containerName: 'runner'
       })
   } else {
-    await runLocalContainerGen(
+    await spin('Generating Container locally', runLocalContainerGen(
       miniAppsPaths,
       platform, {
         containerVersion: '1.0.0',
         nativeAppName: 'runner',
         extraNativeDependencies: dependenciesObjs
-      })
+      }))
   }
 }
 

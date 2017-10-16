@@ -43,16 +43,17 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       const outputDirectory = path.join(paths.outDirectory, `ios`)
       log.debug(`Creating out directory(${outputDirectory}) for ios and copying container hull to it.`)
       shell.mkdir(outputDirectory)
-      shell.cp(`-R`, path.join(paths.apiImplHull, `/ios/*`), outputDirectory)
+      shell.cp(`-R`, path.join(paths.apiImplHull, 'ios', '*'), outputDirectory)
 
-      const apiImplProjectPath = `${outputDirectory}/ElectrodeApiImpl.xcodeproj/project.pbxproj`
-      const apiImplLibrariesPath = `${outputDirectory}/ElectrodeApiImpl/Libraries`
+      const apiImplProjectPath = path.join(outputDirectory, 'ElectrodeApiImpl.xcodeproj', 'project.pbxproj')
+      const apiImplLibrariesPath = path.join(outputDirectory, 'ElectrodeApiImpl', 'Libraries')
       const apiImplProject = await this.getIosApiImplProject(apiImplProjectPath)
       const apiImplTarget = apiImplProject.findTargetKey('ElectrodeApiImpl')
 
       const reactnativeplugin = new Dependency('react-native', {
         version: reactNativeVersion
       })
+
       log.debug(`Manually injecting react-native(${reactnativeplugin}) plugin to dependencies.`)
       plugins.push(reactnativeplugin)
 
@@ -62,9 +63,9 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
         if (pluginConfig.ios) {
           let pluginSourcePath
           if (pluginConfig.origin.scope) {
-            pluginSourcePath = `${paths.pluginsDownloadDirectory}/node_modules/@${pluginConfig.origin.scope}/${pluginConfig.origin.name}`
+            pluginSourcePath = path.join(paths.pluginsDownloadDirectory, 'node_modules', `@${pluginConfig.origin.scope}`, pluginConfig.origin.name)
           } else {
-            pluginSourcePath = `${paths.pluginsDownloadDirectory}/node_modules/${pluginConfig.origin.name}`
+            pluginSourcePath = path.join(paths.pluginsDownloadDirectory, 'node_modules', 'pluginConfig.origin.name')
           }
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.scopedName}`)
@@ -78,7 +79,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
             for (const r of pluginConfig.ios.replaceInFile) {
               const fileContent = fs.readFileSync(`${outputDirectory}/${r.path}`, 'utf8')
               const patchedFileContent = fileContent.replace(RegExp(r.string, 'g'), r.replaceWith)
-              fs.writeFileSync(`${outputDirectory}/${r.path}`, patchedFileContent, {encoding: 'utf8'})
+              fs.writeFileSync(path.join(outputDirectory, r.path), patchedFileContent, {encoding: 'utf8'})
             }
           }
 
@@ -126,7 +127,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
 
             if (pluginConfig.ios.pbxproj.addProject) {
               for (const project of pluginConfig.ios.pbxproj.addProject) {
-                const projectAbsolutePath = `${apiImplLibrariesPath}/${project.path}/project.pbxproj`
+                const projectAbsolutePath = path.join(apiImplLibrariesPath, project.path, 'project.pbxproj')
                 apiImplProject.addProject(projectAbsolutePath, project.path, project.group, apiImplTarget, project.staticLibs)
               }
             }

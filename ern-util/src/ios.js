@@ -6,7 +6,7 @@ import {
   execSync,
   spawn
 } from 'child_process'
-import ora from 'ora'
+import spin from './spin'
 const simctl = require('node-simctl')
 
 export async function getiPhoneDevices () {
@@ -67,20 +67,13 @@ export async function runIosApp ({
   bundleId: string
 }) {
   const iPhoneDevice = await askUserToSelectAniPhoneDevice()
-  await killAllRunningSimulators()
-  const spinner = ora(`Waiting for device to boot`).start()
-  await launchSimulator(iPhoneDevice.udid)
-
-  try {
-    spinner.text = 'Installing application on simulator'
-    await installApplicationOnDevice(iPhoneDevice.udid, appPath)
-    spinner.text = 'Launching application'
-    await launchApplication(iPhoneDevice.udid, bundleId)
-    spinner.succeed('Done')
-  } catch (e) {
-    spinner.fail(e.message)
-    throw e
-  }
+  killAllRunningSimulators()
+  await spin('Waiting for device to boot',
+    launchSimulator(iPhoneDevice.udid))
+  await spin('Installing application on simulator',
+    installApplicationOnDevice(iPhoneDevice.udid, appPath))
+  await spin('Launching application',
+    launchApplication(iPhoneDevice.udid, bundleId))
 }
 
 export async function installApplicationOnDevice (deviceUdid: string, pathToAppFile: string) {
