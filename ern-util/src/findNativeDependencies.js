@@ -6,7 +6,7 @@ import _ from 'lodash'
 import path from 'path'
 
 const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/
-const API_PATH_RE = RegExp(`react-native-.+-api\${path.sep}`)
+const API_PATH_RE = RegExp(`react-native-.+-api${path.sep}`)
 
 export default function findNativeDependencies (p: string) : Array<Dependency> {
   let result = []

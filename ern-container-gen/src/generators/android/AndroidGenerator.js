@@ -28,7 +28,7 @@ import type {
   ContainerGeneratorPaths
 } from '../../FlowTypes'
 
-const ROOT_DIR = shell.pwd()
+const ROOT_DIR = process.cwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 
 export default class AndroidGenerator implements ContainerGenerator {
