@@ -65,7 +65,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
           if (pluginConfig.origin.scope) {
             pluginSourcePath = path.join(paths.pluginsDownloadDirectory, 'node_modules', `@${pluginConfig.origin.scope}`, pluginConfig.origin.name)
           } else {
-            pluginSourcePath = path.join(paths.pluginsDownloadDirectory, 'node_modules', 'pluginConfig.origin.name')
+            pluginSourcePath = path.join(paths.pluginsDownloadDirectory, 'node_modules', pluginConfig.origin.name)
           }
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.scopedName}`)
@@ -151,7 +151,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
 
       log.debug(`[=== Completed api-impl hull filling ===]`)
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while generating api impl hull for ios: ${JSON.stringify(e)}`)
+      Utils.logErrorAndExitProcess(`Error while generating api impl hull for ios: ${e}`)
     }
   }
 
