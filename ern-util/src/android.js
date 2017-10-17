@@ -5,6 +5,7 @@ import { spawn } from 'child_process'
 import inquirer from 'inquirer'
 import shell from './shell'
 import spin from './spin.js'
+import ernConfig from './config'
 
 // ==============================================================================
 // Misc utilities
@@ -88,6 +89,7 @@ export async function runAndroid ({
   projectPath?: string
 }) {
   const devices = await getDevices()
+  // install and launch the app if 1 emulator instance is running
   if (devices.length === 1) {
     log.debug(devices[0].split('\t')[0], ' is running ...')
     await installAndLaunchApp({
@@ -99,14 +101,7 @@ export async function runAndroid ({
   } else if (devices.length > 1) {
     throw new Error('More than one device/emulator is running !')
   } else {
-    const avdImageNames = await getAndroidAvds()
-    const { avdImageName } = await inquirer.prompt([{
-      type: 'list',
-      name: 'avdImageName',
-      message: 'Choose Android emulator image',
-      choices: avdImageNames
-    }])
-
+    const avdImageName = await askUserToSelectAvdEmulator()
     return runAndroidUsingAvdImage({
       projectPath,
       packageName,
@@ -115,6 +110,37 @@ export async function runAndroid ({
       activityName
     })
   }
+}
+
+async function askUserToSelectAvdEmulator (): Promise<string> {
+  const avdImageNames = await getAndroidAvds()
+  let emulatorConfig = ernConfig.getValue('emulatorConfig')
+
+  // Check if user has set the usePreviousEmulator flag to true
+  if (avdImageNames && emulatorConfig.android.usePreviousEmulator) {
+    // Get the name of previously used emulator
+    const emulatorName = emulatorConfig.android.emulatorName
+    // Check if avd image still exists
+    const avdIndex = avdImageNames.indexOf(emulatorName)
+    if (avdIndex > -1) {
+      return `${avdImageNames[avdIndex]}`
+    }
+  }
+
+  // if avd image is still not resolved
+  const {avdImageName} = await inquirer.prompt([{
+    type: 'list',
+    name: 'avdImageName',
+    message: 'Choose Android emulator image',
+    choices: avdImageNames
+  }])
+
+  // Update the emulatorConfig
+  if (emulatorConfig) {
+    emulatorConfig.android.emulatorName = avdImageName
+    ernConfig.setValue('emulatorConfig', emulatorConfig)
+  }
+  return `${avdImageName}`
 }
 
 // Does the job of actually running the app
