@@ -7,29 +7,52 @@ import {
   spawn
 } from 'child_process'
 import spin from './spin'
+import ernConfig from './config'
 const simctl = require('node-simctl')
 
 export async function getiPhoneDevices () {
   const iosDevices = await simctl.getDevices()
   return _.filter(
-           _.flattenDeep(
-             _.map(iosDevices, (val, key) => val)),
-        (device) => device.name.match(/^iPhone/))
+    _.flattenDeep(
+      _.map(iosDevices, (val, key) => val)),
+    (device) => device.name.match(/^iPhone/))
 }
 
 export async function askUserToSelectAniPhoneDevice () {
-  const iPhoneDecices = await getiPhoneDevices()
-  const choices = _.map(iPhoneDecices, (val, key) => ({
+  const iPhoneDevices = await getiPhoneDevices()
+  const choices = _.map(iPhoneDevices, (val, key) => ({
     name: `${val.name} (UDID ${val.udid})`,
     value: val
   }))
 
-  const { selectedDevice } = await inquirer.prompt([{
+  // Check if user has set the usePreviousEmulator flag to true
+  let emulatorConfig = ernConfig.getValue('emulatorConfig')
+  if (choices && emulatorConfig.ios.usePreviousEmulator) {
+    // Get the name of previously used simulator
+    const simulatorUdid = emulatorConfig.ios.simulatorUdid
+    // Check if simulator still exists
+    let previousSimulator
+    choices.forEach((val) => {
+      if (val && val.value.udid === simulatorUdid) {
+        previousSimulator = val.value
+      }
+    })
+    if (previousSimulator) {
+      return previousSimulator
+    }
+  }
+
+  // if simulator is still not resolved
+  let {selectedDevice} = await inquirer.prompt([{
     type: 'list',
     name: 'selectedDevice',
     message: 'Choose an iOS simulator',
     choices
   }])
+
+  // Update the emulatorConfig
+  emulatorConfig.ios.simulatorUdid = selectedDevice.udid
+  ernConfig.setValue('emulatorConfig', emulatorConfig)
 
   return selectedDevice
 }
@@ -62,10 +85,10 @@ export async function launchSimulator (deviceUdid: string) {
 export async function runIosApp ({
   appPath,
   bundleId
-} : {
-  appPath: string,
-  bundleId: string
-}) {
+  } : {
+    appPath: string,
+    bundleId: string
+    }) {
   const iPhoneDevice = await askUserToSelectAniPhoneDevice()
   killAllRunningSimulators()
   await spin('Waiting for device to boot',
