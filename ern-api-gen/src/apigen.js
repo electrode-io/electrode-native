@@ -192,7 +192,7 @@ function _constructTargetNativeDependenciesMap (targetDependencies: Array<Depend
   return targetNativeDependenciesMap
 }
 
-function _promptForMissMatchOfSupportedPlugins (curVersion: any, pluginName: string) {
+function _promptForMissMatchOfSupportedPlugins (curVersion: any, pluginName: string) : Promise<string> {
   return inquirer.prompt([{
     type: 'input',
     name: 'userPluginVer',

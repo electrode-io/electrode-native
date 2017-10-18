@@ -110,7 +110,7 @@ exports.handler = async function ({
   }
 }
 
-async function promptPlatformSelection () {
+async function promptPlatformSelection () : Promise<boolean> {
   const {targetPlatform} = await inquirer.prompt([{
     type: 'list',
     name: 'targetPlatform',
