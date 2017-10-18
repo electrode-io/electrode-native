@@ -38,6 +38,8 @@ function createContainerGenerator (config: ContainerGeneratorConfig) {
   }
 }
 
+type platform = 'android' | 'ios'
+
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
 // For example, the following miniapp strings are all valid
@@ -297,7 +299,7 @@ miniApps: Array<Dependency>, {
   }
 }
 
-async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) {
+async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) : Promise<boolean> {
   log.info(`The following MiniApp versions will get shipped in this CodePush OTA update :`)
   miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
 
@@ -310,7 +312,7 @@ async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Arra
   return userCodePushPublicationConfirmation
 }
 
-async function askUserToForceCodePushPublication () {
+async function askUserToForceCodePushPublication () : Promise<boolean> {
   const { userCodePushForcePublication } = await inquirer.prompt({
     type: 'confirm',
     name: 'userCodePushForcePublication',
@@ -320,7 +322,7 @@ async function askUserToForceCodePushPublication () {
   return userCodePushForcePublication
 }
 
-async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor) {
+async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor) : Promise<string> {
   const config = await cauldron.getConfig(napDescriptor)
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
   const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
@@ -335,7 +337,7 @@ async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicatio
   return userSelectedDeploymentName
 }
 
-async function askUserForCodePushAppName (defaultAppName) {
+async function askUserForCodePushAppName (defaultAppName) : Promise<string> {
   const { userSelectedCodePushAppName } = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedCodePushAppName',
@@ -345,8 +347,8 @@ async function askUserForCodePushAppName (defaultAppName) {
   return userSelectedCodePushAppName
 }
 
-async function askUserForCodePushPlatformName (defaultPlatformName) {
-  const { userSelectedCodePushPlatformName }: { userSelectedCodePushPlatformName: 'android' | 'ios' } = await inquirer.prompt({
+async function askUserForCodePushPlatformName (defaultPlatformName) : Promise<platform> {
+  const { userSelectedCodePushPlatformName }: { userSelectedCodePushPlatformName: platform } = await inquirer.prompt({
     type: 'input',
     name: 'userSelectedCodePushPlatformName',
     message: 'Platform name',

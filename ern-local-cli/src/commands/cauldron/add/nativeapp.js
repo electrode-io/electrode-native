@@ -103,7 +103,7 @@ async function copyOverPreviousVersionData (napDescriptor: NativeApplicationDesc
   }
 }
 
-async function askUserCopyPreviousVersionData (version: string) {
+async function askUserCopyPreviousVersionData (version: string) : Promise<string> {
   const { userCopyPreviousVersionData } = await inquirer.prompt({
     type: 'confirm',
     name: 'userCopyPreviousVersionData',

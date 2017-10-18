@@ -43,8 +43,7 @@ exports.handler = async function ({
       log.info(`NPM does not allow package names containing upper case letters.`)
       let appNameToken = core.splitCamelCaseString(appName)
       if (appNameToken) {
-        const answer = await _promptForPackageName(appNameToken.join('-'))
-        packageName = answer.packageName
+        packageName = await _promptForPackageName(appNameToken.join('-'))
       }
     }
     const isPackageNameInNpm = await utils.doesPackageExistInNpm(packageName)
@@ -77,8 +76,8 @@ exports.handler = async function ({
   }
 }
 
-function _promptForPackageName (packageName: string) {
-  return inquirer.prompt([{
+async function _promptForPackageName (packageName: string): Promise<string> {
+  const {pkgName} = await inquirer.prompt([{
     type: 'input',
     name: 'packageName',
     message: `Type package name to publish to npm. Press Enter to use the default.`,
@@ -92,4 +91,5 @@ function _promptForPackageName (packageName: string) {
       return 'Check npm package name rules https://docs.npmjs.com/files/package.json'
     }
   }])
+  return pkgName
 }

@@ -565,7 +565,7 @@ async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
   })
 }
 
-async function doesPackageExistInNpm (packageName: string) {
+async function doesPackageExistInNpm (packageName: string) : Promise<boolean> {
   try {
     const result = await yarn.info(DependencyPath.fromString(packageName), {field: 'versions', json: true})
     if (result && result.type === `inspect`) {
@@ -578,7 +578,7 @@ async function doesPackageExistInNpm (packageName: string) {
   return false
 }
 
-async function promptSkipNpmNameConflictCheck (name: string) {
+async function promptSkipNpmNameConflictCheck (name: string) : Promise<boolean> {
   const {skipPackageExistsOnNpmCheck} = await inquirer.prompt([{
     type: 'confirm',
     name: 'skipPackageExistsOnNpmCheck',
