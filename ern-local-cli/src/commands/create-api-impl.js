@@ -39,6 +39,9 @@ exports.builder = function (yargs: any) {
   }).option('outputDirectory', {
     alias: 'o',
     describe: 'Path to output directory'
+  }).option('hasConfig', {
+    type: 'bool',
+    describe: 'Indicates if this api implementation requires some config during initialization. \nThis command will be stored and reused during container generation to enforce config initialization'
   })
   .epilog(utils.epilog(exports))
 }
@@ -52,13 +55,15 @@ exports.handler = async function ({
   nativeOnly,
   jsOnly,
   force,
-  outputDirectory
+  outputDirectory,
+  hasConfig
 } : {
   api: string,
   nativeOnly: boolean,
   jsOnly: boolean,
   force: boolean,
   outputDirectory: string,
+  hasConfig: boolean
 }) {
   const isPackageNameInNpm = await utils.doesPackageExistInNpm(api)
   // If package name exists in the npm
@@ -97,6 +102,7 @@ exports.handler = async function ({
       nativeOnly,
       forceGenerate: force,
       reactNativeVersion,
+      hasConfig,
       paths: {
         apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
         pluginsDownloadDirectory: PLUGIN_DIRECTORY,

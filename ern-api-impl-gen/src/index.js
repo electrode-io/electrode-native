@@ -24,6 +24,7 @@ export async function generateApiImpl ({
   nativeOnly,
   forceGenerate,
   reactNativeVersion,
+  hasConfig = false,
   paths
 } : {
   apiDependency: Dependency,
@@ -31,6 +32,7 @@ export async function generateApiImpl ({
   nativeOnly: boolean,
   forceGenerate: boolean,
   reactNativeVersion: string,
+  hasConfig: boolean,
   paths: {
     workingDirectory: string,
     pluginsDownloadDirectory: string,
@@ -44,7 +46,7 @@ export async function generateApiImpl ({
     // get the directory to output the generated project.
     paths.outDirectory = outputDirectory = formOutputDirectoryName(apiDependency, outputDirectory)
     await createOutputDirectory(outputDirectory, forceGenerate)
-    await createNodePackage(outputDirectory, apiDependency, nativeOnly)
+    await createNodePackage(outputDirectory, apiDependency, nativeOnly, hasConfig)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -89,7 +91,8 @@ async function createOutputDirectory (outputDirectoryPath: string, forceGenerate
 async function createNodePackage (
   outputDirectoryPath: string,
   apiDependency: Dependency,
-  nativeOnly: boolean) {
+  nativeOnly: boolean,
+  hasConfig: boolean) {
   let currentDirectory = process.cwd()
   shell.cd(outputDirectoryPath)
   await yarn.init()
@@ -99,8 +102,12 @@ async function createNodePackage (
   const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
   const moduleType = nativeOnly ? `${ModuleTypes.NATIVE_API_IMPL}` : `${ModuleTypes.JS_API_IMPL}`
+  const containerGen = {
+    'hasConfig': hasConfig
+  }
   packageJson.ern = {
-    moduleType
+    moduleType,
+    containerGen
   }
   packageJson.keywords
     ? packageJson.keywords.push(moduleType)
