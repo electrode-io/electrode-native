@@ -30,15 +30,15 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     return 'android'
   }
 
-  async generate (
-    paths: {
-      workingDirectory: string,
-      pluginsDownloadDirectory: string,
-      apiImplHull: string,
-      outDirectory: string
-    },
-    reactNativeVersion: string,
-    plugins: Array<Dependency>) {
+  async generate (apiDependency: Dependency,
+                  paths: {
+                    workingDirectory: string,
+                    pluginsDownloadDirectory: string,
+                    apiImplHull: string,
+                    outDirectory: string
+                  },
+                  reactNativeVersion: string,
+                  plugins: Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
 
     await this.fillHull(paths, reactNativeVersion, plugins)
