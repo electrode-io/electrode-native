@@ -5,7 +5,8 @@ import {
 } from 'ern-util'
 
 export interface ApiImplGeneratable {
-  generate (paths: Object,
+  generate (apiDependency: Dependency,
+            paths: Object,
             reactNativeVersion: string,
             plugins: Array<Dependency>): any;
 

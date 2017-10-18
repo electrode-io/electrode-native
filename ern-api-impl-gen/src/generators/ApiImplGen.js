@@ -35,7 +35,7 @@ export default class ApiImplGen {
     for (let generator of generators) {
       try {
         if (generator) {
-          await generator.generate(paths, reactNativeVersion, plugins)
+          await generator.generate(apiDependency, paths, reactNativeVersion, plugins)
         }
       } catch (e) {
         throw new Error(`API implementation project generation failed: ${e}`)
@@ -110,6 +110,7 @@ class NullApiImplGenerator implements ApiImplGeneratable {
   }
 
   async generate (
+    apiDependency: Dependency,
     paths: Object,
     reactNativeVersion: string,
     plugins: Array<Dependency>) {
