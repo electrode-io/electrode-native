@@ -5,7 +5,6 @@ import * as _ios from './ios'
 import * as _mustacheUtils from './mustacheUtils'
 import _ColoredLog from './coloredLog'
 import _config from './config'
-import _npm from './npm'
 import _ReactNativeCli from './ReactNativeCli'
 import _required from './required'
 import _spin from './spin'
@@ -25,7 +24,6 @@ export const android = _android
 export const ios = _ios
 export const ColoredLog = _ColoredLog
 export const config = _config
-export const npm = _npm
 export const ReactNativeCli = _ReactNativeCli
 export const required = _required
 export const spin = _spin
@@ -47,7 +45,6 @@ export default ({
   ios: _ios,
   ColoredLog: _ColoredLog,
   config: _config,
-  npm: _npm,
   ReactNativeCli: _ReactNativeCli,
   required: _required,
   spin: _spin,

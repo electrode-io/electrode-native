@@ -1,9 +1,7 @@
 // @flow
 
 import {
-  exec
-} from './exec'
-import {
+  exec,
   spawn
 } from 'child_process'
 import * as fileUtils from './fileUtil'

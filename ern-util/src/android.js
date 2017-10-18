@@ -1,7 +1,9 @@
 // @flow
 
-import exec from './exec'
-import { spawn } from 'child_process'
+import {
+  exec,
+  spawn
+} from 'child_process'
 import inquirer from 'inquirer'
 import shell from './shell'
 import spin from './spin.js'
