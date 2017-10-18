@@ -6,9 +6,14 @@ import {
   shell
 } from 'ern-util'
 import {
-  manifest
+  manifest,
+  Platform
 } from 'ern-core'
+import {
+  ApiGenUtils
+} from 'ern-api-gen'
 import path from 'path'
+import readDir from 'fs-readdir-recursive'
 
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 
@@ -41,10 +46,11 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
                   plugins: Array<Dependency>) {
     log.debug(`Starting project generation for ${this.platform}`)
 
-    await this.fillHull(paths, reactNativeVersion, plugins)
+    await this.fillHull(apiDependency, paths, reactNativeVersion, plugins)
   }
 
-  async fillHull (paths: Object,
+  async fillHull (apiDependency: Dependency,
+                  paths: Object,
                   reactNativeVersion: string,
                   plugins: Array<Dependency>) {
     try {
@@ -64,6 +70,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
           this.copyPluginToOutput(paths, outputDirectory, plugin, pluginConfig)
         })
       }
+      await this.generateRequestHandlerClasses(apiDependency, paths)
 
       this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
     } catch (e) {
@@ -86,5 +93,51 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       path.join(paths.apiImplHull, 'android', 'lib', 'build.gradle'),
       mustacheView,
       path.join(outputDirectory, 'lib', 'build.gradle'))
+  }
+
+  async generateRequestHandlerClasses (apiDependency: Dependency, paths: Object) {
+    log.debug(`=== updating request handler implementation class ===`)
+    try {
+      const schemaJson = path.join(paths.pluginsDownloadDirectory, `node_modules`, apiDependency.scopedName, `schema.json`)
+      const {outputDir, resourceDir} = ApiImplMavenGenerator.createImplDirectoryAndCopyCommonClasses(paths)
+      const apis = await ApiGenUtils.extractApiEventsAndRequests(schemaJson)
+
+      for (const api of apis) {
+        const {files, classNames} = ApiImplMavenGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
+        for (const file of files) {
+          if (!classNames[file]) {
+            log.warn(`Skipping mustaching of ${file}. No resulting file mapping found, consider adding one. \nThis might cause issues in generated implemenation project.`)
+            throw new Error(`Class name mapping is missing for ${file}, unable to generate implementation class file.`)
+          }
+          await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+            path.join(resourceDir, file),
+            api,
+            path.join(outputDir, classNames[file]))
+        }
+        log.debug(`Api implementation files successfully generated for ${api.apiName}Api`)
+      }
+    } catch (e) {
+      throw new Error(`Failed to update RequestHandlerClass: ${e}`)
+    }
+  }
+
+  static getMustacheFileNamesMap (resourceDir, apiName) {
+    const files = readDir(resourceDir, (f) => (f.endsWith('.mustache')))
+    const classNames = {
+      'requestHandlers.mustache': `${apiName}ApiRequestHandler.java`,
+      'requestHandlerProvider.mustache': `${apiName}ApiRequestHandlerProvider.java`,
+      'apiController.mustache': `${apiName}ApiController.java`
+    }
+    return {files, classNames}
+  }
+
+  static createImplDirectoryAndCopyCommonClasses (paths) {
+    const outputDir = path.join(paths.outDirectory, `/android/lib/src/main/java/com/ern/api/impl/`)
+    shell.mkdir(`-p`, outputDir)
+
+    const resourceDir = path.join(Platform.currentPlatformVersionPath, `ern-api-impl-gen/resources/android`)
+    shell.cp(path.join(resourceDir, `RequestHandlerConfig.java`), outputDir)
+    shell.cp(path.join(resourceDir, `RequestHandlerProvider.java`), outputDir)
+    return {outputDir, resourceDir}
   }
 }
