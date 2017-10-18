@@ -25,7 +25,7 @@ Experienced React Native developers won't notice much difference compared to the
 This command is equivalent to the React Native `react-native init` command.  
 
 - Add JavaScript and/or native dependencies (platform APIs or supported third party native modules) to the MiniApp using the Electrode Native `ern add` command.  
-This command is equivalent the the Yarn `add` or `npm install` commands.  
+This command is equivalent to the Yarn `add` or `npm install` commands.  
 
 - Launch the MiniApp inside the Electrode Native platform runner mobile application.  
 The runner allows you to develop, debug, and test the MiniApp standalone, using the `ern run-android` and/or the `ern run-ios` commands. These commands are the equivalent of the `react-native run-android` and `react-native run-ios` commands.  
