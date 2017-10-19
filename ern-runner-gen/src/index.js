@@ -39,42 +39,23 @@ const runnerHullPath = path.join(__dirname, '..', 'runner-hull')
 // plugins : Array containing all plugins to be included in the generated container
 // miniapp : The miniapp to attach to this runner. Needs to have localPath set !
 // outDirectory : Where the generated project will be outputed
-export async function generateRunner ({
-  plugins,
-  miniapp,
-  outDir,
-  platform,
-  containerGenWorkingDir,
-  reactNativeDevSupportEnabled
-} : {
-  plugins: Array<Object>,
-  miniapp: Object,
+export async function generateRunnerProject (
+  platform: string,
   outDir: string,
-  platform: 'android' | 'ios',
   containerGenWorkingDir: string,
-  reactNativeDevSupportEnabled: boolean
-}) {
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
   try {
-    if (!miniapp.localPath) {
-      throw new Error('Miniapp must come with a local path !')
-    }
-
-    shell.mkdir(outDir)
-
     if (platform === 'android') {
       await generateAndroidRunnerProject(
-        outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
+        outDir, containerGenWorkingDir, mainMiniAppName, { reactNativeDevSupportEnabled })
     } else if (platform === 'ios') {
       await generateIosRunnerProject(
-        outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
+        outDir, containerGenWorkingDir, mainMiniAppName, { reactNativeDevSupportEnabled })
     }
-
-    await generateContainerForRunner({
-      plugins,
-      miniapp,
-      platform,
-      containerGenWorkingDir
-    })
   } catch (e) {
     log.error('Something went wrong: ' + e)
     throw e
@@ -103,26 +84,6 @@ export async function generateAndroidRunnerProject (
   }
 }
 
-export async function regenerateAndroidRunnerConfig (
-  pathToRunnerProject: string,
-  mainMiniAppName: string, {
-    reactNativeDevSupportEnabled
-  } : {
-    reactNativeDevSupportEnabled?: boolean
-  } = {}) {
-  const mustacheView = {
-    miniAppName: mainMiniAppName,
-    pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
-  }
-  const subPathToRunnerConfig = path.join('app', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'RunnerConfig.java')
-  const pathToRunnerConfigHull = path.join(runnerHullPath, 'android', subPathToRunnerConfig)
-  const pathToRunnerConfig = path.join(pathToRunnerProject, subPathToRunnerConfig)
-  shell.cp(pathToRunnerConfigHull, pathToRunnerConfig)
-  await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-    pathToRunnerConfig, mustacheView, pathToRunnerConfig)
-}
-
 export async function generateIosRunnerProject (
   outDir: string,
   containerGenWorkingDir: string,
@@ -144,6 +105,50 @@ export async function generateIosRunnerProject (
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(outDir, file), mustacheView, path.join(outDir, file))
   }
+}
+
+export async function regenerateRunnerConfig (
+  platform: string,
+  outDir: string,
+  containerGenWorkingDir: string,
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
+  try {
+    if (platform === 'android') {
+      await regenerateAndroidRunnerConfig(
+        outDir, containerGenWorkingDir, mainMiniAppName, { reactNativeDevSupportEnabled })
+    } else if (platform === 'ios') {
+      await regenerateIosRunnerConfig(
+        outDir, containerGenWorkingDir, mainMiniAppName, { reactNativeDevSupportEnabled })
+    }
+  } catch (e) {
+    log.error('Something went wrong: ' + e)
+    throw e
+  }
+}
+
+export async function regenerateAndroidRunnerConfig (
+  pathToRunnerProject: string,
+  containerGenWorkingDir: string,
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled
+  } : {
+    reactNativeDevSupportEnabled?: boolean
+  } = {}) {
+  const mustacheView = {
+    miniAppName: mainMiniAppName,
+    pascalCaseMiniAppName: pascalCase(mainMiniAppName),
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
+  }
+  const subPathToRunnerConfig = path.join('app', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'RunnerConfig.java')
+  const pathToRunnerConfigHull = path.join(runnerHullPath, 'android', subPathToRunnerConfig)
+  const pathToRunnerConfig = path.join(pathToRunnerProject, subPathToRunnerConfig)
+  shell.cp(pathToRunnerConfigHull, pathToRunnerConfig)
+  await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+    pathToRunnerConfig, mustacheView, pathToRunnerConfig)
 }
 
 export async function regenerateIosRunnerConfig (
