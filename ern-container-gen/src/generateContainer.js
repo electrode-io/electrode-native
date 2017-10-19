@@ -43,7 +43,7 @@ export default async function generateContainer ({
   const COMPOSITE_MINIAPP_DIRECTORY = path.join(workingDirectory, 'compositeMiniApp')
 
   const paths : ContainerGeneratorPaths = {
-    containerHull: path.join(Platform.currentPlatformVersionPath, 'ern-container-gen', 'hull', generator.platform),
+    containerHull: path.join(__dirname, '..', 'hull', generator.platform),
     containerTemplates: path.join(Platform.currentPlatformVersionPath, 'ern-container-gen', 'templates', generator.platform),
     compositeMiniApp: COMPOSITE_MINIAPP_DIRECTORY,
     pluginsDownloadDirectory: PLUGINS_DOWNLOAD_DIRECTORY,
