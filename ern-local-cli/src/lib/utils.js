@@ -442,14 +442,13 @@ async function runMiniApp (platform: 'android' | 'ios', {
       shell.mkdir('-p', pathToAndroidRunner)
       await spin('Generating Android Runner project',
         generateAndroidRunnerProject(
-          Platform.currentPlatformVersionPath,
           pathToAndroidRunner,
           path.join(Platform.rootDirectory, 'containergen'),
           entryMiniAppName,
           { reactNativeDevSupportEnabled: dev }))
     } else {
       await spin('Regenerating Android Runner Configuration',
-        regenerateAndroidRunnerConfig(Platform.currentPlatformVersionPath,
+        regenerateAndroidRunnerConfig(
           pathToAndroidRunner,
           entryMiniAppName,
           { reactNativeDevSupportEnabled: dev }))
@@ -466,7 +465,6 @@ async function runMiniApp (platform: 'android' | 'ios', {
       shell.mkdir('-p', pathToIosRunner)
       await spin('Generating iOS Runner project',
       generateIosRunnerProject(
-        Platform.currentPlatformVersionPath,
         pathToIosRunner,
         path.join(Platform.rootDirectory, 'containergen'),
         entryMiniAppName,
@@ -474,7 +472,6 @@ async function runMiniApp (platform: 'android' | 'ios', {
     } else {
       await spin('Regenerating iOS Runner Configuration',
         regenerateIosRunnerConfig(
-          Platform.currentPlatformVersionPath,
           pathToIosRunner,
           path.join(Platform.rootDirectory, 'containergen'),
           entryMiniAppName,
