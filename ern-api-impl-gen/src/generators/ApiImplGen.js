@@ -8,8 +8,12 @@ import {
 import {
   yarn
 } from 'ern-core'
+import {
+  ApiGenUtils
+} from 'ern-api-gen'
 import _ from 'lodash'
 import chalk from 'chalk'
+import path from 'path'
 import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
 import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
@@ -31,11 +35,14 @@ export default class ApiImplGen {
 
     await this.downloadApiAndDependencies(apiDependency, paths.pluginsDownloadDirectory, reactNativeVersion)
 
+    const schemaJson = path.join(paths.pluginsDownloadDirectory, `node_modules`, apiDependency.scopedName, `schema.json`)
+    const apis:Array<Object> = await ApiGenUtils.extractApiEventsAndRequests(schemaJson)
+
     const generators: Array<ApiImplGeneratable> = this.getGenerators(platforms)
     for (let generator of generators) {
       try {
         if (generator) {
-          await generator.generate(apiDependency, paths, reactNativeVersion, plugins)
+          await generator.generate(apiDependency, paths, reactNativeVersion, plugins, apis)
         }
       } catch (e) {
         throw new Error(`API implementation project generation failed: ${e}`)
@@ -113,7 +120,8 @@ class NullApiImplGenerator implements ApiImplGeneratable {
     apiDependency: Dependency,
     paths: Object,
     reactNativeVersion: string,
-    plugins: Array<Dependency>) {
+    plugins: Array<Dependency>,
+    apis: Array<Object>) {
     log.debug('NullApiImplGenerator generate - noop')
   }
 }

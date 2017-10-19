@@ -9,9 +9,7 @@ import {
   manifest,
   Platform
 } from 'ern-core'
-import {
-  ApiGenUtils
-} from 'ern-api-gen'
+
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 
@@ -43,16 +41,18 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
                     outDirectory: string
                   },
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>) {
+                  plugins: Array<Dependency>,
+                  apis: Array<Object>) {
     log.debug(`Starting project generation for ${this.platform}`)
 
-    await this.fillHull(apiDependency, paths, reactNativeVersion, plugins)
+    await this.fillHull(apiDependency, paths, reactNativeVersion, plugins, apis)
   }
 
   async fillHull (apiDependency: Dependency,
                   paths: Object,
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>) {
+                  plugins: Array<Dependency>,
+                  apis: Array<Object>) {
     try {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
 
@@ -70,7 +70,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
           this.copyPluginToOutput(paths, outputDirectory, plugin, pluginConfig)
         })
       }
-      await this.generateRequestHandlerClasses(apiDependency, paths)
+      await this.generateRequestHandlerClasses(apiDependency, paths, apis)
 
       this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
     } catch (e) {
@@ -95,12 +95,10 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       path.join(outputDirectory, 'lib', 'build.gradle'))
   }
 
-  async generateRequestHandlerClasses (apiDependency: Dependency, paths: Object) {
+  async generateRequestHandlerClasses (apiDependency: Dependency, paths: Object, apis: Array<Object>) {
     log.debug(`=== updating request handler implementation class ===`)
     try {
-      const schemaJson = path.join(paths.pluginsDownloadDirectory, `node_modules`, apiDependency.scopedName, `schema.json`)
       const {outputDir, resourceDir} = ApiImplMavenGenerator.createImplDirectoryAndCopyCommonClasses(paths)
-      const apis = await ApiGenUtils.extractApiEventsAndRequests(schemaJson)
 
       for (const api of apis) {
         const {files, classNames} = ApiImplMavenGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
