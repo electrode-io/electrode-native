@@ -64,10 +64,12 @@ exports.handler = async function ({
   outputDirectory: string,
   hasConfig: boolean
 }) {
-  const isPackageNameInNpm = await utils.doesPackageExistInNpm(api)
+  // check if the packageName for specified {apiName}-impl exists
+  const apiImpl = `${api}-impl`
+  const isPackageNameInNpm = await utils.doesPackageExistInNpm(apiImpl)
   // If package name exists in the npm
   if (isPackageNameInNpm) {
-    const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(api)
+    const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(apiImpl)
     // If user wants to stop execution if npm package name conflicts
     if (!skipNpmNameConflict) {
       return
