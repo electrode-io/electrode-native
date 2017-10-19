@@ -8,10 +8,8 @@ import {
   yarn
 } from 'ern-core'
 import {
-  generateAndroidRunnerProject,
-  generateIosRunnerProject,
-  regenerateAndroidRunnerConfig,
-  regenerateIosRunnerConfig
+  generateRunnerProject,
+  regenerateRunnerConfig
 } from 'ern-runner-gen'
 import {
   android,
@@ -431,56 +429,34 @@ async function runMiniApp (platform: 'android' | 'ios', {
     }
   }
 
-  if (platform === 'android') {
-    await generateContainerForRunner(platform, {
-      napDescriptor: napDescriptor || undefined,
-      dependenciesObjs,
-      miniAppsPaths
-    })
-    const pathToAndroidRunner = path.join(cwd, platform)
-    if (!fs.existsSync(pathToAndroidRunner)) {
-      shell.mkdir('-p', pathToAndroidRunner)
-      await spin('Generating Android Runner project',
-        generateAndroidRunnerProject(
-          pathToAndroidRunner,
-          path.join(Platform.rootDirectory, 'containergen'),
-          entryMiniAppName,
-          { reactNativeDevSupportEnabled: dev }))
-    } else {
-      await spin('Regenerating Android Runner Configuration',
-        regenerateAndroidRunnerConfig(
-          pathToAndroidRunner,
-          entryMiniAppName,
-          { reactNativeDevSupportEnabled: dev }))
-    }
-    await launchAndroidRunner(pathToAndroidRunner)
-  } else if (platform === 'ios') {
-    await generateContainerForRunner(
-      platform, {
-        napDescriptor: napDescriptor || undefined,
-        dependenciesObjs,
-        miniAppsPaths })
-    const pathToIosRunner = path.join(cwd, platform)
-    if (!fs.existsSync(pathToIosRunner)) {
-      shell.mkdir('-p', pathToIosRunner)
-      await spin('Generating iOS Runner project',
-      generateIosRunnerProject(
-        pathToIosRunner,
+  await generateContainerForRunner(platform, {
+    napDescriptor: napDescriptor || undefined,
+    dependenciesObjs,
+    miniAppsPaths
+  })
+
+  const pathToRunner = path.join(cwd, platform)
+
+  if (!fs.existsSync(pathToRunner)) {
+    shell.mkdir('-p', pathToRunner)
+    await spin(`Generating ${platform} Runner project`,
+      generateRunnerProject(
+        platform,
+        pathToRunner,
         path.join(Platform.rootDirectory, 'containergen'),
         entryMiniAppName,
         { reactNativeDevSupportEnabled: dev }))
-    } else {
-      await spin('Regenerating iOS Runner Configuration',
-        regenerateIosRunnerConfig(
-          pathToIosRunner,
-          path.join(Platform.rootDirectory, 'containergen'),
-          entryMiniAppName,
-          { reactNativeDevSupportEnabled: dev }))
-    }
-    await launchIosRunner(pathToIosRunner)
   } else {
-    throw new Error(`Unsupported platform : ${platform}`)
+    await spin(`Regenerating ${platform} Runner Configuration`,
+      regenerateRunnerConfig(
+        platform,
+        pathToRunner,
+        path.join(Platform.rootDirectory, 'containergen'),
+        entryMiniAppName,
+        { reactNativeDevSupportEnabled: dev }))
   }
+
+  await launchRunner(platform, pathToRunner)
 }
 
 async function generateContainerForRunner (
@@ -508,6 +484,14 @@ async function generateContainerForRunner (
         nativeAppName: 'runner',
         extraNativeDependencies: dependenciesObjs
       }))
+  }
+}
+
+async function launchRunner (platform: string, pathToRunner: string) {
+  if (platform === 'android') {
+    return launchAndroidRunner(pathToRunner)
+  } else if (platform === 'ios') {
+    return launchIosRunner(pathToRunner)
   }
 }
 
