@@ -170,7 +170,7 @@ export async function regenerateIosRunnerConfig (
     pathToElectrodeContainerXcodeProj: path.join(containerGenWorkingDir, 'out', 'ios')
   }
   const pathToRunnerConfig = path.join(pathToRunnerProject, 'ErnRunner/RunnerConfig.m')
-  shell.cp(path.join(runnerHullPath}, 'ios', 'ErnRunner', 'RunnerConfig.m', pathToRunnerConfig))
+  shell.cp(path.join(runnerHullPath, 'ios', 'ErnRunner', 'RunnerConfig.m'), pathToRunnerConfig)
   await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
     pathToRunnerConfig, mustacheView, pathToRunnerConfig)
 }
