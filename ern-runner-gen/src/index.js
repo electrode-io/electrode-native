@@ -33,6 +33,7 @@ function pascalCase (str: string) {
 // =============================================================================
 
 const RUNNER_CONTAINER_VERSION = '1.0.0'
+const runnerHullPath = path.join(__dirname, '..', 'runner-hull')
 
 // Generate the runner project
 // platformPath : Path to the ern-platform to use
@@ -98,8 +99,8 @@ export async function generateAndroidRunnerProject (
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
   }
-  shell.cp('-R', path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'android', '*'), outDir)
-  const files = readDir(path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'android'),
+  shell.cp('-R', path.join(runnerHullPath, 'android', '*'), outDir)
+  const files = readDir(path.join(runnerHullPath, 'android'),
             (f) => (!f.endsWith('.jar') && !f.endsWith('.png')))
   for (const file of files) {
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
@@ -121,7 +122,7 @@ export async function regenerateAndroidRunnerConfig (
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
   }
   const subPathToRunnerConfig = path.join('app', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'RunnerConfig.java')
-  const pathToRunnerConfigHull = path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'android', subPathToRunnerConfig)
+  const pathToRunnerConfigHull = path.join(runnerHullPath, 'android', subPathToRunnerConfig)
   const pathToRunnerConfig = path.join(pathToRunnerProject, subPathToRunnerConfig)
   shell.cp(pathToRunnerConfigHull, pathToRunnerConfig)
   await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
@@ -144,8 +145,8 @@ export async function generateIosRunnerProject (
     pathToElectrodeContainerXcodeProj: path.join(containerGenWorkingDir, 'out', 'ios')
   }
 
-  shell.cp('-R', path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'ios', '*'), outDir)
-  const files = readDir(path.join(platformPath, 'ern-runner-gen', 'runner-hull', 'ios'))
+  shell.cp('-R', path.join(runnerHullPath, 'ios', '*'), outDir)
+  const files = readDir(path.join(runnerHullPath, 'ios'))
   for (const file of files) {
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(outDir, file), mustacheView, path.join(outDir, file))
@@ -169,7 +170,7 @@ export async function regenerateIosRunnerConfig (
     pathToElectrodeContainerXcodeProj: path.join(containerGenWorkingDir, 'out', 'ios')
   }
   const pathToRunnerConfig = path.join(pathToRunnerProject, 'ErnRunner/RunnerConfig.m')
-  shell.cp(`${platformPath}/ern-runner-gen/runner-hull/ios/ErnRunner/RunnerConfig.m`, pathToRunnerConfig)
+  shell.cp(path.join(runnerHullPath}, 'ios', 'ErnRunner', 'RunnerConfig.m', pathToRunnerConfig))
   await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
     pathToRunnerConfig, mustacheView, pathToRunnerConfig)
 }
