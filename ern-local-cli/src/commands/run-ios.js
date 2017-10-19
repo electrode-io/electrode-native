@@ -54,6 +54,10 @@ exports.handler = async function ({
   dev?: boolean,
   usePreviousEmulator?: boolean
 }) {
+  if (process.platform !== 'darwin') {
+    return log.error('This command can only be used on Mac OS X')
+  }
+
   let emulatorConfig = ernConfig.getValue('emulatorConfig', {
     android: {usePreviousEmulator: false, emulatorName: ''},
     ios: {usePreviousEmulator: false, simulatorUdid: ''}
