@@ -98,21 +98,7 @@ async function createNodePackage (
   await yarn.init()
   await yarn.add(apiDependency.path)
   shell.rm('-rf', path.join(outputDirectoryPath, 'node_modules'))
-  log.debug('Removed node modules directory')
-  const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
-  const moduleType = nativeOnly ? `${ModuleTypes.NATIVE_API_IMPL}` : `${ModuleTypes.JS_API_IMPL}`
-  const containerGen = {
-    'hasConfig': hasConfig
-  }
-  packageJson.ern = {
-    moduleType,
-    containerGen
-  }
-  packageJson.keywords
-    ? packageJson.keywords.push(moduleType)
-    : packageJson.keywords = [moduleType]
-  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
+  ernifyPackageJson(outputDirectoryPath, nativeOnly, hasConfig)
   shell.cd(currentDirectory)
 }
 
@@ -138,4 +124,21 @@ function getPlatforms (nativeOnly: boolean): Array<string> {
   return nativeOnly
     ? [`android`, `ios`]
     : [`js`]
+}
+
+function ernifyPackageJson (outputDirectoryPath, nativeOnly, hasConfig) {
+  const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+  const moduleType = nativeOnly ? `${ModuleTypes.NATIVE_API_IMPL}` : `${ModuleTypes.JS_API_IMPL}`
+  const containerGen = {
+    'hasConfig': hasConfig
+  }
+  packageJson.ern = {
+    moduleType,
+    containerGen
+  }
+  packageJson.keywords
+    ? packageJson.keywords.push(moduleType)
+    : packageJson.keywords = [moduleType]
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
 }
