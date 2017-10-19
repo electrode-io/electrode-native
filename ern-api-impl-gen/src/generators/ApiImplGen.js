@@ -14,6 +14,7 @@ import {
 import _ from 'lodash'
 import chalk from 'chalk'
 import path from 'path'
+import fs from 'fs'
 import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
 import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
@@ -35,8 +36,9 @@ export default class ApiImplGen {
 
     await this.downloadApiAndDependencies(apiDependency, paths.pluginsDownloadDirectory, reactNativeVersion)
 
-    const schemaJson = path.join(paths.pluginsDownloadDirectory, `node_modules`, apiDependency.scopedName, `schema.json`)
+    const schemaJson = path.join(paths.pluginsDownloadDirectory, 'node_modules', apiDependency.scopedName, 'schema.json')
     const apis:Array<Object> = await ApiGenUtils.extractApiEventsAndRequests(schemaJson)
+    this.updatePackageJsonWithApiNames(paths.outDirectory, apis)
 
     const generators: Array<ApiImplGeneratable> = this.getGenerators(platforms)
     for (let generator of generators) {
@@ -108,6 +110,13 @@ export default class ApiImplGen {
           return new NullApiImplGenerator()
       }
     })
+  }
+
+  updatePackageJsonWithApiNames (outputDirectoryPath: string, apis: Array<Object>) {
+    const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+    packageJson.ern.containerGen.apiNames = _.map(apis, api => api.apiName)
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
   }
 }
 
