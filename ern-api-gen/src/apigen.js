@@ -13,10 +13,12 @@ import {
 import {
   Dependency,
   fileUtils,
-  npm,
   shell
 } from 'ern-util'
 import inquirer from 'inquirer'
+import { 
+  exec
+} from 'child_process'
 
 /**
  * ==============================================================================
@@ -207,8 +209,20 @@ async function publish ({version}: { version: string }) {
     message: `Would you like to NPM publish version [${version}] of this API ?`
   }])
   if (answers.confirmNpmPublish) {
-    await npm.npm('publish')
+    await npmPublish()
   }
+}
+
+async function npmPublish() {
+  return new Promise((resolve, reject) => {
+    exec('npm publish', (err, stdout, stderr) => {
+      if (err) {
+        log.error(stderr)
+        return reject(err)
+      }
+      return resolve(stdout)
+    })
+  })
 }
 
 exports.default = {

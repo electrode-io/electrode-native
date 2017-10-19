@@ -5,8 +5,7 @@ import {
   shell
 } from 'ern-util'
 import {
-  MiniApp,
-  Platform
+  MiniApp
 } from 'ern-core'
 import {
   capitalizeFirstLetter
@@ -44,7 +43,7 @@ export default async function generateContainer ({
 
   const paths : ContainerGeneratorPaths = {
     containerHull: path.join(__dirname, '..', 'hull', generator.platform),
-    containerTemplates: path.join(Platform.currentPlatformVersionPath, 'ern-container-gen', 'templates', generator.platform),
+    containerTemplates: path.join(__dirname, '..', 'templates', generator.platform),
     compositeMiniApp: COMPOSITE_MINIAPP_DIRECTORY,
     pluginsDownloadDirectory: PLUGINS_DOWNLOAD_DIRECTORY,
     outDirectory: OUT_DIRECTORY

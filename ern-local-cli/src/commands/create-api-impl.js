@@ -48,7 +48,6 @@ exports.builder = function (yargs: any) {
 
 const WORKING_DIRECTORY = path.join(Platform.rootDirectory, `api-impl-gen`)
 const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, `plugins`)
-const platformPath = `${Platform.currentPlatformVersionPath}`
 
 exports.handler = async function ({
   api,
@@ -104,7 +103,7 @@ exports.handler = async function ({
       reactNativeVersion,
       hasConfig,
       paths: {
-        apiImplHull: path.join(platformPath, `ern-api-impl-gen/hull`),
+        apiImplHull: path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'hull'),
         pluginsDownloadDirectory: PLUGIN_DIRECTORY,
         workingDirectory: WORKING_DIRECTORY,
         outDirectory: ''

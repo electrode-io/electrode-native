@@ -36,12 +36,10 @@ const RUNNER_CONTAINER_VERSION = '1.0.0'
 const runnerHullPath = path.join(__dirname, '..', 'runner-hull')
 
 // Generate the runner project
-// platformPath : Path to the ern-platform to use
 // plugins : Array containing all plugins to be included in the generated container
 // miniapp : The miniapp to attach to this runner. Needs to have localPath set !
 // outDirectory : Where the generated project will be outputed
 export async function generateRunner ({
-  platformPath,
   plugins,
   miniapp,
   outDir,
@@ -49,7 +47,6 @@ export async function generateRunner ({
   containerGenWorkingDir,
   reactNativeDevSupportEnabled
 } : {
-  platformPath: string,
   plugins: Array<Object>,
   miniapp: Object,
   outDir: string,
@@ -66,14 +63,13 @@ export async function generateRunner ({
 
     if (platform === 'android') {
       await generateAndroidRunnerProject(
-        platformPath, outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
+        outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
     } else if (platform === 'ios') {
       await generateIosRunnerProject(
-        platformPath, outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
+        outDir, containerGenWorkingDir, miniapp.name, { reactNativeDevSupportEnabled })
     }
 
     await generateContainerForRunner({
-      platformPath,
       plugins,
       miniapp,
       platform,
@@ -86,7 +82,6 @@ export async function generateRunner ({
 }
 
 export async function generateAndroidRunnerProject (
-  platformPath: string,
   outDir: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string, {
@@ -109,7 +104,6 @@ export async function generateAndroidRunnerProject (
 }
 
 export async function regenerateAndroidRunnerConfig (
-  platformPath: string,
   pathToRunnerProject: string,
   mainMiniAppName: string, {
     reactNativeDevSupportEnabled
@@ -130,7 +124,6 @@ export async function regenerateAndroidRunnerConfig (
 }
 
 export async function generateIosRunnerProject (
-  platformPath: string,
   outDir: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string, {
@@ -154,7 +147,6 @@ export async function generateIosRunnerProject (
 }
 
 export async function regenerateIosRunnerConfig (
-  platformPath: string,
   pathToRunnerProject: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string,
