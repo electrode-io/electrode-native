@@ -270,7 +270,7 @@ Are you sure this is a MiniApp ?`)
           log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies)}`)
           for (let dep: Dependency of nativeDependencies) {
             if (Dependency.same(dep.withoutVersion(), dependency, {ignoreVersion: true})) {
-              if (MiniApp.isDependencyApiOrApiImpl(dep.name)) {
+              if (utils.isDependencyApiOrApiImpl(dep.name)) {
                 log.debug(`This is an api or api-impl`)
                 log.warn(`${dep.toString()} is not declared in the Manifest. You might consider adding it.`)
                 finalDependency = dep
@@ -330,10 +330,6 @@ Are you sure this is a MiniApp ?`)
       log.warn(`You might want to update the version in your Manifest to add this dependency to ${this.name}`)
       return dependency
     }
-  }
-
-  static isDependencyApiOrApiImpl (dependencyName: string): boolean {
-    return (/^react-native-.+-api$|^react-native-.+-api-impl$/.test(dependencyName))
   }
 
   async upgradeToPlatformVersion (versionToUpgradeTo: string) : Promise<*> {
