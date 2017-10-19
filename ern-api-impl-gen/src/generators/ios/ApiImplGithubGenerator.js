@@ -29,7 +29,8 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
   async generate (apiDependency: Dependency,
                   paths : Object,
                   reactNativeVersion: string,
-                  plugins : Array<Dependency>) {
+                  plugins : Array<Dependency>,
+                  apis: Array<Object>) {
     log.debug(`Starting project generation for ${this.platform}`)
     await this.fillHull(paths, reactNativeVersion, plugins)
   }
