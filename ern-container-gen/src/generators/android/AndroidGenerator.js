@@ -6,7 +6,8 @@ import {
   ContainerGeneratorConfig,
   MavenUtils,
   MiniApp,
-  GitUtils
+  GitUtils,
+  utils
 } from 'ern-core'
 import {
   mustacheUtils,
@@ -161,6 +162,11 @@ export default class AndroidGenerator implements ContainerGenerator {
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
+
+        if (utils.isDependencyApiImpl(plugin.name)) {
+          this.populateApiImplMustacheView(pluginSourcePath, mustacheView)
+        }
+
         const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)
         shell.cd(pathToPluginProject)
 
@@ -228,6 +234,24 @@ export default class AndroidGenerator implements ContainerGenerator {
     } catch (e) {
       log.error('[fillContainerHull] Something went wrong: ' + e)
       throw e
+    }
+  }
+
+  populateApiImplMustacheView (pluginSourcePath: string, mustacheView: Object) {
+    const packageJson = JSON.parse(fs.readFileSync(path.join(pluginSourcePath, 'package.json'), 'utf-8'))
+    const containerGenConfig = packageJson.ern.containerGen
+    if (containerGenConfig && containerGenConfig.apiNames) {
+      mustacheView.apiImplementations = mustacheView.apiImplementations ? mustacheView.apiImplementations : []
+      for (const apiName of containerGenConfig.apiNames) {
+        let api = {
+          apiName,
+          hasConfig: containerGenConfig.hasConfig,
+          apiVariableName: utils.camelize(apiName, true)
+        }
+        mustacheView.apiImplementations.push(api)
+      }
+    } else {
+      log.warn(`!!!!! containerGen entry not valid for api implementation, skipping api-impl code gen in container for ${packageJson.name} !!!!`)
     }
   }
 
