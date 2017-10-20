@@ -92,11 +92,12 @@ export async function generateIosRunnerProject (
   } : {
     reactNativeDevSupportEnabled?: boolean
   } = {}) {
+  const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(path.join(containerGenWorkingDir, 'out', 'ios'))
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
-    pathToElectrodeContainerXcodeProj: path.join(containerGenWorkingDir, 'out', 'ios')
+    pathToElectrodeContainerXcodeProj
   }
 
   shell.cp('-R', path.join(runnerHullPath, 'ios', '*'), outDir)
@@ -160,11 +161,12 @@ export async function regenerateIosRunnerConfig (
   } : {
     reactNativeDevSupportEnabled?: boolean
   } = {}) {
+  const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(path.join(containerGenWorkingDir, 'out', 'ios'))
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
-    pathToElectrodeContainerXcodeProj: path.join(containerGenWorkingDir, 'out', 'ios')
+    pathToElectrodeContainerXcodeProj
   }
   const pathToRunnerConfig = path.join(pathToRunnerProject, 'ErnRunner/RunnerConfig.m')
   shell.cp(path.join(runnerHullPath, 'ios', 'ErnRunner', 'RunnerConfig.m'), pathToRunnerConfig)
@@ -196,4 +198,10 @@ export async function generateContainerForRunner ({
     miniapps: [miniapp],
     workingDirectory: containerGenWorkingDir
   }))
+}
+
+function replaceHomePathWithTidle (p: string) {
+  return process.env.HOME
+    ? p.replace(process.env.HOME, '~')
+    : p
 }
