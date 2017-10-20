@@ -41,6 +41,12 @@ import com.facebook.react.shell.MainReactPackage;
 {{#plugins}}
 import com.walmartlabs.ern.container.plugins.{{name}};
 {{/plugins}}
+{{#apiImplementations}}
+import com.ern.api.impl.{{apiName}}ApiController;
+{{#hasConfig}}
+import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
+{{/hasConfig}}
+{{/apiImplementations}}
 
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
@@ -161,7 +167,12 @@ public class ElectrodeReactContainer {
       {{#configurable}}
             ,@NonNull final {{name}}.Config {{lcname}}Config
       {{/configurable}}
-    {{/plugins}} ) {
+    {{/plugins}}
+     {{#apiImplementations}}
+     {{#hasConfig}}
+        ,@NonNull final {{apiName}}ApiRequestHandlerProvider.{{apiName}}ApiConfig {{apiVariableName}}ApiConfig
+     {{/hasConfig}}
+     {{/apiImplementations}}) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
@@ -174,6 +185,10 @@ public class ElectrodeReactContainer {
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
+
+            {{#apiImplementations}}
+            {{apiName}}ApiController.register({{#hasConfig}}{{apiVariableName}}ApiConfig{{/hasConfig}}{{^hasConfig}}null{{/hasConfig}});
+            {{/apiImplementations}}
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
