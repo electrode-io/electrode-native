@@ -7,9 +7,23 @@
 
 **Options**  
 
-`ern run-ios <miniapp>`
-
-* Launch a specified MiniApp in the Runner application  
+ `--dev [true|false]`
+ * Enable or disable React Native dev support
+ 
+ `--miniapps/m`
+ * One or more MiniApps to combine in the Runner Container
+ 
+ `--dependencies, --deps`
+ * One or more native dependencies to add to the Runner Container
+ 
+ `--descriptor, -d`
+ * complete native application descriptor
+ 
+ `--mainMiniAppName`
+ * Name of the MiniApp to launch when starting the Runner application
+ 
+ `--usePreviousEmulator/-u`
+ * Use the previously selected emulator to avoid prompt
 
 #### Remarks
 * You can launch the MiniApp located in the current working directory or on a connected iOS device or running emulator if available. If a connected iOS device is not available, the command prompts you to select an emulator to launch from the list of installed emulator images.  
