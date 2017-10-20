@@ -207,7 +207,7 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         private {{{dataType}}} {{baseName}};
         {{/optionalParams}}
 
-        public Builder({{#requiredParams}}@NonNull {{dataType}} {{baseName}}{{#hasMore}}, {{/hasMore}}{{/requiredParams}}) {
+        public Builder({{#requiredParams}}@NonNull {{{dataType}}} {{baseName}}{{#hasMore}}, {{/hasMore}}{{/requiredParams}}) {
         {{#requiredParams}}
             this.{{baseName}} = {{baseName}};
         {{/requiredParams}}

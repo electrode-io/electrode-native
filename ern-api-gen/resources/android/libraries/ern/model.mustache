@@ -76,7 +76,7 @@ public class {{classname}} implements Parcelable, Bridgeable {
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getFloatArray("{{baseName}}"), Float.class) : null;
         {{/isFloat}}
         {{^isPrimitiveType}}
-        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getParcelableArray("{{baseName}}"), {{datatype}}.class) : null;
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getParcelableArray("{{baseName}}"), {{{datatype}}}.class) : null;
         {{/isPrimitiveType}}
         {{/items}}
         {{/isListContainer}}
@@ -237,7 +237,7 @@ public class {{classname}} implements Parcelable, Bridgeable {
         private {{{datatype}}} {{name}};
         {{/optionalVars}}
 
-        public Builder({{#requiredVars}}@NonNull {{datatype}} {{name}}{{^-last}}, {{/-last}}{{/requiredVars}}) {
+        public Builder({{#requiredVars}}@NonNull {{{datatype}}} {{name}}{{^-last}}, {{/-last}}{{/requiredVars}}) {
         {{#requiredVars}}
             this.{{name}} = {{name}};
         {{/requiredVars}}
