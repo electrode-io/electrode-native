@@ -82,8 +82,9 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     log.debug(`injecting ${plugin.name} code.`)
     const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName,
       pluginConfig.android.moduleName === `lib` ? path.join('src', 'main', 'java', '*') : path.join('src', 'main', 'java'))
-    log.debug(`Copying ${plugin.name} code from ${pluginSrcDirectory} to ${path.join(outputDirectory, 'lib', 'src', 'main', 'java')}`)
-    shell.cp(`-R`, pluginSrcDirectory, path.join(outputDirectory, 'lib', 'src', 'main', 'java'))
+    const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
+    log.debug(`Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`)
+    shell.cp(`-R`, pluginSrcDirectory, pluginOutputDirectory)
   }
 
   updateBuildGradle (paths: Object, reactNativeVersion: string, outputDirectory: string): Promise<*> {
