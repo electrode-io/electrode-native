@@ -1,7 +1,5 @@
 // @flow
 
-import noop from './noop'
-
 export default class NativeApplicationDescriptor {
   _name: string
   _platform: ?string
@@ -11,6 +9,12 @@ export default class NativeApplicationDescriptor {
     name: string,
     platform: ?string,
     version: ?string) {
+    if (!name) {
+      throw new Error('[NativeApplicationDescriptor] name is required')
+    }
+    if (!platform && version) {
+      throw new Error('[NativeApplicationDescriptor] platform is required when providing version')
+    }
     this._name = name
     this._platform = platform
     this._version = version
@@ -42,8 +46,8 @@ export default class NativeApplicationDescriptor {
 
   toString () : string {
     let str = this._name
-    this._platform ? str += `:${this._platform}` : noop()
-    this._version ? str += `:${this._version}` : noop()
+    str += this._platform ? `:${this._platform}` : ''
+    str += this._version ? `:${this._version}` : ''
     return str
   }
 }

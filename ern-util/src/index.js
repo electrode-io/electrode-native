@@ -12,7 +12,6 @@ import _tagOneLine from './tagoneline'
 import _CodePushCli from './CodePushCli'
 import _Dependency from './Dependency'
 import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
-import _noop from './noop'
 import _findNativeDependencies from './findNativeDependencies'
 import _Utils from './utils'
 import _DependencyPath from './DependencyPath'
@@ -31,7 +30,6 @@ export const tagOneLine = _tagOneLine
 export const CodePushCli = _CodePushCli
 export const Dependency = _Dependency
 export const NativeApplicationDescriptor = _NativeApplicationDescriptor
-export const noop = _noop
 export const findNativeDependencies = _findNativeDependencies
 export const Utils = _Utils
 export const DependencyPath = _DependencyPath
@@ -52,7 +50,6 @@ export default ({
   CodePushCli: _CodePushCli,
   Dependency: _Dependency,
   NativeApplicationDescriptor: _NativeApplicationDescriptor,
-  noop: _noop,
   findNativeDependencies: _findNativeDependencies,
   Utils: _Utils,
   DependencyPath: _DependencyPath,
