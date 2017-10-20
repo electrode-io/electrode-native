@@ -78,25 +78,35 @@ export default class ApiImplGen {
     await spin(`Downloading ${dependency.toString()}`, yarn.add(dependency.path))
   }
 
-  async getDependencies (apiDependency: Dependency) : Promise<Array<Dependency>> {
+  async getDependencies (apiDependency: Dependency): Promise<Array<Dependency>> {
     try {
       log.info(`Looking for peerDependencies`)
       const apiPackageInfo = await yarn.info(apiDependency.path, {json: true})
 
-      let dependencies = []
+      let pluginsNames = []
+
       if (apiPackageInfo.data.peerDependencies) {
-        let pluginsNames = []
-        for (let dependency in apiPackageInfo.data.peerDependencies) {
-          pluginsNames.push(`${dependency}@${apiPackageInfo.data.peerDependencies[dependency]}`)
-        }
-        dependencies = _.map(pluginsNames, Dependency.fromString)
-      } else {
-        log.warn('no peer dependencies found.')
+        this.pushDependencyNames(apiPackageInfo.data.peerDependencies, pluginsNames)
       }
-      return dependencies
+
+      if (apiPackageInfo.data.dependencies) {
+        this.pushDependencyNames(apiPackageInfo.data.dependencies, pluginsNames)
+      }
+
+      if (pluginsNames.length === 0) {
+        log.info(`no other dependencies found for ${apiDependency.name}`)
+      }
+      return _.map(pluginsNames, Dependency.fromString)
     } catch (e) {
       throw new Error(`getDependencies: ${e}`)
     }
+  }
+
+  pushDependencyNames (dependencies: Object, pluginsNames: Array<string>) : Array<string> {
+    for (const dependency of Object.keys(dependencies)) {
+      pluginsNames.push(`${dependency}@${dependencies[dependency]}`)
+    }
+    return pluginsNames
   }
 
   getGenerators (platforms: Array<string>): Array<ApiImplGeneratable> {
