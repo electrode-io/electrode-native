@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  manifest,
+  utils,
   Platform
 } from 'ern-core'
 import {
@@ -11,7 +11,7 @@ import {
   Dependency,
   DependencyPath
 } from 'ern-util'
-import utils from '../lib/utils'
+import cliUtils from '../lib/utils'
 
 import inquirer from 'inquirer'
 
@@ -43,7 +43,7 @@ exports.builder = function (yargs: any) {
     type: 'bool',
     describe: 'Indicates if this api implementation requires some config during initialization. \nThis command will be stored and reused during container generation to enforce config initialization'
   })
-  .epilog(utils.epilog(exports))
+  .epilog(cliUtils.epilog(exports))
 }
 
 const WORKING_DIRECTORY = path.join(Platform.rootDirectory, `api-impl-gen`)
@@ -66,10 +66,10 @@ exports.handler = async function ({
 }) {
   // check if the packageName for specified {apiName}-impl exists
   const apiImpl = `${api}-impl`
-  const isPackageNameInNpm = await utils.doesPackageExistInNpm(apiImpl)
+  const isPackageNameInNpm = await cliUtils.doesPackageExistInNpm(apiImpl)
   // If package name exists in the npm
   if (isPackageNameInNpm) {
-    const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(apiImpl)
+    const skipNpmNameConflict = await cliUtils.promptSkipNpmNameConflictCheck(apiImpl)
     // If user wants to stop execution if npm package name conflicts
     if (!skipNpmNameConflict) {
       return
@@ -77,26 +77,19 @@ exports.handler = async function ({
   }
   log.info(`Generating API implementation for ${api}`)
 
-  const reactNativeVersionLessDependency = Dependency.fromString('react-native')
-  let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
-
-  if (!reactNativeDependency) {
-    return log.error('Could not retrieve react native dependency from manifest')
-  } else {
-    log.debug(`Will generate api implementation using react native version: ${reactNativeDependency.version}`)
-  }
-
-  let reactNativeVersion = reactNativeDependency.version
-
-  if (jsOnly && nativeOnly) {
-    log.warn('Looks like both js and native are selected, should be only one')
-    nativeOnly = await promptPlatformSelection()
-  }
-
-  if (!jsOnly && !nativeOnly) {
-    nativeOnly = await promptPlatformSelection()
-  }
   try {
+    let reactNativeVersion = await utils.reactNativeManifestVersion()
+    log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
+
+    if (jsOnly && nativeOnly) {
+      log.warn('Looks like both js and native are selected, should be only one')
+      nativeOnly = await promptPlatformSelection()
+    }
+
+    if (!jsOnly && !nativeOnly) {
+      nativeOnly = await promptPlatformSelection()
+    }
+
     await generateApiImpl({
       apiDependency: Dependency.fromPath(DependencyPath.fromString(api)),
       outputDirectory,

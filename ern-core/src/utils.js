@@ -9,6 +9,7 @@ import {
 } from 'ern-util'
 import http from 'http'
 import camelCase from 'lodash/camelCase'
+import manifest from './Manifest'
 
 export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<boolean> {
   if (typeof pkg === 'string') {
@@ -79,4 +80,18 @@ export function isDependencyApi (dependencyName: string): boolean {
 
 export function isDependencyApiImpl (dependencyName: string): boolean {
   return (/^react-native-.+-api-impl$/.test(dependencyName))
+}
+
+/**
+ * Version of react-native dependency in manifest
+ */
+export async function reactNativeManifestVersion () {
+  const reactNativeVersionLessDependency = Dependency.fromString('react-native')
+  let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
+
+  if (!reactNativeDependency) {
+    throw new Error('Could not retrieve react native dependency from manifest')
+  }
+
+  return reactNativeDependency.version
 }
