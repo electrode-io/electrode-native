@@ -25,7 +25,7 @@ exports.builder = function (yargs: any) {
     .option('force', {
       alias: 'f',
       type: 'bool',
-      describe: 'Force upgrade (ignore compatiblity issues -at your own risks-)'
+      describe: 'Force upgrade (ignore compatibility issues -at your own risks-)'
     })
     .option('appName', {
       describe: 'Application name'
@@ -96,11 +96,11 @@ exports.handler = async function ({
     isCompleteNapDescriptorString: { descriptor },
     napDescriptorExistInCauldron: {
       descriptor,
-      extraErrorMessage: 'You cannot CodePush to a non existin native application version.'
+      extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
     },
     noGitOrFilesystemPath: {
       obj: miniapps,
-      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+      extraErrorMessage: 'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.'
     },
     publishedToNpm: {
       obj: miniapps,
