@@ -1,6 +1,6 @@
 {
   "name": "ern-api-gen",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Electrode Native API generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -51,8 +51,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "collections": "^5.0.6",
-    "ern-core": "0.8.0",
-    "ern-util": "0.8.0",
+    "ern-core": "0.9.0",
+    "ern-util": "0.9.0",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.4",
@@ -65,7 +65,7 @@
     "sway": "^1.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.8.0"
+    "ern-util-dev": "0.9.0"
   },
   "engines": {
     "node": ">=4.5"
