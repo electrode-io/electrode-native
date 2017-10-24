@@ -57,7 +57,7 @@
     "mustache": "^2.3.0",
     "semver": "^5.4.1",
     "tmp": "^0.0.31",
-    "xcode-ern": "1.0.0"
+    "xcode-ern": "1.0.1"
   },
   "devDependencies": {
     "ern-util-dev": "0.8.0"
