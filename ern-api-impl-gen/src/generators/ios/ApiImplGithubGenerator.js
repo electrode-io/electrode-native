@@ -30,7 +30,8 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
                   paths : Object,
                   reactNativeVersion: string,
                   plugins : Array<Dependency>,
-                  apis: Array<Object>) {
+                  apis: Array<Object>,
+                  regen: boolean) {
     log.debug(`Starting project generation for ${this.platform}`)
     await this.fillHull(paths, reactNativeVersion, plugins)
   }
@@ -44,7 +45,9 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
 
       const outputDirectory = path.join(paths.outDirectory, `ios`)
       log.debug(`Creating out directory(${outputDirectory}) for ios and copying container hull to it.`)
-      shell.mkdir(outputDirectory)
+      if (!fs.existsSync(outputDirectory)) {
+        shell.mkdir(outputDirectory)
+      }
       shell.cp(`-R`, path.join(paths.apiImplHull, 'ios', '*'), outputDirectory)
 
       const apiImplProjectPath = path.join(outputDirectory, 'ElectrodeApiImpl.xcodeproj', 'project.pbxproj')
