@@ -383,6 +383,9 @@
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
 				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)"
+				);
 				INFOPLIST_FILE = ElectrodeContainer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -413,6 +416,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)"
 				);
 				INFOPLIST_FILE = ElectrodeContainerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -539,6 +545,9 @@
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
 				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)"
+				);
 				INFOPLIST_FILE = ElectrodeContainer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -575,6 +584,9 @@
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)"
 				);
 				INFOPLIST_FILE = ElectrodeContainer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -620,6 +632,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush\"",
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)"
 				);
 				INFOPLIST_FILE = ElectrodeContainerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

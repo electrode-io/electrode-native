@@ -271,6 +271,12 @@ export default class IosGenerator implements ContainerGenerator {
               containerIosProject.addFramework(frameworkReference, { customFramework: true })
             }
           }
+
+          if (pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
+            for (const p of pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
+              containerIosProject.addToFrameworkSearchPaths(p)
+            }
+          }
         }
       }
     }
