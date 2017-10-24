@@ -6,7 +6,8 @@ import {
 import {
   Platform,
   ModuleTypes,
-  utils
+  utils,
+  yarn
 } from 'ern-core'
 
 import {
@@ -16,6 +17,7 @@ import {
 import cliUtils from '../lib/utils'
 import path from 'path'
 import fs from 'fs'
+import semver from 'semver'
 
 exports.command = 'regen-api-impl'
 exports.desc = 'Regenerates an existing api implementation for a newer version of the api'
@@ -39,16 +41,17 @@ exports.handler = async function
      apiVersion,
      hasConfig
    }: {
-    apiVersion?: string,
+    apiVersion: string,
     hasConfig: boolean
   } = {}) {
   log.debug(`regen-api-impl command: ${JSON.stringify(arguments[0])}`)
   try {
     const apiImplPackage = await readPackageJson()
+
     const api: Dependency = getApi(apiImplPackage)
-    if (apiVersion) {
-      api.version = apiVersion
-    }
+    const currentApiVersion = api.version
+    api.version = apiVersion
+
     if (apiImplPackage.ern.containerGen.hasConfig) {
       hasConfig = apiImplPackage.ern.containerGen.hasConfig
     }
@@ -59,6 +62,8 @@ exports.handler = async function
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
 
     await validatePackage(api)
+
+    await performVersionCheck(api, apiVersion, currentApiVersion)
 
     await regenerateApiImpl({
       api,
@@ -107,6 +112,21 @@ exports.handler = async function
   async function validatePackage (api) {
     if (!await utils.isPublishedToNpm(api.path)) {
       throw new Error(`${api.toString()}: Package not found in npm, please make sure this version of the api is published to npm.`)
+    }
+  }
+
+  async function performVersionCheck (api: Dependency, apiVersion: ?string, currentApiVersion: string) {
+    log.debug('Performing version check before regenerating the code.')
+
+    if (!apiVersion) {
+      let latestReleasedPackageJson = await yarn.info(api.path, {json: true})
+      apiVersion = latestReleasedPackageJson.data.version
+    }
+
+    if (apiVersion && semver.lte(apiVersion, currentApiVersion)) {
+      log.warn(`You are generating an api implementation for an api version(${apiVersion}) that is less than or equal to the current one(${currentApiVersion}). `)
+    } else {
+      log.info(`Regenerating api implementation for apiVersion:${apiVersion}, current apiVersion:${currentApiVersion}`)
     }
   }
 
