@@ -58,7 +58,7 @@
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
     "xcode": "^0.9.1",
-    "xcode-ern": "1.0.0"
+    "xcode-ern": "1.0.1"
   },
   "devDependencies": {
     "ern-util-dev": "0.8.0"
