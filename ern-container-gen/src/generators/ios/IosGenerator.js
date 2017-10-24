@@ -250,7 +250,12 @@ export default class IosGenerator implements ContainerGenerator {
           if (pluginConfig.ios.pbxproj.addProject) {
             for (const project of pluginConfig.ios.pbxproj.addProject) {
               const projectAbsolutePath = path.join(containerLibrariesPath, project.path, 'project.pbxproj')
-              containerIosProject.addProject(projectAbsolutePath, project.path, project.group, electrodeContainerTarget, project.staticLibs)
+              const options = {
+                projectAbsolutePath,
+                staticLibs: project.staticLibs,
+                frameworks: project.frameworks
+              }
+              containerIosProject.addProject(project.path, project.group, electrodeContainerTarget, options)
             }
           }
 
