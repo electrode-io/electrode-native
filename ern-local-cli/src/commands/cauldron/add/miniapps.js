@@ -94,13 +94,24 @@ exports.handler = async function ({
     miniAppsObjs.push(m)
   }
 
+  const cauldronCommitMessage = [
+    `${miniapps.length === 1
+      ? `Add ${miniapps[0]} MiniApp to ${napDescriptor.toString()}`
+      : `Add multiple MiniApps to ${napDescriptor.toString()}`}`
+  ]
+
   try {
-    await utils.performContainerStateUpdateInCauldron(async () => {
-      for (const miniAppObj of miniAppsObjs) {
-        // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-        await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
-      }
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async () => {
+        for (const miniAppObj of miniAppsObjs) {
+          // Add the MiniApp (and all it's dependencies if needed) to Cauldron
+          await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
+          cauldronCommitMessage.push(`- Add ${miniAppObj.packageDescriptor} MiniApp`)
+        }
+      },
+      napDescriptor,
+      cauldronCommitMessage,
+      { containerVersion })
     log.debug(`MiniApp(s) was/were succesfully added to ${napDescriptor.toString()} in the Cauldron !`)
   } catch (e) {
     log.error(`An error occured while trying to add MiniApp(s) to Cauldron`)

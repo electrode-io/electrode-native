@@ -56,9 +56,13 @@ exports.handler = async function ({
   })
 
   try {
-    await utils.performContainerStateUpdateInCauldron(async () => {
-      return Promise.resolve()
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async () => {
+        return Promise.resolve()
+      },
+      napDescriptor,
+      `Regenerate Container of ${napDescriptor.toString()} native application`,
+      { containerVersion })
     log.debug(`Container was succesfully regenerated !`)
   } catch (e) {
     log.error(`An error occured while trying to regenerate the container : ${e.message}`)

@@ -84,12 +84,23 @@ exports.handler = async function ({
 
   const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
 
+  const cauldronCommitMessage = [
+    `${dependencies.length === 1
+      ? `Remove ${dependencies[0]} native dependency from ${napDescriptor.toString()}`
+      : `Remove multiple native dependencies from ${napDescriptor.toString()}`}`
+  ]
+
   try {
-    await utils.performContainerStateUpdateInCauldron(async () => {
-      for (const dependencyObj of dependenciesObjs) {
-        await cauldron.removeNativeDependency(napDescriptor, dependencyObj)
-      }
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async () => {
+        for (const dependencyObj of dependenciesObjs) {
+          await cauldron.removeNativeDependency(napDescriptor, dependencyObj)
+          cauldronCommitMessage.push(`- Remove ${dependencyObj.toString()} native dependency`)
+        }
+      },
+      napDescriptor,
+      cauldronCommitMessage,
+      { containerVersion })
     log.info(`Dependency(ies) was/were succesfully removed from ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove dependency(ies) from ${napDescriptor.toString()}`)

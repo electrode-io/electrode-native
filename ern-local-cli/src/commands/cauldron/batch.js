@@ -161,15 +161,19 @@ exports.handler = async function ({
     addMiniAppsObjs.push(m)
   }
 
+  const cauldronCommitMessage = [ `Batch operation on ${napDescriptor.toString()} native application` ]
+
   try {
     await utils.performContainerStateUpdateInCauldron(async () => {
       // Del Dependencies
       for (const delDependencyObj of delDependenciesObjs) {
         await cauldron.removeNativeDependency(napDescriptor, delDependencyObj)
+        cauldronCommitMessage.push(`- Remove ${delDependencyObj.toString()} native dependency`)
       }
       // Del MiniApps
       for (const delMiniAppAsDep of delMiniAppsAsDeps) {
         await cauldron.removeMiniAppFromContainer(napDescriptor, delMiniAppAsDep)
+        cauldronCommitMessage.push(`- Remove ${delMiniAppAsDep.toString()} MiniApp`)
       }
       // Update Dependencies
       for (const updateDependencyObj of updateDependenciesObjs) {
@@ -177,23 +181,30 @@ exports.handler = async function ({
           napDescriptor,
           updateDependencyObj.withoutVersion().toString(),
           updateDependencyObj.version)
+        cauldronCommitMessage.push(`- Update ${updateDependencyObj.withoutVersion().toString()} native dependency version to v${updateDependencyObj.version}`)
       }
       // Update MiniApps
       for (const updateMiniAppObj of updateMiniAppsObjs) {
         // Add the MiniApp (and all it's dependencies if needed) to Cauldron
         await updateMiniAppObj.addToNativeAppInCauldron(napDescriptor, force)
+        cauldronCommitMessage.push(`- Update ${updateMiniAppObj.name} MiniApp version to v${updateMiniAppObj.version}`)
       }
       // Add Dependencies
       for (const addDependencyObj of addDependenciesObjs) {
         // Add the dependency to Cauldron
         await cauldron.addNativeDependency(napDescriptor, addDependencyObj)
+        cauldronCommitMessage.push(`-Add ${addDependencyObj.toString()} native dependency`)
       }
       // Add MiniApps
       for (const addMiniAppObj of addMiniAppsObjs) {
         // Add the MiniApp (and all it's dependencies if needed) to Cauldron
         await addMiniAppObj.addToNativeAppInCauldron(napDescriptor, force)
+        cauldronCommitMessage.push(`-Add ${addMiniAppObj.packageDescriptor} MiniApp`)
       }
-    }, napDescriptor, { containerVersion })
+    },
+    napDescriptor,
+    cauldronCommitMessage,
+    { containerVersion })
     log.info(`Operations were succesfully performed for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove dependency(ies) from ${napDescriptor.toString()}`)

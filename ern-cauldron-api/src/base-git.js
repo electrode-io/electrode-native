@@ -57,11 +57,12 @@ export default class BaseGit {
     this._pendingTransaction = false
   }
 
-  async commitTransaction () {
+  async commitTransaction (message: string | Array<string>) {
     if (!this._pendingTransaction) {
       throw new Error('No pending transaction to commit')
     }
 
+    await this.git.commitAsync(message)
     await this.push()
     this._pendingTransaction = false
   }

@@ -100,13 +100,24 @@ exports.handler = async function ({
     miniAppsObjs.push(m)
   }
 
+  const cauldronCommitMessage = [
+    `${miniapps.length === 1
+      ? `Update ${miniapps[0]} MiniApp version in ${napDescriptor.toString()}`
+      : `Update multiple MiniApps versions in ${napDescriptor.toString()}`}`
+  ]
+
   try {
-    await utils.performContainerStateUpdateInCauldron(async() => {
-      for (const miniAppObj of miniAppsObjs) {
-        // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-        await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
-      }
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async() => {
+        for (const miniAppObj of miniAppsObjs) {
+          // Add the MiniApp (and all it's dependencies if needed) to Cauldron
+          await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
+          cauldronCommitMessage.push(`- Update ${miniAppObj.name} MiniApp version to v${miniAppObj.version}`)
+        }
+      },
+      napDescriptor,
+      cauldronCommitMessage,
+      { containerVersion })
     log.info(`MiniApp(s) version(s) was/were succesfully updated for ${napDescriptor.toString()} in Cauldron !`)
   } catch (e) {
     log.error(`An error occured while trying to update MiniApp(s) version(s) in Cauldron`)
