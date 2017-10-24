@@ -31,7 +31,8 @@ export default class ApiImplGen {
       outDirectory: string
     },
     reactNativeVersion: string,
-    platforms: Array<string>) {
+    platforms: Array<string>,
+    regen: boolean = false) {
     log.debug(`Inside generateApiImplementation for api:${apiDependency.toString()},  platforms:${platforms.toString()}`)
 
     await this.downloadApiAndDependencies(apiDependency, paths.pluginsDownloadDirectory, reactNativeVersion)
@@ -44,7 +45,7 @@ export default class ApiImplGen {
     for (let generator of generators) {
       try {
         if (generator) {
-          await generator.generate(apiDependency, paths, reactNativeVersion, plugins, apis)
+          await generator.generate(apiDependency, paths, reactNativeVersion, plugins, apis, regen)
         }
       } catch (e) {
         throw new Error(`API implementation project generation failed: ${e}`)
@@ -140,7 +141,8 @@ class NullApiImplGenerator implements ApiImplGeneratable {
     paths: Object,
     reactNativeVersion: string,
     plugins: Array<Dependency>,
-    apis: Array<Object>) {
+    apis: Array<Object>,
+    regen: boolean) {
     log.debug('NullApiImplGenerator generate - noop')
   }
 }

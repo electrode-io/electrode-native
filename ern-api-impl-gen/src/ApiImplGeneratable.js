@@ -9,7 +9,8 @@ export interface ApiImplGeneratable {
             paths: Object,
             reactNativeVersion: string,
             plugins: Array<Dependency>,
-            apis:Array<Object>): any;
+            apis: Array<Object>,
+            regen: boolean): any;
 
-  +name : string
+  +name: string
 }

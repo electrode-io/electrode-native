@@ -9,7 +9,7 @@ import {
   manifest,
   Platform
 } from 'ern-core'
-
+import fs from 'fs'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 
@@ -25,6 +25,7 @@ type PluginConfig = {
 export const ROOT_DIR = shell.pwd()
 
 export default class ApiImplMavenGenerator implements ApiImplGeneratable {
+  regenerateApiImpl:boolean
   get name (): string {
     return 'ApiImplMavenGenerator'
   }
@@ -42,9 +43,10 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
                   },
                   reactNativeVersion: string,
                   plugins: Array<Dependency>,
-                  apis: Array<Object>) {
+                  apis: Array<Object>,
+                  regen: boolean) {
     log.debug(`Starting project generation for ${this.platform}`)
-
+    this.regenerateApiImpl = regen
     await this.fillHull(apiDependency, paths, reactNativeVersion, plugins, apis)
   }
 
@@ -60,9 +62,11 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
       const outputDirectory = path.join(paths.outDirectory, `android`)
       log.debug(`Creating out directory(${outputDirectory}) for android and copying container hull to it.`)
-      shell.mkdir(outputDirectory)
+      if (!fs.existsSync(outputDirectory)) {
+        shell.mkdir(outputDirectory)
+      }
 
-      shell.cp(`-R`, path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
+      shell.cp(`-Rf`, path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
 
       for (let plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name} to ${outputDirectory}`)
@@ -84,7 +88,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       pluginConfig.android.moduleName === `lib` ? path.join('src', 'main', 'java', '*') : path.join('src', 'main', 'java'))
     const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
     log.debug(`Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`)
-    shell.cp(`-R`, pluginSrcDirectory, pluginOutputDirectory)
+    shell.cp(`-Rf`, pluginSrcDirectory, pluginOutputDirectory)
   }
 
   updateBuildGradle (paths: Object, reactNativeVersion: string, outputDirectory: string): Promise<*> {
@@ -107,6 +111,11 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
           if (!classNames[file]) {
             log.warn(`Skipping mustaching of ${file}. No resulting file mapping found, consider adding one. \nThis might cause issues in generated implemenation project.`)
             throw new Error(`Class name mapping is missing for ${file}, unable to generate implementation class file.`)
+          }
+
+          if (this.regenerateApiImpl && file === `requestHandlerProvider.mustache`) {
+            log.debug(`Skipping regeneration of ${classNames[file]}`)
+            continue
           }
           await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             path.join(resourceDir, file),
@@ -132,7 +141,9 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
   static createImplDirectoryAndCopyCommonClasses (paths) {
     const outputDir = path.join(paths.outDirectory, `/android/lib/src/main/java/com/ern/api/impl/`)
-    shell.mkdir(`-p`, outputDir)
+    if (!fs.existsSync(outputDir)) {
+      shell.mkdir(`-p`, outputDir)
+    }
 
     const resourceDir = path.join(Platform.currentPlatformVersionPath, `ern-api-impl-gen/resources/android`)
     shell.cp(path.join(resourceDir, `RequestHandlerConfig.java`), outputDir)
