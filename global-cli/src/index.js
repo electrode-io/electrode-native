@@ -43,7 +43,7 @@ if (!fs.existsSync(ERN_PATH)) {
 
 // First run ever of ern (no versions installed at all yet)
 // Create all directories and install/activate current platform version
-function firstTimeInstall() {
+function firstTimeInstall () {
   try {
     const isDebug = process.argv.indexOf('--debug') !== -1
 
@@ -77,7 +77,6 @@ function firstTimeInstall() {
           ['add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact', '--ignore-engines'],
           { cwd: pathToVersionDirectory })
       }
-
     } else {
       spinner.text = `Installing Electrode Native v${latestVersion} using npm. This might take a while`
       if (/^win/.test(process.platform)) {
@@ -102,6 +101,7 @@ function firstTimeInstall() {
     installProc.on('error', function (err) {
       console.log(`Something went wrong :( Run the command again with --debug flag for more info.`)
       execSync(`rm -rf ${ERN_PATH}`)
+      throw err
     })
 
     installProc.on('close', function (code) {
@@ -126,7 +126,7 @@ function firstTimeInstall() {
 // and call the default exported method
 // Basically, it just proxy the ern command to the ern-local-cli (local client)
 // of the version currently in use
-function runLocalCli() {
+function runLocalCli () {
   let ernRcPath
   if (fs.existsSync(ERN_RC_LOCAL_FILE_PATH)) {
     ernRcPath = ERN_RC_LOCAL_FILE_PATH
@@ -143,7 +143,7 @@ function runLocalCli() {
   }
 }
 
-function getLatestErnLocalCliVersion() {
+function getLatestErnLocalCliVersion () {
   try {
     let versions = JSON.parse(execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`))
     return versions.pop()
@@ -152,7 +152,7 @@ function getLatestErnLocalCliVersion() {
   }
 }
 
-function isYarnInstalled() {
+function isYarnInstalled () {
   try {
     execSync('yarn --version 1>/dev/null')
     return true
