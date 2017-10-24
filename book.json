@@ -11,7 +11,7 @@
     "versions",
     "-highlight",
     "scripts",
-    "copy-code-button"
+    "copy-code-button" 
   ],
   "pluginsConfig": {
     "prism": {
