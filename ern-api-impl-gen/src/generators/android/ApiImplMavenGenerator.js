@@ -84,9 +84,11 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
   copyPluginToOutput (paths: Object, outputDirectory: string, plugin: Dependency, pluginConfig: PluginConfig) {
     log.debug(`injecting ${plugin.name} code.`)
-    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName,
-      pluginConfig.android.moduleName === `lib` ? path.join('src', 'main', 'java', '*') : path.join('src', 'main', 'java'))
+    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName, 'src', 'main', 'java', '*')
     const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
+    if (!fs.existsSync(pluginOutputDirectory)) {
+      shell.mkdir(pluginOutputDirectory)
+    }
     log.debug(`Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`)
     shell.cp(`-Rf`, pluginSrcDirectory, pluginOutputDirectory)
   }
