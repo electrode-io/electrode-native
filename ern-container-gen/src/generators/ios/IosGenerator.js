@@ -69,9 +69,8 @@ export default class IosGenerator implements ContainerGenerator {
           containerVersion: ${containerVersion}`)
 
           log.debug(`First lets clone the repo so we can update it with the newly generated container`)
-          await GitUtils.gitClone(repoUrl, {destDirectory: 'ios'})
-
-          shell.rm('-rf', `${paths.outDirectory}/*`)
+          await GitUtils.gitClone(repoUrl, {destDirectory: '.'})
+          shell.rm('-rf', path.join(paths.outDirectory, '*'))
         } else {
           log.warn('Looks like we are missing a GitHub publisher. Currently only GitHub publisher is supported.')
         }
@@ -262,8 +261,8 @@ export default class IosGenerator implements ContainerGenerator {
           }
 
           if (pluginConfig.ios.pbxproj.addHeaderSearchPath) {
-            for (const path of pluginConfig.ios.pbxproj.addHeaderSearchPath) {
-              containerIosProject.addToHeaderSearchPaths(path)
+            for (const p of pluginConfig.ios.pbxproj.addHeaderSearchPath) {
+              containerIosProject.addToHeaderSearchPaths(p)
             }
           }
 
