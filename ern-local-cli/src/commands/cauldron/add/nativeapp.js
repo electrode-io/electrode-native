@@ -76,7 +76,7 @@ exports.handler = async function ({
       }
     }
 
-    await spin(`Updating Cauldron`, cauldron.commitTransaction())
+    await spin(`Updating Cauldron`, cauldron.commitTransaction(`Add ${napDescriptor.toString()} native application`))
     log.info(`${napDescriptor.toString()} was succesfuly added to the Cauldron`)
   } catch (e) {
     log.error(`An error occured while trying to add the native app to the Cauldron: ${e.message}`)

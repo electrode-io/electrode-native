@@ -48,9 +48,9 @@ export default class CauldronApi {
     await this._yarnlockStore.discardTransaction()
   }
 
-  async commitTransaction () {
-    await this._db.commitTransaction()
-    await this._yarnlockStore.commitTransaction()
+  async commitTransaction (message: string | Array<string>) {
+    await this._db.commitTransaction(message)
+    await this._yarnlockStore.commitTransaction(message)
   }
 
   // =====================================================================================

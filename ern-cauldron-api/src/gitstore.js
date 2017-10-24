@@ -63,8 +63,8 @@ export default class GitStore extends BaseGit {
   async commit (message: string = 'Commit') {
     await writeJSON(this._jsonPath, this.cauldron)
     await this.git.addAsync(CAULDRON_FILENAME)
-    await this.git.commitAsync(message)
     if (!this._pendingTransaction) {
+      await this.git.commitAsync(message)
       await this.push()
     }
   }

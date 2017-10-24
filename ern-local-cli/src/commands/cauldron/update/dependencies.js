@@ -78,15 +78,26 @@ exports.handler = async function ({
     }
   })
 
+  const cauldronCommitMessage = [
+    `${dependenciesObjs.length === 1
+      ? `Update ${dependenciesObjs[0].withoutVersion().toString()} native dependency version in v${napDescriptor.toString()}`
+      : `Update multiple native dependencies versions in ${napDescriptor.toString()}`}`
+  ]
+
   try {
-    await utils.performContainerStateUpdateInCauldron(async () => {
-      for (const dependencyObj of dependenciesObjs) {
-        await cauldron.updateNativeAppDependency(
-          napDescriptor,
-          dependencyObj.withoutVersion().toString(),
-          dependencyObj.version)
-      }
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async () => {
+        for (const dependencyObj of dependenciesObjs) {
+          await cauldron.updateNativeAppDependency(
+            napDescriptor,
+            dependencyObj.withoutVersion().toString(),
+            dependencyObj.version)
+          cauldronCommitMessage.push(`- Update ${dependencyObj.withoutVersion().toString()} native dependency to v${dependencyObj.version}`)
+        }
+      },
+      napDescriptor,
+      cauldronCommitMessage,
+      { containerVersion })
     log.info(`Dependency(ies) was/were succesfully updated in ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to update dependency(ies) in ${napDescriptor.toString()}`)

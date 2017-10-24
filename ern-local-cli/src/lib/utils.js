@@ -300,7 +300,8 @@ async function askUserToChooseANapDescriptorFromCauldron ({
 // If any part of this function fails, the Cauldron will not get updated
 async function performContainerStateUpdateInCauldron (
   stateUpdateFunc: () => Promise<*>,
-  napDescriptor: NativeApplicationDescriptor, {
+  napDescriptor: NativeApplicationDescriptor,
+  commitMessage: string | Array<string>, {
   containerVersion
 } : {
   containerVersion?: string
@@ -336,7 +337,7 @@ async function performContainerStateUpdateInCauldron (
     await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
 
     // Commit Cauldron transaction
-    await spin(`Updating Cauldron`, cauldron.commitTransaction())
+    await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
 
     log.debug(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {

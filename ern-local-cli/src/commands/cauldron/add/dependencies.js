@@ -77,13 +77,24 @@ exports.handler = async function ({
 
   const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
 
+  const cauldronCommitMessage = [
+    `${dependencies.length === 1
+      ? `Add ${dependencies[0]} native dependency to ${napDescriptor.toString()}`
+      : `Add multiple native dependencies to ${napDescriptor.toString()}`}`
+  ]
+
   try {
-    await utils.performContainerStateUpdateInCauldron(async () => {
-      for (const dependencyObj of dependenciesObjs) {
-        // Add the dependency to Cauldron
-        await cauldron.addNativeDependency(napDescriptor, dependencyObj)
-      }
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async () => {
+        for (const dependencyObj of dependenciesObjs) {
+          // Add the dependency to Cauldron
+          await cauldron.addNativeDependency(napDescriptor, dependencyObj)
+          cauldronCommitMessage.push(`- Add ${dependencyObj.toString()} native dependency`)
+        }
+      },
+      napDescriptor,
+      cauldronCommitMessage,
+      { containerVersion })
     log.info(`Dependency(ies) was/were succesfully added to ${napDescriptor.toString()} !`)
   } catch (e) {
     log.error(`An error happened while trying to add a dependency to ${napDescriptor.toString()}`)

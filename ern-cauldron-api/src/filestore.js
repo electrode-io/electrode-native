@@ -39,8 +39,8 @@ export default class FileStore extends BaseGit {
     const pathToFile = path.resolve(storeDirectoryPath, identifier)
     await writeFile(pathToFile, content, {flag: 'w'})
     await this.git.addAsync(pathToFile)
-    await this.git.commitAsync(`[added file] ${identifier}`)
     if (!this._pendingTransaction) {
+      await this.git.commitAsync(`[added file] ${identifier}`)
       await this.push()
     }
   }
@@ -84,8 +84,8 @@ export default class FileStore extends BaseGit {
     await this.sync()
     if (fs.existsSync(this.pathToFile(filename))) {
       await this.git.rmAsync(this.pathToFile(filename))
-      await this.git.commitAsync(`[removed file] ${filename}`)
       if (!this._pendingTransaction) {
+        await this.git.commitAsync(`[removed file] ${filename}`)
         await this.push()
       }
       return true

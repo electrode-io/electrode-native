@@ -36,8 +36,8 @@ class Cauldron {
     return this.cauldron.discardTransaction()
   }
 
-  async commitTransaction () {
-    return this.cauldron.commitTransaction()
+  async commitTransaction (message: string | Array<string>) {
+    return this.cauldron.commitTransaction(message)
   }
 
   async addNativeApp (

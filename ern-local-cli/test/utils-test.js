@@ -247,7 +247,7 @@ describe('utils.js', () => {
 
     it('should uppdate container version with provided one', async () => {
       await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true), 
-      napDescriptor , { containerVersion: '1.0.0' })
+      napDescriptor , 'commit message', { containerVersion: '1.0.0' })
       sinon.assert.calledWith(updateContainerVersionStub, 
         napDescriptor,
         '1.0.0')
@@ -268,14 +268,14 @@ describe('utils.js', () => {
 
     it('should call state update function during the transaction', async () => {
       const stateUpdateFunc = sinon.stub().resolves(true)
-      await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor)
+      await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor, 'commit message')
       sinon.assert.callOrder(beginTransactionStub, stateUpdateFunc, commitTransactionStub)
     })
 
     it('should discard transaction if an error happens during the transaction', async () => {
       const stateUpdateFunc = sinon.stub().rejects(new Error('boum'))
       try {
-        await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor)
+        await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor, 'commit message')
       } catch (e) {}
       sinon.assert.calledOnce(discardTransactionStub)
       sinon.assert.notCalled(commitTransactionStub)
@@ -285,7 +285,7 @@ describe('utils.js', () => {
       const stateUpdateFunc = sinon.stub().rejects(new Error('boum'))
       let hasRethrowError = false
       try {
-        await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor)
+        await utils.performContainerStateUpdateInCauldron(stateUpdateFunc, napDescriptor, 'commit message')
       } catch (e) {
         if (e.message === 'boum') { hasRethrowError = true }
       }

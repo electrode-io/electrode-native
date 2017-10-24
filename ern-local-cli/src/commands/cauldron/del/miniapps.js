@@ -76,12 +76,23 @@ exports.handler = async function ({
 
   const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))
 
+  const cauldronCommitMessage = [
+    `${miniapps.length === 1
+      ? `Remove ${miniapps[0]} MiniApp from ${napDescriptor.toString()}`
+      : `Remove multiple MiniApps from ${napDescriptor.toString()}`}`
+  ]
+
   try {
-    await utils.performContainerStateUpdateInCauldron(async () => {
-      for (const miniAppAsDep of miniAppsAsDeps) {
-        await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
-      }
-    }, napDescriptor, { containerVersion })
+    await utils.performContainerStateUpdateInCauldron(
+      async () => {
+        for (const miniAppAsDep of miniAppsAsDeps) {
+          await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
+          cauldronCommitMessage.push(`- Remove ${miniAppAsDep.toString()} MiniApp`)
+        }
+      },
+      napDescriptor,
+      cauldronCommitMessage,
+      { containerVersion })
     log.debug(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`An error happened while trying to remove MiniApp(s) from ${napDescriptor.toString()}`)
