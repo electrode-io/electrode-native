@@ -1,6 +1,6 @@
 // @flow
 
-import generateProject, { generateSwagger, generateFlowConfig } from './generateProject'
+import generateProject, { generateSwagger, generateFlowConfig, generatePackageJson } from './generateProject'
 import normalizeConfig from './normalizeConfig'
 import fs from 'fs'
 import path from 'path'
@@ -52,8 +52,9 @@ export async function generateApi (options: Object) {
  * @returns {Promise.<void>}
  */
 export async function regenerateCode (options: Object = {}) {
-  const pkg = await checkValid(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
+  const pkg = await validateApiNameAndGetPackageJson(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
   const curVersion = pkg.version || '0.0.1'
+  const pkgName = pkg.name
   let newPluginVer
   if (options.updatePlugin) {
     newPluginVer = nextVersion(curVersion, options.updatePlugin)
@@ -62,7 +63,7 @@ export async function regenerateCode (options: Object = {}) {
     const {confirmPluginVer} = await inquirer.prompt([{
       type: 'confirm',
       name: 'confirmPluginVer',
-      message: `Would you like to bump the plugin version from [${pkg.name}@${curVersion}] to [${pkg.name}@${newPluginVer}]?`
+      message: `Would you like to bump the plugin version from [${pkgName}@${curVersion}] to [${pkgName}@${newPluginVer}]?`
     }])
 
     if (!confirmPluginVer) {
@@ -71,30 +72,11 @@ export async function regenerateCode (options: Object = {}) {
   }
   await _checkDependencyVersion(pkg, options.targetDependencies || [])
 
-  //check if flow script is initialized
-  if (pkg.scripts && pkg.scripts.flow === undefined) {
-    pkg.scripts['flow'] = 'flow'
-  }
-
-  //check flow-bin
-  if (pkg.devDependencies === undefined) {
-    pkg['devDependencies'] = {}
-    pkg.devDependencies['flow-bin'] = FLOW_BIN_VERSION
-  }
   const isNewVersion = semver.lt(curVersion, newPluginVer)
-  if (isNewVersion) {
-    pkg.version = newPluginVer
-    // should call npm version ${} as it tags and does good stuff.
-    fileUtils.writeFile(`${process.cwd()}/${PKG_FILE}`, JSON.stringify(pkg, null, 2)) // Write the new package properties
-  }
-
-  if (!fs.existsSync(`${process.cwd()}/${FLOW_CONFIG_FILE}`)) {
-    fileUtils.writeFile(`${process.cwd()}/${FLOW_CONFIG_FILE}`, generateFlowConfig())
-  }
   const extra = (pkg.ern && pkg.ern.message) || {}
   const config = normalizeConfig({
-    name: pkg.name,
-    apiVersion: pkg.version,
+    name: pkgName,
+    apiVersion: isNewVersion ? newPluginVer : pkg.version,
     apiDescription: pkg.description,
     apiAuthor: pkg.author,
     bridgeVersion: options.bridgeVersion || pkg.peerDependencies['react-native-electrode-bridge'],
@@ -103,24 +85,40 @@ export async function regenerateCode (options: Object = {}) {
   })
 
   await cleanGenerated()
+
+  const pkgConfig = {
+    npmScope : pkgName && pkgName.startsWith('@') ? pkgName.slice(1, pkgName.indexOf('/')) : '',
+    moduleName : pkgName &&  pkgName.startsWith('@') ? pkgName.slice(pkgName.indexOf('/') + 1) : pkgName,
+    apiVersion : isNewVersion ? newPluginVer : pkg.version,
+    apiDescription : pkg.description,
+    apiAuthor : pkg.author,
+    bridgeVersion : options.bridgeVersion,
+    ...extra
+  }
+  // Regenerate package.json
+  fileUtils.writeFile(path.join(process.cwd(), PKG_FILE), generatePackageJson(pkgConfig))
+  // Regenerate .flowconfig file
+  fileUtils.writeFile(path.join(process.cwd(), FLOW_CONFIG_FILE), generateFlowConfig())
+
   await generateSwagger(config, process.cwd())
   log.info('== API generation complete !')
 
-  if (isNewVersion) {
-    await publish(pkg)
-  } else { log.info('O.K, make sure you bump the version and NPM publish if needed.') }
+  isNewVersion ? await publish(await readPackage()) : log.info('O.K, make sure you bump the version and NPM publish if needed.')
 }
+
 export async function cleanGenerated (outFolder: string = process.cwd()) {
-  const pkg = await checkValid(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
+  const pkg = await validateApiNameAndGetPackageJson(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
 
   shell.rm('-rf', path.join(outFolder, 'javascript'))
   shell.rm('-rf', path.join(outFolder, 'swift'))
   shell.rm('-rf', path.join(outFolder, 'android'))
   shell.rm('-rf', path.join(outFolder, 'IOS'))
+  shell.rm('-rf', path.join(outFolder, FLOW_CONFIG_FILE))
+  shell.rm('-rf', path.join(outFolder, PKG_FILE))
   return pkg
 }
 
-async function checkValid (message: string) {
+async function validateApiNameAndGetPackageJson (message: string) {
   const outFolder = process.cwd()
 
   if (!/react-native-(.*)-api$/.test(outFolder)) {
@@ -132,9 +130,11 @@ async function checkValid (message: string) {
   }
   return pkg
 }
+
 async function readPackage () {
-  return fileUtils.readJSON(`${process.cwd()}/${PKG_FILE}`)
+  return fileUtils.readJSON(path.join(process.cwd(), PKG_FILE))
 }
+
 const nextVersion = (curVersion: string, userPluginVer: string) => {
   switch ((userPluginVer + '').toLowerCase()) {
     case 'same':
@@ -159,6 +159,7 @@ const nextVersion = (curVersion: string, userPluginVer: string) => {
     }
   }
 }
+
 async function _promptForPluginVersion (curVersion: string) {
   const {userPluginVer} = await inquirer.prompt([{
     type: 'input',
