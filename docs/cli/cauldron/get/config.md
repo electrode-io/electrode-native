@@ -1,12 +1,22 @@
-## `ern cauldron get config <descriptor>`
+## `ern cauldron get config`
+
 #### Description
+
 * Retrieve the configuration stored in the Cauldron for a given partial native application descriptor or complete native application descriptor
 * Log the configuration as a JSON formatted string in your terminal  
 
 #### Syntax
+
 `ern cauldron get config <descriptor>`  
 
+**Arguments**
+
+`<descriptor>`
+
+* A partial native application descriptor.
+
 #### Remarks
+
 * A Cauldron can contain global configurations that apply to:
   - All native application versions  
   - All versions of a given native application platform  

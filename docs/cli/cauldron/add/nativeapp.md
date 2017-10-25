@@ -1,9 +1,18 @@
-## `ern cauldron add nativeapp <descriptor>`
+## `ern cauldron add nativeapp`
+
 #### Description
+
 * Add a new native application version to the currently activated Cauldron  
 
 #### Syntax
+
 `ern cauldron add nativeapp <descriptor>`
+
+**Arguments**
+
+`<descriptor>`
+
+* A complete native application descriptor representing the native application version to be added to the Cauldron.
 
 **Example**  
 `ern cauldron add nativeapp MyNativeApp:ios:17.14.0`  
@@ -19,11 +28,12 @@
 * This option is commonly used.  
 
 #### Remarks
+
 * The `ern cauldron add nativeapp <descriptor>` command is usually used when the development of a new version of the native application is started.  
 * The new native application version is identified by the *complete native application description* in the Cauldron.
-* The descriptor provided to this command should be a complete native application descriptor.
 
 #### Related commands
- [ern cauldron update nativeapp] | Add a new native application version to the currently activated Cauldron
+
+[ern cauldron update nativeapp] | Add a new native application version to the currently activated Cauldron
 ___
 [ern cauldron update nativeapp]: ../update/nativeapp.md

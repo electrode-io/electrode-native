@@ -8,15 +8,15 @@
 
 `ern binarystore add <descriptor> <pathToBinary>`
 
-**Parameters**  
+**Arguments**  
 
 `<descriptor>`
 
-A complete native application descriptor (ex: `myapp:android:1.0.0`), representing the mobile application version associated to this binary.
+* A complete native application descriptor (ex: `myapp:android:1.0.0`), representing the native application version associated to this binary.
 
 `<pathToBinary>`
 
-Relative or absolute path to the binary to add to the binary store. For an `Android` binary the path should point to a `.apk` file, whereas of `iOS` it should point to a `.app` file.
+* Relative or absolute path to the binary to add to the binary store. For an `Android` binary the path should point to a `.apk` file, whereas of `iOS` it should point to a `.app`.
 
 #### Remarks
 
@@ -25,12 +25,12 @@ Relative or absolute path to the binary to add to the binary store. For an `Andr
   * There is an active Cauldron
   * The active Cauldron contains proper configuration of the binary store
 
-* If a binary already exists in the store for the targeted mobile application version, it will be replaced.
+* If a binary already exists in the store for the targeted native application version, it will be replaced.
 
 #### Related commands
 
- [ern binarystore get] | Get a mobile application binary from the binary store  
- [ern binarystore remove] | Remove a mobile application binary from the binary store
+ [ern binarystore get] | Get a native application binary from the binary store  
+ [ern binarystore remove] | Remove a native application binary from the binary store
 
 ___  
 

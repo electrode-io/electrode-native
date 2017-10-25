@@ -1,14 +1,26 @@
-## `ern cauldron add miniapps <miniapps..>`
+## `ern cauldron add miniapps`
+
 #### Description
+
 * Add one or more MiniApps to a non-released native application version in a Cauldron  
 * Perform multiple checks, including MiniApp dependencies analysis, to ensure compatibility with the target native application container  
 * Generate and publish a new Container version  
   The native application uses the new Container version to access the new MiniApp.
 
 #### Syntax
+
 `ern cauldron add miniapps <miniapps..>`  
 
+**Arguments**
+
+`<miniapps..>`
+
+* One or more MiniApps (delimited by spaces) to add to a target native application version in the Cauldron.
+* You can only add MiniApp versions that have been published to NPM. 
+* You cannot use the `file` or `git` schemes for the MiniApp(s).
+
 **Example**  
+
 `ern cauldron add miniapps MyFirstMiniApp@1.0.0 MySecondMiniApp@2.0.0`
 
 **Options**  
@@ -32,13 +44,12 @@ Example: If the current container version is 1.2.3 and a version is not included
 **Caution**  Before using the `--force/-f` option, be sure that you can bypass compatibility checks.
 
 #### Remarks
-* You can only add MiniApp versions that have been published to NPM.  
-* You cannot use the `file` or `git` scheme for the MiniApp that you add using the `ern cauldron add miniapps <miniapps..>` command.  
-* The MiniApp is retrieved from NPM and should be a versioned with an NPM package descriptor corresponding to the published MiniApp version.  
+ 
 * If one MiniApp does not pass compatibility checks, the MiniApp is not added to the Cauldron and a new container version is not generated.
 
 #### Related commands
- [ern cauldron update miniapps] | Updates the version of an existing MiniApp
+
+[ern cauldron update miniapps] | Updates the version of an existing MiniApp
 
 _________
 [ern cauldron update miniapps]: ../update/miniapps.md

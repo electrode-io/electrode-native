@@ -1,4 +1,4 @@
-## `ern binarystore remove <descriptor>`
+## `ern binarystore remove`
 
 #### Description
 
@@ -8,11 +8,11 @@
 
 `ern binarystore get <descriptor>`
 
-**Parameters**  
+**Arguments**  
 
 `<descriptor>`
 
-A complete native application descriptor (ex: `myapp:android:1.0.0`), representing the mobile application version associated to this binary.
+* A complete native application descriptor (ex: `myapp:android:1.0.0`), representing the native application version associated to this binary.
 
 #### Remarks
 
@@ -21,12 +21,12 @@ A complete native application descriptor (ex: `myapp:android:1.0.0`), representi
   * There is an active Cauldron
   * The active Cauldron contains proper configuration of the binary store
 
-* If no binary exists in the store for the targeted mobile application version, the command will fail with an appropriate error message
+* If no binary exists in the store for the targeted native application version, the command will fail with an appropriate error message
 
 #### Related commands
 
- [ern binarystore add] | Add a mobile application binary to the binary store  
- [ern binarystore get] | Get a mobile application binary from the binary store
+ [ern binarystore add] | Add a native application binary to the binary store  
+ [ern binarystore get] | Get a native application binary from the binary store
 
 ___  
 
