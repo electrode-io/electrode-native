@@ -1,8 +1,11 @@
 ## `ern upgrade-miniapp`
+
 #### Description
+
 * Upgrades a MiniApp to the currently activated platform version
 
 #### Syntax
+
 `ern upgrade-miniapp`
 
 **Options**  
