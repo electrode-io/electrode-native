@@ -1,11 +1,15 @@
-## `ern add <packages..>`
+## `ern add`
+
 #### Description
+
 * Add one or more package (dependency) to the MiniApp
 
 #### Syntax
+
 `ern add <packages..>`
 
 **Options**  
+
 `--dev/-d`
 
 * Add the package(s) to the MiniApp `devDependencies`  
@@ -17,6 +21,7 @@
 * Checks are not performed to add peer dependencies
 
 #### Remarks
+
 * The `ern add <packages..>` command is the `ern` equivalent of `yarn add` and `npm install`
 When you work with a MiniApp, always use `ern add` to add packages in place of `yarn add` or `npm install`.
 

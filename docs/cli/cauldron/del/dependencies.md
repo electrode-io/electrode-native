@@ -1,5 +1,7 @@
-## `ern cauldron del dependencies <dependencies..>`
+## `ern cauldron del dependencies`
+
 #### Description
+
 * Remove one or more native dependencies from a non-released native application version container (Cauldron)  
 * Perform multiple checks to ensure that MiniApps in the current container, for this native application version, are not using the native dependencies  
 **Note** If one of the MiniApps is relying on one of the native dependencies, the command fails. In this situation, a list is displayed showing you the MiniApps that are depending on the native dependency. To resolve this, do one of the following:
@@ -8,7 +10,14 @@
 * Create and publish a new Container version to account for the removal of the native dependencies
 
 #### Syntax
+
 `ern cauldron del dependencies <dependencies..>`  
+
+**Arguments**
+
+`<dependencies..>`
+
+* One or more dependencies (delimited by spaces) to remove from a native application version in the Cauldron.
 
 **Options**  
 
@@ -27,6 +36,5 @@ Example: If the current container version is 1.2.3 and a version is not included
 `--force/-f`
 
 * Bypass compatibility checks and force-remove the native dependencies from the Cauldron.  
-**Caution**  Before using the `--force/-f` option, be sure that you can bypass compatibility checks.
 
 ______

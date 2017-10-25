@@ -1,13 +1,24 @@
-## `ern code-push <miniapps..>`
+## `ern code-push`
+
 #### Description
+
 * Update/publish one or more MiniApps in a target released native application version Over the Air (OTA)  
 * Perform compatibility checks to ensure that the new MiniApp versions are compatible with the target native application version
 *  Update the Cauldron with a new `CodePush` entry containing the versions of all MiniApps that are part of this publication  
 
-**Note:** The `ern code-push <miniapps..>` command pushes JavaScript code changes only, not native changes. Therefore the compatibility checks must ensure that the MiniApp's native dependencies are compatible with the versions running in the target native application version.
+**Note:** The `ern code-push <miniapps..>` command pushes JavaScript code changes only, not native ones. Therefore compatibility checks will ensure that the MiniApp's native dependencies are compatible with the versions running in the target native application version.
 
 #### Syntax
+
 `ern code-push <miniapps..>`  
+
+**Arguments**
+
+`<miniapps..>`
+
+* One or more MiniApps (delimited by spaces) version(s) to CodePush.
+* You can only add MiniApp versions that have been published to NPM. 
+* You cannot use the `file` or `git` schemes for the MiniApp(s).
 
 **Options**  
 
@@ -15,6 +26,10 @@
 
 * Specify a target native application version to publish the new MiniApp version to using a *complete native application descriptor* from the Cauldron  
 * **Default**  If this option is not used, the command lists all released native application versions from the Cauldron and prompts you to choose a version.  
+
+`--force/-f`
+
+* Bypass all compatibility checks and force OTA update through CodePush.
 
 `--appName <appName>`
 
@@ -52,13 +67,13 @@
 * **Default** Do not skip confirmation prompt
 
 #### Remarks
-* When you update OTA, you don't need to use a native application store release.  
-* You can only use MiniApp versions that have been published to npm and cannot use the `file` or `git` scheme for the MiniApps that you add using the `ern code-push <miniapps..>` command.  
+ 
 * MiniApps are packaged in a single bundle. If the native application version contains 5 MiniApps and you update a single version, then the remaining 4 MiniApp versions are left untouched in the bundle.  
-* The `ern code-push <miniapps..>` command executes the `code-push release-react` command.  
+* The `ern code-push <miniapps..>` command executes the `code-push release-react` command.
 * You do not need to run the `ern code-push <miniapps..>` command from within a MiniApp working directory.  The MiniApp is retrieved from npm and therefore should have a versioned npm package descriptor corresponding to the published MiniApp version.  
 
 #### Related commands
- [code-push release-react] | Release a React Native update to an app development.
+
+[code-push release-react] | Release a React Native update to an app development.
  
- [code-push release-react]: https://github.com/Microsoft/code-push/tree/master/cli
+[code-push release-react]: https://github.com/Microsoft/code-push/tree/master/cli

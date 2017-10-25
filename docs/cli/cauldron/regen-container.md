@@ -6,7 +6,7 @@ Triggers the regeneration of a Container from the Cauldron.
 
 #### Syntax
 
-`ern cauldron regen-container [-v/--containerVersion] [-d/--descriptor]`  
+`ern cauldron regen-container`  
 
 **Options**  
 

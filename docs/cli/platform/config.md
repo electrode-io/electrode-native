@@ -1,11 +1,27 @@
-## `ern platform config <key> [value]`
+## `ern platform config`
+
 #### Description
+
 * Get or set the local platform configuration values stored in the `~/.ern/.ernrc` file  
 
 #### Syntax
-`ern platform config <key> [value]`  
+
+`ern platform config <key>`
+
+**Arguments**
+
+`<key>`
+
+* The key of the configuration element to get or set
+
+**Options**
+
+`--value/-v`
+
+* If specifed, will set the config value associated to this key. If not specifed, will retrieve the config value (get) associated to this key.
 
 #### Remarks
+
 * The `ern platform config <key> [value]` command is rarely used.  
 * All current configuration values are already set and retrieved transparently through the use of commands that rely on the local platform configuration.  
 * If a value is not provided, the `ern platform config <key> [value]` command reads the value associated with the specified key and logs it in the terminal.  
