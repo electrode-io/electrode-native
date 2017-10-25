@@ -75,11 +75,11 @@ export function isDependencyApiOrApiImpl (dependencyName: string): boolean {
 }
 
 export function isDependencyApi (dependencyName: string): boolean {
-  return (/^react-native-.+-api$/.test(dependencyName))
+  return (/^.*react-native-.+-api$/.test(dependencyName))
 }
 
 export function isDependencyApiImpl (dependencyName: string): boolean {
-  return (/^react-native-.+-api-impl$/.test(dependencyName))
+  return (/^.*react-native-.+-api-impl$/.test(dependencyName))
 }
 
 /**
