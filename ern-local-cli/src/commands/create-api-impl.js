@@ -12,19 +12,14 @@ import {
   DependencyPath
 } from 'ern-util'
 import cliUtils from '../lib/utils'
-
 import inquirer from 'inquirer'
-
-const path = require('path')
+import path from 'path'
 
 exports.command = 'create-api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
 
 exports.builder = function (yargs: any) {
-  return yargs.option('api', {
-    type: 'string',
-    describe: `npm package name OR the git location of the api f OR the file path for which an implementation needs to be generated.`
-  }).option('nativeOnly', {
+  return yargs.option('nativeOnly', {
     alias: 'n',
     type: 'bool',
     describe: 'Generate native projects with proper dependencies (Implementation of the API has to be written in native'
@@ -46,8 +41,8 @@ exports.builder = function (yargs: any) {
   .epilog(cliUtils.epilog(exports))
 }
 
-const WORKING_DIRECTORY = path.join(Platform.rootDirectory, `api-impl-gen`)
-const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, `plugins`)
+const WORKING_DIRECTORY = path.join(Platform.rootDirectory, 'api-impl-gen')
+const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, 'plugins')
 
 exports.handler = async function ({
   api,
@@ -64,12 +59,14 @@ exports.handler = async function ({
   outputDirectory: string,
   hasConfig: boolean
 }) {
+  const apiDep = Dependency.fromPath(DependencyPath.fromString(api))
+  const apiImplName = `${apiDep.name}-impl`
   // check if the packageName for specified {apiName}-impl exists
-  const apiImpl = `${api}-impl`
-  const isPackageNameInNpm = await cliUtils.doesPackageExistInNpm(apiImpl)
+  // Extend the command to ack the scope in the name
+  const isPackageNameInNpm = await cliUtils.doesPackageExistInNpm(apiImplName)
   // If package name exists in the npm
   if (isPackageNameInNpm) {
-    const skipNpmNameConflict = await cliUtils.promptSkipNpmNameConflictCheck(apiImpl)
+    const skipNpmNameConflict = await cliUtils.promptSkipNpmNameConflictCheck(apiImplName)
     // If user wants to stop execution if npm package name conflicts
     if (!skipNpmNameConflict) {
       return
@@ -91,7 +88,7 @@ exports.handler = async function ({
     }
 
     await generateApiImpl({
-      apiDependency: Dependency.fromPath(DependencyPath.fromString(api)),
+      apiDependency: apiDep,
       outputDirectory,
       nativeOnly,
       forceGenerate: force,

@@ -81,7 +81,7 @@ export default class ApiImplGen {
 
   async getDependencies (apiDependency: Dependency): Promise<Array<Dependency>> {
     try {
-      log.info(`Looking for peerDependencies`)
+      log.info('Looking for peerDependencies')
       const apiPackageInfo = await yarn.info(apiDependency.path, {json: true})
 
       let pluginsNames = []
