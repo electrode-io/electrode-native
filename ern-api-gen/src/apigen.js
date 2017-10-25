@@ -7,8 +7,7 @@ import path from 'path'
 import semver from 'semver'
 import {
   PKG_FILE,
-  FLOW_CONFIG_FILE,
-  FLOW_BIN_VERSION
+  FLOW_CONFIG_FILE
 } from './Constants'
 import {
   Dependency,
@@ -31,7 +30,7 @@ const {
 export async function generateApi (options: Object) {
   let config = normalizeConfig(options)
 
-  const outFolder = `${process.cwd()}/${config.moduleName}`
+  const outFolder = path.join(process.cwd(), config.moduleName)
   if (fs.existsSync(outFolder)) {
     log.error(`${outFolder} directory already exists`)
     process.exit(1)

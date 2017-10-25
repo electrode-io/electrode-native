@@ -43,12 +43,12 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
       shell.cd(`${ROOT_DIR}`)
 
-      const outputDirectory = path.join(paths.outDirectory, `ios`)
+      const outputDirectory = path.join(paths.outDirectory, 'ios')
       log.debug(`Creating out directory(${outputDirectory}) for ios and copying container hull to it.`)
       if (!fs.existsSync(outputDirectory)) {
         shell.mkdir(outputDirectory)
       }
-      shell.cp(`-R`, path.join(paths.apiImplHull, 'ios', '*'), outputDirectory)
+      shell.cp('-R', path.join(paths.apiImplHull, 'ios', '*'), outputDirectory)
 
       const apiImplProjectPath = path.join(outputDirectory, 'ElectrodeApiImpl.xcodeproj', 'project.pbxproj')
       const apiImplLibrariesPath = path.join(outputDirectory, 'ElectrodeApiImpl', 'Libraries')
@@ -64,7 +64,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
 
       for (const plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name}`)
-        const pluginConfig = await manifest.getPluginConfig(plugin, `ElectrodeApiImpl`)
+        const pluginConfig = await manifest.getPluginConfig(plugin, 'ElectrodeApiImpl')
         if (pluginConfig.ios) {
           let pluginSourcePath
           if (pluginConfig.origin.scope) {
@@ -154,7 +154,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
 
       fs.writeFileSync(apiImplProjectPath, apiImplProject.writeSync())
 
-      log.debug(`[=== Completed api-impl hull filling ===]`)
+      log.debug('[=== Completed api-impl hull filling ===]')
     } catch (e) {
       Utils.logErrorAndExitProcess(`Error while generating api impl hull for ios: ${e}`)
     }
