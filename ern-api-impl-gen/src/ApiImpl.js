@@ -5,7 +5,8 @@ import inquirer from 'inquirer'
 
 import {
   Dependency,
-  shell
+  shell,
+  fileUtils
 } from 'ern-util'
 import {
   ModuleTypes,
@@ -79,7 +80,8 @@ async function createOutputDirectory (outputDirectoryPath: string, forceGenerate
 
   if (forceGenerate && fs.existsSync(outputDirectoryPath)) {
     log.info(`Deleting the existing directory and recreating a new one in ${outputDirectoryPath}`)
-    shell.rm('-R', outputDirectoryPath)
+    fileUtils.chmodr('777', outputDirectoryPath)
+    shell.rm('-Rf', outputDirectoryPath)
   } else {
     log.debug(`creating output dir: ${outputDirectoryPath}`)
   }

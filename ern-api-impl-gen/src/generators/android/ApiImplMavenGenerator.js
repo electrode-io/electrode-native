@@ -3,7 +3,8 @@
 import {
   Dependency,
   mustacheUtils,
-  shell
+  shell,
+  fileUtils
 } from 'ern-util'
 import {
   manifest,
@@ -23,7 +24,8 @@ type PluginConfig = {
 }
 
 export const ROOT_DIR = shell.pwd()
-
+const READ_EXECUTE = '555'
+const READ_WRITE_EXECUTE = '777'
 export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   regenerateApiImpl:boolean
   get name (): string {
@@ -60,37 +62,47 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
       shell.cd(ROOT_DIR)
 
-      const outputDirectory = path.join(paths.outDirectory, `android`)
+      const outputDirectory = path.join(paths.outDirectory, 'android')
       log.debug(`Creating out directory(${outputDirectory}) for android and copying container hull to it.`)
       if (!fs.existsSync(outputDirectory)) {
         shell.mkdir(outputDirectory)
       }
 
+      fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
       shell.cp(`-Rf`, path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
 
+      const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
       for (let plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name} to ${outputDirectory}`)
         await manifest.getPluginConfig(plugin).then((pluginConfig) => {
-          this.copyPluginToOutput(paths, outputDirectory, plugin, pluginConfig)
+          this.copyPluginToOutput(paths, pluginOutputDirectory, plugin, pluginConfig)
         })
       }
-      await this.generateRequestHandlerClasses(apiDependency, paths, apis)
+      const editableFiles = await this.generateRequestHandlerClasses(apiDependency, paths, apis)
+      await this.updateFilePermissions(pluginOutputDirectory, editableFiles)
 
-      this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
+      await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
     } catch (e) {
       throw new Error(`Error during apiimpl hull: ${e}`)
     }
   }
 
-  copyPluginToOutput (paths: Object, outputDirectory: string, plugin: Dependency, pluginConfig: PluginConfig) {
+  copyPluginToOutput (paths: Object, pluginOutputDirectory: string, plugin: Dependency, pluginConfig: PluginConfig) {
     log.debug(`injecting ${plugin.name} code.`)
     const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName, 'src', 'main', 'java', '*')
-    const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
     if (!fs.existsSync(pluginOutputDirectory)) {
-      shell.mkdir(pluginOutputDirectory)
+      shell.mkdir('-p', pluginOutputDirectory)
     }
     log.debug(`Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`)
     shell.cp(`-Rf`, pluginSrcDirectory, pluginOutputDirectory)
+  }
+
+  async updateFilePermissions (pluginOutputDirectory: string, editableFiles: Array<string>) {
+    log.debug('Updating file permissions')
+    fileUtils.chmodr(READ_EXECUTE, pluginOutputDirectory)
+    for (const editableFile of editableFiles) {
+      fileUtils.chmodr(READ_WRITE_EXECUTE, editableFile)
+    }
   }
 
   updateBuildGradle (paths: Object, reactNativeVersion: string, outputDirectory: string): Promise<*> {
@@ -105,19 +117,23 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   async generateRequestHandlerClasses (apiDependency: Dependency, paths: Object, apis: Array<Object>) {
     log.debug(`=== updating request handler implementation class ===`)
     try {
+      let editableFiles = []
       const {outputDir, resourceDir} = ApiImplMavenGenerator.createImplDirectoryAndCopyCommonClasses(paths)
 
       for (const api of apis) {
         const {files, classNames} = ApiImplMavenGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
         for (const file of files) {
           if (!classNames[file]) {
-            log.warn(`Skipping mustaching of ${file}. No resulting file mapping found, consider adding one. \nThis might cause issues in generated implemenation project.`)
+            log.warn(`Skipping mustaching of ${file}. No resulting file mapping found, consider adding one. \nThis might cause issues in generated implementation project.`)
             throw new Error(`Class name mapping is missing for ${file}, unable to generate implementation class file.`)
           }
 
-          if (this.regenerateApiImpl && file === `requestHandlerProvider.mustache`) {
-            log.debug(`Skipping regeneration of ${classNames[file]}`)
-            continue
+          if (file === `requestHandlerProvider.mustache`) {
+            editableFiles.push(path.join(outputDir, classNames[file]))
+            if (this.regenerateApiImpl) {
+              log.debug(`Skipping regeneration of ${classNames[file]}`)
+              continue
+            }
           }
           await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             path.join(resourceDir, file),
@@ -126,6 +142,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
         }
         log.debug(`Api implementation files successfully generated for ${api.apiName}Api`)
       }
+      return editableFiles
     } catch (e) {
       throw new Error(`Failed to update RequestHandlerClass: ${e}`)
     }
