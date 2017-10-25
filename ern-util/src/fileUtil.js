@@ -1,6 +1,7 @@
 // @flow
 
 import fs from 'fs'
+import { shell } from 'ern-util'
 
 /**
  * ==============================================================================
@@ -34,4 +35,13 @@ export async function writeFile (
       else resolve(res)
     })
   })
+}
+
+/**
+ * Recursively apply file mode for a given path
+ * @param fileMode
+ * @param path
+ */
+export function chmodr (fileMode: string, path: string) {
+  shell.chmod('-R', fileMode, path)
 }
