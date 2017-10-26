@@ -13,12 +13,13 @@ import {
 import {
   Dependency,
   fileUtils,
-  shell
+  shell,
+  childProcess
 } from 'ern-util'
 import inquirer from 'inquirer'
-import { 
-  exec
-} from 'child_process'
+const { 
+  execp
+} = childProcess
 
 /**
  * ==============================================================================
@@ -215,15 +216,7 @@ async function publish ({version}: { version: string }) {
 }
 
 async function npmPublish() {
-  return new Promise((resolve, reject) => {
-    exec('npm publish', (err, stdout, stderr) => {
-      if (err) {
-        log.error(stderr)
-        return reject(err)
-      }
-      return resolve(stdout)
-    })
-  })
+  return execp('npm publish')
 }
 
 exports.default = {

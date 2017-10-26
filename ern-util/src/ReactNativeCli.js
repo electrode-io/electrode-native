@@ -1,15 +1,15 @@
 // @flow
 
-import {
-  exec,
-  spawn
-} from 'child_process'
 import * as fileUtils from './fileUtil'
 import fs from 'fs'
 import path from 'path'
 import shell from './shell'
 import spin from './spin'
 import tmp from 'tmp'
+import {
+  execp,
+  spawnp
+} from './childProcess'
 const fetch = require('node-fetch')
 
 export default class ReactNativeCli {
@@ -24,22 +24,13 @@ export default class ReactNativeCli {
   }
 
   async init (appName: string, rnVersion: string) {
-    return new Promise((resolve, reject) => {
-      const dir = path.join(process.cwd(), appName)
+    const dir = path.join(process.cwd(), appName)
 
-      if (fs.existsSync(dir)) {
-        return reject(new Error(`Path already exists will not override ${dir}`))
-      }
+    if (fs.existsSync(dir)) {
+      throw new Error(`Path already exists will not override ${dir}`)
+    }
 
-      exec(`${this.binaryPath} init ${appName} --version react-native@${rnVersion} --skip-jest`,
-        (err, stdout, stderr) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(stdout)
-          }
-        })
-    })
+    return execp(`${this.binaryPath} init ${appName} --version react-native@${rnVersion} --skip-jest`)
   }
 
   async bundle ({
@@ -63,37 +54,11 @@ ${platform ? `--platform=${platform}` : ''} \
 ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
 ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
 
-    return new Promise((resolve, reject) => {
-      log.debug(`[bundle] Running ${bundleCommand}`)
-      exec(bundleCommand,
-          (err, stdout, stderr) => {
-            if (err) {
-              reject(err)
-            } else if (stderr) {
-              reject(stderr)
-            } else if (stdout) {
-              resolve(stdout)
-            }
-          })
-    })
+    return execp(bundleCommand)
   }
 
   startPackager (cwd: string) {
-    const packager = spawn(this.binaryPath, [ 'start' ], { cwd })
-
-    packager.stdout.on('data', (data) => {
-      log.info(data)
-    })
-
-    packager.stderr.on('data', (data) => {
-      log.error(data)
-    })
-
-    packager.on('close', (code) => {
-      log.info(`React Native Packager exited with code ${code}`)
-    })
-
-    process.on('SIGINT', () => { packager.kill(); process.exit() })
+    spawnp(this.binaryPath, [ 'start' ], { cwd })
   }
 
   async startPackagerInNewWindow (cwd: string, args: Array<string> = []) {
@@ -129,7 +94,7 @@ echo "Running ${this.binaryPath} start ${args.join(' ')}";
 ${this.binaryPath} start ${args.join(' ')};
 `)
     shell.chmod('+x', tmpScriptPath)
-    spawn('open', ['-a', 'Terminal', tmpScriptPath])
+    spawnp('open', ['-a', 'Terminal', tmpScriptPath])
   }
 
   async windowsStartPackagerInNewWindow ({
@@ -148,7 +113,7 @@ echo "Running ${this.binaryPath} start ${args.join(' ')}";
 ${this.binaryPath} start ${args.join(' ')};
 `)
     shell.chmod('+x', tmpScriptPath)
-    spawn('cmd.exe', ['/C', tmpScriptPath], { detached: true })
+    spawnp('cmd.exe', ['/C', tmpScriptPath], { detached: true })
   }
 
   async isPackagerRunning () {

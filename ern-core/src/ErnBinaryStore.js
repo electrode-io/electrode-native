@@ -2,10 +2,10 @@
 
 import type { BinaryStore } from './BinaryStore'
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  childProcess
 } from 'ern-util'
 import {
-  exec,
   spawn
 } from 'child_process'
 import fs from 'fs'
@@ -13,6 +13,9 @@ import path from 'path'
 import tmp from 'tmp'
 import archiver from 'archiver'
 const DecompressZip = require('decompress-zip')
+const {
+  execp
+} = childProcess
 
 export default class ErnBinaryStore implements BinaryStore {
   _config: Object
@@ -21,31 +24,13 @@ export default class ErnBinaryStore implements BinaryStore {
     this._config = config
   }
 
-  async addBinary (descriptor: NativeApplicationDescriptor, binaryPath: string) : Promise<boolean> {
+  async addBinary (descriptor: NativeApplicationDescriptor, binaryPath: string) : Promise<string | Buffer> {
     const pathToBinary = await this.zipBinary(descriptor, binaryPath)
-    return new Promise((resolve, reject) => {
-      exec(`curl -XPOST ${this._config.url} -F file=@"${pathToBinary}"`,
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(true)
-          }
-        })
-    })
+    return execp(`curl -XPOST ${this._config.url} -F file=@"${pathToBinary}"`)
   }
 
-  async removeBinary (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      exec(`curl -XDELETE ${this.urlToBinary(descriptor)}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(true)
-          }
-        })
-    })
+  async removeBinary (descriptor: NativeApplicationDescriptor) : Promise<string | Buffer> {
+    return execp(`curl -XDELETE ${this.urlToBinary(descriptor)}`)
   }
 
   async getBinary (descriptor: NativeApplicationDescriptor, {
@@ -57,17 +42,8 @@ export default class ErnBinaryStore implements BinaryStore {
     return this.unzipBinary(descriptor, pathToZippedBinary, { outDir })
   }
 
-  async hasBinary (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      exec(`curl -XOPTIONS -s -o /dev/null -w '%{http_code}' ${this.urlToBinary(descriptor)}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error)
-          } else {
-            stdout.startsWith('404') ? resolve(false) : resolve(true)
-          }
-        })
-    })
+  async hasBinary (descriptor: NativeApplicationDescriptor) : Promise<string | Buffer> {
+    return execp(`curl -XOPTIONS -s -o /dev/null -w '%{http_code}' ${this.urlToBinary(descriptor)}`)
   }
 
   async getZippedBinary (descriptor: NativeApplicationDescriptor) : Promise<string> {

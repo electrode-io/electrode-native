@@ -1,13 +1,13 @@
 // @flow
 
-import {
-  exec,
-  spawn
-} from 'child_process'
 import inquirer from 'inquirer'
 import shell from './shell'
 import spin from './spin.js'
 import ernConfig from './config'
+import {
+  execp,
+  spawnp
+} from './childProcess'
 
 // ==============================================================================
 // Misc utilities
@@ -20,18 +20,6 @@ async function delay (ms: number) {
     setTimeout(() => {
       resolve()
     }, ms)
-  })
-}
-
-function execp (cmd: string) {
-  return new Promise((resolve, reject) => {
-    exec(cmd, (err, stdout, stderr) => {
-      if (err || stderr) {
-        reject(err || stderr)
-      } else {
-        resolve(stdout)
-      }
-    })
   })
 }
 
@@ -175,15 +163,11 @@ export async function runAndroidUsingAvdImage ({
   activityName: string
 }) {
   // https://issuetracker.google.com/issues/37137213
-  const launchEmulatorCmd = spawn(
+  spawnp(
     androidEmulatorPath(),
     ['-avd', avdImageName],
     { detached: true })
 
-  launchEmulatorCmd.stderr.on('data', (data) => {
-    log.debug(`${data}`)
-  })
-  launchEmulatorCmd.unref()
   await spin('Waiting for device to start', waitForAndroidDevice())
   await installAndLaunchApp({ projectPath, packageName, activityName })
 }
@@ -217,7 +201,7 @@ async function installAndLaunchApp ({
 // It check device readiness every 2 sec (poll way)
 export async function waitForAndroidDevice () {
   let androidBootAnimProp = await androidGetBootAnimProp()
-  while (!androidBootAnimProp.startsWith('stopped')) {
+  while (!androidBootAnimProp.toString().startsWith('stopped')) {
     await delay(2000)
     androidBootAnimProp = await androidGetBootAnimProp()
   }
@@ -227,10 +211,6 @@ export async function waitForAndroidDevice () {
 // which indicates somehow that device is ready to install APK and such
 export async function androidGetBootAnimProp () {
   return execp(`${androidAdbPath()} wait-for-device shell getprop init.svc.bootanim`)
-    .catch(err => {
-      log.error(err)
-      return Promise.reject(err)
-    })
 }
 
 // Build & install application on the device
@@ -241,10 +221,6 @@ export async function buildAndInstallApp (projectPath: string) {
   shell.cd(projectPath)
   const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
   return execp(`${gradlew} installDebug`)
-    .catch(err => {
-      log.error(err)
-      return Promise.reject(err)
-    })
 }
 
 // Utility method to launch a specific activity from a given package
@@ -262,44 +238,35 @@ export async function launchAndroidActivity (
 export function launchAndroidActivityDetached (
   packageName: string,
   activityName: string) {
-  const adbShellCommand = spawn(androidAdbPath(),
-      [ 'shell', 'am', 'start', '-n', `${packageName}/.${activityName}` ],
+  spawnp(
+    androidAdbPath(),
+    [ 'shell', 'am', 'start', '-n', `${packageName}/.${activityName}` ],
     { detached: true })
-
-  adbShellCommand.stderr.on('data', (data) => {
-    log.error(`${data}`)
-  })
 }
 
 // Utility method to list all available android avd images (emulator images)
 export async function getAndroidAvds () {
-  return execp(`${androidEmulatorPath()} -list-avds`)
-    .then(stdout => stdout.trim().split('\n'))
+  const stdout = await execp(`${androidEmulatorPath()} -list-avds`)
+  return stdout.toString().trim().split('\n')
 }
 
 // Utility method to query what device instances are connected to the adb server
 export async function getDevices () {
-  return execp(`${androidAdbPath()} devices`)
-    .then(stdout => {
-      /*
-       stdout for running command  $adb devices
-       List of devices attached
-       * daemon not running. starting it now at tcp:5037 *
-       * daemon started successfully *
-      */
-      let stdOutArr = stdout.trim().split('\n')
-      // remove stdout 'List of devices attached' (position 0)
-      // and remove stdout related to daemon
-      return stdOutArr.filter((entry, i) => i > 0 && !entry.includes('* daemon'))
-    })
+  const stdout = await execp(`${androidAdbPath()} devices`)
+  /*
+    stdout for running command  $adb devices
+    List of devices attached
+    * daemon not running. starting it now at tcp:5037 *
+    * daemon started successfully *
+  */
+  let stdOutArr = stdout.toString().trim().split('\n')
+  // remove stdout 'List of devices attached' (position 0)
+  // and remove stdout related to daemon
+  return stdOutArr.filter((entry, i) => i > 0 && !entry.includes('* daemon'))
 }
 
 export async function installApk (pathToApk: string) {
   return execp(`${androidAdbPath()} install -r ${pathToApk}`)
-    .then(stdout => {
-      log.debug(stdout)
-      return stdout
-    })
 }
 
 export function androidAdbPath () : string {
