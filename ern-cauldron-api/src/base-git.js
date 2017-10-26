@@ -3,13 +3,12 @@
 import {
   writeFile
 } from './fs-util'
-import Prom from 'bluebird'
 import fs from 'fs'
 import path from 'path'
 import {
-  shell
+  shell,
+  gitCli
 } from 'ern-util'
-import simpleGit from 'simple-git'
 
 const GIT_REMOTE_NAME = 'upstream'
 const README = '### Cauldron Repository'
@@ -32,9 +31,7 @@ export default class BaseGit {
     }
     this.repository = repository
     this.branch = branch
-    let simpleGitInstance = simpleGit(this.path)
-    simpleGitInstance.silent(global.ernLogLevel !== 'trace' && global.ernLogLevel !== 'debug')
-    this.git = Prom.promisifyAll(simpleGitInstance)
+    this.git = gitCli(this.path)
     this._pendingTransaction = false
     this._hasBeenSynced = false
   }
