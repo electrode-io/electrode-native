@@ -6,13 +6,13 @@ import path from 'path'
 import {
   reactnative,
   yarn,
-  GitUtils,
   MiniApp
 } from 'ern-core'
 import {
   Dependency,
   DependencyPath,
-  shell
+  shell,
+  gitCli
 } from 'ern-util'
 
 const gitDirectoryRe = /.*\/(.*).git/
@@ -378,7 +378,7 @@ export async function downloadPluginSource (pluginOrigin: any) : Promise<string>
     }
   } else if (pluginOrigin.type === 'git') {
     if (pluginOrigin.version) {
-      await GitUtils.gitClone(pluginOrigin.url, { branch: pluginOrigin.version })
+      await gitCli().cloneAsync(pluginOrigin.url, { '--branch': pluginOrigin.version })
       downloadPath = gitDirectoryRe.exec(`${pluginOrigin.url}`)[1]
     }
   } else {

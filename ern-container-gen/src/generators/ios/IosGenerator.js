@@ -3,14 +3,14 @@
 import {
   manifest,
   handleCopyDirective,
-  GitUtils,
   ContainerGeneratorConfig,
   MiniApp
 } from 'ern-core'
 import {
   Dependency,
   mustacheUtils,
-  shell
+  shell,
+  gitCli
 } from 'ern-util'
 
 import {
@@ -69,7 +69,7 @@ export default class IosGenerator implements ContainerGenerator {
           containerVersion: ${containerVersion}`)
 
           log.debug(`First lets clone the repo so we can update it with the newly generated container`)
-          await GitUtils.gitClone(repoUrl, {destDirectory: '.'})
+          await gitCli().cloneAsync(repoUrl, '.')
           shell.rm('-rf', path.join(paths.outDirectory, '*'))
         } else {
           log.warn('Looks like we are missing a GitHub publisher. Currently only GitHub publisher is supported.')
