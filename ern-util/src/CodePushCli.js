@@ -1,8 +1,8 @@
 // @flow
 
 import {
-  exec
-} from 'child_process'
+  execp
+} from './childProcess'
 import inquirer from 'inquirer'
 
 export default class CodePushCli {
@@ -55,21 +55,7 @@ ${platform === 'ios' ? `-b MiniApp.jsbundle` : ''}`
     }
 
     if (shouldExecuteCodePushCommand) {
-      await new Promise((resolve, reject) => {
-        log.debug(`[releaseReact] Running ${codePushCommand}`)
-        exec(codePushCommand,
-            (err, stdout, stderr) => {
-              if (err) {
-                return reject(err)
-              }
-              if (stderr) {
-                return reject(stderr)
-              }
-              if (stdout) {
-                resolve(stdout)
-              }
-            })
-      })
+      await execp(codePushCommand)
     }
 
     return shouldExecuteCodePushCommand

@@ -2,9 +2,12 @@
 import type { Publisher } from './Publisher'
 import { MavenUtils } from './MavenUtils'
 import {
-  shell
+  shell,
+  childProcess
 } from 'ern-util'
-import { exec } from 'child_process'
+const {
+  execp
+} = childProcess
 
 export default class MavenPublisher implements Publisher {
   _url: string
@@ -40,23 +43,6 @@ export default class MavenPublisher implements Publisher {
 
   async buildAndUploadArchive (moduleName: string): Promise<*> {
     const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
-    let cmd = `${gradlew} ${moduleName}:uploadArchives `
-    return new Promise((resolve, reject) => {
-      exec(cmd,
-        (err, stdout, stderr) => {
-          if (err) {
-            log.error(err)
-            reject(err)
-          }
-          if (stderr) {
-            // Supress Lint warning as auto generated code isn't meant to be modified by the developer
-            stderr && stderr.includes('unchecked') ? log.warn('') : log.warn('\n' + stderr)
-          }
-          if (stdout) {
-            log.debug(stdout)
-            resolve(stdout)
-          }
-        })
-    })
+    return execp(`${gradlew} ${moduleName}:uploadArchives`)
   }
 }
