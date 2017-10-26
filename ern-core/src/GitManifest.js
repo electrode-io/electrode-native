@@ -2,14 +2,13 @@
 
 import {
   Dependency,
-  shell
+  shell,
+  gitCli
 } from 'ern-util'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
-import Prom from 'bluebird'
 import semver from 'semver'
-import simpleGit from 'simple-git'
 import Platform from './Platform'
 
 const manifestFileName = 'manifest.json'
@@ -33,9 +32,7 @@ export default class GitManifest {
     if (!fs.existsSync(this._repoAbsoluteLocalPath)) {
       shell.mkdir('-p', this._repoAbsoluteLocalPath)
     }
-    let simpleGitInstance = simpleGit(this._repoAbsoluteLocalPath)
-    simpleGitInstance.silent(global.ernLogLevel === 'trace' || global.ernLogLevel === 'debug')
-    this._git = Prom.promisifyAll(simpleGitInstance)
+    this._git = gitCli(this._repoAbsoluteLocalPath)
     this._repoRemotePath = _repoRemotePath
     this._remote = remote
     this._branch = branch
