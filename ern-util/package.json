@@ -58,7 +58,9 @@
     "node-simctl": "^3.5.5",
     "ora": "^1.1.0",
     "shelljs": "^0.7.6",
-    "tmp": "^0.0.31"
+    "tmp": "^0.0.31",
+    "simple-git": "^1.70.0",
+    "bluebird": "^3.5.0"
   },
   "devDependencies": {
     "ern-util-dev": "0.9.0"

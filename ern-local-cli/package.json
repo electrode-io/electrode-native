@@ -52,7 +52,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
-    "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
     "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
