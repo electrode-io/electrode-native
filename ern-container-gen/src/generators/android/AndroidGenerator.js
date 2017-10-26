@@ -6,14 +6,14 @@ import {
   ContainerGeneratorConfig,
   MavenUtils,
   MiniApp,
-  GitUtils,
   utils
 } from 'ern-core'
 import {
   mustacheUtils,
   Dependency,
   Utils,
-  shell
+  shell,
+  gitCli
 } from 'ern-util'
 import {
   bundleMiniApps,
@@ -93,7 +93,7 @@ export default class AndroidGenerator implements ContainerGenerator {
             containerVersion: ${containerVersion}`)
 
           log.debug(`First lets clone the repo so we can update it with the newly generated container`)
-          await GitUtils.gitClone(repoUrl, { destDirectory: '.' })
+          await gitCli().cloneAsync(repoUrl, '.')
 
           shell.rm('-rf', `${paths.outDirectory}/*`)
         } catch (e) {

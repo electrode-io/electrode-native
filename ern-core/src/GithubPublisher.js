@@ -1,6 +1,6 @@
 // @flow
 import type { Publisher } from './Publisher'
-import GitUtils from './GitUtils'
+import { gitCli } from 'ern-util'
 
 export default class GithubPublisher implements Publisher {
   url: string
@@ -14,9 +14,16 @@ export default class GithubPublisher implements Publisher {
     return this._name
   }
 
-  async publish ({commitMessage, tag}: { commitMessage: string, tag: string } = {}) {
+  async publish ({commitMessage, tag}: { commitMessage: string, tag?: string } = {}) {
     try {
-      await GitUtils.gitPublish({commitMessage: commitMessage, tag: tag})
+      const git = gitCli()
+      await git.addAsync('./*')
+      await git.commitAsync(commitMessage)
+      if (tag) {
+        await git.tagAsync([tag])
+      }
+      await git.pushAsync('origin', 'master')
+      await git.pushTagsAsync('origin')
     } catch (e) {
       log.error(`Git push failed: ${e}`)
     }
