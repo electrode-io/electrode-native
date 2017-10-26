@@ -19,6 +19,7 @@ import * as _fileUtils from './fileUtil'
 import _YarnCli from './YarnCli'
 import _shell from './shell'
 import * as _childProcess from './childProcess'
+import _gitCli from './gitCli'
 
 export const android = _android
 export const ios = _ios
@@ -39,6 +40,7 @@ export const fileUtils = _fileUtils
 export const YarnCli = _YarnCli
 export const shell = _shell
 export const childProcess = _childProcess
+export const gitCli = _gitCli
 
 export default ({
   android: _android,
@@ -59,5 +61,6 @@ export default ({
   fileUtils: _fileUtils,
   YarnCli: _YarnCli,
   shell: _shell,
-  childProcess: _childProcess
+  childProcess: _childProcess,
+  gitCli: _gitCli
 })
