@@ -69,7 +69,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       }
 
       fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
-      shell.cp(`-Rf`, path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
+      shell.cp('-Rf', path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
 
       const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
       for (let plugin: Dependency of plugins) {
@@ -94,7 +94,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       shell.mkdir('-p', pluginOutputDirectory)
     }
     log.debug(`Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`)
-    shell.cp(`-Rf`, pluginSrcDirectory, pluginOutputDirectory)
+    shell.cp('-Rf', pluginSrcDirectory, pluginOutputDirectory)
   }
 
   async updateFilePermissions (pluginOutputDirectory: string, editableFiles: Array<string>) {
@@ -115,7 +115,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   }
 
   async generateRequestHandlerClasses (apiDependency: Dependency, paths: Object, apis: Array<Object>) {
-    log.debug(`=== updating request handler implementation class ===`)
+    log.debug('=== updating request handler implementation class ===')
     try {
       let editableFiles = []
       const {outputDir, resourceDir} = ApiImplMavenGenerator.createImplDirectoryAndCopyCommonClasses(paths)
@@ -128,7 +128,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
             throw new Error(`Class name mapping is missing for ${file}, unable to generate implementation class file.`)
           }
 
-          if (file === `requestHandlerProvider.mustache`) {
+          if (file === 'requestHandlerProvider.mustache') {
             editableFiles.push(path.join(outputDir, classNames[file]))
             if (this.regenerateApiImpl) {
               log.debug(`Skipping regeneration of ${classNames[file]}`)
@@ -159,14 +159,14 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   }
 
   static createImplDirectoryAndCopyCommonClasses (paths) {
-    const outputDir = path.join(paths.outDirectory, `/android/lib/src/main/java/com/ern/api/impl/`)
+    const outputDir = path.join(paths.outDirectory, '/android/lib/src/main/java/com/ern/api/impl/')
     if (!fs.existsSync(outputDir)) {
-      shell.mkdir(`-p`, outputDir)
+      shell.mkdir('-p', outputDir)
     }
 
-    const resourceDir = path.join(Platform.currentPlatformVersionPath, `ern-api-impl-gen/resources/android`)
-    shell.cp(path.join(resourceDir, `RequestHandlerConfig.java`), outputDir)
-    shell.cp(path.join(resourceDir, `RequestHandlerProvider.java`), outputDir)
+    const resourceDir = path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen/resources/android')
+    shell.cp(path.join(resourceDir, 'RequestHandlerConfig.java'), outputDir)
+    shell.cp(path.join(resourceDir, 'RequestHandlerProvider.java'), outputDir)
     return {outputDir, resourceDir}
   }
 }

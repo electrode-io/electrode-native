@@ -20,7 +20,7 @@ export default class ReactNativeCli {
   }
 
   get binaryPath () : string {
-    return this._binaryPath ? this._binaryPath : `react-native`
+    return this._binaryPath ? this._binaryPath : 'react-native'
   }
 
   async init (appName: string, rnVersion: string) {
