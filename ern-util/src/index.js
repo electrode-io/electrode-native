@@ -18,6 +18,7 @@ import _DependencyPath from './DependencyPath'
 import * as _fileUtils from './fileUtil'
 import _YarnCli from './YarnCli'
 import _shell from './shell'
+import * as _childProcess from './childProcess'
 
 export const android = _android
 export const ios = _ios
@@ -37,6 +38,7 @@ export const mustacheUtils = _mustacheUtils
 export const fileUtils = _fileUtils
 export const YarnCli = _YarnCli
 export const shell = _shell
+export const childProcess = _childProcess
 
 export default ({
   android: _android,
@@ -56,5 +58,6 @@ export default ({
   mustacheUtils: _mustacheUtils,
   fileUtils: _fileUtils,
   YarnCli: _YarnCli,
-  shell: _shell
+  shell: _shell,
+  childProcess: _childProcess
 })
