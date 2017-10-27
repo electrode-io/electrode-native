@@ -52,8 +52,8 @@ export default class ContainerGeneratorConfig {
       }
     }
 
-    if ((this.publishers.length === 0) && (platform === 'android')) {
-      // No container config provided. Lets create a default maven publisher for android
+    if ((platform === 'android') && (this.publishers.length === 0 || !this.firstAvailableMavenPublisher)) {
+      // Lets create a default maven publisher for android, if no maven publisher is provided.
       this.publishers.push(ContainerGeneratorConfig.createPublisher('maven', MavenUtils.getDefaultMavenLocalDirectory()))
     }
   }
