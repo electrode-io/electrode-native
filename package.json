@@ -10,7 +10,8 @@
     "test": "lerna run test",
     "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r lcov -r html $(find ./ern-*/.nyc_output -type f -name '*.json' -maxdepth 3)",
     "standard": "standard",
-    "flow": "flow"
+    "flow": "flow",
+    "precommit": "standard && flow",
   },
   "pre-commit": [
     "standard",
@@ -37,14 +38,13 @@
     "dirty-chai": "^1.2.2",
     "eslint-plugin-flowtype": "^2.33.0",
     "flow-bin": "0.47.0",
-    "husky": "^0.13.2",
+    "husky": "^0.14.3",
     "install": "^0.8.7",
     "istanbul-combine": "^0.3.0",
     "lerna": "2.0.0",
     "mocha": "^3.2.0",
     "npm": "^4.4.1",
     "nyc": "^10.1.2",
-    "pre-commit": "^1.2.2",
     "rimraf": "^2.6.0",
     "sinon": "3.1.0",
     "standard": "^10.0.2"
