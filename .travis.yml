@@ -6,7 +6,9 @@ install:
 - npm install
 script:
 - npm run rebuild
+- npm run standard --version
 - npm run standard
+- npm run flow version
 - npm run flow
 - npm run test
 notifications:
