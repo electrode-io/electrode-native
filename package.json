@@ -12,6 +12,7 @@
     "standard": "standard",
     "flow": "flow",
     "precommit": "standard && flow",
+    "postmerge": "node auto-rebuild.js"
   },
   "pre-commit": [
     "standard",
