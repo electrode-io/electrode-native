@@ -9,12 +9,7 @@ exports.command = 'config <key> [value]'
 exports.desc = 'Get or set a configuration key'
 
 exports.builder = function (yargs: any) {
-  return yargs
-    .option('value', {
-      alias: 'v',
-      describe: 'Value to set for the key'
-    })
-    .epilog(utils.epilog(exports))
+  return yargs.epilog(utils.epilog(exports))
 }
 
 exports.handler = function ({

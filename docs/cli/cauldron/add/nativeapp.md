@@ -15,9 +15,14 @@
 * A complete native application descriptor representing the native application version to be added to the Cauldron.
 
 **Example**  
+
 `ern cauldron add nativeapp MyNativeApp:ios:17.14.0`  
 
-**Options**  
+**Options** 
+
+`--platformVersion/-v`
+
+* Use specified platform version
 
 `--copyFromVersion/-c <version>`
 
