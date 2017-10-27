@@ -64,15 +64,18 @@ exports.handler = async function ({
   }
 
   log.info(`Generating ${apiName} API ${ApiGen}`)
-  ApiGen.generateApi({
-    bridgeVersion: `${bridgeDep.version}`,
-    reactNativeVersion: reactNative.version,
-    name: apiName,
-    npmScope: scope,
-    modelSchemaPath: schemaPath,
-    apiVersion: apiVersion,
-    apiAuthor: apiAuthor
-  }).then(() => {
-    log.info(`Success!`)
-  })
+  try {
+    await ApiGen.generateApi({
+      bridgeVersion: `${bridgeDep.version}`,
+      reactNativeVersion: reactNative.version,
+      name: apiName,
+      npmScope: scope,
+      modelSchemaPath: schemaPath,
+      apiVersion: apiVersion,
+      apiAuthor: apiAuthor
+    })
+    log.info('Success!')
+  } catch (e) {
+    log.error('Command failed.')
+  }
 }
