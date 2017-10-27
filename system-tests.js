@@ -23,7 +23,10 @@ const movieApi = 'react-native-ernmovie-api'
 function run (command) {
   console.log('===========================================================================')
   console.log(`${chalk.bold.red(`Running`)} ${chalk.bold.blue(`${command}`)}`)
-  shell.exec(command)
+  if (shell.exec(command).code !== 0) {
+    console.log(`${chalk.bold.red(`!!!TEST FAILED!!! `)} ${chalk.bold.blue(`${command}`)}`)
+    shell.exit(1)
+  }
   console.log('===========================================================================')
 }
 
