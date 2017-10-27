@@ -77,5 +77,6 @@ exports.handler = async function ({
     log.info('Success!')
   } catch (e) {
     log.error('Command failed.')
+    process.exit(1)
   }
 }
