@@ -21,40 +21,51 @@ exports.builder = function (yargs: any) {
     .option('scope', {
       describe: 'specify npm scope to group related packages together'
     })
+    .option('skipNpmCheck', {
+      describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
+      type: 'bool'
+    })
     .epilog(utils.epilog(exports))
 }
 
 exports.handler = async function ({
   appName,
   platformVersion,
-  scope
+  scope,
+  skipNpmCheck
 } : {
   appName: string,
   platformVersion: string,
   scope?: string,
+  skipNpmCheck?: boolean
 }) {
   try {
     if (!appName) {
       log.error('MiniApp must contain a value')
       return
     }
+
     let packageName = appName
     if (packageName !== packageName.toLowerCase()) {
       log.info(`NPM does not allow package names containing upper case letters.`)
       let appNameToken = core.splitCamelCaseString(appName)
       if (appNameToken) {
-        packageName = await _promptForPackageName(appNameToken.join('-'))
+        packageName = skipNpmCheck ? packageName : await _promptForPackageName(appNameToken.join('-'))
       }
     }
-    const isPackageNameInNpm = await utils.doesPackageExistInNpm(packageName)
-    // If package name exists in the npm
-    if (isPackageNameInNpm) {
-      const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(packageName)
-      // If user wants to stop execution if npm package name conflicts
-      if (!skipNpmNameConflict) {
-        return
+
+    if (!skipNpmCheck) {
+      const isPackageNameInNpm = await utils.doesPackageExistInNpm(packageName)
+      // If package name exists in the npm
+      if (isPackageNameInNpm) {
+        const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(packageName)
+        // If user wants to stop execution if npm package name conflicts
+        if (!skipNpmNameConflict) {
+          return
+        }
       }
     }
+
     await MiniApp.create(appName,
       packageName, {
         platformVersion: platformVersion && platformVersion.replace('v', ''),

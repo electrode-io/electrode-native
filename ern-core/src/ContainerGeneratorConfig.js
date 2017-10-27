@@ -94,7 +94,7 @@ export default class ContainerGeneratorConfig {
   }
 
   /**
-   * Returns the first github publisher available in the array
+   * Returns the first maven publisher available in the array
    */
   get firstAvailableMavenPublisher (): ?Publisher {
     if (this.publishers) {
