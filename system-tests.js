@@ -18,6 +18,7 @@ const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${n
 const iosNativeApplicationDescriptor = `${nativeApplicationName}:ios:${nativeApplicationVersion}`
 const movieListMiniAppVersion = '0.0.4'
 const movieDetailsMiniAppVersion = '0.0.3'
+const movieApi = 'react-native-ernmovie-api'
 
 function run (command) {
   console.log('===========================================================================')
@@ -33,9 +34,8 @@ console.log(info(`Creating GitHub repository (${gitHubCauldronRepositoryName})`)
 run(`curl -u ernplatformtest:${gitHubPesonalToken} -d '{"name": "${gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
 run(`ern --hide-banner`)
-run(`ern --log-level info`)
+run(`ern --log-level debug`)
 
-//
 // Cauldron repo
 run(`ern cauldron repo clear`)
 run(`ern cauldron repo add ${cauldronName} https://${gitUserName}:${gitPassword}@github.com/${gitUserName}/${gitHubCauldronRepositoryName}.git --current=false`)
@@ -43,15 +43,13 @@ run(`ern cauldron repo use ${cauldronName}`)
 run(`ern cauldron repo current`)
 run(`ern cauldron repo list`)
 
-//
 // Miniapp commands
-run(`ern create-miniapp ${miniAppName}`)
-const miniAppPath = path.join(process.cwd(), miniAppName)
+run(`ern create-miniapp ${miniAppName} --skipNpmCheck=true`)
+const miniAppPath = path.join(process.cwd(), `${miniAppName}`)
 console.log(info(`Entering ${miniAppPath}`))
-process.chdir(`${miniAppPath}`)
+process.chdir(miniAppPath)
 run(`ern add react-native-electrode-bridge`)
 
-//
 // Cauldron access commands
 run(`ern cauldron add nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
@@ -99,6 +97,17 @@ process.chdir(workingDirectoryPath)
 
 // api
 run(`ern create-api ${apiName}`)
+const apiPath = path.join(process.cwd(), `react-native-${apiName}-api`)
+console.log(info(`Entering ${apiPath}`))
+process.chdir(apiPath)
+run(`ern regen-api --updatePlugin=true`)
+
+// api-impl
+run(`ern create-api-impl ${movieApi} --skipNpmCheck=true --nativeOnly=true --force=true`)
+const apiImplPath = path.join(process.cwd(), `${movieApi}-impl`)
+console.log(info(`Entering ${apiImplPath}`))
+process.chdir(apiImplPath)
+run(`ern regen-api-impl`)
 
 // Platform commands
 run(`ern platform current`)
