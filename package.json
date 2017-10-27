@@ -14,10 +14,6 @@
     "precommit": "standard && flow",
     "postmerge": "node auto-rebuild.js"
   },
-  "pre-commit": [
-    "standard",
-    "flow"
-  ],
   "dependencies": {
     "chalk": "^1.1.3",
     "shelljs": "^0.7.6"
