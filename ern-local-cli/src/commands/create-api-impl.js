@@ -19,10 +19,7 @@ exports.command = 'create-api-impl <api>'
 exports.desc = 'Commands to generate API implementation skeleton.'
 
 exports.builder = function (yargs: any) {
-  return yargs.option('api', {
-    type: 'string',
-    describe: `npm package name OR the git location of the api f OR the file path for which an implementation needs to be generated.`
-  }).option('nativeOnly', {
+  return yargs.option('nativeOnly', {
     alias: 'n',
     type: 'bool',
     describe: 'Generate native projects with proper dependencies (Implementation of the API has to be written in native'

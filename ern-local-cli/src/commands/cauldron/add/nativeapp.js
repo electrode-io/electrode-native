@@ -12,14 +12,14 @@ import inquirer from 'inquirer'
 import _ from 'lodash'
 import utils from '../../../lib/utils'
 
-exports.command = 'nativeapp <descriptor> [platformVersion]'
+exports.command = 'nativeapp <descriptor>'
 exports.desc = 'Add a native application to the cauldron'
 
 exports.builder = function (yargs: any) {
   return yargs
   .option('platformVersion', {
     alias: 'v',
-    describe: 'Platform version'
+    describe: 'Use specified platform version'
   })
   .option('copyFromVersion', {
     alias: 'c',

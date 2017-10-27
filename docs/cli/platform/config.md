@@ -6,7 +6,7 @@
 
 #### Syntax
 
-`ern platform config <key>`
+`ern platform config <key> [value]`
 
 **Arguments**
 
@@ -14,11 +14,9 @@
 
 * The key of the configuration element to get or set
 
-**Options**
+`[value]`
 
-`--value/-v`
-
-* If specifed, will set the config value associated to this key. If not specifed, will retrieve the config value (get) associated to this key.
+* If specified, will set the config value associated to this key. If not specified, will retrieve the config value (get) associated to this key.
 
 #### Remarks
 
