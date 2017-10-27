@@ -9,13 +9,13 @@ if (stdout) {
     console.log('Dependency changes detected in Electrode Native root')
     console.log('Running yarn install')
     console.log('========================================================')
-    console.log(execSync('yarn install'))
+    execSync('yarn install', { stdio: [0, 1, 2] })
   }
   if (/ern-.+(\/|\\)yarn\.lock/.test(stdout)) {
     console.log('========================================================')
     console.log('Dependency changes detected in one or more ern module(s)')
     console.log('Rebuilding Electrode Native platform')
     console.log('========================================================')
-    console.log(execSync('npm run rebuild'))
+    execSync('npm run rebuild', { stdio: [0, 1, 2] })
   }
 }
