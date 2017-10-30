@@ -1,8 +1,7 @@
-import chalk from 'chalk'
-
 export default class Utils {
-  static logErrorAndExitProcess (message: string) {
-    log.error(chalk.red(message))
-    process.exit(1)
+  static logErrorAndExitProcess (e: Error, code?: number = 1) {
+    log.error(`An error hapenned : ${e.message}`)
+    log.debug(e)
+    process.exit(code)
   }
 }
