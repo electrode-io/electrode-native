@@ -1,7 +1,10 @@
 // @flow
 
 import utils from '../lib/utils'
-import { config as ernConfig } from 'ern-util'
+import {
+  config as ernConfig,
+  Utils
+} from 'ern-util'
 
 exports.command = 'run-ios'
 exports.desc = 'Run one or more MiniApps in the iOS Runner application'
@@ -54,18 +57,18 @@ exports.handler = async function ({
   dev?: boolean,
   usePreviousEmulator?: boolean
 }) {
-  if (process.platform !== 'darwin') {
-    return log.error('This command can only be used on Mac OS X')
-  }
-
-  let emulatorConfig = ernConfig.getValue('emulatorConfig', {
-    android: {usePreviousEmulator: false, emulatorName: ''},
-    ios: {usePreviousEmulator: false, simulatorUdid: ''}
-  })
-  usePreviousEmulator ? emulatorConfig.ios.usePreviousEmulator = true : emulatorConfig.ios.usePreviousEmulator = false
-  ernConfig.setValue('emulatorConfig', emulatorConfig)
-
   try {
+    if (process.platform !== 'darwin') {
+      return log.error('This command can only be used on Mac OS X')
+    }
+
+    let emulatorConfig = ernConfig.getValue('emulatorConfig', {
+      android: {usePreviousEmulator: false, emulatorName: ''},
+      ios: {usePreviousEmulator: false, simulatorUdid: ''}
+    })
+    usePreviousEmulator ? emulatorConfig.ios.usePreviousEmulator = true : emulatorConfig.ios.usePreviousEmulator = false
+    ernConfig.setValue('emulatorConfig', emulatorConfig)
+
     await utils.runMiniApp('ios', {
       mainMiniAppName,
       miniapps,
@@ -74,6 +77,6 @@ exports.handler = async function ({
       dev
     })
   } catch (e) {
-    log.error(`${e}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

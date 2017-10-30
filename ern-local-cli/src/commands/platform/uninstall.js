@@ -3,6 +3,9 @@
 import {
   Platform
 } from 'ern-core'
+import {
+  Utils
+} from 'ern-util'
 import utils from '../../lib/utils'
 
 exports.command = 'uninstall <version>'
@@ -20,6 +23,6 @@ exports.handler = function ({
   try {
     Platform.uninstallPlatform(version.toString().replace('v', ''))
   } catch (e) {
-    log.error(e)
+    Utils.logErrorAndExitProcess(e)
   }
 }

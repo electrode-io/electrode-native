@@ -5,7 +5,8 @@ import {
   Platform
 } from 'ern-core'
 import {
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import utils from '../../../lib/utils'
 
@@ -30,11 +31,15 @@ exports.handler = async function ({
   name: string,
   platformVersion?: string
 }) {
-  const plugin = await manifest.getNativeDependency(Dependency.fromString(name), platformVersion)
-  if (!plugin) {
-    return log.warn(`No plugin named ${name} was found for platform version $platformVersion}`)
-  }
+  try {
+    const plugin = await manifest.getNativeDependency(Dependency.fromString(name), platformVersion)
+    if (!plugin) {
+      return log.warn(`No plugin named ${name} was found for platform version $platformVersion}`)
+    }
 
-  const scopeStr = `${plugin.scope ? `${plugin.scope}@` : ''}`
-  console.log(`${chalk.gray(scopeStr)}${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`)
+    const scopeStr = `${plugin.scope ? `${plugin.scope}@` : ''}`
+    console.log(`${chalk.gray(scopeStr)}${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

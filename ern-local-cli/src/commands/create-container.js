@@ -11,7 +11,8 @@ import {
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
-  spin
+  spin,
+  Utils
 } from 'ern-util'
 import {
   runLocalContainerGen,
@@ -104,99 +105,103 @@ exports.handler = async function ({
     return log.error(`You can only provide extra native dependencies when generating a non JS only / non Cauldron based container`)
   }
 
-  //
-  // Full native application selector was not provided.
-  // Ask the user to select a completeNapDescriptor from a list
-  // containing all the native applications versions in the cauldron
-  // Not needed if miniapps are directly provided
-  if (!descriptor && !miniapps) {
-    const nativeApps = await cauldron.getAllNativeApps()
+  try {
+    //
+    // Full native application selector was not provided.
+    // Ask the user to select a completeNapDescriptor from a list
+    // containing all the native applications versions in the cauldron
+    // Not needed if miniapps are directly provided
+    if (!descriptor && !miniapps) {
+      const nativeApps = await cauldron.getAllNativeApps()
 
-    // Transform native apps from the cauldron to an Array
-    // of completeNapDescriptor strings
-    // [Should probably move to a Cauldron util class for reusability]
-    let result =
-      _.filter(
-        _.flattenDeep(
-          _.map(nativeApps, nativeApp =>
-            _.map(nativeApp.platforms, p =>
-              _.map(p.versions, version => {
-                if (!version.isReleased) {
-                  return `${nativeApp.name}:${p.name}:${version.name}`
-                }
-              })))), elt => elt !== undefined)
+      // Transform native apps from the cauldron to an Array
+      // of completeNapDescriptor strings
+      // [Should probably move to a Cauldron util class for reusability]
+      let result =
+        _.filter(
+          _.flattenDeep(
+            _.map(nativeApps, nativeApp =>
+              _.map(nativeApp.platforms, p =>
+                _.map(p.versions, version => {
+                  if (!version.isReleased) {
+                    return `${nativeApp.name}:${p.name}:${version.name}`
+                  }
+                })))), elt => elt !== undefined)
 
-    const {userSelectedCompleteNapDescriptor} = await inquirer.prompt([{
-      type: 'list',
-      name: 'userSelectedCompleteNapDescriptor',
-      message: 'Choose a non released native application version for which to generate container',
-      choices: result
-    }])
+      const {userSelectedCompleteNapDescriptor} = await inquirer.prompt([{
+        type: 'list',
+        name: 'userSelectedCompleteNapDescriptor',
+        message: 'Choose a non released native application version for which to generate container',
+        choices: result
+      }])
 
-    descriptor = userSelectedCompleteNapDescriptor
-  }
-
-  if (descriptor) {
-    await utils.logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: {descriptor},
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage: 'You cannot create a container for a non existin native application version.'
-      }
-    })
-
-    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-  }
-
-  let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
-  //
-  // --jsOnly switch
-  // Ony generates the composite miniapp to a provided output directory
-  if (jsOnly) {
-    if (!miniapps) {
-      if (!napDescriptor) {
-        return log.error('You need to provide a napDescriptor if not providing miniapps')
-      }
-      const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
-      miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
+      descriptor = userSelectedCompleteNapDescriptor
     }
 
-    let pathToYarnLock
-    if (napDescriptor) {
-      pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
-    }
-
-    await generateMiniAppsComposite(
-      miniAppsPaths,
-      outDir || `${Platform.rootDirectory}/miniAppsComposite`,
-      pathToYarnLock ? {pathToYarnLock} : {})
-  } else {
-    if (!napDescriptor && miniapps) {
-      if (!platform) {
-        const {userSelectedPlatform} = await inquirer.prompt([{
-          type: 'list',
-          name: 'userSelectedPlatform',
-          message: 'Choose platform to generate container for',
-          choices: ['android', 'ios']
-        }])
-
-        platform = userSelectedPlatform
-      }
-
-      await spin('Generating Container locally', runLocalContainerGen(
-        miniAppsPaths,
-        platform, {
-          version,
-          nativeAppName: containerName,
-          outDir,
-          extraNativeDependencies: _.map(dependencies, d => Dependency.fromString(d))
+    if (descriptor) {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isCompleteNapDescriptorString: {descriptor},
+        napDescriptorExistInCauldron: {
+          descriptor,
+          extraErrorMessage: 'You cannot create a container for a non existin native application version.'
         }
-      ))
-    } else if (napDescriptor && version) {
-      await runCauldronContainerGen(
-        napDescriptor,
-        version,
-        {publish: false, outDir})
+      })
+
+      napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
     }
+
+    let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
+    //
+    // --jsOnly switch
+    // Ony generates the composite miniapp to a provided output directory
+    if (jsOnly) {
+      if (!miniapps) {
+        if (!napDescriptor) {
+          return log.error('You need to provide a napDescriptor if not providing miniapps')
+        }
+        const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
+        miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
+      }
+
+      let pathToYarnLock
+      if (napDescriptor) {
+        pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
+      }
+
+      await generateMiniAppsComposite(
+        miniAppsPaths,
+        outDir || `${Platform.rootDirectory}/miniAppsComposite`,
+        pathToYarnLock ? {pathToYarnLock} : {})
+    } else {
+      if (!napDescriptor && miniapps) {
+        if (!platform) {
+          const {userSelectedPlatform} = await inquirer.prompt([{
+            type: 'list',
+            name: 'userSelectedPlatform',
+            message: 'Choose platform to generate container for',
+            choices: ['android', 'ios']
+          }])
+
+          platform = userSelectedPlatform
+        }
+
+        await spin('Generating Container locally', runLocalContainerGen(
+          miniAppsPaths,
+          platform, {
+            version,
+            nativeAppName: containerName,
+            outDir,
+            extraNativeDependencies: _.map(dependencies, d => Dependency.fromString(d))
+          }
+        ))
+      } else if (napDescriptor && version) {
+        await runCauldronContainerGen(
+          napDescriptor,
+          version,
+          {publish: false, outDir})
+      }
+    }
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
 }

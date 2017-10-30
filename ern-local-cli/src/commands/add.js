@@ -4,7 +4,8 @@ import {
   MiniApp
 } from 'ern-core'
 import {
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import utils from '../lib/utils'
 
@@ -43,6 +44,6 @@ exports.handler = async function ({
       await MiniApp.fromCurrentPath().addDependency(Dependency.fromString(pkg), {dev, peer})
     }
   } catch (e) {
-    log.error(`${e}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

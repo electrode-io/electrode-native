@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  config as ernConfig
+  config as ernConfig,
+  Utils
 } from 'ern-util'
 import utils from '../../../lib/utils'
 
@@ -13,10 +14,14 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function () {
-  const cauldronRepoInUse = ernConfig.getValue('cauldronRepoInUse')
-  if (!cauldronRepoInUse) {
-    return console.log(`No Cauldron repository is in use yet`)
+  try {
+    const cauldronRepoInUse = ernConfig.getValue('cauldronRepoInUse')
+    if (!cauldronRepoInUse) {
+      return console.log(`No Cauldron repository is in use yet`)
+    }
+    const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
+    console.log(`${cauldronRepoInUse} [${cauldronRepositories[cauldronRepoInUse]}]`)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
-  const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
-  console.log(`${cauldronRepoInUse} [${cauldronRepositories[cauldronRepoInUse]}]`)
 }

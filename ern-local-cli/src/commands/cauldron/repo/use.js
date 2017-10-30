@@ -5,7 +5,8 @@ import {
 } from 'ern-core'
 import {
   config as ernConfig,
-  shell
+  shell,
+  Utils
 } from 'ern-util'
 import utils from '../../../lib/utils'
 
@@ -21,14 +22,18 @@ exports.handler = function ({
 } : {
   alias: string
 }) {
-  let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
-  if (!cauldronRepositories) {
-    return console.log('No Cauldron repositories have been added yet')
+  try {
+    let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
+    if (!cauldronRepositories) {
+      return console.log('No Cauldron repositories have been added yet')
+    }
+    if (!cauldronRepositories[alias]) {
+      return console.log(`No Cauldron repository exists with ${alias} alias`)
+    }
+    ernConfig.setValue('cauldronRepoInUse', alias)
+    shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
+    console.log(`${alias} Cauldron is now in use`)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
-  if (!cauldronRepositories[alias]) {
-    return console.log(`No Cauldron repository exists with ${alias} alias`)
-  }
-  ernConfig.setValue('cauldronRepoInUse', alias)
-  shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-  console.log(`${alias} Cauldron is now in use`)
 }

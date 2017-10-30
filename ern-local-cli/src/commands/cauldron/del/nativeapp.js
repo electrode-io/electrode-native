@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import {
   cauldron
@@ -31,5 +32,9 @@ exports.handler = async function ({
     }
   })
 
-  await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(descriptor))
+  try {
+    await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(descriptor))
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

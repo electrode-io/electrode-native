@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import {
   cauldron
@@ -29,17 +30,21 @@ exports.handler = async function ({
   descriptor: string,
   isReleased: boolean
 }) {
-  await utils.logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage: 'A Cauldron must be active in order to use this command'
-    },
-    isCompleteNapDescriptorString: { descriptor },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage: 'You cannot update the release status of a non existing native application version'
-    }
-  })
+  try {
+    await utils.logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage: 'A Cauldron must be active in order to use this command'
+      },
+      isCompleteNapDescriptorString: { descriptor },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'You cannot update the release status of a non existing native application version'
+      }
+    })
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-  cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+    cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

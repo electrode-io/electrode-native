@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  config as ernConfig
+  config as ernConfig,
+  Utils
 } from 'ern-util'
 import utils from '../../lib/utils'
 
@@ -19,9 +20,13 @@ exports.handler = function ({
   key: string,
   value?: string
 }) {
-  if (value) {
-    ernConfig.setValue(key, value)
-  } else {
-    log.info(`${key}: ${ernConfig.getValue(key)}`)
+  try {
+    if (value) {
+      ernConfig.setValue(key, value)
+    } else {
+      log.info(`${key}: ${ernConfig.getValue(key)}`)
+    }
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
 }

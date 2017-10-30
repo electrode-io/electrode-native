@@ -7,7 +7,8 @@ import {
   manifest
 } from 'ern-core'
 import {
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import utils from '../lib/utils'
 
@@ -34,13 +35,17 @@ exports.handler = async function ({
   updatePlugin: boolean,
   bridgeVersion: string
 } = {}) {
-  if (!bridgeVersion) {
-    const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
-    if (!bridgeDep) {
-      return log.error(`react-native-electrode-bridge not found in manifest. please provide explicit version`)
+  try {
+    if (!bridgeVersion) {
+      const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
+      if (!bridgeDep) {
+        return log.error(`react-native-electrode-bridge not found in manifest. please provide explicit version`)
+      }
+      bridgeVersion = bridgeDep.version
     }
-    bridgeVersion = bridgeDep.version
-  }
 
-  return ApiGen.regenerateCode({bridgeVersion, updatePlugin})
+    return ApiGen.regenerateCode({bridgeVersion, updatePlugin})
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

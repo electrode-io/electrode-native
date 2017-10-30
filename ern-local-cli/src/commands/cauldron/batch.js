@@ -3,7 +3,8 @@
 import {
   Dependency,
   DependencyPath,
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import {
   cauldron,
@@ -207,6 +208,6 @@ exports.handler = async function ({
     { containerVersion })
     log.info(`Operations were succesfully performed for ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`An error happened while trying to remove dependency(ies) from ${napDescriptor.toString()}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

@@ -9,7 +9,8 @@ import {
 } from 'ern-api-impl-gen'
 import {
   Dependency,
-  DependencyPath
+  DependencyPath,
+  Utils
 } from 'ern-util'
 import cliUtils from '../lib/utils'
 import inquirer from 'inquirer'
@@ -108,7 +109,7 @@ exports.handler = async function ({
     })
     log.info('Success!')
   } catch (e) {
-    log.error(`${e} \n\nAPI implementation generation failed.`)
+    Utils.logErrorAndExitProcess(e)
   }
 }
 

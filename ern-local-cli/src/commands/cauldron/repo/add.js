@@ -5,7 +5,8 @@ import {
 } from 'ern-core'
 import {
   config as ernConfig,
-  shell
+  shell,
+  Utils
 } from 'ern-util'
 import inquirer from 'inquirer'
 import utils from '../../../lib/utils'
@@ -32,25 +33,29 @@ exports.handler = function ({
   url: string,
   current: boolean,
 }) {
-  let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
-  if (cauldronRepositories[alias]) {
-    return console.log(`A Cauldron repository is already associated to ${alias} alias`)
-  }
-  cauldronRepositories[alias] = url
-  ernConfig.setValue('cauldronRepositories', cauldronRepositories)
-  console.log(`Added Cauldron repository ${url} with alias ${alias}`)
-  if (current) {
-    useCauldronRepository(alias)
-  } else if (!(current === false)) {
-    inquirer.prompt([{
-      type: 'confirm',
-      name: 'current',
-      message: `Set ${alias} as the current Cauldron repository`
-    }]).then(answers => {
-      if (answers.current) {
-        useCauldronRepository(alias)
-      }
-    })
+  try {
+    let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
+    if (cauldronRepositories[alias]) {
+      return console.log(`A Cauldron repository is already associated to ${alias} alias`)
+    }
+    cauldronRepositories[alias] = url
+    ernConfig.setValue('cauldronRepositories', cauldronRepositories)
+    console.log(`Added Cauldron repository ${url} with alias ${alias}`)
+    if (current) {
+      useCauldronRepository(alias)
+    } else if (!(current === false)) {
+      inquirer.prompt([{
+        type: 'confirm',
+        name: 'current',
+        message: `Set ${alias} as the current Cauldron repository`
+      }]).then(answers => {
+        if (answers.current) {
+          useCauldronRepository(alias)
+        }
+      })
+    }
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
 }
 

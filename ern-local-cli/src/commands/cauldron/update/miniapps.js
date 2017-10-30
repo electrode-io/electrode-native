@@ -6,7 +6,8 @@ import {
 import {
   DependencyPath,
   NativeApplicationDescriptor,
-  spin
+  spin,
+  Utils
 } from 'ern-util'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
@@ -120,6 +121,6 @@ exports.handler = async function ({
       { containerVersion })
     log.info(`MiniApp(s) version(s) was/were succesfully updated for ${napDescriptor.toString()} in Cauldron !`)
   } catch (e) {
-    log.error(`An error occured while trying to update MiniApp(s) version(s) in Cauldron`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

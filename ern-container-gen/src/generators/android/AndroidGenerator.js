@@ -97,7 +97,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
           shell.rm('-rf', `${paths.outDirectory}/*`)
         } catch (e) {
-          Utils.logErrorAndExitProcess('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct')
+          Utils.logErrorAndExitProcess(new Error('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct'))
         }
       }
 

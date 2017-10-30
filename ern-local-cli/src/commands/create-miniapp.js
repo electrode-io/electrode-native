@@ -4,6 +4,9 @@ import {
   MiniApp,
   utils as core
 } from 'ern-core'
+import {
+  Utils
+} from 'ern-util'
 import utils from '../lib/utils'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
@@ -83,7 +86,7 @@ exports.handler = async function ({
     log.info(chalk.white(`    > ern run-ios`))
     log.info(`================================================`)
   } catch (e) {
-    log.error(e.message)
+    Utils.logErrorAndExitProcess(e)
   }
 }
 

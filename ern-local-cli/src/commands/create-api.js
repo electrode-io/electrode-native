@@ -7,7 +7,8 @@ import {
   manifest
 } from 'ern-core'
 import {
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import utils from '../lib/utils'
 
@@ -76,7 +77,6 @@ exports.handler = async function ({
     })
     log.info('Success!')
   } catch (e) {
-    log.error('Command failed.')
-    process.exit(1)
+    Utils.logErrorAndExitProcess(e)
   }
 }

@@ -6,7 +6,8 @@ import {
 import {
   DependencyPath,
   NativeApplicationDescriptor,
-  spin
+  spin,
+  Utils
 } from 'ern-util'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
@@ -112,8 +113,8 @@ exports.handler = async function ({
       napDescriptor,
       cauldronCommitMessage,
       { containerVersion })
-    log.debug(`MiniApp(s) was/were succesfully added to ${napDescriptor.toString()} in the Cauldron !`)
+    log.debug(`MiniApp(s) was/were succesfully added to ${napDescriptor.toString()} in the Cauldron`)
   } catch (e) {
-    log.error(`An error occured while trying to add MiniApp(s) to Cauldron`)
+    Utils.logErrorAndExitProcess(e)
   }
 }
