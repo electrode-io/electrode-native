@@ -4,6 +4,9 @@ import {
   manifest,
   Platform
 } from 'ern-core'
+import {
+  Utils
+} from 'ern-util'
 import utils from '../../../lib/utils'
 
 import chalk from 'chalk'
@@ -26,23 +29,27 @@ exports.handler = async function ({
 } : {
   platformVersion?: string
 }) {
-  const plugins = await manifest.getNativeDependencies(platformVersion)
+  try {
+    const plugins = await manifest.getNativeDependencies(platformVersion)
 
-  log.info(`Platform v${platformVersion} suports the following plugins`)
-  var table = new Table({
-    head: [
-      chalk.cyan('Scope'),
-      chalk.cyan('Name'),
-      chalk.cyan('Version')
-    ],
-    colWidths: [10, 40, 16]
-  })
-  for (const plugin of plugins) {
-    table.push([
-      plugin.scope ? plugin.scope : '',
-      plugin.name,
-      plugin.version
-    ])
+    log.info(`Platform v${platformVersion} suports the following plugins`)
+    var table = new Table({
+      head: [
+        chalk.cyan('Scope'),
+        chalk.cyan('Name'),
+        chalk.cyan('Version')
+      ],
+      colWidths: [10, 40, 16]
+    })
+    for (const plugin of plugins) {
+      table.push([
+        plugin.scope ? plugin.scope : '',
+        plugin.name,
+        plugin.version
+      ])
+    }
+    console.log(table.toString())
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
-  console.log(table.toString())
 }

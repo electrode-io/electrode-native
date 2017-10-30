@@ -2,7 +2,8 @@
 
 import {
   Dependency,
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import {
   cauldron
@@ -108,18 +109,22 @@ exports.handler = async function ({
     }
   })
 
-  const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
-  await performCodePushOtaUpdate(
-    napDescriptor,
-    _.map(miniapps, Dependency.fromString), {
-      force: force,
-      codePushAppName: appName,
-      codePushDeploymentName: deploymentName,
-      codePushPlatformName: platform,
-      codePushTargetVersionName: targetBinaryVersion,
-      codePushIsMandatoryRelease: mandatory,
-      codePushRolloutPercentage: rollout,
-      pathToYarnLock: pathToYarnLock || undefined,
-      skipConfirmation
-    })
+  try {
+    const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
+    await performCodePushOtaUpdate(
+      napDescriptor,
+      _.map(miniapps, Dependency.fromString), {
+        force: force,
+        codePushAppName: appName,
+        codePushDeploymentName: deploymentName,
+        codePushPlatformName: platform,
+        codePushTargetVersionName: targetBinaryVersion,
+        codePushIsMandatoryRelease: mandatory,
+        codePushRolloutPercentage: rollout,
+        pathToYarnLock: pathToYarnLock || undefined,
+        skipConfirmation
+      })
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

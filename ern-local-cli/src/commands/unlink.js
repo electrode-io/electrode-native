@@ -3,6 +3,9 @@
 import {
   MiniApp
 } from 'ern-core'
+import {
+  Utils
+} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'unlink'
@@ -16,6 +19,6 @@ exports.handler = async function () {
   try {
     MiniApp.fromCurrentPath().unlink()
   } catch (e) {
-    log.error(`${e}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

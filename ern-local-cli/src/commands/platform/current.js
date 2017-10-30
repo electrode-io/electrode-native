@@ -3,6 +3,9 @@
 import {
   Platform
 } from 'ern-core'
+import {
+  Utils
+} from 'ern-util'
 import utils from '../../lib/utils'
 
 exports.command = 'current'
@@ -13,5 +16,9 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = function () {
-  log.info(`Platform version : v${Platform.currentVersion}`)
+  try {
+    log.info(`Platform version : v${Platform.currentVersion}`)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

@@ -9,10 +9,10 @@ import {
   utils,
   yarn
 } from 'ern-core'
-
 import {
   fileUtils,
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import cliUtils from '../lib/utils'
 import path from 'path'
@@ -36,6 +36,8 @@ const ERROR_MSG_NOT_IN_IMPL = 'api-regen-impl can only be run inside an implemen
 const WORKING_DIRECTORY = path.join(Platform.rootDirectory, `api-impl-gen`)
 const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, 'plugins')
 
+// TOO MUCH LOGIC IN THE COMMAND ITSELF
+// TO REFACTOR TO EXTRACT LOGIC OUT OF THE COMMAND FOR REUSABILITY
 exports.handler = async function
   ({
      apiVersion,
@@ -79,7 +81,7 @@ exports.handler = async function
     })
     log.info('Successfully regenerated api implementation!')
   } catch (e) {
-    log.error(`${e} ApiImpl regeneration failed.`)
+    Utils.logErrorAndExitProcess(e)
   }
 
   async function readPackageJson (): Object {

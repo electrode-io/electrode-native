@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import utils from '../../lib/utils'
 
@@ -65,6 +66,6 @@ exports.handler = async function ({
       { containerVersion })
     log.debug(`Container was succesfully regenerated !`)
   } catch (e) {
-    log.error(`An error occured while trying to regenerate the container : ${e.message}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

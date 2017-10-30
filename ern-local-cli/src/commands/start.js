@@ -4,7 +4,8 @@ import utils from '../lib/utils'
 import start from '../lib/start'
 import _ from 'lodash'
 import {
-  DependencyPath
+  DependencyPath,
+  Utils
 } from 'ern-util'
 
 exports.command = 'start'
@@ -80,6 +81,6 @@ exports.handler = async function ({
       extraJsDependencies: _.map(extraJsDependencies, d => DependencyPath.fromString(d))
     })
   } catch (e) {
-    log.error(e.message)
+    Utils.logErrorAndExitProcess(e)
   }
 }

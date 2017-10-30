@@ -1,7 +1,10 @@
 // @flow
 
 import utils from '../lib/utils'
-import { config as ernConfig } from 'ern-util'
+import {
+  config as ernConfig,
+  Utils
+} from 'ern-util'
 
 exports.command = 'run-android'
 exports.desc = 'Run one or more MiniApps in the Android Runner application'
@@ -54,14 +57,14 @@ exports.handler = async function ({
   dev?: boolean,
   usePreviousEmulator?: boolean
 }) {
-  let emulatorConfig = ernConfig.getValue('emulatorConfig', {
-    android: {usePreviousEmulator: false, emulatorName: ''},
-    ios: {usePreviousEmulator: false, simulatorUdid: ''}
-  })
-  usePreviousEmulator ? emulatorConfig.android.usePreviousEmulator = true : emulatorConfig.android.usePreviousEmulator = false
-  ernConfig.setValue('emulatorConfig', emulatorConfig)
-
   try {
+    let emulatorConfig = ernConfig.getValue('emulatorConfig', {
+      android: {usePreviousEmulator: false, emulatorName: ''},
+      ios: {usePreviousEmulator: false, simulatorUdid: ''}
+    })
+    usePreviousEmulator ? emulatorConfig.android.usePreviousEmulator = true : emulatorConfig.android.usePreviousEmulator = false
+    ernConfig.setValue('emulatorConfig', emulatorConfig)
+
     await utils.runMiniApp('android', {
       mainMiniAppName,
       miniapps,
@@ -71,6 +74,6 @@ exports.handler = async function ({
     })
     process.exit(0)
   } catch (e) {
-    log.error(`${e}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

@@ -2,7 +2,8 @@
 
 import {
   NativeApplicationDescriptor,
-  Dependency
+  Dependency,
+  Utils
 } from 'ern-util'
 import {
   cauldron
@@ -95,6 +96,6 @@ exports.handler = async function ({
       { containerVersion })
     log.debug(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`An error happened while trying to remove MiniApp(s) from ${napDescriptor.toString()}`)
+    Utils.logErrorAndExitProcess(e)
   }
 }

@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import {
   cauldron
@@ -31,6 +32,10 @@ exports.handler = async function ({
     }
   })
 
-  const nativeApp = await cauldron.getNativeApp(NativeApplicationDescriptor.fromString(descriptor))
-  log.info(JSON.stringify(nativeApp, null, 1))
+  try {
+    const nativeApp = await cauldron.getNativeApp(NativeApplicationDescriptor.fromString(descriptor))
+    log.info(JSON.stringify(nativeApp, null, 1))
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }

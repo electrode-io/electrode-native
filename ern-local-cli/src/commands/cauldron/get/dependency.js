@@ -1,7 +1,8 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
+  NativeApplicationDescriptor,
+  Utils
 } from 'ern-util'
 import {
   cauldron
@@ -31,9 +32,13 @@ exports.handler = async function ({
     }
   })
 
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-  const dependencies = await cauldron.getNativeDependencies(napDescriptor)
-  for (const dependency of dependencies) {
-    log.info(dependency.toString())
+  try {
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+    const dependencies = await cauldron.getNativeDependencies(napDescriptor)
+    for (const dependency of dependencies) {
+      log.info(dependency.toString())
+    }
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
   }
 }

@@ -5,7 +5,8 @@ import {
 } from 'ern-core'
 import {
   config as ernConfig,
-  shell
+  shell,
+  Utils
 } from 'ern-util'
 import utils from '../../../lib/utils'
 
@@ -21,7 +22,11 @@ exports.handler = function ({
 } : {
   alias: string
 }) {
-  ernConfig.setValue('cauldronRepoInUse', undefined)
-  shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-  log.info(`Done.`)
+  try {
+    ernConfig.setValue('cauldronRepoInUse', undefined)
+    shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
+    log.info(`Done.`)
+  } catch (e) {
+    Utils.logErrorAndExitProcess(e)
+  }
 }
