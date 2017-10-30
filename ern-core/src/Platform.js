@@ -96,7 +96,7 @@ export default class Platform {
         execSync(`npm install ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, { cwd: pathToVersion })
       }
     } catch (e) {
-      console.log('Soemthing went wrong during installation. Performing clean up.')
+      log.error('Something went wrong during installation. Performing clean up.')
       shell.rm('-rf', pathToVersion)
       throw e
     }

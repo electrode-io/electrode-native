@@ -17,10 +17,10 @@ exports.handler = function () {
   try {
     const cauldronRepoInUse = ernConfig.getValue('cauldronRepoInUse')
     if (!cauldronRepoInUse) {
-      return console.log(`No Cauldron repository is in use yet`)
+      throw new Error(`No Cauldron repository is in use yet`)
     }
     const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
-    console.log(`${cauldronRepoInUse} [${cauldronRepositories[cauldronRepoInUse]}]`)
+    log.info(`${cauldronRepoInUse} [${cauldronRepositories[cauldronRepoInUse]}]`)
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }

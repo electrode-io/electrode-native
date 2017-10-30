@@ -17,11 +17,11 @@ exports.handler = function () {
   try {
     const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
     if (!cauldronRepositories) {
-      return console.log('No Cauldron repositories have been added yet')
+      throw new Error('No Cauldron repositories have been added yet')
     }
-    console.log('[Cauldron Repositories]')
+    log.info('[Cauldron Repositories]')
     Object.keys(cauldronRepositories).forEach(alias =>
-        console.log(`${alias} -> ${cauldronRepositories[alias]}`))
+      log.info(`${alias} -> ${cauldronRepositories[alias]}`))
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }
