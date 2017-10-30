@@ -43,11 +43,6 @@ export async function generateApi (options: Object) {
 }
 
 /**
- * If updatePlugin is specified it will not attempt to update the version.
- * It'll just do its job.
- *
- * Otherwise it will try to get the next version.
- *
  * @param options
  * @returns {Promise.<void>}
  */
@@ -56,8 +51,8 @@ export async function regenerateCode (options: Object = {}) {
   const curVersion = pkg.version || '0.0.1'
   const pkgName = pkg.name
   let newPluginVer
-  if (options.updatePlugin) {
-    newPluginVer = nextVersion(curVersion, options.updatePlugin)
+  if (options.skipVersion) {
+    newPluginVer = curVersion
   } else {
     newPluginVer = semver.inc(curVersion, 'minor')
     const {confirmPluginVer} = await inquirer.prompt([{
@@ -136,7 +131,7 @@ async function readPackage () {
 }
 
 const nextVersion = (curVersion: string, userPluginVer: string) => {
-  switch ((userPluginVer + '').toLowerCase()) {
+  switch (userPluginVer.toLowerCase()) {
     case 'same':
     case 'no':
     case 'q':
