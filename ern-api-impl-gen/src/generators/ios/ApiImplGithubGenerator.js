@@ -5,7 +5,6 @@ import {
 } from 'ern-core'
 import {
   Dependency,
-  Utils,
   shell
 } from 'ern-util'
 
@@ -93,6 +92,10 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
               for (const source of pluginConfig.ios.pbxproj.addSource) {
                 // Multiple source files
                 if (source.from) {
+                  if (this.switchToOldDirectoryStructure(pluginSourcePath, source.from)) {
+                    log.debug(`Source Copy: Falling back to old directory structure for API(Backward compatibility)`)
+                    source.from = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs', '*.swift')
+                  }
                   const relativeSourcePath = path.dirname(source.from)
                   const pathToSourceFiles = path.join(pluginSourcePath, relativeSourcePath)
                   const fileNames = _.filter(fs.readdirSync(pathToSourceFiles), f => f.endsWith(path.extname(source.from)))
@@ -110,14 +113,13 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
             if (pluginConfig.ios.pbxproj.addHeader) {
               for (const header of pluginConfig.ios.pbxproj.addHeader) {
                 let headerPath = header.path
-
-                apiImplProject.addHeaderFile(headerPath, {public: header.public}, apiImplProject.findPBXGroupKey({name: header.group}))
+                apiImplProject.addHeaderFile(headerPath, { public: header.public }, apiImplProject.findPBXGroupKey({name: header.group}))
               }
             }
 
             if (pluginConfig.ios.pbxproj.addFile) {
               for (const file of pluginConfig.ios.pbxproj.addFile) {
-                apiImplProject.addFile(file.path, apiImplTarget.findPBXGroupKey({name: file.group}))
+                apiImplProject.addFile(file.path, apiImplProject.findPBXGroupKey({name: file.group}))
                 // Add target dep in any case for now, will rework later
                 apiImplProject.addTargetDependency(apiImplTarget, [`"${path.basename(file.path)}"`])
               }
@@ -133,7 +135,12 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
             if (pluginConfig.ios.pbxproj.addProject) {
               for (const project of pluginConfig.ios.pbxproj.addProject) {
                 const projectAbsolutePath = path.join(apiImplLibrariesPath, project.path, 'project.pbxproj')
-                apiImplProject.addProject(projectAbsolutePath, project.path, project.group, apiImplTarget, project.staticLibs)
+                const options = {
+                  projectAbsolutePath,
+                  staticLibs: project.staticLibs,
+                  frameworks: project.frameworks
+                }
+                apiImplProject.addProject(project.path, project.group, apiImplTarget, options)
               }
             }
 
@@ -144,8 +151,20 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
             }
 
             if (pluginConfig.ios.pbxproj.addHeaderSearchPath) {
-              for (const path of pluginConfig.ios.pbxproj.addHeaderSearchPath) {
-                apiImplTarget.addToHeaderSearchPaths(path)
+              for (const p of pluginConfig.ios.pbxproj.addHeaderSearchPath) {
+                apiImplProject.addToHeaderSearchPaths(p)
+              }
+            }
+
+            if (pluginConfig.ios.pbxproj.addFrameworkReference) {
+              for (const frameworkReference of pluginConfig.ios.pbxproj.addFrameworkReference) {
+                apiImplProject.addFramework(frameworkReference, { customFramework: true })
+              }
+            }
+
+            if (pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
+              for (const p of pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
+                apiImplProject.addToFrameworkSearchPaths(p)
               }
             }
           }
@@ -156,8 +175,19 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
 
       log.debug('[=== Completed api-impl hull filling ===]')
     } catch (e) {
-      Utils.logErrorAndExitProcess(`Error while generating api impl hull for ios: ${e}`)
+      log.error('Error while generating api impl hull for ios')
+      throw e
     }
+  }
+
+  // Code to keep backward compatibility
+  switchToOldDirectoryStructure (pluginSourcePath: string, tail: string): boolean {
+    // This is to check if the api referenced during container generation is created using the old or new directory structure to help keep the backward compatibility.
+    const pathToSwaggersAPIs = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs')
+    if (path.dirname(tail) === `IOS` && fs.existsSync(path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs)))) {
+      return true
+    }
+    return false
   }
 
   async getIosApiImplProject (apiImplProjectPath: string) : Promise<*> {

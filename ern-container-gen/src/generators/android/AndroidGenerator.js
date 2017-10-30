@@ -115,7 +115,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         this.copyRnpmAssets(miniapps, paths)
       }
 
-      if (mavenPublisher) {
+      if (mavenPublisher && !process.env['SYSTEM_TESTS']) {
         await mavenPublisher.publish({workingDir: paths.outDirectory, moduleName: `lib`})
         log.debug(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
         log.debug(`To ${mavenPublisher.url}`)

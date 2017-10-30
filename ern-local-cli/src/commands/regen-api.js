@@ -17,9 +17,9 @@ exports.desc = 'Regenerates an existing api'
 
 exports.builder = function (yargs: any) {
   return yargs
-    .option('updatePlugin', {
-      alias: 'u',
-      describe: 'Update plugin version'
+    .option('skipVersion', {
+      alias: 's',
+      describe: 'Do not update API version and do not publish'
     })
     .option('bridgeVersion', {
       alias: 'b',
@@ -29,10 +29,10 @@ exports.builder = function (yargs: any) {
 }
 
 exports.handler = async function ({
-  updatePlugin,
+  skipVersion,
   bridgeVersion
 } : {
-  updatePlugin: boolean,
+  skipVersion: boolean,
   bridgeVersion: string
 } = {}) {
   try {
@@ -44,7 +44,7 @@ exports.handler = async function ({
       bridgeVersion = bridgeDep.version
     }
 
-    return ApiGen.regenerateCode({bridgeVersion, updatePlugin})
+    await ApiGen.regenerateCode({bridgeVersion, skipVersion})
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }
