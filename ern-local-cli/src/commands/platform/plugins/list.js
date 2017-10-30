@@ -48,7 +48,7 @@ exports.handler = async function ({
         plugin.version
       ])
     }
-    console.log(table.toString())
+    log.info(table.toString())
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }

@@ -38,7 +38,7 @@ exports.handler = async function ({
     }
 
     const scopeStr = `${plugin.scope ? `${plugin.scope}@` : ''}`
-    console.log(`${chalk.gray(scopeStr)}${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`)
+    log.info(`${chalk.gray(scopeStr)}${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`)
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }

@@ -25,14 +25,14 @@ exports.handler = function ({
   try {
     let cauldronRepositories = ernConfig.getValue('cauldronRepositories')
     if (!cauldronRepositories) {
-      return console.log('No Cauldron repositories have been added yet')
+      throw new Error('No Cauldron repositories have been added yet')
     }
     if (!cauldronRepositories[alias]) {
-      return console.log(`No Cauldron repository exists with ${alias} alias`)
+      throw new Error(`No Cauldron repository exists with ${alias} alias`)
     }
     ernConfig.setValue('cauldronRepoInUse', alias)
     shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
-    console.log(`${alias} Cauldron is now in use`)
+    log.info(`${alias} Cauldron is now in use`)
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }

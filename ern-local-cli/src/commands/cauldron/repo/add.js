@@ -36,11 +36,11 @@ exports.handler = function ({
   try {
     let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
     if (cauldronRepositories[alias]) {
-      return console.log(`A Cauldron repository is already associated to ${alias} alias`)
+      throw new Error(`A Cauldron repository is already associated to ${alias} alias`)
     }
     cauldronRepositories[alias] = url
     ernConfig.setValue('cauldronRepositories', cauldronRepositories)
-    console.log(`Added Cauldron repository ${url} with alias ${alias}`)
+    log.info(`Added Cauldron repository ${url} with alias ${alias}`)
     if (current) {
       useCauldronRepository(alias)
     } else if (!(current === false)) {
