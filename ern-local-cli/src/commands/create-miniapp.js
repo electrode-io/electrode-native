@@ -25,6 +25,7 @@ exports.builder = function (yargs: any) {
       describe: 'specify npm scope to group related packages together'
     })
     .option('skipNpmCheck', {
+      alias: 's',
       describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
       type: 'bool'
     })
@@ -57,15 +58,12 @@ exports.handler = async function ({
       }
     }
 
+    // Skip npm check code execution
     if (!skipNpmCheck) {
-      const isPackageNameInNpm = await utils.doesPackageExistInNpm(packageName)
-      // If package name exists in the npm
-      if (isPackageNameInNpm) {
-        const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(packageName)
-        // If user wants to stop execution if npm package name conflicts
-        if (!skipNpmNameConflict) {
-          return
-        }
+      const continueIfPkgNameExists = await utils.performPkgNameConflictCheck(packageName)
+      // If user wants to stop execution if npm package name conflicts
+      if (!continueIfPkgNameExists) {
+        return
       }
     }
 

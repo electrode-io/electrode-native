@@ -39,6 +39,7 @@ exports.builder = function (yargs: any) {
     type: 'bool',
     describe: 'Indicates if this api implementation requires some config during initialization. \nThis command will be stored and reused during container generation to enforce config initialization'
   }).option('skipNpmCheck', {
+    alias: 's',
     describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
     type: 'bool'
   })
@@ -63,21 +64,22 @@ exports.handler = async function ({
   force: boolean,
   outputDirectory: string,
   hasConfig: boolean,
-  skipNpmCheck: boolean
+  skipNpmCheck?: boolean
 }) {
   const apiDep = Dependency.fromPath(DependencyPath.fromString(api))
   const apiImplName = `${apiDep.name}-impl`
-  // check if the packageName for specified {apiName}-impl exists
-  // Extend the command to ack the scope in the name
-  const isPackageNameInNpm = await cliUtils.doesPackageExistInNpm(apiImplName)
-  // If package name exists in the npm
-  if (isPackageNameInNpm && !skipNpmCheck) {
-    const skipNpmNameConflict = await cliUtils.promptSkipNpmNameConflictCheck(apiImplName)
+
+  // Skip npm check code execution
+  if (!skipNpmCheck) {
+    // check if the packageName for specified {apiName}-impl exists
+    // Extend the command to ack the scope in the name
+    const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(apiImplName)
     // If user wants to stop execution if npm package name conflicts
-    if (!skipNpmNameConflict) {
+    if (!continueIfPkgNameExists) {
       return
     }
   }
+
   log.info(`Generating API implementation for ${api}`)
 
   try {

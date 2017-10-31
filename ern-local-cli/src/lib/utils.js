@@ -560,14 +560,19 @@ async function doesPackageExistInNpm (packageName: string) : Promise<boolean> {
   return false
 }
 
-async function promptSkipNpmNameConflictCheck (name: string) : Promise<boolean> {
-  const {skipPackageExistsOnNpmCheck} = await inquirer.prompt([{
-    type: 'confirm',
-    name: 'skipPackageExistsOnNpmCheck',
-    message: `The package with name ${name} is already published in NPM registry. Do you wish to continue?`,
-    default: false
-  }])
-  return skipPackageExistsOnNpmCheck
+async function performPkgNameConflictCheck (name: string) : Promise<boolean> {
+  // check if the packageName exists
+  let isPackageNameInNpm = await doesPackageExistInNpm(name)
+  if (isPackageNameInNpm) {
+    const {continueIfPkgNameExists} = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'continueIfPkgNameExists',
+      message: `The package with name ${name} is already published in NPM registry. Do you wish to continue?`,
+      default: false
+    }])
+    return continueIfPkgNameExists
+  }
+  return isPackageNameInNpm
 }
 
 export default {
@@ -578,5 +583,5 @@ export default {
   epilog,
   runMiniApp,
   doesPackageExistInNpm,
-  promptSkipNpmNameConflictCheck
+  performPkgNameConflictCheck
 }
