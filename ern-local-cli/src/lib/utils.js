@@ -529,7 +529,7 @@ async function launchAndroidRunner (pathToAndroidRunner: string) {
 async function launchIosRunner (pathToIosRunner: string) {
   const iosDevices = ios.getiPhoneRealDevices()
   if (iosDevices && iosDevices.length > 0) {
-    console.log(`----- going to launching on devices`)
+    log.debug(`Will launch ErnRunner on a real device`)
     launchOnDevice(pathToIosRunner, iosDevices)
   } else {
     launchOnSimulator(pathToIosRunner)
@@ -552,10 +552,8 @@ async function launchOnDevice (pathToIosRunner: string, devices) {
         console.log(`Start installing ErnRunner on ${iPhoneDevice.name}...`)
         const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {encoding: 'utf8'})
         if (iosDeployOutput.error) {
-          console.log('')
-          console.log('** INSTALLATION FAILED **')
-          console.log('Make sure you have ios-deploy installed globally.')
-          console.log('(e.g "npm install -g ios-deploy")')
+          log.error('INSTALLATION FAILED')
+          log.warn('Make sure you have done "npm install -g ios-deploy".')
         } else {
           spinner.succeed('Installed and Launched ErnRunner on device ')
         }
@@ -567,20 +565,20 @@ async function launchOnDevice (pathToIosRunner: string, devices) {
 }
 
 async function launchOnSimulator (pathToIosRunner: string) {
-  const iPhoneDevice = await ios.askUserToSelectAniPhoneSimulator()
+  const iPhoneSim = await ios.askUserToSelectAniPhoneSimulator()
   await ios.killAllRunningSimulators()
   const spinner = ora(`Waiting for device to boot`).start()
-  await ios.launchSimulator(iPhoneDevice.udid)
+  await ios.launchSimulator(iPhoneSim.udid)
 
   shell.cd(pathToIosRunner)
 
   try {
     spinner.text = 'Building iOS Runner project'
-    await buildIosRunner(pathToIosRunner, iPhoneDevice.udid)
+    await buildIosRunner(pathToIosRunner, iPhoneSim.udid)
     spinner.text = 'Installing runner project on device'
-    await ios.installApplicationOnSimulator(iPhoneDevice.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
+    await ios.installApplicationOnSimulator(iPhoneSim.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
     spinner.text = 'Launching runner project'
-    await ios.launchApplication(iPhoneDevice.udid, 'com.yourcompany.ernrunner')
+    await ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner')
     spinner.succeed('Done')
   } catch (e) {
     spinner.fail(e.message)

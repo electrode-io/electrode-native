@@ -16,12 +16,12 @@ export type IosDevice = {
   version: string;
 }
 
-export async function getiPhoneDevices () {
-  const iosDevices = await simctl.getDevices()
+export async function getiPhoneSimulators () {
+  const iosSims = await simctl.getDevices()
   return _.filter(
-    _.flattenDeep(
-      _.map(iosDevices, (val, key) => val)),
-    (device) => device.name.match(/^iPhone/))
+           _.flattenDeep(
+             _.map(iosSims, (val, key) => val)),
+        (device) => device.name.match(/^iPhone/))
 }
 
 export function getiPhoneRealDevices () {
@@ -47,7 +47,7 @@ export async function askUserToSelectAniPhoneDevice (devices: Array<IosDevice>) 
 }
 
 export async function askUserToSelectAniPhoneSimulator () {
-  const iPhoneDevices = await getiPhoneDevices()
+  const iPhoneDevices = await getiPhoneSimulators()
   const choices = _.map(iPhoneDevices, (val, key) => ({
     name: `${val.name} (UDID ${val.udid})`,
     value: val
