@@ -11,7 +11,7 @@ import utils from '../lib/utils'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
 
-exports.command = 'create-miniapp <appName> [platformVersion] [scope]'
+exports.command = 'create-miniapp <appName>'
 exports.desc = 'Create a new ern application(miniapp)'
 
 exports.builder = function (yargs: any) {

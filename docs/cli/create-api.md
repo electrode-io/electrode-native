@@ -16,24 +16,28 @@
 
 **Options**  
 
-`--scope/-s <scope>`
+`--scope/-n <scope>`
 
 * Specify a given npm scope for the API project package  
 
-`--version/-v <version>`
+`--apiVersion/-a <version>`
 
 * Specify an initial version for the API  
 * **Default**  If this option is not used, the API defaults to 0.0.1.  
 
-`--author/-a <author>`
+`--apiAuthor/-u <author>`
 
 * Specify the author of the API in the `package.json` file of the API  
 * **Default**  If this option is not used, the author is not set.  
 
-`--schemaPath/-p <schemaPath>`
+`--schemaPath/-m <schemaPath>`
 
 * Generate the API using a pre-existing Swagger schema located at the given `schemaPath`  
 * **Default**  If this option is not used the command uses a default starter schema to generate the initial API. You can modify this option at a later time and then regenerate the API using the `ern regen-api` command.  
+
+`--skipNpmCheck/-s`
+* Skips npm check to see if the package already exists
+* **Default** The value defaults to false. 
 
 #### Examples
 
@@ -55,8 +59,8 @@ This example shows how to create a scoped package named `@MyCompany/react-native
 
 #### Related commands
 
- [ern regen-api] | Add a new request, event, or model to an existing API project schema and regenerate the API  
- [ern create-api-impl] | Create an implementation skeleton project for a specified API
+[ern regen-api] | Add a new request, event, or model to an existing API project schema and regenerate the API  
+[ern create-api-impl] | Create an implementation skeleton project for a specified API
 
 [ern regen-api]: ./regen-api.md
 [ern create-api-impl]: ./create-api-impl.md

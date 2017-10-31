@@ -29,6 +29,15 @@
 
 * Generate the project in a specified output directory  
 * **Default**  The project is generated in a new directory named as the API implementation project. The new directory is created in the current working directory.  
+
+`--hasConfig`
+* Indicates if this api implementation requires some config during initialization.
+* This option will be stored and reused during container generation to enforce config initialization
+
+`--skipNpmCheck/-s`
+* Skips npm check to see if the package already exists
+* **Default** The value defaults to false. 
+
 `--force/-f`
 
 * Force the creation of an API implementation project  
