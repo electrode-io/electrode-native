@@ -28,6 +28,10 @@ exports.builder = function (yargs: any) {
   }).option('schemaPath', {
     alias: 'm',
     describe: 'Path to schema(swagger)'
+  }).option('skipNpmCheck', {
+    alias: 's',
+    describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
+    type: 'bool'
   })
   .epilog(utils.epilog(exports))
 }
@@ -37,23 +41,24 @@ exports.handler = async function ({
   scope,
   apiVersion,
   apiAuthor,
-  schemaPath
+  schemaPath,
+  skipNpmCheck
 } : {
   apiName: string,
   scope?: string,
   apiVersion?: string,
   apiAuthor?: string,
-  schemaPath?: string
+  schemaPath?: string,
+  skipNpmCheck? : boolean
 }) {
-  const isPackageNameInNpm = await utils.doesPackageExistInNpm(apiName)
-  // If package name exists in the npm
-  if (isPackageNameInNpm) {
-    const skipNpmNameConflict = await utils.promptSkipNpmNameConflictCheck(apiName)
+  if (!skipNpmCheck) {
+    const continueIfPkgNameExists = await utils.performPkgNameConflictCheck(apiName)
     // If user wants to stop execution if npm package name conflicts
-    if (!skipNpmNameConflict) {
+    if (!continueIfPkgNameExists) {
       return
     }
   }
+
   const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
   if (!bridgeDep) {
     return log.error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
