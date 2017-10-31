@@ -10,6 +10,12 @@ import spin from './spin'
 import ernConfig from './config'
 const simctl = require('node-simctl')
 
+export type IosDevice = {
+  name: string;
+  udid: string;
+  version: string;
+}
+
 export async function getiPhoneDevices () {
   const iosDevices = await simctl.getDevices()
   return _.filter(
@@ -18,7 +24,29 @@ export async function getiPhoneDevices () {
     (device) => device.name.match(/^iPhone/))
 }
 
-export async function askUserToSelectAniPhoneDevice () {
+export function getiPhoneRealDevices () {
+  const devices = execSync('xcrun instruments -s', {encoding: 'utf8'})
+  return parseIOSDevicesList(devices)
+}
+
+export async function askUserToSelectAniPhoneDevice (devices: Array<IosDevice>) {
+  const choices = _.map(devices, (val, key) => ({
+    name: `${val.name} udid: ${val.udid} version: ${val.version}`,
+    value: val
+  }))
+
+  const { selectedDevice } = await inquirer.prompt([{
+    type: 'list',
+    name: 'selectedDevice',
+    message: 'Choose an iOS device',
+    choices: choices
+  }])
+
+  console.log(`---selected is ${JSON.stringify(selectedDevice)}`)
+  return selectedDevice
+}
+
+export async function askUserToSelectAniPhoneSimulator () {
   const iPhoneDevices = await getiPhoneDevices()
   const choices = _.map(iPhoneDevices, (val, key) => ({
     name: `${val.name} (UDID ${val.udid})`,
@@ -55,6 +83,22 @@ export async function askUserToSelectAniPhoneDevice () {
   ernConfig.setValue('emulatorConfig', emulatorConfig)
 
   return selectedDevice
+}
+
+export function parseIOSDevicesList (text: string): Array<IosDevice> {
+  const devices = []
+  text.split('\n').forEach((line) => {
+    const device = line.match(/(.*?) \((.*?)\) \[(.*?)\]/)
+    const noSimulator = line.match(/(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/)
+    if (device != null && noSimulator == null) {
+      var name = device[1]
+      var version = device[2]
+      var udid = device[3]
+      devices.push({udid, name, version})
+    }
+  })
+
+  return devices
 }
 
 export function killAllRunningSimulators () {
@@ -99,7 +143,7 @@ export async function runIosApp ({
     launchApplication(iPhoneDevice.udid, bundleId))
 }
 
-export async function installApplicationOnDevice (deviceUdid: string, pathToAppFile: string) {
+export async function installApplicationOnSimulator (deviceUdid: string, pathToAppFile: string) {
   return simctl.installApp(deviceUdid, pathToAppFile)
 }
 
