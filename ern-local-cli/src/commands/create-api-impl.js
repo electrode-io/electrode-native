@@ -66,23 +66,27 @@ exports.handler = async function ({
   hasConfig: boolean,
   skipNpmCheck?: boolean
 }) {
-  const apiDep = Dependency.fromPath(DependencyPath.fromString(api))
-  const apiImplName = `${apiDep.name}-impl`
-
-  // Skip npm check code execution
-  if (!skipNpmCheck) {
-    // check if the packageName for specified {apiName}-impl exists
-    // Extend the command to ack the scope in the name
-    const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(apiImplName)
-    // If user wants to stop execution if npm package name conflicts
-    if (!continueIfPkgNameExists) {
-      return
-    }
-  }
-
-  log.info(`Generating API implementation for ${api}`)
-
   try {
+    // Fixes https://github.com/electrode-io/electrode-native/issues/265
+    if (!await cliUtils.doesPackageExistInNpm(api)) {
+      throw new Error(`Couldn't find package ${api} to generate the api implementation`)
+    }
+
+    const apiDep = Dependency.fromPath(DependencyPath.fromString(api))
+    const apiImplName = `${apiDep.name}-impl`
+
+    // Skip npm check code execution
+    if (!skipNpmCheck) {
+      // check if the packageName for specified {apiName}-impl exists
+      // Extend the command to ack the scope in the name
+      const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(apiImplName)
+      // If user wants to stop execution if npm package name conflicts
+      if (!continueIfPkgNameExists) {
+        return
+      }
+    }
+
+    log.info(`Generating API implementation for ${api}`)
     let reactNativeVersion = await utils.reactNativeManifestVersion()
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
 
