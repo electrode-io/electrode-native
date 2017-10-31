@@ -25,7 +25,8 @@ import {
   runCauldronContainerGen
 } from './publication'
 import {
-  spawn
+  spawn,
+  spawnSync
 } from 'child_process'
 import utils from './utils'
 import _ from 'lodash'
@@ -36,7 +37,6 @@ import ora from 'ora'
 import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
-
 const {
   runAndroidProject
 } = android
@@ -527,7 +527,47 @@ async function launchAndroidRunner (pathToAndroidRunner: string) {
 }
 
 async function launchIosRunner (pathToIosRunner: string) {
-  const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice()
+  const iosDevices = ios.getiPhoneRealDevices()
+  if (iosDevices && iosDevices.length > 0) {
+    console.log(`----- going to launching on devices`)
+    launchOnDevice(pathToIosRunner, iosDevices)
+  } else {
+    launchOnSimulator(pathToIosRunner)
+  }
+}
+
+async function launchOnDevice (pathToIosRunner: string, devices) {
+  const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
+  shell.cd(pathToIosRunner)
+  const spinner = ora(`Waiting for device to boot`).start()
+  try {
+    spinner.text = 'Building iOS Runner project'
+    await buildIosRunner(pathToIosRunner, iPhoneDevice.udid)
+      .then(() => {
+        const iosDeployInstallArgs = [
+          '--bundle', `${pathToIosRunner}/build/Debug-iphoneos/ErnRunner.app`,
+          '--id', iPhoneDevice.udid,
+          '--justlaunch'
+        ]
+        console.log(`Start installing ErnRunner on ${iPhoneDevice.name}...`)
+        const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {encoding: 'utf8'})
+        if (iosDeployOutput.error) {
+          console.log('')
+          console.log('** INSTALLATION FAILED **')
+          console.log('Make sure you have ios-deploy installed globally.')
+          console.log('(e.g "npm install -g ios-deploy")')
+        } else {
+          spinner.succeed('Installed and Launched ErnRunner on device ')
+        }
+      })
+  } catch (e) {
+    spinner.fail(e.message)
+    throw e
+  }
+}
+
+async function launchOnSimulator (pathToIosRunner: string) {
+  const iPhoneDevice = await ios.askUserToSelectAniPhoneSimulator()
   await ios.killAllRunningSimulators()
   const spinner = ora(`Waiting for device to boot`).start()
   await ios.launchSimulator(iPhoneDevice.udid)
@@ -536,9 +576,9 @@ async function launchIosRunner (pathToIosRunner: string) {
 
   try {
     spinner.text = 'Building iOS Runner project'
-    await buildIosRunner(pathToIosRunner, iPhoneDevice.name)
+    await buildIosRunner(pathToIosRunner, iPhoneDevice.udid)
     spinner.text = 'Installing runner project on device'
-    await ios.installApplicationOnDevice(iPhoneDevice.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
+    await ios.installApplicationOnSimulator(iPhoneDevice.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
     spinner.text = 'Launching runner project'
     await ios.launchApplication(iPhoneDevice.udid, 'com.yourcompany.ernrunner')
     spinner.succeed('Done')
@@ -548,11 +588,11 @@ async function launchIosRunner (pathToIosRunner: string) {
   }
 }
 
-async function buildIosRunner (pathToIosRunner: string, deviceName: string) {
+async function buildIosRunner (pathToIosRunner: string, udid: string) {
   return new Promise((resolve, reject) => {
     const xcodebuildProc = spawn('xcodebuild', [
       `-scheme`, 'ErnRunner', 'build',
-      `-destination`, `platform=iOS Simulator,name=${deviceName}`,
+      `-destination`, `id=${udid}`,
       `SYMROOT=${pathToIosRunner}/build` ],
        { cwd: pathToIosRunner })
 
