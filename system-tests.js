@@ -5,7 +5,6 @@ const path = require('path')
 const workingDirectoryPath = tmp.dirSync({ unsafeCleanup: true }).name
 const info = chalk.bold.blue
 
-const gitHubPesonalToken = 'c8c36f576ef24273c0ffb0c90e512caea0f21c25'
 const gitUserName = 'ernplatformtest'
 const gitPassword = 'ernplatformtest12345'
 const gitHubCauldronRepositoryName = `cauldron-system-tests-${getRandomInt(0, 1000)}`
@@ -47,7 +46,7 @@ function afterAll () {
   console.log('===========================================================================')
   console.log(info('Cleaning up test env'))
   console.log(info(`Removing GitHub repository (${gitHubCauldronRepositoryName})`))
-  shell.exec(`curl -u ernplatformtest:${gitHubPesonalToken} -X DELETE https://api.github.com/repos/${gitUserName}/${gitHubCauldronRepositoryName}`)
+  shell.exec(`curl -u ${gitUserName}:${gitPassword} -X DELETE https://api.github.com/repos/${gitUserName}/${gitHubCauldronRepositoryName}`)
   console.log(info('Deactivating current Cauldron'))
   shell.exec('ern cauldron repo clear')
   console.log(info('Removing Cauldron alias'))
@@ -59,7 +58,7 @@ console.log(info(`Entering temporary working directory : ${workingDirectoryPath}
 process.chdir(workingDirectoryPath)
 
 console.log(info(`Creating GitHub repository (${gitHubCauldronRepositoryName})`))
-run(`curl -u ernplatformtest:${gitHubPesonalToken} -d '{"name": "${gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
+run(`curl -u ${gitUserName}:${gitPassword} -d '{"name": "${gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
 run('ern --hide-banner')
 run('ern --log-level trace')

@@ -5,16 +5,19 @@ sudo: enabled
 install:
 - npm install
 script:
-- npm run rebuild
-- npm run standard --version
-- npm run standard
-- npm run flow version
-- npm run flow
-- npm run test
 - 'if [ ${TRAVIS_EVENT_TYPE} != "cron" ]; then
-    npm install -g electrode-native && ern;
-    node setup-dev;
-    node system-tests;
+  npm run rebuild;
+  npm run standard --version;
+  npm run standard;
+  npm run flow version;
+  npm run flow;
+  npm run test;
+else
+  npm install -g electrode-native;
+  ern;
+  node setup-dev;
+  ern platform use 1000.0.0;
+  node system-tests; 
 fi'
 notifications:
   slack:
