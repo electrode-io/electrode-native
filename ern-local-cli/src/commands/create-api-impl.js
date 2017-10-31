@@ -37,7 +37,7 @@ exports.builder = function (yargs: any) {
     describe: 'Path to output directory'
   }).option('hasConfig', {
     type: 'bool',
-    describe: 'Indicates if this api implementation requires some config during initialization. \nThis command will be stored and reused during container generation to enforce config initialization'
+    describe: 'Indicates if this api implementation requires some config during initialization. \nThis option will be stored and reused during container generation to enforce config initialization'
   }).option('skipNpmCheck', {
     alias: 's',
     describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
