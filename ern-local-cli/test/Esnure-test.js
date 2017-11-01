@@ -151,4 +151,21 @@ describe('Ensure.js', () => {
       expect(() => Ensure.cauldronIsActive(), `does not throw when cauldron is not active`).to.throw()
     })
   })
+
+  // ==========================================================
+  // isValidNpmPackageName
+  // ==========================================================
+  describe('isValidNpmPackageName', () => {
+    fixtures.validNpmPackageNames.forEach(name => {
+      it('shoud not throw if name is valid', () => {
+        expect(() => Ensure.isValidNpmPackageName(name), `throw for ${name}`).to.not.throw()
+      })
+    })
+
+    fixtures.invalidNpmPackageNames.forEach(name => {
+      it('should throw if name is invalid', () => {
+        expect(() => Ensure.isValidNpmPackageName(name), `does not throw for ${name}`).to.throw()
+      })
+    })
+  })
 })

@@ -237,6 +237,24 @@ describe('utils.js', () => {
       })
       assertNoErrorLoggedAndNoProcessExit()
     })
+
+    fixtures.validNpmPackageNames.forEach(name => {
+      it('[isValidPackageName] Should not log error nor exit process if package name is valid', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
+          isValidNpmPackageName: { name }
+        })
+        assertNoErrorLoggedAndNoProcessExit()
+      })
+    })
+
+    fixtures.invalidNpmPackageNames.forEach(name => {
+      it('[isValidPackageName] Should log error and exit process if package name is invalid', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
+          isValidNpmPackageName: { name }
+        })
+        assertLoggedErrorAndExitedProcess()
+      })
+    })
   })
 
   // ==========================================================

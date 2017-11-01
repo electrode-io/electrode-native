@@ -12,8 +12,19 @@ import {
 } from 'ern-core'
 import _ from 'lodash'
 import semver from 'semver'
+import validateNpmPackageName from 'validate-npm-package-name'
 
 export default class Ensure {
+  static isValidNpmPackageName (
+    name: string,
+    extraErrorMessage: string = '') {
+    const validation = validateNpmPackageName(name)
+    if (!validation.validForNewPackages) {
+      const errorMessage = `${name} is not a valid NPM package name`.concat(validation.errors.join('\n'))
+      throw new Error(errorMessage)
+    }
+  }
+
   static isValidContainerVersion (
     version: string,
     extraErrorMessage: string = '') {
