@@ -529,7 +529,6 @@ async function launchAndroidRunner (pathToAndroidRunner: string) {
 async function launchIosRunner (pathToIosRunner: string) {
   const iosDevices = ios.getiPhoneRealDevices()
   if (iosDevices && iosDevices.length > 0) {
-    log.debug(`Will launch ErnRunner on a real device`)
     launchOnDevice(pathToIosRunner, iosDevices)
   } else {
     launchOnSimulator(pathToIosRunner)
@@ -539,7 +538,7 @@ async function launchIosRunner (pathToIosRunner: string) {
 async function launchOnDevice (pathToIosRunner: string, devices) {
   const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
   shell.cd(pathToIosRunner)
-  const spinner = ora(`Waiting for device to boot`).start()
+  const spinner = ora('Waiting for device to boot').start()
   try {
     spinner.text = 'Building iOS Runner project'
     await buildIosRunner(pathToIosRunner, iPhoneDevice.udid)
@@ -549,7 +548,7 @@ async function launchOnDevice (pathToIosRunner: string, devices) {
           '--id', iPhoneDevice.udid,
           '--justlaunch'
         ]
-        console.log(`Start installing ErnRunner on ${iPhoneDevice.name}...`)
+        log.info(`Start installing ErnRunner on ${iPhoneDevice.name}...`)
         const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {encoding: 'utf8'})
         if (iosDeployOutput.error) {
           log.error('INSTALLATION FAILED')

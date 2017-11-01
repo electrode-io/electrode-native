@@ -132,12 +132,12 @@ export async function runIosApp ({
     appPath: string,
     bundleId: string
     }) {
-  const iPhoneDevice = await askUserToSelectAniPhoneDevice()
+  const iPhoneDevice = await askUserToSelectAniPhoneSimulator()
   killAllRunningSimulators()
   await spin('Waiting for device to boot',
     launchSimulator(iPhoneDevice.udid))
   await spin('Installing application on simulator',
-    installApplicationOnDevice(iPhoneDevice.udid, appPath))
+    installApplicationOnSimulator(iPhoneDevice.udid, appPath))
   await spin('Launching application',
     launchApplication(iPhoneDevice.udid, bundleId))
 }
