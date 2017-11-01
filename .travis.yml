@@ -5,7 +5,8 @@ sudo: enabled
 install:
 - npm install
 script:
-- 'if [ ${TRAVIS_EVENT_TYPE} != "cron" ]; then
+- 'set -ev;
+if [ ${TRAVIS_EVENT_TYPE} != "cron" ]; then
   npm run rebuild;
   npm run standard --version;
   npm run standard;
