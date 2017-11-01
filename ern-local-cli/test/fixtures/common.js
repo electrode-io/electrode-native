@@ -31,3 +31,23 @@ export const incompleteNapDescriptors = [
   'myapp',
   'myapp:android'
 ]
+
+export const validNpmPackageNames = [
+  'hello-world',
+  '@hello/world'
+]
+
+export const invalidNpmPackageNames = [
+  ' leading - space:and:weirdchars',
+  'camelCase',
+  'pascalCase',
+  'some spaces',
+  '.start-with-.',
+  '_start-with-_',
+  'invalid-char-~',
+  'invalid-char-)',
+  'invalid-char-(',
+  'invalid-char-\'',
+  'invalid-char-!',
+  'invalid-char-*'
+]

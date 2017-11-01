@@ -87,7 +87,8 @@ async function logErrorAndExitIfNotSatisfied ({
   dependencyIsInNativeApplicationVersionContainer,
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
   dependencyNotInUseByAMiniApp,
-  cauldronIsActive
+  cauldronIsActive,
+  isValidNpmPackageName
 } : {
   noGitOrFilesystemPath?: {
     obj: string | Array<string>,
@@ -154,6 +155,10 @@ async function logErrorAndExitIfNotSatisfied ({
     extraErrorMessage?: string
   },
   cauldronIsActive?: {
+    extraErrorMessage?: string
+  },
+  isValidNpmPackageName?: {
+    name: string,
     extraErrorMessage?: string
   }
 } = {}) {
@@ -256,6 +261,12 @@ async function logErrorAndExitIfNotSatisfied ({
         dependencyNotInUseByAMiniApp.dependency,
         dependencyNotInUseByAMiniApp.napDescriptor,
         dependencyNotInUseByAMiniApp.extraErrorMessage)
+    }
+    if (isValidNpmPackageName) {
+      spinner.text = 'Ensuring that NPM package name is valid'
+      await Ensure.isValidNpmPackageName(
+        isValidNpmPackageName.name,
+        isValidNpmPackageName.extraErrorMessage)
     }
     spinner.succeed('All initial checks have passed')
   } catch (e) {
