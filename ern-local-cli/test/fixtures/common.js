@@ -51,3 +51,18 @@ export const invalidNpmPackageNames = [
   'invalid-char-!',
   'invalid-char-*'
 ]
+
+export const validElectrodeNativeModuleNames = [
+  'MyApp',
+  'myApi',
+  'helloworld',
+  'MYAPIIMPLEMENTATION'
+]
+
+export const invalidElectrodeNativeModuleNames = [
+  'My-App',
+  'my_app',
+  'hell0w0rld',
+  'my*app',
+  'my$app'
+]

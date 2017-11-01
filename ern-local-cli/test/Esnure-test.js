@@ -168,4 +168,21 @@ describe('Ensure.js', () => {
       })
     })
   })
+
+  // ==========================================================
+  // isValidElectrodeNativeModuleName
+  // ==========================================================
+  describe('isValidElectrodeNativeModuleName', () => {
+    fixtures.validElectrodeNativeModuleNames.forEach(name => {
+      it('shoud not throw if name is valid', () => {
+        expect(() => Ensure.isValidElectrodeNativeModuleName(name), `throw for ${name}`).to.not.throw()
+      })
+    })
+
+    fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
+      it('should throw if name is invalid', () => {
+        expect(() => Ensure.isValidElectrodeNativeModuleName(name), `does not throw for ${name}`).to.throw()
+      })
+    })
+  })
 })

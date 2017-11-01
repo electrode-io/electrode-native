@@ -255,6 +255,24 @@ describe('utils.js', () => {
         assertLoggedErrorAndExitedProcess()
       })
     })
+
+    fixtures.validElectrodeNativeModuleNames.forEach(name => {
+      it('[isValidElectrodeNativeModuleName] Should not log error nor exit process if module name is valid', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
+          isValidElectrodeNativeModuleName: { name }
+        })
+        assertNoErrorLoggedAndNoProcessExit()
+      })
+    })
+
+    fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
+      it('[isValidElectrodeNativeModuleName] Should log error and exit process if module name is invalid', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
+          isValidElectrodeNativeModuleName: { name }
+        })
+        assertLoggedErrorAndExitedProcess()
+      })
+    })
   })
 
   // ==========================================================
