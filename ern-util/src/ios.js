@@ -42,7 +42,6 @@ export async function askUserToSelectAniPhoneDevice (devices: Array<IosDevice>) 
     choices: choices
   }])
 
-  console.log(`---selected is ${JSON.stringify(selectedDevice)}`)
   return selectedDevice
 }
 
