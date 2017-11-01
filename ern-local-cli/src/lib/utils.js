@@ -583,7 +583,7 @@ async function performPkgNameConflictCheck (name: string) : Promise<boolean> {
     }])
     return continueIfPkgNameExists
   }
-  return isPackageNameInNpm
+  return true // If package name doesn't exist continue with command execution
 }
 
 export default {
