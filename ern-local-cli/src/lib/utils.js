@@ -575,7 +575,7 @@ async function launchOnSimulator (pathToIosRunner: string) {
   try {
     spinner.text = 'Building iOS Runner project'
     await buildIosRunner(pathToIosRunner, iPhoneSim.udid)
-    spinner.text = 'Installing runner project on device'
+    spinner.text = 'Installing runner project on simulator'
     await ios.installApplicationOnSimulator(iPhoneSim.udid, `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`)
     spinner.text = 'Launching runner project'
     await ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner')
