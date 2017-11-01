@@ -71,7 +71,7 @@ run('ern cauldron repo current')
 run('ern cauldron repo list')
 
 // Miniapp commands
-run(`ern create-miniapp ${miniAppName} --skipNpmCheck=true`)
+run(`ern create-miniapp ${miniAppName} --skipNpmCheck`)
 const miniAppPath = path.join(process.cwd(), miniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
@@ -123,7 +123,7 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 process.chdir(workingDirectoryPath)
 
 // api
-run(`ern create-api ${apiName} --skipNpmCheck`)
+run(`ern create-api ${apiName}`)
 const apiPath = path.join(process.cwd(), `react-native-${apiName}-api`)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
