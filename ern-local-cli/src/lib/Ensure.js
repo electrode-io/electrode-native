@@ -15,6 +15,15 @@ import semver from 'semver'
 import validateNpmPackageName from 'validate-npm-package-name'
 
 export default class Ensure {
+  static isValidElectrodeNativeModuleName (
+    name: string,
+    extraErrorMessage: string = '') {
+    if (!utils.isValidElectrodeNativeModuleName(name)) {
+      const errorMessage = `${name} is not a valid Electrode Native module name\n${extraErrorMessage}`
+      throw new Error(errorMessage)
+    }
+  }
+
   static isValidNpmPackageName (
     name: string,
     extraErrorMessage: string = '') {

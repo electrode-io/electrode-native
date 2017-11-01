@@ -88,7 +88,8 @@ async function logErrorAndExitIfNotSatisfied ({
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
   dependencyNotInUseByAMiniApp,
   cauldronIsActive,
-  isValidNpmPackageName
+  isValidNpmPackageName,
+  isValidElectrodeNativeModuleName
 } : {
   noGitOrFilesystemPath?: {
     obj: string | Array<string>,
@@ -158,6 +159,10 @@ async function logErrorAndExitIfNotSatisfied ({
     extraErrorMessage?: string
   },
   isValidNpmPackageName?: {
+    name: string,
+    extraErrorMessage?: string
+  },
+  isValidElectrodeNativeModuleName?: {
     name: string,
     extraErrorMessage?: string
   }
@@ -267,6 +272,13 @@ async function logErrorAndExitIfNotSatisfied ({
       await Ensure.isValidNpmPackageName(
         isValidNpmPackageName.name,
         isValidNpmPackageName.extraErrorMessage)
+    }
+    if (isValidElectrodeNativeModuleName) {
+      spinner.text = 'Ensuring that Electrode Native module name is valid'
+      await Ensure.isValidElectrodeNativeModuleName(
+        isValidElectrodeNativeModuleName.name,
+        isValidElectrodeNativeModuleName.extraErrorMessage
+      )
     }
     spinner.succeed('All initial checks have passed')
   } catch (e) {

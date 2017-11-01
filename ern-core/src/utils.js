@@ -95,3 +95,7 @@ export async function reactNativeManifestVersion () {
 
   return reactNativeDependency.version
 }
+
+export function isValidElectrodeNativeModuleName (name: string) : boolean {
+  return /^[a-zA-Z]+$/.test(name)
+}
