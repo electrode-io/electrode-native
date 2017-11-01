@@ -42,6 +42,9 @@ exports.builder = function (yargs: any) {
     alias: 's',
     describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
     type: 'bool'
+  }).option('apiImplName', {
+    alias: 'n',
+    describe: 'Specify the name of the api implementation to use'
   })
   .epilog(cliUtils.epilog(exports))
 }
@@ -56,7 +59,8 @@ exports.handler = async function ({
   force,
   outputDirectory,
   hasConfig,
-  skipNpmCheck
+  skipNpmCheck,
+  apiImplName
 } : {
   api: string,
   nativeOnly: boolean,
@@ -64,7 +68,8 @@ exports.handler = async function ({
   force: boolean,
   outputDirectory: string,
   hasConfig: boolean,
-  skipNpmCheck?: boolean
+  skipNpmCheck?: boolean,
+  apiImplName?: string
 }) {
   try {
     // Fixes https://github.com/electrode-io/electrode-native/issues/265
@@ -73,13 +78,13 @@ exports.handler = async function ({
     }
 
     const apiDep = Dependency.fromPath(DependencyPath.fromString(api))
-    const apiImplName = `${apiDep.name}-impl`
+    const implPkgName = `${apiDep.name}-impl`
 
     // Skip npm check code execution
     if (!skipNpmCheck) {
       // check if the packageName for specified {apiName}-impl exists
       // Extend the command to ack the scope in the name
-      const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(apiImplName)
+      const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(implPkgName)
       // If user wants to stop execution if npm package name conflicts
       if (!continueIfPkgNameExists) {
         return
