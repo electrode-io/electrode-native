@@ -123,14 +123,14 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 process.chdir(workingDirectoryPath)
 
 // api
-run(`ern create-api ${apiName}`)
+run(`ern create-api ${apiName} --skipNpmCheck`)
 const apiPath = path.join(process.cwd(), `react-native-${apiName}-api`)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
 run('ern regen-api --skipVersion')
 
 // api-impl
-run(`ern create-api-impl ${movieApi} --skipNpmCheck=true --nativeOnly=true --force=true`)
+run(`ern create-api-impl ${movieApi} --skipNpmCheck --nativeOnly --force`)
 const apiImplPath = path.join(process.cwd(), `${movieApi}-impl`)
 console.log(info(`Entering ${apiImplPath}`))
 process.chdir(apiImplPath)
