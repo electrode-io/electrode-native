@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2265A4A21EB26943007D6C3D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2265A4A11EB26943007D6C3D /* Info.plist */; };
 		30B77DD61E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */; };
 		30F8CDE41E677D7C00413247 /* ElectrodeReactNativeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */; };
 		30F8CDEE1E67946E00413247 /* ElectrodeReactNative_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */; };
@@ -17,9 +18,6 @@
 		48500A991E2FF55B009B6610 /* ElectrodeReactNative.m in Sources */ = {isa = PBXBuildFile; fileRef = 48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */; };
 		968333D71E54E3470031C565 /* ElectrodeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		968333D81E54E3470031C565 /* ElectrodeBridgeDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */; };
-		223A89461E89CDC70092741E /* MiniApp.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 223A89451E89CDC70092741E /* MiniApp.jsbundle */; };
-		2265A4A21EB26943007D6C3D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2265A4A11EB26943007D6C3D /* Info.plist */; };
-		22BF1FEB1E8DAAF800E7F500 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 22BF1FEA1E8DAAF800E7F500 /* assets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2265A4A11EB26943007D6C3D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		30B77DD51E66518E00EF3A78 /* ElectrodeBridgeDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegateTests.m; sourceTree = "<group>"; };
 		30F8CDE31E677D7C00413247 /* ElectrodeReactNativeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeReactNativeTests.m; sourceTree = "<group>"; };
 		30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeReactNative_Internal.h; sourceTree = "<group>"; };
@@ -45,9 +44,6 @@
 		48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeReactNative.m; sourceTree = "<group>"; };
 		968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeBridgeDelegate.h; sourceTree = "<group>"; };
 		968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegate.m; sourceTree = "<group>"; };
-		223A89451E89CDC70092741E /* MiniApp.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MiniApp.jsbundle; sourceTree = "<group>"; };
-		2265A4A11EB26943007D6C3D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		22BF1FEA1E8DAAF800E7F500 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +65,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-	22C096A91EA0893F00E1486A /* APIs */ = {
+		226325CE1E80594F00CD0B10 /* ReactNative */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = ReactNative;
+			sourceTree = "<group>";
+		};
+		22C096A91EA0893F00E1486A /* APIs */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -81,13 +84,6 @@
 			children = (
 			);
 			name = ElectrodeReactNativeBridge;
-			sourceTree = "<group>";
-		};
-		226325CE1E80594F00CD0B10 /* ReactNative */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ReactNative;
 			sourceTree = "<group>";
 		};
 		485009D91E2FF23B009B6610 = {
@@ -121,7 +117,7 @@
 				485009E61E2FF23B009B6610 /* ElectrodeApiImpl.h */,
 				48500A961E2FF55B009B6610 /* ElectrodeReactNative.h */,
 				30F8CDED1E67946E00413247 /* ElectrodeReactNative_Internal.h */,
-				48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */
+				48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */,
 			);
 			path = ElectrodeApiImpl;
 			sourceTree = "<group>";
@@ -157,8 +153,6 @@
 		9654B8921E5CCA1D00AFF607 /* MiniApp */ = {
 			isa = PBXGroup;
 			children = (
-				22BF1FEA1E8DAAF800E7F500 /* assets */,
-				223A89451E89CDC70092741E /* MiniApp.jsbundle */,
 			);
 			path = MiniApp;
 			sourceTree = "<group>";
@@ -188,7 +182,6 @@
 				485009DF1E2FF23B009B6610 /* Frameworks */,
 				485009E01E2FF23B009B6610 /* Headers */,
 				485009E11E2FF23B009B6610 /* Resources */,
-				22C03E991E89BDBF009048EA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -247,8 +240,6 @@
 			mainGroup = 485009D91E2FF23B009B6610;
 			productRefGroup = 485009E41E2FF23B009B6610 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-			);
 			projectRoot = "";
 			targets = (
 				485009E21E2FF23B009B6610 /* ElectrodeApiImpl */,
@@ -265,8 +256,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22BF1FEB1E8DAAF800E7F500 /* assets in Resources */,
-				223A89461E89CDC70092741E /* MiniApp.jsbundle in Resources */,
 				2265A4A21EB26943007D6C3D /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,7 +407,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
-          "$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
+					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImplTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -542,12 +531,12 @@
 				INFOPLIST_FILE = ElectrodeApiImpl/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -563,9 +552,6 @@
 			name = Debug;
 		};
 		485009F91E2FF23C009B6610 /* Release */ = {
-			ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-			CLANG_ENABLE_MODULES = YES;
-			CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
@@ -583,12 +569,12 @@
 				INFOPLIST_FILE = ElectrodeApiImpl/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -605,12 +591,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = ElectrodeApiImplTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImplTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
@@ -626,12 +612,12 @@
 					"\"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush\"",
 				);
 				INFOPLIST_FILE = ElectrodeApiImplTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImplTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
