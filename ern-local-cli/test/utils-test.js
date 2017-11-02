@@ -95,7 +95,7 @@ describe('utils.js', () => {
     it('should return an empty array if no match', async () => {
       useCauldronFixture(emptyCauldronFixture)
       const result = await utils.getNapDescriptorStringsFromCauldron()
-      expect(result).to.be.an.empty.array
+      expect(result).to.be.an('array').that.is.empty
     })
 
     it('should return all native apps descriptors', async () => {
