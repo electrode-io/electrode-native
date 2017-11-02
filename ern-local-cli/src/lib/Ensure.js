@@ -31,7 +31,7 @@ export default class Ensure {
     if (!validation.validForNewPackages) {
       const errorMessage =
         `${name} is not a valid NPM package name\n`
-          .concat(validation.errors.join('\n'))
+          .concat(validation.errors ? validation.errors.join('\n') : '')
           .concat(`\n${extraErrorMessage}`)
       throw new Error(errorMessage)
     }
