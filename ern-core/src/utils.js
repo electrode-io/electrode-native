@@ -88,9 +88,9 @@ export function getDefaultPackageNameForModule (moduleName: string, moduleType: 
     case ModuleTypes.API:
       return basePackageName.concat('-api')
     case ModuleTypes.JS_API_IMPL:
-      return basePackageName.concat('js-api-impl')
+      return basePackageName.concat('-js-api-impl')
     case ModuleTypes.NATIVE_API_IMPL:
-      return basePackageName.concat('native-api-impl')
+      return basePackageName.concat('-native-api-impl')
     default:
       throw new Error(`Unsupported module type : ${moduleType}`)
   }

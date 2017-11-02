@@ -17,7 +17,7 @@ import ApiImplGen from './generators/ApiImplGen'
 
 export default async function generateApiImpl ({
   apiDependency,
-  apiImplPkgName,
+  apiImplDependency,
   outputDirectory,
   nativeOnly,
   forceGenerate,
@@ -26,7 +26,7 @@ export default async function generateApiImpl ({
   paths
 } : {
   apiDependency: Dependency,
-  apiImplPkgName: string,
+  apiImplDependency: Dependency,
   outputDirectory: string,
   nativeOnly: boolean,
   forceGenerate?: boolean,
@@ -42,9 +42,9 @@ export default async function generateApiImpl ({
   log.debug('Entering generate API IMPL')
   try {
     // get the directory to output the generated project.
-    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiImplPkgName, outputDirectory)
+    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiImplDependency, outputDirectory)
     await createOutputDirectory(outputDirectory, forceGenerate)
-    await createNodePackage(outputDirectory, apiDependency, nativeOnly, hasConfig)
+    await createNodePackage(outputDirectory, apiDependency, apiImplDependency, nativeOnly, hasConfig)
 
     let platforms = getPlatforms(nativeOnly)
 
@@ -90,6 +90,7 @@ async function createOutputDirectory (outputDirectoryPath: string, forceGenerate
 async function createNodePackage (
   outputDirectoryPath: string,
   apiDependency: Dependency,
+  apiImplDependency : Dependency,
   nativeOnly: boolean,
   hasConfig: boolean) {
   let currentDirectory = process.cwd()
@@ -97,7 +98,7 @@ async function createNodePackage (
   await yarn.init()
   await yarn.add(apiDependency.path)
   shell.rm('-rf', path.join(outputDirectoryPath, 'node_modules'))
-  ernifyPackageJson(outputDirectoryPath, nativeOnly, hasConfig)
+  ernifyPackageJson(outputDirectoryPath, apiImplDependency, nativeOnly, hasConfig)
   shell.cd(currentDirectory)
 }
 
@@ -112,10 +113,10 @@ function createPluginsDownloadDirectory (pluginsDownloadPath: string) {
   shell.mkdir('-p', pluginsDownloadPath)
 }
 
-function formOutputDirectoryName (apiImplPkgName: string, outputDirectoryPath: string) {
+function formOutputDirectoryName (apiImplDependency: Dependency, outputDirectoryPath: string) {
   return outputDirectoryPath
-    ? path.join(outputDirectoryPath, apiImplPkgName)
-    : path.join(process.cwd(), apiImplPkgName)
+    ? path.join(outputDirectoryPath, apiImplDependency.name)
+    : path.join(process.cwd(), apiImplDependency.name)
 }
 
 function getPlatforms (nativeOnly: boolean): Array<string> {
@@ -124,13 +125,14 @@ function getPlatforms (nativeOnly: boolean): Array<string> {
     : ['js']
 }
 
-function ernifyPackageJson (outputDirectoryPath, nativeOnly, hasConfig) {
+function ernifyPackageJson (outputDirectoryPath, apiImplDependency, nativeOnly, hasConfig) {
   const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
   const moduleType = nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL
   const containerGen = {
     'hasConfig': hasConfig
   }
+  packageJson.name = apiImplDependency.scopedName
   packageJson.ern = {
     moduleType,
     containerGen
