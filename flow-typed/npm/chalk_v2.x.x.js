@@ -1,5 +1,5 @@
-// flow-typed signature: b1a2d646047879188d7e44cb218212b5
-// flow-typed version: b43dff3e0e/chalk_v1.x.x/flow_>=v0.19.x
+// flow-typed signature: 85bfca0f748258a97e014486f68a3b5a
+// flow-typed version: f92fdf5c31/chalk_v2.x.x/flow_>=v0.19.x
 
 type $npm$chalk$StyleElement = {
   open: string;
@@ -21,65 +21,45 @@ type $npm$chalk$Style = {
   // Text colors
   black: $npm$chalk$Chain;
   red: $npm$chalk$Chain;
+  redBright: $npm$chalk$Chain;
   green: $npm$chalk$Chain;
+  greenBright: $npm$chalk$Chain;
   yellow: $npm$chalk$Chain;
+  yellowBright: $npm$chalk$Chain;
   blue: $npm$chalk$Chain;
+  blueBright: $npm$chalk$Chain;
   magenta: $npm$chalk$Chain;
+  magentaBright: $npm$chalk$Chain;
   cyan: $npm$chalk$Chain;
+  cyanBright: $npm$chalk$Chain;
   white: $npm$chalk$Chain;
+  whiteBright: $npm$chalk$Chain;
   gray: $npm$chalk$Chain;
   grey: $npm$chalk$Chain;
 
+
   // Background colors
   bgBlack: $npm$chalk$Chain;
+  bgBlackBright: $npm$chalk$Chain;
   bgRed: $npm$chalk$Chain;
+  bgRedBright: $npm$chalk$Chain;
   bgGreen: $npm$chalk$Chain;
+  bgGreenBright: $npm$chalk$Chain;
   bgYellow: $npm$chalk$Chain;
+  bgYellowBright: $npm$chalk$Chain;
   bgBlue: $npm$chalk$Chain;
+  bgBlueBright: $npm$chalk$Chain;
   bgMagenta: $npm$chalk$Chain;
+  bgMagentaBright: $npm$chalk$Chain;
   bgCyan: $npm$chalk$Chain;
+  bgCyanBright: $npm$chalk$Chain;
   bgWhite: $npm$chalk$Chain;
-};
-
-type $npm$chalk$StyleMap = {
-  // General
-  reset: $npm$chalk$StyleElement;
-  bold: $npm$chalk$StyleElement;
-  dim: $npm$chalk$StyleElement;
-  italic: $npm$chalk$StyleElement;
-  underline: $npm$chalk$StyleElement;
-  inverse: $npm$chalk$StyleElement;
-  strikethrough: $npm$chalk$StyleElement;
-
-  // Text colors
-  black: $npm$chalk$StyleElement;
-  red: $npm$chalk$StyleElement;
-  green: $npm$chalk$StyleElement;
-  yellow: $npm$chalk$StyleElement;
-  blue: $npm$chalk$StyleElement;
-  magenta: $npm$chalk$StyleElement;
-  cyan: $npm$chalk$StyleElement;
-  white: $npm$chalk$StyleElement;
-  gray: $npm$chalk$StyleElement;
-
-  // Background colors
-  bgBlack: $npm$chalk$StyleElement;
-  bgRed: $npm$chalk$StyleElement;
-  bgGreen: $npm$chalk$StyleElement;
-  bgYellow: $npm$chalk$StyleElement;
-  bgBlue: $npm$chalk$StyleElement;
-  bgMagenta: $npm$chalk$StyleElement;
-  bgCyan: $npm$chalk$StyleElement;
-  bgWhite: $npm$chalk$StyleElement;
+  bgWhiteBright: $npm$chalk$Chain;
 };
 
 declare module "chalk" {
   declare var enabled: boolean;
   declare var supportsColor: boolean;
-  declare var styles: $npm$chalk$StyleMap;
-
-  declare function stripColor(value: string): any;
-  declare function hasColor(str: string): boolean;
 
   // General
   declare var reset: $npm$chalk$Chain;
@@ -93,22 +73,37 @@ declare module "chalk" {
   // Text colors
   declare var black: $npm$chalk$Chain;
   declare var red: $npm$chalk$Chain;
+  declare var redBright: $npm$chalk$Chain;
   declare var green: $npm$chalk$Chain;
+  declare var greenBright: $npm$chalk$Chain;
   declare var yellow: $npm$chalk$Chain;
+  declare var yellowBright: $npm$chalk$Chain;
   declare var blue: $npm$chalk$Chain;
+  declare var blueBright: $npm$chalk$Chain;
   declare var magenta: $npm$chalk$Chain;
+  declare var magentaBright: $npm$chalk$Chain;
   declare var cyan: $npm$chalk$Chain;
+  declare var cyanBright: $npm$chalk$Chain;
   declare var white: $npm$chalk$Chain;
+  declare var whiteBright: $npm$chalk$Chain;
   declare var gray: $npm$chalk$Chain;
   declare var grey: $npm$chalk$Chain;
 
   // Background colors
   declare var bgBlack: $npm$chalk$Chain;
+  declare var bgBlackBright: $npm$chalk$Chain;
   declare var bgRed: $npm$chalk$Chain;
+  declare var bgRedBright: $npm$chalk$Chain;
   declare var bgGreen: $npm$chalk$Chain;
+  declare var bgGreenBright: $npm$chalk$Chain;
   declare var bgYellow: $npm$chalk$Chain;
+  declare var bgYellowBright: $npm$chalk$Chain;
   declare var bgBlue: $npm$chalk$Chain;
+  declare var bgBlueBright: $npm$chalk$Chain;
   declare var bgMagenta: $npm$chalk$Chain;
+  declare var bgMagentaBright: $npm$chalk$Chain;
   declare var bgCyan: $npm$chalk$Chain;
+  declare var bgCyanBright: $npm$chalk$Chain;
   declare var bgWhite: $npm$chalk$Chain;
+  declare var bgWhiteBright: $npm$chalk$Chain;
 }
