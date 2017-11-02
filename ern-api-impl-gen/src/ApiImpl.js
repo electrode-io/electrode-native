@@ -15,10 +15,9 @@ import {
 import path from 'path'
 import ApiImplGen from './generators/ApiImplGen'
 
-const API_NAME_RE = /([^/]*)$/
-
 export default async function generateApiImpl ({
   apiDependency,
+  apiImplPkgName,
   outputDirectory,
   nativeOnly,
   forceGenerate,
@@ -27,6 +26,7 @@ export default async function generateApiImpl ({
   paths
 } : {
   apiDependency: Dependency,
+  apiImplPkgName: string,
   outputDirectory: string,
   nativeOnly: boolean,
   forceGenerate?: boolean,
@@ -40,10 +40,9 @@ export default async function generateApiImpl ({
   }
 } = {}) {
   log.debug('Entering generate API IMPL')
-
   try {
     // get the directory to output the generated project.
-    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiDependency, outputDirectory)
+    paths.outDirectory = outputDirectory = formOutputDirectoryName(apiImplPkgName, outputDirectory)
     await createOutputDirectory(outputDirectory, forceGenerate)
     await createNodePackage(outputDirectory, apiDependency, nativeOnly, hasConfig)
 
@@ -113,11 +112,10 @@ function createPluginsDownloadDirectory (pluginsDownloadPath: string) {
   shell.mkdir('-p', pluginsDownloadPath)
 }
 
-function formOutputDirectoryName (apiDependency: Dependency, outputDirectoryPath: string) {
-  let apiName = API_NAME_RE.exec(apiDependency.name)[1]
+function formOutputDirectoryName (apiImplPkgName: string, outputDirectoryPath: string) {
   return outputDirectoryPath
-    ? path.join(outputDirectoryPath, `${apiName}-impl`)
-    : path.join(process.cwd(), `${apiName}-impl`)
+    ? path.join(outputDirectoryPath, apiImplPkgName)
+    : path.join(process.cwd(), apiImplPkgName)
 }
 
 function getPlatforms (nativeOnly: boolean): Array<string> {

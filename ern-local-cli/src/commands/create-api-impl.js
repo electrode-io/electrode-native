@@ -42,8 +42,8 @@ exports.builder = function (yargs: any) {
     alias: 's',
     describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
     type: 'bool'
-  }).option('apiImplName', {
-    alias: 'n',
+  }).option('apiImplPkgName', {
+    alias: 'a',
     describe: 'Specify the name of the api implementation to use'
   })
   .epilog(cliUtils.epilog(exports))
@@ -60,7 +60,7 @@ exports.handler = async function ({
   outputDirectory,
   hasConfig,
   skipNpmCheck,
-  apiImplName
+  apiImplPkgName
 } : {
   api: string,
   nativeOnly: boolean,
@@ -69,22 +69,32 @@ exports.handler = async function ({
   outputDirectory: string,
   hasConfig: boolean,
   skipNpmCheck?: boolean,
-  apiImplName?: string
+  apiImplPkgName?: string
 }) {
   try {
-    // Fixes https://github.com/electrode-io/electrode-native/issues/265
-    if (!await cliUtils.doesPackageExistInNpm(api)) {
-      throw new Error(`Couldn't find package ${api} to generate the api implementation`)
-    }
-
     const apiDep = Dependency.fromPath(DependencyPath.fromString(api))
-    const implPkgName = `${apiDep.name}-impl`
-
+    if (!apiImplPkgName) {
+      apiImplPkgName = `${apiDep.name}-impl`
+    }
+    // pre conditions
+    await cliUtils.logErrorAndExitIfNotSatisfied({
+      noGitOrFilesystemPath: {
+        obj: api
+      },
+      publishedToNpm: {
+        obj: api,
+        extraErrorMessage: `Couldn't find package ${api} to generate the api implementation`
+      },
+      isValidNpmPackageName: {
+        name: apiImplPkgName,
+        extraErrorMessage: `${apiImplPkgName} is not a valid npm package name`
+      }
+    })
     // Skip npm check code execution
     if (!skipNpmCheck) {
       // check if the packageName for specified {apiName}-impl exists
       // Extend the command to ack the scope in the name
-      const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(implPkgName)
+      const continueIfPkgNameExists = await cliUtils.performPkgNameConflictCheck(apiImplPkgName)
       // If user wants to stop execution if npm package name conflicts
       if (!continueIfPkgNameExists) {
         return
@@ -103,9 +113,9 @@ exports.handler = async function ({
     if (!jsOnly && !nativeOnly) {
       nativeOnly = await promptPlatformSelection()
     }
-
     await generateApiImpl({
       apiDependency: apiDep,
+      apiImplPkgName,
       outputDirectory,
       nativeOnly,
       forceGenerate: force,
