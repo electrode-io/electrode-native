@@ -31,7 +31,7 @@ type SpawnOpts = {
   shell?: boolean | string;
 }
 
-export function promisifyChildProcess (child: ChildProcess) {
+export function promisifyChildProcess (child: ChildProcess) : Promise<void> {
   return new Promise((resolve, reject) => {
     child.addListener('error', err => reject(err))
     child.addListener('exit', code => {

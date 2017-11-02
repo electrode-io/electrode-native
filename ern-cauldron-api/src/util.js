@@ -71,7 +71,7 @@ export function containsDependency (
   return _.some(nativeDependencies, d => d.startsWith(dependency))
 }
 
-export function joiValidate (payload: any, schema: any) {
+export function joiValidate (payload: any, schema: any) : Promise<any> {
   return new Promise(function (resolve, reject) {
     Joi.validate(payload, schema, (err, value) => {
       if (err) {
