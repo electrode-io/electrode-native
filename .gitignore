@@ -39,6 +39,7 @@ lerna-debug.*
 **/lerna-debug.*
 **/coverage/**
 **/.nyc_output/**
+**/.coverage/**
 yarn-error.log
 
 # GitBook
