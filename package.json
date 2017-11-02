@@ -15,7 +15,7 @@
     "postmerge": "node auto-rebuild.js"
   },
   "dependencies": {
-    "chalk": "^1.1.3",
+    "chalk": "^2.3.0",
     "shelljs": "^0.7.6"
   },
   "devDependencies": {
