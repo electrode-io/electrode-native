@@ -2,7 +2,8 @@
 
 import {
   MiniApp,
-  utils as core
+  utils as core,
+  ModuleTypes
 } from 'ern-core'
 import {
   Utils
@@ -22,11 +23,15 @@ exports.builder = function (yargs: any) {
       describe: 'Overrides current platform version in use with this platform version'
     })
     .option('scope', {
-      describe: 'specify npm scope to group related packages together'
+      alias: 's',
+      describe: 'Scope to use for the MiniApp NPM package'
+    })
+    .option('packageName', {
+      alias: 'p',
+      describe: 'Name to use for the MiniApp NPM package'
     })
     .option('skipNpmCheck', {
-      alias: 's',
-      describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
+      describe: 'Skip the check ensuring package does not already exists in NPM registry',
       type: 'bool'
     })
     .epilog(utils.epilog(exports))
@@ -34,74 +39,72 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   appName,
+  packageName,
   platformVersion,
   scope,
   skipNpmCheck
 } : {
   appName: string,
+  packageName?: string,
   platformVersion: string,
   scope?: string,
   skipNpmCheck?: boolean
 }) {
   try {
-    if (!appName) {
-      log.error('MiniApp must contain a value')
-      return
-    }
-
-    let packageName = appName
-    if (packageName !== packageName.toLowerCase()) {
-      log.info(`NPM does not allow package names containing upper case letters.`)
-      let appNameToken = core.splitCamelCaseString(appName)
-      if (appNameToken) {
-        packageName = skipNpmCheck ? packageName : await _promptForPackageName(appNameToken.join('-'))
+    await utils.logErrorAndExitIfNotSatisfied({
+      isValidElectrodeNativeModuleName: {
+        name: appName
       }
+    })
+
+    if (!packageName) {
+      const defaultPackageName = core.getDefaultPackageNameForModule(appName, ModuleTypes.MINIAPP)
+      packageName = await promptForPackageName(defaultPackageName)
     }
 
-    // Skip npm check code execution
-    if (!skipNpmCheck) {
-      const continueIfPkgNameExists = await utils.performPkgNameConflictCheck(packageName)
-      // If user wants to stop execution if npm package name conflicts
-      if (!continueIfPkgNameExists) {
-        return
+    await utils.logErrorAndExitIfNotSatisfied({
+      isValidNpmPackageName: {
+        name: packageName
       }
+    })
+
+    if (!skipNpmCheck && !await utils.performPkgNameConflictCheck(packageName)) {
+      throw new Error(`Aborting command `)
     }
 
-    await MiniApp.create(appName,
+    await MiniApp.create(
+      appName,
       packageName, {
         platformVersion: platformVersion && platformVersion.replace('v', ''),
         scope
       })
-    log.info(`${appName} MiniApp was successfully created !`)
-    log.info(`================================================`)
-    log.info(chalk.bold.white('To run your MiniApp on Android :'))
-    log.info(chalk.white(`    > cd ${appName}`))
-    log.info(chalk.white(`followed by :`))
-    log.info(chalk.white(`    > ern run-android`))
-    log.info(chalk.bold.white('To run your MiniApp on iOS :'))
-    log.info(chalk.white(`    > cd ${appName}`))
-    log.info(chalk.white(`followed by :`))
-    log.info(chalk.white(`    > ern run-ios`))
-    log.info(`================================================`)
+
+    logSuccessFooter(appName)
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }
 }
 
-async function _promptForPackageName (packageName: string): Promise<string> {
-  const {pkgName} = await inquirer.prompt([{
+async function promptForPackageName (defaultPackageName: string): Promise<string> {
+  const { packageName } = await inquirer.prompt([{
     type: 'input',
     name: 'packageName',
-    message: `Type package name to publish to npm. Press Enter to use the default.`,
-    default: () => {
-      return `${packageName}`
-    },
-    validate: (value) => {
-      if (value && value === value.toLowerCase()) {
-        return true
-      }
-      return 'Check npm package name rules https://docs.npmjs.com/files/package.json'
-    }
+    message: 'Type NPM package name to use for this MiniApp. Press Enter to use the default.',
+    default: defaultPackageName
   }])
-  return pkgName
+  return packageName
+}
+
+function logSuccessFooter (appName: string) {
+  log.info(`${appName} MiniApp was successfully created !`)
+  log.info(`================================================`)
+  log.info(chalk.bold.white('To run your MiniApp on Android :'))
+  log.info(chalk.white(`    > cd ${appName}`))
+  log.info(chalk.white(`followed by :`))
+  log.info(chalk.white(`    > ern run-android`))
+  log.info(chalk.bold.white('To run your MiniApp on iOS :'))
+  log.info(chalk.white(`    > cd ${appName}`))
+  log.info(chalk.white(`followed by :`))
+  log.info(chalk.white(`    > ern run-ios`))
+  log.info(`================================================`)
 }
