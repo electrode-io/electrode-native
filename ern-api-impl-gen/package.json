@@ -44,7 +44,7 @@
     }
   ],
   "scripts": {
-    "test": "cross-env __ERN_TEST__=true ern-mocha",
+    "test": "ern-mocha",
     "build": "ern-babel",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
