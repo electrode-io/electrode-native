@@ -11,11 +11,8 @@ import {
 import {
   Dependency,
   DependencyPath,
-  shell,
-  gitCli
+  shell
 } from 'ern-util'
-
-const gitDirectoryRe = /.*\/(.*).git/
 
 export async function bundleMiniApps (
   miniapps: Array<MiniApp>,
@@ -342,50 +339,6 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
       await yarn.upgrade(miniappPackage.path)
     }
   }
-}
-
-//
-// Download the plugin source given a plugin origin
-// pluginOrigin: A plugin origin object
-// Sample plugin origin objects :
-// {
-//  "type": "git",
-//  "url": "https://github.com/aoriani/ReactNative-StackTracer.git",
-//  "version": "0.1.1"
-// }
-//
-// {
-//  "type": "npm",
-//  "name": "react-native-code-push",
-//  "version": "1.16.1-beta"
-// }
-//
-// Note: The plugin will be downloaded locally to the current directory
-// For npm origin it will be put in node_modules directory
-// For git origin it will be put directly at the root in a directory named after
-// the git repo as one would expect
-//
-// Returns: Absolute path to where the plugin was installed
-export async function downloadPluginSource (pluginOrigin: any) : Promise<string> {
-  let downloadPath = ''
-  if (pluginOrigin.type === 'npm') {
-    const dependency = new Dependency(pluginOrigin.name, { scope: pluginOrigin.scope, version: pluginOrigin.version })
-    await yarn.add(DependencyPath.fromString(dependency.toString()))
-    if (pluginOrigin.scope) {
-      downloadPath = path.join('node_modules', `@${pluginOrigin.scope}`, pluginOrigin.name)
-    } else {
-      downloadPath = path.join('node_modules', pluginOrigin.name)
-    }
-  } else if (pluginOrigin.type === 'git') {
-    if (pluginOrigin.version) {
-      await gitCli().cloneAsync(pluginOrigin.url, { '--branch': pluginOrigin.version })
-      downloadPath = gitDirectoryRe.exec(`${pluginOrigin.url}`)[1]
-    }
-  } else {
-    throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
-  }
-
-  return Promise.resolve(path.join(process.cwd(), downloadPath))
 }
 
 // =============================================================================
