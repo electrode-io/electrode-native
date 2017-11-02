@@ -167,7 +167,7 @@ async function logErrorAndExitIfNotSatisfied ({
     extraErrorMessage?: string
   }
 } = {}) {
-  const spinner = ora('Performing initial checks').start()
+  const spinner = ora('Performing validity checks').start()
   try {
     if (cauldronIsActive) {
       spinner.text = 'Ensuring that a Cauldron is active'
@@ -280,7 +280,7 @@ async function logErrorAndExitIfNotSatisfied ({
         isValidElectrodeNativeModuleName.extraErrorMessage
       )
     }
-    spinner.succeed('All initial checks have passed')
+    spinner.succeed('Validity checks have passed')
   } catch (e) {
     spinner.fail(e.message)
     process.exit(1)
