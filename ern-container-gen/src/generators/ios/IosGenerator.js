@@ -4,21 +4,19 @@ import {
   manifest,
   handleCopyDirective,
   ContainerGeneratorConfig,
-  MiniApp
+  MiniApp,
+  IosUtil
 } from 'ern-core'
 import {
   Dependency,
-  mustacheUtils,
   shell,
   gitCli
 } from 'ern-util'
 
 import {
-  bundleMiniApps,
-  downloadPluginSource
+  bundleMiniApps
 } from '../../utils.js'
 
-import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import xcode from 'xcode-ern'
@@ -149,145 +147,23 @@ export default class IosGenerator implements ContainerGenerator {
     miniApps: Array<MiniApp>,
     paths: any,
     mustacheView: any) : Promise<*> {
-    log.debug(`[=== Starting container hull filling ===]`)
-    shell.cd(`${ROOT_DIR}`)
+    const pathSpec = {
+      rootDir: ROOT_DIR,
+      projectHullDir: path.join(paths.containerHull, '{.*,*}'),
+      outputDir: paths.outDirectory,
+      pluginsDownloadDirectory: paths.pluginsDownloadDirectory
+    }
 
-    const copyFromPath = path.join(paths.containerHull, '{.*,*}')
+    const projectSpec = {
+      projectName: 'ElectrodeContainer'
+    }
 
-    shell.cp('-R', copyFromPath, paths.outDirectory)
     await this.buildiOSPluginsViews(plugins, mustacheView)
 
-    log.debug(`---iOS: reading template files to be rendered for plugins`)
-    const files = readDir(paths.outDirectory, (f) => (f))
-    for (const file of files) {
-      if ((file.endsWith('.h') || file.endsWith('.m'))) {
-        const pathToOutputFile = path.join(paths.outDirectory, file)
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-          pathToOutputFile, mustacheView, pathToOutputFile)
-      }
-    }
+    const {iosProject, projectPath} = await IosUtil.fillProjectHull(pathSpec, projectSpec, plugins, mustacheView)
 
-    const containerProjectPath = path.join(paths.outDirectory, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
-    const containerLibrariesPath = path.join(paths.outDirectory, 'ElectrodeContainer', 'Libraries')
-
-    const containerIosProject = await this.getIosContainerProject(containerProjectPath)
-    const electrodeContainerTarget = containerIosProject.findTargetKey('ElectrodeContainer')
-
-    for (const plugin of plugins) {
-      const pluginConfig = await manifest.getPluginConfig(plugin)
-      shell.cd(paths.pluginsDownloadDirectory)
-      if (pluginConfig.ios) {
-        log.debug(`Retrieving ${plugin.scopedName}`)
-        const pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
-        if (!pluginSourcePath) {
-          throw new Error(`Was not able to download ${plugin.scopedName}`)
-        }
-
-        if (pluginConfig.ios.copy) {
-          for (let copy of pluginConfig.ios.copy) {
-            if (this.switchToOldDirectoryStructure(pluginSourcePath, copy.source)) {
-              log.debug(`Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`)
-              copy.source = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs')
-            }
-          }
-          handleCopyDirective(pluginSourcePath, paths.outDirectory, pluginConfig.ios.copy)
-        }
-
-        if (pluginConfig.ios.replaceInFile) {
-          for (const r of pluginConfig.ios.replaceInFile) {
-            const pathToFile = path.join(paths.outDirectory, r.path)
-            const fileContent = fs.readFileSync(pathToFile, 'utf8')
-            const patchedFileContent = fileContent.replace(RegExp(r.string, 'g'), r.replaceWith)
-            fs.writeFileSync(pathToFile, patchedFileContent, { encoding: 'utf8' })
-          }
-        }
-
-        if (pluginConfig.ios.pbxproj) {
-          if (pluginConfig.ios.pbxproj.addSource) {
-            for (const source of pluginConfig.ios.pbxproj.addSource) {
-              // Multiple source files
-              if (source.from) {
-                if (this.switchToOldDirectoryStructure(pluginSourcePath, source.from)) {
-                  log.debug(`Source Copy: Falling back to old directory structure for API(Backward compatibility)`)
-                  source.from = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs', '*.swift')
-                }
-                const relativeSourcePath = path.dirname(source.from)
-                const pathToSourceFiles = path.join(pluginSourcePath, relativeSourcePath)
-                const fileNames = _.filter(fs.readdirSync(pathToSourceFiles), f => f.endsWith(path.extname(source.from)))
-                for (const fileName of fileNames) {
-                  const fileNamePath = path.join(source.path, fileName)
-                  containerIosProject.addSourceFile(fileNamePath, null, containerIosProject.findPBXGroupKey({name: source.group}))
-                }
-              } else {
-                // Single source file
-                containerIosProject.addSourceFile(source.path, null, containerIosProject.findPBXGroupKey({name: source.group}))
-              }
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addHeader) {
-            for (const header of pluginConfig.ios.pbxproj.addHeader) {
-              let headerPath = header.path
-              containerIosProject.addHeaderFile(headerPath, { public: header.public }, containerIosProject.findPBXGroupKey({name: header.group}))
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addFile) {
-            for (const file of pluginConfig.ios.pbxproj.addFile) {
-              containerIosProject.addFile(file.path, containerIosProject.findPBXGroupKey({name: file.group}))
-              // Add target dep in any case for now, will rework later
-              containerIosProject.addTargetDependency(electrodeContainerTarget, [`"${path.basename(file.path)}"`])
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addFramework) {
-            for (const framework of pluginConfig.ios.pbxproj.addFramework) {
-              containerIosProject.addFramework(framework, {sourceTree: 'BUILT_PRODUCTS_DIR', customFramework: true})
-              containerIosProject.addCopyfileFrameworkCustom(framework)
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addProject) {
-            for (const project of pluginConfig.ios.pbxproj.addProject) {
-              const projectAbsolutePath = path.join(containerLibrariesPath, project.path, 'project.pbxproj')
-              const options = {
-                projectAbsolutePath,
-                staticLibs: project.staticLibs,
-                frameworks: project.frameworks
-              }
-              containerIosProject.addProject(project.path, project.group, electrodeContainerTarget, options)
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addStaticLibrary) {
-            for (const lib of pluginConfig.ios.pbxproj.addStaticLibrary) {
-              containerIosProject.addStaticLibrary(lib)
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addHeaderSearchPath) {
-            for (const p of pluginConfig.ios.pbxproj.addHeaderSearchPath) {
-              containerIosProject.addToHeaderSearchPaths(p)
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addFrameworkReference) {
-            for (const frameworkReference of pluginConfig.ios.pbxproj.addFrameworkReference) {
-              containerIosProject.addFramework(frameworkReference, { customFramework: true })
-            }
-          }
-
-          if (pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
-            for (const p of pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
-              containerIosProject.addToFrameworkSearchPaths(p)
-            }
-          }
-        }
-      }
-    }
-
-    await this.addiOSPluginHookClasses(containerIosProject, plugins, paths)
-    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
+    await this.addiOSPluginHookClasses(iosProject, plugins, paths)
+    fs.writeFileSync(projectPath, iosProject.writeSync())
 
     log.debug(`[=== Completed container hull filling ===]`)
   }
