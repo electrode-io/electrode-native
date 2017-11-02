@@ -10,6 +10,7 @@ import {
 import http from 'http'
 import camelCase from 'lodash/camelCase'
 import manifest from './Manifest'
+import * as ModuleTypes from './ModuleTypes'
 
 export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<boolean> {
   if (typeof pkg === 'string') {
@@ -64,10 +65,30 @@ export function camelize (word: string, lowercaseFirstLetter: boolean = false): 
  * @param camelCaseString
  * @returns {string}
  */
-export function splitCamelCaseString (camelCaseString: string) {
-  return camelCaseString && camelCaseString.split(/(?=[A-Z])/).map((token) => {
+export function splitCamelCaseString (camelCaseString: string) : Array<string> {
+  return camelCaseString.split(/(?=[A-Z])/).map((token) => {
     return token.toLowerCase()
   })
+}
+
+export function getDefaultPackageNameForCamelCaseString (camelCaseString: string) {
+  return splitCamelCaseString(camelCaseString).join('-')
+}
+
+export function getDefaultPackageNameForModule (moduleName: string, moduleType: string) {
+  const basePackageName = getDefaultPackageNameForCamelCaseString(moduleName)
+  switch (moduleType) {
+    case ModuleTypes.MINIAPP:
+      return basePackageName.concat('-miniapp')
+    case ModuleTypes.API:
+      return basePackageName.concat('-api')
+    case ModuleTypes.JS_API_IMPL:
+      return basePackageName.concat('js-api-impl')
+    case ModuleTypes.NATIVE_API_IMPL:
+      return basePackageName.concat('native-api-impl')
+    default:
+      throw new Error(`Unsupported module type : ${moduleType}`)
+  }
 }
 
 export function isDependencyApiOrApiImpl (dependencyName: string): boolean {

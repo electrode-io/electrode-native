@@ -10,6 +10,7 @@ const gitPassword = 'ernplatformtest12345'
 const gitHubCauldronRepositoryName = `cauldron-system-tests-${getRandomInt(0, 1000)}`
 const cauldronName = 'cauldron-automation'
 const miniAppName = 'MiniAppSystemTest'
+const miniAppPackageName = 'miniapp-system-test'
 const apiName = 'TestApi'
 const nativeApplicationName = 'system-test-app'
 const nativeApplicationVersion = '1.0.0'
@@ -71,7 +72,7 @@ run('ern cauldron repo current')
 run('ern cauldron repo list')
 
 // Miniapp commands
-run(`ern create-miniapp ${miniAppName} --skipNpmCheck`)
+run(`ern create-miniapp ${miniAppName} --packageName ${miniAppPackageName} --skipNpmCheck`)
 const miniAppPath = path.join(process.cwd(), miniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
