@@ -17,8 +17,7 @@ import {
 } from 'ern-util'
 import {
   bundleMiniApps,
-  capitalizeFirstLetter,
-  downloadPluginSource
+  capitalizeFirstLetter
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
@@ -158,7 +157,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
 
         shell.cd(paths.pluginsDownloadDirectory)
-        pluginSourcePath = await downloadPluginSource(pluginConfig.origin)
+        pluginSourcePath = await utils.downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
