@@ -31,10 +31,10 @@ exports.builder = function (yargs: any) {
     describe: 'Generate js project with proper dependencies (Implementation of the API has to be written in js'
   }).option('packageName', {
     alias: 'p',
-    describe: 'Name to use for the ApiImpl NPM package'
+    describe: 'Name to use for the apiImpl NPM package'
   }).option('scope', {
     alias: 's',
-    describe: 'Scope to use for the ApiImpl NPM package'
+    describe: 'Scope to use for the apiImpl NPM package'
   }).option('force', {
     alias: 'f',
     type: 'bool',

@@ -23,7 +23,13 @@
 
 `--jsOnly/-j`
 
-* Generate an implementation skeleton project for a JavaScript implementation of the API  
+* Generate an implementation skeleton project for a JavaScript implementation of the API
+  
+`--packageName/-p`
+* Name to use for the apiImpl NPM package
+
+`--scope/-s`
+* Scope to use for the apiImpl NPM package
 
 `--outputDirectory/-o <directory>`
 
@@ -34,7 +40,7 @@
 * Indicates if this api implementation requires some config during initialization.
 * This option will be stored and reused during container generation to enforce config initialization
 
-`--skipNpmCheck/-s`
+`--skipNpmCheck`
 * Skips npm check to see if the package already exists
 * **Default** The value defaults to false. 
 
@@ -45,8 +51,17 @@
 
 #### Examples
 
-`ern create-api-impl react-native-weather-api`  
+`ern create-api-impl react-native-weather-api`
 This example shows how to create an API skeleton project named `react-native-weather-api-impl`.
+
+`ern create-api-impl react-native-weather-api -p my-weather-api-impl`
+
+This example shows how to create an API skeleton project named `my-weather-api-impl`.
+
+`ern create-api-impl react-native-weather-api -p my-weather-api-impl -s org`
+
+This example shows how to create an API skeleton project named `@org/my-weather-api-impl`.
+
 
 #### Remarks
 
