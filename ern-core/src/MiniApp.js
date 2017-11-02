@@ -270,7 +270,7 @@ Are you sure this is a MiniApp ?`)
           log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies)}`)
           for (let dep: Dependency of nativeDependencies) {
             if (Dependency.same(dep.withoutVersion(), dependency, {ignoreVersion: true})) {
-              if (utils.isDependencyApiOrApiImpl(dep.name)) {
+              if (await utils.isDependencyApiOrApiImpl(dep.name)) {
                 log.debug(`This is an api or api-impl`)
                 log.warn(`${dep.toString()} is not declared in the Manifest. You might consider adding it.`)
                 finalDependency = dep

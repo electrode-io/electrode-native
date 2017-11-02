@@ -162,7 +162,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
 
-        if (utils.isDependencyApiImpl(plugin.name)) {
+        if (await utils.isDependencyApiImpl(plugin.name)) {
           this.populateApiImplMustacheView(pluginSourcePath, mustacheView)
         }
 
