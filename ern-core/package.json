@@ -61,7 +61,8 @@
     "react-native-cli": "^2.0.1",
     "semver": "^5.4.1",
     "tmp": "^0.0.31",
-    "yarn": "^0.27.5"
+    "yarn": "^0.27.5",
+    "xcode-ern": "1.0.1"
   },
   "devDependencies": {
     "ern-util-dev": "0.9.0"

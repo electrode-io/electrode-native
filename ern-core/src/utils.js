@@ -5,14 +5,19 @@ import {
 } from './clients'
 import {
   Dependency,
-  DependencyPath
+  DependencyPath,
+  gitCli
 } from 'ern-util'
 import http from 'http'
 import camelCase from 'lodash/camelCase'
 import manifest from './Manifest'
 import * as ModuleTypes from './ModuleTypes'
+import path from 'path'
+import fs from 'fs'
 
-export async function isPublishedToNpm (pkg: string | DependencyPath) : Promise<boolean> {
+const gitDirectoryRe = /.*\/(.*).git/
+
+export async function isPublishedToNpm (pkg: string | DependencyPath): Promise<boolean> {
   if (typeof pkg === 'string') {
     pkg = DependencyPath.fromString(pkg)
   }
@@ -119,4 +124,85 @@ export async function reactNativeManifestVersion () {
 
 export function isValidElectrodeNativeModuleName (name: string) : boolean {
   return /^[a-zA-Z]+$/.test(name)
+}
+/**
+ * Download the plugin source given a plugin origin if not already downloaded
+ pluginOrigin: A plugin origin object
+ Sample plugin origin objects :
+ {
+  "type": "git",
+  "url": "https://github.com/aoriani/ReactNative-StackTracer.git",
+  "version": "0.1.1"
+ }
+
+ {
+  "type": "npm",
+  "name": "react-native-code-push",
+  "version": "1.16.1-beta"
+ }
+
+ Note: The plugin will be downloaded locally to the current directory
+ For npm origin it will be put in node_modules directory
+ For git origin it will be put directly at the root in a directory named after
+ the git repo as one would expect
+
+ Returns:
+ * @param pluginOrigin
+ * @returns {Promise.<T>} Absolute path to where the plugin was installed
+ */
+export async function downloadPluginSource (pluginOrigin: any): Promise<string> {
+  let downloadPath = getDownloadedPluginPath(pluginOrigin)
+  const absolutePluginOutPath = path.join(process.cwd(), downloadPath)
+
+  if (!fs.existsSync(absolutePluginOutPath)) {
+    if (pluginOrigin.type === 'npm') {
+      const dependency = new Dependency(pluginOrigin.name, {scope: pluginOrigin.scope, version: pluginOrigin.version})
+      await yarn.add(DependencyPath.fromString(dependency.toString()))
+    } else if (pluginOrigin.type === 'git') {
+      if (pluginOrigin.version) {
+        await gitCli().cloneAsync(pluginOrigin.url, {'--branch': pluginOrigin.version})
+      }
+    } else {
+      throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
+    }
+  } else {
+    log.debug(`Plugin already downloaded to ${absolutePluginOutPath}`)
+  }
+
+  return Promise.resolve(absolutePluginOutPath)
+}
+
+/**
+ * Sample plugin origin objects :
+ {
+  "type": "git",
+  "url": "https://github.com/aoriani/ReactNative-StackTracer.git",
+  "version": "0.1.1"
+ }
+
+ {
+  "type": "npm",
+  "name": "react-native-code-push",
+  "version": "1.16.1-beta"
+ }
+ * @param pluginOrigin
+ */
+function getDownloadedPluginPath (pluginOrigin: any) {
+  let downloadPath
+  if (pluginOrigin.type === 'npm') {
+    if (pluginOrigin.scope) {
+      downloadPath = path.join('node_modules', `@${pluginOrigin.scope}`, pluginOrigin.name)
+    } else {
+      downloadPath = path.join('node_modules', pluginOrigin.name)
+    }
+  } else if (pluginOrigin.type === 'git') {
+    if (pluginOrigin.version) {
+      downloadPath = gitDirectoryRe.exec(`${pluginOrigin.url}`)[1]
+    }
+  }
+
+  if (!downloadPath) {
+    throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
+  }
+  return downloadPath
 }
