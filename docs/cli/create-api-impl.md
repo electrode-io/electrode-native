@@ -7,11 +7,11 @@
 
 #### Syntax
 
-`ern create-api-impl <api>`  
+`ern create-api-impl <apiName>`  
 
 **Arguments**
 
-`<api>`
+`<apiName>`
 
 * The package descriptor of the API for which to create an API implementation project
 
