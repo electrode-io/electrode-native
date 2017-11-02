@@ -96,7 +96,7 @@ export function getDefaultPackageNameForModule (moduleName: string, moduleType: 
   }
 }
 
-export function isDependencyApiOrApiImpl (dependencyName: string): boolean {
+export async function isDependencyApiOrApiImpl (dependencyName: string): Promise<boolean> {
   return (isDependencyApi(dependencyName) || isDependencyApiImpl(dependencyName))
 }
 
@@ -104,8 +104,13 @@ export function isDependencyApi (dependencyName: string): boolean {
   return (/^.*react-native-.+-api$/.test(dependencyName))
 }
 
-export function isDependencyApiImpl (dependencyName: string): boolean {
-  return (/^.*react-native-.+-api-impl$/.test(dependencyName))
+export async function isDependencyApiImpl (dependencyName: string): Promise<boolean> {
+  // for api-impl using default name minimize the await time
+  if (/^.*react-native-.+-api-impl$/.test(dependencyName)) {
+    return true
+  }
+  const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
+  return (depInfo.data && [`${ModuleTypes.NATIVE_API_IMPL}`, `${ModuleTypes.JS_API_IMPL}`].indexOf(depInfo.data.moduleType) > -1)
 }
 
 /**
