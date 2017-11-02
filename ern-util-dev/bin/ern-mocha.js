@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+process.env['__ERN_TEST__'] = true
 if (!require('fs').existsSync(require('path').join(process.cwd(), 'test'))) {
   console.log('no tests for project ', process.cwd())
   process.exit(0)

@@ -44,7 +44,7 @@
   ],
   "scripts": {
     "build": "ern-babel",
-    "test": "cross-env __ERN_TEST__=true ern-mocha",
+    "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build",
     "postinstall": "node scripts/postinstall.js"

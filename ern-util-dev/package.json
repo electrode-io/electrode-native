@@ -41,7 +41,7 @@
     }
   ],
   "scripts": {
-    "test": "cross-env __ERN_TEST__=true ./bin/ern-mocha.js"
+    "test": "node bin/ern-mocha.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
