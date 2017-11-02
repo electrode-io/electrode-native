@@ -18,6 +18,7 @@ import {
 } from './clients'
 import * as _dependencyLookup from './dependencyLookup'
 import _ErnBinaryStore from './ErnBinaryStore'
+import * as _iosUtil from './iosUtil'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -35,6 +36,7 @@ export const MavenUtils = _MavenUtils
 export const Publisher = _Publisher
 export const ContainerGeneratorConfig = _ContainerGeneratorConfig
 export const ErnBinaryStore = _ErnBinaryStore
+export const IosUtil = _iosUtil
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -52,5 +54,6 @@ export default ({
   MavenUtils: _MavenUtils,
   Publisher: _Publisher,
   ContainerGeneratorConfig: _ContainerGeneratorConfig,
-  ErnBinaryStore: _ErnBinaryStore
+  ErnBinaryStore: _ErnBinaryStore,
+  IosUtil: _iosUtil
 })
