@@ -17,7 +17,7 @@ process.argv.push(
   '--instrument=false',
   '--all',
   `--require=${__dirname}/../babelhook-coverage`,
-  '--only="src/"',
+  '--include=src/**/*.js',
   'mocha',
   'test/*-test.js')
 
