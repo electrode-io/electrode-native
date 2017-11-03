@@ -23,7 +23,7 @@ The Electrode Native platform guarantees that any MiniApp targeting a given Elec
 The Electrode Native platform stores its master manifest in a GitHub repository, [electrode-native-manifest](https://github.com/electrode-io/electrode-native-manifest/blob/master/manifest.json).  
 By default, Electrode Native uses the master manifest. For more advanced use cases, it is possible to override the master manifest as described later in this documentation.
 
-In order to update the manifest at any time, it is stored in a Git repository. This allows for addding new supported dependencies for an Electrode Native version at any time, without having to wait for the next Electrode Native main version to be released.
+In order to update the manifest at any time, it is stored in a Git repository. This allows for adding new supported dependencies for an Electrode Native version at any time, without having to wait for the next Electrode Native main version to be released.
 
 For any Electrode Native version defined in the master manifest:
 * We can add new native dependencies support.  
