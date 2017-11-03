@@ -1,0 +1,14 @@
+// 
+// DUMMY TEST JUST FOR ERN-CORE MODULE
+// TO BE ACCOUNTED FOR IN TEST COVERAGE
+// REMOVE THIS FILE AND THIS TEST AS SOON
+// AS A SINGLE REAL ERN-CORE TEST HAS BEEN CREATED
+// AS THIS TEST WON'T LONGER BE NECESSARY
+
+import {
+  expect
+} from 'chai'
+
+it('should succeed', () => {
+  expect(true).to.be.true
+})
