@@ -16,6 +16,7 @@ import {
   childProcess
 } from 'ern-util'
 import inquirer from 'inquirer'
+import { utils as core } from 'ern-core'
 const { 
   execp
 } = childProcess
@@ -115,12 +116,11 @@ export async function cleanGenerated (outFolder: string = process.cwd()) {
 
 async function validateApiNameAndGetPackageJson (message: string) {
   const outFolder = process.cwd()
-
-  if (!/react-native-(.*)-api$/.test(outFolder)) {
+  if (await !core.isDependencyApi(outFolder)) {
     throw new Error(message)
   }
   let pkg = await readPackage()
-  if (!/react-native-(.*)-api$/.test(pkg.name)) {
+  if (await !core.isDependencyApi(pkg.name)) {
     throw new Error(message)
   }
   return pkg
