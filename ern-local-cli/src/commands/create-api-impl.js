@@ -46,7 +46,7 @@ exports.builder = function (yargs: any) {
     type: 'bool',
     describe: 'Indicates if this api implementation requires some config during initialization. \nThis option will be stored and reused during container generation to enforce config initialization'
   }).option('skipNpmCheck', {
-    describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
+    describe: 'Skip the check ensuring package does not already exists in NPM registry',
     type: 'bool'
   })
   .epilog(utils.epilog(exports))

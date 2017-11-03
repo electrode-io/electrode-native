@@ -41,7 +41,7 @@
 * This option will be stored and reused during container generation to enforce config initialization
 
 `--skipNpmCheck`
-* Skips npm check to see if the package already exists
+* Skip the check ensuring package does not already exists in NPM registry
 * **Default** The value defaults to false. 
 
 `--force/-f`

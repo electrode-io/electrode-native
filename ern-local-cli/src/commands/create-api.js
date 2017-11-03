@@ -17,7 +17,7 @@ exports.desc = 'Create a new api'
 
 exports.builder = function (yargs: any) {
   return yargs.option('scope', {
-    alias: 'n',
+    alias: 's',
     describe: 'NPM scope of project'
   }).option('apiVersion', {
     alias: 'a',
@@ -29,8 +29,7 @@ exports.builder = function (yargs: any) {
     alias: 'm',
     describe: 'Path to schema(swagger)'
   }).option('skipNpmCheck', {
-    alias: 's',
-    describe: 'skips npm check to see if the package already exists. This is mainly useful when running this command for CI',
+    describe: 'Skip the check ensuring package does not already exists in NPM registry',
     type: 'bool'
   })
   .epilog(utils.epilog(exports))
@@ -51,6 +50,14 @@ exports.handler = async function ({
   schemaPath?: string,
   skipNpmCheck? : boolean
 }) {
+  // Check if the api name is valid npm package name
+  // https://docs.npmjs.com/files/package.json
+  await utils.logErrorAndExitIfNotSatisfied({
+    isValidNpmPackageName: {
+      name: apiName
+    }
+  })
+
   if (!skipNpmCheck) {
     const continueIfPkgNameExists = await utils.performPkgNameConflictCheck(apiName)
     // If user wants to stop execution if npm package name conflicts
