@@ -9,6 +9,7 @@
     "rebuild": "rimraf ern-*/**/dist && lerna clean --yes && lerna bootstrap --npmClient=yarn",
     "test": "lerna run test",
     "coverage": "lerna run coverage && istanbul-combine -d coverage -p summary -r html $(find ./ern-*/.coverage -type f -name 'coverage-final.json' -maxdepth 3)",
+    "coverage-ci": "lerna run coverage && istanbul-combine -d coverage -p summary -r text-lcov $(find ./ern-*/.coverage -type f -name 'coverage-final.json' -maxdepth 3) | coveralls",
     "standard": "standard",
     "flow": "flow",
     "precommit": "standard && flow",
