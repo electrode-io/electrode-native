@@ -97,7 +97,10 @@ export function getDefaultPackageNameForModule (moduleName: string, moduleType: 
 }
 
 export async function isDependencyApiOrApiImpl (dependencyName: string): Promise<boolean> {
-  return (isDependencyApi(dependencyName) || isDependencyApiImpl(dependencyName))
+  const isApi = await isDependencyApi(dependencyName)
+  const isApiImpl = !isApi ? await isDependencyApiImpl(dependencyName) : false
+  // Note: using constants as using await in return statement was not satisfying standard checks
+  return isApi || isApiImpl
 }
 
 export async function isDependencyApi (dependencyName: string): Promise<boolean> {
