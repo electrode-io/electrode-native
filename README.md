@@ -5,12 +5,11 @@
   <br>
 </h1>
 
-> Electrode Native is a mobile platform that streamlines the integration of React Native components into existing mobile applications.  
-> Requiring minimal changes to existing mobile code base and infrastructure, Electrode Native makes it simpler to leverage React Native potential in any mobile application.
+> Electrode Native is a mobile platform that streamlines the integration of React Native components into existing mobile applications. With minimal changes required to the application code base and infrastructure, Electrode Native makes it simpler to leverage React Native potential in any mobile application.
 
 ![Current version](https://img.shields.io/npm/v/ern-local-cli.svg?label=current)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-![travis ci](https://travis-ci.org/electrode-io/electrode-native.svg?branch=master)
+[![travis ci](https://travis-ci.org/electrode-io/electrode-native.svg?branch=master)](https://travis-ci.org/electrode-io/electrode-native?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/electrode-io/electrode-native/badge.svg?branch=master)](https://coveralls.io/github/electrode-io/electrode-native?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -31,7 +30,7 @@ $ npm install -g electrode-native && ern
 
 ### Trying it
 
-We have created a [step by step guide], for iOS and Android, to present some of the concepts and features of Electrode Native, through the building of a simple mobile application showing a list of movies.
+We have created a [step by step guide], for iOS and Android, to present some of the concepts and features of Electrode Native, through the development of a simple mobile application listing some movies.
 
 ## Documentation
 
@@ -44,13 +43,13 @@ This should be read first, as an introduction to learn about [what is Electrode 
 - A Platform Reference section  
 This section covers each Electrode Native module in depth, such as [Container], [Cauldron], [Manifest], [Apis] ...
 
-- A CLI command reference section
+- A CLI command reference section  
 In this section you will find a documentation page for each of the CLI commands available in Electrode Native, for example [create-miniapp], 
 [run-android], [platform use] ...
 
 ## Contributing
 
-We embrace contributions, be it documentation, issue reporting, or contributions to the Electrode Native code base itself.
+We embrace contributions, be it documentation, issue reporting, or contributing code.
 
 Please read our [CONTRIBUTING guide](docs/overview/contributing.md) for more details on how to contribute.
 
