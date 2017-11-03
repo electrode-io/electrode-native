@@ -9,10 +9,6 @@ Depending on whether you are building Android or iOS apps, the following tools a
 
 If you have React Native already installed, then you probably have the required tools installed.
 
-### OS X
-
-Electrode Native supports Mac OS X only. Electrode Native also runs on Linux; however, it has not been thoroughly tested on the Linux platform. Windows support is on our road map.
-
 ### [Node.JS](https://nodejs.org/en/)
 
 Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or later must be installed on your workstation.  
