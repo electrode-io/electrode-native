@@ -133,7 +133,7 @@ Are you sure this is a MiniApp ?`)
       appPackageJson.ern = {
         version: platformVersion,
         moduleType: ModuleTypes.MINIAPP,
-        miniAppName
+        moduleName: miniAppName
       }
       appPackageJson.private = false
       appPackageJson.keywords
@@ -186,7 +186,14 @@ Are you sure this is a MiniApp ?`)
   }
 
   get name (): string {
-    return (this.packageJson.ern && this.packageJson.ern.miniAppName) ? this.packageJson.ern.miniAppName : this.getUnscopedModuleName(this.packageJson.name)
+    if (this.packageJson.ern) {
+      if (this.packageJson.ern.miniAppName) {
+        return this.packageJson.ern.miniAppName
+      } else if (this.packageJson.ern.moduleName) {
+        return this.packageJson.ern.moduleName
+      }
+    }
+    return this.getUnscopedModuleName(this.packageJson.name)
   }
 
   get scope () : ?string {
@@ -348,7 +355,7 @@ Are you sure this is a MiniApp ?`)
       }
     }
 
-    // Update ernPlatfomVersion in package.json
+    // Update ernPlatformVersion in package.json
     if (!this.packageJson.ern) {
       throw new Error(`In order to upgrade, please first replace "ernPlatformVersion" : "${this.packageJson.ernPlatformVersion}" in your package.json 
 with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
