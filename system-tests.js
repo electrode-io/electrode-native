@@ -11,7 +11,7 @@ const gitHubCauldronRepositoryName = `cauldron-system-tests-${getRandomInt(0, 10
 const cauldronName = 'cauldron-automation'
 const miniAppName = 'MiniAppSystemTest'
 const miniAppPackageName = 'miniapp-system-test'
-const apiName = 'TestApi'
+const apiName = 'testapi'
 const nativeApplicationName = 'system-test-app'
 const nativeApplicationVersion = '1.0.0'
 const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${nativeApplicationVersion}`
@@ -124,7 +124,7 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 process.chdir(workingDirectoryPath)
 
 // api
-run(`ern create-api ${apiName}`)
+run(`ern create-api ${apiName} --skipNpmCheck`)
 const apiPath = path.join(process.cwd(), `react-native-${apiName}-api`)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
@@ -132,7 +132,7 @@ run('ern regen-api --skipVersion')
 
 // api-impl
 run(`ern create-api-impl ${movieApi} --skipNpmCheck --nativeOnly --force`)
-const apiImplPath = path.join(process.cwd(), `${movieApi}-impl`)
+const apiImplPath = path.join(process.cwd(), `${movieApi}-native-api-impl`)
 console.log(info(`Entering ${apiImplPath}`))
 process.chdir(apiImplPath)
 run('ern regen-api-impl')
