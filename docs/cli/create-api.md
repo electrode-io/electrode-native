@@ -6,17 +6,17 @@
 
 #### Syntax
 
-`ern create-api <name>`  
+`ern create-api <apiName>`  
 
 **Arguments**
 
-`<name>`
+`<apiName>`
 
 * The name to use for this API.
 
 **Options**  
 
-`--scope/-n <scope>`
+`--scope/-s <scope>`
 
 * Specify a given npm scope for the API project package  
 
@@ -35,8 +35,8 @@
 * Generate the API using a pre-existing Swagger schema located at the given `schemaPath`  
 * **Default**  If this option is not used the command uses a default starter schema to generate the initial API. You can modify this option at a later time and then regenerate the API using the `ern regen-api` command.  
 
-`--skipNpmCheck/-s`
-* Skips npm check to see if the package already exists
+`--skipNpmCheck`
+* Skip the check ensuring package does not already exists in NPM registry
 * **Default** The value defaults to false. 
 
 #### Examples
