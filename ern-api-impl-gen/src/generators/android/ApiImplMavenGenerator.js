@@ -26,6 +26,9 @@ type PluginConfig = {
 export const ROOT_DIR = shell.pwd()
 const READ_EXECUTE = '555'
 const READ_WRITE_EXECUTE = '777'
+const SRC_MAIN_JAVA_DIR = path.join('src', 'main', 'java')
+const API_IMPL_PACKAGE = path.join('com', 'ern', 'api', 'impl')
+
 export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   regenerateApiImpl:boolean
   get name (): string {
@@ -71,15 +74,15 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
       shell.cp('-Rf', path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
 
-      const pluginOutputDirectory = path.join(outputDirectory, 'lib', 'src', 'main', 'java')
+      const srcOutputDirectory = path.join(outputDirectory, 'lib', SRC_MAIN_JAVA_DIR)
       for (let plugin: Dependency of plugins) {
         log.debug(`Copying ${plugin.name} to ${outputDirectory}`)
         await manifest.getPluginConfig(plugin).then((pluginConfig) => {
-          this.copyPluginToOutput(paths, pluginOutputDirectory, plugin, pluginConfig)
+          this.copyPluginToOutput(paths, srcOutputDirectory, plugin, pluginConfig)
         })
       }
       const editableFiles = await this.generateRequestHandlerClasses(apiDependency, paths, apis)
-      await this.updateFilePermissions(pluginOutputDirectory, editableFiles)
+      await this.updateFilePermissions(srcOutputDirectory, editableFiles)
 
       await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
     } catch (e) {
@@ -89,7 +92,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
 
   copyPluginToOutput (paths: Object, pluginOutputDirectory: string, plugin: Dependency, pluginConfig: PluginConfig) {
     log.debug(`injecting ${plugin.name} code.`)
-    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName, 'src', 'main', 'java', '*')
+    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName, SRC_MAIN_JAVA_DIR, '*')
     if (!fs.existsSync(pluginOutputDirectory)) {
       shell.mkdir('-p', pluginOutputDirectory)
     }
@@ -97,11 +100,13 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     shell.cp('-Rf', pluginSrcDirectory, pluginOutputDirectory)
   }
 
-  async updateFilePermissions (pluginOutputDirectory: string, editableFiles: Array<string>) {
+  async updateFilePermissions (srcOutputDirectory: string, editableFiles: Array<string>) {
     log.debug('Updating file permissions')
-    fileUtils.chmodr(READ_EXECUTE, pluginOutputDirectory)
-    for (const editableFile of editableFiles) {
-      fileUtils.chmodr(READ_WRITE_EXECUTE, editableFile)
+    const files = shell.find(srcOutputDirectory).filter((file) => file.endsWith('.java'))
+    for (const file of files) {
+      editableFiles.includes(file)
+        ? fileUtils.chmodr(READ_WRITE_EXECUTE, file)
+        : fileUtils.chmodr(READ_EXECUTE, file)
     }
   }
 
@@ -159,12 +164,12 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
   }
 
   static createImplDirectoryAndCopyCommonClasses (paths) {
-    const outputDir = path.join(paths.outDirectory, '/android/lib/src/main/java/com/ern/api/impl/')
+    const outputDir = path.join(paths.outDirectory, 'android', 'lib', SRC_MAIN_JAVA_DIR, API_IMPL_PACKAGE)
     if (!fs.existsSync(outputDir)) {
       shell.mkdir('-p', outputDir)
     }
 
-    const resourceDir = path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen/resources/android')
+    const resourceDir = path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', 'android')
     shell.cp(path.join(resourceDir, 'RequestHandlerConfig.java'), outputDir)
     shell.cp(path.join(resourceDir, 'RequestHandlerProvider.java'), outputDir)
     return {outputDir, resourceDir}
