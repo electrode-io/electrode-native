@@ -100,12 +100,17 @@ export async function isDependencyApiOrApiImpl (dependencyName: string): Promise
   return (isDependencyApi(dependencyName) || isDependencyApiImpl(dependencyName))
 }
 
-export function isDependencyApi (dependencyName: string): boolean {
-  return (/^.*react-native-.+-api$/.test(dependencyName))
+export async function isDependencyApi (dependencyName: string): Promise<boolean> {
+  // for api generated using default name minimize the await time
+  if ((/^.*react-native-.+-api$/.test(dependencyName))) {
+    return true
+  }
+  const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
+  return (depInfo.data && ModuleTypes.API === depInfo.data.moduleType)
 }
 
 export async function isDependencyApiImpl (dependencyName: string): Promise<boolean> {
-  // for api-impl using default name minimize the await time
+  // for api-impl generated using default name minimize the await time
   if (/^.*react-native-.+-api-impl$/.test(dependencyName)) {
     return true
   }

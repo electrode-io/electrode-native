@@ -11,6 +11,7 @@ import GitManifest from './GitManifest'
 import Mustache from 'mustache'
 import _ from 'lodash'
 import fs from 'fs'
+import {isDependencyApiOrApiImpl} from './utils'
 
 export type PluginConfig = {
   android: Object,
@@ -169,7 +170,7 @@ export class Manifest {
         }
       }
       result.path = pluginConfigPath
-    } else if (plugin.name.endsWith('-api') || plugin.name.endsWith('-api-impl')) {
+    } else if (await isDependencyApiOrApiImpl(plugin.name)) {
       log.debug(`API or API IMPL detected. Returning API default config`)
       result = this.getApiPluginDefaultConfig(projectName)
     } else {

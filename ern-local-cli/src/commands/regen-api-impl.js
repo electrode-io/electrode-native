@@ -50,7 +50,7 @@ exports.handler = async function
   try {
     const apiImplPackage = await readPackageJson()
 
-    const api: Dependency = getApi(apiImplPackage)
+    const api: Dependency = await getApi(apiImplPackage)
     const currentApiVersion = api.version
     api.version = apiVersion
 
@@ -100,9 +100,9 @@ exports.handler = async function
     return apiImplPackage
   }
 
-  function getApi (apiImplPackage: Object): Dependency {
+  async function getApi (apiImplPackage: Object): Promise<Dependency> {
     for (const depKey of Object.keys(apiImplPackage.dependencies)) {
-      if (utils.isDependencyApi(depKey)) {
+      if (await utils.isDependencyApi(depKey)) {
         // TODO: THis is by assuming that this is the only api dependency inside this implemenation.
         // TODO: This may not be right all the time as an api implementor can add more other apis as dependencies. Logic needs to be revisited.
         return Dependency.fromString(`${depKey}@${apiImplPackage.dependencies[depKey]}`)
