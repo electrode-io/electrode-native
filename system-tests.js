@@ -13,6 +13,7 @@ const miniAppName = 'MiniAppSystemTest'
 const miniAppPackageName = 'miniapp-system-test'
 const apiName = 'TestApi'
 const apiPkgName = 'test'
+const invalidElectrodeNativeModuleName = 'Test-Api' // alpha only is valid
 const nativeApplicationName = 'system-test-app'
 const nativeApplicationVersion = '1.0.0'
 const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${nativeApplicationVersion}`
@@ -20,6 +21,8 @@ const iosNativeApplicationDescriptor = `${nativeApplicationName}:ios:${nativeApp
 const movieListMiniAppVersion = '0.0.7'
 const movieDetailsMiniAppVersion = '0.0.6'
 const movieApi = 'react-native-ernmovie-api'
+const movieApiImpl = 'ErnMovieApiImpl'
+const packageNotInNpm = 'ewkljrlwjerjlwjrl@0.0.3'
 
 process.env['SYSTEM_TESTS'] = 'true'
 
@@ -96,7 +99,7 @@ run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 // Already existing miniapp
 run(`ern cauldron add miniapps moviedetailsminiapp@${movieDetailsMiniAppVersion} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 // Non published miniapp
-run(`ern cauldron add miniapps ewkljrlwjerjlwjrl@0.0.3 -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
+run(`ern cauldron add miniapps ${packageNotInNpm} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 // File system miniapp
 run(`ern cauldron add miniapps file:${miniAppPath} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 
@@ -125,15 +128,19 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 process.chdir(workingDirectoryPath)
 
 // api
-run(`ern create-api ${apiName} -p ${apiPkgName}  --skipNpmCheck`)
+run(`ern create-api ${invalidElectrodeNativeModuleName} --skipNpmCheck`, { expectedExitCode: 1 })
+run(`ern create-api ${apiName} -p ${apiPkgName} --skipNpmCheck`)
 const apiPath = path.join(process.cwd(), apiName)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
 run('ern regen-api --skipVersion')
 
 // api-impl
-run(`ern create-api-impl ${movieApi} --skipNpmCheck --nativeOnly --force`)
-const apiImplPath = path.join(process.cwd(), `${movieApi}-native-api-impl`)
+run(`ern create-api-impl ${packageNotInNpm} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
+run(`ern create-api-impl ${packageNotInNpm} ${invalidElectrodeNativeModuleName} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
+
+run(`ern create-api-impl ${movieApi} ${movieApiImpl} --skipNpmCheck --nativeOnly --force`)
+const apiImplPath = path.join(process.cwd(), `${movieApiImpl}`)
 console.log(info(`Entering ${apiImplPath}`))
 process.chdir(apiImplPath)
 run('ern regen-api-impl')
