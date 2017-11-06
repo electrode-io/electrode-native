@@ -1,13 +1,11 @@
 // @flow
 
-import {
-  exec
-} from 'child_process'
 import tmp from 'tmp'
 import shell from './shell'
 import path from 'path'
 import fs from 'fs'
 import DependencyPath from './DependencyPath'
+import { execp } from './childProcess'
 
 export default class YarnCli {
   _binaryPath: ?string
@@ -82,23 +80,13 @@ export default class YarnCli {
       const output = await this.runYarnCommand(cmd)
 
       // Assume single line of yarn JSON output in stdout for yarn info
-      return JSON.parse(output)
+      return JSON.parse(output.toString())
     }
   }
 
-  async runYarnCommand (command: string) {
+  async runYarnCommand (command: string) : Promise<string | Buffer> {
     const cmd = `${this.binaryPath} ${command}`
     log.debug(`[runYarnCommand] Running ${cmd}`)
-    return new Promise((resolve, reject) => {
-      exec(cmd, (err, stdout, stderr) => {
-        if (err) {
-          reject(err)
-        } else if (stdout) {
-          resolve(stdout)
-        } else if (stderr) {
-          reject(stderr)
-        }
-      })
-    })
+    return execp(cmd)
   }
 }
