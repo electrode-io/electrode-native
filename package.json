@@ -40,7 +40,6 @@
     "flow-bin": "0.58.0",
     "husky": "^0.14.3",
     "install": "^0.8.7",
-    "istanbul-combine": "^0.3.0",
     "lerna": "2.0.0",
     "mocha": "^4.0.1",
     "npm": "^4.4.1",
