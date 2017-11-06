@@ -126,7 +126,7 @@ export default function normalizeConfig ({
   if (apiSchemaPath) {
     config.apiSchemaPath = apiSchemaPath
   }
-  if (!artifactId) {
+  if (!config.artifactId) {
     config.artifactId = `react-native-${simpleName}-api`
   }
   if (targetDependencies) {
