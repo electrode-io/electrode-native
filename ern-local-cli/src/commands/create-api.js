@@ -81,12 +81,12 @@ exports.handler = async function ({
 
     const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
     if (!bridgeDep) {
-      return log.error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
+      throw new Error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
     }
 
     const reactNative = await manifest.getNativeDependency(Dependency.fromString('react-native'))
     if (!reactNative) {
-      return log.error(`react-native not found in manifest. cannot infer version to use`)
+      throw new Error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
     }
 
     log.info(`Generating ${apiName} API`)
