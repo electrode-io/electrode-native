@@ -72,7 +72,7 @@ exports.handler = async function ({
   nativeOnly: boolean,
   jsOnly: boolean,
   packageName?: string,
-  scope?: string,
+  scope: string,
   force: boolean,
   outputDirectory: string,
   hasConfig: boolean,
@@ -149,6 +149,7 @@ exports.handler = async function ({
       reactNativeVersion,
       hasConfig,
       packageName,
+      scope,
       paths: {
         apiImplHull: path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'hull'),
         pluginsDownloadDirectory: PLUGIN_DIRECTORY,
