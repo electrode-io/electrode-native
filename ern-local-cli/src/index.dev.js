@@ -1,3 +1,6 @@
 #!/usr/bin/env node
-require('ern-util-dev/babelhook')
+if (!process.env.COVERAGE) {
+  // babelhook is already required through nyc command
+  require('ern-util-dev/babelhook')
+}
 require('./index.js').default()

@@ -9,12 +9,7 @@ const oload = Module._load
 
 if (process.env.COVERAGE) {
   conf.plugins.push([
-    'istanbul',
-    {
-      'exclude': [
-        '**/test/*-test.js'
-      ]
-    }
+    'istanbul'
   ])
 }
 
