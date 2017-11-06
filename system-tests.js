@@ -12,6 +12,7 @@ const cauldronName = 'cauldron-automation'
 const miniAppName = 'MiniAppSystemTest'
 const miniAppPackageName = 'miniapp-system-test'
 const apiName = 'TestApi'
+const apiPkgName = 'test'
 const nativeApplicationName = 'system-test-app'
 const nativeApplicationVersion = '1.0.0'
 const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${nativeApplicationVersion}`
@@ -124,8 +125,8 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 process.chdir(workingDirectoryPath)
 
 // api
-run(`ern create-api ${apiName} --skipNpmCheck`)
-const apiPath = path.join(process.cwd(), `${apiName}`)
+run(`ern create-api ${apiName} -p ${apiPkgName}  --skipNpmCheck`)
+const apiPath = path.join(process.cwd(), apiName)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
 run('ern regen-api --skipVersion')
