@@ -49,7 +49,7 @@ export async function generateApi (options: Object) {
  */
 export async function regenerateCode (options: Object = {}) {
   const pkg = await validateApiNameAndGetPackageJson(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
-  const curVersion = pkg.version || '0.0.1'
+  const curVersion = pkg.version || '1.0.0' //[default: 1.0.0]
   const pkgName = pkg.name
   let newPluginVer
   if (options.skipVersion) {
@@ -71,28 +71,23 @@ export async function regenerateCode (options: Object = {}) {
   const isNewVersion = semver.lt(curVersion, newPluginVer)
   const extra = (pkg.ern && pkg.ern.message) || {}
   const config = normalizeConfig({
-    name: pkgName,
+    name: extra && extra.apiName ? extra.apiName : extra && extra.moduleName ? extra.moduleName : pkgName,
     apiVersion: isNewVersion ? newPluginVer : pkg.version,
     apiDescription: pkg.description,
     apiAuthor: pkg.author,
     bridgeVersion: options.bridgeVersion || pkg.peerDependencies['react-native-electrode-bridge'],
+    packageName : pkgName,
+    artifactId : pkg.artifactId,
     ...extra,
     ...options
   })
 
+  log.error(JSON.stringify(config))
+
   await cleanGenerated()
 
-  const pkgConfig = {
-    npmScope : pkgName && pkgName.startsWith('@') ? pkgName.slice(1, pkgName.indexOf('/')) : '',
-    moduleName : pkgName &&  pkgName.startsWith('@') ? pkgName.slice(pkgName.indexOf('/') + 1) : pkgName,
-    apiVersion : isNewVersion ? newPluginVer : pkg.version,
-    apiDescription : pkg.description,
-    apiAuthor : pkg.author,
-    bridgeVersion : options.bridgeVersion,
-    ...extra
-  }
   // Regenerate package.json
-  fileUtils.writeFile(path.join(process.cwd(), PKG_FILE), generatePackageJson(pkgConfig))
+  fileUtils.writeFile(path.join(process.cwd(), PKG_FILE), generatePackageJson(config))
   // Regenerate .flowconfig file
   fileUtils.writeFile(path.join(process.cwd(), FLOW_CONFIG_FILE), generateFlowConfig())
 
@@ -115,10 +110,6 @@ export async function cleanGenerated (outFolder: string = process.cwd()) {
 }
 
 async function validateApiNameAndGetPackageJson (message: string) {
-  const outFolder = process.cwd()
-  if (await !core.isDependencyApi(outFolder)) {
-    throw new Error(message)
-  }
   let pkg = await readPackage()
   if (await !core.isDependencyApi(pkg.name)) {
     throw new Error(message)
