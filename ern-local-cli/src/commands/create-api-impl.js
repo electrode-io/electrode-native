@@ -123,9 +123,10 @@ exports.handler = async function ({
 
     // If no package name is specified get default name from apiImplName
     if (!packageName) {
-      packageName = core.getDefaultPackageNameForModule(
+      const defaultPackageName = packageName = core.getDefaultPackageNameForModule(
         apiImplName,
         nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL)
+      packageName = await promptForPackageName(defaultPackageName)
     }
 
     // Check if packageName is valid
@@ -172,4 +173,14 @@ async function promptPlatformSelection () : Promise<boolean> {
     choices: [`js`, `native`]
   }])
   return targetPlatform !== `js`
+}
+
+async function promptForPackageName (defaultPackageName: string): Promise<string> {
+  const { packageName } = await inquirer.prompt([{
+    type: 'input',
+    name: 'packageName',
+    message: 'Type NPM package name to use for this API implementation. Press Enter to use the default.',
+    default: defaultPackageName
+  }])
+  return packageName
 }
