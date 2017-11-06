@@ -51,27 +51,27 @@ export async function generateSwagger ({
 }
 export function generatePackageJson ({
   npmScope,
-  moduleName = '',
   reactNativeVersion,
   apiVersion = '1.0.0',
   apiDescription,
   apiAuthor,
   apiLicense,
   bridgeVersion = '',
+  packageName,
   ...conf
 } : {
   npmScope?: string,
-  moduleName?: string,
   reactNativeVersion?: string,
   apiVersion?: string,
   apiDescription?: string,
   apiAuthor?: string,
   apiLicense?: string,
   bridgeVersion?: string,
+  packageName?: string,
   config?: any
 }) {
   return JSON.stringify({
-    'name': npmScope ? `@${npmScope}/${moduleName}` : moduleName,
+    'name': npmScope ? `@${npmScope}/${packageName}` : packageName,
     'version': apiVersion,
     'description': apiDescription,
     'main': 'javascript/src/index.js',
