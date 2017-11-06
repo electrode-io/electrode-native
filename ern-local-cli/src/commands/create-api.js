@@ -4,7 +4,9 @@ import {
   ApiGen
 } from 'ern-api-gen'
 import {
-  manifest
+  manifest,
+  utils as core,
+  ModuleTypes
 } from 'ern-core'
 import {
   Dependency,
@@ -18,7 +20,10 @@ exports.desc = 'Create a new api'
 exports.builder = function (yargs: any) {
   return yargs.option('scope', {
     alias: 's',
-    describe: 'NPM scope of project'
+    describe: 'Scope to use for the api NPM package'
+  }).option('packageName', {
+    alias: 'p',
+    describe: 'Name to use for the api NPM package'
   }).option('apiVersion', {
     alias: 'a',
     describe: 'Initial npm version'
@@ -38,6 +43,7 @@ exports.builder = function (yargs: any) {
 exports.handler = async function ({
   apiName,
   scope,
+  packageName,
   apiVersion,
   apiAuthor,
   schemaPath,
@@ -45,39 +51,46 @@ exports.handler = async function ({
 } : {
   apiName: string,
   scope?: string,
+  packageName: string,
   apiVersion?: string,
   apiAuthor?: string,
   schemaPath?: string,
   skipNpmCheck? : boolean
 }) {
-  // Check if the api name is valid npm package name
-  // https://docs.npmjs.com/files/package.json
-  await utils.logErrorAndExitIfNotSatisfied({
-    isValidNpmPackageName: {
-      name: apiName
-    }
-  })
-
-  if (!skipNpmCheck) {
-    const continueIfPkgNameExists = await utils.performPkgNameConflictCheck(apiName)
-    // If user wants to stop execution if npm package name conflicts
-    if (!continueIfPkgNameExists) {
-      return
-    }
-  }
-
-  const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
-  if (!bridgeDep) {
-    return log.error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
-  }
-
-  const reactNative = await manifest.getNativeDependency(Dependency.fromString('react-native'))
-  if (!reactNative) {
-    return log.error(`react-native not found in manifest. cannot infer version to use`)
-  }
-
-  log.info(`Generating ${apiName} API`)
   try {
+    await utils.logErrorAndExitIfNotSatisfied({
+      isValidElectrodeNativeModuleName: {
+        name: apiName
+      }
+    })
+
+    // Construct the package name
+    if (!packageName) {
+      packageName = core.getDefaultPackageNameForModule(apiName, ModuleTypes.API)
+    }
+
+    await utils.logErrorAndExitIfNotSatisfied({
+      isValidNpmPackageName: {
+        name: packageName
+      }
+    })
+
+    if (!skipNpmCheck && !await utils.performPkgNameConflictCheck(packageName)) {
+      throw new Error(`Aborting command `)
+    }
+
+    const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
+    if (!bridgeDep) {
+      return log.error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
+    }
+
+    const reactNative = await manifest.getNativeDependency(Dependency.fromString('react-native'))
+    if (!reactNative) {
+      return log.error(`react-native not found in manifest. cannot infer version to use`)
+    }
+
+    log.info(`Generating ${apiName} API`)
+
     await ApiGen.generateApi({
       bridgeVersion: `${bridgeDep.version}`,
       reactNativeVersion: reactNative.version,
@@ -85,7 +98,8 @@ exports.handler = async function ({
       npmScope: scope,
       modelSchemaPath: schemaPath,
       apiVersion: apiVersion,
-      apiAuthor: apiAuthor
+      apiAuthor: apiAuthor,
+      packageName: packageName
     })
     log.info('Success!')
   } catch (e) {

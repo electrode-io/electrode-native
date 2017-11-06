@@ -45,6 +45,7 @@ export default function normalizeConfig ({
   artifactId,
   shouldGenerateBlankApi,
   configFilePath = cwd(CONFIG_FILE),
+  packageName,
   ...rest
 } : {
   name: string,
@@ -61,6 +62,7 @@ export default function normalizeConfig ({
   artifactId?: string,
   shouldGenerateBlankApi?: boolean,
   configFilePath?: string,
+  packageName: string,
   rest?: any
 }) {
   let simpleName = name
@@ -83,7 +85,7 @@ export default function normalizeConfig ({
         namespace = _pkgName ? `com.${_pkgName}.${simpleName}` : simpleName
       }
     }
-    config.apiName = simpleName
+    config.moduleName = simpleName
   }
   if (namespace) {
     config.namespace = namespace
@@ -101,7 +103,7 @@ export default function normalizeConfig ({
     config.npmScope = npmScope
   }
   if (!config.moduleName) {
-    config.moduleName = moduleName || `react-native-${simpleName}-api`
+    config.moduleName = moduleName || simpleName
   }
   if (!config.apiAuthor) {
     config.apiAuthor = apiAuthor || process.env['EMAIL'] || process.env['USER']
@@ -110,7 +112,7 @@ export default function normalizeConfig ({
     config.apiVersion = '1.0.0'
   }
   if (!config.apiDescription) {
-    config.apiDescription = `ERN Generated API for ${config.apiName}`
+    config.apiDescription = `ERN Generated API for ${config.moduleName}`
   }
   if (bridgeVersion) {
     config.bridgeVersion = bridgeVersion
@@ -125,10 +127,14 @@ export default function normalizeConfig ({
     config.apiSchemaPath = apiSchemaPath
   }
   if (!artifactId) {
-    config.artifactId = config.moduleName
+    config.artifactId = `react-native-${simpleName}-api`
   }
   if (targetDependencies) {
     config.targetDependencies = targetDependencies
+  }
+
+  if (packageName) {
+    config.packageName = packageName
   }
   return config
 }
