@@ -22,6 +22,7 @@ const movieListMiniAppVersion = '0.0.7'
 const movieDetailsMiniAppVersion = '0.0.6'
 const movieApi = 'react-native-ernmovie-api'
 const movieApiImpl = 'ErnMovieApiImpl'
+const movieApiImplPkgName = 'ern-movie-api-impl'
 const packageNotInNpm = 'ewkljrlwjerjlwjrl@0.0.3'
 
 process.env['SYSTEM_TESTS'] = 'true'
@@ -137,10 +138,9 @@ run('ern regen-api --skipVersion')
 
 // api-impl
 run(`ern create-api-impl ${packageNotInNpm} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
-run(`ern create-api-impl ${packageNotInNpm} ${invalidElectrodeNativeModuleName} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
-
-run(`ern create-api-impl ${movieApi} ${movieApiImpl} --skipNpmCheck --nativeOnly --force`)
-const apiImplPath = path.join(process.cwd(), `${movieApiImpl}`)
+run(`ern create-api-impl ${movieApi} ${invalidElectrodeNativeModuleName} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
+run(`ern create-api-impl ${movieApi} ${movieApiImpl} -p ${movieApiImplPkgName} --skipNpmCheck --nativeOnly --force`)
+const apiImplPath = path.join(process.cwd(), movieApiImpl)
 console.log(info(`Entering ${apiImplPath}`))
 process.chdir(apiImplPath)
 run('ern regen-api-impl')
