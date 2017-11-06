@@ -39,7 +39,7 @@ exports.handler = async function ({
     if (!bridgeVersion) {
       const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
       if (!bridgeDep) {
-        throw new Error(`react-native-electrode-bridge not found in manifest. please provide explicit version`)
+        throw new Error('react-native-electrode-bridge not found in manifest. please provide explicit version')
       }
       bridgeVersion = bridgeDep.version
     }

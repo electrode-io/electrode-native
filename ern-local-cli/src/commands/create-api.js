@@ -13,6 +13,7 @@ import {
   Utils
 } from 'ern-util'
 import utils from '../lib/utils'
+import inquirer from 'inquirer'
 
 exports.command = 'create-api <apiName>'
 exports.desc = 'Create a new api'
@@ -66,7 +67,8 @@ exports.handler = async function ({
 
     // Construct the package name
     if (!packageName) {
-      packageName = core.getDefaultPackageNameForModule(apiName, ModuleTypes.API)
+      const defaultPackageName = core.getDefaultPackageNameForModule(apiName, ModuleTypes.API)
+      packageName = await promptForPackageName(defaultPackageName)
     }
 
     await utils.logErrorAndExitIfNotSatisfied({
@@ -105,4 +107,14 @@ exports.handler = async function ({
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }
+}
+
+async function promptForPackageName (defaultPackageName: string): Promise<string> {
+  const { packageName } = await inquirer.prompt([{
+    type: 'input',
+    name: 'packageName',
+    message: 'Type NPM package name to use for this API. Press Enter to use the default.',
+    default: defaultPackageName
+  }])
+  return packageName
 }
