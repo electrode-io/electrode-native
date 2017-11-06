@@ -125,7 +125,7 @@ process.chdir(workingDirectoryPath)
 
 // api
 run(`ern create-api ${apiName} --skipNpmCheck`)
-const apiPath = path.join(process.cwd(), `react-native-${apiName}-api`)
+const apiPath = path.join(process.cwd(), `${apiName}`)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
 run('ern regen-api --skipVersion')
