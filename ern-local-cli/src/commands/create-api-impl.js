@@ -17,7 +17,7 @@ import utils from '../lib/utils'
 import inquirer from 'inquirer'
 import path from 'path'
 
-exports.command = 'create-api-impl <apiName>'
+exports.command = 'create-api-impl <apiName> [apiImplName]'
 exports.desc = 'Commands to generate API implementation skeleton.'
 
 exports.builder = function (yargs: any) {
@@ -38,7 +38,7 @@ exports.builder = function (yargs: any) {
   }).option('force', {
     alias: 'f',
     type: 'bool',
-    describe: 'Forces a project creation even if an imlemenation already present inside the output location'
+    describe: 'Forces a project creation even if an implementation already present inside the output location'
   }).option('outputDirectory', {
     alias: 'o',
     describe: 'Path to output directory'
@@ -57,6 +57,7 @@ const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, 'plugins')
 
 exports.handler = async function ({
   apiName,
+  apiImplName,
   nativeOnly,
   jsOnly,
   packageName,
@@ -67,6 +68,7 @@ exports.handler = async function ({
   skipNpmCheck
 } : {
   apiName: string,
+  apiImplName?: string,
   nativeOnly: boolean,
   jsOnly: boolean,
   packageName?: string,
@@ -89,6 +91,14 @@ exports.handler = async function ({
       }
     })
 
+    if (apiImplName) {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidElectrodeNativeModuleName: {
+          name: apiImplName
+        }
+      })
+    }
+
     log.info(`Generating API implementation for ${apiName}`)
     let reactNativeVersion = await core.reactNativeManifestVersion()
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
@@ -102,43 +112,43 @@ exports.handler = async function ({
       nativeOnly = await promptPlatformSelection()
     }
 
-    // Construct the package name
-    if (packageName) {
-      packageName = scope ? `@${scope}/${packageName}` : packageName
-    } else {
+    // Must conform to definition of ElectrodeNativeModuleName
+    if (!apiImplName) {
+      // camel case api name
+      let cameCaseName = core.camelize(apiDep.name)
+      // remove number if present
+      const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
+      apiImplName = `${nameWithNoNumber}Impl`
+    }
+
+    // If no package name is specified get default name from apiImplName
+    if (!packageName) {
       packageName = core.getDefaultPackageNameForModule(
-        scope ? `@${scope}/${apiDep.name}` : apiDep.name,
+        apiImplName,
         nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL)
     }
 
     // Check if packageName is valid
     await utils.logErrorAndExitIfNotSatisfied({
       isValidNpmPackageName: {
-        name: packageName,
-        extraErrorMessage: `${packageName} is not a valid npm package name`
+        name: packageName
       }
     })
 
-    const apiImplDep = Dependency.fromPath(DependencyPath.fromString(packageName))
-    // Skip npm check code execution
-    if (!skipNpmCheck) {
-      // check if the packageName for specified {apiName}-impl exists
-      // Extend the command to ack the scope in the name
-      const continueIfPkgNameExists = await utils.performPkgNameConflictCheck(packageName)
-      // If user wants to stop execution if npm package name conflicts
-      if (!continueIfPkgNameExists) {
-        return
-      }
+    // Skip npm check
+    if (!skipNpmCheck && !await utils.performPkgNameConflictCheck(packageName)) {
+      throw new Error(`Aborting command `)
     }
 
     await generateApiImpl({
       apiDependency: apiDep,
-      apiImplDependency: apiImplDep,
+      apiImplName,
       outputDirectory,
       nativeOnly,
       forceGenerate: force,
       reactNativeVersion,
       hasConfig,
+      packageName,
       paths: {
         apiImplHull: path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'hull'),
         pluginsDownloadDirectory: PLUGIN_DIRECTORY,
