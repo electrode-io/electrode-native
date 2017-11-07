@@ -1,7 +1,7 @@
 // @flow
 
 import fs from 'fs'
-import { shell } from 'ern-util'
+import shell from './shell'
 
 /**
  * ==============================================================================
