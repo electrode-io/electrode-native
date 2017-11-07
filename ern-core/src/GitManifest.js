@@ -106,7 +106,7 @@ export default class GitManifest {
 
   getPluginsConfigurationDirectories (maxVersion: string = Platform.currentVersion) : Array<string> {
     return _(fs.readdirSync(path.join(this._repoAbsoluteLocalPath, 'plugins')))
-            .filter(d => ERN_VERSION_DIRECTORY_RE.test(d) && ERN_VERSION_DIRECTORY_RE.exec(d)[1] <= maxVersion)
+            .filter(d => ERN_VERSION_DIRECTORY_RE.test(d) && semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)[1], maxVersion))
             .map(d => path.join(this._repoAbsoluteLocalPath, 'plugins', d))
             .value()
   }
