@@ -5,7 +5,8 @@ import {
   MiniApp,
   Platform,
   reactnative,
-  yarn
+  yarn,
+  ModuleTypes
 } from 'ern-core'
 import {
   generateRunnerProject,
@@ -635,6 +636,62 @@ async function performPkgNameConflictCheck (name: string) : Promise<boolean> {
   return true // If package name doesn't exist continue with command execution
 }
 
+function checkIfModuleSuffixExists (moduleName: string, moduleType: string): boolean {
+  if (moduleName) {
+    switch (moduleType) {
+      case ModuleTypes.MINIAPP:
+        return moduleName.toUpperCase().indexOf('APP') > -1
+      case ModuleTypes.API:
+        return moduleName.toUpperCase().indexOf('API') > -1
+      case ModuleTypes.JS_API_IMPL:
+        return moduleName.toUpperCase().indexOf('IMPL') > -1
+      case ModuleTypes.NATIVE_API_IMPL:
+        return moduleName.toUpperCase().indexOf('IMPL') > -1
+      default:
+        return false
+    }
+  }
+  return false
+}
+
+async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: string): Promise<string> {
+  let message = ''
+  let suffixedModuleName = moduleName
+  if (moduleName) {
+    switch (moduleType) {
+      case ModuleTypes.MINIAPP:
+        suffixedModuleName = `${moduleName}-App`
+        message = `We recommend suffixing the name of ${moduleName} with App, Do you want to use it?`
+        break
+      case ModuleTypes.API:
+        suffixedModuleName = `${moduleName}-Api`
+        message = `We recommend suffixing the name of ${moduleName} with Api, Do you want to use it?`
+        break
+      case ModuleTypes.JS_API_IMPL:
+        suffixedModuleName = `${moduleName}-Impl`
+        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use it?`
+        break
+      case ModuleTypes.NATIVE_API_IMPL:
+        suffixedModuleName = `${moduleName}-Impl`
+        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use it?`
+        break
+      default:
+        // do nothing
+    }
+  }
+
+  const {useSuffixedModuleName} = await inquirer.prompt(
+    {
+      type: 'confirm',
+      name: 'useSuffixedModuleName',
+      message: message,
+      default: true
+    }
+  )
+
+  return useSuffixedModuleName ? suffixedModuleName : moduleName
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
@@ -643,5 +700,7 @@ export default {
   epilog,
   runMiniApp,
   doesPackageExistInNpm,
-  performPkgNameConflictCheck
+  performPkgNameConflictCheck,
+  checkIfModuleSuffixExists,
+  promptUserToUseSuffixModuleName
 }
