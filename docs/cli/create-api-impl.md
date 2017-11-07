@@ -7,13 +7,17 @@
 
 #### Syntax
 
-`ern create-api-impl <apiName>`  
+`ern create-api-impl <apiName> [apiImplName]`  
 
 **Arguments**
 
 `<apiName>`
 
 * The package descriptor of the API for which to create an API implementation project
+
+`[apiImplName]`
+* The name of the API IMPL project.  API IMPL name must contain only alphabets.
+* If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.
 
 **Options**  
 
@@ -26,10 +30,14 @@
 * Generate an implementation skeleton project for a JavaScript implementation of the API
   
 `--packageName/-p`
-* Name to use for the apiImpl NPM package
+* Specify the NPM package name to use for the API IMPL.
+* Add the package name automatically in the `package.json` of the generated API IMPL.
+* **Default** The command will prompt for the package name to use.
 
 `--scope/-s`
-* Scope to use for the apiImpl NPM package
+* Specify the NPM package scope to use for the API IMPL.
+* Add the package scope automatically in the `package.json` of the generated API IMPL.
+* **Default** Package will be unscoped.
 
 `--outputDirectory/-o <directory>`
 
@@ -52,20 +60,26 @@
 #### Examples
 
 `ern create-api-impl react-native-weather-api`
-This example shows how to create an API skeleton project named `react-native-weather-api-impl`.
 
-`ern create-api-impl react-native-weather-api -p my-weather-api-impl`
+This example shows how to create an API skeleton project named `ReactNativeWeatherApiImpl`.
 
-This example shows how to create an API skeleton project named `my-weather-api-impl`.
+`ern create-api-impl react-native-weather-api MyApi`
 
-`ern create-api-impl react-native-weather-api -p my-weather-api-impl -s org`
+This example shows how to create an API skeleton project named `MyApi`.
 
-This example shows how to create an API skeleton project named `@org/my-weather-api-impl`.
+`ern create-api-impl react-native-weather-api MyApi -p my-weather-api-impl`
 
+This example shows how to create an API skeleton project named `MyApi`.
+The package name for this project is `my-weather-api-impl`.
+
+`ern create-api-impl react-native-weather-api MyApi -p my-weather-api-impl -s org`
+
+This example shows how to create an API skeleton project named `MyApi`.
+The package name for this project is `@org/my-weather-api-impl`.
 
 #### Remarks
 
-* The name of the implementation mirrors the name of the API package with the `-impl` suffix.  
+* If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.  
 * If you do not specify a platform (for example, native v.s JavaScript), you are prompted to select a platform.    
 
 #### Related commands

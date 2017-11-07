@@ -26,7 +26,7 @@
 
 * Specify the NPM package name to use for the API.
 * Add the package name automatically in the `package.json` of the generated API.
-* **Default** package name used will be `apiName-api` , where apiName is split with `-` for camel case string
+* **Default** The command will prompt for the package name to use.
 
 `--apiVersion/-a <version>`
 
