@@ -53,9 +53,9 @@ You can override the master manifest with your own manifest file:
 
 To override a manifest:
 
-1) Create your own manifest repository on GitHub (you can fork this [starter manifest](https://github.com/electrode-io/electrode-native-starter-manifest)).
-2) Create a manifest override configuration in your cauldron--so that it is correctly applied to all users of this cauldron.
-3) Update and maintain your manifest as needed, over time.
+1. Create your own manifest repository on GitHub (you can fork this [starter manifest](https://github.com/electrode-io/electrode-native-starter-manifest)).
+2. Create a manifest override configuration in your cauldron--so that it is correctly applied to all users of this cauldron.
+3. Update and maintain your manifest as needed, over time.
 
 The following example shows a configuration that includes a manifest override.
 
