@@ -11,7 +11,7 @@ import GitManifest from './GitManifest'
 import Mustache from 'mustache'
 import _ from 'lodash'
 import fs from 'fs'
-import {isDependencyApiOrApiImpl} from './utils'
+import {isDependencyApi, isDependencyApiImpl} from './utils'
 
 export type PluginConfig = {
   android: Object,
@@ -170,9 +170,12 @@ export class Manifest {
         }
       }
       result.path = pluginConfigPath
-    } else if (await isDependencyApiOrApiImpl(plugin.name)) {
-      log.debug(`API or API IMPL detected. Returning API default config`)
+    } else if (await isDependencyApi(plugin.name)) {
+      log.debug(`API detected. Returning API default config`)
       result = this.getApiPluginDefaultConfig(projectName)
+    } else if (await isDependencyApiImpl(plugin.name)) {
+      log.debug(`APIImpl detected. Returning APIImpl default config`)
+      result = this.getApiImplPluginDefaultConfig(projectName)
     } else {
       throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.toString()}`)
     }
@@ -224,6 +227,38 @@ export class Manifest {
               from: 'IOS/*.swift',
               path: 'APIs',
               group: 'APIs'
+            }
+          ]
+        }
+      }
+    }
+  }
+
+  getApiImplPluginDefaultConfig (projectName?: string = 'UNKNOWN') : PluginConfig {
+    return {
+      android: {
+        root: 'android',
+        moduleName: 'lib',
+        transform: [
+          { file: 'android/lib/build.gradle' }
+        ]
+      },
+      ios: {
+        pluginHook: {
+          configurable: false
+        },
+        copy: [
+          {
+            source: 'ios/ElectrodeApiImpl/APIImpls/*',
+            dest: `${projectName}/APIImpls`
+          }
+        ],
+        pbxproj: {
+          addSource: [
+            {
+              from: 'ios/ElectrodeApiImpl/APIImpls/*.swift',
+              path: 'APIImpls',
+              group: 'APIImpls'
             }
           ]
         }
