@@ -3,10 +3,8 @@
 import {
   Dependency
 } from 'ern-util'
-import fs from 'fs'
 import {
-  MODEL_FILE,
-  CONFIG_FILE
+  MODEL_FILE
 } from './Constants'
 import path from 'path'
 const cwd = path.join.bind(path, process.cwd())
@@ -27,9 +25,9 @@ const isApiRe = /.*react-native-(.*)-api$/
 // - npmScope: Npm scope to use for the module [Default: no scope]
 // - modelsSchemaPath : Path to the file holding the models schema [Default : no path]
 // - apiSchemaPath : Path to the file holding the api schema [Default : no path]
-// - moduleName : Name of the generated npm module [Default : react-native-{name}-api]
+// - moduleName : Name of the generated npm module
 // - shouldGenerateBlankApi : Indicated whether to generate blank api/model schema or sample one [Default : false]
-// - configFilePath : Path to configuration file [Default : no path]
+// - packageName : npm package name of the moduleName
 export default function normalizeConfig ({
   name, /* REQUIRED */
   bridgeVersion, /* REQUIRED */
@@ -44,7 +42,6 @@ export default function normalizeConfig ({
   moduleName,
   artifactId,
   shouldGenerateBlankApi,
-  configFilePath = cwd(CONFIG_FILE),
   packageName,
   ...rest
 } : {
@@ -61,7 +58,6 @@ export default function normalizeConfig ({
   moduleName?: string,
   artifactId?: string,
   shouldGenerateBlankApi?: boolean,
-  configFilePath?: string,
   packageName: string,
   rest?: any
 }) {
@@ -72,10 +68,6 @@ export default function normalizeConfig ({
   }
 
   let config = {}
-
-  if (fs.existsSync(configFilePath)) {
-    Object.assign(config, JSON.parse(fs.readFileSync(configFilePath, 'utf-8')))
-  }
 
   if (simpleName) {
     if (/^@/.test(simpleName)) {
