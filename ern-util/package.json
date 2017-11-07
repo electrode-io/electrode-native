@@ -1,6 +1,6 @@
 {
   "name": "ern-util",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Electrode Native Utilities",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -48,6 +48,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "chalk": "^2.3.0",
     "console-log-level": "^1.4.0",
     "fs-readdir-recursive": "^1.0.0",
@@ -58,12 +59,11 @@
     "node-simctl": "^3.5.5",
     "ora": "^1.1.0",
     "shelljs": "^0.7.6",
-    "tmp": "^0.0.31",
     "simple-git": "^1.70.0",
-    "bluebird": "^3.5.0"
+    "tmp": "^0.0.31"
   },
   "devDependencies": {
-    "ern-util-dev": "0.9.0"
+    "ern-util-dev": "0.10.0"
   },
   "engines": {
     "node": ">=4.5"
