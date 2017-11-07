@@ -364,7 +364,7 @@ async function performContainerStateUpdateInCauldron (
 
     log.debug(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`[performContainerStateUpdateInCauldron] An error happened ${e}`)
+    log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
     cauldron.discardTransaction()
     throw e
   }
