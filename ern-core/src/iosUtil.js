@@ -3,11 +3,9 @@ import {
   mustacheUtils,
   shell
 } from 'ern-util'
-import {
-  manifest,
-  handleCopyDirective,
-  utils
-} from 'ern-core'
+import manifest from './Manifest'
+import handleCopyDirective from './handleCopyDirective'
+import utils from './utils'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
 import xcode from 'xcode-ern'
