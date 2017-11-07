@@ -109,8 +109,9 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
         }
 
         if (file === 'requestHandlerProvider.mustache') {
-          editableFiles.push(path.join(outputDir, classNames[file]))
-          if (this.regenerateApiImpl) {
+          const reqHandlerProviderClassFile = path.join(outputDir, classNames[file])
+          editableFiles.push(reqHandlerProviderClassFile)
+          if (this.regenerateApiImpl && shell.test('-e', reqHandlerProviderClassFile)) {
             log.debug(`Skipping regeneration of ${classNames[file]}`)
             continue
           }
