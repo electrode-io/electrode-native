@@ -1,6 +1,6 @@
 {
   "name": "ern-util-dev",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Electrode Native Platform Development Utilities",
   "main": "index.js",
   "homepage": "http://www.electrode.io",
