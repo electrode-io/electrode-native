@@ -12,7 +12,7 @@
 
 `<apiName>`
 
-* The name to use for this API. API name must contain only alphabets.
+* The name to use for this API. The API name must only contain upper and/or lower case letters.
 
 **Options**  
 

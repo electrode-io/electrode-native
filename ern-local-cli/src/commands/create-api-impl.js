@@ -72,7 +72,7 @@ exports.handler = async function ({
   nativeOnly: boolean,
   jsOnly: boolean,
   packageName?: string,
-  scope: string,
+  scope?: string,
   force: boolean,
   outputDirectory: string,
   hasConfig: boolean,

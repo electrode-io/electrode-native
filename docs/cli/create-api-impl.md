@@ -16,7 +16,7 @@
 * The package descriptor of the API for which to create an API implementation project
 
 `[apiImplName]`
-* The name of the API IMPL project.  API IMPL name must contain only alphabets.
+* The name of the API implementation project.  The API implementation name must only contain upper and/or lower case letters.
 * If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.
 
 **Options**  
@@ -30,13 +30,13 @@
 * Generate an implementation skeleton project for a JavaScript implementation of the API
   
 `--packageName/-p`
-* Specify the NPM package name to use for the API IMPL.
-* Add the package name automatically in the `package.json` of the generated API IMPL.
+* Specify the NPM package name to use for the API implementation.
+* Add the package name automatically in the `package.json` of the generated API implementation.
 * **Default** The command will prompt for the package name to use.
 
 `--scope/-s`
-* Specify the NPM package scope to use for the API IMPL.
-* Add the package scope automatically in the `package.json` of the generated API IMPL.
+* Specify the NPM package scope to use for the API implementation.
+* Add the package scope automatically in the `package.json` of the generated API implementation.
 * **Default** Package will be unscoped.
 
 `--outputDirectory/-o <directory>`
