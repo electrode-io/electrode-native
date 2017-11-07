@@ -52,6 +52,6 @@ exports.handler = async function ({
     await binaryStore.removeBinary(napDescriptor)
     log.info(`${napDescriptor.toString()} binary was successfuly removed from the store`)
   } catch (e) {
-    log.error(`An error happened while trying to remove ${napDescriptor.toString()} binary`)
+    log.error(`An error occurred while trying to remove ${napDescriptor.toString()} binary`)
   }
 }

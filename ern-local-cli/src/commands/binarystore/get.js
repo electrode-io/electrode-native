@@ -59,6 +59,6 @@ exports.handler = async function ({
     const pathToBinary = await binaryStore.getBinary(napDescriptor, {outDir})
     log.info(`Binary was successfuly retrieved. Path: ${pathToBinary}`)
   } catch (e) {
-    log.error(`An error happened while retrieving ${napDescriptor.toString()} binary`)
+    log.error(`An error occurred while retrieving ${napDescriptor.toString()} binary`)
   }
 }

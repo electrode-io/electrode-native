@@ -51,6 +51,6 @@ exports.handler = async function ({
     await binaryStore.addBinary(napDescriptor, absolutePathToBinary)
     log.info(`Binary was successfuly added to the store for ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`An error happened while trying to add the binary of ${napDescriptor.toString()}`)
+    log.error(`An error occurred while trying to add the binary of ${napDescriptor.toString()}`)
   }
 }
