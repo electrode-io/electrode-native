@@ -35,7 +35,7 @@ export default async function generateApiImpl ({
   reactNativeVersion: string,
   hasConfig?: boolean,
   packageName: string,
-  scope: string,
+  scope?: string,
   paths: {
     workingDirectory: string,
     pluginsDownloadDirectory: string,
@@ -96,7 +96,7 @@ async function createNodePackage (
   apiDependency: Dependency,
   apiImplName: string,
   packageName: string,
-  scope : string,
+  scope? : string,
   nativeOnly: boolean,
   hasConfig: boolean) {
   let currentDirectory = process.cwd()
@@ -135,7 +135,7 @@ function ernifyPackageJson (
   outputDirectoryPath: string,
   apiImplName: string,
   packageName: string,
-  scope: string,
+  scope?: string,
   nativeOnly: boolean,
   hasConfig: boolean) {
   const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
