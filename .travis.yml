@@ -18,8 +18,6 @@ else
   ern;
   node setup-dev;
   ern platform use 1000.0.0;
-  npm run test;
-  npm run system-test;
   npm run coverage-ci; 
 fi'
 notifications:
