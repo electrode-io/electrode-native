@@ -10,6 +10,7 @@ import {
 } from 'ern-util'
 import http from 'http'
 import camelCase from 'lodash/camelCase'
+import _ from 'lodash'
 import manifest from './Manifest'
 import * as ModuleTypes from './ModuleTypes'
 import path from 'path'
@@ -76,12 +77,24 @@ export function splitCamelCaseString (camelCaseString: string) : Array<string> {
   })
 }
 
-export function getDefaultPackageNameForCamelCaseString (camelCaseString: string) {
-  return splitCamelCaseString(camelCaseString).join('-')
+export function getDefaultPackageNameForCamelCaseString (camelCaseString: string, moduleType: string) : string {
+  let splitArray = splitCamelCaseString(camelCaseString)
+  switch (moduleType) {
+    case ModuleTypes.MINIAPP:
+      return _.filter(splitArray, token => !['mini', 'app'].includes(token)).join('-')
+    case ModuleTypes.API:
+      return _.filter(splitArray, token => !['api'].includes(token)).join('-')
+    case ModuleTypes.JS_API_IMPL:
+      return _.filter(splitArray, token => !['js', 'api', 'impl'].includes(token)).join('-')
+    case ModuleTypes.NATIVE_API_IMPL:
+      return _.filter(splitArray, token => !['native', 'api', 'impl'].includes(token)).join('-')
+    default:
+      return splitArray.join('-')
+  }
 }
 
-export function getDefaultPackageNameForModule (moduleName: string, moduleType: string) {
-  const basePackageName = getDefaultPackageNameForCamelCaseString(moduleName)
+export function getDefaultPackageNameForModule (moduleName: string, moduleType: string) : string {
+  const basePackageName = getDefaultPackageNameForCamelCaseString(moduleName, moduleType)
   switch (moduleType) {
     case ModuleTypes.MINIAPP:
       return basePackageName.concat('-miniapp')
