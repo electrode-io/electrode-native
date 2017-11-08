@@ -13,6 +13,7 @@
 `<apiName>`
 
 * The name to use for this API. The API name must follow Electrode Native module name rules.
+* We recommend suffixing the name of API with suffix `Api`
 
 **Options**  
 

@@ -65,7 +65,7 @@ exports.handler = async function ({
       }
     })
 
-    if (!utils.checkIfModuleSuffixExists(apiName, ModuleTypes.API)) {
+    if (!utils.checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
       apiName = await utils.promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
     }
 

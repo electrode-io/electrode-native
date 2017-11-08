@@ -14,6 +14,7 @@
 `<apiName>`
 
 * The package descriptor of the API for which to create an API implementation project
+* We recommend suffixing the name of API implementation with suffix `Impl`
 
 `[apiImplName]`
 * The name of the API implementation project.  The API implementation name must follow Electrode Native module name rules.

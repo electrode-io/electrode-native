@@ -114,8 +114,8 @@ exports.handler = async function ({
 
     const moduleType = nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL
 
-    if (apiImplName && !utils.checkIfModuleSuffixExists(apiImplName, moduleType)) {
-      await utils.promptUserToUseSuffixModuleName(apiImplName, moduleType)
+    if (apiImplName && !utils.checkIfModuleNameContainsSuffix(apiImplName, moduleType)) {
+      apiImplName = await utils.promptUserToUseSuffixModuleName(apiImplName, moduleType)
     }
 
     // Must conform to definition of ElectrodeNativeModuleName
