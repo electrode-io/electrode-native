@@ -676,7 +676,7 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
         message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
         break
       default:
-        // do nothing
+        throw new Error(`Unsupported module type : ${moduleType}`)
     }
   }
 
