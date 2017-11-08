@@ -636,7 +636,7 @@ async function performPkgNameConflictCheck (name: string) : Promise<boolean> {
   return true // If package name doesn't exist continue with command execution
 }
 
-function checkIfModuleSuffixExists (moduleName: string, moduleType: string): boolean {
+function checkIfModuleNameContainsSuffix (moduleName: string, moduleType: string): boolean {
   if (moduleName) {
     switch (moduleType) {
       case ModuleTypes.MINIAPP:
@@ -660,7 +660,7 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
   if (moduleName) {
     switch (moduleType) {
       case ModuleTypes.MINIAPP:
-        suffixedModuleName = `${moduleName}App`
+        suffixedModuleName = `${moduleName}MiniApp`
         message = `We recommend suffixing the name of ${moduleName} with App, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.API:
@@ -668,11 +668,11 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
         message = `We recommend suffixing the name of ${moduleName} with Api, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.JS_API_IMPL:
-        suffixedModuleName = `${moduleName}Impl`
+        suffixedModuleName = `${moduleName}ApiImpl`
         message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.NATIVE_API_IMPL:
-        suffixedModuleName = `${moduleName}Impl`
+        suffixedModuleName = `${moduleName}ApiImpl`
         message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
         break
       default:
@@ -701,6 +701,6 @@ export default {
   runMiniApp,
   doesPackageExistInNpm,
   performPkgNameConflictCheck,
-  checkIfModuleSuffixExists,
+  checkIfModuleNameContainsSuffix,
   promptUserToUseSuffixModuleName
 }

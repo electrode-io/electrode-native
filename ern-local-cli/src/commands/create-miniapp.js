@@ -57,7 +57,7 @@ exports.handler = async function ({
       }
     })
 
-    if (!utils.checkIfModuleSuffixExists(appName, ModuleTypes.MINIAPP)) {
+    if (!utils.checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
       appName = await utils.promptUserToUseSuffixModuleName(appName, ModuleTypes.MINIAPP)
     }
 
