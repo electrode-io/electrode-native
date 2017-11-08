@@ -5,7 +5,7 @@ import {
 } from 'ern-util'
 import manifest from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
-import utils from './utils'
+import { downloadPluginSource } from './utils'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
 import xcode from 'xcode-ern'
@@ -55,7 +55,7 @@ export async function fillProjectHull
     if (pluginConfig.ios) {
       log.debug(`Retrieving ${plugin.scopedName}`)
       const pluginSourcePath = await
-        utils.downloadPluginSource(pluginConfig.origin)
+        downloadPluginSource(pluginConfig.origin)
       if (!pluginSourcePath) {
         throw new Error(`Was not able to download ${plugin.scopedName}`)
       }
