@@ -1,0 +1,42 @@
+Known Devices:
+Funny MacBook Pro (47) [39CBCC0D-24EE-58EB-861D-69492E4F2D4C]
+Hilarious Phone Name (11.1) [695c329443f455c75b5454aacb72ace87b66351e]
+Apple TV 1080p (10.2) [8AFA1115-5240-42F8-B6D7-767E37EBAA54] (Simulator)
+iPad (5th generation) (10.3.1) [896419D7-2878-4E33-87BB-2ADD0E3FD5C5] (Simulator)
+iPad Air (10.3.1) [2782C8C3-A96C-4A1A-8071-CB91F49F967C] (Simulator)
+iPad Air 2 (10.3.1) [8188C404-CC7A-448B-9B6B-D30FC485CF5D] (Simulator)
+iPad Pro (10.5-inch) (10.3.1) [8D830A45-E4FE-4992-81F1-A47B663CA287] (Simulator)
+iPad Pro (12.9 inch) (10.3.1) [F012BDC4-C8A7-4E5A-B3F6-EE3893391C69] (Simulator)
+iPad Pro (12.9-inch) (2nd generation) (10.3.1) [51228C1C-4E3E-4843-B59D-C3092C4FD72C] (Simulator)
+iPad Pro (9.7 inch) (10.3.1) [AE96D638-5D86-4A0D-ACEE-C591BFD45C4A] (Simulator)
+iPhone 5 (10.3.1) [42BD6EC5-DBF6-405F-A877-4B33DE6C981E] (Simulator)
+iPhone 5s (10.3.1) [1419133A-B06B-4BF9-A5CD-562FAD383F6C] (Simulator)
+iPhone 6 (10.3.1) [BC499167-8EEF-45D2-92A2-1977F33EA1E2] (Simulator)
+iPhone 6 Plus (10.3.1) [CB402F1E-5A20-4B67-AB4F-DC0E07EEDBCF] (Simulator)
+iPhone 6s (10.3.1) [CBFBD4B0-A934-4B02-95D8-4F6618CB3AE5] (Simulator)
+iPhone 6s (10.3.1) + Apple Watch - 38mm (3.2) [95644592-BFA3-4BFA-B54E-C8781E9DB2C5] (Simulator)
+iPhone 6s Plus (10.3.1) [941A4D7E-03A6-43D8-AB1A-75CEB0D2F58E] (Simulator)
+iPhone 6s Plus (10.3.1) + Apple Watch - 42mm (3.2) [0DFE184D-4993-407D-BD30-3C0858C504E3] (Simulator)
+iPhone 7 (10.3.1) [87C20BA5-3718-47FF-A97D-48D2697033FA] (Simulator)
+iPhone 7 (10.3.1) + Apple Watch Series 2 - 38mm (3.2) [A52B2C0E-DDFD-4370-AD01-D3AFC71C0469] (Simulator)
+iPhone 7 Plus (10.3.1) [43EC0095-4918-4818-8F64-5530171931F8] (Simulator)
+iPhone 7 Plus (10.3.1) + Apple Watch Series 2 - 42mm (3.2) [3C47F676-E046-4281-8E29-76B5391F88AF] (Simulator)
+iPhone SE (10.3.1) [CAAFC2EC-1A8C-413B-8E38-0B5A18C0EE42] (Simulator)
+Known Templates:
+"Activity Monitor"
+"Allocations"
+"Blank"
+"Cocoa Layout"
+"Core Animation"
+"Core Data"
+"Counters"
+"Energy Log"
+"File Activity"
+"Leaks"
+"Metal System Trace"
+"Network"
+"System Trace"
+"System Usage"
+"Time Profiler"
+"Zombies"
+

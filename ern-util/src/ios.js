@@ -26,7 +26,8 @@ export async function getiPhoneSimulators () {
 
 export function getiPhoneRealDevices () {
   const devices = execSync('xcrun instruments -s', {encoding: 'utf8'})
-  return parseIOSDevicesList(devices)
+  const computerName = execSync('scutil --get HostName', {encoding: 'utf8'})
+  return parseIOSDevicesList(devices, computerName)
 }
 
 export async function askUserToSelectAniPhoneDevice (devices: Array<IosDevice>) {
@@ -84,20 +85,27 @@ export async function askUserToSelectAniPhoneSimulator () {
   return selectedDevice
 }
 
-export function parseIOSDevicesList (text: string): Array<IosDevice> {
-  const devices = []
-  text.split('\n').forEach((line) => {
-    const device = line.match(/(.*?) \((.*?)\) \[(.*?)\]/)
-    const noSimulator = line.match(/(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/)
-    if (device != null && noSimulator == null) {
-      var name = device[1]
-      var version = device[2]
-      var udid = device[3]
-      devices.push({udid, name, version})
-    }
-  })
+export function parseIOSDevicesList (text: string, computerName: string): Array<IosDevice> {
+  const name = computerName.split('\n')[0]
+  const devicePattern = /(.*?) \((.*?)\) \[(.*?)\]/
+  const noSimulatorPattern = /(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/
 
-  return devices
+  return text.split('\n').reduce((list, line) => {
+    const device = line.match(devicePattern)
+    if (
+      device &&
+      !noSimulatorPattern.test(line) &&
+      !line.includes(name)
+    ) {
+      list.push({
+        name: device[1],
+        version: device[2],
+        udid: device[3]
+      })
+    }
+
+    return list
+  }, [])
 }
 
 export function killAllRunningSimulators () {
