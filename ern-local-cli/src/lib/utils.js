@@ -289,7 +289,7 @@ async function logErrorAndExitIfNotSatisfied ({
 }
 
 //
-// Inquire user to choose a native application version from the Cauldron, optionaly
+// Inquire user to choose a native application version from the Cauldron, optionally
 // filtered by platform/and or release status and returns them as an array
 // of native application descriptor strings
 async function askUserToChooseANapDescriptorFromCauldron ({
