@@ -16,7 +16,7 @@
 * The package descriptor of the API for which to create an API implementation project
 
 `[apiImplName]`
-* The name of the API implementation project.  The API implementation name must only contain upper and/or lower case letters.
+* The name of the API implementation project.  The API implementation name must follow Electrode Native module name rules.
 * If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.
 
 **Options**  

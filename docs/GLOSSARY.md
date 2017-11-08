@@ -9,3 +9,8 @@ A complete native application descriptor is a string with format `[nativeAppName
 
 A partial native application descriptor is a string with format `[nativeAppName]`, `plaform` and `version` can remain optional. 
 - `nativeAppName` : alphanumeric native application name , cannot contain character ':'
+
+## Electrode Native module name
+The Electrode Native module name applies to modules created with Electrode Native cli.
+- Electrode Native recommends module name must only contain upper and/or lower case letters. 
+- `create-miniapp`, `create-api` and `create-api-impl` commands allow passing Electrode Native module name as it's arguments.
