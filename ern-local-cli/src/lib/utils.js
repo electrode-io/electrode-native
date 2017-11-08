@@ -660,20 +660,20 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
   if (moduleName) {
     switch (moduleType) {
       case ModuleTypes.MINIAPP:
-        suffixedModuleName = `${moduleName}-App`
-        message = `We recommend suffixing the name of ${moduleName} with App, Do you want to use it?`
+        suffixedModuleName = `${moduleName}App`
+        message = `We recommend suffixing the name of ${moduleName} with App, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.API:
-        suffixedModuleName = `${moduleName}-Api`
-        message = `We recommend suffixing the name of ${moduleName} with Api, Do you want to use it?`
+        suffixedModuleName = `${moduleName}Api`
+        message = `We recommend suffixing the name of ${moduleName} with Api, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.JS_API_IMPL:
-        suffixedModuleName = `${moduleName}-Impl`
-        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use it?`
+        suffixedModuleName = `${moduleName}Impl`
+        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.NATIVE_API_IMPL:
-        suffixedModuleName = `${moduleName}-Impl`
-        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use it?`
+        suffixedModuleName = `${moduleName}Impl`
+        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
         break
       default:
         // do nothing

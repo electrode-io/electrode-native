@@ -65,6 +65,10 @@ exports.handler = async function ({
       }
     })
 
+    if (!utils.checkIfModuleSuffixExists(apiName, ModuleTypes.API)) {
+      apiName = await utils.promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
+    }
+
     // Construct the package name
     if (!packageName) {
       const defaultPackageName = core.getDefaultPackageNameForModule(apiName, ModuleTypes.API)

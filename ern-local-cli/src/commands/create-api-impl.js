@@ -112,6 +112,12 @@ exports.handler = async function ({
       nativeOnly = await promptPlatformSelection()
     }
 
+    const moduleType = nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL
+
+    if (apiImplName && !utils.checkIfModuleSuffixExists(apiImplName, moduleType)) {
+      await utils.promptUserToUseSuffixModuleName(apiImplName, moduleType)
+    }
+
     // Must conform to definition of ElectrodeNativeModuleName
     if (!apiImplName) {
       // camel case api name
@@ -123,9 +129,7 @@ exports.handler = async function ({
 
     // If no package name is specified get default name from apiImplName
     if (!packageName) {
-      const defaultPackageName = packageName = core.getDefaultPackageNameForModule(
-        apiImplName,
-        nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL)
+      const defaultPackageName = packageName = core.getDefaultPackageNameForModule(apiImplName, moduleType)
       packageName = await promptForPackageName(defaultPackageName)
     }
 
