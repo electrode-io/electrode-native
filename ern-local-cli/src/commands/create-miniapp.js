@@ -57,6 +57,10 @@ exports.handler = async function ({
       }
     })
 
+    if (!utils.checkIfModuleSuffixExists(appName, ModuleTypes.MINIAPP)) {
+      appName = await utils.promptUserToUseSuffixModuleName(appName, ModuleTypes.MINIAPP)
+    }
+
     if (!packageName) {
       const defaultPackageName = core.getDefaultPackageNameForModule(appName, ModuleTypes.MINIAPP)
       packageName = await promptForPackageName(defaultPackageName)
