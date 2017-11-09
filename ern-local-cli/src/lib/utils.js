@@ -640,13 +640,12 @@ function checkIfModuleNameContainsSuffix (moduleName: string, moduleType: string
   if (moduleName) {
     switch (moduleType) {
       case ModuleTypes.MINIAPP:
-        return moduleName.toUpperCase().indexOf('APP') > -1
+        return moduleName.toUpperCase().indexOf('MINIAPP') > -1
       case ModuleTypes.API:
         return moduleName.toUpperCase().indexOf('API') > -1
       case ModuleTypes.JS_API_IMPL:
-        return moduleName.toUpperCase().indexOf('IMPL') > -1
       case ModuleTypes.NATIVE_API_IMPL:
-        return moduleName.toUpperCase().indexOf('IMPL') > -1
+        return moduleName.toUpperCase().indexOf('APIIMPL') > -1
       default:
         return false
     }
@@ -668,9 +667,6 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
         message = `We recommend suffixing the name of ${moduleName} with Api, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.JS_API_IMPL:
-        suffixedModuleName = `${moduleName}ApiImpl`
-        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
-        break
       case ModuleTypes.NATIVE_API_IMPL:
         suffixedModuleName = `${moduleName}ApiImpl`
         message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`

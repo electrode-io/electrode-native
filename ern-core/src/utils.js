@@ -77,7 +77,7 @@ export function splitCamelCaseString (camelCaseString: string) : Array<string> {
   })
 }
 
-export function getDefaultPackageNameForCamelCaseString (camelCaseString: string, moduleType: string) : string {
+export function getDefaultPackageNameForCamelCaseString (camelCaseString: string, moduleType: string): string {
   let splitArray = splitCamelCaseString(camelCaseString)
   switch (moduleType) {
     case ModuleTypes.MINIAPP:
@@ -85,9 +85,8 @@ export function getDefaultPackageNameForCamelCaseString (camelCaseString: string
     case ModuleTypes.API:
       return _.filter(splitArray, token => !['api'].includes(token)).join('-')
     case ModuleTypes.JS_API_IMPL:
-      return _.filter(splitArray, token => !['js', 'api', 'impl'].includes(token)).join('-')
     case ModuleTypes.NATIVE_API_IMPL:
-      return _.filter(splitArray, token => !['native', 'api', 'impl'].includes(token)).join('-')
+      return _.filter(splitArray, token => !['api', 'impl'].includes(token)).join('-')
     default:
       return splitArray.join('-')
   }
@@ -101,9 +100,8 @@ export function getDefaultPackageNameForModule (moduleName: string, moduleType: 
     case ModuleTypes.API:
       return basePackageName.concat('-api')
     case ModuleTypes.JS_API_IMPL:
-      return basePackageName.concat('-js-api-impl')
     case ModuleTypes.NATIVE_API_IMPL:
-      return basePackageName.concat('-native-api-impl')
+      return basePackageName.concat('-api-impl')
     default:
       throw new Error(`Unsupported module type : ${moduleType}`)
   }
