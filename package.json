@@ -11,7 +11,7 @@
     "system-test": "node system-tests",
     "coverage-unit": "rimraf ern-*/.nyc_output && lerna run coverage && npm run istanbul report --include=ern-*/.coverage/coverage-final.json html",
     "coverage-system": "rimraf .nyc_output && node system-tests-coverage",
-    "coverage-ci": "npm run coverage-unit && npm run coverage-system && npm run istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
+    "coverage-ci": "npm run coverage-unit && npm run coverage-system && node_modules/.bin/istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
     "istanbul": "istanbul",
     "standard": "standard",
     "flow": "flow",
