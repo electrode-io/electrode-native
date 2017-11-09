@@ -17,6 +17,29 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 @protocol ElectrodePluginConfig;
+
+{{#hasAtleastOneApiImplConfig}}
+{{#apiImplementations}}
+{{#hasConfig}}
+@class {{apiName}}ApiConfig;
+{{/hasConfig}}
+{{/apiImplementations}}
+{{/hasAtleastOneApiImplConfig}}
+
+{{#hasAtleastOneApiImplConfig}}
+@protocol APIImplsConfigWrapperDelegate <NSObject>
+@required
+{{/hasAtleastOneApiImplConfig}}
+{{#apiImplementations}}
+{{#hasConfig}}
+- ({{apiName}}ApiConfig *_Nonnull){{apiVariableName}}ApiConfig;
+{{/hasConfig}}
+{{/apiImplementations}}
+{{#hasAtleastOneApiImplConfig}}
+@end
+{{/hasAtleastOneApiImplConfig}}
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
@@ -56,7 +79,10 @@ NS_ASSUME_NONNULL_BEGIN
                         {{#configurable}}
                         {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
                         {{/configurable}}
-                        {{/plugins}};
+                        {{/plugins}}
+                        {{#hasAtleastOneApiImplConfig}}
+                        apiImplementationsConfig: (NSObject <APIImplsConfigWrapperDelegate> *) apiImplConfig
+                        {{/hasAtleastOneApiImplConfig}};
 
 
 /**
