@@ -1,6 +1,13 @@
 #!/usr/bin/env node
-const babelRc = require('../babelrc.prod.json')
+let babelRc
+if (process.env['BABEL_ENV'] !== 'coverage') {
+  babelRc = require('../babelrc.prod.json')
+} else {
+  babelRc = require('../babelrc.coverage.json')
+}
+
 process.argv.push('--source-maps')
+process.argv.push(babelRc.sourceMaps)
 process.argv.push('--presets')
 process.argv.push(babelRc.presets)
 process.argv.push('--plugins')

@@ -7,7 +7,7 @@ const path = require('path')
 const babelRegister = require('babel-register')
 const oload = Module._load
 
-if (process.env.COVERAGE) {
+if (process.env['BABEL_ENV'] === 'coverage') {
   conf.plugins.push([
     'istanbul'
   ])

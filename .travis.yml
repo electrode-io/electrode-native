@@ -16,7 +16,7 @@ if [ ${TRAVIS_EVENT_TYPE} != "cron" ]; then
 else
   npm install -g electrode-native;
   ern;
-  node setup-dev;
+  BABEL_ENV=coverage node setup-dev;
   ern platform use 1000.0.0;
   npm run coverage-ci; 
 fi'

@@ -1,2 +1,2 @@
-process.env.COVERAGE = 1
+process.env['BABEL_ENV'] = 'coverage'
 require('./babelhook')

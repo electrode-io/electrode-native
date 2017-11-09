@@ -1,13 +1,12 @@
 #!/usr/bin/env node
+process.env['BABEL_ENV'] = 'coverage'
 process.argv.push(
   '--sourceMap=false',
   '--reportDir=.coverage',
   '--reporter=json',
   '--reporter=text',
-  '--show-process-tree',
   '--instrument=false',
   '--all',
-  `--require=${__dirname}/ern-util-dev/babelhook-coverage`,
   '--include=ern-*/src/**/*.js',
   'node',
   'system-tests')
