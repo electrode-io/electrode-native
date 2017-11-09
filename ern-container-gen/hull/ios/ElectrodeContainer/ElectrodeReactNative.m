@@ -100,6 +100,9 @@ static dispatch_semaphore_t semaphore;
                 {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
                     {{/configurable}}
                 {{/plugins}}
+                {{#hasAtleastOneApiImplConfig}}
+                apiImplementationsConfig: (NSObject <APIImplsConfigWrapperDelegate> *) apiImplConfig
+                {{/hasAtleastOneApiImplConfig}}
 
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
@@ -111,7 +114,10 @@ static dispatch_semaphore_t semaphore;
          {{#configurable}}
          {{{lcname}}}:{{{lcname}}}
          {{/configurable}}
-         {{/plugins}}];
+         {{/plugins}}
+         {{#hasAtleastOneApiImplConfig}}
+         apiImplementationsConfig: apiImplConfig
+         {{/hasAtleastOneApiImplConfig}}];
     });
 }
 
@@ -152,6 +158,9 @@ static dispatch_semaphore_t semaphore;
                 {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
             {{/configurable}}
          {{/plugins}}
+         {{#hasAtleastOneApiImplConfig}}
+         apiImplementationsConfig: (NSObject <APIImplsConfigWrapperDelegate> *) apiImplConfig
+         {{/hasAtleastOneApiImplConfig}}
 {
     ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] init];
     
@@ -174,6 +183,10 @@ static dispatch_semaphore_t semaphore;
                                                      name:RCTJavaScriptDidLoadNotification object:nil];
     [self loadCustomFonts];
 
+    {{#hasApiImpl}}
+    [self registerAPIImplementations:apiImplConfig];
+    {{/hasApiImpl}}
+
 }
 
 - (void)loadCustomFonts {
@@ -194,6 +207,16 @@ static dispatch_semaphore_t semaphore;
         }
     }
 }
+
+ {{#hasApiImpl}}
+- (void)registerAPIImplementations:(NSObject <APIImplsConfigWrapperDelegate> *)configWrapper
+{
+    {{#apiImplementations}}
+    [[{{apiName}}ApiController new] registerWithConfig:{{#hasConfig}}[configWrapper {{apiVariableName}}ApiConfig]]{{/hasConfig}}{{^hasConfig}}nil]{{/hasConfig}};
+    {{/apiImplementations}}
+
+}
+ {{/hasApiImpl}}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

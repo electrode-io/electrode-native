@@ -5,7 +5,8 @@ import {
   handleCopyDirective,
   ContainerGeneratorConfig,
   MiniApp,
-  IosUtil
+  IosUtil,
+  utils
 } from 'ern-core'
 import {
   Dependency,
@@ -25,6 +26,7 @@ import type {
   ContainerGenerator,
   ContainerGeneratorPaths
 } from '../../FlowTypes'
+import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 
 const ROOT_DIR = process.cwd()
 
@@ -159,6 +161,7 @@ export default class IosGenerator implements ContainerGenerator {
     }
 
     await this.buildiOSPluginsViews(plugins, mustacheView)
+    await this.buildApiImplPluginViews(plugins, mustacheView, pathSpec, projectSpec)
 
     const {iosProject, projectPath} = await IosUtil.fillProjectHull(pathSpec, projectSpec, plugins, mustacheView)
 
@@ -270,5 +273,29 @@ export default class IosGenerator implements ContainerGenerator {
         resolve(containerProject)
       })
     })
+  }
+
+  async buildApiImplPluginViews (plugins: Array<Dependency>,
+                                 mustacheView: Object,
+                                 pathSpec: Object,
+                                 projectSpec: Object) {
+    for (const plugin of plugins) {
+      const pluginConfig = await manifest.getPluginConfig(plugin, projectSpec.projectName)
+      shell.cd(pathSpec.pluginsDownloadDirectory)
+      if (await utils.isDependencyApiImpl(plugin.name)) {
+        const pluginSourcePath = await utils.downloadPluginSource(pluginConfig.origin)
+        populateApiImplMustacheView(pluginSourcePath, mustacheView)
+      }
+    }
+
+    if (mustacheView.apiImplementations) {
+      mustacheView.hasApiImpl = true
+      for (const api of mustacheView.apiImplementations) {
+        if (api.hasConfig) {
+          mustacheView.hasAtleastOneApiImplConfig = true
+          break
+        }
+      }
+    }
   }
 }

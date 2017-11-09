@@ -16,4 +16,7 @@
 
 #import "ElectrodeContainer.h"
 #import "ElectrodeBridgeDelegate.h"
+{{#hasApiImpl}}
+#import "ElectrodeContainer/ElectrodeContainer-Swift.h"
+{{/hasApiImpl}}
 
