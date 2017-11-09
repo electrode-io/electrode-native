@@ -27,6 +27,7 @@ import type {
   ContainerGenerator,
   ContainerGeneratorPaths
 } from '../../FlowTypes'
+import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 
 const ROOT_DIR = process.cwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
@@ -163,7 +164,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
 
         if (await utils.isDependencyApiImpl(plugin.name)) {
-          this.populateApiImplMustacheView(pluginSourcePath, mustacheView)
+          populateApiImplMustacheView(pluginSourcePath, mustacheView)
         }
 
         const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)
@@ -233,24 +234,6 @@ export default class AndroidGenerator implements ContainerGenerator {
     } catch (e) {
       log.error('[fillContainerHull] Something went wrong: ' + e)
       throw e
-    }
-  }
-
-  populateApiImplMustacheView (pluginSourcePath: string, mustacheView: Object) {
-    const packageJson = JSON.parse(fs.readFileSync(path.join(pluginSourcePath, 'package.json'), 'utf-8'))
-    const containerGenConfig = packageJson.ern.containerGen
-    if (containerGenConfig && containerGenConfig.apiNames) {
-      mustacheView.apiImplementations = mustacheView.apiImplementations ? mustacheView.apiImplementations : []
-      for (const apiName of containerGenConfig.apiNames) {
-        let api = {
-          apiName,
-          hasConfig: containerGenConfig.hasConfig,
-          apiVariableName: utils.camelize(apiName, true)
-        }
-        mustacheView.apiImplementations.push(api)
-      }
-    } else {
-      log.warn(`!!!!! containerGen entry not valid for api implementation, skipping api-impl code gen in container for ${packageJson.name} !!!!`)
     }
   }
 
