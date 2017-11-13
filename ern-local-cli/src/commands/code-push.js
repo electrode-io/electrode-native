@@ -35,11 +35,6 @@ exports.builder = function (yargs: any) {
       describe: 'Deployment to release the update to',
       type: 'string'
     })
-    .option('platform', {
-      describe: 'Platform name (android / ios)',
-      alias: 'p',
-      type: 'string'
-    })
     .option('targetBinaryVersion', {
       describe: 'Semver expression that specifies the binary app version(s) this release is targeting (e.g. 1.1.0, ~1.2.3)',
       alias: 't',
@@ -54,8 +49,8 @@ exports.builder = function (yargs: any) {
     .option('rollout', {
       describe: 'Percentage of users this release should be immediately available to',
       alias: 'r',
-      type: 'string',
-      default: '100%'
+      type: 'number',
+      default: '100'
     })
     .option('skipConfirmation', {
       describe: 'Skip final confirmation prompt if no compatibility issues are detected',
@@ -85,7 +80,7 @@ exports.handler = async function ({
   platform: 'android' | 'ios',
   targetBinaryVersion: string,
   mandatory: boolean,
-  rollout: string,
+  rollout: number,
   skipConfirmation?: boolean
 }) {
   if (!descriptor) {
@@ -114,10 +109,9 @@ exports.handler = async function ({
     await performCodePushOtaUpdate(
       napDescriptor,
       _.map(miniapps, Dependency.fromString), {
-        force: force,
+        force,
         codePushAppName: appName,
         codePushDeploymentName: deploymentName,
-        codePushPlatformName: platform,
         codePushTargetVersionName: targetBinaryVersion,
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,

@@ -44,7 +44,7 @@ export default class ReactNativeCli {
     dev: boolean,
     bundleOutput: string,
     assetsDest: string,
-    platform: 'android' | 'ios'
+    platform: string
   }) {
     const bundleCommand =
     `${this.binaryPath} bundle \
