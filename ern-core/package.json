@@ -52,7 +52,6 @@
     "archiver": "^2.0.3",
     "chalk": "^2.3.0",
     "cli-table": "^0.3.1",
-    "code-push-cli": "1.12.9-beta",
     "decompress-zip": "^0.3.0",
     "ern-cauldron-api": "0.10.1",
     "ern-util": "0.10.1",
