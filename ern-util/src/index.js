@@ -9,7 +9,6 @@ import _ReactNativeCli from './ReactNativeCli'
 import _required from './required'
 import _spin from './spin'
 import _tagOneLine from './tagoneline'
-import _CodePushCli from './CodePushCli'
 import _Dependency from './Dependency'
 import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import _findNativeDependencies from './findNativeDependencies'
@@ -29,7 +28,6 @@ export const ReactNativeCli = _ReactNativeCli
 export const required = _required
 export const spin = _spin
 export const tagOneLine = _tagOneLine
-export const CodePushCli = _CodePushCli
 export const Dependency = _Dependency
 export const NativeApplicationDescriptor = _NativeApplicationDescriptor
 export const findNativeDependencies = _findNativeDependencies
@@ -51,7 +49,6 @@ export default ({
   required: _required,
   spin: _spin,
   tagOneLine: _tagOneLine,
-  CodePushCli: _CodePushCli,
   Dependency: _Dependency,
   NativeApplicationDescriptor: _NativeApplicationDescriptor,
   findNativeDependencies: _findNativeDependencies,
