@@ -1,12 +1,13 @@
 import { expect } from 'chai'
 import fs from 'fs'
-import { promisify } from 'util'
 import path from 'path'
+import Promise from 'bluebird'
 
 import { parseIOSDevicesList } from '../src/ios.js'
 
 const computerName = 'Funny MacBook Pro (47)\n'
-const readFile = promisify(fs.readFile)
+// util.promisify function added to the core only after node 8
+const readFile = Promise.promisify(fs.readFile)
 
 describe('ios utils', () => {
   describe('parse iOS device list', () => {
