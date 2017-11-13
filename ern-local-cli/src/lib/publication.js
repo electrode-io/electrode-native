@@ -8,7 +8,6 @@ import {
 } from 'ern-container-gen'
 import {
   cauldron,
-  codepush,
   compatibility,
   MiniApp,
   Platform,

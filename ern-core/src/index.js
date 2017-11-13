@@ -13,8 +13,7 @@ import * as _ModuleTypes from './ModuleTypes'
 import * as _utils from './utils'
 import {
   yarn as _yarn,
-  reactnative as _reactnative,
-  codepush as _codepush
+  reactnative as _reactnative
 } from './clients'
 import * as _dependencyLookup from './dependencyLookup'
 import _ErnBinaryStore from './ErnBinaryStore'
@@ -29,7 +28,6 @@ export const MiniApp = _MiniApp
 export const ModuleTypes = _ModuleTypes
 export const yarn = _yarn
 export const reactnative = _reactnative
-export const codepush = _codepush
 export const dependencyLookup = _dependencyLookup
 export const utils = _utils
 export const MavenUtils = _MavenUtils
@@ -48,7 +46,6 @@ export default ({
   ModuleTypes: _ModuleTypes,
   yarn: _yarn,
   reactnative: _reactnative,
-  codepush: _codepush,
   dependencyLookup: _dependencyLookup,
   utils: _utils,
   MavenUtils: _MavenUtils,
