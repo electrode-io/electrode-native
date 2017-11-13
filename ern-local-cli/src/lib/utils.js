@@ -610,7 +610,7 @@ async function buildIosRunner (pathToIosRunner: string, udid: string) {
 
 async function doesPackageExistInNpm (packageName: string) : Promise<boolean> {
   try {
-    const result = await yarn.info(DependencyPath.fromString(packageName), {field: 'versions', json: true})
+    const result = await yarn.info(DependencyPath.fromString(packageName), {field: 'versions 2> /dev/null', json: true})
     if (result && result.type === `inspect`) {
       return true
     }
@@ -660,7 +660,7 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
     switch (moduleType) {
       case ModuleTypes.MINIAPP:
         suffixedModuleName = `${moduleName}MiniApp`
-        message = `We recommend suffixing the name of ${moduleName} with App, Do you want to use ${suffixedModuleName}?`
+        message = `We recommend suffixing the name of ${moduleName} with MiniApp, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.API:
         suffixedModuleName = `${moduleName}Api`
@@ -669,7 +669,7 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
       case ModuleTypes.JS_API_IMPL:
       case ModuleTypes.NATIVE_API_IMPL:
         suffixedModuleName = `${moduleName}ApiImpl`
-        message = `We recommend suffixing the name of ${moduleName} with Impl, Do you want to use ${suffixedModuleName}?`
+        message = `We recommend suffixing the name of ${moduleName} with ApiImpl, Do you want to use ${suffixedModuleName}?`
         break
       default:
         throw new Error(`Unsupported module type : ${moduleType}`)

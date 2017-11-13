@@ -3,7 +3,9 @@ import {
   expect
 } from 'chai'
 import {
-  cauldron
+  cauldron,
+  ModuleTypes,
+  yarn
 } from 'ern-core'
 import {
   NativeApplicationDescriptor
@@ -13,10 +15,13 @@ import sinon from 'sinon'
 import utils from '../src/lib/utils'
 import * as fixtures from './fixtures/common'
 import ora from 'ora'
+import inquirer from 'inquirer'
 
 // Fixtures
 const basicCauldronFixture = require('./fixtures/cauldron.json')
 const emptyCauldronFixture = require('./fixtures/empty-cauldron.json')
+const npmPackageExists = require('./fixtures/npmPkgExistsResponse.json')
+const npmPackageDoesNotExists = '' // 2> /dev/null suppresses stderr in yarn.info
 
 // Cauldron stubs
 const getAllNativeAppsStub = sinon.stub(cauldron, 'getAllNativeApps')
@@ -40,9 +45,13 @@ const oraStartStub = sinon.stub(oraProto, 'start').returns({
   succeed: sinon.stub()
 })
 
+// yarn stub
+const yarnStub = sinon.stub(yarn, 'info')
+
 // Other stubs
 const runCauldronContainerGenStub = sinon.stub(publication, 'runCauldronContainerGen')
 const processExitStub = sinon.stub(process, 'exit')
+const inquirerStub = sinon.stub(inquirer, 'prompt')
 
 global.log = {
   error: logErrorStub,
@@ -62,6 +71,8 @@ beforeEach(() => {
   discardTransactionStub.reset()
   updateContainerVersionStub.reset()
   oraFailStub.reset()
+  yarnStub.reset()
+  inquirerStub.reset()
 })
 
 let cauldronIsActiveStub
@@ -70,8 +81,16 @@ afterEach(() => {
   cauldronIsActiveStub && cauldronIsActiveStub.restore()
 })
 
-function useCauldronFixture(fixture) {
+function useCauldronFixture (fixture) {
   getAllNativeAppsStub.resolves(fixture.nativeApps)
+}
+
+function useNpmPkgFixture (fixture) {
+  yarnStub.resolves(fixture)
+}
+
+function resolveInquirer (answer) {
+  inquirerStub.resolves(answer)
 }
 
 after(() => {
@@ -85,6 +104,8 @@ after(() => {
   getTopLevelContainerVersionStub.restore()
   updateContainerVersionStub.restore()
   oraStartStub.restore()
+  yarnStub.restore()
+  inquirerStub.restore()
 })
 
 describe('utils.js', () => {
@@ -106,49 +127,52 @@ describe('utils.js', () => {
 
     it('should return only released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true})
+      const result = await utils.getNapDescriptorStringsFromCauldron({onlyReleasedVersions: true})
       expect(result).to.have.lengthOf(3)
     })
 
     it('should return only non released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyNonReleasedVersions: true})
+      const result = await utils.getNapDescriptorStringsFromCauldron({onlyNonReleasedVersions: true})
       expect(result).to.have.lengthOf(2)
     })
 
     it('should return only android platform native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ platform: 'android'})
+      const result = await utils.getNapDescriptorStringsFromCauldron({platform: 'android'})
       expect(result).to.have.lengthOf(2)
     })
 
     it('should return only ios platform native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ platform: 'ios'})
+      const result = await utils.getNapDescriptorStringsFromCauldron({platform: 'ios'})
       expect(result).to.have.lengthOf(3)
     })
 
     it('should return only android platform released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true, platform: 'android'})
+      const result = await utils.getNapDescriptorStringsFromCauldron({onlyReleasedVersions: true, platform: 'android'})
       expect(result).to.have.lengthOf(1)
     })
 
     it('should return only android platform non released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyNonReleasedVersions: true, platform: 'android'})
+      const result = await utils.getNapDescriptorStringsFromCauldron({
+        onlyNonReleasedVersions: true,
+        platform: 'android'
+      })
       expect(result).to.have.lengthOf(1)
     })
 
     it('should return only ios platform released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyReleasedVersions: true, platform: 'ios'})
+      const result = await utils.getNapDescriptorStringsFromCauldron({onlyReleasedVersions: true, platform: 'ios'})
       expect(result).to.have.lengthOf(2)
     })
 
     it('should return only ios platform non released native apps descriptors', async () => {
       useCauldronFixture(basicCauldronFixture)
-      const result = await utils.getNapDescriptorStringsFromCauldron({ onlyNonReleasedVersions: true, platform: 'ios'})
+      const result = await utils.getNapDescriptorStringsFromCauldron({onlyNonReleasedVersions: true, platform: 'ios'})
       expect(result).to.have.lengthOf(1)
     })
   })
@@ -156,22 +180,22 @@ describe('utils.js', () => {
   // ==========================================================
   // logErrorAndExitIfNotSatisfied
   // ==========================================================
-  function assertLoggedErrorAndExitedProcess() {
+  function assertLoggedErrorAndExitedProcess () {
     sinon.assert.calledOnce(oraFailStub)
     sinon.assert.calledOnce(processExitStub)
     assert(oraFailStub.calledBefore(processExitStub))
   }
 
-  function assertNoErrorLoggedAndNoProcessExit() {
+  function assertNoErrorLoggedAndNoProcessExit () {
     sinon.assert.notCalled(oraFailStub)
     sinon.assert.notCalled(processExitStub)
   }
 
   describe('logErrorAndExitIfNotSatisfied', () => {
     fixtures.invalidContainerVersions.forEach(containerVersion => {
-      it('[isValidContainerVersion] Shoud log error and exit process for invalid container version', async () => {
+      it('[isValidContainerVersion] Should log error and exit process for invalid container version', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidContainerVersion: { containerVersion }
+          isValidContainerVersion: {containerVersion}
         })
         assertLoggedErrorAndExitedProcess()
       })
@@ -180,7 +204,7 @@ describe('utils.js', () => {
     fixtures.validContainerVersions.forEach(containerVersion => {
       it('[isValidContainerVersion] Should not log error nor exit process for valid container version', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidContainerVersion: { containerVersion }
+          isValidContainerVersion: {containerVersion}
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
@@ -189,7 +213,7 @@ describe('utils.js', () => {
     fixtures.incompleteNapDescriptors.forEach(descriptor => {
       it('[isCompleteNapDescriptorString] Should log error and exit process for incomplete nap descriptor', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isCompleteNapDescriptorString: { descriptor }
+          isCompleteNapDescriptorString: {descriptor}
         })
         assertLoggedErrorAndExitedProcess()
       })
@@ -198,7 +222,7 @@ describe('utils.js', () => {
     fixtures.completeNapDescriptors.forEach(descriptor => {
       it('[isCompleteNapDescriptorString] Should not log error nor exit process for complete nap descriptor', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isCompleteNapDescriptorString: { descriptor }
+          isCompleteNapDescriptorString: {descriptor}
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
@@ -207,7 +231,7 @@ describe('utils.js', () => {
     fixtures.withGitOrFileSystemPath.forEach(obj => {
       it('[noGitOrFilesystemPath] Should log error and exit process if path is/contains a git or file system scheme', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          noGitOrFilesystemPath: { obj }
+          noGitOrFilesystemPath: {obj}
         })
         assertLoggedErrorAndExitedProcess()
       })
@@ -216,7 +240,7 @@ describe('utils.js', () => {
     fixtures.withoutGitOrFileSystemPath.forEach(obj => {
       it('[noGitOrFilesystemPath] Should not log error not exit process if path is not/ does not contain a git or file system scheme', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          noGitOrFilesystemPath: { obj }
+          noGitOrFilesystemPath: {obj}
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
@@ -241,7 +265,7 @@ describe('utils.js', () => {
     fixtures.validNpmPackageNames.forEach(name => {
       it('[isValidPackageName] Should not log error nor exit process if package name is valid', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidNpmPackageName: { name }
+          isValidNpmPackageName: {name}
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
@@ -250,7 +274,7 @@ describe('utils.js', () => {
     fixtures.invalidNpmPackageNames.forEach(name => {
       it('[isValidPackageName] Should log error and exit process if package name is invalid', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidNpmPackageName: { name }
+          isValidNpmPackageName: {name}
         })
         assertLoggedErrorAndExitedProcess()
       })
@@ -259,7 +283,7 @@ describe('utils.js', () => {
     fixtures.validElectrodeNativeModuleNames.forEach(name => {
       it('[isValidElectrodeNativeModuleName] Should not log error nor exit process if module name is valid', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidElectrodeNativeModuleName: { name }
+          isValidElectrodeNativeModuleName: {name}
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
@@ -268,7 +292,7 @@ describe('utils.js', () => {
     fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
       it('[isValidElectrodeNativeModuleName] Should log error and exit process if module name is invalid', async () => {
         await utils.logErrorAndExitIfNotSatisfied({
-          isValidElectrodeNativeModuleName: { name }
+          isValidElectrodeNativeModuleName: {name}
         })
         assertLoggedErrorAndExitedProcess()
       })
@@ -282,16 +306,16 @@ describe('utils.js', () => {
     const napDescriptor = NativeApplicationDescriptor.fromString('testapp:android:1.0.0')
 
     it('should uppdate container version with provided one', async () => {
-      await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true), 
-      napDescriptor , 'commit message', { containerVersion: '1.0.0' })
-      sinon.assert.calledWith(updateContainerVersionStub, 
+      await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true),
+        napDescriptor, 'commit message', {containerVersion: '1.0.0'})
+      sinon.assert.calledWith(updateContainerVersionStub,
         napDescriptor,
         '1.0.0')
     })
 
     it('should bump existing container version if not provided one', async () => {
       await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true), napDescriptor)
-      sinon.assert.calledWith(updateContainerVersionStub, 
+      sinon.assert.calledWith(updateContainerVersionStub,
         napDescriptor,
         '1.2.4')
     })
@@ -326,6 +350,167 @@ describe('utils.js', () => {
         if (e.message === 'boum') { hasRethrowError = true }
       }
       expect(hasRethrowError).to.be.true
+    })
+  })
+
+  // ==========================================================
+  // doesPackageExistInNpm
+  // ==========================================================
+  describe('doesPackageExistInNpm', () => {
+    it('should return true if npm package exists', async () => {
+      useNpmPkgFixture(npmPackageExists)
+      const result = await utils.doesPackageExistInNpm(fixtures.npmPkgNameExists)
+      expect(result).to.be.true
+    })
+
+    it('should return false if npm package does not exists', async () => {
+      useNpmPkgFixture(npmPackageDoesNotExists)
+      const result = await utils.doesPackageExistInNpm(fixtures.npmPkgNameDoesNotExists)
+      expect(result).to.be.false
+    })
+  })
+
+  // ==========================================================
+  // performPkgNameConflictCheck
+  // ==========================================================
+  describe('performPkgNameConflictCheck', () => {
+    it('if package does not exists in npm return true', async () => {
+      useNpmPkgFixture(npmPackageDoesNotExists)
+      const result = await utils.performPkgNameConflictCheck(fixtures.npmPkgNameDoesNotExists)
+      expect(result).to.be.true
+    })
+
+    it('if package exists in npm and user confirms exit execution return false ', async () => {
+      useNpmPkgFixture(npmPackageExists)
+      resolveInquirer({continueIfPkgNameExists: false})
+      const result = await utils.performPkgNameConflictCheck(fixtures.npmPkgNameExists)
+      expect(result).to.be.false
+    })
+
+    it('if package exists in npm and user confirms continue execution return true', async () => {
+      useNpmPkgFixture(npmPackageExists)
+      resolveInquirer({continueIfPkgNameExists: true})
+      const result = await utils.performPkgNameConflictCheck(fixtures.npmPkgNameExists)
+      expect(result).to.be.true
+    })
+  })
+
+  // ==========================================================
+  // checkIfModuleNameContainsSuffix
+  // ==========================================================
+  describe('checkIfModuleNameContainsSuffix', () => {
+    it('should return false if module name of mini-app does not contain suffix', () => {
+      const result = utils.checkIfModuleNameContainsSuffix(fixtures.npmPkgName, ModuleTypes.MINIAPP)
+      expect(result).to.be.false
+    })
+
+    it('should return false if module name of api does not contain suffix', () => {
+      const result = utils.checkIfModuleNameContainsSuffix(fixtures.npmPkgName, ModuleTypes.API)
+      expect(result).to.be.false
+    })
+
+    it('should return false if module name of (js) api-impl does not contain suffix', () => {
+      const result = utils.checkIfModuleNameContainsSuffix(fixtures.npmPkgName, ModuleTypes.JS_API_IMPL)
+      expect(result).to.be.false
+    })
+
+    it('should return false if module name of (native) api-impl does not contain suffix', () => {
+      const result = utils.checkIfModuleNameContainsSuffix(fixtures.npmPkgName, ModuleTypes.NATIVE_API_IMPL)
+      expect(result).to.be.false
+    })
+
+    it('should return false if module type is not supported', () => {
+      const result = utils.checkIfModuleNameContainsSuffix(fixtures.npmPkgName, fixtures.moduleTypeNotSupported)
+      expect(result).to.be.false
+    })
+
+    fixtures.miniAppNameWithSuffix.forEach(name => {
+      it('should return true if module name of mini-app contains suffix', () => {
+        const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.MINIAPP)
+        expect(result).to.be.true
+      })
+    })
+
+    fixtures.apiNameWithSuffix.forEach(name => {
+      it('should return true if module name of api contains suffix', () => {
+        const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.API)
+        expect(result).to.be.true
+      })
+    })
+
+    fixtures.apiImplNameWithSuffix.forEach(name => {
+      it('should return true if module name of (js) api-impl contains suffix', () => {
+        const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.JS_API_IMPL)
+        expect(result).to.be.true
+      })
+    })
+
+    fixtures.apiImplNameWithSuffix.forEach(name => {
+      it('should return true if module name of (native) api-impl contains suffix', () => {
+        const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.JS_API_IMPL)
+        expect(result).to.be.true
+      })
+    })
+  })
+
+  // ==========================================================
+  // promptUserToUseSuffixModuleName
+  // ==========================================================
+  describe('promptUserToUseSuffixModuleName', () => {
+    it('return suffixed mini-app name if user confirms true', async () => {
+      resolveInquirer({useSuffixedModuleName: true})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.MINIAPP)
+      expect(result).to.be.equal(`${fixtures.npmPkgName}MiniApp`)
+    })
+
+    it('return suffixed api name if user confirms true', async () => {
+      resolveInquirer({useSuffixedModuleName: true})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.API)
+      expect(result).to.be.equal(`${fixtures.npmPkgName}Api`)
+    })
+
+    it('return suffixed (js) api-impl name if user confirms true', async () => {
+      resolveInquirer({useSuffixedModuleName: true})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.JS_API_IMPL)
+      expect(result).to.be.equal(`${fixtures.npmPkgName}ApiImpl`)
+    })
+
+    it('return suffixed (native) api-impl name if user confirms true', async () => {
+      resolveInquirer({useSuffixedModuleName: true})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.NATIVE_API_IMPL)
+      expect(result).to.be.equal(`${fixtures.npmPkgName}ApiImpl`)
+    })
+
+    it('return non-suffixed mini-app name if user selects false', async () => {
+      resolveInquirer({useSuffixedModuleName: false})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.MINIAPP)
+      expect(result).to.be.equal(fixtures.npmPkgName)
+    })
+
+    it('return non-suffixed api name if user selects false', async () => {
+      resolveInquirer({useSuffixedModuleName: false})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.API)
+      expect(result).to.be.equal(fixtures.npmPkgName)
+    })
+
+    it('return non-suffixed (js) api-impl name if user selects false', async () => {
+      resolveInquirer({useSuffixedModuleName: false})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.JS_API_IMPL)
+      expect(result).to.be.equal(fixtures.npmPkgName)
+    })
+
+    it('return non-suffixed (native) api-impl name if user selects false', async () => {
+      resolveInquirer({useSuffixedModuleName: false})
+      const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.NATIVE_API_IMPL)
+      expect(result).to.be.equal(fixtures.npmPkgName)
+    })
+
+    it('return non-suffixed (native) api-impl name if user selects false', async () => {
+      try {
+        await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, fixtures.moduleTypeNotSupported)
+      } catch (e) {
+       expect(e.message).to.include('Unsupported module type :')
+      }
     })
   })
 })

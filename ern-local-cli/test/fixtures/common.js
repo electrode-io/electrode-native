@@ -66,3 +66,32 @@ export const invalidElectrodeNativeModuleNames = [
   'my*app',
   'my$app'
 ]
+
+export const miniAppNameWithSuffix = [
+  'MiniAppTest',
+  'TestMiniApp',
+  'testminiapp',
+  'miniappTest',
+  'thisMiniAppIsValid'
+]
+
+export const apiNameWithSuffix = [
+  'ApiTest',
+  'TestApi',
+  'testapi',
+  'apiTest',
+  'thisapiIsValid'
+]
+
+export const apiImplNameWithSuffix = [
+  'ApiImplTest',
+  'TestApiimpl',
+  'testapiImpl',
+  'apiImplTest',
+  'thisapiImplIsValid'
+]
+
+export const npmPkgNameExists = 'chai'
+export const npmPkgNameDoesNotExists = 'zxc-pkg-not-in-npm-bnm'
+export const npmPkgName = 'chai'
+export const moduleTypeNotSupported = 'moduleTypeNotSupported'
