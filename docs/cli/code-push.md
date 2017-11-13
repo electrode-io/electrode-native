@@ -41,11 +41,6 @@
 * Specify the `code-push` deployment name that this update is targeting  
 * **Default**  If this option is not used, the command prompts you for the deployment name to target. If deployment names for your native applications are stored in the Cauldron, a list displays the names and you are prompted to choose the target.  
 
-`--platform/-p <android|ios>`
-
-* Specify the platform targeted by this update  
-* **Default**  If this option is not used, you are prompted to confirm the platform from the *complete native application descriptor*.  
-
 `--targetBinaryVersion/-t <targetBinaryVersion>`
 
 * Specify one or more versions of the native application to target  
@@ -59,7 +54,7 @@
 `--rollout/-r <rollout>`
 
 * Specify the percentage of users who will have immediate access to this release  
-* **Default**  100%  
+* **Default**  100
 
 `--skipConfirmation/-s`
 

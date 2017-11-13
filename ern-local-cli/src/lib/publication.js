@@ -11,9 +11,12 @@ import {
   compatibility,
   MiniApp,
   Platform,
-  ContainerGeneratorConfig
+  ContainerGeneratorConfig,
+  reactnative
 } from 'ern-core'
 import {
+  config,
+  CodePushSdk,
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
@@ -22,7 +25,10 @@ import {
 
 import inquirer from 'inquirer'
 import _ from 'lodash'
+import tmp from 'tmp'
 import path from 'path'
+import fs from 'fs'
+import shell from 'shelljs'
 
 function createContainerGenerator (config: ContainerGeneratorConfig) {
   switch (config.platform) {
@@ -36,8 +42,6 @@ function createContainerGenerator (config: ContainerGeneratorConfig) {
       throw new Error(`No Container Generator exists for ${config.platform} platform`)
   }
 }
-
-type platform = 'android' | 'ios'
 
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
@@ -191,7 +195,6 @@ miniApps: Array<Dependency>, {
   force,
   codePushAppName,
   codePushDeploymentName,
-  codePushPlatformName,
   codePushTargetVersionName,
   codePushIsMandatoryRelease,
   codePushRolloutPercentage,
@@ -201,19 +204,25 @@ miniApps: Array<Dependency>, {
   force: boolean,
   codePushAppName: string,
   codePushDeploymentName: string,
-  codePushPlatformName: 'android' | 'ios',
   codePushTargetVersionName: string,
   codePushIsMandatoryRelease: boolean,
-  codePushRolloutPercentage: string,
+  codePushRolloutPercentage: number,
   pathToYarnLock?: string,
   skipConfirmation?: boolean
 } = {}) {
-  const plugins = await cauldron.getNativeDependencies(napDescriptor)
+  const codePushAccessKey = getCodePushAccessKey()
+  if (!codePushAccessKey) {
+    throw new Error('Unable to get the CodePush access key to use')
+  }
 
+  const plugins = await cauldron.getNativeDependencies(napDescriptor)
   const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
   if (!codePushPlugin) {
     throw new Error('react-native-code-push plugin is not in native app !')
   }
+
+  const codePushSdk = new CodePushSdk(codePushAccessKey)
+  const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
 
   let nativeDependenciesVersionAligned = true
 
@@ -241,7 +250,6 @@ miniApps: Array<Dependency>, {
     }
   }
 
-  const workingDirectory = path.join(Platform.rootDirectory, 'CompositeOta')
   const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
   const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
 
@@ -273,29 +281,48 @@ miniApps: Array<Dependency>, {
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
   await spin('Generating composite bundle to be published through CodePush',
-     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, workingDirectory, {pathToYarnLock}))
+     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
 
-  process.chdir(workingDirectory)
+  const bundleOutputPath = path.join(tmpWorkingDir, 'bundleOut')
+  shell.mkdir('-p', bundleOutputPath)
+  const platform = napDescriptor.platform || ''
+
+  await reactnative.bundle({
+    entryFile: `index.${platform}.js`,
+    dev: false,
+    bundleOutput: bundleOutputPath,
+    platform,
+    assetsDest: bundleOutputPath
+  })
 
   codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
   codePushAppName = codePushAppName || await askUserForCodePushAppName()
-  codePushPlatformName = codePushPlatformName || await askUserForCodePushPlatformName(napDescriptor.platform)
 
-  const codePushWasDone = await codepush.releaseReact(
+  const codePushWasDone = await codePushSdk.releaseReact(
     codePushAppName,
-    codePushPlatformName, {
-      targetBinaryVersion: codePushTargetVersionName,
-      mandatory: codePushIsMandatoryRelease,
-      deploymentName: codePushDeploymentName,
-      rolloutPercentage: codePushRolloutPercentage,
-      askForConfirmation: !force && !skipConfirmation
+    codePushDeploymentName,
+    bundleOutputPath,
+    codePushTargetVersionName, {
+      isMandatory: codePushIsMandatoryRelease,
+      rollout: codePushRolloutPercentage
     })
 
   if (codePushWasDone) {
     await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
-    const pathToNewYarnLock = path.join(workingDirectory, 'yarn.lock')
+    const pathToNewYarnLock = path.join(bundleOutputPath, 'yarn.lock')
     await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
   }
+}
+
+export function getCodePushAccessKey () {
+  let codePushAccessKey = config.getValue('codePushAccessKey')
+  if (!codePushAccessKey) {
+    const codePushConfigFilePath = path.join(process.env.LOCALAPPDATA || process.env.HOME || '', '.code-push.config')
+    if (fs.existsSync(codePushConfigFilePath)) {
+      codePushAccessKey = JSON.parse(fs.readFileSync(codePushConfigFilePath, 'utf-8')).accessKey
+    }
+  }
+  return codePushAccessKey
 }
 
 async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) : Promise<boolean> {
@@ -344,14 +371,4 @@ async function askUserForCodePushAppName (defaultAppName) : Promise<string> {
     default: defaultAppName
   })
   return userSelectedCodePushAppName
-}
-
-async function askUserForCodePushPlatformName (defaultPlatformName) : Promise<platform> {
-  const { userSelectedCodePushPlatformName }: { userSelectedCodePushPlatformName: platform } = await inquirer.prompt({
-    type: 'input',
-    name: 'userSelectedCodePushPlatformName',
-    message: 'Platform name',
-    default: defaultPlatformName
-  })
-  return userSelectedCodePushPlatformName
 }
