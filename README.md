@@ -10,7 +10,7 @@
 ![Current version](https://img.shields.io/npm/v/ern-local-cli.svg?label=current)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![travis ci](https://travis-ci.org/electrode-io/electrode-native.svg?branch=master)](https://travis-ci.org/electrode-io/electrode-native?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/electrode-io/electrode-native/badge.svg?branch=master)](https://coveralls.io/github/electrode-io/electrode-native?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/electrode-io/electrode-native/badge.svg?branch=master)](https://coveralls.io/github/electrode-io/electrode-native?branch=master&service=github)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Getting Started
