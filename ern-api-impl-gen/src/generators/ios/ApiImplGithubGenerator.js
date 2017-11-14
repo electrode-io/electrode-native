@@ -46,7 +46,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
     try {
       const pathSpec = {
         rootDir: ROOT_DIR,
-        projectHullDir: path.join(paths.apiImplHull, 'ios', '*'),
+        projectHullDir: path.join(paths.apiImplHull, 'ios', '{.*,*}'),
         outputDir: path.join(paths.outDirectory, 'ios'),
         pluginsDownloadDirectory: paths.pluginsDownloadDirectory
       }
