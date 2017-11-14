@@ -114,18 +114,21 @@ export async function runAndroid ({
   }
 }
 
-async function askUserToSelectAvdEmulator (): Promise<string> {
+export async function askUserToSelectAvdEmulator (): Promise<string> {
   const avdImageNames = await getAndroidAvds()
   let emulatorConfig = ernConfig.getValue('emulatorConfig')
-
   // Check if user has set the usePreviousEmulator flag to true
-  if (avdImageNames && emulatorConfig.android.usePreviousEmulator) {
-    // Get the name of previously used emulator
-    const emulatorName = emulatorConfig.android.emulatorName
-    // Check if avd image still exists
-    const avdIndex = avdImageNames.indexOf(emulatorName)
-    if (avdIndex > -1) {
-      return `${avdImageNames[avdIndex]}`
+  if (avdImageNames && emulatorConfig) {
+    if (emulatorConfig.android) {
+      if (emulatorConfig.android.usePreviousEmulator) {
+        // Get the name of previously used emulator
+        const emulatorName = emulatorConfig.android.emulatorName
+        // Check if avd image still exists
+        const avdIndex = avdImageNames.indexOf(emulatorName)
+        if (avdIndex > -1) {
+          return `${avdImageNames[avdIndex]}`
+        }
+      }
     }
   }
 
@@ -177,7 +180,7 @@ export async function runAndroidUsingAvdImage ({
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
-async function installAndLaunchApp ({
+export async function installAndLaunchApp ({
   projectPath,
   apkPath,
   packageName,
@@ -251,7 +254,7 @@ export async function getAndroidAvds () {
 }
 
 // Utility method to query what device instances are connected to the adb server
-export async function getDevices () {
+export async function getDevices (): Promise<Array<string>> {
   const stdout = await execp(`${androidAdbPath()} devices`)
   /*
     stdout for running command  $adb devices
