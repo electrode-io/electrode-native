@@ -17,8 +17,8 @@ import android.support.annotation.Nullable;
 
 /**
  * GENERATED CODE: DO NOT MODIFY
- * Do not modify the content of this class as it will be regenerated every time an api-impl regen command is executed.
- * Link: TODO: provide the electrode native link to ern regen-api-impl here.
+ * Do not modify the content of this class as it will be regenerated every time an api-impl-regen command is executed.
+ * @see <a href:"https://electrode.gitbooks.io/electrode-native/content/v/master/cli/regen-api-impl.html"></a>
  */
 
 abstract class RequestHandlerProvider<T extends RequestHandlerConfig> {

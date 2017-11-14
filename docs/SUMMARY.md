@@ -60,6 +60,7 @@
 - [create-miniapp](cli/create-miniapp.md)
 - [link](cli/link.md)
 - [regen-api](cli/regen-api.md)
+- [regen-api-impl](cli/regen-api-impl.md)
 - [run-android](cli/run-android.md)
 - [run-ios](cli/run-ios.md)
 - [start](cli/start.md)
