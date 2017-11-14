@@ -8,6 +8,9 @@ import {
 } from 'ern-util'
 import _ from 'lodash'
 import CauldronCli from 'ern-cauldron-api'
+import type {
+  TypeCauldronCodePushMetadata
+} from 'ern-cauldron-api'
 import Platform from './Platform'
 
 //
@@ -179,12 +182,17 @@ class Cauldron {
     }
   }
 
-  async hasYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
+  async hasYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string) : Promise<boolean> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       return this.cauldron.hasYarnLock(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key)
     } catch (e) {
       log.error(`[hasYarnLock] ${e}`)
       throw e
@@ -193,37 +201,52 @@ class Cauldron {
 
   async addYarnLock (
     napDescriptor: NativeApplicationDescriptor,
+    key: string,
     yarnlockPath: string) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       let yarnLockFile = await fileUtils.readFile(yarnlockPath)
       return this.cauldron.addYarnLock(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnLockFile)
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key,
+        yarnLockFile)
     } catch (e) {
       log.error(`[addYarnLock] ${e}`)
       throw e
     }
   }
 
-  async getYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<?Buffer> {
+  async getYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string) : Promise<?Buffer> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       return this.cauldron.getYarnLock(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key)
     } catch (e) {
       log.error(`[getYarnLock] ${e}`)
       throw e
     }
   }
 
-  async getPathToYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<?string> {
+  async getPathToYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string) : Promise<?string> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       return this.cauldron.getPathToYarnLock(
-        napDescriptor.name, napDescriptor.platform, napDescriptor.version
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key
       )
     } catch (e) {
       log.error(`[getPathToYarnLock] ${e}`)
@@ -231,12 +254,17 @@ class Cauldron {
     }
   }
 
-  async removeYarnLock (napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
+  async removeYarnLock (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string) : Promise<boolean> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       return this.cauldron.removeYarnLock(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version)
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key)
     } catch (e) {
       log.error(`[removeYarnLock] ${e}`)
       throw e
@@ -245,6 +273,7 @@ class Cauldron {
 
   async updateYarnLock (
     napDescriptor: NativeApplicationDescriptor,
+    key: string,
     yarnlockPath: string
   ) : Promise<boolean> {
     try {
@@ -252,40 +281,47 @@ class Cauldron {
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       let yarnLockFile = await fileUtils.readFile(yarnlockPath)
       return this.cauldron.updateYarnLock(
-                napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnLockFile)
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key,
+        yarnLockFile)
     } catch (e) {
       log.error(`[updateYarnLock] ${e}`)
       throw e
     }
   }
 
-  async setYarnLockId (
+  async setYarnLocks (
     napDescriptor: NativeApplicationDescriptor,
-    yarnlockid: string
+    yarnLocks: Object
   ) {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      return this.cauldron.setYarnLockId(
-        napDescriptor.name, napDescriptor.platform, napDescriptor.version, yarnlockid
-      )
+      return this.cauldron.setYarnLocks(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        yarnLocks)
     } catch (e) {
-      log.error(`[setYarnLockId] ${e}`)
+      log.error(`[setYarnLocks] ${e}`)
       throw e
     }
   }
 
   async addOrUpdateYarnLock (
     napDescriptor: NativeApplicationDescriptor,
+    key: string,
     yarnlockPath: string
   ) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      if (await this.hasYarnLock(napDescriptor)) {
-        return this.updateYarnLock(napDescriptor, yarnlockPath)
+      if (await this.hasYarnLock(napDescriptor, key)) {
+        return this.updateYarnLock(napDescriptor, key, yarnlockPath)
       } else {
-        return this.addYarnLock(napDescriptor, yarnlockPath)
+        return this.addYarnLock(napDescriptor, key, yarnlockPath)
       }
     } catch (e) {
       log.error(`[addOrUpdateYarnLock] ${e}`)
@@ -357,14 +393,34 @@ class Cauldron {
     }
   }
 
-  async getCodePushMiniApps (napDescriptor: NativeApplicationDescriptor) : Promise<Array<Array<string>>> {
+  async getCodePushMiniApps (
+    napDescriptor: NativeApplicationDescriptor,
+    deploymentName: string) : Promise<Array<Dependency> | void> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      return this.cauldron.getCodePushMiniApps(
+      const codePushEntries = await this.cauldron.getCodePushEntries(
         napDescriptor.name,
         napDescriptor.platform,
         napDescriptor.version)
+      if (codePushEntries) {
+        let result = _.chain(codePushEntries)
+          .filter(e => !Array.isArray(e))
+          .filter(e => e.deploymentName === deploymentName)
+          .map(e => e.miniapps)
+          .map(e => Dependency.fromString(e))
+          .last()
+          .value()
+        // Backward compatibility with old structure
+        // To deprecate at some point
+        if (!result) {
+          result = _.chain(codePushEntries)
+            .filter(e => Array.isArray(e))
+            .last()
+            .value()
+        }
+        return result
+      }
     } catch (e) {
       log.error(`[getCodePushMiniApps] ${e}`)
       throw e
@@ -387,18 +443,19 @@ class Cauldron {
     }
   }
 
-  async addCodePushMiniApps (
+  async addCodePushEntry (
     napDescriptor: NativeApplicationDescriptor,
+    metadata: TypeCauldronCodePushMetadata,
     miniApps: Array<Dependency>) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-      const miniAppsAsStrings = _.map(miniApps, x => x.toString())
-      return this.cauldron.addCodePushMiniApps(
+      const miniapps = _.map(miniApps, x => x.toString())
+      return this.cauldron.addCodePushEntry(
               napDescriptor.name,
               napDescriptor.platform,
               napDescriptor.version,
-              miniAppsAsStrings)
+              { metadata, miniapps })
     } catch (e) {
       log.error(`[addOtaMiniApp] ${e}`)
       throw e

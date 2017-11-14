@@ -72,7 +72,7 @@ export default async function start ({
 
   let pathToYarnLock
   if (descriptor) {
-    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
+    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
   }
   await spin('Generating MiniApps composite',
     generateMiniAppsComposite(miniAppsPaths, workingDir, {

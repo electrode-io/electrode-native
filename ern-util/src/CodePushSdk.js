@@ -2,15 +2,27 @@
 
 import CodePush from 'code-push'
 
-export type PackageInfo = {
+export type CodePushPackageInfo = {
   appVersion?: string;
   description?: string;
   isDisabled?: boolean;
   isMandatory?: boolean;
-  label?: string;
-  packageHash?: string;
+  /* generated */ label?: string;
+  /* generated */ packageHash?: string;
   rollout?: number;
-}
+};
+
+export type CodePushReleaseInfo = {
+  /* generated */ blobUrl: string;
+  /* generated */ originalLabel: string;
+  /* generated */ originalDeployment: string;
+  /* generated */ releasedBy: string;
+  /* generated */ releaseMethod: string;
+  /* generated */ size: number;
+  /* generated */ uploadTime: number;
+};
+
+export type CodePushPackage = CodePushPackageInfo & CodePushReleaseInfo;
 
 export default class CodePushSdk {
   _codePush: any
@@ -24,13 +36,13 @@ export default class CodePushSdk {
     deploymentName: string,
     filePath: string,
     targetBinaryVersion: string,
-    updateMetadata: PackageInfo) : Promise<void> {
-    return this._codePush.release(
+    updateMetadata: CodePushPackageInfo) : Promise<CodePushPackage> {
+    const response = await this._codePush.release(
         appName,
         deploymentName,
         filePath,
         targetBinaryVersion,
-        updateMetadata
-      )
+        updateMetadata)
+    return response.package
   }
 }

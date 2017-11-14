@@ -12,7 +12,7 @@ export const nativeApplicationVersion = Joi.object({
   ernPlatformVersion: Joi.string().required(),
   isReleased: Joi.boolean().optional().default(false),
   binary: Joi.string().default(null),
-  yarnlock: Joi.string().default(null),
+  yarnLocks: Joi.object().default({}),
   nativeDeps: Joi.array().default([]),
   miniApps: miniApps.default(),
   containerVersion: Joi.string().optional() // optional for Backward Compat. Required in ERN 0.5.0

@@ -95,8 +95,8 @@ async function copyOverPreviousVersionData (napDescriptor: NativeApplicationDesc
     await cauldron.addContainerMiniApp(napDescriptor, Dependency.fromString(containerMiniApp))
   }
   // Copy over previous yarn lock if any
-  if (nativeAppVersion.yarnlock) {
-    await cauldron.setYarnLockId(napDescriptor, nativeAppVersion.yarnlock)
+  if (nativeAppVersion.yarnLocks) {
+    await cauldron.setYarnLocks(napDescriptor, nativeAppVersion.yarnLocks)
   }
   // Copy over container version
   if (nativeAppVersion.containerVersion) {

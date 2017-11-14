@@ -12,6 +12,10 @@ import _ from 'lodash'
 import FileStore from './filestore'
 import GitStore from './gitstore'
 
+import type {
+  TypeCauldronCodePushEntry
+} from './gitstore'
+
 export default class CauldronApi {
   _db: GitStore
   _sourceMapStore: FileStore
@@ -102,7 +106,7 @@ export default class CauldronApi {
     }
   }
 
-  async getCodePushMiniApps (
+  async getCodePushEntries (
     nativeApplicationName: string,
     platformName: string,
     versionName: string) {
@@ -385,14 +389,14 @@ export default class CauldronApi {
     }
   }
 
-  async addCodePushMiniApps (
+  async addCodePushEntry (
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    miniapps: Array<string>) {
+    codePushEntry: Array<TypeCauldronCodePushEntry>) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version) {
-      version.miniApps.codePush.push(miniapps)
+      version.miniApps.codePush.push(codePushEntry)
       await this.commit(`New CodePush OTA update`)
     }
   }
@@ -459,24 +463,33 @@ export default class CauldronApi {
   async hasYarnLock (
     nativeApplicationName: string,
     platformName: string,
-    versionName: string
+    versionName: string,
+    key: string
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return version ? version.yarnlock !== null : false
+    if (version && version.yarnLocks && version.yarnLocks[key]) {
+      return true
+    } else {
+      return false
+    }
   }
 
   async addYarnLock (
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
+    key: string,
     yarnlock: string | Buffer) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
 
     if (version) {
       const filename = shasum(yarnlock)
       await this._yarnlockStore.storeFile(filename, yarnlock)
-      version.yarnlock = filename
-      await this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
+      if (!version.yarnLocks) {
+        version.yarnLocks = {}
+      }
+      version.yarnLocks[key] = filename
+      await this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
       return true
     }
 
@@ -486,38 +499,41 @@ export default class CauldronApi {
   async getYarnLock (
     nativeApplicationName: string,
     platformName: string,
-    versionName: string
+    versionName: string,
+    key: string
   ) : Promise<?Buffer> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
 
-    if (version && version.yarnlock) {
-      return this._yarnlockStore.getFile(version.yarnlock)
+    if (version && version.yarnLocks && version.yarnLocks[key]) {
+      return this._yarnlockStore.getFile(version.yarnLocks[key])
     }
   }
 
   async getPathToYarnLock (
     nativeApplicationName: string,
     platformName: string,
-    versionName: string
+    versionName: string,
+    key: string
   ) : Promise<?string> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
 
-    if (version && version.yarnlock) {
-      return this._yarnlockStore.getPathToFile(version.yarnlock)
+    if (version && version.yarnLocks && version.yarnLocks[key]) {
+      return this._yarnlockStore.getPathToFile(version.yarnLocks[key])
     }
   }
 
   async removeYarnLock (
     nativeApplicationName: string,
     platformName: string,
-    versionName: string
+    versionName: string,
+    key: string
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
 
-    if (version && version.yarnlock) {
-      if (await this._yarnlockStore.removeFile(version.yarnlock)) {
-        version.yarnlock = null
-        await this.commit(`Remove yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
+    if (version && version.yarnLocks && version.yarnLocks[key]) {
+      if (await this._yarnlockStore.removeFile(version.yarnLocks[key])) {
+        delete version.yarnLocks[key]
+        await this.commit(`Remove yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
         return true
       }
     }
@@ -529,31 +545,32 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
+    key: string,
     yarnlock: string | Buffer
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
 
-    if (version && version.yarnlock) {
-      await this._yarnlockStore.removeFile(version.yarnlock)
+    if (version && version.yarnLocks && version.yarnLocks[key]) {
+      await this._yarnlockStore.removeFile(version.yarnLocks[key])
       const filename = shasum(yarnlock)
       await this._yarnlockStore.storeFile(filename, yarnlock)
       version.yarnlock = filename
-      await this.commit(`Updated yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
+      await this.commit(`Updated yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
     }
 
     return false
   }
 
-  async setYarnLockId (
+  async setYarnLocks (
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    yarnlockid: string
+    yarnLocks: Object
   ) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
-      version.yarnlock = yarnlockid
-      await this.commit(`Set yarn.lock for ${nativeApplicationName} ${platformName} ${versionName}`)
+    if (version && version.yarnLocks) {
+      version.yarnLocks = yarnLocks
+      await this.commit(`Set yarn locks for ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
 }

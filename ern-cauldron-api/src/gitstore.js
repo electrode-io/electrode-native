@@ -10,9 +10,25 @@ import path from 'path'
 
 const CAULDRON_FILENAME = 'cauldron.json'
 
+export type TypeCauldronCodePushMetadata = {
+  deploymentName?: string,
+  isMandatory?: boolean,
+  appVersion?: string,
+  size?: number,
+  releaseMethod?: string,
+  label?: string,
+  releasedBy?: string,
+  rollout?: number
+}
+
+export type TypeCauldronCodePushEntry = {
+  metadata: TypeCauldronCodePushMetadata,
+  miniapps: Array<string>
+}
+
 type TypeCauldronMiniApps = {
   container: Array<string>,
-  codePush: Array<any>
+  codePush: Array<TypeCauldronCodePushEntry>
 }
 
 type TypeCauldronVersion = {
@@ -20,7 +36,7 @@ type TypeCauldronVersion = {
   ernPlatormVersion: string,
   isReleased: boolean,
   binary: ?string,
-  yarnlock: ?string,
+  yarnLocks: Object,
   nativeDeps: Array<string>,
   miniApps: TypeCauldronMiniApps,
   config?: Object,
