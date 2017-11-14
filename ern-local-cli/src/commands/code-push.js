@@ -105,7 +105,7 @@ exports.handler = async function ({
   })
 
   try {
-    const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
+    const pathToYarnLock = await getPathToYarnLock(napDescriptor, deploymentName)
     await performCodePushOtaUpdate(
       napDescriptor,
       _.map(miniapps, Dependency.fromString), {
@@ -121,4 +121,14 @@ exports.handler = async function ({
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }
+}
+
+async function getPathToYarnLock (
+  napDescriptor: NativeApplicationDescriptor,
+  deploymentName: string) {
+  let pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, deploymentName)
+  if (!pathToYarnLock) {
+    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
+  }
+  return pathToYarnLock
 }

@@ -165,7 +165,7 @@ exports.handler = async function ({
 
       let pathToYarnLock
       if (napDescriptor) {
-        pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
+        pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
       }
 
       await generateMiniAppsComposite(

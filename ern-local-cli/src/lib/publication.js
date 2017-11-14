@@ -22,6 +22,9 @@ import {
   NativeApplicationDescriptor,
   spin
 } from 'ern-util'
+import type {
+  CodePushPackage
+} from 'ern-util'
 
 import inquirer from 'inquirer'
 import _ from 'lodash'
@@ -142,7 +145,7 @@ version: string, {
   try {
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
-    const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor)
+    const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
 
     // Retrieve generator configuration (which for now only contains publication URL config)
     // only if caller of this method wants to publish the generated container
@@ -181,7 +184,7 @@ version: string, {
     // Only update yarn lock if container is getting published
     if (publish) {
       const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
-      await cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock)
+      await cauldron.addOrUpdateYarnLock(napDescriptor, 'container', pathToNewYarnLock)
     }
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
@@ -192,14 +195,14 @@ version: string, {
 export async function performCodePushOtaUpdate (
 napDescriptor: NativeApplicationDescriptor,
 miniApps: Array<Dependency>, {
-  force,
+  force = false,
   codePushAppName,
   codePushDeploymentName,
   codePushTargetVersionName,
-  codePushIsMandatoryRelease,
-  codePushRolloutPercentage,
+  codePushIsMandatoryRelease = false,
+  codePushRolloutPercentage = 100,
   pathToYarnLock,
-  skipConfirmation
+  skipConfirmation = false
 }: {
   force: boolean,
   codePushAppName: string,
@@ -250,8 +253,7 @@ miniApps: Array<Dependency>, {
     }
   }
 
-  const codePushMiniapps : Array<Array<string>> = await cauldron.getCodePushMiniApps(napDescriptor)
-  const latestCodePushedMiniApps : Array<Dependency> = _.map(codePushMiniapps.pop(), Dependency.fromString)
+  const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(napDescriptor, codePushDeploymentName)
 
   // We need to include, in this CodePush bundle, all the MiniApps that were part
   // of the previous CodePush. We will override versions of the MiniApps with
@@ -261,7 +263,7 @@ miniApps: Array<Dependency>, {
   // the bundle we will push will container MiniAppOne@2.0.0 and MiniAppTwo@1.0.0.
   // If this the first ever CodePush bundle for this specific native application version
   // then the reference miniapp versions are the one from the container.
-  let referenceMiniAppsToCodePush : Array<Dependency> = latestCodePushedMiniApps
+  let referenceMiniAppsToCodePush = latestCodePushedMiniApps
   if (!referenceMiniAppsToCodePush || referenceMiniAppsToCodePush.length === 0) {
     referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(napDescriptor)
   }
@@ -283,22 +285,25 @@ miniApps: Array<Dependency>, {
   await spin('Generating composite bundle to be published through CodePush',
      generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
 
-  const bundleOutputPath = path.join(tmpWorkingDir, 'bundleOut')
-  shell.mkdir('-p', bundleOutputPath)
+  const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
+  shell.mkdir('-p', bundleOutputDirectory)
   const platform = napDescriptor.platform || ''
+  const bundleOutputPath = platform === 'android'
+    ? path.join(bundleOutputDirectory, 'index.android.bundle')
+    : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
   await reactnative.bundle({
     entryFile: `index.${platform}.js`,
     dev: false,
     bundleOutput: bundleOutputPath,
     platform,
-    assetsDest: bundleOutputPath
+    assetsDest: bundleOutputDirectory
   })
 
   codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
   codePushAppName = codePushAppName || await askUserForCodePushAppName()
 
-  const codePushWasDone = await codePushSdk.releaseReact(
+  const codePushResponse: CodePushPackage = await codePushSdk.releaseReact(
     codePushAppName,
     codePushDeploymentName,
     bundleOutputPath,
@@ -307,11 +312,21 @@ miniApps: Array<Dependency>, {
       rollout: codePushRolloutPercentage
     })
 
-  if (codePushWasDone) {
-    await cauldron.addCodePushMiniApps(napDescriptor, miniAppsToBeCodePushed)
-    const pathToNewYarnLock = path.join(bundleOutputPath, 'yarn.lock')
-    await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, pathToNewYarnLock))
-  }
+  await cauldron.addCodePushEntry(
+    napDescriptor, {
+      deploymentName: codePushDeploymentName,
+      isMandatory: codePushResponse.isMandatory,
+      appVersion: codePushResponse.appVersion,
+      size: codePushResponse.size,
+      releaseMethod: codePushResponse.releaseMethod,
+      label: codePushResponse.label,
+      releasedBy: codePushResponse.releasedBy,
+      rollout: codePushResponse.rollout
+    },
+    miniAppsToBeCodePushed)
+
+  const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
+  await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, codePushDeploymentName, pathToNewYarnLock))
 }
 
 export function getCodePushAccessKey () {

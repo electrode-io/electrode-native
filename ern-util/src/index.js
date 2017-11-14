@@ -64,3 +64,8 @@ export default ({
   gitCli: _gitCli,
   CodePushSdk: _CodePushSdk
 })
+
+export type {
+  CodePushPackageInfo,
+  CodePushPackage
+} from './CodePushSdk'

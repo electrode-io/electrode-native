@@ -13,3 +13,8 @@ export default function factory (
   const dbStore = new GitStore(cauldronPath, repository, branch)
   return new Api(dbStore, sourcemapStore, yarnlockStore)
 }
+
+export type {
+  TypeCauldronCodePushMetadata,
+  TypeCauldronCodePushEntry
+} from './gitstore'
