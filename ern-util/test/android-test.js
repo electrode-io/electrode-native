@@ -8,13 +8,7 @@ import path from 'path'
 import * as childProcess from '../src/childProcess'
 import sinon from 'sinon'
 import ora from 'ora'
-import  {
-  getAndroidAvds,
-  askUserToSelectAvdEmulator,
-  getDevices,
-  runAndroid,
-  installAndLaunchApp
-} from '../src/android'
+import * as android from '../src/android'
 import ernConfig from '../src/config'
 import inquirer from 'inquirer'
 import * as fixtures from './fixtures/common'
@@ -44,7 +38,6 @@ const oraStartStub = sinon.stub(oraProto, 'start').returns({
 // class in test stubs
 const execpStub = sinon.stub(childProcess, 'execp')
 const inquirerStub = sinon.stub(inquirer, 'prompt')
-const installAndLaunchAppStub = sinon.stub(installAndLaunchApp.prototype)
 
 // Before each test
 beforeEach(() => {
@@ -75,13 +68,9 @@ describe('android.js', () => {
   // ==========================================================
   describe('runAndroid', () => {
     it('runAndroid throws error with more than 2 running devices', async () => {
-      const avdStdOut = await readFile(
-        path.resolve(__dirname, './fixtures/adb_devices'),
-        {encoding: 'utf8'}
-      )
-      execpStub.resolves(avdStdOut)
+      execpStub.resolves(fixtures.getDeviceResult)
       try {
-        await runAndroid(fixtures.pkgName, fixtures.activityName)
+        await android.runAndroid(fixtures.pkgName, fixtures.activityName)
       } catch (e) {
         expect(e.message).to.include('More than one device/emulator is running !')
       }
@@ -98,7 +87,7 @@ describe('android.js', () => {
         {encoding: 'utf8'}
       )
       execpStub.resolves(avdStdOut)
-      const devices = await getDevices()
+      const devices = await android.getDevices()
       expect(devices).to.include(fixtures.deviceOne)
       expect(devices).to.include(fixtures.deviceTwo)
     })
@@ -109,7 +98,7 @@ describe('android.js', () => {
         {encoding: 'utf8'}
       )
       execpStub.resolves(avdStdOut)
-      const devices = await getDevices()
+      const devices = await android.getDevices()
       expect(devices).to.eql([])
     })
   })
@@ -119,11 +108,7 @@ describe('android.js', () => {
   // ==========================================================
   describe('askUserToSelectAvdEmulator', () => {
     it('prompt user if previous emulator flag is false', async () => {
-      const avdStdOut = await readFile(
-        path.resolve(__dirname, './fixtures/emulator_list_avds'),
-        {encoding: 'utf8'}
-      )
-      execpStub.resolves(avdStdOut)
+      execpStub.resolves(fixtures.oneAvdList)
       const config = {
         android: {
           usePreviousEmulator: false,
@@ -132,15 +117,11 @@ describe('android.js', () => {
       }
       resolveInquirer({avdImageName: fixtures.oneAvd})
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
     })
 
     it('prompt user if avd is missing and previous emulator flag is true', async () => {
-      const avdStdOut = await readFile(
-        path.resolve(__dirname, './fixtures/emulator_list_avds'),
-        {encoding: 'utf8'}
-      )
-      execpStub.resolves(avdStdOut)
+      execpStub.resolves(fixtures.oneAvdList)
       const config = {
         android: {
           usePreviousEmulator: true,
@@ -149,41 +130,29 @@ describe('android.js', () => {
       }
       resolveInquirer({avdImageName: fixtures.oneAvd})
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
     })
 
     it('prompt user if emulator config is not present', async () => {
-      const avdStdOut = await readFile(
-        path.resolve(__dirname, './fixtures/emulator_list_avds'),
-        {encoding: 'utf8'}
-      )
-      execpStub.resolves(avdStdOut)
+      execpStub.resolves(fixtures.oneAvdList)
       const config = null
       resolveInquirer({avdImageName: fixtures.oneAvd})
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
     })
 
     it('prompt user if usePreviousEmulator flag is not present', async () => {
-      const avdStdOut = await readFile(
-        path.resolve(__dirname, './fixtures/emulator_list_avds'),
-        {encoding: 'utf8'}
-      )
-      execpStub.resolves(avdStdOut)
+      execpStub.resolves(fixtures.oneAvdList)
       const config = {
         android: {}
       }
       resolveInquirer({avdImageName: fixtures.oneAvd})
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
     })
 
     it('do not prompt user if previous emulator flag is true', async () => {
-      const avdStdOut = await readFile(
-        path.resolve(__dirname, './fixtures/emulator_list_avds'),
-        {encoding: 'utf8'}
-      )
-      execpStub.resolves(avdStdOut)
+      execpStub.resolves(fixtures.oneAvdList)
       const config = {
         android: {
           usePreviousEmulator: true,
@@ -191,7 +160,7 @@ describe('android.js', () => {
         }
       }
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
     })
   })
 
@@ -205,7 +174,7 @@ describe('android.js', () => {
         {encoding: 'utf8'}
       )
       execpStub.resolves(avdStdOut)
-      const avdList = await getAndroidAvds()
+      const avdList = await android.getAndroidAvds()
       expect(avdList).to.have.length(2)
       expect(avdList).to.eql(fixtures.multipleAvdList)
     })
@@ -216,7 +185,7 @@ describe('android.js', () => {
         {encoding: 'utf8'}
       )
       execpStub.resolves(avdStdOut)
-      const avdList = await getAndroidAvds()
+      const avdList = await android.getAndroidAvds()
       expect(avdList).to.have.length(1)
       expect(avdList).to.eql(fixtures.oneAvdList)
     })
@@ -224,7 +193,7 @@ describe('android.js', () => {
     it('return empty list of configured avd', async () => {
       const avdStdOut = ''
       execpStub.resolves(avdStdOut)
-      const avdList = await getAndroidAvds()
+      const avdList = await android.getAndroidAvds()
       expect(avdList).to.eql([''])
     })
   })
