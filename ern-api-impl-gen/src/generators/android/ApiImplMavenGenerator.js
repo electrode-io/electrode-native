@@ -72,7 +72,7 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
       }
 
       fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
-      shell.cp('-Rf', path.join(paths.apiImplHull, 'android', '*'), outputDirectory)
+      shell.cp('-Rf', path.join(paths.apiImplHull, 'android', '{.*,*}'), outputDirectory)
 
       const srcOutputDirectory = path.join(outputDirectory, 'lib', SRC_MAIN_JAVA_DIR)
       for (let plugin: Dependency of plugins) {
