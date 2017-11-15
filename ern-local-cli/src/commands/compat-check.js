@@ -39,11 +39,7 @@ exports.handler = async function ({
 } = {}) {
   try {
     if (!miniapp && miniapps.length === 0) {
-      try {
-        miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
-      } catch (e) {
-        return log.error(e.message)
-      }
+      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
     } else if (miniapp && miniapps.length === 0) {
       miniapps.push(miniapp)
     }
