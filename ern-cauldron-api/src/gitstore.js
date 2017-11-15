@@ -10,7 +10,7 @@ import path from 'path'
 
 const CAULDRON_FILENAME = 'cauldron.json'
 
-export type TypeCauldronCodePushMetadata = {
+export type CauldronCodePushMetadata = {
   deploymentName?: string,
   isMandatory?: boolean,
   appVersion?: string,
@@ -21,43 +21,43 @@ export type TypeCauldronCodePushMetadata = {
   rollout?: number
 }
 
-export type TypeCauldronCodePushEntry = {
-  metadata: TypeCauldronCodePushMetadata,
+export type CauldronCodePushEntry = {
+  metadata: CauldronCodePushMetadata,
   miniapps: Array<string>
 }
 
-type TypeCauldronMiniApps = {
+type CauldronMiniApps = {
   container: Array<string>,
-  codePush: Array<TypeCauldronCodePushEntry>
+  codePush: Array<CauldronCodePushEntry>
 }
 
-type TypeCauldronVersion = {
+type CauldronNativeAppVersion = {
   name: string,
   ernPlatormVersion: string,
   isReleased: boolean,
   binary: ?string,
   yarnLocks: Object,
   nativeDeps: Array<string>,
-  miniApps: TypeCauldronMiniApps,
+  miniApps: CauldronMiniApps,
   config?: Object,
   containerVersion: string
 }
 
-type TypeCauldronPlatform = {
+type CauldronNativeAppPlatform = {
   name: string,
-  versions: Array<TypeCauldronVersion>,
+  versions: Array<CauldronNativeAppVersion>,
   config?: Object
 }
 
-type TypeCauldronNativeApp = {
+type CauldronNativeApp = {
   name: string,
-  platforms: Array<TypeCauldronPlatform>,
+  platforms: Array<CauldronNativeAppPlatform>,
   config?: Object
 }
 
-type TypeCauldron = {
+type Cauldron = {
   config?: Object,
-  nativeApps: Array<TypeCauldronNativeApp>
+  nativeApps: Array<CauldronNativeApp>
 }
 
 export default class GitStore extends BaseGit {
@@ -85,7 +85,7 @@ export default class GitStore extends BaseGit {
     }
   }
 
-  async getCauldron () : Promise<TypeCauldron> {
+  async getCauldron () : Promise<Cauldron> {
     await this.sync()
     if (fs.existsSync(this._jsonPath)) {
       this.cauldron = await readJSON(this._jsonPath)

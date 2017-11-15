@@ -19,6 +19,7 @@ import {
   runCauldronContainerGen
 } from '../lib/publication'
 import utils from '../lib/utils'
+import * as constants from '../lib/constants'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
@@ -165,7 +166,7 @@ exports.handler = async function ({
 
       let pathToYarnLock
       if (napDescriptor) {
-        pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
+        pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
       }
 
       await generateMiniAppsComposite(

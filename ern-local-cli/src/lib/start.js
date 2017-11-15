@@ -19,6 +19,7 @@ import _ from 'lodash'
 import chokidar from 'chokidar'
 import tmp from 'tmp'
 import path from 'path'
+import * as constants from './constants'
 
 const {
   runAndroidApk
@@ -72,7 +73,7 @@ export default async function start ({
 
   let pathToYarnLock
   if (descriptor) {
-    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
+    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
   }
   await spin('Generating MiniApps composite',
     generateMiniAppsComposite(miniAppsPaths, workingDir, {

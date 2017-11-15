@@ -13,7 +13,7 @@ import FileStore from './filestore'
 import GitStore from './gitstore'
 
 import type {
-  TypeCauldronCodePushEntry
+  CauldronCodePushEntry
 } from './gitstore'
 
 export default class CauldronApi {
@@ -393,7 +393,7 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    codePushEntry: Array<TypeCauldronCodePushEntry>) {
+    codePushEntry: Array<CauldronCodePushEntry>) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version) {
       version.miniApps.codePush.push(codePushEntry)

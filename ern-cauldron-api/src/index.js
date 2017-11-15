@@ -15,6 +15,6 @@ export default function factory (
 }
 
 export type {
-  TypeCauldronCodePushMetadata,
-  TypeCauldronCodePushEntry
+  CauldronCodePushMetadata,
+  CauldronCodePushEntry
 } from './gitstore'
