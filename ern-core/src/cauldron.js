@@ -417,6 +417,7 @@ class Cauldron {
           result = _.chain(codePushEntries)
             .filter(e => Array.isArray(e))
             .last()
+            .map(e => Dependency.fromString(e))
             .value()
         }
         return result
