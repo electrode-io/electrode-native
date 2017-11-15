@@ -283,7 +283,7 @@ miniApps: Array<Dependency>, {
   }
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
-  await spin('Generating composite bundle to be published through CodePush',
+  await spin('Generating MiniApps composite',
      generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
 
   const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
@@ -293,25 +293,25 @@ miniApps: Array<Dependency>, {
     ? path.join(bundleOutputDirectory, 'index.android.bundle')
     : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
-  await reactnative.bundle({
+  await spin('Generating MiniApps composite bundle', reactnative.bundle({
     entryFile: `index.${platform}.js`,
     dev: false,
     bundleOutput: bundleOutputPath,
     platform,
     assetsDest: bundleOutputDirectory
-  })
+  }))
 
   codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
   codePushAppName = codePushAppName || await askUserForCodePushAppName()
 
-  const codePushResponse: CodePushPackage = await codePushSdk.releaseReact(
+  const codePushResponse: CodePushPackage = await spin('Releasing bundle through CodePush', codePushSdk.releaseReact(
     codePushAppName,
     codePushDeploymentName,
     bundleOutputPath,
     codePushTargetVersionName, {
       isMandatory: codePushIsMandatoryRelease,
       rollout: codePushRolloutPercentage
-    })
+    }))
 
   await cauldron.addCodePushEntry(
     napDescriptor, {
