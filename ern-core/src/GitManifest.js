@@ -115,10 +115,10 @@ export default class GitManifest {
     plugin: Dependency,
     platformVersion: string = Platform.currentVersion) : Promise<?string> {
     await this.syncIfNeeded()
-    const orderedPluginsConfigurationDirectories = _(this.getPluginsConfigurationDirectories(platformVersion))
-                                                  .sortBy()
+    const versionRe = /_v(.+)\+/
+    const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(platformVersion)
+                                                  .sort((a, b) => semver.compare(versionRe.exec(a)[1], versionRe.exec(b)[1]))
                                                   .reverse()
-                                                  .value()
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       // Directory names cannot contain '/', so, replaced by ':'
@@ -126,9 +126,9 @@ export default class GitManifest {
 
       const pluginVersions = _.map(
         fs.readdirSync(pluginsConfigurationDirectory).filter(f => f.startsWith(pluginScopeAndName)),
-        s => /_v(.+)\+/.exec(s)[1])
+        s => versionRe.exec(s)[1])
 
-      const matchingVersion = _.find(pluginVersions.sort().reverse(), d => plugin.version >= d)
+      const matchingVersion = _.find(pluginVersions.sort(semver.compare).reverse(), d => plugin.version >= d)
       if (matchingVersion) {
         const pluginConfigurationPath = path.join(pluginsConfigurationDirectory, `${pluginScopeAndName}_v${matchingVersion}+`)
         if (fs.existsSync(path.join(pluginConfigurationPath, pluginConfigFileName))) {
