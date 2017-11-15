@@ -1,4 +1,4 @@
-## `ern code-push`
+## `ern code-push release`
 
 #### Description
 
@@ -10,7 +10,7 @@
 
 #### Syntax
 
-`ern code-push <miniapps..>`  
+`ern code-push release <miniapps..>`  
 
 **Arguments**
 
