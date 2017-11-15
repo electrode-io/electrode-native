@@ -9,7 +9,7 @@ import {
 import _ from 'lodash'
 import CauldronCli from 'ern-cauldron-api'
 import type {
-  TypeCauldronCodePushMetadata
+  CauldronCodePushMetadata
 } from 'ern-cauldron-api'
 import Platform from './Platform'
 
@@ -445,7 +445,7 @@ class Cauldron {
 
   async addCodePushEntry (
     napDescriptor: NativeApplicationDescriptor,
-    metadata: TypeCauldronCodePushMetadata,
+    metadata: CauldronCodePushMetadata,
     miniApps: Array<Dependency>) : Promise<*> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)

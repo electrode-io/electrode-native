@@ -12,6 +12,7 @@ import {
   performCodePushOtaUpdate
 } from '../lib/publication'
 import utils from '../lib/utils'
+import * as constants from '../lib/constants'
 import _ from 'lodash'
 
 exports.command = 'code-push <miniapps..>'
@@ -128,7 +129,7 @@ async function getPathToYarnLock (
   deploymentName: string) {
   let pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, deploymentName)
   if (!pathToYarnLock) {
-    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, 'container')
+    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
   }
   return pathToYarnLock
 }
