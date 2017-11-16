@@ -184,7 +184,7 @@ static dispatch_semaphore_t semaphore;
     [self loadCustomFonts];
 
     {{#hasApiImpl}}
-    [self registerAPIImplementations:apiImplConfig];
+    [self registerAPIImplementations:{{#hasAtleastOneApiImplConfig}}apiImplConfig{{/hasAtleastOneApiImplConfig}}{{^hasAtleastOneApiImplConfig}}nil{{/hasAtleastOneApiImplConfig}}];
     {{/hasApiImpl}}
 
 }
