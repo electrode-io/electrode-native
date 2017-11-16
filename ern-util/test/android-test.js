@@ -37,30 +37,21 @@ const oraStartStub = sinon.stub(oraProto, 'start').returns({
 
 // class in test stubs
 const execpStub = sinon.stub(childProcess, 'execp')
-const inquirerStub = sinon.stub(inquirer, 'prompt')
+let ernConfigStub
 
-// Before each test
+after(() => {
+  execpStub.restore()
+})
+
 beforeEach(() => {
   logErrorStub.reset()
   logInfoStub.reset()
   execpStub.reset()
-  inquirerStub.reset()
 })
-
-after(() => {
-  execpStub.restore()
-  inquirerStub.restore()
-})
-
-let ernConfigStub
 
 afterEach(() => {
   ernConfigStub && ernConfigStub.restore()
 })
-
-function resolveInquirer (answer) {
-  inquirerStub.resolves(answer)
-}
 
 describe('android.js', () => {
   // ==========================================================
@@ -115,9 +106,13 @@ describe('android.js', () => {
           emulatorName: fixtures.oneAvd
         }
       }
-      resolveInquirer({avdImageName: fixtures.oneAvd})
+      const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
+        avdImageName: fixtures.oneAvd
+      })
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      const result = await android.askUserToSelectAvdEmulator()
+      inquirerStub.restore()
+      expect(result).to.be.equal(fixtures.oneAvd)
     })
 
     it('prompt user if avd is missing and previous emulator flag is true', async () => {
@@ -128,17 +123,25 @@ describe('android.js', () => {
           emulatorName: 'AvdNotPresent'
         }
       }
-      resolveInquirer({avdImageName: fixtures.oneAvd})
+      const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
+        avdImageName: fixtures.oneAvd
+      })
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      const result = await android.askUserToSelectAvdEmulator()
+      inquirerStub.restore()
+      expect(result).to.be.equal(fixtures.oneAvd)
     })
 
     it('prompt user if emulator config is not present', async () => {
       execpStub.resolves(fixtures.oneAvdList)
       const config = null
-      resolveInquirer({avdImageName: fixtures.oneAvd})
+      const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
+        avdImageName: fixtures.oneAvd
+      })
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      const result = await android.askUserToSelectAvdEmulator()
+      inquirerStub.restore()
+      expect(result).to.be.equal(fixtures.oneAvd)
     })
 
     it('prompt user if usePreviousEmulator flag is not present', async () => {
@@ -146,9 +149,13 @@ describe('android.js', () => {
       const config = {
         android: {}
       }
-      resolveInquirer({avdImageName: fixtures.oneAvd})
+      const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
+        avdImageName: fixtures.oneAvd
+      })
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
-      expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
+      const result = await android.askUserToSelectAvdEmulator()
+      inquirerStub.restore()
+      expect(result).to.be.equal(fixtures.oneAvd)
     })
 
     it('do not prompt user if previous emulator flag is true', async () => {

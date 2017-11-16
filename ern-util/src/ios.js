@@ -19,14 +19,25 @@ export type IosDevice = {
 export async function getiPhoneSimulators () {
   const iosSims = await simctl.getDevices()
   return _.filter(
-           _.flattenDeep(
-             _.map(iosSims, (val, key) => val)),
-        (device) => device.name.match(/^iPhone/))
+    _.flattenDeep(
+      _.map(iosSims, (val, key) => val)),
+    (device) => device.name.match(/^iPhone/))
 }
 
+function getKnownDevices () {
+  return execSync('xcrun instruments -s', {encoding: 'utf8'})
+}
+
+function getComputerName () {
+  return execSync('scutil --get HostName', {encoding: 'utf8'})
+}
+
+exports.getKnownDevices = getKnownDevices
+exports.getComputerName = getComputerName
+
 export function getiPhoneRealDevices () {
-  const devices = execSync('xcrun instruments -s', {encoding: 'utf8'})
-  const computerName = execSync('scutil --get HostName', {encoding: 'utf8'})
+  const devices = exports.getKnownDevices()
+  const computerName = exports.getComputerName()
   return parseIOSDevicesList(devices, computerName)
 }
 
@@ -36,7 +47,7 @@ export async function askUserToSelectAniPhoneDevice (devices: Array<IosDevice>) 
     value: val
   }))
 
-  const { selectedDevice } = await inquirer.prompt([{
+  const {selectedDevice} = await inquirer.prompt([{
     type: 'list',
     name: 'selectedDevice',
     message: 'Choose an iOS device',
@@ -55,18 +66,20 @@ export async function askUserToSelectAniPhoneSimulator () {
 
   // Check if user has set the usePreviousEmulator flag to true
   let emulatorConfig = ernConfig.getValue('emulatorConfig')
-  if (choices && emulatorConfig.ios.usePreviousEmulator) {
-    // Get the name of previously used simulator
-    const simulatorUdid = emulatorConfig.ios.simulatorUdid
-    // Check if simulator still exists
-    let previousSimulator
-    choices.forEach((val) => {
-      if (val && val.value.udid === simulatorUdid) {
-        previousSimulator = val.value
+  if (choices && emulatorConfig) {
+    if (emulatorConfig.ios && emulatorConfig.ios.usePreviousEmulator) {
+      // Get the name of previously used simulator
+      const simulatorUdid = emulatorConfig.ios.simulatorUdid
+      // Check if simulator still exists
+      let previousSimulator
+      choices.forEach((val) => {
+        if (val && val.value.udid === simulatorUdid) {
+          previousSimulator = val.value
+        }
+      })
+      if (previousSimulator) {
+        return previousSimulator
       }
-    })
-    if (previousSimulator) {
-      return previousSimulator
     }
   }
 
@@ -118,7 +131,7 @@ export function killAllRunningSimulators () {
 
 export async function launchSimulator (deviceUdid: string) {
   return new Promise((resolve, reject) => {
-    const xcrunProc = spawn('xcrun', [ 'instruments', '-w', deviceUdid ])
+    const xcrunProc = spawn('xcrun', ['instruments', '-w', deviceUdid])
     xcrunProc.stdout.on('data', data => {
       log.debug(data)
     })
@@ -134,12 +147,12 @@ export async function launchSimulator (deviceUdid: string) {
 }
 
 export async function runIosApp ({
-  appPath,
-  bundleId
-  } : {
-    appPath: string,
-    bundleId: string
-    }) {
+                                   appPath,
+                                   bundleId
+                                 }: {
+                                   appPath: string,
+                                   bundleId: string
+                                 }) {
   const iPhoneDevice = await askUserToSelectAniPhoneSimulator()
   killAllRunningSimulators()
   await spin('Waiting for device to boot',

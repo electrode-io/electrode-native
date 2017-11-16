@@ -1,0 +1,46 @@
+{
+  "11.1": [
+    {
+      "state": "Shutdown",
+      "name": "iPad Air",
+      "udid": "30DC1EF8-FAE6-4901-8D38-704BE0C91399",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Air 2",
+      "udid": "D5AD6C6D-B60C-4B5B-A509-08CA6DAEACB6",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad (5th generation)",
+      "udid": "CE18CE07-B890-4A3F-AC48-CC1E0A83E1F5",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (9.7-inch)",
+      "udid": "ED82558F-2A60-451A-A8D8-D19619F420C2",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (12.9-inch)",
+      "udid": "0C903922-94C6-47B1-A49C-874A05D36D79",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (12.9-inch) (2nd generation)",
+      "udid": "80164F39-DADE-4E6C-B99E-8DEE4C83F07F",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (10.5-inch)",
+      "udid": "FC34D86D-AA8A-4A25-B252-746BA72C00BF",
+      "sdk": "11.1"
+    }
+  ]
+}
