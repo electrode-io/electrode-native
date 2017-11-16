@@ -26,8 +26,10 @@
 {{/apiImplementations}}
 {{/hasAtleastOneApiImplConfig}}
 
-{{#hasAtleastOneApiImplConfig}}
+{{#hasApiImpl}}
 @protocol APIImplsConfigWrapperDelegate <NSObject>
+{{/hasApiImpl}}
+{{#hasAtleastOneApiImplConfig}}
 @required
 {{/hasAtleastOneApiImplConfig}}
 {{#apiImplementations}}
@@ -35,9 +37,9 @@
 - ({{apiName}}ApiConfig *_Nonnull){{apiVariableName}}ApiConfig;
 {{/hasConfig}}
 {{/apiImplementations}}
-{{#hasAtleastOneApiImplConfig}}
+{{#hasApiImpl}}
 @end
-{{/hasAtleastOneApiImplConfig}}
+{{/hasApiImpl}}
 
 
 NS_ASSUME_NONNULL_BEGIN
