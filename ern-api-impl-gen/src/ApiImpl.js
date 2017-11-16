@@ -10,7 +10,8 @@ import {
 } from 'ern-util'
 import {
   ModuleTypes,
-  yarn
+  yarn,
+  Platform
 } from 'ern-core'
 import path from 'path'
 import ApiImplGen from './generators/ApiImplGen'
@@ -103,7 +104,7 @@ async function createNodePackage (
   shell.cd(outputDirectoryPath)
   await yarn.init()
   await yarn.add(apiDependency.path)
-  shell.rm('-rf', path.join(outputDirectoryPath, 'node_modules'))
+  shell.cp(path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', '.gitignore'), outputDirectoryPath)
   ernifyPackageJson(outputDirectoryPath, apiImplName, packageName, scope, nativeOnly, hasConfig)
   shell.cd(currentDirectory)
 }
