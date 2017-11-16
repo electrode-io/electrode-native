@@ -201,14 +201,14 @@ Now let's add an API to the MiniApp so that we can retrieve movies from the nati
 
 ## Adding the MoviesApi to the MovieList MiniApp
 
-We have already created and published the `MoviesApi` for the needs of this tutorial.
-You may view the created API code in [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) repository.  
+We have already created and published the `MoviesApi` and a native implementation of the api for the needs of this tutorial.
+You may view the created API code in [react-native-ernmovie-api](https://github.com/electrode-io/react-native-ernmovie-api) repository and the implementation code in [ReactNativeErnmovieApiImpl](https://github.com/electrode-io/ReactNativeErnmovieApiImpl) repository.
 We also created a `NavigationApi` that will be of use later in this tutorial, you can view its code in the [react-native-ernnavigation-api](https://github.com/electrode-io/react-native-ernnavigation-api) repository.
 
-1) Add the `MoviesApi`, the `NavigationApi` and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as dependencies of MovieListMiniApp, using the `ern add` command.
+1) Add the `MoviesApi`, the `MoviesApiImpl`, the `NavigationApi` and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as dependencies of MovieListMiniApp, using the `ern add` command.
 
 ```bash
-$ ern add react-native-ernmovie-api react-native-ernnavigation-api react-native-electrode-bridge
+$ ern add react-native-ernmovie-api-impl react-native-ernnavigation-api react-native-electrode-bridge
 ```
 
 2) Open the `App.js` file and modify it as described in the next steps.
@@ -271,147 +271,7 @@ $ ern run-ios
 ```
 {% common %}
 
-The UI displays the movie names that are set in the catch block. This means there was no API implementation available to serve the `getTopRatedMovies` request.
-
-Now let's write an implementation of this API. Although you can write the implementation either on the JavaScript side or Native side, this tutorial shows how to write the implementation on the native side.
-
-### Implementing the MovieApi on the native side
-
-{% sample lang="android" %}  
-1) Open the `MainApplication.java` file in your favorite editor. The `MainApplication.java` file is located in the  `android/app/src/main/java/com/walmartlabs/ern/`) directory. Alternatively, you can use Android Studio to open the Android project (in the `android/` directory) and to edit this file.
-
-2) Replace the code in the `MainApplication.java` file with the following code:
-
-```java
-package com.walmartlabs.ern;
-
-import android.app.Application;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import com.ernmvoie.ern.api.MoviesApi;
-import com.ernmvoie.ern.model.Movie;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
-import com.walmartlabs.electrode.reactnative.bridge.None;
-import com.walmartlabs.ern.container.ElectrodeReactContainer;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainApplication extends Application {
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        ElectrodeReactContainer.initialize(this,
-          new ElectrodeReactContainer.Config().isReactNativeDeveloperSupport(RunnerConfig.RN_DEV_SUPPORT_ENABLED));
-
-        MoviesApi.requests().registerGetTopRatedMoviesRequestHandler(new ElectrodeBridgeRequestHandler<None, List<Movie>>() {
-            @Override
-            public void onRequest(@Nullable None payload, @NonNull ElectrodeBridgeResponseListener<List<Movie>> responseListener) {
-              List<Movie> movies = new ArrayList<Movie>() {{
-                add(new Movie.Builder("1", "The Shawshank Redemption").releaseYear(1994).rating(5f).imageUrl("http://bit.ly/2xZm1Zr").build());
-                add(new Movie.Builder("2", "The Godfather").releaseYear(1972).rating(4.9f).imageUrl("http://bit.ly/2wK5TuA").build());
-                add(new Movie.Builder("3", "The Godfather: Part II ").releaseYear(1974).rating(4f).imageUrl("http://bit.ly/2yysiIA").build());
-                add(new Movie.Builder("4", "The Dark Knight").releaseYear(2008).rating(4f).imageUrl("http://bit.ly/2iZPBqw").build());
-                add(new Movie.Builder("5", "12 Angry Men").releaseYear(1957).rating(3f).imageUrl("http://bit.ly/2xwkt7r").build());
-              }};
-              responseListener.onSuccess(movies);
-            }
-        });
-    }
-}
-```
-3) Relaunch the application
-
-If you are using Android Studio, you can run the app directly from there or you can use the `run` command as shown below.
-
-```bash
-$ ern run-android
-```
-
-{% sample lang="ios" %}
-1) In Xcode, open the generated iOS project (in the `ios` directory).
-
-2) Replace the content of the `ViewController.h` file with the content shown below:
-
-```objectivec
-#import <UIKit/UIKit.h>
-
-@interface ViewController : UINavigationController
-
-@end
-```
-
-3) Replace the code in the `ViewController.m` file with the following code.
-
-```objectivec
-#import "ViewController.h"
-#import "RunnerConfig.h"
-#import <ElectrodeContainer/ElectrodeContainer.h>
-
-@interface ViewController ()
-@end
-
-@implementation ViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    MoviesAPI* moviesApi = [[MoviesAPI alloc] init];
-
-    [moviesApi.requests registerGetTopRatedMoviesRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
-        NSMutableArray<Movie *> *movies = [[NSMutableArray alloc] init];
-
-        [movies addObject:[self createMovie:@"1" title:@"The Shawshank Redemption" releaseYear:@1994 rating:@9.2 imageUrl:@"http://bit.ly/2xZm1Zr"]];
-        [movies addObject:[self createMovie:@"2" title:@"The Godfather" releaseYear:@1972 rating:@9.2 imageUrl:@"http://bit.ly/2wK5TuA"]];
-        [movies addObject:[self createMovie:@"3" title:@"The Godfather: Part II" releaseYear:@1974 rating:@9 imageUrl:@"http://bit.ly/2yysiIA"]];
-        [movies addObject:[self createMovie:@"4" title:@"The Dark Knight" releaseYear:@2008 rating:@9 imageUrl:@"http://bit.ly/2iZPBqw"]];
-        [movies addObject:[self createMovie:@"5" title:@"12 Angry Men" releaseYear:@1957 rating:@8.9 imageUrl:@"http://bit.ly/2xwkt7r"]];
-
-        block(movies, nil);
-    }];
-
-   UIViewController *viewController =
-   [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
-   [viewController setTitle:@"MovieList MiniApp"];
-   viewController.view.frame = [UIScreen mainScreen].bounds;
-   self.navigationBar.translucent = NO;
-   [self pushViewController:viewController animated:NO];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (Movie *) createMovie : (NSString*) movieId title: (NSString*) title releaseYear: (NSNumber*) releaseYear rating: (NSNumber*) rating imageUrl: (NSString*) imageUrl {
-
-    NSMutableDictionary* movieDict = [[NSMutableDictionary alloc]init];
-    [movieDict setObject:movieId forKey:@"id"];
-    [movieDict setObject:title forKey:@"title"];
-    [movieDict setObject:releaseYear forKey:@"releaseYear"];
-    [movieDict setObject:imageUrl forKey:@"imageUrl"];
-
-    Movie *movie =[[Movie alloc] initWithDictionary:movieDict];
-    return movie;
-}
-
-@end
-
-```
-
-3) Relaunch the application
-
-You can launch the app directly from Xcode or you can use the `run` command as shown below.
-
-```bash
-$ ern run-ios
-```
-
-{% common %}
-You can see that the UI now shows the movies that are stored in the native application.
+The UI displays the movie names that are returned by the native implementation of the movie api.
 
 ## Using the Navigation API
 
