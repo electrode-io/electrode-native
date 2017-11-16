@@ -70,8 +70,8 @@ process.chdir(workingDirectoryPath)
 console.log(info(`Creating GitHub repository (${gitHubCauldronRepositoryName})`))
 run(`curl -u ${gitUserName}:${gitPassword} -d '{"name": "${gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
-run('ern --hide-banner')
-run('ern --log-level trace')
+run('ern platform config showBanner false')
+run('ern platform config logLevel trace')
 run('ern --version')
 
 // Cauldron repo

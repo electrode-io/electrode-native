@@ -46,26 +46,16 @@ function showVersion () {
 // Entry point
 // ==============================================================================
 export default function run () {
-  const logLevel = process.env['ERN_LOG_LEVEL'] ? process.env['ERN_LOG_LEVEL'] : ernConfig.getValue('loglevel', 'info')
+  const logLevel = process.env['ERN_LOG_LEVEL'] ? process.env['ERN_LOG_LEVEL'] : ernConfig.getValue('logLevel', 'info')
   global.log = new ColoredLog(logLevel)
   global.ernLogLevel = logLevel
   shell.config.fatal = true
   shell.config.verbose = (logLevel === 'trace')
 
-  if (ernConfig.getValue('banner', true)) { showBanner() }
+  if (ernConfig.getValue('showBanner', true)) { showBanner() }
   showInfo()
 
-  const argv = yargs.argv
-  if (argv['show-banner']) {
-    ernConfig.setValue('banner', true)
-    return log.info(`Banner is now enabled`)
-  } else if (argv['hide-banner']) {
-    ernConfig.setValue('banner', false)
-    return log.info(`Banner is now disabled`)
-  } else if (argv['log-level']) {
-    ernConfig.setValue('loglevel', argv['log-level'])
-    return log.info(`Log level is now set to ${argv['log-level']}`)
-  } else if (argv['version']) {
+  if (yargs.argv['version']) {
     return showVersion()
   }
 
