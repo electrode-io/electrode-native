@@ -30,6 +30,7 @@ const movieApiImplPkgName = 'ern-movie-api-impl'
 const packageNotInNpm = 'ewkljrlwjerjlwjrl@0.0.3'
 
 process.env['SYSTEM_TESTS'] = 'true'
+process.on('SIGINT', () => afterAll())
 
 function getRandomInt (min, max) {
   min = Math.ceil(min)
@@ -42,10 +43,14 @@ function run (command, {
 } = {}) {
   console.log('===========================================================================')
   console.log(`${chalk.bold.red('Running')} ${chalk.bold.blue(`${command}`)}`)
-  const exitCode = shell.exec(command).code
-  if (exitCode !== expectedExitCode) {
+  const cmdProcess = shell.exec(command)
+  if (!cmdProcess) {
+    // Process was killed, perform clean up
+    afterAll()
+    shell.exit(1)
+  } else if (cmdProcess.code !== expectedExitCode) {
     console.log(`${chalk.bold.red('!!! TEST FAILED !!! ')} ${chalk.bold.blue(`${command}`)}`)
-    console.log(`Expected exit code ${expectedExitCode} but command exited with code ${exitCode}`)
+    console.log(`Expected exit code ${expectedExitCode} but command exited with code ${cmdProcess.code}`)
     afterAll()
     shell.exit(1)
   }
