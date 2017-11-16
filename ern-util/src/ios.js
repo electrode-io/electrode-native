@@ -8,6 +8,7 @@ import {
 } from 'child_process'
 import spin from './spin'
 import ernConfig from './config'
+import os from 'os'
 const simctl = require('node-simctl')
 
 export type IosDevice = {
@@ -29,7 +30,7 @@ function getKnownDevices () {
 }
 
 function getComputerName () {
-  return execSync('scutil --get HostName', {encoding: 'utf8'})
+  return os.hostname()
 }
 
 exports.getKnownDevices = getKnownDevices
