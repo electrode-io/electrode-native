@@ -283,7 +283,7 @@ miniApps: Array<Dependency>, {
   }
 
   const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
-  await spin('Generating MiniApps composite',
+  await spin('Generating composite miniapps',
      generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
 
   const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
@@ -293,7 +293,7 @@ miniApps: Array<Dependency>, {
     ? path.join(bundleOutputDirectory, 'index.android.bundle')
     : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
-  await spin('Generating MiniApps composite bundle', reactnative.bundle({
+  await spin('Generating composite bundle for miniapps', reactnative.bundle({
     entryFile: `index.${platform}.js`,
     dev: false,
     bundleOutput: bundleOutputPath,
