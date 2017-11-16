@@ -1,0 +1,112 @@
+{
+  "11.1": [
+    {
+      "state": "Shutdown",
+      "name": "iPhone 5s",
+      "udid": "CEF8F618-82F3-4BE5-A2B6-92A96F83687A",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 6",
+      "udid": "848776AA-6343-43AD-B5AD-B72D6AC6109E",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 6 Plus",
+      "udid": "A1213FE6-BDA8-424B-972C-4EA0480C3497",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 6s",
+      "udid": "48F5EADD-1AAD-403F-BF60-DE043FA408D4",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 6s Plus",
+      "udid": "B4A2E72A-4A4D-4058-A414-CE1D086DCFCF",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 7",
+      "udid": "AC25258D-FFB6-4C51-A0D2-FB2716F36FB1",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 7 Plus",
+      "udid": "F371A9C4-7518-4050-BF2A-680E2D6BB3AF",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 8",
+      "udid": "EA815EB8-AA9C-4304-B0C6-6171C586A1CF",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone 8 Plus",
+      "udid": "842EFEDB-CA3B-4616-92DF-0BB30E2C5701",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone SE",
+      "udid": "897AB1D6-0898-4239-BEB2-2E11E203DD66",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPhone X",
+      "udid": "E8B60421-F9A8-4A6D-90FC-BA9106886D6D",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Air",
+      "udid": "30DC1EF8-FAE6-4901-8D38-704BE0C91399",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Air 2",
+      "udid": "D5AD6C6D-B60C-4B5B-A509-08CA6DAEACB6",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad (5th generation)",
+      "udid": "CE18CE07-B890-4A3F-AC48-CC1E0A83E1F5",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (9.7-inch)",
+      "udid": "ED82558F-2A60-451A-A8D8-D19619F420C2",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (12.9-inch)",
+      "udid": "0C903922-94C6-47B1-A49C-874A05D36D79",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (12.9-inch) (2nd generation)",
+      "udid": "80164F39-DADE-4E6C-B99E-8DEE4C83F07F",
+      "sdk": "11.1"
+    },
+    {
+      "state": "Shutdown",
+      "name": "iPad Pro (10.5-inch)",
+      "udid": "FC34D86D-AA8A-4A25-B252-746BA72C00BF",
+      "sdk": "11.1"
+    }
+  ]
+}
