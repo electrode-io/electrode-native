@@ -18,6 +18,16 @@
 
 * If specified, will set the config value associated to this key. If not specified, will retrieve the config value (get) associated to this key.
 
+**Configurable properties**
+
+- `logLevel` [trace|debug|warn|info|fatal]  
+Set the log level to use for all commands.  
+By default, commands log level is set to `info`.
+
+- `showBanner` [true|false]  
+Show the Electrode Native ASCII banner for all commands.  
+By default, the value is set to `true` (banner is shown).
+
 #### Remarks
 
 * The `ern platform config <key> [value]` command is rarely used.  

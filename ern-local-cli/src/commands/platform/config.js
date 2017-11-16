@@ -22,7 +22,12 @@ exports.handler = function ({
 }) {
   try {
     if (value) {
-      ernConfig.setValue(key, value)
+      let valueToset =
+          value === 'true' ? true
+        : value === 'false' ? false
+        : value
+
+      ernConfig.setValue(key, valueToset)
     } else {
       log.info(`${key}: ${ernConfig.getValue(key)}`)
     }
