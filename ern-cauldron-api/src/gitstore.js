@@ -11,7 +11,7 @@ import path from 'path'
 const CAULDRON_FILENAME = 'cauldron.json'
 
 export type CauldronCodePushMetadata = {
-  deploymentName?: string,
+  deploymentName: string,
   isMandatory?: boolean,
   appVersion?: string,
   size?: number,
@@ -28,7 +28,6 @@ export type CauldronCodePushEntry = {
 
 type CauldronMiniApps = {
   container: Array<string>,
-  codePush: Array<CauldronCodePushEntry>
 }
 
 type CauldronNativeAppVersion = {
@@ -39,6 +38,7 @@ type CauldronNativeAppVersion = {
   yarnLocks: Object,
   nativeDeps: Array<string>,
   miniApps: CauldronMiniApps,
+  codePush: Object,
   config?: Object,
   containerVersion: string
 }

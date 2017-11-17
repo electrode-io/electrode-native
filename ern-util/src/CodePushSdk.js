@@ -37,12 +37,16 @@ export default class CodePushSdk {
     filePath: string,
     targetBinaryVersion: string,
     updateMetadata: CodePushPackageInfo) : Promise<CodePushPackage> {
-    const response = await this._codePush.release(
-        appName,
-        deploymentName,
-        filePath,
-        targetBinaryVersion,
-        updateMetadata)
-    return response.package
+    if (updateMetadata.rollout === 100) {
+      // If rollout is 100% we shouldn't pass it in the HTTP request
+      delete updateMetadata.rollout
+    }
+
+    return this._codePush.release(
+      appName,
+      deploymentName,
+      filePath,
+      targetBinaryVersion,
+      updateMetadata)
   }
 }

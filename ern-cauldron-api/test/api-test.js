@@ -47,9 +47,14 @@ describe('api.js', () => {
   // getCodePushEntries
   // ==========================================================
   describe('getCodePushEntries', () => {
-    it('should return the code push entries', async () => {
-      const entries = await api.getCodePushEntries('test', 'android', '17.7.0')
-      expect(entries).to.be.an('array').of.length(3)
+    it('should return the code push Production entries', async () => {
+      const entries = await api.getCodePushEntries('test', 'android', '17.7.0', 'Production')
+      expect(entries).to.be.an('array').of.length(2)
+    })
+
+    it('should return the code push QA entries', async () => {
+      const entries = await api.getCodePushEntries('test', 'android', '17.7.0', 'QA')
+      expect(entries).to.be.an('array').of.length(1)
     })
 
     it('should return undefined if native application version is not found', async () => {
@@ -62,15 +67,18 @@ describe('api.js', () => {
   // addCodePushEntry
   // ==========================================================
   describe('addCodePushEntry', () => {
-    it('should add the code push entry', async () => {
+    it('should add the code push entry to QA', async () => {
       await api.addCodePushEntry('test', 'android', '17.7.0', codePushNewEntryFixture)
-      const entries = await api.getCodePushEntries('test', 'android', '17.7.0')
-      expect(entries).to.be.an('array').of.length(4)
+      const entries = await api.getCodePushEntries('test', 'android', '17.7.0', 'QA')
+      expect(entries).to.be.an('array').of.length(2)
     })
 
-    it('should return the code push entries', async () => {
-      const entries = await api.getCodePushEntries('test', 'android', '17.7.0')
-      expect(entries).to.be.an('array').of.length(3)
+    it('should add the code push entry to new deployment name', async () => {
+      let modifiedCodePushEntryFixture = Object.assign({}, codePushNewEntryFixture)
+      modifiedCodePushEntryFixture.metadata.deploymentName = 'STAGING'
+      await api.addCodePushEntry('test', 'android', '17.7.0', modifiedCodePushEntryFixture)
+      const entries = await api.getCodePushEntries('test', 'android', '17.7.0', 'STAGING')
+      expect(entries).to.be.an('array').of.length(1)
     })
 
     it('should commit the changes if code push entry was added', async () => {

@@ -201,7 +201,7 @@ miniApps: Array<Dependency>, {
   codePushDeploymentName,
   codePushTargetVersionName,
   codePushIsMandatoryRelease = false,
-  codePushRolloutPercentage = 100,
+  codePushRolloutPercentage,
   pathToYarnLock,
   skipConfirmation = false
 }: {
@@ -209,8 +209,8 @@ miniApps: Array<Dependency>, {
   codePushAppName: string,
   codePushDeploymentName: string,
   codePushTargetVersionName: string,
-  codePushIsMandatoryRelease: boolean,
-  codePushRolloutPercentage: number,
+  codePushIsMandatoryRelease?: boolean,
+  codePushRolloutPercentage?: number,
   pathToYarnLock?: string,
   skipConfirmation?: boolean
 } = {}) {

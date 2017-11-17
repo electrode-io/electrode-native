@@ -402,25 +402,11 @@ class Cauldron {
       const codePushEntries = await this.cauldron.getCodePushEntries(
         napDescriptor.name,
         napDescriptor.platform,
-        napDescriptor.version)
+        napDescriptor.version,
+        deploymentName)
       if (codePushEntries) {
-        let result = _.chain(codePushEntries)
-          .filter(e => !Array.isArray(e))
-          .filter(e => e.deploymentName === deploymentName)
-          .map(e => e.miniapps)
-          .map(e => Dependency.fromString(e))
-          .last()
-          .value()
-        // Backward compatibility with old structure
-        // To deprecate at some point
-        if (!result) {
-          result = _.chain(codePushEntries)
-            .filter(e => Array.isArray(e))
-            .last()
-            .map(e => Dependency.fromString(e))
-            .value()
-        }
-        return result
+        const lastEntry = _.last(codePushEntries)
+        return _.map(lastEntry.miniapps, e => Dependency.fromString(e))
       }
     } catch (e) {
       log.error(`[getCodePushMiniApps] ${e}`)

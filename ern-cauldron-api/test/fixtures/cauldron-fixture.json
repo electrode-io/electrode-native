@@ -58,8 +58,10 @@
               "container": [
                 "@test/react-native-foo@4.0.0",
                 "react-native-bar@2.0.0"
-              ],
-              "codePush": [
+              ]
+            },
+            "codePush": {
+              "Production": [
                 {
                   "metadata": {
                     "deploymentName": "Production",
@@ -91,7 +93,9 @@
                     "@test/react-native-foo@4.0.2",
                     "react-native-bar@2.0.2"
                   ]
-                },
+                }
+              ],
+              "QA": [
                 {
                   "metadata": {
                     "deploymentName": "QA",
@@ -126,9 +130,9 @@
               "container": [
                 "@test/react-native-foo@5.0.0",
                 "react-native-bar@3.0.0"
-              ],
-              "codePush": []
-            }
+              ]
+            },
+            "codePush": []
           }
         ]
       }

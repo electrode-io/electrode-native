@@ -51,7 +51,7 @@ exports.builder = function (yargs: any) {
       describe: 'Percentage of users this release should be immediately available to',
       alias: 'r',
       type: 'number',
-      default: '100'
+      default: 100
     })
     .option('skipConfirmation', {
       describe: 'Skip final confirmation prompt if no compatibility issues are detected',
@@ -80,8 +80,8 @@ exports.handler = async function ({
   deploymentName: string,
   platform: 'android' | 'ios',
   targetBinaryVersion: string,
-  mandatory: boolean,
-  rollout: number,
+  mandatory?: boolean,
+  rollout?: number,
   skipConfirmation?: boolean
 }) {
   if (!descriptor) {
