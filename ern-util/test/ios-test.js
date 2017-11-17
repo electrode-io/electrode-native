@@ -35,15 +35,12 @@ global.log = {
 
 // test stubs
 const getDevicesStub = sinon.stub(simctl, 'getDevices')
-const execSyncStub = sinon.stub(childProcess, 'execSync')
 const getKnownDevicesStub = sinon.stub(ios, 'getKnownDevices')
 const getComputerNameStub = sinon.stub(ios, 'getComputerName')
 let ernConfigStub
 
 beforeEach(() => {
   getDevicesStub.reset()
-  execSyncStub.reset()
-  getKnownDevicesStub.reset()
 })
 
 afterEach(() => {
@@ -51,7 +48,6 @@ afterEach(() => {
 })
 
 after(() => {
-  execSyncStub.restore()
   getDevicesStub.restore()
   getKnownDevicesStub.restore()
 })
@@ -105,7 +101,7 @@ describe('ios utils', () => {
     it('should return known devices', () => {
       getKnownDevicesStub.restore()
       expect(ios.getKnownDevices()).to.have.length.above(1)
-    })
+    }).timeout(3000) //Error: Timeout of 2000ms exceeded [mocha default]
   })
 
   describe('getComputerName', () => {
