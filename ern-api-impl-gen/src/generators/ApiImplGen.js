@@ -17,6 +17,7 @@ import path from 'path'
 import fs from 'fs'
 import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
 import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
+import ApiImplJsGenerator from './js/ApiImplJsGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
 let plugins: Array<Dependency>
@@ -117,6 +118,8 @@ export default class ApiImplGen {
           return new ApiImplMavenGenerator()
         case 'ios' :
           return new ApiImplGithubGenerator()
+        case 'js' :
+          return new ApiImplJsGenerator()
         default:
           return new NullApiImplGenerator()
       }

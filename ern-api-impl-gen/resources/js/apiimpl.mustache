@@ -1,0 +1,8 @@
+import { {{apiName}}Api } from '{{packageName}}'
+
+{{#requests}}
+{{apiName}}Api.requests().register{{.}}RequestHandler((requestData) => {
+    //TODO: Write your implementation and resolve or reject the promise
+    //return Promise.resolve(result) || Promise.reject(err)
+})
+{{/requests}}
