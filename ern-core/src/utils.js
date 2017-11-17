@@ -33,14 +33,19 @@ export async function isPublishedToNpm (pkg: string | DependencyPath): Promise<b
     log.debug(e)
     return false
   }
-
-  let publishedVersions: Array<string> = publishedVersionsInfo.data
-  const pkgVersion: string = Dependency.fromString(pkg.toString()).version
-  if (publishedVersions && pkgVersion) {
-    return publishedVersions.includes(pkgVersion)
-  } else {
-    return true
+  if (publishedVersionsInfo) {
+    let publishedVersions: Array<string> = publishedVersionsInfo.data
+    let type: string = publishedVersionsInfo.type
+    if (type && type === 'inspect') {
+      const pkgVersion: string = Dependency.fromString(pkg.toString()).version
+      if (publishedVersions && pkgVersion) {
+        return publishedVersions.includes(pkgVersion)
+      } else {
+        return true
+      }
+    }
   }
+  return false
 }
 
 export async function httpGet (url: string): Promise<http.IncomingMessage> {
@@ -77,8 +82,8 @@ export function splitCamelCaseString (camelCaseString: string) : Array<string> {
   })
 }
 
-export function getDefaultPackageNameForCamelCaseString (camelCaseString: string, moduleType: string): string {
-  let splitArray = splitCamelCaseString(camelCaseString)
+export function getDefaultPackageNameForCamelCaseString (moduleName: string, moduleType: string): string {
+  let splitArray = splitCamelCaseString(moduleName)
   switch (moduleType) {
     case ModuleTypes.MINIAPP:
       return _.filter(splitArray, token => !['mini', 'app'].includes(token)).join('-')
