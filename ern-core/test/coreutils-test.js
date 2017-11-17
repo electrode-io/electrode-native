@@ -10,6 +10,7 @@ import {
 } from 'ern-util'
 import * as fixtures from './fixtures/common'
 import * as ModuleTypes from '../src/ModuleTypes'
+import path from 'path'
 
 // Logging stubs
 const logErrorStub = sinon.stub()
@@ -31,10 +32,15 @@ const yarnInfoErnApiImpl = require('./fixtures/yarn_info_ern_api_impl.json')
 const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json')
 const yarnInfoError = require('./fixtures/yarn_info_error.json')
 
-before(() => {
+// stub
+const pathStub = sinon.stub(path, 'join')
+
+beforeEach(() => {
+  pathStub.reset()
 })
 
-after(() => {
+afterEach(() => {
+  pathStub.restore()
 })
 
 describe('utils.js', () => {
@@ -459,4 +465,57 @@ describe('utils.js', () => {
       })
     })
   })
+
+  // ==========================================================
+  // getDownloadedPluginPath
+  // ==========================================================
+  describe('getDownloadedPluginPath', () => {
+    it('return download plugin path for npm plugin', () => {
+      const pluginPath = 'node_modules/react-native-code-push'
+      const npmPlugin = {
+        type: "npm",
+        name: "react-native-code-push",
+        version: "1.16.1-beta"
+      }
+      pathStub.resolves(pluginPath)
+      expect(utils.getDownloadedPluginPath(npmPlugin)).to.eql(pluginPath)
+    })
+
+    it('return download plugin path for npm plugin', () => {
+      const pluginPath = 'node_modules/@msft/react-native-code-push'
+      const npmPluginWithScope = {
+        type: "npm",
+        name: "@msft/react-native-code-push",
+        version: "1.16.1-beta"
+      }
+      pathStub.resolves(pluginPath)
+      expect(utils.getDownloadedPluginPath(npmPluginWithScope)).to.eql(pluginPath)
+    })
+
+    it('return download plugin path for git plugin', () => {
+      const pluginPath = 'https://github.com/aoriani/ReactNative-StackTracer.git'
+      const gitPlugin = {
+        type: "git",
+        url: "https://github.com/aoriani/ReactNative-StackTracer.git",
+        version: "0.1.1"
+      }
+      pathStub.resolves(pluginPath)
+      expect(utils.getDownloadedPluginPath(gitPlugin)).to.eql('ReactNative-StackTracer')
+    })
+
+    it('throw error if plugin path cannot be resolved', () => {
+      const unknown = {
+        type: "unknown",
+        url: "https://github.com/aoriani/ReactNative-StackTracer.git",
+        version: "0.1.1"
+      }
+      try{
+        utils.getDownloadedPluginPath(unknown)
+      }catch (e){
+        expect(e.message).to.include('Unsupported plugin origin type')
+      }
+    })
+  })
+
 })
+

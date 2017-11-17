@@ -224,7 +224,7 @@ export async function downloadPluginSource (pluginOrigin: any): Promise<string> 
  }
  * @param pluginOrigin
  */
-function getDownloadedPluginPath (pluginOrigin: any) {
+export function getDownloadedPluginPath (pluginOrigin: any) {
   let downloadPath
   if (pluginOrigin.type === 'npm') {
     if (pluginOrigin.scope) {
