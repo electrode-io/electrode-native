@@ -109,11 +109,10 @@ export default class CauldronApi {
   async getCodePushEntries (
     nativeApplicationName: string,
     platformName: string,
-    versionName: string) {
+    versionName: string,
+    deploymentName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.miniApps) {
-      return version.miniApps.codePush
-    }
+    return version && version.codePush && version.codePush[deploymentName]
   }
 
   async getContainerMiniApps (
@@ -393,10 +392,13 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    codePushEntry: Array<CauldronCodePushEntry>) {
+    codePushEntry: CauldronCodePushEntry) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (version) {
-      version.miniApps.codePush.push(codePushEntry)
+      const deploymentName = codePushEntry.metadata.deploymentName
+      version.codePush[deploymentName]
+        ? version.codePush[deploymentName].push(codePushEntry)
+        : version.codePush[deploymentName] = [ codePushEntry ]
       await this.commit(`New CodePush OTA update`)
     }
   }

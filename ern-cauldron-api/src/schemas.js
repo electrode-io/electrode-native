@@ -3,8 +3,7 @@
 import Joi from 'joi'
 
 export const miniApps = Joi.object({
-  container: Joi.array().default([]),
-  codePush: Joi.array().default([])
+  container: Joi.array().default([])
 })
 
 export const nativeApplicationVersion = Joi.object({
@@ -15,6 +14,7 @@ export const nativeApplicationVersion = Joi.object({
   yarnLocks: Joi.object().default({}),
   nativeDeps: Joi.array().default([]),
   miniApps: miniApps.default(),
+  codePush: Joi.object().default({}),
   containerVersion: Joi.string().optional() // optional for Backward Compat. Required in ERN 0.5.0
 })
 
