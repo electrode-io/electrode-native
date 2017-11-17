@@ -50,7 +50,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^2.3.0",
-    "code-push": "^2.0.2-beta",
+    "code-push": "^2.0.3-beta",
     "console-log-level": "^1.4.0",
     "fs-readdir-recursive": "^1.0.0",
     "inquirer": "^3.0.6",
