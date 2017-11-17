@@ -174,7 +174,7 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('isValidElectrodeNativeModuleName', () => {
     fixtures.validElectrodeNativeModuleNames.forEach(name => {
-      it('shoud not throw if name is valid', () => {
+      it('should not throw if name is valid', () => {
         expect(() => Ensure.isValidElectrodeNativeModuleName(name), `throw for ${name}`).to.not.throw()
       })
     })
