@@ -290,49 +290,49 @@ describe('utils.js', () => {
     it('get default package name JS_API_IMPL', () => {
       expect(
         utils.getDefaultPackageNameForModule('foobar', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-js')
       expect(
         utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foo-bar-api-impl')
+      ).to.eql('foo-bar-api-impl-js')
       expect(
         utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foo-bar-api-impl')
+      ).to.eql('foo-bar-api-impl-js')
       expect(
         utils.getDefaultPackageNameForModule('implFoobar', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-js')
       expect(
         utils.getDefaultPackageNameForModule('FoobarApi', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-js')
       expect(
         utils.getDefaultPackageNameForModule('apiFoobarImpl', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-js')
       expect(
         utils.getDefaultPackageNameForModule('ImplApiFoobar', ModuleTypes.JS_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-js')
     })
 
     it('get default package name NATIVE_API_IMPL', () => {
       expect(
         utils.getDefaultPackageNameForModule('foobar', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-native')
       expect(
         utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foo-bar-api-impl')
+      ).to.eql('foo-bar-api-impl-native')
       expect(
         utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foo-bar-api-impl')
+      ).to.eql('foo-bar-api-impl-native')
       expect(
         utils.getDefaultPackageNameForModule('implFoobar', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-native')
       expect(
         utils.getDefaultPackageNameForModule('FoobarApi', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-native')
       expect(
         utils.getDefaultPackageNameForModule('apiFoobarImpl', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-native')
       expect(
         utils.getDefaultPackageNameForModule('ImplApiFoobar', ModuleTypes.NATIVE_API_IMPL)
-      ).to.eql('foobar-api-impl')
+      ).to.eql('foobar-api-impl-native')
 
     })
 
