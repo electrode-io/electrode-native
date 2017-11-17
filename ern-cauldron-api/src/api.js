@@ -115,6 +115,19 @@ export default class CauldronApi {
     return version && version.codePush && version.codePush[deploymentName]
   }
 
+  async setCodePushEntries (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    deploymentName: string,
+    codePushEntries: Array<CauldronCodePushEntry>) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (version && version.codePush) {
+      version.codePush[deploymentName] = codePushEntries
+    }
+    await this.commit(`Set codePush entries`)
+  }
+
   async getContainerMiniApps (
     nativeApplicationName: string,
     platformName: string,

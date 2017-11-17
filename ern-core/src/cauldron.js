@@ -13,18 +13,21 @@ import type {
 } from 'ern-cauldron-api'
 import Platform from './Platform'
 
+type CodePushConfig = {
+  entriesLimit?: number
+}
+
 //
 // Helper class to access the cauldron
 // It uses the ern-cauldron-cli client
-class Cauldron {
+export class Cauldron {
   cauldron: Object
 
-  constructor (cauldronRepoAlias: string, cauldronPath: string) {
-    if (!cauldronRepoAlias) {
+  constructor (cauldronCli?: Object) {
+    if (!cauldronCli) {
       return
     }
-    const cauldronRepositories = config.getValue('cauldronRepositories')
-    this.cauldron = new CauldronCli(cauldronRepositories[cauldronRepoAlias], cauldronPath)
+    this.cauldron = cauldronCli
   }
 
   isActive () {
@@ -434,17 +437,50 @@ class Cauldron {
     napDescriptor: NativeApplicationDescriptor,
     metadata: CauldronCodePushMetadata,
     miniApps: Array<Dependency>) : Promise<*> {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+    return this._addCodePushEntry(
+      napDescriptor,
+      metadata,
+      miniApps)
+  }
+
+  async _addCodePushEntry (
+    napDescriptor: NativeApplicationDescriptor,
+    metadata: CauldronCodePushMetadata,
+    miniApps: Array<Dependency>
+  ) : Promise<*> {
     try {
-      this.throwIfPartialNapDescriptor(napDescriptor)
-      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
       const miniapps = _.map(miniApps, x => x.toString())
-      return this.cauldron.addCodePushEntry(
-              napDescriptor.name,
-              napDescriptor.platform,
-              napDescriptor.version,
-              { metadata, miniapps })
+      const codePushConfig = await this.getCodePushConfig()
+      const codePushEntries = await this.cauldron.getCodePushEntries(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        metadata.deploymentName)
+      let nbEntriesToDrop = 0
+      let updatedEntriesArr
+
+      if (codePushEntries) {
+        if (codePushConfig &&
+            codePushConfig.entriesLimit &&
+            codePushEntries.length >= codePushConfig.entriesLimit) {
+          nbEntriesToDrop = codePushEntries.length - codePushConfig.entriesLimit + 1
+        }
+        updatedEntriesArr = _.drop(codePushEntries, nbEntriesToDrop)
+        updatedEntriesArr.push({ metadata, miniapps })
+      } else {
+        updatedEntriesArr = [ { metadata, miniapps } ]
+      }
+
+      return this.cauldron.setCodePushEntries(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        metadata.deploymentName,
+        updatedEntriesArr)
     } catch (e) {
-      log.error(`[addOtaMiniApp] ${e}`)
+      log.error(`[_addCodePushEntry] ${e}`)
       throw e
     }
   }
@@ -478,6 +514,11 @@ class Cauldron {
   async getBinaryStoreConfig () : Promise<*> {
     const config = await this.cauldron.getConfig()
     return config ? config.binaryStore : undefined
+  }
+
+  async getCodePushConfig () : Promise<CodePushConfig | void> {
+    const config = await this.cauldron.getConfig()
+    return config ? config.codePush : undefined
   }
 
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
@@ -625,4 +666,15 @@ class Cauldron {
   }
 }
 
-export default new Cauldron(config.getValue('cauldronRepoInUse'), `${Platform.rootDirectory}/cauldron`)
+function getCauldron () {
+  const cauldronRepositories = config.getValue('cauldronRepositories')
+  const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
+  if (!cauldronRepoInUse) {
+    return new Cauldron()
+  } else {
+    const cauldronCli = new CauldronCli(cauldronRepositories[cauldronRepoInUse], `${Platform.rootDirectory}/cauldron`)
+    return new Cauldron(cauldronCli)
+  }
+}
+
+export default getCauldron()
