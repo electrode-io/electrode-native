@@ -101,7 +101,7 @@ describe('ios utils', () => {
     it('should return known devices', () => {
       getKnownDevicesStub.restore()
       expect(ios.getKnownDevices()).to.have.length.above(1)
-    }).timeout(3000) //Error: Timeout of 2000ms exceeded [mocha default]
+    }).timeout(4000) //Error: Timeout of 2000ms exceeded [mocha default]
   })
 
   describe('getComputerName', () => {
