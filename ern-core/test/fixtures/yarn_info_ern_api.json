@@ -1,0 +1,12 @@
+{
+  "type": "inspect",
+  "data": {
+    "message": {
+      "apiName": "ernmovie",
+      "namespace": "com.ernmovie.ern",
+      "apiSchemaPath": "schema.json",
+      "artifactId": "react-native-ernmovie-api"
+    },
+    "moduleType": "ern-api"
+  }
+}

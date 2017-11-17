@@ -15,16 +15,21 @@ import * as ModuleTypes from '../src/ModuleTypes'
 const logErrorStub = sinon.stub()
 const logInfoStub = sinon.stub()
 const logDebugStub = sinon.stub()
+const logTraceStub = sinon.stub()
 
 global.log = {
   error: logErrorStub,
   info: logInfoStub,
-  debug: logDebugStub
+  debug: logDebugStub,
+  trace: logTraceStub
 }
 
+// fixtures
 const yarnInfo = require('./fixtures/yarn_info.json')
+const yarnInfoErnApi = require('./fixtures/yarn_info_ern_api.json')
+const yarnInfoErnApiImpl = require('./fixtures/yarn_info_ern_api_impl.json')
+const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json')
 const yarnInfoError = require('./fixtures/yarn_info_error.json')
-
 
 before(() => {
 })
@@ -84,16 +89,16 @@ describe('utils.js', () => {
   // camelize
   // ==========================================================
   describe('camelize', () => {
-    it('camelcase word with lowercaseFirstLetter true',  () => {
+    it('camelcase word with lowercaseFirstLetter true', () => {
       expect(utils.camelize('Foo Bar', true)).to.eql('fooBar')
       expect(utils.camelize('--foo-bar', true)).to.eql('fooBar')
-      expect(utils.camelize('__foo_bar__',true)).to.eql('fooBar')
-      expect(utils.camelize('fooBar',true)).to.eql('fooBar')
-      expect(utils.camelize('foo-bar-bazz',true)).to.eql('fooBarBazz')
-      expect(utils.camelize('GoBar',true)).to.eql('goBar')
+      expect(utils.camelize('__foo_bar__', true)).to.eql('fooBar')
+      expect(utils.camelize('fooBar', true)).to.eql('fooBar')
+      expect(utils.camelize('foo-bar-bazz', true)).to.eql('fooBarBazz')
+      expect(utils.camelize('GoBar', true)).to.eql('goBar')
     })
 
-    it('camelcase word with lowercaseFirstLetter false',  () => {
+    it('camelcase word with lowercaseFirstLetter false', () => {
       expect(utils.camelize('')).to.eql('')
       expect(utils.camelize('Foo Bar')).to.eql('FooBar')
       expect(utils.camelize('--foo-bar')).to.eql('FooBar')
@@ -108,11 +113,11 @@ describe('utils.js', () => {
   // splitCamelCaseString
   // ==========================================================
   describe('splitCamelCaseString', () => {
-    it('split camel case string',  () => {
+    it('split camel case string', () => {
       expect(utils.splitCamelCaseString('')).to.eql([''])
-      expect(utils.splitCamelCaseString('fooBar')).to.eql([ 'foo', 'bar' ])
-      expect(utils.splitCamelCaseString('FooBarBazz')).to.eql([ 'foo', 'bar', 'bazz' ])
-      expect(utils.splitCamelCaseString('foobar')).to.eql([ 'foobar'])
+      expect(utils.splitCamelCaseString('fooBar')).to.eql(['foo', 'bar'])
+      expect(utils.splitCamelCaseString('FooBarBazz')).to.eql(['foo', 'bar', 'bazz'])
+      expect(utils.splitCamelCaseString('foobar')).to.eql(['foobar'])
     })
   })
 
@@ -135,7 +140,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForCamelCaseString('fooBar', ModuleTypes.MINIAPP)
       ).to.eql('foo-bar')
       expect(
-        utils.getDefaultPackageNameForCamelCaseString('FooBar' , ModuleTypes.MINIAPP)
+        utils.getDefaultPackageNameForCamelCaseString('FooBar', ModuleTypes.MINIAPP)
       ).to.eql('foo-bar')
       expect(
         utils.getDefaultPackageNameForCamelCaseString('Foobar', ModuleTypes.MINIAPP)
@@ -159,7 +164,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForCamelCaseString('fooBar', ModuleTypes.API)
       ).to.eql('foo-bar')
       expect(
-        utils.getDefaultPackageNameForCamelCaseString('FooBar' , ModuleTypes.API)
+        utils.getDefaultPackageNameForCamelCaseString('FooBar', ModuleTypes.API)
       ).to.eql('foo-bar')
       expect(
         utils.getDefaultPackageNameForCamelCaseString('Foobar', ModuleTypes.API)
@@ -183,7 +188,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForCamelCaseString('fooBar', ModuleTypes.JS_API_IMPL)
       ).to.eql('foo-bar')
       expect(
-        utils.getDefaultPackageNameForCamelCaseString('FooBar' , ModuleTypes.JS_API_IMPL)
+        utils.getDefaultPackageNameForCamelCaseString('FooBar', ModuleTypes.JS_API_IMPL)
       ).to.eql('foo-bar')
       expect(
         utils.getDefaultPackageNameForCamelCaseString('implFoobar', ModuleTypes.JS_API_IMPL)
@@ -207,7 +212,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForCamelCaseString('fooBar', ModuleTypes.NATIVE_API_IMPL)
       ).to.eql('foo-bar')
       expect(
-        utils.getDefaultPackageNameForCamelCaseString('FooBar' , ModuleTypes.NATIVE_API_IMPL)
+        utils.getDefaultPackageNameForCamelCaseString('FooBar', ModuleTypes.NATIVE_API_IMPL)
       ).to.eql('foo-bar')
       expect(
         utils.getDefaultPackageNameForCamelCaseString('implFoobar', ModuleTypes.NATIVE_API_IMPL)
@@ -236,7 +241,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.MINIAPP)
       ).to.eql('foo-bar-miniapp')
       expect(
-        utils.getDefaultPackageNameForModule('FooBar' , ModuleTypes.MINIAPP)
+        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.MINIAPP)
       ).to.eql('foo-bar-miniapp')
       expect(
         utils.getDefaultPackageNameForModule('Foobar', ModuleTypes.MINIAPP)
@@ -260,7 +265,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.API)
       ).to.eql('foo-bar-api')
       expect(
-        utils.getDefaultPackageNameForModule('FooBar' , ModuleTypes.API)
+        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.API)
       ).to.eql('foo-bar-api')
       expect(
         utils.getDefaultPackageNameForModule('Foobar', ModuleTypes.API)
@@ -284,7 +289,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.JS_API_IMPL)
       ).to.eql('foo-bar-api-impl')
       expect(
-        utils.getDefaultPackageNameForModule('FooBar' , ModuleTypes.JS_API_IMPL)
+        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.JS_API_IMPL)
       ).to.eql('foo-bar-api-impl')
       expect(
         utils.getDefaultPackageNameForModule('implFoobar', ModuleTypes.JS_API_IMPL)
@@ -308,7 +313,7 @@ describe('utils.js', () => {
         utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.NATIVE_API_IMPL)
       ).to.eql('foo-bar-api-impl')
       expect(
-        utils.getDefaultPackageNameForModule('FooBar' , ModuleTypes.NATIVE_API_IMPL)
+        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.NATIVE_API_IMPL)
       ).to.eql('foo-bar-api-impl')
       expect(
         utils.getDefaultPackageNameForModule('implFoobar', ModuleTypes.NATIVE_API_IMPL)
@@ -322,14 +327,119 @@ describe('utils.js', () => {
       expect(
         utils.getDefaultPackageNameForModule('ImplApiFoobar', ModuleTypes.NATIVE_API_IMPL)
       ).to.eql('foobar-api-impl')
+
     })
 
     it('get default package name NATIVE_API_IMPL', () => {
       try {
         utils.getDefaultPackageNameForModule('foobar', fixtures.moduleTypeNotSupported)
-      } catch (e){
+      } catch (e) {
         expect(e.message).to.eql('Unsupported module type : moduleTypeNotSupported')
       }
+    })
+  })
+
+  // ==========================================================
+  // isDependencyApiImpl
+  // ==========================================================
+  describe('isDependencyApiImpl', () => {
+    it('return true if regex matches', async () => {
+      expect(await utils.isDependencyApiImpl('react-native-header-api-impl')).to.eql(true)
+    })
+
+    it('return true if ern object resolves for native api impl', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnApiImpl)
+      expect(await utils.isDependencyApiImpl('react-header')).to.eql(true)
+      yarnStub.restore()
+    })
+
+    it('return true if ern object resolves for js api impl', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnJsApiImpl)
+      expect(await utils.isDependencyApiImpl('react-header')).to.eql(true)
+      yarnStub.restore()
+    })
+
+    it('return false if yarn info error', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoError)
+      expect(await utils.isDependencyApiImpl('react-header')).to.eql(false)
+      yarnStub.restore()
+    })
+  })
+
+  // ==========================================================
+  // isDependencyApi
+  // ==========================================================
+  describe('isDependencyApi', () => {
+    it('return true if regex matches', async () => {
+      expect(await utils.isDependencyApi('react-native-header-api')).to.eql(true)
+    })
+
+    it('return true if ern object resolves for api', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnApi)
+      expect(await utils.isDependencyApi('react-header')).to.eql(true)
+      yarnStub.restore()
+    })
+
+    it('return false if yarn info error', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoError)
+      expect(await utils.isDependencyApi('react-header')).to.eql(false)
+      yarnStub.restore()
+    })
+  })
+
+  // ==========================================================
+  // isDependencyApiOrApiImpl
+  // ==========================================================
+  describe('isDependencyApiOrApiImpl', () => {
+    it('return true if regex matches', async () => {
+      expect(await utils.isDependencyApiOrApiImpl('react-native-header-api')).to.eql(true)
+    })
+
+    it('return true if ern object resolves for api', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnApi)
+      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
+      yarnStub.restore()
+    })
+
+    it('return false if yarn info error', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoError)
+      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(false)
+      yarnStub.restore()
+    })
+
+    it('return true if regex matches', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnApi)
+      expect(await utils.isDependencyApiOrApiImpl('react-native-header-api-impl')).to.eql(true)
+      yarnStub.restore()
+    }).timeout(3000)
+
+    it('return true if ern object resolves for native api impl', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnApiImpl)
+      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
+      yarnStub.restore()
+    })
+
+    it('return true if ern object resolves for js api impl', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoErnJsApiImpl)
+      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
+      yarnStub.restore()
+    })
+
+    it('return false if yarn info error', async () => {
+      const yarnStub = sinon.stub(yarn, 'info')
+      yarnStub.resolves(yarnInfoError)
+      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(false)
+      yarnStub.restore()
     })
   })
 })

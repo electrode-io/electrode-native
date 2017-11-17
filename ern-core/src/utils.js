@@ -76,7 +76,7 @@ export function camelize (word: string, lowercaseFirstLetter: boolean = false): 
  * @param camelCaseString
  * @returns {string}
  */
-export function splitCamelCaseString (camelCaseString: string) : Array<string> {
+export function splitCamelCaseString (camelCaseString: string): Array<string> {
   return camelCaseString.split(/(?=[A-Z])/).map((token) => {
     return token.toLowerCase()
   })
@@ -97,7 +97,7 @@ export function getDefaultPackageNameForCamelCaseString (moduleName: string, mod
   }
 }
 
-export function getDefaultPackageNameForModule (moduleName: string, moduleType: string) : string {
+export function getDefaultPackageNameForModule (moduleName: string, moduleType: string): string {
   const basePackageName = getDefaultPackageNameForCamelCaseString(moduleName, moduleType)
   switch (moduleType) {
     case ModuleTypes.MINIAPP:
@@ -125,7 +125,11 @@ export async function isDependencyApi (dependencyName: string): Promise<boolean>
     return true
   }
   const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
-  return (depInfo.data && ModuleTypes.API === depInfo.data.moduleType)
+  const result =
+    depInfo && depInfo.type === 'error'
+      ? false
+      : depInfo.data && ModuleTypes.API === depInfo.data.moduleType
+  return result
 }
 
 export async function isDependencyApiImpl (dependencyName: string): Promise<boolean> {
@@ -134,7 +138,11 @@ export async function isDependencyApiImpl (dependencyName: string): Promise<bool
     return true
   }
   const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
-  return (depInfo.data && [`${ModuleTypes.NATIVE_API_IMPL}`, `${ModuleTypes.JS_API_IMPL}`].indexOf(depInfo.data.moduleType) > -1)
+  const result =
+    depInfo && depInfo.type === 'error'
+      ? false
+      : depInfo.data && [`${ModuleTypes.NATIVE_API_IMPL}`, `${ModuleTypes.JS_API_IMPL}`].indexOf(depInfo.data.moduleType) > -1
+  return result
 }
 
 /**
@@ -151,7 +159,7 @@ export async function reactNativeManifestVersion () {
   return reactNativeDependency.version
 }
 
-export function isValidElectrodeNativeModuleName (name: string) : boolean {
+export function isValidElectrodeNativeModuleName (name: string): boolean {
   return /^[a-zA-Z]+$/.test(name)
 }
 /**
