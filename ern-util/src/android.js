@@ -222,8 +222,12 @@ export async function androidGetBootAnimProp () {
 // containing the application
 export async function buildAndInstallApp (projectPath: string) {
   shell.cd(projectPath)
-  const gradlew = /^win/.test(process.platform) ? 'gradlew' : './gradlew'
+  const gradlew = getGradleByPlatform()
   return execp(`${gradlew} installDebug`)
+}
+
+export function getGradleByPlatform (): string {
+  return /^win/.test(process.platform) ? 'gradlew' : './gradlew'
 }
 
 // Utility method to launch a specific activity from a given package

@@ -37,16 +37,17 @@ const oraStartStub = sinon.stub(oraProto, 'start').returns({
 
 // class in test stubs
 const execpStub = sinon.stub(childProcess, 'execp')
+const processStub = sinon.stub(process, 'platform').returns('win')
 let ernConfigStub
 
 after(() => {
   execpStub.restore()
+  processStub.restore()
 })
 
 beforeEach(() => {
   logErrorStub.reset()
   logInfoStub.reset()
-  execpStub.reset()
 })
 
 afterEach(() => {
@@ -205,4 +206,81 @@ describe('android.js', () => {
     })
   })
 
+  // ==========================================================
+  // installApk
+  // ==========================================================
+  describe('installApk', () => {
+    it('adb install -r', async () => {
+      execpStub.resolves('Success')
+      expect(await android.installApk()).to.eql('Success')
+    })
+  })
+
+  // ==========================================================
+  // launchAndroidActivity
+  // ==========================================================
+  describe('launchAndroidActivity', () => {
+    it('adb shell am start -n', async () => {
+      execpStub.resolves('Starting: Intent { cmp=')
+      expect(await android.launchAndroidActivity()).to.eql('Starting: Intent { cmp=')
+    })
+  })
+
+  // ==========================================================
+  // buildAndInstallApp
+  // ==========================================================
+  describe('buildAndInstallApp', () => {
+    it('check gradlew is used as execp for win  ', async () => {
+      execpStub.resolves('installDebug success')
+      expect(await android.buildAndInstallApp()).to.eql('installDebug success')
+    })
+  })
+
+  // ==========================================================
+  // getGradleByPlatform
+  // ==========================================================
+  describe('getGradleByPlatform', () => {
+    it('check gradlew is returned for win  ', () => {
+      const platform = Object.getOwnPropertyDescriptor(process, 'platform')
+      Object.defineProperty(process, 'platform', {
+        value: 'win'
+      })
+      expect(android.getGradleByPlatform()).to.eql('gradlew')
+      Object.defineProperty(process, 'platform', {
+        value: platform
+      })
+    })
+
+    it('check ./gradlew is returned for darwin  ', () => {
+      const platform = Object.getOwnPropertyDescriptor(process, 'platform')
+      Object.defineProperty(process, 'platform', {
+        value: 'darwin'
+      })
+      expect(android.getGradleByPlatform()).to.eql('./gradlew')
+      Object.defineProperty(process, 'platform', {
+        value: platform
+      })
+    })
+
+    it('check ./gradlew is returned for linux  ', () => {
+      const platform = Object.getOwnPropertyDescriptor(process, 'platform')
+      Object.defineProperty(process, 'platform', {
+        value: 'linux'
+      })
+      expect(android.getGradleByPlatform()).to.eql('./gradlew')
+      Object.defineProperty(process, 'platform', {
+        value: platform
+      })
+    })
+  })
+
+  // ==========================================================
+  // androidGetBootAnimProp
+  // ==========================================================
+  describe('installApk', () => {
+    it('adb install -r', async () => {
+      execpStub.resolves('Stopped')
+      expect(await android.androidGetBootAnimProp()).to.eql('Stopped')
+    })
+  })
 })
