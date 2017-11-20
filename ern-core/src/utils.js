@@ -8,6 +8,8 @@ import {
   DependencyPath,
   gitCli
 } from 'ern-util'
+import * as constants from './constants'
+import config from './config'
 import http from 'http'
 import camelCase from 'lodash/camelCase'
 import _ from 'lodash'
@@ -243,4 +245,14 @@ export function getDownloadedPluginPath (pluginOrigin: any) {
     throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
   }
   return downloadPath
+}
+
+export function updateDeviceConfig (platform: 'ios' | 'android', usePreviousDevice: boolean = false) {
+  const key = platform === 'ios' ? constants.IOS_DEVICE_CONFIG : constants.ANDROID_DEVICE_CONFIG
+
+  let deviceConfig = config.getValue(key, {
+    deviceId: ''
+  })
+  deviceConfig.usePreviousDevice = usePreviousDevice
+  config.setValue(key, deviceConfig)
 }
