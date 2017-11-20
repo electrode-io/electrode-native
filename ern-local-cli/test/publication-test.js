@@ -6,9 +6,9 @@ import {
   expect
 } from 'chai'
 import {
+  getCodePushSdk,
   getCodePushAccessKey
 } from '../src/lib/publication'
-
 
 const ernRcPath = path.join(os.homedir(), '.ern', '.ernrc')
 const codePushConfigPath = path.join(os.homedir(), '.code-push.config')
@@ -66,6 +66,31 @@ describe('lib/publication.js', () => {
         createCwd: false
       })
       expect(getCodePushAccessKey()).to.be.undefined
+    })
+  })
+
+  // ==========================================================
+  // getCodePushSdk
+  // ==========================================================
+  describe('getCodePushSdk', () => {
+    it('should not throw if an access key exists', () => {
+      mockFs({
+        [ernRcPath]: ernRcWithCodePushAccessKey,
+        [codePushConfigPath]: codePushConfigWithoutAccessKey
+      }, {
+        createCwd: false
+      })
+      expect(getCodePushSdk).to.not.throw()
+    })
+
+    it('should throw if no access key exists', () => {
+      mockFs({
+        [ernRcPath]: ernRcWithoutCodePushAccessKey,
+        [codePushConfigPath]: codePushConfigWithoutAccessKey
+      }, {
+        createCwd: false
+      })
+      expect(getCodePushSdk).to.throw()
     })
   })
 })
