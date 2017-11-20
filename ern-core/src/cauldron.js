@@ -567,17 +567,21 @@ export class Cauldron {
 
   async getManifestConfig () : Promise<*> {
     const config = await this.cauldron.getConfig()
-    return config ? config.manifest : undefined
+    return config && config.manifest
   }
 
   async getBinaryStoreConfig () : Promise<*> {
     const config = await this.cauldron.getConfig()
-    return config ? config.binaryStore : undefined
+    return config && config.binaryStore
   }
 
-  async getCodePushConfig () : Promise<CodePushConfig | void> {
-    const config = await this.cauldron.getConfig()
-    return config ? config.codePush : undefined
+  async getCodePushConfig (descriptor?: NativeApplicationDescriptor) : Promise<CodePushConfig | void> {
+    const config = await this.cauldron.getConfig({
+      appName: descriptor && descriptor.name,
+      platformName: descriptor && descriptor.platform,
+      versionName: descriptor && descriptor.version
+    })
+    return config && config.codePush
   }
 
   async getConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
