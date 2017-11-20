@@ -117,7 +117,7 @@ export async function generateMiniAppsComposite (
     }
 
     if (!fs.existsSync(pathToYarnLock)) {
-      throw new Error(`[generateMiniAppsComposite] Path to yarn.lock does not exists (${pathToYarnLock})`)
+      throw new Error(`[generateMiniAppsComposite] Path to yarn.lock does not exist (${pathToYarnLock})`)
     }
 
     log.debug(`Copying yarn.lock to ${outDir}`)
