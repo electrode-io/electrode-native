@@ -318,6 +318,36 @@ async function askUserToChooseANapDescriptorFromCauldron ({
 }
 
 //
+// Inquire user to choose one or more native application version(s) from the Cauldron, optionally
+// filtered by platform/and or release status and returns the selected choices as an array of strings
+async function askUserToChooseOneOrMoreNapDescriptorFromCauldron ({
+  platform,
+  onlyReleasedVersions,
+  onlyNonReleasedVersions,
+  message
+} : {
+  platform?: 'ios' | 'android',
+  onlyReleasedVersions?: boolean,
+  onlyNonReleasedVersions?: boolean,
+  message?: string
+} = {}) : Promise<Array<string>> {
+  const napDescriptorStrings = await getNapDescriptorStringsFromCauldron({
+    platform,
+    onlyReleasedVersions,
+    onlyNonReleasedVersions
+  })
+
+  const { userSelectedCompleteNapDescriptors } = await inquirer.prompt([{
+    type: 'checkbox',
+    name: 'userSelectedCompleteNapDescriptors',
+    message: message || 'Choose a native application version',
+    choices: napDescriptorStrings
+  }])
+
+  return userSelectedCompleteNapDescriptors
+}
+
+//
 // Perform some custom work on a container in Cauldron, provided as a
 // function, that is going to change the state of the container,
 // and regenerate a new container and publish it.
@@ -692,6 +722,7 @@ export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
+  askUserToChooseOneOrMoreNapDescriptorFromCauldron,
   performContainerStateUpdateInCauldron,
   epilog,
   runMiniApp,
