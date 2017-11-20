@@ -49,4 +49,40 @@ export default class CodePushSdk {
       targetBinaryVersion,
       updateMetadata)
   }
+
+  async promote (
+    appName: string,
+    sourceDeploymentName: string,
+    destinationDeploymentName: string,
+    updateMetadata: CodePushPackageInfo) : Promise<CodePushPackage> {
+    if (updateMetadata.rollout === 100) {
+      // If rollout is 100% we shouldn't pass it in the HTTP request
+      delete updateMetadata.rollout
+    }
+
+    return this._codePush.promote(
+      appName,
+      sourceDeploymentName,
+      destinationDeploymentName,
+      updateMetadata)
+  }
+
+  async patch (
+    appName: string,
+    deploymentName: string,
+    label: string,
+    updateMetadata: CodePushPackageInfo) : Promise<CodePushPackage> {
+    if (updateMetadata.rollout === 100) {
+      // If rollout is 100% we shouldn't pass it in the HTTP request
+      delete updateMetadata.rollout
+    }
+
+    console.log(`patchRelease : ${appName} ${deploymentName} ${label} ${JSON.stringify(updateMetadata)}`)
+
+    return this._codePush.patchRelease(
+      appName,
+      deploymentName,
+      label,
+      updateMetadata)
+  }
 }
