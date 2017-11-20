@@ -40,6 +40,10 @@ export default class NativeApplicationDescriptor {
     return (this._platform === undefined) || (this._version === undefined)
   }
 
+  withoutVersion () : NativeApplicationDescriptor {
+    return new NativeApplicationDescriptor(this.name, this.platform)
+  }
+
   static fromString (napDescriptorLiteral: string) : NativeApplicationDescriptor {
     return new NativeApplicationDescriptor(...napDescriptorLiteral.split(':'))
   }

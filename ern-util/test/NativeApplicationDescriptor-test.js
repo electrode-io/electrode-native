@@ -112,4 +112,12 @@ describe('NativeApplicationDescriptor', () => {
       expect(descriptor.toString()).to.equal('MyNativeAppName')
     })
   })
+
+  describe('withoutVersion', () => {
+    it('should create a new native application descriptor without the version', () => {
+      const descriptor = NativeApplicationDescriptor.fromString('MyNativeAppName:android:1.2.3')
+      const newDescriptor = descriptor.withoutVersion()
+      expect(newDescriptor.toString()).to.equal('MyNativeAppName:android')
+    })
+  })
 })
