@@ -511,6 +511,31 @@ export default class CauldronApi {
     return false
   }
 
+  async getYarnLockId (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    key: string
+  ) : Promise<?string> {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+
+    return version && version.yarnLocks && version.yarnLocks[key]
+  }
+
+  async setYarnLockId (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    key: string,
+    id: string
+  ) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+
+    if (version && version.yarnLocks) {
+      version.yarnLocks[key] = id
+    }
+  }
+
   async getYarnLock (
     nativeApplicationName: string,
     platformName: string,
@@ -574,6 +599,24 @@ export default class CauldronApi {
     }
 
     return false
+  }
+
+  async updateYarnLockId (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    key: string,
+    id: string
+  ) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+
+    if (version && version.yarnLocks) {
+      if (version.yarnLocks[key]) {
+        await this._yarnlockStore.removeFile(version.yarnLocks[key])
+      }
+      version.yarnLocks[key] = id
+      await this.commit(`Updated yarn.lock id for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
+    }
   }
 
   async setYarnLocks (

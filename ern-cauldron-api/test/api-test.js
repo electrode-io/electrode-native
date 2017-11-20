@@ -12,8 +12,6 @@ import GitStore from '../src/gitstore'
 const cauldronFixture = require('./fixtures/cauldron-fixture.json')
 
 const fileStoreSourceMapStub = sinon.createStubInstance(FileStore)
-const fileStoreYarnLockStub = sinon.createStubInstance(FileStore)
-fileStoreYarnLockStub.removeFile = sinon.stub().resolves(true)
 
 const codePushNewEntryFixture = {
   "metadata": {
@@ -33,13 +31,18 @@ const codePushNewEntryFixture = {
 }
 
 let gitStoreStub
+let fileStoreYarnLockStub
 let api
+let cauldronData
 
 describe('api.js', () => {
   beforeEach(() => {
     gitStoreStub = sinon.createStubInstance(GitStore)
-    gitStoreStub.getCauldron = sinon.stub().resolves(JSON.parse(JSON.stringify(cauldronFixture)))
+    cauldronData = JSON.parse(JSON.stringify(cauldronFixture))
+    gitStoreStub.getCauldron = sinon.stub().resolves(cauldronData)
     gitStoreStub.commit = sinon.stub().resolves()
+    fileStoreYarnLockStub = sinon.createStubInstance(FileStore)
+    fileStoreYarnLockStub.removeFile = sinon.stub().resolves(true)
     api = new CauldronApi(gitStoreStub, fileStoreSourceMapStub, fileStoreYarnLockStub)
   })
 
@@ -156,6 +159,70 @@ describe('api.js', () => {
     it('should not commit the changes if the yarn lock was not removed', async () => {
       await api.removeYarnLock('test', 'android', '1.0.0', 'Production')
       sinon.assert.notCalled(gitStoreStub.commit)
+    })
+  })
+
+  // ==========================================================
+  // getYarnLockId
+  // ==========================================================
+  describe('getYarnLockId', () => {
+    it('should properly return the yarn lock id if it exists', async () => {
+      const id = await api.getYarnLockId('test', 'android', '17.7.0', 'Production')
+      expect(id).eql('91bf4eff61586d71fe5d52e31a2cfabcbb31e33e')
+    })
+
+    it('should return undefined if the yarn lock key does not exists', async () => {
+      const id = await api.getYarnLockId('test', 'android', '17.7.0', 'UnknownKey')
+      expect(id).undefined
+    })
+
+    it('should return undefined if the native app version does not exists', async () => {
+      const id = await api.getYarnLockId('test', 'android', '17.1000.0', 'Production')
+      expect(id).undefined
+    })
+  })
+
+  // ==========================================================
+  // setYarnLockId
+  // ==========================================================
+  describe('setYarnLockId', () => {
+    it('should properly set the yarn lock id of an existing key', async () => {
+      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
+      await api.setYarnLockId('test', 'android', '17.7.0', 'Production', newId)
+      const id = await api.getYarnLockId('test', 'android', '17.7.0', 'Production')
+      expect(id).eql(newId)
+    })
+
+    it('should properly set the yarn lock id of an unexisting key', async () => {
+      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
+      await api.setYarnLockId('test', 'android', '17.7.0', 'NewKey', newId)
+      const id = await api.getYarnLockId('test', 'android', '17.7.0', 'NewKey')
+      expect(id).eql(newId)
+    })
+  })
+
+   // ==========================================================
+  // updateYarnLockId
+  // ==========================================================
+  describe('updateYarnLockId', () => {
+    it('should properly update the yarn lock id of an existing key', async () => {
+      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
+      await api.updateYarnLockId('test', 'android', '17.7.0', 'Production', newId)
+      const id = await api.getYarnLockId('test', 'android', '17.7.0', 'Production')
+      expect(id).eql(newId)
+    })
+
+    it('should properly set the yarn lock id of an unexisting key', async () => {
+      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
+      await api.updateYarnLockId('test', 'android', '17.7.0', 'NewKey', newId)
+      const id = await api.getYarnLockId('test', 'android', '17.7.0', 'NewKey')
+      expect(id).eql(newId)
+    })
+
+    it('should properly remove the existing yarn lock file', async () => {
+      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
+      await api.updateYarnLockId('test', 'android', '17.7.0', 'Production', newId)
+      sinon.assert.called(fileStoreYarnLockStub.removeFile)
     })
   })
 })

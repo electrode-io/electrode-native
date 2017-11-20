@@ -332,6 +332,65 @@ export class Cauldron {
     }
   }
 
+  async getYarnLockId (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string
+  ) : Promise<?string> {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+      return this.cauldron.getYarnLockId(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key)
+    } catch (e) {
+      log.error(`[getYarnLockId] ${e}`)
+      throw e
+    }
+  }
+
+  async setYarnLockId (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string,
+    id: string
+  ) {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+      return this.cauldron.setYarnLockId(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key,
+        id)
+    } catch (e) {
+      log.error(`[setYarnLockId] ${e}`)
+      throw e
+    }
+  }
+
+  async updateYarnLockId (
+    napDescriptor: NativeApplicationDescriptor,
+    key: string,
+    id: string
+  ) {
+    try {
+      this.throwIfPartialNapDescriptor(napDescriptor)
+      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+      return this.cauldron.updateYarnLockId(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        key,
+        id
+      )
+    } catch (e) {
+      log.error(`[updateYarnLockId] ${e}`)
+      throw e
+    }
+  }
+
   async getNativeDependency (
     napDescriptor: NativeApplicationDescriptor,
     dependencyName: string,
