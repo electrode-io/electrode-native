@@ -193,6 +193,42 @@ version: string, {
   }
 }
 
+export async function performCodePushPatch (
+  napDescriptor: NativeApplicationDescriptor,
+  deploymentName: string,
+  label: string, {
+    isDisabled,
+    isMandatory,
+    rollout
+  } : {
+    isDisabled?: boolean,
+    isMandatory?: boolean,
+    rollout?: number
+  }) {
+  try {
+    const codePushSdk = getCodePushSdk()
+    const appName = await getCodePushAppName(napDescriptor)
+    await codePushSdk.patch(
+      appName,
+      deploymentName,
+      label, {
+        isDisabled,
+        isMandatory,
+        rollout
+      })
+    await cauldron.updateCodePushEntry(
+      napDescriptor,
+      deploymentName,
+      label, {
+        isDisabled,
+        isMandatory,
+        rollout
+      })
+  } catch (e) {
+    log.error(`[performCodePushPatch] ${e}`)
+    throw e
+  }
+}
 export async function performCodePushOtaUpdate (
 napDescriptor: NativeApplicationDescriptor,
 deploymentName: string,
