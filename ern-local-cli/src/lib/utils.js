@@ -110,7 +110,7 @@ async function logErrorAndExitIfNotSatisfied ({
     extraErrorMessage?: string
   },
   napDescriptorExistInCauldron?: {
-    descriptor: string,
+    descriptor: string | Array<string>,
     extraErrorMessage?: string
   },
   napDescritorDoesNotExistsInCauldron?: {
