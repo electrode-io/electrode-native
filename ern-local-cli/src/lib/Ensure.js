@@ -77,12 +77,16 @@ export default class Ensure {
   }
 
   static async napDescritorExistsInCauldron (
-    napDescriptor: string,
+    napDescriptor: string | Array<string>,
     extraErrorMessage: string = '') {
-    const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
-    const result = await cauldron.getNativeApp(descriptor)
-    if (!result) {
-      throw new Error(`${descriptor.toString()} descriptor does not exist in Cauldron.\n${extraErrorMessage}`)
+    const descriptors = napDescriptor instanceof Array
+      ? _.map(napDescriptor, d => NativeApplicationDescriptor.fromString(d))
+      : [ NativeApplicationDescriptor.fromString(napDescriptor) ]
+    for (const descriptor of descriptors) {
+      const result = await cauldron.getNativeApp(descriptor)
+      if (!result) {
+        throw new Error(`${descriptor.toString()} descriptor does not exist in Cauldron.\n${extraErrorMessage}`)
+      }
     }
   }
 
