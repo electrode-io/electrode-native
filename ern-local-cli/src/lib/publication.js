@@ -229,6 +229,77 @@ export async function performCodePushPatch (
     throw e
   }
 }
+
+export async function performCodePushPromote (
+  sourceNapDescriptor: NativeApplicationDescriptor,
+  targetNapDescriptors: Array<NativeApplicationDescriptor>,
+  sourceDeploymentName: string,
+  targetDeploymentName: string, {
+    mandatory,
+    rollout
+  } : {
+    mandatory?: boolean,
+    rollout?: number
+  }) {
+  try {
+    const codePushSdk = getCodePushSdk()
+    await cauldron.beginTransaction()
+    const cauldronCommitMessage = [
+      `CodePush release promotion of ${sourceNapDescriptor.toString()} ${sourceDeploymentName} to ${targetDeploymentName} of`
+    ]
+
+    for (const targetNapDescriptor of targetNapDescriptors) {
+      if (!targetNapDescriptor.version) {
+        throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
+      }
+
+      const appName = await getCodePushAppName(sourceNapDescriptor)
+      const appVersion = await getCodePushTargetVersionName(targetNapDescriptor, targetDeploymentName)
+      const result = await spin(`Promoting release to ${appVersion}`,
+        codePushSdk.promote(appName, sourceDeploymentName, targetDeploymentName, {
+          appVersion,
+          isMandatory: mandatory,
+          rollout
+        }))
+
+      const miniApps = await cauldron.getCodePushMiniApps(sourceNapDescriptor, sourceDeploymentName)
+      if (!miniApps) {
+        log.error(`No MiniApps were found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}] `)
+        log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
+        continue
+      }
+
+      const sourceYarnLockId = await cauldron.getYarnLockId(sourceNapDescriptor, sourceDeploymentName)
+      if (!sourceYarnLockId) {
+        log.error(`No yarn.lock was found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}]`)
+        log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
+        continue
+      }
+      await cauldron.updateYarnLockId(targetNapDescriptor, targetDeploymentName, sourceYarnLockId)
+
+      await cauldron.addCodePushEntry(
+        targetNapDescriptor, {
+          deploymentName: targetDeploymentName,
+          isMandatory: result.isMandatory,
+          appVersion: result.appVersion,
+          size: result.size,
+          releaseMethod: result.releaseMethod,
+          label: result.label,
+          releasedBy: result.releasedBy,
+          rollout: result.rollout
+        },
+        miniApps)
+
+      cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
+    }
+    await spin(`Updating Cauldron`, cauldron.commitTransaction(cauldronCommitMessage))
+  } catch (e) {
+    cauldron.discardTransaction()
+    log.error(`[performCodePushPromote] ${e}`)
+    throw e
+  }
+}
+
 export async function performCodePushOtaUpdate (
 napDescriptor: NativeApplicationDescriptor,
 deploymentName: string,
