@@ -290,16 +290,17 @@ async function logErrorAndExitIfNotSatisfied ({
 
 //
 // Inquire user to choose a native application version from the Cauldron, optionally
-// filtered by platform/and or release status and returns them as an array
-// of native application descriptor strings
+// filtered by platform/and or release status and returns the selected one as a string
 async function askUserToChooseANapDescriptorFromCauldron ({
   platform,
   onlyReleasedVersions,
-  onlyNonReleasedVersions
+  onlyNonReleasedVersions,
+  message
 } : {
   platform?: 'ios' | 'android',
   onlyReleasedVersions?: boolean,
-  onlyNonReleasedVersions?: boolean
+  onlyNonReleasedVersions?: boolean,
+  message?: string
 } = {}) : Promise<string> {
   const napDescriptorStrings = await getNapDescriptorStringsFromCauldron({
     platform,
@@ -310,7 +311,7 @@ async function askUserToChooseANapDescriptorFromCauldron ({
   const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
     type: 'list',
     name: 'userSelectedCompleteNapDescriptor',
-    message: 'Choose a native application version',
+    message: message || 'Choose a native application version',
     choices: napDescriptorStrings
   }])
 
