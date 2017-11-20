@@ -544,6 +544,72 @@ export class Cauldron {
     }
   }
 
+  async updateCodePushEntry (
+    napDescriptor: NativeApplicationDescriptor,
+    deploymentName: string,
+    label: string, {
+      isDisabled,
+      isMandatory,
+      rollout
+    } : {
+      isDisabled?: boolean,
+      isMandatory?: boolean,
+      rollout?: number
+    }) : Promise<*> {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+    return this._updateCodePushEntry(
+      napDescriptor,
+      deploymentName,
+      label, {
+        isDisabled,
+        isMandatory,
+        rollout
+      })
+  }
+
+  async _updateCodePushEntry (
+    napDescriptor: NativeApplicationDescriptor,
+    deploymentName: string,
+    label: string, {
+      isDisabled,
+      isMandatory,
+      rollout
+    } : {
+      isDisabled?: boolean,
+      isMandatory?: boolean,
+      rollout?: number
+    }) {
+    try {
+      const codePushEntries = await this.cauldron.getCodePushEntries(
+        napDescriptor.name,
+        napDescriptor.platform,
+        napDescriptor.version,
+        deploymentName)
+      let entry = _.find(codePushEntries, c => c.metadata.label === label)
+      if (entry) {
+        if (isDisabled !== undefined) {
+          entry.metadata.isDisabled = isDisabled
+        }
+        if (isMandatory !== undefined) {
+          entry.metadata.isMandatory = isDisabled
+        }
+        if (rollout !== undefined) {
+          entry.metadata.rollout = rollout
+        }
+        return this.cauldron.setCodePushEntries(
+          napDescriptor.name,
+          napDescriptor.platform,
+          napDescriptor.version,
+          deploymentName,
+          codePushEntries)
+      }
+    } catch (e) {
+      log.error(`[updateCodePushEntry] ${e}`)
+      throw e
+    }
+  }
+
   async addContainerMiniApp (
     napDescriptor: NativeApplicationDescriptor,
     miniApp: Object) : Promise<*> {
