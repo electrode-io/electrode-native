@@ -214,18 +214,13 @@ miniApps: Array<Dependency>, {
   pathToYarnLock?: string,
   skipConfirmation?: boolean
 } = {}) {
-  const codePushAccessKey = getCodePushAccessKey()
-  if (!codePushAccessKey) {
-    throw new Error('Unable to get the CodePush access key to use')
-  }
-
+  const codePushSdk = getCodePushSdk()
   const plugins = await cauldron.getNativeDependencies(napDescriptor)
   const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
   if (!codePushPlugin) {
     throw new Error('react-native-code-push plugin is not in native app !')
   }
 
-  const codePushSdk = new CodePushSdk(codePushAccessKey)
   const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
 
   let nativeDependenciesVersionAligned = true
@@ -339,6 +334,14 @@ export function getCodePushAccessKey () {
     }
   }
   return codePushAccessKey
+}
+
+export function getCodePushSdk () {
+  const codePushAccessKey = getCodePushAccessKey()
+  if (!codePushAccessKey) {
+    throw new Error('Unable to get the CodePush access key to use')
+  }
+  return new CodePushSdk(codePushAccessKey)
 }
 
 async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) : Promise<boolean> {
