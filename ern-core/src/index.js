@@ -18,6 +18,7 @@ import {
 import * as _dependencyLookup from './dependencyLookup'
 import _ErnBinaryStore from './ErnBinaryStore'
 import * as _iosUtil from './iosUtil'
+import * as _constants from './constants'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -35,6 +36,7 @@ export const Publisher = _Publisher
 export const ContainerGeneratorConfig = _ContainerGeneratorConfig
 export const ErnBinaryStore = _ErnBinaryStore
 export const IosUtil = _iosUtil
+export const constants = _constants
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -52,5 +54,6 @@ export default ({
   Publisher: _Publisher,
   ContainerGeneratorConfig: _ContainerGeneratorConfig,
   ErnBinaryStore: _ErnBinaryStore,
-  IosUtil: _iosUtil
+  IosUtil: _iosUtil,
+  constants: constants
 })

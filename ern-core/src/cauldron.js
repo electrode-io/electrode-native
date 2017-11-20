@@ -1,7 +1,6 @@
 // @flow
 
 import {
-  config,
   Dependency,
   NativeApplicationDescriptor,
   fileUtils
@@ -12,6 +11,7 @@ import type {
   CauldronCodePushMetadata
 } from 'ern-cauldron-api'
 import Platform from './Platform'
+import config from './config'
 
 type CodePushConfig = {
   entriesLimit?: number
