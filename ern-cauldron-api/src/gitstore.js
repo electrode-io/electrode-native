@@ -13,6 +13,7 @@ const CAULDRON_FILENAME = 'cauldron.json'
 export type CauldronCodePushMetadata = {
   deploymentName: string,
   isMandatory?: boolean,
+  isDisabled?: boolean,
   appVersion?: string,
   size?: number,
   releaseMethod?: string,
