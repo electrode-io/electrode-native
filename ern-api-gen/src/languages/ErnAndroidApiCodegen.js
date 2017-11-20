@@ -1,8 +1,6 @@
 import AndroidClientCodegen from "../languages/AndroidClientCodegen";
 import ernify from './ERNMixin';
 import {newHashMap} from '../java/javaUtil';
-import File from '../java/File';
-import SupportingFile from '../SupportingFile';
 
 export default class ErnAndroidApiCodegen extends AndroidClientCodegen {
 

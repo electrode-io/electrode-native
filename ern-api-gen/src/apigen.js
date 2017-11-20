@@ -82,8 +82,6 @@ export async function regenerateCode (options: Object = {}) {
     ...options
   })
 
-  log.error(JSON.stringify(config))
-
   await cleanGenerated()
 
   // Regenerate package.json
