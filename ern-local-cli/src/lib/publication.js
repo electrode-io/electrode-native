@@ -195,20 +195,15 @@ version: string, {
 
 export async function performCodePushOtaUpdate (
 napDescriptor: NativeApplicationDescriptor,
+deploymentName: string,
 miniApps: Array<Dependency>, {
   force = false,
-  codePushAppName,
-  codePushDeploymentName,
-  codePushTargetVersionName,
   codePushIsMandatoryRelease = false,
   codePushRolloutPercentage,
   pathToYarnLock,
   skipConfirmation = false
 }: {
   force: boolean,
-  codePushAppName: string,
-  codePushDeploymentName: string,
-  codePushTargetVersionName: string,
   codePushIsMandatoryRelease?: boolean,
   codePushRolloutPercentage?: number,
   pathToYarnLock?: string,
@@ -249,7 +244,7 @@ miniApps: Array<Dependency>, {
     }
   }
 
-  const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(napDescriptor, codePushDeploymentName)
+  const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(napDescriptor, deploymentName)
 
   // We need to include, in this CodePush bundle, all the MiniApps that were part
   // of the previous CodePush. We will override versions of the MiniApps with
@@ -296,21 +291,21 @@ miniApps: Array<Dependency>, {
     assetsDest: bundleOutputDirectory
   }))
 
-  codePushDeploymentName = codePushDeploymentName || await askUserForCodePushDeploymentName(napDescriptor)
-  codePushAppName = codePushAppName || await askUserForCodePushAppName()
+  const appName = await getCodePushAppName(napDescriptor)
+  const targetVersionName = await getCodePushTargetVersionName(napDescriptor, deploymentName)
 
   const codePushResponse: CodePushPackage = await spin('Releasing bundle through CodePush', codePushSdk.releaseReact(
-    codePushAppName,
-    codePushDeploymentName,
+    appName,
+    deploymentName,
     bundleOutputPath,
-    codePushTargetVersionName, {
+    targetVersionName, {
       isMandatory: codePushIsMandatoryRelease,
       rollout: codePushRolloutPercentage
     }))
 
   await cauldron.addCodePushEntry(
     napDescriptor, {
-      deploymentName: codePushDeploymentName,
+      deploymentName: deploymentName,
       isMandatory: codePushResponse.isMandatory,
       appVersion: codePushResponse.appVersion,
       size: codePushResponse.size,
@@ -322,7 +317,34 @@ miniApps: Array<Dependency>, {
     miniAppsToBeCodePushed)
 
   const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
-  await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, codePushDeploymentName, pathToNewYarnLock))
+  await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, deploymentName, pathToNewYarnLock))
+}
+
+export async function getCodePushTargetVersionName (
+  napDescriptor: NativeApplicationDescriptor,
+  deploymentName: string) {
+  if (!napDescriptor.version) {
+    throw new Error(`Native application descriptor ${napDescriptor.toString()} does not contain a version !`)
+  }
+  let result = napDescriptor.version
+  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
+  if (codePushConfig && codePushConfig.versionModifiers) {
+    const versionModifier = _.find(codePushConfig.versionModifiers, m => m.deploymentName === deploymentName)
+    if (versionModifier) {
+      result = result.replace(/(.+)/, versionModifier.modifier)
+    }
+  }
+  return result
+}
+
+async function getCodePushAppName (
+  napDescriptor: NativeApplicationDescriptor) : Promise<string> {
+  let result = napDescriptor.name
+  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
+  if (codePushConfig && codePushConfig.appName) {
+    result = codePushConfig.appName
+  }
+  return result
 }
 
 export function getCodePushAccessKey () {
@@ -367,7 +389,7 @@ async function askUserToForceCodePushPublication () : Promise<boolean> {
   return userCodePushForcePublication
 }
 
-async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor) : Promise<string> {
+export async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor, message?: string) : Promise<string> {
   const config = await cauldron.getConfig(napDescriptor)
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
   const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
@@ -375,19 +397,9 @@ async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicatio
   const { userSelectedDeploymentName } = await inquirer.prompt({
     type: choices ? 'list' : 'input',
     name: 'userSelectedDeploymentName',
-    message: 'Deployment name',
+    message: message || 'Deployment name',
     choices
   })
 
   return userSelectedDeploymentName
-}
-
-async function askUserForCodePushAppName (defaultAppName) : Promise<string> {
-  const { userSelectedCodePushAppName } = await inquirer.prompt({
-    type: 'input',
-    name: 'userSelectedCodePushAppName',
-    message: 'Application name',
-    default: defaultAppName
-  })
-  return userSelectedCodePushAppName
 }

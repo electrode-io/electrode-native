@@ -9,7 +9,8 @@ import {
   cauldron
 } from 'ern-core'
 import {
-  performCodePushOtaUpdate
+  performCodePushOtaUpdate,
+  askUserForCodePushDeploymentName
 } from '../../lib/publication'
 import utils from '../../lib/utils'
 import * as constants from '../../lib/constants'
@@ -34,11 +35,6 @@ exports.builder = function (yargs: any) {
     })
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
-      type: 'string'
-    })
-    .option('targetBinaryVersion', {
-      describe: 'Semver expression that specifies the binary app version(s) this release is targeting (e.g. 1.1.0, ~1.2.3)',
-      alias: 't',
       type: 'string'
     })
     .option('mandatory', {
@@ -68,7 +64,6 @@ exports.handler = async function ({
   appName,
   deploymentName,
   platform,
-  targetBinaryVersion,
   mandatory,
   rollout,
   skipConfirmation
@@ -79,7 +74,6 @@ exports.handler = async function ({
   appName: string,
   deploymentName: string,
   platform: 'android' | 'ios',
-  targetBinaryVersion: string,
   mandatory?: boolean,
   rollout?: number,
   skipConfirmation?: boolean
@@ -105,15 +99,17 @@ exports.handler = async function ({
     }
   })
 
+  if (!deploymentName) {
+    deploymentName = await askUserForCodePushDeploymentName(napDescriptor)
+  }
+
   try {
     const pathToYarnLock = await getPathToYarnLock(napDescriptor, deploymentName)
     await performCodePushOtaUpdate(
       napDescriptor,
+      deploymentName,
       _.map(miniapps, Dependency.fromString), {
         force,
-        codePushAppName: appName,
-        codePushDeploymentName: deploymentName,
-        codePushTargetVersionName: targetBinaryVersion,
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,
         pathToYarnLock: pathToYarnLock || undefined,

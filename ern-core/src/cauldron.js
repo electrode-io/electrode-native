@@ -13,8 +13,14 @@ import type {
 } from 'ern-cauldron-api'
 import Platform from './Platform'
 
+type CodePushVersionModifier = {
+  deploymentName: string,
+  modifier: string
+}
+
 type CodePushConfig = {
-  entriesLimit?: number
+  entriesLimit?: number,
+  versionModifiers?: Array<CodePushVersionModifier>
 }
 
 //
