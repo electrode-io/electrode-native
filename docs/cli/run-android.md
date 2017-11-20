@@ -25,8 +25,8 @@
 `--mainMiniAppName`
 * Name of the MiniApp to launch when starting the Runner application
 
-`--usePreviousEmulator/-u`
-* Use the previously selected emulator to avoid prompt
+`--usePreviousDevice/-u`
+* Use the previously selected device to avoid prompt
 
 #### Remarks
 

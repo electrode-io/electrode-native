@@ -7,8 +7,10 @@ import {
   spawn
 } from 'child_process'
 import spin from './spin'
-import ernConfig from './config'
+import ernConfig from '../../ern-core/src/config'
 import os from 'os'
+import { constants } from 'ern-core'
+
 const simctl = require('node-simctl')
 
 export type IosDevice = {
@@ -66,20 +68,20 @@ export async function askUserToSelectAniPhoneSimulator () {
   }))
 
   // Check if user has set the usePreviousEmulator flag to true
-  let emulatorConfig = ernConfig.getValue('emulatorConfig')
-  if (choices && emulatorConfig) {
-    if (emulatorConfig.ios && emulatorConfig.ios.usePreviousEmulator) {
+  let deviceConfig = ernConfig.getValue(constants.IOS_DEVICE_CONFIG)
+  if (choices && deviceConfig) {
+    if (deviceConfig.usePreviousDevice) {
       // Get the name of previously used simulator
-      const simulatorUdid = emulatorConfig.ios.simulatorUdid
+      const deviceUdid = deviceConfig.deviceId
       // Check if simulator still exists
-      let previousSimulator
+      let previousDevice
       choices.forEach((val) => {
-        if (val && val.value.udid === simulatorUdid) {
-          previousSimulator = val.value
+        if (val && val.value.udid === deviceUdid) {
+          previousDevice = val.value
         }
       })
-      if (previousSimulator) {
-        return previousSimulator
+      if (previousDevice) {
+        return previousDevice
       }
     }
   }
@@ -88,13 +90,13 @@ export async function askUserToSelectAniPhoneSimulator () {
   let {selectedDevice} = await inquirer.prompt([{
     type: 'list',
     name: 'selectedDevice',
-    message: 'Choose an iOS simulator',
+    message: 'Choose an iOS device',
     choices
   }])
 
   // Update the emulatorConfig
-  emulatorConfig.ios.simulatorUdid = selectedDevice.udid
-  ernConfig.setValue('emulatorConfig', emulatorConfig)
+  deviceConfig.deviceId = selectedDevice.udid
+  ernConfig.setValue(constants.IOS_DEVICE_CONFIG, deviceConfig)
 
   return selectedDevice
 }
