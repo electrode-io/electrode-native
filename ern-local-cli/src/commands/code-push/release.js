@@ -21,9 +21,9 @@ exports.desc = 'CodePush one or more MiniApp(s) versions to a target native appl
 
 exports.builder = function (yargs: any) {
   return yargs
-    .option('descriptor', {
+    .option('descriptors', {
       alias: 'd',
-      describe: 'Full native application selector (target native application version for the push)'
+      describe: 'Full native application descriptors (target native application versions for the push)'
     })
     .option('force', {
       alias: 'f',
@@ -60,7 +60,7 @@ exports.builder = function (yargs: any) {
 exports.handler = async function ({
   force,
   miniapps,
-  descriptor,
+  descriptors = [],
   appName,
   deploymentName,
   platform,
@@ -70,7 +70,7 @@ exports.handler = async function ({
 } : {
   force: boolean,
   miniapps: Array<string>,
-  descriptor?: string,
+  descriptors?: Array<string>,
   appName: string,
   deploymentName: string,
   platform: 'android' | 'ios',
@@ -78,15 +78,19 @@ exports.handler = async function ({
   rollout?: number,
   skipConfirmation?: boolean
 }) {
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyReleasedVersions: true })
+  if (descriptors.length === 0) {
+    descriptors = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron({ onlyReleasedVersions: true })
   }
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
+  const napDescriptors = _.map(descriptors, d => NativeApplicationDescriptor.fromString(d))
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor },
+    sameNativeApplicationAndPlatform: {
+      descriptors,
+      extraErrorMessage: 'You can only pass descriptors that match the same native application and version'
+    },
     napDescriptorExistInCauldron: {
-      descriptor,
+      descriptor: napDescriptors,
       extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
     },
     noGitOrFilesystemPath: {
@@ -100,21 +104,23 @@ exports.handler = async function ({
   })
 
   if (!deploymentName) {
-    deploymentName = await askUserForCodePushDeploymentName(napDescriptor)
+    deploymentName = await askUserForCodePushDeploymentName(napDescriptors[0])
   }
 
   try {
-    const pathToYarnLock = await getPathToYarnLock(napDescriptor, deploymentName)
-    await performCodePushOtaUpdate(
-      napDescriptor,
-      deploymentName,
-      _.map(miniapps, Dependency.fromString), {
-        force,
-        codePushIsMandatoryRelease: mandatory,
-        codePushRolloutPercentage: rollout,
-        pathToYarnLock: pathToYarnLock || undefined,
-        skipConfirmation
-      })
+    for (const napDescriptor of napDescriptors) {
+      const pathToYarnLock = await getPathToYarnLock(napDescriptor, deploymentName)
+      await performCodePushOtaUpdate(
+        napDescriptor,
+        deploymentName,
+        _.map(miniapps, Dependency.fromString), {
+          force,
+          codePushIsMandatoryRelease: mandatory,
+          codePushRolloutPercentage: rollout,
+          pathToYarnLock: pathToYarnLock || undefined,
+          skipConfirmation
+        })
+    }
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
   }
