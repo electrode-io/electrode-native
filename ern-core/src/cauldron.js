@@ -175,6 +175,21 @@ export class Cauldron {
     }
   }
 
+  async getVersions (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
+    if (!napDescriptor.platform) {
+      throw new Error(`[getVersions] platform must be present in the NativeApplicationDesctiptor`)
+    }
+
+    return this.cauldron.getVersions(
+      napDescriptor.name,
+      napDescriptor.version)
+  }
+
+  async getVersionsNames (napDescriptor: NativeApplicationDescriptor) : Promise<Array<string>> {
+    const versions = await this.getVersions(napDescriptor)
+    return _.map(versions, v => v.name)
+  }
+
   async getNativeDependencies (
     napDescriptor: NativeApplicationDescriptor) : Promise<Array<Dependency>> {
     try {

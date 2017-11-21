@@ -15,6 +15,7 @@ import {
 import utils from '../../lib/utils'
 import * as constants from '../../lib/constants'
 import _ from 'lodash'
+import inquirer from 'inquirer'
 
 exports.command = 'release <miniapps..>'
 exports.desc = 'CodePush one or more MiniApp(s) versions to a target native application version'
@@ -24,6 +25,9 @@ exports.builder = function (yargs: any) {
     .option('descriptors', {
       alias: 'd',
       describe: 'Full native application descriptors (target native application versions for the push)'
+    })
+    .option('semVerDescriptor', {
+      describe: 'A native application descriptor using a semver expression for the version'
     })
     .option('force', {
       alias: 'f',
@@ -50,7 +54,7 @@ exports.builder = function (yargs: any) {
       default: 100
     })
     .option('skipConfirmation', {
-      describe: 'Skip final confirmation prompt if no compatibility issues are detected',
+      describe: 'Skip confirmation prompts',
       alias: 's',
       type: 'bool'
     })
@@ -61,6 +65,7 @@ exports.handler = async function ({
   force,
   miniapps,
   descriptors = [],
+  semVerDescriptor,
   appName,
   deploymentName,
   platform,
@@ -71,6 +76,7 @@ exports.handler = async function ({
   force: boolean,
   miniapps: Array<string>,
   descriptors?: Array<string>,
+  semVerDescriptor?: string,
   appName: string,
   deploymentName: string,
   platform: 'android' | 'ios',
@@ -78,36 +84,67 @@ exports.handler = async function ({
   rollout?: number,
   skipConfirmation?: boolean
 }) {
-  if (descriptors.length === 0) {
-    descriptors = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron({ onlyReleasedVersions: true })
-  }
-
-  const napDescriptors = _.map(descriptors, d => NativeApplicationDescriptor.fromString(d))
-
-  await utils.logErrorAndExitIfNotSatisfied({
-    sameNativeApplicationAndPlatform: {
-      descriptors,
-      extraErrorMessage: 'You can only pass descriptors that match the same native application and version'
-    },
-    napDescriptorExistInCauldron: {
-      descriptor: napDescriptors,
-      extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
-    },
-    noGitOrFilesystemPath: {
-      obj: miniapps,
-      extraErrorMessage: 'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.'
-    },
-    publishedToNpm: {
-      obj: miniapps,
-      extraErrorMessage: 'You can only CodePush MiniApps versions that have been published to NPM'
-    }
-  })
-
-  if (!deploymentName) {
-    deploymentName = await askUserForCodePushDeploymentName(napDescriptors[0])
-  }
-
   try {
+    let napDescriptors
+
+    if (descriptors.length > 0) {
+      // User provided one or more descriptor(s)
+      await utils.logErrorAndExitIfNotSatisfied({
+        sameNativeApplicationAndPlatform: {
+          descriptors,
+          extraErrorMessage: 'You can only pass descriptors that match the same native application and version'
+        },
+        napDescriptorExistInCauldron: {
+          descriptor: descriptors,
+          extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
+        }
+      })
+    } else if (descriptors.length === 0 && !semVerDescriptor) {
+      // User provided no descriptors, nor a semver descriptor
+      descriptors = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron({ onlyReleasedVersions: true })
+    } else if (semVerDescriptor) {
+      // User provided a semver descritpor
+      const semVerNapDescriptor = NativeApplicationDescriptor.fromString(semVerDescriptor)
+      napDescriptors = await utils.getDescriptorsMatchingSemVerDescriptor(semVerNapDescriptor)
+      if (napDescriptors.length === 0) {
+        throw new Error(`No versions matching ${semVerDescriptor} were found`)
+      } else {
+        log.info('CodePush release will target the following native application descriptors :')
+        for (const napDescriptor of napDescriptors) {
+          log.info(`- ${napDescriptor.toString()}`)
+        }
+        if (!skipConfirmation) {
+          const { userConfirmedVersions } = await inquirer.prompt([{
+            type: 'confirm',
+            name: 'userConfirmedVersions',
+            message: 'Do you confirm ?'
+          }])
+          if (!userConfirmedVersions) {
+            throw new Error('Aborting command execution')
+          }
+        }
+      }
+    }
+
+    if (!napDescriptors) {
+      napDescriptors = _.map(descriptors, d => NativeApplicationDescriptor.fromString(d))
+    }
+
+    await utils.logErrorAndExitIfNotSatisfied({
+      noGitOrFilesystemPath: {
+        obj: miniapps,
+        extraErrorMessage: 'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.'
+      },
+      publishedToNpm: {
+        obj: miniapps,
+        extraErrorMessage: 'You can only CodePush MiniApps versions that have been published to NPM'
+      }
+    })
+
+    if (!deploymentName) {
+      deploymentName = await askUserForCodePushDeploymentName(napDescriptors[0])
+    }
+
     for (const napDescriptor of napDescriptors) {
       const pathToYarnLock = await getPathToYarnLock(napDescriptor, deploymentName)
       await performCodePushOtaUpdate(
