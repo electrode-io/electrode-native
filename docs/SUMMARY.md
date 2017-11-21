@@ -53,6 +53,9 @@
 
 - [add](cli/add.md)
 - [code-push](cli/code-push.md)
+  - [release](cli/code-push/release.md)
+  - [promote](cli/code-push/promote.md)
+  - [patch](cli/code-push/patch.md)
 - [compat-check](cli/compat-check.md)
 - [create-api-impl](cli/create-api-impl.md)
 - [create-api](cli/create-api.md)
