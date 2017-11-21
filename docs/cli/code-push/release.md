@@ -1,5 +1,7 @@
 ## `ern code-push release`
 
+[code-push commands prerequisites] needs to be met in order to execute this command
+
 #### Description
 
 * Release one or more MiniApp(s) version(s) to one or more released native application version(s).
