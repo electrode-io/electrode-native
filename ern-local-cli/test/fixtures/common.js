@@ -91,6 +91,19 @@ export const apiImplNameWithSuffix = [
   'thisapiImplIsValid'
 ]
 
+export const differentNativeApplicationPlatformDescriptors = [
+  'testapp:android:1.0.0',
+  'testapp:android:2.0.0',
+  'testapp:ios:1.0.0',
+  'testapp:android:3.0.0',
+]
+
+export const sameNativeApplicationPlatformDescriptors = [
+  'testapp:android:1.0.0',
+  'testapp:android:2.0.0',
+  'testapp:android:3.0.0'
+]
+
 export const npmPkgNameExists = 'chai'
 export const npmPkgNameDoesNotExists = 'zxc-pkg-not-in-npm-bnm'
 export const npmPkgName = 'chai'

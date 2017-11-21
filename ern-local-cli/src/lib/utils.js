@@ -79,6 +79,7 @@ async function logErrorAndExitIfNotSatisfied ({
   isNewerContainerVersion,
   isCompleteNapDescriptorString,
   napDescriptorExistInCauldron,
+  sameNativeApplicationAndPlatform,
   napDescritorDoesNotExistsInCauldron,
   publishedToNpm,
   miniAppNotInNativeApplicationVersionContainer,
@@ -111,6 +112,10 @@ async function logErrorAndExitIfNotSatisfied ({
   },
   napDescriptorExistInCauldron?: {
     descriptor: string | Array<string>,
+    extraErrorMessage?: string
+  },
+  sameNativeApplicationAndPlatform?: {
+    descriptors: Array<string>,
     extraErrorMessage?: string
   },
   napDescritorDoesNotExistsInCauldron?: {
@@ -206,6 +211,12 @@ async function logErrorAndExitIfNotSatisfied ({
       await Ensure.napDescritorExistsInCauldron(
         napDescriptorExistInCauldron.descriptor,
         napDescriptorExistInCauldron.extraErrorMessage)
+    }
+    if (sameNativeApplicationAndPlatform) {
+      spinner.text = 'Ensuring that all descriptors are for the same native application and platform'
+      Ensure.sameNativeApplicationAndPlatform(
+        sameNativeApplicationAndPlatform.descriptors,
+        sameNativeApplicationAndPlatform.extraErrorMessage)
     }
     if (napDescritorDoesNotExistsInCauldron) {
       spinner.text = 'Ensuring that native application descriptor does not already exist in Cauldron'
