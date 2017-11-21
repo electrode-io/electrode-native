@@ -1,5 +1,7 @@
 ## `ern code-push promote`
 
+[code-push commands prerequisites] needs to be met in order to execute this command
+
 #### Description
 
 * Promote a CodePush release to a different deployment name and/or native application versions.

@@ -460,6 +460,8 @@ async function getCodePushAppName (
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
   if (codePushConfig && codePushConfig.appName) {
     result = codePushConfig.appName
+  } else {
+    result = `${napDescriptor.name}${napDescriptor.platform === 'ios' ? 'Ios' : 'Android'}`
   }
   return result
 }

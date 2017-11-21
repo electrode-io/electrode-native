@@ -1,5 +1,7 @@
 ## `ern code-push patch`
 
+[code-push commands prerequisites] needs to be met in order to execute this command
+
 #### Description
 
 * Patch a CodePush release.
@@ -49,3 +51,4 @@
  
 [code-push promote]: ./promote.md
 [code-push release]: ./release.md
+[code-push commands prerequisites]: ../code-push.md
