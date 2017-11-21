@@ -207,6 +207,7 @@ export async function performCodePushPatch (
   }) {
   try {
     const codePushSdk = getCodePushSdk()
+    await cauldron.beginTransaction()
     const appName = await getCodePushAppName(napDescriptor)
     await codePushSdk.patch(
       appName,
@@ -224,7 +225,9 @@ export async function performCodePushPatch (
         isMandatory,
         rollout
       })
+    await cauldron.commitTransaction(`CodePush patched ${napDescriptor.toString()} ${deploymentName} ${label}`)
   } catch (e) {
+    await cauldron.discardTransaction()
     log.error(`[performCodePushPatch] ${e}`)
     throw e
   }
@@ -294,7 +297,7 @@ export async function performCodePushPromote (
     }
     await spin(`Updating Cauldron`, cauldron.commitTransaction(cauldronCommitMessage))
   } catch (e) {
-    cauldron.discardTransaction()
+    await cauldron.discardTransaction()
     log.error(`[performCodePushPromote] ${e}`)
     throw e
   }
@@ -316,115 +319,122 @@ miniApps: Array<Dependency>, {
   pathToYarnLock?: string,
   skipConfirmation?: boolean
 } = {}) {
-  const codePushSdk = getCodePushSdk()
-  const plugins = await cauldron.getNativeDependencies(napDescriptor)
-  const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
-  if (!codePushPlugin) {
-    throw new Error('react-native-code-push plugin is not in native app !')
-  }
-
-  const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
-
-  let nativeDependenciesVersionAligned = true
-
-  for (const miniApp of miniApps) {
-    let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
-      MiniApp.fromPackagePath(new DependencyPath(miniApp.toString())))
-    let report = await compatibility.checkCompatibilityWithNativeApp(
-          miniAppInstance,
-          napDescriptor.name,
-          napDescriptor.platform,
-          napDescriptor.version)
-    if (!report.isCompatible) {
-      nativeDependenciesVersionAligned = false
-      log.warn('At least one native dependency version is not aligned !')
-    } else {
-      log.info(`${miniApp.toString()} native dependencies versions are aligned with ${napDescriptor.toString()}`)
+  try {
+    const codePushSdk = getCodePushSdk()
+    const plugins = await cauldron.getNativeDependencies(napDescriptor)
+    const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
+    if (!codePushPlugin) {
+      throw new Error('react-native-code-push plugin is not in native app !')
     }
-  }
 
-  if (!nativeDependenciesVersionAligned && force) {
-    log.warn('Native dependencies versions are not aligned but ignoring due to the use of force flag')
-  } else if (!nativeDependenciesVersionAligned && !force) {
-    if (!await askUserToForceCodePushPublication()) {
+    const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
+
+    let nativeDependenciesVersionAligned = true
+
+    for (const miniApp of miniApps) {
+      let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
+        MiniApp.fromPackagePath(new DependencyPath(miniApp.toString())))
+      let report = await compatibility.checkCompatibilityWithNativeApp(
+            miniAppInstance,
+            napDescriptor.name,
+            napDescriptor.platform,
+            napDescriptor.version)
+      if (!report.isCompatible) {
+        nativeDependenciesVersionAligned = false
+        log.warn('At least one native dependency version is not aligned !')
+      } else {
+        log.info(`${miniApp.toString()} native dependencies versions are aligned with ${napDescriptor.toString()}`)
+      }
+    }
+
+    if (!nativeDependenciesVersionAligned && force) {
+      log.warn('Native dependencies versions are not aligned but ignoring due to the use of force flag')
+    } else if (!nativeDependenciesVersionAligned && !force) {
+      if (!await askUserToForceCodePushPublication()) {
+        return log.info('CodePush publication aborted')
+      }
+    }
+
+    const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(napDescriptor, deploymentName)
+
+    // We need to include, in this CodePush bundle, all the MiniApps that were part
+    // of the previous CodePush. We will override versions of the MiniApps with
+    // the one provided to this function, and keep other ones intact.
+    // For example, if previous CodePush bundle was containing MiniAppOne@1.0.0 and
+    // MiniAppTwo@1.0.0 and this method is called to CodePush MiniAppOne@2.0.0, then
+    // the bundle we will push will container MiniAppOne@2.0.0 and MiniAppTwo@1.0.0.
+    // If this the first ever CodePush bundle for this specific native application version
+    // then the reference miniapp versions are the one from the container.
+    let referenceMiniAppsToCodePush = latestCodePushedMiniApps
+    if (!referenceMiniAppsToCodePush || referenceMiniAppsToCodePush.length === 0) {
+      referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(napDescriptor)
+    }
+
+    const miniAppsToBeCodePushed = _.unionBy(
+      miniApps, referenceMiniAppsToCodePush, x => x.withoutVersion().toString())
+
+    // If force or skipFinalConfirmation was not provided as option, we ask user for confirmation before proceeding
+    // with code-push publication
+    const userConfirmedCodePushPublication = force || skipConfirmation || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed)
+
+    if (!userConfirmedCodePushPublication) {
       return log.info('CodePush publication aborted')
+    } else {
+      log.info('Getting things ready for CodePush publication')
     }
-  }
 
-  const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(napDescriptor, deploymentName)
+    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
+    await spin('Generating composite miniapps',
+       generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
 
-  // We need to include, in this CodePush bundle, all the MiniApps that were part
-  // of the previous CodePush. We will override versions of the MiniApps with
-  // the one provided to this function, and keep other ones intact.
-  // For example, if previous CodePush bundle was containing MiniAppOne@1.0.0 and
-  // MiniAppTwo@1.0.0 and this method is called to CodePush MiniAppOne@2.0.0, then
-  // the bundle we will push will container MiniAppOne@2.0.0 and MiniAppTwo@1.0.0.
-  // If this the first ever CodePush bundle for this specific native application version
-  // then the reference miniapp versions are the one from the container.
-  let referenceMiniAppsToCodePush = latestCodePushedMiniApps
-  if (!referenceMiniAppsToCodePush || referenceMiniAppsToCodePush.length === 0) {
-    referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(napDescriptor)
-  }
+    const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
+    shell.mkdir('-p', bundleOutputDirectory)
+    const platform = napDescriptor.platform || ''
+    const bundleOutputPath = platform === 'android'
+      ? path.join(bundleOutputDirectory, 'index.android.bundle')
+      : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
-  const miniAppsToBeCodePushed = _.unionBy(
-    miniApps, referenceMiniAppsToCodePush, x => x.withoutVersion().toString())
-
-  // If force or skipFinalConfirmation was not provided as option, we ask user for confirmation before proceeding
-  // with code-push publication
-  const userConfirmedCodePushPublication = force || skipConfirmation || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed)
-
-  if (!userConfirmedCodePushPublication) {
-    return log.info('CodePush publication aborted')
-  } else {
-    log.info('Getting things ready for CodePush publication')
-  }
-
-  const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
-  await spin('Generating composite miniapps',
-     generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
-
-  const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
-  shell.mkdir('-p', bundleOutputDirectory)
-  const platform = napDescriptor.platform || ''
-  const bundleOutputPath = platform === 'android'
-    ? path.join(bundleOutputDirectory, 'index.android.bundle')
-    : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
-
-  await spin('Generating composite bundle for miniapps', reactnative.bundle({
-    entryFile: `index.${platform}.js`,
-    dev: false,
-    bundleOutput: bundleOutputPath,
-    platform,
-    assetsDest: bundleOutputDirectory
-  }))
-
-  const appName = await getCodePushAppName(napDescriptor)
-  const targetVersionName = await getCodePushTargetVersionName(napDescriptor, deploymentName)
-
-  const codePushResponse: CodePushPackage = await spin('Releasing bundle through CodePush', codePushSdk.releaseReact(
-    appName,
-    deploymentName,
-    bundleOutputPath,
-    targetVersionName, {
-      isMandatory: codePushIsMandatoryRelease,
-      rollout: codePushRolloutPercentage
+    await spin('Generating composite bundle for miniapps', reactnative.bundle({
+      entryFile: `index.${platform}.js`,
+      dev: false,
+      bundleOutput: bundleOutputPath,
+      platform,
+      assetsDest: bundleOutputDirectory
     }))
 
-  await cauldron.addCodePushEntry(
-    napDescriptor, {
-      deploymentName: deploymentName,
-      isMandatory: codePushResponse.isMandatory,
-      appVersion: codePushResponse.appVersion,
-      size: codePushResponse.size,
-      releaseMethod: codePushResponse.releaseMethod,
-      label: codePushResponse.label,
-      releasedBy: codePushResponse.releasedBy,
-      rollout: codePushResponse.rollout
-    },
-    miniAppsToBeCodePushed)
+    const appName = await getCodePushAppName(napDescriptor)
+    const targetVersionName = await getCodePushTargetVersionName(napDescriptor, deploymentName)
 
-  const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
-  await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, deploymentName, pathToNewYarnLock))
+    const codePushResponse: CodePushPackage = await spin('Releasing bundle through CodePush', codePushSdk.releaseReact(
+      appName,
+      deploymentName,
+      bundleOutputPath,
+      targetVersionName, {
+        isMandatory: codePushIsMandatoryRelease,
+        rollout: codePushRolloutPercentage
+      }))
+
+    await cauldron.addCodePushEntry(
+      napDescriptor, {
+        deploymentName: deploymentName,
+        isMandatory: codePushResponse.isMandatory,
+        appVersion: codePushResponse.appVersion,
+        size: codePushResponse.size,
+        releaseMethod: codePushResponse.releaseMethod,
+        label: codePushResponse.label,
+        releasedBy: codePushResponse.releasedBy,
+        rollout: codePushResponse.rollout
+      },
+      miniAppsToBeCodePushed)
+
+    const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
+    await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, deploymentName, pathToNewYarnLock))
+    await cauldron.commitTransaction(`CodePush release for ${napDescriptor.toString()} ${deploymentName}`)
+  } catch (e) {
+    await cauldron.discardTransaction()
+    log.error(`performCodePushOtaUpdate {e}`)
+    throw e
+  }
 }
 
 export async function getCodePushTargetVersionName (
