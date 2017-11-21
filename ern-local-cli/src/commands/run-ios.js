@@ -2,8 +2,8 @@
 
 import utils from '../lib/utils'
 import {
-  config as ernConfig,
-  Utils
+  Utils,
+  deviceConfig
 } from 'ern-util'
 
 exports.command = 'run-ios'
@@ -34,10 +34,10 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'Name of the MiniApp to launch when starting the Runner application'
     })
-    .option('usePreviousEmulator', {
+    .option('usePreviousDevice', {
       type: 'bool',
       alias: 'u',
-      describe: 'Use the previously selected emulator to avoid prompt'
+      describe: 'Use the previously selected device to avoid prompt'
     })
     .epilog(utils.epilog(exports))
 }
@@ -48,26 +48,20 @@ exports.handler = async function ({
   descriptor,
   mainMiniAppName,
   dev,
-  usePreviousEmulator
+  usePreviousDevice
 } : {
   miniapps?: Array<string>,
   dependencies: Array<string>,
   descriptor?: string,
   mainMiniAppName?: string,
   dev?: boolean,
-  usePreviousEmulator?: boolean
+  usePreviousDevice?: boolean
 }) {
   try {
     if (process.platform !== 'darwin') {
       return log.error('This command can only be used on Mac OS X')
     }
-
-    let emulatorConfig = ernConfig.getValue('emulatorConfig', {
-      android: {usePreviousEmulator: false, emulatorName: ''},
-      ios: {usePreviousEmulator: false, simulatorUdid: ''}
-    })
-    usePreviousEmulator ? emulatorConfig.ios.usePreviousEmulator = true : emulatorConfig.ios.usePreviousEmulator = false
-    ernConfig.setValue('emulatorConfig', emulatorConfig)
+    deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
 
     await utils.runMiniApp('ios', {
       mainMiniAppName,

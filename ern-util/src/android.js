@@ -4,6 +4,7 @@ import inquirer from 'inquirer'
 import shell from './shell'
 import spin from './spin.js'
 import ernConfig from './config'
+import * as deviceConfigUtil from './deviceConfig'
 import {
   execp,
   spawnp
@@ -116,18 +117,16 @@ export async function runAndroid ({
 
 export async function askUserToSelectAvdEmulator (): Promise<string> {
   const avdImageNames = await getAndroidAvds()
-  let emulatorConfig = ernConfig.getValue('emulatorConfig')
+  let deviceConfig = ernConfig.getValue(deviceConfigUtil.ANDROID_DEVICE_CONFIG)
   // Check if user has set the usePreviousEmulator flag to true
-  if (avdImageNames && emulatorConfig) {
-    if (emulatorConfig.android) {
-      if (emulatorConfig.android.usePreviousEmulator) {
-        // Get the name of previously used emulator
-        const emulatorName = emulatorConfig.android.emulatorName
-        // Check if avd image still exists
-        const avdIndex = avdImageNames.indexOf(emulatorName)
-        if (avdIndex > -1) {
-          return `${avdImageNames[avdIndex]}`
-        }
+  if (avdImageNames && deviceConfig) {
+    if (deviceConfig.usePreviousDevice) {
+      // Get the name of previously used device
+      const deviceId = deviceConfig.deviceId
+      // Check if avd image still exists
+      const avdIndex = avdImageNames.indexOf(deviceId)
+      if (avdIndex > -1) {
+        return `${avdImageNames[avdIndex]}`
       }
     }
   }
@@ -136,14 +135,14 @@ export async function askUserToSelectAvdEmulator (): Promise<string> {
   const {avdImageName} = await inquirer.prompt([{
     type: 'list',
     name: 'avdImageName',
-    message: 'Choose Android emulator image',
+    message: 'Choose Android device image',
     choices: avdImageNames
   }])
 
-  // Update the emulatorConfig
-  if (emulatorConfig) {
-    emulatorConfig.android.emulatorName = avdImageName
-    ernConfig.setValue('emulatorConfig', emulatorConfig)
+  // Update the device Config
+  if (deviceConfig) {
+    deviceConfig.deviceId = avdImageName
+    ernConfig.setValue(deviceConfigUtil.ANDROID_DEVICE_CONFIG, deviceConfig)
   }
   return `${avdImageName}`
 }
@@ -153,7 +152,7 @@ export async function askUserToSelectAvdEmulator (): Promise<string> {
 // Params :
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
-// - avdImageName : name of the avd image to use (emulator image)
+// - avdImageName : name of the avd image to use (device image)
 export async function runAndroidUsingAvdImage ({
   projectPath,
   packageName,

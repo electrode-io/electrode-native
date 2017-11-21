@@ -146,10 +146,8 @@ describe('ios utils', () => {
     it('prompt user to select iPhone Simulator if usePreviousEmulator is false', async () => {
       resolveGetDevices(iPhoneSimulators)
       const config = {
-        ios: {
-          usePreviousEmulator: false,
-          simulatorUdid: fixtures.oneUdid
-        }
+        usePreviousDevice: false,
+        deviceId: fixtures.oneUdid
       }
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves(
@@ -172,10 +170,8 @@ describe('ios utils', () => {
     it('prompt user if simulator is missing and previous emulator flag is true ', async () => {
       resolveGetDevices(iPhoneSimulators)
       const config = {
-        ios: {
-          usePreviousEmulator: true,
-          simulatorUdid: 'SimulatorNotPresent'
-        }
+        usePreviousDevice: true,
+        deviceId: 'SimulatorNotPresent'
       }
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves(
@@ -198,10 +194,8 @@ describe('ios utils', () => {
     it('do not prompt user to select iPhone Simulator if usePreviousEmulator is true', async () => {
       resolveGetDevices(iPhoneSimulators)
       const config = {
-        ios: {
-          usePreviousEmulator: true,
-          simulatorUdid: fixtures.oneUdid
-        }
+        usePreviousDevice: true,
+        deviceId: fixtures.oneUdid
       }
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
       const result = await ios.askUserToSelectAniPhoneSimulator()

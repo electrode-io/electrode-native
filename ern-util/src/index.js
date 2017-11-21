@@ -20,6 +20,7 @@ import _shell from './shell'
 import * as _childProcess from './childProcess'
 import _gitCli from './gitCli'
 import _CodePushSdk from './CodePushSdk'
+import * as _deviceConfig from './deviceConfig'
 
 export const android = _android
 export const ios = _ios
@@ -41,6 +42,7 @@ export const shell = _shell
 export const childProcess = _childProcess
 export const gitCli = _gitCli
 export const CodePushSdk = _CodePushSdk
+export const deviceConfig = _deviceConfig
 
 export default ({
   android: _android,
@@ -62,7 +64,8 @@ export default ({
   shell: _shell,
   childProcess: _childProcess,
   gitCli: _gitCli,
-  CodePushSdk: _CodePushSdk
+  CodePushSdk: _CodePushSdk,
+  deviceConfig: _deviceConfig
 })
 
 export type {

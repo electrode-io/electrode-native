@@ -102,10 +102,8 @@ describe('android.js', () => {
     it('prompt user if previous emulator flag is false', async () => {
       execpStub.resolves(fixtures.oneAvdList)
       const config = {
-        android: {
-          usePreviousEmulator: false,
-          emulatorName: fixtures.oneAvd
-        }
+        usePreviousDevice: false,
+        deviceId: fixtures.oneAvd
       }
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
@@ -119,10 +117,8 @@ describe('android.js', () => {
     it('prompt user if avd is missing and previous emulator flag is true', async () => {
       execpStub.resolves(fixtures.oneAvdList)
       const config = {
-        android: {
-          usePreviousEmulator: true,
-          emulatorName: 'AvdNotPresent'
-        }
+        usePreviousDevice: true,
+        deviceId: 'AvdNotPresent'
       }
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
@@ -147,9 +143,7 @@ describe('android.js', () => {
 
     it('prompt user if usePreviousEmulator flag is not present', async () => {
       execpStub.resolves(fixtures.oneAvdList)
-      const config = {
-        android: {}
-      }
+      const config = {}
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
       })
@@ -162,10 +156,8 @@ describe('android.js', () => {
     it('do not prompt user if previous emulator flag is true', async () => {
       execpStub.resolves(fixtures.oneAvdList)
       const config = {
-        android: {
-          usePreviousEmulator: true,
-          emulatorName: fixtures.oneAvd
-        }
+        usePreviousDevice: true,
+        deviceId: fixtures.oneAvd
       }
       ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
       expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)

@@ -2,7 +2,7 @@
 
 import utils from '../lib/utils'
 import {
-  config as ernConfig,
+  deviceConfig,
   Utils
 } from 'ern-util'
 
@@ -34,10 +34,10 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'Name of the MiniApp to launch when starting the Runner application'
     })
-    .option('usePreviousEmulator', {
+    .option('usePreviousDevice', {
       type: 'bool',
       alias: 'u',
-      describe: 'Use the previously selected emulator to avoid prompt'
+      describe: 'Use the previously selected device to avoid prompt'
     })
     .epilog(utils.epilog(exports))
 }
@@ -48,22 +48,17 @@ exports.handler = async function ({
   descriptor,
   mainMiniAppName,
   dev,
-  usePreviousEmulator
+  usePreviousDevice
 } : {
   miniapps?: Array<string>,
   dependencies: Array<string>,
   descriptor?: string,
   mainMiniAppName?: string,
   dev?: boolean,
-  usePreviousEmulator?: boolean
+  usePreviousDevice?: boolean
 }) {
   try {
-    let emulatorConfig = ernConfig.getValue('emulatorConfig', {
-      android: {usePreviousEmulator: false, emulatorName: ''},
-      ios: {usePreviousEmulator: false, simulatorUdid: ''}
-    })
-    usePreviousEmulator ? emulatorConfig.android.usePreviousEmulator = true : emulatorConfig.android.usePreviousEmulator = false
-    ernConfig.setValue('emulatorConfig', emulatorConfig)
+    deviceConfig.updateDeviceConfig('android', usePreviousDevice)
 
     await utils.runMiniApp('android', {
       mainMiniAppName,
