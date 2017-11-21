@@ -90,6 +90,15 @@ export default class Ensure {
     }
   }
 
+  static sameNativeApplicationAndPlatform (
+    descriptors: Array<string>,
+    extraErrorMessage: string = '') {
+    const versionLessDescriptors = _.map(descriptors, n => `${n.split(':')[0]}:${n.split(':')[1]}`)
+    if (_.uniq(versionLessDescriptors).length > 1) {
+      throw new Error(`Descriptors do not all matchthe same native application/platform.\n${extraErrorMessage}`)
+    }
+  }
+
   static async napDescritorDoesNotExistsInCauldron (
     napDescriptor: string,
     extraErrorMessage: string = '') {

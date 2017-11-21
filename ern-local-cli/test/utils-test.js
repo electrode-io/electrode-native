@@ -297,6 +297,20 @@ describe('utils.js', () => {
         assertLoggedErrorAndExitedProcess()
       })
     })
+
+    it('[sameNativeApplicationAndPlatform] Shoud log error and exit process if descriptors do not all match same native application platform', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        sameNativeApplicationAndPlatform: {descriptors: fixtures.differentNativeApplicationPlatformDescriptors}
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[sameNativeApplicationAndPlatform] Shoud not log error anornd exit process if descriptors do not all match same native application platform', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        sameNativeApplicationAndPlatform: {descriptors: fixtures.sameNativeApplicationPlatformDescriptors}
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
   })
 
   // ==========================================================

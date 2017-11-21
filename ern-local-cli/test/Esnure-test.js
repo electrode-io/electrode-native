@@ -185,4 +185,17 @@ describe('Ensure.js', () => {
       })
     })
   })
+
+  // ==========================================================
+  // sameNativeAplicationAndPlatform
+  // ==========================================================
+  describe('sameNativeAplicationAndPlatform', () => {
+    it('should not throw if descriptors are matching the same native application and platform', () => {
+      expect(() => Ensure.sameNativeApplicationAndPlatform(fixtures.sameNativeApplicationPlatformDescriptors)).to.not.throw()
+    })
+    
+    it('should throw if descriptors are not matching the same native application and platforn', () => {
+      expect(() => Ensure.sameNativeApplicationAndPlatform(fixtures.differentNativeApplicationPlatformDescriptors)).to.throw()
+    })
+  })
 })
