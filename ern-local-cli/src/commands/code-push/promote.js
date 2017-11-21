@@ -81,7 +81,13 @@ exports.handler = async function ({
   const sourceNapDescriptor = NativeApplicationDescriptor.fromString(sourceDescriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor: sourceDescriptor },
+    sameNativeApplicationAndPlatform: {
+      descriptors: targetDescriptors,
+      extraErrorMessage: 'You can only pass descriptors that match the same native application and version'
+    },
+    isCompleteNapDescriptorString: {
+      descriptor: sourceDescriptor
+    },
     napDescriptorExistInCauldron: {
       descriptor: targetDescriptors,
       extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
