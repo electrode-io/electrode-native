@@ -31,6 +31,7 @@ const discardTransactionStub = sinon.stub(cauldron, 'discardTransaction')
 const getContainerVersionStub = sinon.stub(cauldron, 'getContainerVersion').resolves('1.0.0')
 const getTopLevelContainerVersionStub = sinon.stub(cauldron, 'getTopLevelContainerVersion').resolves('1.2.3')
 const updateContainerVersionStub = sinon.stub(cauldron, 'updateContainerVersion')
+const getVersionsNameStub = sinon.stub(cauldron, 'getVersionsNames').resolves(['1.2.3', '1.2.4', '2.0.0'])
 
 // Logging stubs
 const logErrorStub = sinon.stub()
@@ -107,6 +108,29 @@ after(() => {
   yarnStub.restore()
   inquirerStub.restore()
 })
+
+// Utility function that returns true if a given async function execution
+// throws an exception, false otherwise
+// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
+async function doesThrow (asyncFn, ...args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === true
+}
+
+async function doesNotThrow (asyncFn, ... args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === false
+}
 
 describe('utils.js', () => {
   // ==========================================================
@@ -525,6 +549,39 @@ describe('utils.js', () => {
       } catch (e) {
        expect(e.message).to.include('Unsupported module type :')
       }
+    })
+  })
+
+  // ==========================================================
+  // getDescriptorsMatchingSemVerDescriptor
+  // ==========================================================
+  describe('getDescriptorsMatchingSemVerDescriptor', () => {
+    it('should throw if the descriptor does not contain a platform', async () => {
+      const descriptor = NativeApplicationDescriptor.fromString('testapp')
+      assert(await doesThrow(utils.getDescriptorsMatchingSemVerDescriptor, descriptor))
+    })
+
+    it('should throw if the descriptor does not contain a version', async () => {
+      const descriptor = NativeApplicationDescriptor.fromString('testapp:android')
+      assert(await doesThrow(utils.getDescriptorsMatchingSemVerDescriptor, descriptor))
+    })
+
+    it('should return an empty array if the semver descriptor does not match any version', async () => {
+      const descriptor = NativeApplicationDescriptor.fromString('testapp:android:5.0.0')
+      const result = await utils.getDescriptorsMatchingSemVerDescriptor(descriptor)
+      expect(result).to.be.an('array').empty
+    })
+
+    it('should return the right matched versions [1]', async () => {
+      const descriptor = NativeApplicationDescriptor.fromString('testapp:android:^1.0.0')
+      const result = await utils.getDescriptorsMatchingSemVerDescriptor(descriptor)
+      expect(result).to.be.an('array').of.length(2)
+    })
+
+    it('should return the right matched versions [2]', async () => {
+      const descriptor = NativeApplicationDescriptor.fromString('testapp:android:2.0.x')
+      const result = await utils.getDescriptorsMatchingSemVerDescriptor(descriptor)
+      expect(result).to.be.an('array').of.length(1)
     })
   })
 })

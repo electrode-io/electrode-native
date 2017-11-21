@@ -730,6 +730,22 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
   return useSuffixedModuleName ? suffixedModuleName : moduleName
 }
 
+async function getDescriptorsMatchingSemVerDescriptor (semVerDescriptor: NativeApplicationDescriptor)
+  : Promise<Array<NativeApplicationDescriptor>> {
+  if (!semVerDescriptor.platform || !semVerDescriptor.version) {
+    throw new Error(`${semVerDescriptor.toString()} descriptor is missing platform and/or version`)
+  }
+  const result = []
+  const versionsNames = await cauldron.getVersionsNames(semVerDescriptor)
+  const versions = _.filter(versionsNames, v => semver.satisfies(v, semVerDescriptor.version))
+  for (const version of versions) {
+    const descriptor = new NativeApplicationDescriptor(semVerDescriptor.name, semVerDescriptor.platform, version)
+    result.push(descriptor)
+  }
+
+  return result
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
@@ -741,5 +757,6 @@ export default {
   doesPackageExistInNpm,
   performPkgNameConflictCheck,
   checkIfModuleNameContainsSuffix,
-  promptUserToUseSuffixModuleName
+  promptUserToUseSuffixModuleName,
+  getDescriptorsMatchingSemVerDescriptor
 }
