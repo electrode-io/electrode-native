@@ -110,6 +110,7 @@ exports.handler = async function ({
 
     if (!jsOnly && !nativeOnly) {
       nativeOnly = await promptPlatformSelection()
+      jsOnly = !nativeOnly
     }
 
     const moduleType = nativeOnly ? ModuleTypes.NATIVE_API_IMPL : ModuleTypes.JS_API_IMPL
@@ -124,7 +125,7 @@ exports.handler = async function ({
       let cameCaseName = core.camelize(apiDep.name)
       // remove number if present
       const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
-      apiImplName = `${nameWithNoNumber}Impl`
+      apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`
     }
 
     // If no package name is specified get default name from apiImplName

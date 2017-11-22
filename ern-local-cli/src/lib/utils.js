@@ -697,8 +697,9 @@ function checkIfModuleNameContainsSuffix (moduleName: string, moduleType: string
       case ModuleTypes.API:
         return moduleName.toUpperCase().indexOf('API') > -1
       case ModuleTypes.JS_API_IMPL:
+        return moduleName.toUpperCase().indexOf('APIIMPLJS') > -1
       case ModuleTypes.NATIVE_API_IMPL:
-        return moduleName.toUpperCase().indexOf('APIIMPL') > -1
+        return moduleName.toUpperCase().indexOf('APIIMPLNATIVE') > -1
       default:
         return false
     }
@@ -720,9 +721,12 @@ async function promptUserToUseSuffixModuleName (moduleName: string, moduleType: 
         message = `We recommend suffixing the name of ${moduleName} with Api, Do you want to use ${suffixedModuleName}?`
         break
       case ModuleTypes.JS_API_IMPL:
+        suffixedModuleName = `${moduleName}ApiImplJs`
+        message = `We recommend suffixing the name of ${moduleName} with ApiImplJs, Do you want to use ${suffixedModuleName}?`
+        break
       case ModuleTypes.NATIVE_API_IMPL:
-        suffixedModuleName = `${moduleName}ApiImpl`
-        message = `We recommend suffixing the name of ${moduleName} with ApiImpl, Do you want to use ${suffixedModuleName}?`
+        suffixedModuleName = `${moduleName}ApiImplNative`
+        message = `We recommend suffixing the name of ${moduleName} with ApiImplNative, Do you want to use ${suffixedModuleName}?`
         break
       default:
         throw new Error(`Unsupported module type : ${moduleType}`)
