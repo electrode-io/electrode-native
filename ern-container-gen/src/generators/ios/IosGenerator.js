@@ -81,7 +81,8 @@ export default class IosGenerator implements ContainerGenerator {
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
       if (miniapps.length > 0) {
-        await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock})
+        const jsApiImplDependencies = await utils.extractJsApiImplementations(plugins)
+        await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock}, jsApiImplDependencies)
       }
 
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {

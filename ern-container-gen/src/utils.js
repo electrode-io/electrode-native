@@ -21,7 +21,8 @@ export async function bundleMiniApps (
     pathToYarnLock
   } : {
     pathToYarnLock?: string
-  } = {}) {
+  } = {},
+  jsApiImplDependencies?: Array<Dependency>) {
   try {
     log.debug(`[=== Starting mini apps bundling ===]`)
 
@@ -40,7 +41,7 @@ export async function bundleMiniApps (
           miniAppsPaths.push(DependencyPath.fromString(miniapp.packageDescriptor))
         }
       }
-      await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock})
+      await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock}, jsApiImplDependencies)
     }
 
     clearReactPackagerCache()
@@ -100,7 +101,8 @@ export async function generateMiniAppsComposite (
   } : {
     pathToYarnLock?: string,
     extraJsDependencies?: Array<DependencyPath>
-  } = {}) {
+  } = {},
+  jsApiImplDependencies?: Array<Dependency>) {
   shell.mkdir('-p', outDir)
   shell.cd(outDir)
 
@@ -162,6 +164,13 @@ export async function generateMiniAppsComposite (
     entryIndexJsContent += `import '${dependency}'\n`
   }
 
+  if (jsApiImplDependencies) {
+    log.debug('Adding imports for JS API implementations.')
+    for (const apiImpl of jsApiImplDependencies) {
+      await yarn.add(apiImpl.path)
+      entryIndexJsContent += `import '${apiImpl.scopedName}'\n`
+    }
+  }
   log.debug(`Removing .babelrc files from all modules`)
   shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
 
