@@ -133,17 +133,38 @@ export async function isDependencyApi (dependencyName: string): Promise<boolean>
   return result
 }
 
-export async function isDependencyApiImpl (dependencyName: string): Promise<boolean> {
+/**
+ *
+ * @param dependencyName: Name of the dependency
+ * @param forceYanInfo: if true, a yarn info command will be executed to determine the api implementation
+ * @param type: checks to see if a dependency is of a specific type(js|native) as well
+ * @returns {Promise.<boolean>}
+ */
+export async function isDependencyApiImpl (dependencyName: (string | Dependency), forceYanInfo?: boolean, type?: ModuleTypes): Promise<boolean> {
+  if (dependencyName instanceof Dependency) {
+    dependencyName = dependencyName.toString()
+  }
   // for api-impl generated using default name minimize the await time
-  if (/^.*react-native-.+-api-impl$/.test(dependencyName)) {
+  if (!type && !forceYanInfo && /^.*react-native-.+-api-impl$/.test(dependencyName)) {
     return true
   }
+
+  const modulesTypes = type ? [type] : [ModuleTypes.NATIVE_API_IMPL, ModuleTypes.JS_API_IMPL]
+
   const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
   const result =
     depInfo && depInfo.type === 'error'
       ? false
-      : depInfo.data && [`${ModuleTypes.NATIVE_API_IMPL}`, `${ModuleTypes.JS_API_IMPL}`].indexOf(depInfo.data.moduleType) > -1
+      : depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
   return result
+}
+
+export async function isDependencyJsApiImpl (dependency: (string | Dependency)): Promise<boolean> {
+  return isDependencyApiImpl(dependency, true, ModuleTypes.JS_API_IMPL)
+}
+
+export async function isDependencyNativeApiImpl (dependency: (string | Dependency)): Promise<boolean> {
+  return isDependencyApiImpl(dependency, true, ModuleTypes.NATIVE_API_IMPL)
 }
 
 /**
