@@ -16,7 +16,7 @@ import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
 import ApiImplAndroidGenerator from './android/ApiImplAndroidGenerator'
-import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
+import ApiImplIosGenerator from './ios/ApiImplIosGenerator'
 import ApiImplJsGenerator from './js/ApiImplJsGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
@@ -117,7 +117,7 @@ export default class ApiImplGen {
         case 'android' :
           return new ApiImplAndroidGenerator()
         case 'ios' :
-          return new ApiImplGithubGenerator()
+          return new ApiImplIosGenerator()
         case 'js' :
           return new ApiImplJsGenerator()
         default:
