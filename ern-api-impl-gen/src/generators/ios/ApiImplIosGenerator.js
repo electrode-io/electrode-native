@@ -18,10 +18,10 @@ import readDir from 'fs-readdir-recursive'
 export const ROOT_DIR = shell.pwd()
 const API_IMPL_GROUP_NAME = 'APIImpls'
 
-export default class ApiImplGithubGenerator implements ApiImplGeneratable {
+export default class ApiImplIosGenerator implements ApiImplGeneratable {
   regenerateApiImpl:boolean
   get name (): string {
-    return 'ApiImplGithubGenerator'
+    return 'ApiImplIosGenerator'
   }
 
   get platform (): string {
@@ -100,7 +100,7 @@ export default class ApiImplGithubGenerator implements ApiImplGeneratable {
     const {outputDir, resourceDir} = this.createImplDirectoryAndCopyCommonClasses(pathSpec, projectSpec, iosProject)
     let editableFiles = []
     for (const api of apis) {
-      const {files, classNames} = ApiImplGithubGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
+      const {files, classNames} = ApiImplIosGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
 
       for (const file of files) {
         if (!classNames[file]) {
