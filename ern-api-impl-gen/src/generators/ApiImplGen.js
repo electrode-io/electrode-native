@@ -15,7 +15,7 @@ import _ from 'lodash'
 import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
-import ApiImplMavenGenerator from './android/ApiImplMavenGenerator'
+import ApiImplAndroidGenerator from './android/ApiImplAndroidGenerator'
 import ApiImplGithubGenerator from './ios/ApiImplGithubGenerator'
 import ApiImplJsGenerator from './js/ApiImplJsGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
@@ -115,7 +115,7 @@ export default class ApiImplGen {
     return _.map(platforms, (platform: string) => {
       switch (platform) {
         case 'android' :
-          return new ApiImplMavenGenerator()
+          return new ApiImplAndroidGenerator()
         case 'ios' :
           return new ApiImplGithubGenerator()
         case 'js' :

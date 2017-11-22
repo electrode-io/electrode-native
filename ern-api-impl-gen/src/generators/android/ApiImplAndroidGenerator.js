@@ -29,10 +29,10 @@ const READ_WRITE_EXECUTE = '777'
 const SRC_MAIN_JAVA_DIR = path.join('src', 'main', 'java')
 const API_IMPL_PACKAGE = path.join('com', 'ern', 'api', 'impl')
 
-export default class ApiImplMavenGenerator implements ApiImplGeneratable {
+export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   regenerateApiImpl:boolean
   get name (): string {
-    return 'ApiImplMavenGenerator'
+    return 'ApiImplAndroidGenerator'
   }
 
   get platform (): string {
@@ -123,10 +123,10 @@ export default class ApiImplMavenGenerator implements ApiImplGeneratable {
     log.debug('=== updating request handler implementation class ===')
     try {
       let editableFiles = []
-      const {outputDir, resourceDir} = ApiImplMavenGenerator.createImplDirectoryAndCopyCommonClasses(paths)
+      const {outputDir, resourceDir} = ApiImplAndroidGenerator.createImplDirectoryAndCopyCommonClasses(paths)
 
       for (const api of apis) {
-        const {files, classNames} = ApiImplMavenGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
+        const {files, classNames} = ApiImplAndroidGenerator.getMustacheFileNamesMap(resourceDir, api.apiName)
         for (const file of files) {
           if (!classNames[file]) {
             log.warn(`Skipping mustaching of ${file}. No resulting file mapping found, consider adding one. \nThis might cause issues in generated implementation project.`)
