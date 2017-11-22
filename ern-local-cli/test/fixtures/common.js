@@ -93,12 +93,20 @@ export const apiNameWithSuffix = [
   'thisapiIsValid'
 ]
 
-export const apiImplNameWithSuffix = [
-  'ApiImplTest',
-  'TestApiimpl',
-  'testapiImpl',
-  'apiImplTest',
-  'thisapiImplIsValid'
+export const apiNativeImplNameWithSuffix = [
+  'ApiImplNativeTest',
+  'TestApiimplNative',
+  'testapiImplNative',
+  'apiImplNativeTest',
+  'thisapiImplNativeIsValid'
+]
+
+export const apiJsImplNameWithSuffix = [
+  'ApiImplJsTest',
+  'TestApiimplJs',
+  'testapiImplJs',
+  'apiImplJsTest',
+  'thisapiImplJsIsValid'
 ]
 
 export const differentNativeApplicationPlatformDescriptors = [

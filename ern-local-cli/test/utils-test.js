@@ -494,16 +494,16 @@ describe('utils.js', () => {
       })
     })
 
-    fixtures.apiImplNameWithSuffix.forEach(name => {
+    fixtures.apiJsImplNameWithSuffix.forEach(name => {
       it('should return true if module name of (js) api-impl contains suffix', () => {
         const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.JS_API_IMPL)
         expect(result).to.be.true
       })
     })
 
-    fixtures.apiImplNameWithSuffix.forEach(name => {
+    fixtures.apiNativeImplNameWithSuffix.forEach(name => {
       it('should return true if module name of (native) api-impl contains suffix', () => {
-        const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.JS_API_IMPL)
+        const result = utils.checkIfModuleNameContainsSuffix(name, ModuleTypes.NATIVE_API_IMPL)
         expect(result).to.be.true
       })
     })
@@ -528,13 +528,13 @@ describe('utils.js', () => {
     it('return suffixed (js) api-impl name if user confirms true', async () => {
       resolveInquirer({useSuffixedModuleName: true})
       const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.JS_API_IMPL)
-      expect(result).to.be.equal(`${fixtures.npmPkgName}ApiImpl`)
+      expect(result).to.be.equal(`${fixtures.npmPkgName}ApiImplJs`)
     })
 
     it('return suffixed (native) api-impl name if user confirms true', async () => {
       resolveInquirer({useSuffixedModuleName: true})
       const result = await utils.promptUserToUseSuffixModuleName(fixtures.npmPkgName, ModuleTypes.NATIVE_API_IMPL)
-      expect(result).to.be.equal(`${fixtures.npmPkgName}ApiImpl`)
+      expect(result).to.be.equal(`${fixtures.npmPkgName}ApiImplNative`)
     })
 
     it('return non-suffixed mini-app name if user selects false', async () => {
