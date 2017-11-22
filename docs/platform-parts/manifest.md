@@ -96,7 +96,7 @@ You can also choose to change a native dependency version from the version used 
 
 If you want to override the master manifest to use private (not open sourced) native modules in your MiniApps, or if you want to contribute to Electrode Native by adding the support for an not-already supported open source native module to the master Manifest, you'll need to create native modules (plugins) configuration in the manifest file.
 
-### Reusing exiting native modules
+### Reusing existing native modules
 
 Electrode Native supports some popular native modules such as `react-native-vector-icons`, `react-native-code-push` or `react-native-maps` for example. And the React Native open source community provides many additional native modules that could be used in your MiniApps.  
 
