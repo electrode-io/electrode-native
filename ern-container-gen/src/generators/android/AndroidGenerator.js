@@ -149,6 +149,11 @@ export default class AndroidGenerator implements ContainerGenerator {
       await this.addAndroidPluginHookClasses(plugins, paths)
 
       for (const plugin of plugins) {
+        if (await utils.isDependencyJsApiImpl(plugin.name)) {
+          log.debug('JS api implementation identified, skipping fill hull.')
+          continue
+        }
+
         let pluginConfig = await manifest.getPluginConfig(plugin)
         let pluginSourcePath
         if (plugin.name === 'react-native') { continue }
@@ -163,8 +168,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
 
-        if (await utils.isDependencyApiImpl(plugin.name)) {
-          populateApiImplMustacheView(pluginSourcePath, mustacheView)
+        if (await utils.isDependencyNativeApiImpl(plugin.name)) {
         }
 
         const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)
