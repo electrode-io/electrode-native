@@ -109,7 +109,9 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
-      await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock})
+      const jsApiImplDependencies = await utils.extractJsApiImplementations(plugins)
+
+      await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock}, jsApiImplDependencies)
 
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
         this.copyRnpmAssets(miniapps, paths)

@@ -265,3 +265,18 @@ export function getDownloadedPluginPath (pluginOrigin: any) {
   }
   return downloadPath
 }
+
+/**
+ * Extracts all the js api implementation dependencies from the plugin array.
+ * @param plugins
+ * @returns {Promise.<Array.<Dependency>>}
+ */
+export async function extractJsApiImplementations (plugins: Array<Dependency>) {
+  const jsApiImplDependencies: Array<Dependency> = []
+  for (const dependency of plugins) {
+    if (await isDependencyJsApiImpl(dependency)) {
+      jsApiImplDependencies.push(dependency)
+    }
+  }
+  return jsApiImplDependencies
+}
