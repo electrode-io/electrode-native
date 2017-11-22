@@ -270,6 +270,24 @@ describe('utils.js', () => {
       })
     })
 
+    fixtures.withFileSystemPath.forEach(obj => {
+      it('[noFileSystemPath] Should log error and exit process if path is/contains a file system scheme', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
+          noFileSystemPath: {obj}
+        })
+        assertLoggedErrorAndExitedProcess()
+      })
+    })
+
+    fixtures.withoutFileSystemPath.forEach(obj => {
+      it('[noFileSystemPath] Should not log error not exit process if path is not/ does not contain a  file system scheme', async () => {
+        await utils.logErrorAndExitIfNotSatisfied({
+          noFileSystemPath: {obj}
+        })
+        assertNoErrorLoggedAndNoProcessExit()
+      })
+    })
+
     it('[cauldronIsActive] Shoud log error and exit process if cauldron is not active', async () => {
       cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(false)
       await utils.logErrorAndExitIfNotSatisfied({

@@ -22,6 +22,16 @@ export const withGitOrFileSystemPath = [
   'file:/Users/username'
 ]
 
+export const withoutFileSystemPath = [
+  'git+ssh://github.com:electrode/react-native.git',
+  'git@github.com:electrode/react-native.git',
+  'package@1.2.3'
+]
+
+export const withFileSystemPath = [
+  'file:/Users/username'
+]
+
 export const completeNapDescriptors = [
   'myapp:android:17.14.0',
   'myapp:ios:1'

@@ -76,6 +76,18 @@ export default class Ensure {
     }
   }
 
+  static noFileSystemPath (
+    obj: string | Array<string>,
+    extraErrorMessage: string = '') {
+    const paths = obj instanceof Array ? obj : [ obj ]
+    for (const path of paths) {
+      const dependencyPath = DependencyPath.fromString(path)
+      if (dependencyPath.isAFileSystemPath) {
+        throw new Error(`Found a file system path.\n${extraErrorMessage}`)
+      }
+    }
+  }
+
   static async napDescritorExistsInCauldron (
     napDescriptor: string | Array<string>,
     extraErrorMessage: string = '') {
