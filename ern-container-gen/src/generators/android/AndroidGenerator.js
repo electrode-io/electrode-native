@@ -169,6 +169,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
 
         if (await utils.isDependencyNativeApiImpl(plugin.name)) {
+          populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
         }
 
         const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)

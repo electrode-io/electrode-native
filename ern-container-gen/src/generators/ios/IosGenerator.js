@@ -284,7 +284,7 @@ export default class IosGenerator implements ContainerGenerator {
       shell.cd(pathSpec.pluginsDownloadDirectory)
       if (await utils.isDependencyApiImpl(plugin.name)) {
         const pluginSourcePath = await utils.downloadPluginSource(pluginConfig.origin)
-        populateApiImplMustacheView(pluginSourcePath, mustacheView)
+        populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
       }
     }
 
