@@ -9,6 +9,7 @@ import {
 } from 'ern-util'
 import chalk from 'chalk'
 import utils from '../../lib/utils'
+import semver from 'semver'
 
 const BASE_RELEASE_URL = `https://github.com/electrode-io/electrode-native/releases/tag`
 
@@ -29,7 +30,7 @@ exports.handler = function () {
       // Don't show versions pre 0.7.0 as it was not official public releases
       // Electrode Native initial public release was 0.7.0 so starting from
       // this version
-      if (version < '0.7.0') { continue }
+      if (semver.lt(version, '0.7.0')) { continue }
       if (Platform.isPlatformVersionInstalled(version)) {
         if (Platform.currentVersion === version) {
           log.info(chalk.green(`-> v${version}\t\t`) + chalk.white(`${BASE_RELEASE_URL}/v${version}`))
