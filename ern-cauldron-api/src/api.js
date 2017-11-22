@@ -161,7 +161,7 @@ export default class CauldronApi {
     versionName: string,
     nativedepName: string) {
     const nativeDeps = await this.getNativeDependencies(nativeApplicationName, platformName, versionName)
-    return _.find(nativeDeps, x => x.startsWith(`${nativedepName}@`))
+    return _.find(nativeDeps, x => (x === nativedepName || x.startsWith(`${nativedepName}@`)))
   }
 
   async getConfig ({
