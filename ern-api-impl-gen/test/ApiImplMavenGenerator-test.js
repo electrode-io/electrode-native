@@ -1,4 +1,4 @@
-import ApiImplMavenGenerator from '../src/generators/android/ApiImplMavenGenerator'
+import ApiImplAndroidGenerator from '../src/generators/android/ApiImplAndroidGenerator'
 import { assert } from 'chai'
 
 import {
@@ -7,9 +7,9 @@ import {
 
 global.log = coloredLog
 
-describe('ApiImplMavenGenerator', () => {
-  it('should create ApiImplMavenGenerator object', () => {
-    const obj = new ApiImplMavenGenerator()
+describe('ApiImplAndroidGenerator', () => {
+  it('should create ApiImplAndroidGenerator object', () => {
+    const obj = new ApiImplAndroidGenerator()
     assert.isNotNull(obj, 'should create a non null object')
   })
 })
