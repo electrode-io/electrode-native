@@ -50,7 +50,7 @@ export async function fillProjectHull
   const target = iosProject.findTargetKey(projectSpec.projectName)
 
   for (const plugin of plugins) {
-    if (await utils.isDependencyJsApiImpl(plugin.name)) {
+    if (await utils.isDependencyJsApiImpl(plugin)) {
       log.debug('JS api implementation identified, skipping fill hull.')
       continue
     }
