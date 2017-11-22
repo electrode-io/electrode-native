@@ -75,6 +75,7 @@ async function getNapDescriptorStringsFromCauldron ({
 // If not, log exception error message and exit process
 async function logErrorAndExitIfNotSatisfied ({
   noGitOrFilesystemPath,
+  noFileSystemPath,
   isValidContainerVersion,
   isNewerContainerVersion,
   isCompleteNapDescriptorString,
@@ -94,6 +95,10 @@ async function logErrorAndExitIfNotSatisfied ({
   isValidElectrodeNativeModuleName
 } : {
   noGitOrFilesystemPath?: {
+    obj: string | Array<string>,
+    extraErrorMessage?: string
+  },
+  noFileSystemPath?: {
     obj: string | Array<string>,
     extraErrorMessage?: string
   },
@@ -205,6 +210,12 @@ async function logErrorAndExitIfNotSatisfied ({
       Ensure.noGitOrFilesystemPath(
         noGitOrFilesystemPath.obj,
         noGitOrFilesystemPath.extraErrorMessage)
+    }
+    if (noFileSystemPath) {
+      spinner.text = 'Ensuring that no file system path(s) is/are used'
+      Ensure.noFileSystemPath(
+        noFileSystemPath.obj,
+        noFileSystemPath.extraErrorMessage)
     }
     if (napDescriptorExistInCauldron) {
       spinner.text = 'Ensuring that native application descriptor exists in Cauldron'

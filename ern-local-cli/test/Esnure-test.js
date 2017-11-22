@@ -107,6 +107,23 @@ describe('Ensure.js', () => {
   })
 
   // ==========================================================
+  // noFileSystemPath
+  // ==========================================================
+  describe('noFileSystemPath', () => {
+    fixtures.withoutFileSystemPath.forEach(obj => {
+      it('shoud not throw if no file system path', () => {
+        expect(() => Ensure.noFileSystemPath(obj), `throw for ${obj}`).to.not.throw()
+      })
+    })
+
+    fixtures.withFileSystemPath.forEach(obj => {
+      it('should throw if file system path', () => {
+        expect(() => Ensure.noFileSystemPath(obj), `does not throw for ${obj}`).to.throw()
+      })
+    })
+  })
+
+  // ==========================================================
   // napDescritorExistsInCauldron
   // ==========================================================
   describe('napDescritorExistsInCauldron', () => {
