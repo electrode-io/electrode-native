@@ -25,7 +25,7 @@ const movieListMiniAppVersion = '0.0.8'
 const movieDetailsMiniAppPackageName = 'moviedetailsminiapp'
 const movieDetailsMiniAppVersion = '0.0.7'
 const movieApi = 'react-native-ernmovie-api'
-const movieApiImpl = 'ErnMovieApiImpl'
+const movieApiImpl = 'ErnMovieApiImplNative'
 const movieApiImplPkgName = 'ern-movie-api-impl'
 const packageNotInNpm = 'ewkljrlwjerjlwjrl@0.0.3'
 
