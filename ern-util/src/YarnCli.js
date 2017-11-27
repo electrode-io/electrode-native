@@ -80,6 +80,10 @@ export default class YarnCli {
       const output = await this.runYarnCommand(cmd)
 
       // Assume single line of yarn JSON output in stdout for yarn info
+      const outputStr = output.toString()
+      if (outputStr === '') {
+        throw new Error(`Could not find ${dependencyPath.toString()} package`)
+      }
       return JSON.parse(output.toString())
     }
   }

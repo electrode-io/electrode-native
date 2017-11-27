@@ -162,8 +162,10 @@ export default class AndroidGenerator implements ContainerGenerator {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
 
-        if (await utils.isDependencyApiImpl(plugin.name)) {
-          this.populateApiImplMustacheView(pluginSourcePath, mustacheView)
+        if (plugin.origin === 'npm') {
+          if (await utils.isDependencyApiImpl(plugin.scopedName)) {
+            this.populateApiImplMustacheView(pluginSourcePath, mustacheView)
+          }
         }
 
         const pathToPluginProject = path.join(pluginSourcePath, pluginConfig.android.root)
