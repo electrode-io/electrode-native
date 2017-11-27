@@ -3,10 +3,12 @@ import {
   mustacheUtils,
   shell
 } from 'ern-util'
-import { utils } from 'ern-core'
 import manifest from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
-import { downloadPluginSource } from './utils'
+import {
+  downloadPluginSource,
+  isDependencyJsApiImpl
+} from './utils'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
 import xcode from 'xcode-ern'
@@ -50,7 +52,7 @@ export async function fillProjectHull
   const target = iosProject.findTargetKey(projectSpec.projectName)
 
   for (const plugin of plugins) {
-    if (await utils.isDependencyJsApiImpl(plugin)) {
+    if (await isDependencyJsApiImpl(plugin)) {
       log.debug('JS api implementation identified, skipping fill hull.')
       continue
     }
