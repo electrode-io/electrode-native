@@ -277,7 +277,7 @@ Are you sure this is a MiniApp ?`)
           log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies)}`)
           for (let dep: Dependency of nativeDependencies) {
             if (Dependency.same(dep.withoutVersion(), dependency, {ignoreVersion: true})) {
-              if (await utils.isDependencyApiOrApiImpl(dep.name)) {
+              if (await utils.isDependencyApiOrApiImpl(dep.scopedName)) {
                 log.debug(`This is an api or api-impl`)
                 log.warn(`${dep.toString()} is not declared in the Manifest. You might consider adding it.`)
                 finalDependency = dep
@@ -289,7 +289,7 @@ Are you sure this is a MiniApp ?`)
             } else {
               // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
               // Recurse with this native dependency
-              if (!addedDependencies.includes(dep.name) && !await this.addDependency(dep, {dev: false, peer: false}, addedDependencies)) {
+              if (!addedDependencies.includes(dep.scopedName) && !await this.addDependency(dep, {dev: false, peer: false}, addedDependencies)) {
                 return log.error(`${dep.toString()} was not added to the MiniApp.`)
               }
             }
@@ -306,7 +306,7 @@ Are you sure this is a MiniApp ?`)
       if (finalDependency) {
         process.chdir(this.path)
         await spin(`Adding ${finalDependency.toString()} to ${this.name}`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
-        addedDependencies.push(finalDependency.name)
+        addedDependencies.push(finalDependency.scopedName)
         return finalDependency
       } else {
         log.debug(`No final dependency? expected?`)

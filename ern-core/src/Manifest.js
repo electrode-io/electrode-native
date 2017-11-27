@@ -170,10 +170,10 @@ export class Manifest {
         }
       }
       result.path = pluginConfigPath
-    } else if (await isDependencyApi(plugin.name)) {
+    } else if (await isDependencyApi(plugin.scopedName)) {
       log.debug(`API detected. Returning API default config`)
       result = this.getApiPluginDefaultConfig(projectName)
-    } else if (await isDependencyApiImpl(plugin.name)) {
+    } else if (await isDependencyApiImpl(plugin.scopedName)) {
       log.debug(`APIImpl detected. Returning APIImpl default config`)
       result = this.getApiImplPluginDefaultConfig(projectName)
     } else {
