@@ -34,6 +34,10 @@ exports.handler = function ({
   current: boolean,
 }) {
   try {
+    if (!url.startsWith('git@')) {
+      throw new Error('Please provide the SSH url of your git repo (the one starting with git@)')
+    }
+
     let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
     if (cauldronRepositories[alias]) {
       throw new Error(`A Cauldron repository is already associated to ${alias} alias`)
