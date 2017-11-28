@@ -631,4 +631,32 @@ export default class CauldronApi {
       await this.commit(`Set yarn locks for ${nativeApplicationName} ${platformName} ${versionName}`)
     }
   }
+
+  async addPublisher (nativeAppName: string, platformName: ('ios' | 'android'), publisherType: ('maven' | 'github'), url: string) {
+    try {
+      const platform = await this.getPlatform(nativeAppName, platformName)
+      if (platform) {
+        platform.config = platform.config || {}
+        platform.config.containerGenerator = platform.config.containerGenerator || {}
+        platform.config.containerGenerator.publishers = platform.config.containerGenerator.publishers || []
+
+        for (const publisher of platform.config.containerGenerator.publishers) {
+          if (publisher.name === publisherType) {
+            throw new Error(`${publisherType} publisher(${publisher.url}) already exists for ${nativeAppName}:${platformName}`)
+          }
+        }
+
+        platform.config.containerGenerator.publishers.push({
+          'name': publisherType,
+          'url': url
+        })
+
+        await this.commit(`Add ${publisherType} publisher for ${nativeAppName}:${platformName}`)
+      } else {
+        throw new Error(`${nativeAppName}:${platformName} is not present in cauldron`)
+      }
+    } catch (e) {
+      throw new Error(`[cauldronApi] addPublisher: ${e}`)
+    }
+  }
 }
