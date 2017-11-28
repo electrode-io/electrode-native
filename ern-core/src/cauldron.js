@@ -4,7 +4,8 @@ import {
   config,
   Dependency,
   NativeApplicationDescriptor,
-  fileUtils
+  fileUtils,
+  promptUtils
 } from 'ern-util'
 import _ from 'lodash'
 import CauldronCli from 'ern-cauldron-api'
@@ -157,6 +158,51 @@ export class Cauldron {
       log.error(`[removeMiniAppFromContainer] ${e}`)
       throw e
     }
+  }
+
+  async addPublisher (napDescriptor: ?NativeApplicationDescriptor, publisherType: ('maven' | 'github'), url: string) {
+    let nativeAppName, platform
+    if (napDescriptor) {
+      await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+      nativeAppName = napDescriptor.name
+      platform = napDescriptor.platform
+    } else {
+      platform = publisherType === 'maven'
+        ? 'android'
+        : await promptUtils.askUserToChooseAnOption(['android', 'ios'], 'Choose a platform to add this publisher')
+
+      const nativeApps: Array<string> = await this.getNativeAppsForPlatform(platform)
+      if (nativeApps && nativeApps.length > 0) {
+        nativeAppName = nativeApps.length === 1
+          ? nativeApps[0]
+          : await promptUtils.askUserToChooseAnOption(nativeApps, 'Choose an application to add this publisher')
+      } else {
+        throw new Error(`Looks like there are no application defined in cauldron for ${platform}`)
+      }
+    }
+    log.info('Adding publisher to native app')
+    await this.cauldron.addPublisher(nativeAppName, platform, publisherType, url)
+  }
+
+  /**
+   * Returns all native app names that has configuration for given platform
+   * @param givenPlatform
+   * @returns {Promise.<Array>}
+   */
+  async getNativeAppsForPlatform (givenPlatform: string): Promise<Array<string>> {
+    const availableNativeApps = await this.getAllNativeApps()
+    const nativeAppsForGivenPlatform = []
+    if (availableNativeApps) {
+      for (const nativeApp of availableNativeApps) {
+        for (const platform of nativeApp.platforms) {
+          if (platform.name === givenPlatform) {
+            nativeAppsForGivenPlatform.push(nativeApp.name)
+            break
+          }
+        }
+      }
+    }
+    return Promise.resolve(nativeAppsForGivenPlatform)
   }
 
   async getNativeApp (napDescriptor: NativeApplicationDescriptor) : Promise<*> {
