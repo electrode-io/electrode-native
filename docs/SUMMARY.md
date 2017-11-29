@@ -75,6 +75,7 @@
   - [dependencies](cli/cauldron/add/dependencies.md)
   - [miniapps](cli/cauldron/add/miniapps.md)
   - [nativeapp](cli/cauldron/add/nativeapp.md)
+  - [publisher](cli/cauldron/add/publisher.md)
 - [cauldron del](cli/cauldron/del.md)
   - [dependencies](cli/cauldron/del/dependencies.md)
   - [miniapps](cli/cauldron/del/miniapps.md)
