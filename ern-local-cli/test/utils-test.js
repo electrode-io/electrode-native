@@ -11,6 +11,10 @@ import {
   utils as coreUtils
 } from 'ern-core'
 import {
+  doesThrow,
+  doesNotThrow
+} from 'ern-util-dev'
+import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import * as publication from '../src/lib/publication'
@@ -31,29 +35,6 @@ global.log = {
   error: sinon.stub(),
   info: sinon.stub(),
   debug: sinon.stub()
-}
-
-// Utility function that returns true if a given async function execution
-// throws an exception, false otherwise
-// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
-async function doesThrow (asyncFn, ...args) {
-  let threwError = false
-  try {
-    await asyncFn(...args)
-  } catch (e) {
-    threwError = true
-  }
-  return threwError === true
-}
-
-async function doesNotThrow (asyncFn, ... args) {
-  let threwError = false
-  try {
-    await asyncFn(...args)
-  } catch (e) {
-    threwError = true
-  }
-  return threwError === false
 }
 
 let cauldronHelperStub

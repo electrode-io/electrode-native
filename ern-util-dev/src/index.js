@@ -205,3 +205,23 @@ ${diffOut}
   }
   return api
 }
+
+export async function doesThrow (asyncFn, ...args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === true
+}
+
+export async function doesNotThrow (asyncFn, ...args) {
+  let threwError = false
+  try {
+    await asyncFn(...args)
+  } catch (e) {
+    threwError = true
+  }
+  return threwError === false
+}

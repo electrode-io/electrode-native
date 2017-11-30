@@ -8,33 +8,14 @@ import {
   CauldronHelper,
   utils
 } from 'ern-core'
+import {
+  doesThrow,
+  doesNotThrow
+} from 'ern-util-dev'
 import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
 import * as fixtures from './fixtures/common'
 const sandbox = sinon.createSandbox()
-
-// Utility function that returns true if a given async function execution
-// throws an exception, false otherwise
-// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
-async function doesThrow (asyncFn, ...args) {
-  let threwError = false
-  try {
-    await asyncFn(...args)
-  } catch (e) {
-    threwError = true
-  }
-  return threwError === true
-}
-
-async function doesNotThrow (asyncFn, ... args) {
-  let threwError = false
-  try {
-    await asyncFn(...args)
-  } catch (e) {
-    threwError = true
-  }
-  return threwError === false
-}
 
 let cauldronHelperStub
 
