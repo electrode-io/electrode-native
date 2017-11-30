@@ -11,7 +11,7 @@ import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
-  cauldron,
+  utils as coreUtils,
   reactnative,
   ErnBinaryStore
 } from 'ern-core'
@@ -52,6 +52,8 @@ export default async function start ({
   if (descriptor) {
     napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
   }
+
+  const cauldron = await coreUtils.getCauldronInstance()
 
   if (!miniapps) {
     if (!descriptor) {

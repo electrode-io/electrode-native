@@ -6,7 +6,7 @@ import {
   Utils
 } from 'ern-util'
 import {
-  cauldron
+  utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
@@ -84,6 +84,7 @@ exports.handler = async function ({
   ]
 
   try {
+    const cauldron = await coreUtils.getCauldronInstance()
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const miniAppAsDep of miniAppsAsDeps) {

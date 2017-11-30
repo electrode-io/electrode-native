@@ -9,11 +9,14 @@ import {
   shell,
   gitCli
 } from 'ern-util'
+import {
+  ITransactional
+} from './FlowTypes'
 
 const GIT_REMOTE_NAME = 'upstream'
 const README = '### Cauldron Repository'
 
-export default class BaseGit {
+export default class BaseGit implements ITransactional {
   path: string
   repository: string
   branch: string
@@ -34,34 +37,6 @@ export default class BaseGit {
     this.git = gitCli(this.path)
     this._pendingTransaction = false
     this._hasBeenSynced = false
-  }
-
-  async beginTransaction () {
-    if (this._pendingTransaction) {
-      throw new Error('A transaction is already pending')
-    }
-
-    await this.sync()
-    this._pendingTransaction = true
-  }
-
-  async discardTransaction () {
-    if (!this._pendingTransaction) {
-      throw new Error('No pending transaction to discard')
-    }
-
-    await this.git.resetAsync(['--hard'])
-    this._pendingTransaction = false
-  }
-
-  async commitTransaction (message: string | Array<string>) {
-    if (!this._pendingTransaction) {
-      throw new Error('No pending transaction to commit')
-    }
-
-    await this.git.commitAsync(message)
-    await this.push()
-    this._pendingTransaction = false
   }
 
   async push () {
@@ -117,5 +92,37 @@ export default class BaseGit {
       await this.git.commitAsync('First Commit!')
       return this.push()
     }
+  }
+
+  // ===========================================================
+  // ITransactional implementation
+  // ===========================================================
+
+  async beginTransaction () {
+    if (this._pendingTransaction) {
+      throw new Error('A transaction is already pending')
+    }
+
+    await this.sync()
+    this._pendingTransaction = true
+  }
+
+  async discardTransaction () {
+    if (!this._pendingTransaction) {
+      throw new Error('No pending transaction to discard')
+    }
+
+    await this.git.resetAsync(['--hard'])
+    this._pendingTransaction = false
+  }
+
+  async commitTransaction (message: string | Array<string>) {
+    if (!this._pendingTransaction) {
+      throw new Error('No pending transaction to commit')
+    }
+
+    await this.git.commitAsync(message)
+    await this.push()
+    this._pendingTransaction = false
   }
 }

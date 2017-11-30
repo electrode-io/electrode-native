@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  cauldron,
+  utils as coreUtils,
   MiniApp,
   Platform,
   reactnative,
@@ -55,6 +55,7 @@ async function getNapDescriptorStringsFromCauldron ({
   onlyReleasedVersions?: boolean,
   onlyNonReleasedVersions?: boolean
 } = {}) {
+  const cauldron = await coreUtils.getCauldronInstance()
   const nativeApps = await cauldron.getAllNativeApps()
   return _.filter(
             _.flattenDeep(
@@ -182,7 +183,7 @@ async function logErrorAndExitIfNotSatisfied ({
   try {
     if (cauldronIsActive) {
       spinner.text = 'Ensuring that a Cauldron is active'
-      Ensure.cauldronIsActive(
+      await Ensure.cauldronIsActive(
         cauldronIsActive.extraErrorMessage
       )
     }
@@ -383,20 +384,22 @@ async function performContainerStateUpdateInCauldron (
 } : {
   containerVersion?: string
 } = {}) {
-  let cauldronContainerVersion
-  if (containerVersion) {
-    cauldronContainerVersion = containerVersion
-  } else {
-    cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
-    if (cauldronContainerVersion) {
-      cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
-    } else {
-      // Default to 1.0.0 for Container version
-      cauldronContainerVersion = '1.0.0'
-    }
-  }
-
   try {
+    var cauldron = await coreUtils.getCauldronInstance()
+
+    let cauldronContainerVersion
+    if (containerVersion) {
+      cauldronContainerVersion = containerVersion
+    } else {
+      cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(napDescriptor)
+      if (cauldronContainerVersion) {
+        cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
+      } else {
+        // Default to 1.0.0 for Container version
+        cauldronContainerVersion = '1.0.0'
+      }
+    }
+
     // Begin a Cauldron transaction
     await cauldron.beginTransaction()
 
@@ -419,7 +422,9 @@ async function performContainerStateUpdateInCauldron (
     log.debug(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
     log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
-    cauldron.discardTransaction()
+    if (cauldron) {
+      cauldron.discardTransaction()
+    }
     throw e
   }
 }
@@ -751,6 +756,7 @@ async function getDescriptorsMatchingSemVerDescriptor (semVerDescriptor: NativeA
     throw new Error(`${semVerDescriptor.toString()} descriptor is missing platform and/or version`)
   }
   const result = []
+  const cauldron = await coreUtils.getCauldronInstance()
   const versionsNames = await cauldron.getVersionsNames(semVerDescriptor)
   const versions = _.filter(versionsNames, v => semver.satisfies(v, semVerDescriptor.version))
   for (const version of versions) {

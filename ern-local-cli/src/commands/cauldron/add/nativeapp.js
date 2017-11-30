@@ -7,7 +7,8 @@ import {
   Utils
 } from 'ern-util'
 import {
-  cauldron
+  CauldronHelper,
+  utils as coreUtils
 } from 'ern-core'
 import inquirer from 'inquirer'
 import _ from 'lodash'
@@ -53,6 +54,7 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   try {
+    var cauldron = await coreUtils.getCauldronInstance()
     await cauldron.beginTransaction()
 
     const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
@@ -67,25 +69,30 @@ exports.handler = async function ({
 
       if (copyFromVersion) {
         if (copyFromVersion === 'latest') {
-          await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion))
+          await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron))
         } else {
           const version = _.find(previousApps.versions, v => v.name === copyFromVersion)
-          await spin(`Copying data over from version ${copyFromVersion}`, copyOverPreviousVersionData(napDescriptor, version))
+          await spin(`Copying data over from version ${copyFromVersion}`, copyOverPreviousVersionData(napDescriptor, version, cauldron))
         }
       } else if (await askUserCopyPreviousVersionData(latestVersionName)) {
-        await spin(`Copying data over from previous version`, copyOverPreviousVersionData(napDescriptor, latestVersion))
+        await spin(`Copying data over from previous version`, copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron))
       }
     }
 
     await spin(`Updating Cauldron`, cauldron.commitTransaction(`Add ${napDescriptor.toString()} native application`))
     log.info(`${napDescriptor.toString()} was succesfuly added to the Cauldron`)
   } catch (e) {
-    await cauldron.discardTransaction()
+    if (cauldron) {
+      await cauldron.discardTransaction()
+    }
     Utils.logErrorAndExitProcess(e)
   }
 }
 
-async function copyOverPreviousVersionData (napDescriptor: NativeApplicationDescriptor, nativeAppVersion: any) {
+async function copyOverPreviousVersionData (
+  napDescriptor: NativeApplicationDescriptor,
+  nativeAppVersion: any,
+  cauldron: CauldronHelper) {
   // Copy over previous native application version native dependencies
   for (const nativeDep of nativeAppVersion.nativeDeps) {
     await cauldron.addNativeDependency(napDescriptor, Dependency.fromString(nativeDep))

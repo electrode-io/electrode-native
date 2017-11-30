@@ -4,6 +4,7 @@ import {
   yarn
 } from './clients'
 import {
+  config,
   Dependency,
   DependencyPath,
   gitCli
@@ -15,6 +16,9 @@ import manifest from './Manifest'
 import * as ModuleTypes from './ModuleTypes'
 import path from 'path'
 import fs from 'fs'
+import Platform from './Platform'
+import CauldronHelper from './CauldronHelper'
+import CauldronCli from 'ern-cauldron-api'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -279,4 +283,20 @@ export async function extractJsApiImplementations (plugins: Array<Dependency>) {
     }
   }
   return jsApiImplDependencies
+}
+
+// Singleton CauldronHelper
+let currentCauldronHelperInstance
+export async function getCauldronInstance () : Promise<CauldronHelper> {
+  if (!currentCauldronHelperInstance) {
+    const cauldronRepositories = config.getValue('cauldronRepositories')
+    const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
+    if (!cauldronRepoInUse) {
+      currentCauldronHelperInstance = new CauldronHelper()
+    } else {
+      const cauldronCli = new CauldronCli(cauldronRepositories[cauldronRepoInUse], path.join(Platform.rootDirectory, 'cauldron'))
+      currentCauldronHelperInstance = new CauldronHelper(cauldronCli)
+    }
+  }
+  return Promise.resolve(currentCauldronHelperInstance)
 }

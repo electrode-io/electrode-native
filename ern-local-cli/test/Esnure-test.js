@@ -3,33 +3,16 @@ import {
   expect
 } from 'chai'
 import {
-  cauldron,
+  CauldronHelper,
   utils
 } from 'ern-core'
 import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
 import * as fixtures from './fixtures/common'
 
-const getNativeAppStub = sinon.stub(cauldron, 'getNativeApp')
-const isPublishedToNpmStub = sinon.stub(utils, 'isPublishedToNpm')
-let cauldronIsActiveStub
-
 function resolveCauldronGetNativeAppWith(data) {
   getNativeAppStub.resolves(data)
 }
-
-beforeEach(() => {
-  isPublishedToNpmStub.reset()
-})
-
-afterEach(() => {
-  cauldronIsActiveStub && cauldronIsActiveStub.restore()
-})
-
-after(() => {
-  getNativeAppStub.restore()
-  isPublishedToNpmStub.restore()
-})
 
 // Utility function that returns true if a given async function execution
 // throws an exception, false otherwise
@@ -54,7 +37,35 @@ async function doesNotThrow (asyncFn, ... args) {
   return threwError === false
 }
 
+let cauldronHelper
+let getNativeAppStub
+let isPublishedToNpmStub
+let getCauldronInstanceStub
+let isActiveStub
+
 describe('Ensure.js', () => {
+  beforeEach(() => {
+    cauldronHelper = new CauldronHelper()
+    getNativeAppStub = sinon.stub(cauldronHelper, 'getNativeApp')
+    isActiveStub = sinon.stub(cauldronHelper, 'isActive')
+    isPublishedToNpmStub = sinon.stub(utils, 'isPublishedToNpm')
+    getCauldronInstanceStub = sinon.stub(utils, 'getCauldronInstance').resolves(cauldronHelper)
+  })
+  
+  afterEach(() => {
+    isPublishedToNpmStub.restore()
+    getNativeAppStub.restore()
+    isActiveStub && isActiveStub.restore()
+    getCauldronInstanceStub.restore()
+  })
+  
+  after(() => {
+    getNativeAppStub.restore()
+    isPublishedToNpmStub.restore()
+    getCauldronInstanceStub.restore()
+    isActiveStub && isActiveStub.restore()
+  })
+
   // ==========================================================
   // isValidContainerVersion
   // ==========================================================
@@ -158,14 +169,14 @@ describe('Ensure.js', () => {
   // cauldronIsActive
   // ==========================================================
   describe('cauldronIsActive', () => {
-    it('should not throw if a cauldron is active', () => {
-      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(true)
-      expect(() => Ensure.cauldronIsActive(), `does throw when cauldron is active`).to.not.throw()
+    it('should not throw if a cauldron is active', async () => {
+      isActiveStub.returns(true)
+      assert(await doesNotThrow(Ensure.cauldronIsActive))
     })
 
-    it('should throw if no cauldron is active', () => {
-      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(false)
-      expect(() => Ensure.cauldronIsActive(), `does not throw when cauldron is not active`).to.throw()
+    it('should throw if no cauldron is active', async() => {
+      isActiveStub.returns(false)
+      assert(await doesThrow(Ensure.cauldronIsActive))
     })
   })
 

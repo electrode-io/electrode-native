@@ -4,8 +4,8 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
-  cauldron,
-  ErnBinaryStore
+  ErnBinaryStore,
+  utils as coreUtils
 } from 'ern-core'
 import utils from '../../lib/utils'
 import path from 'path'
@@ -40,6 +40,7 @@ exports.handler = async function ({
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
+  const cauldron = await coreUtils.getCauldronInstance()
   const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
   if (!binaryStoreConfig) {
     return log.error('No binaryStore configuration was found in Cauldron')

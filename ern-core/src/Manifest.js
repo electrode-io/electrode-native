@@ -4,14 +4,17 @@ import {
   Dependency,
   shell
 } from 'ern-util'
-import cauldron from './cauldron'
 import path from 'path'
 import Platform from './Platform'
 import GitManifest from './GitManifest'
 import Mustache from 'mustache'
 import _ from 'lodash'
 import fs from 'fs'
-import {isDependencyApi, isDependencyApiImpl} from './utils'
+import {
+  isDependencyApi,
+  isDependencyApiImpl,
+  getCauldronInstance
+} from './utils'
 
 export type PluginConfig = {
   android: Object,
@@ -35,8 +38,9 @@ export class Manifest {
   }
 
   async initOverrideManifest () {
-    if (!this._overrideManifest && cauldron.isActive()) {
-      const manifestConfig = await cauldron.getManifestConfig()
+    const cauldronInstance = await getCauldronInstance()
+    if (!this._overrideManifest && cauldronInstance.isActive()) {
+      const manifestConfig = await cauldronInstance.getManifestConfig()
       if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
         this._overrideManifest = new GitManifest(Platform.overrideManifestDirectory, manifestConfig.override.url)
         this._manifestOverrideType = manifestConfig.override.type || 'partial'

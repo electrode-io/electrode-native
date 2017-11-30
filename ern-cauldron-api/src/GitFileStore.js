@@ -3,14 +3,17 @@
 import {
   writeFile
 } from './fs-util'
-import BaseGit from './base-git'
+import BaseGit from './BaseGit'
 import fs from 'fs'
 import path from 'path'
 import {
   shell
 } from 'ern-util'
+import type {
+  ICauldronFileStore
+} from './FlowTypes'
 
-export default class FileStore extends BaseGit {
+export default class GitFileStore extends BaseGit implements ICauldronFileStore {
   _prefix : string
 
   constructor (
@@ -22,13 +25,14 @@ export default class FileStore extends BaseGit {
     this._prefix = prefix
   }
 
-  /**
-  * Stores a file in this file store
-  *
-  * @param {string} filename - The name of the file to store
-  * @param {string|Buffer} data - The file binary data
-  * @return sha1 hash from git.
-  */
+  _pathToFile (filename: string) {
+    return path.join(this.path, this._prefix, filename)
+  }
+
+  // ===========================================================
+  // ICauldronFileAccess implementation
+  // ===========================================================
+
   async storeFile (identifier: string, content: string | Buffer) {
     await this.sync()
     const storeDirectoryPath = path.resolve(this.path, this._prefix)
@@ -48,42 +52,31 @@ export default class FileStore extends BaseGit {
   async hasFile (filename: string) {
     await this.sync()
     try {
-      fs.statSync(this.pathToFile(filename)).isFile()
+      fs.statSync(this._pathToFile(filename)).isFile()
       return true
     } catch (e) {
       return false
     }
   }
 
-  /**
-  * Retrieves a file from this store
-  *
-  * @param {string} filename - The name of the file to retrieve
-  * @return {Buffer} The file binary data
-  */
-  async getFile (filename: string) : Promise<?Buffer> {
-    await this.sync()
-    if (fs.existsSync(this.pathToFile(filename))) {
-      return fs.readFileSync(this.pathToFile(filename))
-    }
-  }
-
   async getPathToFile (filename: string) : Promise<?string> {
     await this.sync()
-    if (fs.existsSync(this.pathToFile(filename))) {
-      return this.pathToFile(filename)
+    if (fs.existsSync(this._pathToFile(filename))) {
+      return this._pathToFile(filename)
     }
   }
 
-  /**
-  * Removes a file from this store
-  *
-  * @param {string} filename - The name of the file to remove
-  */
+  async getFile (filename: string) : Promise<?Buffer> {
+    await this.sync()
+    if (fs.existsSync(this._pathToFile(filename))) {
+      return fs.readFileSync(this._pathToFile(filename))
+    }
+  }
+
   async removeFile (filename: string) : Promise<boolean> {
     await this.sync()
-    if (fs.existsSync(this.pathToFile(filename))) {
-      await this.git.rmAsync(this.pathToFile(filename))
+    if (fs.existsSync(this._pathToFile(filename))) {
+      await this.git.rmAsync(this._pathToFile(filename))
       if (!this._pendingTransaction) {
         await this.git.commitAsync(`[removed file] ${filename}`)
         await this.push()
@@ -91,9 +84,5 @@ export default class FileStore extends BaseGit {
       return true
     }
     return false
-  }
-
-  pathToFile (filename: string) {
-    return path.join(this.path, this._prefix, filename)
   }
 }

@@ -6,7 +6,7 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
-  cauldron,
+  utils as coreUtils,
   dependencyLookup,
   utils
 } from 'ern-core'
@@ -49,6 +49,7 @@ export default class Ensure {
     napDescriptor: string,
     containerVersion: string,
     extraErrorMessage: string = '') {
+    const cauldron = await coreUtils.getCauldronInstance()
     const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(NativeApplicationDescriptor.fromString(napDescriptor))
     if (!semver.gt(containerVersion, cauldronContainerVersion)) {
       throw new Error(`Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`)
@@ -91,6 +92,7 @@ export default class Ensure {
   static async napDescritorExistsInCauldron (
     napDescriptor: string | Array<string>,
     extraErrorMessage: string = '') {
+    const cauldron = await coreUtils.getCauldronInstance()
     const descriptors = napDescriptor instanceof Array
       ? _.map(napDescriptor, d => NativeApplicationDescriptor.fromString(d))
       : [ NativeApplicationDescriptor.fromString(napDescriptor) ]
@@ -114,6 +116,7 @@ export default class Ensure {
   static async napDescritorDoesNotExistsInCauldron (
     napDescriptor: string,
     extraErrorMessage: string = '') {
+    const cauldron = await coreUtils.getCauldronInstance()
     const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
     const result = await cauldron.getNativeApp(descriptor)
     if (result) {
@@ -137,6 +140,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
       const versionLessMiniAppString = Dependency.fromString(miniAppString).withoutVersion().toString()
@@ -151,6 +155,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
       const unversionedDependencyString = Dependency.fromString(dependencyString).withoutVersion().toString()
@@ -165,6 +170,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
       const versionLessMiniAppString = Dependency.fromString(miniAppString).withoutVersion().toString()
@@ -179,6 +185,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
       const unversionedDependencyString = Dependency.fromString(dependencyString).withoutVersion().toString()
@@ -193,6 +200,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     const versionLessMiniAppsStrings = _.map(miniAppsStrings, m => Dependency.fromString(m).withoutVersion().toString())
     await this.miniAppIsInNativeApplicationVersionContainer(versionLessMiniAppsStrings, napDescriptor)
@@ -211,6 +219,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     await this.dependencyIsInNativeApplicationVersionContainer(obj, napDescriptor)
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
@@ -227,6 +236,7 @@ export default class Ensure {
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = '') {
     if (!obj) return
+    const cauldron = await coreUtils.getCauldronInstance()
     const dependencies = obj instanceof Array ? obj : [ obj ]
     const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
 
@@ -253,7 +263,8 @@ export default class Ensure {
     }
   }
 
-  static cauldronIsActive (extraErrorMessage: string = '') {
+  static async cauldronIsActive (extraErrorMessage: string = '') {
+    const cauldron = await coreUtils.getCauldronInstance()
     if (!cauldron.isActive()) {
       throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
     }
