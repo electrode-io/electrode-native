@@ -87,6 +87,9 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   await utils.logErrorAndExitIfNotSatisfied({
+    cauldronIsActive: {
+      extraErrorMessage: 'A Cauldron must be active in order to use this command'
+    },
     isCompleteNapDescriptorString: { descriptor },
     isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
     isNewerContainerVersion: containerVersion ? {

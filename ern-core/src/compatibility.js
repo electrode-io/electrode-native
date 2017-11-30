@@ -104,6 +104,9 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
 }= {}) {
   let result = []
   const cauldronInstance = await utils.getCauldronInstance()
+  if (!cauldronInstance) {
+    throw new Error('[getNativeAppCompatibilityReport] No Cauldron is active')
+  }
   const nativeApps = await cauldronInstance.getAllNativeApps()
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)

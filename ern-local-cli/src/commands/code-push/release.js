@@ -167,6 +167,9 @@ async function getPathToYarnLock (
   napDescriptor: NativeApplicationDescriptor,
   deploymentName: string) {
   const cauldron = await coreUtils.getCauldronInstance()
+  if (!cauldron) {
+    throw new Error('[getPathToYarnLock] No active Cauldron')
+  }
   let pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, deploymentName)
   if (!pathToYarnLock) {
     pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)

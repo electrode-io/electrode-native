@@ -264,8 +264,7 @@ export default class Ensure {
   }
 
   static async cauldronIsActive (extraErrorMessage: string = '') {
-    const cauldron = await coreUtils.getCauldronInstance()
-    if (!cauldron.isActive()) {
+    if (!await coreUtils.getCauldronInstance()) {
       throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
     }
   }
