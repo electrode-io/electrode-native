@@ -225,3 +225,8 @@ export async function doesNotThrow (asyncFn, ...args) {
   }
   return threwError === false
 }
+
+export const fixtures = {
+  defaultCauldron: require('../fixtures/default-cauldron-fixture.json'),
+  emptyCauldron: require('../fixtures/empty-cauldron-fixture.json')
+}

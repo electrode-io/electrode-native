@@ -4,12 +4,12 @@ import {
 } from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
-
+import {
+  fixtures
+} from 'ern-util-dev'
 import CauldronApi from '../src/CauldronApi'
 import GitFileStore from '../src/GitFileStore'
 import GitDocumentStore from '../src/GitDocumentStore'
-
-const cauldronFixture = require('./fixtures/cauldron-fixture.json')
 
 const fileStoreSourceMapStub = sinon.createStubInstance(GitFileStore)
 
@@ -38,7 +38,7 @@ let cauldronData
 describe('api.js', () => {
   beforeEach(() => {
     gitStoreStub = sinon.createStubInstance(GitFileStore)
-    cauldronData = JSON.parse(JSON.stringify(cauldronFixture))
+    cauldronData = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
     gitStoreStub.getCauldron = sinon.stub().resolves(cauldronData)
     gitStoreStub.commit = sinon.stub().resolves()
     fileStoreYarnLockStub = sinon.createStubInstance(GitFileStore)
