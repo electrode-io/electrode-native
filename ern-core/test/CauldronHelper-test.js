@@ -10,6 +10,11 @@ import {
   Dependency,
   NativeApplicationDescriptor
 } from 'ern-util'
+import {
+  beforeTest,
+  afterTest,
+  stubs
+} from 'ern-util-dev'
 import { 
   CauldronApi,
   EphemeralFileStore,
@@ -20,19 +25,6 @@ import {
 } from 'ern-util-dev'
 import jp from 'jsonpath'
 import path from 'path'
-
-// Logging stubs
-const logErrorStub = sinon.stub()
-const logInfoStub = sinon.stub()
-const logDebugStub = sinon.stub()
-const logTraceStub = sinon.stub()
-
-global.log = {
-  error: logErrorStub,
-  info: logInfoStub,
-  debug: logDebugStub,
-  trace: logTraceStub
-}
 
 const codePushEntryFixtureOne =  {
   metadata: {
@@ -108,6 +100,14 @@ function getCauldronFixtureClone() {
 const testAndroid1770Path = '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
 
 describe('CauldronHelper.js', () => {
+  beforeEach(() => {
+    beforeTest()
+  })
+
+  afterEach(() => {
+    afterTest()
+  })
+
   describe('constructor', () => {
     
   })

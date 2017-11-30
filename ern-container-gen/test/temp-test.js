@@ -15,6 +15,10 @@ import {
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas
 } from '../src/utils'
+import {
+  beforeTest,
+  afterTest
+} from 'ern-util-dev'
 import * as ernUtil from 'ern-util'
 const {
   Dependency,
@@ -31,14 +35,6 @@ const yarnInstallSpy = sinon.stub(YarnCli.prototype, 'install').callsFake(() => 
 //const yarnUpgradeSpy = sinon.stub(ernUtil.yarn, 'yarnUpgrade').callsFake(() => {})
 //const yarnInstallSpy = sinon.stub(ernUtil.yarn, 'yarnInstall').callsFake(() => {})
 sinon.stub(ernUtil, 'spin').callsFake(async (msg, prom) => { await prom })
-
-// Intercept log calls
-global.log = {
-  debug: () => {},
-  error: console.log,
-  warn: console.log,
-  info: console.log
-}
 
 let tmpOutDir
 const currentDir = process.cwd()
@@ -77,6 +73,14 @@ after(() => {
 })
 
 describe('ern-container-gen utils.js', () => {
+  beforeEach(() => {
+    beforeTest()
+  })
+
+  afterEach(() => {
+    afterTest()
+  })
+
   // ==========================================================
   // getMiniAppsDeltas
   // ==========================================================

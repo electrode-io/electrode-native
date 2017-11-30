@@ -1,7 +1,14 @@
+// @flow
+
 import {
   assert,
   expect,
 } from 'chai'
+import {
+  beforeTest,
+  afterTest,
+  stubs
+} from 'ern-util-dev'
 import fs from 'fs'
 import Promise from 'bluebird'
 import path from 'path'
@@ -14,18 +21,6 @@ import inquirer from 'inquirer'
 import * as fixtures from './fixtures/common'
 
 const readFile = Promise.promisify(fs.readFile)
-// Logging stubs
-const logErrorStub = sinon.stub()
-const logInfoStub = sinon.stub()
-const logDebugStub = sinon.stub()
-const logTraceStub = sinon.stub()
-
-global.log = {
-  error: logErrorStub,
-  info: logInfoStub,
-  debug: logDebugStub,
-  trace: logTraceStub
-}
 
 // Ora stubs
 const oraProto = Object.getPrototypeOf(ora())
@@ -40,21 +35,21 @@ const execpStub = sinon.stub(childProcess, 'execp')
 const processStub = sinon.stub(process, 'platform').returns('win')
 let ernConfigStub
 
-after(() => {
-  execpStub.restore()
-  processStub.restore()
-})
-
-beforeEach(() => {
-  logErrorStub.reset()
-  logInfoStub.reset()
-})
-
-afterEach(() => {
-  ernConfigStub && ernConfigStub.restore()
-})
-
 describe('android.js', () => {
+  beforeEach(() => {
+    beforeTest()
+  })
+
+  afterEach(() => {
+    afterTest()
+    ernConfigStub && ernConfigStub.restore()
+  })
+
+  after(() => {
+    execpStub.restore()
+    processStub.restore()
+  })
+
   // ==========================================================
   // runAndroid
   // ==========================================================
@@ -62,7 +57,7 @@ describe('android.js', () => {
     it('runAndroid throws error with more than 2 running devices', async () => {
       execpStub.resolves(fixtures.getDeviceResult)
       try {
-        await android.runAndroid(fixtures.pkgName, fixtures.activityName)
+        await android.runAndroid(fixtures.pkgName)
       } catch (e) {
         expect(e.message).to.include('More than one device/emulator is running !')
       }
@@ -195,36 +190,6 @@ describe('android.js', () => {
       execpStub.resolves(avdStdOut)
       const avdList = await android.getAndroidAvds()
       expect(avdList).to.eql([''])
-    })
-  })
-
-  // ==========================================================
-  // installApk
-  // ==========================================================
-  describe('installApk', () => {
-    it('adb install -r', async () => {
-      execpStub.resolves('Success')
-      expect(await android.installApk()).to.eql('Success')
-    })
-  })
-
-  // ==========================================================
-  // launchAndroidActivity
-  // ==========================================================
-  describe('launchAndroidActivity', () => {
-    it('adb shell am start -n', async () => {
-      execpStub.resolves('Starting: Intent { cmp=')
-      expect(await android.launchAndroidActivity()).to.eql('Starting: Intent { cmp=')
-    })
-  })
-
-  // ==========================================================
-  // buildAndInstallApp
-  // ==========================================================
-  describe('buildAndInstallApp', () => {
-    it('check gradlew is used as execp for win  ', async () => {
-      execpStub.resolves('installDebug success')
-      expect(await android.buildAndInstallApp()).to.eql('installDebug success')
     })
   })
 

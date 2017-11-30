@@ -1,3 +1,5 @@
+// @flow
+
 import {
   assert,
   expect,
@@ -19,19 +21,6 @@ const computerName = 'Funny MacBook Pro (47)\n'
 const readFile = Promise.promisify(fs.readFile)
 const iPhoneSimulatorsWithNoIphone = require('./fixtures/ios_no_iphone_simulators.json')
 const iPhoneSimulators = require('./fixtures/ios_iphone_simulators.json')
-
-// Logging stubs
-const logErrorStub = sinon.stub()
-const logInfoStub = sinon.stub()
-const logDebugStub = sinon.stub()
-const logTraceStub = sinon.stub()
-
-global.log = {
-  error: logErrorStub,
-  info: logInfoStub,
-  debug: logDebugStub,
-  trace: logTraceStub
-}
 
 // test stubs
 const getDevicesStub = sinon.stub(simctl, 'getDevices')
@@ -77,7 +66,7 @@ describe('ios utils', () => {
       )
       getKnownDevicesStub.returns(instruments)
       getComputerNameStub.returns(computerName)
-      expect(ios.getiPhoneRealDevices(instruments, computerName)).to.be.empty
+      expect(ios.getiPhoneRealDevices()).to.be.empty
     })
 
     it('should return real iPhone device', async () => {
@@ -94,20 +83,6 @@ describe('ios utils', () => {
         udid: '695c329443f455c75b5454aacb72ace87b66351e',
         version: '11.1'
       }])
-    })
-  })
-
-  describe('getKnownDevices', () => {
-    it('should return known devices', () => {
-      getKnownDevicesStub.restore()
-      expect(ios.getKnownDevices()).to.have.length.above(1)
-    }).timeout(4000) //Error: Timeout of 2000ms exceeded [mocha default]
-  })
-
-  describe('getComputerName', () => {
-    it('should return computer name', () => {
-      getComputerNameStub.restore()
-      expect(ios.getComputerName()).to.have.length.above(1)
     })
   })
 
