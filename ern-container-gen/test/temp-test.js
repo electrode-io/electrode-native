@@ -2,6 +2,9 @@ import {
   assert,
   expect
 } from 'chai'
+import {
+  doesThrow
+} from 'ern-util-dev'
 import sinon from 'sinon'
 import tmp from 'tmp'
 import path from 'path'
@@ -72,19 +75,6 @@ after(() => {
   yarnInstallSpy.restore()
   yarnUpgradeSpy.restore()
 })
-
-// Utility function that returns true if a given async function execution
-// throws an exception, false otherwise
-// DUPLICATE : TO BE MOVED TO ERN-UTIL-DEV
-async function doesThrow (asyncFn, ...args) {
-  let threwError = false
-  try {
-    await asyncFn(...args)
-  } catch (e) {
-    threwError = true
-  }
-  return threwError
-}
 
 describe('ern-container-gen utils.js', () => {
   // ==========================================================
