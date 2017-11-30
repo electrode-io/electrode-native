@@ -4,12 +4,12 @@ import {
 } from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
-
+import {
+  fixtures
+} from 'ern-util-dev'
 import CauldronApi from '../src/CauldronApi'
 import EphemeralFileStore from '../src/EphemeralFileStore'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
-
-const cauldronFixture = require('./fixtures/cauldron-fixture.json')
 
 const codePushNewEntryFixture = {
   "metadata": {
@@ -41,7 +41,7 @@ function cauldronApi(cauldronDocument) {
 }
 
 function getCauldronFixtureClone() {
-  return JSON.parse(JSON.stringify(cauldronFixture))
+  return JSON.parse(JSON.stringify(fixtures.defaultCauldron))
 }
 
 describe('CauldronApi.js', () => {

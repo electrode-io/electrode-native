@@ -1,3 +1,5 @@
+// @flow
+
 import {
   assert,
   expect
@@ -13,6 +15,9 @@ import {
   EphemeralFileStore,
   InMemoryDocumentStore
 } from 'ern-cauldron-api'
+import {
+  fixtures
+} from 'ern-util-dev'
 import jp from 'jsonpath'
 import path from 'path'
 
@@ -28,9 +33,6 @@ global.log = {
   debug: logDebugStub,
   trace: logTraceStub
 }
-
-
-const cauldronFixture = require('./fixtures/cauldron-fixture.json')
 
 const codePushEntryFixtureOne =  {
   metadata: {
@@ -100,7 +102,7 @@ function createCauldronHelper(cauldronDocument) {
 }
 
 function getCauldronFixtureClone() {
-  return JSON.parse(JSON.stringify(cauldronFixture))
+  return JSON.parse(JSON.stringify(fixtures.defaultCauldron))
 }
 
 const testAndroid1770Path = '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
