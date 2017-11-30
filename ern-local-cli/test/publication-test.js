@@ -22,11 +22,12 @@ const codePushConfigWithAccessKey = JSON.stringify({accessKey: codePushConfigAcc
 const ernRcWithoutCodePushAccessKey= JSON.stringify({})
 const codePushConfigWithoutAccessKey = JSON.stringify({})
 
-afterEach(() => {
-  mockFs.restore()
-})
 
 describe('lib/publication.js', () => {
+  afterEach(() => {
+    mockFs.restore()
+  })
+
   // ==========================================================
   // getCodePushAccessKey
   // ==========================================================

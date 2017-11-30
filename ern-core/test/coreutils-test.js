@@ -18,6 +18,7 @@ import {
 import * as fixtures from './fixtures/common'
 import * as ModuleTypes from '../src/ModuleTypes'
 import path from 'path'
+const sandbox = sinon.createSandbox()
 
 // fixtures
 const yarnInfo = require('./fixtures/yarn_info.json')
@@ -32,11 +33,11 @@ let pathStub
 describe('utils.js', () => {
   beforeEach(() => {
     beforeTest()
-    pathStub = sinon.stub(path, 'join')
+    pathStub = sandbox.stub(path, 'join')
   })
   
   afterEach(() => {
-    pathStub.restore()
+    sandbox.restore()
     afterTest()
   })
 

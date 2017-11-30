@@ -22,30 +22,31 @@ const readFile = Promise.promisify(fs.readFile)
 const iPhoneSimulatorsWithNoIphone = require('./fixtures/ios_no_iphone_simulators.json')
 const iPhoneSimulators = require('./fixtures/ios_iphone_simulators.json')
 
-// test stubs
-const getDevicesStub = sinon.stub(simctl, 'getDevices')
-const getKnownDevicesStub = sinon.stub(ios, 'getKnownDevices')
-const getComputerNameStub = sinon.stub(ios, 'getComputerName')
-let ernConfigStub
+const sandbox = sinon.createSandbox()
 
-beforeEach(() => {
-  getDevicesStub.reset()
-})
-
-afterEach(() => {
-  ernConfigStub && ernConfigStub.restore()
-})
-
-after(() => {
-  getDevicesStub.restore()
-  getKnownDevicesStub.restore()
-})
+let getDevicesStub
+let getKnownDevicesStub
+let getComputerNameStub
+let ernConfigGetValueStub
 
 function resolveGetDevices (fixtures) {
   getDevicesStub.resolves(fixtures)
 }
 
 describe('ios utils', () => {
+  beforeEach(() => {
+    // test stubs
+    getDevicesStub = sandbox.stub(simctl, 'getDevices')
+    getKnownDevicesStub = sandbox.stub(ios, 'getKnownDevices')
+    getComputerNameStub = sandbox.stub(ios, 'getComputerName')
+    ernConfigGetValueStub = sandbox.stub(ernConfig, 'getValue')
+    let ernConfigStub
+  })
+  
+  afterEach(() => {
+    sandbox.restore()
+  })
+
   describe('getiPhoneSimulators', () => {
     it('should return empty list with no matching iphone', async () => {
       resolveGetDevices(iPhoneSimulatorsWithNoIphone)
@@ -124,7 +125,7 @@ describe('ios utils', () => {
         usePreviousDevice: false,
         deviceId: fixtures.oneUdid
       }
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves(
         {
           selectedDevice: {
@@ -148,7 +149,7 @@ describe('ios utils', () => {
         usePreviousDevice: true,
         deviceId: 'SimulatorNotPresent'
       }
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves(
         {
           selectedDevice: {
@@ -172,7 +173,7 @@ describe('ios utils', () => {
         usePreviousDevice: true,
         deviceId: fixtures.oneUdid
       }
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const result = await ios.askUserToSelectAniPhoneSimulator()
       expect(result.udid).to.eql(fixtures.oneUdid)
     })
