@@ -1,3 +1,5 @@
+// @flow
+
 import {
   expect
 } from 'chai'
@@ -19,10 +21,6 @@ describe('NativeApplicationDescriptor', () => {
 
     it('should throw if version is provided but not platform', () => {
       expect(() => new NativeApplicationDescriptor('MyNativeAppName', null, '1.2.3')).to.throw()
-    })
-
-    it('should throw if name is not provided', () => {
-      expect(() => new NativeApplicationDescriptor(null, 'android', '1.2.3')).to.throw()
     })
   })
 

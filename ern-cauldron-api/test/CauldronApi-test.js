@@ -11,7 +11,7 @@ import CauldronApi from '../src/CauldronApi'
 import EphemeralFileStore from '../src/EphemeralFileStore'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
 
-const codePushNewEntryFixture = {
+const codePushNewEntryFixture : CauldronCodePushEntry = {
   "metadata": {
     "deploymentName": "QA",
     "isMandatory": true,
