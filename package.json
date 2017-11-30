@@ -42,6 +42,7 @@
     "husky": "^0.14.3",
     "install": "^0.8.7",
     "istanbul": "^0.4.5",
+    "jsonpath": "^1.0.0",
     "lerna": "2.0.0",
     "mocha": "^4.0.1",
     "mock-fs": "^4.4.2",
