@@ -52,7 +52,8 @@
   "dependencies": {
     "ern-util": "0.10.1",
     "joi": "^10.1.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "tmp": "^0.0.33"
   },
   "devDependencies": {
     "ern-util-dev": "0.10.1"
