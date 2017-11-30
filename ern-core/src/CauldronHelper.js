@@ -1,14 +1,12 @@
 // @flow
 
 import {
-  config,
   Dependency,
   NativeApplicationDescriptor,
   fileUtils,
   promptUtils
 } from 'ern-util'
 import _ from 'lodash'
-import CauldronCli from 'ern-cauldron-api'
 import type {
   CauldronCodePushMetadata
 } from 'ern-cauldron-api'
@@ -27,7 +25,7 @@ type CodePushConfig = {
 //
 // Helper class to access the cauldron
 // It uses the ern-cauldron-cli client
-export class Cauldron {
+export default class CauldronHelper {
   cauldron: Object
 
   constructor (cauldronCli?: Object) {
@@ -861,16 +859,3 @@ export class Cauldron {
     }
   }
 }
-
-function getCauldron () {
-  const cauldronRepositories = config.getValue('cauldronRepositories')
-  const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
-  if (!cauldronRepoInUse) {
-    return new Cauldron()
-  } else {
-    const cauldronCli = new CauldronCli(cauldronRepositories[cauldronRepoInUse], `${Platform.rootDirectory}/cauldron`)
-    return new Cauldron(cauldronCli)
-  }
-}
-
-export default getCauldron()

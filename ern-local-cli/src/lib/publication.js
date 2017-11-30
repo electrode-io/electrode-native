@@ -7,7 +7,7 @@ import {
   AndroidGenerator
 } from 'ern-container-gen'
 import {
-  cauldron,
+  utils as coreUtils,
   compatibility,
   MiniApp,
   Platform,
@@ -144,6 +144,7 @@ version: string, {
   containerName?: string
 } = {}) {
   try {
+    const cauldron = await coreUtils.getCauldronInstance()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
@@ -206,6 +207,7 @@ export async function performCodePushPatch (
     rollout?: number
   }) {
   try {
+    var cauldron = await coreUtils.getCauldronInstance()
     const codePushSdk = getCodePushSdk()
     await cauldron.beginTransaction()
     const appName = await getCodePushAppName(napDescriptor)
@@ -227,7 +229,9 @@ export async function performCodePushPatch (
       })
     await cauldron.commitTransaction(`CodePush patched ${napDescriptor.toString()} ${deploymentName} ${label}`)
   } catch (e) {
-    await cauldron.discardTransaction()
+    if (cauldron) {
+      await cauldron.discardTransaction()
+    }
     log.error(`[performCodePushPatch] ${e}`)
     throw e
   }
@@ -246,6 +250,7 @@ export async function performCodePushPromote (
   }) {
   try {
     const codePushSdk = getCodePushSdk()
+    var cauldron = await coreUtils.getCauldronInstance()
     await cauldron.beginTransaction()
     const cauldronCommitMessage = [
       `CodePush release promotion of ${sourceNapDescriptor.toString()} ${sourceDeploymentName} to ${targetDeploymentName} of`
@@ -297,7 +302,9 @@ export async function performCodePushPromote (
     }
     await spin(`Updating Cauldron`, cauldron.commitTransaction(cauldronCommitMessage))
   } catch (e) {
-    await cauldron.discardTransaction()
+    if (cauldron) {
+      await cauldron.discardTransaction()
+    }
     log.error(`[performCodePushPromote] ${e}`)
     throw e
   }
@@ -321,6 +328,7 @@ miniApps: Array<Dependency>, {
 } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
+    var cauldron = await coreUtils.getCauldronInstance()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
     if (!codePushPlugin) {
@@ -431,7 +439,9 @@ miniApps: Array<Dependency>, {
     await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, deploymentName, pathToNewYarnLock))
     await cauldron.commitTransaction(`CodePush release for ${napDescriptor.toString()} ${deploymentName}`)
   } catch (e) {
-    await cauldron.discardTransaction()
+    if (cauldron) {
+      await cauldron.discardTransaction()
+    }
     log.error(`performCodePushOtaUpdate {e}`)
     throw e
   }
@@ -444,6 +454,7 @@ export async function getCodePushTargetVersionName (
     throw new Error(`Native application descriptor ${napDescriptor.toString()} does not contain a version !`)
   }
   let result = napDescriptor.version
+  const cauldron = await coreUtils.getCauldronInstance()
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
   if (codePushConfig && codePushConfig.versionModifiers) {
     const versionModifier = _.find(codePushConfig.versionModifiers, m => m.deploymentName === deploymentName)
@@ -457,6 +468,7 @@ export async function getCodePushTargetVersionName (
 async function getCodePushAppName (
   napDescriptor: NativeApplicationDescriptor) : Promise<string> {
   let result = napDescriptor.name
+  const cauldron = await coreUtils.getCauldronInstance()
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
   if (codePushConfig && codePushConfig.appName) {
     result = codePushConfig.appName
@@ -509,6 +521,7 @@ async function askUserToForceCodePushPublication () : Promise<boolean> {
 }
 
 export async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor, message?: string) : Promise<string> {
+  const cauldron = await coreUtils.getCauldronInstance()
   const config = await cauldron.getConfig(napDescriptor)
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
   const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined

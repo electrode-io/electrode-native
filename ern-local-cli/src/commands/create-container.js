@@ -4,7 +4,7 @@ import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
-  cauldron,
+  utils as coreUtils,
   Platform
 } from 'ern-core'
 import {
@@ -107,6 +107,8 @@ exports.handler = async function ({
   }
 
   try {
+    const cauldron = await coreUtils.getCauldronInstance()
+
     //
     // Full native application selector was not provided.
     // Ask the user to select a completeNapDescriptor from a list

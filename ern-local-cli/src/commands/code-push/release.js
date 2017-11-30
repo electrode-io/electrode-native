@@ -6,7 +6,7 @@ import {
   Utils
 } from 'ern-util'
 import {
-  cauldron
+  utils as coreUtils
 } from 'ern-core'
 import {
   performCodePushOtaUpdate,
@@ -166,6 +166,7 @@ exports.handler = async function ({
 async function getPathToYarnLock (
   napDescriptor: NativeApplicationDescriptor,
   deploymentName: string) {
+  const cauldron = await coreUtils.getCauldronInstance()
   let pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, deploymentName)
   if (!pathToYarnLock) {
     pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)

@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  cauldron,
+  utils as coreUtils,
   dependencyLookup
 } from 'ern-core'
 import {
@@ -28,6 +28,7 @@ exports.handler = async function ({
 }) {
   try {
     const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
+    const cauldron = await coreUtils.getCauldronInstance()
     const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
     const miniAppsPaths = _.map(miniApps, m => m.path)
     log.info(`This might take a while. The more MiniApps, the longer.`)

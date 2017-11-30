@@ -3,9 +3,10 @@ import {
   expect
 } from 'chai'
 import {
-  cauldron,
+  CauldronHelper,
   ModuleTypes,
-  yarn
+  yarn,
+  utils as coreUtils
 } from 'ern-core'
 import {
   NativeApplicationDescriptor
@@ -24,14 +25,8 @@ const npmPackageExists = require('./fixtures/npmPkgExistsResponse.json')
 const npmPackageDoesNotExists = '' // 2> /dev/null suppresses stderr in yarn.info
 
 // Cauldron stubs
-const getAllNativeAppsStub = sinon.stub(cauldron, 'getAllNativeApps')
-const beginTransactionStub = sinon.stub(cauldron, 'beginTransaction')
-const commitTransactionStub = sinon.stub(cauldron, 'commitTransaction')
-const discardTransactionStub = sinon.stub(cauldron, 'discardTransaction')
-const getContainerVersionStub = sinon.stub(cauldron, 'getContainerVersion').resolves('1.0.0')
-const getTopLevelContainerVersionStub = sinon.stub(cauldron, 'getTopLevelContainerVersion').resolves('1.2.3')
-const updateContainerVersionStub = sinon.stub(cauldron, 'updateContainerVersion')
-const getVersionsNameStub = sinon.stub(cauldron, 'getVersionsNames').resolves(['1.2.3', '1.2.4', '2.0.0'])
+
+let getCauldronInstanceStub
 
 // Logging stubs
 const logErrorStub = sinon.stub()
@@ -60,28 +55,6 @@ global.log = {
   debug: logDebugStub
 }
 
-// Before each test
-beforeEach(() => {
-  // Reset the state of all stubs/spies
-  processExitStub.reset()
-  logErrorStub.reset()
-  logInfoStub.reset()
-  runCauldronContainerGenStub.reset()
-  beginTransactionStub.reset()
-  commitTransactionStub.reset()
-  discardTransactionStub.reset()
-  updateContainerVersionStub.reset()
-  oraFailStub.reset()
-  yarnStub.reset()
-  inquirerStub.reset()
-})
-
-let cauldronIsActiveStub
-
-afterEach(() => {
-  cauldronIsActiveStub && cauldronIsActiveStub.restore()
-})
-
 function useCauldronFixture (fixture) {
   getAllNativeAppsStub.resolves(fixture.nativeApps)
 }
@@ -93,21 +66,6 @@ function useNpmPkgFixture (fixture) {
 function resolveInquirer (answer) {
   inquirerStub.resolves(answer)
 }
-
-after(() => {
-  getAllNativeAppsStub.restore()
-  processExitStub.restore()
-  runCauldronContainerGenStub.restore()
-  beginTransactionStub.restore()
-  commitTransactionStub.restore()
-  discardTransactionStub.restore()
-  getContainerVersionStub.restore()
-  getTopLevelContainerVersionStub.restore()
-  updateContainerVersionStub.restore()
-  oraStartStub.restore()
-  yarnStub.restore()
-  inquirerStub.restore()
-})
 
 // Utility function that returns true if a given async function execution
 // throws an exception, false otherwise
@@ -132,7 +90,73 @@ async function doesNotThrow (asyncFn, ... args) {
   return threwError === false
 }
 
+let getAllNativeAppsStub
+let beginTransactionStub
+let commitTransactionStub
+let discardTransactionStub
+let getContainerVersionStub
+let getTopLevelContainerVersionStub
+let updateContainerVersionStub
+let getVersionsNameStub
+let isActiveStub
+let cauldronHelper
+
 describe('utils.js', () => {
+  // Before each test
+  beforeEach(() => {
+    cauldronHelper = new CauldronHelper()
+    getAllNativeAppsStub = sinon.stub(cauldronHelper, 'getAllNativeApps')
+    beginTransactionStub = sinon.stub(cauldronHelper, 'beginTransaction')
+    commitTransactionStub = sinon.stub(cauldronHelper, 'commitTransaction')
+    discardTransactionStub = sinon.stub(cauldronHelper, 'discardTransaction')
+    getContainerVersionStub = sinon.stub(cauldronHelper, 'getContainerVersion').resolves('1.0.0')
+    getTopLevelContainerVersionStub = sinon.stub(cauldronHelper, 'getTopLevelContainerVersion').resolves('1.2.3')
+    updateContainerVersionStub = sinon.stub(cauldronHelper, 'updateContainerVersion')
+    getVersionsNameStub = sinon.stub(cauldronHelper, 'getVersionsNames').resolves(['1.2.3', '1.2.4', '2.0.0'])
+    isActiveStub = sinon.stub(cauldronHelper, 'isActive')
+
+    // Reset the state of all stubs/spies
+    processExitStub.reset()
+    logErrorStub.reset()
+    logInfoStub.reset()
+    runCauldronContainerGenStub.reset()
+    beginTransactionStub.reset()
+    oraFailStub.reset()
+    yarnStub.reset()
+    inquirerStub.reset()
+    getCauldronInstanceStub = sinon.stub(coreUtils, 'getCauldronInstance').resolves(cauldronHelper)
+  })
+
+  afterEach(() => {
+    getCauldronInstanceStub.restore()
+    isActiveStub.restore()
+    getAllNativeAppsStub.restore()
+    beginTransactionStub.restore()
+    commitTransactionStub.restore()
+    discardTransactionStub.restore()
+    getContainerVersionStub.restore()
+    getTopLevelContainerVersionStub.restore()
+    updateContainerVersionStub.restore()
+    getVersionsNameStub.restore()
+    isActiveStub.restore()
+  })
+
+  after(() => {
+    getAllNativeAppsStub.restore()
+    processExitStub.restore()
+    runCauldronContainerGenStub.restore()
+    beginTransactionStub.restore()
+    commitTransactionStub.restore()
+    discardTransactionStub.restore()
+    getContainerVersionStub.restore()
+    getTopLevelContainerVersionStub.restore()
+    updateContainerVersionStub.restore()
+    oraStartStub.restore()
+    yarnStub.restore()
+    inquirerStub.restore()
+    isActiveStub.restore()
+  })
+
   // ==========================================================
   // getNapDescriptorStringsFromCauldron
   // ==========================================================
@@ -289,7 +313,7 @@ describe('utils.js', () => {
     })
 
     it('[cauldronIsActive] Shoud log error and exit process if cauldron is not active', async () => {
-      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(false)
+      isActiveStub.returns(false)
       await utils.logErrorAndExitIfNotSatisfied({
         cauldronIsActive: {}
       })
@@ -297,7 +321,7 @@ describe('utils.js', () => {
     })
 
     it('[cauldronIsActive] Shoud not log error not exit process if cauldron is active', async () => {
-      cauldronIsActiveStub = sinon.stub(cauldron, 'isActive').returns(true)
+      isActiveStub.returns(true)
       await utils.logErrorAndExitIfNotSatisfied({
         cauldronIsActive: {}
       })

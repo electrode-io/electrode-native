@@ -5,7 +5,7 @@ import {
   NativeApplicationDescriptor,
   spin
 } from 'ern-util'
-import cauldron from './cauldron.js'
+import * as utils from './utils.js'
 import manifest from './Manifest.js'
 import MiniApp from './MiniApp.js'
 import _ from 'lodash'
@@ -103,7 +103,8 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
   versionName: ?string
 }= {}) {
   let result = []
-  const nativeApps = await cauldron.getAllNativeApps()
+  const cauldronInstance = await utils.getCauldronInstance()
+  const nativeApps = await cauldronInstance.getAllNativeApps()
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
   const miniappDependencies = miniApp.nativeDependencies
@@ -119,7 +120,7 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
                 nativeApp.name,
                 nativeAppPlatform.name,
                 nativeAppVersion.name)
-              let nativeAppDependencies = await cauldron.getNativeDependencies(napDescriptor)
+              let nativeAppDependencies = await cauldronInstance.getNativeDependencies(napDescriptor)
               const compatibility = getCompatibility(
                   miniappDependencies, nativeAppDependencies, {
                     uncompatibleIfARemoteDepIsMissing: nativeAppVersion.isReleased

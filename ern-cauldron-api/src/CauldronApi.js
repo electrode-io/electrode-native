@@ -9,22 +9,21 @@ import {
   shasum
 } from './util'
 import _ from 'lodash'
-import FileStore from './filestore'
-import GitStore from './gitstore'
-
 import type {
-  CauldronCodePushEntry
-} from './gitstore'
+  CauldronCodePushEntry,
+  ICauldronDocumentStore,
+  ICauldronFileStore
+} from './FlowTypes'
 
 export default class CauldronApi {
-  _db: GitStore
-  _sourceMapStore: FileStore
-  _yarnlockStore: FileStore
+  _db: ICauldronDocumentStore
+  _sourceMapStore: ICauldronFileStore
+  _yarnlockStore: ICauldronFileStore
 
   constructor (
-    db: GitStore,
-    sourcemapStore: FileStore,
-    yarnlockStore: FileStore) {
+    db: ICauldronDocumentStore,
+    sourcemapStore: ICauldronFileStore,
+    yarnlockStore: ICauldronFileStore) {
     this._db = db
     this._sourceMapStore = sourcemapStore
     this._yarnlockStore = yarnlockStore

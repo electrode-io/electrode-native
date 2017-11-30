@@ -5,7 +5,7 @@ import {
   Utils
 } from 'ern-util'
 import {
-  cauldron
+  utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
 
@@ -43,6 +43,7 @@ exports.handler = async function ({
     })
 
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+    const cauldron = await coreUtils.getCauldronInstance()
     cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
   } catch (e) {
     Utils.logErrorAndExitProcess(e)

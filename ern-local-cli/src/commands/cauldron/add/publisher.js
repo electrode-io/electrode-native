@@ -5,7 +5,7 @@ import {
   NativeApplicationDescriptor
 } from 'ern-util'
 import {
-  cauldron
+  utils as coreUtils
 } from 'ern-core'
 
 exports.command = 'publisher'
@@ -58,6 +58,7 @@ exports.handler = async function ({
       throw new Error('Maven publisher is only supported for android, you selected ios.')
     }
     const publisherType = mavenUrl ? 'maven' : 'github'
+    const cauldron = await coreUtils.getCauldronInstance()
     await cauldron.addPublisher(napDescriptor, publisherType, url)
     log.info(`${publisherType} publisher was successfully added!`)
   } catch (e) {

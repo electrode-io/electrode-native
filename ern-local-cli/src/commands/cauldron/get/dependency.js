@@ -5,7 +5,7 @@ import {
   Utils
 } from 'ern-util'
 import {
-  cauldron
+  utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
 
@@ -34,6 +34,7 @@ exports.handler = async function ({
 
   try {
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+    const cauldron = await coreUtils.getCauldronInstance()
     const dependencies = await cauldron.getNativeDependencies(napDescriptor)
     for (const dependency of dependencies) {
       log.info(dependency.toString())
