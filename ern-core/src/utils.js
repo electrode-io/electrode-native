@@ -286,15 +286,16 @@ export async function extractJsApiImplementations (plugins: Array<Dependency>) {
 }
 
 // Singleton CauldronHelper
+// Returns undefined if no Cauldron is active
 let currentCauldronHelperInstance
 export async function getCauldronInstance () : Promise<CauldronHelper> {
   if (!currentCauldronHelperInstance) {
     const cauldronRepositories = config.getValue('cauldronRepositories')
     const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
-    if (!cauldronRepoInUse) {
-      currentCauldronHelperInstance = new CauldronHelper()
-    } else {
-      const cauldronCli = new CauldronCli(cauldronRepositories[cauldronRepoInUse], path.join(Platform.rootDirectory, 'cauldron'))
+    if (cauldronRepoInUse) {
+      const cauldronCli = new CauldronCli(
+        cauldronRepositories[cauldronRepoInUse],
+        path.join(Platform.rootDirectory, 'cauldron'))
       currentCauldronHelperInstance = new CauldronHelper(cauldronCli)
     }
   }

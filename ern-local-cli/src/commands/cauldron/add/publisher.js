@@ -7,6 +7,7 @@ import {
 import {
   utils as coreUtils
 } from 'ern-core'
+import utils from '../../../lib/utils'
 
 exports.command = 'publisher'
 exports.desc = 'Add a publisher url to publish the generated container/archive.'
@@ -38,6 +39,12 @@ exports.handler = async function ({
   descriptor?: string
 }) {
   try {
+    await utils.logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage: 'A Cauldron must be active in order to use this command'
+      }
+    })
+
     let url = ''
     if (mavenUrl) {
       url = mavenUrl

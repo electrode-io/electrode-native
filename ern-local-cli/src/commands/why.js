@@ -27,6 +27,12 @@ exports.handler = async function ({
   completeNapDescriptor: string
 }) {
   try {
+    await utils.logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage: 'A Cauldron must be active in order to use this command'
+      }
+    })
+
     const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
     const cauldron = await coreUtils.getCauldronInstance()
     const miniApps = await cauldron.getContainerMiniApps(napDescriptor)

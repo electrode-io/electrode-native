@@ -39,7 +39,7 @@ export class Manifest {
 
   async initOverrideManifest () {
     const cauldronInstance = await getCauldronInstance()
-    if (!this._overrideManifest && cauldronInstance.isActive()) {
+    if (!this._overrideManifest && cauldronInstance) {
       const manifestConfig = await cauldronInstance.getManifestConfig()
       if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
         this._overrideManifest = new GitManifest(Platform.overrideManifestDirectory, manifestConfig.override.url)

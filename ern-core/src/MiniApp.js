@@ -375,6 +375,9 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     force?: boolean) {
     try {
       const cauldronInstance = await utils.getCauldronInstance()
+      if (!cauldronInstance) {
+        throw new Error('No Cauldron is active')
+      }
       const nativeApp = await cauldronInstance.getNativeApp(napDescriptor)
 
       const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)

@@ -94,19 +94,22 @@ exports.handler = async function ({
 } = {}) {
   let napDescriptor: ?NativeApplicationDescriptor
 
-  await utils.logErrorAndExitIfNotSatisfied({
-    isValidContainerVersion: version ? {containerVersion: version} : undefined,
-    noGitOrFilesystemPath: {
-      obj: dependencies,
-      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
-    }
-  })
-
-  if ((dependencies.length > 0) && (jsOnly || descriptor)) {
-    return log.error(`You can only provide extra native dependencies when generating a non JS only / non Cauldron based container`)
-  }
-
   try {
+    await utils.logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage: 'A Cauldron must be active in order to use this command'
+      },
+      isValidContainerVersion: version ? {containerVersion: version} : undefined,
+      noGitOrFilesystemPath: {
+        obj: dependencies,
+        extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+      }
+    })
+
+    if ((dependencies.length > 0) && (jsOnly || descriptor)) {
+      throw new Error(`You can only provide extra native dependencies when generating a non JS only / non Cauldron based container`)
+    }
+
     const cauldron = await coreUtils.getCauldronInstance()
 
     //

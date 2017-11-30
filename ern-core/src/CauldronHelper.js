@@ -28,15 +28,11 @@ type CodePushConfig = {
 export default class CauldronHelper {
   cauldron: Object
 
-  constructor (cauldronCli?: Object) {
-    if (!cauldronCli) {
-      return
+  constructor (cauldronApi: Object) {
+    if (!cauldronApi) {
+      throw new Error('cauldronApi is required')
     }
-    this.cauldron = cauldronCli
-  }
-
-  isActive () {
-    return this.cauldron !== undefined
+    this.cauldron = cauldronApi
   }
 
   async beginTransaction () {
