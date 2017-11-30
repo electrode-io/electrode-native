@@ -1,3 +1,5 @@
+// @flow
+
 import {
   assert,
   expect
@@ -7,9 +9,13 @@ import fs from 'fs'
 import {
   fixtures
 } from 'ern-util-dev'
+import type {
+  CauldronCodePushEntry
+} from '../src/FlowTypes'
 import CauldronApi from '../src/CauldronApi'
 import EphemeralFileStore from '../src/EphemeralFileStore'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
+const sandbox = sinon.createSandbox()
 
 const codePushNewEntryFixture : CauldronCodePushEntry = {
   "metadata": {
@@ -20,7 +26,7 @@ const codePushNewEntryFixture : CauldronCodePushEntry = {
     "releaseMethod": "Upload",
     "label": "v18",
     "releasedBy": "test@gmail.com",
-    "rollout": "100"
+    "rollout": 100
   },
   "miniapps": [
     "@test/react-native-foo@4.0.4",
@@ -29,8 +35,6 @@ const codePushNewEntryFixture : CauldronCodePushEntry = {
 }
 
 let gitStoreStub
-let fileStoreYarnLockStub
-let cauldronData
 
 function cauldronApi(cauldronDocument) {
   cauldronDocument = cauldronDocument || getCauldronFixtureClone()
@@ -60,7 +64,7 @@ describe('CauldronApi.js', () => {
     })
 
     it('should return undefined if native application version is not found', async () => {
-      const entries = await cauldronApi().getCodePushEntries('test', 'android', '1.0.0')
+      const entries = await cauldronApi().getCodePushEntries('test', 'android', '1.0.0', 'QA')
       expect(entries).undefined
     })
   })

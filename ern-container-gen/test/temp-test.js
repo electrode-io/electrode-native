@@ -28,15 +28,10 @@ const {
   YarnCli,
   shell
 } = ernUtil
+const sandbox = sinon.createSandbox()
 
 // Spies
-const yarnAddSpy = sinon.stub(YarnCli.prototype, 'add').callsFake(() => {})
-const yarnUpgradeSpy = sinon.stub(YarnCli.prototype, 'upgrade').callsFake(() => {})
-const yarnInstallSpy = sinon.stub(YarnCli.prototype, 'install').callsFake(() => {})
-//const yarnAddSpy = sinon.stub(ernUtil.yarn, 'yarnAdd').callsFake(() => {})
-//const yarnUpgradeSpy = sinon.stub(ernUtil.yarn, 'yarnUpgrade').callsFake(() => {})
-//const yarnInstallSpy = sinon.stub(ernUtil.yarn, 'yarnInstall').callsFake(() => {})
-sinon.stub(ernUtil, 'spin').callsFake(async (msg, prom) => { await prom })
+let yarnCliStub
 
 let tmpOutDir
 const currentDir = process.cwd()
@@ -44,42 +39,28 @@ const pathToFixtures = path.join(currentDir, 'test', 'fixtures')
 const pathToSampleYarnLock = path.join(pathToFixtures, 'sample.yarn.lock')
 const sampleYarnLock = fs.readFileSync(pathToSampleYarnLock, 'utf8')
 
-// Before each test
-beforeEach(() => {
-  // Go back to initial dir (otherwise we might start execution from a temporary
-  // created directory that got removed and it makes shelljs go crazy)
-  process.chdir(currentDir)
-
-  // Reset the state of all spies
-  yarnAddSpy.reset()
-  yarnInstallSpy.reset()
-  yarnUpgradeSpy.reset()
-
-  // Create temporary directory to use as target output directory of some
-  // functions under test
-  tmpOutDir = tmp.dirSync().name
-})
-
-// After each test
-afterEach(() => {
-  // Remove the temporary output directory created for the test
-  shell.rm('-rf', tmpOutDir)
-})
-
-// After all tests
-after(() => {
-  // Restore the functions that were spied on to their original code
-  yarnAddSpy.restore()
-  yarnInstallSpy.restore()
-  yarnUpgradeSpy.restore()
-})
-
 describe('ern-container-gen utils.js', () => {
+  // Before each test
   beforeEach(() => {
     beforeTest()
+
+    yarnCliStub = sandbox.stub(YarnCli.prototype)
+    sandbox.stub(ernUtil, 'spin').callsFake(async (msg, prom) => { await prom })
+
+    // Go back to initial dir (otherwise we might start execution from a temporary
+    // created directory that got removed and it makes shelljs go crazy)
+    process.chdir(currentDir)
+
+    // Create temporary directory to use as target output directory of some
+    // functions under test
+    tmpOutDir = tmp.dirSync().name
   })
 
+  // After each test
   afterEach(() => {
+    // Remove the temporary output directory created for the test
+    shell.rm('-rf', tmpOutDir)
+    sandbox.restore()
     afterTest()
   })
 
@@ -136,7 +117,7 @@ describe('ern-container-gen utils.js', () => {
         new: [ { name: 'MiniAppFour', version: '7.0.0' }, { name: 'MiniAppFive', version: '4.0.0' } ]
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnAddSpy.calledTwice)
+      assert(yarnCliStub.add.calledTwice)
     })
 
     it('should yarn upgrade upgraded MiniApps', async () => {
@@ -144,7 +125,7 @@ describe('ern-container-gen utils.js', () => {
         upgraded: [ { name: 'MiniAppOne', version: '7.0.0' }, { name: 'MiniAppTwo', version: '4.0.0' } ]
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnUpgradeSpy.calledTwice)
+      assert(yarnCliStub.upgrade.calledTwice)
     })
 
     it('should not yarn upgrade nor yarn add same MiniApps versions', async () => {
@@ -152,8 +133,8 @@ describe('ern-container-gen utils.js', () => {
         same: [ { name: 'MiniAppOne', version: '6.0.0' }, { name: 'MiniAppTwo', version: '3.0.0' } ]
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnUpgradeSpy.notCalled)
-      assert(yarnAddSpy.notCalled)
+      assert(yarnCliStub.upgrade.notCalled)
+      assert(yarnCliStub.add.notCalled)
     })
 
     it('should work correctly with mixed deltas', async () => {
@@ -163,8 +144,8 @@ describe('ern-container-gen utils.js', () => {
         new: [ { name: 'MiniAppFour', version: '7.0.0' } ]
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnUpgradeSpy.calledTwice)
-      assert(yarnAddSpy.calledOnce)
+      assert(yarnCliStub.upgrade.calledTwice)
+      assert(yarnCliStub.add.calledOnce)
     })
   })
 
@@ -257,11 +238,11 @@ describe('ern-container-gen utils.js', () => {
         DependencyPath.fromString('MiniAppFour@1.0.0') // new
       ]
       await generateMiniAppsComposite(miniApps, tmpOutDir, { pathToYarnLock: pathToSampleYarnLock })
-      assert(yarnInstallSpy.calledOnce)
-      assert(yarnUpgradeSpy.calledOnce)
-      assert(yarnAddSpy.calledOnce)
-      assert(yarnInstallSpy.calledBefore(yarnAddSpy))
-      assert(yarnInstallSpy.calledBefore(yarnUpgradeSpy))
+      assert(yarnCliStub.install.calledOnce)
+      assert(yarnCliStub.upgrade.calledOnce)
+      assert(yarnCliStub.add.calledOnce)
+      assert(yarnCliStub.install.calledBefore(yarnCliStub.add))
+      assert(yarnCliStub.install.calledBefore(yarnCliStub.upgrade))
     })
 
     it('should create index.android.js', async () => {
@@ -305,7 +286,7 @@ describe('ern-container-gen utils.js', () => {
         }
       }), 'utf8')
       await generateMiniAppsComposite(miniApps, tmpOutDir)
-      assert(yarnAddSpy.calledThrice)
+      assert(yarnCliStub.add.calledThrice)
     })
 
     it('should create index.android.js', async () => {

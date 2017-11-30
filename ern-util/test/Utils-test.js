@@ -10,17 +10,20 @@ import {
 } from 'ern-util-dev'
 import sinon from 'sinon'
 import Utils from '../src/utils'
+const sanbox = sinon.createSandbox()
 
-const processExitStub = sinon.stub(process, 'exit')
+let processExitStub
 
 describe('Utils', () => {
   let stubs
 
   beforeEach(() => {
+    processExitStub = sanbox.stub(process, 'exit')
     stubs = beforeTest()
   })
 
   afterEach(() => {
+    sanbox.restore()
     afterTest()
   })
 

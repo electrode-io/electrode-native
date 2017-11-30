@@ -15,8 +15,7 @@ import type {
 import CauldronApi from '../src/CauldronApi'
 import GitFileStore from '../src/GitFileStore'
 import GitDocumentStore from '../src/GitDocumentStore'
-
-const fileStoreSourceMapStub = sinon.createStubInstance(GitFileStore)
+const sandbox = sinon.createSandbox()
 
 const codePushNewEntryFixture : CauldronCodePushEntry = {
   "metadata": {
@@ -41,14 +40,20 @@ let api
 let cauldronData
 
 describe('api.js', () => {
+
   beforeEach(() => {
-    gitStoreStub = sinon.createStubInstance(GitFileStore)
+    const fileStoreSourceMapStub = sandbox.createStubInstance(GitFileStore)
+    gitStoreStub = sandbox.createStubInstance(GitFileStore)
     cauldronData = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-    gitStoreStub.getCauldron = sinon.stub().resolves(cauldronData)
-    gitStoreStub.commit = sinon.stub().resolves()
-    fileStoreYarnLockStub = sinon.createStubInstance(GitFileStore)
-    fileStoreYarnLockStub.removeFile = sinon.stub().resolves(true)
+    gitStoreStub.getCauldron = sandbox.stub().resolves(cauldronData)
+    gitStoreStub.commit = sandbox.stub().resolves()
+    fileStoreYarnLockStub = sandbox.createStubInstance(GitFileStore)
+    fileStoreYarnLockStub.removeFile = sandbox.stub().resolves(true)
     api = new CauldronApi(gitStoreStub, fileStoreSourceMapStub, fileStoreYarnLockStub)
+  })
+
+  afterEach(() => {
+    sandbox.restore()
   })
 
   // ==========================================================

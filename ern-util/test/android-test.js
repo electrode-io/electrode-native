@@ -19,35 +19,34 @@ import * as android from '../src/android'
 import ernConfig from '../src/config'
 import inquirer from 'inquirer'
 import * as fixtures from './fixtures/common'
-
 const readFile = Promise.promisify(fs.readFile)
+const sandbox = sinon.createSandbox()
 
-// Ora stubs
-const oraProto = Object.getPrototypeOf(ora())
-const oraFailStub = sinon.stub()
-const oraStartStub = sinon.stub(oraProto, 'start').returns({
-  fail: oraFailStub,
-  succeed: sinon.stub()
-})
-
-// class in test stubs
-const execpStub = sinon.stub(childProcess, 'execp')
-const processStub = sinon.stub(process, 'platform').returns('win')
-let ernConfigStub
+let ernConfigGetValueStub
+let execpStub
 
 describe('android.js', () => {
   beforeEach(() => {
     beforeTest()
+
+    // Ora stubs
+    const oraProto = Object.getPrototypeOf(ora())
+    const oraFailStub = sandbox.stub()
+    const oraStartStub = sandbox.stub(oraProto, 'start').returns({
+      fail: oraFailStub,
+      succeed: sandbox.stub()
+    })
+
+    ernConfigGetValueStub = sandbox.stub(ernConfig, 'getValue')
+
+    // class in test stubs
+    execpStub = sandbox.stub(childProcess, 'execp')
+    sandbox.stub(process, 'platform').returns('win')
   })
 
   afterEach(() => {
     afterTest()
-    ernConfigStub && ernConfigStub.restore()
-  })
-
-  after(() => {
-    execpStub.restore()
-    processStub.restore()
+    sandbox.restore()
   })
 
   // ==========================================================
@@ -103,7 +102,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
       })
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -118,7 +117,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
       })
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -130,7 +129,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
       })
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -142,7 +141,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd
       })
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -154,7 +153,7 @@ describe('android.js', () => {
         usePreviousDevice: true,
         deviceId: fixtures.oneAvd
       }
-      ernConfigStub = sinon.stub(ernConfig, 'getValue').returns(config)
+      ernConfigGetValueStub.returns(config)
       expect(await android.askUserToSelectAvdEmulator()).to.be.equal(fixtures.oneAvd)
     })
   })
