@@ -11,6 +11,8 @@ import fs from 'fs'
 import path from 'path'
 import shell from 'shelljs'
 import _tmp from 'tmp'
+import sinon from 'sinon'
+const sandbox = sinon.createSandbox()
 
 const CLI = path.resolve(__dirname, '..', '..', 'ern-local-cli', 'src', 'index.dev.js')
 
@@ -224,6 +226,42 @@ export async function doesNotThrow (asyncFn, ...args) {
     threwError = true
   }
   return threwError === false
+}
+
+let logErrorStub
+let logInfoStub
+let logDebugStub
+let logTraceStub
+let logWarnStub
+
+export function beforeTest () {
+  logErrorStub = sandbox.stub()
+  logInfoStub = sandbox.stub()
+  logDebugStub = sandbox.stub()
+  logTraceStub = sandbox.stub()
+  logWarnStub = sandbox.stub()
+
+  global.log = {
+    warn: logWarnStub,
+    error: logErrorStub,
+    info: logInfoStub,
+    debug: logDebugStub,
+    trace: logTraceStub
+  }
+
+  return {
+    log: {
+      error: logErrorStub,
+      info: logInfoStub,
+      debug: logDebugStub,
+      trace: logTraceStub,
+      warn: logWarnStub
+    }
+  }
+}
+
+export function afterTest () {
+  sandbox.restore()
 }
 
 export const fixtures = {

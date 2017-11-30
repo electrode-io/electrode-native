@@ -86,7 +86,7 @@ export function splitCamelCaseString (camelCaseString: string): Array<string> {
   })
 }
 
-export function getDefaultPackageNameForCamelCaseString (moduleName: string, moduleType: string): string {
+export function getDefaultPackageNameForCamelCaseString (moduleName: string, moduleType?: string): string {
   let splitArray = splitCamelCaseString(moduleName)
   switch (moduleType) {
     case ModuleTypes.MINIAPP:

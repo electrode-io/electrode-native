@@ -13,6 +13,8 @@ import {
 import {
   doesThrow,
   doesNotThrow,
+  beforeTest,
+  afterTest,
   fixtures as utilFixtures
 } from 'ern-util-dev'
 import {
@@ -32,12 +34,6 @@ const npmPackageExists = require('./fixtures/npmPkgExistsResponse.json')
 const npmPackageDoesNotExists = '' // 2> /dev/null suppresses stderr in yarn.info
 const sandbox = sinon.createSandbox()
 
-global.log = {
-  error: sinon.stub(),
-  info: sinon.stub(),
-  debug: sinon.stub()
-}
-
 let cauldronHelperStub
 let yarnInfoStub
 let oraFailStub
@@ -47,6 +43,7 @@ let inquirerPromptStub
 describe('utils.js', () => {
   // Before each test
   beforeEach(() => {
+    beforeTest()
     cauldronHelperStub = sandbox.createStubInstance(CauldronHelper)
     cauldronHelperStub.getContainerVersion.resolves('1.0.0')
     cauldronHelperStub.getTopLevelContainerVersion.resolves('1.2.3')
@@ -71,6 +68,7 @@ describe('utils.js', () => {
   })
 
   afterEach(() => {
+    afterTest()
     sandbox.restore()
   })
 

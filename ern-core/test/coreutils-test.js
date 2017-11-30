@@ -1,3 +1,5 @@
+// @flow
+
 import {
   assert,
   expect
@@ -8,22 +10,14 @@ import * as utils from '../src/utils'
 import {
   DependencyPath,
 } from 'ern-util'
+import {
+  beforeTest,
+  afterTest,
+  stubs
+} from 'ern-util-dev'
 import * as fixtures from './fixtures/common'
 import * as ModuleTypes from '../src/ModuleTypes'
 import path from 'path'
-
-// Logging stubs
-const logErrorStub = sinon.stub()
-const logInfoStub = sinon.stub()
-const logDebugStub = sinon.stub()
-const logTraceStub = sinon.stub()
-
-global.log = {
-  error: logErrorStub,
-  info: logInfoStub,
-  debug: logDebugStub,
-  trace: logTraceStub
-}
 
 // fixtures
 const yarnInfo = require('./fixtures/yarn_info.json')
@@ -37,11 +31,13 @@ let pathStub
 
 describe('utils.js', () => {
   beforeEach(() => {
+    beforeTest()
     pathStub = sinon.stub(path, 'join')
   })
   
   afterEach(() => {
     pathStub.restore()
+    afterTest()
   })
 
   // ==========================================================
@@ -425,7 +421,7 @@ describe('utils.js', () => {
       yarnStub.resolves(yarnInfoErnApi)
       expect(await utils.isDependencyApiOrApiImpl('react-native-header-api-impl')).to.eql(true)
       yarnStub.restore()
-    }).timeout(3000)
+    })
 
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
