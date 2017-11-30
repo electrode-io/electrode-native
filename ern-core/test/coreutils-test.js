@@ -33,17 +33,17 @@ const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json'
 const yarnInfoError = require('./fixtures/yarn_info_error.json')
 
 // stub
-const pathStub = sinon.stub(path, 'join')
-
-beforeEach(() => {
-  pathStub.reset()
-})
-
-afterEach(() => {
-  pathStub.restore()
-})
+let pathStub
 
 describe('utils.js', () => {
+  beforeEach(() => {
+    pathStub = sinon.stub(path, 'join')
+  })
+  
+  afterEach(() => {
+    pathStub.restore()
+  })
+
   // ==========================================================
   // isPublishedToNpm
   // ==========================================================
@@ -477,7 +477,7 @@ describe('utils.js', () => {
         name: "react-native-code-push",
         version: "1.16.1-beta"
       }
-      pathStub.resolves(pluginPath)
+      pathStub.returns(pluginPath)
       expect(utils.getDownloadedPluginPath(npmPlugin)).to.eql(pluginPath)
     })
 
@@ -488,7 +488,7 @@ describe('utils.js', () => {
         name: "@msft/react-native-code-push",
         version: "1.16.1-beta"
       }
-      pathStub.resolves(pluginPath)
+      pathStub.returns(pluginPath)
       expect(utils.getDownloadedPluginPath(npmPluginWithScope)).to.eql(pluginPath)
     })
 
@@ -499,7 +499,7 @@ describe('utils.js', () => {
         url: "https://github.com/aoriani/ReactNative-StackTracer.git",
         version: "0.1.1"
       }
-      pathStub.resolves(pluginPath)
+      pathStub.returns(pluginPath)
       expect(utils.getDownloadedPluginPath(gitPlugin)).to.eql('ReactNative-StackTracer')
     })
 

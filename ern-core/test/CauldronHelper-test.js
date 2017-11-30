@@ -14,6 +14,21 @@ import {
   InMemoryDocumentStore
 } from 'ern-cauldron-api'
 import jp from 'jsonpath'
+import path from 'path'
+
+// Logging stubs
+const logErrorStub = sinon.stub()
+const logInfoStub = sinon.stub()
+const logDebugStub = sinon.stub()
+const logTraceStub = sinon.stub()
+
+global.log = {
+  error: logErrorStub,
+  info: logInfoStub,
+  debug: logDebugStub,
+  trace: logTraceStub
+}
+
 
 const cauldronFixture = require('./fixtures/cauldron-fixture.json')
 
@@ -78,9 +93,9 @@ let documentStore
 
 function createCauldronHelper(cauldronDocument) {
   documentStore = new InMemoryDocumentStore(cauldronDocument)
- // const sourceMapStore = new EphemeralFileStore()
- // const yarnLockStore = new EphemeralFileStore()
-  const cauldronApi = new CauldronApi(documentStore)//, sourceMapStore, yarnLockStore)
+  const sourceMapStore = new EphemeralFileStore()
+  const yarnLockStore = new EphemeralFileStore()
+  const cauldronApi = new CauldronApi(documentStore, sourceMapStore, yarnLockStore)
   return new CauldronHelper(cauldronApi)
 }
 
@@ -91,7 +106,11 @@ function getCauldronFixtureClone() {
 const testAndroid1770Path = '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
 
 describe('CauldronHelper.js', () => {
-   describe('_addCodePushEntry', () => {
+  describe('constructor', () => {
+    
+  })
+
+  describe('_addCodePushEntry', () => {
     it('should properly apply the entriesLimit config [limit of 2 entries]', async () => {
       const fixture = getCauldronFixtureClone()
       fixture.config.codePush = { entriesLimit: 2 }
@@ -104,6 +123,8 @@ describe('CauldronHelper.js', () => {
         expect(result).to.be.an('array').of.length(2)
         expect(result[1].metadata).eql(codePushMetadataFixtureOne)
     })
+
+
 
     it('should properly apply the entriesLimit config [limit of 0 entries = unlimited entries]', async () => {
       const fixture = getCauldronFixtureClone()
