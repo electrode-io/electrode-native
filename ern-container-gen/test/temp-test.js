@@ -1,3 +1,5 @@
+// @flow
+
 import {
   assert,
   expect
