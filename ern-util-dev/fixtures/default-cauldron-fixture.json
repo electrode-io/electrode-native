@@ -1,5 +1,12 @@
 {
   "config": {
+    "codePush": {
+      "entriesLimit": 0
+    },
+    "binaryStore": {
+      "provider": "ern-binary-store",
+      "url": "http://localhost:3000"
+    },
     "manifest": {
       "override": {
         "url": "git@gecgithub01.test.com:react-native/ern-test-manifest.git",
@@ -40,6 +47,10 @@
         "versions": [
           {
             "name": "17.7.0",
+            "containerVersion": "1.16.44",
+            "config": { 
+              "test": 0
+            },
             "ernPlatformVersion": "1000.0.0",
             "isReleased": true,
             "binary": null,
