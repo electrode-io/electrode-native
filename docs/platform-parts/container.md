@@ -346,5 +346,5 @@ This command is rarely used in workflows as it does not allow remote publication
 `- ern cauldron (add/del/update> dependencies` and `- ern cauldron <add/del/update> miniapps`  
 Given that a container contains MiniApps and native dependencies, every time you need to add, delete, or update MiniApps or native dependencies to your container, the container is regenerated and published (with a new version). This means every time you make use of an `ern cauldron` subcommand used to add, delete, or update MiniApps or native dependencies for a given non-released mobile application version, behind the scene a new container version is automatically re-generated and published.
 
-`- ern run-android`` and `- ern run-ios`  
+`- ern run-android` and `- ern run-ios`  
 These two commands generate a local container that includes your MiniApp along with its native dependencies and the container is used by the Electrode Native runner application project to launch your MiniApp.
