@@ -542,7 +542,6 @@ export default class CauldronApi {
     key: string
   ) : Promise<?Buffer> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
     if (version && version.yarnLocks && version.yarnLocks[key]) {
       return this._yarnlockStore.getFile(version.yarnLocks[key])
     }
@@ -588,13 +587,13 @@ export default class CauldronApi {
     yarnlock: string | Buffer
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
     if (version && version.yarnLocks && version.yarnLocks[key]) {
       await this._yarnlockStore.removeFile(version.yarnLocks[key])
       const filename = shasum(yarnlock)
       await this._yarnlockStore.storeFile(filename, yarnlock)
-      version.yarnlock = filename
+      version.yarnLocks[key] = filename
       await this.commit(`Updated yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
+      return true
     }
 
     return false

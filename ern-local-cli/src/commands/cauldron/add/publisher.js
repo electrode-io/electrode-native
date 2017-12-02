@@ -66,7 +66,7 @@ exports.handler = async function ({
     }
     const publisherType = mavenUrl ? 'maven' : 'github'
     const cauldron = await coreUtils.getCauldronInstance()
-    await cauldron.addPublisher(napDescriptor, publisherType, url)
+    await cauldron.addPublisher(publisherType, url, napDescriptor)
     log.info(`${publisherType} publisher was successfully added!`)
   } catch (e) {
     Utils.logErrorAndExitProcess(e)
