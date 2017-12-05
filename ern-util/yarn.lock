@@ -268,9 +268,9 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-code-push@^2.0.3-beta:
-  version "2.0.3-beta"
-  resolved "https://registry.yarnpkg.com/code-push/-/code-push-2.0.3-beta.tgz#0d321cf8243b12b06aae46566c7e71e55b3faa8e"
+code-push@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/code-push/-/code-push-2.0.4.tgz#c0da90a8ca38f97478bf37136c78d066563f4905"
   dependencies:
     q "^1.4.1"
     recursive-fs "0.1.4"
