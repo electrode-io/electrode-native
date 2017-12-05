@@ -111,6 +111,7 @@ run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
 run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${iosNativeApplicationDescriptorNewVersion}`)
 run(`ern cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
+run(`ern cauldron get nativeapp`)
 
 run(`ern cauldron get config ${iosNativeApplicationDescriptorNewVersion}`)
 

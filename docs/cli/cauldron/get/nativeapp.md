@@ -2,17 +2,44 @@
 
 #### Description
 
-* Retrieve the data stored in the Cauldron for a given native application version
-* Log the data as a JSON formatted string in your terminal    
+* Retrieve the data stored in the Cauldron for a given native application object
+* Log the data as a JSON formatted string in your terminal
 
 #### Syntax
 
-`ern cauldron get nativeapp <descriptor>`  
+`ern cauldron get nativeapp [descriptor]`  
 
-**Arguments**
+**Options**
 
-`<descriptor>`
+`descriptor`
 
-* A complete native application descriptor representing the native application version for which to retrieve associated data.
+* A partial or complete application descriptor representing which native application object to get
+* If not provided, the command will log the list of all complete native application descriptors stored in the Cauldron
 
+**Examples**
+e
+* `ern cauldron get nativeapp`
+
+Will log all the complete native application descriptors from the Cauldron.
+For example, here is a possible output :
+
+```
+walmart:android:17.7.0
+walmart:android:17.8.0
+walmart:ios:17.7.0
+walmart:ios:17.8.0
+testapp:android:1.0.0
+```
+
+* `ern cauldron get nativeapp walmart`
+
+Will log the JSON document associated to the walmart application.
+
+* `ern cauldron get nativeapp walmart:android`
+
+Will log the JSON document associated to the walmart android application.
+
+* `ern cauldron get nativeapp walmart:android:17.7.0`
+
+Will log the JSON document associated to version 17.7.0 of the walmart android application.
 ____
