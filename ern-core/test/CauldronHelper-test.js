@@ -1276,7 +1276,6 @@ describe('CauldronHelper.js', () => {
         const codePushEntries = jp.query(fixture, `${testAndroid1770Path}.codePush.Production`)[0]
         expect(codePushEntries).to.be.an('array').of.length(2)
         const updatedEntry = jp.query(codePushEntries,`$[?(@.metadata.label=="v17")]`)[0]
-        console.log(`updatedEntry is ${JSON.stringify(updatedEntry)}`)
 
         expect(updatedEntry.metadata).to.have.property('isDisabled').eql(true)
     })
@@ -1293,7 +1292,6 @@ describe('CauldronHelper.js', () => {
         const codePushEntries = jp.query(fixture, `${testAndroid1770Path}.codePush.Production`)[0]
         expect(codePushEntries).to.be.an('array').of.length(2)
         const updatedEntry = jp.query(codePushEntries,`$[?(@.metadata.label=="v17")]`)[0]
-        console.log(`updatedEntry is ${JSON.stringify(updatedEntry)}`)
 
         expect(updatedEntry.metadata).to.have.property('isMandatory').eql(true)
     })
@@ -1310,7 +1308,6 @@ describe('CauldronHelper.js', () => {
         const codePushEntries = jp.query(fixture, `${testAndroid1770Path}.codePush.Production`)[0]
         expect(codePushEntries).to.be.an('array').of.length(2)
         const updatedEntry = jp.query(codePushEntries,`$[?(@.metadata.label=="v17")]`)[0]
-        console.log(`updatedEntry is ${JSON.stringify(updatedEntry)}`)
 
         expect(updatedEntry.metadata).to.have.property('rollout').eql(10)
     })

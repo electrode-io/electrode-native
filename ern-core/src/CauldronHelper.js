@@ -50,13 +50,15 @@ export default class CauldronHelper {
   async addNativeApp (
     napDescriptor: NativeApplicationDescriptor,
     ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {
-    await this.cauldron.createNativeApplication({name: napDescriptor.name})
-    if (napDescriptor.platform) {
+    if (!await this.cauldron.getNativeApplication(napDescriptor.name)) {
+      await this.cauldron.createNativeApplication({name: napDescriptor.name})
+    }
+    if (napDescriptor.platform && !await this.cauldron.getPlatform(napDescriptor.name, napDescriptor.platform)) {
       await this.cauldron.createPlatform(napDescriptor.name, {name: napDescriptor.platform})
-      if (napDescriptor.version) {
-        await this.cauldron.createVersion(
-                    napDescriptor.name, napDescriptor.platform, {name: napDescriptor.version, ernPlatformVersion})
-      }
+    }
+    if (napDescriptor.version && !await this.cauldron.getVersion(napDescriptor.name, napDescriptor.platform, napDescriptor.version)) {
+      await this.cauldron.createVersion(
+        napDescriptor.name, napDescriptor.platform, {name: napDescriptor.version, ernPlatformVersion})
     }
   }
 
