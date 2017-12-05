@@ -21,6 +21,14 @@ export default class EphemeralFileStore implements ICauldronFileStore {
     return path.join(this._storePath, filename)
   }
 
+  get storePath () : string {
+    return this._storePath
+  }
+
+  get isPendingTransaction () : boolean {
+    return this._isPendingTransaction
+  }
+
   // ===========================================================
   // ICauldronFileAccess implementation
   // ===========================================================
