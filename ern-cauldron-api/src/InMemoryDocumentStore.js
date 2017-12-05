@@ -12,8 +12,23 @@ export default class InMemoryDocumentStore implements ICauldronDocumentStore {
   _isPendingTransaction: boolean
 
   constructor (cauldron: Object) {
+    if (!cauldron) {
+      throw new Error('A Cauldron document object must be provided')
+    }
     this._pendingCauldron = cauldron
     this._isPendingTransaction = false
+  }
+
+  get latestCommitedCauldron () : Object {
+    return this._latestCommitedCauldron
+  }
+
+  get isPendingTransaction () : boolean {
+    return this._isPendingTransaction
+  }
+
+  get latestCommitMessage () : string | Array<string> {
+    return this._latestCommitMessage
   }
 
   // ===========================================================
@@ -42,8 +57,10 @@ export default class InMemoryDocumentStore implements ICauldronDocumentStore {
   }
 
   async commitTransaction (message: string | Array<string>) {
-    this._isPendingTransaction = false
-    return this.commit(message)
+    if (this._isPendingTransaction) {
+      this._isPendingTransaction = false
+      return this.commit(message)
+    }
   }
 
   async discardTransaction () {
