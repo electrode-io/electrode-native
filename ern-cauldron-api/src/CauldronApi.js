@@ -3,8 +3,7 @@
 import * as schemas from './schemas'
 import { Dependency } from 'ern-util'
 import {
-  alreadyExists,
-  buildReactNativeSourceMapFileName,
+  exists,
   joiValidate,
   shasum
 } from './util'
@@ -114,19 +113,6 @@ export default class CauldronApi {
     return version && version.codePush && version.codePush[deploymentName]
   }
 
-  async setCodePushEntries (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    deploymentName: string,
-    codePushEntries: Array<CauldronCodePushEntry>) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.codePush) {
-      version.codePush[deploymentName] = codePushEntries
-    }
-    await this.commit(`Set codePush entries`)
-  }
-
   async getContainerMiniApps (
     nativeApplicationName: string,
     platformName: string,
@@ -195,23 +181,29 @@ export default class CauldronApi {
   async clearCauldron () {
     const cauldron = await this.getCauldron()
     cauldron.nativeApps = []
-    await this.commit('Clear Cauldron')
+    return this.commit('Clear Cauldron')
   }
 
   async createNativeApplication (nativeApplication: any) {
     const cauldron = await this.getCauldron()
-    if (!alreadyExists(cauldron.nativeApps, nativeApplication.name)) {
-      const validatedNativeApplication = await joiValidate(nativeApplication, schemas.nativeApplication)
-      cauldron.nativeApps.push(validatedNativeApplication)
-      await this.commit(`Create ${nativeApplication.name} native application`)
+    const appName = nativeApplication.name
+    if (exists(cauldron.nativeApps, appName)) {
+      throw new Error(`${appName} native application already exists in the Cauldron`)
     }
+
+    const validatedNativeApplication = await joiValidate(nativeApplication, schemas.nativeApplication)
+    cauldron.nativeApps.push(validatedNativeApplication)
+    return this.commit(`Create ${nativeApplication.name} native application`)
   }
 
-  async removeNativeApplication (name: string) {
+  async removeNativeApplication (appName: string) {
     const cauldron = await this.getCauldron()
-    if (_.remove(cauldron.nativeApps, x => x.name === name).length > 0) {
-      await this.commit(`Remove ${name} native application`)
+    if (!exists(cauldron.nativeApps, appName)) {
+      throw new Error(`${appName} native application was not found in the Cauldron`)
     }
+
+    _.remove(cauldron.nativeApps, x => x.name === appName)
+    return this.commit(`Remove ${appName} native application`)
   }
 
   async createPlatform (
@@ -221,11 +213,14 @@ export default class CauldronApi {
     if (!nativeApplication) {
       throw new Error(`Cannot create platform for unexisting native application ${nativeApplicationName}`)
     }
-    if (!alreadyExists(nativeApplication.platforms, platform.name)) {
-      const validatedPlatform = await joiValidate(platform, schemas.nativeApplicationPlatform)
-      nativeApplication.platforms.push(validatedPlatform)
-      await this.commit(`Create ${platform.name} platform for ${nativeApplicationName}`)
+    const platformName = platform.name
+    if (exists(nativeApplication.platforms, platform.name)) {
+      throw new Error(`${platformName} platform already exists for ${nativeApplicationName} native application`)
     }
+
+    const validatedPlatform = await joiValidate(platform, schemas.nativeApplicationPlatform)
+    nativeApplication.platforms.push(validatedPlatform)
+    return this.commit(`Create ${platformName} platform for ${nativeApplicationName}`)
   }
 
   async removePlatform (
@@ -235,9 +230,12 @@ export default class CauldronApi {
     if (!nativeApplication) {
       throw new Error(`Cannot remove platform of unexisting native application ${nativeApplicationName}`)
     }
-    if (_.remove(nativeApplication.platforms, x => x.name === platformName).length > 0) {
-      await this.commit(`Remove ${platformName} platform from ${nativeApplicationName}`)
+    if (!exists(nativeApplication.platforms, platformName)) {
+      throw new Error(`${platformName} platform does not exist for ${nativeApplicationName} native application`)
     }
+
+    _.remove(nativeApplication.platforms, x => x.name === platformName)
+    return this.commit(`Remove ${platformName} platform from ${nativeApplicationName}`)
   }
 
   async createVersion (
@@ -248,11 +246,14 @@ export default class CauldronApi {
     if (!platform) {
       throw new Error(`Cannot create version for unexisting ${nativeApplicationName}:${platformName}`)
     }
-    if (!alreadyExists(platform.versions, version.name)) {
-      const validatedVersion = await joiValidate(version, schemas.nativeApplicationVersion)
-      platform.versions.push(validatedVersion)
-      await this.commit(`Create version ${version.name} of ${nativeApplicationName} ${platformName}`)
+    const versionName = version.name
+    if (exists(platform.versions, versionName)) {
+      throw new Error(`${versionName} version already exists for ${nativeApplicationName} ${platformName}`)
     }
+
+    const validatedVersion = await joiValidate(version, schemas.nativeApplicationVersion)
+    platform.versions.push(validatedVersion)
+    return this.commit(`Create version ${version.name} of ${nativeApplicationName} ${platformName}`)
   }
 
   async removeVersion (
@@ -263,19 +264,25 @@ export default class CauldronApi {
     if (!platform) {
       throw new Error(`Cannot remove version from unexisting ${nativeApplicationName}:${platformName}`)
     }
-    if (_.remove(platform.versions, x => x.name === versionName).length > 0) {
-      await this.commit(`Remove version ${versionName} from ${nativeApplicationName} ${platformName}`)
+    if (!exists(platform.versions, versionName)) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+
+    _.remove(platform.versions, x => x.name === versionName)
+    return this.commit(`Remove version ${versionName} from ${nativeApplicationName} ${platformName}`)
   }
 
   async updateVersion (
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    newVersion: string) {
+    newVersion: any) {
     const validatedVersion = await joiValidate(newVersion, schemas.nativeAplicationVersionPatch)
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && validatedVersion.isReleased != null) {
+    if (!version) {
+      throw new Error(`Cannot update version of unexisting version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
+    if (validatedVersion.isReleased != null) {
       version.isReleased = validatedVersion.isReleased
       await this.commit(`Update release status of ${nativeApplicationName} ${platformName} ${versionName}`)
     }
@@ -287,9 +294,15 @@ export default class CauldronApi {
     versionName: string,
     dependency: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && _.remove(version.nativeDeps, x => x.startsWith(`${dependency}@`)).length > 0) {
-      await this.commit(`Remove ${dependency} dependency from ${nativeApplicationName} ${platformName}`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    if (!_.some(version.nativeDeps, x => x.startsWith(`${dependency}@`))) {
+      throw new Error(`${dependency} dependency does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
+
+    _.remove(version.nativeDeps, x => x.startsWith(`${dependency}@`))
+    return this.commit(`Remove ${dependency} dependency from ${nativeApplicationName} ${platformName}`)
   }
 
   async updateNativeDependency (
@@ -299,28 +312,35 @@ export default class CauldronApi {
     dependencyName: string,
     newVersion: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
-      _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
-      const newDependencyString = `${dependencyName}@${newVersion}`
-      version.nativeDeps.push(newDependencyString)
-      await this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    if (!_.some(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))) {
+      throw new Error(`${dependencyName} dependency does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
+
+    _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
+    const newDependencyString = `${dependencyName}@${newVersion}`
+    version.nativeDeps.push(newDependencyString)
+    return this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
   }
 
-  // Only version of miniapps in container can be updated
   async updateMiniAppVersion (
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
     miniApp: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
-      let miniAppInContainer = _.find(version.miniApps.container, m => Dependency.same(Dependency.fromString(m), miniApp, { ignoreVersion: true }))
-      if (miniAppInContainer) {
-        version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
-        await this.commit(`Update version of ${miniApp.name} MiniApp to ${miniApp.version}`)
-      }
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    const miniAppInContainer = _.find(version.miniApps.container, m => Dependency.same(Dependency.fromString(m), miniApp, { ignoreVersion: true }))
+    if (!miniAppInContainer) {
+      throw new Error(`${miniApp.name} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
+
+    version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
+    return this.commit(`Update version of ${miniApp.name} MiniApp to ${miniApp.version}`)
   }
 
   async updateTopLevelContainerVersion (
@@ -350,10 +370,11 @@ export default class CauldronApi {
     versionName: string,
     newContainerVersion: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
-      version.containerVersion = newContainerVersion
-      await this.commit(`Update container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    version.containerVersion = newContainerVersion
+    return this.commit(`Update container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
   }
 
   async getTopLevelContainerVersion (
@@ -372,9 +393,11 @@ export default class CauldronApi {
     versionName: string
   ) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.containerVersion) {
-      return version.containerVersion
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+
+    return version.containerVersion
   }
 
   async removeContainerMiniApp (
@@ -383,9 +406,15 @@ export default class CauldronApi {
     versionName: string,
     miniAppName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && _.remove(version.miniApps.container, x => x.startsWith(`${miniAppName}@`)).length > 0) {
-      await this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    if (!_.some(version.miniApps.container, x => x.startsWith(`${miniAppName}@`))) {
+      throw new Error(`${miniAppName} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
+
+    _.remove(version.miniApps.container, x => x.startsWith(`${miniAppName}@`))
+    return this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
   }
 
   async createNativeDependency (
@@ -394,10 +423,15 @@ export default class CauldronApi {
     versionName: string,
     dependency: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && !version.nativeDeps.includes(dependency.toString())) {
-      version.nativeDeps.push(dependency.toString())
-      await this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    if (version.nativeDeps.includes(dependency.toString())) {
+      throw new Error(`${dependency.name} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
+
+    version.nativeDeps.push(dependency.toString())
+    return this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
   }
 
   async addCodePushEntry (
@@ -406,13 +440,33 @@ export default class CauldronApi {
     versionName: string,
     codePushEntry: CauldronCodePushEntry) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
-      const deploymentName = codePushEntry.metadata.deploymentName
-      version.codePush[deploymentName]
-        ? version.codePush[deploymentName].push(codePushEntry)
-        : version.codePush[deploymentName] = [ codePushEntry ]
-      await this.commit(`New CodePush OTA update`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+
+    const deploymentName = codePushEntry.metadata.deploymentName
+    version.codePush[deploymentName]
+      ? version.codePush[deploymentName].push(codePushEntry)
+      : version.codePush[deploymentName] = [ codePushEntry ]
+    return this.commit(`New CodePush OTA update`)
+  }
+
+  async setCodePushEntries (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    deploymentName: string,
+    codePushEntries: Array<CauldronCodePushEntry>) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (!version.codePush) {
+      version.codePush = {}
+    }
+
+    version.codePush[deploymentName] = codePushEntries
+    return this.commit('Set codePush entries')
   }
 
   async addContainerMiniApp (
@@ -421,58 +475,20 @@ export default class CauldronApi {
     versionName: string,
     miniapp: any) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && !version.miniApps.container.includes(miniapp.toString())) {
-      version.miniApps.container.push(miniapp.toString())
-      await this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-  }
+    if (version.miniApps.container.includes(miniapp.toString())) {
+      throw new Error(`${miniapp.name} MiniApp already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
 
-  async validateAndGet (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    let app = await this.getNativeApplication(nativeApplicationName)
-    if (!app) {
-      throw new Error(`Cannot remove platform of unexisting native application ${nativeApplicationName}`)
-    }
-    let platform, version
-    if (platformName) {
-      platform = await this.getPlatform(nativeApplicationName, platformName)
-      if (versionName) {
-        version = await this.getVersion(nativeApplicationName, platformName, versionName)
-      }
-    }
-    return {app, platform, version}
+    version.miniApps.container.push(miniapp.toString())
+    return this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
   }
 
   // =====================================================================================
-  // FILE OPERATIONS (TO DEPRECATE OR IMPROVE)
+  // FILE OPERATIONS
   // =====================================================================================
-
-  async createSourceMap (
-    nativeApplicationName: string,
-    versionName: string,
-    payload: any) {
-    const filename = buildReactNativeSourceMapFileName(nativeApplicationName, versionName)
-    this._sourceMapStore.storeFile(filename, payload)
-    return true
-  }
-
-  async getSourceMap (
-    nativeApplicationName: string,
-    versionName: string) {
-    const filename = buildReactNativeSourceMapFileName(nativeApplicationName, versionName)
-    const fileExists = this._sourceMapStore.hasFile(filename)
-    return fileExists ? this._sourceMapStore.getFile(filename) : false
-  }
-
-  async removeSourceMap (
-    nativeApplicationName: string,
-    versionName: string) {
-    const filename = buildReactNativeSourceMapFileName(nativeApplicationName, versionName)
-    const fileExists = this._sourceMapStore.hasFile(filename)
-    return fileExists ? this._sourceMapStore.removeFile(filename) : false
-  }
 
   async hasYarnLock (
     nativeApplicationName: string,
@@ -481,7 +497,10 @@ export default class CauldronApi {
     key: string
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.yarnLocks && version.yarnLocks[key]) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks && version.yarnLocks[key]) {
       return true
     } else {
       return false
@@ -493,21 +512,19 @@ export default class CauldronApi {
     platformName: string,
     versionName: string,
     key: string,
-    yarnlock: string | Buffer) : Promise<boolean> {
+    yarnlock: string | Buffer) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version) {
-      const filename = shasum(yarnlock)
-      await this._yarnlockStore.storeFile(filename, yarnlock)
-      if (!version.yarnLocks) {
-        version.yarnLocks = {}
-      }
-      version.yarnLocks[key] = filename
-      await this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
-      return true
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
 
-    return false
+    const filename = shasum(yarnlock)
+    await this._yarnlockStore.storeFile(filename, yarnlock)
+    if (!version.yarnLocks) {
+      version.yarnLocks = {}
+    }
+    version.yarnLocks[key] = filename
+    return this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
   }
 
   async getYarnLockId (
@@ -517,8 +534,10 @@ export default class CauldronApi {
     key: string
   ) : Promise<?string> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    return version && version.yarnLocks && version.yarnLocks[key]
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    return version.yarnLocks && version.yarnLocks[key]
   }
 
   async setYarnLockId (
@@ -529,10 +548,15 @@ export default class CauldronApi {
     id: string
   ) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version && version.yarnLocks) {
-      version.yarnLocks[key] = id
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
+    if (!version.yarnLocks) {
+      version.yarnLocks = {}
+    }
+
+    version.yarnLocks[key] = id
+    return this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
   }
 
   async getYarnLock (
@@ -542,7 +566,10 @@ export default class CauldronApi {
     key: string
   ) : Promise<?Buffer> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.yarnLocks && version.yarnLocks[key]) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks && version.yarnLocks[key]) {
       return this._yarnlockStore.getFile(version.yarnLocks[key])
     }
   }
@@ -554,8 +581,10 @@ export default class CauldronApi {
     key: string
   ) : Promise<?string> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version && version.yarnLocks && version.yarnLocks[key]) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks && version.yarnLocks[key]) {
       return this._yarnlockStore.getPathToFile(version.yarnLocks[key])
     }
   }
@@ -567,8 +596,10 @@ export default class CauldronApi {
     key: string
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version && version.yarnLocks && version.yarnLocks[key]) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks && version.yarnLocks[key]) {
       if (await this._yarnlockStore.removeFile(version.yarnLocks[key])) {
         delete version.yarnLocks[key]
         await this.commit(`Remove yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
@@ -587,7 +618,10 @@ export default class CauldronApi {
     yarnlock: string | Buffer
   ) : Promise<boolean> {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.yarnLocks && version.yarnLocks[key]) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks && version.yarnLocks[key]) {
       await this._yarnlockStore.removeFile(version.yarnLocks[key])
       const filename = shasum(yarnlock)
       await this._yarnlockStore.storeFile(filename, yarnlock)
@@ -607,8 +641,10 @@ export default class CauldronApi {
     id: string
   ) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-
-    if (version && version.yarnLocks) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks) {
       if (version.yarnLocks[key]) {
         await this._yarnlockStore.removeFile(version.yarnLocks[key])
       }
@@ -624,7 +660,10 @@ export default class CauldronApi {
     yarnLocks: Object
   ) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.yarnLocks) {
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.yarnLocks) {
       version.yarnLocks = yarnLocks
       await this.commit(`Set yarn locks for ${nativeApplicationName} ${platformName} ${versionName}`)
     }

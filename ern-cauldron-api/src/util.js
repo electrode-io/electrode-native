@@ -9,7 +9,7 @@ import Joi from 'joi'
 // ====================================
 export const shasum = (payload: string | Buffer) => crypto.createHash('sha1').update(payload).digest('hex')
 
-export function alreadyExists (
+export function exists (
   collection: any,
   name: string,
   version: ?string) {
