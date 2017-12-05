@@ -193,6 +193,10 @@ export default class IosGenerator implements ContainerGenerator {
           continue
         }
         let pluginConfig = await manifest.getPluginConfig(plugin)
+        if (!pluginConfig.ios) {
+          log.warn(`${plugin.name} does not have any injection configuration for iOS`)
+          continue
+        }
         let iosPluginHook = pluginConfig.ios.pluginHook
         let containerHeader = pluginConfig.ios.containerPublicHeader
         if (iosPluginHook.configurable) {
