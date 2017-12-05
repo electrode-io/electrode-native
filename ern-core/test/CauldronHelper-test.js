@@ -13,16 +13,14 @@ import {
   doesNotThrow,
   beforeTest,
   afterTest,
-  stubs
+  stubs,
+  fixtures
 } from 'ern-util-dev'
 import { 
   CauldronApi,
   EphemeralFileStore,
   InMemoryDocumentStore
 } from 'ern-cauldron-api'
-import {
-  fixtures
-} from 'ern-util-dev'
 import jp from 'jsonpath'
 import path from 'path'
 import mockFs from 'mock-fs'
