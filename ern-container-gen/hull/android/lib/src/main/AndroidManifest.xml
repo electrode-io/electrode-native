@@ -5,8 +5,9 @@
     <application>
       {{#miniApps}}		
        <activity android:name="com.walmartlabs.ern.container.miniapps.{{{pascalCaseName}}}Activity"		
-                 android:exported="true">		
+                 android:exported="true">
        </activity>		
        {{/miniApps}}
+       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
    </application>
 </manifest>
