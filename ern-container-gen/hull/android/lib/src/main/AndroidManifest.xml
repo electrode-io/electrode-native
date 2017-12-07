@@ -8,5 +8,6 @@
                  android:exported="true">
        </activity>		
        {{/miniApps}}
-   </application>
+       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+    </application>
 </manifest>
