@@ -1,20 +1,23 @@
 buildscript {
-repositories {
-jcenter()
-}
-dependencies {
-classpath 'com.android.tools.build:gradle:2.3.3'
-}
+    repositories {
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1''
+    }
 }
 
 allprojects {
-repositories {
-mavenLocal()
-maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
-jcenter()
-}
+    repositories {
+        mavenLocal()
+        maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
+        jcenter()
+        google()
+    }
 }
 
 task clean(type: Delete) {
-delete rootProject.buildDir
+    delete rootProject.buildDir
 }
