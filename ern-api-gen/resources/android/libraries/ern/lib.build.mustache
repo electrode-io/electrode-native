@@ -2,34 +2,35 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
 task androidSourcesJar(type: Jar) {
-classifier = 'sources'
-from android.sourceSets.main.java.srcDirs
-include '**/*.java'
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+    include '**/*.java'
 }
 
 artifacts {
-archives androidSourcesJar
+    archives androidSourcesJar
 }
 
 android {
-compileSdkVersion 24
-buildToolsVersion "26.0.1"
-defaultConfig {
-minSdkVersion 16
-targetSdkVersion 24
-versionCode 1
-versionName "1.0"
-}
-buildTypes {
-release {
-minifyEnabled false
-}
-}
-lintOptions {
-abortOnError false
-}
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
-compile 'com.walmartlabs.ern:react-native-electrode-bridge:{{{bridgeVersion}}}'
+    compile 'com.walmartlabs.ern:react-native-electrode-bridge:{{{bridgeVersion}}}'
 }
