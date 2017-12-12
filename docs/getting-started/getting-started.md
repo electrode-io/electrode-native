@@ -390,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 {% sample lang="ios" %}
-* Add the following implementation inside the `ViewController.m` file right below the movie api implementation.  
+* Add the following implementation inside the `ViewController.m` file below `[super viewDidLoad];`.  
 
 ```objectivec
  NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
