@@ -49,6 +49,7 @@ public class ElectrodeReactActivityDelegate {
      * ReactRootView holding the view containing the ReactNative application
      */
     private ReactRootView mRootView;
+    private String mApplicationName;
 
     /**
      * Back key handler specifics
@@ -168,7 +169,8 @@ public class ElectrodeReactActivityDelegate {
 
     @Nullable
     private View getReactAppView(@NonNull Activity activity, @NonNull String applicationName, @Nullable Bundle props) {
-        if (mRootView == null) {
+         if (mRootView == null || !applicationName.equals(mApplicationName)) {
+            mApplicationName = applicationName;
             mRootView = new ReactRootView(activity);
             mRootView.startReactApplication(mReactInstanceManager, applicationName, props);
         }
