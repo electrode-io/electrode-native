@@ -327,7 +327,7 @@ _onPressRow (movie) {
 
 5) Save your modification to the `App.js` file
 
-6) Implement the `NavigationApi` in the native application, as we did for the `MovieApi`.
+6) Implement the `NavigationApi` in the native application.
 
 {% sample lang="android" %}  
 * Replace the content of `MainActivity.java` with the following code:
@@ -390,10 +390,14 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 {% sample lang="ios" %}
-* Add the following implementation inside the `ViewController.m` file below `[super viewDidLoad];`.  
+* Replace the `viewDidLoad` method with the following implementation.
 
 ```objectivec
- NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+
+    NavigationAPI *navigationAPI = [[NavigationAPI alloc] init];
     [navigationAPI.requests registerNavigateRequestHandlerWithHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
@@ -411,14 +415,34 @@ public class MainActivity extends AppCompatActivity {
 
         block(nil, nil);
     }];
+
+    UIViewController *viewController =
+    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
+    [viewController setTitle:@"MovieList MiniApp"];
+    viewController.view.frame = [UIScreen mainScreen].bounds;
+    self.navigationBar.translucent = NO;
+    [self pushViewController:viewController animated:NO];
+}
 ```  
 
 * Make sure that you add the `appDelegate` import statement to `ViewController.m` file as well.  
 
 ```objectivec
 #import "AppDelegate.h"
+``` 
+
+* Finally, let's convert our `ViewController` to a `UINavigationController` as we're going to navigate betwen different ViewControllers. In the `ViewController.h` file, replace
+
 ```
-{% common %}  
+@interface ViewController : UIViewController
+```
+
+with
+
+```
+@interface ViewController : UINavigationController
+```
+{% common %} 
 
 ## Adding the MovieDetailsMiniApp
 
