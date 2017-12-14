@@ -99,10 +99,14 @@ export async function generateIosRunnerProject (
   }
 
   shell.cp('-R', path.join(runnerHullPath, 'ios', '*'), outDir)
-  const files = readDir(path.join(runnerHullPath, 'ios'))
-  for (const file of files) {
+  const filesToMustache = [
+    path.join(outDir, 'ErnRunner', 'RunnerConfig.m'),
+    path.join(outDir, 'ErnRunner.xcodeproj', 'project.pbxproj')
+  ]
+  
+  for (const file of filesToMustache) {
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      path.join(outDir, file), mustacheView, path.join(outDir, file))
+    file, mustacheView, file)
   }
 }
 

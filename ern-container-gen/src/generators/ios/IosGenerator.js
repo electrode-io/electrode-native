@@ -86,7 +86,7 @@ export default class IosGenerator implements ContainerGenerator {
       }
 
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
-        this.copyRnpmAssets(miniapps, paths)
+        await this.copyRnpmAssets(miniapps, paths)
       }
 
       if (gitHubPublisher) {
@@ -102,7 +102,7 @@ export default class IosGenerator implements ContainerGenerator {
     }
   }
 
-  copyRnpmAssets (
+  async copyRnpmAssets (
     miniApps: Array<MiniApp>,
     paths: any) {
     // Case of local container for runner
@@ -117,7 +117,7 @@ export default class IosGenerator implements ContainerGenerator {
         this.copyRnpmAssetsFromMiniAppPath(miniAppPath, paths.outDirectory)
       }
     }
-    this.addResources(paths.outDirectory)
+    return this.addResources(paths.outDirectory)
   }
 
   async addResources (outputDirectory: any) {
