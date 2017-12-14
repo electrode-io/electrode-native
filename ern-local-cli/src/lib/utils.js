@@ -19,7 +19,8 @@ import {
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  shell
+  shell,
+  Utils
 } from 'ern-util'
 import {
   runLocalContainerGen,
@@ -331,6 +332,10 @@ async function askUserToChooseANapDescriptorFromCauldron ({
     onlyNonReleasedVersions
   })
 
+  if (_.isEmpty(napDescriptorStrings)) {
+    Utils.logErrorAndExitProcess(new Error('Could not find qualifying native application from Cauldron.\nIt is possible that native application are released'))
+  }
+
   const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
     type: 'list',
     name: 'userSelectedCompleteNapDescriptor',
@@ -360,6 +365,10 @@ async function askUserToChooseOneOrMoreNapDescriptorFromCauldron ({
     onlyReleasedVersions,
     onlyNonReleasedVersions
   })
+
+  if (_.isEmpty(napDescriptorStrings)) {
+    Utils.logErrorAndExitProcess(new Error('Could not find qualifying native application from Cauldron.\nIt is possible that native application are released'))
+  }
 
   const { userSelectedCompleteNapDescriptors } = await inquirer.prompt([{
     type: 'checkbox',
