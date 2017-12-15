@@ -46,44 +46,43 @@ exports.handler = async function ({
       extraErrorMessage: 'A Cauldron must be active in order to use this command'
     }
   })
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-  await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor },
-    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
-    isNewerContainerVersion: containerVersion ? {
-      containerVersion,
-      descriptor,
-      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
-    } : undefined,
-    noGitOrFilesystemPath: {
-      obj: miniapps,
-      extraErrorMessage: 'You cannot provide MiniApp(s) using git or file scheme for this command. Only the form miniapp@version is allowed.'
-    },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage: 'This command cannot work on a non existing native application version'
-    },
-    miniAppIsInNativeApplicationVersionContainer: {
-      miniApp: miniapps,
-      napDescriptor,
-      extraErrorMessahe: 'This command cannot remove MiniApp(s) that do not exist in Cauldron.'
+  try {
+    if (!descriptor) {
+      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
     }
-  })
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-  const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))
+    await utils.logErrorAndExitIfNotSatisfied({
+      isCompleteNapDescriptorString: { descriptor },
+      isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+      isNewerContainerVersion: containerVersion ? {
+        containerVersion,
+        descriptor,
+        extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+      } : undefined,
+      noGitOrFilesystemPath: {
+        obj: miniapps,
+        extraErrorMessage: 'You cannot provide MiniApp(s) using git or file scheme for this command. Only the form miniapp@version is allowed.'
+      },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'This command cannot work on a non existing native application version'
+      },
+      miniAppIsInNativeApplicationVersionContainer: {
+        miniApp: miniapps,
+        napDescriptor,
+        extraErrorMessahe: 'This command cannot remove MiniApp(s) that do not exist in Cauldron.'
+      }
+    })
 
-  const cauldronCommitMessage = [
-    `${miniapps.length === 1
+    const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))
+
+    const cauldronCommitMessage = [
+      `${miniapps.length === 1
       ? `Remove ${miniapps[0]} MiniApp from ${napDescriptor.toString()}`
       : `Remove multiple MiniApps from ${napDescriptor.toString()}`}`
-  ]
+    ]
 
-  try {
     const cauldron = await coreUtils.getCauldronInstance()
     await utils.performContainerStateUpdateInCauldron(
       async () => {

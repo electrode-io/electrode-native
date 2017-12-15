@@ -63,21 +63,21 @@ exports.handler = async function ({
   mandatory?: boolean,
   rollout?: number
 }) {
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyReleasedVersions: true })
-  }
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-  await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
-    }
-  })
-
   try {
+    if (!descriptor) {
+      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyReleasedVersions: true })
+    }
+
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
+    await utils.logErrorAndExitIfNotSatisfied({
+      isCompleteNapDescriptorString: { descriptor },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'You cannot CodePush to a non existing native application version.'
+      }
+    })
+
     if (!deploymentName) {
       deploymentName = await askUserForCodePushDeploymentName(napDescriptor)
     }

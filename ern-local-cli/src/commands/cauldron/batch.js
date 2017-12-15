@@ -81,93 +81,93 @@ exports.handler = async function ({
   containerVersion?: string,
   descriptor?: string
 }) {
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-  await utils.logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage: 'A Cauldron must be active in order to use this command'
-    },
-    isCompleteNapDescriptorString: { descriptor },
-    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
-    isNewerContainerVersion: containerVersion ? {
-      containerVersion,
-      descriptor,
-      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
-    } : undefined,
-    noGitOrFilesystemPath: {
-      obj: [ ...addDependencies, ...addMiniapps, ...delDependencies, ...delMiniapps, ...updateDependencies, ...updateMiniapps ],
-      extraErrorMessage: 'You cannot provide dependency(ies) or MiniApp(s) using git or file scheme for this command. Only the form name@version is allowed.'
-    },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage: 'This command cannot work on a non existing native application version'
-    },
-    dependencyIsInNativeApplicationVersionContainer: {
-      dependency: [ ...delDependencies, ...updateDependencies ],
-      napDescriptor,
-      extraErrorMessahe: 'This command cannot del or update dependency(ies) that do not exist in Cauldron.'
-    },
-    dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: {
-      dependency: updateDependencies,
-      napDescriptor,
-      extraErrorMessage: 'It seems like you are trying to update a dependency to a version that is already the one in use.'
-    },
-    dependencyNotInNativeApplicationVersionContainer: {
-      dependency: addDependencies,
-      napDescriptor,
-      extraErrorMessage: 'You cannot add dependencies that already exit in Cauldron. Please consider using update instead.'
-    },
-    dependencyNotInUseByAMiniApp: {
-      dependency: [ ...delDependencies ],
-      napDescriptor
-    },
-    miniAppIsInNativeApplicationVersionContainer: {
-      miniApp: [ ...delMiniapps, ...updateMiniapps ],
-      napDescriptor,
-      extraErrorMessahe: 'This command cannot remove MiniApp(s) that do not exist in Cauldron.'
-    },
-    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
-      miniApp: updateMiniapps,
-      napDescriptor,
-      extraErrorMessage: 'It seems like you are trying to update a MiniApp to a version that is already the one in use.'
-    },
-    miniAppNotInNativeApplicationVersionContainer: {
-      miniApp: addMiniapps,
-      napDescriptor,
-      extraErrorMessage: 'You cannot add MiniApp(s) that already exist yet in Cauldron. Please consider using update instead.'
-    },
-    publishedToNpm: {
-      obj: [ ...addDependencies, ...addMiniapps, ...updateDependencies, ...updateMiniapps ],
-      extraErrorMessage: 'You can only add or update dependency(ies) or MiniApp(s) wtih version(s) that have been published to NPM'
-    }
-  })
-
-  const addDependenciesObjs = _.map(addDependencies, d => Dependency.fromString(d))
-  const delDependenciesObjs = _.map(delDependencies, d => Dependency.fromString(d))
-  const delMiniAppsAsDeps = _.map(delMiniapps, m => Dependency.fromString(m))
-  const updateDependenciesObjs = _.map(updateDependencies, d => Dependency.fromString(d))
-
-  let updateMiniAppsObjs = []
-  const updateMiniAppsDependencyPaths = _.map(updateMiniapps, m => DependencyPath.fromString(m))
-  for (const updateMiniAppDependencyPath of updateMiniAppsDependencyPaths) {
-    const m = await MiniApp.fromPackagePath(updateMiniAppDependencyPath)
-    updateMiniAppsObjs.push(m)
-  }
-
-  let addMiniAppsObjs = []
-  // An array of miniapps strings was provided
-  const addMiniAppsDependencyPaths = _.map(addMiniapps, m => DependencyPath.fromString(m))
-  for (const addMiniAppDependencyPath of addMiniAppsDependencyPaths) {
-    const m = await MiniApp.fromPackagePath(addMiniAppDependencyPath)
-    addMiniAppsObjs.push(m)
-  }
-
-  const cauldronCommitMessage = [ `Batch operation on ${napDescriptor.toString()} native application` ]
-
   try {
+    if (!descriptor) {
+      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
+    }
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+
+    await utils.logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage: 'A Cauldron must be active in order to use this command'
+      },
+      isCompleteNapDescriptorString: { descriptor },
+      isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+      isNewerContainerVersion: containerVersion ? {
+        containerVersion,
+        descriptor,
+        extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+      } : undefined,
+      noGitOrFilesystemPath: {
+        obj: [ ...addDependencies, ...addMiniapps, ...delDependencies, ...delMiniapps, ...updateDependencies, ...updateMiniapps ],
+        extraErrorMessage: 'You cannot provide dependency(ies) or MiniApp(s) using git or file scheme for this command. Only the form name@version is allowed.'
+      },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'This command cannot work on a non existing native application version'
+      },
+      dependencyIsInNativeApplicationVersionContainer: {
+        dependency: [ ...delDependencies, ...updateDependencies ],
+        napDescriptor,
+        extraErrorMessahe: 'This command cannot del or update dependency(ies) that do not exist in Cauldron.'
+      },
+      dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: {
+        dependency: updateDependencies,
+        napDescriptor,
+        extraErrorMessage: 'It seems like you are trying to update a dependency to a version that is already the one in use.'
+      },
+      dependencyNotInNativeApplicationVersionContainer: {
+        dependency: addDependencies,
+        napDescriptor,
+        extraErrorMessage: 'You cannot add dependencies that already exit in Cauldron. Please consider using update instead.'
+      },
+      dependencyNotInUseByAMiniApp: {
+        dependency: [ ...delDependencies ],
+        napDescriptor
+      },
+      miniAppIsInNativeApplicationVersionContainer: {
+        miniApp: [ ...delMiniapps, ...updateMiniapps ],
+        napDescriptor,
+        extraErrorMessahe: 'This command cannot remove MiniApp(s) that do not exist in Cauldron.'
+      },
+      miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
+        miniApp: updateMiniapps,
+        napDescriptor,
+        extraErrorMessage: 'It seems like you are trying to update a MiniApp to a version that is already the one in use.'
+      },
+      miniAppNotInNativeApplicationVersionContainer: {
+        miniApp: addMiniapps,
+        napDescriptor,
+        extraErrorMessage: 'You cannot add MiniApp(s) that already exist yet in Cauldron. Please consider using update instead.'
+      },
+      publishedToNpm: {
+        obj: [ ...addDependencies, ...addMiniapps, ...updateDependencies, ...updateMiniapps ],
+        extraErrorMessage: 'You can only add or update dependency(ies) or MiniApp(s) wtih version(s) that have been published to NPM'
+      }
+    })
+
+    const addDependenciesObjs = _.map(addDependencies, d => Dependency.fromString(d))
+    const delDependenciesObjs = _.map(delDependencies, d => Dependency.fromString(d))
+    const delMiniAppsAsDeps = _.map(delMiniapps, m => Dependency.fromString(m))
+    const updateDependenciesObjs = _.map(updateDependencies, d => Dependency.fromString(d))
+
+    let updateMiniAppsObjs = []
+    const updateMiniAppsDependencyPaths = _.map(updateMiniapps, m => DependencyPath.fromString(m))
+    for (const updateMiniAppDependencyPath of updateMiniAppsDependencyPaths) {
+      const m = await MiniApp.fromPackagePath(updateMiniAppDependencyPath)
+      updateMiniAppsObjs.push(m)
+    }
+
+    let addMiniAppsObjs = []
+  // An array of miniapps strings was provided
+    const addMiniAppsDependencyPaths = _.map(addMiniapps, m => DependencyPath.fromString(m))
+    for (const addMiniAppDependencyPath of addMiniAppsDependencyPaths) {
+      const m = await MiniApp.fromPackagePath(addMiniAppDependencyPath)
+      addMiniAppsObjs.push(m)
+    }
+
+    const cauldronCommitMessage = [ `Batch operation on ${napDescriptor.toString()} native application` ]
+
     const cauldron = await coreUtils.getCauldronInstance()
     await utils.performContainerStateUpdateInCauldron(async () => {
       // Del Dependencies

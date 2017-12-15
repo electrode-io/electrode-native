@@ -19,8 +19,7 @@ import {
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  shell,
-  Utils
+  shell
 } from 'ern-util'
 import {
   runLocalContainerGen,
@@ -333,7 +332,7 @@ async function askUserToChooseANapDescriptorFromCauldron ({
   })
 
   if (_.isEmpty(napDescriptorStrings)) {
-    Utils.logErrorAndExitProcess(new Error('Could not find qualifying native application from Cauldron.\nIt is possible that native application are released'))
+    throw new Error('Could not find any qualifying native application version in the Cauldron')
   }
 
   const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([{
@@ -367,7 +366,7 @@ async function askUserToChooseOneOrMoreNapDescriptorFromCauldron ({
   })
 
   if (_.isEmpty(napDescriptorStrings)) {
-    Utils.logErrorAndExitProcess(new Error('Could not find qualifying native application from Cauldron.\nIt is possible that native application are released'))
+    throw new Error('Could not find any qualifying native application version in the Cauldron')
   }
 
   const { userSelectedCompleteNapDescriptors } = await inquirer.prompt([{
@@ -465,19 +464,19 @@ async function runMiniApp (platform: 'android' | 'ios', {
   let napDescriptor: ?NativeApplicationDescriptor
 
   if (miniapps && miniapps.length > 1 && !mainMiniAppName) {
-    throw new Error(`If you provide multiple MiniApps you need to provide the name of the MiniApp to launch`)
+    throw new Error('If you provide multiple MiniApps you need to provide the name of the MiniApp to launch')
   }
 
   if (miniapps && miniapps.length > 1 && dev) {
-    throw new Error(`You cannot enable development mode yet when running multiple MiniApps`)
+    throw new Error('You cannot enable development mode yet when running multiple MiniApps')
   }
 
   if (dependencies && (dependencies.length > 0) && descriptor) {
-    throw new Error(`You cannot pass extra native dependencies when using a Native Application Descriptor`)
+    throw new Error('You cannot pass extra native dependencies when using a Native Application Descriptor')
   }
 
   if (miniapps && descriptor) {
-    throw new Error(`You cannot use miniapps and descriptor at the same time`)
+    throw new Error('You cannot use miniapps and descriptor at the same time')
   }
 
   if (descriptor) {
