@@ -53,61 +53,59 @@ exports.handler = async function ({
       extraErrorMessage: 'A Cauldron must be active in order to use this command'
     }
   })
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-  await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage: 'This command cannot work on a non existing native application version'
-    },
-    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
-    isNewerContainerVersion: containerVersion ? {
-      containerVersion,
-      descriptor,
-      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
-    } : undefined,
-    noGitOrFilesystemPath: {
-      obj: miniapps,
-      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
-    },
-    publishedToNpm: {
-      obj: miniapps,
-      extraErrorMessage: 'You can only update MiniApp(s) version(s) with version(s) that have been published to NPM'
-    },
-    miniAppIsInNativeApplicationVersionContainer: {
-      miniApp: miniapps,
-      napDescriptor,
-      extraErrorMessage: 'If you want to add a new MiniApp(s), use -ern cauldron add miniapps- instead'
-    },
-    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
-      miniApp: miniapps,
-      napDescriptor,
-      extraErrorMessage: 'It seems like you are trying to update a MiniApp to a version that is already the one in use.'
+  try {
+    if (!descriptor) {
+      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
     }
-  })
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-  //
+    await utils.logErrorAndExitIfNotSatisfied({
+      isCompleteNapDescriptorString: { descriptor },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'This command cannot work on a non existing native application version'
+      },
+      isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+      isNewerContainerVersion: containerVersion ? {
+        containerVersion,
+        descriptor,
+        extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+      } : undefined,
+      noGitOrFilesystemPath: {
+        obj: miniapps,
+        extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+      },
+      publishedToNpm: {
+        obj: miniapps,
+        extraErrorMessage: 'You can only update MiniApp(s) version(s) with version(s) that have been published to NPM'
+      },
+      miniAppIsInNativeApplicationVersionContainer: {
+        miniApp: miniapps,
+        napDescriptor,
+        extraErrorMessage: 'If you want to add a new MiniApp(s), use -ern cauldron add miniapps- instead'
+      },
+      miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
+        miniApp: miniapps,
+        napDescriptor,
+        extraErrorMessage: 'It seems like you are trying to update a MiniApp to a version that is already the one in use.'
+      }
+    })
+
   // Construct MiniApp objects array
-  let miniAppsObjs = []
-  const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
-  for (const miniAppDependencyPath of miniAppsDependencyPaths) {
-    const m = await spin(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
+    let miniAppsObjs = []
+    const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
+    for (const miniAppDependencyPath of miniAppsDependencyPaths) {
+      const m = await spin(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
         MiniApp.fromPackagePath(miniAppDependencyPath))
-    miniAppsObjs.push(m)
-  }
+      miniAppsObjs.push(m)
+    }
 
-  const cauldronCommitMessage = [
-    `${miniapps.length === 1
+    const cauldronCommitMessage = [
+      `${miniapps.length === 1
       ? `Update ${miniapps[0]} MiniApp version in ${napDescriptor.toString()}`
       : `Update multiple MiniApps versions in ${napDescriptor.toString()}`}`
-  ]
+    ]
 
-  try {
     await utils.performContainerStateUpdateInCauldron(
       async() => {
         for (const miniAppObj of miniAppsObjs) {

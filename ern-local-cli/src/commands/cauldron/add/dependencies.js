@@ -43,48 +43,47 @@ exports.handler = async function ({
       extraErrorMessage: 'A Cauldron must be active in order to use this command'
     }
   })
-
-  if (!descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
-  }
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-  await utils.logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor },
-    isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
-    isNewerContainerVersion: containerVersion ? {
-      containerVersion,
-      descriptor,
-      extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
-    } : undefined,
-    noGitOrFilesystemPath: {
-      obj: dependencies,
-      extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form dependency@version is allowed.'
-    },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage: 'This command cannot work on a non existing native application version'
-    },
-    dependencyNotInNativeApplicationVersionContainer: {
-      dependency: dependencies,
-      napDescriptor,
-      extraErrorMessage: 'If you want to update dependency(ies) version(s), use -ern cauldron update dependencies- instead'
-    },
-    publishedToNpm: {
-      obj: dependencies,
-      extraErrorMessage: 'You can only add dependencies versions that have been published to NPM'
+  try {
+    if (!descriptor) {
+      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({ onlyNonReleasedVersions: true })
     }
-  })
+    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-  const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+    await utils.logErrorAndExitIfNotSatisfied({
+      isCompleteNapDescriptorString: { descriptor },
+      isValidContainerVersion: containerVersion ? { containerVersion } : undefined,
+      isNewerContainerVersion: containerVersion ? {
+        containerVersion,
+        descriptor,
+        extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
+      } : undefined,
+      noGitOrFilesystemPath: {
+        obj: dependencies,
+        extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form dependency@version is allowed.'
+      },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage: 'This command cannot work on a non existing native application version'
+      },
+      dependencyNotInNativeApplicationVersionContainer: {
+        dependency: dependencies,
+        napDescriptor,
+        extraErrorMessage: 'If you want to update dependency(ies) version(s), use -ern cauldron update dependencies- instead'
+      },
+      publishedToNpm: {
+        obj: dependencies,
+        extraErrorMessage: 'You can only add dependencies versions that have been published to NPM'
+      }
+    })
 
-  const cauldronCommitMessage = [
-    `${dependencies.length === 1
+    const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+
+    const cauldronCommitMessage = [
+      `${dependencies.length === 1
       ? `Add ${dependencies[0]} native dependency to ${napDescriptor.toString()}`
       : `Add multiple native dependencies to ${napDescriptor.toString()}`}`
-  ]
+    ]
 
-  try {
     const cauldron = await coreUtils.getCauldronInstance()
     await utils.performContainerStateUpdateInCauldron(
       async () => {
