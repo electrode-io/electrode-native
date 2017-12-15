@@ -129,11 +129,17 @@ export async function isDependencyApi (dependencyName: string): Promise<boolean>
   if ((/^.*react-native-.+-api$/.test(dependencyName))) {
     return true
   }
-  const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
-  const result =
-    depInfo && depInfo.type === 'error'
-      ? false
-      : depInfo.data && ModuleTypes.API === depInfo.data.moduleType
+  let result
+  try {
+    const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
+    result =
+      depInfo && depInfo.type === 'error'
+        ? false
+        : depInfo.data && ModuleTypes.API === depInfo.data.moduleType
+  } catch (e) {
+    log.debug(e)
+    return false
+  }
   return result
 }
 
@@ -154,12 +160,18 @@ export async function isDependencyApiImpl (dependencyName: (string | Dependency)
   }
 
   const modulesTypes = type ? [type] : [ModuleTypes.NATIVE_API_IMPL, ModuleTypes.JS_API_IMPL]
+  let result
+  try {
+    const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
+    result =
+      depInfo && depInfo.type === 'error'
+        ? false
+        : depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
+  } catch (e) {
+    log.debug(e)
+    return false
+  }
 
-  const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
-  const result =
-    depInfo && depInfo.type === 'error'
-      ? false
-      : depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
   return result
 }
 
