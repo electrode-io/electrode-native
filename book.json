@@ -56,8 +56,12 @@
           "text": "Electrode Native [v0.9]"
         },
         {
-          "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.9/",
+          "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.10/",
           "text": "Electrode Native [v0.10]"
+        },
+        {
+          "value": "https://electrode.gitbooks.io/electrode-native/content/v/v0.11/",
+          "text": "Electrode Native [v0.11]"
         },
         {
           "value": "https://electrode.gitbooks.io/electrode-native/content/v/master/",
