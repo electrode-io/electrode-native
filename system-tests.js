@@ -95,6 +95,10 @@ console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
 run('ern add react-native-electrode-bridge')
 
+// list dependencies command
+run('ern list dependencies')
+run(`ern list dependencies ${movieListMiniAppPackageName}@${movieListMiniAppVersion}`)
+
 // Cauldron access commands
 run(`ern cauldron add nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
