@@ -77,8 +77,6 @@ export default class CodePushSdk {
       delete updateMetadata.rollout
     }
 
-    console.log(`patchRelease : ${appName} ${deploymentName} ${label} ${JSON.stringify(updateMetadata)}`)
-
     return this._codePush.patchRelease(
       appName,
       deploymentName,
