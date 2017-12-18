@@ -19,6 +19,7 @@
 #import <ElectrodeContainer/ElectrodeContainer.h>
 
 @interface ViewController ()
+@property(nonatomic, weak) IBOutlet UIView *rnView;
 @end
 
 @implementation ViewController
@@ -31,6 +32,19 @@
     [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
     viewController.view.frame = [UIScreen mainScreen].bounds;
     [self.view addSubview:viewController.view];
+
+
+    self.rnView = viewController.view;
+    self.rnView.frame = [UIScreen mainScreen].bounds;
+    [self.view addSubview:self.rnView];
+    [self.view layoutIfNeeded];
+}
+
+- (void) viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    if (@available(iOS 11.0, *)){
+        self.rnView.frame = self.view.safeAreaLayoutGuide.layoutFrame;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
