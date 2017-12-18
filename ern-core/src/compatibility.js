@@ -38,7 +38,7 @@ export async function checkCompatibilityWithNativeApp (
 //
 // Check compatibility of a given miniapp against a given platform version
 export async function checkCompatibilityWithPlatform (miniApp: MiniApp, platformVersion: string) {
-  const miniappDependencies = miniApp.nativeAndJsDependencies
+  const miniappDependencies = miniApp.getPackageJsonDependencies()
   const platformDependencies = await manifest.getJsAndNativeDependencies(platformVersion)
 
   const report = getCompatibility(miniappDependencies, platformDependencies)
@@ -110,7 +110,11 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
   const nativeApps = await cauldronInstance.getAllNativeApps()
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const miniappDependencies = miniApp.nativeDependencies
+  const nativeDependencies = await miniApp.getNativeDependencies()
+  const miniappDependencies = [
+    ...nativeDependencies.apis,
+    ...nativeDependencies.nativeApisImpl,
+    ...nativeDependencies.thirdPartyInManifest ]
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {

@@ -14,7 +14,8 @@ export async function getMiniAppsUsingNativeDependency (
   const nativeDependencyString = nativeDependency.withoutVersion().toString()
   for (const miniAppPath of miniAppsPaths) {
     const miniApp = await spin(`Retrieving ${miniAppPath} for dependency lookup`, MiniApp.fromPackagePath(miniAppPath))
-    const miniAppNativeDependenciesStrings = _.map(miniApp.nativeDependencies, d => d.withoutVersion().toString())
+    const miniAppNativeDependencies = await miniApp.getNativeDependencies()
+    const miniAppNativeDependenciesStrings = _.map(miniAppNativeDependencies.all, d => d.withoutVersion().toString())
     if (miniAppNativeDependenciesStrings.includes(nativeDependencyString)) {
       result.push(miniApp)
     }
