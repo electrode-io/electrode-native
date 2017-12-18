@@ -2,7 +2,6 @@
 
 import {
   config as ernConfig,
-  findNativeDependencies,
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
@@ -20,15 +19,19 @@ import * as ModuleTypes from './ModuleTypes'
 import {
   checkCompatibilityWithNativeApp
 } from './compatibility'
+import * as nativeDependenciesLookup from './nativeDependenciesLookup'
+import type {
+  NativeDependencies
+} from './nativeDependenciesLookup'
 import * as utils from './utils'
 import {
   execSync
 } from 'child_process'
 import fs from 'fs'
-import _ from 'lodash'
 import tmp from 'tmp'
 import path from 'path'
 import semver from 'semver'
+import _ from 'lodash'
 
 export default class MiniApp {
   _path: string
@@ -214,28 +217,29 @@ Are you sure this is a MiniApp ?`)
     return `${this.packageJson.name}@${this.packageJson.version}`
   }
 
-  // Return all native dependencies currently used by the mini-app
-  get nativeDependencies () : Array<Dependency> {
-    return findNativeDependencies(path.join(this.path, 'node_modules'))
+  async getNativeDependencies () : Promise<NativeDependencies> {
+    return nativeDependenciesLookup.findNativeDependencies(path.join(this.path, 'node_modules'))
   }
 
   async isPublishedToNpm () : Promise<boolean> {
     return utils.isPublishedToNpm(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`))
   }
 
-  // Return all javascript (non native) dependencies currently used by the mini-app
-  // This method checks dependencies from the pa2ckage.json of the miniapp and
+  // Return all javascript (non native) dependencies currently used by the MiniApp
+  // This method checks dependencies from the package.json of the MiniApp and
   // exclude native dependencies (plugins).
-  get jsDependencies () : Array<Dependency> {
-    const nativeDependenciesNames = _.map(this.nativeDependencies, d => d.name)
-    let result = _.map(this.packageJson.dependencies, (val: string, key: string) =>
-            Dependency.fromString(`${key}@${val}`))
+  async getJsDependencies () : Promise<Array<Dependency>> {
+    const nativeDependencies : NativeDependencies = await this.getNativeDependencies()
+    const nativeDependenciesNames : Array<string> = _.map(nativeDependencies.all, d => d.name)
+    const nativeAndJsDependencies = this.getPackageJsonDependencies()
 
-    return result == null ? [] : _.filter(result, d => !nativeDependenciesNames.includes(d.name))
+    return _.filter(nativeAndJsDependencies, d => !nativeDependenciesNames.includes(d.name))
   }
 
-  get nativeAndJsDependencies () : Array<Dependency> {
-    return [...this.jsDependencies, ...this.nativeDependencies]
+  getPackageJsonDependencies () : Array<Dependency> {
+    return _.map(
+      this.packageJson.dependencies, (val: string, key: string) =>
+        Dependency.fromString(`${key}@${val}`))
   }
 
   async addDependency (
@@ -267,14 +271,14 @@ Are you sure this is a MiniApp ?`)
         await spin(`${versionLessDependency.toString()} is not declared in the manifest. Performing additional checks.`,
                     yarn.add(DependencyPath.fromString(dependency.toString())))
 
-        const nativeDependencies = findNativeDependencies(path.join(tmpPath, 'node_modules'))
-        if (nativeDependencies.length === 0) {
+        const nativeDependencies = await nativeDependenciesLookup.findNativeDependencies(path.join(tmpPath, 'node_modules'))
+        if (_.isEmpty(nativeDependencies.all)) {
           log.debug('Pure JS dependency')
           // This is a pure JS dependency. Not much to do here -yet-
           finalDependency = versionLessDependency
-        } else if (nativeDependencies.length >= 1) {
-          log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies)}`)
-          for (let dep: Dependency of nativeDependencies) {
+        } else if (nativeDependencies.all.length >= 1) {
+          log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies.all)}`)
+          for (let dep: Dependency of nativeDependencies.all) {
             if (Dependency.same(dep.withoutVersion(), dependency, {ignoreVersion: true})) {
               if (await utils.isDependencyApiOrApiImpl(dep.scopedName)) {
                 log.debug(`This is an api or api-impl`)
@@ -408,7 +412,18 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
         }
       }
 
-      for (const localNativeDependency of this.nativeDependencies) {
+      const nativeDependencies = await this.getNativeDependencies()
+      const validNativeDependencies = [
+        ...nativeDependencies.apis,
+        ...nativeDependencies.nativeApisImpl,
+        ...nativeDependencies.thirdPartyInManifest ]
+      for (const nonAddedDependency of nativeDependencies.thirdPartyNotInManifest) {
+        log.warn('========================================================================================================')
+        log.warn(`${nonAddedDependency.toString()} will not be added to the Cauldron as it is not declared in the Manifest`)
+        log.warn('You should add it to the Manifest if its a React Native plugin. Otherwise please ignore this warning')
+        log.warn('========================================================================================================')
+      }
+      for (const localNativeDependency of validNativeDependencies) {
         // If local native dependency already exists at same version in cauldron,
         // we then don't need to add it or update it
         const localNativeDependencyString =

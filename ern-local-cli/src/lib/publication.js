@@ -69,7 +69,7 @@ platform: 'android' | 'ios', {
   extraNativeDependencies: Array<Dependency>
 } = {}) {
   try {
-    const nativeDependenciesStrings: Set < string > = new Set()
+    const nativeDependenciesStrings: Set <string> = new Set()
     let miniapps: Array<MiniApp> = []
     let config
 
@@ -97,7 +97,12 @@ platform: 'android' | 'ios', {
 
       miniapps.push(currentMiniApp)
 
-      currentMiniApp.nativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
+      const nativeDependencies = await currentMiniApp.getNativeDependencies()
+      const supportedNativeDependencies = [
+        ...nativeDependencies.apis,
+        ...nativeDependencies.nativeApisImpl,
+        ...nativeDependencies.thirdPartyInManifest ]
+      supportedNativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
     }
 
     let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => Dependency.fromString(d))

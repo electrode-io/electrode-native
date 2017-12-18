@@ -18,6 +18,7 @@ import * as _dependencyLookup from './dependencyLookup'
 import _ErnBinaryStore from './ErnBinaryStore'
 import * as _iosUtil from './iosUtil'
 import _CauldronHelper from './CauldronHelper'
+import * as _nativeDependenciesLookup from './nativeDependenciesLookup'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -35,6 +36,7 @@ export const ContainerGeneratorConfig = _ContainerGeneratorConfig
 export const ErnBinaryStore = _ErnBinaryStore
 export const IosUtil = _iosUtil
 export const CauldronHelper = _CauldronHelper
+export const nativeDependenciesLookup = _nativeDependenciesLookup
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -52,5 +54,6 @@ export default ({
   ContainerGeneratorConfig: _ContainerGeneratorConfig,
   ErnBinaryStore: _ErnBinaryStore,
   IosUtil: _iosUtil,
-  CauldronHelper: _CauldronHelper
+  CauldronHelper: _CauldronHelper,
+  nativeDependenciesLookup: _nativeDependenciesLookup
 })

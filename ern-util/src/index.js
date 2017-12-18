@@ -11,7 +11,6 @@ import _spin from './spin'
 import _tagOneLine from './tagoneline'
 import _Dependency from './Dependency'
 import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
-import _findNativeDependencies from './findNativeDependencies'
 import _Utils from './utils'
 import _DependencyPath from './DependencyPath'
 import * as _fileUtils from './fileUtil'
@@ -33,7 +32,6 @@ export const spin = _spin
 export const tagOneLine = _tagOneLine
 export const Dependency = _Dependency
 export const NativeApplicationDescriptor = _NativeApplicationDescriptor
-export const findNativeDependencies = _findNativeDependencies
 export const Utils = _Utils
 export const DependencyPath = _DependencyPath
 export const mustacheUtils = _mustacheUtils
@@ -57,7 +55,6 @@ export default ({
   tagOneLine: _tagOneLine,
   Dependency: _Dependency,
   NativeApplicationDescriptor: _NativeApplicationDescriptor,
-  findNativeDependencies: _findNativeDependencies,
   Utils: _Utils,
   DependencyPath: _DependencyPath,
   mustacheUtils: _mustacheUtils,
