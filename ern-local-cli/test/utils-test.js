@@ -541,4 +541,25 @@ describe('utils.js', () => {
       expect(result).to.be.an('array').of.length(1)
     })
   })
+
+  describe('normalizeVersionsToSemver', () => {
+    it('should return an array containing the normalized versions', () => {
+      const versions = [ 
+        '1.0.0', 
+        '2.0', 
+        '3', 
+        '1.0.0-beta', 
+        '2.0-beta',
+        '2-beta' ]
+      const result = utils.normalizeVersionsToSemver(versions)
+      expect(result).to.be.an('array').deep.equal([
+        '1.0.0', 
+        '2.0.0', 
+        '3.0.0', 
+        '1.0.0-beta', 
+        '2.0.0-beta',
+        '2.0.0-beta'
+      ])
+    })
+  })
 })
