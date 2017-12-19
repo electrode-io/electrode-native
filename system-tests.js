@@ -112,6 +112,7 @@ run(`ern cauldron add miniapps ${movieDetailsMiniAppPackageName}@${movieDetailsM
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron add miniapps ${movieDetailsMiniAppPackageName}@${movieDetailsMiniAppVersion} -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
+run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
 run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${iosNativeApplicationDescriptorNewVersion}`)
 run(`ern cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
