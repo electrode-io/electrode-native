@@ -72,6 +72,9 @@ exports.handler = async function ({
           await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron))
         } else {
           const version = _.find(previousApps.versions, v => v.name === copyFromVersion)
+          if (!version) {
+            throw new Error(`Could not resolve native application version to copy Cauldron data from.\nExamine current value : ${copyFromVersion}`)
+          }
           await spin(`Copying data over from version ${copyFromVersion}`, copyOverPreviousVersionData(napDescriptor, version, cauldron))
         }
       } else if (await askUserCopyPreviousVersionData(latestVersionName)) {
