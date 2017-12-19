@@ -766,6 +766,7 @@ async function getDescriptorsMatchingSemVerDescriptor (semVerDescriptor: NativeA
   const result = []
   const cauldron = await coreUtils.getCauldronInstance()
   const versionsNames = await cauldron.getVersionsNames(semVerDescriptor)
+
   const versions = _.filter(versionsNames, v => semver.satisfies(v, semVerDescriptor.version))
   for (const version of versions) {
     const descriptor = new NativeApplicationDescriptor(semVerDescriptor.name, semVerDescriptor.platform, version)
@@ -773,6 +774,23 @@ async function getDescriptorsMatchingSemVerDescriptor (semVerDescriptor: NativeA
   }
 
   return result
+}
+
+function normalizeVersionsToSemver (versions: Array<string>) : Array<string> {
+  const validSemVerRe = /^\d+\.\d+.\d+.*/
+  const versionMissingPatchRe = /^(\d+\.\d+)(.*)/
+  const versionMissingMinorRe = /^(\d+)(.*)/
+  return _.map(versions, v => {
+    if (validSemVerRe.test(v)) {
+      return v
+    } else {
+      if (versionMissingPatchRe.test(v)) {
+        return v.replace(versionMissingPatchRe, '$1.0$2')
+      } else if (versionMissingMinorRe.test(v)) {
+        return v.replace(versionMissingMinorRe, '$1.0.0$2')
+      }
+    }
+  })
 }
 
 export default {
@@ -787,5 +805,6 @@ export default {
   performPkgNameConflictCheck,
   checkIfModuleNameContainsSuffix,
   promptUserToUseSuffixModuleName,
-  getDescriptorsMatchingSemVerDescriptor
+  getDescriptorsMatchingSemVerDescriptor,
+  normalizeVersionsToSemver
 }
