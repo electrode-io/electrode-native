@@ -471,5 +471,4 @@ You've successfully used Electrode Native to build your first native application
 
 In this tutorial, we've covered only a small part of what Electrode Native offers. Be sure to check the rest of the Electrode Native documentation to learn about all the features that Electrode Native offers.
 
-
 {% endmethod %}
