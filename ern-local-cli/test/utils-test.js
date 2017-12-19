@@ -47,7 +47,7 @@ describe('utils.js', () => {
     cauldronHelperStub = sandbox.createStubInstance(CauldronHelper)
     cauldronHelperStub.getContainerVersion.resolves('1.0.0')
     cauldronHelperStub.getTopLevelContainerVersion.resolves('1.2.3')
-    cauldronHelperStub.getVersionsNames.resolves(['1.2.3', '1.2.4', '2.0.0'])
+    cauldronHelperStub.getVersionsNames.resolves(['1.2.3', '1.2.4', '2.0.0', '3.0'])
     // Ora stubs
     const oraProto = Object.getPrototypeOf(ora())
     oraFailStub = sandbox.stub()
@@ -539,6 +539,13 @@ describe('utils.js', () => {
       const descriptor = NativeApplicationDescriptor.fromString('testapp:android:2.0.x')
       const result = await utils.getDescriptorsMatchingSemVerDescriptor(descriptor)
       expect(result).to.be.an('array').of.length(1)
+    })
+
+    it('should return the right matched versions [3]', async () => {
+      const descriptor = NativeApplicationDescriptor.fromString('testapp:android:3.0.x')
+      const result = await utils.getDescriptorsMatchingSemVerDescriptor(descriptor)
+      expect(result).to.be.an('array').of.length(1)
+      expect(result[0].version).eql('3.0')
     })
   })
 

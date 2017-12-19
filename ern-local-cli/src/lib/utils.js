@@ -766,10 +766,12 @@ async function getDescriptorsMatchingSemVerDescriptor (semVerDescriptor: NativeA
   const result = []
   const cauldron = await coreUtils.getCauldronInstance()
   const versionsNames = await cauldron.getVersionsNames(semVerDescriptor)
+  const semVerVersionNames = normalizeVersionsToSemver(versionsNames)
+  const zippedVersions = _.zipWith(versionsNames, semVerVersionNames, (nonSemVer, semVer) => ({nonSemVer, semVer}))
 
-  const versions = _.filter(versionsNames, v => semver.satisfies(v, semVerDescriptor.version))
+  const versions = _.filter(zippedVersions, z => semver.satisfies(z.semVer, semVerDescriptor.version))
   for (const version of versions) {
-    const descriptor = new NativeApplicationDescriptor(semVerDescriptor.name, semVerDescriptor.platform, version)
+    const descriptor = new NativeApplicationDescriptor(semVerDescriptor.name, semVerDescriptor.platform, version.nonSemVer)
     result.push(descriptor)
   }
 
