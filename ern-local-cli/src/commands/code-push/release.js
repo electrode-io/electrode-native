@@ -24,7 +24,8 @@ exports.builder = function (yargs: any) {
   return yargs
     .option('descriptors', {
       alias: 'd',
-      describe: 'Full native application descriptors (target native application versions for the push)'
+      describe: 'Full native application descriptors (target native application versions for the push)',
+      type: 'array'
     })
     .option('semVerDescriptor', {
       describe: 'A native application descriptor using a semver expression for the version'
