@@ -422,7 +422,7 @@ miniApps: Array<Dependency>, {
     const codePushResponse: CodePushPackage = await spin('Releasing bundle through CodePush', codePushSdk.releaseReact(
       appName,
       deploymentName,
-      bundleOutputPath,
+      bundleOutputDirectory,
       targetVersionName, {
         isMandatory: codePushIsMandatoryRelease,
         rollout: codePushRolloutPercentage
