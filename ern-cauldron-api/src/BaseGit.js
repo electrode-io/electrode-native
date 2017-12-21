@@ -68,18 +68,20 @@ export default class BaseGit implements ITransactional {
       this.repository
     ])
 
-    try {
+    const heads = await this.git.rawAsync([
+      'ls-remote',
+      '--heads',
+      GIT_REMOTE_NAME
+    ])
+
+    if (!heads) {
+      await this._doInitialCommit()
+    } else {
       log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} master`)
       await this.git.fetchAsync(GIT_REMOTE_NAME, 'master')
-    } catch (e) {
-      if (e.message.includes(`Couldn't find remote ref master`)) {
-        await this._doInitialCommit()
-      } else {
-        throw e
-      }
+      await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/master`])
     }
 
-    await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/master`])
     this._hasBeenSynced = true
   }
 
