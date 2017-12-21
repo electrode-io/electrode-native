@@ -354,11 +354,9 @@ export default class CauldronApi {
     } else {
       const platform = await this.getPlatform(nativeApplicationName, platformName)
       if (platform) {
-        platform.config = {
-          containerGenerator: {
-            containerVersion: newContainerVersion
-          }
-        }
+        platform.config = platform.config || {}
+        platform.config.containerGenerator = platform.config.containerGenerator || {}
+        platform.config.containerGenerator.containerVersion = newContainerVersion
         await this.commit(`Update top level container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}`)
       }
     }
