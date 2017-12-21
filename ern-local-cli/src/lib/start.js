@@ -20,6 +20,7 @@ import chokidar from 'chokidar'
 import tmp from 'tmp'
 import path from 'path'
 import * as constants from './constants'
+import utils from '../lib/utils'
 
 const {
   runAndroidApk
@@ -48,19 +49,19 @@ export default async function start ({
 } = {}) {
   let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
   let napDescriptor
-
-  if (descriptor) {
-    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-  }
+  let pathToYarnLock
 
   const cauldron = await coreUtils.getCauldronInstance()
 
-  if (!miniapps) {
-    if (!descriptor) {
-      return log.error('You need to provide a descriptor if not providing miniapps')
-    }
+  if (!miniapps && !descriptor) {
+    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron()
+  }
+
+  if (descriptor) {
+    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
     const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
     miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
+    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
   }
 
   // Because this command can only be stoped through `CTRL+C` (or killing the process)
@@ -73,10 +74,6 @@ export default async function start ({
   const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
   log.debug(`Temporary working directory is ${workingDir}`)
 
-  let pathToYarnLock
-  if (descriptor) {
-    pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
-  }
   await spin('Generating MiniApps composite',
     generateMiniAppsComposite(miniAppsPaths, workingDir, {
       pathToYarnLock,
