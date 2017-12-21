@@ -153,7 +153,7 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron del nativeapp ${androidNativeApplicationDescriptor}`)
 
 run(`ern compat-check -m ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -d ${iosNativeApplicationDescriptor}`)
-run(`ern upgrade-miniapp -v 0.10.1`)
+run(`ern upgrade-miniapp`)
 
 process.chdir(workingDirectoryPath)
 
