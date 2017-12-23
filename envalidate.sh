@@ -59,28 +59,42 @@ function echo_if {
 
 # ============================================== Functions
 
+normal=$(tput sgr0)
+bright=$(tput bold)
+
 # command line programs
+printf "${bright} --- Node.js 4.5 or later ---${normal}\n"
+
 echo "node    $(echo_if $(program_is_installed node))"
 $(print_version node)
+printf "\n"
+
+printf "${bright} --- NPM (version 3.0 or later) or Yarn ---${normal}\n"
+
+echo "npm    $(echo_if $(program_is_installed npm))"
+$(print_version npm)
 printf "\n"
 
 echo "yarn    $(echo_if $(program_is_installed yarn))"
 $(print_version yarn)
 printf "\n"
 
-echo "ern $(echo_if $(program_is_installed ern))"
-$(print_version ern)
-printf "\n"
+printf "${bright} --- Xcode 8.3.2 or later for iOS apps ---${normal}\n"
 
 echo "Xcode  $(echo_if $(program_is_installed xcodebuild))"
 $(print_version xcodebuild -version)
 printf "\n"
 
-
+printf "${bright} --- Android Studio for Android apps ---${normal}\n"
 
 echo "Android  $(echo_if $(program_is_installed $ANDROID_HOME/tools/bin/sdkmanager))"
 if [ $(program_is_installed $ANDROID_HOME/tools/bin/sdkmanager) == 0 ]; then
   echo $(echo_if 0 "Please make sure to install android sdk and set ANDROID_HOME in env variables." )
 fi
+printf "\n"
 
+printf "${BRIGHT} --- Electrode Native ---${normal}\n"
+
+echo "ern $(echo_if $(program_is_installed ern))"
+$(print_version ern)
 printf "\n"
