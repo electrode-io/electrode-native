@@ -31,10 +31,6 @@ function pascalCase (str: string) {
 const RUNNER_CONTAINER_VERSION = '1.0.0'
 const runnerHullPath = path.join(__dirname, '..', 'runner-hull')
 
-// Generate the runner project
-// plugins : Array containing all plugins to be included in the generated container
-// miniapp : The miniapp to attach to this runner. Needs to have localPath set !
-// outDirectory : Where the generated project will be outputed
 export async function generateRunnerProject (
   platform: string,
   outDir: string,

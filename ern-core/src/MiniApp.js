@@ -196,6 +196,10 @@ Are you sure this is a MiniApp ?`)
     return this.getUnscopedModuleName(this.packageJson.name)
   }
 
+  get pascalCaseName () : string {
+    return `${this.name.charAt(0).toUpperCase()}${this.name.slice(1)}`
+  }
+
   get scope () : ?string {
     const scopeCapture = /^@(.*)\//.exec(this.packageJson.name)
     if (scopeCapture) {

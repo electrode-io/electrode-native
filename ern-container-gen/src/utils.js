@@ -349,15 +349,6 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
 }
 
 // =============================================================================
-// MISC utils
-// =============================================================================
-
-// Given a string returns the same string with its first letter capitalized
-export function capitalizeFirstLetter (str: string) {
-  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
-}
-
-// =============================================================================
 // Async wrappers
 // =============================================================================
 
