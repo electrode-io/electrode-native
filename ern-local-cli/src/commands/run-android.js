@@ -3,8 +3,8 @@
 import utils from '../lib/utils'
 import {
   deviceConfig,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 
 exports.command = 'run-android'
 exports.desc = 'Run one or more MiniApps in the Android Runner application'
@@ -69,6 +69,6 @@ exports.handler = async function ({
     })
     process.exit(0)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

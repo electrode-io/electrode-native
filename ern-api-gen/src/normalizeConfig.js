@@ -2,7 +2,7 @@
 
 import {
   Dependency
-} from 'ern-util'
+} from 'ern-core'
 import {
   MODEL_FILE
 } from './Constants'

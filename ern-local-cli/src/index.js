@@ -2,13 +2,11 @@
 
 import './lib/log-noop.js'
 import {
-  Platform
-} from 'ern-core'
-import {
+  Platform,
   ColoredLog,
   config as ernConfig,
   shell
-} from 'ern-util'
+} from 'ern-core'
 import chalk from 'chalk'
 import yargs from 'yargs'
 import { execSync } from 'child_process'

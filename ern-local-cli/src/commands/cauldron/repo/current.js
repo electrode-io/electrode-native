@@ -2,8 +2,8 @@
 
 import {
   config as ernConfig,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../../lib/utils'
 
 exports.command = 'current'
@@ -22,6 +22,6 @@ exports.handler = function () {
     const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
     log.info(`${cauldronRepoInUse} [${cauldronRepositories[cauldronRepoInUse]}]`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

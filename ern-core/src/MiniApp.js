@@ -1,16 +1,15 @@
 // @flow
 
-import {
-  config as ernConfig,
-  Dependency,
-  DependencyPath,
-  NativeApplicationDescriptor,
-  spin,
-  tagOneLine,
-  shell
-} from 'ern-util'
+import config from './config'
+import Dependency from './Dependency'
+import DependencyPath from './DependencyPath'
+import NativeApplicationDescriptor from './NativeApplicationDescriptor'
+import spin from './spin'
+import tagOneLine from './tagoneline'
+import shell from './shell'
 import manifest from './Manifest'
 import Platform from './Platform'
+import * as nativeDependenciesLookup from './nativeDependenciesLookup'
 import {
   reactnative,
   yarn
@@ -19,7 +18,6 @@ import * as ModuleTypes from './ModuleTypes'
 import {
   checkCompatibilityWithNativeApp
 } from './compatibility'
-import * as nativeDependenciesLookup from './nativeDependenciesLookup'
 import type {
   NativeDependencies
 } from './nativeDependenciesLookup'
@@ -471,7 +469,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
   }
 
   async link () {
-    let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
+    let miniAppsLinks = config.getValue('miniAppsLinks', {})
     const previousLinkPath = miniAppsLinks[this.packageJson.name]
     if (previousLinkPath && (previousLinkPath !== this.path)) {
       log.warn(`Replacing previous link [${this.packageJson.name} => ${previousLinkPath}]`)
@@ -479,15 +477,15 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       return log.warn(`Link is already created for ${this.packageJson.name} with same path`)
     }
     miniAppsLinks[this.packageJson.name] = this.path
-    ernConfig.setValue('miniAppsLinks', miniAppsLinks)
+    config.setValue('miniAppsLinks', miniAppsLinks)
     log.info(`${this.packageJson.name} link created [${this.packageJson.name} => ${this.path}]`)
   }
 
   async unlink () {
-    let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
+    let miniAppsLinks = config.getValue('miniAppsLinks', {})
     if (miniAppsLinks[this.packageJson.name]) {
       delete miniAppsLinks[this.packageJson.name]
-      ernConfig.setValue('miniAppsLinks', miniAppsLinks)
+      config.setValue('miniAppsLinks', miniAppsLinks)
       log.info(`${this.packageJson.name} link was removed`)
     } else {
       return log.warn(`No link exists for ${this.packageJson.name}`)

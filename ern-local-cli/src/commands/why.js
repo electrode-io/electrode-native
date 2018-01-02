@@ -2,13 +2,10 @@
 
 import {
   utils as coreUtils,
-  dependencyLookup
-} from 'ern-core'
-import {
+  dependencyLookup,
   Dependency,
-  NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
+  NativeApplicationDescriptor
+} from 'ern-core'
 import _ from 'lodash'
 import utils from '../lib/utils'
 
@@ -48,6 +45,6 @@ exports.handler = async function ({
       }
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

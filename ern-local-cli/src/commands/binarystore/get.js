@@ -2,9 +2,7 @@
 
 import {
   NativeApplicationDescriptor,
-  shell
-} from 'ern-util'
-import {
+  shell,
   utils as coreUtils,
   ErnBinaryStore
 } from 'ern-core'

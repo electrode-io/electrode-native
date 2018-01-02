@@ -1,22 +1,18 @@
 import path from 'path'
 import {
-  fileUtils
-} from 'ern-util'
-
+  fileUtils,
+  ModuleTypes
+} from 'ern-core'
 import {
   CodegenConfigurator,
   DefaultGenerator
 } from './index'
-
 import {
   PKG_FILE,
   MODEL_FILE,
   FLOW_CONFIG_FILE,
   FLOW_BIN_VERSION
 } from './Constants'
-import {
-  ModuleTypes
-} from 'ern-core'
 
 export const GENERATE = [['android', 'ERNAndroid'], ['javascript', 'ERNES6'], ['IOS', 'ERNSwift']]
 

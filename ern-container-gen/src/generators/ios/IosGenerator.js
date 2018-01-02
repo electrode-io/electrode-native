@@ -6,18 +6,14 @@ import {
   ContainerGeneratorConfig,
   MiniApp,
   IosUtil,
-  utils
-} from 'ern-core'
-import {
+  utils,
   Dependency,
   shell,
   gitCli
-} from 'ern-util'
-
+} from 'ern-core'
 import {
   bundleMiniApps
 } from '../../utils.js'
-
 import fs from 'fs'
 import path from 'path'
 import xcode from 'xcode-ern'

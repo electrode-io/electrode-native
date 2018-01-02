@@ -9,7 +9,7 @@ import {
   afterTest
 } from 'ern-util-dev'
 import sinon from 'sinon'
-import Utils from '../src/utils'
+import * as coreUtils from '../src/utils'
 const sanbox = sinon.createSandbox()
 
 let processExitStub
@@ -28,7 +28,7 @@ describe('Utils', () => {
   })
 
   it('test logErrorAndExitProcess', () => {
-    Utils.logErrorAndExitProcess(new Error('test error'), 1)
+    coreUtils.logErrorAndExitProcess(new Error('test error'), 1)
     sinon.assert.calledOnce(stubs.log.error)
     sinon.assert.calledWith(stubs.log.error, 'An error occurred: test error')
     sinon.assert.calledOnce(processExitStub)
@@ -36,7 +36,7 @@ describe('Utils', () => {
   })
 
   it('test logErrorAndExitProcess with arguments', () => {
-    Utils.logErrorAndExitProcess(new Error('test error'), 1)
+    coreUtils.logErrorAndExitProcess(new Error('test error'), 1)
     sinon.assert.calledWith(stubs.log.error, 'An error occurred: test error')
     assert(stubs.log.debug.calledAfter(stubs.log.error))
     sinon.assert.calledWith(processExitStub, 1)

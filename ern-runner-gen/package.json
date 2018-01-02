@@ -52,7 +52,6 @@
   "dependencies": {
     "ern-container-gen": "1000.0.0",
     "ern-core": "1000.0.0",
-    "ern-util": "1000.0.0",
     "fs-readdir-recursive": "^1.0.0",
     "mustache": "^2.3.0",
     "tmp": "^0.0.31"

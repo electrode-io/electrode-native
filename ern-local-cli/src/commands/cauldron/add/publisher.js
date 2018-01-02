@@ -1,10 +1,7 @@
 // @flow
 
 import {
-  Utils,
-  NativeApplicationDescriptor
-} from 'ern-util'
-import {
+  NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -69,6 +66,6 @@ exports.handler = async function ({
     await cauldron.addPublisher(publisherType, url, napDescriptor)
     log.info(`${publisherType} publisher was successfully added!`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

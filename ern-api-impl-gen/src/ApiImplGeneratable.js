@@ -2,7 +2,7 @@
 
 import {
   Dependency
-} from 'ern-util'
+} from 'ern-core'
 
 export interface ApiImplGeneratable {
   generate (apiDependency: Dependency,

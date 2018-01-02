@@ -2,12 +2,10 @@
 
 import {
   manifest,
-  Platform
-} from 'ern-core'
-import {
+  Platform,
   Dependency,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../../lib/utils'
 
 import chalk from 'chalk'
@@ -40,6 +38,6 @@ exports.handler = async function ({
     const scopeStr = `${plugin.scope ? `${plugin.scope}@` : ''}`
     log.info(`${chalk.gray(scopeStr)}${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

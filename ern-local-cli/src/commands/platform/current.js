@@ -1,11 +1,9 @@
 // @flow
 
 import {
-  Platform
+  Platform,
+  utils as coreUtils
 } from 'ern-core'
-import {
-  Utils
-} from 'ern-util'
 import utils from '../../lib/utils'
 
 exports.command = 'current'
@@ -19,6 +17,6 @@ exports.handler = function () {
   try {
     log.info(`Platform version : v${Platform.currentVersion}`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

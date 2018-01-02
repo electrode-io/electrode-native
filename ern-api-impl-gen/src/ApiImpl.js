@@ -6,9 +6,7 @@ import inquirer from 'inquirer'
 import {
   Dependency,
   shell,
-  fileUtils
-} from 'ern-util'
-import {
+  fileUtils,
   ModuleTypes,
   yarn,
   Platform

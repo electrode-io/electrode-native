@@ -2,8 +2,8 @@
 
 import {
   NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import {
   performCodePushPromote,
   askUserForCodePushDeploymentName
@@ -165,6 +165,6 @@ exports.handler = async function ({
         rollout
       })
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

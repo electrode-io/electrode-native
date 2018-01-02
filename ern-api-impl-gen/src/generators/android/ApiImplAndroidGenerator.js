@@ -4,9 +4,7 @@ import {
   Dependency,
   mustacheUtils,
   shell,
-  fileUtils
-} from 'ern-util'
-import {
+  fileUtils,
   manifest,
   Platform
 } from 'ern-core'

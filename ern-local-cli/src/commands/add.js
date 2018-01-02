@@ -1,12 +1,10 @@
 // @flow
 
 import {
-  MiniApp
-} from 'ern-core'
-import {
+  MiniApp,
   Dependency,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../lib/utils'
 
 // Note : We use `pkg` instead of `package` because `package` is
@@ -44,6 +42,6 @@ exports.handler = async function ({
       await MiniApp.fromCurrentPath().addDependency(Dependency.fromString(pkg), {dev, peer})
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

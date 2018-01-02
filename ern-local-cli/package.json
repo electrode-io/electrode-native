@@ -61,7 +61,6 @@
     "ern-container-gen": "1000.0.0",
     "ern-core": "1000.0.0",
     "ern-runner-gen": "1000.0.0",
-    "ern-util": "1000.0.0",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.4",
     "ora": "^1.1.0",

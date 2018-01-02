@@ -5,16 +5,14 @@ import {
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  shell
-} from 'ern-util'
-import {
-  generateMiniAppsComposite
-} from 'ern-container-gen'
-import {
+  shell,
   utils as coreUtils,
   reactnative,
   ErnBinaryStore
 } from 'ern-core'
+import {
+  generateMiniAppsComposite
+} from 'ern-container-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
 import tmp from 'tmp'

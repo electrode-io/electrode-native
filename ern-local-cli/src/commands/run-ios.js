@@ -2,9 +2,9 @@
 
 import utils from '../lib/utils'
 import {
-  Utils,
+  utils as coreUtils,
   deviceConfig
-} from 'ern-util'
+} from 'ern-core'
 
 exports.command = 'run-ios'
 exports.desc = 'Run one or more MiniApps in the iOS Runner application'
@@ -71,6 +71,6 @@ exports.handler = async function ({
       dev
     })
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

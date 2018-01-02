@@ -1,8 +1,6 @@
-import {
-  Dependency,
-  mustacheUtils,
-  shell
-} from 'ern-util'
+import Dependency from './Dependency'
+import * as mustacheUtils from './mustacheUtils'
+import shell from './shell'
 import manifest from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
 import {

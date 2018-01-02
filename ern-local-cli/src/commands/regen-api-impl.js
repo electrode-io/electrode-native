@@ -6,14 +6,11 @@ import {
 import {
   Platform,
   ModuleTypes,
-  utils,
-  yarn
-} from 'ern-core'
-import {
+  utils as coreUtils,
+  yarn,
   fileUtils,
-  Dependency,
-  Utils
-} from 'ern-util'
+  Dependency
+} from 'ern-core'
 import cliUtils from '../lib/utils'
 import path from 'path'
 import fs from 'fs'
@@ -60,7 +57,7 @@ exports.handler = async function
 
     log.info(`regenerating api implementation for ${api.toString()}`)
 
-    let reactNativeVersion = await utils.reactNativeManifestVersion()
+    let reactNativeVersion = await coreUtils.reactNativeManifestVersion()
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
 
     await validatePackage(api)
@@ -81,7 +78,7 @@ exports.handler = async function
     })
     log.info('Successfully regenerated api implementation!')
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 
   async function readPackageJson (): Object {
@@ -102,7 +99,7 @@ exports.handler = async function
 
   async function getApi (apiImplPackage: Object): Promise<Dependency> {
     for (const depKey of Object.keys(apiImplPackage.dependencies)) {
-      if (await utils.isDependencyApi(depKey)) {
+      if (await coreUtils.isDependencyApi(depKey)) {
         // TODO: THis is by assuming that this is the only api dependency inside this implemenation.
         // TODO: This may not be right all the time as an api implementor can add more other apis as dependencies. Logic needs to be revisited.
         return Dependency.fromString(`${depKey}@${apiImplPackage.dependencies[depKey]}`)
@@ -112,7 +109,7 @@ exports.handler = async function
   }
 
   async function validatePackage (api) {
-    if (!await utils.isPublishedToNpm(api.path)) {
+    if (!await coreUtils.isPublishedToNpm(api.path)) {
       throw new Error(`${api.toString()}: Package not found in npm, please make sure this version of the api is published to npm.`)
     }
   }

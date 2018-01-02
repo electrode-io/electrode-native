@@ -2,11 +2,9 @@
 
 import {
   MiniApp,
-  Platform
+  Platform,
+  utils as coreUtils
 } from 'ern-core'
-import {
-  Utils
-} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'upgrade-miniapp'
@@ -34,6 +32,6 @@ exports.handler = function ({
     const versionWithoutPrefix = version.toString().replace('v', '')
     miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

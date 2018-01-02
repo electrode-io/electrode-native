@@ -19,6 +19,26 @@ import _ErnBinaryStore from './ErnBinaryStore'
 import * as _iosUtil from './iosUtil'
 import _CauldronHelper from './CauldronHelper'
 import * as _nativeDependenciesLookup from './nativeDependenciesLookup'
+import * as _android from './android'
+import _shell from './shell'
+import _spin from './spin'
+import _config from './config'
+import * as _deviceConfig from './deviceConfig'
+import * as _childProcess from './childProcess'
+import * as _ios from './ios'
+import * as _mustacheUtils from './mustacheUtils'
+import _ColoredLog from './coloredLog'
+import _ReactNativeCli from './ReactNativeCli'
+import _required from './required'
+import _tagOneLine from './tagoneline'
+import _Dependency from './Dependency'
+import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
+import _DependencyPath from './DependencyPath'
+import * as _fileUtils from './fileUtil'
+import _YarnCli from './YarnCli'
+import _gitCli from './gitCli'
+import _CodePushSdk from './CodePushSdk'
+import * as _promptUtils from './promptUtils'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -37,6 +57,26 @@ export const ErnBinaryStore = _ErnBinaryStore
 export const IosUtil = _iosUtil
 export const CauldronHelper = _CauldronHelper
 export const nativeDependenciesLookup = _nativeDependenciesLookup
+export const android = _android
+export const shell = _shell
+export const spin = _spin
+export const config = _config
+export const deviceConfig = _deviceConfig
+export const childProcess = _childProcess
+export const ios = _ios
+export const ColoredLog = _ColoredLog
+export const ReactNativeCli = _ReactNativeCli
+export const required = _required
+export const tagOneLine = _tagOneLine
+export const Dependency = _Dependency
+export const NativeApplicationDescriptor = _NativeApplicationDescriptor
+export const DependencyPath = _DependencyPath
+export const mustacheUtils = _mustacheUtils
+export const fileUtils = _fileUtils
+export const YarnCli = _YarnCli
+export const gitCli = _gitCli
+export const CodePushSdk = _CodePushSdk
+export const promptUtils = _promptUtils
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -55,5 +95,30 @@ export default ({
   ErnBinaryStore: _ErnBinaryStore,
   IosUtil: _iosUtil,
   CauldronHelper: _CauldronHelper,
-  nativeDependenciesLookup: _nativeDependenciesLookup
+  nativeDependenciesLookup: _nativeDependenciesLookup,
+  android: _android,
+  shell: _shell,
+  spin: _spin,
+  config: _config,
+  deviceConfig: _deviceConfig,
+  childProcess: _childProcess,
+  ios: _ios,
+  ColoredLog: _ColoredLog,
+  ReactNativeCli: _ReactNativeCli,
+  required: _required,
+  tagOneLine: _tagOneLine,
+  Dependency: _Dependency,
+  NativeApplicationDescriptor: _NativeApplicationDescriptor,
+  DependencyPath: _DependencyPath,
+  mustacheUtils: _mustacheUtils,
+  fileUtils: _fileUtils,
+  YarnCli: _YarnCli,
+  gitCli: _gitCli,
+  CodePushSdk: _CodePushSdk,
+  promptUtils: _promptUtils
 })
+
+export type {
+  CodePushPackageInfo,
+  CodePushPackage
+} from './CodePushSdk'

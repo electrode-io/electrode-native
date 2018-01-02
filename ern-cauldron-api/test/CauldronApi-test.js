@@ -8,7 +8,7 @@ import sinon from 'sinon'
 import fs from 'fs'
 import {
   Dependency
-} from 'ern-util'
+} from 'ern-core'
 import {
   beforeTest,
   doesThrow,

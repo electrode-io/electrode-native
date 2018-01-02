@@ -4,16 +4,13 @@ import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
-  utils as coreUtils,
-  Platform
-} from 'ern-core'
-import {
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  Utils
-} from 'ern-util'
+  utils as coreUtils,
+  Platform
+} from 'ern-core'
 import {
   runLocalContainerGen,
   runCauldronContainerGen
@@ -208,6 +205,6 @@ exports.handler = async function ({
       }
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

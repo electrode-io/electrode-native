@@ -1,6 +1,6 @@
 // @flow
 import type { Publisher } from './Publisher'
-import { gitCli } from 'ern-util'
+import gitCli from './gitCli'
 
 export default class GithubPublisher implements Publisher {
   url: string

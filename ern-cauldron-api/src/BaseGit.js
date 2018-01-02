@@ -8,7 +8,7 @@ import path from 'path'
 import {
   shell,
   gitCli
-} from 'ern-util'
+} from 'ern-core'
 import {
   ITransactional
 } from './FlowTypes'

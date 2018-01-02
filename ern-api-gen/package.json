@@ -52,7 +52,6 @@
   "dependencies": {
     "collections": "^5.0.6",
     "ern-core": "1000.0.0",
-    "ern-util": "1000.0.0",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.4",

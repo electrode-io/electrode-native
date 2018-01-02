@@ -1,7 +1,7 @@
 // @flow
 
 import ApiImplGen from './generators/ApiImplGen'
-import { Dependency } from 'ern-util'
+import { Dependency } from 'ern-core'
 
 export default async function regenerateApiImpl
   ({

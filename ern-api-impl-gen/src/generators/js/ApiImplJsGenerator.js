@@ -4,9 +4,7 @@ import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 import {
   Dependency,
   shell,
-  mustacheUtils
-} from 'ern-util'
-import {
+  mustacheUtils,
   Platform
 } from 'ern-core'
 import fs from 'fs'

@@ -3,12 +3,10 @@
 import {
   yarn
 } from './clients'
-import {
-  config,
-  Dependency,
-  DependencyPath,
-  gitCli
-} from 'ern-util'
+import config from './config'
+import Dependency from './Dependency'
+import DependencyPath from './DependencyPath'
+import gitCli from './gitCli'
 import http from 'http'
 import camelCase from 'lodash/camelCase'
 import _ from 'lodash'
@@ -312,4 +310,10 @@ export async function getCauldronInstance () : Promise<CauldronHelper> {
     }
   }
   return Promise.resolve(currentCauldronHelperInstance)
+}
+
+export function logErrorAndExitProcess (e: Error, code?: number = 1) {
+  log.error(`An error occurred: ${e.message}`)
+  log.debug(e)
+  process.exit(code)
 }

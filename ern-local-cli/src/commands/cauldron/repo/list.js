@@ -2,8 +2,8 @@
 
 import {
   config as ernConfig,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../../lib/utils'
 
 exports.command = 'list'
@@ -23,6 +23,6 @@ exports.handler = function () {
     Object.keys(cauldronRepositories).forEach(alias =>
       log.info(`${alias} -> ${cauldronRepositories[alias]}`))
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }
