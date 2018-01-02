@@ -25,6 +25,7 @@ import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 import ContainerGeneratorConfig from '../../ContainerGeneratorConfig'
 
 const ROOT_DIR = process.cwd()
+const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 
 export default class IosGenerator implements ContainerGenerator {
   _containerGeneratorConfig : ContainerGeneratorConfig
@@ -148,7 +149,7 @@ export default class IosGenerator implements ContainerGenerator {
     mustacheView: any) : Promise<*> {
     const pathSpec = {
       rootDir: ROOT_DIR,
-      projectHullDir: path.join(paths.containerHull, '{.*,*}'),
+      projectHullDir: path.join(PATH_TO_HULL_DIR, '{.*,*}'),
       outputDir: paths.outDirectory,
       pluginsDownloadDirectory: paths.pluginsDownloadDirectory
     }

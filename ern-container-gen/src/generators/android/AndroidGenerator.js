@@ -28,6 +28,8 @@ import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 
 const ROOT_DIR = process.cwd()
 const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
+const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
+const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 
 export default class AndroidGenerator implements ContainerGenerator {
   _containerGeneratorConfig : ContainerGeneratorConfig
@@ -140,7 +142,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       shell.cd(ROOT_DIR)
 
-      const copyFromPath = path.join(paths.containerHull, '{.*,*}')
+      const copyFromPath = path.join(PATH_TO_HULL_DIR, '{.*,*}')
 
       shell.cp('-R', copyFromPath, paths.outDirectory)
 
@@ -226,7 +228,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
 
         log.debug(`Creating ${activityFileName}`)
-        const pathToMiniAppActivityMustacheTemplate = path.join(paths.containerTemplates, 'MiniAppActivity.mustache')
+        const pathToMiniAppActivityMustacheTemplate = path.join(PATH_TO_TEMPLATES_DIR, 'MiniAppActivity.mustache')
         const pathToOutputActivityFile = path.join(paths.outDirectory, pathLibSrcMainJavaComWalmartlabsErnContainer, 'miniapps', activityFileName)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             pathToMiniAppActivityMustacheTemplate,

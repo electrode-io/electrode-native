@@ -40,8 +40,6 @@ export default async function generateContainer ({
   const COMPOSITE_MINIAPP_DIRECTORY = path.join(workingDirectory, 'compositeMiniApp')
 
   const paths : ContainerGeneratorPaths = {
-    containerHull: path.join(__dirname, '..', 'hull', generator.platform),
-    containerTemplates: path.join(__dirname, '..', 'templates', generator.platform),
     compositeMiniApp: COMPOSITE_MINIAPP_DIRECTORY,
     pluginsDownloadDirectory: PLUGINS_DOWNLOAD_DIRECTORY,
     outDirectory: OUT_DIRECTORY

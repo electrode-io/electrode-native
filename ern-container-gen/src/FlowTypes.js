@@ -6,10 +6,6 @@ import {
 } from 'ern-core'
 
 export type ContainerGeneratorPaths = {
-  // Where the container project hull is stored
-  containerHull: string;
-  // Where the templates to be used during container generation are stored
-  containerTemplates: string;
   // Where we assemble the miniapps together
   compositeMiniApp: string;
   // Where we download plugins
