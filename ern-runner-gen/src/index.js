@@ -6,13 +6,11 @@ import {
   AndroidGenerator
 } from 'ern-container-gen'
 import {
+  ContainerGeneratorConfig,
   Dependency,
   mustacheUtils,
   spin,
   shell
-} from 'ern-util'
-import {
-  ContainerGeneratorConfig
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'

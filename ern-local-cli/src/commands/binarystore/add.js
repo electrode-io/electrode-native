@@ -1,9 +1,7 @@
 // @flow
 
 import {
-  NativeApplicationDescriptor
-} from 'ern-util'
-import {
+  NativeApplicationDescriptor,
   ErnBinaryStore,
   utils as coreUtils
 } from 'ern-core'

@@ -3,9 +3,6 @@
 import {
   Dependency,
   NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
-import {
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -101,6 +98,6 @@ exports.handler = async function ({
       { containerVersion })
     log.info(`Dependency(ies) was/were succesfully updated in ${napDescriptor.toString()}`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

@@ -3,7 +3,7 @@ import { assert } from 'chai'
 
 import {
   coloredLog
-} from 'ern-util'
+} from 'ern-core'
 import {
   beforeTest,
   afterTest

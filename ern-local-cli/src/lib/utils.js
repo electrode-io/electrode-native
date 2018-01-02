@@ -6,13 +6,7 @@ import {
   Platform,
   reactnative,
   yarn,
-  ModuleTypes
-} from 'ern-core'
-import {
-  generateRunnerProject,
-  regenerateRunnerConfig
-} from 'ern-runner-gen'
-import {
+  ModuleTypes,
   android,
   ios,
   Dependency,
@@ -20,7 +14,11 @@ import {
   NativeApplicationDescriptor,
   spin,
   shell
-} from 'ern-util'
+} from 'ern-core'
+import {
+  generateRunnerProject,
+  regenerateRunnerConfig
+} from 'ern-runner-gen'
 import {
   runLocalContainerGen,
   runCauldronContainerGen

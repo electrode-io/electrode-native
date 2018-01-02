@@ -2,9 +2,7 @@
 
 import {
   Dependency,
-  shell
-} from 'ern-util'
-import {
+  shell,
   MiniApp
 } from 'ern-core'
 import {

@@ -3,9 +3,6 @@
 import {
   NativeApplicationDescriptor,
   Dependency,
-  Utils
-} from 'ern-util'
-import {
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -96,6 +93,6 @@ exports.handler = async function ({
       { containerVersion })
     log.debug(`MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

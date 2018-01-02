@@ -1,13 +1,11 @@
 // @flow
 
 import {
-  Platform
-} from 'ern-core'
-import {
+  Platform,
   config as ernConfig,
   shell,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../../lib/utils'
 
 exports.command = 'clear'
@@ -27,6 +25,6 @@ exports.handler = function ({
     shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
     log.info(`Done.`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

@@ -3,9 +3,7 @@
 import {
   spin,
   Dependency,
-  shell
-} from 'ern-util'
-import {
+  shell,
   yarn
 } from 'ern-core'
 import {

@@ -2,8 +2,8 @@
 
 import {
   config as ernConfig,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../../lib/utils'
 
 exports.command = 'remove <alias>'
@@ -35,6 +35,6 @@ exports.handler = function ({
       log.info(`This Cauldron repository was the currently activated one. No more current repo !`)
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

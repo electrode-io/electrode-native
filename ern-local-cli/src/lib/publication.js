@@ -9,22 +9,20 @@ import {
 import {
   utils as coreUtils,
   compatibility,
-  MiniApp,
-  Platform,
-  ContainerGeneratorConfig,
-  reactnative
-} from 'ern-core'
-import {
-  config,
   CodePushSdk,
   Dependency,
   DependencyPath,
+  config,
+  MiniApp,
   NativeApplicationDescriptor,
-  spin
-} from 'ern-util'
+  Platform,
+  spin,
+  ContainerGeneratorConfig,
+  reactnative
+} from 'ern-core'
 import type {
   CodePushPackage
-} from 'ern-util'
+} from 'ern-core'
 
 import inquirer from 'inquirer'
 import _ from 'lodash'

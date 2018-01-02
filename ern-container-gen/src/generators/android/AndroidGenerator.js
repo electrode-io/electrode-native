@@ -6,15 +6,12 @@ import {
   ContainerGeneratorConfig,
   MavenUtils,
   MiniApp,
-  utils
-} from 'ern-core'
-import {
+  utils as coreUtils,
   mustacheUtils,
   Dependency,
-  Utils,
   shell,
   gitCli
-} from 'ern-util'
+} from 'ern-core'
 import {
   bundleMiniApps,
   capitalizeFirstLetter
@@ -97,7 +94,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
           shell.rm('-rf', `${paths.outDirectory}/*`)
         } catch (e) {
-          Utils.logErrorAndExitProcess(new Error('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct'))
+          coreUtils.logErrorAndExitProcess(new Error('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct'))
         }
       }
 
@@ -109,7 +106,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
-      const jsApiImplDependencies = await utils.extractJsApiImplementations(plugins)
+      const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(plugins)
 
       await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock}, jsApiImplDependencies)
 
@@ -151,7 +148,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       await this.addAndroidPluginHookClasses(plugins, paths)
 
       for (const plugin of plugins) {
-        if (await utils.isDependencyJsApiImpl(plugin.name)) {
+        if (await coreUtils.isDependencyJsApiImpl(plugin.name)) {
           log.debug('JS api implementation identified, skipping fill hull.')
           continue
         }
@@ -165,12 +162,12 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
 
         shell.cd(paths.pluginsDownloadDirectory)
-        pluginSourcePath = await utils.downloadPluginSource(pluginConfig.origin)
+        pluginSourcePath = await coreUtils.downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
         }
 
-        if (await utils.isDependencyNativeApiImpl(plugin.scopedName)) {
+        if (await coreUtils.isDependencyNativeApiImpl(plugin.scopedName)) {
           populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
         }
 

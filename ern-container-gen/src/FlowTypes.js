@@ -1,9 +1,7 @@
 // @flow
 
 import {
-  Dependency
-} from 'ern-util'
-import {
+  Dependency,
   MiniApp
 } from 'ern-core'
 

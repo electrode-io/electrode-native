@@ -21,7 +21,7 @@ import {
   beforeTest,
   afterTest
 } from 'ern-util-dev'
-import * as ernUtil from 'ern-util'
+import * as ernUtil from 'ern-core'
 const {
   Dependency,
   DependencyPath,

@@ -13,10 +13,10 @@ import {
   Dependency,
   fileUtils,
   shell,
-  childProcess
-} from 'ern-util'
+  childProcess,
+  utils as coreUtils
+} from 'ern-core'
 import inquirer from 'inquirer'
-import { utils as core } from 'ern-core'
 const { 
   execp
 } = childProcess
@@ -109,7 +109,7 @@ export async function cleanGenerated (outFolder: string = process.cwd()) {
 
 async function validateApiNameAndGetPackageJson (message: string) {
   let pkg = await readPackage()
-  if (await !core.isDependencyApi(pkg.name)) {
+  if (await !coreUtils.isDependencyApi(pkg.name)) {
     throw new Error(message)
   }
   return pkg

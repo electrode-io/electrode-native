@@ -1,8 +1,6 @@
 // @flow
 
-import {
-  Dependency
-} from 'ern-util'
+import Dependency from './Dependency'
 import readDir from 'fs-readdir-recursive'
 import _ from 'lodash'
 import path from 'path'

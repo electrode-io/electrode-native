@@ -1,14 +1,12 @@
 // @flow
 
 import {
-  MiniApp
-} from 'ern-core'
-import {
+  MiniApp,
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
@@ -119,6 +117,6 @@ exports.handler = async function ({
       { containerVersion })
     log.info(`MiniApp(s) version(s) was/were succesfully updated for ${napDescriptor.toString()} in Cauldron !`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

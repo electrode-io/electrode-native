@@ -1,10 +1,8 @@
 // @flow
 
 import type { BinaryStore } from './BinaryStore'
-import {
-  NativeApplicationDescriptor,
-  childProcess
-} from 'ern-util'
+import NativeApplicationDescriptor from './NativeApplicationDescriptor'
+import * as childProcess from './childProcess'
 import {
   spawn
 } from 'child_process'

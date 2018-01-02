@@ -3,12 +3,9 @@
 import {
   Dependency,
   DependencyPath,
-  NativeApplicationDescriptor
-} from 'ern-util'
-import {
+  NativeApplicationDescriptor,
   utils as coreUtils,
-  dependencyLookup,
-  utils
+  dependencyLookup
 } from 'ern-core'
 import _ from 'lodash'
 import semver from 'semver'
@@ -18,7 +15,7 @@ export default class Ensure {
   static isValidElectrodeNativeModuleName (
     name: string,
     extraErrorMessage: string = '') {
-    if (!utils.isValidElectrodeNativeModuleName(name)) {
+    if (!coreUtils.isValidElectrodeNativeModuleName(name)) {
       const errorMessage = `${name} is not a valid Electrode Native module name\n${extraErrorMessage}`
       throw new Error(errorMessage)
     }
@@ -129,7 +126,7 @@ export default class Ensure {
     extraErrorMessage: string = '') {
     const dependencies = obj instanceof Array ? obj : [ obj ]
     for (const dependency of dependencies) {
-      if (!await utils.isPublishedToNpm(dependency)) {
+      if (!await coreUtils.isPublishedToNpm(dependency)) {
         throw new Error(`${dependency} version is not published to NPM.\n${extraErrorMessage}`)
       }
     }

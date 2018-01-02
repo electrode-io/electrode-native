@@ -2,8 +2,8 @@
 
 import {
   config as ernConfig,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../lib/utils'
 
 exports.command = 'config <key> [value]'
@@ -32,6 +32,6 @@ exports.handler = function ({
       log.info(`${key}: ${ernConfig.getValue(key)}`)
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

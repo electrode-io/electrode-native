@@ -1,12 +1,10 @@
 // @flow
 
 import {
-  Platform
-} from 'ern-core'
-import {
+  Platform,
   tagOneLine,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import chalk from 'chalk'
 import utils from '../../lib/utils'
 import semver from 'semver'
@@ -42,6 +40,6 @@ exports.handler = function () {
       }
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

@@ -1,9 +1,7 @@
 // @flow
 
-import {
-  Dependency,
-  shell
-} from 'ern-util'
+import Dependency from './Dependency'
+import shell from './shell'
 import path from 'path'
 import Platform from './Platform'
 import GitManifest from './GitManifest'

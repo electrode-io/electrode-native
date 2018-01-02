@@ -1,13 +1,10 @@
 // @flow
 
 import {
+  CauldronHelper,
   Dependency,
   NativeApplicationDescriptor,
   spin,
-  Utils
-} from 'ern-util'
-import {
-  CauldronHelper,
   utils as coreUtils
 } from 'ern-core'
 import inquirer from 'inquirer'
@@ -88,7 +85,7 @@ exports.handler = async function ({
     if (cauldron) {
       await cauldron.discardTransaction()
     }
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }
 

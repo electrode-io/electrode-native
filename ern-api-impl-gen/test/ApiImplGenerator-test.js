@@ -5,13 +5,13 @@
 /* import { generateApiImpl } from '../src/index'
 import {
   shell 
-}from 'ern-util'
+}from 'ern-core'
 import fs from 'fs'
 import { assert } from 'chai'
 
 import {
   DependencyPath
-} from 'ern-util'
+} from 'ern-core'
 import {
   Platform
 } from 'ern-core'

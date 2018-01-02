@@ -7,9 +7,7 @@ import {
 import { yarn } from '../src/clients'
 import sinon from 'sinon'
 import * as utils from '../src/utils'
-import {
-  DependencyPath,
-} from 'ern-util'
+import DependencyPath from '../src/DependencyPath'
 import {
   beforeTest,
   afterTest,

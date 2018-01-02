@@ -1,10 +1,8 @@
 // @flow
 import type { Publisher } from './Publisher'
 import { MavenUtils } from './MavenUtils'
-import {
-  shell,
-  childProcess
-} from 'ern-util'
+import shell from './shell'
+import * as childProcess from './childProcess'
 const {
   execp
 } = childProcess

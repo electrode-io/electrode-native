@@ -1,7 +1,4 @@
-import {
-  shell
-} from 'ern-util'
-
+import shell from './shell'
 import {httpGet} from './utils'
 import fs from 'fs'
 import os from 'os'

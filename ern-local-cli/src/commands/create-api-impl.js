@@ -1,18 +1,15 @@
 // @flow
 
 import {
-  utils as core,
+  Dependency,
+  DependencyPath,
+  utils as coreUtils,
   Platform,
   ModuleTypes
 } from 'ern-core'
 import {
   generateApiImpl
 } from 'ern-api-impl-gen'
-import {
-  Dependency,
-  DependencyPath,
-  Utils
-} from 'ern-util'
 import utils from '../lib/utils'
 import inquirer from 'inquirer'
 import path from 'path'
@@ -100,7 +97,7 @@ exports.handler = async function ({
     }
 
     log.info(`Generating API implementation for ${apiName}`)
-    let reactNativeVersion = await core.reactNativeManifestVersion()
+    let reactNativeVersion = await coreUtils.reactNativeManifestVersion()
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
 
     if (jsOnly && nativeOnly) {
@@ -122,7 +119,7 @@ exports.handler = async function ({
     // Must conform to definition of ElectrodeNativeModuleName
     if (!apiImplName) {
       // camel case api name
-      let cameCaseName = core.camelize(apiDep.name)
+      let cameCaseName = coreUtils.camelize(apiDep.name)
       // remove number if present
       const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
       apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`
@@ -130,7 +127,7 @@ exports.handler = async function ({
 
     // If no package name is specified get default name from apiImplName
     if (!packageName) {
-      const defaultPackageName = packageName = core.getDefaultPackageNameForModule(apiImplName, moduleType)
+      const defaultPackageName = packageName = coreUtils.getDefaultPackageNameForModule(apiImplName, moduleType)
       packageName = await promptForPackageName(defaultPackageName)
     }
 
@@ -165,7 +162,7 @@ exports.handler = async function ({
     })
     log.info('Success!')
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }
 

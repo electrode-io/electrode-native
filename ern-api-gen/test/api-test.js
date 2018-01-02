@@ -2,7 +2,7 @@ import DefaultGenerator from '../src/DefaultGenerator'
 import path from 'path'
 import {
   shell
-} from 'ern-util'
+} from 'ern-core'
 import ernUtilDev from 'ern-util-dev'
 import {CONFIG} from '../src/java/Logger'
 import File from '../src/java/File'

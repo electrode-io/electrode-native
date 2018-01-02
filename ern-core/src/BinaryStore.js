@@ -1,8 +1,6 @@
 // @flow
 
-import {
-  NativeApplicationDescriptor
-} from 'ern-util'
+import NativeApplicationDescriptor from './NativeApplicationDescriptor'
 
 export interface BinaryStore {
   addBinary (descriptor: NativeApplicationDescriptor, binary: any) : Promise<string | Buffer>;

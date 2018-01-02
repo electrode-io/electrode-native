@@ -2,8 +2,8 @@
 
 import {
   NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../../lib/utils'
 
 exports.command = 'regen-container'
@@ -65,6 +65,6 @@ exports.handler = async function ({
       { containerVersion })
     log.debug(`Container was succesfully regenerated !`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

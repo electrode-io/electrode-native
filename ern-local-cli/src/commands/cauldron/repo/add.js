@@ -1,13 +1,11 @@
 // @flow
 
 import {
-  Platform
-} from 'ern-core'
-import {
+  Platform,
   config as ernConfig,
   shell,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import inquirer from 'inquirer'
 import utils from '../../../lib/utils'
 
@@ -55,7 +53,7 @@ exports.handler = function ({
       })
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }
 

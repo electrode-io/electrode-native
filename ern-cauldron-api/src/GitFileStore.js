@@ -8,7 +8,7 @@ import fs from 'fs'
 import path from 'path'
 import {
   shell
-} from 'ern-util'
+} from 'ern-core'
 import type {
   ICauldronFileStore
 } from './FlowTypes'

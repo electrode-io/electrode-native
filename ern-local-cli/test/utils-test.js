@@ -7,6 +7,7 @@ import {
 import {
   CauldronHelper,
   ModuleTypes,
+  NativeApplicationDescriptor,
   yarn,
   utils as coreUtils
 } from 'ern-core'
@@ -17,9 +18,6 @@ import {
   afterTest,
   fixtures as utilFixtures
 } from 'ern-util-dev'
-import {
-  NativeApplicationDescriptor
-} from 'ern-util'
 import * as publication from '../src/lib/publication'
 import sinon from 'sinon'
 import utils from '../src/lib/utils'

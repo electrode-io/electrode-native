@@ -1,9 +1,7 @@
 // @flow
 
-import {
-  ReactNativeCli,
-  YarnCli
-} from 'ern-util'
+import ReactNativeCli from './ReactNativeCli'
+import YarnCli from './YarnCli'
 import fs from 'fs'
 import path from 'path'
 

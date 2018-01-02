@@ -5,8 +5,8 @@ import start from '../lib/start'
 import _ from 'lodash'
 import {
   DependencyPath,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 
 exports.command = 'start'
 exports.desc = 'Start a composite MiniApp'
@@ -81,6 +81,6 @@ exports.handler = async function ({
       extraJsDependencies: _.map(extraJsDependencies, d => DependencyPath.fromString(d))
     })
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

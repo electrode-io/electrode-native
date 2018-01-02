@@ -1,7 +1,7 @@
 // @flow
 
 import * as schemas from './schemas'
-import { Dependency } from 'ern-util'
+import { Dependency } from 'ern-core'
 import {
   exists,
   joiValidate,

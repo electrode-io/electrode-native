@@ -4,12 +4,10 @@ import {
   ApiGen
 } from 'ern-api-gen'
 import {
-  manifest
-} from 'ern-core'
-import {
+  manifest,
   Dependency,
-  Utils
-} from 'ern-util'
+  utils as coreUtils
+} from 'ern-core'
 import utils from '../lib/utils'
 
 exports.command = 'regen-api'
@@ -46,6 +44,6 @@ exports.handler = async function ({
 
     await ApiGen.regenerateCode({bridgeVersion, skipVersion})
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

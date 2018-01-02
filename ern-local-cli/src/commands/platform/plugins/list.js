@@ -2,11 +2,9 @@
 
 import {
   manifest,
-  Platform
+  Platform,
+  utils as coreUtils
 } from 'ern-core'
-import {
-  Utils
-} from 'ern-util'
 import utils from '../../../lib/utils'
 
 import chalk from 'chalk'
@@ -50,6 +48,6 @@ exports.handler = async function ({
     }
     log.info(table.toString())
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

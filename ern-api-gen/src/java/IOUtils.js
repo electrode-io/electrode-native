@@ -1,6 +1,6 @@
 import {
   shell
-} from 'ern-util'
+} from 'ern-core'
 import File from './File'
 
 export default ({

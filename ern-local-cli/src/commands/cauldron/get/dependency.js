@@ -2,9 +2,6 @@
 
 import {
   NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
-import {
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -40,6 +37,6 @@ exports.handler = async function ({
       log.info(dependency.toString())
     }
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

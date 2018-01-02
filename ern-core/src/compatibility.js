@@ -1,10 +1,8 @@
 // @flow
 
-import {
-  Dependency,
-  NativeApplicationDescriptor,
-  spin
-} from 'ern-util'
+import Dependency from './Dependency'
+import NativeApplicationDescriptor from './NativeApplicationDescriptor'
+import spin from './spin'
 import * as utils from './utils.js'
 import manifest from './Manifest.js'
 import MiniApp from './MiniApp.js'

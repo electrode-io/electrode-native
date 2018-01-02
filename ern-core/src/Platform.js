@@ -1,9 +1,7 @@
 // @flow
 
-import {
-    config,
-    shell
-} from 'ern-util'
+import config from './config'
+import shell from './shell'
 import {
   execSync
 } from 'child_process'

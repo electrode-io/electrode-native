@@ -4,9 +4,6 @@ import {
   Dependency,
   DependencyPath,
   NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
-import {
   utils as coreUtils,
   MiniApp
 } from 'ern-core'
@@ -212,6 +209,6 @@ exports.handler = async function ({
     { containerVersion })
     log.info(`Operations were succesfully performed for ${napDescriptor.toString()}`)
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

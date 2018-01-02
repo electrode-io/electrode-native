@@ -1,10 +1,8 @@
 // @flow
 
-import {
-  Dependency,
-  shell,
-  gitCli
-} from 'ern-util'
+import Dependency from './Dependency'
+import shell from './shell'
+import gitCli from './gitCli'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'

@@ -4,14 +4,11 @@ import {
   ApiGen
 } from 'ern-api-gen'
 import {
+  Dependency,
   manifest,
-  utils as core,
+  utils as coreUtils,
   ModuleTypes
 } from 'ern-core'
-import {
-  Dependency,
-  Utils
-} from 'ern-util'
 import utils from '../lib/utils'
 import inquirer from 'inquirer'
 
@@ -71,7 +68,7 @@ exports.handler = async function ({
 
     // Construct the package name
     if (!packageName) {
-      const defaultPackageName = core.getDefaultPackageNameForModule(apiName, ModuleTypes.API)
+      const defaultPackageName = coreUtils.getDefaultPackageNameForModule(apiName, ModuleTypes.API)
       packageName = await promptForPackageName(defaultPackageName)
     }
 
@@ -109,7 +106,7 @@ exports.handler = async function ({
     })
     log.info('Success!')
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }
 

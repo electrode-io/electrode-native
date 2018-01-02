@@ -2,9 +2,6 @@
 
 import {
   NativeApplicationDescriptor,
-  Utils
-} from 'ern-util'
-import {
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -36,6 +33,6 @@ exports.handler = async function ({
     const cauldron = await coreUtils.getCauldronInstance()
     await cauldron.removeNativeApp(NativeApplicationDescriptor.fromString(descriptor))
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

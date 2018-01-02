@@ -2,13 +2,11 @@
 
 import {
   nativeDependenciesLookup,
-  yarn
-} from 'ern-core'
-import {
+  yarn,
   shell,
   Dependency,
   DependencyPath
-} from 'ern-util'
+} from 'ern-core'
 import utils from '../../lib/utils'
 import tmp from 'tmp'
 import chalk from 'chalk'

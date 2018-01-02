@@ -1,11 +1,9 @@
 // @flow
 
-import {
-  Dependency,
-  NativeApplicationDescriptor,
-  fileUtils,
-  promptUtils
-} from 'ern-util'
+import Dependency from './Dependency'
+import NativeApplicationDescriptor from './NativeApplicationDescriptor'
+import * as fileUtils from './fileUtil'
+import * as promptUtils from './promptUtils'
 import _ from 'lodash'
 import type {
   CauldronCodePushMetadata

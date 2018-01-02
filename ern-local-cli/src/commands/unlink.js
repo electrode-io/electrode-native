@@ -1,11 +1,9 @@
 // @flow
 
 import {
-  MiniApp
+  MiniApp,
+  utils as coreUtils
 } from 'ern-core'
-import {
-  Utils
-} from 'ern-util'
 import utils from '../lib/utils'
 
 exports.command = 'unlink'
@@ -19,6 +17,6 @@ exports.handler = async function () {
   try {
     MiniApp.fromCurrentPath().unlink()
   } catch (e) {
-    Utils.logErrorAndExitProcess(e)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

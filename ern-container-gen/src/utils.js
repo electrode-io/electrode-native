@@ -6,13 +6,11 @@ import path from 'path'
 import {
   reactnative,
   yarn,
-  MiniApp
-} from 'ern-core'
-import {
+  MiniApp,
   Dependency,
   DependencyPath,
   shell
-} from 'ern-util'
+} from 'ern-core'
 
 export async function bundleMiniApps (
   miniapps: Array<MiniApp>,
