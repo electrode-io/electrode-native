@@ -4,7 +4,7 @@ import { generateMiniAppsComposite as _generateMiniAppsComposite } from './utils
 import _generateContainer from './generateContainer'
 import _IosGenerator from './generators/ios/IosGenerator'
 import _AndroidGenerator from './generators/android/AndroidGenerator'
-import _Publisher from './Publisher'
+import _Publisher from './publishers/Publisher'
 import _ContainerGeneratorConfig from './ContainerGeneratorConfig'
 
 export const AndroidGenerator = _AndroidGenerator

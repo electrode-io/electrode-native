@@ -1,8 +1,8 @@
 // @flow
-import type { Publisher } from './Publisher'
-import MavenPublisher from './MavenPublisher'
-import GithubPublisher from './GithubPublisher'
-import UnKnownPublisher from './UnKnownPublisher'
+import type { Publisher } from './publishers/Publisher'
+import MavenPublisher from './publishers/MavenPublisher'
+import GithubPublisher from './publishers/GithubPublisher'
+import UnKnownPublisher from './publishers/UnKnownPublisher'
 import {
   MavenUtils
 } from 'ern-core'
