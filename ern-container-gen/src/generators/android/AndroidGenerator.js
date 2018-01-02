@@ -12,8 +12,7 @@ import {
   gitCli
 } from 'ern-core'
 import {
-  bundleMiniApps,
-  capitalizeFirstLetter
+  bundleMiniApps
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
@@ -102,8 +101,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       mustacheView.android = {
         repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
-        namespace: this.namespace,
-        miniapps: mustacheView.miniApps
+        namespace: this.namespace
       }
 
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
@@ -220,19 +218,14 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       log.debug(`Creating miniapp activities`)
       for (const miniApp of miniApps) {
-        let tmpMiniAppView = {
-          miniAppName: miniApp.name,
-          pascalCaseMiniAppName: capitalizeFirstLetter(miniApp.name.replace(/-/g, ''))
-        }
-
-        let activityFileName = `${tmpMiniAppView.pascalCaseMiniAppName}Activity.java`
+        let activityFileName = `${miniApp.pascalCaseName}Activity.java`
 
         log.debug(`Creating ${activityFileName}`)
         const pathToMiniAppActivityMustacheTemplate = path.join(PATH_TO_TEMPLATES_DIR, 'MiniAppActivity.mustache')
         const pathToOutputActivityFile = path.join(paths.outDirectory, pathLibSrcMainJavaComWalmartlabsErnContainer, 'miniapps', activityFileName)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             pathToMiniAppActivityMustacheTemplate,
-            tmpMiniAppView,
+            miniApp,
             pathToOutputActivityFile)
       }
 

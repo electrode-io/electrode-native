@@ -5,9 +5,6 @@ import {
   shell,
   MiniApp
 } from 'ern-core'
-import {
-  capitalizeFirstLetter
-} from './utils.js'
 import _ from 'lodash'
 import semver from 'semver'
 import path from 'path'
@@ -62,15 +59,7 @@ export default async function generateContainer ({
   mustacheView = {
     nativeAppName,
     containerVersion,
-    miniApps: _.map(miniapps, miniapp => ({
-      name: miniapp.name,
-      scope: miniapp.scope,
-      version: miniapp.version,
-      unscopedName: miniapp.name.replace(/-/g, ''),
-      pascalCaseName: capitalizeFirstLetter(miniapp.name.replace(/-/g, '')),
-      localPath: miniapp.path,
-      packagePath: miniapp.packageDescriptor
-    }))
+    miniapps
   }
 
   mustacheView = addReactNativeVersionKeysToMustacheView(
