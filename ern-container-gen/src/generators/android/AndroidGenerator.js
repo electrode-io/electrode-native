@@ -3,7 +3,6 @@
 import {
   manifest,
   handleCopyDirective,
-  ContainerGeneratorConfig,
   MavenUtils,
   MiniApp,
   utils as coreUtils,
@@ -24,6 +23,7 @@ import type {
   ContainerGenerator,
   ContainerGeneratorPaths
 } from '../../FlowTypes'
+import ContainerGeneratorConfig from '../../ContainerGeneratorConfig'
 import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 
 const ROOT_DIR = process.cwd()

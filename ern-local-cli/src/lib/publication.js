@@ -4,7 +4,8 @@ import {
   generateContainer,
   generateMiniAppsComposite,
   IosGenerator,
-  AndroidGenerator
+  AndroidGenerator,
+  ContainerGeneratorConfig
 } from 'ern-container-gen'
 import {
   utils as coreUtils,
@@ -17,7 +18,6 @@ import {
   NativeApplicationDescriptor,
   Platform,
   spin,
-  ContainerGeneratorConfig,
   reactnative
 } from 'ern-core'
 import type {

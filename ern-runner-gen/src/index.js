@@ -3,10 +3,10 @@
 import {
   generateContainer,
   IosGenerator,
-  AndroidGenerator
+  AndroidGenerator,
+  ContainerGeneratorConfig
 } from 'ern-container-gen'
 import {
-  ContainerGeneratorConfig,
   Dependency,
   mustacheUtils,
   spin,

@@ -4,8 +4,6 @@ import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
 import _manifest from './Manifest'
 import _MavenUtils from './MavenUtils'
-import _Publisher from './Publisher'
-import _ContainerGeneratorConfig from './ContainerGeneratorConfig'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 import * as _ModuleTypes from './ModuleTypes'
@@ -51,8 +49,6 @@ export const reactnative = _reactnative
 export const dependencyLookup = _dependencyLookup
 export const utils = _utils
 export const MavenUtils = _MavenUtils
-export const Publisher = _Publisher
-export const ContainerGeneratorConfig = _ContainerGeneratorConfig
 export const ErnBinaryStore = _ErnBinaryStore
 export const IosUtil = _iosUtil
 export const CauldronHelper = _CauldronHelper
@@ -90,8 +86,6 @@ export default ({
   dependencyLookup: _dependencyLookup,
   utils: _utils,
   MavenUtils: _MavenUtils,
-  Publisher: _Publisher,
-  ContainerGeneratorConfig: _ContainerGeneratorConfig,
   ErnBinaryStore: _ErnBinaryStore,
   IosUtil: _iosUtil,
   CauldronHelper: _CauldronHelper,
