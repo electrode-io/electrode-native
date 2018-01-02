@@ -3,7 +3,6 @@
 import {
   manifest,
   handleCopyDirective,
-  ContainerGeneratorConfig,
   MiniApp,
   IosUtil,
   utils,
@@ -23,6 +22,7 @@ import type {
   ContainerGeneratorPaths
 } from '../../FlowTypes'
 import populateApiImplMustacheView from '../ApiImplMustacheUtil'
+import ContainerGeneratorConfig from '../../ContainerGeneratorConfig'
 
 const ROOT_DIR = process.cwd()
 

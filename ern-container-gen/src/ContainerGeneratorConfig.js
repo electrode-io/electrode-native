@@ -3,7 +3,9 @@ import type { Publisher } from './Publisher'
 import MavenPublisher from './MavenPublisher'
 import GithubPublisher from './GithubPublisher'
 import UnKnownPublisher from './UnKnownPublisher'
-import MavenUtils from './MavenUtils'
+import {
+  MavenUtils
+} from 'ern-core'
 
 /**
  * {
