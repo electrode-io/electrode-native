@@ -106,7 +106,7 @@ export class Manifest {
 
   async getPluginConfigPath (
     plugin: Dependency,
-    platformVersion: string = Platform.currentVersion) {
+    platformVersion: string) : Promise<?string> {
     let pluginConfigPath
     if (this._overrideManifest && this._manifestOverrideType === 'partial') {
       pluginConfigPath = await this._overrideManifest.getPluginConfigurationPath(plugin, platformVersion)
@@ -121,86 +121,121 @@ export class Manifest {
     return pluginConfigPath
   }
 
-  async getPluginConfig (
+  async isPluginConfigInManifest (
     plugin: Dependency,
-    projectName: string = 'ElectrodeContainer',
-    platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
-    await this.initOverrideManifest()
-    let result = {}
+    platformVersion: string) : Promise<boolean> {
+    const pluginConfigPath = await this.getPluginConfigPath(plugin, platformVersion)
+    return pluginConfigPath !== undefined
+  }
+
+  async getPluginConfigFromManifest (
+    plugin: Dependency,
+    platformVersion: string,
+    projectName: string) : Promise<Object> {
     let pluginConfigPath = await this.getPluginConfigPath(plugin, platformVersion)
-
-    if (pluginConfigPath) {
-      let configFile = await fs.readFileSync(path.join(pluginConfigPath, pluginConfigFileName), 'utf-8')
-      configFile = Mustache.render(configFile, { projectName })
-      result = JSON.parse(configFile)
-
-      // Add default value (convention) for Android subsection for missing fields
-      if (result.android) {
-        if (result.android.root === undefined) {
-          result.android.root = 'android'
-        }
-
-        result.android.pluginHook = {}
-        const matchedFiles =
-          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
-        if (matchedFiles && matchedFiles.length === 1) {
-          const pluginHookClass = path.basename(matchedFiles[0], '.java')
-          result.android.pluginHook.name = pluginHookClass
-          if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
-            result.android.pluginHook.configurable = true
-          }
-        }
-      }
-
-      if (result.ios) {
-        if (result.ios.root === undefined) {
-          result.ios.root = 'ios'
-        }
-
-        result.ios.pluginHook = {}
-        const matchedHeaderFiles =
-          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
-        const matchedSourceFiles =
-          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
-        if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
-          const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
-          result.ios.pluginHook.name = pluginHookClass
-          result.ios.pluginHook.configurable = true
-          result.ios.pluginHook.header = matchedHeaderFiles[0]
-          result.ios.pluginHook.source = matchedSourceFiles[0]
-        } else {
-          result.ios.pluginHook.configurable = false
-        }
-      }
-      result.path = pluginConfigPath
-    } else if (await isDependencyApi(plugin.scopedName)) {
-      log.debug(`API detected. Returning API default config`)
-      result = this.getApiPluginDefaultConfig(projectName)
-    } else if (await isDependencyApiImpl(plugin.scopedName)) {
-      log.debug(`APIImpl detected. Returning APIImpl default config`)
-      result = this.getApiImplPluginDefaultConfig(projectName)
-    } else {
-      throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.toString()}`)
+    if (!pluginConfigPath) {
+      throw new Error(`There is no configuration for ${plugin.name} plugin in Manifest matching platform version ${platformVersion}`)
     }
 
-    if (!result.origin) {
+    let result = {}
+    let configFile = await fs.readFileSync(path.join(pluginConfigPath, pluginConfigFileName), 'utf-8')
+    configFile = Mustache.render(configFile, { projectName })
+    result = JSON.parse(configFile)
+
+    // Add default value (convention) for Android subsection for missing fields
+    if (result.android) {
+      if (result.android.root === undefined) {
+        result.android.root = 'android'
+      }
+
+      result.android.pluginHook = {}
+      const matchedFiles =
+        shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
+      if (matchedFiles && matchedFiles.length === 1) {
+        const pluginHookClass = path.basename(matchedFiles[0], '.java')
+        result.android.pluginHook.name = pluginHookClass
+        if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
+          result.android.pluginHook.configurable = true
+        }
+      }
+    }
+
+    if (result.ios) {
+      if (result.ios.root === undefined) {
+        result.ios.root = 'ios'
+      }
+
+      result.ios.pluginHook = {}
+      const matchedHeaderFiles =
+        shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
+      const matchedSourceFiles =
+        shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
+      if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
+        const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
+        result.ios.pluginHook.name = pluginHookClass
+        result.ios.pluginHook.configurable = true
+        result.ios.pluginHook.header = matchedHeaderFiles[0]
+        result.ios.pluginHook.source = matchedSourceFiles[0]
+      } else {
+        result.ios.pluginHook.configurable = false
+      }
+    }
+    result.path = pluginConfigPath
+    return result
+  }
+
+  addOriginPropertyToConfigIfMissing (
+    plugin: Dependency,
+    config: Object) : Object {
+    if (!config.origin) {
       if (npmScopeModuleRe.test(plugin.scopedName)) {
-        result.origin = {
+        config.origin = {
           type: 'npm',
           scope: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[1]}`,
           name: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[2]}`,
           version: plugin.version
         }
       } else {
-        result.origin = {
+        config.origin = {
           type: 'npm',
           name: plugin.name,
           version: plugin.version
         }
       }
-    } else if (!result.origin.version) {
-      result.origin.version = plugin.version
     }
+    return config
+  }
+
+  addOriginVersionPropertyToConfigIfMissing (
+    plugin: Dependency,
+    config: Object) : Object {
+    if (config.origin && !config.origin.version) {
+      config.origin.version = plugin.version
+    }
+    return config
+  }
+
+  async getPluginConfig (
+    plugin: Dependency,
+    projectName: string = 'ElectrodeContainer',
+    platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
+    await this.initOverrideManifest()
+    let result
+    if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
+      log.debug('Third party plugin detected. Retrieving plugin configuration from manifest')
+      result = await this.getPluginConfigFromManifest(plugin, platformVersion, projectName)
+    } else if (await isDependencyApi(plugin.scopedName)) {
+      log.debug('API plugin detected. Retrieving API plugin default configuration')
+      result = this.getApiPluginDefaultConfig(projectName)
+    } else if (await isDependencyApiImpl(plugin.scopedName)) {
+      log.debug('APIImpl plugin detected. Retrieving APIImpl plugin default configuration')
+      result = this.getApiImplPluginDefaultConfig(projectName)
+    } else {
+      throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.name}`)
+    }
+
+    result = this.addOriginPropertyToConfigIfMissing(plugin, result)
+    result = this.addOriginVersionPropertyToConfigIfMissing(plugin, result)
 
     return result
   }
