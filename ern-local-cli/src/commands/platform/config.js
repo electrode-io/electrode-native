@@ -28,6 +28,7 @@ exports.handler = function ({
         : value
 
       ernConfig.setValue(key, valueToset)
+      log.info(`${key} set to ${ernConfig.getValue(key)}`)
     } else {
       log.info(`${key}: ${ernConfig.getValue(key)}`)
     }
