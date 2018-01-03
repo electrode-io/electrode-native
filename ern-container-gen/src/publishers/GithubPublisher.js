@@ -1,19 +1,18 @@
 // @flow
-import type { Publisher } from './Publisher'
+import type { Publisher } from '../FlowTypes'
 import {
   gitCli
 } from 'ern-core'
 
 export default class GithubPublisher implements Publisher {
   url: string
-  _name: string = 'github'
 
   constructor (url: string) {
     this.url = url
   }
 
   get name (): string {
-    return this._name
+    return 'github'
   }
 
   async publish ({commitMessage, tag}: { commitMessage: string, tag?: string } = {}) {

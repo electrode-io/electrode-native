@@ -1,5 +1,5 @@
 // @flow
-import type { Publisher } from './publishers/Publisher'
+import type { Publisher } from './FlowTypes'
 import MavenPublisher from './publishers/MavenPublisher'
 import GithubPublisher from './publishers/GithubPublisher'
 import UnKnownPublisher from './publishers/UnKnownPublisher'

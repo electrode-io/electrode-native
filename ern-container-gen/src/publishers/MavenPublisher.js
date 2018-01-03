@@ -1,5 +1,5 @@
 // @flow
-import type { Publisher } from './Publisher'
+import type { Publisher } from '../FlowTypes'
 import {
   MavenUtils,
   shell,
@@ -11,14 +11,13 @@ const {
 
 export default class MavenPublisher implements Publisher {
   _url: string
-  _name: string = 'maven'
 
   constructor ({url = MavenUtils.getDefaultMavenLocalDirectory()}: { url: string } = {}) {
     this._url = url
   }
 
   get name (): string {
-    return this._name
+    return 'maven'
   }
 
   get url (): string {

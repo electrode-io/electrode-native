@@ -1,11 +1,9 @@
 // @flow
-import type { Publisher } from './Publisher'
+import type { Publisher } from '../FlowTypes'
 
 export default class UnKnownPublisher implements Publisher {
-  _name = `UnKnownPublisher`
-
   get name (): string {
-    return this._name
+    return 'UnKnownPublisher'
   }
 
   get url (): string {

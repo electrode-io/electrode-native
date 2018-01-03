@@ -28,3 +28,10 @@ export interface ContainerGenerator {
   +name : string;
   +platform: string;
 }
+
+// @flow
+export interface Publisher {
+  publish(any): any;
+  + name: string;
+  + url: string
+}
