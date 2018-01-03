@@ -11,7 +11,8 @@ import {
 } from 'ern-core'
 import {
   bundleMiniApps,
-  publishContainerToGit
+  publishContainerToGit,
+  generatePluginsMustacheViews
 } from '../../utils.js'
 import fs from 'fs'
 import path from 'path'
@@ -164,35 +165,7 @@ export default class IosGenerator implements ContainerGenerator {
     plugins: Array<Dependency>,
     mustacheView: any) : Promise<*> {
     try {
-      let pluginsView = []
-      log.debug(`===iOS: building iOS plugin views`)
-      for (const plugin of plugins) {
-        if (plugin.name === 'react-native') {
-          continue
-        }
-        let pluginConfig = await manifest.getPluginConfig(plugin)
-        if (!pluginConfig.ios) {
-          log.warn(`${plugin.name} does not have any injection configuration for iOS`)
-          continue
-        }
-        let iosPluginHook = pluginConfig.ios.pluginHook
-        let containerHeader = pluginConfig.ios.containerPublicHeader
-        if (iosPluginHook.configurable) {
-          pluginsView.push({
-            'name': iosPluginHook.name,
-            'lcname': iosPluginHook.name.charAt(0).toLowerCase() + iosPluginHook.name.slice(1),
-            'configurable': iosPluginHook.configurable,
-            'containerHeader': containerHeader
-          })
-        } else {
-          pluginsView.push({
-            'configurable': iosPluginHook.configurable,
-            'containerHeader': containerHeader
-          })
-        }
-      }
-
-      mustacheView.plugins = pluginsView
+      mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'ios')
     } catch (e) {
       log.error('[buildiOSPluginsViews] Something went wrong: ' + e)
       throw e

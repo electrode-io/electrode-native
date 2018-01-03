@@ -12,7 +12,8 @@ import {
 } from 'ern-core'
 import {
   bundleMiniApps,
-  publishContainerToGit
+  publishContainerToGit,
+  generatePluginsMustacheViews
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
@@ -285,32 +286,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     plugins: Array<Dependency>,
     mustacheView: any) : Promise<*> {
     try {
-      let pluginsView = []
-
-      for (const plugin of plugins) {
-        if (plugin.name === 'react-native') {
-          continue
-        }
-        let pluginConfig = await manifest.getPluginConfig(plugin)
-        if (!pluginConfig.android) {
-          log.warn(`${plugin.name} does not have any injection configuration for Android`)
-          continue
-        }
-
-        let androidPluginHook = pluginConfig.android.pluginHook
-        if (androidPluginHook) {
-          log.debug(`Hooking ${plugin.scopedName} plugin`)
-          pluginsView.push({
-            'name': androidPluginHook.name,
-            'lcname': androidPluginHook.name.charAt(0).toLowerCase() +
-            androidPluginHook.name.slice(1),
-            'configurable': androidPluginHook.configurable
-          })
-        }
-      }
-
-      mustacheView.plugins = pluginsView
-
+      mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'android')
       mustacheView.pluginCompile = []
       const reactNativePlugin = _.find(plugins, p => p.name === 'react-native')
       if (reactNativePlugin) {
