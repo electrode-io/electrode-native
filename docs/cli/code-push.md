@@ -64,18 +64,25 @@ You should specify the custom application name in the `codePush` config object o
 
 4. Creating your CodePush deployment names
 
-Think about deployment names as different deployment environments. You can choose as many deployment names as you see fit, though most users usually stick with the basic `Staging` and `Production` deployment names. 
+Think about deployment names as different deployment environments. You can choose as many deployment names as you see fit, though most users usually stick with the basic deployment names `Staging` and `Production` that app center creates for you when you add your app.  
 You will get a different 'key' for each app name / deployment name combination.  
 The keys are stored in your native application, and based upon the key you select at runtime, your native application will only retrieve the releases from a specific deployment name.
 
-Refer to the App center documentation for more details on how to create deployment environments, but for illustration, here are the commands we would run for our `MyAwesomeApp` application, to create `Staging` and `Production` deployment names :
+Enter the command below to list the deployments associated with an app
 
 ```shell
-$ appcenter codepush deployment add -a MyAwesomeAppIos Staging
-$ appcenter codepush deployment add -a MyAwesomeAppIos Production
-$ appcenter codepush deployment add -a MyAwesomeAppAndroid Staging
-$ appcenter codepush deployment add -a MyAwesomeAppAndroid Production
+$ appcenter codepush deployment list -a <YourAppName>
 ```
+
+Refer to the App center documentation for more details on how to create deployment environments, but for illustration, here are the commands we would run for our `MyAwesomeApp` application, to create `Dev` deployment name :
+
+```shell
+$ appcenter codepush deployment add -a MyAwesomeAppIos Dev
+$ appcenter codepush deployment add -a MyAwesomeAppAndroid Dev
+```
+
+NOTE: If you get `not a valid application id` error, Execute `appcenter apps list` command to get the application id to pass in for the commads. 
+
 
 5. [Optional] Store the deployment names in your Cauldron
 
