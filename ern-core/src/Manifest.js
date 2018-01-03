@@ -135,40 +135,36 @@ export class Manifest {
           result.android.root = 'android'
         }
 
-        if (!result.android.pluginHook) {
-          result.android.pluginHook = {}
-          const matchedFiles =
-            shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
-          if (matchedFiles && matchedFiles.length === 1) {
-            const pluginHookClass = path.basename(matchedFiles[0], '.java')
-            result.android.pluginHook.name = pluginHookClass
-            if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
-              result.android.pluginHook.configurable = true
-            }
+        result.android.pluginHook = {}
+        const matchedFiles =
+          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.java$/) })
+        if (matchedFiles && matchedFiles.length === 1) {
+          const pluginHookClass = path.basename(matchedFiles[0], '.java')
+          result.android.pluginHook.name = pluginHookClass
+          if (fs.readFileSync(matchedFiles[0], 'utf-8').includes('public static class Config')) {
+            result.android.pluginHook.configurable = true
           }
         }
       }
+
       if (result.ios) {
         if (result.ios.root === undefined) {
           result.ios.root = 'ios'
         }
 
-        if (!result.ios.pluginHook) {
-          const matchedHeaderFiles =
-            shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
-          const matchedSourceFiles =
-            shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
-          if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
-            result.ios.pluginHook = {}
-            const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
-            result.ios.pluginHook.name = pluginHookClass
-            result.ios.pluginHook.configurable = true // TODO: CLAIRE change if it should be true on different types of plugins
-            result.ios.pluginHook.header = matchedHeaderFiles[0]
-            result.ios.pluginHook.source = matchedSourceFiles[0]
-          } else {
-            result.ios.pluginHook = {}
-            result.ios.pluginHook.configurable = false
-          }
+        result.ios.pluginHook = {}
+        const matchedHeaderFiles =
+          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.h$/) })
+        const matchedSourceFiles =
+          shell.find(pluginConfigPath).filter(function (file) { return file.match(/\.m$/) })
+        if (matchedHeaderFiles && matchedHeaderFiles.length === 1 && matchedSourceFiles && matchedSourceFiles.length === 1) {
+          const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
+          result.ios.pluginHook.name = pluginHookClass
+          result.ios.pluginHook.configurable = true
+          result.ios.pluginHook.header = matchedHeaderFiles[0]
+          result.ios.pluginHook.source = matchedSourceFiles[0]
+        } else {
+          result.ios.pluginHook.configurable = false
         }
       }
       result.path = pluginConfigPath
