@@ -104,15 +104,10 @@ export class Manifest {
     return _.map(manifestDeps, d => Dependency.fromString(d))
   }
 
-  // Tp be refactored !
-  async getPluginConfig (
+  async getPluginConfigPath (
     plugin: Dependency,
-    projectName: string = 'ElectrodeContainer',
-    platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
-    await this.initOverrideManifest()
-    let result = {}
+    platformVersion: string = Platform.currentVersion) {
     let pluginConfigPath
-
     if (this._overrideManifest && this._manifestOverrideType === 'partial') {
       pluginConfigPath = await this._overrideManifest.getPluginConfigurationPath(plugin, platformVersion)
       if (!pluginConfigPath) {
@@ -123,6 +118,16 @@ export class Manifest {
     } else {
       pluginConfigPath = await this._masterManifest.getPluginConfigurationPath(plugin, platformVersion)
     }
+    return pluginConfigPath
+  }
+
+  async getPluginConfig (
+    plugin: Dependency,
+    projectName: string = 'ElectrodeContainer',
+    platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
+    await this.initOverrideManifest()
+    let result = {}
+    let pluginConfigPath = await this.getPluginConfigPath(plugin, platformVersion)
 
     if (pluginConfigPath) {
       let configFile = await fs.readFileSync(path.join(pluginConfigPath, pluginConfigFileName), 'utf-8')
