@@ -3,14 +3,19 @@
 import fs from 'fs'
 import _ from 'lodash'
 import path from 'path'
+import tmp from 'tmp'
 import {
   reactnative,
   yarn,
   MiniApp,
   Dependency,
   DependencyPath,
-  shell
+  shell,
+  gitCli
 } from 'ern-core'
+import type {
+  Publisher
+} from './FlowTypes'
 
 export async function bundleMiniApps (
   miniapps: Array<MiniApp>,
@@ -345,6 +350,27 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
       log.debug(`Upgrading MiniApp ${miniappPackage.toString()}`)
       await yarn.upgrade(miniappPackage.path)
     }
+  }
+}
+
+export async function publishContainerToGit (
+  containerDir: string,
+  containerVersion: string,
+  gitPublisher: Publisher) {
+  try {
+    const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
+    shell.pushd(workingDir)
+    log.debug(`Cloning git repository to ${workingDir}`)
+    await gitCli().cloneAsync(gitPublisher.url, '.')
+    shell.rm('-rf', `${workingDir}/*`)
+    log.debug(`Copying container from ${containerDir} to ${workingDir}`)
+    shell.cp('-Rf', `${containerDir}/*`, workingDir)
+    log.debug(`Publisher container version ${containerVersion} to git repository url ${gitPublisher.url}`)
+    await gitPublisher.publish({
+      commitMessage: `Container v${containerVersion}`,
+      tag: `v${containerVersion}`})
+  } finally {
+    shell.popd()
   }
 }
 
