@@ -35,8 +35,8 @@ The name of the unsuffixed application should match the name you will use (or th
 Refer to the App Center documentation for more details on the command, but for illustration, here are the commands we would run based on our imaginary application name:
 
 ```shell
-$ appcenter apps create -p "React-Native" -o "ios" -d "MyAwesomeAppIos"
-$ appcenter apps create -p "React-Native" -o "android" -d "MyAwesomeAppAndroid"
+$ appcenter apps create -p "React-Native" -o "iOS" -d "MyAwesomeAppIos"
+$ appcenter apps create -p "React-Native" -o "Android" -d "MyAwesomeAppAndroid"
 ```
 
 3. [Optional] Set the application names in your Cauldron configuration
