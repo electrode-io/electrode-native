@@ -11,7 +11,8 @@ import {
   Dependency,
   DependencyPath,
   shell,
-  gitCli
+  gitCli,
+  manifest
 } from 'ern-core'
 import type {
   Publisher
@@ -372,6 +373,39 @@ export async function publishContainerToGit (
   } finally {
     shell.popd()
   }
+}
+
+export async function generatePluginsMustacheViews (
+  plugins: Array<Dependency>,
+  platform: string) {
+  let pluginsViews = []
+  log.debug('Generating plugins mustache views')
+  for (const plugin of plugins) {
+    if (plugin.name === 'react-native') {
+      continue
+    }
+    let pluginConfig = await manifest.getPluginConfig(plugin)
+    if (!pluginConfig[platform]) {
+      log.warn(`${plugin.name} does not have any injection configuration for ${platform} platform`)
+      continue
+    }
+    let pluginHook = pluginConfig[platform].pluginHook
+    let containerHeader = pluginConfig[platform].containerPublicHeader
+    if (pluginHook.configurable) {
+      pluginsViews.push({
+        'name': pluginHook.name,
+        'lcname': pluginHook.name.charAt(0).toLowerCase() + pluginHook.name.slice(1),
+        'configurable': pluginHook.configurable,
+        'containerHeader': containerHeader
+      })
+    } else {
+      pluginsViews.push({
+        'configurable': pluginHook.configurable,
+        'containerHeader': containerHeader
+      })
+    }
+  }
+  return pluginsViews
 }
 
 // =============================================================================
