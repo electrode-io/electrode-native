@@ -7,11 +7,11 @@ import {
   IosUtil,
   utils,
   Dependency,
-  shell,
-  gitCli
+  shell
 } from 'ern-core'
 import {
-  bundleMiniApps
+  bundleMiniApps,
+  publishContainerToGit
 } from '../../utils.js'
 import fs from 'fs'
 import path from 'path'
@@ -56,25 +56,6 @@ export default class IosGenerator implements ContainerGenerator {
     try {
       shell.cd(paths.outDirectory)
 
-      let gitHubPublisher
-      if (this._containerGeneratorConfig.shouldPublish()) {
-        // TODO: The logic below should be fixed to support multiple publishers. Only GitHub publisher is support for now for iOS
-        if ((gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher)) {
-          let repoUrl = gitHubPublisher.url
-          log.debug(`\n === Using github publisher
-          targetRepoUrl: ${repoUrl}
-          containerVersion: ${containerVersion}`)
-
-          log.debug(`First lets clone the repo so we can update it with the newly generated container`)
-          await gitCli().cloneAsync(repoUrl, '.')
-          shell.rm('-rf', path.join(paths.outDirectory, '*'))
-        } else {
-          log.warn('Looks like we are missing a GitHub publisher. Currently only GitHub publisher is supported.')
-        }
-      } else {
-        log.debug('Will not publish since there is no publisher provided to generator.')
-      }
-
       await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
 
       if (miniapps.length > 0) {
@@ -86,10 +67,10 @@ export default class IosGenerator implements ContainerGenerator {
         await this.copyRnpmAssets(miniapps, paths)
       }
 
+      const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
       if (gitHubPublisher) {
-        shell.cd(paths.outDirectory)
-        log.debug(`Publish generated container[v${containerVersion}] to git repo: ${gitHubPublisher.url}`)
-        await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
+        log.debug('Publishing container to git')
+        await publishContainerToGit(paths.outDirectory, containerVersion, gitHubPublisher)
       }
 
       log.debug(`Container generation completed!`)

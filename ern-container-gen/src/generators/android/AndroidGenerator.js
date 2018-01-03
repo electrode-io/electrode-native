@@ -8,11 +8,11 @@ import {
   utils as coreUtils,
   mustacheUtils,
   Dependency,
-  shell,
-  gitCli
+  shell
 } from 'ern-core'
 import {
-  bundleMiniApps
+  bundleMiniApps,
+  publishContainerToGit
 } from '../../utils.js'
 import _ from 'lodash'
 import fs from 'fs'
@@ -81,24 +81,6 @@ export default class AndroidGenerator implements ContainerGenerator {
         log.debug('Something does not look right, android should always have a default maven publisher.')
       }
 
-      const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
-      if (gitHubPublisher) {
-        try {
-          log.debug(`GitHub publisher found. Lets clone the repo before generating the container.`)
-          let repoUrl = gitHubPublisher.url
-          log.debug(`\n === Generated container will also be published to github
-            targetRepoUrl: ${repoUrl}
-            containerVersion: ${containerVersion}`)
-
-          log.debug(`First lets clone the repo so we can update it with the newly generated container`)
-          await gitCli().cloneAsync(repoUrl, '.')
-
-          shell.rm('-rf', `${paths.outDirectory}/*`)
-        } catch (e) {
-          coreUtils.logErrorAndExitProcess(new Error('Container generation Failed while cloning the repo. \n Check to see if the entered URL is correct'))
-        }
-      }
-
       mustacheView.android = {
         repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
         namespace: this.namespace
@@ -119,10 +101,11 @@ export default class AndroidGenerator implements ContainerGenerator {
         log.debug(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
         log.debug(`To ${mavenPublisher.url}`)
       }
+
+      const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
       if (gitHubPublisher) {
-        shell.cd(paths.outDirectory)
-        await gitHubPublisher.publish({commitMessage: `Container v${containerVersion}`, tag: `v${containerVersion}`})
-        log.debug(`Code pushed to ${gitHubPublisher.url}`)
+        log.debug('Publishing container to git')
+        await publishContainerToGit(paths.outDirectory, containerVersion, gitHubPublisher)
       }
     } catch (e) {
       log.error(`[generateContainer] Something went wrong. Aborting Container Generation`)
