@@ -11,7 +11,7 @@ describe('NativeApplicationDescriptor', () => {
       expect(() => new NativeApplicationDescriptor('MyNativeAppName')).to.not.throw()
     })
 
-    it('should instantiate a patial NativeApplicationDescriptor [name:platform]', () => {
+    it('should instantiate a partial NativeApplicationDescriptor [name:platform]', () => {
       expect(() => new NativeApplicationDescriptor('MyNativeAppName', 'android')).to.not.throw()
     })
 
@@ -21,6 +21,10 @@ describe('NativeApplicationDescriptor', () => {
 
     it('should throw if version is provided but not platform', () => {
       expect(() => new NativeApplicationDescriptor('MyNativeAppName', null, '1.2.3')).to.throw()
+    })
+
+    it('should throw if empty name is provided', () => {
+      expect(() => new NativeApplicationDescriptor('', 'android', '1.2.3')).to.throw()
     })
   })
 
