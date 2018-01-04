@@ -12,7 +12,8 @@ import {
   DependencyPath,
   shell,
   gitCli,
-  manifest
+  manifest,
+  handleCopyDirective
 } from 'ern-core'
 import type {
   Publisher
@@ -410,6 +411,34 @@ export async function generatePluginsMustacheViews (
     pluginsViews.push(pluginView)
   }
   return pluginsViews
+}
+
+export function copyRnpmAssets (
+  miniApps: Array<MiniApp>,
+  paths: any) {
+  // Case of local container for runner
+  if ((miniApps.length === 1) && (miniApps[0].path)) {
+    copyRnpmAssetsFromMiniAppPath(miniApps[0].path, paths.outDirectory)
+  } else {
+    for (const miniApp of miniApps) {
+      const miniAppPath = path.join(
+        paths.compositeMiniApp,
+        'node_modules',
+        miniApp.packageJson.name)
+      copyRnpmAssetsFromMiniAppPath(miniAppPath, paths.outDirectory)
+    }
+  }
+}
+
+function copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
+  if (packageJson.rnpm && packageJson.rnpm.assets) {
+    for (const assetDirectoryName of packageJson.rnpm.assets) {
+      const source = path.join(assetDirectoryName, '*')
+      const dest = path.join('lib', 'src', 'main', 'assets', assetDirectoryName.toLowerCase())
+      handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
+    }
+  }
 }
 
 // =============================================================================
