@@ -309,12 +309,62 @@ describe('utils.js', () => {
   })
 
   // ==========================================================
+  // askUserToChooseANapDescriptorFromCauldron
+  // ==========================================================
+  describe('askUserToChooseANapDescriptorFromCauldron', () => {
+    it('throw error if cannot not find any qualifying native application version in the Cauldron', async () => {
+      cauldronHelperStub.getAllNativeApps.resolves(emptyCauldronFixture.nativeApps)
+      let hasRethrowError = false
+      try{
+        await utils.askUserToChooseANapDescriptorFromCauldron()
+      } catch (err) {
+        if(err.message === 'Could not find any qualifying native application version in the Cauldron')
+        hasRethrowError = true
+      }
+      expect(hasRethrowError).to.be.true
+    })
+
+    it('return user selected NapDescriptor from Cauldron', async () => {
+      cauldronHelperStub.getAllNativeApps.resolves(basicCauldronFixture.nativeApps)
+      inquirerPromptStub.resolves({userSelectedCompleteNapDescriptor: fixtures.validCompleteNapDescriptor})
+      const result = await utils.askUserToChooseANapDescriptorFromCauldron()
+      expect(result).to.equal(fixtures.validCompleteNapDescriptor)
+    })
+
+  })
+
+  // ==========================================================
+  // askUserToChooseOneOrMoreNapDescriptorFromCauldron
+  // ==========================================================
+  describe('askUserToChooseOneOrMoreNapDescriptorFromCauldron', () => {
+    it('throw error if cannot not find any qualifying native application version in the Cauldron', async () => {
+      cauldronHelperStub.getAllNativeApps.resolves(emptyCauldronFixture.nativeApps)
+      let hasRethrowError = false
+      try{
+        await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron()
+      } catch (err) {
+        if(err.message === 'Could not find any qualifying native application version in the Cauldron')
+          hasRethrowError = true
+      }
+      expect(hasRethrowError).to.be.true
+    })
+
+    it('return user selected NapDescriptor from Cauldron', async () => {
+      cauldronHelperStub.getAllNativeApps.resolves(basicCauldronFixture.nativeApps)
+      inquirerPromptStub.resolves({userSelectedCompleteNapDescriptors: fixtures.validCompleteNapDescriptor})
+      const result = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron()
+      expect(result).to.equal(fixtures.validCompleteNapDescriptor)
+    })
+
+  })
+
+  // ==========================================================
   // performContainerStateUpdateInCauldron
   // ==========================================================
   describe('performContainerStateUpdateInCauldron', () => {
     const napDescriptor = NativeApplicationDescriptor.fromString('testapp:android:1.0.0')
 
-    it('should uppdate container version with provided one', async () => {
+    it('should update container version with provided one', async () => {
       await utils.performContainerStateUpdateInCauldron(() => Promise.resolve(true),
         napDescriptor, 'commit message', {containerVersion: '1.0.0'})
       sinon.assert.calledWith(cauldronHelperStub.updateContainerVersion,
