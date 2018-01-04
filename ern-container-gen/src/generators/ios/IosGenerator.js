@@ -187,28 +187,23 @@ export default class IosGenerator implements ContainerGenerator {
           continue
         }
         let iOSPluginHook = pluginConfig.ios.pluginHook
-        if (iOSPluginHook) {
-          if (iOSPluginHook.header) {
-            log.debug(`Adding ${iOSPluginHook.name}.h`)
-            if (!pluginConfig.path) {
-              throw new Error(`No plugin config path was set. Cannot proceed.`)
-            }
-            const pathToPluginHookHeader = path.join(pluginConfig.path, `${iOSPluginHook.name}.h`)
-            const pathToCopyPluginHookHeaderTo = path.join(paths.outDirectory, 'ElectrodeContainer')
-            shell.cp(pathToPluginHookHeader, pathToCopyPluginHookHeaderTo)
-            containerIosProject.addHeaderFile(`${iOSPluginHook.name}.h`, { public: true }, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
-            containerIosProject.addSourceFile(`${iOSPluginHook.name}.m`, null, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
+        if (iOSPluginHook && iOSPluginHook.name) {
+          if (!pluginConfig.path) {
+            throw new Error(`No plugin config path was set. Cannot proceed.`)
           }
 
-          if (iOSPluginHook.source) {
-            log.debug(`Adding ${iOSPluginHook.name}.m`)
-            if (!pluginConfig.path) {
-              throw new Error(`No plugin config path was set. Cannot proceed.`)
-            }
-            const pathToPluginHookSource = path.join(pluginConfig.path, `${iOSPluginHook.name}.m`)
-            const pathToCopyPluginHookSourceTo = path.join(paths.outDirectory, 'ElectrodeContainer')
-            shell.cp(pathToPluginHookSource, pathToCopyPluginHookSourceTo)
-          }
+          const pluginConfigPath = pluginConfig.path
+          const pathToCopyPluginHooksTo = path.join(paths.outDirectory, 'ElectrodeContainer')
+
+          log.debug(`Adding ${iOSPluginHook.name}.h`)
+          const pathToPluginHookHeader = path.join(pluginConfigPath, `${iOSPluginHook.name}.h`)
+          shell.cp(pathToPluginHookHeader, pathToCopyPluginHooksTo)
+          containerIosProject.addHeaderFile(`${iOSPluginHook.name}.h`, { public: true }, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
+
+          log.debug(`Adding ${iOSPluginHook.name}.m`)
+          const pathToPluginHookSource = path.join(pluginConfigPath, `${iOSPluginHook.name}.m`)
+          shell.cp(pathToPluginHookSource, pathToCopyPluginHooksTo)
+          containerIosProject.addSourceFile(`${iOSPluginHook.name}.m`, null, containerIosProject.findPBXGroupKey({name: 'ElectrodeContainer'}))
         }
       }
 

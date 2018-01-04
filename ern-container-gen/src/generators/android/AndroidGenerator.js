@@ -256,7 +256,6 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
-        log.debug(`Handling ${plugin.name}`)
         let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.android) {
           log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
@@ -266,7 +265,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         if (androidPluginHook) {
           log.debug(`Adding ${androidPluginHook.name}.java`)
           if (!pluginConfig.path) {
-            throw new Error(`No plugin config path was set. Cannot proceed.`)
+            throw new Error('No plugin config path was set. Cannot proceed.')
           }
           const pathToPluginConfigHook = path.join(pluginConfig.path, `${androidPluginHook.name}.java`)
           const pathToCopyPluginConfigHookTo =
@@ -275,7 +274,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
       }
 
-      log.debug(`[=== Done adding plugin hook classes ===]`)
+      log.debug('[=== Done adding plugin hook classes ===]')
     } catch (e) {
       log.error('[addAndroidPluginHookClasses] Something went wrong: ' + e)
       throw e

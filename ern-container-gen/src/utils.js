@@ -389,21 +389,18 @@ export async function generatePluginsMustacheViews (
       log.warn(`${plugin.name} does not have any injection configuration for ${platform} platform`)
       continue
     }
-    let pluginHook = pluginConfig[platform].pluginHook
-    let containerHeader = pluginConfig[platform].containerPublicHeader
-    if (pluginHook.configurable) {
-      pluginsViews.push({
-        'name': pluginHook.name,
-        'lcname': pluginHook.name.charAt(0).toLowerCase() + pluginHook.name.slice(1),
-        'configurable': pluginHook.configurable,
-        'containerHeader': containerHeader
-      })
-    } else {
-      pluginsViews.push({
-        'configurable': pluginHook.configurable,
-        'containerHeader': containerHeader
-      })
+    let pluginView = {}
+    const pluginHook = pluginConfig[platform].pluginHook
+    if (pluginHook) {
+      pluginView.name = pluginHook.name
+      pluginView.lcname = pluginHook.name && pluginHook.name.charAt(0).toLowerCase() + pluginHook.name.slice(1)
+      pluginView.configurable = pluginHook.configurable
     }
+    let containerHeader = pluginConfig[platform].containerPublicHeader
+    if (containerHeader) {
+      pluginView.containerHeader = containerHeader
+    }
+    pluginsViews.push(pluginView)
   }
   return pluginsViews
 }
