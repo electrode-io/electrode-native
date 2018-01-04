@@ -2,7 +2,6 @@
 
 import {
   manifest,
-  handleCopyDirective,
   MiniApp,
   IosUtil,
   utils,
@@ -12,7 +11,8 @@ import {
 import {
   bundleMiniApps,
   publishContainerToGit,
-  generatePluginsMustacheViews
+  generatePluginsMustacheViews,
+  copyRnpmAssets
 } from '../../utils.js'
 import fs from 'fs'
 import path from 'path'
@@ -65,7 +65,8 @@ export default class IosGenerator implements ContainerGenerator {
       }
 
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
-        await this.copyRnpmAssets(miniapps, paths)
+        await copyRnpmAssets(miniapps, paths)
+        this.addResources(paths.outDirectory)
       }
 
       const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
@@ -81,24 +82,6 @@ export default class IosGenerator implements ContainerGenerator {
     }
   }
 
-  async copyRnpmAssets (
-    miniApps: Array<MiniApp>,
-    paths: any) {
-    // Case of local container for runner
-    if ((miniApps.length === 1) && (miniApps[0].path)) {
-      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, paths.outDirectory)
-    } else {
-      for (const miniApp of miniApps) {
-        const miniAppPath = path.join(
-          paths.compositeMiniApp,
-          'node_modules',
-          miniApp.packageJson.name)
-        this.copyRnpmAssetsFromMiniAppPath(miniAppPath, paths.outDirectory)
-      }
-    }
-    return this.addResources(paths.outDirectory)
-  }
-
   async addResources (outputDirectory: any) {
     log.debug(`=== ios: adding resources for miniapps`)
     const containerProjectPath = path.join(outputDirectory, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
@@ -111,17 +94,6 @@ export default class IosGenerator implements ContainerGenerator {
     log.debug(`---iOS: Finished adding resource files. `)
 
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
-  }
-
-  copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
-    const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
-    if (packageJson.rnpm && packageJson.rnpm.assets) {
-      for (const assetDirectoryName of packageJson.rnpm.assets) {
-        const source = path.join(assetDirectoryName, '*')
-        const dest = path.join('ElectrodeContainer', 'Resources')
-        handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
-      }
-    }
   }
 
   async fillContainerHull (

@@ -13,10 +13,10 @@ import {
 import {
   bundleMiniApps,
   publishContainerToGit,
-  generatePluginsMustacheViews
+  generatePluginsMustacheViews,
+  copyRnpmAssets
 } from '../../utils.js'
 import _ from 'lodash'
-import fs from 'fs'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import type {
@@ -94,7 +94,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock}, jsApiImplDependencies)
 
       if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
-        this.copyRnpmAssets(miniapps, paths)
+        copyRnpmAssets(miniapps, paths)
       }
 
       if (mavenPublisher && !process.env['SYSTEM_TESTS']) {
@@ -217,34 +217,6 @@ export default class AndroidGenerator implements ContainerGenerator {
     } catch (e) {
       log.error('[fillContainerHull] Something went wrong: ' + e)
       throw e
-    }
-  }
-
-  copyRnpmAssets (
-    miniApps: Array<MiniApp>,
-    paths: any) {
-    // Case of local container for runner
-    if ((miniApps.length === 1) && (miniApps[0].path)) {
-      this.copyRnpmAssetsFromMiniAppPath(miniApps[0].path, paths.outDirectory)
-    } else {
-      for (const miniApp of miniApps) {
-        const miniAppPath = path.join(
-          paths.compositeMiniApp,
-          'node_modules',
-          miniApp.packageJson.name)
-        this.copyRnpmAssetsFromMiniAppPath(miniAppPath, paths.outDirectory)
-      }
-    }
-  }
-
-  copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
-    const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
-    if (packageJson.rnpm && packageJson.rnpm.assets) {
-      for (const assetDirectoryName of packageJson.rnpm.assets) {
-        const source = path.join(assetDirectoryName, '*')
-        const dest = path.join('lib', 'src', 'main', 'assets', assetDirectoryName.toLowerCase())
-        handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
-      }
     }
   }
 
