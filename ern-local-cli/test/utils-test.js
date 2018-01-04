@@ -31,6 +31,7 @@ const emptyCauldronFixture = utilFixtures.emptyCauldron
 const npmPackageExists = require('./fixtures/npmPkgExistsResponse.json')
 const npmPackageDoesNotExists = '' // 2> /dev/null suppresses stderr in yarn.info
 const sandbox = sinon.createSandbox()
+const topLevelContainerVersion = '1.2.3'
 
 let cauldronHelperStub
 let yarnInfoStub
@@ -44,7 +45,7 @@ describe('utils.js', () => {
     beforeTest()
     cauldronHelperStub = sandbox.createStubInstance(CauldronHelper)
     cauldronHelperStub.getContainerVersion.resolves('1.0.0')
-    cauldronHelperStub.getTopLevelContainerVersion.resolves('1.2.3')
+    cauldronHelperStub.getTopLevelContainerVersion.resolves(topLevelContainerVersion)
     cauldronHelperStub.getVersionsNames.resolves(['1.2.3', '1.2.4', '2.0.0', '3.0'])
     // Ora stubs
     const oraProto = Object.getPrototypeOf(ora())
@@ -169,6 +170,21 @@ describe('utils.js', () => {
         })
         assertNoErrorLoggedAndNoProcessExit()
       })
+    })
+
+    it('[isNewerContainerVersion] Should log error and exit process for container version is not new', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isNewerContainerVersion: {descriptor: 'myapp:android:17.14.0' , containerVersion : topLevelContainerVersion}
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+
+    it('[isNewerContainerVersion] Should not log error and nor exit process for newer container version', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isNewerContainerVersion: {descriptor : 'myapp:android:17.14.0' , containerVersion : '2.2.2'}
+      })
+      assertNoErrorLoggedAndNoProcessExit()
     })
 
     fixtures.incompleteNapDescriptors.forEach(descriptor => {
