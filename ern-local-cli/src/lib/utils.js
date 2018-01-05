@@ -13,12 +13,17 @@ import {
   DependencyPath,
   NativeApplicationDescriptor,
   spin,
-  shell
+  shell,
+  MavenUtils
 } from 'ern-core'
 import {
   generateRunnerProject,
   regenerateRunnerConfig
 } from 'ern-runner-gen'
+import {
+  MavenPublisher,
+  GitHubPublisher
+} from 'ern-container-gen'
 import {
   runLocalContainerGen,
   runCauldronContainerGen
@@ -36,6 +41,8 @@ import ora from 'ora'
 import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
+import tmp from 'tmp'
+import * as constants from './constants'
 const {
   runAndroidProject
 } = android
@@ -390,7 +397,12 @@ async function performContainerStateUpdateInCauldron (
 } : {
   containerVersion?: string
 } = {}) {
+  if (!napDescriptor.platform) {
+    throw new Error(`napDescriptor (${napDescriptor.toString()}) does not contain a platform`)
+  }
+
   try {
+    const platform = napDescriptor.platform
     var cauldron = await coreUtils.getCauldronInstance()
 
     let cauldronContainerVersion
@@ -412,12 +424,46 @@ async function performContainerStateUpdateInCauldron (
     // Perform the custom container state update
     await stateUpdateFunc()
 
+    const compositeMiniAppDir = tmp.dirSync({ unsafeCleanup: true }).name
+
     // Run container generator
+    const outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform)
     await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
       runCauldronContainerGen(
-        napDescriptor,
-        cauldronContainerVersion,
-        { publish: true }))
+        napDescriptor, {
+          outDir,
+          compositeMiniAppDir
+        }))
+
+    // Publish container
+    const containerGenConfig = await cauldron.getContainerGeneratorConfig(napDescriptor)
+    const publishersFromCauldron = containerGenConfig && containerGenConfig.publishers
+    if (publishersFromCauldron) {
+      for (const publisherFromCauldron of publishersFromCauldron) {
+        switch (publisherFromCauldron.name) {
+          case 'github':
+            await new GitHubPublisher().publish({
+              containerPath: outDir,
+              containerVersion: cauldronContainerVersion,
+              url: publisherFromCauldron.url
+            })
+            break
+          case 'maven':
+            await new MavenPublisher().publish({
+              containerPath: outDir,
+              containerVersion: cauldronContainerVersion,
+              url: publisherFromCauldron.url,
+              extra: {
+                artifactId: `${napDescriptor.name}-ern-container`,
+                groupId: 'com.walmartlabs.ern'
+              }
+            })
+            break
+        }
+      }
+      const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
+      await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
+    }
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
@@ -518,11 +564,26 @@ async function runMiniApp (platform: 'android' | 'ios', {
     }
   }
 
+  const outDir = path.join(Platform.rootDirectory, 'containergen', platform)
   await generateContainerForRunner(platform, {
     napDescriptor: napDescriptor || undefined,
     dependenciesObjs,
-    miniAppsPaths
+    miniAppsPaths,
+    outDir
   })
+
+  if (platform === 'android') {
+    const mavenPublisher = new MavenPublisher()
+    await mavenPublisher.publish({
+      containerPath: outDir,
+      containerVersion: '1.0.0',
+      url: MavenUtils.getDefaultMavenLocalDirectory(),
+      extra: {
+        artifactId: 'runner-ern-container',
+        groupId: 'com.walmartlabs.ern'
+      }
+    })
+  }
 
   const pathToRunner = path.join(cwd, platform)
 
@@ -552,27 +613,25 @@ async function generateContainerForRunner (
   platform: 'android' | 'ios', {
     napDescriptor,
     dependenciesObjs = [],
-    miniAppsPaths = []
+    miniAppsPaths = [],
+    outDir
   } : {
     napDescriptor?: NativeApplicationDescriptor,
     dependenciesObjs: Array<Dependency>,
-    miniAppsPaths: Array<DependencyPath>
+    miniAppsPaths: Array<DependencyPath>,
+    outDir: string
   } = {}) {
   if (napDescriptor) {
-    await runCauldronContainerGen(
-      napDescriptor,
-      '1.0.0', {
-        publish: false,
-        containerName: 'runner'
-      })
+    await runCauldronContainerGen(napDescriptor, {
+      outDir
+    })
   } else {
-    await spin('Generating Container locally', runLocalContainerGen(
-      miniAppsPaths,
-      platform, {
-        containerVersion: '1.0.0',
-        nativeAppName: 'runner',
-        extraNativeDependencies: dependenciesObjs
-      }))
+    await runLocalContainerGen(
+    miniAppsPaths,
+    platform, {
+      outDir,
+      extraNativeDependencies: dependenciesObjs
+    })
   }
 }
 

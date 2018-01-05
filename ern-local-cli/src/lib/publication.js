@@ -1,11 +1,10 @@
 // @flow
 
 import {
-  generateContainer,
   generateMiniAppsComposite,
   IosGenerator,
   AndroidGenerator,
-  ContainerGeneratorConfig
+  ContainerGenerator
 } from 'ern-container-gen'
 import {
   utils as coreUtils,
@@ -32,19 +31,6 @@ import fs from 'fs'
 import shell from 'shelljs'
 import * as constants from './constants'
 
-function createContainerGenerator (config: ContainerGeneratorConfig) {
-  switch (config.platform) {
-    case 'android':
-      log.debug('Creating an AndroidGenerator')
-      return new AndroidGenerator({containerGeneratorConfig: config})
-    case 'ios':
-      log.debug('Creating an IOSGenerator')
-      return new IosGenerator(config)
-    default:
-      throw new Error(`No Container Generator exists for ${config.platform} platform`)
-  }
-}
-
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
 // For example, the following miniapp strings are all valid
@@ -54,34 +40,15 @@ function createContainerGenerator (config: ContainerGeneratorConfig) {
 export async function runLocalContainerGen (
 miniappPackagesPaths: Array<DependencyPath>,
 platform: 'android' | 'ios', {
-  containerVersion = '1.0.0',
-  nativeAppName = 'local',
-  publicationUrl,
   outDir = `${Platform.rootDirectory}/containergen`,
   extraNativeDependencies = []
 }: {
-  containerVersion?: string,
-  nativeAppName?: string,
-  publicationUrl?: string,
   outDir?: string,
   extraNativeDependencies: Array<Dependency>
 } = {}) {
   try {
     const nativeDependenciesStrings: Set <string> = new Set()
     let miniapps: Array<MiniApp> = []
-    let config
-
-    if (publicationUrl) {
-      config = platform === 'android' ? {
-        publishers: [{
-          name: 'maven',
-          url: publicationUrl
-        }]
-      } : {
-        publishers: [{name: 'github', url: publicationUrl}]}
-    }
-    let containerGeneratorConfig = new ContainerGeneratorConfig(platform, config)
-    log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
 
     for (const miniappPackagePath of miniappPackagesPaths) {
       log.debug(`Retrieving ${miniappPackagePath.toString()}`)
@@ -116,35 +83,37 @@ platform: 'android' | 'ios', {
       throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
     }
 
-    await spin(
-      platform === 'android'
-      ? 'Creating local Container and publishing AAR to maven local'
-      : 'Creating local Container'
-      , generateContainer({
-        containerVersion,
-        nativeAppName,
-        generator: createContainerGenerator(containerGeneratorConfig),
-        plugins: nativeDependencies,
-        miniapps,
-        workingDirectory: outDir
-      }))
+    const generator = getGeneratorForPlatform(platform)
+
+    await spin('Generating Container', generator.generate({
+      miniApps: miniapps,
+      outDir,
+      plugins: nativeDependencies,
+      pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
+      compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name
+    }))
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
     throw e
   }
 }
 
+function getGeneratorForPlatform (platform: string) : ContainerGenerator {
+  switch (platform) {
+    case 'android': return new AndroidGenerator()
+    case 'ios': return new IosGenerator()
+    default: throw new Error(`Unsupported platform : ${platform}`)
+  }
+}
+
 // Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronContainerGen (
-napDescriptor: NativeApplicationDescriptor,
-version: string, {
-  publish,
-  outDir = `${Platform.rootDirectory}/containergen`,
-  containerName
+napDescriptor: NativeApplicationDescriptor, {
+  outDir,
+  compositeMiniAppDir
 }: {
-  publish?: boolean,
   outDir?: string,
-  containerName?: string
+  compositeMiniAppDir?: string
 } = {}) {
   try {
     const cauldron = await coreUtils.getCauldronInstance()
@@ -152,45 +121,35 @@ version: string, {
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
 
-    // Retrieve generator configuration (which for now only contains publication URL config)
-    // only if caller of this method wants to publish the generated container
-    let config
-    if (publish) {
-      config = await cauldron.getConfig(napDescriptor)
-      log.debug(`Cauldron config: ${config ? JSON.stringify(config.containerGenerator) : 'undefined'}`)
-    } else {
-      log.info('Container publication is disabled. Will generate the container locally.')
-    }
-
     if (!napDescriptor.platform) {
       throw new Error(`napDescriptor (${napDescriptor.toString()}) does not contain a platform`)
     }
 
-    let containerGeneratorConfig = new ContainerGeneratorConfig(napDescriptor.platform, config ? config.containerGenerator : undefined)
-    log.debug(`containerGeneratorConfig is generated: ${JSON.stringify(containerGeneratorConfig)}`)
+    if (!compositeMiniAppDir) {
+      compositeMiniAppDir = tmp.dirSync({ unsafeCleanup: true }).name
+    }
+
+    const platform = napDescriptor.platform
+    const containerGeneratorConfig = await cauldron.getContainerGeneratorConfig(napDescriptor)
 
     const miniAppsInstances = []
     for (const miniapp of miniapps) {
       miniAppsInstances.push(await MiniApp.fromPackagePath(miniapp.path))
     }
 
-    const paths = await spin(
+    const generator = getGeneratorForPlatform(platform)
+
+    await spin(
       `Creating Container for ${napDescriptor.toString()} from Cauldron`,
-      generateContainer({
-        containerVersion: version,
-        nativeAppName: containerName || napDescriptor.name,
-        generator: createContainerGenerator(containerGeneratorConfig),
+      generator.generate({
+        miniApps: miniAppsInstances,
+        outDir: outDir || path.join(Platform.rootDirectory, 'containergen', 'out', platform),
         plugins,
-        miniapps: miniAppsInstances,
-        workingDirectory: outDir,
+        ignoreRnpmAssets: containerGeneratorConfig && containerGeneratorConfig.ignoreRnpmAssets,
+        pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
+        compositeMiniAppDir,
         pathToYarnLock: pathToYarnLock || undefined
       }))
-
-    // Only update yarn lock if container is getting published
-    if (publish) {
-      const pathToNewYarnLock = path.join(paths.compositeMiniApp, 'yarn.lock')
-      await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
-    }
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e

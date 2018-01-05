@@ -3,8 +3,6 @@
 import {
   manifest,
   handleCopyDirective,
-  MavenUtils,
-  MiniApp,
   utils as coreUtils,
   mustacheUtils,
   Dependency,
@@ -12,40 +10,26 @@ import {
 } from 'ern-core'
 import {
   bundleMiniApps,
-  publishContainerToGit,
   generatePluginsMustacheViews,
-  copyRnpmAssets
+  copyRnpmAssets,
+  injectReactNativeVersionKeysInObject,
+  sortDependenciesByName
 } from '../../utils.js'
 import _ from 'lodash'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
+import fs from 'fs'
 import type {
   ContainerGenerator,
-  ContainerGeneratorPaths
+  ContainerGeneratorConfig
 } from '../../FlowTypes'
-import ContainerGeneratorConfig from '../../ContainerGeneratorConfig'
 import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 
 const ROOT_DIR = process.cwd()
-const DEFAULT_NAMESPACE = 'com.walmartlabs.ern'
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 
 export default class AndroidGenerator implements ContainerGenerator {
-  _containerGeneratorConfig : ContainerGeneratorConfig
-  _namespace : string
-
-  constructor ({
-    containerGeneratorConfig,
-    namespace = DEFAULT_NAMESPACE
-   } : {
-    containerGeneratorConfig: ContainerGeneratorConfig,
-    namespace?: string
-   } = {}) {
-    this._containerGeneratorConfig = containerGeneratorConfig
-    this._namespace = namespace
-  }
-
   get name () : string {
     return 'AndroidGenerator'
   }
@@ -54,59 +38,47 @@ export default class AndroidGenerator implements ContainerGenerator {
     return 'android'
   }
 
-  get namespace () : string {
-    return this._namespace
+  prepareDirectories (config: ContainerGeneratorConfig) {
+    if (!fs.existsSync(config.outDir)) {
+      shell.mkdir('-p', config.outDir)
+    } else {
+      shell.rm('-rf', path.join(config.outDir, '*'))
+    }
+
+    if (!fs.existsSync(config.compositeMiniAppDir)) {
+      shell.mkdir('-p', config.compositeMiniAppDir)
+    } else {
+      shell.rm('-rf', path.join(config.compositeMiniAppDir, '*'))
+    }
+
+    if (!fs.existsSync(config.pluginsDownloadDir)) {
+      shell.mkdir('-p', config.pluginsDownloadDir)
+    } else {
+      shell.rm('-rf', path.join(config.pluginsDownloadDir, '*'))
+    }
   }
 
-  async generateContainer (
-    containerVersion: string,
-    nativeAppName: string,
-    plugins: Array<Dependency>,
-    miniapps: Array<MiniApp>,
-    paths: ContainerGeneratorPaths,
-    mustacheView: any, {
-      pathToYarnLock
-    } : {
-      pathToYarnLock?: string
-    } = {}) {
+  async generate (config: ContainerGeneratorConfig) : Promise<void> {
     try {
-      shell.cd(paths.outDirectory)
+      this.prepareDirectories(config)
+      config.plugins = sortDependenciesByName(config.plugins)
 
-      const mavenPublisher = this._containerGeneratorConfig.firstAvailableMavenPublisher
-      if (this._containerGeneratorConfig.shouldPublish() && mavenPublisher) {
-        log.debug(`Container will be published to ${mavenPublisher.url}`)
-        if (MavenUtils.isLocalMavenRepo(mavenPublisher.url)) {
-          MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
-        }
-      } else {
-        log.debug('Something does not look right, android should always have a default maven publisher.')
-      }
+      shell.cd(config.outDir)
 
-      mustacheView.android = {
-        repository: mavenPublisher ? MavenUtils.targetRepositoryGradleStatement(mavenPublisher.url) : undefined,
-        namespace: this.namespace
-      }
+      await this.fillContainerHull(config)
 
-      await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
+      const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(config.plugins)
 
-      const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(plugins)
+      await bundleMiniApps(
+        config.miniApps,
+        config.compositeMiniAppDir,
+        config.outDir,
+        'android',
+        { pathToYarnLock: config.pathToYarnLock },
+        jsApiImplDependencies)
 
-      await bundleMiniApps(miniapps, paths, 'android', {pathToYarnLock}, jsApiImplDependencies)
-
-      if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
-        copyRnpmAssets(miniapps, paths)
-      }
-
-      if (mavenPublisher && !process.env['SYSTEM_TESTS']) {
-        await mavenPublisher.publish({workingDir: paths.outDirectory, moduleName: `lib`})
-        log.debug(`Published com.walmartlabs.ern:${nativeAppName}-ern-container:${containerVersion}`)
-        log.debug(`To ${mavenPublisher.url}`)
-      }
-
-      const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
-      if (gitHubPublisher) {
-        log.debug('Publishing container to git')
-        await publishContainerToGit(paths.outDirectory, containerVersion, gitHubPublisher)
+      if (!config.ignoreRnpmAssets) {
+        copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir)
       }
     } catch (e) {
       log.error(`[generateContainer] Something went wrong. Aborting Container Generation`)
@@ -114,11 +86,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
   }
 
-  async fillContainerHull (
-    plugins: Array<Dependency>,
-    miniApps: Array<MiniApp>,
-    paths: any,
-    mustacheView: any) : Promise<*> {
+  async fillContainerHull (config: ContainerGeneratorConfig) : Promise<void> {
     try {
       log.debug(`[=== Starting container hull filling ===]`)
 
@@ -126,12 +94,21 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       const copyFromPath = path.join(PATH_TO_HULL_DIR, '{.*,*}')
 
-      shell.cp('-R', copyFromPath, paths.outDirectory)
+      shell.cp('-R', copyFromPath, config.outDir)
 
-      await this.buildAndroidPluginsViews(plugins, mustacheView)
-      await this.addAndroidPluginHookClasses(plugins, paths)
+      const reactNativePlugin = _.find(config.plugins, p => p.name === 'react-native')
+      if (!reactNativePlugin) {
+        throw new Error('react-native was not found in plugins list !')
+      }
 
-      for (const plugin of plugins) {
+      const mustacheView = {}
+      injectReactNativeVersionKeysInObject(mustacheView, reactNativePlugin.version)
+      mustacheView.miniApps = config.miniApps
+
+      await this.buildAndroidPluginsViews(config.plugins, mustacheView)
+      await this.addAndroidPluginHookClasses(config.plugins, config.outDir)
+
+      for (const plugin of config.plugins) {
         if (await coreUtils.isDependencyJsApiImpl(plugin.name)) {
           log.debug('JS api implementation identified, skipping fill hull.')
           continue
@@ -145,7 +122,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           continue
         }
 
-        shell.cd(paths.pluginsDownloadDirectory)
+        shell.cd(config.pluginsDownloadDir)
         pluginSourcePath = await coreUtils.downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
           throw new Error(`Was not able to download ${plugin.name}`)
@@ -161,12 +138,12 @@ export default class AndroidGenerator implements ContainerGenerator {
         const relPathToPluginSource = pluginConfig.android.moduleName
           ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
           : path.join('src', 'main', 'java')
-        const absPathToCopyPluginSourceTo = path.join(paths.outDirectory, 'lib', 'src', 'main')
+        const absPathToCopyPluginSourceTo = path.join(config.outDir, 'lib', 'src', 'main')
         shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
 
         if (pluginConfig.android) {
           if (pluginConfig.android.copy) {
-            handleCopyDirective(pluginSourcePath, paths.outDirectory, pluginConfig.android.copy)
+            handleCopyDirective(pluginSourcePath, config.outDir, pluginConfig.android.copy)
           }
 
           if (pluginConfig.android.dependencies) {
@@ -181,7 +158,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       }
 
       log.debug(`Patching hull`)
-      const files = readDir(paths.outDirectory, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
+      const files = readDir(config.outDir, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
       const pathLibSrcMain = path.join('lib', 'src', 'main')
       const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
       const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java', 'com')
@@ -196,17 +173,17 @@ export default class AndroidGenerator implements ContainerGenerator {
           continue
         }
         log.debug(`Mustaching ${file}`)
-        const pathToFile = path.join(paths.outDirectory, file)
+        const pathToFile = path.join(config.outDir, file)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(pathToFile, mustacheView, pathToFile)
       }
 
       log.debug(`Creating miniapp activities`)
-      for (const miniApp of miniApps) {
+      for (const miniApp of config.miniApps) {
         let activityFileName = `${miniApp.pascalCaseName}Activity.java`
 
         log.debug(`Creating ${activityFileName}`)
         const pathToMiniAppActivityMustacheTemplate = path.join(PATH_TO_TEMPLATES_DIR, 'MiniAppActivity.mustache')
-        const pathToOutputActivityFile = path.join(paths.outDirectory, pathLibSrcMainJavaComWalmartlabsErnContainer, 'miniapps', activityFileName)
+        const pathToOutputActivityFile = path.join(config.outDir, pathLibSrcMainJavaComWalmartlabsErnContainer, 'miniapps', activityFileName)
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
             pathToMiniAppActivityMustacheTemplate,
             miniApp,
@@ -222,7 +199,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
   async addAndroidPluginHookClasses (
     plugins: Array<Dependency>,
-    paths: any) : Promise<*> {
+    outDir: string) : Promise<*> {
     try {
       log.debug(`[=== Adding plugin hook classes ===]`)
 
@@ -241,7 +218,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           }
           const pathToPluginConfigHook = path.join(pluginConfig.path, `${androidPluginHook.name}.java`)
           const pathToCopyPluginConfigHookTo =
-            path.join(paths.outDirectory, 'lib', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'container', 'plugins')
+            path.join(outDir, 'lib', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'container', 'plugins')
           shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo)
         }
       }

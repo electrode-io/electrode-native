@@ -200,8 +200,7 @@ exports.handler = async function ({
       } else if (napDescriptor && version) {
         await runCauldronContainerGen(
           napDescriptor,
-          version,
-          {publish: false, outDir})
+          {outDir})
       }
     }
   } catch (e) {

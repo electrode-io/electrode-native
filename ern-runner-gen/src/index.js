@@ -1,10 +1,8 @@
 // @flow
 
 import {
-  generateContainer,
   IosGenerator,
-  AndroidGenerator,
-  ContainerGeneratorConfig
+  AndroidGenerator
 } from 'ern-container-gen'
 import {
   Dependency,
@@ -14,6 +12,7 @@ import {
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
+import tmp from 'tmp'
 
 // ==============================================================================
 // Misc utitlities
@@ -28,7 +27,6 @@ function pascalCase (str: string) {
 // Main
 // =============================================================================
 
-const RUNNER_CONTAINER_VERSION = '1.0.0'
 const runnerHullPath = path.join(__dirname, '..', 'runner-hull')
 
 export async function generateRunnerProject (
@@ -180,18 +178,16 @@ export async function generateContainerForRunner ({
   platform: 'android' | 'ios',
   containerGenWorkingDir: string
 }) {
-  const generatorConfig = new ContainerGeneratorConfig(platform)
   const generator = (platform === 'android')
-    ? new AndroidGenerator({containerGeneratorConfig: generatorConfig})
-    : new IosGenerator(generatorConfig)
+    ? new AndroidGenerator()
+    : new IosGenerator()
 
-  await spin('Generating Runner Container project', generateContainer({
-    containerVersion: RUNNER_CONTAINER_VERSION,
-    nativeAppName: 'runner',
-    generator,
+  await spin('Generating Runner Container project', generator.generate({
     plugins,
-    miniapps: [miniapp],
-    workingDirectory: containerGenWorkingDir
+    miniApps: [miniapp],
+    outDir: containerGenWorkingDir,
+    pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
+    compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name
   }))
 }
 
