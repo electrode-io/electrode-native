@@ -23,8 +23,8 @@ import java.util.HashMap;
 
 public class MiniAppsConfig {
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{=<% %>=}}{{<%={{ }}=%>
-        {{#miniapps}}
-        put("{{name}}", {{pascalCaseName}}Activity.class);
-        {{/miniapps}}
+        {{#miniApps}}
+        put("{{normalizedName}}", {{pascalCaseName}}Activity.class);
+        {{/miniApps}}
     {{=<% %>=}}}};<%={{ }}=%>
 }

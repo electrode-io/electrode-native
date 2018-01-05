@@ -3,7 +3,7 @@
 import fs from 'fs'
 import _ from 'lodash'
 import path from 'path'
-import tmp from 'tmp'
+import semver from 'semver'
 import {
   reactnative,
   yarn,
@@ -11,22 +11,21 @@ import {
   Dependency,
   DependencyPath,
   shell,
-  gitCli,
   manifest,
   handleCopyDirective
 } from 'ern-core'
-import type {
-  Publisher
-} from './FlowTypes'
 
 export async function bundleMiniApps (
+  // The miniapps to be bundled
   miniapps: Array<MiniApp>,
-  paths: any,
+  compositeMiniAppDir: string,
+  outDir: string,
   platform: 'android' | 'ios', {
     pathToYarnLock
   } : {
     pathToYarnLock?: string
   } = {},
+  // JavaScript API implementations
   jsApiImplDependencies?: Array<Dependency>) {
   try {
     log.debug(`[=== Starting mini apps bundling ===]`)
@@ -46,17 +45,17 @@ export async function bundleMiniApps (
           miniAppsPaths.push(DependencyPath.fromString(miniapp.packageDescriptor))
         }
       }
-      await generateMiniAppsComposite(miniAppsPaths, paths.compositeMiniApp, {pathToYarnLock}, jsApiImplDependencies)
+      await generateMiniAppsComposite(miniAppsPaths, compositeMiniAppDir, {pathToYarnLock}, jsApiImplDependencies)
     }
 
     clearReactPackagerCache()
 
     if (platform === 'android') {
       log.debug(`Bundling miniapp(s) for Android`)
-      await reactNativeBundleAndroid(paths)
+      await reactNativeBundleAndroid(outDir)
     } else if (platform === 'ios') {
       log.debug(`Bundling miniapp(s) for iOS`)
-      await reactNativeBundleIos(paths)
+      await reactNativeBundleIos(outDir)
     }
 
     log.debug(`[=== Completed mini apps bundling ===]`)
@@ -66,8 +65,8 @@ export async function bundleMiniApps (
   }
 }
 
-export async function reactNativeBundleAndroid (paths: any) {
-  const libSrcMainPath = path.join(paths.outDirectory, 'lib', 'src', 'main')
+export async function reactNativeBundleAndroid (outDir: string) {
+  const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   const bundleOutput = path.join(libSrcMainPath, 'assets', 'index.android.bundle')
   const assetsDest = path.join(libSrcMainPath, 'res')
 
@@ -80,8 +79,8 @@ export async function reactNativeBundleAndroid (paths: any) {
   })
 }
 
-export async function reactNativeBundleIos (paths: any) {
-  const miniAppOutPath = path.join(paths.outDirectory, 'ElectrodeContainer', 'Libraries', 'MiniApp')
+export async function reactNativeBundleIos (outDir: string) {
+  const miniAppOutPath = path.join(outDir, 'ElectrodeContainer', 'Libraries', 'MiniApp')
   const bundleOutput = path.join(miniAppOutPath, 'MiniApp.jsbundle')
   const assetsDest = miniAppOutPath
 
@@ -355,27 +354,6 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
   }
 }
 
-export async function publishContainerToGit (
-  containerDir: string,
-  containerVersion: string,
-  gitPublisher: Publisher) {
-  try {
-    const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
-    shell.pushd(workingDir)
-    log.debug(`Cloning git repository to ${workingDir}`)
-    await gitCli().cloneAsync(gitPublisher.url, '.')
-    shell.rm('-rf', `${workingDir}/*`)
-    log.debug(`Copying container from ${containerDir} to ${workingDir}`)
-    shell.cp('-Rf', `${containerDir}/*`, workingDir)
-    log.debug(`Publisher container version ${containerVersion} to git repository url ${gitPublisher.url}`)
-    await gitPublisher.publish({
-      commitMessage: `Container v${containerVersion}`,
-      tag: `v${containerVersion}`})
-  } finally {
-    shell.popd()
-  }
-}
-
 export async function generatePluginsMustacheViews (
   plugins: Array<Dependency>,
   platform: string) {
@@ -415,17 +393,18 @@ export async function generatePluginsMustacheViews (
 
 export function copyRnpmAssets (
   miniApps: Array<MiniApp>,
-  paths: any) {
+  compositeMiniAppDir: string,
+  outDir: string) {
   // Case of local container for runner
   if ((miniApps.length === 1) && (miniApps[0].path)) {
-    copyRnpmAssetsFromMiniAppPath(miniApps[0].path, paths.outDirectory)
+    copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outDir)
   } else {
     for (const miniApp of miniApps) {
       const miniAppPath = path.join(
-        paths.compositeMiniApp,
+        compositeMiniAppDir,
         'node_modules',
         miniApp.packageJson.name)
-      copyRnpmAssetsFromMiniAppPath(miniAppPath, paths.outDirectory)
+      copyRnpmAssetsFromMiniAppPath(miniAppPath, outDir)
     }
   }
 }
@@ -439,6 +418,28 @@ function copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string)
       handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
     }
   }
+}
+
+export function injectReactNativeVersionKeysInObject (
+  object: Object,
+  reactNativeVersion: string) {
+  return Object.assign(object, {
+    reactNativeVersion,
+    RN_VERSION_GTE_49: semver.gte(reactNativeVersion, '0.49.0'),
+    RN_VERSION_LT_49: semver.lt(reactNativeVersion, '0.49.0')
+  })
+}
+
+export function sortDependenciesByName (dependencies: Array<Dependency>) {
+  return dependencies.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1
+    }
+    if (a.name > b.name) {
+      return 1
+    }
+    return 0
+  })
 }
 
 // =============================================================================

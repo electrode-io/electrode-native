@@ -2,7 +2,6 @@
 
 import {
   manifest,
-  MiniApp,
   IosUtil,
   utils,
   Dependency,
@@ -10,9 +9,10 @@ import {
 } from 'ern-core'
 import {
   bundleMiniApps,
-  publishContainerToGit,
   generatePluginsMustacheViews,
-  copyRnpmAssets
+  copyRnpmAssets,
+  injectReactNativeVersionKeysInObject,
+  sortDependenciesByName
 } from '../../utils.js'
 import fs from 'fs'
 import path from 'path'
@@ -20,21 +20,15 @@ import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
 import type {
   ContainerGenerator,
-  ContainerGeneratorPaths
+  ContainerGeneratorConfig
 } from '../../FlowTypes'
 import populateApiImplMustacheView from '../ApiImplMustacheUtil'
-import ContainerGeneratorConfig from '../../ContainerGeneratorConfig'
+import _ from 'lodash'
 
 const ROOT_DIR = process.cwd()
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 
 export default class IosGenerator implements ContainerGenerator {
-  _containerGeneratorConfig : ContainerGeneratorConfig
-
-  constructor (containerGeneratorConfig: ContainerGeneratorConfig) {
-    this._containerGeneratorConfig = containerGeneratorConfig
-  }
-
   get name () : string {
     return 'IosGenerator'
   }
@@ -43,36 +37,49 @@ export default class IosGenerator implements ContainerGenerator {
     return 'ios'
   }
 
-  async generateContainer (
-    containerVersion: string,
-    nativeAppName: string,
-    plugins: Array<Dependency>,
-    miniapps: Array<MiniApp>,
-    paths: ContainerGeneratorPaths,
-    mustacheView: any, {
-      pathToYarnLock
-    } : {
-      pathToYarnLock?: string
-    } = {}) : Promise<*> {
+  prepareDirectories (config: ContainerGeneratorConfig) {
+    if (!fs.existsSync(config.outDir)) {
+      shell.mkdir('-p', config.outDir)
+    } else {
+      shell.rm('-rf', path.join(config.outDir, '*'))
+    }
+
+    if (!fs.existsSync(config.compositeMiniAppDir)) {
+      shell.mkdir('-p', config.compositeMiniAppDir)
+    } else {
+      shell.rm('-rf', path.join(config.compositeMiniAppDir, '*'))
+    }
+
+    if (!fs.existsSync(config.pluginsDownloadDir)) {
+      shell.mkdir('-p', config.pluginsDownloadDir)
+    } else {
+      shell.rm('-rf', path.join(config.pluginsDownloadDir, '*'))
+    }
+  }
+
+  async generate (config: ContainerGeneratorConfig) : Promise<void> {
     try {
-      shell.cd(paths.outDirectory)
+      this.prepareDirectories(config)
+      config.plugins = sortDependenciesByName(config.plugins)
 
-      await this.fillContainerHull(plugins, miniapps, paths, mustacheView)
+      shell.cd(config.outDir)
 
-      if (miniapps.length > 0) {
-        const jsApiImplDependencies = await utils.extractJsApiImplementations(plugins)
-        await bundleMiniApps(miniapps, paths, 'ios', {pathToYarnLock}, jsApiImplDependencies)
+      await this.fillContainerHull(config)
+
+      if (config.miniApps.length > 0) {
+        const jsApiImplDependencies = await utils.extractJsApiImplementations(config.plugins)
+        await bundleMiniApps(
+          config.miniApps,
+          config.compositeMiniAppDir,
+          config.outDir,
+          'ios',
+          { pathToYarnLock: config.pathToYarnLock },
+          jsApiImplDependencies)
       }
 
-      if (!this._containerGeneratorConfig.ignoreRnpmAssets) {
-        await copyRnpmAssets(miniapps, paths)
-        this.addResources(paths.outDirectory)
-      }
-
-      const gitHubPublisher = this._containerGeneratorConfig.firstAvailableGitHubPublisher
-      if (gitHubPublisher) {
-        log.debug('Publishing container to git')
-        await publishContainerToGit(paths.outDirectory, containerVersion, gitHubPublisher)
+      if (!config.ignoreRnpmAssets) {
+        await copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir)
+        this.addResources(config.outDir)
       }
 
       log.debug(`Container generation completed!`)
@@ -96,28 +103,31 @@ export default class IosGenerator implements ContainerGenerator {
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
   }
 
-  async fillContainerHull (
-    plugins: Array<Dependency>,
-    miniApps: Array<MiniApp>,
-    paths: any,
-    mustacheView: any) : Promise<*> {
+  async fillContainerHull (config: ContainerGeneratorConfig) : Promise<void> {
     const pathSpec = {
       rootDir: ROOT_DIR,
       projectHullDir: path.join(PATH_TO_HULL_DIR, '{.*,*}'),
-      outputDir: paths.outDirectory,
-      pluginsDownloadDirectory: paths.pluginsDownloadDirectory
+      outputDir: config.outDir,
+      pluginsDownloadDirectory: config.pluginsDownloadDir
     }
 
     const projectSpec = {
       projectName: 'ElectrodeContainer'
     }
 
-    await this.buildiOSPluginsViews(plugins, mustacheView)
-    await this.buildApiImplPluginViews(plugins, mustacheView, pathSpec, projectSpec)
+    const reactNativePlugin = _.find(config.plugins, p => p.name === 'react-native')
+    if (!reactNativePlugin) {
+      throw new Error('react-native was not found in plugins list !')
+    }
 
-    const {iosProject, projectPath} = await IosUtil.fillProjectHull(pathSpec, projectSpec, plugins, mustacheView)
+    const mustacheView = {}
+    injectReactNativeVersionKeysInObject(mustacheView, reactNativePlugin.version)
+    await this.buildiOSPluginsViews(config.plugins, mustacheView)
+    await this.buildApiImplPluginViews(config.plugins, mustacheView, pathSpec, projectSpec)
 
-    await this.addiOSPluginHookClasses(iosProject, plugins, paths)
+    const {iosProject, projectPath} = await IosUtil.fillProjectHull(pathSpec, projectSpec, config.plugins, mustacheView)
+
+    await this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir)
     fs.writeFileSync(projectPath, iosProject.writeSync())
 
     log.debug(`[=== Completed container hull filling ===]`)
@@ -147,7 +157,7 @@ export default class IosGenerator implements ContainerGenerator {
   async addiOSPluginHookClasses (
     containerIosProject: any,
     plugins: Array<Dependency>,
-    paths: any) : Promise<*> {
+    outDir: string) : Promise<*> {
     try {
       log.debug(`[=== iOS: Adding plugin hook classes ===]`)
 
@@ -165,7 +175,7 @@ export default class IosGenerator implements ContainerGenerator {
           }
 
           const pluginConfigPath = pluginConfig.path
-          const pathToCopyPluginHooksTo = path.join(paths.outDirectory, 'ElectrodeContainer')
+          const pathToCopyPluginHooksTo = path.join(outDir, 'ElectrodeContainer')
 
           log.debug(`Adding ${iOSPluginHook.name}.h`)
           const pathToPluginHookHeader = path.join(pluginConfigPath, `${iOSPluginHook.name}.h`)

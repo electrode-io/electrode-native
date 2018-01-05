@@ -1,31 +1,9 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-    include '**/*.java'
-}
-
-artifacts {
-    archives androidSourcesJar
-}
 
 gradle.projectsEvaluated {
     def buildTypes = android.buildTypes.collect { type -> type.name }
     android.buildTypes.each {
         it.resValue 'string', "CODE_PUSH_APK_BUILD_TIME", Long.toString(System.currentTimeMillis())
-    }
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.version = '{{{containerVersion}}}'
-            pom.artifactId = '{{{nativeAppName}}}-ern-container'
-            pom.groupId = 'com.walmartlabs.ern'
-            {{{android.repository}}}
-        }
     }
 }
 

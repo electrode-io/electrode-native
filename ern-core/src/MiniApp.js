@@ -196,8 +196,12 @@ Are you sure this is a MiniApp ?`)
     return this.getUnscopedModuleName(this.packageJson.name)
   }
 
+  get normalizedName () : string {
+    return this.name.replace(/-/g, '')
+  }
+
   get pascalCaseName () : string {
-    return `${this.name.charAt(0).toUpperCase()}${this.name.slice(1)}`
+    return `${this.normalizedName.charAt(0).toUpperCase()}${this.normalizedName.slice(1)}`
   }
 
   get scope () : ?string {
