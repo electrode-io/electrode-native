@@ -4,7 +4,7 @@ import utils from '../lib/utils'
 import start from '../lib/start'
 import _ from 'lodash'
 import {
-  DependencyPath,
+  PackagePath,
   utils as coreUtils
 } from 'ern-core'
 
@@ -78,7 +78,7 @@ exports.handler = async function ({
       packageName,
       activityName,
       bundleId,
-      extraJsDependencies: _.map(extraJsDependencies, d => DependencyPath.fromString(d))
+      extraJsDependencies: _.map(extraJsDependencies, d => PackagePath.fromString(d))
     })
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

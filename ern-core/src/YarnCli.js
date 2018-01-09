@@ -4,7 +4,7 @@ import tmp from 'tmp'
 import shell from './shell'
 import path from 'path'
 import fs from 'fs'
-import DependencyPath from './DependencyPath'
+import PackagePath from './PackagePath'
 import { execp } from './childProcess'
 
 export default class YarnCli {
@@ -18,7 +18,7 @@ export default class YarnCli {
     return this._binaryPath ? this._binaryPath : `yarn`
   }
 
-  async add (dependencyPath: DependencyPath,
+  async add (dependencyPath: PackagePath,
   {
     dev,
     peer
@@ -38,11 +38,11 @@ export default class YarnCli {
     // directory contained within this package after yarn add is executed. Howver subsequent
     // yarn add of a different dependency just reintroduce the error on previous package
     // this is really weird]
-    if (dependencyPath.isAFileSystemPath) {
+    if (dependencyPath.isFilePath) {
       const tmpDirPath = tmp.dirSync({unsafeCleanup: true}).name
-      shell.cp('-R', `${/file:(.+)/.exec(dependencyPath.toString())[1]}/*`, tmpDirPath)
+      shell.cp('-R', `${dependencyPath.basePath}/*`, tmpDirPath)
       shell.rm('-rf', path.join(tmpDirPath, 'node_modules'))
-      dependencyPath = DependencyPath.fromFileSystemPath(tmpDirPath)
+      dependencyPath = PackagePath.fromString(`file:${tmpDirPath}`)
     }
 
     const cmd = `add ${dependencyPath.toString()} --ignore-engines --exact ${dev ? '--dev' : ''} ${peer ? '--peer' : ''}`
@@ -54,7 +54,7 @@ export default class YarnCli {
     return this.runYarnCommand(cmd)
   }
 
-  async upgrade (dependencyPath: DependencyPath) {
+  async upgrade (dependencyPath: PackagePath) {
     const cmd = `upgrade ${dependencyPath.toString()} --ignore-engines --exact`
     return this.runYarnCommand(cmd)
   }
@@ -64,15 +64,15 @@ export default class YarnCli {
     return this.runYarnCommand(cmd)
   }
 
-  async info (dependencyPath: DependencyPath, {
+  async info (dependencyPath: PackagePath, {
     field,
     json
   }: {
     field?: string,
     json?: boolean
   } = {}) {
-    if (dependencyPath.isAFileSystemPath) {
-      const packageJsonPath = path.join(dependencyPath.toString().substr(5), `package.json`)
+    if (dependencyPath.isFilePath) {
+      const packageJsonPath = path.join(dependencyPath.basePath, `package.json`)
       log.debug(`[runYarnCommand] Running info: returning ${packageJsonPath} `)
       return JSON.parse(fs.readFileSync(packageJsonPath, `utf-8`))
     } else {

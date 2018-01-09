@@ -2,7 +2,7 @@
 
 import {
   MiniApp,
-  DependencyPath,
+  PackagePath,
   NativeApplicationDescriptor,
   spin,
   utils as coreUtils
@@ -91,7 +91,7 @@ exports.handler = async function ({
 
   // Construct MiniApp objects array
     let miniAppsObjs = []
-    const miniAppsDependencyPaths = _.map(miniapps, m => DependencyPath.fromString(m))
+    const miniAppsDependencyPaths = _.map(miniapps, m => PackagePath.fromString(m))
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
       const m = await spin(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
         MiniApp.fromPackagePath(miniAppDependencyPath))

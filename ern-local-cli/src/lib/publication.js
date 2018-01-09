@@ -10,8 +10,7 @@ import {
   utils as coreUtils,
   compatibility,
   CodePushSdk,
-  Dependency,
-  DependencyPath,
+  PackagePath,
   config,
   MiniApp,
   NativeApplicationDescriptor,
@@ -38,13 +37,13 @@ import * as constants from './constants'
 // FROM GIT => git@github.com:username/MiniAppp.git
 // FROM FS  => file:/Users/username/Code/MiniApp
 export async function runLocalContainerGen (
-miniappPackagesPaths: Array<DependencyPath>,
+miniappPackagesPaths: Array<PackagePath>,
 platform: 'android' | 'ios', {
   outDir = `${Platform.rootDirectory}/containergen`,
   extraNativeDependencies = []
 }: {
   outDir?: string,
-  extraNativeDependencies: Array<Dependency>
+  extraNativeDependencies: Array<PackagePath>
 } = {}) {
   try {
     const nativeDependenciesStrings: Set <string> = new Set()
@@ -54,8 +53,8 @@ platform: 'android' | 'ios', {
       log.debug(`Retrieving ${miniappPackagePath.toString()}`)
 
       let currentMiniApp
-      if (miniappPackagePath.isAFileSystemPath) {
-        currentMiniApp = MiniApp.fromPath(miniappPackagePath.unprefixedPath)
+      if (miniappPackagePath.isFilePath) {
+        currentMiniApp = MiniApp.fromPath(miniappPackagePath.basePath)
       } else {
         currentMiniApp = await MiniApp.fromPackagePath(miniappPackagePath)
       }
@@ -70,13 +69,12 @@ platform: 'android' | 'ios', {
       supportedNativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
     }
 
-    let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => Dependency.fromString(d))
+    let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => PackagePath.fromString(d))
     nativeDependencies = nativeDependencies.concat(extraNativeDependencies)
 
     // Verify uniqueness of native dependencies (that all miniapps are using the same
     // native dependencies version). This is a requirement in order to generate a proper container
-    const nativeDependenciesWithoutVersion: Array<string> = _.map(
-      nativeDependencies, d => d.withoutVersion().toString())
+    const nativeDependenciesWithoutVersion: Array<string> = _.map(nativeDependencies, d => d.basePath)
     const duplicateNativeDependencies =
       _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
     if (duplicateNativeDependencies.length > 0) {
@@ -134,7 +132,7 @@ napDescriptor: NativeApplicationDescriptor, {
 
     const miniAppsInstances = []
     for (const miniapp of miniapps) {
-      miniAppsInstances.push(await MiniApp.fromPackagePath(miniapp.path))
+      miniAppsInstances.push(await MiniApp.fromPackagePath(miniapp))
     }
 
     const generator = getGeneratorForPlatform(platform)
@@ -275,7 +273,7 @@ export async function performCodePushPromote (
 export async function performCodePushOtaUpdate (
 napDescriptor: NativeApplicationDescriptor,
 deploymentName: string,
-miniApps: Array<Dependency>, {
+miniApps: Array<PackagePath>, {
   force = false,
   codePushIsMandatoryRelease = false,
   codePushRolloutPercentage,
@@ -304,7 +302,7 @@ miniApps: Array<Dependency>, {
 
     for (const miniApp of miniApps) {
       let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
-        MiniApp.fromPackagePath(new DependencyPath(miniApp.toString())))
+        MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
       let report = await compatibility.checkCompatibilityWithNativeApp(
             miniAppInstance,
             napDescriptor.name,
@@ -342,7 +340,7 @@ miniApps: Array<Dependency>, {
     }
 
     const miniAppsToBeCodePushed = _.unionBy(
-      miniApps, referenceMiniAppsToCodePush, x => x.withoutVersion().toString())
+      miniApps, referenceMiniAppsToCodePush, x => x.basePath)
 
     // If force or skipFinalConfirmation was not provided as option, we ask user for confirmation before proceeding
     // with code-push publication
@@ -354,7 +352,7 @@ miniApps: Array<Dependency>, {
       log.info('Getting things ready for CodePush publication')
     }
 
-    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => DependencyPath.fromString(m.toString()))
+    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => PackagePath.fromString(m.toString()))
     await spin('Generating composite miniapps',
        generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
 
@@ -460,7 +458,7 @@ export function getCodePushSdk () {
   return new CodePushSdk(codePushAccessKey)
 }
 
-async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<Dependency>) : Promise<boolean> {
+async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<PackagePath>) : Promise<boolean> {
   log.info(`The following MiniApp versions will get shipped in this CodePush OTA update :`)
   miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
 

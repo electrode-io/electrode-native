@@ -1,8 +1,7 @@
 // @flow
 
 import config from './config'
-import Dependency from './Dependency'
-import DependencyPath from './DependencyPath'
+import PackagePath from './PackagePath'
 import NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import spin from './spin'
 import tagOneLine from './tagoneline'
@@ -82,7 +81,7 @@ Are you sure this is a MiniApp ?`)
   // Create a MiniApp object given a valid package path to the MiniApp
   // package path can be any valid git or npm path to the MiniApp
   // package
-  static async fromPackagePath (packagePath: DependencyPath) {
+  static async fromPackagePath (packagePath: PackagePath) {
     const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
     shell.cd(tmpMiniAppPath)
     await yarn.add(packagePath)
@@ -115,13 +114,16 @@ Are you sure this is a MiniApp ?`)
 
       const reactNativeDependency = await spin(
         `Retrieving react-native version from Manifest`,
-        manifest.getNativeDependency(Dependency.fromString('react-native')))
+        manifest.getNativeDependency(PackagePath.fromString('react-native')))
 
       if (!reactNativeDependency) {
         throw new Error('react-native dependency is not defined in manifest. cannot infer version to be used')
       }
 
       const reactNativeVersion = reactNativeDependency.version
+      if (!reactNativeVersion) {
+        throw new Error('React Native version needs to be explicitely defined')
+      }
 
       await spin(
         `Creating ${miniAppName} project using react-native v${reactNativeVersion}. This might take a while.`,
@@ -228,13 +230,13 @@ Are you sure this is a MiniApp ?`)
   }
 
   async isPublishedToNpm () : Promise<boolean> {
-    return utils.isPublishedToNpm(DependencyPath.fromString(`${this.packageJson.name}@${this.packageJson.version}`))
+    return utils.isPublishedToNpm(PackagePath.fromString(`${this.packageJson.name}@${this.packageJson.version}`))
   }
 
   // Return all javascript (non native) dependencies currently used by the MiniApp
   // This method checks dependencies from the package.json of the MiniApp and
   // exclude native dependencies (plugins).
-  async getJsDependencies () : Promise<Array<Dependency>> {
+  async getJsDependencies () : Promise<Array<PackagePath>> {
     const nativeDependencies : NativeDependencies = await this.getNativeDependencies()
     const nativeDependenciesNames : Array<string> = _.map(nativeDependencies.all, d => d.name)
     const nativeAndJsDependencies = this.getPackageJsonDependencies()
@@ -242,19 +244,19 @@ Are you sure this is a MiniApp ?`)
     return _.filter(nativeAndJsDependencies, d => !nativeDependenciesNames.includes(d.name))
   }
 
-  getPackageJsonDependencies () : Array<Dependency> {
+  getPackageJsonDependencies () : Array<PackagePath> {
     return _.map(
       this.packageJson.dependencies, (val: string, key: string) =>
-        Dependency.fromString(`${key}@${val}`))
+      PackagePath.fromString(`${key}@${val}`))
   }
 
   async addDependency (
-    dependency: Dependency,
-    { dev, peer } : { dev?: boolean, peer?: boolean } = {}, addedDependencies: Array<string> = []) : Promise<?Dependency> {
+    dependency: PackagePath,
+    { dev, peer } : { dev?: boolean, peer?: boolean } = {}, addedDependencies: Array<string> = []) : Promise<?PackagePath> {
     if (dev || peer) {
       // Dependency is a devDependency or peerDependency
       // In that case we don't perform any checks at all (for now)
-      const devDependencyPath = DependencyPath.fromString(dependency.toString())
+      const devDependencyPath = PackagePath.fromString(dependency.toString())
       if (dev) {
         await spin(`Adding ${dependency.toString()} to MiniApp devDependencies`, yarn.add(devDependencyPath, { dev: true }))
       } else {
@@ -264,9 +266,9 @@ Are you sure this is a MiniApp ?`)
       let finalDependency
       // Dependency is not a development dependency
       // In that case we need to perform additional checks and operations
-      const versionLessDependency = dependency.withoutVersion()
-      const manifestNativeDependency = await manifest.getNativeDependency(versionLessDependency)
-      const manifestDependency = manifestNativeDependency || await manifest.getJsDependency(versionLessDependency)
+      const basePathDependency = new PackagePath(dependency.basePath)
+      const manifestNativeDependency = await manifest.getNativeDependency(basePathDependency)
+      const manifestDependency = manifestNativeDependency || await manifest.getJsDependency(basePathDependency)
 
       if (!manifestDependency) {
         // Dependency is not declared in manifest
@@ -274,19 +276,19 @@ Are you sure this is a MiniApp ?`)
         // if it contains transitive native dependencies
         const tmpPath = tmp.dirSync({ unsafeCleanup: true }).name
         process.chdir(tmpPath)
-        await spin(`${versionLessDependency.toString()} is not declared in the manifest. Performing additional checks.`,
-                    yarn.add(DependencyPath.fromString(dependency.toString())))
+        await spin(`${basePathDependency.toString()} is not declared in the manifest. Performing additional checks.`,
+                    yarn.add(PackagePath.fromString(dependency.toString())))
 
         const nativeDependencies = await nativeDependenciesLookup.findNativeDependencies(path.join(tmpPath, 'node_modules'))
         if (_.isEmpty(nativeDependencies.all)) {
           log.debug('Pure JS dependency')
           // This is a pure JS dependency. Not much to do here -yet-
-          finalDependency = versionLessDependency
+          finalDependency = basePathDependency
         } else if (nativeDependencies.all.length >= 1) {
           log.debug(`One or more native dependencies identified: ${JSON.stringify(nativeDependencies.all)}`)
-          for (let dep: Dependency of nativeDependencies.all) {
-            if (Dependency.same(dep.withoutVersion(), dependency, {ignoreVersion: true})) {
-              if (await utils.isDependencyApiOrApiImpl(dep.scopedName)) {
+          for (let dep: PackagePath of nativeDependencies.all) {
+            if (dependency.same(new PackagePath(dep.basePath), {ignoreVersion: true})) {
+              if (await utils.isDependencyApiOrApiImpl(dep.basePath)) {
                 log.debug(`This is an api or api-impl`)
                 log.warn(`${dep.toString()} is not declared in the Manifest. You might consider adding it.`)
                 finalDependency = dep
@@ -298,7 +300,7 @@ Are you sure this is a MiniApp ?`)
             } else {
               // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
               // Recurse with this native dependency
-              if (!addedDependencies.includes(dep.scopedName) && !await this.addDependency(dep, {dev: false, peer: false}, addedDependencies)) {
+              if (!addedDependencies.includes(dep.basePath) && !await this.addDependency(dep, {dev: false, peer: false}, addedDependencies)) {
                 return log.error(`${dep.toString()} was not added to the MiniApp.`)
               }
             }
@@ -314,8 +316,8 @@ Are you sure this is a MiniApp ?`)
 
       if (finalDependency) {
         process.chdir(this.path)
-        await spin(`Adding ${finalDependency.toString()} to ${this.name}`, yarn.add(DependencyPath.fromString(finalDependency.toString())))
-        addedDependencies.push(finalDependency.scopedName)
+        await spin(`Adding ${finalDependency.toString()} to ${this.name}`, yarn.add(PackagePath.fromString(finalDependency.toString())))
+        addedDependencies.push(finalDependency.basePath)
         return finalDependency
       } else {
         log.debug(`No final dependency? expected?`)
@@ -330,7 +332,7 @@ Are you sure this is a MiniApp ?`)
    * @param manifestDependency dependency defined in manifest
    * @returns {Dependency} Dependency with proper version number
    */
-  manifestConformingDependency (dependency: Dependency, manifestDependency: Dependency): ? Dependency {
+  manifestConformingDependency (dependency: PackagePath, manifestDependency: PackagePath): ? PackagePath {
     if (!dependency.version || dependency.version === manifestDependency.version) {
       // If no version was specified for this dependency, we're good, just use the version
       // declared in the manifest
@@ -341,8 +343,8 @@ Are you sure this is a MiniApp ?`)
       // TODO : If not API/API impl, we need to ensure that plugin is supported by platform
       // for the provided plugin version
       log.warn(`${dependency.toString()} version mismatch.`)
-      log.warn(`Manifest version: ${manifestDependency.version}`)
-      log.warn(`Wanted version: ${dependency.version}`)
+      log.warn(`Manifest version: ${manifestDependency.version || 'undefined'}`)
+      log.warn(`Wanted version: ${dependency.version || 'undefined'}`)
       log.warn(`You might want to update the version in your Manifest to add this dependency to ${this.name}`)
       return dependency
     }
@@ -390,7 +392,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       }
       const nativeApp = await cauldronInstance.getNativeApp(napDescriptor)
 
-      const miniApp = Dependency.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
+      const miniApp = PackagePath.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
 
        // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
@@ -432,16 +434,19 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       for (const localNativeDependency of validNativeDependencies) {
         // If local native dependency already exists at same version in cauldron,
         // we then don't need to add it or update it
-        const localNativeDependencyString =
-                        `${localNativeDependency.scope ? `@${localNativeDependency.scope}/` : ''}${localNativeDependency.name}`
+        const localNativeDependencyString = localNativeDependency.basePath
         const remoteDependency =
                     await cauldronInstance.getNativeDependency(napDescriptor, localNativeDependencyString, { convertToObject: true })
+
+        if (!localNativeDependency.version) {
+          throw new Error('local dependency does not have a version. This should not happen')
+        }
 
         // Update dependency version in Cauldron, only if local dependency version is a newer version compared to Cauldron
         // This will only apply for API/API-IMPLS and bridge due to backward compatibility (if no major version update)
         // This does not apply to other third party native dependencies (anyway in that case the code should not react this
         // point as compatibility checks would have failed unless force flag is used)
-        if (remoteDependency && (remoteDependency.version < localNativeDependency.version)) {
+        if (remoteDependency && remoteDependency.version && (remoteDependency.version < localNativeDependency.version)) {
           await cauldronInstance.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
         } else if (!remoteDependency) {
           await cauldronInstance.addNativeDependency(napDescriptor, localNativeDependency)
@@ -449,7 +454,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       }
 
       const currentMiniAppEntryInContainer =
-                await cauldronInstance.getContainerMiniApp(napDescriptor, miniApp.withoutVersion())
+                await cauldronInstance.getContainerMiniApp(napDescriptor, miniApp.basePath)
 
       if (currentMiniAppEntryInContainer && !nativeApp.isReleased) {
         await cauldronInstance.updateMiniAppVersion(napDescriptor, miniApp)

@@ -1,6 +1,6 @@
 // @flow
 
-import Dependency from './Dependency'
+import PackagePath from './PackagePath'
 import shell from './shell'
 import gitCli from './gitCli'
 import _ from 'lodash'
@@ -110,7 +110,7 @@ export default class GitManifest {
   }
 
   async getPluginConfigurationPath (
-    plugin: Dependency,
+    plugin: PackagePath,
     platformVersion: string = Platform.currentVersion) : Promise<?string> {
     await this.syncIfNeeded()
     const versionRe = /_v(.+)\+/
@@ -120,7 +120,7 @@ export default class GitManifest {
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       // Directory names cannot contain '/', so, replaced by ':'
-      const pluginScopeAndName = plugin.scopedName.replace(/\//g, ':')
+      const pluginScopeAndName = plugin.basePath.replace(/\//g, ':')
 
       const pluginVersions = _.map(
         fs.readdirSync(pluginsConfigurationDirectory).filter(f => f.startsWith(pluginScopeAndName)),

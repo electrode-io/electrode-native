@@ -17,14 +17,12 @@ export const withoutGitOrFileSystemPath = [
 ]
 
 export const withGitOrFileSystemPath = [
-  'git+ssh://github.com:electrode/react-native.git',
-  'git@github.com:electrode/react-native.git',
+  'git+ssh://github.com:electrode/react-native.git#master',
   'file:/Users/username'
 ]
 
 export const withoutFileSystemPath = [
-  'git+ssh://github.com:electrode/react-native.git',
-  'git@github.com:electrode/react-native.git',
+  'git+ssh://github.com:electrode/react-native.git#master',
   'package@1.2.3'
 ]
 

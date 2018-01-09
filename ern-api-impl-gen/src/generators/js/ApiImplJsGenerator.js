@@ -2,7 +2,7 @@
 
 import type { ApiImplGeneratable } from '../../ApiImplGeneratable'
 import {
-  Dependency,
+  PackagePath,
   shell,
   mustacheUtils,
   Platform
@@ -21,7 +21,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
     return 'js'
   }
 
-  async generate (apiDependency: Dependency,
+  async generate (apiDependency: PackagePath,
                   paths: {
                     workingDirectory: string,
                     pluginsDownloadDirectory: string,
@@ -29,7 +29,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
                     outDirectory: string
                   },
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>,
+                  plugins: Array<PackagePath>,
                   apis: Array<Object>,
                   regen: boolean) {
     log.debug(`Starting project generation for ${this.platform}`)
@@ -37,7 +37,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
     await this.fillHull(apiDependency, paths, apis)
   }
 
-  async fillHull (apiDependency: Dependency,
+  async fillHull (apiDependency: PackagePath,
                   paths: Object,
                   apis: Array<Object>) {
     shell.cd(shell.pwd())
@@ -49,7 +49,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
     const mustacheFile = path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', 'js', 'apiimpl.mustache')
 
     for (const api of apis) {
-      api.packageName = apiDependency.scopedName
+      api.packageName = apiDependency.basePath
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         mustacheFile,
         api,

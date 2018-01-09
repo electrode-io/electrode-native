@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Dependency,
+  PackagePath,
   mustacheUtils,
   shell,
   fileUtils,
@@ -37,7 +37,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     return 'android'
   }
 
-  async generate (apiDependency: Dependency,
+  async generate (apiDependency: PackagePath,
                   paths: {
                     workingDirectory: string,
                     pluginsDownloadDirectory: string,
@@ -45,7 +45,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
                     outDirectory: string
                   },
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>,
+                  plugins: Array<PackagePath>,
                   apis: Array<Object>,
                   regen: boolean) {
     log.debug(`Starting project generation for ${this.platform}`)
@@ -53,10 +53,10 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     await this.fillHull(apiDependency, paths, reactNativeVersion, plugins, apis)
   }
 
-  async fillHull (apiDependency: Dependency,
+  async fillHull (apiDependency: PackagePath,
                   paths: Object,
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>,
+                  pluginsPaths: Array<PackagePath>,
                   apis: Array<Object>) {
     try {
       log.debug(`[=== Starting hull filling for api impl gen for ${this.platform} ===]`)
@@ -73,10 +73,10 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       shell.cp('-Rf', path.join(paths.apiImplHull, 'android', '{.*,*}'), outputDirectory)
 
       const srcOutputDirectory = path.join(outputDirectory, 'lib', SRC_MAIN_JAVA_DIR)
-      for (let plugin: Dependency of plugins) {
-        log.debug(`Copying ${plugin.name} to ${outputDirectory}`)
-        await manifest.getPluginConfig(plugin).then((pluginConfig) => {
-          this.copyPluginToOutput(paths, srcOutputDirectory, plugin, pluginConfig)
+      for (let pluginPath: PackagePath of pluginsPaths) {
+        log.debug(`Copying ${pluginPath.basePath} to ${outputDirectory}`)
+        await manifest.getPluginConfig(pluginPath).then((pluginConfig) => {
+          this.copyPluginToOutput(paths, srcOutputDirectory, pluginPath, pluginConfig)
         })
       }
       const editableFiles = await this.generateRequestHandlerClasses(apiDependency, paths, apis)
@@ -88,9 +88,9 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     }
   }
 
-  copyPluginToOutput (paths: Object, pluginOutputDirectory: string, plugin: Dependency, pluginConfig: PluginConfig) {
-    log.debug(`injecting ${plugin.name} code.`)
-    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', plugin.scopedName, 'android', pluginConfig.android.moduleName, SRC_MAIN_JAVA_DIR, '*')
+  copyPluginToOutput (paths: Object, pluginOutputDirectory: string, pluginPath: PackagePath, pluginConfig: PluginConfig) {
+    log.debug(`injecting ${pluginPath.basePath} code.`)
+    const pluginSrcDirectory = path.join(paths.pluginsDownloadDirectory, 'node_modules', pluginPath.basePath, 'android', pluginConfig.android.moduleName, SRC_MAIN_JAVA_DIR, '*')
     if (!fs.existsSync(pluginOutputDirectory)) {
       shell.mkdir('-p', pluginOutputDirectory)
     }
@@ -117,7 +117,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       path.join(outputDirectory, 'lib', 'build.gradle'))
   }
 
-  async generateRequestHandlerClasses (apiDependency: Dependency, paths: Object, apis: Array<Object>) {
+  async generateRequestHandlerClasses (apiDependency: PackagePath, paths: Object, apis: Array<Object>) {
     log.debug('=== updating request handler implementation class ===')
     try {
       let editableFiles = []

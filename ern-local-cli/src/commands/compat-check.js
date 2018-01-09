@@ -2,7 +2,7 @@
 
 import {
   compatibility,
-  DependencyPath,
+  PackagePath,
   MiniApp,
   NativeApplicationDescriptor,
   utils as coreUtils
@@ -52,7 +52,7 @@ exports.handler = async function ({
     })
 
     for (const miniappPath of miniapps) {
-      const miniapp = await MiniApp.fromPackagePath(DependencyPath.fromString(miniappPath))
+      const miniapp = await MiniApp.fromPackagePath(PackagePath.fromString(miniappPath))
       log.info(`=> ${miniapp.name}`)
       await compatibility.checkCompatibilityWithNativeApp(
         miniapp, napDescriptor.name, napDescriptor.platform, napDescriptor.version)

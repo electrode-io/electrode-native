@@ -5,7 +5,7 @@ import {
   handleCopyDirective,
   utils as coreUtils,
   mustacheUtils,
-  Dependency,
+  PackagePath,
   shell
 } from 'ern-core'
 import {
@@ -96,7 +96,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       shell.cp('-R', copyFromPath, config.outDir)
 
-      const reactNativePlugin = _.find(config.plugins, p => p.name === 'react-native')
+      const reactNativePlugin = _.find(config.plugins, p => p.basePath === 'react-native')
       if (!reactNativePlugin) {
         throw new Error('react-native was not found in plugins list !')
       }
@@ -109,26 +109,26 @@ export default class AndroidGenerator implements ContainerGenerator {
       await this.addAndroidPluginHookClasses(config.plugins, config.outDir)
 
       for (const plugin of config.plugins) {
-        if (await coreUtils.isDependencyJsApiImpl(plugin.name)) {
+        if (await coreUtils.isDependencyJsApiImpl(plugin.basePath)) {
           log.debug('JS api implementation identified, skipping fill hull.')
           continue
         }
 
         let pluginConfig = await manifest.getPluginConfig(plugin)
         let pluginSourcePath
-        if (plugin.name === 'react-native') { continue }
+        if (plugin.basePath === 'react-native') { continue }
         if (!pluginConfig.android) {
-          log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
+          log.warn(`Skipping ${plugin.basePath} as it does not have an Android configuration`)
           continue
         }
 
         shell.cd(config.pluginsDownloadDir)
         pluginSourcePath = await coreUtils.downloadPluginSource(pluginConfig.origin)
         if (!pluginSourcePath) {
-          throw new Error(`Was not able to download ${plugin.name}`)
+          throw new Error(`Was not able to download ${plugin.basePath}`)
         }
 
-        if (await coreUtils.isDependencyNativeApiImpl(plugin.scopedName)) {
+        if (await coreUtils.isDependencyNativeApiImpl(plugin.basePath)) {
           populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
         }
 
@@ -198,7 +198,7 @@ export default class AndroidGenerator implements ContainerGenerator {
   }
 
   async addAndroidPluginHookClasses (
-    plugins: Array<Dependency>,
+    plugins: Array<PackagePath>,
     outDir: string) : Promise<*> {
     try {
       log.debug(`[=== Adding plugin hook classes ===]`)
@@ -207,7 +207,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         if (plugin.name === 'react-native') { continue }
         let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.android) {
-          log.warn(`Skipping ${plugin.name} as it does not have an Android configuration`)
+          log.warn(`Skipping ${plugin.basePath} as it does not have an Android configuration`)
           continue
         }
         let androidPluginHook = pluginConfig.android.pluginHook
@@ -231,12 +231,12 @@ export default class AndroidGenerator implements ContainerGenerator {
   }
 
   async buildAndroidPluginsViews (
-    plugins: Array<Dependency>,
+    plugins: Array<PackagePath>,
     mustacheView: any) : Promise<*> {
     try {
       mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'android')
       mustacheView.pluginCompile = []
-      const reactNativePlugin = _.find(plugins, p => p.name === 'react-native')
+      const reactNativePlugin = _.find(plugins, p => p.basePath === 'react-native')
       if (reactNativePlugin) {
         log.debug(`Will inject: compile 'com.walmartlabs.ern:react-native:${reactNativePlugin.version}'`)
         mustacheView.pluginCompile.push({

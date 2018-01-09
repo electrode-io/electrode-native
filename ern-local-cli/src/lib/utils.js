@@ -9,8 +9,7 @@ import {
   ModuleTypes,
   android,
   ios,
-  Dependency,
-  DependencyPath,
+  PackagePath,
   NativeApplicationDescriptor,
   spin,
   shell,
@@ -541,7 +540,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
   if (miniapps) {
     if (MiniApp.existInPath(cwd)) {
       const miniapp = MiniApp.fromPath(cwd)
-      miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
+      miniAppsPaths = [ PackagePath.fromString(`file:${cwd}`) ]
       log.debug(`This command is being run from the ${miniapp.name} MiniApp directory.`)
       log.info(`All extra MiniApps will be included in the Runner container along with ${miniapp.name}`)
       if (!mainMiniAppName) {
@@ -550,14 +549,14 @@ async function runMiniApp (platform: 'android' | 'ios', {
         entryMiniAppName = miniapp.name
       }
     }
-    dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
-    miniAppsPaths = miniAppsPaths.concat(_.map(miniapps, m => DependencyPath.fromString(m)))
+    dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
+    miniAppsPaths = miniAppsPaths.concat(_.map(miniapps, m => PackagePath.fromString(m)))
   } else if (!miniapps && !descriptor) {
     entryMiniAppName = MiniApp.fromCurrentPath().name
     log.debug(`This command is being run from the ${entryMiniAppName} MiniApp directory.`)
     log.debug(`Initializing Runner`)
-    dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
-    miniAppsPaths = [ DependencyPath.fromFileSystemPath(cwd) ]
+    dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
+    miniAppsPaths = [ PackagePath.fromString(`file:${cwd}`) ]
     if (dev === undefined) { // If dev is not defined it will default to true in the case of standalone MiniApp runner
       dev = true
       await reactnative.startPackagerInNewWindow(cwd)
@@ -617,8 +616,8 @@ async function generateContainerForRunner (
     outDir
   } : {
     napDescriptor?: NativeApplicationDescriptor,
-    dependenciesObjs: Array<Dependency>,
-    miniAppsPaths: Array<DependencyPath>,
+    dependenciesObjs: Array<PackagePath>,
+    miniAppsPaths: Array<PackagePath>,
     outDir: string
   } = {}) {
   if (napDescriptor) {
@@ -733,7 +732,7 @@ async function buildIosRunner (pathToIosRunner: string, udid: string) {
 
 async function doesPackageExistInNpm (packageName: string) : Promise<boolean> {
   try {
-    const result = await yarn.info(DependencyPath.fromString(packageName), {field: 'versions 2> /dev/null', json: true})
+    const result = await yarn.info(PackagePath.fromString(packageName), {field: 'versions 2> /dev/null', json: true})
     if (result && result.type === `inspect`) {
       return true
     }

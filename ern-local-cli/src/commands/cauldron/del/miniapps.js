@@ -2,7 +2,7 @@
 
 import {
   NativeApplicationDescriptor,
-  Dependency,
+  PackagePath,
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -72,7 +72,7 @@ exports.handler = async function ({
       }
     })
 
-    const miniAppsAsDeps = _.map(miniapps, m => Dependency.fromString(m))
+    const miniAppsAsDeps = _.map(miniapps, m => PackagePath.fromString(m))
 
     const cauldronCommitMessage = [
       `${miniapps.length === 1

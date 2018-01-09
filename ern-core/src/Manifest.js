@@ -1,6 +1,6 @@
 // @flow
 
-import Dependency from './Dependency'
+import PackagePath from './PackagePath'
 import shell from './shell'
 import path from 'path'
 import Platform from './Platform'
@@ -58,12 +58,12 @@ export class Manifest {
       manifestData.targetNativeDependencies = _.unionBy(
         overrideManifestData ? overrideManifestData.targetNativeDependencies : [],
         masterManifestData ? masterManifestData.targetNativeDependencies : [],
-        d => Dependency.fromString(d).withoutVersion().toString())
+        d => PackagePath.fromString(d).basePath)
 
       manifestData.targetJsDependencies = _.unionBy(
         overrideManifestData ? overrideManifestData.targetJsDependencies : [],
         masterManifestData ? masterManifestData.targetJsDependencies : [],
-        d => Dependency.fromString(d).withoutVersion().toString())
+        d => PackagePath.fromString(d).basePath)
     } else if (this._overrideManifest && this._manifestOverrideType === 'full') {
       manifestData = await this._overrideManifest.getManifestData(platformVersion)
     } else {
@@ -72,28 +72,28 @@ export class Manifest {
     return manifestData
   }
 
-  async getNativeDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<Dependency>> {
+  async getNativeDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<PackagePath>> {
     const manifest = await this.getManifestData(platformVersion)
     return manifest
-      ? _.map(manifest.targetNativeDependencies, d => Dependency.fromString(d))
+      ? _.map(manifest.targetNativeDependencies, d => PackagePath.fromString(d))
       : []
   }
 
-  async getJsDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<Dependency>> {
+  async getJsDependencies (platformVersion: string = Platform.currentVersion) : Promise<Array<PackagePath>> {
     const manifest = await this.getManifestData(platformVersion)
     return manifest
-      ? _.map(manifest.targetJsDependencies, d => Dependency.fromString(d))
+      ? _.map(manifest.targetJsDependencies, d => PackagePath.fromString(d))
       : []
   }
 
-  async getNativeDependency (dependency: Dependency, platformVersion: string = Platform.currentVersion) : Promise<?Dependency> {
+  async getNativeDependency (dependency: PackagePath, platformVersion: string = Platform.currentVersion) : Promise<?PackagePath> {
     const nativeDependencies = await this.getNativeDependencies(platformVersion)
-    return _.find(nativeDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
+    return _.find(nativeDependencies, d => (d.basePath === dependency.basePath))
   }
 
-  async getJsDependency (dependency: Dependency, platformVersion: string = Platform.currentVersion) : Promise<?Dependency> {
+  async getJsDependency (dependency: PackagePath, platformVersion: string = Platform.currentVersion) : Promise<?PackagePath> {
     const jsDependencies = await this.getJsDependencies(platformVersion)
-    return _.find(jsDependencies, d => (d.name === dependency.name) && (d.scope === dependency.scope))
+    return _.find(jsDependencies, d => (d.basePath === dependency.basePath))
   }
 
   async getJsAndNativeDependencies (platformVersion: string) {
@@ -101,11 +101,11 @@ export class Manifest {
     const manifestDeps = manifest
       ? _.union(manifest.targetJsDependencies, manifest.targetNativeDependencies)
       : []
-    return _.map(manifestDeps, d => Dependency.fromString(d))
+    return _.map(manifestDeps, d => PackagePath.fromString(d))
   }
 
   async getPluginConfigPath (
-    plugin: Dependency,
+    plugin: PackagePath,
     platformVersion: string) : Promise<?string> {
     let pluginConfigPath
     if (this._overrideManifest && this._manifestOverrideType === 'partial') {
@@ -122,19 +122,19 @@ export class Manifest {
   }
 
   async isPluginConfigInManifest (
-    plugin: Dependency,
+    plugin: PackagePath,
     platformVersion: string) : Promise<boolean> {
     const pluginConfigPath = await this.getPluginConfigPath(plugin, platformVersion)
     return pluginConfigPath !== undefined
   }
 
   async getPluginConfigFromManifest (
-    plugin: Dependency,
+    plugin: PackagePath,
     platformVersion: string,
     projectName: string) : Promise<Object> {
     let pluginConfigPath = await this.getPluginConfigPath(plugin, platformVersion)
     if (!pluginConfigPath) {
-      throw new Error(`There is no configuration for ${plugin.name} plugin in Manifest matching platform version ${platformVersion}`)
+      throw new Error(`There is no configuration for ${plugin.basePath} plugin in Manifest matching platform version ${platformVersion}`)
     }
 
     let result = {}
@@ -182,20 +182,20 @@ export class Manifest {
   }
 
   addOriginPropertyToConfigIfMissing (
-    plugin: Dependency,
+    plugin: PackagePath,
     config: Object) : Object {
     if (!config.origin) {
-      if (npmScopeModuleRe.test(plugin.scopedName)) {
+      if (npmScopeModuleRe.test(plugin.basePath)) {
         config.origin = {
           type: 'npm',
-          scope: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[1]}`,
-          name: `${npmScopeModuleRe.exec(`${plugin.scopedName}`)[2]}`,
+          scope: `${npmScopeModuleRe.exec(`${plugin.basePath}`)[1]}`,
+          name: `${npmScopeModuleRe.exec(`${plugin.basePath}`)[2]}`,
           version: plugin.version
         }
       } else {
         config.origin = {
           type: 'npm',
-          name: plugin.name,
+          name: plugin.basePath,
           version: plugin.version
         }
       }
@@ -204,7 +204,7 @@ export class Manifest {
   }
 
   addOriginVersionPropertyToConfigIfMissing (
-    plugin: Dependency,
+    plugin: PackagePath,
     config: Object) : Object {
     if (config.origin && !config.origin.version) {
       config.origin.version = plugin.version
@@ -213,7 +213,7 @@ export class Manifest {
   }
 
   async getPluginConfig (
-    plugin: Dependency,
+    plugin: PackagePath,
     projectName: string = 'ElectrodeContainer',
     platformVersion: string = Platform.currentVersion) : Promise<PluginConfig> {
     await this.initOverrideManifest()
@@ -221,14 +221,14 @@ export class Manifest {
     if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
       log.debug('Third party plugin detected. Retrieving plugin configuration from manifest')
       result = await this.getPluginConfigFromManifest(plugin, platformVersion, projectName)
-    } else if (await isDependencyApi(plugin.scopedName)) {
+    } else if (await isDependencyApi(plugin.basePath)) {
       log.debug('API plugin detected. Retrieving API plugin default configuration')
       result = this.getApiPluginDefaultConfig(projectName)
-    } else if (await isDependencyApiImpl(plugin.scopedName)) {
+    } else if (await isDependencyApiImpl(plugin.basePath)) {
       log.debug('APIImpl plugin detected. Retrieving APIImpl plugin default configuration')
       result = this.getApiImplPluginDefaultConfig(projectName)
     } else {
-      throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.name}`)
+      throw new Error(`Unsupported plugin. No configuration found in manifest for ${plugin.basePath}`)
     }
 
     result = this.addOriginPropertyToConfigIfMissing(plugin, result)

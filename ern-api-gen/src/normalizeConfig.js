@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Dependency
+  PackagePath
 } from 'ern-core'
 import {
   MODEL_FILE
@@ -48,7 +48,7 @@ export default function normalizeConfig ({
   name: string,
   bridgeVersion: string,
   reactNativeVersion: string,
-  targetDependencies: Array<Dependency>,
+  targetDependencies: Array<PackagePath>,
   apiVersion?: string,
   apiDescription?: string,
   apiAuthor?: string,

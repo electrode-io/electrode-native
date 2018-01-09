@@ -4,8 +4,7 @@ import {
   nativeDependenciesLookup,
   yarn,
   shell,
-  Dependency,
-  DependencyPath
+  PackagePath
 } from 'ern-core'
 import utils from '../../lib/utils'
 import tmp from 'tmp'
@@ -30,7 +29,7 @@ exports.handler = async function ({
     if (module) {
       pathToModule = tmp.dirSync({ unsafeCleanup: true }).name
       shell.cd(pathToModule)
-      await yarn.add(DependencyPath.fromString(module))
+      await yarn.add(PackagePath.fromString(module))
     }
     const dependencies = await nativeDependenciesLookup.findNativeDependencies(path.join(pathToModule, 'node_modules'))
 
@@ -44,7 +43,7 @@ exports.handler = async function ({
   }
 }
 
-function logDependencies (dependencies: Array<Dependency>, type: string) {
+function logDependencies (dependencies: Array<PackagePath>, type: string) {
   if (!_.isEmpty(dependencies)) {
     console.log(chalk.blue.bold(`=== ${type} ===`))
     for (const d of dependencies) {

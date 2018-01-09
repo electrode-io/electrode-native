@@ -1,4 +1,6 @@
-import Dependency from './Dependency'
+// @flow
+
+import PackagePath from './PackagePath'
 import * as mustacheUtils from './mustacheUtils'
 import shell from './shell'
 import manifest from './Manifest'
@@ -23,7 +25,7 @@ export async function fillProjectHull
  projectSpec: {
    projectName: string
  },
- plugins: Array<Dependency>,
+ plugins: Array<PackagePath>,
  mustacheView?: any) {
   log.debug(`[=== Starting iOS framework project hull filling ===]`)
   shell.cd(pathSpec.rootDir)
@@ -59,11 +61,11 @@ export async function fillProjectHull
       manifest.getPluginConfig(plugin, projectSpec.projectName)
     shell.cd(pathSpec.pluginsDownloadDirectory)
     if (pluginConfig.ios) {
-      log.debug(`Retrieving ${plugin.scopedName}`)
+      log.debug(`Retrieving ${plugin.basePath}`)
       const pluginSourcePath = await
         downloadPluginSource(pluginConfig.origin)
       if (!pluginSourcePath) {
-        throw new Error(`Was not able to download ${plugin.scopedName}`)
+        throw new Error(`Was not able to download ${plugin.basePath}`)
       }
 
       if (pluginConfig.ios.copy) {

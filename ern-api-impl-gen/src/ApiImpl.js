@@ -4,7 +4,7 @@ import fs from 'fs'
 import inquirer from 'inquirer'
 
 import {
-  Dependency,
+  PackagePath,
   shell,
   fileUtils,
   ModuleTypes,
@@ -26,7 +26,7 @@ export default async function generateApiImpl ({
   scope,
   paths
 } : {
-  apiDependency: Dependency,
+  apiDependency: PackagePath,
   apiImplName: string,
   outputDirectory: string,
   nativeOnly: boolean,
@@ -92,7 +92,7 @@ async function createOutputDirectory (outputDirectoryPath: string, forceGenerate
 
 async function createNodePackage (
   outputDirectoryPath: string,
-  apiDependency: Dependency,
+  apiDependency: PackagePath,
   apiImplName: string,
   packageName: string,
   scope? : string,
@@ -101,7 +101,7 @@ async function createNodePackage (
   let currentDirectory = process.cwd()
   shell.cd(outputDirectoryPath)
   await yarn.init()
-  await yarn.add(apiDependency.path)
+  await yarn.add(apiDependency)
   shell.cp(path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', '.gitignore'), outputDirectoryPath)
   ernifyPackageJson(outputDirectoryPath, apiImplName, packageName, scope, nativeOnly, hasConfig)
   shell.cd(currentDirectory)

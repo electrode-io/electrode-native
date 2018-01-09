@@ -2,7 +2,7 @@
 
 import {
   CauldronHelper,
-  Dependency,
+  PackagePath,
   NativeApplicationDescriptor,
   spin,
   utils as coreUtils
@@ -95,11 +95,11 @@ async function copyOverPreviousVersionData (
   cauldron: CauldronHelper) {
   // Copy over previous native application version native dependencies
   for (const nativeDep of nativeAppVersion.nativeDeps) {
-    await cauldron.addNativeDependency(napDescriptor, Dependency.fromString(nativeDep))
+    await cauldron.addNativeDependency(napDescriptor, PackagePath.fromString(nativeDep))
   }
   // Copy over previous native application version container MiniApps
   for (const containerMiniApp of nativeAppVersion.miniApps.container) {
-    await cauldron.addContainerMiniApp(napDescriptor, Dependency.fromString(containerMiniApp))
+    await cauldron.addContainerMiniApp(napDescriptor, PackagePath.fromString(containerMiniApp))
   }
   // Copy over previous yarn lock if any
   if (nativeAppVersion.yarnLocks) {

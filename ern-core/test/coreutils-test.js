@@ -7,7 +7,7 @@ import {
 import { yarn } from '../src/clients'
 import sinon from 'sinon'
 import * as utils from '../src/utils'
-import DependencyPath from '../src/DependencyPath'
+import PackagePath from '../src/PackagePath'
 import {
   beforeTest,
   afterTest,
@@ -53,21 +53,21 @@ describe('utils.js', () => {
     it('dependencyPath in npm return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfo)
-      expect(await utils.isPublishedToNpm(new DependencyPath(fixtures.pkgName))).to.eql(true)
+      expect(await utils.isPublishedToNpm(new PackagePath(fixtures.pkgName))).to.eql(true)
       yarnStub.restore()
     })
 
     it('dependencyPath in npm with version return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfo)
-      expect(await utils.isPublishedToNpm(new DependencyPath(fixtures.pkgNameWithVersion))).to.eql(true)
+      expect(await utils.isPublishedToNpm(new PackagePath(fixtures.pkgNameWithVersion))).to.eql(true)
       yarnStub.restore()
     })
 
     it('dependencyPath in npm with invalid version return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfo)
-      expect(await utils.isPublishedToNpm(new DependencyPath(fixtures.pkgNameWithInvalidVersion))).to.eql(false)
+      expect(await utils.isPublishedToNpm(new PackagePath(fixtures.pkgNameWithInvalidVersion))).to.eql(false)
       yarnStub.restore()
     })
 

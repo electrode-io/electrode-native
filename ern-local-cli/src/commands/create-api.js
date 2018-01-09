@@ -4,7 +4,7 @@ import {
   ApiGen
 } from 'ern-api-gen'
 import {
-  Dependency,
+  PackagePath,
   manifest,
   utils as coreUtils,
   ModuleTypes
@@ -82,12 +82,15 @@ exports.handler = async function ({
       throw new Error(`Aborting command `)
     }
 
-    const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
+    const bridgeDep = await manifest.getNativeDependency(PackagePath.fromString('react-native-electrode-bridge'))
     if (!bridgeDep) {
       throw new Error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
     }
+    if (!bridgeDep.version) {
+      throw new Error(`react-native-electrode-bridge version needs to be defined`)
+    }
 
-    const reactNative = await manifest.getNativeDependency(Dependency.fromString('react-native'))
+    const reactNative = await manifest.getNativeDependency(PackagePath.fromString('react-native'))
     if (!reactNative) {
       throw new Error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
     }
@@ -95,7 +98,7 @@ exports.handler = async function ({
     log.info(`Generating ${apiName} API`)
 
     await ApiGen.generateApi({
-      bridgeVersion: `${bridgeDep.version}`,
+      bridgeVersion: `${bridgeDep.version || ''}`,
       reactNativeVersion: reactNative.version,
       name: apiName,
       npmScope: scope,

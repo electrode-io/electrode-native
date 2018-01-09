@@ -1,7 +1,7 @@
 // @flow
 
 import ApiImplGen from './generators/ApiImplGen'
-import { Dependency } from 'ern-core'
+import { PackagePath } from 'ern-core'
 
 export default async function regenerateApiImpl
   ({
@@ -10,7 +10,7 @@ export default async function regenerateApiImpl
      reactNativeVersion,
      platforms
    }: {
-    api: Dependency,
+    api: PackagePath,
     paths: Object,
     reactNativeVersion: string,
     platforms: Array<string>

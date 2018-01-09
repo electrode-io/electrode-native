@@ -5,7 +5,7 @@ import {
   AndroidGenerator
 } from 'ern-container-gen'
 import {
-  Dependency,
+  PackagePath,
   mustacheUtils,
   spin,
   shell
@@ -173,7 +173,7 @@ export async function generateContainerForRunner ({
   platform,
   containerGenWorkingDir
 } : {
-  plugins: Array<Dependency>,
+  plugins: Array<PackagePath>,
   miniapp: Object,
   platform: 'android' | 'ios',
   containerGenWorkingDir: string

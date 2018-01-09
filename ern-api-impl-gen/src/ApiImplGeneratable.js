@@ -1,14 +1,14 @@
 // @flow
 
 import {
-  Dependency
+  PackagePath
 } from 'ern-core'
 
 export interface ApiImplGeneratable {
-  generate (apiDependency: Dependency,
+  generate (apiDependency: PackagePath,
             paths: Object,
             reactNativeVersion: string,
-            plugins: Array<Dependency>,
+            plugins: Array<PackagePath>,
             apis: Array<Object>,
             regen: boolean): any;
 

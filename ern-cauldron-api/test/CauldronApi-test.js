@@ -7,7 +7,7 @@ import {
 import sinon from 'sinon'
 import fs from 'fs'
 import {
-  Dependency
+  PackagePath
 } from 'ern-core'
 import {
   beforeTest,
@@ -701,7 +701,7 @@ describe('CauldronApi.js', () => {
   describe('updateMiniAppVersion', () => {
     it('should update the MiniApp version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).updateMiniAppVersion('test', 'android', '17.7.0', Dependency.fromString('react-native-bar@3.0.0'))
+      await cauldronApi(tmpFixture).updateMiniAppVersion('test', 'android', '17.7.0', PackagePath.fromString('react-native-bar@3.0.0'))
       const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].miniApps.container')[0]
       expect(miniAppsArr.includes('react-native-bar@3.0.0')).true
       expect(miniAppsArr.includes('react-native-bar@2.0.0')).false
@@ -711,16 +711,16 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.updateMiniAppVersion('test', 'android', '17.7.0', Dependency.fromString('react-native-bar@3.0.0'))
+      await api.updateMiniAppVersion('test', 'android', '17.7.0', PackagePath.fromString('react-native-bar@3.0.0'))
       sinon.assert.calledOnce(commitStub)
     })
 
     it('should throw if the miniapp is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateMiniAppVersion, 'test', 'android', '17.7.0',  Dependency.fromString('react-native-foo@3.0.0')))
+      assert(await doesThrow(cauldronApi().updateMiniAppVersion, 'test', 'android', '17.7.0',  PackagePath.fromString('react-native-foo@3.0.0')))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateMiniAppVersion, 'test', 'android', '17.20.0',  Dependency.fromString('react-native-bar@3.0.0')))
+      assert(await doesThrow(cauldronApi().updateMiniAppVersion, 'test', 'android', '17.20.0',  PackagePath.fromString('react-native-bar@3.0.0')))
     })
   })
 
@@ -826,7 +826,7 @@ describe('CauldronApi.js', () => {
   describe('addContainerMiniApp', () => {
     it('should add the MiniApp to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerMiniApp('test', 'android', '17.7.0', Dependency.fromString('newMiniApp@1.0.0'))
+      await cauldronApi(tmpFixture).addContainerMiniApp('test', 'android', '17.7.0', PackagePath.fromString('newMiniApp@1.0.0'))
       const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].miniApps.container')[0]
       expect(miniAppsArr.includes('newMiniApp@1.0.0')).true
     })
@@ -835,16 +835,16 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.addContainerMiniApp('test', 'android', '17.7.0', Dependency.fromString('newMiniApp@1.0.0'))
+      await api.addContainerMiniApp('test', 'android', '17.7.0', PackagePath.fromString('newMiniApp@1.0.0'))
       sinon.assert.calledOnce(commitStub)
     })
 
     it('should throw if the MiniApp already exists', async () => {
-      assert(await doesThrow(cauldronApi().addContainerMiniApp, 'test', 'android', '17.7.0', Dependency.fromString('react-native-bar@2.0.0')))
+      assert(await doesThrow(cauldronApi().addContainerMiniApp, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-bar@2.0.0')))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().addContainerMiniApp, 'test', 'android', '17.20.0', Dependency.fromString('newMiniApp@1.0.0')))
+      assert(await doesThrow(cauldronApi().addContainerMiniApp, 'test', 'android', '17.20.0', PackagePath.fromString('newMiniApp@1.0.0')))
     })
   })
 
@@ -854,7 +854,7 @@ describe('CauldronApi.js', () => {
   describe('createNativeDependency', () => {
     it('should add the native dependency to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).createNativeDependency('test', 'android', '17.7.0', Dependency.fromString('testDep@1.0.0'))
+      await cauldronApi(tmpFixture).createNativeDependency('test', 'android', '17.7.0', PackagePath.fromString('testDep@1.0.0'))
       const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].nativeDeps')[0]
       expect(dependenciesArr.includes('testDep@1.0.0')).true
     })
@@ -863,16 +863,16 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.createNativeDependency('test', 'android', '17.7.0', Dependency.fromString('testDep@1.0.0'))
+      await api.createNativeDependency('test', 'android', '17.7.0', PackagePath.fromString('testDep@1.0.0'))
       sinon.assert.calledOnce(commitStub)
     })
 
     it('should throw if the dependency already exists', async () => {
-      assert(await doesThrow(cauldronApi().createNativeDependency, 'test', 'android', '17.7.0', Dependency.fromString('react-native-electrode-bridge@1.4.0')))
+      assert(await doesThrow(cauldronApi().createNativeDependency, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-electrode-bridge@1.4.0')))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().createNativeDependency, 'test', 'android', '17.20.0', Dependency.fromString('testDep@1.0.0')))
+      assert(await doesThrow(cauldronApi().createNativeDependency, 'test', 'android', '17.20.0', PackagePath.fromString('testDep@1.0.0')))
     })
   })
 

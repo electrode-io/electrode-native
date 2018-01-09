@@ -1,11 +1,15 @@
+// @flow
+
 import {
   IosUtil,
   Platform,
-  Dependency,
+  PackagePath,
   shell,
   mustacheUtils
 } from 'ern-core'
-import ApiImplGeneratable from '../../ApiImplGeneratable'
+import type {
+  ApiImplGeneratable
+} from '../../ApiImplGeneratable'
 import fs from 'fs'
 import path from 'path'
 import xcode from 'xcode-ern'
@@ -24,10 +28,10 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     return 'ios'
   }
 
-  async generate (apiDependency: Dependency,
+  async generate (apiDependency: PackagePath,
                   paths: Object,
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>,
+                  plugins: Array<PackagePath>,
                   apis: Array<Object>,
                   regen: boolean) {
     log.debug(`Starting project generation for ${this.platform}`)
@@ -37,8 +41,8 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
 
   async fillHull (paths: Object,
                   reactNativeVersion: string,
-                  plugins: Array<Dependency>,
-                  apis) {
+                  plugins: Array<PackagePath>,
+                  apis: Array<Object>) {
     try {
       const pathSpec = {
         rootDir: ROOT_DIR,
@@ -66,12 +70,10 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     }
   }
 
-  injectReactNativeToPlugins (reactNativeVersion, plugins) {
-    const reactNativePlugin = new Dependency('react-native', {
-      version: reactNativeVersion
-    })
+  injectReactNativeToPlugins (reactNativeVersion: string, plugins: Array<PackagePath>) {
+    const reactNativePlugin = new PackagePath(`react-native@${reactNativeVersion}`)
 
-    log.debug(`Manually injecting react-native(${reactNativePlugin}) plugin to dependencies.`)
+    log.debug(`Manually injecting react-native(${reactNativePlugin.toString()}) plugin to dependencies.`)
     plugins.push(reactNativePlugin)
   }
 
@@ -90,7 +92,7 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     })
   }
 
-  async generateRequestHandlerClasses (iosProject, pathSpec, projectSpec, apis) {
+  async generateRequestHandlerClasses (iosProject: any, pathSpec: any, projectSpec: any, apis: any) {
     log.debug('=== updating request handler implementation class ===')
 
     const {outputDir, resourceDir} = this.createImplDirectoryAndCopyCommonClasses(pathSpec, projectSpec, iosProject)
@@ -134,7 +136,7 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     return {files, classNames}
   }
 
-  createImplDirectoryAndCopyCommonClasses (pathSpec, projectSpec, iosProject) {
+  createImplDirectoryAndCopyCommonClasses (pathSpec: any, projectSpec: any, iosProject: any) {
     const resourceDir = path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', 'ios')
     const outputDir = path.join(pathSpec.outputDir, projectSpec.projectName, API_IMPL_GROUP_NAME)
 

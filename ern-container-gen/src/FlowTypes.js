@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Dependency,
+  PackagePath,
   MiniApp
 } from 'ern-core'
 
@@ -18,7 +18,7 @@ export type ContainerGeneratorConfig = {
   // The MiniApps that should be included in the generated Container
   miniApps: Array<MiniApp>;
   // The plugins that should be included in the generate Container
-  plugins: Array<Dependency>;
+  plugins: Array<PackagePath>;
   // The output directory where to generate the Container
   outDir: string;
   // Directory where the plugins should be downloaded to during generation

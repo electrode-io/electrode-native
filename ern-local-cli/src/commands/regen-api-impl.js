@@ -9,7 +9,7 @@ import {
   utils as coreUtils,
   yarn,
   fileUtils,
-  Dependency
+  PackagePath
 } from 'ern-core'
 import cliUtils from '../lib/utils'
 import path from 'path'
@@ -47,9 +47,12 @@ exports.handler = async function
   try {
     const apiImplPackage = await readPackageJson()
 
-    const api: Dependency = await getApi(apiImplPackage)
+    let api: PackagePath = await getApi(apiImplPackage)
     const currentApiVersion = api.version
-    api.version = apiVersion
+    if (!currentApiVersion) {
+      throw new Error('no API version. This should not happen.')
+    }
+    api = PackagePath.fromString(`${api.basePath}${apiVersion ? `@${apiVersion}` : ''}`)
 
     if (apiImplPackage.ern.containerGen.hasConfig) {
       hasConfig = apiImplPackage.ern.containerGen.hasConfig
@@ -58,6 +61,9 @@ exports.handler = async function
     log.info(`regenerating api implementation for ${api.toString()}`)
 
     let reactNativeVersion = await coreUtils.reactNativeManifestVersion()
+    if (!reactNativeVersion) {
+      throw new Error('React Native version is not defined in Manifest. This sould not happen !')
+    }
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
 
     await validatePackage(api)
@@ -97,28 +103,28 @@ exports.handler = async function
     return apiImplPackage
   }
 
-  async function getApi (apiImplPackage: Object): Promise<Dependency> {
+  async function getApi (apiImplPackage: Object): Promise<PackagePath> {
     for (const depKey of Object.keys(apiImplPackage.dependencies)) {
       if (await coreUtils.isDependencyApi(depKey)) {
         // TODO: THis is by assuming that this is the only api dependency inside this implemenation.
         // TODO: This may not be right all the time as an api implementor can add more other apis as dependencies. Logic needs to be revisited.
-        return Dependency.fromString(`${depKey}@${apiImplPackage.dependencies[depKey]}`)
+        return PackagePath.fromString(`${depKey}@${apiImplPackage.dependencies[depKey]}`)
       }
     }
     throw new Error('Unable to identify the api for this implementation')
   }
 
   async function validatePackage (api) {
-    if (!await coreUtils.isPublishedToNpm(api.path)) {
+    if (!await coreUtils.isPublishedToNpm(api.toString())) {
       throw new Error(`${api.toString()}: Package not found in npm, please make sure this version of the api is published to npm.`)
     }
   }
 
-  async function performVersionCheck (api: Dependency, apiVersion: ?string, currentApiVersion: string) {
+  async function performVersionCheck (api: PackagePath, apiVersion: ?string, currentApiVersion: string) {
     log.debug('Performing version check before regenerating the code.')
 
     if (!apiVersion) {
-      let latestReleasedPackageJson = await yarn.info(api.path, {json: true})
+      let latestReleasedPackageJson = await yarn.info(api, {json: true})
       apiVersion = latestReleasedPackageJson.data.version
     }
 
