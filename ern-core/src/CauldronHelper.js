@@ -1,6 +1,6 @@
 // @flow
 
-import Dependency from './Dependency'
+import PackagePath from './PackagePath'
 import NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import * as fileUtils from './fileUtil'
 import * as promptUtils from './promptUtils'
@@ -78,39 +78,39 @@ export default class CauldronHelper {
 
   async addNativeDependency (
     napDescriptor: NativeApplicationDescriptor,
-    dependency: Dependency) : Promise<*> {
+    dependency: PackagePath) : Promise<*> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
     await this.throwIfNativeAppVersionIsReleased(napDescriptor,
       'Cannot add a native dependency to a released native app version')
 
     return this.cauldron.createNativeDependency(
-      napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependency.toString())
+      napDescriptor.name, napDescriptor.platform, napDescriptor.version, dependency)
   }
 
   async removeNativeDependency (
     napDescriptor: NativeApplicationDescriptor,
-    dependency: Dependency) : Promise<*> {
+    dependency: PackagePath) : Promise<*> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-    const versionLessDependencyString = dependency.withoutVersion().toString()
+    const basePathDependencyString = dependency.basePath
     await this.throwIfNativeAppVersionIsReleased(napDescriptor,
               'Cannot remove a native dependency from a released native app version')
 
     return this.cauldron.removeNativeDependency(
-        napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessDependencyString)
+        napDescriptor.name, napDescriptor.platform, napDescriptor.version, basePathDependencyString)
   }
 
   async removeMiniAppFromContainer (
     napDescriptor: NativeApplicationDescriptor,
-    miniAppName: Dependency) : Promise<*> {
+    miniAppName: PackagePath) : Promise<*> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
-    const versionLessMiniAppString = miniAppName.withoutVersion().toString()
+    const basePathMiniAppString = miniAppName.basePath
     await this.throwIfNativeAppVersionIsReleased(napDescriptor,
     'Cannot remove a MiniApp for a released native app version')
     return this.cauldron.removeContainerMiniApp(
-      napDescriptor.name, napDescriptor.platform, napDescriptor.version, versionLessMiniAppString)
+      napDescriptor.name, napDescriptor.platform, napDescriptor.version, basePathMiniAppString)
   }
 
   async addPublisher (
@@ -188,14 +188,14 @@ export default class CauldronHelper {
   }
 
   async getNativeDependencies (
-    napDescriptor: NativeApplicationDescriptor) : Promise<Array<Dependency>> {
+    napDescriptor: NativeApplicationDescriptor) : Promise<Array<PackagePath>> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     const dependencies = await this.cauldron.getNativeDependencies(
       napDescriptor.name,
       napDescriptor.platform,
       napDescriptor.version)
 
-    return _.map(dependencies, Dependency.fromString)
+    return _.map(dependencies, PackagePath.fromString)
   }
 
   async hasYarnLock (
@@ -351,7 +351,7 @@ export default class CauldronHelper {
     napDescriptor: NativeApplicationDescriptor,
     dependencyName: string,
     { convertToObject = true } :
-    { convertToObject: boolean } = {}) : Promise<?Dependency> {
+    { convertToObject: boolean } = {}) : Promise<?PackagePath> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
     const dependency = await this.cauldron.getNativeDependency(
@@ -360,7 +360,7 @@ export default class CauldronHelper {
       napDescriptor.version,
       dependencyName)
     if (dependency) {
-      return convertToObject ? Dependency.fromString(dependency) : dependency
+      return convertToObject ? PackagePath.fromString(dependency) : dependency
     }
   }
 
@@ -399,7 +399,7 @@ export default class CauldronHelper {
 
   async getCodePushMiniApps (
     napDescriptor: NativeApplicationDescriptor,
-    deploymentName: string) : Promise<Array<Dependency> | void> {
+    deploymentName: string) : Promise<Array<PackagePath> | void> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
     const codePushEntries = await this.cauldron.getCodePushEntries(
@@ -409,12 +409,12 @@ export default class CauldronHelper {
       deploymentName)
     if (codePushEntries) {
       const lastEntry = _.last(codePushEntries)
-      return _.map(lastEntry.miniapps, e => Dependency.fromString(e))
+      return _.map(lastEntry.miniapps, e => PackagePath.fromString(e))
     }
   }
 
   async getContainerMiniApps (
-    napDescriptor: NativeApplicationDescriptor) : Promise<Array<Dependency>> {
+    napDescriptor: NativeApplicationDescriptor) : Promise<Array<PackagePath>> {
     try {
       this.throwIfPartialNapDescriptor(napDescriptor)
       await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
@@ -422,7 +422,7 @@ export default class CauldronHelper {
         napDescriptor.name,
         napDescriptor.platform,
         napDescriptor.version)
-      return _.map(miniApps, Dependency.fromString)
+      return _.map(miniApps, PackagePath.fromString)
     } catch (e) {
       log.error(`[getContainerMiniApps] ${e}`)
       throw e
@@ -432,7 +432,7 @@ export default class CauldronHelper {
   async addCodePushEntry (
     napDescriptor: NativeApplicationDescriptor,
     metadata: CauldronCodePushMetadata,
-    miniApps: Array<Dependency>) : Promise<*> {
+    miniApps: Array<PackagePath>) : Promise<*> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
     const miniapps = _.map(miniApps, x => x.toString())

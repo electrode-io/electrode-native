@@ -4,7 +4,7 @@ import {
 } from 'chai'
 import CauldronHelper from '../src/CauldronHelper'
 import sinon from 'sinon'
-import Dependency from '../src/Dependency'
+import PackagePath from '../src/PackagePath'
 import NativeApplicationDescriptor from '../src/NativeApplicationDescriptor'
 import {
   doesThrow,
@@ -78,7 +78,7 @@ const codePushMetadataFixtureTwo = {
   rollout: 100
 }
 
-const miniAppsFixtureOne = [ Dependency.fromString('code-push-test-miniapp@0.0.22') ]
+const miniAppsFixtureOne = [ PackagePath.fromString('code-push-test-miniapp@0.0.22') ]
 
 let cauldronHelper
 let documentStore
@@ -228,7 +228,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.addNativeDependency, 
         NativeApplicationDescriptor.fromString('test:android'),
-        Dependency.fromString('test@1.0.0')))
+        PackagePath.fromString('test@1.0.0')))
     })
 
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
@@ -237,7 +237,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.addNativeDependency, 
         NativeApplicationDescriptor.fromString('test:android:0.0.0'),
-        Dependency.fromString('test@1.0.0')))
+        PackagePath.fromString('test@1.0.0')))
     })
 
     it('should throw if the given native application version is released', async () => {
@@ -246,7 +246,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.addNativeDependency, 
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        Dependency.fromString('test@1.0.0')))
+        PackagePath.fromString('test@1.0.0')))
     })
 
     it('should add the dependency to the native application version', async () => {
@@ -254,7 +254,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.addNativeDependency(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        Dependency.fromString('test@1.0.0'))
+        PackagePath.fromString('test@1.0.0'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.nativeDeps.includes('test@1.0.0')).true
     })
@@ -267,7 +267,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.removeNativeDependency, 
         NativeApplicationDescriptor.fromString('test:android'),
-        Dependency.fromString('test@1.0.0')))
+        PackagePath.fromString('test@1.0.0')))
     })
 
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
@@ -276,7 +276,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.removeNativeDependency, 
         NativeApplicationDescriptor.fromString('test:android:0.0.0'),
-        Dependency.fromString('test@1.0.0')))
+        PackagePath.fromString('test@1.0.0')))
     })
 
     it('should throw if the given native application version is released', async () => {
@@ -285,7 +285,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.removeNativeDependency, 
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        Dependency.fromString('test@1.0.0')))
+        PackagePath.fromString('test@1.0.0')))
     })
 
     it('should remove the dependency from the native application version [1]', async () => {
@@ -293,7 +293,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.removeNativeDependency(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        Dependency.fromString('react-native-electrode-bridge@1.4.9'))
+        PackagePath.fromString('react-native-electrode-bridge@1.4.9'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.nativeDeps.includes('react-native-electrode-bridge@1.4.9')).false
     })
@@ -303,7 +303,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.removeNativeDependency(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        Dependency.fromString('react-native-electrode-bridge'))
+        PackagePath.fromString('react-native-electrode-bridge'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.nativeDeps.includes('react-native-electrode-bridge@1.4.9')).false
     })
@@ -316,7 +316,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.removeMiniAppFromContainer, 
         NativeApplicationDescriptor.fromString('test:android'),
-        Dependency.fromString('@test/react-native-foo@5.0.0')))
+        PackagePath.fromString('@test/react-native-foo@5.0.0')))
     })
 
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
@@ -325,7 +325,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.removeMiniAppFromContainer, 
         NativeApplicationDescriptor.fromString('test:android:0.0.0'),
-        Dependency.fromString('@test/react-native-foo@5.0.0')))
+        PackagePath.fromString('@test/react-native-foo@5.0.0')))
     })
 
     it('should throw if the given native application version is released', async () => {
@@ -334,7 +334,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.removeMiniAppFromContainer, 
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        Dependency.fromString('@test/react-native-foo@5.0.0')))
+        PackagePath.fromString('@test/react-native-foo@5.0.0')))
     })
 
     it('should remove the miniapp from the native application version [1]', async () => {
@@ -342,7 +342,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.removeMiniAppFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        Dependency.fromString('@test/react-native-foo@5.0.0'))
+        PackagePath.fromString('@test/react-native-foo@5.0.0'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
     })
@@ -352,7 +352,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.removeMiniAppFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        Dependency.fromString('@test/react-native-foo'))
+        PackagePath.fromString('@test/react-native-foo'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
     })
@@ -965,7 +965,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'), 
         'react-native-electrode-bridge')
       expect(result).not.undefined
-      expect(result.name).eql('react-native-electrode-bridge')
+      expect(result.basePath).eql('react-native-electrode-bridge')
     })
 
     it('should return the dependency [2]', async () => {
@@ -975,7 +975,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'), 
         'react-native-electrode-bridge@1.4.9')
       expect(result).not.undefined
-      expect(result.name).eql('react-native-electrode-bridge')
+      expect(result.basePath).eql('react-native-electrode-bridge')
     })
   })
 
@@ -986,7 +986,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.updateNativeAppDependency, 
         NativeApplicationDescriptor.fromString('test:android'),
-        Dependency.fromString('react-native-electrode-bridge'),
+        PackagePath.fromString('react-native-electrode-bridge'),
         '1.5.0'))
     })
 
@@ -996,7 +996,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.updateNativeAppDependency, 
         NativeApplicationDescriptor.fromString('test:android:0.0.0'),
-        Dependency.fromString('react-native-electrode-bridge'),
+        PackagePath.fromString('react-native-electrode-bridge'),
         '1.5.0'))
     })
 
@@ -1006,7 +1006,7 @@ describe('CauldronHelper.js', () => {
       assert(doesThrow(
         cauldronHelper.updateNativeAppDependency, 
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        Dependency.fromString('react-native-electrode-bridge'),
+        PackagePath.fromString('react-native-electrode-bridge'),
         '1.5.0'))
     })
 
@@ -1015,7 +1015,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.updateNativeAppDependency(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        Dependency.fromString('react-native-electrode-bridge'),
+        'react-native-electrode-bridge',
         '1.5.0')
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.nativeDeps).includes('react-native-electrode-bridge@1.5.0')

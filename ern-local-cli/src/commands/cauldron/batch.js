@@ -1,8 +1,7 @@
 // @flow
 
 import {
-  Dependency,
-  DependencyPath,
+  PackagePath,
   NativeApplicationDescriptor,
   utils as coreUtils,
   MiniApp
@@ -143,13 +142,13 @@ exports.handler = async function ({
       }
     })
 
-    const addDependenciesObjs = _.map(addDependencies, d => Dependency.fromString(d))
-    const delDependenciesObjs = _.map(delDependencies, d => Dependency.fromString(d))
-    const delMiniAppsAsDeps = _.map(delMiniapps, m => Dependency.fromString(m))
-    const updateDependenciesObjs = _.map(updateDependencies, d => Dependency.fromString(d))
+    const addDependenciesObjs = _.map(addDependencies, d => PackagePath.fromString(d))
+    const delDependenciesObjs = _.map(delDependencies, d => PackagePath.fromString(d))
+    const delMiniAppsAsDeps = _.map(delMiniapps, m => PackagePath.fromString(m))
+    const updateDependenciesObjs = _.map(updateDependencies, d => PackagePath.fromString(d))
 
     let updateMiniAppsObjs = []
-    const updateMiniAppsDependencyPaths = _.map(updateMiniapps, m => DependencyPath.fromString(m))
+    const updateMiniAppsDependencyPaths = _.map(updateMiniapps, m => PackagePath.fromString(m))
     for (const updateMiniAppDependencyPath of updateMiniAppsDependencyPaths) {
       const m = await MiniApp.fromPackagePath(updateMiniAppDependencyPath)
       updateMiniAppsObjs.push(m)
@@ -157,7 +156,7 @@ exports.handler = async function ({
 
     let addMiniAppsObjs = []
   // An array of miniapps strings was provided
-    const addMiniAppsDependencyPaths = _.map(addMiniapps, m => DependencyPath.fromString(m))
+    const addMiniAppsDependencyPaths = _.map(addMiniapps, m => PackagePath.fromString(m))
     for (const addMiniAppDependencyPath of addMiniAppsDependencyPaths) {
       const m = await MiniApp.fromPackagePath(addMiniAppDependencyPath)
       addMiniAppsObjs.push(m)
@@ -181,9 +180,9 @@ exports.handler = async function ({
       for (const updateDependencyObj of updateDependenciesObjs) {
         await cauldron.updateNativeAppDependency(
           napDescriptor,
-          updateDependencyObj.withoutVersion().toString(),
+          updateDependencyObj.basePath,
           updateDependencyObj.version)
-        cauldronCommitMessage.push(`- Update ${updateDependencyObj.withoutVersion().toString()} native dependency version to v${updateDependencyObj.version}`)
+        cauldronCommitMessage.push(`- Update ${updateDependencyObj.basePath} native dependency version to v${updateDependencyObj.version}`)
       }
       // Update MiniApps
       for (const updateMiniAppObj of updateMiniAppsObjs) {

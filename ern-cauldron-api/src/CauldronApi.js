@@ -1,7 +1,7 @@
 // @flow
 
 import * as schemas from './schemas'
-import { Dependency } from 'ern-core'
+import { PackagePath } from 'ern-core'
 import {
   exists,
   joiValidate,
@@ -329,18 +329,19 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    miniApp: any) {
+    miniApp: PackagePath) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-    const miniAppInContainer = _.find(version.miniApps.container, m => Dependency.same(Dependency.fromString(m), miniApp, { ignoreVersion: true }))
+
+    const miniAppInContainer = _.find(version.miniApps.container, m => miniApp.same(PackagePath.fromString(m), { ignoreVersion: true }))
     if (!miniAppInContainer) {
-      throw new Error(`${miniApp.name} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${miniApp.basePath} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
     version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
-    return this.commit(`Update version of ${miniApp.name} MiniApp to ${miniApp.version}`)
+    return this.commit(`Update version of ${miniApp.basePath} MiniApp to ${miniApp.version || ''} `)
   }
 
   async updateTopLevelContainerVersion (
@@ -419,13 +420,13 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    dependency: any) {
+    dependency: PackagePath) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
     if (version.nativeDeps.includes(dependency.toString())) {
-      throw new Error(`${dependency.name} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${dependency.basePath} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
     version.nativeDeps.push(dependency.toString())
@@ -471,17 +472,17 @@ export default class CauldronApi {
     nativeApplicationName: string,
     platformName: string,
     versionName: string,
-    miniapp: any) {
+    miniapp: PackagePath) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
     if (version.miniApps.container.includes(miniapp.toString())) {
-      throw new Error(`${miniapp.name} MiniApp already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${miniapp.basePath} MiniApp already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
     version.miniApps.container.push(miniapp.toString())
-    return this.commit(`Add ${miniapp.name} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
+    return this.commit(`Add ${miniapp.basePath} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
   }
 
   // =====================================================================================

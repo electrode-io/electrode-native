@@ -33,16 +33,14 @@ exports.handler = async function ({
     log.info(`Platform v${platformVersion} suports the following plugins`)
     var table = new Table({
       head: [
-        chalk.cyan('Scope'),
         chalk.cyan('Name'),
         chalk.cyan('Version')
       ],
-      colWidths: [10, 40, 16]
+      colWidths: [40, 16]
     })
     for (const plugin of plugins) {
       table.push([
-        plugin.scope ? plugin.scope : '',
-        plugin.name,
+        plugin.basePath,
         plugin.version
       ])
     }

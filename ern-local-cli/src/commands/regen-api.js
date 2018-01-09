@@ -5,7 +5,7 @@ import {
 } from 'ern-api-gen'
 import {
   manifest,
-  Dependency,
+  PackagePath,
   utils as coreUtils
 } from 'ern-core'
 import utils from '../lib/utils'
@@ -35,9 +35,12 @@ exports.handler = async function ({
 } = {}) {
   try {
     if (!bridgeVersion) {
-      const bridgeDep = await manifest.getNativeDependency(Dependency.fromString('react-native-electrode-bridge'))
+      const bridgeDep = await manifest.getNativeDependency(PackagePath.fromString('react-native-electrode-bridge'))
       if (!bridgeDep) {
         throw new Error('react-native-electrode-bridge not found in manifest. please provide explicit version')
+      }
+      if (!bridgeDep.version) {
+        throw new Error('react-native-electrode-bridge version not defined. This should not happen')
       }
       bridgeVersion = bridgeDep.version
     }

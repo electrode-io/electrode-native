@@ -1,8 +1,7 @@
 // @flow
 
 import {
-  Dependency,
-  DependencyPath,
+  PackagePath,
   utils as coreUtils,
   Platform,
   ModuleTypes
@@ -76,7 +75,7 @@ exports.handler = async function ({
   skipNpmCheck?: boolean
 }) {
   try {
-    const apiDep = Dependency.fromPath(DependencyPath.fromString(apiName))
+    const apiDep = PackagePath.fromString(apiName)
     // pre conditions
     await utils.logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
@@ -98,6 +97,9 @@ exports.handler = async function ({
 
     log.info(`Generating API implementation for ${apiName}`)
     let reactNativeVersion = await coreUtils.reactNativeManifestVersion()
+    if (!reactNativeVersion) {
+      throw new Error('React Native version is not defined in Manifest. This sould not happen !')
+    }
     log.debug(`Will generate api implementation using react native version: ${reactNativeVersion}`)
 
     if (jsOnly && nativeOnly) {
@@ -119,7 +121,7 @@ exports.handler = async function ({
     // Must conform to definition of ElectrodeNativeModuleName
     if (!apiImplName) {
       // camel case api name
-      let cameCaseName = coreUtils.camelize(apiDep.name)
+      let cameCaseName = coreUtils.camelize(apiDep.basePath)
       // remove number if present
       const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
       apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`

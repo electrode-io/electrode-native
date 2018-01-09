@@ -2,7 +2,7 @@
 
 import {
   spin,
-  Dependency,
+  PackagePath,
   shell,
   yarn
 } from 'ern-core'
@@ -18,11 +18,11 @@ import ApiImplIosGenerator from './ios/ApiImplIosGenerator'
 import ApiImplJsGenerator from './js/ApiImplJsGenerator'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
-let plugins: Array<Dependency>
+let plugins: Array<PackagePath>
 
 export default class ApiImplGen {
   async generateApiImplementation (
-    apiDependency: Dependency,
+    apiPackagePath: PackagePath,
     paths: {
       workingDirectory: string,
       pluginsDownloadDirectory: string,
@@ -32,11 +32,11 @@ export default class ApiImplGen {
     reactNativeVersion: string,
     platforms: Array<string>,
     regen: boolean = false) {
-    log.debug(`Inside generateApiImplementation for api:${apiDependency.toString()},  platforms:${platforms.toString()}`)
+    log.debug(`Inside generateApiImplementation for api:${apiPackagePath.toString()},  platforms:${platforms.toString()}`)
 
-    await this.downloadApiAndDependencies(apiDependency, paths.pluginsDownloadDirectory, reactNativeVersion)
+    await this.downloadApiAndDependencies(apiPackagePath, paths.pluginsDownloadDirectory, reactNativeVersion)
 
-    const schemaJson = path.join(paths.pluginsDownloadDirectory, 'node_modules', apiDependency.scopedName, 'schema.json')
+    const schemaJson = path.join(paths.pluginsDownloadDirectory, 'node_modules', apiPackagePath.basePath, 'schema.json')
     const apis:Array<Object> = await ApiGenUtils.extractApiEventsAndRequests(schemaJson)
     this.updatePackageJsonWithApiNames(paths.outDirectory, apis)
 
@@ -44,7 +44,7 @@ export default class ApiImplGen {
     for (let generator of generators) {
       try {
         if (generator) {
-          await generator.generate(apiDependency, paths, reactNativeVersion, plugins, apis, regen)
+          await generator.generate(apiPackagePath, paths, reactNativeVersion, plugins, apis, regen)
         }
       } catch (e) {
         throw new Error(`API implementation project generation failed: ${e}`)
@@ -54,13 +54,13 @@ export default class ApiImplGen {
     log.info(chalk.green(`API implementation project was successfully generated in ${paths.outDirectory}`))
   }
 
-  async downloadApiAndDependencies (apiDependency: Dependency, path: string, reactNativeVersion: string) {
+  async downloadApiAndDependencies (apiPackagePath: PackagePath, path: string, reactNativeVersion: string) {
     try {
       shell.cd(path)
 
-      await this.spinAndDownload(apiDependency)
-      plugins = await this.getDependencies(apiDependency)
-      plugins.push(apiDependency)// Also add the api as a plugin so it's src files will get copied.
+      await this.spinAndDownload(apiPackagePath)
+      plugins = await this.getDependencies(apiPackagePath)
+      plugins.push(apiPackagePath)// Also add the api as a plugin so it's src files will get copied.
       if (plugins) {
         log.info('Downloading dependencies')
         for (let dependency of plugins) {
@@ -68,20 +68,20 @@ export default class ApiImplGen {
         }
       }
       log.debug('Downloading react-native dependency')
-      await this.spinAndDownload(Dependency.fromString(`react-native@${reactNativeVersion}`))
+      await this.spinAndDownload(new PackagePath(`react-native@${reactNativeVersion}`))
     } catch (e) {
       throw new Error(`Api dependency download failed: ${e}`)
     }
   }
 
-  async spinAndDownload (dependency: Dependency) {
-    await spin(`Downloading ${dependency.toString()}`, yarn.add(dependency.path))
+  async spinAndDownload (dependency: PackagePath) {
+    await spin(`Downloading ${dependency.toString()}`, yarn.add(dependency))
   }
 
-  async getDependencies (apiDependency: Dependency): Promise<Array<Dependency>> {
+  async getDependencies (apiPackagePath: PackagePath): Promise<Array<PackagePath>> {
     try {
       log.info('Looking for peerDependencies')
-      const apiPackageInfo = await yarn.info(apiDependency.path, {json: true})
+      const apiPackageInfo = await yarn.info(apiPackagePath, {json: true})
 
       let pluginsNames = []
 
@@ -94,9 +94,9 @@ export default class ApiImplGen {
       }
 
       if (pluginsNames.length === 0) {
-        log.info(`no other dependencies found for ${apiDependency.name}`)
+        log.info(`no other dependencies found for ${apiPackagePath.basePath}`)
       }
-      return _.map(pluginsNames, Dependency.fromString)
+      return _.map(pluginsNames, PackagePath.fromString)
     } catch (e) {
       throw new Error(`getDependencies: ${e}`)
     }
@@ -138,10 +138,10 @@ class NullApiImplGenerator implements ApiImplGeneratable {
   }
 
   async generate (
-    apiDependency: Dependency,
+    apiDependency: PackagePath,
     paths: Object,
     reactNativeVersion: string,
-    plugins: Array<Dependency>,
+    plugins: Array<PackagePath>,
     apis: Array<Object>,
     regen: boolean) {
     log.debug('NullApiImplGenerator generate - noop')

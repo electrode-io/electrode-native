@@ -3,7 +3,7 @@
 import {
   manifest,
   Platform,
-  Dependency,
+  PackagePath,
   utils as coreUtils
 } from 'ern-core'
 import utils from '../../../lib/utils'
@@ -30,13 +30,12 @@ exports.handler = async function ({
   platformVersion?: string
 }) {
   try {
-    const plugin = await manifest.getNativeDependency(Dependency.fromString(name), platformVersion)
+    const plugin = await manifest.getNativeDependency(PackagePath.fromString(name), platformVersion)
     if (!plugin) {
       return log.warn(`No plugin named ${name} was found for platform version $platformVersion}`)
     }
 
-    const scopeStr = `${plugin.scope ? `${plugin.scope}@` : ''}`
-    log.info(`${chalk.gray(scopeStr)}${chalk.yellow(plugin.name)}@${chalk.magenta(plugin.version)}`)
+    log.info(`${chalk.yellow(plugin.basePath)}@${chalk.magenta(plugin.version)}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

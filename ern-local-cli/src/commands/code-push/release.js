@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Dependency,
+  PackagePath,
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
@@ -148,7 +148,7 @@ exports.handler = async function ({
       await performCodePushOtaUpdate(
         napDescriptor,
         deploymentName,
-        _.map(miniapps, Dependency.fromString), {
+        _.map(miniapps, PackagePath.fromString), {
           force,
           codePushIsMandatoryRelease: mandatory,
           codePushRolloutPercentage: rollout,

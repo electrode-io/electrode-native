@@ -23,8 +23,7 @@ import {
 } from 'ern-util-dev'
 import * as ernUtil from 'ern-core'
 const {
-  Dependency,
-  DependencyPath,
+  PackagePath,
   YarnCli,
   shell
 } = ernUtil
@@ -70,8 +69,8 @@ describe('ern-container-gen utils.js', () => {
   describe('getMiniAppsDeltas', () => {
     it('should compute new deltas', () => {
       const miniApps = [
-        Dependency.fromString('MiniAppFour@1.0.0'),
-        Dependency.fromString('MiniAppFive@1.0.0')
+        PackagePath.fromString('MiniAppFour@1.0.0'),
+        PackagePath.fromString('MiniAppFive@1.0.0')
       ]
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock)
       expect(result).to.have.property('new').that.is.a('array').lengthOf(2)
@@ -79,8 +78,8 @@ describe('ern-container-gen utils.js', () => {
 
     it('should compute same deltas', () => {
       const miniApps = [
-        Dependency.fromString('MiniAppOne@6.0.0'),
-        Dependency.fromString('MiniAppTwo@3.0.0')
+        PackagePath.fromString('MiniAppOne@6.0.0'),
+        PackagePath.fromString('MiniAppTwo@3.0.0')
       ]
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock)
       expect(result).to.have.property('same').that.is.a('array').lengthOf(2)
@@ -88,8 +87,8 @@ describe('ern-container-gen utils.js', () => {
 
     it('should compute upgraded deltas', () => {
       const miniApps = [
-        Dependency.fromString('MiniAppOne@7.0.0'),
-        Dependency.fromString('MiniAppTwo@4.0.0')
+        PackagePath.fromString('MiniAppOne@7.0.0'),
+        PackagePath.fromString('MiniAppTwo@4.0.0')
       ]
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock)
       expect(result).to.have.property('upgraded').that.is.a('array').lengthOf(2)
@@ -97,9 +96,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should compute deltas', () => {
       const miniApps = [
-        Dependency.fromString('MiniAppOne@1.0.0'),
-        Dependency.fromString('MiniAppTwo@3.0.0'),
-        Dependency.fromString('MiniAppFour@1.0.0')
+        PackagePath.fromString('MiniAppOne@1.0.0'),
+        PackagePath.fromString('MiniAppTwo@3.0.0'),
+        PackagePath.fromString('MiniAppFour@1.0.0')
       ]
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock)
       expect(result).to.have.property('new').that.is.a('array').lengthOf(1)
@@ -139,9 +138,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should work correctly with mixed deltas', async () => {
       const miniAppsDeltas = {
-        upgraded: [ { name: 'MiniAppOne', version: '7.0.0' }, { name: 'MiniAppTwo', version: '4.0.0' } ],
-        same: [ { name: 'MiniAppOne', version: '6.0.0' }, { name: 'MiniAppTwo', version: '3.0.0' } ],
-        new: [ { name: 'MiniAppFour', version: '7.0.0' } ]
+        upgraded: [ { nabasePathme: 'MiniAppOne', version: '7.0.0' }, { basePath: 'MiniAppTwo', version: '4.0.0' } ],
+        same: [ { basePath: 'MiniAppOne', version: '6.0.0' }, { basePath: 'MiniAppTwo', version: '3.0.0' } ],
+        new: [ { basePath: 'MiniAppFour', version: '7.0.0' } ]
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
       assert(yarnCliStub.upgrade.calledTwice)
@@ -155,7 +154,7 @@ describe('ern-container-gen utils.js', () => {
   describe('getPackageJsonDependenciesBasedOnMiniAppDeltas', () => {
     it('should inject MiniApps that have same version as previous', () => {
       const miniAppsDeltas = {
-        same: [ { name: 'MiniAppOne', version: '6.0.0' }, { name: 'MiniAppTwo', version: '3.0.0' } ]
+        same: [ { basePath: 'MiniAppOne', version: '6.0.0' }, { basePath: 'MiniAppTwo', version: '3.0.0' } ]
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, sampleYarnLock)
       expect(result).to.have.property('MiniAppOne', '6.0.0')
@@ -164,7 +163,7 @@ describe('ern-container-gen utils.js', () => {
 
     it('should inject MiniApps that have upgraded versions', () => {
       const miniAppsDeltas = {
-        upgraded: [ { name: 'MiniAppOne', version: '7.0.0' }, { name: 'MiniAppTwo', version: '4.0.0' } ]
+        upgraded: [ { basePath: 'MiniAppOne', version: '7.0.0' }, { basePath: 'MiniAppTwo', version: '4.0.0' } ]
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, sampleYarnLock)
       expect(result).to.have.property('MiniAppOne', '6.0.0')
@@ -173,7 +172,7 @@ describe('ern-container-gen utils.js', () => {
 
     it('should not inject MiniApps that are new', () => {
       const miniAppsDeltas = {
-        new: [ { name: 'MiniAppFour', version: '7.0.0' }, { name: 'MiniAppFive', version: '4.0.0' } ]
+        new: [ { basePath: 'MiniAppFour', version: '7.0.0' }, { basePath: 'MiniAppFive', version: '4.0.0' } ]
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, sampleYarnLock)
       expect(result).empty
@@ -181,9 +180,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should inject proper MiniApps', () => {
       const miniAppsDeltas = {
-        new: [ { name: 'MiniAppFour', version: '7.0.0' } ],
-        upgraded: [ { name: 'MiniAppTwo', version: '4.0.0' } ],
-        same: [ { name: 'MiniAppOne', version: '6.0.0' } ]
+        new: [ { basePath: 'MiniAppFour', version: '7.0.0' } ],
+        upgraded: [ { basePath: 'MiniAppTwo', version: '4.0.0' } ],
+        same: [ { basePath: 'MiniAppOne', version: '6.0.0' } ]
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, sampleYarnLock)
       expect(result).to.have.property('MiniAppOne', '6.0.0')
@@ -196,46 +195,46 @@ describe('ern-container-gen utils.js', () => {
   // ==========================================================
   describe('generateMiniAppsComposite [with yarn lock]', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [1]', async () => {
-      const miniApps = [DependencyPath.fromString('file:/Code/MiniApp')]
+      const miniApps = [PackagePath.fromString('file:/Code/MiniApp')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [2]', async () => {
-      const miniApps = [DependencyPath.fromString('MiniAppOne@1.0.0'), DependencyPath.fromString('file:/Code/MiniApp')]
+      const miniApps = [PackagePath.fromString('MiniAppOne@1.0.0'), PackagePath.fromString('file:/Code/MiniApp')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [1]', async () => {
-      const miniApps = [DependencyPath.fromString('git://github.com:user/MiniAppRepo')]
+      const miniApps = [PackagePath.fromString('git://github.com:user/MiniAppRepo')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [2]', async () => {
-      const miniApps = [DependencyPath.fromString('MiniAppOne@1.0.0'), DependencyPath.fromString('git://github.com:user/MiniAppRepo')]
+      const miniApps = [PackagePath.fromString('MiniAppOne@1.0.0'), PackagePath.fromString('git://github.com:user/MiniAppRepo')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
-      const miniApps = [DependencyPath.fromString('MiniAppOne')]
+      const miniApps = [PackagePath.fromString('MiniAppOne')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
-      const miniApps = [DependencyPath.fromString('MiniAppOne'), DependencyPath.fromString('MiniAppTwo@1.0.0')]
+      const miniApps = [PackagePath.fromString('MiniAppOne'), PackagePath.fromString('MiniAppTwo@1.0.0')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if path to yarn.lock does not exists', async () => {
-      const miniApps = [DependencyPath.fromString('MiniAppOne@1.0.0'), DependencyPath.fromString('MiniAppTwo@1.0.0')]
+      const miniApps = [PackagePath.fromString('MiniAppOne@1.0.0'), PackagePath.fromString('MiniAppTwo@1.0.0')]
       assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: path.join(tmpOutDir, 'yarn.lock')}), 'No exception was thrown !')
     })
 
     it('should call yarn install prior to calling yarn add or yarn upgrade for each MiniApp', async () => {
       // One new, one same, one upgrade
       const miniApps = [
-        DependencyPath.fromString('MiniAppOne@6.0.0'), // same
-        DependencyPath.fromString('MiniAppTwo@4.0.0'), // upgraded
-        DependencyPath.fromString('MiniAppFour@1.0.0') // new
+        PackagePath.fromString('MiniAppOne@6.0.0'), // same
+        PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
+        PackagePath.fromString('MiniAppFour@1.0.0') // new
       ]
       await generateMiniAppsComposite(miniApps, tmpOutDir, { pathToYarnLock: pathToSampleYarnLock })
       assert(yarnCliStub.install.calledOnce)
@@ -248,7 +247,7 @@ describe('ern-container-gen utils.js', () => {
     it('should create index.android.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [
-        DependencyPath.fromString('MiniAppOne@6.0.0')
+        PackagePath.fromString('MiniAppOne@6.0.0')
       ]
       await generateMiniAppsComposite(miniApps, tmpOutDir, { pathToYarnLock: pathToSampleYarnLock })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
@@ -257,7 +256,7 @@ describe('ern-container-gen utils.js', () => {
     it('should create index.ios.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [
-        DependencyPath.fromString('MiniAppOne@6.0.0')
+        PackagePath.fromString('MiniAppOne@6.0.0')
       ]
       await generateMiniAppsComposite(miniApps, tmpOutDir, { pathToYarnLock: pathToSampleYarnLock })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.ios.js')))
@@ -274,9 +273,9 @@ describe('ern-container-gen utils.js', () => {
     // expected package.json beforehand
     it('should call yarn add for each MiniApp', async () => {
       const miniApps = [
-        DependencyPath.fromString('MiniAppOne@6.0.0'), // same
-        DependencyPath.fromString('MiniAppTwo@4.0.0'), // upgraded
-        DependencyPath.fromString('MiniAppFour@1.0.0') // new
+        PackagePath.fromString('MiniAppOne@6.0.0'), // same
+        PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
+        PackagePath.fromString('MiniAppFour@1.0.0') // new
       ]
       fs.writeFileSync(path.join(tmpOutDir, 'package.json'), JSON.stringify({
         dependencies: {
@@ -292,7 +291,7 @@ describe('ern-container-gen utils.js', () => {
     it('should create index.android.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [
-        DependencyPath.fromString('MiniAppOne@6.0.0')
+        PackagePath.fromString('MiniAppOne@6.0.0')
       ]
       // Because in the case of no yarn lock provided the package.json
       // is created when running first yarn add, and we are using a yarnAdd
@@ -310,7 +309,7 @@ describe('ern-container-gen utils.js', () => {
     it('should create index.ios.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [
-        DependencyPath.fromString('MiniAppOne@6.0.0')
+        PackagePath.fromString('MiniAppOne@6.0.0')
       ]
       // Because in the case of no yarn lock provided the package.json
       // is created when running first yarn add, and we are using a yarnAdd

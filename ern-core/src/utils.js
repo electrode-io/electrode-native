@@ -4,8 +4,7 @@ import {
   yarn
 } from './clients'
 import config from './config'
-import Dependency from './Dependency'
-import DependencyPath from './DependencyPath'
+import PackagePath from './PackagePath'
 import gitCli from './gitCli'
 import http from 'http'
 import camelCase from 'lodash/camelCase'
@@ -20,9 +19,9 @@ import CauldronCli from 'ern-cauldron-api'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
-export async function isPublishedToNpm (pkg: string | DependencyPath): Promise<boolean> {
+export async function isPublishedToNpm (pkg: string | PackagePath): Promise<boolean> {
   if (typeof pkg === 'string') {
-    pkg = DependencyPath.fromString(pkg)
+    pkg = PackagePath.fromString(pkg)
   }
 
   let publishedVersionsInfo
@@ -39,7 +38,7 @@ export async function isPublishedToNpm (pkg: string | DependencyPath): Promise<b
     let publishedVersions: Array<string> = publishedVersionsInfo.data
     let type: string = publishedVersionsInfo.type
     if (type && type === 'inspect') {
-      const pkgVersion: string = Dependency.fromString(pkg.toString()).version
+      const pkgVersion = PackagePath.fromString(pkg.toString()).version
       if (publishedVersions && pkgVersion) {
         return publishedVersions.includes(pkgVersion)
       } else {
@@ -129,7 +128,7 @@ export async function isDependencyApi (dependencyName: string): Promise<boolean>
   }
   let result
   try {
-    const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
+    const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
     result =
       depInfo && depInfo.type === 'error'
         ? false
@@ -148,8 +147,8 @@ export async function isDependencyApi (dependencyName: string): Promise<boolean>
  * @param type: checks to see if a dependency is of a specific type(js|native) as well
  * @returns {Promise.<boolean>}
  */
-export async function isDependencyApiImpl (dependencyName: (string | Dependency), forceYanInfo?: boolean, type?: ModuleTypes): Promise<boolean> {
-  if (dependencyName instanceof Dependency) {
+export async function isDependencyApiImpl (dependencyName: (string | PackagePath), forceYanInfo?: boolean, type?: ModuleTypes): Promise<boolean> {
+  if (dependencyName instanceof PackagePath) {
     dependencyName = dependencyName.toString()
   }
   // for api-impl generated using default name minimize the await time
@@ -160,7 +159,7 @@ export async function isDependencyApiImpl (dependencyName: (string | Dependency)
   const modulesTypes = type ? [type] : [ModuleTypes.NATIVE_API_IMPL, ModuleTypes.JS_API_IMPL]
   let result
   try {
-    const depInfo = await yarn.info(DependencyPath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
+    const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {field: 'ern 2> /dev/null', json: true})
     result =
       depInfo && depInfo.type === 'error'
         ? false
@@ -173,11 +172,11 @@ export async function isDependencyApiImpl (dependencyName: (string | Dependency)
   return result
 }
 
-export async function isDependencyJsApiImpl (dependency: (string | Dependency)): Promise<boolean> {
+export async function isDependencyJsApiImpl (dependency: (string | PackagePath)): Promise<boolean> {
   return isDependencyApiImpl(dependency, true, ModuleTypes.JS_API_IMPL)
 }
 
-export async function isDependencyNativeApiImpl (dependency: (string | Dependency)): Promise<boolean> {
+export async function isDependencyNativeApiImpl (dependency: (string | PackagePath)): Promise<boolean> {
   return isDependencyApiImpl(dependency, true, ModuleTypes.NATIVE_API_IMPL)
 }
 
@@ -185,8 +184,8 @@ export async function isDependencyNativeApiImpl (dependency: (string | Dependenc
  * Version of react-native dependency in manifest
  */
 export async function reactNativeManifestVersion () {
-  const reactNativeVersionLessDependency = Dependency.fromString('react-native')
-  let reactNativeDependency = await manifest.getNativeDependency(reactNativeVersionLessDependency)
+  const reactNativebasePathDependency = PackagePath.fromString('react-native')
+  let reactNativeDependency = await manifest.getNativeDependency(reactNativebasePathDependency)
 
   if (!reactNativeDependency) {
     throw new Error('Could not retrieve react native dependency from manifest')
@@ -229,8 +228,8 @@ export async function downloadPluginSource (pluginOrigin: any): Promise<string> 
 
   if (!fs.existsSync(absolutePluginOutPath)) {
     if (pluginOrigin.type === 'npm') {
-      const dependency = new Dependency(pluginOrigin.name, {scope: pluginOrigin.scope, version: pluginOrigin.version})
-      await yarn.add(DependencyPath.fromString(dependency.toString()))
+      const dependency = packagePathFrom(pluginOrigin.name, {scope: pluginOrigin.scope, version: pluginOrigin.version})
+      await yarn.add(PackagePath.fromString(dependency.toString()))
     } else if (pluginOrigin.type === 'git') {
       if (pluginOrigin.version) {
         await gitCli().cloneAsync(pluginOrigin.url, {'--branch': pluginOrigin.version})
@@ -243,6 +242,16 @@ export async function downloadPluginSource (pluginOrigin: any): Promise<string> 
   }
 
   return Promise.resolve(absolutePluginOutPath)
+}
+
+function packagePathFrom (name, {
+  scope,
+  version
+} : {
+  scope?: string,
+  version?: string
+} = {}) : PackagePath {
+  return PackagePath.fromString(`${scope ? `@${scope}/` : ''}${name}${version ? `@${version}` : ''}`)
 }
 
 /**
@@ -285,8 +294,8 @@ export function getDownloadedPluginPath (pluginOrigin: any) {
  * @param plugins
  * @returns {Promise.<Array.<Dependency>>}
  */
-export async function extractJsApiImplementations (plugins: Array<Dependency>) {
-  const jsApiImplDependencies: Array<Dependency> = []
+export async function extractJsApiImplementations (plugins: Array<PackagePath>) {
+  const jsApiImplDependencies: Array<PackagePath> = []
   for (const dependency of plugins) {
     if (await isDependencyJsApiImpl(dependency)) {
       jsApiImplDependencies.push(dependency)

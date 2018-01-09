@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Dependency,
+  PackagePath,
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
@@ -73,7 +73,7 @@ exports.handler = async function ({
       }
     })
 
-    const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+    const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
 
     const cauldronCommitMessage = [
       `${dependencies.length === 1

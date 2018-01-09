@@ -1,6 +1,6 @@
 // @flow
 
-import Dependency from './Dependency'
+import PackagePath from './PackagePath'
 import NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import spin from './spin'
 import * as utils from './utils.js'
@@ -56,7 +56,7 @@ export async function logCompatibilityReportTable (report: Object) {
       chalk.cyan('Needed Version'),
       chalk.cyan('Local Version')
     ],
-    colWidths: [10, 40, 16, 15]
+    colWidths: [40, 16, 15]
   })
 
   for (const compatibleEntry of report.compatible) {
@@ -198,8 +198,8 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
 // versions it's OK as it's always possible to regenerate a container
 // that include this new native dependency)
 export function getCompatibility (
-  localDeps: Array<Dependency>,
-  remoteDeps: Array<Dependency>, {
+  localDeps: Array<PackagePath>,
+  remoteDeps: Array<PackagePath>, {
     uncompatibleIfARemoteDepIsMissing
 } : {
     uncompatibleIfARemoteDepIsMissing?: boolean
@@ -207,12 +207,11 @@ export function getCompatibility (
   let result = { compatible: [], compatibleNonStrict: [], incompatible: [] }
 
   for (const remoteDep of remoteDeps) {
-    const localDep = _.find(localDeps, d => Dependency.same(d, remoteDep, { ignoreVersion: true }))
+    const localDep = _.find(localDeps, d => remoteDep.same(d, { ignoreVersion: true }))
     const localDepVersion = localDep ? localDep.version : undefined
 
     let entry = {
-      dependencyName: remoteDep.name,
-      scope: remoteDep.scope,
+      dependencyName: remoteDep.basePath,
       localVersion: localDepVersion,
       remoteVersion: remoteDep.version
     }
@@ -252,12 +251,11 @@ export function getCompatibility (
   if (uncompatibleIfARemoteDepIsMissing) {
     for (const localDep of localDeps) {
       const remoteDep = _.find(remoteDeps,
-        d => (d.name === localDep.name) && (d.scope === localDep.scope))
+        d => (d.basePath === localDep.basePath))
       const remoteDepVersion = remoteDep ? remoteDep.version : undefined
 
       let entry = {
-        dependencyName: localDep.name,
-        scope: localDep.scope,
+        dependencyName: localDep.basePath,
         localVersion: localDep.version,
         remoteVersion: remoteDepVersion || 'MISSING'
       }

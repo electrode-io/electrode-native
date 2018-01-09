@@ -1,6 +1,6 @@
 // @flow
 
-import Dependency from './Dependency'
+import PackagePath from './PackagePath'
 import readDir from 'fs-readdir-recursive'
 import _ from 'lodash'
 import path from 'path'
@@ -20,11 +20,11 @@ export function getUnprefixedVersion (version: string) : string {
 }
 
 export type NativeDependencies = {
-  apis: Array<Dependency>;
-  nativeApisImpl: Array<Dependency>;
-  thirdPartyInManifest: Array<Dependency>;
-  thirdPartyNotInManifest: Array<Dependency>;
-  all: Array<Dependency>;
+  apis: Array<PackagePath>;
+  nativeApisImpl: Array<PackagePath>;
+  thirdPartyInManifest: Array<PackagePath>;
+  thirdPartyNotInManifest: Array<PackagePath>;
+  all: Array<PackagePath>;
 }
 
 export async function findNativeDependencies (dir: string) : Promise<NativeDependencies> {
@@ -53,10 +53,10 @@ export async function findNativeDependencies (dir: string) : Promise<NativeDepen
     const name = NPM_SCOPED_MODULE_RE.test(nativeDependencyName) ? NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2] : nativeDependencyName
     const scope = (NPM_SCOPED_MODULE_RE.test(nativeDependencyName) && NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[1]) || undefined
     const version = getUnprefixedVersion(nativeDepPackageJson.version)
-    const dep = new Dependency(name, { scope, version })
+    const dep = packagePathFrom(name, { scope, version })
     if (nativeDepPackageJson.ern) {
       if ((nativeDepPackageJson.ern.moduleType === ModuleTypes.API) ||
-          (/react-native-.+-api$/.test(dep.name))) {
+          (/react-native-.+-api$/.test(dep.basePath))) {
         result.apis.push(dep)
       } else if (nativeDepPackageJson.ern.moduleType === ModuleTypes.NATIVE_API_IMPL) {
         result.nativeApisImpl.push(dep)
@@ -72,4 +72,14 @@ export async function findNativeDependencies (dir: string) : Promise<NativeDepen
   }
 
   return result
+}
+
+function packagePathFrom (name, {
+  scope,
+  version
+} : {
+  scope?: string,
+  version?: string
+} = {}) : PackagePath {
+  return PackagePath.fromString(`${scope ? `@${scope}/` : ''}${name}${version ? `@${version}` : ''}`)
 }

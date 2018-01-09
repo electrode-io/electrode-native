@@ -29,9 +29,8 @@ import _ColoredLog from './coloredLog'
 import _ReactNativeCli from './ReactNativeCli'
 import _required from './required'
 import _tagOneLine from './tagoneline'
-import _Dependency from './Dependency'
+import _PackagePath from './PackagePath'
 import _NativeApplicationDescriptor from './NativeApplicationDescriptor'
-import _DependencyPath from './DependencyPath'
 import * as _fileUtils from './fileUtil'
 import _YarnCli from './YarnCli'
 import _gitCli from './gitCli'
@@ -64,9 +63,8 @@ export const ColoredLog = _ColoredLog
 export const ReactNativeCli = _ReactNativeCli
 export const required = _required
 export const tagOneLine = _tagOneLine
-export const Dependency = _Dependency
+export const PackagePath = _PackagePath
 export const NativeApplicationDescriptor = _NativeApplicationDescriptor
-export const DependencyPath = _DependencyPath
 export const mustacheUtils = _mustacheUtils
 export const fileUtils = _fileUtils
 export const YarnCli = _YarnCli
@@ -101,9 +99,8 @@ export default ({
   ReactNativeCli: _ReactNativeCli,
   required: _required,
   tagOneLine: _tagOneLine,
-  Dependency: _Dependency,
+  PackagePath: _PackagePath,
   NativeApplicationDescriptor: _NativeApplicationDescriptor,
-  DependencyPath: _DependencyPath,
   mustacheUtils: _mustacheUtils,
   fileUtils: _fileUtils,
   YarnCli: _YarnCli,

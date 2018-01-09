@@ -10,7 +10,7 @@ import {
   FLOW_CONFIG_FILE
 } from './Constants'
 import {
-  Dependency,
+  PackagePath,
   fileUtils,
   shell,
   childProcess,
@@ -158,7 +158,7 @@ async function _promptForPluginVersion (curVersion: string) {
   return ret
 }
 
-async function _checkDependencyVersion (pkg: any, targetDependencies: Array<Dependency>) {
+async function _checkDependencyVersion (pkg: any, targetDependencies: Array<PackagePath>) {
   let pluginDependency = pkg.peerDependencies || {}
   let targetNativeDependenciesMap = _constructTargetNativeDependenciesMap(targetDependencies)
   for (const key of Object.keys(pluginDependency)) {
@@ -169,10 +169,10 @@ async function _checkDependencyVersion (pkg: any, targetDependencies: Array<Depe
   }
 }
 
-function _constructTargetNativeDependenciesMap (targetDependencies: Array<Dependency>) {
+function _constructTargetNativeDependenciesMap (targetDependencies: Array<PackagePath>) {
   let targetNativeDependenciesMap = new Map(
-    targetDependencies.map((currVal) => {
-      const dependencyString = currVal.toString()
+    targetDependencies.map(curVal => {
+      const dependencyString = curVal.toString()
       let idx = dependencyString.lastIndexOf('@') // logic for scoped dependency
       return [dependencyString.substring(0, idx), dependencyString.substring(idx + 1)]
     }))

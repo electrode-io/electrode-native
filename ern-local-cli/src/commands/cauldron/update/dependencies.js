@@ -1,7 +1,7 @@
 // @flow
 
 import {
-  Dependency,
+  PackagePath,
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
@@ -46,7 +46,7 @@ exports.handler = async function ({
     }
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    const dependenciesObjs = _.map(dependencies, d => Dependency.fromString(d))
+    const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
 
     await utils.logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
@@ -78,7 +78,7 @@ exports.handler = async function ({
 
     const cauldronCommitMessage = [
       `${dependenciesObjs.length === 1
-      ? `Update ${dependenciesObjs[0].withoutVersion().toString()} native dependency version in v${napDescriptor.toString()}`
+      ? `Update ${dependenciesObjs[0].basePath} native dependency version in v${napDescriptor.toString()}`
       : `Update multiple native dependencies versions in ${napDescriptor.toString()}`}`
     ]
 
@@ -88,9 +88,9 @@ exports.handler = async function ({
         for (const dependencyObj of dependenciesObjs) {
           await cauldron.updateNativeAppDependency(
             napDescriptor,
-            dependencyObj.withoutVersion().toString(),
+            dependencyObj.basePath,
             dependencyObj.version)
-          cauldronCommitMessage.push(`- Update ${dependencyObj.withoutVersion().toString()} native dependency to v${dependencyObj.version}`)
+          cauldronCommitMessage.push(`- Update ${dependencyObj.basePath} native dependency to v${dependencyObj.version}`)
         }
       },
       napDescriptor,

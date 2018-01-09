@@ -4,7 +4,7 @@ import {
   manifest,
   IosUtil,
   utils,
-  Dependency,
+  PackagePath,
   shell
 } from 'ern-core'
 import {
@@ -115,7 +115,7 @@ export default class IosGenerator implements ContainerGenerator {
       projectName: 'ElectrodeContainer'
     }
 
-    const reactNativePlugin = _.find(config.plugins, p => p.name === 'react-native')
+    const reactNativePlugin = _.find(config.plugins, p => p.basePath === 'react-native')
     if (!reactNativePlugin) {
       throw new Error('react-native was not found in plugins list !')
     }
@@ -144,7 +144,7 @@ export default class IosGenerator implements ContainerGenerator {
   }
 
   async buildiOSPluginsViews (
-    plugins: Array<Dependency>,
+    plugins: Array<PackagePath>,
     mustacheView: any) : Promise<*> {
     try {
       mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'ios')
@@ -156,7 +156,7 @@ export default class IosGenerator implements ContainerGenerator {
 
   async addiOSPluginHookClasses (
     containerIosProject: any,
-    plugins: Array<Dependency>,
+    plugins: Array<PackagePath>,
     outDir: string) : Promise<*> {
     try {
       log.debug(`[=== iOS: Adding plugin hook classes ===]`)
@@ -165,7 +165,7 @@ export default class IosGenerator implements ContainerGenerator {
         if (plugin.name === 'react-native') { continue }
         let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.ios) {
-          log.warn(`${plugin.name} does not have any injection configuration for iOS`)
+          log.warn(`${plugin.basePath} does not have any injection configuration for iOS`)
           continue
         }
         let iOSPluginHook = pluginConfig.ios.pluginHook
@@ -208,14 +208,14 @@ export default class IosGenerator implements ContainerGenerator {
     })
   }
 
-  async buildApiImplPluginViews (plugins: Array<Dependency>,
+  async buildApiImplPluginViews (plugins: Array<PackagePath>,
                                  mustacheView: Object,
                                  pathSpec: Object,
                                  projectSpec: Object) {
     for (const plugin of plugins) {
       const pluginConfig = await manifest.getPluginConfig(plugin, projectSpec.projectName)
       shell.cd(pathSpec.pluginsDownloadDirectory)
-      if (await utils.isDependencyApiImpl(plugin.scopedName)) {
+      if (await utils.isDependencyApiImpl(plugin.basePath)) {
         const pluginSourcePath = await utils.downloadPluginSource(pluginConfig.origin)
         populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
       }

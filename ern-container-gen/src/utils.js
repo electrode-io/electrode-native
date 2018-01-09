@@ -8,8 +8,7 @@ import {
   reactnative,
   yarn,
   MiniApp,
-  Dependency,
-  DependencyPath,
+  PackagePath,
   shell,
   manifest,
   handleCopyDirective
@@ -26,7 +25,7 @@ export async function bundleMiniApps (
     pathToYarnLock?: string
   } = {},
   // JavaScript API implementations
-  jsApiImplDependencies?: Array<Dependency>) {
+  jsApiImplDependencies?: Array<PackagePath>) {
   try {
     log.debug(`[=== Starting mini apps bundling ===]`)
 
@@ -35,14 +34,14 @@ export async function bundleMiniApps (
     if ((miniapps.length === 1) && (miniapps[0].isLocal)) {
       shell.cd(miniapps[0].path)
     } else {
-      let miniAppsPaths : Array<DependencyPath> = []
+      let miniAppsPaths : Array<PackagePath> = []
       for (const miniapp of miniapps) {
         if (miniapp.isLocal) {
           log.debug(`[bundleMiniApps] MiniApp is local. Using local path ${miniapp.path} for ${miniapp.name}`)
-          miniAppsPaths.push(DependencyPath.fromFileSystemPath(miniapp.path))
+          miniAppsPaths.push(PackagePath.fromString(`file:${miniapp.path}`))
         } else {
           log.debug(`[bundleMiniApps] MiniApp is not local. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
-          miniAppsPaths.push(DependencyPath.fromString(miniapp.packageDescriptor))
+          miniAppsPaths.push(PackagePath.fromString(miniapp.packageDescriptor))
         }
       }
       await generateMiniAppsComposite(miniAppsPaths, compositeMiniAppDir, {pathToYarnLock}, jsApiImplDependencies)
@@ -98,27 +97,26 @@ export async function reactNativeBundleIos (outDir: string) {
 }
 
 export async function generateMiniAppsComposite (
-  miniappsPaths: Array<DependencyPath>,
+  miniappsPaths: Array<PackagePath>,
   outDir: string, {
     pathToYarnLock,
     extraJsDependencies = []
   } : {
     pathToYarnLock?: string,
-    extraJsDependencies?: Array<DependencyPath>
+    extraJsDependencies?: Array<PackagePath>
   } = {},
-  jsApiImplDependencies?: Array<Dependency>) {
+  jsApiImplDependencies?: Array<PackagePath>) {
   shell.mkdir('-p', outDir)
   shell.cd(outDir)
 
   let compositePackageJson = {}
 
   if (pathToYarnLock) {
-    if (_.some(miniappsPaths, p => p.isAFileSystemPath || p.isAGitPath)) {
+    if (_.some(miniappsPaths, p => p.isFilePath || p.isGitPath)) {
       throw new Error('[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps paths with file or git scheme')
     }
 
-    const miniAppsPackages = _.map(miniappsPaths, p => Dependency.fromPath(p))
-    if (_.some(miniAppsPackages, m => !m.isVersioned)) {
+    if (_.some(miniappsPaths, m => !m.version)) {
       throw new Error('[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version')
     }
 
@@ -130,7 +128,7 @@ export async function generateMiniAppsComposite (
     shell.cp(pathToYarnLock, outDir)
 
     const yarnLock = fs.readFileSync(pathToYarnLock, 'utf8')
-    const miniAppsDeltas = getMiniAppsDeltas(miniAppsPackages, yarnLock)
+    const miniAppsDeltas = getMiniAppsDeltas(miniappsPaths, yarnLock)
 
     log.debug(`[generateMiniAppsComposite] miniAppsDeltas: ${JSON.stringify(miniAppsDeltas)}`)
 
@@ -171,8 +169,8 @@ export async function generateMiniAppsComposite (
   if (jsApiImplDependencies) {
     log.debug('Adding imports for JS API implementations.')
     for (const apiImpl of jsApiImplDependencies) {
-      await yarn.add(apiImpl.path)
-      entryIndexJsContent += `import '${apiImpl.scopedName}'\n`
+      await yarn.add(apiImpl)
+      entryIndexJsContent += `import '${apiImpl.basePath}'\n`
     }
   }
   log.debug(`Removing .babelrc files from all modules`)
@@ -295,10 +293,10 @@ export function clearReactPackagerCache () {
 // 'same' : The MiniApp is the same (it was part of previously generated composite, with same version)
 // 'upgraded' : The MiniApp has a new version (it was part of previously generated composite, but with a different version)
 export function getMiniAppsDeltas (
-  miniApps: Array<Dependency>,
+  miniApps: Array<PackagePath>,
   yarnlock: string) {
-  return _.groupBy(miniApps, m => {
-    const re = new RegExp(`\n${m.withoutVersion().toString()}@(.+):`)
+  return _.groupBy(miniApps, (m: PackagePath) => {
+    const re = new RegExp(`\n${m.basePath}@(.+):`)
     const match = re.exec(yarnlock)
     if (match === null) {
       return 'new'
@@ -320,15 +318,15 @@ export function getPackageJsonDependenciesUsingMiniAppDeltas (
 
   if (miniAppsDeltas.same) {
     for (const m of miniAppsDeltas.same) {
-      result[`${m.name}`] = m.version
+      result[`${m.basePath}`] = m.version
     }
   }
 
   if (miniAppsDeltas.upgraded) {
     for (const m of miniAppsDeltas.upgraded) {
-      const re = new RegExp(`\n${m.name.toString()}@(.+):`)
+      const re = new RegExp(`\n${m.basePath}@(.+):`)
       const initialVersion = re.exec(yarnlock)[1]
-      result[`${m.name}`] = initialVersion
+      result[`${m.basePath}`] = initialVersion
     }
   }
 
@@ -339,23 +337,21 @@ export async function runYarnUsingMiniAppDeltas (miniAppsDeltas: Object) {
   // Now we can `yarn add` new MiniApps and `yarn upgrade` the ones that have new versions
   if (miniAppsDeltas.new) {
     for (const m of miniAppsDeltas.new) {
-      const miniappPackage = Dependency.fromObject(m)
-      log.debug(`Adding new MiniApp ${miniappPackage.toString()}`)
-      await yarn.add(miniappPackage.path)
+      log.debug(`Adding new MiniApp ${m.toString()}`)
+      await yarn.add(m)
     }
   }
 
   if (miniAppsDeltas.upgraded) {
     for (const m of miniAppsDeltas.upgraded) {
-      const miniappPackage = Dependency.fromObject(m)
-      log.debug(`Upgrading MiniApp ${miniappPackage.toString()}`)
-      await yarn.upgrade(miniappPackage.path)
+      log.debug(`Upgrading MiniApp ${m.toString()}`)
+      await yarn.upgrade(m)
     }
   }
 }
 
 export async function generatePluginsMustacheViews (
-  plugins: Array<Dependency>,
+  plugins: Array<PackagePath>,
   platform: string) {
   let pluginsViews = []
   log.debug('Generating plugins mustache views')
@@ -365,7 +361,7 @@ export async function generatePluginsMustacheViews (
     }
     let pluginConfig = await manifest.getPluginConfig(plugin)
     if (!pluginConfig[platform]) {
-      log.warn(`${plugin.name} does not have any injection configuration for ${platform} platform`)
+      log.warn(`${plugin.basePath} does not have any injection configuration for ${platform} platform`)
       continue
     }
     const pluginHook = pluginConfig[platform].pluginHook
@@ -430,12 +426,12 @@ export function injectReactNativeVersionKeysInObject (
   })
 }
 
-export function sortDependenciesByName (dependencies: Array<Dependency>) {
+export function sortDependenciesByName (dependencies: Array<PackagePath>) {
   return dependencies.sort((a, b) => {
-    if (a.name < b.name) {
+    if (a.basePath < b.basePath) {
       return -1
     }
-    if (a.name > b.name) {
+    if (a.basePath > b.basePath) {
       return 1
     }
     return 0

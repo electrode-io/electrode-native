@@ -4,8 +4,7 @@ import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
 import {
-  Dependency,
-  DependencyPath,
+  PackagePath,
   NativeApplicationDescriptor,
   spin,
   utils as coreUtils,
@@ -93,9 +92,6 @@ exports.handler = async function ({
 
   try {
     await utils.logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {
-        extraErrorMessage: 'A Cauldron must be active in order to use this command'
-      },
       isValidContainerVersion: version ? {containerVersion: version} : undefined,
       noGitOrFilesystemPath: {
         obj: dependencies,
@@ -108,6 +104,9 @@ exports.handler = async function ({
     }
 
     const cauldron = await coreUtils.getCauldronInstance()
+    if (!cauldron && !miniapps) {
+      throw new Error('A Cauldron must be active if you don\'t explicitly provide miniapps')
+    }
 
     //
     // Full native application selector was not provided.
@@ -153,7 +152,7 @@ exports.handler = async function ({
       napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
     }
 
-    let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
+    let miniAppsPaths: Array<PackagePath> = _.map(miniapps, PackagePath.fromString)
     //
     // --jsOnly switch
     // Ony generates the composite miniapp to a provided output directory
@@ -163,7 +162,7 @@ exports.handler = async function ({
           return log.error('You need to provide a napDescriptor if not providing miniapps')
         }
         const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
-        miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
+        miniAppsPaths = _.map(miniAppsObjs, m => PackagePath.fromString(m.toString()))
       }
 
       let pathToYarnLock
@@ -194,7 +193,7 @@ exports.handler = async function ({
             version,
             nativeAppName: containerName,
             outDir,
-            extraNativeDependencies: _.map(dependencies, d => Dependency.fromString(d))
+            extraNativeDependencies: _.map(dependencies, d => PackagePath.fromString(d))
           }
         ))
       } else if (napDescriptor && version) {
