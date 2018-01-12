@@ -22,13 +22,21 @@ export default class MavenUtils {
    * @param mavenRepositoryUrl
    * @returns {string}
    */
-  static targetRepositoryGradleStatement (mavenRepositoryUrl: string): ?string {
+  static targetRepositoryGradleStatement (mavenRepositoryUrl: string, {
+    mavenUser,
+    mavenPassword
+  } : {
+    mavenUser?: string,
+    mavenPassword?: string
+  } = {}): ?string {
     const repoType = this.mavenRepositoryType(mavenRepositoryUrl)
     if (repoType === 'file') {
       // Replace \ by \\ for Windows
       return `repository(url: "${mavenRepositoryUrl.replace(/\\/g, '\\\\')}")`
     } else if (repoType === 'http') {
-      return `repository(url: "${mavenRepositoryUrl}") { authentication(userName: mavenUser, password: mavenPassword) }`
+      mavenUser = mavenUser ? `'${mavenUser}'` : 'mavenUser'
+      mavenPassword = mavenPassword ? `'${mavenPassword}'` : 'mavenPassword'
+      return `repository(url: "${mavenRepositoryUrl}") { authentication(userName: ${mavenUser}, password: ${mavenPassword}) }`
     }
   }
 

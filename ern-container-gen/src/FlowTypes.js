@@ -57,6 +57,12 @@ export type ContainerMavenPublisherConfig = {
   artifactId: string;
   // Maven Group ID to use for publication
   groupId: string;
+  // Maven user name
+  // If not specified, by convention, it will use mavenUser from gradle.properties
+  mavenUser?: string;
+  // Maven password
+  // If not specified, by convention, it will use mavenPassword from gradle.properties
+  mavenPassword?: string;
 }
 
 export interface ContainerPublisher {

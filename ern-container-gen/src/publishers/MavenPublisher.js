@@ -55,7 +55,9 @@ export default class MavenPublisher implements ContainerPublisher {
               pom.version = '${config.containerVersion}'
               pom.artifactId = '${artifactId}'
               pom.groupId = '${groupId}'
-              ${MavenUtils.targetRepositoryGradleStatement(config.url)}
+              ${MavenUtils.targetRepositoryGradleStatement(config.url, {
+                mavenUser: config.extra && config.extra.mavenUser, mavenPassword: config.extra && config.extra.mavenPassword
+              })}
           }
       }
   }

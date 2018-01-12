@@ -454,7 +454,9 @@ async function performContainerStateUpdateInCauldron (
               url: publisherFromCauldron.url,
               extra: {
                 artifactId: `${napDescriptor.name}-ern-container`,
-                groupId: 'com.walmartlabs.ern'
+                groupId: 'com.walmartlabs.ern',
+                mavenUser: publisherFromCauldron.mavenUser,
+                mavenPassword: publisherFromCauldron.mavenPassword
               }
             })
             break
