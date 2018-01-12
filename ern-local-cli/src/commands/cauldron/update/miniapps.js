@@ -69,14 +69,6 @@ exports.handler = async function ({
         descriptor,
         extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
       } : undefined,
-      noGitOrFilesystemPath: {
-        obj: miniapps,
-        extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
-      },
-      publishedToNpm: {
-        obj: miniapps,
-        extraErrorMessage: 'You can only update MiniApp(s) version(s) with version(s) that have been published to NPM'
-      },
       miniAppIsInNativeApplicationVersionContainer: {
         miniApp: miniapps,
         napDescriptor,
