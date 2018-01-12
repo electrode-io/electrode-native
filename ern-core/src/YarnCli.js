@@ -45,7 +45,7 @@ export default class YarnCli {
       dependencyPath = PackagePath.fromString(`file:${tmpDirPath}`)
     }
 
-    const cmd = `add ${dependencyPath.toString()} --ignore-engines --exact ${dev ? '--dev' : ''} ${peer ? '--peer' : ''}`
+    const cmd = `add ${dependencyPath.toString()} --ignore-engines --non-interactive --exact ${dev ? '--dev' : ''} ${peer ? '--peer' : ''}`
     return this.runYarnCommand(cmd)
   }
 
