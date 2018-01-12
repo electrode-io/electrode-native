@@ -14,7 +14,7 @@
 
 `<miniapps..>`
 
-* One or more MiniApps (delimited by spaces) to remove from a native application version in the Cauldron.
+* One or more package path to MiniApp(s) (delimited by spaces) to remove from a native application version in the Cauldron.
 
 **Options**  
 

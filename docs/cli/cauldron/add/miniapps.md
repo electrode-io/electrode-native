@@ -15,9 +15,7 @@
 
 `<miniapps..>`
 
-* One or more MiniApps (delimited by spaces) to add to a target native application version in the Cauldron.
-* You can only add MiniApp versions that have been published to NPM. 
-* You cannot use the `file` or `git` schemes for the MiniApp(s).
+* One or more package path to MiniApps (delimited by spaces) to add to a target native application version in the Cauldron.
 
 **Example**  
 

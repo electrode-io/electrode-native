@@ -14,9 +14,7 @@
 
 `<miniapps..>`
 
-* One or more MiniApp(s) (delimited by spaces) to update in a target native application version in the Cauldron.
-* You can only update with MiniApp(s) version(s) that have been published to NPM. 
-* You cannot use the `file` or `git` schemes for the MiniApp(s).
+* One or more package path to MiniApp(s) (delimited by spaces) to update in a target native application version in the Cauldron.
 * The version of each MiniApp is corresponding to the version to update to. 
 
 **Options**  

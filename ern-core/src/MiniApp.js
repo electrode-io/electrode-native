@@ -34,8 +34,9 @@ export default class MiniApp {
   _path: string
   _packageJson: Object
   _isLocal: boolean
+  _packagePath: PackagePath
 
-  constructor (miniAppPath: string, isLocal: boolean) {
+  constructor (miniAppPath: string, isLocal: boolean, packagePath: PackagePath) {
     this._path = miniAppPath
     this._isLocal = isLocal
 
@@ -62,6 +63,7 @@ Are you sure this is a MiniApp ?`)
     }
 
     this._packageJson = packageJson
+    this._packagePath = packagePath
   }
 
   static fromCurrentPath () {
@@ -74,13 +76,14 @@ Are you sure this is a MiniApp ?`)
     return fs.existsSync(path.join(p, 'package.json'))
   }
 
-  static fromPath (path) {
-    return new MiniApp(path, true /* isLocal */)
+  get packagePath () : PackagePath {
+    return this._packagePath
   }
 
-  // Create a MiniApp object given a valid package path to the MiniApp
-  // package path can be any valid git or npm path to the MiniApp
-  // package
+  static fromPath (path) {
+    return new MiniApp(path, true /* isLocal */, PackagePath.fromString(path))
+  }
+
   static async fromPackagePath (packagePath: PackagePath) {
     const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
     shell.cd(tmpMiniAppPath)
@@ -89,7 +92,7 @@ Are you sure this is a MiniApp ?`)
     const packageName = Object.keys(packageJson.dependencies)[0]
     shell.rm(path.join(tmpMiniAppPath, 'package.json'))
     shell.mv(path.join(tmpMiniAppPath, 'node_modules', packageName, '*'), tmpMiniAppPath)
-    return new MiniApp(tmpMiniAppPath, false /* isLocal */)
+    return new MiniApp(tmpMiniAppPath, false /* isLocal */, packagePath)
   }
 
   static async create (
@@ -392,8 +395,6 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       }
       const nativeApp = await cauldronInstance.getNativeApp(napDescriptor)
 
-      const miniApp = PackagePath.fromString(`${this.packageJson.name}@${this.packageJson.version}`)
-
        // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
         if (nativeApp.isReleased) {
@@ -454,12 +455,12 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       }
 
       const currentMiniAppEntryInContainer =
-                await cauldronInstance.getContainerMiniApp(napDescriptor, miniApp.basePath)
+                await cauldronInstance.getContainerMiniApp(napDescriptor, this._packagePath.basePath)
 
       if (currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldronInstance.updateMiniAppVersion(napDescriptor, miniApp)
+        await cauldronInstance.updateMiniAppVersion(napDescriptor, this._packagePath)
       } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldronInstance.addContainerMiniApp(napDescriptor, miniApp)
+        await cauldronInstance.addContainerMiniApp(napDescriptor, this._packagePath)
       } else {
         log.error('not supported')
       }

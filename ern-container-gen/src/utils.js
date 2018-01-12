@@ -29,23 +29,13 @@ export async function bundleMiniApps (
   try {
     log.debug(`[=== Starting mini apps bundling ===]`)
 
-    // Specific case where we use container gen to generate
-    // container for runner and we want to bundle the local miniapp
-    if ((miniapps.length === 1) && (miniapps[0].isLocal)) {
-      shell.cd(miniapps[0].path)
-    } else {
-      let miniAppsPaths : Array<PackagePath> = []
-      for (const miniapp of miniapps) {
-        if (miniapp.isLocal) {
-          log.debug(`[bundleMiniApps] MiniApp is local. Using local path ${miniapp.path} for ${miniapp.name}`)
-          miniAppsPaths.push(PackagePath.fromString(`file:${miniapp.path}`))
-        } else {
-          log.debug(`[bundleMiniApps] MiniApp is not local. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
-          miniAppsPaths.push(PackagePath.fromString(miniapp.packageDescriptor))
-        }
-      }
-      await generateMiniAppsComposite(miniAppsPaths, compositeMiniAppDir, {pathToYarnLock}, jsApiImplDependencies)
+    let miniAppsPaths : Array<PackagePath> = []
+    for (const miniapp of miniapps) {
+      log.debug(`[bundleMiniApps] MiniApp is not local. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
+      miniAppsPaths.push(miniapp.packagePath)
     }
+
+    await generateMiniAppsComposite(miniAppsPaths, compositeMiniAppDir, {pathToYarnLock}, jsApiImplDependencies)
 
     clearReactPackagerCache()
 
@@ -111,11 +101,12 @@ export async function generateMiniAppsComposite (
 
   let compositePackageJson = {}
 
-  if (pathToYarnLock) {
-    if (_.some(miniappsPaths, p => p.isFilePath || p.isGitPath)) {
-      throw new Error('[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps paths with file or git scheme')
-    }
+  if (pathToYarnLock && (_.some(miniappsPaths, p => p.isFilePath || p.isGitPath))) {
+    log.warn('Yarn lock will not be used as some of the MiniApp paths are file or git based')
+    pathToYarnLock = undefined
+  }
 
+  if (pathToYarnLock) {
     if (_.some(miniappsPaths, m => !m.version)) {
       throw new Error('[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version')
     }

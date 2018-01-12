@@ -624,7 +624,7 @@ export default class CauldronHelper {
 
   async updateMiniAppVersion (
     napDescriptor: NativeApplicationDescriptor,
-    miniApp: Object) : Promise<*> {
+    miniApp: PackagePath) : Promise<*> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     return this.cauldron.updateMiniAppVersion(
       napDescriptor.name,

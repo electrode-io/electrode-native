@@ -63,17 +63,9 @@ exports.handler = async function ({
         descriptor,
         extraErrorMessage: 'To avoid conflicts with previous versions, you can only use container version newer than the current one'
       } : undefined,
-      noFileSystemPath: {
-        obj: miniapps,
-        extraErrorMessage: 'You cannot provide dependencies using a file scheme path with this command.'
-      },
       napDescriptorExistInCauldron: {
         descriptor,
         extraErrorMessage: 'This command cannot work on a non existing native application version'
-      },
-      publishedToNpm: {
-        obj: miniapps,
-        extraErrorMessage: 'You can only add MiniApps versions that have been published to NPM'
       },
       miniAppNotInNativeApplicationVersionContainer: {
         miniApp: miniapps,
@@ -82,10 +74,7 @@ exports.handler = async function ({
       }
     })
 
-    //
-    // Construct MiniApp objects array
     let miniAppsObjs = []
-    // An array of miniapps strings was provided
     const miniAppsDependencyPaths = _.map(miniapps, m => PackagePath.fromString(m))
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
       const m = await spin(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
