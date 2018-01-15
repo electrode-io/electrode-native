@@ -2,6 +2,7 @@ const shell = require('shelljs')
 const chalk = require('chalk')
 const tmp = require('tmp')
 const path = require('path')
+const dircompare = require('dir-compare')
 const workingDirectoryPath = tmp.dirSync({ unsafeCleanup: true }).name
 const info = chalk.bold.blue
 
@@ -28,6 +29,10 @@ const movieApi = 'react-native-ernmovie-api'
 const movieApiImpl = 'ErnMovieApiImplNative'
 const movieApiImplPkgName = 'ern-movie-api-impl'
 const packageNotInNpm = 'ewkljrlwjerjlwjrl@0.0.3'
+const processCwd = process.cwd()
+const pathToSystemTestsFixtures = path.join(processCwd, 'system-tests-fixtures')
+const pathToAndroidContainerFixture = path.join(pathToSystemTestsFixtures, 'android-container')
+const pathToIosContainerFixture = path.join(pathToSystemTestsFixtures, 'ios-container')
 
 process.env['SYSTEM_TESTS'] = 'true'
 process.on('SIGINT', () => afterAll())
@@ -57,6 +62,14 @@ function run (command, {
   console.log('===========================================================================')
 }
 
+function assert (expression, message) {
+  if (!expression) {
+    console.log(`${chalk.bold.red(`Assertion failed: ${message}`)}`)
+    afterAll()
+    shell.exit(1)
+  }
+}
+
 function afterAll () {
   console.log('===========================================================================')
   console.log(info('Cleaning up test env'))
@@ -67,6 +80,40 @@ function afterAll () {
   console.log(info('Removing Cauldron alias'))
   shell.exec(`ern cauldron repo remove ${cauldronName}`)
   console.log('===========================================================================')
+}
+
+// Given two paths to Android generated containers, return true if the containers
+// contains the exact same structure and files (including file content) or false otherwise
+// Considering that `index.android.bundle` and `index.android.bundle.meta` can vary legitimately
+// from generation to generation, we allow difference of content for these files
+function areSameAndroidContainers (pathA, pathB) {
+  return areSameContainers(pathA, pathB, ['index.android.bundle', 'index.android.bundle.meta'])
+}
+
+// Given two paths to iOS generated containers, return true if the containers contains the
+// exact same structure and files (including file content) or false otherwise
+// Considering that `MiniApp.jsbundle` and `MiniApp.js.bundle.meta` can vary legitimately
+// from generation to generation, we allow difference of content for these files
+// Also due to the high number of differences in pbxproj (randomy generated IDs) we just
+// ignore differences in this file (furether improvement to system tests should only ignore
+// content that should be ignored in this file)
+function areSameIosContainers (pathA, pathB) {
+  return areSameContainers(pathA, pathB, ['project.pbxproj', 'MiniApp.jsbundle', 'MiniApp.jsbundle.meta'])
+}
+
+function areSameContainers (pathA, pathB, filesToIgnoreContentDiff) {
+  let result = true
+  const containerDiffs = dircompare.compareSync(pathA, pathB, {compareContent: true})
+  for (const diff of containerDiffs.diffSet) {
+    if (diff.state === 'distinct') {
+      if (!filesToIgnoreContentDiff.includes(diff.name1)) {
+        console.log('A difference in content was found !')
+        console.log(JSON.stringify(diff))
+        result = false
+      }
+    }
+  }
+  return result
 }
 
 console.log(info(`Entering temporary working directory : ${workingDirectoryPath}`))
@@ -114,7 +161,8 @@ run(`ern cauldron add miniapps ${movieDetailsMiniAppPackageName}@${movieDetailsM
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
-run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${iosNativeApplicationDescriptorNewVersion}`)
+run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
 run(`ern cauldron get nativeapp`)
 
@@ -134,8 +182,13 @@ run(`ern create-container --miniapps file:${miniAppPath} -p ios -v 1.0.0`)
 run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -p android -v 1.0.0`)
 run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -p ios -v 1.0.0`)
 
-run(`ern create-container --descriptor ${androidNativeApplicationDescriptor}`)
-run(`ern create-container --descriptor ${iosNativeApplicationDescriptor}`)
+const androidContainerOutDir = tmp.dirSync({ unsafeCleanup: true }).name
+run(`ern create-container --descriptor ${androidNativeApplicationDescriptor} --out ${androidContainerOutDir}`)
+assert(areSameAndroidContainers(pathToAndroidContainerFixture, androidContainerOutDir), 'Generated Android Container differ from reference fixture !')
+
+const iosContainerOutDir = tmp.dirSync({ unsafeCleanup: true }).name
+run(`ern create-container --descriptor ${iosNativeApplicationDescriptor} --out ${iosContainerOutDir}`)
+assert(areSameIosContainers(pathToIosContainerFixture, iosContainerOutDir), 'Generated iOS Container differ from reference fixture !')
 
 run(`ern why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
 
