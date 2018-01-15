@@ -172,8 +172,6 @@ run(`ern cauldron get config ${iosNativeApplicationDescriptorNewVersion}`)
 run(`ern cauldron add miniapps ${movieDetailsMiniAppPackageName}@${movieDetailsMiniAppVersion} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 // Non published miniapp
 run(`ern cauldron add miniapps ${packageNotInNpm} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
-// File system miniapp
-run(`ern cauldron add miniapps file:${miniAppPath} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 
 // Container gen should be successful for the two following commands
 run(`ern create-container --miniapps file:${miniAppPath} -p android -v 1.0.0`)
