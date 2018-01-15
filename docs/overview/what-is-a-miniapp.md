@@ -9,7 +9,7 @@ We made the choice to distinguish a MiniApp from a full-fledged React Native app
 * A MiniApp can be a multi-page application containing a complete application feature.  
 * A MiniApp can be shipped and updated inside a mobile application, either included as a native container for in-development mobile application version, or as an Over The Air (OTA) update for released mobile application versions.
 
-### As a JavaScript developer what does a MiniApp means to me?
+### As a JavaScript developer, what does a MiniApp mean to me?
 
 As a JavaScript developer, it means that there is no real change to your workflow or your current knowledge of React Native. You'll continue to write JavaScript, you'll continue to use React Native framework and, you'll be able to use third-party JavaScript packages in your application. In fact developing a MiniApp is exactly the same as developing an application or component using React Native on it's own.  
 
