@@ -16,6 +16,7 @@ process.argv.push(babelRc.plugins.join(','))
 process.argv.push('src')
 process.argv.push('--out-dir')
 process.argv.push('dist')
+process.argv.push('--copy-files')
 
 console.log('running babel with', process.argv.slice(2))
 require('babel-cli/lib/babel')
