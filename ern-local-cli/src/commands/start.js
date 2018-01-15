@@ -15,7 +15,7 @@ exports.builder = function (yargs: any) {
   return yargs
     .option('descriptor', {
       type: 'string',
-      alias: 'n',
+      alias: 'd',
       describe: 'Full native application selector'
     })
     .option('miniapps', {
@@ -78,7 +78,7 @@ exports.handler = async function ({
       packageName,
       activityName,
       bundleId,
-      extraJsDependencies: _.map(extraJsDependencies, d => PackagePath.fromString(d))
+      extraJsDependencies: _.map(extraJsDependencies, jsDep => PackagePath.fromString(jsDep))
     })
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
