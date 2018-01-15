@@ -81,14 +81,14 @@ export default class AndroidGenerator implements ContainerGenerator {
         copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir)
       }
     } catch (e) {
-      log.error(`[generateContainer] Something went wrong. Aborting Container Generation`)
+      log.error('[generateContainer] Something went wrong. Aborting Container Generation')
       throw e
     }
   }
 
   async fillContainerHull (config: ContainerGeneratorConfig) : Promise<void> {
     try {
-      log.debug(`[=== Starting container hull filling ===]`)
+      log.debug('[=== Starting container hull filling ===]')
 
       shell.cd(ROOT_DIR)
 
@@ -157,7 +157,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
       }
 
-      log.debug(`Patching hull`)
+      log.debug('Patching hull')
       const files = readDir(config.outDir, (f) => (!f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')))
       const pathLibSrcMain = path.join('lib', 'src', 'main')
       const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
@@ -177,7 +177,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(pathToFile, mustacheView, pathToFile)
       }
 
-      log.debug(`Creating miniapp activities`)
+      log.debug('Creating miniapp activities')
       for (const miniApp of config.miniApps) {
         let activityFileName = `${miniApp.pascalCaseName}Activity.java`
 
@@ -190,7 +190,7 @@ export default class AndroidGenerator implements ContainerGenerator {
             pathToOutputActivityFile)
       }
 
-      log.debug(`[=== Completed container hull filling ===]`)
+      log.debug('[=== Completed container hull filling ===]')
     } catch (e) {
       log.error('[fillContainerHull] Something went wrong: ' + e)
       throw e
@@ -201,7 +201,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     plugins: Array<PackagePath>,
     outDir: string) : Promise<*> {
     try {
-      log.debug(`[=== Adding plugin hook classes ===]`)
+      log.debug('[=== Adding plugin hook classes ===]')
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }

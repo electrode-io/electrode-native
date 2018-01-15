@@ -82,15 +82,15 @@ export default class IosGenerator implements ContainerGenerator {
         this.addResources(config.outDir)
       }
 
-      log.debug(`Container generation completed!`)
+      log.debug('Container generation completed!')
     } catch (e) {
-      log.error(`[generateContainer] Something went wrong. Aborting Container Generation`)
+      log.error('[generateContainer] Something went wrong. Aborting Container Generation')
       throw e
     }
   }
 
   async addResources (outputDirectory: any) {
-    log.debug(`=== ios: adding resources for miniapps`)
+    log.debug('=== ios: adding resources for miniapps')
     const containerProjectPath = path.join(outputDirectory, 'ElectrodeContainer.xcodeproj', 'project.pbxproj')
     const containerIosProject = await this.getIosContainerProject(containerProjectPath)
 
@@ -98,7 +98,7 @@ export default class IosGenerator implements ContainerGenerator {
     readDir(containerResourcesPath, resourceFile => {
       containerIosProject.addResourceFile(path.join('Resources', resourceFile), null, containerIosProject.findPBXGroupKey({name: 'Resources'}))
     })
-    log.debug(`---iOS: Finished adding resource files. `)
+    log.debug('---iOS: Finished adding resource files.')
 
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
   }
@@ -130,14 +130,14 @@ export default class IosGenerator implements ContainerGenerator {
     await this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir)
     fs.writeFileSync(projectPath, iosProject.writeSync())
 
-    log.debug(`[=== Completed container hull filling ===]`)
+    log.debug('[=== Completed container hull filling ===]')
   }
 
   // Code to keep backward compatibility
   switchToOldDirectoryStructure (pluginSourcePath: string, tail: string): boolean {
     // This is to check if the api referenced during container generation is created using the old or new directory structure to help keep the backward compatibility.
     const pathToSwaggersAPIs = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs')
-    if (path.dirname(tail) === `IOS` && fs.existsSync(path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs)))) {
+    if (path.dirname(tail) === 'IOS' && fs.existsSync(path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs)))) {
       return true
     }
     return false
@@ -159,7 +159,7 @@ export default class IosGenerator implements ContainerGenerator {
     plugins: Array<PackagePath>,
     outDir: string) : Promise<*> {
     try {
-      log.debug(`[=== iOS: Adding plugin hook classes ===]`)
+      log.debug('[=== iOS: Adding plugin hook classes ===]')
 
       for (const plugin of plugins) {
         if (plugin.name === 'react-native') { continue }
@@ -171,7 +171,7 @@ export default class IosGenerator implements ContainerGenerator {
         let iOSPluginHook = pluginConfig.ios.pluginHook
         if (iOSPluginHook && iOSPluginHook.name) {
           if (!pluginConfig.path) {
-            throw new Error(`No plugin config path was set. Cannot proceed.`)
+            throw new Error('No plugin config path was set. Cannot proceed.')
           }
 
           const pluginConfigPath = pluginConfig.path
@@ -189,9 +189,9 @@ export default class IosGenerator implements ContainerGenerator {
         }
       }
 
-      log.debug(`[=== iOS: Done adding plugin hook classes ===]`)
+      log.debug('[=== iOS: Done adding plugin hook classes ===]')
     } catch (e) {
-      log.error('[addiOSPluginHookClasses] Something went wrong: ' + e)
+      log.error(`[addiOSPluginHookClasses] Something went wrong: ${e}`)
       throw e
     }
   }

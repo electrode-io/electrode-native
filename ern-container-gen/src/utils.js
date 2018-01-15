@@ -27,7 +27,7 @@ export async function bundleMiniApps (
   // JavaScript API implementations
   jsApiImplDependencies?: Array<PackagePath>) {
   try {
-    log.debug(`[=== Starting mini apps bundling ===]`)
+    log.debug('[=== Starting mini apps bundling ===]')
 
     let miniAppsPaths : Array<PackagePath> = []
     for (const miniapp of miniapps) {
@@ -40,16 +40,16 @@ export async function bundleMiniApps (
     clearReactPackagerCache()
 
     if (platform === 'android') {
-      log.debug(`Bundling miniapp(s) for Android`)
+      log.debug('Bundling miniapp(s) for Android')
       await reactNativeBundleAndroid(outDir)
     } else if (platform === 'ios') {
-      log.debug(`Bundling miniapp(s) for iOS`)
+      log.debug('Bundling miniapp(s) for iOS')
       await reactNativeBundleIos(outDir)
     }
 
-    log.debug(`[=== Completed mini apps bundling ===]`)
+    log.debug('[=== Completed mini apps bundling ===]')
   } catch (e) {
-    log.error('[bundleMiniApps] Something went wrong: ' + e)
+    log.error(`[bundleMiniApps] Something went wrong: ${e}`)
     throw e
   }
 }
@@ -135,7 +135,7 @@ export async function generateMiniAppsComposite (
     await runYarnUsingMiniAppDeltas(miniAppsDeltas)
   } else {
     // No yarn.lock path was provided, just add miniapps one by one
-    log.debug(`[generateMiniAppsComposite] no yarn lock provided`)
+    log.debug('[generateMiniAppsComposite] no yarn lock provided')
     for (const miniappPath of miniappsPaths) {
       await yarn.add(miniappPath)
     }
@@ -164,16 +164,16 @@ export async function generateMiniAppsComposite (
       entryIndexJsContent += `import '${apiImpl.basePath}'\n`
     }
   }
-  log.debug(`Removing .babelrc files from all modules`)
+  log.debug('Removing .babelrc files from all modules')
   shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
 
-  log.debug(`Creating top level composite .babelrc`)
+  log.debug('Creating top level composite .babelrc')
   const compositeBabelRc = { 'presets': ['react-native'], 'plugins': [] }
 
   // Ugly hacky way of handling module-resolver babel plugin
   // At least it has some guarantees to make it safer but its just a temporary
   // solution until we figure out a more proper way of handling this plugin
-  log.debug(`Taking care of potential Babel plugins used by MiniApps`)
+  log.debug('Taking care of potential Babel plugins used by MiniApps')
   let moduleResolverAliases = {}
   for (const dependency of Object.keys(compositePackageJson.dependencies)) {
     const miniAppPackageJsonPath = path.join(outDir, 'node_modules', dependency, 'package.json')
@@ -210,7 +210,7 @@ export async function generateMiniAppsComposite (
                   if ((item instanceof Object) && (item.alias)) {
                     for (const aliasKey of Object.keys(item.alias)) {
                       if (moduleResolverAliases[aliasKey] && moduleResolverAliases[aliasKey] !== item.alias[aliasKey]) {
-                        throw new Error(`Babel module-resolver alias conflict`)
+                        throw new Error('Babel module-resolver alias conflict')
                       } else if (!moduleResolverAliases[aliasKey]) {
                         moduleResolverAliases[aliasKey] = item.alias[aliasKey]
                       }
@@ -265,9 +265,9 @@ export async function generateMiniAppsComposite (
     fs.writeFileSync('package.json', JSON.stringify(compositePackageJson, null, 2))
   }
 
-  log.debug(`Creating index.android.js`)
+  log.debug('Creating index.android.js')
   await writeFile('index.android.js', entryIndexJsContent)
-  log.debug(`Creating index.ios.js`)
+  log.debug('Creating index.ios.js')
   await writeFile('index.ios.js', entryIndexJsContent)
 }
 
