@@ -77,13 +77,13 @@ export default async function start ({
   process.on('SIGINT', () => process.exit())
 
   tmp.setGracefulCleanup(true)
-  const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
-  log.debug(`Temporary working directory is ${workingDir}`)
+  const compositeDir = tmp.dirSync({ unsafeCleanup: true }).name
+  log.trace(`Temporary composite directory is ${compositeDir}`)
 
   await spin('Generating MiniApps composite',
     generateMiniAppsComposite(
       miniAppsPaths,
-      workingDir, {
+      compositeDir, {
         pathToYarnLock: pathToYarnLock || undefined,
         extraJsDependencies: extraJsDependencies || undefined
       }))
@@ -91,11 +91,12 @@ export default async function start ({
   let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
 
   Object.keys(miniAppsLinks).forEach(linkName => {
-    log.info(`Watching for changes in linked directory ${miniAppsLinks[linkName]}`)
-    startLinkSynchronization(workingDir, linkName, miniAppsLinks[linkName])
+    replacePackageInCompositeWithLinkedPackage(compositeDir, linkName, miniAppsLinks[linkName])
+    log.info(`Watching for changes in linked MiniApp directory ${miniAppsLinks[linkName]}`)
+    startLinkSynchronization(compositeDir, linkName, miniAppsLinks[linkName])
   })
 
-  reactnative.startPackagerInNewWindow(workingDir, [
+  reactnative.startPackagerInNewWindow(compositeDir, [
     '--reset-cache',
     '--providesModuleNodeModules',
     `react-native,${Object.keys(miniAppsLinks).concat(watchNodeModules).join(',')}`
@@ -129,17 +130,28 @@ export default async function start ({
   log.warn('=========================================================')
 }
 
-function startLinkSynchronization (workingDir, linkName, sourceLinkDir) {
-  log.debug(`startLinkSynchronization [${workingDir}] [${linkName}] [${sourceLinkDir}]`)
+function replacePackageInCompositeWithLinkedPackage (compositeDir, linkedPackageName, sourceLinkDir) {
+  const pathToPackageInComposite = getPathToPackageInComposite(compositeDir, linkedPackageName)
+  shell.rm('-Rf', pathToPackageInComposite)
+  shell.mkdir('-p', pathToPackageInComposite)
+  shell.cp('-Rf', path.join(sourceLinkDir, '{.*,*}'), pathToPackageInComposite)
+  // We remove react-native and react to avoid haste collisions, as they are
+  // already part of the top level composite node_modules
+  shell.rm('-Rf', path.join(pathToPackageInComposite, 'node_modules', 'react-native'))
+  shell.rm('-Rf', path.join(pathToPackageInComposite, 'node_modules', 'react'))
+}
+
+function startLinkSynchronization (compositeDir, linkedPackageName, sourceLinkDir) {
+  log.trace(`startLinkSynchronization [${compositeDir}] [${linkedPackageName}] [${sourceLinkDir}]`)
 
   const watcher = chokidar.watch(sourceLinkDir, {
-    ignored: ['node_modules/**', 'android/**', 'ios/**', '.**'],
+    ignored: ['node_modules/**', 'android/**', 'ios/**'],
     cwd: sourceLinkDir,
     ignoreInitial: true,
     persistent: true
   })
 
-  const rootTargetLinkDir = path.join(workingDir, 'node_modules', linkName)
+  const rootTargetLinkDir = getPathToPackageInComposite(compositeDir, linkedPackageName)
 
   watcher
     .on('add', p => {
@@ -171,4 +183,8 @@ function startLinkSynchronization (workingDir, linkName, sourceLinkDir) {
     })
     .on('error', error => log.error(`Watcher error: ${error}`))
     .on('ready', () => log.debug('Initial scan complete. Watching for changes'))
+}
+
+function getPathToPackageInComposite (compositeDir: string, packageName: string) {
+  return path.join(compositeDir, 'node_modules', packageName)
 }
