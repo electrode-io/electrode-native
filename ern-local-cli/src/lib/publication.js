@@ -202,12 +202,14 @@ export async function performCodePushPromote (
   targetNapDescriptors: Array<NativeApplicationDescriptor>,
   sourceDeploymentName: string,
   targetDeploymentName: string, {
+    force = false,
     mandatory,
     rollout
   } : {
+    force?: boolean,
     mandatory?: boolean,
     rollout?: number
-  }) {
+  } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
     var cauldron = await coreUtils.getCauldronInstance()
@@ -221,6 +223,24 @@ export async function performCodePushPromote (
         throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
       }
 
+      const miniApps = await cauldron.getCodePushMiniApps(sourceNapDescriptor, sourceDeploymentName)
+      if (!miniApps) {
+        log.error(`No MiniApps were found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}] `)
+        log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
+        continue
+      }
+
+      const nativeDependenciesVersionAligned =
+        await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(miniApps, targetNapDescriptor)
+
+      if (!nativeDependenciesVersionAligned && force) {
+        log.warn('Native dependencies versions are not aligned but ignoring due to the use of force flag')
+      } else if (!nativeDependenciesVersionAligned && !force) {
+        if (!await askUserToForceCodePushPublication()) {
+          return log.info('CodePush promotion aborted')
+        }
+      }
+
       const appName = await getCodePushAppName(sourceNapDescriptor)
       const appVersion = await getCodePushTargetVersionName(targetNapDescriptor, targetDeploymentName)
       const result = await spin(`Promoting release to ${appVersion}`,
@@ -229,13 +249,6 @@ export async function performCodePushPromote (
           isMandatory: mandatory,
           rollout
         }))
-
-      const miniApps = await cauldron.getCodePushMiniApps(sourceNapDescriptor, sourceDeploymentName)
-      if (!miniApps) {
-        log.error(`No MiniApps were found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}] `)
-        log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
-        continue
-      }
 
       const sourceYarnLockId = await cauldron.getYarnLockId(sourceNapDescriptor, sourceDeploymentName)
       if (!sourceYarnLockId) {
@@ -298,29 +311,14 @@ miniApps: Array<PackagePath>, {
 
     const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
 
-    let nativeDependenciesVersionAligned = true
-
-    for (const miniApp of miniApps) {
-      let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${napDescriptor.toString()}`,
-        MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
-      let report = await compatibility.checkCompatibilityWithNativeApp(
-            miniAppInstance,
-            napDescriptor.name,
-            napDescriptor.platform,
-            napDescriptor.version)
-      if (!report.isCompatible) {
-        nativeDependenciesVersionAligned = false
-        log.warn('At least one native dependency version is not aligned !')
-      } else {
-        log.info(`${miniApp.toString()} native dependencies versions are aligned with ${napDescriptor.toString()}`)
-      }
-    }
+    const nativeDependenciesVersionAligned =
+      await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(miniApps, napDescriptor)
 
     if (!nativeDependenciesVersionAligned && force) {
       log.warn('Native dependencies versions are not aligned but ignoring due to the use of force flag')
     } else if (!nativeDependenciesVersionAligned && !force) {
       if (!await askUserToForceCodePushPublication()) {
-        return log.info('CodePush publication aborted')
+        throw new Error('CodePush publication aborted')
       }
     }
 
@@ -406,6 +404,27 @@ miniApps: Array<PackagePath>, {
     log.error(`performCodePushOtaUpdate {e}`)
     throw e
   }
+}
+
+async function areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion (
+  miniApps: Array<PackagePath>,
+  targetDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
+  for (const miniApp of miniApps) {
+    let miniAppInstance = await spin(`Checking native dependencies version alignment of ${miniApp.toString()} with ${targetDescriptor.toString()}`,
+      MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
+    let report = await compatibility.checkCompatibilityWithNativeApp(
+          miniAppInstance,
+          targetDescriptor.name,
+          targetDescriptor.platform,
+          targetDescriptor.version)
+    if (!report.isCompatible) {
+      log.warn('At least one native dependency version is not aligned !')
+      return false
+    } else {
+      log.info(`${miniApp.toString()} native dependencies versions are aligned with ${targetDescriptor.toString()}`)
+    }
+  }
+  return true
 }
 
 export async function getCodePushTargetVersionName (
