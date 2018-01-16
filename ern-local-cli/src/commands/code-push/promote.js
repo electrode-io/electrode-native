@@ -48,6 +48,11 @@ exports.builder = function (yargs: any) {
       describe: 'Percentage of users this release should be immediately available to',
       default: 100
     })
+    .option('force', {
+      alias: 'f',
+      type: 'bool',
+      describe: 'Force upgrade (ignore compatibility issues -at your own risks-)'
+    })
     .option('skipConfirmation', {
       describe: 'Skip confirmation prompts',
       alias: 's',
@@ -65,7 +70,8 @@ exports.handler = async function ({
   platform,
   mandatory,
   rollout,
-  skipConfirmation
+  skipConfirmation,
+  force
 } : {
   sourceDescriptor?: string,
   targetDescriptors?: Array<string>,
@@ -75,7 +81,8 @@ exports.handler = async function ({
   platform: 'android' | 'ios',
   mandatory?: boolean,
   rollout?: number,
-  skipConfirmation?: boolean
+  skipConfirmation?: boolean,
+  force?: boolean
 }) {
   try {
     let targetNapDescriptors
@@ -161,6 +168,7 @@ exports.handler = async function ({
       targetNapDescriptors,
       sourceDeploymentName,
       targetDeploymentName, {
+        force,
         mandatory,
         rollout
       })

@@ -231,6 +231,8 @@ export function getCompatibility (
     //      => INCOMPATIBLE
     if (localDep && localDepVersion &&
       (localDepVersion !== remoteDep.version)) {
+      // Todo : do not infer api or api-impl by looking solely at the suffix as its not mandatory anymore, so
+      // we might get false negatives
       if (localDep.name.endsWith('-api') || localDep.name.endsWith('-api-impl') || (localDep.name === 'react-native-electrode-bridge')) {
         if (semver.major(localDepVersion) === semver.major(remoteDep.version)) {
           result.compatibleNonStrict.push(entry)

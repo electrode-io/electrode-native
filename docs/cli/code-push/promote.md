@@ -54,6 +54,11 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 * Skip confirmation prompts
 * **Default** false
 
+`--force/-f`
+
+* Bypass all compatibility checks and force OTA update through CodePush. **USE AT YOUR OWN RISK**
+* **Default** false
+
 #### Related commands
 
 [code-push release] | Issue a CodePush release 
