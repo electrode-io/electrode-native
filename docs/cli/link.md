@@ -20,8 +20,7 @@ The `ern link` or the `ern unlink` plus the `ern start` commands are used togeth
 
 #### Caveats
 
-1) Due to the current simple-watching mechanism used by this command, the working directory of the MiniApp should contain the exact same code and the exact same dependencies as the MiniApp that is going to be retrieved by the `ern start` command.   
-2) In order to add a JavaScript dependency to your MiniApp or change a JavaScript dependency version, you must relaunch the bundling from the start after adding or updating the dependencies using the `ern start` command.
+1) If you add a JavaScript dependency to your MiniApp (through `ern add`) or update a JavaScript dependency version, you'll have to relaunch the `ern start` command.
 
 #### Remarks
 
