@@ -25,6 +25,26 @@ If you do not pass an argument to this command, you are prompted to select a nat
 * The command packages all the provided MiniApps in a composite bundle and starts the react-native packager.  
 * You can use any valid Yarn package descriptor for the MiniApps provided to this command, including Git and other file system path schemes.  
 
+`--watchNodeModules/-w <nodemodules>`
+* A list of one or more directory name(s) from node_modules that should be watched for changes.
+
+`--extraJsDependencies/-e <jsdependencies>`
+* Additional JavaScript dependencies to add to the composite JavaScript bundle.
+
+**Platform Specific Options**
+
+`Android`
+
+`--packageName/-p <packagename>`
+* Android application package name to avoid conflict with the names of classes or interfaces.
+
+`--activityName/-a <activity name>`
+*  Specify Android Activity to launch.
+
+`iOS`
+`--bundleId/-b`
+*   iOS Bundle Identifier unique to your app.
+
 #### Remarks
 
 * This command can be used to package multiple MiniApps inside a single composite bundle and automatically start the react-native local packager to serve this bundle.  
