@@ -1,8 +1,10 @@
+// @flow
+
 import {
   android,
   ios,
   config as ernConfig,
-  DependencyPath,
+  PackagePath,
   NativeApplicationDescriptor,
   spin,
   shell,
@@ -39,17 +41,23 @@ export default async function start ({
 } : {
   miniapps?: Array<string>,
   descriptor?: string,
-  watchNodeModules: Array<string>,
+  watchNodeModules?: Array<string>,
   packageName?: string,
   activityName?: string,
   bundleId?: string,
-  extraJsDependencies?: Array<DependencyPath>
+  extraJsDependencies?: Array<PackagePath>
 } = {}) {
-  let miniAppsPaths: Array<DependencyPath> = _.map(miniapps, DependencyPath.fromString)
+  let miniAppsPaths: Array<PackagePath> = _.map(miniapps, PackagePath.fromString)
   let napDescriptor
   let pathToYarnLock
 
   const cauldron = await coreUtils.getCauldronInstance()
+  if (!cauldron && descriptor) {
+    throw new Error('To use a native application descriptor, a Cauldron must be active')
+  }
+  if (!cauldron && !miniapps) {
+    throw new Error('If no MiniApp(s) is/are specified, a Cauldron must be active')
+  }
 
   if (!miniapps && !descriptor) {
     descriptor = await utils.askUserToChooseANapDescriptorFromCauldron()
@@ -58,7 +66,7 @@ export default async function start ({
   if (descriptor) {
     napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
     const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
-    miniAppsPaths = _.map(miniAppsObjs, m => DependencyPath.fromString(m.toString()))
+    miniAppsPaths = _.map(miniAppsObjs, m => PackagePath.fromString(m.toString()))
     pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
   }
 
@@ -73,10 +81,12 @@ export default async function start ({
   log.debug(`Temporary working directory is ${workingDir}`)
 
   await spin('Generating MiniApps composite',
-    generateMiniAppsComposite(miniAppsPaths, workingDir, {
-      pathToYarnLock,
-      extraJsDependencies
-    }))
+    generateMiniAppsComposite(
+      miniAppsPaths,
+      workingDir, {
+        pathToYarnLock: pathToYarnLock || undefined,
+        extraJsDependencies: extraJsDependencies || undefined
+      }))
 
   let miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
 
@@ -91,7 +101,7 @@ export default async function start ({
     `react-native,${Object.keys(miniAppsLinks).concat(watchNodeModules).join(',')}`
   ])
 
-  if (descriptor) {
+  if (napDescriptor) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
     if (binaryStoreConfig) {
       const binaryStore = new ErnBinaryStore(binaryStoreConfig)
