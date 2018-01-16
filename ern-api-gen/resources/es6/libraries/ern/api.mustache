@@ -21,18 +21,21 @@ export function events() {
   return EVENTS;
 }
 {{/hasEvent}}
+
 {{!no event has request}}
 {{^hasEvent}}
-{{#hasRequest}}
+    {{#hasRequest}}
 export default ({requests});
-{{/hasRequest}}
+    {{/hasRequest}}
 {{/hasEvent}}
+
 {{!has event no request}}
 {{^hasRequest}}
-    {{#hasEvents}}
+    {{#hasEvent}}
 export default ({events});
-    {{/hasEvents}}
+    {{/hasEvent}}
 {{/hasRequest}}
+
 {{!has both event and request}}
 {{#hasEvent}}
     {{#hasRequest}}
