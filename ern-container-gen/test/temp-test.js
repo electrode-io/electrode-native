@@ -196,37 +196,37 @@ describe('ern-container-gen utils.js', () => {
   describe('generateMiniAppsComposite [with yarn lock]', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [1]', async () => {
       const miniApps = [PackagePath.fromString('file:/Code/MiniApp')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [2]', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne@1.0.0'), PackagePath.fromString('file:/Code/MiniApp')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [1]', async () => {
       const miniApps = [PackagePath.fromString('git://github.com:user/MiniAppRepo')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [2]', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne@1.0.0'), PackagePath.fromString('git://github.com:user/MiniAppRepo')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne'), PackagePath.fromString('MiniAppTwo@1.0.0')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: 'hello'}), 'No exception was thrown !')
     })
 
     it('should throw an exception if path to yarn.lock does not exists', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne@1.0.0'), PackagePath.fromString('MiniAppTwo@1.0.0')]
-      assert(await doesThrow(generateMiniAppsComposite, miniApps, tmpOutDir, {pathToYarnLock: path.join(tmpOutDir, 'yarn.lock')}), 'No exception was thrown !')
+      assert(await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {pathToYarnLock: path.join(tmpOutDir, 'yarn.lock')}), 'No exception was thrown !')
     })
 
     it('should call yarn install prior to calling yarn add or yarn upgrade for each MiniApp', async () => {

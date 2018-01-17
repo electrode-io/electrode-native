@@ -103,15 +103,14 @@ describe('Ensure.js', () => {
   describe('napDescritorExistsInCauldron', () => {
     it('should not throw if nap descriptor exists in Cauldron', async () => {
       cauldronHelperStub.getNativeApp.resolves({})
-      assert(await doesNotThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
+      assert(await doesNotThrow(Ensure.napDescritorExistsInCauldron, null, 'testapp:android:1.0.0'))
     })
 
     it('should throw if nap descriptor does not exist in Cauldron', async () => {
       cauldronHelperStub.getNativeApp.resolves(undefined)
-      assert(await doesThrow(Ensure.napDescritorExistsInCauldron, 'testapp:android:1.0.0'))
+      assert(await doesThrow(Ensure.napDescritorExistsInCauldron, null, 'testapp:android:1.0.0'))
     })
   })
-
 
   // ==========================================================
   // publishedToNpm
@@ -119,12 +118,12 @@ describe('Ensure.js', () => {
   describe('publishedToNpm', () => {
     it('should not throw if dependency is published to npm', async () => {
       sandbox.stub(utils, 'isPublishedToNpm').resolves(true)
-      assert(await doesNotThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
+      assert(await doesNotThrow(Ensure.publishedToNpm, null, 'nonpublished@1.0.0'))
     })
 
     it('should throw if dependency is not published to npm', async () => {
       sandbox.stub(utils, 'isPublishedToNpm').resolves(false)
-      assert(await doesThrow(Ensure.publishedToNpm, 'nonpublished@1.0.0'))
+      assert(await doesThrow(Ensure.publishedToNpm, null, 'nonpublished@1.0.0'))
     })
   })
 
