@@ -12,7 +12,8 @@ import {
   generatePluginsMustacheViews,
   copyRnpmAssets,
   injectReactNativeVersionKeysInObject,
-  sortDependenciesByName
+  sortDependenciesByName,
+  populateApiImplMustacheView
 } from '../../utils.js'
 import fs from 'fs'
 import path from 'path'
@@ -22,7 +23,6 @@ import type {
   ContainerGenerator,
   ContainerGeneratorConfig
 } from '../../FlowTypes'
-import populateApiImplMustacheView from '../ApiImplMustacheUtil'
 import _ from 'lodash'
 
 const ROOT_DIR = process.cwd()
