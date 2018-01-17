@@ -579,12 +579,12 @@ describe('utils.js', () => {
   describe('getDescriptorsMatchingSemVerDescriptor', () => {
     it('should throw if the descriptor does not contain a platform', async () => {
       const descriptor = NativeApplicationDescriptor.fromString('testapp')
-      assert(await doesThrow(utils.getDescriptorsMatchingSemVerDescriptor, descriptor))
+      assert(await doesThrow(utils.getDescriptorsMatchingSemVerDescriptor, null, descriptor))
     })
 
     it('should throw if the descriptor does not contain a version', async () => {
       const descriptor = NativeApplicationDescriptor.fromString('testapp:android')
-      assert(await doesThrow(utils.getDescriptorsMatchingSemVerDescriptor, descriptor))
+      assert(await doesThrow(utils.getDescriptorsMatchingSemVerDescriptor, null, descriptor))
     })
 
     it('should return an empty array if the semver descriptor does not match any version', async () => {

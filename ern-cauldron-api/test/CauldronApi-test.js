@@ -325,7 +325,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version does not exists', async () => {
-      assert(await doesThrow(cauldronApi().setCodePushEntries, 'test', 'android', '17.20.0', 'QA', [codePushNewEntryFixture]))
+      const api = cauldronApi()
+      assert(await doesThrow(api.setCodePushEntries, api, 'test', 'android', '17.20.0', 'QA', [codePushNewEntryFixture]))
     })
   })
 
@@ -423,25 +424,37 @@ describe('CauldronApi.js', () => {
   // getConfig
   // ==========================================================
   describe('getConfig', () => {
-    it('should return the native application version config', async () => {
+    it('[get application version config] should return the native application version config', async () => {
       const configObj = await cauldronApi().getConfig({appName:'test', platformName:'android', versionName:'17.7.0'})
       const config = jp.query(fixtures.defaultCauldron, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].config')[0]
       expect(configObj).eql(config)
     })
 
-    it('should return the native application platform config', async () => {
+    it('[get application version config] should return undefined if the native application version does not exist', async () => {
+      const configObj = await cauldronApi().getConfig({appName:'test', platformName:'android', versionName:'17.7.1'})
+      const config = jp.query(fixtures.defaultCauldron, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].config')[0]
+      expect(configObj).undefined
+    })
+
+    it('[get application platform config] should return the native application platform config', async () => {
       const configObj = await cauldronApi().getConfig({appName:'test', platformName:'android'})
       const config = jp.query(fixtures.defaultCauldron, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].config')[0]
       expect(configObj).eql(config)
     })
 
-    it('should return the native application name config', async () => {
+    it('[get application platform config] should return undefined if the native application platform does not exist', async () => {
+      const configObj = await cauldronApi().getConfig({appName:'test', platformName:'none', versionName:'17.7.0'})
+      const config = jp.query(fixtures.defaultCauldron, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].config')[0]
+      expect(configObj).undefined
+    })
+
+    it('[get application config] should return the native application name config', async () => {
       const configObj = await cauldronApi().getConfig({appName:'test'})
       const config = jp.query(fixtures.defaultCauldron, '$.nativeApps[?(@.name=="test")].config')[0]
       expect(configObj).eql(config)
     })
 
-    it('should return undefined if no config exist', async () => {
+    it('[get application config] should return undefined if native application does not exist', async () => {
       const configObj = await cauldronApi().getConfig({appName:'unexisting'})
       expect(configObj).undefined
     })
@@ -478,7 +491,9 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application name already exists', async() => {
-      assert(await doesThrow(cauldronApi().createNativeApplication, {name: 'test'}))
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      assert(await doesThrow(api.createNativeApplication, api, {name: 'test'}))
     })
   })
 
@@ -502,7 +517,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the application name does not exists', async () => {
-      assert(await doesThrow(cauldronApi().removeNativeApplication, 'unexisting'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeNativeApplication, api, 'unexisting'))
     })
   })
 
@@ -526,7 +542,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the application platform already exists', async () => {
-      assert(await doesThrow(cauldronApi().createPlatform('test', {name:'android'})))
+      const api = cauldronApi()
+      assert(await doesThrow(api.createPlatform, api, 'test', {name:'android'}))
     })
   })
 
@@ -550,11 +567,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the application name does not exists', async () => {
-      assert(await doesThrow(cauldronApi().removePlatform, 'unexisting', 'android'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removePlatform, api, 'unexisting', 'android'))
     })
 
     it('should throw if the application platform does not exists', async () => {
-      assert(await doesThrow(cauldronApi().removePlatform, 'test', 'ios'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removePlatform, api, 'test', 'ios'))
     })
   })
 
@@ -578,11 +597,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the platform does not exist', async () => {
-      assert(await doesThrow(cauldronApi().createVersion('test', 'ios', {name:'17.20.0', ernPlatformVersion:'1.0.0'})))
+      const api = cauldronApi()
+      assert(await doesThrow(api.createVersion, api, 'test', 'ios', {name:'17.20.0', ernPlatformVersion:'1.0.0'}))
     })
 
     it('should throw if the version already exists', async () => {
-      assert(await doesThrow(cauldronApi().createVersion('test', 'android', {name:'17.7.0', ernPlatformVersion:'1.0.0'})))
+      const api = cauldronApi()
+      assert(await doesThrow(api.createVersion, api, 'test', 'android', {name:'17.7.0', ernPlatformVersion:'1.0.0'}))
     })
   })
 
@@ -606,11 +627,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the platform name does not exists', async () => {
-      assert(await doesThrow(cauldronApi().removeVersion, 'test', 'unexisting'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeVersion, api, 'test', 'unexisting'))
     })
 
     it('should throw if the version does not exists', async () => {
-      assert(await doesThrow(cauldronApi().removePlatform, 'test', 'android', '17.20.0'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeVersion, api, 'test', 'android', '17.20.0'))
     })
   })
 
@@ -634,7 +657,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the version does not exists', async () => {
-      assert(await doesThrow(cauldronApi().updateVersion, 'test', 'android', '17.20.0', {isReleased: false}))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateVersion, api, 'test', 'android', '17.20.0', {isReleased: false}))
     })
   })
 
@@ -658,11 +682,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the dependency is not found', async () => {
-      assert(await doesThrow(cauldronApi().removeNativeDependency, 'test', 'android', '17.7.0', 'unexisting'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeNativeDependency, api, 'test', 'android', '17.7.0', 'unexisting'))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().removeNativeDependency, 'test', 'android', '17.20.0', 'react-native-electrode-bridge'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeNativeDependency, api, 'test', 'android', '17.20.0', 'react-native-electrode-bridge'))
     })
   })
 
@@ -687,11 +713,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the dependency is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateNativeDependency, 'test', 'android', '17.7.0', 'unexisting', '1.5.0'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateNativeDependency, api, 'test', 'android', '17.7.0', 'unexisting', '1.5.0'))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateNativeDependency, 'test', 'android', '17.20.0', 'react-native-electrode-bridge', '1.5.0'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateNativeDependency, api, 'test', 'android', '17.20.0', 'react-native-electrode-bridge', '1.5.0'))
     })
   })
 
@@ -716,11 +744,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the miniapp is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateMiniAppVersion, 'test', 'android', '17.7.0',  PackagePath.fromString('react-native-foo@3.0.0')))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateMiniAppVersion, api, 'test', 'android', '17.7.0',  PackagePath.fromString('react-native-foo@3.0.0')))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateMiniAppVersion, 'test', 'android', '17.20.0',  PackagePath.fromString('react-native-bar@3.0.0')))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateMiniAppVersion, api, 'test', 'android', '17.20.0',  PackagePath.fromString('react-native-bar@3.0.0')))
     })
   })
 
@@ -764,7 +794,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateContainerVersion, 'test', 'android', '17.20.0', '2.0.0'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateContainerVersion, api, 'test', 'android', '17.20.0', '2.0.0'))
     })
   })
 
@@ -788,7 +819,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().getContainerVersion, 'test', 'android', '17.20.0'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.getContainerVersion, api, 'test', 'android', '17.20.0'))
     })
   })
 
@@ -812,11 +844,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the MiniApp is not found', async () => {
-      assert(await doesThrow(cauldronApi().removeContainerMiniApp, 'test', 'android', '17.7.0', 'unexisting'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeContainerMiniApp, api, 'test', 'android', '17.7.0', 'unexisting'))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().removeContainerMiniApp, 'test', 'android', '17.20.0', 'react-native-bar'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeContainerMiniApp, api, 'test', 'android', '17.20.0', 'react-native-bar'))
     })
   })
 
@@ -840,11 +874,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the MiniApp already exists', async () => {
-      assert(await doesThrow(cauldronApi().addContainerMiniApp, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-bar@2.0.0')))
+      const api = cauldronApi()
+      assert(await doesThrow(api.addContainerMiniApp, api, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-bar@2.0.0')))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().addContainerMiniApp, 'test', 'android', '17.20.0', PackagePath.fromString('newMiniApp@1.0.0')))
+      const api = cauldronApi()
+      assert(await doesThrow(api.addContainerMiniApp, api, 'test', 'android', '17.20.0', PackagePath.fromString('newMiniApp@1.0.0')))
     })
   })
 
@@ -868,11 +904,13 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the dependency already exists', async () => {
-      assert(await doesThrow(cauldronApi().createNativeDependency, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-electrode-bridge@1.4.0')))
+      const api = cauldronApi()
+      assert(await doesThrow(api.createNativeDependency, api, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-electrode-bridge@1.4.9')))
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().createNativeDependency, 'test', 'android', '17.20.0', PackagePath.fromString('testDep@1.0.0')))
+      const api = cauldronApi()
+      assert(await doesThrow(api.createNativeDependency, api, 'test', 'android', '17.20.0', PackagePath.fromString('testDep@1.0.0')))
     })
   })
 
@@ -905,7 +943,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().addCodePushEntry, 'test', 'android', '17.20.0',codePushNewEntryFixture))
+      const api = cauldronApi()
+      assert(await doesThrow(api.addCodePushEntry, api, 'test', 'android', '17.20.0',codePushNewEntryFixture))
     })
   })
 
@@ -924,7 +963,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().hasYarnLock, 'test', 'android', '17.20.0', 'Production'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.hasYarnLock, api, 'test', 'android', '17.20.0', 'Production'))
     })
   })
 
@@ -948,7 +988,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().addYarnLock, 'test', 'android', '17.20.0', 'YARN_LOCK_KEY', 'YARN_LOCK_CONTENT'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.addYarnLock, api, 'test', 'android', '17.20.0', 'YARN_LOCK_KEY', 'YARN_LOCK_CONTENT'))
     })
   })
 
@@ -967,7 +1008,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().getYarnLockId, 'test', 'android', '17.20.0', 'Production'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.getYarnLockId, api, 'test', 'android', '17.20.0', 'Production'))
     })
   })
 
@@ -1002,7 +1044,8 @@ describe('CauldronApi.js', () => {
 
     it('should throw if the native application version is not found', async () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      assert(await doesThrow(cauldronApi().setYarnLockId, 'test', 'android', '17.20.0', 'NewKey', newId))
+      const api = cauldronApi()
+      assert(await doesThrow(api.setYarnLockId, api, 'test', 'android', '17.20.0', 'NewKey', newId))
     })
   })
 
@@ -1012,7 +1055,8 @@ describe('CauldronApi.js', () => {
   describe('getYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      assert(await doesThrow(cauldronApi().getYarnLock, 'test', 'android', '17.20.0', 'Production'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.getYarnLock, api, 'test', 'android', '17.20.0', 'Production'))
     })
   })
 
@@ -1021,7 +1065,8 @@ describe('CauldronApi.js', () => {
   // ==========================================================
   describe('getPathToYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().getPathToYarnLock, 'test', 'android', '17.20.0', 'Production'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.getPathToYarnLock, api, 'test', 'android', '17.20.0', 'Production'))
     })
   })
 
@@ -1030,7 +1075,8 @@ describe('CauldronApi.js', () => {
   // ==========================================================
   describe('removeYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().removeYarnLock, 'test', 'android', '17.20.0', 'Production'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeYarnLock, api, 'test', 'android', '17.20.0', 'Production'))
     })
   })
 
@@ -1039,7 +1085,8 @@ describe('CauldronApi.js', () => {
   // ==========================================================
   describe('updateYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().updateYarnLock, 'test', 'android', '17.20.0', 'Production', 'NewLock'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateYarnLock, api, 'test', 'android', '17.20.0', 'Production', 'NewLock'))
     })
   })
 
@@ -1065,7 +1112,8 @@ describe('CauldronApi.js', () => {
 
     it('should throw if the native application version is not found', async () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      assert(await doesThrow(cauldronApi().updateYarnLockId, 'test', 'android', '17.20.0', 'NewKey'))
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateYarnLockId, api, 'test', 'android', '17.20.0', 'NewKey'))
     })
   })
 
@@ -1091,7 +1139,8 @@ describe('CauldronApi.js', () => {
     })
 
     it('should throw if the native application version is not found', async () => {
-      assert(await doesThrow(cauldronApi().setYarnLocks, 'test', 'android', '17.20.0', {"Test":"30bf4eff61586d71fe5d52e31a2cfabcbb31e33e"}))
+      const api = cauldronApi()
+      assert(await doesThrow(api.setYarnLocks, api, 'test', 'android', '17.20.0', {"Test":"30bf4eff61586d71fe5d52e31a2cfabcbb31e33e"}))
     })
   })
 })
