@@ -22,7 +22,6 @@ exports.handler = async function ({
     cauldronIsActive: {
       extraErrorMessage: 'A Cauldron must be active in order to use this command'
     },
-    isCompleteNapDescriptorString: { descriptor },
     napDescriptorExistInCauldron: {
       descriptor,
       extraErrorMessahe: 'This command cannot remove a native application version that do not exist in Cauldron.'
