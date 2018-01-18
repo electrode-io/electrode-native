@@ -669,7 +669,7 @@ describe('CauldronApi.js', () => {
     it('should remove the native dependency', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       await cauldronApi(tmpFixture).removeNativeDependency('test', 'android', '17.7.0', 'react-native-electrode-bridge')
-      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].nativeDeps')[0]
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.nativeDeps')[0]
       expect(dependenciesArr.includes('react-native-electrode-bridge@1.4.9')).false
     })
 
@@ -699,7 +699,7 @@ describe('CauldronApi.js', () => {
     it('should update the native dependency', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       await cauldronApi(tmpFixture).updateNativeDependency('test', 'android', '17.7.0', 'react-native-electrode-bridge', '1.5.0')
-      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].nativeDeps')[0]
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.nativeDeps')[0]
       expect(dependenciesArr.includes('react-native-electrode-bridge@1.4.9')).false
       expect(dependenciesArr.includes('react-native-electrode-bridge@1.5.0')).true
     })
@@ -730,7 +730,7 @@ describe('CauldronApi.js', () => {
     it('should update the MiniApp version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       await cauldronApi(tmpFixture).updateMiniAppVersion('test', 'android', '17.7.0', PackagePath.fromString('react-native-bar@3.0.0'))
-      const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].miniApps.container')[0]
+      const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniApps')[0]
       expect(miniAppsArr.includes('react-native-bar@3.0.0')).true
       expect(miniAppsArr.includes('react-native-bar@2.0.0')).false
     })
@@ -831,7 +831,7 @@ describe('CauldronApi.js', () => {
     it('should remove the MiniApp from the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       await cauldronApi(tmpFixture).removeContainerMiniApp('test', 'android', '17.7.0', 'react-native-bar')
-      const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].miniApps.container')[0]
+      const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniApps')[0]
       expect(miniAppsArr.includes('react-native-bare@2.0.0')).false
     })
 
@@ -861,7 +861,7 @@ describe('CauldronApi.js', () => {
     it('should add the MiniApp to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       await cauldronApi(tmpFixture).addContainerMiniApp('test', 'android', '17.7.0', PackagePath.fromString('newMiniApp@1.0.0'))
-      const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].miniApps.container')[0]
+      const miniAppsArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniApps')[0]
       expect(miniAppsArr.includes('newMiniApp@1.0.0')).true
     })
 
@@ -891,7 +891,7 @@ describe('CauldronApi.js', () => {
     it('should add the native dependency to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       await cauldronApi(tmpFixture).createNativeDependency('test', 'android', '17.7.0', PackagePath.fromString('testDep@1.0.0'))
-      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].nativeDeps')[0]
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.nativeDeps')[0]
       expect(dependenciesArr.includes('testDep@1.0.0')).true
     })
 

@@ -94,11 +94,11 @@ async function copyOverPreviousVersionData (
   nativeAppVersion: any,
   cauldron: CauldronHelper) {
   // Copy over previous native application version native dependencies
-  for (const nativeDep of nativeAppVersion.nativeDeps) {
+  for (const nativeDep of nativeAppVersion.container.nativeDeps) {
     await cauldron.addNativeDependency(napDescriptor, PackagePath.fromString(nativeDep))
   }
   // Copy over previous native application version container MiniApps
-  for (const containerMiniApp of nativeAppVersion.miniApps.container) {
+  for (const containerMiniApp of nativeAppVersion.container.miniApps) {
     await cauldron.addContainerMiniApp(napDescriptor, PackagePath.fromString(containerMiniApp))
   }
   // Copy over previous yarn lock if any

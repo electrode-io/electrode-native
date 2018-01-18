@@ -259,7 +259,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('test@1.0.0'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.nativeDeps.includes('test@1.0.0')).true
+      expect(nativeAppVersion.container.nativeDeps.includes('test@1.0.0')).true
     })
   })
 
@@ -301,7 +301,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('react-native-electrode-bridge@1.4.9'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.nativeDeps.includes('react-native-electrode-bridge@1.4.9')).false
+      expect(nativeAppVersion.container.nativeDeps.includes('react-native-electrode-bridge@1.4.9')).false
     })
 
     it('should remove the dependency from the native application version [2]', async () => {
@@ -311,7 +311,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('react-native-electrode-bridge'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.nativeDeps.includes('react-native-electrode-bridge@1.4.9')).false
+      expect(nativeAppVersion.container.nativeDeps.includes('react-native-electrode-bridge@1.4.9')).false
     })
   })
 
@@ -353,7 +353,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('@test/react-native-foo@5.0.0'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
+      expect(nativeAppVersion.container.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
     })
 
     it('should remove the miniapp from the native application version [2]', async () => {
@@ -363,7 +363,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('@test/react-native-foo'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
+      expect(nativeAppVersion.container.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
     })
   })
 
@@ -1056,8 +1056,8 @@ describe('CauldronHelper.js', () => {
         'react-native-electrode-bridge',
         '1.5.0')
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.nativeDeps).includes('react-native-electrode-bridge@1.5.0')
-      expect(nativeAppVersion.nativeDeps).not.includes('react-native-electrode-bridge@1.4.9')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-electrode-bridge@1.5.0')
+      expect(nativeAppVersion.container.nativeDeps).not.includes('react-native-electrode-bridge@1.4.9')
     })
   })
 
