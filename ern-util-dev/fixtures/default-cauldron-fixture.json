@@ -59,14 +59,14 @@
               "Production": "91bf4eff61586d71fe5d52e31a2cfabcbb31e33e",
               "QA": "31bf4e4f61386d71fe5d52e31a2c5abcbb31e33e"
             },
-            "nativeDeps": [
-              "react-native-electrode-bridge@1.4.9",
-              "@test/react-native-test-api@0.17.8",
-              "react-native@0.42.0",
-              "react-native-code-push@1.17.1-beta"
-            ],
-            "miniApps": {
-              "container": [
+            "container": {
+              "nativeDeps": [
+                "react-native-electrode-bridge@1.4.9",
+                "@test/react-native-test-api@0.17.8",
+                "react-native@0.42.0",
+                "react-native-code-push@1.17.1-beta"
+              ],
+              "miniApps": [
                 "@test/react-native-foo@4.0.0",
                 "react-native-bar@2.0.0"
               ]
@@ -131,14 +131,14 @@
             "ernPlatformVersion": "1000.0.0",
             "isReleased": false,
             "binary": null,
-            "nativeDeps": [
-              "react-native-electrode-bridge@1.4.9",
-              "@test/react-native-test-api@0.17.8",
-              "react-native@0.42.0",
-              "react-native-code-push@1.17.1-beta"
-            ],
-            "miniApps": {
-              "container": [
+            "container": {
+              "nativeDeps": [
+                "react-native-electrode-bridge@1.4.9",
+                "@test/react-native-test-api@0.17.8",
+                "react-native@0.42.0",
+                "react-native-code-push@1.17.1-beta"
+              ],
+              "miniApps": [
                 "@test/react-native-foo@5.0.0",
                 "react-native-bar@3.0.0"
               ]

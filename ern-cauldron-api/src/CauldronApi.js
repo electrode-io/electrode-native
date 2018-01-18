@@ -118,8 +118,8 @@ export default class CauldronApi {
     platformName: string,
     versionName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version && version.miniApps) {
-      return version.miniApps.container
+    if (version) {
+      return version.container.miniApps
     }
   }
 
@@ -137,7 +137,7 @@ export default class CauldronApi {
     platformName: string,
     versionName: string) {
     const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return version == null ? [] : version.nativeDeps
+    return version == null ? [] : version.container.nativeDeps
   }
 
   async getNativeDependency (
@@ -297,11 +297,11 @@ export default class CauldronApi {
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-    if (!_.some(version.nativeDeps, x => x.startsWith(`${dependency}@`))) {
+    if (!_.some(version.container.nativeDeps, x => x.startsWith(`${dependency}@`))) {
       throw new Error(`${dependency} dependency does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
     }
 
-    _.remove(version.nativeDeps, x => x.startsWith(`${dependency}@`))
+    _.remove(version.container.nativeDeps, x => x.startsWith(`${dependency}@`))
     return this.commit(`Remove ${dependency} dependency from ${nativeApplicationName} ${platformName}`)
   }
 
@@ -315,13 +315,13 @@ export default class CauldronApi {
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-    if (!_.some(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))) {
+    if (!_.some(version.container.nativeDeps, x => x.startsWith(`${dependencyName}@`))) {
       throw new Error(`${dependencyName} dependency does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
     }
 
-    _.remove(version.nativeDeps, x => x.startsWith(`${dependencyName}@`))
+    _.remove(version.container.nativeDeps, x => x.startsWith(`${dependencyName}@`))
     const newDependencyString = `${dependencyName}@${newVersion}`
-    version.nativeDeps.push(newDependencyString)
+    version.container.nativeDeps.push(newDependencyString)
     return this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
   }
 
@@ -335,12 +335,12 @@ export default class CauldronApi {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
 
-    const miniAppInContainer = _.find(version.miniApps.container, m => miniApp.same(PackagePath.fromString(m), { ignoreVersion: true }))
+    const miniAppInContainer = _.find(version.container.miniApps, m => miniApp.same(PackagePath.fromString(m), { ignoreVersion: true }))
     if (!miniAppInContainer) {
       throw new Error(`${miniApp.basePath} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
-    version.miniApps.container = _.map(version.miniApps.container, e => (e === miniAppInContainer) ? miniApp.toString() : e)
+    version.container.miniApps = _.map(version.container.miniApps, e => (e === miniAppInContainer) ? miniApp.toString() : e)
     return this.commit(`Update version of ${miniApp.basePath} MiniApp to ${miniApp.version || ''} `)
   }
 
@@ -408,11 +408,11 @@ export default class CauldronApi {
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-    if (!_.some(version.miniApps.container, x => x.startsWith(`${miniAppName}@`))) {
+    if (!_.some(version.container.miniApps, x => x.startsWith(`${miniAppName}@`))) {
       throw new Error(`${miniAppName} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
-    _.remove(version.miniApps.container, x => x.startsWith(`${miniAppName}@`))
+    _.remove(version.container.miniApps, x => x.startsWith(`${miniAppName}@`))
     return this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
   }
 
@@ -425,11 +425,11 @@ export default class CauldronApi {
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-    if (version.nativeDeps.includes(dependency.toString())) {
+    if (version.container.nativeDeps.includes(dependency.toString())) {
       throw new Error(`${dependency.basePath} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
-    version.nativeDeps.push(dependency.toString())
+    version.container.nativeDeps.push(dependency.toString())
     return this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
   }
 
@@ -477,11 +477,11 @@ export default class CauldronApi {
     if (!version) {
       throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
     }
-    if (version.miniApps.container.includes(miniapp.toString())) {
+    if (version.container.miniApps.includes(miniapp.toString())) {
       throw new Error(`${miniapp.basePath} MiniApp already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
     }
 
-    version.miniApps.container.push(miniapp.toString())
+    version.container.miniApps.push(miniapp.toString())
     return this.commit(`Add ${miniapp.basePath} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
   }
 

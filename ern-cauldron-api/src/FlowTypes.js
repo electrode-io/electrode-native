@@ -17,8 +17,9 @@ export type CauldronCodePushEntry = {
   miniapps: Array<string>
 }
 
-export type CauldronMiniApps = {
-  container: Array<string>,
+export type CauldronContainer = {
+  miniApps: Array<string>,
+  nativeDeps: Array<string>
 }
 
 export type CauldronNativeAppVersion = {
@@ -27,8 +28,7 @@ export type CauldronNativeAppVersion = {
   isReleased: boolean,
   binary: ?string,
   yarnLocks: Object,
-  nativeDeps: Array<string>,
-  miniApps: CauldronMiniApps,
+  container: CauldronContainer,
   codePush: Object,
   config?: Object,
   containerVersion: string
