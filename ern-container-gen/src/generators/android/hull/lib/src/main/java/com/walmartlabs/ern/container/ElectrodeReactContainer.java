@@ -17,11 +17,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -51,23 +50,21 @@ import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
 
-    private static ReactInstanceManagerBuilder reactInstanceManagerBuilder;
     private static ElectrodeReactContainer sInstance;
-    private static ReactInstanceManager sReactInstanceManager;
-
-    private final boolean isReactNativeDeveloperSupport;
     private static boolean sIsReactNativeReady;
     private static List<ReactNativeReadyListener> reactNativeReadyListeners = new ArrayList<>();
 
-    private static List<ReactPackage> sReactPackages = new ArrayList<>();
+    private final boolean isReactNativeDeveloperSupport;
+    private final ReactInstanceManager mReactInstanceManager;
 
-    private ElectrodeReactContainer(Application application,
-                                    Config reactContainerConfig
-                            {{#plugins}}
-                              {{#configurable}}
-                                ,{{{name}}}.Config {{{lcname}}}Config
-                              {{/configurable}}
-                            {{/plugins}} ) {
+    private ElectrodeReactContainer(Application application
+            , Config reactContainerConfig
+              {{#plugins}}
+              {{#configurable}}
+            , {{{name}}}.Config {{{lcname}}}Config
+            {{/configurable}}
+            {{/plugins}}
+    ) {
         // ReactNative general config
         this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
 
@@ -87,7 +84,7 @@ public class ElectrodeReactContainer {
           application.startActivity(serviceIntent);
         }
 
-        reactInstanceManagerBuilder = ReactInstanceManager.builder()
+        final ReactInstanceManagerBuilder reactInstanceManagerBuilder = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
                 {{#RN_VERSION_GTE_49}}
@@ -100,88 +97,100 @@ public class ElectrodeReactContainer {
                 .setUseDeveloperSupport(reactContainerConfig.isReactNativeDeveloperSupport)
                 .setInitialLifecycleState(LifecycleState.BEFORE_CREATE);
 
-      {{#plugins}}
+        final List<ReactPackage> reactPackages = new ArrayList<>();
+        {{#plugins}}
         {{#configurable}}
-        sReactPackages.add(new {{name}}().hook(application, reactInstanceManagerBuilder, {{lcname}}Config));
+        reactPackages.add(new {{name}}().hook(application, reactInstanceManagerBuilder, {{lcname}}Config));
         {{/configurable}}
         {{^configurable}}
-        sReactPackages.add(new {{name}}().hook(application, reactInstanceManagerBuilder));
+        reactPackages.add(new {{name}}().hook(application, reactInstanceManagerBuilder));
         {{/configurable}}
-      {{/plugins}}
-    }
+        {{/plugins}}
 
-    public synchronized static ReactInstanceManager getReactInstanceManager() {
-        if (null == sReactInstanceManager) {
-          sReactInstanceManager = reactInstanceManagerBuilder.build();
-          sReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-            @Override
-            public void onReactContextInitialized(ReactContext context) {
-              sIsReactNativeReady = true;
-              notifyReactNativeReadyListeners();
-              for (ReactPackage instance : sReactPackages) {
+        mReactInstanceManager = reactInstanceManagerBuilder.build();
+        mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+        @Override
+        public void onReactContextInitialized(ReactContext context) {
+            sIsReactNativeReady = true;
+            notifyReactNativeReadyListeners();
+            for (ReactPackage instance : reactPackages) {
                 try {
-                  Method onReactNativeInitialized =
+                    Method onReactNativeInitialized =
                     instance.getClass().getMethod("onReactNativeInitialized");
-                  onReactNativeInitialized.invoke(instance);
+                    onReactNativeInitialized.invoke(instance);
                 }
                 catch (NoSuchMethodException e) {}
-                catch (IllegalAccessException e) {}
-                catch (InvocationTargetException e) {}
-              }
+                catch (IllegalAccessException e) {
+                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                }
+                catch (InvocationTargetException e) {
+                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                }
             }
-          });
         }
+        });
+    }
 
-        return sReactInstanceManager;
+    @SuppressWarnings("WeakerAccess")
+    public synchronized static ReactInstanceManager getReactInstanceManager() {
+        throwIfNotInitialized();
+        return sInstance.mReactInstanceManager;
     }
 
     public static ElectrodeReactContainer getInstance() {
+        throwIfNotInitialized();
         return sInstance;
     }
 
+    @SuppressWarnings("unused")
     public static void startActivitySafely(Intent intent) {
-       if (null != sReactInstanceManager) {
-            new SafeActivityStarter(sReactInstanceManager.getCurrentReactContext(), intent).startActivity();
+        throwIfNotInitialized();
+        if (null != sInstance.mReactInstanceManager && null != sInstance.mReactInstanceManager.getCurrentReactContext()) {
+            new SafeActivityStarter(sInstance.mReactInstanceManager.getCurrentReactContext(), intent).startActivity();
+        } else {
+            Log.w(TAG, "startActivitySafely: Unable to start activity, react context or instance manager is null");
         }
     }
 
+    @SuppressWarnings("unused")
+    @Nullable
     public static Activity getCurrentActivity() {
-        if (null != sReactInstanceManager) {
-            return sReactInstanceManager.getCurrentReactContext().getCurrentActivity();
+        throwIfNotInitialized();
+        if (null != sInstance.mReactInstanceManager && null != sInstance.mReactInstanceManager.getCurrentReactContext()) {
+            return sInstance.mReactInstanceManager.getCurrentReactContext().getCurrentActivity();
         }
-
         return null;
     }
 
+    @SuppressWarnings("unused")
     public static ReactContext getCurrentReactContext() {
-        if (null != sReactInstanceManager) {
-            return sReactInstanceManager.getCurrentReactContext();
+        throwIfNotInitialized();
+        if (null != sInstance.mReactInstanceManager) {
+            return sInstance.mReactInstanceManager.getCurrentReactContext();
         }
         return null;
     }
 
-    public synchronized static ElectrodeReactContainer initialize(
-            @NonNull Application application,
-            @NonNull final Config reactContainerConfig
-    {{#plugins}}
-      {{#configurable}}
-            ,@NonNull final {{name}}.Config {{lcname}}Config
-      {{/configurable}}
-    {{/plugins}}
-     {{#apiImplementations}}
-     {{#hasConfig}}
-        ,@NonNull final {{apiName}}ApiRequestHandlerProvider.{{apiName}}ApiConfig {{apiVariableName}}ApiConfig
-     {{/hasConfig}}
-     {{/apiImplementations}}) {
-        if (null == sInstance) {
-            sInstance = new ElectrodeReactContainer(
-                    application,
-                    reactContainerConfig
+    @SuppressWarnings("UnusedReturnValue")
+    public synchronized static ElectrodeReactContainer initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
             {{#plugins}}
-              {{#configurable}}
-                ,{{lcname}}Config
-              {{/configurable}}
-            {{/plugins}} );
+            {{#configurable}}
+            , @NonNull final {{name}}.Config {{lcname}}Config
+            {{/configurable}}
+            {{/plugins}}
+            {{#apiImplementations}}
+            {{#hasConfig}}
+            , @NonNull final {{apiName}}ApiRequestHandlerProvider.{{apiName}}ApiConfig {{apiVariableName}}ApiConfig
+            {{/hasConfig}}
+            {{/apiImplementations}}
+     ) {
+        if (null == sInstance) {
+             sInstance = new ElectrodeReactContainer(application, reactContainerConfig
+                    {{#plugins}}
+                    {{#configurable}}
+                    ,{{lcname}}Config
+                    {{/configurable}}
+                    {{/plugins}});
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
@@ -197,12 +206,19 @@ public class ElectrodeReactContainer {
     }
 
 
+    
+    @SuppressWarnings("WeakerAccess")
     public boolean isReactNativeDeveloperSupport() {
         return this.isReactNativeDeveloperSupport;
     }
 
+    /**
+     * Indicates if the react native context is initialized successfully.
+     * @return true | false
+     */
+    @SuppressWarnings("unused")
     public static boolean isReactNativeReady() {
-            return sIsReactNativeReady;
+        return sIsReactNativeReady;
     }
 
     public static class Config {
@@ -214,6 +230,7 @@ public class ElectrodeReactContainer {
             return this;
         }
 
+        @SuppressWarnings("unused")
         public Config useOkHttpClient(OkHttpClient value) {
             okHttpClient = value;
             return this;
@@ -227,6 +244,7 @@ public class ElectrodeReactContainer {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void registerReactNativeReadyListener(ReactNativeReadyListener listener) {
         // If react native initialization is already completed, just call listener
         // immediately
@@ -245,12 +263,19 @@ public class ElectrodeReactContainer {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void resetReactNativeReadyListeners() {
         reactNativeReadyListeners.clear();
     }
 
     public interface ReactNativeReadyListener {
-            void onReactNativeReady();
+        void onReactNativeReady();
+    }
+
+    private static void throwIfNotInitialized() {
+        if (sInstance == null) {
+            throw new IllegalStateException("ElectrodeReactContainer not initialized. ElectrodeReactContainer.initialize() method needs to be called before you can get a ReactInstanceManager instance");
+        }
     }
 
 }
