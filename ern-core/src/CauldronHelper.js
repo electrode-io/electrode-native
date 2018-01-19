@@ -385,6 +385,42 @@ export default class CauldronHelper {
     return this.cauldron.getNativeApplications()
   }
 
+  async getContainerJsApiImpls (
+    napDescriptor: NativeApplicationDescriptor
+  ) : Promise<Array<PackagePath>> {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    return this.cauldron.getJsApiImpls(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version)
+  }
+
+  async getContainerJsApiImpl (
+    napDescriptor: NativeApplicationDescriptor,
+    jsApiImpl: PackagePath) {
+    return this.cauldron.getJsApiImpl(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version,
+      jsApiImpl.toString())
+  }
+
+  async getCodePushJsApiImpls (
+    napDescriptor: NativeApplicationDescriptor,
+    deploymentName: string) : Promise<Array<PackagePath> | void> {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
+    const codePushEntries = await this.cauldron.getCodePushEntries(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version,
+      deploymentName)
+    if (codePushEntries) {
+      const lastEntry = _.last(codePushEntries)
+      return _.map(lastEntry.jsApiImpls, e => PackagePath.fromString(e))
+    }
+  }
+
   async getContainerMiniApp (
     napDescriptor: NativeApplicationDescriptor,
     miniApp: string | Object) : Promise<*> {
@@ -432,10 +468,12 @@ export default class CauldronHelper {
   async addCodePushEntry (
     napDescriptor: NativeApplicationDescriptor,
     metadata: CauldronCodePushMetadata,
-    miniApps: Array<PackagePath>) : Promise<*> {
+    miniApps: Array<PackagePath>,
+    jsApiImplementations: Array<PackagePath>) : Promise<*> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     await this.throwIfNativeApplicationNotInCauldron(napDescriptor)
     const miniapps = _.map(miniApps, x => x.toString())
+    const jsApiImpls = _.map(jsApiImplementations, x => x.toString())
     const codePushConfig = await this.getCodePushConfig()
     const codePushEntries = await this.cauldron.getCodePushEntries(
       napDescriptor.name,
@@ -452,9 +490,9 @@ export default class CauldronHelper {
         nbEntriesToDrop = codePushEntries.length - codePushConfig.entriesLimit + 1
       }
       updatedEntriesArr = _.drop(codePushEntries, nbEntriesToDrop)
-      updatedEntriesArr.push({ metadata, miniapps })
+      updatedEntriesArr.push({ metadata, miniapps, jsApiImpls })
     } else {
-      updatedEntriesArr = [ { metadata, miniapps } ]
+      updatedEntriesArr = [ { metadata, miniapps, jsApiImpls } ]
     }
 
     return this.cauldron.setCodePushEntries(

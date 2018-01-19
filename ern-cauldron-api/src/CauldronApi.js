@@ -123,6 +123,26 @@ export default class CauldronApi {
     }
   }
 
+  async getJsApiImpls (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string) : Promise<Array<string>> {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (!version) {
+      throw new Error(`getContainerJsApiImpls: Native application ${nativeApplicationName}:${platformName}${versionName} does not exist`)
+    }
+    return version.container.jsApiImpls
+  }
+
+  async getJsApiImpl (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    jsApiImplName: string) : Promise<?string> {
+    const jsApiImpls = await this.getJsApiImpls(nativeApplicationName, platformName, versionName)
+    return _.find(jsApiImpls, x => (x === jsApiImplName) || x.startsWith(`${jsApiImplName}@`))
+  }
+
   async getContainerMiniApp (
     nativeApplicationName: string,
     platformName: string,
@@ -416,6 +436,43 @@ export default class CauldronApi {
     return this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
   }
 
+  async removeJsApiImpl (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    jsApiImplName: string) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (!_.some(version.container.jsApiImpls, x => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`))) {
+      throw new Error(`${jsApiImplName} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
+
+    _.remove(version.container.jsApiImpls, x => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`))
+    return this.commit(`Remove ${jsApiImplName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
+  }
+
+  async updateJsApiImpl (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    jsApiImplName: string,
+    newVersion: string) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (!_.some(version.container.jsApiImpls, x => x.startsWith(`${jsApiImplName}@`))) {
+      throw new Error(`${jsApiImplName} JS API implementation does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
+    }
+
+    _.remove(version.container.jsApiImpls, x => x.startsWith(`${jsApiImplName}@`))
+    const newJsApiImplString = `${jsApiImplName}@${newVersion}`
+    version.container.jsApiImpls.push(newJsApiImplString)
+    return this.commit(`Update ${jsApiImplName} JS API implementation to v${newVersion} for ${nativeApplicationName} ${platformName}`)
+  }
+
   async createNativeDependency (
     nativeApplicationName: string,
     platformName: string,
@@ -431,6 +488,23 @@ export default class CauldronApi {
 
     version.container.nativeDeps.push(dependency.toString())
     return this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
+  }
+
+  async addJsApiImpl (
+    nativeApplicationName: string,
+    platformName: string,
+    versionName: string,
+    jsApiImpl: PackagePath) {
+    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
+    if (!version) {
+      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    }
+    if (version.container.jsApiImpls.includes(jsApiImpl.toString())) {
+      throw new Error(`${jsApiImpl.basePath} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+    }
+
+    version.container.jsApiImpls.push(jsApiImpl.toString())
+    return this.commit(`Add JS API implementation ${jsApiImpl.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
   }
 
   async addCodePushEntry (

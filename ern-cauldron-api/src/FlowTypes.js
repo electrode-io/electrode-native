@@ -14,12 +14,14 @@ export type CauldronCodePushMetadata = {
 
 export type CauldronCodePushEntry = {
   metadata: CauldronCodePushMetadata,
-  miniapps: Array<string>
+  miniapps: Array<string>,
+  jsApiImpls: Array<string>
 }
 
 export type CauldronContainer = {
   miniApps: Array<string>,
-  nativeDeps: Array<string>
+  nativeDeps: Array<string>,
+  jsApiImpls: Array<string>
 }
 
 export type CauldronNativeAppVersion = {

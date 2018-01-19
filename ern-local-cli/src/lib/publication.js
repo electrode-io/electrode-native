@@ -269,7 +269,8 @@ export async function performCodePushPromote (
           releasedBy: result.releasedBy,
           rollout: result.rollout
         },
-        miniApps)
+        miniApps,
+        [] /* TODO */)
 
       cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
     }
@@ -392,7 +393,8 @@ miniApps: Array<PackagePath>, {
         releasedBy: codePushResponse.releasedBy,
         rollout: codePushResponse.rollout
       },
-      miniAppsToBeCodePushed)
+      miniAppsToBeCodePushed,
+      [] /* TODO */)
 
     const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
     await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, deploymentName, pathToNewYarnLock))
