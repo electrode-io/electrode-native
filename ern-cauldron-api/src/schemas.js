@@ -4,7 +4,8 @@ import Joi from 'joi'
 
 export const container = Joi.object({
   miniApps: Joi.array().default([]),
-  nativeDeps: Joi.array().default([])
+  nativeDeps: Joi.array().default([]),
+  jsApiImpls: Joi.array().default([])
 })
 
 export const nativeApplicationVersion = Joi.object({

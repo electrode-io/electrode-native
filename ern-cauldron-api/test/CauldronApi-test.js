@@ -38,6 +38,9 @@ const codePushNewEntryFixture : CauldronCodePushEntry = {
   "miniapps": [
     "@test/react-native-foo@4.0.4",
     "react-native-bar@2.0.2"
+  ],
+  "jsApiImpls": [
+    "react-native-test-js-api-impl@1.0.0"
   ]
 }
 
@@ -377,6 +380,42 @@ describe('CauldronApi.js', () => {
     it('should return an empty array if native application name does not exist', async () => {
       const containerDependencies = await cauldronApi().getNativeDependencies('unexisting', 'android', '17.7.0')
       expect(containerDependencies).to.be.an('array').empty
+    })
+  })
+
+  // ==========================================================
+  // getJsApiImpls
+  // ==========================================================
+  describe('getJsApiImpls', () => {
+    it('should throw an error if the native application version does not exist', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.getJsApiImpls, api, 'test', 'android', '17.10.0'))
+    })
+
+    it('should return the JavaScript API implementations package paths', async () => {
+      const result = await cauldronApi().getJsApiImpls('test', 'android', '17.7.0')
+      expect(result).to.be.an('array').of.length(1)
+      expect(result[0]).eql('react-native-my-api-impl@1.0.0')
+    })
+  })
+
+  // ==========================================================
+  // getJsApiImpl
+  // ==========================================================
+  describe('getJsApiImpl', () => {
+    it('should throw an error if the native application version does not exist', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.getJsApiImpl, api, 'test', 'android', '17.10.0', 'react-native-my-api-impl'))
+    })
+
+    it('should return the JavaScript API implementation package path [1]', async () => {
+      const result = await cauldronApi().getJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl')
+      expect(result).eql('react-native-my-api-impl@1.0.0')
+    })
+
+    it('should return the JavaScript API implementation package path [2]', async () => {
+      const result = await cauldronApi().getJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl@1.0.0')
+      expect(result).eql('react-native-my-api-impl@1.0.0')
     })
   })
 
@@ -911,6 +950,108 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi()
       assert(await doesThrow(api.createNativeDependency, api, 'test', 'android', '17.20.0', PackagePath.fromString('testDep@1.0.0')))
+    })
+  })
+
+  // ==========================================================
+  // addJsApiImpl
+  // ==========================================================
+  describe('addJsApiImpl', () => {
+    it('should throw if the native application version is not found', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.addJsApiImpl, api, 'test', 'android', '17.20.0', PackagePath.fromString('react-native-new-js-api-impl@1.0.0')))
+    })
+
+    it('should throw if the js api impl already exists', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.addJsApiImpl, api, 'test', 'android', '17.7.0', PackagePath.fromString('react-native-my-api-impl@1.0.0')))
+    })
+
+    it('should commit the document store', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      const commitStub = sandbox.stub(documentStore, 'commit')
+      await api.addJsApiImpl('test', 'android', '17.7.0', PackagePath.fromString('react-native-new-js-api-impl@1.0.0'))
+      sinon.assert.calledOnce(commitStub)
+    })
+
+    it('should add the JS API impl to the container of the native application version', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addJsApiImpl('test', 'android', '17.7.0', PackagePath.fromString('react-native-new-js-api-impl@1.0.0'))
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImpls')[0]
+      expect(dependenciesArr.includes('react-native-new-js-api-impl@1.0.0')).true
+    })
+  })
+
+  // ==========================================================
+  // removeJsApiImpl
+  // ==========================================================
+  describe('removeJsApiImpl', () => {
+    it('should throw if the native application version is not found', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeJsApiImpl, api, 'test', 'android', '17.20.0', 'react-native-my-api-impl@1.0.0'))
+    })
+
+    it('should throw if the js api impl is not found [1]', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeJsApiImpl, api, 'test', 'android', '17.7.0', 'react-native-unknown-api-impl'))
+    })
+
+    it('should throw if the js api impl is not found [2]', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeJsApiImpl, api, 'test', 'android', '17.7.0', 'react-native-unknown-api-impl@1.0.0'))
+    })
+
+    it('should commit the document store', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      const commitStub = sandbox.stub(documentStore, 'commit')
+      await api.removeJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl@1.0.0')
+      sinon.assert.calledOnce(commitStub)
+    })
+
+    it('should remove the JS API impl from the container of the native application version [1]', async() => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).removeJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl')
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImpls')[0]
+      expect(dependenciesArr).not.includes('react-native-my-api-impl@1.0.0')
+    })
+
+    it('should remove the JS API impl from the container of the native application version [2]', async() => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).removeJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl@1.0.0')
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImpls')[0]
+      expect(dependenciesArr).not.includes('react-native-my-api-impl@1.0.0')
+    })
+  })
+
+  // ==========================================================
+  // updateJsApiImpl
+  // ==========================================================
+  describe('updateJsApiImpl', () => {
+    it('should throw if the native application version is not found', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateJsApiImpl, api, 'test', 'android', '17.20.0', 'react-native-my-api-impl', '2.0.0'))
+    })
+
+    it('should throw if the js api impl is not found', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateJsApiImpl, api, 'test', 'android', '17.7.0', 'react-native-unknown-api-impl', '1.0.0'))
+    })
+
+    it('should commit the document store', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      const commitStub = sandbox.stub(documentStore, 'commit')
+      await api.updateJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl', '2.0.0')
+      sinon.assert.calledOnce(commitStub)
+    })
+
+    it('should update the JS API impl version', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).updateJsApiImpl('test', 'android', '17.7.0', 'react-native-my-api-impl', '2.0.0')
+      const dependenciesArr = jp.query(tmpFixture, '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImpls')[0]
+      expect(dependenciesArr).includes('react-native-my-api-impl@2.0.0')
     })
   })
 

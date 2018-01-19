@@ -69,6 +69,9 @@
               "miniApps": [
                 "@test/react-native-foo@4.0.0",
                 "react-native-bar@2.0.0"
+              ],
+              "jsApiImpls": [
+                "react-native-my-api-impl@1.0.0"
               ]
             },
             "codePush": {
@@ -87,7 +90,8 @@
                   "miniapps": [
                     "@test/react-native-foo@4.0.2",
                     "react-native-bar@2.0.1"
-                  ]
+                  ],
+                  "jsApiImpls": []
                 },
                 {
                   "metadata": {
@@ -103,6 +107,9 @@
                   "miniapps": [
                     "@test/react-native-foo@4.0.2",
                     "react-native-bar@2.0.2"
+                  ],
+                  "jsApiImpls": [
+                    "react-native-my-api-impl@1.0.0"
                   ]
                 }
               ],
@@ -121,6 +128,9 @@
                   "miniapps": [
                     "@test/react-native-foo@4.0.3",
                     "react-native-bar@2.0.2"
+                  ],
+                  "jsApiImpls": [
+                    "react-native-my-api-impl@1.1.0"
                   ]
                 }
               ]
@@ -141,9 +151,11 @@
               "miniApps": [
                 "@test/react-native-foo@5.0.0",
                 "react-native-bar@3.0.0"
-              ]
+              ],
+              "jsApiImpls": []
             },
-            "codePush": []
+            "codePush": {
+            }
           }
         ]
       }

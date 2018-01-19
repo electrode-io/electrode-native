@@ -53,6 +53,9 @@ const codePushEntryFixtureTwo = {
   },
   miniapps: [
     "code-push-test-miniapp@0.0.20"
+  ],
+  jsApiImpls: [
+    "react-native-test-js-api-impl@1.0.0"
   ]
 }
 
@@ -79,6 +82,7 @@ const codePushMetadataFixtureTwo = {
 }
 
 const miniAppsFixtureOne = [ PackagePath.fromString('code-push-test-miniapp@0.0.22') ]
+const jsApiImplFixtureOne = [ PackagePath.fromString('react-native-test-js-api-impl@2.0.0') ]
 
 let cauldronHelper
 let documentStore
@@ -1070,6 +1074,83 @@ describe('CauldronHelper.js', () => {
     })
   })
 
+  describe('getContainerJsApiImpls', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getContainerJsApiImpls, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android')))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getContainerJsApiImpls, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0')))
+    })
+
+    it('should return the container MiniApps', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'))
+      expect(result).to.be.an('array').of.length(1)
+    })
+  })
+
+  describe('getContainerJsApiImpl', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getContainerJsApiImpl, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'),
+        PackagePath.fromString('react-native-my-api-impl')))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getContainerJsApiImpl, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'),
+        PackagePath.fromString('react-native-my-api-impl')))
+    })
+
+    it('should return undefined if the JS API impl was not found', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerJsApiImpl(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('foo@1.0.0'))
+      expect(result).undefined
+    })
+
+    it('should return the JS API impl [1]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerJsApiImpl(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('react-native-my-api-impl'))
+      expect(result).not.undefined
+    })
+
+    it('should return the JS API impl [2]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerJsApiImpl(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('react-native-my-api-impl@1.0.0'))
+      expect(result).not.undefined
+    })
+  })
+
   describe('getContainerMiniApp', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
@@ -1125,6 +1206,46 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'react-native-bar@2.0.0')
       expect(result).not.undefined
+    })
+  })
+
+  describe('getCodePushJsApiImpls', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getCodePushJsApiImpls, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'),
+        'Production'))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getCodePushJsApiImpls, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'),
+        'Production'))
+    })
+
+    it('should return undefined if no JS API impls were CodePushed', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getCodePushJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Foo')
+      expect(result).undefined
+    })
+
+    it('should return the CodePushed JS API impls', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getCodePushJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Production')
+      expect(result).to.be.an('array').of.length(1)
     })
   })
 
