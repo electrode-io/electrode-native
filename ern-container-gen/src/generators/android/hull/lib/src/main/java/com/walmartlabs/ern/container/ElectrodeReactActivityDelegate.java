@@ -27,6 +27,9 @@ import android.widget.Toast;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * An instance of this class should be used by each Activity containing a ReactNative application.
  * It can be seen as the interaction surface with the ReactNative engine, providing a way to retrieve
@@ -41,10 +44,9 @@ public class ElectrodeReactActivityDelegate {
 
 
     /**
-     * ReactRootView holding the view containing the ReactNative application
+     * List of ReactRootView(s) holding the view containing the ReactNative application(s)
      */
-    private ReactRootView mRootView;
-    private String mApplicationName;
+    private Map<String, ReactRootView> mReactRootViews = new HashMap<>();
 
     /**
      * Back key handler specifics
@@ -107,11 +109,19 @@ public class ElectrodeReactActivityDelegate {
      * Call this method from within your Activity onDestroy
      */
     public void onDestroy(@NonNull Activity activity) {
-        if (mRootView != null) {
-            mRootView.unmountReactApplication();
-        }
+        unMountReactApplications();
 
-        ElectrodeReactContainer.getReactInstanceManager().onHostDestroy(activity);
+        if (ElectrodeReactContainer.hasInstance()) {
+            ElectrodeReactContainer.getReactInstanceManager().onHostDestroy(activity);
+        }
+    }
+
+    private void unMountReactApplications() {
+        for (Map.Entry<String, ReactRootView> entry : mReactRootViews.entrySet()) {
+            ReactRootView rootView = entry.getValue();
+            rootView.unmountReactApplication();
+        }
+        mReactRootViews.clear();
     }
 
     /**
@@ -162,13 +172,15 @@ public class ElectrodeReactActivityDelegate {
 
     @Nullable
     private View getReactAppView(@NonNull Activity activity, @NonNull String applicationName, @Nullable Bundle props) {
-        if (mRootView == null || !applicationName.equals(mApplicationName)) {
-            mApplicationName = applicationName;
-            mRootView = new ReactRootView(activity);
-            mRootView.startReactApplication(ElectrodeReactContainer.getReactInstanceManager(), applicationName, props);
+        ReactRootView rootView = mReactRootViews.get(applicationName);
+
+        if (rootView == null) {
+            rootView = new ReactRootView(activity);
+            rootView.startReactApplication(ElectrodeReactContainer.getReactInstanceManager(), applicationName, props);
+            mReactRootViews.put(applicationName, rootView);
         }
 
-        return mRootView;
+        return rootView;
     }
 
     @TargetApi(Build.VERSION_CODES.M)
