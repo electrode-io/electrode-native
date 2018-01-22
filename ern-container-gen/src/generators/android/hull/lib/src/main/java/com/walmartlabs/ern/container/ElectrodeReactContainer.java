@@ -205,8 +205,6 @@ public class ElectrodeReactContainer {
         return sInstance;
     }
 
-
-    
     @SuppressWarnings("WeakerAccess")
     public boolean isReactNativeDeveloperSupport() {
         return this.isReactNativeDeveloperSupport;
@@ -219,6 +217,10 @@ public class ElectrodeReactContainer {
     @SuppressWarnings("unused")
     public static boolean isReactNativeReady() {
         return sIsReactNativeReady;
+    }
+
+    public static boolean hasReactInstance() {
+        return sInstance != null && sInstance.mReactInstanceManager != null;
     }
 
     public static class Config {

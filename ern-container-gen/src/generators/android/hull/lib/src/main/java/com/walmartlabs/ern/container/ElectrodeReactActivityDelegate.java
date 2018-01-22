@@ -111,7 +111,7 @@ public class ElectrodeReactActivityDelegate {
     public void onDestroy(@NonNull Activity activity) {
         unMountReactApplications();
 
-        if (ElectrodeReactContainer.hasInstance()) {
+        if (ElectrodeReactContainer.hasReactInstance()) {
             ElectrodeReactContainer.getReactInstanceManager().onHostDestroy(activity);
         }
     }
