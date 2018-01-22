@@ -422,8 +422,7 @@ export default class CauldronHelper {
   }
 
   async getContainerJsApiImpls (
-    napDescriptor: NativeApplicationDescriptor
-  ) : Promise<Array<PackagePath>> {
+    napDescriptor: NativeApplicationDescriptor) : Promise<Array<PackagePath>> {
     this.throwIfPartialNapDescriptor(napDescriptor)
     return this.cauldron.getJsApiImpls(
       napDescriptor.name,

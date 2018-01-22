@@ -1,18 +1,11 @@
 // @flow
 
 import {
-  IosGenerator,
-  AndroidGenerator
-} from 'ern-container-gen'
-import {
-  PackagePath,
   mustacheUtils,
-  spin,
   shell
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
-import tmp from 'tmp'
 
 // ==============================================================================
 // Misc utitlities
@@ -165,30 +158,6 @@ export async function regenerateIosRunnerConfig (
   shell.cp(path.join(runnerHullPath, 'ios', 'ErnRunner', 'RunnerConfig.m'), pathToRunnerConfig)
   await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
     pathToRunnerConfig, mustacheView, pathToRunnerConfig)
-}
-
-export async function generateContainerForRunner ({
-  plugins,
-  miniapp,
-  platform,
-  containerGenWorkingDir
-} : {
-  plugins: Array<PackagePath>,
-  miniapp: Object,
-  platform: 'android' | 'ios',
-  containerGenWorkingDir: string
-}) {
-  const generator = (platform === 'android')
-    ? new AndroidGenerator()
-    : new IosGenerator()
-
-  await spin('Generating Runner Container project', generator.generate({
-    plugins,
-    miniApps: [miniapp],
-    outDir: containerGenWorkingDir,
-    pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
-    compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name
-  }))
 }
 
 function replaceHomePathWithTidle (p: string) {

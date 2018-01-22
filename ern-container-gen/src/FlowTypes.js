@@ -17,8 +17,10 @@ export type ContainerGeneratorPaths = {
 export type ContainerGeneratorConfig = {
   // The MiniApps that should be included in the generated Container
   miniApps: Array<MiniApp>;
-  // The plugins that should be included in the generate Container
+  // The plugins that should be included in the generated Container
   plugins: Array<PackagePath>;
+  // The JS API implementations that should be included in the generated Container
+  jsApiImpls: Array<PackagePath>;
   // The output directory where to generate the Container
   outDir: string;
   // Directory where the plugins should be downloaded to during generation
