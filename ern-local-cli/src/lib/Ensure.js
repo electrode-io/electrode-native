@@ -259,7 +259,7 @@ export default class Ensure {
   }
 
   static async cauldronIsActive (extraErrorMessage: string = '') {
-    if (!await coreUtils.getCauldronInstance()) {
+    if (!await coreUtils.getCauldronInstance({ignoreSchemaVersionMismatch: true})) {
       throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
     }
   }
