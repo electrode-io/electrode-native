@@ -53,6 +53,7 @@
     "joi": "^10.1.0",
     "lodash": "^4.17.4",
     "tmp": "^0.0.33",
+    "semver": "^5.5.0",
     "ern-core": "1000.0.0"
   },
   "devDependencies": {
