@@ -33,3 +33,9 @@ export const nativeApplication = Joi.object({
   name: Joi.string().required(),
   platforms: Joi.array().items(nativeApplicationPlatform).default([])
 })
+
+export const schemaVersion = '1.0.0'
+
+export const cauldronApiVersionBySchemaVersion = {
+  '1.0.0': '0.12.0'
+}

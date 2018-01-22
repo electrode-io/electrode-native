@@ -59,6 +59,11 @@ export default class CauldronApi {
   // READ OPERATIONS
   // =====================================================================================
 
+  async getCauldronSchemaVersion () : Promise<string> {
+    const cauldron = await this.getCauldron()
+    return cauldron.schemaVersion
+  }
+
   async getNativeApplications () {
     const cauldron = await this.getCauldron()
     return cauldron.nativeApps

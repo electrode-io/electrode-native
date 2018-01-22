@@ -113,6 +113,19 @@ export default class CauldronHelper {
       napDescriptor.name, napDescriptor.platform, napDescriptor.version, basePathMiniAppString)
   }
 
+  async removeJsApiImplFromContainer (
+    napDescriptor: NativeApplicationDescriptor,
+    jsApiImpl: PackagePath) : Promise<*> {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    await this.throwIfNativeAppVersionIsReleased(napDescriptor,
+      'Cannot remove a JS API impl from the Container of a released native app version')
+    return this.cauldron.removeJsApiImpl(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version,
+      jsApiImpl.basePath)
+  }
+
   async addPublisher (
     publisherType: ('maven' | 'github'),
     url: string,
@@ -381,6 +394,21 @@ export default class CauldronHelper {
         newVersion)
   }
 
+  async updateContainerJsApiImpl (
+    napDescriptor: NativeApplicationDescriptor,
+    jsApiImplName: string,
+    newVersion: string) {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    await this.throwIfNativeAppVersionIsReleased(napDescriptor,
+      'Cannot update a JS API implementation in the Container of a released native app version')
+    return this.cauldron.updateJsApiImpl(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version,
+      jsApiImplName,
+      newVersion)
+  }
+
   async getAllNativeApps () : Promise<*> {
     return this.cauldron.getNativeApplications()
   }
@@ -553,6 +581,17 @@ export default class CauldronHelper {
             napDescriptor.platform,
             napDescriptor.version,
             miniApp)
+  }
+
+  async addContainerJsApiImpl (
+    napDescriptor: NativeApplicationDescriptor,
+    jsApiImpl: PackagePath) : Promise<*> {
+    this.throwIfPartialNapDescriptor(napDescriptor)
+    return this.cauldron.addJsApiImpl(
+      napDescriptor.name,
+      napDescriptor.platform,
+      napDescriptor.version,
+      jsApiImpl)
   }
 
   async getContainerGeneratorConfig (napDescriptor: NativeApplicationDescriptor) : Promise<*> {

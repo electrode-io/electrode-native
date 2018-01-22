@@ -49,6 +49,7 @@ export type CauldronNativeApp = {
 }
 
 export type Cauldron = {
+  schemaVersion: string,
   config?: Object,
   nativeApps: Array<CauldronNativeApp>
 }

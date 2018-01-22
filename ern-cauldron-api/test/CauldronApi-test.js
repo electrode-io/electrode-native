@@ -101,6 +101,24 @@ describe('CauldronApi.js', () => {
     })
   })
 
+  // ========================================================== 
+  // getCauldronSchemaVersion
+  // ========================================================== 
+  describe('getCauldronSchemaVersion', () => {
+    it('should return the Cauldron schema version', async () => {
+      const schemaVersion = await cauldronApi().getCauldronSchemaVersion()
+      expect(schemaVersion).eql('1.0.0')
+    })
+
+    it('should return undefined if schemaVersion property is missing', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      delete tmpFixture['schemaVersion']
+      const schemaVersion = await cauldronApi(tmpFixture).getCauldronSchemaVersion()
+      expect(schemaVersion).undefined
+    })
+  })
+
+
   // ==========================================================
   // beginTransaction
   // ========================================================== 
