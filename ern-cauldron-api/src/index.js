@@ -24,3 +24,8 @@ export type {
   CauldronCodePushMetadata,
   CauldronCodePushEntry
 } from './FlowTypes'
+
+export {
+  getSchemaVersionMatchingCauldronApiVersion,
+  getCurrentSchemaVersion
+} from './util'

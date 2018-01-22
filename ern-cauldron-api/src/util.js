@@ -3,6 +3,11 @@
 import _ from 'lodash'
 import crypto from 'crypto'
 import Joi from 'joi'
+import semver from 'semver'
+import {
+  schemaVersion,
+  cauldronApiVersionBySchemaVersion
+} from './schemas'
 
 // ====================================
 // Cauldron Helper
@@ -41,4 +46,21 @@ export function joiValidate (payload: any, schema: any) : Promise<any> {
       resolve(value)
     })
   })
+}
+
+export function getSchemaVersionMatchingCauldronApiVersion (cauldronApiVersion: string) {
+  if (cauldronApiVersion === '1000.0.0') {
+    const schemaVersions = Object.keys(cauldronApiVersionBySchemaVersion)
+    return schemaVersions[schemaVersions.length - 1]
+  }
+  for (const v of Object.keys(cauldronApiVersionBySchemaVersion)) {
+    if (semver.satisfies(cauldronApiVersion, cauldronApiVersionBySchemaVersion[v])) {
+      return v
+    }
+  }
+  return '0.0.0'
+}
+
+export function getCurrentSchemaVersion () {
+  return schemaVersion
 }
