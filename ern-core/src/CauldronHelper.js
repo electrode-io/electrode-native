@@ -45,6 +45,10 @@ export default class CauldronHelper {
     return this.cauldron.commitTransaction(message)
   }
 
+  async getCauldronSchemaVersion () {
+    return this.cauldron.getCauldronSchemaVersion()
+  }
+
   async upgradeCauldronSchema () {
     return this.cauldron.upgradeCauldronSchema()
   }

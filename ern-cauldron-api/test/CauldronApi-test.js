@@ -110,14 +110,13 @@ describe('CauldronApi.js', () => {
       expect(schemaVersion).eql('1.0.0')
     })
 
-    it('should return undefined if schemaVersion property is missing', async () => {
+    it('should return 0.0.0 if schemaVersion property is missing', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       delete tmpFixture['schemaVersion']
       const schemaVersion = await cauldronApi(tmpFixture).getCauldronSchemaVersion()
-      expect(schemaVersion).undefined
+      expect(schemaVersion).eql('0.0.0')
     })
   })
-
 
   // ==========================================================
   // beginTransaction

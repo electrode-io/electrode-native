@@ -15,7 +15,10 @@ import path from 'path'
 import fs from 'fs'
 import Platform from './Platform'
 import CauldronHelper from './CauldronHelper'
-import CauldronCli from 'ern-cauldron-api'
+import CauldronCli, {
+  getCurrentSchemaVersion
+} from 'ern-cauldron-api'
+import semver from 'semver'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -306,6 +309,7 @@ export async function extractJsApiImplementations (plugins: Array<PackagePath>) 
 
 // Singleton CauldronHelper
 // Returns undefined if no Cauldron is active
+// Throw error if Cauldron is not using the correct schema version
 let currentCauldronHelperInstance
 export async function getCauldronInstance ({
     ignoreSchemaVersionMismatch
