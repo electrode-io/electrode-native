@@ -11,6 +11,9 @@ import type {
   Cauldron,
   ICauldronDocumentStore
 } from './FlowTypes'
+import {
+  schemaVersion
+} from './schemas'
 const CAULDRON_FILENAME = 'cauldron.json'
 
 export default class GitDocumentStore extends BaseGit implements ICauldronDocumentStore {
@@ -22,7 +25,8 @@ export default class GitDocumentStore extends BaseGit implements ICauldronDocume
     repository: string,
     branch: string = 'master',
     cauldron: Object = {
-      'nativeApps': []
+      'nativeApps': [],
+      schemaVersion
     }) {
     super(cauldronPath, repository, branch)
     this._jsonPath = path.resolve(this.path, CAULDRON_FILENAME)

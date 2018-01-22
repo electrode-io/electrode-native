@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "1.0.0",
   "config": {
     "codePush": {
       "entriesLimit": 0
