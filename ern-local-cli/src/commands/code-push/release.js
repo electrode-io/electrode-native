@@ -14,11 +14,19 @@ import * as constants from '../../lib/constants'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
-exports.command = 'release <miniapps..>'
-exports.desc = 'CodePush one or more MiniApp(s) versions to a target native application version'
+exports.command = 'release'
+exports.desc = 'CodePush MiniApp(s) or JS API implementation(s) version(s) to a target native application version'
 
 exports.builder = function (yargs: any) {
   return yargs
+    .option('miniapps', {
+      describe: 'One or more MiniApp to CodePush',
+      type: 'array'
+    })
+    .option('jsApiImpls', {
+      describe: 'One or more JS API implementation to CodePush',
+      type: 'array'
+    })
     .option('descriptors', {
       alias: 'd',
       describe: 'Full native application descriptors (target native application versions for the push)',
@@ -61,7 +69,8 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   force,
-  miniapps,
+  miniapps = [],
+  jsApiImpls = [],
   descriptors = [],
   semVerDescriptor,
   appName,
@@ -73,6 +82,7 @@ exports.handler = async function ({
 } : {
   force: boolean,
   miniapps: Array<string>,
+  jsApiImpls: Array<string>,
   descriptors?: Array<string>,
   semVerDescriptor?: string,
   appName: string,
@@ -84,6 +94,10 @@ exports.handler = async function ({
 }) {
   try {
     let napDescriptors
+
+    if ((miniapps.length === 0) && (jsApiImpls.length === 0)) {
+      throw new Error('You need to provide at least one MiniApp or one JS API implementation version to CodePush')
+    }
 
     if (descriptors.length > 0) {
       // User provided one or more descriptor(s)
@@ -130,11 +144,11 @@ exports.handler = async function ({
 
     await utils.logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
-        obj: miniapps,
+        obj: [ ...miniapps, ...jsApiImpls ],
         extraErrorMessage: 'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.'
       },
       publishedToNpm: {
-        obj: miniapps,
+        obj: [ ...miniapps, ...jsApiImpls ],
         extraErrorMessage: 'You can only CodePush MiniApps versions that have been published to NPM'
       }
     })
@@ -148,7 +162,8 @@ exports.handler = async function ({
       await performCodePushOtaUpdate(
         napDescriptor,
         deploymentName,
-        _.map(miniapps, PackagePath.fromString), {
+        _.map(miniapps, PackagePath.fromString),
+        _.map(jsApiImpls, PackagePath.fromString), {
           force,
           codePushIsMandatoryRelease: mandatory,
           codePushRolloutPercentage: rollout,

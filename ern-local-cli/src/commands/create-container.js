@@ -44,6 +44,10 @@ exports.builder = function (yargs: any) {
       alias: 'm',
       describe: 'A list of one or more miniapps'
     })
+    .option('jsApiImpls', {
+      type: 'array',
+      describe: 'A list of one or more JS API implementation'
+    })
     .option('dependencies', {
       type: 'array',
       alias: 'deps',
@@ -73,6 +77,7 @@ exports.handler = async function ({
   jsOnly,
   outDir,
   miniapps,
+  jsApiImpls = [],
   dependencies = [],
   platform,
   containerName,
@@ -83,6 +88,7 @@ exports.handler = async function ({
   jsOnly?: boolean,
   outDir?: string,
   miniapps?: Array<string>,
+  jsApiImpls: Array<string>,
   dependencies: Array<string>,
   platform?: 'android' | 'ios',
   containerName?: string,
@@ -153,6 +159,8 @@ exports.handler = async function ({
     }
 
     let miniAppsPaths: Array<PackagePath> = _.map(miniapps, PackagePath.fromString)
+    let jsApiImplsPaths: Array<PackagePath> = _.map(jsApiImpls, PackagePath.fromString)
+
     //
     // --jsOnly switch
     // Ony generates the composite miniapp to a provided output directory
@@ -161,8 +169,8 @@ exports.handler = async function ({
         if (!napDescriptor) {
           return log.error('You need to provide a napDescriptor if not providing miniapps')
         }
-        const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
-        miniAppsPaths = _.map(miniAppsObjs, m => PackagePath.fromString(m.toString()))
+        miniAppsPaths = await cauldron.getContainerMiniApps(napDescriptor)
+        jsApiImplsPaths = await cauldron.getContainerJsApiImpls(napDescriptor)
       }
 
       let pathToYarnLock
@@ -173,7 +181,8 @@ exports.handler = async function ({
       await generateMiniAppsComposite(
         miniAppsPaths,
         outDir || `${Platform.rootDirectory}/miniAppsComposite`,
-        pathToYarnLock ? {pathToYarnLock} : {})
+        pathToYarnLock ? {pathToYarnLock} : {},
+        jsApiImplsPaths)
     } else {
       if (!napDescriptor && miniapps) {
         if (!platform) {
@@ -189,6 +198,7 @@ exports.handler = async function ({
 
         await spin('Generating Container locally', runLocalContainerGen(
           miniAppsPaths,
+          jsApiImplsPaths,
           platform, {
             version,
             nativeAppName: containerName,

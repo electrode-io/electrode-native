@@ -38,6 +38,7 @@ import * as constants from './constants'
 // FROM FS  => file:/Users/username/Code/MiniApp
 export async function runLocalContainerGen (
 miniappPackagesPaths: Array<PackagePath>,
+jsApiImplsPackagePaths: Array<PackagePath>,
 platform: 'android' | 'ios', {
   outDir = `${Platform.rootDirectory}/containergen`,
   extraNativeDependencies = []
@@ -85,6 +86,7 @@ platform: 'android' | 'ios', {
 
     await spin('Generating Container', generator.generate({
       miniApps: miniapps,
+      jsApiImpls: jsApiImplsPackagePaths,
       outDir,
       plugins: nativeDependencies,
       pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
@@ -117,6 +119,7 @@ napDescriptor: NativeApplicationDescriptor, {
     const cauldron = await coreUtils.getCauldronInstance()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
     const pathToYarnLock = await cauldron.getPathToYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY)
 
     if (!napDescriptor.platform) {
@@ -141,6 +144,7 @@ napDescriptor: NativeApplicationDescriptor, {
       `Creating Container for ${napDescriptor.toString()} from Cauldron`,
       generator.generate({
         miniApps: miniAppsInstances,
+        jsApiImpls,
         outDir: outDir || path.join(Platform.rootDirectory, 'containergen', 'out', platform),
         plugins,
         ignoreRnpmAssets: containerGeneratorConfig && containerGeneratorConfig.ignoreRnpmAssets,
@@ -230,6 +234,8 @@ export async function performCodePushPromote (
         continue
       }
 
+      const jsApiImpls = await cauldron.getCodePushJsApiImpls(sourceNapDescriptor, sourceDeploymentName)
+
       const nativeDependenciesVersionAligned =
         await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(miniApps, targetNapDescriptor)
 
@@ -270,7 +276,7 @@ export async function performCodePushPromote (
           rollout: result.rollout
         },
         miniApps,
-        [] /* TODO */)
+        jsApiImpls || [])
 
       cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
     }
@@ -287,7 +293,8 @@ export async function performCodePushPromote (
 export async function performCodePushOtaUpdate (
 napDescriptor: NativeApplicationDescriptor,
 deploymentName: string,
-miniApps: Array<PackagePath>, {
+miniApps: Array<PackagePath>,
+jsApiImpls: Array<PackagePath>, {
   force = false,
   codePushIsMandatoryRelease = false,
   codePushRolloutPercentage,
@@ -312,21 +319,22 @@ miniApps: Array<PackagePath>, {
 
     const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
 
-    const nativeDependenciesVersionAligned =
+    const miniAppsNativeDependenciesVersionAligned =
       await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(miniApps, napDescriptor)
 
-    if (!nativeDependenciesVersionAligned && force) {
-      log.warn('Native dependencies versions are not aligned but ignoring due to the use of force flag')
-    } else if (!nativeDependenciesVersionAligned && !force) {
+    if (!miniAppsNativeDependenciesVersionAligned && force) {
+      log.warn('Native dependencies versions of MiniApps are not aligned but ignoring due to the use of force flag')
+    } else if (!miniAppsNativeDependenciesVersionAligned && !force) {
       if (!await askUserToForceCodePushPublication()) {
         throw new Error('CodePush publication aborted')
       }
     }
 
     const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(napDescriptor, deploymentName)
+    const latestCodePushedJsApiImpls = await cauldron.getCodePushJsApiImpls(napDescriptor, deploymentName)
 
-    // We need to include, in this CodePush bundle, all the MiniApps that were part
-    // of the previous CodePush. We will override versions of the MiniApps with
+    // We need to include, in this CodePush bundle, all the MiniApps and JS API implementations that were part
+    // of the previous CodePush. We will override versions of the MiniApps and JS API implementations with
     // the one provided to this function, and keep other ones intact.
     // For example, if previous CodePush bundle was containing MiniAppOne@1.0.0 and
     // MiniAppTwo@1.0.0 and this method is called to CodePush MiniAppOne@2.0.0, then
@@ -338,12 +346,20 @@ miniApps: Array<PackagePath>, {
       referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(napDescriptor)
     }
 
+    let referenceJsApiImplsToCodePush = latestCodePushedJsApiImpls
+    if (!referenceJsApiImplsToCodePush || referenceJsApiImplsToCodePush.length === 0) {
+      referenceJsApiImplsToCodePush = await cauldron.getContainerJsApiImpls(napDescriptor)
+    }
+
     const miniAppsToBeCodePushed = _.unionBy(
       miniApps, referenceMiniAppsToCodePush, x => x.basePath)
 
+    const jsApiImplsToBeCodePushed = _.unionBy(
+      jsApiImpls, referenceJsApiImplsToCodePush, x => x.basePath)
+
     // If force or skipFinalConfirmation was not provided as option, we ask user for confirmation before proceeding
     // with code-push publication
-    const userConfirmedCodePushPublication = force || skipConfirmation || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed)
+    const userConfirmedCodePushPublication = force || skipConfirmation || await askUserToConfirmCodePushPublication(miniAppsToBeCodePushed, jsApiImplsToBeCodePushed)
 
     if (!userConfirmedCodePushPublication) {
       return log.info('CodePush publication aborted')
@@ -352,8 +368,10 @@ miniApps: Array<PackagePath>, {
     }
 
     const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m => PackagePath.fromString(m.toString()))
-    await spin('Generating composite miniapps',
-       generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}))
+    const pathToJsApiImplsToBeCodePushed = _.map(jsApiImplsToBeCodePushed, j => PackagePath.fromString(j.toString()))
+
+    await spin('Generating composite module',
+       generateMiniAppsComposite(pathsToMiniAppsToBeCodePushed, tmpWorkingDir, {pathToYarnLock}, pathToJsApiImplsToBeCodePushed))
 
     const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
     shell.mkdir('-p', bundleOutputDirectory)
@@ -394,7 +412,7 @@ miniApps: Array<PackagePath>, {
         rollout: codePushResponse.rollout
       },
       miniAppsToBeCodePushed,
-      [] /* TODO */)
+      jsApiImplsToBeCodePushed)
 
     const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
     await spin(`Adding yarn.lock to Cauldron`, cauldron.addOrUpdateYarnLock(napDescriptor, deploymentName, pathToNewYarnLock))
@@ -479,9 +497,17 @@ export function getCodePushSdk () {
   return new CodePushSdk(codePushAccessKey)
 }
 
-async function askUserToConfirmCodePushPublication (miniAppsToBeCodePushed: Array<PackagePath>) : Promise<boolean> {
-  log.info(`The following MiniApp versions will get shipped in this CodePush OTA update :`)
-  miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
+async function askUserToConfirmCodePushPublication (
+  miniAppsToBeCodePushed: Array<PackagePath>,
+  jsApiImplsToBeCodePushed: Array<PackagePath>) : Promise<boolean> {
+  if (miniAppsToBeCodePushed && miniAppsToBeCodePushed.length > 0) {
+    log.info(`The following MiniApp versions will get shipped in this CodePush OTA update :`)
+    miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
+  }
+  if (jsApiImplsToBeCodePushed && jsApiImplsToBeCodePushed.length > 0) {
+    log.info(`The following JS API implementation versions will get shipped in this CodePush OTA update :`)
+    jsApiImplsToBeCodePushed.forEach(m => log.info(m.toString()))
+  }
 
   const { userCodePushPublicationConfirmation } = await inquirer.prompt({
     type: 'confirm',

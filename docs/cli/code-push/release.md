@@ -12,17 +12,21 @@
 
 #### Syntax
 
-`ern code-push release <miniapps..>`  
+`ern code-push release`  
 
-**Arguments**
+**Options**  
 
-`<miniapps..>`
+`--miniapps`
 
 * One or more MiniApps (separated by spaces) version(s) to CodePush.
 * Only NPM published versions can be provided.
 * You cannot use the `file` or `git` schemes for the MiniApp(s).
 
-**Options**  
+`--jsApiImpls`
+
+* One or more JS API implementations (separated by spaces) version(s) to CodePush.
+* Only NPM published versions can be provided.
+* You cannot use the `file` or `git` schemes for the MiniApp(s).
 
 `--descriptors/-d <descriptors..>`
 
