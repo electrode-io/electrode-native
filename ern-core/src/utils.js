@@ -307,7 +307,11 @@ export async function extractJsApiImplementations (plugins: Array<PackagePath>) 
 // Singleton CauldronHelper
 // Returns undefined if no Cauldron is active
 let currentCauldronHelperInstance
-export async function getCauldronInstance () : Promise<CauldronHelper> {
+export async function getCauldronInstance ({
+    ignoreSchemaVersionMismatch
+  } : {
+    ignoreSchemaVersionMismatch?: boolean
+  } = {}) : Promise<CauldronHelper> {
   if (!currentCauldronHelperInstance) {
     const cauldronRepositories = config.getValue('cauldronRepositories')
     const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
@@ -316,6 +320,21 @@ export async function getCauldronInstance () : Promise<CauldronHelper> {
         cauldronRepositories[cauldronRepoInUse],
         path.join(Platform.rootDirectory, 'cauldron'))
       currentCauldronHelperInstance = new CauldronHelper(cauldronCli)
+      const schemaVersionUsedByCauldron = await currentCauldronHelperInstance.getCauldronSchemaVersion()
+      const schemaVersionOfCurrentCauldronApi = getCurrentSchemaVersion()
+      if (!ignoreSchemaVersionMismatch && (schemaVersionUsedByCauldron !== schemaVersionOfCurrentCauldronApi)) {
+        if (semver.gt(schemaVersionUsedByCauldron, schemaVersionOfCurrentCauldronApi)) {
+          throw new Error(
+`Cauldron schema version mismatch (${schemaVersionUsedByCauldron} > ${schemaVersionOfCurrentCauldronApi}).
+You should switch to a newer platform version that supports this Cauldron schema.`
+          )
+        } else if (semver.lt(schemaVersionUsedByCauldron, schemaVersionOfCurrentCauldronApi)) {
+          throw new Error(
+`Cauldron schema version mismatch (${schemaVersionUsedByCauldron} < ${schemaVersionOfCurrentCauldronApi}.
+You should run the following command : 'ern cauldron upgrade' to upgrade your Cauldron to the latest version.
+You can also switch to an older version of the platform which supports this Cauldron schema version.`)
+        }
+      }
     }
   }
   return Promise.resolve(currentCauldronHelperInstance)

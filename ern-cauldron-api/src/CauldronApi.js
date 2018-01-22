@@ -13,6 +13,7 @@ import type {
   ICauldronDocumentStore,
   ICauldronFileStore
 } from './FlowTypes'
+import upgradeScripts from './upgrade-scripts/scripts'
 
 export default class CauldronApi {
   _db: ICauldronDocumentStore
@@ -34,6 +35,27 @@ export default class CauldronApi {
 
   async getCauldron () {
     return this._db.getCauldron()
+  }
+
+  // =====================================================================================
+  // CAULDRON SCHEMA UPGRADE
+  // =====================================================================================
+
+  async upgradeCauldronSchema () {
+    const currentSchemaVersion = await this.getCauldronSchemaVersion()
+    if (currentSchemaVersion === schemas.schemaVersion) {
+      throw new Error(`The Cauldron is already using the proper schema version ${currentSchemaVersion}`)
+    }
+    let isUpgradeStarted = false
+    // We apply all upgrade scripts, one by one, starting from the current schema version
+    for (const upgradeScript of upgradeScripts) {
+      if (upgradeScript.from === currentSchemaVersion) {
+        isUpgradeStarted = true
+      }
+      if (isUpgradeStarted) {
+        await upgradeScript.upgrade(this)
+      }
+    }
   }
 
   // =====================================================================================
@@ -61,7 +83,7 @@ export default class CauldronApi {
 
   async getCauldronSchemaVersion () : Promise<string> {
     const cauldron = await this.getCauldron()
-    return cauldron.schemaVersion
+    return cauldron.schemaVersion || '0.0.0'
   }
 
   async getNativeApplications () {

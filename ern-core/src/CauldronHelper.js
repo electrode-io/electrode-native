@@ -45,6 +45,10 @@ export default class CauldronHelper {
     return this.cauldron.commitTransaction(message)
   }
 
+  async upgradeCauldronSchema () {
+    return this.cauldron.upgradeCauldronSchema()
+  }
+
   async addNativeApp (
     napDescriptor: NativeApplicationDescriptor,
     ernPlatformVersion: string = Platform.currentVersion) : Promise<*> {
