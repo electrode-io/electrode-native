@@ -267,6 +267,48 @@ describe('CauldronHelper.js', () => {
     })
   })
 
+  describe('addContainerJsApiImpl', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.addContainerJsApiImpl,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'),
+        PackagePath.fromString('test@1.0.0')))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.addContainerJsApiImpl,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'),
+        PackagePath.fromString('test@1.0.0')))
+    })
+
+    it('should throw if the given native application version is released', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.addContainerJsApiImpl,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('test@1.0.0')))
+    })
+
+    it('should add the JS API impl to the native application version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addContainerJsApiImpl(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('test@1.0.0'))
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.jsApiImpls.includes('test@1.0.0')).true
+    })
+  })
+
   describe('removeNativeDependency', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
@@ -368,6 +410,58 @@ describe('CauldronHelper.js', () => {
         PackagePath.fromString('@test/react-native-foo'))
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.container.nativeDeps.includes('@test/react-native-foo@5.0.0')).false
+    })
+  })
+
+  describe('removeJsApiImplFromContainer', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.removeJsApiImplFromContainer,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'),
+        PackagePath.fromString('react-native-my-api-impl@1.0.0')))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.removeJsApiImplFromContainer,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'),
+        PackagePath.fromString('react-native-my-api-impl@1.0.0')))
+    })
+
+    it('should throw if the given native application version is released', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.removeJsApiImplFromContainer,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('react-native-my-api-impl@1.0.0')))
+    })
+
+    it('should remove the miniapp from the native application version [1]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.removeJsApiImplFromContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('react-native-my-api-impl@1.0.0'))
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.nativeDeps.includes('react-native-my-api-impl@1.0.0')).false
+    })
+
+    it('should remove the miniapp from the native application version [2]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.removeJsApiImplFromContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('react-native-my-api-impl'))
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.nativeDeps.includes('react-native-my-api-impl@1.0.0')).false
     })
   })
 
@@ -1062,6 +1156,53 @@ describe('CauldronHelper.js', () => {
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.container.nativeDeps).includes('react-native-electrode-bridge@1.5.0')
       expect(nativeAppVersion.container.nativeDeps).not.includes('react-native-electrode-bridge@1.4.9')
+    })
+  })
+
+  describe('updateContainerJsApiImpl', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.updateContainerJsApiImpl, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'),
+        'react-native-my-api-impl',
+        '1.5.0'))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.updateContainerJsApiImpl, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'),
+        'react-native-my-api-impl',
+        '1.5.0'))
+    })
+
+    it('should throw if the given native application version is released', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.updateContainerJsApiImpl, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'react-native-my-api-impl',
+        '1.5.0'))
+    })
+
+    it('should update the native dependency version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.updateContainerJsApiImpl(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        'react-native-my-api-impl',
+        '1.5.0')
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.jsApiImpls).includes('react-native-my-api-impl@1.5.0')
+      expect(nativeAppVersion.container.jsApiImpls).not.includes('react-native-my-api-impl@1.1.0')
     })
   })
 
