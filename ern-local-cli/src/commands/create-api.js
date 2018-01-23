@@ -1,5 +1,6 @@
 // @flow
 
+import fs from 'fs'
 import {
   ApiGen
 } from 'ern-api-gen'
@@ -30,7 +31,7 @@ exports.builder = function (yargs: any) {
     describe: 'Author of library'
   }).option('schemaPath', {
     alias: 'm',
-    describe: 'Path to schema(swagger)'
+    describe: 'Path to pre-existing schema(swagger)'
   }).option('skipNpmCheck', {
     describe: 'Skip the check ensuring package does not already exists in NPM registry',
     type: 'bool'
@@ -61,6 +62,10 @@ exports.handler = async function ({
         name: apiName
       }
     })
+
+    if (schemaPath && !fs.existsSync(schemaPath)) {
+      throw new Error(`Cannot resolve path to ${schemaPath}`)
+    }
 
     if (!utils.checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
       apiName = await utils.promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
