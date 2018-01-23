@@ -29,7 +29,6 @@ const {
  * Refer to normalizeConfig function doc for the list of options
  */
 export async function generateApi (options: Object) {
-  log.error('dasjdsads' ,options)
   let config = normalizeConfig(options)
 
   const outFolder = path.join(process.cwd(), config.moduleName)

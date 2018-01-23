@@ -56,6 +56,10 @@ This example shows how to create a unscoped package named `weather-api`. The API
 `ern create-api weather --scope MyCompany`  
 This example shows how to create a scoped package named `@MyCompany/weather-api`.  
 
+`ern create-api weather --schemaPath schema.json`  
+This example shows how to create a unscoped package named `weather-api`. The API project is located in the new directory named `weather`. The `--schemaPath` option specifies location of file containing pre-existing Swagger schema. 
+
+
 #### Remarks
 
 
