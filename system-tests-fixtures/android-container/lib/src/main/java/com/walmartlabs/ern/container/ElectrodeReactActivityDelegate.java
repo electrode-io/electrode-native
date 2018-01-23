@@ -24,9 +24,11 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Toast;
 
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An instance of this class should be used by each Activity containing a ReactNative application.
@@ -40,16 +42,11 @@ public class ElectrodeReactActivityDelegate {
         void onBackKey();
     }
 
-    /**
-     * ReactInstance manager singleton
-     */
-    private final ReactInstanceManager mReactInstanceManager;
 
     /**
-     * ReactRootView holding the view containing the ReactNative application
+     * List of ReactRootView(s) holding the view containing the ReactNative application(s)
      */
-    private ReactRootView mRootView;
-    private String mApplicationName;
+    private Map<String, ReactRootView> mReactRootViews = new HashMap<>();
 
     /**
      * Back key handler specifics
@@ -64,16 +61,13 @@ public class ElectrodeReactActivityDelegate {
         }
     };
 
-    public ElectrodeReactActivityDelegate() {
-        mReactInstanceManager = ElectrodeReactContainer.getReactInstanceManager();
-    }
-
     /**
      * This method has to be called in your Activity onCreate. It retrieves the View containing
      * the ReactNative application
-     * @param activity The activity attached to this delegate
+     *
+     * @param activity        The activity attached to this delegate
      * @param applicationName The name of the ReactNative application to load
-     * @param props Any optional props to be passed to the ReactNative application upon start
+     * @param props           Any optional props to be passed to the ReactNative application upon start
      * @return A View instance containing the ReactNative application UI
      */
     @Nullable
@@ -81,9 +75,9 @@ public class ElectrodeReactActivityDelegate {
         //
         // Ask for overlay permission. This is required only during development and is needed for
         // ReactNative to display the Debug menu as an overlay
-         if (ElectrodeReactContainer.getInstance().isReactNativeDeveloperSupport()
-                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && !Settings.canDrawOverlays(activity)) {
+        if (ElectrodeReactContainer.getInstance().isReactNativeDeveloperSupport()
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && !Settings.canDrawOverlays(activity)) {
             Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(serviceIntent);
@@ -101,25 +95,33 @@ public class ElectrodeReactActivityDelegate {
      * @param hostActivity The host activity
      */
     public void onResume(@NonNull Activity hostActivity) {
-        mReactInstanceManager.onHostResume(hostActivity, mDefaultHardwareBackBtnHandler);
+        ElectrodeReactContainer.getReactInstanceManager().onHostResume(hostActivity, mDefaultHardwareBackBtnHandler);
     }
 
     /**
      * Call this method from within your Activity onPause
      */
     public void onPause(@NonNull Activity activity) {
-        mReactInstanceManager.onHostPause(activity);
+        ElectrodeReactContainer.getReactInstanceManager().onHostPause(activity);
     }
 
     /**
      * Call this method from within your Activity onDestroy
      */
     public void onDestroy(@NonNull Activity activity) {
-        if (mRootView != null) {
-            mRootView.unmountReactApplication();
-        }
+        unMountReactApplications();
 
-        mReactInstanceManager.onHostDestroy(activity);
+        if (ElectrodeReactContainer.hasReactInstance()) {
+            ElectrodeReactContainer.getReactInstanceManager().onHostDestroy(activity);
+        }
+    }
+
+    private void unMountReactApplications() {
+        for (Map.Entry<String, ReactRootView> entry : mReactRootViews.entrySet()) {
+            ReactRootView rootView = entry.getValue();
+            rootView.unmountReactApplication();
+        }
+        mReactRootViews.clear();
     }
 
     /**
@@ -129,12 +131,13 @@ public class ElectrodeReactActivityDelegate {
      * to the Native app, to the BackKeyHandler implementation that was passed to setBackKeyHandler
      */
     public void onBackPressed() {
-        mReactInstanceManager.onBackPressed();
+        ElectrodeReactContainer.getReactInstanceManager().onBackPressed();
     }
 
     /**
      * Sets the BackKeyHandler instance to call whenever a back button press is not internally
      * handled/swallowed by the ReactNative JS application
+     *
      * @param backKeyHandler A BackKeyHandler implementation
      */
     public void setBackKeyHandler(BackKeyHandler backKeyHandler) {
@@ -145,7 +148,7 @@ public class ElectrodeReactActivityDelegate {
      * Call this method from within your Activity onActivityResult
      */
     public boolean onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        mReactInstanceManager.onActivityResult(activity, requestCode, resultCode, data);
+        ElectrodeReactContainer.getReactInstanceManager().onActivityResult(activity, requestCode, resultCode, data);
         return true;
     }
 
@@ -153,7 +156,7 @@ public class ElectrodeReactActivityDelegate {
      * @return True if developer menu can be displayed (dev mode), false otherwise
      */
     public boolean canShowDeveloperMenu() {
-        return mReactInstanceManager.getDevSupportManager().getDevSupportEnabled();
+        return ElectrodeReactContainer.getReactInstanceManager().getDevSupportManager().getDevSupportEnabled();
     }
 
     /**
@@ -163,29 +166,31 @@ public class ElectrodeReactActivityDelegate {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             showDeveloperMenuMarshmallow();
         } else {
-            mReactInstanceManager.getDevSupportManager().showDevOptionsDialog();
+            ElectrodeReactContainer.getReactInstanceManager().getDevSupportManager().showDevOptionsDialog();
         }
     }
 
     @Nullable
     private View getReactAppView(@NonNull Activity activity, @NonNull String applicationName, @Nullable Bundle props) {
-         if (mRootView == null || !applicationName.equals(mApplicationName)) {
-            mApplicationName = applicationName;
-            mRootView = new ReactRootView(activity);
-            mRootView.startReactApplication(mReactInstanceManager, applicationName, props);
+        ReactRootView rootView = mReactRootViews.get(applicationName);
+
+        if (rootView == null) {
+            rootView = new ReactRootView(activity);
+            rootView.startReactApplication(ElectrodeReactContainer.getReactInstanceManager(), applicationName, props);
+            mReactRootViews.put(applicationName, rootView);
         }
 
-        return mRootView;
+        return rootView;
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void showDeveloperMenuMarshmallow() {
-        if (Settings.canDrawOverlays(mReactInstanceManager.getCurrentReactContext())) {
-            mReactInstanceManager.getDevSupportManager().showDevOptionsDialog();
+        if (Settings.canDrawOverlays(ElectrodeReactContainer.getReactInstanceManager().getCurrentReactContext())) {
+            ElectrodeReactContainer.getReactInstanceManager().getDevSupportManager().showDevOptionsDialog();
         }
     }
 
     public void reload() {
-        mReactInstanceManager.getDevSupportManager().handleReloadJS();
+        ElectrodeReactContainer.getReactInstanceManager().getDevSupportManager().handleReloadJS();
     }
 }
