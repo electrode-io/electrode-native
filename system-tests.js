@@ -89,7 +89,7 @@ function afterAll () {
 // Considering that `index.android.bundle` and `index.android.bundle.meta` can vary legitimately
 // from generation to generation, we allow difference of content for these files
 function areSameAndroidContainers (pathA, pathB) {
-  return areSameContainers(pathA, pathB, ['index.android.bundle', 'index.android.bundle.meta'])
+  return areSameDirectoriesContent(pathA, pathB, ['index.android.bundle', 'index.android.bundle.meta'])
 }
 
 // Given two paths to iOS generated containers, return true if the containers contains the
@@ -100,13 +100,13 @@ function areSameAndroidContainers (pathA, pathB) {
 // ignore differences in this file (furether improvement to system tests should only ignore
 // content that should be ignored in this file)
 function areSameIosContainers (pathA, pathB) {
-  return areSameContainers(pathA, pathB, ['project.pbxproj', 'MiniApp.jsbundle', 'MiniApp.jsbundle.meta'])
+  return areSameDirectoriesContent(pathA, pathB, ['project.pbxproj', 'MiniApp.jsbundle', 'MiniApp.jsbundle.meta'])
 }
 
-function areSameContainers (pathA, pathB, filesToIgnoreContentDiff) {
+function areSameDirectoriesContent (pathA, pathB, filesToIgnoreContentDiff) {
   let result = true
-  const containerDiffs = dircompare.compareSync(pathA, pathB, {compareContent: true})
-  for (const diff of containerDiffs.diffSet) {
+  const directoriesDiff = dircompare.compareSync(pathA, pathB, {compareContent: true})
+  for (const diff of directoriesDiff.diffSet) {
     if (diff.state === 'distinct') {
       if (!filesToIgnoreContentDiff.includes(diff.name1)) {
         console.log('A difference in content was found !')
@@ -206,7 +206,6 @@ run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 // Del jsapiimpls
 run(`ern cauldron del jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron del jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${iosNativeApplicationDescriptor}`)
 
 // Del nativeapp
 run(`ern cauldron del nativeapp ${androidNativeApplicationDescriptor}`)
