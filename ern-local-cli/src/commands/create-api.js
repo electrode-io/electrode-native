@@ -79,20 +79,20 @@ exports.handler = async function ({
     })
 
     if (!skipNpmCheck && !await utils.performPkgNameConflictCheck(packageName)) {
-      throw new Error(`Aborting command `)
+      throw new Error('Aborting command')
     }
 
     const bridgeDep = await manifest.getNativeDependency(PackagePath.fromString('react-native-electrode-bridge'))
     if (!bridgeDep) {
-      throw new Error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
+      throw new Error('react-native-electrode-bridge not found in manifest. cannot infer version to use')
     }
     if (!bridgeDep.version) {
-      throw new Error(`react-native-electrode-bridge version needs to be defined`)
+      throw new Error('react-native-electrode-bridge version needs to be defined')
     }
 
     const reactNative = await manifest.getNativeDependency(PackagePath.fromString('react-native'))
     if (!reactNative) {
-      throw new Error(`react-native-electrode-bridge not found in manifest. cannot infer version to use`)
+      throw new Error('react-native-electrode-bridge not found in manifest. cannot infer version to use')
     }
 
     log.info(`Generating ${apiName} API`)

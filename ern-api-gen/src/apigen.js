@@ -29,6 +29,7 @@ const {
  * Refer to normalizeConfig function doc for the list of options
  */
 export async function generateApi (options: Object) {
+  log.error('dasjdsads' ,options)
   let config = normalizeConfig(options)
 
   const outFolder = path.join(process.cwd(), config.moduleName)
@@ -48,7 +49,7 @@ export async function generateApi (options: Object) {
  * @returns {Promise.<void>}
  */
 export async function regenerateCode (options: Object = {}) {
-  const pkg = await validateApiNameAndGetPackageJson(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
+  const pkg = await validateApiNameAndGetPackageJson('This is not a properly named API directory. Naming convention is react-native-{name}-api')
   const curVersion = pkg.version || '1.0.0' //[default: 1.0.0]
   const pkgName = pkg.name
   let newPluginVer
@@ -96,7 +97,7 @@ export async function regenerateCode (options: Object = {}) {
 }
 
 export async function cleanGenerated (outFolder: string = process.cwd()) {
-  const pkg = await validateApiNameAndGetPackageJson(`This is not a properly named API directory. Naming convention is react-native-{name}-api`)
+  const pkg = await validateApiNameAndGetPackageJson('This is not a properly named API directory. Naming convention is react-native-{name}-api')
 
   shell.rm('-rf', path.join(outFolder, 'javascript'))
   shell.rm('-rf', path.join(outFolder, 'swift'))
@@ -138,7 +139,7 @@ const nextVersion = (curVersion: string, userPluginVer: string) => {
           return ret
         }
       } catch (e) {
-        log.info(`not a valid version:`, userPluginVer)
+        log.info(`not a valid version: ${userPluginVer}`)
       }
     }
   }
@@ -152,7 +153,7 @@ async function _promptForPluginVersion (curVersion: string) {
   }])
   const ret = nextVersion(curVersion, userPluginVer)
   if (ret == null) {
-    log.info(`Sorry, I do not understand your answer`)
+    log.info('Enter valid version number. For more details visit https://github.com/npm/node-semver')
     return _promptForPluginVersion(curVersion)
   }
   return ret
