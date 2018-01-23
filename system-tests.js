@@ -33,6 +33,8 @@ const processCwd = process.cwd()
 const pathToSystemTestsFixtures = path.join(processCwd, 'system-tests-fixtures')
 const pathToAndroidContainerFixture = path.join(pathToSystemTestsFixtures, 'android-container')
 const pathToIosContainerFixture = path.join(pathToSystemTestsFixtures, 'ios-container')
+const reactNativeMovieApiImplJsPackageName = 'react-native-ernmovie-api-impl-js'
+const reactNativeMovieApiImplJsVersion = '0.0.2'
 
 process.env['SYSTEM_TESTS'] = 'true'
 process.on('SIGINT', () => afterAll())
@@ -164,6 +166,8 @@ run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c l
 run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
+run(`ern cauldron add jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron add jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp`)
 
 run(`ern cauldron get config ${iosNativeApplicationDescriptorNewVersion}`)
@@ -199,6 +203,10 @@ run(`ern cauldron del miniapps ${movieListMiniAppPackageName} -d ${androidNative
 // Del dependency should now succeed
 run(`ern cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+
+// Del jsapiimpls
+run(`ern cauldron del jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron del jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${iosNativeApplicationDescriptor}`)
 
 // Del nativeapp
 run(`ern cauldron del nativeapp ${androidNativeApplicationDescriptor}`)
