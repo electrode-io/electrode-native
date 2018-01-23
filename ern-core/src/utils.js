@@ -323,6 +323,6 @@ export async function getCauldronInstance () : Promise<CauldronHelper> {
 
 export function logErrorAndExitProcess (e: Error, code?: number = 1) {
   log.error(`An error occurred: ${e.message}`)
-  log.debug(e)
+  log.debug(e.stack)
   process.exit(code)
 }
