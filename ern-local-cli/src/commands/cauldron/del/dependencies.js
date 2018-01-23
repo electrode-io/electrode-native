@@ -80,27 +80,20 @@ exports.handler = async function ({
       }
     })
 
-    console.log(`heheheehehrrre`)
     const dependenciesObjs: Array<PackagePath> = _.map(dependencies, PackagePath.fromString)
 
-    console.log(`ggoogogo`)
     const cauldronCommitMessage = [
       `${dependencies.length === 1
       ? `Remove ${dependencies[0]} native dependency from ${napDescriptor.toString()}`
       : `Remove multiple native dependencies from ${napDescriptor.toString()}`}`
     ]
 
-    console.log(`ewrwr`)
-
     const cauldron = await coreUtils.getCauldronInstance()
-    console.log(`rwerwer`)
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const dependencyObj: PackagePath of dependenciesObjs) {
           await cauldron.removeNativeDependency(napDescriptor, dependencyObj)
-          console.log(`depobjhere`)
           cauldronCommitMessage.push(`- Remove ${dependencyObj.toString()} native dependency`)
-          console.log(`depobjthere`)
         }
       },
       napDescriptor,
