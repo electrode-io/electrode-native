@@ -34,7 +34,9 @@ export async function findNativeDependencies (dir: string) : Promise<NativeDepen
   const filteredDirectories = filterDirectories(directoriesWithNativeCode)
 
   for (const nativeDepsDirectory of filteredDirectories) {
-    const r = /^(@.*?\/.*?)\/|^(.*?)\//.exec(nativeDepsDirectory)
+    const r = /^win/.test(process.platform)
+      ? /^(@.*?\\.*?)\\|^(.*?)\\/.exec(nativeDepsDirectory)
+      : /^(@.*?\/.*?)\/|^(.*?)\//.exec(nativeDepsDirectory)
     nativeDependenciesNames.add(r[1] || r[2])
   }
 
