@@ -95,6 +95,8 @@ export default class AndroidGenerator implements ContainerGenerator {
       const copyFromPath = path.join(PATH_TO_HULL_DIR, '{.*,*}')
 
       shell.cp('-R', copyFromPath, config.outDir)
+
+      // https://github.com/npm/npm/issues/1862 : Npm renames .gitigonre to .npmignore causing the generated contaier to emit the .gitnore file. This solution below helps to bypass it.
       shell.mv(`${config.outDir}/gitignore`, `${config.outDir}/.gitignore`)
 
       const reactNativePlugin = _.find(config.plugins, p => p.basePath === 'react-native')
