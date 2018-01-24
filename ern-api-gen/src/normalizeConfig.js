@@ -26,7 +26,6 @@ const isApiRe = /.*react-native-(.*)-api$/
 // - modelsSchemaPath : Path to the file holding the models schema [Default : no path]
 // - apiSchemaPath : Path to the file holding the api schema [Default : no path]
 // - moduleName : Name of the generated npm module
-// - shouldGenerateBlankApi : Indicated whether to generate blank api/model schema or sample one [Default : false]
 // - packageName : npm package name of the moduleName
 export default function normalizeConfig ({
   name, /* REQUIRED */
@@ -41,7 +40,6 @@ export default function normalizeConfig ({
   apiSchemaPath = MODEL_FILE,
   moduleName,
   artifactId,
-  shouldGenerateBlankApi,
   packageName,
   ...rest
 } : {
@@ -57,7 +55,6 @@ export default function normalizeConfig ({
   apiSchemaPath?: string,
   moduleName?: string,
   artifactId?: string,
-  shouldGenerateBlankApi?: boolean,
   packageName: string,
   rest?: any
 }) {
@@ -111,9 +108,6 @@ export default function normalizeConfig ({
   }
   if (reactNativeVersion) {
     config.reactNativeVersion = reactNativeVersion
-  }
-  if (shouldGenerateBlankApi) {
-    config.shouldGenerateBlankApi = shouldGenerateBlankApi
   }
   if (apiSchemaPath) {
     config.apiSchemaPath = apiSchemaPath
