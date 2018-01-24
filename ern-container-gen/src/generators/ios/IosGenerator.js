@@ -41,19 +41,19 @@ export default class IosGenerator implements ContainerGenerator {
     if (!fs.existsSync(config.outDir)) {
       shell.mkdir('-p', config.outDir)
     } else {
-      shell.rm('-rf', path.join(config.outDir, '*'))
+      shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
     }
 
     if (!fs.existsSync(config.compositeMiniAppDir)) {
       shell.mkdir('-p', config.compositeMiniAppDir)
     } else {
-      shell.rm('-rf', path.join(config.compositeMiniAppDir, '*'))
+      shell.rm('-rf', path.join(config.compositeMiniAppDir, '{.*,*}'))
     }
 
     if (!fs.existsSync(config.pluginsDownloadDir)) {
       shell.mkdir('-p', config.pluginsDownloadDir)
     } else {
-      shell.rm('-rf', path.join(config.pluginsDownloadDir, '*'))
+      shell.rm('-rf', path.join(config.pluginsDownloadDir, '{.*,*}'))
     }
   }
 
