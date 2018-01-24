@@ -21,7 +21,7 @@ export default class GithubPublisher implements ContainerPublisher {
     try {
       shell.pushd(workingDir)
       const git = gitCli()
-      log.debug(`Cloning git repository to ${workingDir}`)
+      log.debug(`Cloning git repository(${config.url}) to ${workingDir}`)
       await gitCli().cloneAsync(config.url, '.')
       shell.rm('-rf', `${workingDir}/*`)
       shell.cp('-Rf', path.join(config.containerPath, '{.*,*}'), workingDir)
