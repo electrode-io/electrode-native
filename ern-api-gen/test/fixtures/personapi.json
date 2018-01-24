@@ -70,6 +70,20 @@
           "type": "number",
           "format": "long",
           "description": "Latitude"
+        },
+        "friends": {
+          "type": "array",
+          "description": "friends",
+          "items": {
+            "type": "string"
+          }
+        },
+        "friendsAges": {
+          "type": "array",
+          "description": "friend's ages",
+          "items": {
+            "type": "integer"
+          }
         }
       },
       "required": [
