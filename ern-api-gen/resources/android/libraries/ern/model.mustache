@@ -229,6 +229,30 @@ public class {{classname}} implements Parcelable, Bridgeable {
         return bundle;
     }
 
+    @Override
+    public String toString() {
+        return "{"
+        {{#allVars}}
+        {{#isListContainer}}
+        + "{{name}}:" + ({{name}} != null ? {{name}}.toString() : null){{^-last}}+ ","{{/-last}}
+        {{/isListContainer}}
+        {{#isString}}
+        + "{{name}}:" + ({{name}} != null ? "\"" + {{name}} + "\"" : null){{^-last}}+ ","{{/-last}}
+        {{/isString}}
+        {{^isListContainer}}
+        {{^isString}}
+        {{#isPrimitiveType}}
+        + "{{name}}:" + {{name}}{{^-last}}+ ","{{/-last}}
+        {{/isPrimitiveType}}
+        {{/isString}}
+        {{^isPrimitiveType}}
+        + "{{name}}:" + ({{name}} != null ? {{name}}.toString() : null){{^-last}}+ ","{{/-last}}
+        {{/isPrimitiveType}}
+        {{/isListContainer}}
+        {{/allVars}}
+        + "}";
+    }
+
     public static class Builder {
         {{#requiredVars}}
         private final {{{datatype}}} {{name}};
