@@ -95,16 +95,12 @@ export function generatePackageJson ({
 
 export async function generateInitialSchema ({
   namespace,
-  shouldGenerateBlankApi,
   apiSchemaPath
 } : {
   namespace?: string,
-  shouldGenerateBlankApi?: boolean,
   apiSchemaPath: string
 }) {
-  return shouldGenerateBlankApi
-    ? ''
-    : apiSchemaPath && fs.existsSync(apiSchemaPath)
+  return  apiSchemaPath && fs.existsSync(apiSchemaPath)
       ?  fileUtils.readFile(apiSchemaPath)
       :`
   {
