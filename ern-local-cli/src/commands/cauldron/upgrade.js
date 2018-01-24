@@ -3,7 +3,6 @@
 import {
   utils as coreUtils
 } from 'ern-core'
-import utils from '../../lib/utils'
 
 exports.command = 'upgrade'
 exports.desc = 'Upgrade the Cauldron schema'
@@ -15,7 +14,7 @@ exports.handler = async function () {
       throw new Error('A Cauldron must be active in order to use this command')
     }
     await cauldron.upgradeCauldronSchema()
-    log.debug(`Cauldron was succesfully upgraded !`)
+    log.debug('Cauldron was succesfully upgraded !')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }
