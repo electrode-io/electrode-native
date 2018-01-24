@@ -59,7 +59,7 @@ export default function setup (workingCwd = path.join(process.cwd(), 'test'), _d
       prefix: 'ern_test'
     }, (e, _tmpDir, _clean) => {
       if (e) return reject(e)
-      api.log(`tmpDir`, _tmpDir, '\n\n')
+      api.log('tmpDir', _tmpDir, '\n\n')
       tmpDir = _tmpDir
       resolve()
     }))
@@ -199,7 +199,7 @@ ${diffOut}
     has,
     cwd,
     ernTest,
-    fail (message = `This should fail if executed`) {
+    fail (message = 'This should fail if executed') {
       return () => {
         throw new Error(message)
       }

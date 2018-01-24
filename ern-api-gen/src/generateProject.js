@@ -1,4 +1,5 @@
 import path from 'path'
+import fs from 'fs'
 import {
   fileUtils,
   ModuleTypes
@@ -103,8 +104,8 @@ export async function generateInitialSchema ({
 }) {
   return shouldGenerateBlankApi
     ? ''
-    : apiSchemaPath
-      ? await fileUtils.readFile(apiSchemaPath)
+    : apiSchemaPath && fs.existsSync(apiSchemaPath)
+      ?  fileUtils.readFile(apiSchemaPath)
       :`
   {
     "swagger": "2.0",
