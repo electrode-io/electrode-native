@@ -145,7 +145,12 @@ function runLocalCli () {
 
 function getLatestErnLocalCliVersion () {
   try {
-    let versions = JSON.parse(execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`))
+    let versions
+    if (isYarnInstalled()) {
+      versions = JSON.parse(execSync(`yarn info ${ERN_LOCAL_CLI_PACKAGE} versions --json`)).data
+    } else {
+      versions = JSON.parse(execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`))
+    }
     return versions.pop()
   } catch (e) {
     console.log(e)
