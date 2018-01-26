@@ -71,7 +71,7 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
       } else if (/^win/.test(process.platform)) {
         return this.windowsStartPackagerInNewWindow({ cwd, args })
       } else {
-        throw new Error(`${process.platform} is not supported yet`)
+        return this.linuxStartPackageInNewWindow({cwd, args})
       }
     } else {
       log.warn('A React Native Packager is already running in a different process')
@@ -95,6 +95,25 @@ ${this.binaryPath} start ${args.join(' ')};
 `)
     shell.chmod('+x', tmpScriptPath)
     spawnp('open', ['-a', 'Terminal', tmpScriptPath])
+  }
+
+  async linuxStartPackageInNewWindow ({
+    cwd = process.cwd(),
+    args = []
+  } : {
+    cwd?: string,
+    args?: Array<string>
+  }) {
+    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpScriptPath = path.join(tmpDir, 'packager.sh')
+    await fileUtils.writeFile(tmpScriptPath,
+`
+cd "${cwd}"; 
+echo "Running ${this.binaryPath} start ${args.join(' ')}";
+${this.binaryPath} start ${args.join(' ')};
+`)
+    shell.chmod('+x', tmpScriptPath)
+    spawnp('gnome-terminal', ['--command', tmpScriptPath])
   }
 
   async windowsStartPackagerInNewWindow ({
