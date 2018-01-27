@@ -102,6 +102,19 @@ export default class GitManifest {
     return _.find(await this.getManifest(), m => semver.satisfies(platformVersion, m.platformVersion))
   }
 
+  //
+  // Return an array containing all top level plugin configuration directories that
+  // are matching an Electrode Native version lower or equal than the specified maxVersion
+  // For example, given the following directories :
+  //   /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+
+  //   /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+
+  //   /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.13.0+
+  // And maxVersion = '0.10.0'
+  // The function would return :
+  // [
+  //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+',
+  //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+'
+  // ]
   getPluginsConfigurationDirectories (maxVersion: string = Platform.currentVersion) : Array<string> {
     return _(fs.readdirSync(path.join(this._repoAbsoluteLocalPath, 'plugins')))
             .filter(d => ERN_VERSION_DIRECTORY_RE.test(d) && semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)[1], maxVersion))
@@ -110,6 +123,66 @@ export default class GitManifest {
   }
 
   async getPluginConfigurationPath (
+    plugin: PackagePath,
+    platformVersion: string = Platform.currentVersion) : Promise<?string> {
+    let result = await this._getPluginConfigurationPath(plugin, platformVersion)
+    if (!result) {
+      result = await this._getPluginConfigurationPathLegacy(plugin, platformVersion)
+    }
+    return result
+  }
+
+  async _getPluginConfigurationPath (
+    plugin: PackagePath,
+    platformVersion: string = Platform.currentVersion) : Promise<?string> {
+    await this.syncIfNeeded()
+    const versionRe = /_v(.+)\+/
+    const scopeNameRe = /^(@.+)\/(.+)$/
+
+    // Top level plugin configuration directories ordered by descending
+    // Electrode Native version
+    // For example :
+    // [
+    //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+',
+    //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+'
+    // ]
+    const orderedPluginsConfigurationDirectories =
+      this.getPluginsConfigurationDirectories(platformVersion)
+          .sort((a, b) => semver.compare(versionRe.exec(a)[1], versionRe.exec(b)[1]))
+          .reverse()
+
+    for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
+      let pluginScope, pluginName, basePluginPath
+      if (scopeNameRe.test(plugin.basePath)) {
+        pluginScope = scopeNameRe.exec(plugin.basePath)[1]
+        pluginName = scopeNameRe.exec(plugin.basePath)[2]
+        basePluginPath = path.join(pluginsConfigurationDirectory, pluginScope)
+      } else {
+        pluginName = plugin.basePath
+        basePluginPath = pluginsConfigurationDirectory
+      }
+
+      const pluginConfigDirectories = fs.readdirSync(basePluginPath).filter(f => f.startsWith(pluginName))
+
+      const pluginVersions = _.map(
+        pluginConfigDirectories,
+        s => versionRe.exec(s)[1])
+
+      const matchingVersion = _.find(pluginVersions.sort(semver.compare).reverse(), d => plugin.version >= d)
+      if (matchingVersion) {
+        let pluginConfigurationPath = ''
+        pluginConfigurationPath = path.join(basePluginPath, `${pluginName}_v${matchingVersion}+`)
+        if (fs.existsSync(path.join(pluginConfigurationPath, pluginConfigFileName))) {
+          return pluginConfigurationPath
+        }
+      }
+    }
+  }
+
+  //
+  // Old way of getting plugin configuration path
+  // -- To be deprecated --
+  async _getPluginConfigurationPathLegacy (
     plugin: PackagePath,
     platformVersion: string = Platform.currentVersion) : Promise<?string> {
     await this.syncIfNeeded()
