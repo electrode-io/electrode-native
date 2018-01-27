@@ -126,6 +126,7 @@ plugins/ern_v0.2.0+/react-native-code-push_v1.17.0+
 plugins/ern_v0.2.0+/react-native-linear-gradient_v2.0.0+
 plugins/ern_v0.2.0+/react-native-maps_v0.13.1+
 plugins/ern_v0.2.0+/react-native-maps_v0.14.0+
+plugins/ern_v0.2.0+/@myscope/react-native-my-module_v1.0.0+
 ```
 
 The naming of these directories includes the minimum version of the plugin that the configuration targets. If a newer version needs a different configuration, a new directory can be created. This is shown in the above example for the `react-native-maps`.
