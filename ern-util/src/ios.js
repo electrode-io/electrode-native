@@ -111,7 +111,8 @@ export function parseIOSDevicesList (text: string, computerName: string): Array<
     if (
       device &&
       !noSimulatorPattern.test(line) &&
-      !line.includes(name)
+      !line.includes(name) &&
+      !line.includes('MacBook')
     ) {
       list.push({
         name: device[1],

@@ -1,6 +1,6 @@
 {
   "name": "ern-local-cli",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "description": "Electrode Native Local CLI",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -55,13 +55,13 @@
     "chalk": "^2.3.0",
     "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
-    "ern-api-gen": "0.11.2",
-    "ern-api-impl-gen": "0.11.2",
-    "ern-cauldron-api": "0.11.2",
-    "ern-container-gen": "0.11.2",
-    "ern-core": "0.11.2",
-    "ern-runner-gen": "0.11.2",
-    "ern-util": "0.11.2",
+    "ern-api-gen": "0.11.3",
+    "ern-api-impl-gen": "0.11.3",
+    "ern-cauldron-api": "0.11.3",
+    "ern-container-gen": "0.11.3",
+    "ern-core": "0.11.3",
+    "ern-runner-gen": "0.11.3",
+    "ern-util": "0.11.3",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.4",
     "ora": "^1.1.0",
@@ -71,7 +71,7 @@
     "yargs": "^7.1.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.11.2"
+    "ern-util-dev": "0.11.3"
   },
   "engines": {
     "node": ">=4.5",

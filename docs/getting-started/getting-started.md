@@ -208,7 +208,7 @@ We also created a `NavigationApi` that will be of use later in this tutorial, yo
 1) Add the `MoviesApi`, the `MoviesApiImpl`, the `NavigationApi` and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as dependencies of MovieListMiniApp, using the `ern add` command.
 
 ```bash
-$ ern add react-native-ernmovie-api-impl react-native-ernnavigation-api react-native-electrode-bridge
+$ ern add react-native-ernmovie-api-impl@0.0.11 react-native-ernnavigation-api@0.0.4
 ```
 
 2) Open the `App.js` file and modify it as described in the next steps.
