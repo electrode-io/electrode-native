@@ -358,13 +358,12 @@ Are you sure this is a MiniApp ?`)
     const manifestDependencies = await manifest.getJsAndNativeDependencies(versionToUpgradeTo)
 
     for (const manifestDependency of manifestDependencies) {
-      const nameWithScope = `${manifestDependency.scope ? `@${manifestDependency.scope}/` : ''}${manifestDependency.name}`
-      if (this.packageJson.dependencies[nameWithScope]) {
+      if (this.packageJson.dependencies[manifestDependency.basePath]) {
         const dependencyManifestVersion = manifestDependency.version
-        const localDependencyVersion = this.packageJson.dependencies[nameWithScope]
+        const localDependencyVersion = this.packageJson.dependencies[manifestDependency.basePath]
         if (dependencyManifestVersion !== localDependencyVersion) {
-          log.info(`${nameWithScope} : ${localDependencyVersion} => ${dependencyManifestVersion}`)
-          this.packageJson.dependencies[nameWithScope] = dependencyManifestVersion
+          log.info(`${manifestDependency.basePath} : ${localDependencyVersion} => ${dependencyManifestVersion}`)
+          this.packageJson.dependencies[manifestDependency.basePath] = dependencyManifestVersion
         }
       }
     }
