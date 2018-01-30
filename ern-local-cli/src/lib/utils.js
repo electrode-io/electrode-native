@@ -587,7 +587,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
     jsApiImplsPaths = (cauldron && napDescriptor && await cauldron.getContainerJsApiImpls(napDescriptor)) || []
   }
 
-  const outDir = path.join(Platform.rootDirectory, 'containergen', platform)
+  const outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform)
   await generateContainerForRunner(platform, {
     napDescriptor: napDescriptor || undefined,
     dependenciesObjs,
