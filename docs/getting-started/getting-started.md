@@ -454,12 +454,12 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
 
 {% sample lang="android" %}  
 ```bash
-$ ern run-android --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
+$ ern run-android --miniapps moviedetailsminiapp@0.0.8 --mainMiniAppName MovieListMiniApp
 ```  
 {% sample lang="ios" %}  
 ```bash
 $ cd MovieListMiniApp //make sure you are in root dir of MovieListMiniApp
-$ ern run-ios --miniapps moviedetailsminiapp --mainMiniAppName MovieListMiniApp
+$ ern run-ios --miniapps moviedetailsminiapp@0.0.8 --mainMiniAppName MovieListMiniApp
 ```  
 
 {% common %}
