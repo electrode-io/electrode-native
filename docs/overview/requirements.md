@@ -37,7 +37,8 @@ $ export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
 
 You need to install [Xcode](https://developer.apple.com/xcode/) if you want your MiniApp to target the iOS platform  or if you need to generate containers targeting iOS mobile applications.
 
-Xcode 8.3.2 or later is required to ensure compatibility with Electrode Native.
+- **XCode 8.3.2** or later version is required to ensure compatibility with Electrode Native.
+- **XCode 9.0** or later version is required to use `run-ios` command.
 
 ### Additional optional requirements
 
