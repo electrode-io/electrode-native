@@ -22,9 +22,9 @@ const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${n
 const iosNativeApplicationDescriptor = `${nativeApplicationName}:ios:${nativeApplicationVersion}`
 const iosNativeApplicationDescriptorNewVersion = `${nativeApplicationName}:ios:${nativeApplicationVersionNew}`
 const movieListMiniAppPackageName = 'movielistminiapp'
-const movieListMiniAppVersion = '0.0.9'
+const movieListMiniAppVersion = '0.0.10'
 const movieDetailsMiniAppPackageName = 'moviedetailsminiapp'
-const movieDetailsMiniAppVersion = '0.0.8'
+const movieDetailsMiniAppVersion = '0.0.9'
 const movieApi = 'react-native-ernmovie-api'
 const movieApiImpl = 'ErnMovieApiImplNative'
 const movieApiImplPkgName = 'ern-movie-api-impl'
@@ -163,8 +163,8 @@ run(`ern cauldron add miniapps ${movieDetailsMiniAppPackageName}@${movieDetailsM
 run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
 run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
-run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add dependencies react-native-code-push@5.1.3-beta -d ${iosNativeApplicationDescriptor}`)
+run(`ern cauldron add dependencies react-native-code-push@5.2.1 -d ${androidNativeApplicationDescriptor}`)
+run(`ern cauldron add dependencies react-native-code-push@5.2.1 -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
 run(`ern cauldron add jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${androidNativeApplicationDescriptor}`)
 run(`ern cauldron add jsapiimpls ${reactNativeMovieApiImplJsPackageName}@${reactNativeMovieApiImplJsVersion} -d ${iosNativeApplicationDescriptor}`)
