@@ -162,6 +162,10 @@ export default class GitManifest {
         basePluginPath = pluginsConfigurationDirectory
       }
 
+      if (!fs.existsSync(basePluginPath)) {
+        continue
+      }
+
       const pluginConfigDirectories = fs.readdirSync(basePluginPath).filter(f => f.startsWith(pluginName))
 
       const pluginVersions = _.map(
