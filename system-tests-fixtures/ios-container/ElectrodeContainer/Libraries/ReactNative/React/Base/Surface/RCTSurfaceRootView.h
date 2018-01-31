@@ -7,20 +7,17 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import "RCTPackagerConnectionConfig.h"
+#import <UIKit/UIKit.h>
 
-#if RCT_DEV // Only supported in dev mode
+#import <React/RCTView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RCTBridge;
-
-@interface RCTPackagerConnectionBridgeConfig : NSObject <RCTPackagerConnectionConfig>
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge;
+/**
+ * Internal class represents Surface's root view.
+ */
+@interface RCTSurfaceRootView : RCTView
 
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

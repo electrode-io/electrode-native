@@ -7,21 +7,21 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTDefines.h>
-
-#if RCT_DEV // Only supported in dev mode
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol RCTPackagerClientMethod;
+@class RCTSurface;
 
-@protocol RCTPackagerConnectionConfig
+/**
+ * UIView instance which represents the Surface
+ */
+@interface RCTSurfaceView : UIView
 
-@property (nonatomic, copy, readonly) NSURL *packagerURL;
-@property (nonatomic, copy, readonly) NSDictionary<NSString *, id<RCTPackagerClientMethod>> *defaultPackagerMethods;
+- (instancetype)initWithSurface:(RCTSurface *)surface NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, weak, readonly, nullable) RCTSurface *surface;
 
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

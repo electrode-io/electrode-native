@@ -32,6 +32,6 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.walmartlabs.ern:react-native:0.51.0'
+    compile 'com.walmartlabs.ern:react-native:0.52.2'
     compile 'com.nimbusds:nimbus-jose-jwt:5.1'
 }

@@ -7,16 +7,12 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTPackagerClient.h>
+#import "RCTSurfaceRootView.h"
 
-@protocol RCTJSEnvironment;
+#import "RCTDefines.h"
 
-#if RCT_DEV // Only supported in dev mode
+@implementation RCTSurfaceRootView
 
-@interface RCTSamplingProfilerPackagerMethod : NSObject <RCTPackagerClientMethod>
-
-- (instancetype)initWithJSEnvironment:(id<RCTJSEnvironment>)jsEnvironment;
+RCT_NOT_IMPLEMENTED(- (nullable instancetype)initWithCoder:(NSCoder *)coder)
 
 @end
-
-#endif

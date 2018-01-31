@@ -7,22 +7,20 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTPackagerClient.h>
+#import <UIKit/UIKit.h>
 
-@class RCTBridge;
+#import <React/RCTSurfaceStage.h>
+#import <React/RCTSurfaceView.h>
 
-#if RCT_DEV // Only supported in dev mode
+@class RCTSurfaceRootView;
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^RCTReloadPackagerMethodBlock)(id);
+@interface RCTSurfaceView (Internal)
 
-@interface RCTReloadPackagerMethod : NSObject <RCTPackagerClientMethod>
-
-- (instancetype)initWithReloadCommand:(RCTReloadPackagerMethodBlock)block callbackQueue:(dispatch_queue_t)callbackQueue;
+@property (nonatomic, strong) RCTSurfaceRootView *rootView;
+@property (nonatomic, assign) RCTSurfaceStage stage;
 
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif
