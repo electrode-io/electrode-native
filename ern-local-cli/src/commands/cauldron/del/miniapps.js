@@ -84,7 +84,7 @@ exports.handler = async function ({
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const miniAppAsDep of miniAppsAsDeps) {
-          await cauldron.removeMiniAppFromContainer(napDescriptor, miniAppAsDep)
+          await cauldron.removeContainerMiniApp(napDescriptor, miniAppAsDep)
           cauldronCommitMessage.push(`- Remove ${miniAppAsDep.toString()} MiniApp`)
         }
       },

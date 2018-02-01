@@ -168,17 +168,17 @@ exports.handler = async function ({
     await utils.performContainerStateUpdateInCauldron(async () => {
       // Del Dependencies
       for (const delDependencyObj of delDependenciesObjs) {
-        await cauldron.removeNativeDependency(napDescriptor, delDependencyObj)
+        await cauldron.removeContainerNativeDependency(napDescriptor, delDependencyObj)
         cauldronCommitMessage.push(`- Remove ${delDependencyObj.toString()} native dependency`)
       }
       // Del MiniApps
       for (const delMiniAppAsDep of delMiniAppsAsDeps) {
-        await cauldron.removeMiniAppFromContainer(napDescriptor, delMiniAppAsDep)
+        await cauldron.removeContainerMiniApp(napDescriptor, delMiniAppAsDep)
         cauldronCommitMessage.push(`- Remove ${delMiniAppAsDep.toString()} MiniApp`)
       }
       // Update Dependencies
       for (const updateDependencyObj of updateDependenciesObjs) {
-        await cauldron.updateNativeAppDependency(
+        await cauldron.updateContainerNativeDependencyVersion(
           napDescriptor,
           updateDependencyObj.basePath,
           updateDependencyObj.version)
@@ -193,7 +193,7 @@ exports.handler = async function ({
       // Add Dependencies
       for (const addDependencyObj of addDependenciesObjs) {
         // Add the dependency to Cauldron
-        await cauldron.addNativeDependency(napDescriptor, addDependencyObj)
+        await cauldron.addContainerNativeDependency(napDescriptor, addDependencyObj)
         cauldronCommitMessage.push(`-Add ${addDependencyObj.toString()} native dependency`)
       }
       // Add MiniApps

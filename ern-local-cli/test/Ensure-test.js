@@ -102,12 +102,12 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('napDescritorExistsInCauldron', () => {
     it('should not throw if nap descriptor exists in Cauldron', async () => {
-      cauldronHelperStub.getNativeApp.resolves({})
+      cauldronHelperStub.isDescriptorInCauldron.resolves(true)
       assert(await doesNotThrow(Ensure.napDescritorExistsInCauldron, null, 'testapp:android:1.0.0'))
     })
 
     it('should throw if nap descriptor does not exist in Cauldron', async () => {
-      cauldronHelperStub.getNativeApp.resolves(undefined)
+      cauldronHelperStub.isDescriptorInCauldron.resolves(false)
       assert(await doesThrow(Ensure.napDescritorExistsInCauldron, null, 'testapp:android:1.0.0'))
     })
   })

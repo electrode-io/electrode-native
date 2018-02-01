@@ -70,7 +70,7 @@ exports.handler = async function ({
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const jsApiImpl of jsapiimpls) {
-          await cauldron.removeJsApiImplFromContainer(napDescriptor, PackagePath.fromString(jsApiImpl))
+          await cauldron.removeContainerJsApiImpl(napDescriptor, PackagePath.fromString(jsApiImpl))
           cauldronCommitMessage.push(`- Remove ${jsApiImpl} JS API implementation`)
         }
       },

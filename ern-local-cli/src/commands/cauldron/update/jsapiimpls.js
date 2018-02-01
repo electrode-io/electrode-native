@@ -77,7 +77,7 @@ exports.handler = async function ({
             log.error(`Will not update ${jsApiImplPackagePath.toString()} as it does not specify a version`)
             continue
           }
-          await cauldron.updateContainerJsApiImpl(
+          await cauldron.updateContainerJsApiImplVersion(
             napDescriptor,
             jsApiImplPackagePath.basePath,
             jsApiImplPackagePath.version)

@@ -92,7 +92,7 @@ exports.handler = async function ({
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const dependencyObj: PackagePath of dependenciesObjs) {
-          await cauldron.removeNativeDependency(napDescriptor, dependencyObj)
+          await cauldron.removeContainerNativeDependency(napDescriptor, dependencyObj)
           cauldronCommitMessage.push(`- Remove ${dependencyObj.toString()} native dependency`)
         }
       },

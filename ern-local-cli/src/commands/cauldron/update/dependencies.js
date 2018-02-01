@@ -86,7 +86,7 @@ exports.handler = async function ({
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const dependencyObj of dependenciesObjs) {
-          await cauldron.updateNativeAppDependency(
+          await cauldron.updateContainerNativeDependencyVersion(
             napDescriptor,
             dependencyObj.basePath,
             dependencyObj.version)
