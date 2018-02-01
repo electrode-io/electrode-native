@@ -1,7 +1,10 @@
 // @flow
 
 import * as schemas from './schemas'
-import { PackagePath } from 'ern-core'
+import {
+  NativeApplicationDescriptor,
+  PackagePath
+} from 'ern-core'
 import {
   exists,
   joiValidate,
@@ -10,6 +13,9 @@ import {
 import _ from 'lodash'
 import type {
   CauldronCodePushEntry,
+  CauldronNativeApp,
+  CauldronNativeAppPlatform,
+  CauldronNativeAppVersion,
   ICauldronDocumentStore,
   ICauldronFileStore
 } from './FlowTypes'
@@ -29,11 +35,11 @@ export default class CauldronApi {
     this._yarnlockStore = yarnlockStore
   }
 
-  async commit (message: string) {
+  async commit (message: string) : Promise<void> {
     return this._db.commit(message)
   }
 
-  async getCauldron () {
+  async getCauldron () : Promise<Object> {
     return this._db.getCauldron()
   }
 
@@ -41,7 +47,7 @@ export default class CauldronApi {
   // CAULDRON SCHEMA UPGRADE
   // =====================================================================================
 
-  async upgradeCauldronSchema () {
+  async upgradeCauldronSchema () : Promise<void> {
     const currentSchemaVersion = await this.getCauldronSchemaVersion()
     if (currentSchemaVersion === schemas.schemaVersion) {
       throw new Error(`The Cauldron is already using the proper schema version ${currentSchemaVersion}`)
@@ -62,17 +68,17 @@ export default class CauldronApi {
   // TRANSACTION MANAGEMENT
   // =====================================================================================
 
-  async beginTransaction () {
+  async beginTransaction () : Promise<void> {
     await this._db.beginTransaction()
     await this._yarnlockStore.beginTransaction()
   }
 
-  async discardTransaction () {
+  async discardTransaction () : Promise<void> {
     await this._db.discardTransaction()
     await this._yarnlockStore.discardTransaction()
   }
 
-  async commitTransaction (message: string | Array<string>) {
+  async commitTransaction (message: string | Array<string>) : Promise<void> {
     await this._db.commitTransaction(message)
     await this._yarnlockStore.commitTransaction(message)
   }
@@ -86,136 +92,192 @@ export default class CauldronApi {
     return cauldron.schemaVersion || '0.0.0'
   }
 
-  async getNativeApplications () {
+  async getDescriptor (descriptor: NativeApplicationDescriptor) : Promise<Object> {
+    if (descriptor.version) {
+      return this.getVersion(descriptor)
+    } else if (descriptor.platform) {
+      return this.getPlatform(descriptor)
+    } else {
+      return this.getNativeApplication(descriptor)
+    }
+  }
+
+  async getNativeApplications () : Promise<Array<CauldronNativeApp>> {
     const cauldron = await this.getCauldron()
     return cauldron.nativeApps
   }
 
-  async getNativeApplication (name: string) {
+  async hasDescriptor (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    if (descriptor.version) {
+      return this.hasVersion(descriptor)
+    } else if (descriptor.platform) {
+      return this.hasPlatform(descriptor)
+    } else {
+      return this.hasNativeApplication(descriptor)
+    }
+  }
+
+  async hasNativeApplication (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
     const cauldron = await this.getCauldron()
-    return _.find(cauldron.nativeApps, n => n.name === name)
+    const result = _.find(cauldron.nativeApps, n => n.name === descriptor.name)
+    return result != null
   }
 
-  async getPlatforms (nativeApplicationName: string) {
-    const app = await this.getNativeApplication(nativeApplicationName)
-    if (app) {
-      return app.platforms
+  async hasPlatform (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    if (!await this.hasNativeApplication(descriptor)) {
+      return false
     }
+    const platforms = await this.getPlatforms(descriptor)
+    const result = _.find(platforms, p => p.name === descriptor.platform)
+    return result != null
   }
 
-  async getPlatform (
-    nativeApplicationName: string,
-    platformName: string) {
-    const platforms = await this.getPlatforms(nativeApplicationName)
-    if (platforms) {
-      return _.find(platforms, p => p.name === platformName)
+  async hasVersion (descriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    if (!await this.hasPlatform(descriptor)) {
+      return false
     }
+    const versions = await this.getVersions(descriptor)
+    const result = _.find(versions, v => v.name === descriptor.version)
+    return result != null
   }
 
-  async getVersions (
-    nativeApplicationName: string,
-    platformName: string) {
-    const platform = await this.getPlatform(nativeApplicationName, platformName)
-    if (platform) {
-      return platform.versions
+  async getNativeApplication (descriptor: NativeApplicationDescriptor) : Promise<CauldronNativeApp> {
+    const cauldron = await this.getCauldron()
+    const result = _.find(cauldron.nativeApps, n => n.name === descriptor.name)
+    if (!result) {
+      throw new Error(`Cannot find ${descriptor.toString()} in Cauldron`)
     }
+    return result
   }
 
-  async getVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    const versions = await this.getVersions(nativeApplicationName, platformName)
-    if (versions) {
-      return _.find(versions, x => x.name === versionName)
+  async getPlatforms (descriptor: NativeApplicationDescriptor) : Promise<Array<CauldronNativeAppPlatform>> {
+    const app = await this.getNativeApplication(descriptor)
+    return app.platforms
+  }
+
+  async getPlatform (descriptor: NativeApplicationDescriptor) : Promise<CauldronNativeAppPlatform> {
+    const platforms = await this.getPlatforms(descriptor)
+    const result = _.find(platforms, p => p.name === descriptor.platform)
+    if (!result) {
+      throw new Error(`Cannot find ${descriptor.toString()} in Cauldron`)
     }
+    return result
+  }
+
+  async getVersions (descriptor: NativeApplicationDescriptor) : Promise<Array<CauldronNativeAppVersion>> {
+    const platform = await this.getPlatform(descriptor)
+    return platform.versions
+  }
+
+  async getVersion (descriptor: NativeApplicationDescriptor) : Promise<CauldronNativeAppVersion> {
+    const versions = await this.getVersions(descriptor)
+    const result = _.find(versions, v => v.name === descriptor.version)
+    if (!result) {
+      throw new Error(`Cannot find ${descriptor.toString()} in Cauldron`)
+    }
+    return result
   }
 
   async getCodePushEntries (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    deploymentName: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return version && version.codePush && version.codePush[deploymentName]
+    descriptor: NativeApplicationDescriptor,
+    deploymentName: string) : Promise<Array<CauldronCodePushEntry>> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    const result = version.codePush[deploymentName]
+    return result
   }
 
-  async getContainerMiniApps (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (version) {
-      return version.container.miniApps
-    }
+  async getContainerMiniApps (descriptor: NativeApplicationDescriptor) : Promise<Array<string>> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    return version.container.miniApps
   }
 
-  async getJsApiImpls (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) : Promise<Array<string>> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`getContainerJsApiImpls: Native application ${nativeApplicationName}:${platformName}${versionName} does not exist`)
-    }
+  async getContainerJsApiImpls (descriptor: NativeApplicationDescriptor) : Promise<Array<string>> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     return version.container.jsApiImpls
   }
 
-  async getJsApiImpl (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    jsApiImplName: string) : Promise<?string> {
-    const jsApiImpls = await this.getJsApiImpls(nativeApplicationName, platformName, versionName)
-    return _.find(jsApiImpls, x => (x === jsApiImplName) || x.startsWith(`${jsApiImplName}@`))
+  async getContainerJsApiImpl (
+    descriptor: NativeApplicationDescriptor,
+    jsApiImplName: string) : Promise<string> {
+    const jsApiImpls = await this.getContainerJsApiImpls(descriptor)
+    const result = _.find(jsApiImpls, x => (x === jsApiImplName) || x.startsWith(`${jsApiImplName}@`))
+    if (!result) {
+      throw new Error(`Cannot find ${jsApiImplName} JS API implementation in ${descriptor.toString()} Container`)
+    }
+    return result
+  }
+
+  async isMiniAppInContainer (
+    descriptor: NativeApplicationDescriptor,
+    miniAppName: string) : Promise<boolean> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const miniApps = await this.getContainerMiniApps(descriptor)
+    const result = _.find(miniApps, m => m.startsWith(miniAppName))
+    if (!result) {
+      return false
+    } else {
+      return true
+    }
   }
 
   async getContainerMiniApp (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    miniApp: any) {
-    const miniApps = await this.getContainerMiniApps(nativeApplicationName, platformName, versionName)
-    return _.find(miniApps, m => m.startsWith(miniApp.toString()))
+    descriptor: NativeApplicationDescriptor,
+    miniAppName: string) : Promise<string> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const miniApps = await this.getContainerMiniApps(descriptor)
+    const result = _.find(miniApps, m => m.startsWith(miniAppName))
+    if (!result) {
+      throw new Error(`Cannot find ${miniAppName} MiniApp in ${descriptor.toString()} Container`)
+    }
+    return result
   }
 
-  async getNativeDependencies (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    return version == null ? [] : version.container.nativeDeps
+  async getNativeDependencies (descriptor: NativeApplicationDescriptor) : Promise<Array<string>> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    return version.container.nativeDeps
   }
 
-  async getNativeDependency (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    nativedepName: string) {
-    const nativeDeps = await this.getNativeDependencies(nativeApplicationName, platformName, versionName)
-    return _.find(nativeDeps, x => (x === nativedepName || x.startsWith(`${nativedepName}@`)))
+  async isNativeDependencyInContainer (
+    descriptor: NativeApplicationDescriptor,
+    nativeDepName: string) : Promise<boolean> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const nativeDeps = await this.getNativeDependencies(descriptor)
+    const result = _.find(nativeDeps, x => (x === nativeDepName || x.startsWith(`${nativeDepName}@`)))
+    if (!result) {
+      return false
+    } else {
+      return true
+    }
   }
 
-  async getConfig ({
-    appName,
-    platformName,
-    versionName
-  } : {
-    appName?: string,
-    platformName?: string,
-    versionName?: string
-  } = {}) {
-    if (appName) {
-      if (platformName) {
-        if (versionName) {
-          const version = await this.getVersion(appName, platformName, versionName)
-          return version == null ? undefined : version.config
+  async getContainerNativeDependency (
+    descriptor: NativeApplicationDescriptor,
+    nativeDepName: string) : Promise<string> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const nativeDeps = await this.getNativeDependencies(descriptor)
+    const result = _.find(nativeDeps, x => (x === nativeDepName || x.startsWith(`${nativeDepName}@`)))
+    if (!result) {
+      throw new Error(`Cannot find ${nativeDepName} native dependency in ${descriptor.toString()} Container`)
+    }
+    return result
+  }
+
+  async getConfig (descriptor?: NativeApplicationDescriptor) : Promise<?Object> {
+    if (descriptor) {
+      if (descriptor.platform) {
+        if (descriptor.version) {
+          const version = await this.getVersion(descriptor)
+          return version.config
         }
-        const platform = await this.getPlatform(appName, platformName)
-        return platform == null ? undefined : platform.config
+        const platform = await this.getPlatform(descriptor)
+        return platform.config
       }
-      const app = await this.getNativeApplication(appName)
-      return app == null ? undefined : app.config
+      const app = await this.getNativeApplication(descriptor)
+      return app.config
     }
     const cauldron = await this.getCauldron()
     return cauldron.config
@@ -225,365 +287,293 @@ export default class CauldronApi {
   // WRITE OPERATIONS
   // =====================================================================================
 
-  async clearCauldron () {
+  async clearCauldron () : Promise<void> {
     const cauldron = await this.getCauldron()
     cauldron.nativeApps = []
     return this.commit('Clear Cauldron')
   }
 
-  async createNativeApplication (nativeApplication: any) {
-    const cauldron = await this.getCauldron()
-    const appName = nativeApplication.name
-    if (exists(cauldron.nativeApps, appName)) {
-      throw new Error(`${appName} native application already exists in the Cauldron`)
+  async addDescriptor (descriptor: NativeApplicationDescriptor) : Promise<void> {
+    if (!await this.hasNativeApplication(descriptor)) {
+      await this.createNativeApplication({name: descriptor.name})
     }
+    if (descriptor.platform && !await this.hasPlatform(descriptor)) {
+      await this.createPlatform(descriptor, {name: descriptor.platform})
+    }
+    if (descriptor.version && !await this.hasVersion(descriptor)) {
+      await this.createVersion(descriptor, {name: descriptor.version})
+    }
+  }
 
+  async removeDescriptor (descriptor: NativeApplicationDescriptor) : Promise<void> {
+    if (descriptor.version) {
+      return this.removeVersion(descriptor)
+    } else if (descriptor.platform) {
+      return this.removePlatform(descriptor)
+    } else {
+      return this.removeNativeApplication(descriptor)
+    }
+  }
+
+  async createNativeApplication (nativeApplication: Object) : Promise<void> {
+    const cauldron = await this.getCauldron()
     const validatedNativeApplication = await joiValidate(nativeApplication, schemas.nativeApplication)
     cauldron.nativeApps.push(validatedNativeApplication)
     return this.commit(`Create ${nativeApplication.name} native application`)
   }
 
-  async removeNativeApplication (appName: string) {
+  async removeNativeApplication (descriptor: NativeApplicationDescriptor) : Promise<void> {
     const cauldron = await this.getCauldron()
-    if (!exists(cauldron.nativeApps, appName)) {
-      throw new Error(`${appName} native application was not found in the Cauldron`)
+    if (!exists(cauldron.nativeApps, descriptor.name)) {
+      throw new Error(`${descriptor.name} was not found in Cauldron`)
     }
-
-    _.remove(cauldron.nativeApps, x => x.name === appName)
-    return this.commit(`Remove ${appName} native application`)
+    _.remove(cauldron.nativeApps, x => x.name === descriptor.name)
+    return this.commit(`Remove ${descriptor.toString()}`)
   }
 
   async createPlatform (
-    nativeApplicationName: string,
-    platform: any) {
-    const nativeApplication = await this.getNativeApplication(nativeApplicationName)
-    if (!nativeApplication) {
-      throw new Error(`Cannot create platform for unexisting native application ${nativeApplicationName}`)
-    }
+    descriptor: NativeApplicationDescriptor,
+    platform: Object) : Promise<void> {
+    const nativeApplication = await this.getNativeApplication(descriptor)
     const platformName = platform.name
     if (exists(nativeApplication.platforms, platform.name)) {
-      throw new Error(`${platformName} platform already exists for ${nativeApplicationName} native application`)
+      throw new Error(`${platformName} platform already exists for ${descriptor.toString()}`)
     }
-
     const validatedPlatform = await joiValidate(platform, schemas.nativeApplicationPlatform)
     nativeApplication.platforms.push(validatedPlatform)
-    return this.commit(`Create ${platformName} platform for ${nativeApplicationName}`)
+    return this.commit(`Create ${platformName} platform for ${descriptor.toString()}`)
   }
 
-  async removePlatform (
-    nativeApplicationName: string,
-    platformName: string) {
-    const nativeApplication = await this.getNativeApplication(nativeApplicationName)
-    if (!nativeApplication) {
-      throw new Error(`Cannot remove platform of unexisting native application ${nativeApplicationName}`)
+  async removePlatform (descriptor: NativeApplicationDescriptor) {
+    const platform = descriptor.platform
+    if (!platform) {
+      throw new Error('removePlatform: descriptor should include the platform to be removed')
     }
-    if (!exists(nativeApplication.platforms, platformName)) {
-      throw new Error(`${platformName} platform does not exist for ${nativeApplicationName} native application`)
+    const nativeApplication = await this.getNativeApplication(descriptor)
+    if (!exists(nativeApplication.platforms, platform)) {
+      throw new Error(`${platform} platform does not exist for ${descriptor.name} native application`)
     }
-
-    _.remove(nativeApplication.platforms, x => x.name === platformName)
-    return this.commit(`Remove ${platformName} platform from ${nativeApplicationName}`)
+    _.remove(nativeApplication.platforms, x => x.name === platform)
+    return this.commit(`Remove ${descriptor.toString()}`)
   }
 
   async createVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    version: any) {
-    const platform = await this.getPlatform(nativeApplicationName, platformName)
-    if (!platform) {
-      throw new Error(`Cannot create version for unexisting ${nativeApplicationName}:${platformName}`)
-    }
+    descriptor: NativeApplicationDescriptor,
+    version: Object) : Promise<void> {
+    const platform = await this.getPlatform(descriptor)
     const versionName = version.name
     if (exists(platform.versions, versionName)) {
-      throw new Error(`${versionName} version already exists for ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${versionName} version already exists for ${descriptor.toString()}`)
     }
-
     const validatedVersion = await joiValidate(version, schemas.nativeApplicationVersion)
     platform.versions.push(validatedVersion)
-    return this.commit(`Create version ${version.name} of ${nativeApplicationName} ${platformName}`)
+    return this.commit(`Create version ${versionName} for ${descriptor.toString()}`)
   }
 
-  async removeVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string) {
-    const platform = await this.getPlatform(nativeApplicationName, platformName)
-    if (!platform) {
-      throw new Error(`Cannot remove version from unexisting ${nativeApplicationName}:${platformName}`)
+  async removeVersion (descriptor: NativeApplicationDescriptor) : Promise<void> {
+    const versionName = descriptor.version
+    if (!versionName) {
+      throw new Error('removeVersion: descriptor should include the version to be removed')
     }
+    const platform = await this.getPlatform(descriptor)
     if (!exists(platform.versions, versionName)) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${versionName} version does not exist for ${descriptor.toString()}`)
     }
-
     _.remove(platform.versions, x => x.name === versionName)
-    return this.commit(`Remove version ${versionName} from ${nativeApplicationName} ${platformName}`)
+    return this.commit(`Remove ${descriptor.toString()}`)
   }
 
   async updateVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    newVersion: any) {
+    descriptor: NativeApplicationDescriptor,
+    newVersion: any) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
     const validatedVersion = await joiValidate(newVersion, schemas.nativeAplicationVersionPatch)
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`Cannot update version of unexisting version ${versionName} of ${nativeApplicationName} ${platformName}`)
-    }
+    const version = await this.getVersion(descriptor)
     if (validatedVersion.isReleased != null) {
       version.isReleased = validatedVersion.isReleased
-      await this.commit(`Update release status of ${nativeApplicationName} ${platformName} ${versionName}`)
+      await this.commit(`Update release status of ${descriptor.toString()}`)
     }
   }
 
-  async removeNativeDependency (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    dependency: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+  async removeContainerNativeDependency (
+    descriptor: NativeApplicationDescriptor,
+    dependency: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (!_.some(version.container.nativeDeps, x => x.startsWith(`${dependency}@`))) {
-      throw new Error(`${dependency} dependency does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
+      throw new Error(`${dependency} dependency does not exists in ${descriptor.toString()} Container`)
     }
-
     _.remove(version.container.nativeDeps, x => x.startsWith(`${dependency}@`))
-    return this.commit(`Remove ${dependency} dependency from ${nativeApplicationName} ${platformName}`)
+    return this.commit(`Remove ${dependency} dependency from ${descriptor.toString()} Container`)
   }
 
-  async updateNativeDependency (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+  async updateContainerNativeDependencyVersion (
+    descriptor: NativeApplicationDescriptor,
     dependencyName: string,
-    newVersion: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+    newVersion: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (!_.some(version.container.nativeDeps, x => x.startsWith(`${dependencyName}@`))) {
-      throw new Error(`${dependencyName} dependency does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
+      throw new Error(`${dependencyName} dependency does not exists in ${descriptor.toString()} Container`)
     }
-
     _.remove(version.container.nativeDeps, x => x.startsWith(`${dependencyName}@`))
     const newDependencyString = `${dependencyName}@${newVersion}`
     version.container.nativeDeps.push(newDependencyString)
-    return this.commit(`Update ${dependencyName} dependency to v${newVersion} for ${nativeApplicationName} ${platformName}`)
+    return this.commit(`Update ${dependencyName} dependency to v${newVersion} in ${descriptor.toString()} Container`)
   }
 
-  async updateMiniAppVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    miniApp: PackagePath) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-
+  async updateContainerMiniAppVersion (
+    descriptor: NativeApplicationDescriptor,
+    miniApp: PackagePath) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     const miniAppInContainer = _.find(version.container.miniApps, m => miniApp.same(PackagePath.fromString(m), { ignoreVersion: true }))
     if (!miniAppInContainer) {
-      throw new Error(`${miniApp.basePath} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${miniApp.basePath} does not exist in version ${descriptor.toString()} Container`)
     }
-
     version.container.miniApps = _.map(version.container.miniApps, e => (e === miniAppInContainer) ? miniApp.toString() : e)
-    return this.commit(`Update version of ${miniApp.basePath} MiniApp to ${miniApp.version || ''} `)
+    return this.commit(`Update version of ${miniApp.basePath} MiniApp to ${miniApp.version || ''} in ${descriptor.toString()} Container`)
   }
 
   async updateTopLevelContainerVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    newContainerVersion: string) {
-    const config = await this.getConfig({ appName: nativeApplicationName, platformName })
+    descriptor: NativeApplicationDescriptor,
+    newContainerVersion: string) : Promise<void> {
+    const config = await this.getConfig(descriptor)
     if (config && config.containerGenerator && config.containerGenerator.containerVersion) {
       config.containerGenerator.containerVersion = newContainerVersion
-      await this.commit(`Update top level container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}`)
+      return this.commit(`Update top level Container version of ${descriptor.toString()} to ${newContainerVersion}`)
     } else {
-      const platform = await this.getPlatform(nativeApplicationName, platformName)
-      if (platform) {
-        platform.config = platform.config || {}
-        platform.config.containerGenerator = platform.config.containerGenerator || {}
-        platform.config.containerGenerator.containerVersion = newContainerVersion
-        await this.commit(`Update top level container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}`)
-      }
+      const platform = await this.getPlatform(descriptor)
+      platform.config = platform.config || {}
+      platform.config.containerGenerator = platform.config.containerGenerator || {}
+      platform.config.containerGenerator.containerVersion = newContainerVersion
+      return this.commit(`Update top level Container version of ${descriptor.toString()} to ${newContainerVersion}`)
     }
   }
 
   async updateContainerVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    newContainerVersion: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+    descriptor: NativeApplicationDescriptor,
+    newContainerVersion: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     version.containerVersion = newContainerVersion
-    return this.commit(`Update container version to ${newContainerVersion} for ${nativeApplicationName}:${platformName}:${versionName}`)
+    return this.commit(`Update container version of ${descriptor.toString()} to ${newContainerVersion}`)
   }
 
-  async getTopLevelContainerVersion (
-    nativeApplicationName: string,
-    platformName: string
-  ) {
-    const config = await this.getConfig({ appName: nativeApplicationName, platformName: platformName })
+  async getTopLevelContainerVersion (descriptor: NativeApplicationDescriptor) : Promise<?string> {
+    const config = await this.getConfig(descriptor.withoutVersion())
     if (config && config.containerGenerator) {
       return config.containerGenerator.containerVersion
     }
   }
 
-  async getContainerVersion (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string
-  ) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-
+  async getContainerVersion (descriptor: NativeApplicationDescriptor) : Promise<string> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     return version.containerVersion
   }
 
   async removeContainerMiniApp (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    miniAppName: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+    descriptor: NativeApplicationDescriptor,
+    miniAppName: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (!_.some(version.container.miniApps, x => x.startsWith(`${miniAppName}@`))) {
-      throw new Error(`${miniAppName} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${miniAppName} MiniApp does not exist in ${descriptor.toString()} Container`)
     }
-
     _.remove(version.container.miniApps, x => x.startsWith(`${miniAppName}@`))
-    return this.commit(`Remove ${miniAppName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
+    return this.commit(`Remove ${miniAppName} MiniApp from ${descriptor.toString()} Container`)
   }
 
-  async removeJsApiImpl (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    jsApiImplName: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+  async removeContainerJsApiImpl (
+    descriptor: NativeApplicationDescriptor,
+    jsApiImplName: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (!_.some(version.container.jsApiImpls, x => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`))) {
-      throw new Error(`${jsApiImplName} does not exist in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${jsApiImplName} JS API implementation does not exist in ${descriptor.toString()} Container`)
     }
-
     _.remove(version.container.jsApiImpls, x => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`))
-    return this.commit(`Remove ${jsApiImplName} from ${nativeApplicationName} ${platformName} ${versionName} container`)
+    return this.commit(`Remove ${jsApiImplName} JS API implementation from ${descriptor.toString()} Container`)
   }
 
-  async updateJsApiImpl (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+  async updateContainerJsApiImplVersion (
+    descriptor: NativeApplicationDescriptor,
     jsApiImplName: string,
-    newVersion: string) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+    newVersion: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (!_.some(version.container.jsApiImpls, x => x.startsWith(`${jsApiImplName}@`))) {
-      throw new Error(`${jsApiImplName} JS API implementation does not exists in ${nativeApplicationName} ${platformName} ${versionName}`)
+      throw new Error(`${jsApiImplName} JS API implementation does not exists in ${descriptor.toString()} Container`)
     }
-
     _.remove(version.container.jsApiImpls, x => x.startsWith(`${jsApiImplName}@`))
     const newJsApiImplString = `${jsApiImplName}@${newVersion}`
     version.container.jsApiImpls.push(newJsApiImplString)
-    return this.commit(`Update ${jsApiImplName} JS API implementation to v${newVersion} for ${nativeApplicationName} ${platformName}`)
+    return this.commit(`Update ${jsApiImplName} JS API implementation to v${newVersion} in ${descriptor.toString()} Container`)
   }
 
-  async createNativeDependency (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    dependency: PackagePath) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+  async addContainerNativeDependency (
+    descriptor: NativeApplicationDescriptor,
+    dependency: PackagePath) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (version.container.nativeDeps.includes(dependency.toString())) {
-      throw new Error(`${dependency.basePath} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${dependency.basePath} already exists in ${descriptor.toString()} Container`)
     }
-
     version.container.nativeDeps.push(dependency.toString())
-    return this.commit(`Add native dependency ${dependency.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
+    return this.commit(`Add native dependency ${dependency.toString()} in ${descriptor.toString()} Container`)
   }
 
-  async addJsApiImpl (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    jsApiImpl: PackagePath) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+  async addContainerJsApiImpl (
+    descriptor: NativeApplicationDescriptor,
+    jsApiImpl: PackagePath) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (version.container.jsApiImpls.includes(jsApiImpl.toString())) {
-      throw new Error(`${jsApiImpl.basePath} already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${jsApiImpl.basePath} already exists in ${descriptor.toString()} Container`)
     }
-
     version.container.jsApiImpls.push(jsApiImpl.toString())
-    return this.commit(`Add JS API implementation ${jsApiImpl.toString()} to ${nativeApplicationName} ${platformName} ${versionName}`)
+    return this.commit(`Add JS API implementation ${jsApiImpl.toString()} in ${descriptor.toString()} Container`)
+  }
+
+  async hasCodePushEntries (
+    descriptor: NativeApplicationDescriptor,
+    deploymentName: string) : Promise<boolean> {
+    const version = await this.getVersion(descriptor)
+    return version.codePush[deploymentName] != null
   }
 
   async addCodePushEntry (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    codePushEntry: CauldronCodePushEntry) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-
+    descriptor: NativeApplicationDescriptor,
+    codePushEntry: CauldronCodePushEntry) : Promise<void> {
+    const version = await this.getVersion(descriptor)
     const deploymentName = codePushEntry.metadata.deploymentName
     version.codePush[deploymentName]
       ? version.codePush[deploymentName].push(codePushEntry)
       : version.codePush[deploymentName] = [ codePushEntry ]
-    return this.commit(`New CodePush OTA update`)
+    return this.commit(`New CodePush OTA update for ${descriptor.toString()}`)
   }
 
   async setCodePushEntries (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     deploymentName: string,
-    codePushEntries: Array<CauldronCodePushEntry>) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (!version.codePush) {
-      version.codePush = {}
-    }
-
+    codePushEntries: Array<CauldronCodePushEntry>) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     version.codePush[deploymentName] = codePushEntries
-    return this.commit('Set codePush entries')
+    return this.commit(`Set codePush entries in ${descriptor.toString()}`)
   }
 
   async addContainerMiniApp (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    miniapp: PackagePath) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
+    descriptor: NativeApplicationDescriptor,
+    miniapp: PackagePath) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     if (version.container.miniApps.includes(miniapp.toString())) {
-      throw new Error(`${miniapp.basePath} MiniApp already exists in version ${versionName} of ${nativeApplicationName} ${platformName}`)
+      throw new Error(`${miniapp.basePath} MiniApp already exists in ${descriptor.toString()} Container`)
     }
-
     version.container.miniApps.push(miniapp.toString())
-    return this.commit(`Add ${miniapp.basePath} MiniApp to ${nativeApplicationName} ${platformName} ${versionName} container`)
+    return this.commit(`Add ${miniapp.basePath} MiniApp in ${descriptor.toString()} Container`)
   }
 
   // =====================================================================================
@@ -591,16 +581,12 @@ export default class CauldronApi {
   // =====================================================================================
 
   async hasYarnLock (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     key: string
   ) : Promise<boolean> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (version.yarnLocks && version.yarnLocks[key]) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (version.yarnLocks[key]) {
       return true
     } else {
       return false
@@ -608,192 +594,134 @@ export default class CauldronApi {
   }
 
   async addYarnLock (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     key: string,
-    yarnlock: string | Buffer) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-
+    yarnlock: string | Buffer) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     const filename = shasum(yarnlock)
     await this._yarnlockStore.storeFile(filename, yarnlock)
-    if (!version.yarnLocks) {
-      version.yarnLocks = {}
-    }
     version.yarnLocks[key] = filename
-    return this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
+    return this.commit(`Add yarn.lock for ${descriptor.toString()} ${key}`)
   }
 
   async getYarnLockId (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    key: string
-  ) : Promise<?string> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    return version.yarnLocks && version.yarnLocks[key]
+    descriptor: NativeApplicationDescriptor,
+    key: string) : Promise<?string> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    return version.yarnLocks[key]
   }
 
   async setYarnLockId (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     key: string,
-    id: string
-  ) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (!version.yarnLocks) {
-      version.yarnLocks = {}
-    }
-
+    id: string) : Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
     version.yarnLocks[key] = id
-    return this.commit(`Add yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
+    return this.commit(`Add yarn.lock for ${descriptor.toString()} ${key}`)
   }
 
   async getYarnLock (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     key: string
   ) : Promise<?Buffer> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (version.yarnLocks && version.yarnLocks[key]) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (version.yarnLocks[key]) {
       return this._yarnlockStore.getFile(version.yarnLocks[key])
     }
   }
 
   async getPathToYarnLock (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    key: string
-  ) : Promise<?string> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (version.yarnLocks && version.yarnLocks[key]) {
+    descriptor: NativeApplicationDescriptor,
+    key: string) : Promise<?string> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (version.yarnLocks[key]) {
       return this._yarnlockStore.getPathToFile(version.yarnLocks[key])
     }
   }
 
   async removeYarnLock (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    key: string
-  ) : Promise<boolean> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (version.yarnLocks && version.yarnLocks[key]) {
+    descriptor: NativeApplicationDescriptor,
+    key: string) : Promise<boolean> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (version.yarnLocks[key]) {
       if (await this._yarnlockStore.removeFile(version.yarnLocks[key])) {
         delete version.yarnLocks[key]
-        await this.commit(`Remove yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
+        await this.commit(`Remove yarn.lock for ${descriptor.toString()} ${key}`)
         return true
       }
     }
-
     return false
   }
 
   async updateYarnLock (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     key: string,
-    yarnlock: string | Buffer
-  ) : Promise<boolean> {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (version.yarnLocks && version.yarnLocks[key]) {
+    yarnlock: string | Buffer) : Promise<boolean> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (version.yarnLocks[key]) {
       await this._yarnlockStore.removeFile(version.yarnLocks[key])
       const filename = shasum(yarnlock)
       await this._yarnlockStore.storeFile(filename, yarnlock)
       version.yarnLocks[key] = filename
-      await this.commit(`Updated yarn.lock for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
+      await this.commit(`Updated yarn.lock for ${descriptor.toString()} ${key}`)
       return true
     }
-
     return false
   }
 
   async updateYarnLockId (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
+    descriptor: NativeApplicationDescriptor,
     key: string,
-    id: string
-  ) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
+    id: string) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (version.yarnLocks[key]) {
+      await this._yarnlockStore.removeFile(version.yarnLocks[key])
     }
-    if (version.yarnLocks) {
-      if (version.yarnLocks[key]) {
-        await this._yarnlockStore.removeFile(version.yarnLocks[key])
-      }
-      version.yarnLocks[key] = id
-      await this.commit(`Updated yarn.lock id for ${nativeApplicationName} ${platformName} ${versionName} ${key}`)
-    }
+    version.yarnLocks[key] = id
+    await this.commit(`Updated yarn.lock id for ${descriptor.toString()} ${key}`)
   }
 
   async setYarnLocks (
-    nativeApplicationName: string,
-    platformName: string,
-    versionName: string,
-    yarnLocks: Object
-  ) {
-    const version = await this.getVersion(nativeApplicationName, platformName, versionName)
-    if (!version) {
-      throw new Error(`${versionName} version does not exist for ${nativeApplicationName} ${platformName}`)
-    }
-    if (version.yarnLocks) {
-      version.yarnLocks = yarnLocks
-      await this.commit(`Set yarn locks for ${nativeApplicationName} ${platformName} ${versionName}`)
+    descriptor: NativeApplicationDescriptor,
+    yarnLocks: Object) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    version.yarnLocks = yarnLocks
+    await this.commit(`Set yarn locks for ${descriptor.toString()}`)
+  }
+
+  async addPublisher (descriptor: NativeApplicationDescriptor, publisherType: ('maven' | 'github'), url: string) {
+    try {
+      const platform = await this.getPlatform(descriptor)
+      platform.config = platform.config || {}
+      platform.config.containerGenerator = platform.config.containerGenerator || {}
+      platform.config.containerGenerator.publishers = platform.config.containerGenerator.publishers || []
+      for (const publisher of platform.config.containerGenerator.publishers) {
+        if (publisher.name === publisherType) {
+          throw new Error(`${publisherType} publisher(${publisher.url}) already exists for ${descriptor.toString()}`)
+        }
+      }
+      platform.config.containerGenerator.publishers.push({
+        'name': publisherType,
+        'url': url
+      })
+      await this.commit(`Add ${publisherType} publisher for ${descriptor.toString()}`)
+    } catch (e) {
+      throw new Error(`[cauldronApi] addPublisher: ${e}`)
     }
   }
 
-  async addPublisher (nativeAppName: string, platformName: ('ios' | 'android'), publisherType: ('maven' | 'github'), url: string) {
-    try {
-      const platform = await this.getPlatform(nativeAppName, platformName)
-      if (platform) {
-        platform.config = platform.config || {}
-        platform.config.containerGenerator = platform.config.containerGenerator || {}
-        platform.config.containerGenerator.publishers = platform.config.containerGenerator.publishers || []
-
-        for (const publisher of platform.config.containerGenerator.publishers) {
-          if (publisher.name === publisherType) {
-            throw new Error(`${publisherType} publisher(${publisher.url}) already exists for ${nativeAppName}:${platformName}`)
-          }
-        }
-
-        platform.config.containerGenerator.publishers.push({
-          'name': publisherType,
-          'url': url
-        })
-
-        await this.commit(`Add ${publisherType} publisher for ${nativeAppName}:${platformName}`)
-      } else {
-        throw new Error(`${nativeAppName}:${platformName} is not present in cauldron`)
-      }
-    } catch (e) {
-      throw new Error(`[cauldronApi] addPublisher: ${e}`)
+  throwIfPartialNapDescriptor (napDescriptor: NativeApplicationDescriptor) {
+    if (napDescriptor.isPartial) {
+      throw new Error(`Cannot work with a partial native application descriptor`)
     }
   }
 }
