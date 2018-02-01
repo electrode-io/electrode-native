@@ -10,7 +10,6 @@ export const container = Joi.object({
 
 export const nativeApplicationVersion = Joi.object({
   name: Joi.string().required(),
-  ernPlatformVersion: Joi.string().required(),
   isReleased: Joi.boolean().optional().default(false),
   binary: Joi.string().default(null),
   yarnLocks: Joi.object().default({}),

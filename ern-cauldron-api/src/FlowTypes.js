@@ -26,7 +26,6 @@ export type CauldronContainer = {
 
 export type CauldronNativeAppVersion = {
   name: string,
-  ernPlatormVersion: string,
   isReleased: boolean,
   binary: ?string,
   yarnLocks: Object,
