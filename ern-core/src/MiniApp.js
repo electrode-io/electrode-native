@@ -392,7 +392,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       if (!cauldronInstance) {
         throw new Error('No Cauldron is active')
       }
-      const nativeApp = await cauldronInstance.getNativeApp(napDescriptor)
+      const nativeApp = await cauldronInstance.getDescriptor(napDescriptor)
 
        // If this is not a forced add, we run quite some checks beforehand
       if (!force) {
@@ -435,8 +435,10 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
         // If local native dependency already exists at same version in cauldron,
         // we then don't need to add it or update it
         const localNativeDependencyString = localNativeDependency.basePath
-        const remoteDependency =
-                    await cauldronInstance.getNativeDependency(napDescriptor, localNativeDependencyString, { convertToObject: true })
+        let remoteDependency
+        if (await cauldronInstance.isNativeDependencyInContainer(napDescriptor, localNativeDependencyString)) {
+          remoteDependency = await cauldronInstance.getContainerNativeDependency(napDescriptor, localNativeDependencyString)
+        }
 
         if (!localNativeDependency.version) {
           throw new Error('local dependency does not have a version. This should not happen')
@@ -447,18 +449,18 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
         // This does not apply to other third party native dependencies (anyway in that case the code should not react this
         // point as compatibility checks would have failed unless force flag is used)
         if (remoteDependency && remoteDependency.version && (remoteDependency.version < localNativeDependency.version)) {
-          await cauldronInstance.updateNativeAppDependency(napDescriptor, localNativeDependencyString, localNativeDependency.version)
+          await cauldronInstance.updateContainerNativeDependencyVersion(napDescriptor, localNativeDependencyString, localNativeDependency.version)
         } else if (!remoteDependency) {
-          await cauldronInstance.addNativeDependency(napDescriptor, localNativeDependency)
+          await cauldronInstance.addContainerNativeDependency(napDescriptor, localNativeDependency)
         }
       }
 
-      const currentMiniAppEntryInContainer =
-                await cauldronInstance.getContainerMiniApp(napDescriptor, this._packagePath.basePath)
+      const isMiniAppInContainer =
+                await cauldronInstance.isMiniAppInContainer(napDescriptor, this._packagePath.basePath)
 
-      if (currentMiniAppEntryInContainer && !nativeApp.isReleased) {
-        await cauldronInstance.updateMiniAppVersion(napDescriptor, this._packagePath)
-      } else if (!currentMiniAppEntryInContainer && !nativeApp.isReleased) {
+      if (isMiniAppInContainer && !nativeApp.isReleased) {
+        await cauldronInstance.updateContainerMiniAppVersion(napDescriptor, this._packagePath)
+      } else if (!isMiniAppInContainer && !nativeApp.isReleased) {
         await cauldronInstance.addContainerMiniApp(napDescriptor, this._packagePath)
       } else {
         log.error('not supported')

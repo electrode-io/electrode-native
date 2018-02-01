@@ -86,7 +86,7 @@ exports.handler = async function ({
       async () => {
         for (const dependencyObj of dependenciesObjs) {
           // Add the dependency to Cauldron
-          await cauldron.addNativeDependency(napDescriptor, dependencyObj)
+          await cauldron.addContainerNativeDependency(napDescriptor, dependencyObj)
           cauldronCommitMessage.push(`- Add ${dependencyObj.toString()} native dependency`)
         }
       },

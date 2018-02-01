@@ -30,7 +30,7 @@ exports.handler = async function ({
       const napDescriptors = await utils.getNapDescriptorStringsFromCauldron()
       napDescriptors.forEach(n => log.info(n))
     } else {
-      const nativeApp = await cauldron.getNativeApp(NativeApplicationDescriptor.fromString(descriptor))
+      const nativeApp = await cauldron.getDescriptor(NativeApplicationDescriptor.fromString(descriptor))
       log.info(JSON.stringify(nativeApp, null, 1))
     }
   } catch (e) {

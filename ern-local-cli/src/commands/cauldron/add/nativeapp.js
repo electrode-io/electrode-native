@@ -54,11 +54,13 @@ exports.handler = async function ({
     var cauldron = await coreUtils.getCauldronInstance()
     await cauldron.beginTransaction()
 
-    const previousApps = await cauldron.getNativeApp(new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform))
+    const desc = new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform)
+    let previousApps
+    if (await cauldron.isDescriptorInCauldron(desc)) {
+      previousApps = await cauldron.getDescriptor(desc)
+    }
 
-    await spin(`Adding ${descriptor}`, cauldron.addNativeApp(napDescriptor, platformVersion
-      ? platformVersion.toString().replace('v', '')
-      : undefined))
+    await spin(`Adding ${descriptor}`, cauldron.addDescriptor(napDescriptor))
 
     if (previousApps) {
       const latestVersion = _.last(previousApps.versions)
@@ -95,7 +97,7 @@ async function copyOverPreviousVersionData (
   cauldron: CauldronHelper) {
   // Copy over previous native application version native dependencies
   for (const nativeDep of nativeAppVersion.container.nativeDeps) {
-    await cauldron.addNativeDependency(napDescriptor, PackagePath.fromString(nativeDep))
+    await cauldron.addContainerNativeDependency(napDescriptor, PackagePath.fromString(nativeDep))
   }
   // Copy over previous native application version container MiniApps
   for (const containerMiniApp of nativeAppVersion.container.miniApps) {

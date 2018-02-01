@@ -532,7 +532,7 @@ export async function askUserForCodePushDeploymentName (napDescriptor: NativeApp
   const cauldron = await coreUtils.getCauldronInstance()
   const config = await cauldron.getConfig(napDescriptor)
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
-  const choices = hasCodePushDeploymentsConfig ? config.codePush.deployments : undefined
+  const choices = hasCodePushDeploymentsConfig ? config && config.codePush.deployments : undefined
 
   const { userSelectedDeploymentName } = await inquirer.prompt({
     type: choices ? 'list' : 'input',

@@ -47,7 +47,7 @@ export default class Ensure {
     extraErrorMessage: string = '') {
     const cauldron = await coreUtils.getCauldronInstance()
     const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(NativeApplicationDescriptor.fromString(napDescriptor))
-    if (!semver.gt(containerVersion, cauldronContainerVersion)) {
+    if (cauldronContainerVersion && !semver.gt(containerVersion, cauldronContainerVersion)) {
       throw new Error(`Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`)
     }
   }
@@ -93,7 +93,7 @@ export default class Ensure {
       ? _.map(napDescriptor, d => NativeApplicationDescriptor.fromString(d))
       : [ NativeApplicationDescriptor.fromString(napDescriptor) ]
     for (const descriptor of descriptors) {
-      const result = await cauldron.getNativeApp(descriptor)
+      const result = await cauldron.isDescriptorInCauldron(descriptor)
       if (!result) {
         throw new Error(`${descriptor.toString()} descriptor does not exist in Cauldron.\n${extraErrorMessage}`)
       }
@@ -114,8 +114,7 @@ export default class Ensure {
     extraErrorMessage: string = '') {
     const cauldron = await coreUtils.getCauldronInstance()
     const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
-    const result = await cauldron.getNativeApp(descriptor)
-    if (result) {
+    if (await cauldron.isDescriptorInCauldron(descriptor)) {
       throw new Error(`${descriptor.toString()} descriptor exist in Cauldron.\n${extraErrorMessage}`)
     }
   }
@@ -140,7 +139,7 @@ export default class Ensure {
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
       const basePathMiniAppString = PackagePath.fromString(miniAppString).basePath
-      if (await cauldron.getContainerMiniApp(napDescriptor, basePathMiniAppString)) {
+      if (await cauldron.isMiniAppInContainer(napDescriptor, basePathMiniAppString)) {
         throw new Error(`${basePathMiniAppString} MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
@@ -155,7 +154,7 @@ export default class Ensure {
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
       const unversionedDependencyString = PackagePath.fromString(dependencyString).basePath
-      if (await cauldron.getNativeDependency(napDescriptor, unversionedDependencyString)) {
+      if (await cauldron.isNativeDependencyInContainer(napDescriptor, unversionedDependencyString)) {
         throw new Error(`${unversionedDependencyString} dependency exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
@@ -170,7 +169,7 @@ export default class Ensure {
     const miniAppsStrings = obj instanceof Array ? obj : [ obj ]
     for (const miniAppString of miniAppsStrings) {
       const basePathMiniAppString = PackagePath.fromString(miniAppString).basePath
-      if (!await cauldron.getContainerMiniApp(napDescriptor, basePathMiniAppString)) {
+      if (!await cauldron.isMiniAppInContainer(napDescriptor, basePathMiniAppString)) {
         throw new Error(`${basePathMiniAppString} MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
@@ -185,7 +184,7 @@ export default class Ensure {
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
       const unversionedDependencyString = PackagePath.fromString(dependencyString).basePath
-      if (!await cauldron.getNativeDependency(napDescriptor, unversionedDependencyString)) {
+      if (!await cauldron.getContainerNativeDependency(napDescriptor, unversionedDependencyString)) {
         throw new Error(`${unversionedDependencyString} does not exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
       }
     }
@@ -219,7 +218,7 @@ export default class Ensure {
     await this.dependencyIsInNativeApplicationVersionContainer(obj, napDescriptor)
     const dependenciesStrings = obj instanceof Array ? obj : [ obj ]
     for (const dependencyString of dependenciesStrings) {
-      const dependencyFromCauldron = await cauldron.getNativeDependency(napDescriptor,
+      const dependencyFromCauldron = await cauldron.getContainerNativeDependency(napDescriptor,
         PackagePath.fromString(dependencyString).basePath)
       if (dependencyFromCauldron && dependencyFromCauldron.version === PackagePath.fromString(dependencyString).version) {
         throw new Error(`${PackagePath.fromString(dependencyString).basePath} is already at version ${dependencyFromCauldron.version || 'undefined'} in ${napDescriptor.toString()}.\n${extraErrorMessage}`)
