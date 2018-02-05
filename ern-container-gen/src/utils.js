@@ -33,7 +33,6 @@ export async function bundleMiniApps (
 
     let miniAppsPaths : Array<PackagePath> = []
     for (const miniapp of miniapps) {
-      log.debug(`[bundleMiniApps] MiniApp is not local. Using package path ${miniapp.packageDescriptor} for ${miniapp.name}`)
       miniAppsPaths.push(miniapp.packagePath)
     }
 
