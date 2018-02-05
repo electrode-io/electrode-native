@@ -10,12 +10,6 @@
 
 **Options**  
 
-`--version/-v <version>`
-
-* Specify the version to use for the Container  
-* The version must be in the format: `x.y.z` where x, y and z are integers. For example `version=1.2.30`.
-* **Default**  If you don't provide an explicit version, the default version 1.0.0 is used.  
-
 `--jsOnly/--js`
 
 * Create a JavaScript-only container  
