@@ -59,6 +59,10 @@ exports.builder = function (yargs: any) {
       alias: 'out',
       describe: 'Directory to output the generated container to'
     })
+    .option('ignoreRnpmAssets', {
+      type: 'bool',
+      describe: 'Ignore rppm assets from the MiniApps'
+    })
     .epilog(utils.epilog(exports))
 }
 
@@ -70,7 +74,8 @@ exports.handler = async function ({
   jsApiImpls = [],
   dependencies = [],
   platform,
-  publicationUrl
+  publicationUrl,
+  ignoreRnpmAssets
 } : {
   descriptor?: string,
   jsOnly?: boolean,
@@ -79,7 +84,8 @@ exports.handler = async function ({
   jsApiImpls: Array<string>,
   dependencies: Array<string>,
   platform?: 'android' | 'ios',
-  publicationUrl?: string
+  publicationUrl?: string,
+  ignoreRnpmAssets?: boolean
 } = {}) {
   let napDescriptor: ?NativeApplicationDescriptor
 
@@ -187,7 +193,8 @@ exports.handler = async function ({
           jsApiImplsPaths,
           platform, {
             outDir,
-            extraNativeDependencies: _.map(dependencies, d => PackagePath.fromString(d))
+            extraNativeDependencies: _.map(dependencies, d => PackagePath.fromString(d)),
+            ignoreRnpmAssets
           }
         ))
       } else if (napDescriptor) {
