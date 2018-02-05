@@ -53,7 +53,7 @@ export default function run () {
   if (ernConfig.getValue('showBanner', true)) { showBanner() }
   showInfo()
 
-  if (yargs.argv['version']) {
+  if (yargs.argv._.length === 0 && yargs.argv['version']) {
     return showVersion()
   }
 
