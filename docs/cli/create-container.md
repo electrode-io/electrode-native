@@ -2,7 +2,7 @@
 
 #### Description
 
-* Create a new container (native or JavaScript only) locally to the workstation  
+* Create a new container (native or JavaScript only) locally to the workstation.
 
 #### Syntax
 
@@ -53,11 +53,12 @@ You cannot use the Git or file package descriptors for referring to the dependen
 #### Remarks
 
 * The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  
+* Container generation and publication are two separate processes. If you want to publish your Container (to a git or maven repository) after locally creating it, you can make use of the `ern publish-container` command.
 * To create a container that is published so that your native application team can use the container, you should use one of the Cauldron commands to add your MiniApps to a specified native application version in the Cauldron, which will trigger the generation and publication of a Container. See *Related commands*.  
 * For Android OS, the Container is also published to your local Maven repository.  
 
 #### Related commands
 
-[ern cauldron add miniapp] | Add one or more MiniApps to a non-released native application version in a Cauldron
+[ern publish-container] | Publish a local Container.
 
-[ern cauldron add miniapp]: ./cauldron/add/miniapps.md
+[ern publish-container]: ./publish-container.md
