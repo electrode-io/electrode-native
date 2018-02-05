@@ -41,10 +41,12 @@ miniappPackagesPaths: Array<PackagePath>,
 jsApiImplsPackagePaths: Array<PackagePath>,
 platform: 'android' | 'ios', {
   outDir = `${Platform.rootDirectory}/containergen`,
-  extraNativeDependencies = []
+  extraNativeDependencies = [],
+  ignoreRnpmAssets = false
 }: {
   outDir?: string,
-  extraNativeDependencies: Array<PackagePath>
+  extraNativeDependencies: Array<PackagePath>,
+  ignoreRnpmAssets?: boolean
 } = {}) {
   try {
     const nativeDependenciesStrings: Set <string> = new Set()
@@ -90,7 +92,8 @@ platform: 'android' | 'ios', {
       outDir,
       plugins: nativeDependencies,
       pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
-      compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name
+      compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name,
+      ignoreRnpmAssets
     }))
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)

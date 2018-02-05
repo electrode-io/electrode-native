@@ -44,6 +44,12 @@ You cannot use the Git or file package descriptors for referring to the dependen
 * Specify the output directory where the container generated project should be stored upon creation  
 * **Default**  If this option is not provided, the container is generated in the default platform directory `~/.ern/containergen/out`.
 
+`--ignoreRnpmAssets`
+
+* Inform the Container generator to ignore any rnpm assets optionally declared by MiniApps. This can be used in case you want to keep specific rnpm assets inside the native application itself and not the Container.
+* This flag wil have no effect for a Container generated from a Cauldron as the Container configuration stored in the Cauldron will take precedence.
+* **Default** Do not ignore rnpm assets and package them inside the generated Container.
+
 #### Remarks
 
 * The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  
