@@ -29,11 +29,6 @@ exports.builder = function (yargs: any) {
       alias: 'd',
       describe: 'Full native application descriptor'
     })
-    .option('version', {
-      type: 'string',
-      alias: 'v',
-      describe: 'Version of the generated container. Default to 1.0.0'
-    })
     .option('jsOnly', {
       type: 'bool',
       alias: 'js',
@@ -59,10 +54,6 @@ exports.builder = function (yargs: any) {
       describe: 'The platform for which to generate the container',
       choices: ['android', 'ios', undefined]
     })
-    .option('containerName', {
-      type: 'string',
-      describe: 'The name to user for the container (usually native application name)'
-    })
     .option('outDir', {
       type: 'string',
       alias: 'out',
@@ -73,32 +64,27 @@ exports.builder = function (yargs: any) {
 
 exports.handler = async function ({
   descriptor,
-  version = '1.0.0',
   jsOnly,
   outDir,
   miniapps,
   jsApiImpls = [],
   dependencies = [],
   platform,
-  containerName,
   publicationUrl
 } : {
   descriptor?: string,
-  version: string,
   jsOnly?: boolean,
   outDir?: string,
   miniapps?: Array<string>,
   jsApiImpls: Array<string>,
   dependencies: Array<string>,
   platform?: 'android' | 'ios',
-  containerName?: string,
   publicationUrl?: string
 } = {}) {
   let napDescriptor: ?NativeApplicationDescriptor
 
   try {
     await utils.logErrorAndExitIfNotSatisfied({
-      isValidContainerVersion: version ? {containerVersion: version} : undefined,
       noGitOrFilesystemPath: {
         obj: dependencies,
         extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
@@ -200,13 +186,11 @@ exports.handler = async function ({
           miniAppsPaths,
           jsApiImplsPaths,
           platform, {
-            version,
-            nativeAppName: containerName,
             outDir,
             extraNativeDependencies: _.map(dependencies, d => PackagePath.fromString(d))
           }
         ))
-      } else if (napDescriptor && version) {
+      } else if (napDescriptor) {
         await runCauldronContainerGen(
           napDescriptor,
           {outDir})
