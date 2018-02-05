@@ -78,7 +78,7 @@ export default class BaseGit implements ITransactional {
       await this._doInitialCommit()
     } else {
       log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} master`)
-      await this.git.fetchAsync(GIT_REMOTE_NAME, 'master')
+      await this.git.fetchAsync(['--all'])
       await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/master`])
     }
 
