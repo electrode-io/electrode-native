@@ -35,6 +35,8 @@ export default class MavenPublisher implements ContainerPublisher {
       MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
     }
 
+    config.url = config.url.replace('file:~', `file:${process.env.HOME || ''}`)
+
     fs.appendFileSync(path.join(workingDir, 'lib', 'build.gradle'),
   `
   apply plugin: 'maven'
