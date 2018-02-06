@@ -315,7 +315,7 @@ jsApiImpls: Array<PackagePath>, {
     var cauldron = await coreUtils.getCauldronInstance()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     await cauldron.beginTransaction()
-    const codePushPlugin = _.find(plugins, p => p.name === 'react-native-code-push')
+    const codePushPlugin = _.find(plugins, p => p.basePath === 'react-native-code-push')
     if (!codePushPlugin) {
       throw new Error('react-native-code-push plugin is not in native app !')
     }
