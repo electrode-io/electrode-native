@@ -162,7 +162,7 @@ export default class IosGenerator implements ContainerGenerator {
       log.debug('[=== iOS: Adding plugin hook classes ===]')
 
       for (const plugin of plugins) {
-        if (plugin.name === 'react-native') { continue }
+        if (plugin.basePath === 'react-native') { continue }
         let pluginConfig = await manifest.getPluginConfig(plugin)
         if (!pluginConfig.ios) {
           log.warn(`${plugin.basePath} does not have any injection configuration for iOS`)
