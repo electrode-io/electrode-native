@@ -178,11 +178,11 @@ run(`ern cauldron add miniapps ${movieDetailsMiniAppPackageName}@${movieDetailsM
 run(`ern cauldron add miniapps ${packageNotInNpm} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 
 // Container gen should be successful for the two following commands
-run(`ern create-container --miniapps file:${miniAppPath} -p android -v 1.0.0`)
-run(`ern create-container --miniapps file:${miniAppPath} -p ios -v 1.0.0`)
+run(`ern create-container --miniapps file:${miniAppPath} -p android`)
+run(`ern create-container --miniapps file:${miniAppPath} -p ios`)
 
-run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -p android -v 1.0.0`)
-run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -p ios -v 1.0.0`)
+run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -p android`)
+run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPackageName}@${movieListMiniAppVersion} -p ios`)
 
 const androidContainerOutDir = tmp.dirSync({ unsafeCleanup: true }).name
 run(`ern create-container --descriptor ${androidNativeApplicationDescriptor} --out ${androidContainerOutDir}`)
