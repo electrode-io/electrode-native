@@ -1,0 +1,25 @@
+include_defs("//ReactCommon/DEFS")
+
+cxx_library(
+    name = "microprofiler",
+    srcs = [
+        "MicroProfiler.cpp",
+    ],
+    header_namespace = "microprofiler",
+    exported_headers = [
+        "MicroProfiler.h",
+    ],
+    compiler_flags = [
+        "-Wall",
+        "-Werror",
+        "-std=c++11",
+        "-fexceptions",
+    ],
+    force_static = True,
+    visibility = [
+        "PUBLIC",
+    ],
+    deps = [
+        GLOG_DEP,
+    ],
+)
