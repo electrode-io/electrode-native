@@ -1,0 +1,28 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "ERN Generated API for TestApi",
+  "main": "javascript/src/index.js",
+  "author": "b0m00ca",
+  "scripts": {
+    "flow": "flow"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.47.0"
+  },
+  "dependencies": {
+    "react-native-electrode-bridge": "1.5.x"
+  },
+  "ern": {
+    "message": {
+      "moduleName": "TestApi",
+      "namespace": "com.TestApi.ern",
+      "apiSchemaPath": "schema.json",
+      "artifactId": "react-native-TestApi-api"
+    },
+    "moduleType": "ern-api"
+  },
+  "keywords": [
+    "ern-api"
+  ]
+}

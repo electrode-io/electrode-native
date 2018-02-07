@@ -1,0 +1,22 @@
+{
+  "name": "ern-movie-api-impl",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "react-native-ernmovie-api": "0.0.10"
+  },
+  "ern": {
+    "moduleType": "ern-js-api-impl",
+    "containerGen": {
+      "hasConfig": false,
+      "moduleName": "ReactNativeErnmovieApiImplJs",
+      "apiNames": [
+        "Movies"
+      ]
+    }
+  },
+  "keywords": [
+    "ern-js-api-impl"
+  ]
+}
