@@ -37,7 +37,11 @@ export async function findNativeDependencies (dir: string) : Promise<NativeDepen
     const r = /^win/.test(process.platform)
       ? /^(@.*?\\.*?)\\|^(.*?)\\/.exec(nativeDepsDirectory)
       : /^(@.*?\/.*?)\/|^(.*?)\//.exec(nativeDepsDirectory)
-    nativeDependenciesNames.add(r[1] || r[2])
+    if (r[1]) {
+      nativeDependenciesNames.add(/^win/.test(process.platform) ? r[1].replace('\\', '/') : r[1])
+    } else {
+      nativeDependenciesNames.add(r[2])
+    }
   }
 
   const result : NativeDependencies = {
