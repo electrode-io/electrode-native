@@ -2,7 +2,8 @@
 
 const FILE_PATH_WITH_PREFIX_RE = /^file:(.+)/
 const FILE_PATH_WITHOUT_PREFIX_RE = /^(\/.+)/
-const FILE_PATH_RE = new RegExp(`${FILE_PATH_WITH_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_RE.source}`)
+const FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE = /^[a-zA-Z]:\\[\\\S|*\S]?.*$/
+const FILE_PATH_RE = new RegExp(`${FILE_PATH_WITH_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.source}`)
 const GIT_SSH_PATH_RE = new RegExp(/^git\+ssh:\/\/.+\.git$/)
 const GIT_SSH_PATH_VERSION_RE = new RegExp(/^(git\+ssh:\/\/.+\.git)#(.+)$/)
 const GIT_HTTPS_PATH_RE = new RegExp(/^https:\/\/.+\.git$/)
