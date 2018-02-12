@@ -29,6 +29,20 @@ import path from 'path'
 import fs from 'fs'
 import shell from 'shelljs'
 import * as constants from './constants'
+import semver from 'semver'
+
+export function containsVersionMismatch (
+  versions: Array<string>,
+  mismatchLevel: 'major' | 'minor' | 'patch') : boolean {
+  const minVersion = semver.minSatisfying(versions, '*')
+  const maxVersion = semver.maxSatisfying(versions, '*')
+  const majorMismatch = semver.major(maxVersion) !== semver.major(minVersion)
+  const minorMismatch = semver.minor(maxVersion) !== semver.minor(minVersion)
+  const patchMismatch = semver.patch(maxVersion) !== semver.patch(minVersion)
+  return majorMismatch ||
+        (minorMismatch && (mismatchLevel === 'minor' || mismatchLevel === 'patch')) ||
+        (patchMismatch && mismatchLevel === 'patch')
+}
 
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
