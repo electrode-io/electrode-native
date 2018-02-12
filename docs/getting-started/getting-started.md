@@ -345,6 +345,7 @@ import android.widget.Toast;
 
 import com.ernnavigation.ern.api.NavigateData;
 import com.ernnavigation.ern.api.NavigationApi;
+import com.walmartlabs.electrode.reactnative.bridge.BridgeFailureMessage;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
@@ -377,12 +378,18 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, activityClass);
                             ElectrodeMiniAppActivity.addInitialProps(intent, bundle);
                             MainActivity.this.startActivity(intent);
+                            responseListener.onSuccess(true);
                         } else {
                             Toast.makeText(MainActivity.this, "No activity found to navigate for: " + navigateData.getminiAppName(), Toast.LENGTH_LONG).show();
+                            responseListener.onFailure(BridgeFailureMessage.create("ERROR_NAVIGATION_FAILED", "Something went wrong.", new Exception("Data received is not enough to navigate. Unable to find activity for MiniApp: " + navigateData.getminiAppName())));
                         }
                     } else {
                         Log.e("NAVIGATION", "Not enough data provided to navigate");
+                        responseListener.onFailure(BridgeFailureMessage.create("ERROR_NAVIGATION_FAILED", "Something went wrong.", new Exception("Data received is null. No MiniApp name provided to navigate.")));
                     }
+                } else {
+                    Log.w(TAG, "Activity is finishing or null, cannot get a valid activity context to navigate");
+                    responseListener.onFailure(BridgeFailureMessage.create("ERROR_NAVIGATION_FAILED", "Something went wrong.", new Exception("No valid activity context found. Current activity is either null or finishing.")));
                 }
             }
         });
