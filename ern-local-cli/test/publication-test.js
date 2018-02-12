@@ -8,8 +8,13 @@ import {
   expect
 } from 'chai'
 import {
+  PackagePath
+} from 'ern-core'
+import {
   getCodePushSdk,
-  getCodePushAccessKey
+  getCodePushAccessKey,
+  containsVersionMismatch,
+  resolvePluginsVersions
 } from '../src/lib/publication'
 
 const ernRcPath = path.join(os.homedir(), '.ern', '.ernrc')
@@ -152,6 +157,40 @@ describe('lib/publication.js', () => {
 
     it('should return false if mismatch level is set to patch and there is no patch version mismatch', () => {
       expect(containsVersionMismatch(versionsWithoutMismatch, 'patch')).false
+    })
+  })
+
+  // ==========================================================
+  // resolvePluginsVersions
+  // ==========================================================
+  describe('resolvePluginsVersions', () => {
+    it('should work as expected [1]', () => {
+      const plugins = [
+        PackagePath.fromString('react-native@0.42.0'),
+        PackagePath.fromString('react-native@0.42.1'),
+        PackagePath.fromString('react-native-code-push@1.15.0') ]
+  
+      const result = resolvePluginsVersions(plugins, 'patch')
+
+      expect(result.resolved).to.be.an('array').of.length(1)
+      expect(result.resolved[0].toString()).eql('react-native-code-push@1.15.0')
+      expect(result.pluginsWithMismatchingVersions).to.be.an('array').of.length(1)
+      expect(result.pluginsWithMismatchingVersions[0]).eql('react-native')
+    })
+
+    it('should work as expected [2]', () => {
+      const plugins = [
+        PackagePath.fromString('react-native-electrode-bridge@1.5.9'),
+        PackagePath.fromString('react-native-electrode-bridge@1.6.0'),
+        PackagePath.fromString('react-native-test-api@1.0.0'),
+        PackagePath.fromString('react-native-test-api@1.0.4') ]
+
+      const result = resolvePluginsVersions(plugins, 'major')
+
+      expect(result.resolved).to.be.an('array').of.length(2)
+      expect(result.resolved[0].toString()).eql('react-native-electrode-bridge@1.6.0')
+      expect(result.resolved[1].toString()).eql('react-native-test-api@1.0.4')
+      expect(result.pluginsWithMismatchingVersions).to.be.an('array').of.length(0)
     })
   })
 })
