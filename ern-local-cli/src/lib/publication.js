@@ -54,7 +54,7 @@ export async function runLocalContainerGen (
 miniappPackagesPaths: Array<PackagePath>,
 jsApiImplsPackagePaths: Array<PackagePath>,
 platform: 'android' | 'ios', {
-  outDir = `${Platform.rootDirectory}/containergen`,
+  outDir = path.join(Platform.rootDirectory, 'containergen'),
   extraNativeDependencies = [],
   ignoreRnpmAssets = false
 }: {
