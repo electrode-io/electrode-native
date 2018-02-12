@@ -96,7 +96,8 @@ platform: 'android' | 'ios', {
   ignoreRnpmAssets?: boolean
 } = {}) {
   try {
-    const nativeDependenciesStrings: Set <string> = new Set()
+    let apisAndNativeApisImpls: Array<PackagePath> = []
+    let nativeModulesInManifest: Array<PackagePath> = []
     let miniapps: Array<MiniApp> = []
 
     for (const miniappPackagePath of miniappPackagesPaths) {
@@ -112,23 +113,30 @@ platform: 'android' | 'ios', {
       miniapps.push(currentMiniApp)
 
       const nativeDependencies = await currentMiniApp.getNativeDependencies()
-      const supportedNativeDependencies = [
+
+      const miniAppApisAndNativeApisImpls = [
         ...nativeDependencies.apis,
-        ...nativeDependencies.nativeApisImpl,
-        ...nativeDependencies.thirdPartyInManifest ]
-      supportedNativeDependencies.forEach(d => nativeDependenciesStrings.add(d.toString()))
+        ...nativeDependencies.nativeApisImpl ]
+      apisAndNativeApisImpls = apisAndNativeApisImpls.concat(miniAppApisAndNativeApisImpls)
+
+      const miniAppNativeModulesInManifest = nativeDependencies.thirdPartyInManifest
+      nativeModulesInManifest = nativeModulesInManifest.concat(miniAppNativeModulesInManifest)
     }
 
-    let nativeDependencies = _.map(Array.from(nativeDependenciesStrings), d => PackagePath.fromString(d))
-    nativeDependencies = nativeDependencies.concat(extraNativeDependencies)
+    // Move react-native-electrode-bridge from nativeModulesInManifest array to apisAndNativeApisImpls array
+    // as when it comes to version compatibility checks, react-native-electrode-bridge should be considered
+    // in the same way as APIs and APIs implementations (it's a native module exception)
+    const bridgeDep = _.remove(apisAndNativeApisImpls, d => d.basePath === 'react-native-electrode-bridge')
+    nativeModulesInManifest = nativeModulesInManifest.concat(bridgeDep)
 
-    // Verify uniqueness of native dependencies (that all miniapps are using the same
-    // native dependencies version). This is a requirement in order to generate a proper container
-    const nativeDependenciesWithoutVersion: Array<string> = _.map(nativeDependencies, d => d.basePath)
-    const duplicateNativeDependencies =
-      _(nativeDependenciesWithoutVersion).groupBy().pickBy(x => x.length > 1).keys().value()
-    if (duplicateNativeDependencies.length > 0) {
-      throw new Error(`The following native dependencies are not using the same version: ${duplicateNativeDependencies}`)
+    const apiAndApiImplsResolvedVersions = resolvePluginsVersions(apisAndNativeApisImpls, 'major')
+    const nativeModulesResolvedVersions = resolvePluginsVersions(nativeModulesInManifest, 'patch')
+
+    if (apiAndApiImplsResolvedVersions.pluginsWithMismatchingVersions.length > 0 ||
+        nativeModulesResolvedVersions.pluginsWithMismatchingVersions.length > 0) {
+      throw new Error(`The following plugins are not using compatible versions : 
+        ${apiAndApiImplsResolvedVersions.pluginsWithMismatchingVersions.toString()} 
+        ${nativeModulesResolvedVersions.pluginsWithMismatchingVersions.toString()}`)
     }
 
     const generator = getGeneratorForPlatform(platform)
@@ -137,7 +145,9 @@ platform: 'android' | 'ios', {
       miniApps: miniapps,
       jsApiImpls: jsApiImplsPackagePaths,
       outDir,
-      plugins: nativeDependencies,
+      plugins: [
+        ...apiAndApiImplsResolvedVersions.resolved,
+        ...nativeModulesResolvedVersions.resolved ],
       pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
       compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name,
       ignoreRnpmAssets
