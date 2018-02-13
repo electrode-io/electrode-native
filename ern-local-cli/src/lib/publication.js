@@ -147,7 +147,8 @@ platform: 'android' | 'ios', {
       outDir,
       plugins: [
         ...apiAndApiImplsResolvedVersions.resolved,
-        ...nativeModulesResolvedVersions.resolved ],
+        ...nativeModulesResolvedVersions.resolved,
+        ...extraNativeDependencies ],
       pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
       compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name,
       ignoreRnpmAssets
