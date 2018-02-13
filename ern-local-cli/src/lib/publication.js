@@ -539,14 +539,12 @@ async function getCodePushAppName (
 }
 
 export function getCodePushAccessKey () {
-  let codePushAccessKey = config.getValue('codePushAccessKey')
-  if (!codePushAccessKey) {
-    const codePushConfigFilePath = path.join(process.env.LOCALAPPDATA || process.env.HOME || '', '.code-push.config')
-    if (fs.existsSync(codePushConfigFilePath)) {
-      codePushAccessKey = JSON.parse(fs.readFileSync(codePushConfigFilePath, 'utf-8')).accessKey
-    }
+  const codePushConfigFilePath = path.join(process.env.LOCALAPPDATA || process.env.HOME || '', '.code-push.config')
+  if (fs.existsSync(codePushConfigFilePath)) {
+    return JSON.parse(fs.readFileSync(codePushConfigFilePath, 'utf-8')).accessKey
+  } else {
+    return config.getValue('codePushAccessKey')
   }
-  return codePushAccessKey
 }
 
 export function getCodePushSdk () {

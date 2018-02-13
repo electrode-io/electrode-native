@@ -18,7 +18,7 @@ import {
 } from '../src/lib/publication'
 
 const ernRcPath = path.join(os.homedir(), '.ern', '.ernrc')
-const codePushConfigPath = path.join(os.homedir(), '.code-push.config')
+const codePushConfigPath = path.join(process.env.LOCALAPPDATA || process.env.HOME || '', '.code-push.config')
 const ernRcCodePushAccessKey = '0e2509c78c4f94c25e69131a0a5e5be3b7d2927b'
 const codePushConfigAccessKey = '1e2509c78c4f94c25e69131a0a5e5be3b7d2927b'
 
@@ -37,14 +37,14 @@ describe('lib/publication.js', () => {
   // getCodePushAccessKey
   // ==========================================================
   describe('getCodePushAccessKey', () => {
-    it('should return the access key from platform config if keys are present in both config files', () => {
+    it('should return the access key from code push config if keys are present in both config files', () => {
       mockFs({
         [ernRcPath]: ernRcWithCodePushAccessKey,
         [codePushConfigPath]: codePushConfigWithAccessKey
       }, {
         createCwd: false
       })
-      expect(getCodePushAccessKey()).to.be.equal(ernRcCodePushAccessKey)
+      expect(getCodePushAccessKey()).to.be.equal(codePushConfigAccessKey)
     })
 
     it('should return the access key from code push config if key is not present in .ernrc', () => {
@@ -84,7 +84,7 @@ describe('lib/publication.js', () => {
     it('should not throw if an access key exists', () => {
       mockFs({
         [ernRcPath]: ernRcWithCodePushAccessKey,
-        [codePushConfigPath]: codePushConfigWithoutAccessKey
+        [codePushConfigPath]: codePushConfigWithAccessKey
       }, {
         createCwd: false
       })
