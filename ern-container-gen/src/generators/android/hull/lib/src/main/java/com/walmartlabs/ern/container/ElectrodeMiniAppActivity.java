@@ -29,8 +29,11 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     /**
      * Method that helps to pass bundle to react native side.
      *
+     *
+     * @deprecated use
      * @param intent Intent that will start the activity
      * @param bundle Bundle that you would like to pass to react native.
+     *
      */
     public static void addInitialProps(@NonNull Intent intent, @NonNull Bundle bundle) {
         intent.putExtra(INITIAL_PROPS, bundle);
@@ -43,9 +46,9 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mReactActivityDelegate = new ElectrodeReactActivityDelegate();
+        mReactActivityDelegate = new ElectrodeReactActivityDelegate(this);
         mReactActivityDelegate.setBackKeyHandler(this);
-        View reactRootView = mReactActivityDelegate.onCreate(this, getMiniAppName(), getIntent().getBundleExtra(INITIAL_PROPS));
+        View reactRootView = mReactActivityDelegate.createMiniAppRootView(getMiniAppName(), getIntent().getBundleExtra(INITIAL_PROPS));
 
         if (reactRootView != null) {
             setContentView(reactRootView);
@@ -55,19 +58,19 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     @Override
     protected void onPause() {
         super.onPause();
-        mReactActivityDelegate.onPause(this);
+        mReactActivityDelegate.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mReactActivityDelegate.onResume(this);
+        mReactActivityDelegate.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mReactActivityDelegate.onDestroy(this);
+        mReactActivityDelegate.onDestroy();
     }
 
     @Override
@@ -87,7 +90,7 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mReactActivityDelegate.onActivityResult(this, requestCode, resultCode, data);
+        mReactActivityDelegate.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -95,7 +98,7 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
         final boolean isMenuKey = (keyCode == KeyEvent.KEYCODE_MENU);
 
         if (isMenuKey
-                && ElectrodeReactContainer.getInstance().isReactNativeDeveloperSupport()
+                && ElectrodeReactContainer.isReactNativeDeveloperSupport()
                 && mReactActivityDelegate.canShowDeveloperMenu()) {
             mReactActivityDelegate.showDeveloperMenu();
             return true;
