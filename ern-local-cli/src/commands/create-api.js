@@ -107,7 +107,7 @@ exports.handler = async function ({
       reactNativeVersion: reactNative.version,
       name: apiName,
       npmScope: scope,
-      modelSchemaPath: schemaPath,
+      apiSchemaPath: schemaPath,
       apiVersion: apiVersion,
       apiAuthor: apiAuthor,
       packageName: packageName
