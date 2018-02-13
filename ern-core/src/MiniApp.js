@@ -448,7 +448,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
         // This will only apply for API/API-IMPLS and bridge due to backward compatibility (if no major version update)
         // This does not apply to other third party native dependencies (anyway in that case the code should not react this
         // point as compatibility checks would have failed unless force flag is used)
-        if (remoteDependency && remoteDependency.version && (remoteDependency.version < localNativeDependency.version)) {
+        if (remoteDependency && remoteDependency.version && semver.lt(remoteDependency.version, localNativeDependency.version)) {
           await cauldronInstance.updateContainerNativeDependencyVersion(napDescriptor, localNativeDependencyString, localNativeDependency.version)
         } else if (!remoteDependency) {
           await cauldronInstance.addContainerNativeDependency(napDescriptor, localNativeDependency)
