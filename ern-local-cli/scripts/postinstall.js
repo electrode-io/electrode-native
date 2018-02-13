@@ -26,6 +26,10 @@ const ERN_MANIFEST_REPO_PATH = path.join(ERN_PATH, 'ern-master-manifest')
 // Remote git path to ern manifest repo
 const ERN_MANIFEST_DEFAULT_GIT_REPO = 'https://github.com/electrode-io/electrode-native-manifest.git'
 
+if (!isGitInstalled()) {
+  throw new Error('git is not installed on this machine ! Please install git and retry.')
+}
+
 // Clone ern manifest repository if not done already
 if (!fs.existsSync(ERN_MANIFEST_REPO_PATH)) {
   console.log('Cloning electrode-native master manifest')
@@ -43,6 +47,15 @@ if (!fs.existsSync(ERN_RC_GLOBAL_FILE_PATH)) {
   // TODO : Handle case where .ernrc global file already exists if needed
   // (meaning that at least one version of ern platform) is already installled.
   // We should probably just patch the .ernrc file with any new configuration data introduced in this version
+}
+
+function isGitInstalled () {
+  try {
+    execSync('git --version > /dev/null 2>&1')
+    return true
+  } catch (e) {
+    return false
+  }
 }
 
 console.log(`=== Hurray ! Platform installed @ v${PLATFORM_VERSION}`)
