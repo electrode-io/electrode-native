@@ -49,13 +49,9 @@ public class MiniAppsConfig {
         }
     }
 
-    /**
-     * @deprecated Use {@link MiniAppsConfig.MiniApps} enum instead
-     */
-    @Deprecated
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{=<% %>=}}{{<%={{ }}=%>
         {{#miniApps}}
-        put(MiniApps.{{normalizedName}}.getName(), MiniApps.{{normalizedName}}.getClass());
+        put(MiniApps.{{normalizedName}}.getName(), MiniApps.{{normalizedName}}.getActivityClass());
         {{/miniApps}}
     {{=<% %>=}}}};<%={{ }}=%>
 }
