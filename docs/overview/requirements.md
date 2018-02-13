@@ -23,6 +23,12 @@ Node.js v6.x includes npm@3 by default, but if you are using Node.js v4, be sure
 $ npm install -g npm@3
 ```
 
+### [Git](https://git-scm.com/downloads)
+
+You need to have the `git` command line client installed on your workstation and declared in your PATH (i.e if you type `git` from a command prompt / terminal, it should not fail with "command not found" error).  
+
+Electrode Native is relying on the `git` client for [Cauldron](../platform-parts/cauldron.md) access as well as [Manifest](../platform-parts/manifest.md) access, and also to publish your Containers to git if you want to use such a publisher.
+
 ### [Android Studio](https://developer.android.com/studio/index.html)
 
 You need to install [Android Studio](https://developer.android.com/studio/index.html) if you want your MiniApp to target the Android platform or if you need to generate containers targeting Android mobile applications.
