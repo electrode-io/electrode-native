@@ -56,9 +56,11 @@ export type ContainerPublisherConfig = {
 
 export type ContainerMavenPublisherConfig = {
   // Maven Artifact ID to use for publication
-  artifactId: string;
+  // Defaults to 'local-container'
+  artifactId?: string;
   // Maven Group ID to use for publication
-  groupId: string;
+  // Defaults to 'com.walmartlabs.ern'
+  groupId?: string;
   // Maven user name
   // If not specified, by convention, it will use mavenUser from gradle.properties
   mavenUser?: string;

@@ -11,6 +11,7 @@ import {
 import fs from 'fs'
 import path from 'path'
 import tmp from 'tmp'
+import os from 'os'
 const {
   execp
 } = childProcess
@@ -22,7 +23,15 @@ export default class MavenPublisher implements ContainerPublisher {
 
   async publish (config: ContainerPublisherConfig): any {
     if (!config.extra) {
-      throw new Error('Missing extra config for Maven Publisher')
+      config.extra = {}
+    }
+
+    if (!config.extra.artifactId) {
+      config.extra.artifactId = 'local-container'
+    }
+
+    if (!config.extra.groupId) {
+      config.extra.groupId = 'com.walmartlabs.ern'
     }
 
     const artifactId = config.extra.artifactId
@@ -35,7 +44,7 @@ export default class MavenPublisher implements ContainerPublisher {
       MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
     }
 
-    config.url = config.url.replace('file:~', `file:${process.env.HOME || ''}`)
+    config.url = config.url.replace('file:~', `file:${os.homedir() || ''}`)
 
     fs.appendFileSync(path.join(workingDir, 'lib', 'build.gradle'),
   `

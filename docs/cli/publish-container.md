@@ -21,7 +21,7 @@
 
 * Specify the Container version to use for publication.
 * The version must be in the format: `x.y.z` where x, y and z are integers. For example `version=1.2.30`.
-* This option is required, there is no default.
+* Defaults to `1.0.0`.
 
 `--publisher/-p <publisher>`
 
@@ -32,13 +32,18 @@
 
 * The publication url to publish the Container to.
 * Can either be the url of a Git repository or a Maven repository (local or remote), depending on the publisher being used.
-* This option is required, there is no default.
+* This option is required for the `git` publisher. For `maven` publisher, it will default to the standard Maven local path (`~/.m2/repository`) if not specified.
 
 `--config/-c <config>`
 
 * Optional publisher configuration provided as JSON.
 * As of this version of Electrode Native, Maven publisher is the only one to expose some extra configuration. 
 * Sample : `--config '{"artifactId":"test-container","groupId":"com.walmartlabs.ern","mavenUser":"user","mavenPasword":"password"}'`
+* Configuration can be omitted or partially provided. The default configuration values used for the Maven publisher are :
+  - artifactId: `local-container`
+  - groupId: `com.walmartlabs.ern`
+  - mavenUser : `undefined`
+  - mavePassword: `undefined`
 
 #### Related commands
 
