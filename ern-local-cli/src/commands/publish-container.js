@@ -9,6 +9,8 @@ import {
 } from 'ern-container-gen'
 import utils from '../lib/utils'
 import fs from 'fs'
+import path from 'path'
+import os from 'os'
 
 exports.command = 'publish-container <containerPath>'
 exports.desc = 'Publish a local Container'
@@ -19,7 +21,7 @@ exports.builder = function (yargs: any) {
       type: 'string',
       alias: 'v',
       describe: 'Container version to use for publication',
-      demandOption: true
+      default: '1.0.0'
     })
     .option('publisher', {
       type: 'string',
@@ -31,8 +33,7 @@ exports.builder = function (yargs: any) {
     .option('url', {
       type: 'string',
       alias: 'u',
-      describe: 'The publication url',
-      demandOption: true
+      describe: 'The publication url'
     })
     .option('config', {
       type: 'string',
@@ -56,10 +57,16 @@ exports.handler = async function ({
   config?: string
 } = {}) {
   try {
-    console.log('here')
     await utils.logErrorAndExitIfNotSatisfied({
       isValidContainerVersion: { containerVersion: version }
     })
+
+    // url validation
+    if (!url && publisher === 'git') {
+      throw new Error('url is required when using a git publisher')
+    } else if (!url && publisher === 'maven') {
+      url = `file:${path.join(os.homedir() || '', '.m2', 'repository')}`
+    }
 
     // Container path validation
     if (!fs.existsSync(containerPath)) {
