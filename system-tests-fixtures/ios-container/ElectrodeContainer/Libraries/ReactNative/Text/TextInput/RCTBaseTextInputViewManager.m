@@ -7,31 +7,20 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import "RCTTextFieldManager.h"
+#import "RCTBaseTextInputViewManager.h"
 
 #import <React/RCTBridge.h>
+#import <React/RCTConvert.h>
 #import <React/RCTFont.h>
 #import <React/RCTShadowView+Layout.h>
 #import <React/RCTShadowView.h>
 
 #import "RCTConvert+Text.h"
-#import "RCTShadowTextField.h"
-#import "RCTTextField.h"
-#import "RCTUITextField.h"
+#import "RCTBaseTextInputView.h"
 
-@implementation RCTTextFieldManager
+@implementation RCTBaseTextInputViewManager
 
 RCT_EXPORT_MODULE()
-
-- (RCTShadowView *)shadowView
-{
-  return [RCTShadowTextField new];
-}
-
-- (UIView *)view
-{
-  return [[RCTTextField alloc] initWithBridge:self.bridge];
-}
 
 #pragma mark - Unified <TextInput> properties
 
@@ -61,12 +50,6 @@ RCT_EXPORT_VIEW_PROPERTY(selectTextOnFocus, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(selection, RCTTextSelection)
 RCT_EXPORT_VIEW_PROPERTY(text, NSString)
 
-#pragma mark - Singleline <TextInput> (aka TextField) specific properties
-
-RCT_REMAP_VIEW_PROPERTY(caretHidden, backedTextInputView.caretHidden, BOOL)
-RCT_REMAP_VIEW_PROPERTY(clearButtonMode, backedTextInputView.clearButtonMode, UITextFieldViewMode)
-RCT_EXPORT_VIEW_PROPERTY(onSelectionChange, RCTDirectEventBlock)
-
 RCT_EXPORT_VIEW_PROPERTY(mostRecentEventCount, NSInteger)
 
 - (RCTViewManagerUIBlock)uiBlockToAmendWithShadowView:(RCTShadowView *)shadowView
@@ -74,8 +57,8 @@ RCT_EXPORT_VIEW_PROPERTY(mostRecentEventCount, NSInteger)
   NSNumber *reactTag = shadowView.reactTag;
   UIEdgeInsets borderAsInsets = shadowView.borderAsInsets;
   UIEdgeInsets paddingAsInsets = shadowView.paddingAsInsets;
-  return ^(RCTUIManager *uiManager, NSDictionary<NSNumber *, RCTTextInput *> *viewRegistry) {
-    RCTTextInput *view = viewRegistry[reactTag];
+  return ^(RCTUIManager *uiManager, NSDictionary<NSNumber *, RCTBaseTextInputView *> *viewRegistry) {
+    RCTBaseTextInputView *view = viewRegistry[reactTag];
     view.reactBorderInsets = borderAsInsets;
     view.reactPaddingInsets = paddingAsInsets;
   };

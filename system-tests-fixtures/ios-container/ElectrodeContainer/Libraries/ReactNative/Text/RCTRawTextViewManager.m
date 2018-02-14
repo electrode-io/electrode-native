@@ -7,13 +7,19 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <UIKit/UIKit.h>
+#import "RCTRawTextViewManager.h"
 
-@interface RCTText : UIView
+#import "RCTRawTextShadowView.h"
 
-@property (nonatomic, assign) UIEdgeInsets contentInset;
-@property (nonatomic, strong) NSTextStorage *textStorage;
-@property (nonatomic, assign) CGRect textFrame;
-@property (nonatomic, assign) BOOL selectable;
+@implementation RCTRawTextViewManager
+
+RCT_EXPORT_MODULE(RCTRawText)
+
+- (RCTShadowView *)shadowView
+{
+  return [RCTRawTextShadowView new];
+}
+
+RCT_EXPORT_SHADOW_PROPERTY(text, NSString)
 
 @end

@@ -7,10 +7,13 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTShadowView.h>
+#import "RCTMultilineTextInputShadowView.h"
 
-@interface RCTShadowRawText : RCTShadowView
+@implementation RCTMultilineTextInputShadowView
 
-@property (nonatomic, copy) NSString *text;
+- (BOOL)isYogaLeafNode
+{
+  return YES;
+}
 
 @end

@@ -19,11 +19,37 @@ package com.walmartlabs.ern.container.miniapps;
 // DO NOT EDIT MANUALLY
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+import android.support.annotation.NonNull;
+import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
 import java.util.HashMap;
 
 public class MiniAppsConfig {
+     public enum MiniApps {
+        MovieListMiniApp("MovieListMiniApp", MovieListMiniAppActivity.class),
+        MovieDetailsMiniApp("MovieDetailsMiniApp", MovieDetailsMiniAppActivity.class),
+        ;
+
+        private final String miniAppName;
+        private final Class<? extends ElectrodeMiniAppActivity> activityClass;
+
+        MiniApps(String miniAppName, Class<? extends ElectrodeMiniAppActivity> miniAppActivityClass) {
+            this.miniAppName = miniAppName;
+            this.activityClass = miniAppActivityClass;
+        }
+
+        @NonNull
+        public Class<? extends ElectrodeMiniAppActivity> getActivityClass() {
+            return activityClass;
+        }
+
+        @NonNull
+        public String getName() {
+            return miniAppName;
+        }
+    }
+
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{
-        put("MovieListMiniApp", MovieListMiniAppActivity.class);
-        put("MovieDetailsMiniApp", MovieDetailsMiniAppActivity.class);
+        put(MiniApps.MovieListMiniApp.getName(), MiniApps.MovieListMiniApp.getActivityClass());
+        put(MiniApps.MovieDetailsMiniApp.getName(), MiniApps.MovieDetailsMiniApp.getActivityClass());
     }};
 }

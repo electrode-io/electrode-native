@@ -7,13 +7,8 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import "RCTShadowTextView.h"
+#import "RCTBaseTextInputViewManager.h"
 
-@implementation RCTShadowTextView
-
-- (BOOL)isYogaLeafNode
-{
-  return YES;
-}
+@interface RCTSinglelineTextInputViewManager : RCTBaseTextInputViewManager
 
 @end

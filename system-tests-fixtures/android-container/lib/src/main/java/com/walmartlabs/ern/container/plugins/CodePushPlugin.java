@@ -7,11 +7,13 @@ import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
 import com.microsoft.codepush.react.CodePush;
 
-public class CodePushPlugin {
+public class CodePushPlugin implements ReactPlugin<CodePushPlugin.Config> {
 
     public ReactPackage hook(@NonNull Application application ,
-                     @NonNull ReactInstanceManagerBuilder reactInstanceManagerBuilder,
                      @NonNull Config config) {
+       if (config == null) {
+           throw new IllegalArgumentException("Config cannot be null");
+       }
         CodePush codePush = null;
         if (null != config.serverUrl) {
             codePush = new CodePush(
@@ -26,14 +28,10 @@ public class CodePushPlugin {
                           config.isDebugModeEnabled);
         }
 
-        reactInstanceManagerBuilder
-                .setJSBundleFile(CodePush.getJSBundleFile())
-                .addPackage(codePush);
-
         return codePush;
     }
 
-    public static class Config {
+    public static class Config implements ReactPluginConfig {
         private final String deploymentKey;
         private String serverUrl;
         private boolean isDebugModeEnabled;
