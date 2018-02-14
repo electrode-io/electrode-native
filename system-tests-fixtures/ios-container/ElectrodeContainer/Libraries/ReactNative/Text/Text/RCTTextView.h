@@ -7,8 +7,13 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTShadowView.h>
+#import <UIKit/UIKit.h>
 
-@interface RCTShadowTextView : RCTShadowView
+@interface RCTTextView : UIView
+
+@property (nonatomic, assign) UIEdgeInsets contentInset;
+@property (nonatomic, strong) NSTextStorage *textStorage;
+@property (nonatomic, assign) CGRect textFrame;
+@property (nonatomic, assign) BOOL selectable;
 
 @end

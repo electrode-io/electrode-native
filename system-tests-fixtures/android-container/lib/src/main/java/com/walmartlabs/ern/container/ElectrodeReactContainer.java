@@ -22,109 +22,63 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.ArrayList;
-
-import okhttp3.OkHttpClient;
-
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.SafeActivityStarter;
 import com.facebook.react.modules.network.OkHttpClientProvider;
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.ReactInstanceManagerBuilder;
-import com.facebook.react.ReactPackage;
-import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import okhttp3.OkHttpClient;
+
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
 
-    private static ElectrodeReactContainer sInstance;
+    @Deprecated
+    private static final ElectrodeReactContainer sInstance = new ElectrodeReactContainer();
     private static boolean sIsReactNativeReady;
+    private static List<ReactPackage> sReactPackages = new ArrayList<>();
+    private static ElectrodeReactNativeHost sElectrodeReactNativeHost;
+
+    private static boolean isReactNativeDeveloperSupport;
+
     private static List<ReactNativeReadyListener> reactNativeReadyListeners = new ArrayList<>();
 
-    private final boolean isReactNativeDeveloperSupport;
-    private final ReactInstanceManager mReactInstanceManager;
+    private ElectrodeReactContainer() {
 
-    private ElectrodeReactContainer(Application application
-            , Config reactContainerConfig
-            , CodePushPlugin.Config codePushPluginConfig
-    ) {
-        // ReactNative general config
-        this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
-
-        // Replace OkHttpClient with client provided instance, if any
-        if (reactContainerConfig.okHttpClient != null) {
-          OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
-        }
-
-        // Ask for overlay permission for the application if
-        // developper mode is enabled and android version is Marshmallow
-        // or above
-        if (reactContainerConfig.isReactNativeDeveloperSupport &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                !Settings.canDrawOverlays(application)) {
-          Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-          serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          application.startActivity(serviceIntent);
-        }
-
-        final ReactInstanceManagerBuilder reactInstanceManagerBuilder = ReactInstanceManager.builder()
-                .setApplication(application)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index.android")
-                .addPackage(new MainReactPackage())
-                .setUseDeveloperSupport(reactContainerConfig.isReactNativeDeveloperSupport)
-                .setInitialLifecycleState(LifecycleState.BEFORE_CREATE);
-
-        final List<ReactPackage> reactPackages = new ArrayList<>();
-        reactPackages.add(new CodePushPlugin().hook(application, reactInstanceManagerBuilder, codePushPluginConfig));
-        reactPackages.add(new BridgePlugin().hook(application, reactInstanceManagerBuilder));
-
-        mReactInstanceManager = reactInstanceManagerBuilder.build();
-        mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-        @Override
-        public void onReactContextInitialized(ReactContext context) {
-            sIsReactNativeReady = true;
-            notifyReactNativeReadyListeners();
-            for (ReactPackage instance : reactPackages) {
-                try {
-                    Method onReactNativeInitialized =
-                    instance.getClass().getMethod("onReactNativeInitialized");
-                    onReactNativeInitialized.invoke(instance);
-                }
-                catch (NoSuchMethodException e) {}
-                catch (IllegalAccessException e) {
-                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
-                }
-                catch (InvocationTargetException e) {
-                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
-                }
-            }
-        }
-        });
     }
 
-    @SuppressWarnings("WeakerAccess")
     public synchronized static ReactInstanceManager getReactInstanceManager() {
         throwIfNotInitialized();
-        return sInstance.mReactInstanceManager;
+        return sElectrodeReactNativeHost.getReactInstanceManager();
     }
 
+    /**
+     * @deprecated This method is deprecated. This class is converted to hold only util methods that allows you to initialize Electrode container and ReactNativeHost.
+     * Start referring to all the static util methods that are exposed.
+     */
+    @SuppressWarnings("unused")
+    @Deprecated
     public static ElectrodeReactContainer getInstance() {
         throwIfNotInitialized();
         return sInstance;
     }
 
+
     @SuppressWarnings("unused")
     public static void startActivitySafely(Intent intent) {
         throwIfNotInitialized();
-        if (null != sInstance.mReactInstanceManager && null != sInstance.mReactInstanceManager.getCurrentReactContext()) {
-            new SafeActivityStarter(sInstance.mReactInstanceManager.getCurrentReactContext(), intent).startActivity();
+        if (null != getReactInstanceManager() && null != getReactInstanceManager().getCurrentReactContext()) {
+            new SafeActivityStarter(getReactInstanceManager().getCurrentReactContext(), intent).startActivity();
         } else {
             Log.w(TAG, "startActivitySafely: Unable to start activity, react context or instance manager is null");
         }
@@ -134,8 +88,8 @@ public class ElectrodeReactContainer {
     @Nullable
     public static Activity getCurrentActivity() {
         throwIfNotInitialized();
-        if (null != sInstance.mReactInstanceManager && null != sInstance.mReactInstanceManager.getCurrentReactContext()) {
-            return sInstance.mReactInstanceManager.getCurrentReactContext().getCurrentActivity();
+        if (null != getReactInstanceManager() && null != getReactInstanceManager().getCurrentReactContext()) {
+            return getReactInstanceManager().getCurrentReactContext().getCurrentActivity();
         }
         return null;
     }
@@ -143,38 +97,72 @@ public class ElectrodeReactContainer {
     @SuppressWarnings("unused")
     public static ReactContext getCurrentReactContext() {
         throwIfNotInitialized();
-        if (null != sInstance.mReactInstanceManager) {
-            return sInstance.mReactInstanceManager.getCurrentReactContext();
+        if (null != getReactInstanceManager()) {
+            return getReactInstanceManager().getCurrentReactContext();
         }
         return null;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public synchronized static ElectrodeReactContainer initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
+    public synchronized static void initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
             , @NonNull final CodePushPlugin.Config codePushPluginConfig
      ) {
-        if (null == sInstance) {
-             sInstance = new ElectrodeReactContainer(application, reactContainerConfig
-                    ,codePushPluginConfig
-                                        );
+        if (sElectrodeReactNativeHost == null) {
+            sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
+
+            // ReactNative general config
+
+            isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
+
+            // Replace OkHttpClient with client provided instance, if any
+            if (reactContainerConfig.okHttpClient != null) {
+                OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
+            }
+
+            askForOverlayPermissionIfDebug(application);
+
+            sReactPackages.add(new MainReactPackage());
+            sReactPackages.add(new CodePushPlugin().hook(application, codePushPluginConfig));
+            sReactPackages.add(new BridgePlugin().hook(application, null));
+            sReactPackages.removeAll(Collections.singleton((ReactPackage)null));
+            Log.e(TAG, "initialize: createReactInstanceManager PACKAGES:  " + sReactPackages.toString());
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
+        } else {
+            Log.i(TAG, "Ignoring duplicate initialize call, electrode container is already initialized or is being initialized");
         }
-
-        return sInstance;
     }
 
+    private static void askForOverlayPermissionIfDebug(Application application) {
+        // Ask for overlay permission for the application if
+        // developper mode is enabled and android version is Marshmallow
+        // or above
+        if (isReactNativeDeveloperSupport &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                !Settings.canDrawOverlays(application)) {
+            Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+            serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            application.startActivity(serviceIntent);
+        }
+    }
+
+    public static ReactNativeHost getReactNativeHost() {
+        return sElectrodeReactNativeHost;
+    }
+
+
     @SuppressWarnings("WeakerAccess")
-    public boolean isReactNativeDeveloperSupport() {
-        return this.isReactNativeDeveloperSupport;
+    public static boolean isReactNativeDeveloperSupport() {
+        return isReactNativeDeveloperSupport;
     }
 
     /**
      * Indicates if the react native context is initialized successfully.
+     *
      * @return true | false
      */
     @SuppressWarnings("unused")
@@ -183,7 +171,7 @@ public class ElectrodeReactContainer {
     }
 
     public static boolean hasReactInstance() {
-        return sInstance != null && sInstance.mReactInstanceManager != null;
+        return sElectrodeReactNativeHost != null && getReactInstanceManager() != null;
     }
 
     public static class Config {
@@ -238,9 +226,69 @@ public class ElectrodeReactContainer {
     }
 
     private static void throwIfNotInitialized() {
-        if (sInstance == null) {
-            throw new IllegalStateException("ElectrodeReactContainer not initialized. ElectrodeReactContainer.initialize() method needs to be called before you can get a ReactInstanceManager instance");
+        if (sElectrodeReactNativeHost == null) {
+            throw new IllegalStateException("ElectrodeReactContainer not initialized. ElectrodeReactContainer.initialize() method needs to be called before you can get a ReactNativeHost instance");
         }
     }
+
+    private static class ElectrodeReactNativeHost extends ReactNativeHost {
+
+        private ElectrodeReactNativeHost(Application application) {
+            super(application);
+        }
+
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return isReactNativeDeveloperSupport;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+            return sReactPackages;
+        }
+
+        @javax.annotation.Nullable
+        @Override
+        protected String getBundleAssetName() {
+            return "index.android.bundle";
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+            return "index.android";
+        }
+
+        @Override
+        protected ReactInstanceManager createReactInstanceManager() {
+            Log.i(TAG, "Creating react native instance manager");
+            Log.e(TAG, "createReactInstanceManager PACKAGES:  " + sReactPackages.toString());
+            ReactInstanceManager reactInstanceManager = super.createReactInstanceManager();
+            reactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+                @Override
+                public void onReactContextInitialized(ReactContext context) {
+                    sIsReactNativeReady = true;
+                    notifyReactNativeReadyListeners();
+                    for (ReactPackage instance : getPackages()) {
+                        try {
+                            Method onReactNativeInitialized =
+                                    instance.getClass().getMethod("onReactNativeInitialized");
+                            onReactNativeInitialized.invoke(instance);
+                        } catch (NoSuchMethodException e) {
+                            //Expected since not all react packages would have onReactNativeInitialized() method.
+                        } catch (IllegalAccessException e) {
+                            Log.e(TAG, "IllegalAccessException: Container Initialization failed: " + e.getMessage());
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            Log.e(TAG, "InvocationTargetException: Container Initialization failed: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            Log.i(TAG, "Instance manager created");
+            return reactInstanceManager;
+        }
+    }
+
 
 }

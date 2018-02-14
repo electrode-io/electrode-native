@@ -23,9 +23,9 @@ const androidNativeApplicationDescriptor = `${nativeApplicationName}:android:${n
 const iosNativeApplicationDescriptor = `${nativeApplicationName}:ios:${nativeApplicationVersion}`
 const iosNativeApplicationDescriptorNewVersion = `${nativeApplicationName}:ios:${nativeApplicationVersionNew}`
 const movieListMiniAppPackageName = 'movielistminiapp'
-const movieListMiniAppVersion = '0.0.10'
+const movieListMiniAppVersion = '0.0.11'
 const movieDetailsMiniAppPackageName = 'moviedetailsminiapp'
-const movieDetailsMiniAppVersion = '0.0.9'
+const movieDetailsMiniAppVersion = '0.0.10'
 const movieApi = 'react-native-ernmovie-api'
 const movieApiImpl = 'ErnMovieApiImplNative'
 const movieApiImplPkgName = 'ern-movie-api-impl'
@@ -35,12 +35,19 @@ const pathToSystemTestsFixtures = path.join(processCwd, 'system-tests-fixtures')
 const pathToAndroidContainerFixture = path.join(pathToSystemTestsFixtures, 'android-container')
 const pathToIosContainerFixture = path.join(pathToSystemTestsFixtures, 'ios-container')
 const pathToDefaultAPI = path.join(pathToSystemTestsFixtures, 'api')
-const pathToDefaultSchema = path.join(pathToDefaultAPI, 'TestApi', 'schema.json')
 const pathToComplexAPI = path.join(pathToSystemTestsFixtures, 'api')
 const pathToComplexSchema = path.join(pathToComplexAPI, 'ComplexApi', 'schema.json')
 const pathToApiImplNative = path.join(pathToSystemTestsFixtures, 'api-impl-native')
 const pathToApiImplJS = path.join(pathToSystemTestsFixtures, 'api-impl-js')
-const filesToIgnore = ['ElectrodeApiImpl.xcodeproj', 'project.pbxproj', 'package.json', '.DS_Store', 'index.android.bundle', 'index.android.bundle.meta']
+const filesToIgnore = [
+  'ElectrodeApiImpl.xcodeproj',
+  'project.pbxproj',
+  'package.json',
+  '.DS_Store',
+  'index.android.bundle',
+  'index.android.bundle.meta',
+  'yarn.lock'
+]
 const reactNativeMovieApiImplJsPackageName = 'react-native-ernmovie-api-impl-js'
 const reactNativeMovieApiImplJsVersion = '0.0.2'
 
@@ -225,11 +232,6 @@ process.chdir(workingDirectoryPath)
 
 // api
 run(`ern create-api ${invalidElectrodeNativeModuleName} --skipNpmCheck`, { expectedExitCode: 1 })
-run(`ern create-api ${apiName} -p ${apiPkgName} --skipNpmCheck`)
-const apiPath = path.join(process.cwd(), apiName)
-console.log(info(`Entering ${apiPath}`))
-process.chdir(apiPath)
-run('ern regen-api --skipVersion')
 
 // api-impl
 run(`ern create-api-impl ${packageNotInNpm} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
@@ -247,8 +249,12 @@ run('ern platform plugins list')
 run('ern platform plugins search react-native')
 
 process.chdir(workingDirectoryPath)
-run(`ern create-api ${apiName} -p ${apiPkgName} --skipNpmCheck --schemaPath ${pathToDefaultSchema}`)
+run(`ern create-api ${apiName} -p ${apiPkgName} --skipNpmCheck`)
 assert(areSameDirectoriesContent(pathToDefaultAPI, workingDirectoryPath, filesToIgnore), 'Generated API differ from reference fixture !')
+const apiPath = path.join(process.cwd(), apiName)
+console.log(info(`Entering ${apiPath}`))
+process.chdir(apiPath)
+run('ern regen-api --skipVersion')
 
 process.chdir(workingDirectoryPath)
 run(`ern create-api ${complexApi} -p ${apiPkgName}  --schemaPath ${pathToComplexSchema} --skipNpmCheck`)
