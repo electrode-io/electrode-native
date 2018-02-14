@@ -1,6 +1,6 @@
 {
   "name": "ern-cauldron-api",
-  "version": "1000.0.0",
+  "version": "0.13.0",
   "description": "Electrode Native Cauldron Client",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -50,14 +50,14 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "ern-core": "0.13.0",
     "joi": "^10.1.0",
     "lodash": "^4.17.4",
-    "tmp": "^0.0.33",
     "semver": "^5.5.0",
-    "ern-core": "1000.0.0"
+    "tmp": "^0.0.33"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.13.0"
   },
   "engines": {
     "node": ">=4.5"
