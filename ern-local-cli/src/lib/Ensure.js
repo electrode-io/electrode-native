@@ -200,7 +200,7 @@ export default class Ensure {
     const basePathMiniAppsStrings = _.map(miniAppsStrings, m => PackagePath.fromString(m).basePath)
     await this.miniAppIsInNativeApplicationVersionContainer(basePathMiniAppsStrings, napDescriptor)
     for (const miniAppString of miniAppsStrings) {
-      const miniAppFromCauldron = await cauldron.getContainerMiniApp(napDescriptor, miniAppString)
+      const miniAppFromCauldron = await cauldron.getContainerMiniApp(napDescriptor, PackagePath.fromString(miniAppString).basePath)
       const cauldronMiniApp = PackagePath.fromString(miniAppFromCauldron)
       const givenMiniApp = PackagePath.fromString(miniAppString)
       if (cauldronMiniApp.version === givenMiniApp.version) {
