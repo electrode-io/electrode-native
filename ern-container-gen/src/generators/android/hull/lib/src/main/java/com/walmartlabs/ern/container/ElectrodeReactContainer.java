@@ -147,7 +147,6 @@ public class ElectrodeReactContainer {
             {{/configurable}}
             {{/plugins}}
             sReactPackages.removeAll(Collections.singleton((ReactPackage)null));
-            Log.e(TAG, "initialize: createReactInstanceManager PACKAGES:  " + sReactPackages.toString());
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
@@ -285,8 +284,6 @@ public class ElectrodeReactContainer {
 
         @Override
         protected ReactInstanceManager createReactInstanceManager() {
-            Log.i(TAG, "Creating react native instance manager");
-            Log.e(TAG, "createReactInstanceManager PACKAGES:  " + sReactPackages.toString());
             ReactInstanceManager reactInstanceManager = super.createReactInstanceManager();
             reactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                 @Override
@@ -310,7 +307,6 @@ public class ElectrodeReactContainer {
                     }
                 }
             });
-            Log.i(TAG, "Instance manager created");
             return reactInstanceManager;
         }
     }
