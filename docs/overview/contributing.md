@@ -54,7 +54,7 @@ The only difference with a regular user will be that you'll have access to versi
 ## Electrode Native development remarks
 
 Electrode Native workspace is composed of multiple independent packages (all prefixed by `ern-`) that are managed by [lerna].  
-When using the development vesion, after pulling the latest from our `master`, you might sometime experience some errors such as `Cannot find module ...` when running `ern` again. This is because some new package dependencies might have been added to one or more `ern-` modules and needs to be installed. The same apply if you add a new package dependency to the `package.json` of one of the `ern-` module project, you'll need to install it through [lerna].
+When using the development version, after pulling the latest from our `master`, you might sometime experience some errors such as `Cannot find module ...` when running `ern` again. This is because some new package dependencies might have been added to one or more `ern-` modules and needs to be installed. The same apply if you add a new package dependency to the `package.json` of one of the `ern-` module project, you'll need to install it through [lerna].
 
 The way to do this is to just run `npm run rebuild` command from the root directory of your Electrode Native clone.
 
