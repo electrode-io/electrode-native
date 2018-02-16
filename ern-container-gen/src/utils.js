@@ -370,6 +370,11 @@ export async function generatePluginsMustacheViews (
       pluginView.configurable = pluginHook.configurable
     }
 
+    pluginView.customRepos = []
+    if (pluginConfig.android && pluginConfig.android.repositories) {
+      pluginView.customRepos.push(...pluginConfig.android.repositories)
+    }
+
     if (containerHeader) {
       pluginView.containerHeader = containerHeader
     }
