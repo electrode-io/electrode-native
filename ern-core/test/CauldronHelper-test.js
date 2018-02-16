@@ -22,7 +22,6 @@ import {
 import jp from 'jsonpath'
 import path from 'path'
 import mockFs from 'mock-fs'
-import { nativeApplication } from '../../ern-cauldron-api/dist/schemas';
 
 const codePushEntryFixtureOne =  {
   metadata: {
