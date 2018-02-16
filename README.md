@@ -58,6 +58,7 @@ Please read our [CONTRIBUTING guide](docs/overview/contributing.md) for more det
 - Check out our [Announcement Blog Post].
 - Have a look at the [TechCrunch article].
 - See [What is Electrode Native] for more details on Electrode Native.
+- Read [Electrode Native Case Study] to learn about key facts.
 
 ## License
 
@@ -114,3 +115,5 @@ Thank you.
 [run-android]: https://electrode.gitbooks.io/electrode-native/cli/run-android.html
 
 [platform use]: https://electrode.gitbooks.io/electrode-native/cli/platform/use.html
+
+[Electrode Native Case Study]: https://www.walmartlabs.com/case-studies/electrode-native

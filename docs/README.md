@@ -23,6 +23,8 @@ $ npm install -g electrode-native && ern
 
 - See [What is Electrode Native] for more details on Electrode Native.
 
+- Read [Electrode Native Case Study] to learn about key facts.
+
 ## Contributing
 
 Please see the [CONTRIBUTING guide]
@@ -53,3 +55,6 @@ Licensed under the [Apache License, Version 2.0].
 [gitbook]: https://www.gitbook.com/
 
 [what is electrode native]: ./overview/what-is-ern.md
+
+[Electrode Native Case Study]: https://www.walmartlabs.com/case-studies/electrode-native
+
