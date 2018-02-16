@@ -9,6 +9,7 @@ import {
   execp,
   spawnp
 } from './childProcess'
+import os from 'os'
 
 // ==============================================================================
 // Misc utilities
@@ -253,7 +254,7 @@ export function launchAndroidActivityDetached (
 // Utility method to list all available android avd images (emulator images)
 export async function getAndroidAvds () {
   const stdout = await execp(`${androidEmulatorPath()} -list-avds`)
-  return stdout.toString().trim().split('\n')
+  return stdout.toString().trim().split(os.EOL)
 }
 
 // Utility method to query what device instances are connected to the adb server
@@ -265,7 +266,7 @@ export async function getDevices (): Promise<Array<string>> {
     * daemon not running. starting it now at tcp:5037 *
     * daemon started successfully *
   */
-  let stdOutArr = stdout.toString().trim().split('\n')
+  let stdOutArr = stdout.toString().trim().split(os.EOL)
   // remove stdout 'List of devices attached' (position 0)
   // and remove stdout related to daemon
   return stdOutArr.filter((entry, i) => i > 0 && !entry.includes('* daemon'))
