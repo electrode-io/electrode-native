@@ -19,7 +19,12 @@ allprojects {
         jcenter()
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' }        
+       {{#plugins}}
+       {{#customRepos}}
+       {{{.}}}
+       {{/customRepos}}
+       {{/plugins}}
     }
 
     tasks.withType(JavaCompile) {
