@@ -2,7 +2,10 @@ const shell = require('shelljs')
 const chalk = require('chalk')
 const tmp = require('tmp')
 const path = require('path')
+const fs = require('fs')
+require('colors')
 const dircompare = require('dir-compare')
+const jsdiff = require('diff')
 const workingDirectoryPath = tmp.dirSync({ unsafeCleanup: true }).name
 const info = chalk.bold.blue
 
@@ -46,7 +49,11 @@ const filesToIgnore = [
   '.DS_Store',
   'index.android.bundle',
   'index.android.bundle.meta',
-  'yarn.lock'
+  'yarn.lock',
+  'README.md',
+  'WalmartItemApi.spec.js',
+  'SysteTestEventApi.spec.js',
+  'SystemTestsApi.spec.js'
 ]
 const reactNativeMovieApiImplJsPackageName = 'react-native-ernmovie-api-impl-js'
 const reactNativeMovieApiImplJsVersion = '0.0.2'
@@ -126,6 +133,14 @@ function areSameDirectoriesContent (pathA, pathB, filesToIgnoreContentDiff = [])
       if (!filesToIgnoreContentDiff.includes(diff.name1)) {
         console.log('A difference in content was found !')
         console.log(JSON.stringify(diff))
+        let diffLine = jsdiff.diffLines(
+          fs.readFileSync(path.join(diff.path1, diff.name1)).toString(),
+          fs.readFileSync(path.join(diff.path2, diff.name2)).toString())
+        diffLine.forEach((part) => {
+          let color = part.added ? 'green'
+            : part.removed ? 'red' : 'grey'
+          process.stderr.write(part.value[color])
+        })
         result = false
       }
     }
