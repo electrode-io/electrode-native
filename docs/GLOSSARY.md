@@ -20,12 +20,20 @@ The Electrode Native module name applies to modules created with Electrode Nativ
 
 A package path is a string representing the path (local or remote) to a Node Package. In the context of Electrode Native, a few package path formats are supported (as illustrated by the following samples) :
 
+Package in git repository on network:
+
 - `git+ssh://git@github.com:electrode-io/MovieListMiniApp.git`
 - `git+ssh://git@github.com:electrode-io/MovieListMiniApp.git#0.0.9`
 - `https://github.com/electrode-io/MovieListMiniApp.git`
 - `https://github.com/electrode-io/MovieListMiniApp.git#0.0.9`
+
+Package on local harddisk:
+
 - `file:/Users/blemair/Code/MovieListMiniApp`
 - `/Users/blemair/Code/MovieListMiniApp`
+
+Package on npm repository on network:
+
 - `movielistminiapp`
 - `movielistminiapp@0.0.9`
 - `@myscope/movielistminiapp@0.0.9`
