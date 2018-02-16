@@ -7,7 +7,7 @@ A complete native application descriptor is a string with format `[nativeAppName
 
 ## partial native application descriptor
 
-A partial native application descriptor is a string with format `[nativeAppName]`, `plaform` and `version` can remain optional. 
+A partial native application descriptor is a string with format `[nativeAppName]`, `platform` and `version` can remain optional. 
 - `nativeAppName` : alphanumeric native application name , cannot contain character ':'
 
 ## Electrode Native module name
@@ -18,7 +18,7 @@ The Electrode Native module name applies to modules created with Electrode Nativ
 
 ## package path
 
-A package path is a string representing the path (local or remote) to a Node Package. In the context of Electrode Native, a few package path formats are supported (as ilustrated by the following samples) :
+A package path is a string representing the path (local or remote) to a Node Package. In the context of Electrode Native, a few package path formats are supported (as illustrated by the following samples) :
 
 - `git+ssh://git@github.com:electrode-io/MovieListMiniApp.git`
 - `git+ssh://git@github.com:electrode-io/MovieListMiniApp.git#0.0.9`
