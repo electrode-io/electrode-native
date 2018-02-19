@@ -37,7 +37,7 @@ The Electrode Native manifest repository contains:
 
 Open source MiniApp developers should always use the master manifest. This is the default operating mode of the platform.
 
-To align your native dependencies to a new Electrode Native version, use the `ern upgrade` command. When you align the native dependencies to a new Electrode Native version, your MiniApp will be able to be added to any mobile application using any Electrode Native version.
+To align your native dependencies to a new Electrode Native version, use the `ern upgrade-miniapp` command. When you align the native dependencies to a new Electrode Native version, your MiniApp will be able to be added to any mobile application using any Electrode Native version.
 
 You might also consider using the same version of React Native for your mobile application, for a while, before upgrading to a new version of React Native. Indeed, upgrading (the version of react-native or associated native modules) too frequently might harm your release process because you cannot use CodePush to release updates to versions of your mobile application that have already been released with a different version of React Native.
 
