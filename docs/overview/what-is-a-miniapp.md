@@ -17,7 +17,7 @@ While your actual coding experience won't change, the CLI commands you'll intera
 Some of the commands from the React Native CLI have been replaced with a few Electrode Native CLI commands.  
 
 For example, instead of running the `react-native run-ios` command to launch your React Native MiniApp inside an iOS simulator or real device, you will use the `ern run-ios` command.  
-Instead of using the `react-native start` command, you'll use the `ern start` command. Most of these commands will actually invoke the associated React Native commands, but the Electrode Native CLI commands perform additional platform-specific logic. Also you won't have to use the React Native `link` command due to the fact that supported native dependencies will be automatically linked.  
+Instead of using the `react-native start` command, you'll use the `ern start` command. Most of these commands will actually invoke the associated React Native commands, but the Electrode Native CLI commands perform additional platform-specific logic. Also you won't have to use the React Native `react-native link` command due to the fact that supported native dependencies will be automatically linked.  
 
 ### As a mobile developer what does a MiniApp mean to me?
 
