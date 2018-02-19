@@ -31,7 +31,7 @@ Electrode Native also queries the manifest repository when you use the `ern crea
 
 Thus any MiniApp developed using a specific Electrode Native version will be properly aligned to the same native dependencies versions.  
 
-If you are a MiniApp developer intending to release open source MiniApps, then you'll want to make sure that you use the `ern add` command instead of the `yarn add` command or the `npm install` command--and that you upgrade the native dependency versions of your MiniApp to any new release of the platform. Use the `ern upgrade` command to easily upgrade the native dependency versions to a new platform release.
+If you are a MiniApp developer intending to release open source MiniApps, then you'll want to make sure that you use the `ern add` command instead of the `yarn add` or `npm install` command--and that you upgrade the native dependency versions of your MiniApp to any new release of the platform. Use the `ern upgrade-miniapp` command to easily upgrade the native dependency versions to a new platform release.
 
 Electrode Native allows you to override the master open source manifest with your own private manifest. This is helpful if you work with private, non-open sourced native dependencies or if you want to stick to a specific React Native version for a while. Indeed, with each new release of the platform, the master manifest will be aligned with the latest available version of React Native, which might not be what you want.
 
