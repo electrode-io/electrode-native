@@ -45,7 +45,7 @@ There are a few considerations and recommendations that you want to read about b
 
   However, the Electrode Native platform also does not support "all" third-party native modules. Each native module needs to be listed in the platform manifest and configurations must be modified so that the native modules can be properly injected into any container.  
 
-  Considering that the Electrode Native master manifest is a public GitHub repository, and is not bound to a specific platform release lifecycle--anyone can contribute to it in order to add new native module support for their own--as well as any other developer's use!
+  Considering that the [Electrode Native master manifest](https://github.com/electrode-io/electrode-native-manifest) is a public GitHub repository, and is not bound to a specific platform release lifecycle--anyone can contribute to it in order to add new native module support for their own--as well as any other developer's use!
 
 **CodePush OTA updates**
 
