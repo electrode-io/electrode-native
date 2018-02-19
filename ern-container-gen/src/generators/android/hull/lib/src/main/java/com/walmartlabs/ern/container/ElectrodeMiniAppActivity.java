@@ -15,16 +15,22 @@ package com.walmartlabs.ern.container;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReactActivityDelegate.BackKeyHandler {
+import com.facebook.react.modules.core.PermissionAwareActivity;
+import com.facebook.react.modules.core.PermissionListener;
+
+public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReactActivityDelegate.BackKeyHandler, PermissionAwareActivity {
 
     private static final String INITIAL_PROPS = "props";
     private ElectrodeReactActivityDelegate mReactActivityDelegate;
+    private PermissionListener mPermissionListener;
 
     /**
      * Method that helps to pass bundle to react native side.
@@ -110,5 +116,26 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     @Override
     public void onBackKey() {
         finish();
+    }
+
+    @Override
+    public int checkPermission(String permission, int pid, int uid) {
+        return PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public  int checkSelfPermission(String permission) {
+        return PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+        mPermissionListener = listener;
+        ActivityCompat.requestPermissions(this, permissions, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mPermissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
