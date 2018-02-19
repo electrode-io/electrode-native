@@ -15,7 +15,7 @@ Electrode Native is primarily a Node.js application therefore, Node.js 4.5 or la
 
 **Note** You also need to install NPM or Yarn in order to install the Electrode Native platform. When you install Node.js, NPM is automatically installed.
 
-### NPM (version 3.0 or later) or Yarn
+### [NPM](https://www.npmjs.com) (version 3.0 or later) or Yarn
 
 Node.js v6.x includes npm@3 by default, but if you are using Node.js v4, be sure to install npm@3 using the following command:
 
@@ -33,18 +33,18 @@ Electrode Native is relying on the `git` client for [Cauldron](../platform-parts
 
 You need to install [Android Studio](https://developer.android.com/studio/index.html) if you want your MiniApp to target the Android platform or if you need to generate containers targeting Android mobile applications.
 
-After you install Android Studio, set the `ANDROID_SDK env` variable to point to the location of the Android SDK--if it has not been set already. An example of the SDK path is shown below.  
+After you install Android Studio, set the `ANDROID_SDK_ROOT env` variable to point to the location of the Android SDK--if it has not been set already. An example of the SDK path is shown below.  
 
 ```bash
-$ export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
+$ export ANDROID_SDK_ROOT=/Users/[YOUR_USER_NAME]/Library/Android/sdk
 ```
 
 ### [Xcode](https://developer.apple.com/xcode/)
 
 You need to install [Xcode](https://developer.apple.com/xcode/) if you want your MiniApp to target the iOS platform  or if you need to generate containers targeting iOS mobile applications.
 
-- **XCode 8.3.2** or later version is required to ensure compatibility with Electrode Native.
-- **XCode 9.0** or later version is required to use `run-ios` command.
+- **Xcode 8.3.2** or later version is required to ensure compatibility with Electrode Native.
+- **Xcode 9.0** or later version is required to use `run-ios` command.
 
 ### Additional optional requirements
 
