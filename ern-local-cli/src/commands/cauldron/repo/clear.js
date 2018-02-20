@@ -22,7 +22,7 @@ exports.handler = function ({
 }) {
   try {
     ernConfig.setValue('cauldronRepoInUse', undefined)
-    shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
+    shell.rm('-rf', Platform.cauldronDirectory)
     log.info(`Done.`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
