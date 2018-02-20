@@ -29,7 +29,7 @@ exports.handler = function ({
       throw new Error(`No Cauldron repository exists with ${alias} alias`)
     }
     ernConfig.setValue('cauldronRepoInUse', alias)
-    shell.rm('-rf', `${Platform.rootDirectory}/cauldron`)
+    shell.rm('-rf', Platform.cauldronDirectory)
     log.info(`${alias} Cauldron is now in use`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
