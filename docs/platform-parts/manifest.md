@@ -139,7 +139,7 @@ The plugin configuration file is located within these sub-directories.
 #### Configuration example  
 
 The following example shows the configuration files for the `react-native-code-push` plugin.  
-The directory is view-able [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/tree/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B)
+The directory is view-able [here](https://github.com/electrode-io/electrode-native-manifest/tree/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B)
 
 
 ```
@@ -338,7 +338,7 @@ The following example describes an Android source file.
 `{PLUGIN_NAME}Plugin.java`
 
 In this example, the CodePush plugin file is named `CodePushPlugin.java`.   
-You can view the configuration in the current master manifest file located  [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/CodePushPlugin.java)
+You can view the configuration in the current master manifest file located  [here](https://github.com/electrode-io/electrode-native-manifest/blob/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B/CodePushPlugin.java)
 
 The core of the source file is the `hook` method. The container invokes the `hook` method during initialization. The last parameter is the actual `Config` instance of the plugin as provided by the user when calling the `ElectrodeReactContainer` `initialize` method.
 
@@ -358,7 +358,7 @@ The following example describes an iOS source file.
 `Electrode{PLUGIN_NAME}Config.h` and `Electrode{PLUGIN_NAME}Config.m`
 
 This example includes two `ObjectiveC` files for for CodePush plugin: `ElectrodeCodePushConfig.h` and `ElectrodeCodePushConfig.m`.  
-You can view the configuration in these files in the current master manifest file located  [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.h) and [here](https://gecgithub01.walmart.com/Electrode-Mobile-Platform/ern-master-manifest/blob/master/plugins/ern_v0.3.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.m).
+You can view the configuration in these files in the current master manifest file located  [here](https://github.com/electrode-io/electrode-native-manifest/blob/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.h) and [here](https://github.com/electrode-io/electrode-native-manifest/blob/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B/ElectrodeCodePushConfig.m).
 
 A configuration class should use the `ElectrodePluginConfig` protocol.  
 
