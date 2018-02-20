@@ -1088,7 +1088,7 @@ colors@1.0.3:
 
 colors@^1.1.2:
   version "1.1.2"
-  resolved "http://npme.walmart.com/colors/-/colors-1.1.2.tgz#168a4701756b6a7f51a12ce0c97bfa28c084ed63"
+  resolved "http://registry.yarnpkg.com/colors/-/colors-1.1.2.tgz#168a4701756b6a7f51a12ce0c97bfa28c084ed63"
 
 columnify@^1.5.4, columnify@~1.5.4:
   version "1.5.4"
@@ -1531,7 +1531,7 @@ diff@3.3.1, diff@^3.1.0:
 
 diff@^3.4.0:
   version "3.4.0"
-  resolved "http://npme.walmart.com/diff/-/diff-3.4.0.tgz#b1d85507daf3964828de54b37d0d73ba67dda56c"
+  resolved "http://registry.yarnpkg.com/diff/-/diff-3.4.0.tgz#b1d85507daf3964828de54b37d0d73ba67dda56c"
 
 dir-compare@^1.4.0:
   version "1.4.0"
