@@ -27,7 +27,10 @@
 `--copyFromVersion/-c <version>`
 
 * Copy the data of a native application version stored in the Cauldron.  
-* You can use a specific version, for example `1.2.3`, or you can use `latest` if you want to copy the data from the latest version of the native application.  
+* Possible values for this option are :
+  - A specific version, for example `1.2.3`
+  - `latest` if you want to copy the data from the latest version of the native application
+  - `none` if you don't want any copy from action  
 * The `--copyFromVersion/-c <version>` option also copies the list of native dependencies and MiniApps as well as the container version to the new native application version.  
 * If you use the `--copyFromVersion/-c <version>` option, you do not need to add all MiniApps again after creating a new native application version in the Cauldron.  
 * This option is commonly used.  

@@ -69,6 +69,8 @@ exports.handler = async function ({
       if (copyFromVersion) {
         if (copyFromVersion === 'latest') {
           await spin(`Copying data over from latest version ${latestVersionName}`, copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron))
+        } else if (copyFromVersion === 'none') {
+          log.info(`Skipping copy over from previous version as 'none' was specified`)
         } else {
           const version = _.find(previousApps.versions, v => v.name === copyFromVersion)
           if (!version) {
