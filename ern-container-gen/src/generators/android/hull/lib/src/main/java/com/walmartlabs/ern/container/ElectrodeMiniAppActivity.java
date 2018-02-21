@@ -15,10 +15,10 @@ package com.walmartlabs.ern.container;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +30,6 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
 
     private static final String INITIAL_PROPS = "props";
     private ElectrodeReactActivityDelegate mReactActivityDelegate;
-    private PermissionListener mPermissionListener;
 
     /**
      * Method that helps to pass bundle to react native side.
@@ -118,24 +117,15 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
         finish();
     }
 
-    @Override
-    public int checkPermission(String permission, int pid, int uid) {
-        return PackageManager.PERMISSION_GRANTED;
-    }
-
-    @Override
-    public  int checkSelfPermission(String permission) {
-        return PackageManager.PERMISSION_GRANTED;
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
-        mPermissionListener = listener;
-        ActivityCompat.requestPermissions(this, permissions, requestCode);
+        mReactActivityDelegate.requestPermissions(permissions, requestCode, listener);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        mPermissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mReactActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
