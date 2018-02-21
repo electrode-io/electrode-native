@@ -15,7 +15,7 @@
     "istanbul": "istanbul",
     "standard": "standard",
     "flow": "flow",
-    "precommit": "standard && flow",
+    "precommit": "node yarn-lock && standard && flow",
     "postmerge": "node auto-rebuild.js"
   },
   "dependencies": {
