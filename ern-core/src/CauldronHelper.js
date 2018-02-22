@@ -113,15 +113,14 @@ export default class CauldronHelper {
     await this.cauldron.addPublisher(new NativeApplicationDescriptor(nativeAppName, platform), publisherType, url)
   }
 
-  async getNativeAppsForPlatform (platform: string): Promise<Array<string>> {
+  async getNativeAppsForPlatform (platformName: string): Promise<Array<string>> {
     const availableNativeApps = await this.getAllNativeApps()
     const nativeAppsForGivenPlatform = []
     if (availableNativeApps) {
       for (const nativeApp of availableNativeApps) {
         for (const platform of nativeApp.platforms) {
-          if (platform.name === platform) {
+          if (platform.name === platformName) {
             nativeAppsForGivenPlatform.push(nativeApp.name)
-            break
           }
         }
       }
