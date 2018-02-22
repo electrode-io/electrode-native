@@ -320,9 +320,13 @@ export async function getCauldronInstance ({
     const cauldronRepositories = config.getValue('cauldronRepositories')
     const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
     if (cauldronRepoInUse) {
+      const cauldronRepoUrl = cauldronRepositories[cauldronRepoInUse]
+      const cauldronRepoBranchReResult = /#(.+)$/.exec(cauldronRepoUrl)
+      const cauldronRepoUrlWithoutBranch = cauldronRepoUrl.replace(/#(.+)$/, '')
       const cauldronCli = new CauldronCli(
-        cauldronRepositories[cauldronRepoInUse],
-        path.join(Platform.rootDirectory, 'cauldron'))
+        cauldronRepoUrlWithoutBranch,
+        path.join(Platform.rootDirectory, 'cauldron'),
+        cauldronRepoBranchReResult ? cauldronRepoBranchReResult[1] : 'master')
       currentCauldronHelperInstance = new CauldronHelper(cauldronCli)
       const schemaVersionUsedByCauldron = await currentCauldronHelperInstance.getCauldronSchemaVersion()
       const schemaVersionOfCurrentCauldronApi = getCurrentSchemaVersion()
