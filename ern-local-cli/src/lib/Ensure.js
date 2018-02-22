@@ -15,7 +15,7 @@ export default class Ensure {
     name: string,
     extraErrorMessage: string = '') {
     if (!coreUtils.isValidElectrodeNativeModuleName(name)) {
-      const errorMessage = `${name} is not a valid Electrode Native module name\n${extraErrorMessage}`
+      const errorMessage = `${name} is not a valid Electrode Native module name\nCheck GLOSSARY section of doc for "Electrode Native module name" naming rules\n${extraErrorMessage}`
       throw new Error(errorMessage)
     }
   }
