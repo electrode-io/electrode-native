@@ -9,7 +9,7 @@ Communication through the Electrode Native bridge is based on message exchanges 
 - Request  
 A Request message is used to request data from a receiver or to request an action to be performed by a receiver. A Request message always results in an associated response message that can contain either the requested data or indicate the result of an action. A Request message can optionally contain a payload. For any given Request message type, there can be only one associated receiver. The receiver handles the request and issues a response message. From a developer perspective, a Request message can be thought as being a method call.
 
-- Response
+- Response  
 A Response message is the result of a single Request message. A Response message can optionally contain a payload. From a developer perspective, a Response message can be thought as the return value of a method. The value can be of a specific type or not (void).
 
 - Event  
@@ -34,6 +34,6 @@ Payloads for Requests, Responses, or Events can be primitive types, but the Elec
 
 ### Leveraging the Electrode Native bridge using APIs
 
-Even though the Electrode Native bridge is a standalone native module that can be used in your React Native projects (even without Electrode Native), if you are using Electrode Native, you do not directly interact with the Electrode Native bridge in your MiniApps or in your mobile applications. Instead, you'll mostly use Electrode Native APIs that are interacting with the bridge on their own. The Electrode Native APIs are generated from a Swagger schema--so they are predefined. Check out our Electrode Native API documentation.
+Even though the Electrode Native bridge is a standalone native module that can be used in your React Native projects (even without Electrode Native), if you are using Electrode Native, you do not directly interact with the Electrode Native bridge in your MiniApps or in your mobile applications. Instead, you'll mostly use Electrode Native APIs that are interacting with the bridge on their own. The Electrode Native APIs are generated from a Swagger schema--so they are predefined. Check out our [Electrode Native API documentation](https://electrode.gitbooks.io/electrode-native/platform-parts/apis.html).
 
 For more information about the Electrode Native bridge, check out the [react-native-electrode-bridge repository](https://github.com/electrode-io/react-native-electrode-bridge).
