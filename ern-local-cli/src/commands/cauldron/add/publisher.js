@@ -48,7 +48,7 @@ exports.handler = async function ({
     } else if (githubUrl) {
       url = githubUrl
     } else {
-      throw new Error('Please provide a publisher option (publisher --mavenUrl or --gitHubUrl)')
+      throw new Error('Please provide a publisher option (publisher --mavenUrl or --githubUrl)')
     }
 
     log.debug(`Adding ${mavenUrl ? 'maven' : 'gitHub'}publisher: ${url}`)
