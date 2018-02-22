@@ -77,9 +77,9 @@ export default class BaseGit implements ITransactional {
     if (!heads) {
       await this._doInitialCommit()
     } else {
-      log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} master`)
+      log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} ${this.branch}`)
       await this.git.fetchAsync(['--all'])
-      await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/master`])
+      await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/${this.branch}`])
     }
 
     this._hasBeenSynced = true
@@ -89,6 +89,7 @@ export default class BaseGit implements ITransactional {
     const fpath = path.resolve(this.path, 'README.md')
     if (!fs.existsSync(fpath)) {
       log.debug(`[BaseGit] Performing initial commit`)
+      await this.git.rawAsync(['checkout', '-b', this.branch])
       await writeFile(fpath, README, {encoding: 'utf8'})
       await this.git.addAsync('README.md')
       await this.git.commitAsync('First Commit!')
