@@ -66,11 +66,15 @@ Generated standalone API implementations have the following naming convention: `
 
 ### Related commands
 
-- `ern create-api`  
+- [ern create-api]  
 Creates (generates) a new API project based on a Swagger schema
 
-- `ern regen-api`  
+- [ern regen-api]  
 Regenerates an existing API project following Swagger schema updates
 
-- `ern create-api-impl`  
+- [ern create-api-impl]  
 Creates (generates) a new API implementation project (native or JS)
+
+[ern create-api]: ../cli/create-api.md
+[ern regen-api]: ../cli/regen-api.md
+[ern create-api-impl]: ../cli/create-api-impl.md
