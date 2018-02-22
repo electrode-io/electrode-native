@@ -15,13 +15,18 @@ package com.walmartlabs.ern.container;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReactActivityDelegate.BackKeyHandler {
+import com.facebook.react.modules.core.PermissionAwareActivity;
+import com.facebook.react.modules.core.PermissionListener;
+
+public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReactActivityDelegate.BackKeyHandler, PermissionAwareActivity {
 
     private static final String INITIAL_PROPS = "props";
     private ElectrodeReactActivityDelegate mReactActivityDelegate;
@@ -111,4 +116,16 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     public void onBackKey() {
         finish();
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+        @Override
+        public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+            mReactActivityDelegate.requestPermissions(permissions, requestCode, listener);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.M)
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+            mReactActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
 }
