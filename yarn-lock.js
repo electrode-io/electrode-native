@@ -1,6 +1,7 @@
 const fs = require('fs')
 const lockfile = require('@yarnpkg/lockfile')
 const chalk = require('chalk')
+const path = require('path')
 
 const yarnLock = 'yarn.lock'
 const yarnRegistryRe = /https:\/\/registry.yarnpkg.com/
@@ -8,12 +9,12 @@ const yarnRegistryRe = /https:\/\/registry.yarnpkg.com/
 let ernDirs = fs.readdirSync(process.cwd()).filter(x => x.startsWith('ern'))
 ernDirs.push(yarnLock) // Root yarn.lock
 
-ernDirs.forEach((current) => {
-  try {
-    let yarnLockPath = current === yarnLock
-      ? yarnLock
-      : `${current}/${yarnLock}`
+ernDirs.forEach(current => {
+  let yarnLockPath = current === yarnLock
+    ? yarnLock
+    : path.join(current, yarnLock)
 
+  try {
     let yarnLockContent = fs.readFileSync(yarnLockPath, 'utf8')
     let yarnLockParsed = lockfile.parse(yarnLockContent)
 
@@ -49,7 +50,7 @@ ernDirs.forEach((current) => {
        http://npme.walmart.com/diff/-/diff-3.4.0.tgz#b1d85507daf3964828de54b37d0d73ba67dda56c
        */
       if (incorrectRegistries.length > 0) {
-        console.log(chalk.bold.red(`${yarnLock} contains registry other than https://registry.yarnpkg.com`))
+        console.log(chalk.bold.red(`${yarnLockPath} contains registry other than https://registry.yarnpkg.com`))
         incorrectRegistries.forEach((item) => {
           console.log(chalk.bold.red(item))
         })
@@ -57,6 +58,6 @@ ernDirs.forEach((current) => {
       }
     }
   } catch (e) {
-    console.log(chalk.yellow(`Skip, no such file ${current}/${yarnLock}`))
+    console.log(chalk.yellow(`Skip yarn-lock registry check for ${current}`))
   }
 })
