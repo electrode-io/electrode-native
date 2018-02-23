@@ -61,8 +61,7 @@ exports.handler = async function ({
     }
 
     await spin(`Adding ${descriptor}`, cauldron.addDescriptor(napDescriptor))
-
-    if (previousApps) {
+    if (previousApps && previousApps.versions.length > 0) {
       const latestVersion = _.last(previousApps.versions)
       const latestVersionName = latestVersion.name
 
