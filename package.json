@@ -15,7 +15,7 @@
     "istanbul": "istanbul",
     "standard": "standard",
     "flow": "flow",
-    "precommit": "standard && flow",
+    "precommit": "node yarn-lock && standard && flow",
     "postmerge": "node auto-rebuild.js"
   },
   "dependencies": {
@@ -52,7 +52,8 @@
     "nyc": "^11.3.0",
     "rimraf": "^2.6.0",
     "sinon": "4.1.2",
-    "standard": "^10.0.2"
+    "standard": "^10.0.2",
+    "@yarnpkg/lockfile" : "^1.0.0"
   },
   "standard": {
     "globals": [
