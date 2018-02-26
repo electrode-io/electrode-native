@@ -1349,6 +1349,58 @@ describe('CauldronHelper.js', () => {
     })
   })
 
+  describe('getCodePushEntry', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(await doesThrow(
+        cauldronHelper.getCodePushEntry, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'),
+        'Production'))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(await doesThrow(
+        cauldronHelper.getCodePushEntry, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'),
+        'Production'))
+    })
+
+    it('should throw if the label does not exist', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(await doesThrow(
+        cauldronHelper.getCodePushEntry, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Production', { label: 'v0' }))
+    })
+
+    it('should return the latest CodePushed entry if label is ommited', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getCodePushEntry(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Production')
+      expect(result).not.undefined
+      expect(result.metadata.label).eql('v17')
+    })
+
+    it('should return the CodePushed entry matching label', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getCodePushEntry(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Production', { label: 'v16' })
+        expect(result).not.undefined
+        expect(result.metadata.label).eql('v16')
+    })
+  })
+
   describe('getCodePushMiniApps', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
@@ -1380,13 +1432,32 @@ describe('CauldronHelper.js', () => {
         'Foo'))
     })
 
-    it('should return the CodePushed MiniApps', async () => {
+    it('should return the latest CodePushed MiniApps if label is ommited', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       const result = await cauldronHelper.getCodePushMiniApps(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'Production')
       expect(result).to.be.an('array').of.length(2)
+    })
+
+    it('should return the CodePushed MiniApps matching label', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getCodePushMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Production', { label: 'v16' })
+      expect(result).to.be.an('array').of.length(3)
+    })
+
+    it('should throw if the label does not exist', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(await doesThrow(
+        cauldronHelper.getCodePushMiniApps, 
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'Production', { label: 'v0' }))
     })
   })
 
