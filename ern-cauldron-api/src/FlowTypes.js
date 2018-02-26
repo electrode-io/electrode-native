@@ -9,7 +9,8 @@ export type CauldronCodePushMetadata = {
   releaseMethod?: string,
   label?: string,
   releasedBy?: string,
-  rollout?: number
+  rollout?: number,
+  promotedFromLabel?: string
 }
 
 export type CauldronCodePushEntry = {
