@@ -7,7 +7,8 @@ import * as promptUtils from './promptUtils'
 import _ from 'lodash'
 import type {
   CauldronApi,
-  CauldronCodePushMetadata
+  CauldronCodePushMetadata,
+  CauldronCodePushEntry
 } from 'ern-cauldron-api'
 
 //
@@ -276,11 +277,14 @@ export default class CauldronHelper {
 
   async getCodePushJsApiImpls (
     napDescriptor: NativeApplicationDescriptor,
-    deploymentName: string) : Promise<Array<PackagePath> | void> {
-    const codePushEntries = await this.cauldron.getCodePushEntries(napDescriptor, deploymentName)
-    if (codePushEntries) {
-      const lastEntry = _.last(codePushEntries)
-      return _.map(lastEntry.jsApiImpls, e => PackagePath.fromString(e))
+    deploymentName: string, {
+      label
+    } : {
+      label?: string
+    } = {}) : Promise<Array<PackagePath> | void> {
+    const codePushEntry = await this.getCodePushEntry(napDescriptor, deploymentName, { label })
+    if (codePushEntry) {
+      return _.map(codePushEntry.jsApiImpls, e => PackagePath.fromString(e))
     }
   }
 
@@ -298,12 +302,37 @@ export default class CauldronHelper {
 
   async getCodePushMiniApps (
     napDescriptor: NativeApplicationDescriptor,
-    deploymentName: string) : Promise<Array<PackagePath> | void> {
-    const codePushEntries = await this.cauldron.getCodePushEntries(napDescriptor, deploymentName)
-    if (codePushEntries) {
-      const lastEntry = _.last(codePushEntries)
-      return _.map(lastEntry.miniapps, e => PackagePath.fromString(e))
+    deploymentName: string, {
+      label
+    } : {
+      label?: string
+    } = {}) : Promise<Array<PackagePath> | void> {
+    const codePushEntry = await this.getCodePushEntry(napDescriptor, deploymentName, { label })
+    if (codePushEntry) {
+      return _.map(codePushEntry.miniapps, e => PackagePath.fromString(e))
     }
+  }
+
+  async getCodePushEntry (
+    napDescriptor: NativeApplicationDescriptor,
+    deploymentName: string, {
+      label
+    } : {
+      label?: string
+    } = {}) : Promise<CauldronCodePushEntry | void> {
+    const codePushEntries = await this.cauldron.getCodePushEntries(napDescriptor, deploymentName)
+    let result
+    if (codePushEntries) {
+      if (label) {
+        result = _.find(codePushEntries, e => e.metadata.label === label)
+        if (!result || result.length === 0) {
+          throw new Error(`No CodePush entry matching label ${label} was found in ${napDescriptor.toString()}`)
+        }
+      } else {
+        result = _.last(codePushEntries)
+      }
+    }
+    return result
   }
 
   async getContainerMiniApps (
@@ -365,7 +394,6 @@ export default class CauldronHelper {
     const codePushEntries = await this.cauldron.getCodePushEntries(napDescriptor, deploymentName)
     let entry = _.find(codePushEntries, c => c.metadata.label === label)
     if (entry) {
-      console.log('found entry')
       if (isDisabled !== undefined) {
         entry.metadata.isDisabled = isDisabled
       }
