@@ -269,11 +269,13 @@ export async function performCodePushPromote (
   targetDeploymentName: string, {
     force = false,
     mandatory,
-    rollout
+    rollout,
+    label
   } : {
     force?: boolean,
     mandatory?: boolean,
-    rollout?: number
+    rollout?: number,
+    label?: string
   } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
@@ -288,14 +290,17 @@ export async function performCodePushPromote (
         throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
       }
 
-      const miniApps = await cauldron.getCodePushMiniApps(sourceNapDescriptor, sourceDeploymentName)
-      if (!miniApps) {
-        log.error(`No MiniApps were found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}] `)
-        log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
-        continue
+      const codePushEntrySource = await cauldron.getCodePushEntry(sourceNapDescriptor, sourceDeploymentName, { label })
+      if (!codePushEntrySource) {
+        throw new Error(`No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor.toString()} dep: ${sourceDeploymentName} label: ${label || 'latest'}`)
       }
 
-      const jsApiImpls = await cauldron.getCodePushJsApiImpls(sourceNapDescriptor, sourceDeploymentName)
+      const miniApps = _.map(codePushEntrySource.miniapps, miniapp => PackagePath.fromString(miniapp))
+      const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, jsapiimpl => PackagePath.fromString(jsapiimpl))
+      if ((!miniApps || miniApps.length === 0) && (!jsApiImpls || jsApiImpls.length === 0)) {
+        log.error(`No MiniApps or JS API Implementations were found in source release [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}] `)
+        throw new Error(`Aborting CodePush promotion`)
+      }
 
       const nativeDependenciesVersionAligned =
         await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(miniApps, targetNapDescriptor)
@@ -314,7 +319,8 @@ export async function performCodePushPromote (
         codePushSdk.promote(appName, sourceDeploymentName, targetDeploymentName, {
           appVersion,
           isMandatory: mandatory,
-          rollout
+          rollout,
+          label
         }))
 
       const sourceYarnLockId = await cauldron.getYarnLockId(sourceNapDescriptor, sourceDeploymentName)
@@ -334,7 +340,8 @@ export async function performCodePushPromote (
           releaseMethod: result.releaseMethod,
           label: result.label,
           releasedBy: result.releasedBy,
-          rollout: result.rollout
+          rollout: result.rollout,
+          promotedFromLabel: codePushEntrySource.metadata.label
         },
         miniApps,
         jsApiImpls || [])
