@@ -59,6 +59,11 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 * Bypass all compatibility checks and force OTA update through CodePush. **USE AT YOUR OWN RISK**
 * **Default** false
 
+`--label/-l`
+
+* Promote the release matching this specific label. 
+* **Default** The latest release matching sourceDescriptor/sourceDeploymentName pair will be promoted.
+
 #### Related commands
 
 [code-push release] | Issue a CodePush release 

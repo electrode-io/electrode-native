@@ -58,6 +58,11 @@ exports.builder = function (yargs: any) {
       alias: 's',
       type: 'bool'
     })
+    .option('label', {
+      alias: 'l',
+      type: 'string',
+      describe: 'Promote the release matching this label. If omitted, the latest release of sourceDescriptor/sourceDeploymentName pair will be promoted.'
+    })
     .epilog(utils.epilog(exports))
 }
 
@@ -71,7 +76,8 @@ exports.handler = async function ({
   mandatory,
   rollout,
   skipConfirmation,
-  force
+  force,
+  label
 } : {
   sourceDescriptor?: string,
   targetDescriptors?: Array<string>,
@@ -82,7 +88,8 @@ exports.handler = async function ({
   mandatory?: boolean,
   rollout?: number,
   skipConfirmation?: boolean,
-  force?: boolean
+  force?: boolean,
+  label?: string
 }) {
   try {
     let targetNapDescriptors
@@ -170,7 +177,8 @@ exports.handler = async function ({
       targetDeploymentName, {
         force,
         mandatory,
-        rollout
+        rollout,
+        label
       })
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
