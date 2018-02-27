@@ -118,14 +118,14 @@ public class ElectrodeMiniAppActivity extends Activity implements ElectrodeReact
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-        @Override
-        public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
-            mReactActivityDelegate.requestPermissions(permissions, requestCode, listener);
-        }
+    @Override
+    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+        mReactActivityDelegate.requestPermissions(permissions, requestCode, listener);
+    }
 
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        @Override
-        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-            mReactActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mReactActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
