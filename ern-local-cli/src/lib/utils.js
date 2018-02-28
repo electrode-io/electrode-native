@@ -21,7 +21,8 @@ import {
 } from 'ern-runner-gen'
 import {
   MavenPublisher,
-  GitHubPublisher
+  GitHubPublisher,
+  JcenterPublisher
 } from 'ern-container-gen'
 import {
   runLocalContainerGen,
@@ -457,6 +458,17 @@ async function performContainerStateUpdateInCauldron (
                 groupId: 'com.walmartlabs.ern',
                 mavenUser: publisherFromCauldron.mavenUser,
                 mavenPassword: publisherFromCauldron.mavenPassword
+              }
+            })
+            break
+          case 'jcenter':
+            await new JcenterPublisher().publish({
+              containerPath: outDir,
+              containerVersion: cauldronContainerVersion,
+              url: '',
+              extra: {
+                artifactId: `${napDescriptor.name}-ern-container`,
+                groupId: 'com.walmartlabs.ern'
               }
             })
             break
