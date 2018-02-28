@@ -31,6 +31,8 @@ Electrode Native offers two publishers for the Electrode Native container: Git a
 
 - The Maven publisher is used for an Android container. Upon generation of the Electrode Native container, and compilation of it, Maven publishes the resulting AAR artifact to a Maven repository of your choice--this can be your own custom Nexus for example.
 
+- The jcenter publisher is used to publsh the android container's generated binary file(.aar) to your bintray repository.
+
 - The Git publisher can be used for both the Android or iOS container. When you generate a container, the Git publisher publishes the complete generated container project to a Git repository of your choice--probably GitHub.
 
 A Container is versioned. Every time an Electrode Native container is re-generated, its version is updated. For the Maven publisher, the version is part of the AAR artifact. For the Git publisher, a Git tag is used to denote the version.
@@ -61,6 +63,9 @@ The configuration object should be stored under a specific platform level in the
                      {
                         "name":"maven",
                         "url":"http://user.nexus.repo.com:8081/nexus/content/repositories"
+                     },
+                     {
+                        "name":"jcenter"
                      }
                   ]
                }
@@ -97,6 +102,18 @@ The publishers array contains all the publishers you want to use to publish an E
 ```bash
 mavenUser=user
 mavenPassword=password
+```
+
+#### Jcenter publisher remarks
+
+- The Jcenter publisher can be used only for the Android platform.
+- You'll need to have a global `gradle.properties` file on your workstation (``~/.gradle/gradle.properties``) containing the bintry repository details
+
+```bash
+bintrayUser=user
+bintrayApiKey=apikey
+bintrayRepo=repository name
+bintrayVcsUrl=vcsUrl
 ```
 
 ### Adding an Electrode Native container to your mobile application
