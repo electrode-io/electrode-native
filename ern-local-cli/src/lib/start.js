@@ -128,6 +128,16 @@ export default async function start ({
   log.warn('Ending this process will stop monitoring linked MiniApps.')
   log.warn('You can end this process once you are done, using CTRL+C.')
   log.warn('=========================================================')
+
+  // Trick to keep the Node process alive even if no MiniApps are linked (otherwise linked
+  // MiniApps will keep process alive as they are registering event listeners)
+  // We need to keep the process alive due to the fact that we create the composite
+  // project in a temporary directory which gets destroyed upon process exit.
+  // If the process exits too soon, then the packager (running in a separate process)
+  // fails as the directory containing the files to package, does not exist anymore.
+  if (Object.keys(miniAppsLinks).length === 0) {
+    process.stdin.resume()
+  }
 }
 
 function replacePackageInCompositeWithLinkedPackage (compositeDir, linkedPackageName, sourceLinkDir) {
