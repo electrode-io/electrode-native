@@ -13,6 +13,7 @@ import {
   isDependencyApiImpl,
   getCauldronInstance
 } from './utils'
+import config from './config'
 
 export type PluginConfig = {
   android: Object,
@@ -40,10 +41,25 @@ export class Manifest {
     if (!this._overrideManifest && cauldronInstance) {
       const manifestConfig = await cauldronInstance.getManifestConfig()
       if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
-        this._overrideManifest = new GitManifest(Platform.overrideManifestDirectory, manifestConfig.override.url)
+        const manifestOverrideUrl = this.modifyOverrideManifestUrlIfNeeded(manifestConfig.override.url)
+        this._overrideManifest = new GitManifest(Platform.overrideManifestDirectory, manifestOverrideUrl)
         this._manifestOverrideType = manifestConfig.override.type || 'partial'
       }
     }
+  }
+
+  modifyOverrideManifestUrlIfNeeded (url: string) {
+    // Sample local config :
+    // "overrideManifestUrlModifier": {
+    //   "searchValue": "github.com",
+    //   "replaceValue": "new.github.com"
+    // }
+    const overrideManifestUrlModifier = config.getValue('overrideManifestUrlModifier')
+    if (overrideManifestUrlModifier) {
+      const obj = JSON.parse(overrideManifestUrlModifier)
+      url = url.replace(obj.searchValue, obj.replaceValue)
+    }
+    return url
   }
 
   async getManifestData (platformVersion: string) {
