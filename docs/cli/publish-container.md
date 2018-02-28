@@ -37,13 +37,14 @@
 `--config/-c <config>`
 
 * Optional publisher configuration provided as JSON.
-* As of this version of Electrode Native, Maven publisher is the only one to expose some extra configuration. 
-* Sample : `--config '{"artifactId":"test-container","groupId":"com.walmartlabs.ern","mavenUser":"user","mavenPasword":"password"}'`
+* As of this version of Electrode Native, Maven and jcenter publisher are the only ones to expose some extra configuration. 
+* Sample maven: `--config '{"artifactId":"test-container","groupId":"com.walmartlabs.ern","mavenUser":"user","mavenPasword":"password"}'`
+* Sample jcenter: `--config '{"artifactId":"test-container","groupId":"com.walmartlabs.ern"}'`. Other bintray related details(bintrayUser, bintrayApiKey, bintrayRepo & bintrayVcsUrl) need to be provided inside your global `~/.gradle/gradle.properties` file.
 * Configuration can be omitted or partially provided. The default configuration values used for the Maven publisher are :
   - artifactId: `local-container`
   - groupId: `com.walmartlabs.ern`
-  - mavenUser : `undefined`
-  - mavePassword: `undefined`
+  - mavenUser : `undefined` (maven only)
+  - mavePassword: `undefined` (maven only)
 
 #### Related commands
 
