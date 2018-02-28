@@ -82,11 +82,6 @@ exports.handler = async function ({
       }
     }
 
-    // Publisher validation
-    if (!['maven', 'git'].includes(publisher)) {
-      throw new Error('publisher can only be either maven or git')
-    }
-
     if (publisher === 'git') {
       await new GitHubPublisher().publish({
         containerPath,
