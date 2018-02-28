@@ -21,15 +21,15 @@ export default class JcenterPublisher implements ContainerPublisher {
   }
   async publish (config: ContainerPublisherConfig): any {
     if (!config.extra) {
-      throw new Error('Missing params(artifactId, groupId)')
+      config.extra = {}
     }
 
     if (!config.extra.artifactId) {
-      throw new Error('artifactId')
+      config.extra.artifactId = 'local-container'
     }
 
     if (!config.extra.groupId) {
-      throw new Error('groupId')
+      config.extra.groupId = 'com.walmartlabs.ern'
     }
 
     const mustacheConfig = {}

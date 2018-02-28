@@ -5,7 +5,8 @@ import {
 } from 'ern-core'
 import {
   MavenPublisher,
-  GitHubPublisher
+  GitHubPublisher,
+  JcenterPublisher
 } from 'ern-container-gen'
 import utils from '../lib/utils'
 import fs from 'fs'
@@ -27,7 +28,7 @@ exports.builder = function (yargs: any) {
       type: 'string',
       alias: 'p',
       describe: 'The publisher type',
-      choices: ['git', 'maven'],
+      choices: ['git', 'maven', 'jcenter'],
       demandOption: true
     })
     .option('url', {
@@ -82,19 +83,30 @@ exports.handler = async function ({
       }
     }
 
-    if (publisher === 'git') {
-      await new GitHubPublisher().publish({
-        containerPath,
-        containerVersion: version,
-        url
-      })
-    } else if (publisher === 'maven') {
-      await new MavenPublisher().publish({
-        containerPath,
-        containerVersion: version,
-        url,
-        extra: config ? JSON.parse(config) : undefined
-      })
+    switch (publisher) {
+      case 'git':
+        await new GitHubPublisher().publish({
+          containerPath,
+          containerVersion: version,
+          url
+        })
+        break
+      case 'maven':
+        await new MavenPublisher().publish({
+          containerPath,
+          containerVersion: version,
+          url,
+          extra: config ? JSON.parse(config) : undefined
+        })
+        break
+      case 'jcenter':
+        await new JcenterPublisher().publish({
+          containerPath,
+          containerVersion: version,
+          url: '', // jcenter does not require a url
+          extra: config ? JSON.parse(config) : undefined
+        })
+        break
     }
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
