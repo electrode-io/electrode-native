@@ -20,13 +20,21 @@
 
 **Configurable properties**
 
-- `logLevel` [trace|debug|warn|info|fatal]  
+- `logLevel` [trace|debug|info|error|fatal]  
 Set the log level to use for all commands.  
-By default, commands log level is set to `info`.
+**default** : info
 
 - `showBanner` [true|false]  
 Show the Electrode Native ASCII banner for all commands.  
-By default, the value is set to `true` (banner is shown).
+**default** : true
+
+- `tmp-dir`  
+Temporary directory to use during commands execution.  
+**default** : system default
+
+- `retain-tmp-dir` [true|false]   
+If set to `true`, the temporary directories created during some commands execution, won't be destroyed after the command execution.  
+**default** : false
 
 #### Remarks
 
