@@ -2,10 +2,12 @@
 
 import fs from 'fs'
 import path from 'path'
-import tmp from 'tmp'
 import type {
   ICauldronFileStore
 } from './FlowTypes'
+import {
+  createTmpDir
+} from 'ern-core'
 
 export default class EphemeralFileStore implements ICauldronFileStore {
   _storePath : string
@@ -13,7 +15,7 @@ export default class EphemeralFileStore implements ICauldronFileStore {
   _isPendingTransaction: boolean
 
   constructor () {
-    this._storePath = tmp.dirSync({ unsafeCleanup: true }).name
+    this._storePath = createTmpDir()
     this._isPendingTransaction = false
   }
 

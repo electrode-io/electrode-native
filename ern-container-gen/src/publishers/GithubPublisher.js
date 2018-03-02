@@ -4,10 +4,10 @@ import type {
   ContainerPublisherConfig
 } from '../FlowTypes'
 import {
+  createTmpDir,
   gitCli,
   shell
 } from 'ern-core'
-import tmp from 'tmp'
 import path from 'path'
 
 export default class GithubPublisher implements ContainerPublisher {
@@ -16,7 +16,7 @@ export default class GithubPublisher implements ContainerPublisher {
   }
 
   async publish (config: ContainerPublisherConfig) {
-    const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const workingDir = createTmpDir()
 
     try {
       shell.pushd(workingDir)

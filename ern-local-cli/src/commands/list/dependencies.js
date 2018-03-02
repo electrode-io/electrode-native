@@ -1,13 +1,13 @@
 // @flow
 
 import {
+  createTmpDir,
   nativeDependenciesLookup,
   yarn,
   shell,
   PackagePath
 } from 'ern-core'
 import utils from '../../lib/utils'
-import tmp from 'tmp'
 import chalk from 'chalk'
 import _ from 'lodash'
 import path from 'path'
@@ -27,7 +27,7 @@ exports.handler = async function ({
   try {
     let pathToModule = process.cwd()
     if (module) {
-      pathToModule = tmp.dirSync({ unsafeCleanup: true }).name
+      pathToModule = createTmpDir()
       shell.cd(pathToModule)
       await yarn.add(PackagePath.fromString(module))
     }

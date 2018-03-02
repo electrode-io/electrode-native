@@ -3,12 +3,12 @@
 import type { BinaryStore } from './BinaryStore'
 import NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import * as childProcess from './childProcess'
+import createTmpDir from './createTmpDir'
 import {
   spawn
 } from 'child_process'
 import fs from 'fs'
 import path from 'path'
-import tmp from 'tmp'
 import archiver from 'archiver'
 const DecompressZip = require('decompress-zip')
 const {
@@ -46,7 +46,7 @@ export default class ErnBinaryStore implements BinaryStore {
 
   async getZippedBinary (descriptor: NativeApplicationDescriptor) : Promise<string> {
     return new Promise((resolve, reject) => {
-      const tmpOutDir = tmp.dirSync({ unsafeCleanup: true }).name
+      const tmpOutDir = createTmpDir()
       const outputFilePath = path.join(tmpOutDir, this.buildZipBinaryFileName(descriptor))
       const outputFile = fs.createWriteStream(outputFilePath)
       const curl = spawn('curl', [ this.urlToBinary(descriptor) ])
@@ -62,7 +62,7 @@ export default class ErnBinaryStore implements BinaryStore {
 
   async zipBinary (descriptor: NativeApplicationDescriptor, binaryPath: string) : Promise<string> {
     return new Promise((resolve, reject) => {
-      const tmpOutDir = tmp.dirSync({ unsafeCleanup: true }).name
+      const tmpOutDir = createTmpDir()
       const pathToZipFile = path.join(tmpOutDir, this.buildZipBinaryFileName(descriptor))
       const outputZipStream = fs.createWriteStream(pathToZipFile)
       const archive = archiver('zip', { zlib: { level: 9 } })
@@ -86,7 +86,7 @@ export default class ErnBinaryStore implements BinaryStore {
       outDir?: string
     } = {}) : Promise<string> {
     return new Promise((resolve, reject) => {
-      const outputDirectory = outDir || tmp.dirSync({ unsafeCleanup: true }).name
+      const outputDirectory = outDir || createTmpDir()
       const pathToOutputBinary = path.join(outputDirectory, this.buildNativeBinaryFileName(descriptor))
       const unzipper = new DecompressZip(zippedBinaryPath)
       unzipper.on('error', err => reject(err))
