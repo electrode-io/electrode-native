@@ -23,6 +23,7 @@
     "shelljs": "^0.7.6"
   },
   "devDependencies": {
+    "@yarnpkg/lockfile": "^1.0.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.1",
@@ -34,14 +35,15 @@
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.22.0",
     "chai": "^4.1.2",
+    "colors": "^1.1.2",
     "coveralls": "^3.0.0",
+    "diff": "^3.4.0",
     "dir-compare": "^1.4.0",
-    "colors" : "^1.1.2",
-    "diff" : "^3.4.0",
     "dirty-chai": "^2.0.1",
     "eslint-plugin-flowtype": "^2.33.0",
     "flow-bin": "0.58.0",
     "husky": "^0.14.3",
+    "inquirer": "^5.1.0",
     "install": "^0.8.7",
     "istanbul": "^0.4.5",
     "jsonpath": "^1.0.0",
@@ -52,8 +54,7 @@
     "nyc": "^11.3.0",
     "rimraf": "^2.6.0",
     "sinon": "4.1.2",
-    "standard": "^10.0.2",
-    "@yarnpkg/lockfile" : "^1.0.0"
+    "standard": "^10.0.2"
   },
   "standard": {
     "globals": [
