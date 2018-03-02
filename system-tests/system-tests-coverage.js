@@ -9,6 +9,7 @@ process.argv.push(
   '--all',
   '--include=ern-*/src/**/*.js',
   'node',
-  'system-tests/system-tests')
+  'system-tests/system-tests',
+  '--all')
 
 require('nyc/bin/nyc')
