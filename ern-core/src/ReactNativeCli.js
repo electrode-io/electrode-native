@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import shell from './shell'
 import spin from './spin'
-import tmp from 'tmp'
+import createTmpDir from './createTmpDir'
 import {
   execp,
   spawnp
@@ -85,7 +85,7 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
     cwd?: string,
     args?: Array<string>
   }) {
-    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpDir = createTmpDir()
     const tmpScriptPath = path.join(tmpDir, 'packager.sh')
     await fileUtils.writeFile(tmpScriptPath,
 `
@@ -104,7 +104,7 @@ ${this.binaryPath} start ${args.join(' ')};
     cwd?: string,
     args?: Array<string>
   }) {
-    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpDir = createTmpDir()
     const tmpScriptPath = path.join(tmpDir, 'packager.sh')
     await fileUtils.writeFile(tmpScriptPath,
 `
@@ -123,7 +123,7 @@ ${this.binaryPath} start ${args.join(' ')};
       cwd?: string,
       args?: Array<string>
     }) {
-    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpDir = createTmpDir()
     const tmpScriptPath = path.join(tmpDir, 'packager.bat')
     await fileUtils.writeFile(tmpScriptPath,
 `

@@ -4,13 +4,13 @@ import type {
   ContainerPublisherConfig
 } from '../FlowTypes'
 import {
+  createTmpDir,
   MavenUtils,
   shell,
   childProcess
  } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
-import tmp from 'tmp'
 import os from 'os'
 const {
   execp
@@ -37,7 +37,7 @@ export default class MavenPublisher implements ContainerPublisher {
     const artifactId = config.extra.artifactId
     const groupId = config.extra.groupId
 
-    const workingDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const workingDir = createTmpDir()
     shell.cp('-Rf', path.join(config.containerPath, '{.*,*}'), workingDir)
 
     if (MavenUtils.isLocalMavenRepo(config.url)) {

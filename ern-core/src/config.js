@@ -9,7 +9,7 @@ const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc')
 
 export class ErnConfig {
   get obj () : Object {
-    return JSON.parse(fs.readFileSync(this.ernRcFilePath, 'utf-8'))
+    return process.env['__ERN_TEST__'] ? {} : JSON.parse(fs.readFileSync(this.ernRcFilePath, 'utf-8'))
   }
 
   get ernRcFilePath () : string {

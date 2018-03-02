@@ -4,13 +4,13 @@ import type {
   ContainerPublisherConfig
 } from '../FlowTypes'
 import {
+  createTmpDir,
   shell,
   mustacheUtils,
   childProcess
 } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
-import tmp from 'tmp'
 const {
   execp
 } = childProcess
@@ -38,9 +38,7 @@ export default class JcenterPublisher implements ContainerPublisher {
     mustacheConfig.groupId = config.extra.groupId
     mustacheConfig.containerVersion = config.containerVersion
 
-    const workingDir = tmp.dirSync({
-      unsafeCleanup: true
-    }).name
+    const workingDir = createTmpDir()
     shell.cp('-Rf', path.join(config.containerPath, '{.*,*}'), workingDir)
 
     fs.appendFileSync(path.join(workingDir, 'lib', 'build.gradle'),

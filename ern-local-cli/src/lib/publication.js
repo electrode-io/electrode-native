@@ -7,6 +7,7 @@ import {
   ContainerGenerator
 } from 'ern-container-gen'
 import {
+  createTmpDir,
   utils as coreUtils,
   compatibility,
   CodePushSdk,
@@ -24,7 +25,6 @@ import type {
 
 import inquirer from 'inquirer'
 import _ from 'lodash'
-import tmp from 'tmp'
 import path from 'path'
 import fs from 'fs'
 import shell from 'shelljs'
@@ -149,8 +149,8 @@ platform: 'android' | 'ios', {
         ...apiAndApiImplsResolvedVersions.resolved,
         ...nativeModulesResolvedVersions.resolved,
         ...extraNativeDependencies ],
-      pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
-      compositeMiniAppDir: tmp.dirSync({ unsafeCleanup: true }).name,
+      pluginsDownloadDir: createTmpDir(),
+      compositeMiniAppDir: createTmpDir(),
       ignoreRnpmAssets
     }))
   } catch (e) {
@@ -188,7 +188,7 @@ napDescriptor: NativeApplicationDescriptor, {
     }
 
     if (!compositeMiniAppDir) {
-      compositeMiniAppDir = tmp.dirSync({ unsafeCleanup: true }).name
+      compositeMiniAppDir = createTmpDir()
     }
 
     const platform = napDescriptor.platform
@@ -209,7 +209,7 @@ napDescriptor: NativeApplicationDescriptor, {
         outDir: outDir || path.join(Platform.rootDirectory, 'containergen', 'out', platform),
         plugins,
         ignoreRnpmAssets: containerGeneratorConfig && containerGeneratorConfig.ignoreRnpmAssets,
-        pluginsDownloadDir: tmp.dirSync({ unsafeCleanup: true }).name,
+        pluginsDownloadDir: createTmpDir(),
         compositeMiniAppDir,
         pathToYarnLock: pathToYarnLock || undefined
       }))
@@ -385,7 +385,7 @@ jsApiImpls: Array<PackagePath>, {
       throw new Error('react-native-code-push plugin is not in native app !')
     }
 
-    const tmpWorkingDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpWorkingDir = createTmpDir()
 
     const miniAppsNativeDependenciesVersionAligned =
       await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(miniApps, napDescriptor)

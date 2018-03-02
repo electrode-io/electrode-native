@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  createTmpDir,
   android,
   ios,
   config as ernConfig,
@@ -17,7 +18,6 @@ import {
 } from 'ern-container-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
-import tmp from 'tmp'
 import path from 'path'
 import * as constants from './constants'
 import utils from '../lib/utils'
@@ -76,8 +76,7 @@ export default async function start ({
   // is not removed after `CTRL+C` is done
   process.on('SIGINT', () => process.exit())
 
-  tmp.setGracefulCleanup(true)
-  const compositeDir = tmp.dirSync({ unsafeCleanup: true }).name
+  const compositeDir = createTmpDir()
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
   await spin('Generating MiniApps composite',
