@@ -1,17 +1,17 @@
-const shell = require('shelljs')
 const chalk = require('chalk')
 const tmp = require('tmp')
 const path = require('path')
-const fs = require('fs')
-require('colors')
-const dircompare = require('dir-compare')
-const jsdiff = require('diff')
+const afterAll = require('./utils/afterAll')
+const assert = require('./utils/assert')
+const randomInt = require('./utils/randomInt')
+const sameDirContent = require('./utils/sameDirContent')
+const run = require('./utils/run')
+
 const workingDirectoryPath = tmp.dirSync({ unsafeCleanup: true }).name
 const info = chalk.bold.blue
-
 const gitUserName = 'ernplatformtest'
 const gitPassword = 'ernplatformtest12345'
-const gitHubCauldronRepositoryName = `cauldron-system-tests-${getRandomInt(0, 1000)}`
+const gitHubCauldronRepositoryName = `cauldron-system-tests-${randomInt(0, 1000)}`
 const cauldronName = 'cauldron-automation'
 const miniAppName = 'MiniAppSystemTest'
 const miniAppPackageName = 'miniapp-system-test'
@@ -59,93 +59,6 @@ const reactNativeMovieApiImplJsVersion = '0.0.2'
 
 process.env['SYSTEM_TESTS'] = 'true'
 process.on('SIGINT', () => afterAll())
-
-function getRandomInt (min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min)) + min
-}
-
-function run (command, {
-  expectedExitCode = 0
-} = {}) {
-  console.log('===========================================================================')
-  console.log(`${chalk.bold.red('Running')} ${chalk.bold.blue(`${command}`)}`)
-  const cmdProcess = shell.exec(command)
-  if (!cmdProcess) {
-    // Process was killed, perform clean up
-    afterAll()
-    shell.exit(1)
-  } else if (cmdProcess.code !== expectedExitCode) {
-    console.log(`${chalk.bold.red('!!! TEST FAILED !!! ')} ${chalk.bold.blue(`${command}`)}`)
-    console.log(`Expected exit code ${expectedExitCode} but command exited with code ${cmdProcess.code}`)
-    afterAll()
-    shell.exit(1)
-  }
-  console.log('===========================================================================')
-}
-
-function assert (expression, message) {
-  if (!expression) {
-    console.log(`${chalk.bold.red(`Assertion failed: ${message}`)}`)
-    afterAll()
-    shell.exit(1)
-  }
-}
-
-function afterAll () {
-  console.log('===========================================================================')
-  console.log(info('Cleaning up test env'))
-  console.log(info(`Removing GitHub repository (${gitHubCauldronRepositoryName})`))
-  shell.exec(`curl -u ${gitUserName}:${gitPassword} -X DELETE https://api.github.com/repos/${gitUserName}/${gitHubCauldronRepositoryName}`)
-  console.log(info('Deactivating current Cauldron'))
-  shell.exec('ern cauldron repo clear')
-  console.log(info('Removing Cauldron alias'))
-  shell.exec(`ern cauldron repo remove ${cauldronName}`)
-  console.log('===========================================================================')
-}
-
-// Given two paths to Android generated containers, return true if the containers
-// contains the exact same structure and files (including file content) or false otherwise
-// Considering that `index.android.bundle` and `index.android.bundle.meta` can vary legitimately
-// from generation to generation, we allow difference of content for these files
-function areSameAndroidContainers (pathA, pathB) {
-  return areSameDirectoriesContent(pathA, pathB, ['index.android.bundle', 'index.android.bundle.meta'])
-}
-
-// Given two paths to iOS generated containers, return true if the containers contains the
-// exact same structure and files (including file content) or false otherwise
-// Considering that `MiniApp.jsbundle` and `MiniApp.js.bundle.meta` can vary legitimately
-// from generation to generation, we allow difference of content for these files
-// Also due to the high number of differences in pbxproj (randomy generated IDs) we just
-// ignore differences in this file (furether improvement to system tests should only ignore
-// content that should be ignored in this file)
-function areSameIosContainers (pathA, pathB) {
-  return areSameDirectoriesContent(pathA, pathB, ['project.pbxproj', 'MiniApp.jsbundle', 'MiniApp.jsbundle.meta'])
-}
-
-function areSameDirectoriesContent (pathA, pathB, filesToIgnoreContentDiff = []) {
-  let result = true
-  const directoriesDiff = dircompare.compareSync(pathA, pathB, {compareContent: true})
-  for (const diff of directoriesDiff.diffSet) {
-    if (diff.state === 'distinct') {
-      if (!filesToIgnoreContentDiff.includes(diff.name1)) {
-        console.log('A difference in content was found !')
-        console.log(JSON.stringify(diff))
-        let diffLine = jsdiff.diffLines(
-          fs.readFileSync(path.join(diff.path1, diff.name1)).toString(),
-          fs.readFileSync(path.join(diff.path2, diff.name2)).toString())
-        diffLine.forEach((part) => {
-          let color = part.added ? 'green'
-            : part.removed ? 'red' : 'grey'
-          process.stderr.write(part.value[color])
-        })
-        result = false
-      }
-    }
-  }
-  return result
-}
 
 console.log(info(`Entering temporary working directory : ${workingDirectoryPath}`))
 process.chdir(workingDirectoryPath)
@@ -215,11 +128,12 @@ run(`ern create-container --miniapps file:${miniAppPath} ${movieListMiniAppPacka
 
 const androidContainerOutDir = tmp.dirSync({ unsafeCleanup: true }).name
 run(`ern create-container --descriptor ${androidNativeApplicationDescriptor} --out ${androidContainerOutDir}`)
-assert(areSameAndroidContainers(pathToAndroidContainerFixture, androidContainerOutDir), 'Generated Android Container differ from reference fixture !')
+assert(sameDirContent(pathToAndroidContainerFixture, androidContainerOutDir, ['index.android.bundle', 'index.android.bundle.meta']), 'Generated Android Container differ from reference fixture !')
+
 
 const iosContainerOutDir = tmp.dirSync({ unsafeCleanup: true }).name
 run(`ern create-container --descriptor ${iosNativeApplicationDescriptor} --out ${iosContainerOutDir}`)
-assert(areSameIosContainers(pathToIosContainerFixture, iosContainerOutDir), 'Generated iOS Container differ from reference fixture !')
+assert(sameDirContent(pathToIosContainerFixture, iosContainerOutDir, ['project.pbxproj', 'MiniApp.jsbundle', 'MiniApp.jsbundle.meta']), 'Generated iOS Container differ from reference fixture !')
 
 run(`ern why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
 
@@ -264,7 +178,7 @@ run('ern platform plugins search react-native')
 
 process.chdir(workingDirectoryPath)
 run(`ern create-api ${apiName} -p ${apiPkgName} --skipNpmCheck`)
-assert(areSameDirectoriesContent(pathToApiFixtureDir, workingDirectoryPath, filesToIgnore), 'Generated API differ from reference fixture !')
+assert(sameDirContent(pathToApiFixtureDir, workingDirectoryPath, filesToIgnore), 'Generated API differ from reference fixture !')
 const apiPath = path.join(process.cwd(), apiName)
 console.log(info(`Entering ${apiPath}`))
 process.chdir(apiPath)
@@ -272,16 +186,16 @@ run('ern regen-api --skipVersion')
 
 process.chdir(workingDirectoryPath)
 run(`ern create-api ${complexApi} -p ${apiPkgName}  --schemaPath ${pathToComplexSchema} --skipNpmCheck`)
-assert(areSameDirectoriesContent(pathToApiFixtureDir, workingDirectoryPath, filesToIgnore), 'Generated API differ from reference fixture !')
+assert(sameDirContent(pathToApiFixtureDir, workingDirectoryPath, filesToIgnore), 'Generated API differ from reference fixture !')
 
 //  Tests for API IMPL Native
 process.chdir(workingDirectoryPath)
 run(`ern create-api-impl ${movieApi} -p ${movieApiImplPkgName} --skipNpmCheck --nativeOnly --outputDirectory ${workingDirectoryPath} --force`)
-assert(areSameDirectoriesContent(pathToApiImplNative, workingDirectoryPath, filesToIgnore), 'Generated API Native Impl differ from reference fixture !')
+assert(sameDirContent(pathToApiImplNative, workingDirectoryPath, filesToIgnore), 'Generated API Native Impl differ from reference fixture !')
 
 //  Tests for API IMPL JS
 process.chdir(workingDirectoryPath)
 run(`ern create-api-impl ${movieApi} -p ${movieApiImplPkgName} --skipNpmCheck --jsOnly --outputDirectory ${workingDirectoryPath} --force`)
-assert(areSameDirectoriesContent(pathToApiImplJS, workingDirectoryPath, filesToIgnore), 'Generated API JS Impl differ from reference fixture !')
+assert(sameDirContent(pathToApiImplJS, workingDirectoryPath, filesToIgnore), 'Generated API JS Impl differ from reference fixture !')
 
 afterAll()
