@@ -246,6 +246,10 @@ export default class AndroidGenerator implements ContainerGenerator {
           'compileStatement': `compile 'com.walmartlabs.ern:react-native:${reactNativePlugin.version}'`
         })
       }
+      const reactNativeCodePushPlugin = _.find(plugins, p => p.basePath === 'react-native-code-push')
+      if (reactNativeCodePushPlugin) {
+        mustacheView.loadJsBundleFromCustomPath = true
+      }
     } catch (e) {
       log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
       throw e

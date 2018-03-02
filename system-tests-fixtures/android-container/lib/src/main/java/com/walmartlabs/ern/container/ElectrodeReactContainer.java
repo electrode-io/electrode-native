@@ -285,6 +285,4 @@ public class ElectrodeReactContainer {
             return reactInstanceManager;
         }
     }
-
-
 }

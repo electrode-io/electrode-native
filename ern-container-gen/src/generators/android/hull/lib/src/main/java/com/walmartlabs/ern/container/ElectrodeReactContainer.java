@@ -38,6 +38,9 @@ import com.ern.api.impl.{{apiName}}ApiController;
 import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
 {{/hasConfig}}
 {{/apiImplementations}}
+{{#loadJsBundleFromCustomPath}}
+import com.microsoft.codepush.react.CodePush;
+{{/loadJsBundleFromCustomPath}}
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -309,7 +312,13 @@ public class ElectrodeReactContainer {
             });
             return reactInstanceManager;
         }
+        
+        {{#loadJsBundleFromCustomPath}}
+        @javax.annotation.Nullable
+        @Override
+        protected String getJSBundleFile() {
+            return CodePush.getJSBundleFile();
+        }
+        {{/loadJsBundleFromCustomPath}}
     }
-
-
 }
