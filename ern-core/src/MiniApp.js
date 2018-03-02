@@ -8,6 +8,7 @@ import tagOneLine from './tagoneline'
 import shell from './shell'
 import manifest from './Manifest'
 import Platform from './Platform'
+import createTmpDir from './createTmpDir'
 import * as nativeDependenciesLookup from './nativeDependenciesLookup'
 import {
   reactnative,
@@ -25,7 +26,6 @@ import {
   execSync
 } from 'child_process'
 import fs from 'fs'
-import tmp from 'tmp'
 import path from 'path'
 import semver from 'semver'
 import _ from 'lodash'
@@ -85,7 +85,7 @@ Are you sure this is a MiniApp ?`)
   }
 
   static async fromPackagePath (packagePath: PackagePath) {
-    const tmpMiniAppPath = tmp.dirSync({ unsafeCleanup: true }).name
+    const tmpMiniAppPath = createTmpDir()
     shell.cd(tmpMiniAppPath)
     await yarn.add(packagePath)
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
@@ -277,7 +277,7 @@ Are you sure this is a MiniApp ?`)
         // Dependency is not declared in manifest
         // We need to detect if this dependency is a pure JS one or if it's a native one or
         // if it contains transitive native dependencies
-        const tmpPath = tmp.dirSync({ unsafeCleanup: true }).name
+        const tmpPath = createTmpDir()
         process.chdir(tmpPath)
         await spin(`${basePathDependency.toString()} is not declared in the manifest. Performing additional checks.`,
                     yarn.add(PackagePath.fromString(dependency.toString())))

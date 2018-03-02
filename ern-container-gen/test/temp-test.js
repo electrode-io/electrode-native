@@ -8,7 +8,6 @@ import {
   doesThrow
 } from 'ern-util-dev'
 import sinon from 'sinon'
-import tmp from 'tmp'
 import path from 'path'
 import fs from 'fs'
 import {
@@ -52,7 +51,7 @@ describe('ern-container-gen utils.js', () => {
 
     // Create temporary directory to use as target output directory of some
     // functions under test
-    tmpOutDir = tmp.dirSync().name
+    tmpOutDir = ernUtil.createTmpDir()
   })
 
   // After each test

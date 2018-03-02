@@ -1,6 +1,6 @@
 // @flow
 
-import tmp from 'tmp'
+import createTmpDir from './createTmpDir'
 import shell from './shell'
 import path from 'path'
 import fs from 'fs'
@@ -39,7 +39,7 @@ export default class YarnCli {
     // yarn add of a different dependency just reintroduce the error on previous package
     // this is really weird]
     if (dependencyPath.isFilePath) {
-      const tmpDirPath = tmp.dirSync({unsafeCleanup: true}).name
+      const tmpDirPath = createTmpDir()
       shell.cp('-R', `${dependencyPath.basePath}/*`, tmpDirPath)
       shell.rm('-rf', path.join(tmpDirPath, 'node_modules'))
       dependencyPath = PackagePath.fromString(`file:${tmpDirPath}`)

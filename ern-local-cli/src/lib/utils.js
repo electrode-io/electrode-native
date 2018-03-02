@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  createTmpDir,
   utils as coreUtils,
   MiniApp,
   Platform,
@@ -41,7 +42,6 @@ import ora from 'ora'
 import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
-import tmp from 'tmp'
 import * as constants from './constants'
 const {
   runAndroidProject
@@ -424,7 +424,7 @@ async function performContainerStateUpdateInCauldron (
     // Perform the custom container state update
     await stateUpdateFunc()
 
-    const compositeMiniAppDir = tmp.dirSync({ unsafeCleanup: true }).name
+    const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
     const outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform)
