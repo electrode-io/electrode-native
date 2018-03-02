@@ -312,7 +312,7 @@ public class ElectrodeReactContainer {
             });
             return reactInstanceManager;
         }
-        
+
         {{#loadJsBundleFromCustomPath}}
         @javax.annotation.Nullable
         @Override
