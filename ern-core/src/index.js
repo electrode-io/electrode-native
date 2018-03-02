@@ -36,6 +36,7 @@ import _YarnCli from './YarnCli'
 import _gitCli from './gitCli'
 import _CodePushSdk from './CodePushSdk'
 import * as _promptUtils from './promptUtils'
+import _createTmpDir from './createTmpDir'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -71,6 +72,7 @@ export const YarnCli = _YarnCli
 export const gitCli = _gitCli
 export const CodePushSdk = _CodePushSdk
 export const promptUtils = _promptUtils
+export const createTmpDir = _createTmpDir
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -106,7 +108,8 @@ export default ({
   YarnCli: _YarnCli,
   gitCli: _gitCli,
   CodePushSdk: _CodePushSdk,
-  promptUtils: _promptUtils
+  promptUtils: _promptUtils,
+  createTmpDir: _createTmpDir
 })
 
 export type {
