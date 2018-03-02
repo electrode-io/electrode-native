@@ -8,9 +8,9 @@
     "setup-dev": "node setup-dev.js",
     "rebuild": "rimraf ern-*/**/dist && lerna clean --yes && lerna bootstrap --npmClient=yarn",
     "test": "lerna run test",
-    "system-test": "node system-tests",
+    "system-tests": "node system-tests/system-tests",
     "coverage-unit": "rimraf ern-*/.nyc_output && lerna run coverage && npm run istanbul report --include=ern-*/.coverage/coverage-final.json html",
-    "coverage-system": "rimraf .nyc_output && node system-tests-coverage",
+    "coverage-system-tests": "rimraf .nyc_output && node system-tests/system-tests-coverage",
     "coverage-ci": "npm run coverage-unit && npm run coverage-system && node_modules/.bin/istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
     "istanbul": "istanbul",
     "standard": "standard",
@@ -70,7 +70,7 @@
       "**/ern-api-gen/",
       "**/flow-typed/",
       "**/test",
-      "**/system-tests-fixtures"
+      "**/system-tests"
     ],
     "plugins": [
       "flowtype"
