@@ -1,0 +1,11 @@
+const path = require('path')
+const run = require('../utils/run')
+const f = require('../fixtures/constants')
+
+run(`ern create-api-impl ${f.notInNpmPkg} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
+run(`ern create-api-impl ${f.movieApiPkgName} ${f.invalidElectrodeNativeModuleName} --skipNpmCheck --nativeOnly --force`, { expectedExitCode: 1 })
+run(`ern create-api-impl ${f.movieApiPkgName} ${f.movieApiImplName} -p ${f.movieApiImplPkgName} --skipNpmCheck --nativeOnly --force`)
+const apiImplPath = path.join(process.cwd(), f.movieApiImplName)
+console.log(`Entering ${apiImplPath}`)
+process.chdir(apiImplPath)
+run('ern regen-api-impl')
