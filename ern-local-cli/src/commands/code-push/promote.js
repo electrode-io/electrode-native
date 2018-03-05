@@ -100,7 +100,7 @@ exports.handler = async function ({
         message: 'Please select a source native application descriptor'
       })
     } else {
-      await utils.askUserToChooseANapDescriptorFromCauldron({
+      await utils.logErrorAndExitIfNotSatisfied({
         isCompleteNapDescriptorString: {
           descriptor: sourceDescriptor
         }
