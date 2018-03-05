@@ -51,7 +51,7 @@ if (!fs.existsSync(ERN_RC_GLOBAL_FILE_PATH)) {
 
 function isGitInstalled () {
   try {
-    execSync('git --version > /dev/null 2>&1')
+    execSync('git --version')
     return true
   } catch (e) {
     return false
