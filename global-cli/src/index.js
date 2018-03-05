@@ -23,6 +23,8 @@ updateNotifier({ pkg }).notify()
 // ....
 // |_ .ernrc
 
+// Initial process cwd
+const INITIAL_PROCESS_CWD = process.cwd()
 // Path to ern platform root directory
 const ERN_PATH = path.join(os.homedir(), '.ern')
 // Path to ern platform versions directory (containing all installed versions of the platform)
@@ -30,9 +32,11 @@ const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
 // Path to ern global configuration file
 const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
 // Path to potential ern local configuration file (local to the directory where ern command is run)
-const ERN_RC_LOCAL_FILE_PATH = path.join(process.cwd(), '.ernrc')
+const ERN_RC_LOCAL_FILE_PATH = path.join(INITIAL_PROCESS_CWD, '.ernrc')
 // Name of ern local client NPM package
 const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
+
+const IS_WINDOWS_PLATFORM = /^win/.test(process.platform)
 
 // Entry point
 if (!fs.existsSync(ERN_PATH)) {
@@ -68,7 +72,7 @@ function firstTimeInstall () {
     if (isYarnInstalled()) {
       // Favor yarn if it is installed as it will greatly speed up install
       spinner.text = `Installing Electrode Native v${latestVersion} using yarn. This might take a while`
-      if (/^win/.test(process.platform)) {
+      if (IS_WINDOWS_PLATFORM) {
         installProc = spawn('cmd',
           ['/s', '/c', 'yarn', 'add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact', '--ignore-engines'],
           { cwd: pathToVersionDirectory })
@@ -79,7 +83,7 @@ function firstTimeInstall () {
       }
     } else {
       spinner.text = `Installing Electrode Native v${latestVersion} using npm. This might take a while`
-      if (/^win/.test(process.platform)) {
+      if (IS_WINDOWS_PLATFORM) {
         installProc = spawn('cmd',
           ['/s', '/c', 'npm', 'install', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`],
           { cwd: pathToVersionDirectory })
@@ -99,9 +103,8 @@ function firstTimeInstall () {
     })
 
     installProc.on('error', function (err) {
-      console.log(`Something went wrong :( Run the command again with --debug flag for more info.`)
-      execSync(`rm -rf ${ERN_PATH}`)
-      throw err
+      console.log(`Something went wrong ${err} :( Run the command again with --debug flag for more info.`)
+      removeErnDirectory()
     })
 
     installProc.on('close', function (code) {
@@ -109,14 +112,24 @@ function firstTimeInstall () {
         spinner.succeed(`Hurray ! Electrode Native v${latestVersion} was successfully installed.`)
       } else {
         spinner.fail(`Something went wrong :( Run the command again with --debug flag for more info.`)
-        execSync(`rm -rf ${ERN_PATH}`)
+        removeErnDirectory()
       }
     })
   } catch (e) {
-    // If something went wrong, we just clean up everything.
-    // Don't want to create and leave the .ern global directory hanging around
-    // in a bad state
     console.log(`Something went wrong :( Run the command again with --debug flag for more info.`)
+    removeErnDirectory()
+  }
+}
+
+// Remove .ern global directory.
+// Done if something' gone wrong during install.
+// Don't want to leave the .ern global directory hanging around in a bad state
+function removeErnDirectory () {
+  console.log(`Performing cleanup. Please wait for the process to exit.`)
+  process.chdir(INITIAL_PROCESS_CWD)
+  if (IS_WINDOWS_PLATFORM) {
+    execSync(`rd /s /q ${ERN_PATH}`)
+  } else {
     execSync(`rm -rf ${ERN_PATH}`)
   }
 }
@@ -159,7 +172,7 @@ function getLatestErnLocalCliVersion () {
 
 function isYarnInstalled () {
   try {
-    execSync('yarn --version 1>/dev/null')
+    execSync('yarn --version')
     return true
   } catch (e) {
     return false
