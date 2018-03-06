@@ -23,8 +23,6 @@ process.chdir(workingDirectoryPath)
 console.log(info(`Creating GitHub repository (${f.gitHubCauldronRepositoryName})`))
 run(`curl -u ${f.gitUserName}:${f.gitPassword} -d '{"name": "${f.gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
-run('ern platform config showBanner false')
-run('ern platform config logLevel trace')
 run('ern --version')
 
 // Cauldron repo
