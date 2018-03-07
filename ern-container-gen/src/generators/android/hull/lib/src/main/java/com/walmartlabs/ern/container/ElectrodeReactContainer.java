@@ -127,7 +127,6 @@ public class ElectrodeReactContainer {
             {{/apiImplementations}}
      ) {
         if (sElectrodeReactNativeHost == null) {
-            sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
 
             // ReactNative general config
 
@@ -137,6 +136,8 @@ public class ElectrodeReactContainer {
             if (reactContainerConfig.okHttpClient != null) {
                 OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
             }
+
+            sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
 
             askForOverlayPermissionIfDebug(application);
 
