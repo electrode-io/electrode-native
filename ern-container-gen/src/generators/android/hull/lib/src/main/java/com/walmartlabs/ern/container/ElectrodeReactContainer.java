@@ -27,6 +27,9 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.SafeActivityStarter;
+{{#RN_VERSION_GTE_54}}
+import com.facebook.react.modules.network.OkHttpClientFactory;
+{{/RN_VERSION_GTE_54}}
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.shell.MainReactPackage;
 {{#plugins}}
@@ -134,7 +137,12 @@ public class ElectrodeReactContainer {
 
             // Replace OkHttpClient with client provided instance, if any
             if (reactContainerConfig.okHttpClient != null) {
+                {{#RN_VERSION_LT_54}}
                 OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
+                {{/RN_VERSION_LT_54}}
+                {{#RN_VERSION_GTE_54}}
+                OkHttpClientProvider.setOkHttpClientFactory(new OkHttpClientFactoryImpl(reactContainerConfig.okHttpClient));
+                {{/RN_VERSION_GTE_54}}
             }
 
             sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
@@ -322,4 +330,19 @@ public class ElectrodeReactContainer {
         }
         {{/loadJsBundleFromCustomPath}}
     }
+    
+    {{#RN_VERSION_GTE_54}}
+    private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {
+        private final OkHttpClient mOkHttpClient;
+
+        private OkHttpClientFactoryImpl(@NonNull OkHttpClient okHttpClient) {
+            this.mOkHttpClient = okHttpClient;
+        }
+
+        @Override
+        public OkHttpClient createNewNetworkModuleClient() {
+            return mOkHttpClient;
+        }
+    }
+    {{/RN_VERSION_GTE_54}}
 }

@@ -423,8 +423,8 @@ export function injectReactNativeVersionKeysInObject (
   reactNativeVersion: string) {
   return Object.assign(object, {
     reactNativeVersion,
-    RN_VERSION_GTE_49: semver.gte(reactNativeVersion, '0.49.0'),
-    RN_VERSION_LT_49: semver.lt(reactNativeVersion, '0.49.0')
+    RN_VERSION_GTE_54: semver.gte(reactNativeVersion, '0.54.0'),
+    RN_VERSION_LT_54: semver.lt(reactNativeVersion, '0.54.0')
   })
 }
 
