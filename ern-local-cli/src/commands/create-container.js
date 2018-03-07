@@ -61,7 +61,7 @@ exports.builder = function (yargs: any) {
     })
     .option('ignoreRnpmAssets', {
       type: 'bool',
-      describe: 'Ignore rppm assets from the MiniApps'
+      describe: 'Ignore rnpm assets from the MiniApps'
     })
     .epilog(utils.epilog(exports))
 }
@@ -93,17 +93,17 @@ exports.handler = async function ({
     await utils.logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
         obj: dependencies,
-        extraErrorMessage: 'You cannot provide dependencies using git or file schme for this command. Only the form miniapp@version is allowed.'
+        extraErrorMessage: 'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.'
       }
     })
 
     if ((dependencies.length > 0) && (jsOnly || descriptor)) {
-      throw new Error(`You can only provide extra native dependencies when generating a non JS only / non Cauldron based container`)
+      throw new Error(`You can only provide extra native dependencies, when generating a non-JS-only / non-Cauldron based container`)
     }
 
     const cauldron = await coreUtils.getCauldronInstance()
     if (!cauldron && !miniapps) {
-      throw new Error('A Cauldron must be active if you don\'t explicitly provide miniapps')
+      throw new Error('A Cauldron must be active, if you don\'t explicitly provide miniapps')
     }
 
     //
@@ -131,7 +131,7 @@ exports.handler = async function ({
       const {userSelectedCompleteNapDescriptor} = await inquirer.prompt([{
         type: 'list',
         name: 'userSelectedCompleteNapDescriptor',
-        message: 'Choose a non released native application version for which to generate container',
+        message: 'Choose a non-released native application version for which to generate container',
         choices: result
       }])
 
@@ -143,7 +143,7 @@ exports.handler = async function ({
         isCompleteNapDescriptorString: {descriptor},
         napDescriptorExistInCauldron: {
           descriptor,
-          extraErrorMessage: 'You cannot create a container for a non existin native application version.'
+          extraErrorMessage: 'You cannot create a container for a non-existing native application version.'
         }
       })
 
@@ -159,7 +159,7 @@ exports.handler = async function ({
     if (jsOnly) {
       if (!miniapps) {
         if (!napDescriptor) {
-          return log.error('You need to provide a napDescriptor if not providing miniapps')
+          return log.error('You need to provide a native application descriptor, if not providing miniapps')
         }
         miniAppsPaths = await cauldron.getContainerMiniApps(napDescriptor)
         jsApiImplsPaths = await cauldron.getContainerJsApiImpls(napDescriptor)
