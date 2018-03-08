@@ -7,10 +7,8 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTShadowView.h>
+#import "RCTBaseTextShadowView.h"
 
-@interface RCTRawTextShadowView : RCTShadowView
-
-@property (nonatomic, copy) NSString *text;
+@interface RCTVirtualTextShadowView : RCTBaseTextShadowView
 
 @end

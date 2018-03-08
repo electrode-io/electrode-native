@@ -7,8 +7,11 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-@protocol RCTFontAttributesDelegate <NSObject>
+#import <UIKit/UIKit.h>
 
-- (void)fontAttributesDidChangeWithFont:(UIFont *)font;
+#import <React/RCTBridge.h>
+#import <React/RCTBridgeModule.h>
+
+@interface RCTFabricUIManager : NSObject<RCTBridgeModule>
 
 @end
