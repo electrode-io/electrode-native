@@ -7,8 +7,22 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <React/RCTShadowView.h>
+#import "RCTVirtualTextViewManager.h"
 
-@interface RCTSinglelineTextInputShadowView : RCTShadowView
+#import "RCTVirtualTextShadowView.h"
+
+@implementation RCTVirtualTextViewManager
+
+RCT_EXPORT_MODULE(RCTVirtualText)
+
+- (UIView *)view
+{
+  return [UIView new];
+}
+
+- (RCTShadowView *)shadowView
+{
+  return [RCTVirtualTextShadowView new];
+}
 
 @end
