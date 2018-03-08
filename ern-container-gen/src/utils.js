@@ -137,6 +137,7 @@ export async function generateMiniAppsComposite (
   } else {
     // No yarn.lock path was provided, just add miniapps one by one
     log.debug('[generateMiniAppsComposite] no yarn lock provided')
+    await yarn.init()
     for (const miniappPath of miniappsPaths) {
       await yarn.add(miniappPath)
     }
