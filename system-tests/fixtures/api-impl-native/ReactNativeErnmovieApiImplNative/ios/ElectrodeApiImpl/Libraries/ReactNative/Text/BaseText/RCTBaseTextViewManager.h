@@ -7,13 +7,12 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import "RCTSinglelineTextInputShadowView.h"
+#import <React/RCTViewManager.h>
 
-@implementation RCTSinglelineTextInputShadowView
+NS_ASSUME_NONNULL_BEGIN
 
-- (BOOL)isYogaLeafNode
-{
-  return YES;
-}
+@interface RCTBaseTextViewManager : RCTViewManager
 
 @end
+
+NS_ASSUME_NONNULL_END
