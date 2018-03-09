@@ -78,7 +78,7 @@ export default class IosGenerator implements ContainerGenerator {
       }
 
       if (!config.ignoreRnpmAssets) {
-        await copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir)
+        await copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir, 'ios')
         this.addResources(config.outDir)
       }
 
