@@ -148,12 +148,17 @@ function runLocalCli () {
   }
 
   const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'))
+  const pathToErnVersionEntryPoint = ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0'))
+    ? path.join(ERN_VERSIONS_CACHE_PATH, '1000.0.0', 'ern-local-cli', 'src', 'index.dev.js')
+    : path.join(ERN_VERSIONS_CACHE_PATH, ernRc.platformVersion, 'node_modules', 'ern-local-cli', 'src', 'index.prod.js')
 
-  if ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0')) {
-    require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/ern-local-cli/src/index.dev.js`)
-  } else {
-    require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/node_modules/ern-local-cli/src/index.prod.js`)
+  if (!fs.existsSync(pathToErnVersionEntryPoint)) {
+    console.error(`Path not found : ${pathToErnVersionEntryPoint}`)
+    removeErnDirectory()
+    process.exit(1)
   }
+
+  require(pathToErnVersionEntryPoint)
 }
 
 function getLatestErnLocalCliVersion () {
