@@ -149,10 +149,16 @@ function runLocalCli () {
 
   const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'))
 
+  let ernPlatformPath
   if ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0')) {
-    require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/ern-local-cli/src/index.dev.js`)
+    ernPlatformPath = `${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/ern-local-cli/src/index.dev.js`
   } else {
-    require(`${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/node_modules/ern-local-cli/src/index.prod.js`)
+    ernPlatformPath = `${ERN_VERSIONS_CACHE_PATH}/${ernRc.platformVersion}/node_modules/ern-local-cli/src/index.prod.js`
+  }
+  try {
+    require(ernPlatformPath)
+  } catch (e) {
+    console.error(`cannot find ${ernPlatformPath}`)
   }
 }
 
