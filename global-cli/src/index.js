@@ -33,6 +33,8 @@ const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
 const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_PATH, '.ernrc')
 // Path to potential ern local configuration file (local to the directory where ern command is run)
 const ERN_RC_LOCAL_FILE_PATH = path.join(INITIAL_PROCESS_CWD, '.ernrc')
+// Resolved path to ern configuration file
+const ENR_RC_RESOLVED_PATH = fs.existsSync(ERN_RC_LOCAL_FILE_PATH) ? ERN_RC_LOCAL_FILE_PATH : ERN_RC_GLOBAL_FILE_PATH
 // Name of ern local client NPM package
 const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
@@ -59,11 +61,18 @@ function firstTimeInstall () {
     // Create cached versions directory
     fs.mkdirSync(ERN_VERSIONS_CACHE_PATH)
 
-    // List all available versions from electrode-native git repository
-    const latestVersion = getLatestErnLocalCliVersion()
+    // Initial version to install is either the one declared in local .ernrc file
+    // if it exists, or the latest available version of Electrode Native CLI
+    let initialVersion
+    if (ERN_RC_LOCAL_FILE_PATH === ENR_RC_RESOLVED_PATH) {
+      const ernRc = JSON.parse(fs.readFileSync(ENR_RC_RESOLVED_PATH, 'utf-8'))
+      initialVersion = ernRc.platformVersion
+    } else {
+      initialVersion = getLatestErnLocalCliVersion()
+    }
 
     // Create the version directory
-    const pathToVersionDirectory = path.join(ERN_VERSIONS_CACHE_PATH, latestVersion)
+    const pathToVersionDirectory = path.join(ERN_VERSIONS_CACHE_PATH, initialVersion)
     fs.mkdirSync(pathToVersionDirectory)
     fs.mkdirSync(path.join(pathToVersionDirectory, 'node_modules'))
     process.chdir(pathToVersionDirectory)
@@ -71,25 +80,25 @@ function firstTimeInstall () {
 
     if (isYarnInstalled()) {
       // Favor yarn if it is installed as it will greatly speed up install
-      spinner.text = `Installing Electrode Native v${latestVersion} using yarn. This might take a while`
+      spinner.text = `Installing Electrode Native v${initialVersion} using yarn. This might take a while`
       if (IS_WINDOWS_PLATFORM) {
         installProc = spawn('cmd',
-          ['/s', '/c', 'yarn', 'add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact', '--ignore-engines'],
+          ['/s', '/c', 'yarn', 'add', `${ERN_LOCAL_CLI_PACKAGE}@${initialVersion}`, '--exact', '--ignore-engines'],
           { cwd: pathToVersionDirectory })
       } else {
         installProc = spawn('yarn',
-          ['add', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`, '--exact', '--ignore-engines'],
+          ['add', `${ERN_LOCAL_CLI_PACKAGE}@${initialVersion}`, '--exact', '--ignore-engines'],
           { cwd: pathToVersionDirectory })
       }
     } else {
-      spinner.text = `Installing Electrode Native v${latestVersion} using npm. This might take a while`
+      spinner.text = `Installing Electrode Native v${initialVersion} using npm. This might take a while`
       if (IS_WINDOWS_PLATFORM) {
         installProc = spawn('cmd',
-          ['/s', '/c', 'npm', 'install', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`],
+          ['/s', '/c', 'npm', 'install', `${ERN_LOCAL_CLI_PACKAGE}@${initialVersion}`],
           { cwd: pathToVersionDirectory })
       } else {
         installProc = spawn('npm',
-          ['install', `${ERN_LOCAL_CLI_PACKAGE}@${latestVersion}`],
+          ['install', `${ERN_LOCAL_CLI_PACKAGE}@${initialVersion}`],
           { cwd: pathToVersionDirectory })
       }
     }
@@ -109,7 +118,7 @@ function firstTimeInstall () {
 
     installProc.on('close', function (code) {
       if (code === 0) {
-        spinner.succeed(`Hurray ! Electrode Native v${latestVersion} was successfully installed.`)
+        spinner.succeed(`Hurray ! Electrode Native v${initialVersion} was successfully installed.`)
       } else {
         spinner.fail(`Something went wrong :( Run the command again with --debug flag for more info.`)
         removeErnDirectory()
@@ -140,14 +149,7 @@ function removeErnDirectory () {
 // Basically, it just proxy the ern command to the ern-local-cli (local client)
 // of the version currently in use
 function runLocalCli () {
-  let ernRcPath
-  if (fs.existsSync(ERN_RC_LOCAL_FILE_PATH)) {
-    ernRcPath = ERN_RC_LOCAL_FILE_PATH
-  } else {
-    ernRcPath = ERN_RC_GLOBAL_FILE_PATH
-  }
-
-  const ernRc = JSON.parse(fs.readFileSync(ernRcPath, 'utf-8'))
+  const ernRc = JSON.parse(fs.readFileSync(ENR_RC_RESOLVED_PATH, 'utf-8'))
   const pathToErnVersionEntryPoint = ((ernRc.platformVersion === '1000') || (ernRc.platformVersion === '1000.0.0'))
     ? path.join(ERN_VERSIONS_CACHE_PATH, '1000.0.0', 'ern-local-cli', 'src', 'index.dev.js')
     : path.join(ERN_VERSIONS_CACHE_PATH, ernRc.platformVersion, 'node_modules', 'ern-local-cli', 'src', 'index.prod.js')
