@@ -393,27 +393,43 @@ export async function generatePluginsMustacheViews (
 export function copyRnpmAssets (
   miniApps: Array<MiniApp>,
   compositeMiniAppDir: string,
-  outDir: string) {
+  outDir: string,
+  platform: 'android' | 'ios') {
   // Case of local container for runner
   if ((miniApps.length === 1) && (miniApps[0].path)) {
-    copyRnpmAssetsFromMiniAppPath(miniApps[0].path, outDir)
+    platform === 'android'
+      ? copyAndroidRnpmAssetsFromMiniAppPath(miniApps[0].path, outDir)
+      : copyIosRnpmAssetsFromMiniAppPath(miniApps[0].path, outDir)
   } else {
     for (const miniApp of miniApps) {
       const miniAppPath = path.join(
         compositeMiniAppDir,
         'node_modules',
         miniApp.packageJson.name)
-      copyRnpmAssetsFromMiniAppPath(miniAppPath, outDir)
+      platform === 'android'
+        ? copyAndroidRnpmAssetsFromMiniAppPath(miniAppPath, outDir)
+        : copyIosRnpmAssetsFromMiniAppPath(miniAppPath, outDir)
     }
   }
 }
 
-function copyRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
+function copyAndroidRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
   const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
   if (packageJson.rnpm && packageJson.rnpm.assets) {
     for (const assetDirectoryName of packageJson.rnpm.assets) {
       const source = path.join(assetDirectoryName, '*')
       const dest = path.join('lib', 'src', 'main', 'assets', assetDirectoryName.toLowerCase())
+      handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
+    }
+  }
+}
+
+function copyIosRnpmAssetsFromMiniAppPath (miniAppPath: string, outputPath: string) {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8'))
+  if (packageJson.rnpm && packageJson.rnpm.assets) {
+    for (const assetDirectoryName of packageJson.rnpm.assets) {
+      const source = path.join(assetDirectoryName, '*')
+      const dest = path.join('ElectrodeContainer', 'Resources')
       handleCopyDirective(miniAppPath, outputPath, [{ source, dest }])
     }
   }
