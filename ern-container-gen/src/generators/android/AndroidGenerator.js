@@ -78,7 +78,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         jsApiImplDependencies)
 
       if (!config.ignoreRnpmAssets) {
-        copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir)
+        copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir, 'android')
       }
     } catch (e) {
       log.error('[generateContainer] Something went wrong. Aborting Container Generation')
