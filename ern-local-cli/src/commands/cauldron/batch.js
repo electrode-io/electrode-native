@@ -4,7 +4,8 @@ import {
   PackagePath,
   NativeApplicationDescriptor,
   utils as coreUtils,
-  MiniApp
+  MiniApp,
+  nativeDepenciesVersionResolution as resolver
 } from 'ern-core'
 import utils from '../../lib/utils'
 import _ from 'lodash'
@@ -155,7 +156,7 @@ exports.handler = async function ({
     }
 
     let addMiniAppsObjs = []
-  // An array of miniapps strings was provided
+    // An array of miniapps strings was provided
     const addMiniAppsDependencyPaths = _.map(addMiniapps, m => PackagePath.fromString(m))
     for (const addMiniAppDependencyPath of addMiniAppsDependencyPaths) {
       const m = await MiniApp.fromPackagePath(addMiniAppDependencyPath)
@@ -184,24 +185,37 @@ exports.handler = async function ({
           updateDependencyObj.version)
         cauldronCommitMessage.push(`- Update ${updateDependencyObj.basePath} native dependency version to v${updateDependencyObj.version}`)
       }
-      // Update MiniApps
-      for (const updateMiniAppObj of updateMiniAppsObjs) {
-        // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-        await updateMiniAppObj.addToNativeAppInCauldron(napDescriptor, force)
-        cauldronCommitMessage.push(`- Update ${updateMiniAppObj.name} MiniApp version to v${updateMiniAppObj.version}`)
-      }
       // Add Dependencies
       for (const addDependencyObj of addDependenciesObjs) {
         // Add the dependency to Cauldron
         await cauldron.addContainerNativeDependency(napDescriptor, addDependencyObj)
         cauldronCommitMessage.push(`-Add ${addDependencyObj.toString()} native dependency`)
       }
+      // Update MiniApps
+      for (const updateMiniAppObj of updateMiniAppsObjs) {
+        cauldronCommitMessage.push(`- Update ${updateMiniAppObj.name} MiniApp version to v${updateMiniAppObj.version}`)
+      }
       // Add MiniApps
       for (const addMiniAppObj of addMiniAppsObjs) {
-        // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-        await addMiniAppObj.addToNativeAppInCauldron(napDescriptor, force)
         cauldronCommitMessage.push(`-Add ${addMiniAppObj.packageDescriptor} MiniApp`)
       }
+
+      const miniAppsInCauldron = await cauldron.getContainerMiniApps(napDescriptor)
+      const nonUpdatedMiniAppsInCauldron = _.xorBy(updateMiniAppsDependencyPaths, miniAppsInCauldron, 'basePath')
+      let nonUpdatedMiniAppsInCauldronObjs = []
+      for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
+        const m = await MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron)
+        nonUpdatedMiniAppsInCauldronObjs.push(m)
+      }
+
+      const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps([...updateMiniAppsObjs, ...addMiniAppsObjs, ...nonUpdatedMiniAppsInCauldronObjs])
+      const cauldronDependencies = await cauldron.getNativeDependencies(napDescriptor)
+      const finalNativeDependencies = resolver.retainHighestVersions(nativeDependencies.resolved, cauldronDependencies)
+
+      utils.logNativeDependenciesConflicts(nativeDependencies, { throwIfConflict: !force })
+
+      await cauldron.syncContainerMiniApps(napDescriptor, [...addMiniAppsDependencyPaths, ...updateMiniAppsDependencyPaths])
+      await cauldron.syncContainerNativeDependencies(napDescriptor, finalNativeDependencies)
     },
     napDescriptor,
     cauldronCommitMessage,
