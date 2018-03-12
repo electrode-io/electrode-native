@@ -5,7 +5,8 @@ import {
   MiniApp,
   NativeApplicationDescriptor,
   spin,
-  utils as coreUtils
+  utils as coreUtils,
+  nativeDepenciesVersionResolution as resolver
 } from 'ern-core'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
@@ -78,9 +79,24 @@ exports.handler = async function ({
     const miniAppsDependencyPaths = _.map(miniapps, m => PackagePath.fromString(m))
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
       const m = await spin(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
-      MiniApp.fromPackagePath(miniAppDependencyPath))
+        MiniApp.fromPackagePath(miniAppDependencyPath))
       miniAppsObjs.push(m)
     }
+
+    const cauldron = await coreUtils.getCauldronInstance()
+    const miniAppsInCauldron = await cauldron.getContainerMiniApps(napDescriptor)
+    let miniAppsInCauldronObjs = []
+    for (const miniAppInCauldron of miniAppsInCauldron) {
+      const m = await spin(`Retrieving ${miniAppInCauldron.toString()} MiniApp`,
+        MiniApp.fromPackagePath(miniAppInCauldron))
+      miniAppsInCauldronObjs.push(m)
+    }
+
+    const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps([...miniAppsObjs, ...miniAppsInCauldronObjs])
+    const cauldronDependencies = await cauldron.getNativeDependencies(napDescriptor)
+    const finalNativeDependencies = resolver.retainHighestVersions(nativeDependencies.resolved, cauldronDependencies)
+
+    utils.logNativeDependenciesConflicts(nativeDependencies, { throwIfConflict: !force })
 
     const cauldronCommitMessage = [
       `${miniapps.length === 1
@@ -91,10 +107,10 @@ exports.handler = async function ({
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const miniAppObj of miniAppsObjs) {
-          // Add the MiniApp (and all it's dependencies if needed) to Cauldron
-          await miniAppObj.addToNativeAppInCauldron(napDescriptor, force)
           cauldronCommitMessage.push(`- Add ${miniAppObj.packageDescriptor} MiniApp`)
         }
+        await cauldron.syncContainerMiniApps(napDescriptor, miniAppsDependencyPaths)
+        await cauldron.syncContainerNativeDependencies(napDescriptor, finalNativeDependencies)
       },
       napDescriptor,
       cauldronCommitMessage,

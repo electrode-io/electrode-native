@@ -44,8 +44,8 @@
 1) [delDependencies]  
 2) [delMiniapps]  
 3) [updateDependencies]  
-4) [updateMiniapps]  
-5) [addDependencies]  
+4) [addDependencies]  
+5) [updateMiniapps]  
 6) [addMiniapps]
 
 [delDependencies]: del/dependencies.md

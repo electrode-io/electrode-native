@@ -900,6 +900,26 @@ function normalizeVersionsToSemver (versions: Array<string>) : Array<string> {
   })
 }
 
+function logNativeDependenciesConflicts (
+  nativeDependencies: Object, {
+    throwIfConflict
+  } : {
+    throwIfConflict?: boolean
+  } = {}) {
+  const conflictingDependencies = nativeDependencies.pluginsWithMismatchingVersions
+  if (conflictingDependencies.length > 0) {
+    if (!throwIfConflict) {
+      log.warn('=============================================================================')
+      log.warn('The following native dependencies are using different conflicting versions : ')
+      conflictingDependencies.foreach(p => log.warn(`- ${p}`))
+      log.warn('Ignoring due to the use of the --force flag')
+      log.warn('=============================================================================')
+    } else {
+      throw new Error(`Some native dependencies are using conflicting versions : ${conflictingDependencies.join(',')}`)
+    }
+  }
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
@@ -913,5 +933,6 @@ export default {
   checkIfModuleNameContainsSuffix,
   promptUserToUseSuffixModuleName,
   getDescriptorsMatchingSemVerDescriptor,
-  normalizeVersionsToSemver
+  normalizeVersionsToSemver,
+  logNativeDependenciesConflicts
 }
