@@ -2,7 +2,6 @@
 
 import config from './config'
 import PackagePath from './PackagePath'
-import NativeApplicationDescriptor from './NativeApplicationDescriptor'
 import spin from './spin'
 import tagOneLine from './tagoneline'
 import shell from './shell'
@@ -15,9 +14,6 @@ import {
   yarn
 } from './clients'
 import * as ModuleTypes from './ModuleTypes'
-import {
-  checkCompatibilityWithNativeApp
-} from './compatibility'
 import type {
   NativeDependencies
 } from './nativeDependenciesLookup'
@@ -382,93 +378,6 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
 
     process.chdir(this.path)
     await spin(`Running yarn install`, yarn.install())
-  }
-
-  async addToNativeAppInCauldron (
-    napDescriptor: NativeApplicationDescriptor,
-    force?: boolean) {
-    try {
-      const cauldronInstance = await utils.getCauldronInstance()
-      if (!cauldronInstance) {
-        throw new Error('No Cauldron is active')
-      }
-      const nativeApp = await cauldronInstance.getDescriptor(napDescriptor)
-
-       // If this is not a forced add, we run quite some checks beforehand
-      if (!force) {
-        if (nativeApp.isReleased) {
-          throw new Error(`${napDescriptor.toString()} is released. You cannot add or update MiniApps in its container.`)
-        }
-
-        /* log.info(`Checking that container version match native app version`)
-        const nativeAppPlatformVersion = nativeApp.ernPlatformVersion
-        const miniAppPlatformVersion = this.platformVersion
-        if (nativeAppPlatformVersion !== miniAppPlatformVersion) {
-        throw new Error(tagOneLine`Platform versions mismatch :
-        [${miniAppName} => ${miniAppPlatformVersion}]
-        [${appName}:${platformName}:${versionName} => ${nativeAppPlatformVersion}]`);
-        } */
-
-        log.debug('Checking compatibility with each native dependency')
-        let report = await checkCompatibilityWithNativeApp(
-          this,
-          napDescriptor.name,
-          napDescriptor.platform,
-          napDescriptor.version)
-        if (!report.isCompatible) {
-          throw new Error('At least a native dependency is incompatible')
-        }
-      }
-
-      const nativeDependencies = await this.getNativeDependencies()
-      const validNativeDependencies = [
-        ...nativeDependencies.apis,
-        ...nativeDependencies.nativeApisImpl,
-        ...nativeDependencies.thirdPartyInManifest ]
-      for (const nonAddedDependency of nativeDependencies.thirdPartyNotInManifest) {
-        log.warn('========================================================================================================')
-        log.warn(`${nonAddedDependency.toString()} will not be added to the Cauldron as it is not declared in the Manifest`)
-        log.warn('You should add it to the Manifest if its a React Native plugin. Otherwise please ignore this warning')
-        log.warn('========================================================================================================')
-      }
-      for (const localNativeDependency of validNativeDependencies) {
-        // If local native dependency already exists at same version in cauldron,
-        // we then don't need to add it or update it
-        const localNativeDependencyString = localNativeDependency.basePath
-        let remoteDependency
-        if (await cauldronInstance.isNativeDependencyInContainer(napDescriptor, localNativeDependencyString)) {
-          remoteDependency = await cauldronInstance.getContainerNativeDependency(napDescriptor, localNativeDependencyString)
-        }
-
-        if (!localNativeDependency.version) {
-          throw new Error('local dependency does not have a version. This should not happen')
-        }
-
-        // Update dependency version in Cauldron, only if local dependency version is a newer version compared to Cauldron
-        // This will only apply for API/API-IMPLS and bridge due to backward compatibility (if no major version update)
-        // This does not apply to other third party native dependencies (anyway in that case the code should not react this
-        // point as compatibility checks would have failed unless force flag is used)
-        if (remoteDependency && remoteDependency.version && semver.lt(remoteDependency.version, localNativeDependency.version)) {
-          await cauldronInstance.updateContainerNativeDependencyVersion(napDescriptor, localNativeDependencyString, localNativeDependency.version)
-        } else if (!remoteDependency) {
-          await cauldronInstance.addContainerNativeDependency(napDescriptor, localNativeDependency)
-        }
-      }
-
-      const isMiniAppInContainer =
-                await cauldronInstance.isMiniAppInContainer(napDescriptor, this._packagePath.basePath)
-
-      if (isMiniAppInContainer && !nativeApp.isReleased) {
-        await cauldronInstance.updateContainerMiniAppVersion(napDescriptor, this._packagePath)
-      } else if (!isMiniAppInContainer && !nativeApp.isReleased) {
-        await cauldronInstance.addContainerMiniApp(napDescriptor, this._packagePath)
-      } else {
-        log.error('not supported')
-      }
-    } catch (e) {
-      log.error(`[addMiniAppToNativeAppInCauldron ${e.message}`)
-      throw e
-    }
   }
 
   publishToNpm () {
