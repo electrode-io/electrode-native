@@ -1114,6 +1114,154 @@ describe('CauldronHelper.js', () => {
     })
   })
 
+  describe('syncContainerNativeDependencies', () => {
+    it('should not update anything if dependencies versions are the same', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerNativeDependencies(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('react-native-electrode-bridge@1.4.9'),
+          PackagePath.fromString('@test/react-native-test-api@0.17.8'),
+          PackagePath.fromString('react-native@0.42.0'),
+          PackagePath.fromString('react-native-code-push@1.17.1-beta')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.nativeDeps).length(4)
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-electrode-bridge@1.4.9')
+      expect(nativeAppVersion.container.nativeDeps).includes('@test/react-native-test-api@0.17.8')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native@0.42.0')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-code-push@1.17.1-beta')
+    })
+
+    it('should add missing dependencies', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerNativeDependencies(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('react-native-electrode-bridge@1.4.9'),
+          PackagePath.fromString('@test/react-native-test-api@0.17.8'),
+          PackagePath.fromString('react-native@0.42.0'),
+          PackagePath.fromString('react-native-code-push@1.17.1-beta'),
+          PackagePath.fromString('new-dependency@1.0.0')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.nativeDeps).length(5)
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-electrode-bridge@1.4.9')
+      expect(nativeAppVersion.container.nativeDeps).includes('@test/react-native-test-api@0.17.8')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native@0.42.0')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-code-push@1.17.1-beta')
+      expect(nativeAppVersion.container.nativeDeps).includes('new-dependency@1.0.0')
+    })
+
+    it('should update dependencies with different versions', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerNativeDependencies(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('react-native-electrode-bridge@1.5.0'),
+          PackagePath.fromString('@test/react-native-test-api@0.17.8'),
+          PackagePath.fromString('react-native@0.43.0'),
+          PackagePath.fromString('react-native-code-push@1.17.1-beta')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.nativeDeps).length(4)
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-electrode-bridge@1.5.0')
+      expect(nativeAppVersion.container.nativeDeps).includes('@test/react-native-test-api@0.17.8')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native@0.43.0')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-code-push@1.17.1-beta')
+    })
+
+    it('should add missing dependencies and update dependencies with different versions', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerNativeDependencies(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('react-native-electrode-bridge@1.5.0'),
+          PackagePath.fromString('@test/react-native-test-api@0.17.8'),
+          PackagePath.fromString('react-native@0.43.0'),
+          PackagePath.fromString('react-native-code-push@1.17.1-beta'),
+          PackagePath.fromString('new-dependency@1.0.0')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.nativeDeps).length(5)
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-electrode-bridge@1.5.0')
+      expect(nativeAppVersion.container.nativeDeps).includes('@test/react-native-test-api@0.17.8')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native@0.43.0')
+      expect(nativeAppVersion.container.nativeDeps).includes('react-native-code-push@1.17.1-beta')
+      expect(nativeAppVersion.container.nativeDeps).includes('new-dependency@1.0.0')
+    })
+  })
+
+  describe('syncContainerMiniApps', () => {
+    it('should not update anything if miniapps versions are the same', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('@test/react-native-foo@5.0.0'),
+          PackagePath.fromString('react-native-bar@3.0.0'),
+          PackagePath.fromString('git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.miniApps).length(3)
+      expect(nativeAppVersion.container.miniApps).includes('@test/react-native-foo@5.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('react-native-bar@3.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9')
+    })
+
+    it('should add missing miniapps', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('@test/react-native-foo@5.0.0'),
+          PackagePath.fromString('react-native-bar@3.0.0'),
+          PackagePath.fromString('git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9'),
+          PackagePath.fromString('new-miniapp@0.0.1')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.miniApps).length(4)
+      expect(nativeAppVersion.container.miniApps).includes('@test/react-native-foo@5.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('react-native-bar@3.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9')
+      expect(nativeAppVersion.container.miniApps).includes('new-miniapp@0.0.1')
+    })
+
+    it('should update miniapps with different versions', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('@test/react-native-foo@6.0.0'),
+          PackagePath.fromString('react-native-bar@3.0.0'),
+          PackagePath.fromString('git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0'),
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.miniApps).length(3)
+      expect(nativeAppVersion.container.miniApps).includes('@test/react-native-foo@6.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('react-native-bar@3.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0')
+    })
+
+    it('should add missing miniapps and update miniapps with different versions', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'), [
+          PackagePath.fromString('@test/react-native-foo@6.0.0'),
+          PackagePath.fromString('react-native-bar@3.0.0'),
+          PackagePath.fromString('git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0'),
+          PackagePath.fromString('new-miniapp@0.0.1')
+        ])
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.miniApps).length(4)
+      expect(nativeAppVersion.container.miniApps).includes('@test/react-native-foo@6.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('react-native-bar@3.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0')
+      expect(nativeAppVersion.container.miniApps).includes('new-miniapp@0.0.1')
+    })
+  })
+
   describe('updateContainerJsApiImplVersion', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
