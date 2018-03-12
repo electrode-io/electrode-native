@@ -37,6 +37,7 @@ import _gitCli from './gitCli'
 import _CodePushSdk from './CodePushSdk'
 import * as _promptUtils from './promptUtils'
 import _createTmpDir from './createTmpDir'
+import * as _nativeDepenciesVersionResolution from './resolveNativeDependenciesVersions'
 
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
@@ -73,6 +74,7 @@ export const gitCli = _gitCli
 export const CodePushSdk = _CodePushSdk
 export const promptUtils = _promptUtils
 export const createTmpDir = _createTmpDir
+export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolution
 
 export default ({
   handleCopyDirective: _handleCopyDirective,
@@ -109,7 +111,8 @@ export default ({
   gitCli: _gitCli,
   CodePushSdk: _CodePushSdk,
   promptUtils: _promptUtils,
-  createTmpDir: _createTmpDir
+  createTmpDir: _createTmpDir,
+  nativeDepenciesVersionResolution: _nativeDepenciesVersionResolution
 })
 
 export type {
