@@ -152,7 +152,8 @@
               ],
               "miniApps": [
                 "@test/react-native-foo@5.0.0",
-                "react-native-bar@3.0.0"
+                "react-native-bar@3.0.0",
+                "git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9"
               ],
               "jsApiImpls": [
                 "react-native-my-api-impl@1.0.0"

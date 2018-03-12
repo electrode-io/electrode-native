@@ -250,6 +250,60 @@ export default class CauldronHelper {
     return this.cauldron.updateContainerNativeDependencyVersion(napDescriptor, dependencyName, newVersion)
   }
 
+  async syncContainerMiniApps (
+    napDescriptor: NativeApplicationDescriptor,
+    miniappsPackagePath: Array<PackagePath>) : Promise<void> {
+    const cauldronMiniApps = await this.getContainerMiniApps(napDescriptor)
+    // Add MiniApps that are not part of the Container
+    const newMiniApps = _.differenceBy(miniappsPackagePath, cauldronMiniApps, 'basePath')
+    for (const newMiniApp of newMiniApps) {
+      await this.addContainerMiniApp(napDescriptor, newMiniApp)
+    }
+    // Update MiniApps that have a different version
+    for (const cauldronMiniApp of cauldronMiniApps) {
+      const miniapp = _.find(miniappsPackagePath, d => d.basePath === cauldronMiniApp.basePath)
+      if (miniapp && (miniapp.version !== cauldronMiniApp.version)) {
+        await this.updateContainerMiniAppVersion(napDescriptor, miniapp)
+      }
+    }
+  }
+
+  async syncContainerJsApiImpls (
+    napDescriptor: NativeApplicationDescriptor,
+    jsApiImplsPackagePath: Array<PackagePath>) : Promise<void> {
+    const cauldronJsApiImpls = await this.getContainerJsApiImpls(napDescriptor)
+    // Add JS API Impls that are not part of the Container
+    const newJsApiImpls = _.differenceBy(jsApiImplsPackagePath, cauldronJsApiImpls, 'basePath')
+    for (const newJsApiImpl of newJsApiImpls) {
+      await this.addContainerJsApiImpl(napDescriptor, newJsApiImpl)
+    }
+    // Update JS API Impls that have a different version
+    for (const cauldronJsApiImpl of cauldronJsApiImpls) {
+      const jsApiImpl = _.find(jsApiImplsPackagePath, d => d.basePath === cauldronJsApiImpl.basePath)
+      if (jsApiImpl && (jsApiImpl.version !== cauldronJsApiImpl.version)) {
+        await this.updateContainerJsApiImplVersion(napDescriptor, jsApiImpl.basePath, jsApiImpl.version)
+      }
+    }
+  }
+
+  async syncContainerNativeDependencies (
+    napDescriptor: NativeApplicationDescriptor,
+    nativeDependencies: Array<PackagePath>) : Promise<void> {
+    const cauldronNativeDependencies = await this.getNativeDependencies(napDescriptor)
+    // Add native dependencies that are not part of the Container
+    const newNativeDependencies = _.differenceBy(nativeDependencies, cauldronNativeDependencies, 'basePath')
+    for (const newNativeDependency of newNativeDependencies) {
+      await this.addContainerNativeDependency(napDescriptor, newNativeDependency)
+    }
+    // Update native dependencies that have a different version
+    for (const cauldronNativeDependency of cauldronNativeDependencies) {
+      const dep = _.find(nativeDependencies, d => d.basePath === cauldronNativeDependency.basePath)
+      if (dep && (dep.version !== cauldronNativeDependency.version)) {
+        await this.updateContainerNativeDependencyVersion(napDescriptor, dep.basePath, dep.version)
+      }
+    }
+  }
+
   async updateContainerJsApiImplVersion (
     napDescriptor: NativeApplicationDescriptor,
     jsApiImplName: string,
