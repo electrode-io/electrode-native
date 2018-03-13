@@ -1,6 +1,6 @@
 {
   "name": "electrode-native",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Electrode Native Global CLI",
   "main": "./dist/index.js",
   "bin": {
