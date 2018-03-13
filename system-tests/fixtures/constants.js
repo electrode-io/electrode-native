@@ -37,7 +37,7 @@ const pathConstants = {
   pathToIosContainerFixture: path.join(__dirname, 'ios-container'),
   pathToBaseApiFixture: path.join(__dirname, 'api', baseConstants.testApiName),
   pathToComplexApiFixture: path.join(__dirname, 'api', baseConstants.complexApiName),
-  pathToComplexApiSchema: path.join(__dirname, 'api', baseConstants.complexApiName, 'schema.json')
+  pathToComplexApiSchema: path.join(__dirname, 'api', 'schema.json')
 }
 
 module.exports = Object.freeze(Object.assign({}, baseConstants, compositeConstants, pathConstants))

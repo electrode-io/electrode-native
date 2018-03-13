@@ -16,7 +16,8 @@
     "standard": "standard",
     "flow": "flow",
     "precommit": "node yarn-lock && standard && flow",
-    "postmerge": "node auto-rebuild.js"
+    "postmerge": "node auto-rebuild.js",
+    "regen-fixtures": "node system-tests/regen-fixtures"
   },
   "dependencies": {
     "chalk": "^2.3.0",
