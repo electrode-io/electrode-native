@@ -404,7 +404,6 @@ async function performContainerStateUpdateInCauldron (
   const platform = napDescriptor.platform
   const outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform)
   let cauldronContainerVersion
-  let compositeMiniAppDir
   let cauldron
 
   try {
@@ -428,7 +427,7 @@ async function performContainerStateUpdateInCauldron (
     // Perform the custom container state update
     await stateUpdateFunc()
 
-    compositeMiniAppDir = createTmpDir()
+    const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
     await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
@@ -441,10 +440,14 @@ async function performContainerStateUpdateInCauldron (
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
 
+    // Update yarn lock
+    const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
+    await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
+
     // Commit Cauldron transaction
     await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
 
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
+    log.info(`Added new container version ${cauldronContainerVersion} for ${napDescriptor.toString()} in Cauldron`)
   } catch (e) {
     log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
     if (cauldron) {
@@ -492,8 +495,7 @@ async function performContainerStateUpdateInCauldron (
             break
         }
       }
-      const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
-      await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
+      log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
     }
   } catch (e) {
     log.error(`[performContainerStateUpdateInCauldron] An error occurred while publishing container: ${e}`)
