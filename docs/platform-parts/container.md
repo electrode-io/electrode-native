@@ -31,13 +31,9 @@ Electrode Native supports three distinct publishers for the Electrode Native gen
 
 - The Maven publisher can be used to publish Android containers. Upon generation and compilation of the Electrode Native container, the resulting AAR artifact will be published to a Maven repository of your choice--this can be your own custom Nexus for example.
 
-<<<<<<< HEAD
-- The Git publisher can be used for both the Android or iOS container. When you generate a container, the Git publisher publishes the complete generated container project to a Git repository of your choice--probably GitHub.
-=======
 - The JCenter publisher can be used to publish Android container. Upn generation and compilation of the Electrode Native container, the resulting AAR artifact will be published to your bintray repository.
 
 - The Git publisher can be used for both the Android or iOS container. When you generate a container, the Git publisher will publish the complete generated container project to a Git repository of your choice--probably GitHub. Please note that in the case of an Android Container, the project itself will be published to Git, not the AAR. Only Maven and JCenter publisher will trigger generation and publication of an AAR.
->>>>>>> 8250c624... :pencil: Update Container documentation
 
 It is possible to use more than one publisher for your container. For example, you can choose to publish your Android containers both to Maven and GitHub.
 
@@ -87,6 +83,9 @@ The publication configuration object will be stored under in the cauldron docume
                      {
                         "name":"maven",
                         "url":"http://user.nexus.repo.com:8081/nexus/content/repositories"
+                     },
+                     {
+                        "name":"jcenter"
                      }
                   ]
                }
@@ -125,8 +124,6 @@ mavenUser=user
 mavenPassword=password
 ```
 
-<<<<<<< HEAD
-=======
 or you can directly store them in the maven publisher configuration in the Cauldron, though this is less recommended as your credentials will be visible to anyone having read acccess to your Cauldron.
 
 #### Jcenter publisher remarks
@@ -141,7 +138,6 @@ bintrayRepo=repository name
 bintrayVcsUrl=vcsUrl
 ```
 
->>>>>>> 8250c624... :pencil: Update Container documentation
 ### Adding an Electrode Native container to your mobile application
 
 This section describes how to add an Electrode Native container to your Android or iOS mobile application.
