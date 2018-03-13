@@ -553,7 +553,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
   if (descriptor) {
     cauldron = await coreUtils.getCauldronInstance()
     if (cauldron == null) {
-      throw new Error('Boum')
+      throw new Error('[runMiniApp] No cauldron instance found')
     }
     await utils.logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
