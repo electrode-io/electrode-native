@@ -52,10 +52,14 @@
 ### CLI COMMANDS
 
 - [add](cli/add.md)
+- binarystore
+  - [add](cli/binarystore/add.md)
+  - [get](cli/binarystore/get.md)
+  - [remove](cli/binarystore/remove.md)
 - [code-push](cli/code-push.md)
+  - [patch](cli/code-push/patch.md)
   - [release](cli/code-push/release.md)
   - [promote](cli/code-push/promote.md)
-  - [patch](cli/code-push/patch.md)
 - [compat-check](cli/compat-check.md)
 - [create-api-impl](cli/create-api-impl.md)
 - [create-api](cli/create-api.md)
@@ -71,7 +75,6 @@
 - [unlink](cli/unlink.md)
 - [upgrade-miniapp](cli/upgrade-miniapp.md)
 - [why](cli/why.md)
-
 - [cauldron add](cli/cauldron/add.md)
   - [dependencies](cli/cauldron/add/dependencies.md)
   - [jsapiimpls](cli/cauldron/add/jsapiimpls.md)
