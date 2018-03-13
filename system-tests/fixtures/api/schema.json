@@ -1,0 +1,162 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "Test schema to demonstrate ComplexAPI ",
+		"title": "Complex Api"
+	},
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+		"/testArrayOfStrings": {
+			"post": {
+				"tags": [
+					"SystemTests"
+				],
+				"operationId": "testArrayOfStrings",
+				"parameters": [{
+					"name": "key",
+					"in": "body",
+					"description": "keys to get setting",
+					"required": true,
+					"schema": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}],
+				"responses": {
+          "200": {
+            "schema": {
+							"type": "array",
+							"description": "response as an array of Objects",
+							"items": {
+								"$ref": "#/definitions/ERNObject"
+							}
+            }
+          }
+        }
+			}
+		},
+		"/testMultiArgs": {
+			"post": {
+				"tags": [
+						"SystemTests"
+					],
+					"description": "This is a test for multiple arguments.",
+					"operationId": "testMultiArgs",
+					"parameters": [{
+						"name": "key1",
+						"in": "path",
+						"description": "first argument",
+						"required": true,
+						"type": "string"
+		},
+		{
+			"name": "key2",
+			"in": "path",
+			"description": "second argument",
+			"required": true,
+			"type": "integer"
+		}],
+			"responses": {
+				"200": {
+					"description": "set location response",
+					"schema": {
+						"type": "string"
+				}
+			}
+		}
+	}
+},
+"event/testEvent": {
+	"event": {
+		"tags": [
+			"SysteTestEvent"
+		],
+		"operationId": "testEvent",
+		"parameters": [{
+			"name": "buttonId",
+			"in": "path",
+			"description": "id of the button clicked",
+			"required": true,
+				"type": "string"
+		}]
+	}
+}
+	},
+	"definitions": {
+		"NavBarButton": {
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Name of button"
+		},
+			"identifier": {
+				"type": "string",
+				"description": "Id of the button"
+		},
+			"showIcon": {
+				"type": "boolean",
+				"description": "Set to true for showing icon"
+		}
+	},
+		"required": [
+			"name",
+			"identifier"
+	]
+},
+    "ERNObject": {
+      "type": "object",
+      "properties": {
+				"name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number",
+          "format": "double"
+        },
+        "expiry": {
+          "type": "number",
+          "format": "long"
+        },
+				"leftButton":{
+					"$ref": "#/definitions/NavBarButton"
+				},
+				"rightButtons": {
+					"type": "array",
+						"items": {
+							"$ref": "#/definitions/NavBarButton"
+										 },
+										 "description": "Right button properties"
+				},
+				"isGuestUser": {
+					"type": "boolean",
+					"description": "specify if user is a guest",
+					"default": false
+				},
+				"mergeType": {
+					"type": "integer",
+					"description": "specify merge type"
+				}
+      },
+			"required": [
+        "name",
+        "version"
+      ]
+    }
+	}
+}
