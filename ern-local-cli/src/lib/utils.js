@@ -401,11 +401,14 @@ async function performContainerStateUpdateInCauldron (
     throw new Error(`napDescriptor (${napDescriptor.toString()}) does not contain a platform`)
   }
 
-  try {
-    const platform = napDescriptor.platform
-    var cauldron = await coreUtils.getCauldronInstance()
+  const platform = napDescriptor.platform
+  const outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform)
+  let cauldronContainerVersion
+  let cauldron
 
-    let cauldronContainerVersion
+  try {
+    cauldron = await coreUtils.getCauldronInstance()
+
     if (containerVersion) {
       cauldronContainerVersion = containerVersion
     } else {
@@ -427,7 +430,6 @@ async function performContainerStateUpdateInCauldron (
     const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
-    const outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform)
     await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
       runCauldronContainerGen(
         napDescriptor, {
@@ -435,6 +437,25 @@ async function performContainerStateUpdateInCauldron (
           compositeMiniAppDir
         }))
 
+    // Update container version in Cauldron
+    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
+
+    // Update yarn lock
+    const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
+    await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
+
+    // Commit Cauldron transaction
+    await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
+
+    log.info(`Added new container version ${cauldronContainerVersion} for ${napDescriptor.toString()} in Cauldron`)
+  } catch (e) {
+    log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
+    if (cauldron) {
+      cauldron.discardTransaction()
+    }
+    throw e
+  }
+  try {
     // Publish container
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(napDescriptor)
     const publishersFromCauldron = containerGenConfig && containerGenConfig.publishers
@@ -474,22 +495,10 @@ async function performContainerStateUpdateInCauldron (
             break
         }
       }
-      const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
-      await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
+      log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
     }
-
-    // Update container version in Cauldron
-    await cauldron.updateContainerVersion(napDescriptor, cauldronContainerVersion)
-
-    // Commit Cauldron transaction
-    await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
-
-    log.info(`Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`)
   } catch (e) {
-    log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
-    if (cauldron) {
-      cauldron.discardTransaction()
-    }
+    log.error(`[performContainerStateUpdateInCauldron] An error occurred while publishing container: ${e}`)
     throw e
   }
 }
@@ -546,7 +555,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
   if (descriptor) {
     cauldron = await coreUtils.getCauldronInstance()
     if (cauldron == null) {
-      throw new Error('Boum')
+      throw new Error('[runMiniApp] No cauldron instance found')
     }
     await utils.logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
