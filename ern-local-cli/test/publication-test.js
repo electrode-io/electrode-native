@@ -12,7 +12,7 @@ import {
 } from 'ern-core'
 import {
   getCodePushSdk,
-  getCodePushAccessKey,
+  getCodePushInitConfig,
   containsVersionMismatch,
   resolvePluginsVersions
 } from '../src/lib/publication'
@@ -36,7 +36,7 @@ describe('lib/publication.js', () => {
   // ==========================================================
   // getCodePushAccessKey
   // ==========================================================
-  describe('getCodePushAccessKey', () => {
+  describe('getCodePushInitConfig', () => {
     it('should return the access key from code push config if keys are present in both config files', () => {
       mockFs({
         [ernRcPath]: ernRcWithCodePushAccessKey,
@@ -44,7 +44,7 @@ describe('lib/publication.js', () => {
       }, {
         createCwd: false
       })
-      expect(getCodePushAccessKey()).to.be.equal(codePushConfigAccessKey)
+      expect(getCodePushInitConfig().accessKey).to.be.equal(codePushConfigAccessKey)
     })
 
     it('should return the access key from code push config if key is not present in .ernrc', () => {
@@ -54,7 +54,7 @@ describe('lib/publication.js', () => {
       }, {
         createCwd: false
       })
-      expect(getCodePushAccessKey()).to.be.equal(codePushConfigAccessKey)
+      expect(getCodePushInitConfig().accessKey).to.be.equal(codePushConfigAccessKey)
     })
 
     it('should return undefined if key is not found in .ernrc nor in .code-push.config', () => {
@@ -64,7 +64,7 @@ describe('lib/publication.js', () => {
       }, {
         createCwd: false
       })
-      expect(getCodePushAccessKey()).to.be.undefined
+      expect(getCodePushInitConfig().accessKey).to.be.undefined
     })
 
     it('should return undefined if key is not found in .ernrc and .code-push.config does not exist', () => {
@@ -73,7 +73,7 @@ describe('lib/publication.js', () => {
       }, {
         createCwd: false
       })
-      expect(getCodePushAccessKey()).to.be.undefined
+      expect(getCodePushInitConfig().accessKey).to.be.undefined
     })
   })
 
