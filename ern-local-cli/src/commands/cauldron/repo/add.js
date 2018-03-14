@@ -22,6 +22,8 @@ exports.builder = function (yargs: any) {
     .epilog(utils.epilog(exports))
 }
 
+const supportedGitHttpsSchemeRe = /(^https:\/\/.+:.+@.+$)|(^https:\/\/.+@.+$)/
+
 exports.handler = function ({
   alias,
   url,
@@ -32,6 +34,15 @@ exports.handler = function ({
   current: boolean,
 }) {
   try {
+    if (url.startsWith('https')) {
+      if (!supportedGitHttpsSchemeRe.test(url)) {
+        throw new Error(`Cauldron https urls have to be formatted as : 
+https://[username]:[password]@[repourl]
+OR
+https://[token]@[repourl]`)
+      }
+    }
+
     let cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
     if (cauldronRepositories[alias]) {
       throw new Error(`A Cauldron repository is already associated to ${alias} alias`)
