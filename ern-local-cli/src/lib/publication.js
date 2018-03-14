@@ -20,7 +20,8 @@ import {
   reactnative
 } from 'ern-core'
 import type {
-  CodePushPackage
+  CodePushPackage,
+  CodePushInitConfig
 } from 'ern-core'
 
 import inquirer from 'inquirer'
@@ -546,21 +547,28 @@ async function getCodePushAppName (
   return result
 }
 
-export function getCodePushAccessKey () {
+export function getCodePushInitConfig (): CodePushInitConfig {
   const codePushConfigFilePath = path.join(process.env.LOCALAPPDATA || process.env.HOME || '', '.code-push.config')
+  var codePushInitConfig: CodePushInitConfig
   if (fs.existsSync(codePushConfigFilePath)) {
-    return JSON.parse(fs.readFileSync(codePushConfigFilePath, 'utf-8')).accessKey
+    codePushInitConfig = JSON.parse(fs.readFileSync(codePushConfigFilePath, 'utf-8'))
   } else {
-    return config.getValue('codePushAccessKey')
+    codePushInitConfig = {
+      'accessKey': config.getValue('codePushAccessKey'),
+      'customHeaders': config.getValue('codePushCustomHeaders'),
+      'customServerUrl': config.getValue('codePushCustomServerUrl'),
+      'proxy': config.getValue('codePushproxy')
+    }
   }
+  return codePushInitConfig
 }
 
 export function getCodePushSdk () {
-  const codePushAccessKey = getCodePushAccessKey()
-  if (!codePushAccessKey) {
-    throw new Error('Unable to get the CodePush access key to use')
+  const codePushInitConfig = getCodePushInitConfig()
+  if (!codePushInitConfig || !codePushInitConfig.accessKey) {
+    throw new Error('Unable to get the CodePush config to use')
   }
-  return new CodePushSdk(codePushAccessKey)
+  return new CodePushSdk(codePushInitConfig)
 }
 
 async function askUserToConfirmCodePushPublication (

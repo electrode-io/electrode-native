@@ -117,5 +117,6 @@ export default ({
 
 export type {
   CodePushPackageInfo,
-  CodePushPackage
+  CodePushPackage,
+  CodePushInitConfig
 } from './CodePushSdk'
