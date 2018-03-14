@@ -116,7 +116,7 @@ The problem in that scenario, is that, when doing a release targeting a specific
 
 If you are using version modifiers for your native application, then you should create an appropriate `codePush` configuration entry in your Cauldron.
 
-For example, for your Android application, if `-dev-debug` versions are associated to your `Staging` deployment name and `-qa-debug` versions are associated to your `QA` deployment name, then you will end up with the following `codePush` configuration in your Cauldron :
+For example, for your Android application, if `-dev-debug` versions are associated to your `Staging` deployment name and `-qa-debug` versions are associated to your `QA` deployment name, then you should setup the following `codePush` configuration in your Cauldron :
 
 ```json
 "nativeApps": [
@@ -127,16 +127,22 @@ For example, for your Android application, if `-dev-debug` versions are associat
     "name": "android",
     "config": {
       "codePush": {
-         "deployments": [{ 
-              "name": "Production" 
-            }, { 
-              "name": "Staging",
+         "deployments": [
+           "Staging",
+           "QA",
+           "Production"
+          ],
+          "versionModifiers": [
+            {
+              "deploymentName": "Staging",
               "modifier": "$1-qa-debug"
-            }, {
-              "name": "QA",
+            },
+            {
+              "deploymentName": "QA",
               "modifier": "$1-dev-debug"
             }
           ]
+        }
       }
     }
   ...
