@@ -17,6 +17,7 @@
 `<url>`
 
 * HTTPS or SSH url to the Cauldron git repository
+* For HTTPS urls, the username and password (or token) must be specified in the URL (valid formats are `https://[username]:[password]@[repourl` or `https://[token]@[repourl]`).
 * By default, the `master` branch of the repository will be used. If you need to use a different branch, you can set the branch name you want to use, by appending it at the end of the url using the `#[branch-name]` format (second example below illustrate this).
 
 **Options**  
