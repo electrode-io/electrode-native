@@ -22,13 +22,20 @@ export type CodePushReleaseInfo = {
   /* generated */ uploadTime: number;
 };
 
+export type CodePushInitConfig = {
+  accessKey: string,
+  customHeaders?: {[headerName: string]: string},
+  customServerUrl?: string,
+  proxy?: string
+}
+
 export type CodePushPackage = CodePushPackageInfo & CodePushReleaseInfo;
 
 export default class CodePushSdk {
   _codePush: any
 
-  constructor (accessKey: string) {
-    this._codePush = new CodePush(accessKey)
+  constructor (initConfig: CodePushInitConfig) {
+    this._codePush = new CodePush(initConfig.accessKey, initConfig.customHeaders, initConfig.customServerUrl, initConfig.proxy)
   }
 
   async releaseReact (
