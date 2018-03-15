@@ -97,7 +97,12 @@ export async function generateMiniAppsComposite (
     extraJsDependencies?: Array<PackagePath>
   } = {},
   jsApiImplDependencies?: Array<PackagePath>) {
-  shell.mkdir('-p', outDir)
+  if (fs.existsSync(outDir)) {
+    cleanupMiniAppsCompositeDir(outDir)
+  } else {
+    shell.mkdir('-p', outDir)
+  }
+
   shell.cd(outDir)
 
   let compositePackageJson = {}
@@ -271,6 +276,17 @@ export async function generateMiniAppsComposite (
   await writeFile('index.android.js', entryIndexJsContent)
   log.debug('Creating index.ios.js')
   await writeFile('index.ios.js', entryIndexJsContent)
+}
+
+function cleanupMiniAppsCompositeDir (dir: string) {
+  shell.rm('-rf', [
+    '.babelrc',
+    'index.android.js',
+    'index.ios.js',
+    'node_modules',
+    'package.json',
+    'yarn.lock'
+  ].map(file => path.join(dir, file)))
 }
 
 // TODO : [WINDOWS SUPPORT]
