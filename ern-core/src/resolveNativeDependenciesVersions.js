@@ -1,8 +1,8 @@
 import semver from 'semver'
 import _ from 'lodash'
-import { PackagePath } from 'ern-core'
 import { NativeDependencies } from './nativeDependenciesLookup'
 import MiniApp from './MiniApp'
+import PackagePath from './PackagePath'
 
 export function containsVersionMismatch (
   versions: Array<string>,
