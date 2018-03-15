@@ -276,13 +276,10 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
         PackagePath.fromString('MiniAppFour@1.0.0') // new
       ]
-      fs.writeFileSync(path.join(tmpOutDir, 'package.json'), JSON.stringify({
-        dependencies: {
-          MiniAppOne: '6.0.0',
-          MiniAppTwo: '4.0.0',
-          MiniAppFour: '1.0.0'
-        }
-      }), 'utf8')
+      yarnCliStub.init.callsFake(() => { 
+        fs.writeFileSync(path.join(tmpOutDir, 'package.json'), 
+          JSON.stringify({ dependencies: {} }), 'utf8') 
+      })
       await generateMiniAppsComposite(miniApps, tmpOutDir)
       assert(yarnCliStub.add.calledThrice)
     })
@@ -292,15 +289,10 @@ describe('ern-container-gen utils.js', () => {
       const miniApps = [
         PackagePath.fromString('MiniAppOne@6.0.0')
       ]
-      // Because in the case of no yarn lock provided the package.json
-      // is created when running first yarn add, and we are using a yarnAdd
-      // stub that is not going to run real yarn add, we need to create the
-      // expected package.json beforehand
-      fs.writeFileSync(path.join(tmpOutDir, 'package.json'), JSON.stringify({
-        dependencies: {
-          MiniAppOne: '6.0.0'
-        }
-      }), 'utf8')
+      yarnCliStub.init.callsFake(() => { 
+        fs.writeFileSync(path.join(tmpOutDir, 'package.json'), 
+          JSON.stringify({ dependencies: {} }), 'utf8') 
+      })
       await generateMiniAppsComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
@@ -310,15 +302,10 @@ describe('ern-container-gen utils.js', () => {
       const miniApps = [
         PackagePath.fromString('MiniAppOne@6.0.0')
       ]
-      // Because in the case of no yarn lock provided the package.json
-      // is created when running first yarn add, and we are using a yarnAdd
-      // stub that is not going to run real yarn add, we need to create the
-      // expected package.json beforehand
-      fs.writeFileSync(path.join(tmpOutDir, 'package.json'), JSON.stringify({
-        dependencies: {
-          MiniAppOne: '6.0.0'
-        }
-      }), 'utf8')
+      yarnCliStub.init.callsFake(() => { 
+        fs.writeFileSync(path.join(tmpOutDir, 'package.json'), 
+          JSON.stringify({ dependencies: {} }), 'utf8') 
+      })
       await generateMiniAppsComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
