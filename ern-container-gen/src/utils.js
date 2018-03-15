@@ -5,6 +5,7 @@ import _ from 'lodash'
 import path from 'path'
 import semver from 'semver'
 import {
+  config,
   reactnative,
   yarn,
   MiniApp,
@@ -271,6 +272,18 @@ export async function generateMiniAppsComposite (
   await writeFile('index.android.js', entryIndexJsContent)
   log.debug('Creating index.ios.js')
   await writeFile('index.ios.js', entryIndexJsContent)
+
+  await runAfterJsCompositeGenerationScript(outDir)
+}
+
+async function runAfterJsCompositeGenerationScript (outDir: string) {
+  const customScript = config.getValue('custom-script')
+  if (customScript) {
+    if (!fs.existsSync(customScript)) {
+      throw new Error(`custom-script was not found in ${customScript}`)
+    }
+    await require(customScript).afterJsCompositeGeneration({ outDir, yarn })
+  }
 }
 
 // TODO : [WINDOWS SUPPORT]
