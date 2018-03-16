@@ -28,6 +28,12 @@
  `--usePreviousDevice/-u`
  * Use the previously selected device to avoid prompt
 
+`--host`
+* Host or ip to launch the local packager on *(default: localhost)*
+
+`--port`
+* Port on which the local packager should listen on *(default: 8081)*
+
 #### Remarks
 
 * You can launch the MiniApp located in the current working directory or on a connected iOS device or running emulator if available. If a connected iOS device is not available, the command prompts you to select an emulator to launch from the list of installed emulator images.  

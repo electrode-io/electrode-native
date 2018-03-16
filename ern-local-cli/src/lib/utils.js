@@ -518,14 +518,18 @@ async function runMiniApp (platform: 'android' | 'ios', {
   jsApiImpls,
   dependencies,
   descriptor,
-  dev
+  dev,
+  host,
+  port
 } : {
   mainMiniAppName?: string,
   miniapps?: Array<string>,
   jsApiImpls?: Array<string>,
   dependencies?: Array<string>,
   descriptor?: string,
-  dev?: boolean
+  dev?: boolean,
+  host?: string,
+  port?: string
 } = {}) {
   const cwd = process.cwd()
 
@@ -593,7 +597,10 @@ async function runMiniApp (platform: 'android' | 'ios', {
     miniAppsPaths = [ PackagePath.fromString(`file:${cwd}`) ]
     if (dev === undefined) { // If dev is not defined it will default to true in the case of standalone MiniApp runner
       dev = true
-      await reactnative.startPackagerInNewWindow(cwd)
+      const args = []
+      if (host) { args.push(`--host ${host}`) }
+      if (port) { args.push(`--port ${port}`) }
+      await reactnative.startPackagerInNewWindow(cwd, args)
     }
   } else {
     miniAppsPaths = (cauldron && napDescriptor && await cauldron.getContainerMiniApps(napDescriptor)) || []
@@ -647,11 +654,19 @@ async function runMiniApp (platform: 'android' | 'ios', {
         platform,
         pathToRunner,
         path.join(Platform.rootDirectory, 'containergen'),
-        entryMiniAppName,
-        { reactNativeDevSupportEnabled: dev }))
+        entryMiniAppName, {
+          reactNativeDevSupportEnabled: dev,
+          host,
+          port
+        }))
   }
 
-  await launchRunner(platform, pathToRunner)
+  await launchRunner({
+    platform,
+    pathToRunner,
+    host,
+    port
+  })
 }
 
 async function generateContainerForRunner (
@@ -683,7 +698,17 @@ async function generateContainerForRunner (
   }
 }
 
-async function launchRunner (platform: string, pathToRunner: string) {
+async function launchRunner ({
+    platform,
+    pathToRunner,
+    host,
+    port
+  } : {
+    platform: string,
+    pathToRunner: string,
+    host?: string,
+    port?: string
+  } = {}) {
   if (platform === 'android') {
     return launchAndroidRunner(pathToRunner)
   } else if (platform === 'ios') {
