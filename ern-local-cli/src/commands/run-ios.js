@@ -39,6 +39,16 @@ exports.builder = function (yargs: any) {
       alias: 'u',
       describe: 'Use the previously selected device to avoid prompt'
     })
+    .option('host', {
+      type: 'string',
+      describe: 'Host/IP to use for the local packager',
+      default: 'localhost'
+    })
+    .option('port', {
+      type: 'string',
+      describe: 'Port to use for the local package',
+      default: '8081'
+    })
     .epilog(utils.epilog(exports))
 }
 
@@ -48,14 +58,18 @@ exports.handler = async function ({
   descriptor,
   mainMiniAppName,
   dev,
-  usePreviousDevice
+  usePreviousDevice,
+  host,
+  port
 } : {
   miniapps?: Array<string>,
   dependencies: Array<string>,
   descriptor?: string,
   mainMiniAppName?: string,
   dev?: boolean,
-  usePreviousDevice?: boolean
+  usePreviousDevice?: boolean,
+  host?: string,
+  port?: string
 }) {
   try {
     if (process.platform !== 'darwin') {
@@ -68,7 +82,9 @@ exports.handler = async function ({
       miniapps,
       dependencies,
       descriptor,
-      dev
+      dev,
+      host,
+      port
     })
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

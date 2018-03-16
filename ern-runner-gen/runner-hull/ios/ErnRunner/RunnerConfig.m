@@ -24,3 +24,5 @@
 
 NSString *const MainMiniAppName = @"{{{miniAppName}}}";
 BOOL const RnDevSupportEnabled = {{{isReactNativeDevSupportEnabled}}};
+NSString *const PackagerHost = @"{{{packagerHost}}}";
+NSString *const PackagerPort = @"{{{packagerPort}}}";

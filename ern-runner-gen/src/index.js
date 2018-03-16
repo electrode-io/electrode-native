@@ -49,14 +49,20 @@ export async function generateAndroidRunnerProject (
   outDir: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string, {
-    reactNativeDevSupportEnabled
+    reactNativeDevSupportEnabled,
+    host = 'localhost',
+    port = '8081'
   } : {
-    reactNativeDevSupportEnabled?: boolean
+    reactNativeDevSupportEnabled?: boolean,
+    host?: string,
+    port?: string
   } = {}) {
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false',
+    packagerHost: host,
+    packagerPort: port
   }
   shell.cp('-R', path.join(runnerHullPath, 'android', '*'), outDir)
   const files = readDir(path.join(runnerHullPath, 'android'),
@@ -71,16 +77,22 @@ export async function generateIosRunnerProject (
   outDir: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string, {
-    reactNativeDevSupportEnabled
+    reactNativeDevSupportEnabled,
+    host = 'localhost',
+    port = '8081'
   } : {
-    reactNativeDevSupportEnabled?: boolean
+    reactNativeDevSupportEnabled?: boolean,
+    host?: string,
+    port?: string
   } = {}) {
   const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(path.join(containerGenWorkingDir, 'out', 'ios'))
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
-    pathToElectrodeContainerXcodeProj
+    pathToElectrodeContainerXcodeProj,
+    packagerHost: host,
+    packagerPort: port
   }
 
   shell.cp('-R', path.join(runnerHullPath, 'ios', '*'), outDir)
@@ -99,17 +111,29 @@ export async function regenerateRunnerConfig (
   outDir: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string, {
-    reactNativeDevSupportEnabled
+    reactNativeDevSupportEnabled,
+    host,
+    port
   } : {
-    reactNativeDevSupportEnabled?: boolean
+    reactNativeDevSupportEnabled?: boolean,
+    host?: string,
+    port?: string
   } = {}) {
   try {
     if (platform === 'android') {
       await regenerateAndroidRunnerConfig(
-        outDir, containerGenWorkingDir, mainMiniAppName, { reactNativeDevSupportEnabled })
+        outDir, containerGenWorkingDir, mainMiniAppName, {
+          reactNativeDevSupportEnabled,
+          host,
+          port
+        })
     } else if (platform === 'ios') {
       await regenerateIosRunnerConfig(
-        outDir, containerGenWorkingDir, mainMiniAppName, { reactNativeDevSupportEnabled })
+        outDir, containerGenWorkingDir, mainMiniAppName, {
+          reactNativeDevSupportEnabled,
+          host,
+          port
+        })
     }
   } catch (e) {
     log.error('Something went wrong: ' + e)
@@ -121,14 +145,20 @@ export async function regenerateAndroidRunnerConfig (
   pathToRunnerProject: string,
   containerGenWorkingDir: string,
   mainMiniAppName: string, {
-    reactNativeDevSupportEnabled
+    reactNativeDevSupportEnabled,
+    host = 'localhost',
+    port = '8081'
   } : {
-    reactNativeDevSupportEnabled?: boolean
+    reactNativeDevSupportEnabled?: boolean,
+    host?: string,
+    port?: string
   } = {}) {
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
-    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false'
+    isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'true' : 'false',
+    packagerHost: host,
+    packagerPort: port
   }
   const subPathToRunnerConfig = path.join('app', 'src', 'main', 'java', 'com', 'walmartlabs', 'ern', 'RunnerConfig.java')
   const pathToRunnerConfigHull = path.join(runnerHullPath, 'android', subPathToRunnerConfig)
@@ -141,18 +171,23 @@ export async function regenerateAndroidRunnerConfig (
 export async function regenerateIosRunnerConfig (
   pathToRunnerProject: string,
   containerGenWorkingDir: string,
-  mainMiniAppName: string,
-  {
-    reactNativeDevSupportEnabled
+  mainMiniAppName: string, {
+    reactNativeDevSupportEnabled,
+    host = 'localhost',
+    port = '8081'
   } : {
-    reactNativeDevSupportEnabled?: boolean
+    reactNativeDevSupportEnabled?: boolean,
+    host?: string,
+    port?: string
   } = {}) {
   const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(path.join(containerGenWorkingDir, 'out', 'ios'))
   const mustacheView = {
     miniAppName: mainMiniAppName,
     pascalCaseMiniAppName: pascalCase(mainMiniAppName),
     isReactNativeDevSupportEnabled: reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
-    pathToElectrodeContainerXcodeProj
+    pathToElectrodeContainerXcodeProj,
+    packagerHost: host,
+    packagerPort: port
   }
   const pathToRunnerConfig = path.join(pathToRunnerProject, 'ErnRunner/RunnerConfig.m')
   shell.cp(path.join(runnerHullPath, 'ios', 'ErnRunner', 'RunnerConfig.m'), pathToRunnerConfig)
