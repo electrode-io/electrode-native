@@ -12,8 +12,9 @@ export default function factory (
   branch: string = 'master') {
   const sourcemapStore = new GitFileStore(cauldronPath, repository, branch, 'sourcemaps')
   const yarnlockStore = new GitFileStore(cauldronPath, repository, branch, 'yarnlocks')
+  const bundleStore = new GitFileStore(cauldronPath, repository, branch, 'bundles')
   const dbStore = new GitDocumentStore(cauldronPath, repository, branch)
-  return new _CauldronApi(dbStore, sourcemapStore, yarnlockStore)
+  return new _CauldronApi(dbStore, sourcemapStore, yarnlockStore, bundleStore)
 }
 
 export const CauldronApi = _CauldronApi

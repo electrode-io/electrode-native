@@ -25,14 +25,17 @@ export default class CauldronApi {
   _db: ICauldronDocumentStore
   _sourceMapStore: ICauldronFileStore
   _yarnlockStore: ICauldronFileStore
+  _bundleStore: ICauldronFileStore
 
   constructor (
     db: ICauldronDocumentStore,
     sourcemapStore: ICauldronFileStore,
-    yarnlockStore: ICauldronFileStore) {
+    yarnlockStore: ICauldronFileStore,
+    bundleStore: ICauldronFileStore) {
     this._db = db
     this._sourceMapStore = sourcemapStore
     this._yarnlockStore = yarnlockStore
+    this._bundleStore = bundleStore
   }
 
   async commit (message: string) : Promise<void> {
