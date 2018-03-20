@@ -8,7 +8,7 @@ import manifest from './Manifest'
 import * as ModuleTypes from './ModuleTypes'
 
 export function findDirectoriesContainingNativeCode (rootDir: string) : Array<string> {
-  return readDir(rootDir).filter(a => /.swift$|.java$/.test(a))
+  return readDir(rootDir).filter(a => /.swift$|.h$|.java$/.test(a))
 }
 
 export function filterDirectories (directories: Array<string>) : Array<string> {
