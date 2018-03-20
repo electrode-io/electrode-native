@@ -90,7 +90,8 @@ function createCauldronApi(cauldronDocument) {
   documentStore = new InMemoryDocumentStore(cauldronDocument)
   const sourceMapStore = new EphemeralFileStore()
   const yarnLockStore = new EphemeralFileStore()
-  return new CauldronApi(documentStore, sourceMapStore, yarnLockStore)
+  const bundleStore = new EphemeralFileStore()
+  return new CauldronApi(documentStore, sourceMapStore, yarnLockStore, bundleStore)
 }
 
 function createCauldronHelper(cauldronDocument) {
