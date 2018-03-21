@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, readonly, nullable) NSString *serverURL;
 
 - (instancetype) initWithDeploymentKey:(NSString *)deploymentKey
-                             serverURL: (NSURL * _Nullable)severURL
+                             serverURL: (NSString * _Nullable)severURL
                        containerConfig: (ElectrodeContainerConfig *)containerConfig;
 - (NSURL *) codePushBundleURL;
 
