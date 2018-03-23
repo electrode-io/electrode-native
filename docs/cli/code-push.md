@@ -30,7 +30,7 @@ Once you are logged-in with the App Center CLI, you'll need to create your appli
 
 We recommend that you create two different application entries, for your application, one per platform. For example if your application is named `MyAwesomeApp`, you should create an application named `MyAwesomeAppIos` and another named `MyAwesomeAppAndroid`.
 
-The name of the unsuffixed application should match the name you will use (or that you already use) in your Cauldron. For exmample, if you named your application as `MyCoolApp` in your Cauldron, you cannot use `MyAwesomeApp` for naming it in CodePush.
+The name of the unsuffixed application should match the name you will use (or that you already use) in your Cauldron. For example, if you named your application as `MyCoolApp` in your Cauldron, you cannot use `MyAwesomeApp` for naming it in CodePush.
 
 Refer to the App Center documentation for more details on the command, but for illustration, here are the commands we would run based on our imaginary application name:
 
@@ -209,7 +209,7 @@ Here follows an illustration on how to initialize the Container with CodePush co
 ```java
 ElectrodeReactContainer.initialize(
   [...]
-  new CodePushPlugin.Config('DEPLOYMENT_KEY')
+  new CodePushPlugin.Config("DEPLOYMENT_KEY")
 ```
 
 **iOS**
