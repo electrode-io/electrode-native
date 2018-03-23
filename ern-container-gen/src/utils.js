@@ -172,6 +172,9 @@ export async function generateMiniAppsComposite (
       entryIndexJsContent += `import '${apiImpl.basePath}'\n`
     }
   }
+
+  await runAfterJsCompositeGenerationScript(outDir)
+
   log.debug('Removing .babelrc files from all modules')
   shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
 
@@ -277,8 +280,6 @@ export async function generateMiniAppsComposite (
   await writeFile('index.android.js', entryIndexJsContent)
   log.debug('Creating index.ios.js')
   await writeFile('index.ios.js', entryIndexJsContent)
-
-  await runAfterJsCompositeGenerationScript(outDir)
 }
 
 async function runAfterJsCompositeGenerationScript (outDir: string) {
