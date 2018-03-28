@@ -88,6 +88,7 @@ Are you sure this is a MiniApp ?`)
     const packageName = Object.keys(packageJson.dependencies)[0]
     shell.rm(path.join(tmpMiniAppPath, 'package.json'))
     shell.mv(path.join(tmpMiniAppPath, 'node_modules', packageName, '*'), tmpMiniAppPath)
+    shell.rm('-rf', path.join(tmpMiniAppPath, 'node_modules', packageName, '*'))
     return new MiniApp(tmpMiniAppPath, false /* isLocal */, packagePath)
   }
 
