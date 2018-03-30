@@ -102,7 +102,7 @@ async function createNodePackage (
   shell.cd(outputDirectoryPath)
   await yarn.init()
   await yarn.add(apiDependency)
-  shell.cp(path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', '.gitignore'), outputDirectoryPath)
+  shell.cp(path.join(Platform.currentPlatformVersionPath, 'ern-api-impl-gen', 'resources', 'gitignore'), path.join(outputDirectoryPath, '.gitignore'))
   ernifyPackageJson(outputDirectoryPath, apiImplName, packageName, scope, nativeOnly, hasConfig)
   shell.cd(currentDirectory)
 }
