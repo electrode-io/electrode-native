@@ -79,7 +79,7 @@ export default class PackagePath {
     ignoreVersion?: boolean
   } = {}) {
     return this.basePath === other.basePath &&
-           ignoreVersion ? true : this.version === other.version
+           (ignoreVersion ? true : this.version === other.version)
   }
 
   toString () : string {
