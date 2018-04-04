@@ -47,6 +47,11 @@ exports.builder = function (yargs: any) {
       describe: 'Deployment to release the update to',
       type: 'string'
     })
+    .option('targetBinaryVersion', {
+      describe: 'Semver expression that specifies the binary app version(s) this release is targeting',
+      alias: 't',
+      type: 'string'
+    })
     .option('mandatory', {
       describe: 'Specifies whether this release should be considered mandatory',
       alias: 'm',
@@ -75,6 +80,7 @@ exports.handler = async function ({
   semVerDescriptor,
   appName,
   deploymentName,
+  targetBinaryVersion,
   platform,
   mandatory,
   rollout,
@@ -87,6 +93,7 @@ exports.handler = async function ({
   semVerDescriptor?: string,
   appName: string,
   deploymentName: string,
+  targetBinaryVersion?:string,
   platform: 'android' | 'ios',
   mandatory?: boolean,
   rollout?: number,
@@ -115,7 +122,7 @@ exports.handler = async function ({
       // User provided no descriptors, nor a semver descriptor
       descriptors = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron({ onlyReleasedVersions: true })
     } else if (semVerDescriptor) {
-      // User provided a semver descritpor
+      // User provided a semver Descriptor
       const semVerNapDescriptor = NativeApplicationDescriptor.fromString(semVerDescriptor)
       napDescriptors = await utils.getDescriptorsMatchingSemVerDescriptor(semVerNapDescriptor)
       if (napDescriptors.length === 0) {
@@ -168,7 +175,8 @@ exports.handler = async function ({
           codePushIsMandatoryRelease: mandatory,
           codePushRolloutPercentage: rollout,
           pathToYarnLock: pathToYarnLock || undefined,
-          skipConfirmation
+          skipConfirmation,
+          targetBinaryVersion
         })
     }
   } catch (e) {

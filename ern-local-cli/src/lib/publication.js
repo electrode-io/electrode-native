@@ -368,13 +368,15 @@ jsApiImpls: Array<PackagePath>, {
   codePushIsMandatoryRelease = false,
   codePushRolloutPercentage,
   pathToYarnLock,
-  skipConfirmation = false
+  skipConfirmation = false,
+  targetBinaryVersion
 }: {
   force: boolean,
   codePushIsMandatoryRelease?: boolean,
   codePushRolloutPercentage?: number,
   pathToYarnLock?: string,
-  skipConfirmation?: boolean
+  skipConfirmation?: boolean,
+  targetBinaryVersion? : string
 } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
@@ -458,7 +460,10 @@ jsApiImpls: Array<PackagePath>, {
     }))
 
     const appName = await getCodePushAppName(napDescriptor)
-    const targetVersionName = await getCodePushTargetVersionName(napDescriptor, deploymentName)
+
+    const targetVersionName = targetBinaryVersion || await getCodePushTargetVersionName(napDescriptor, deploymentName)
+
+    log.info(`Target Binary version : ${targetVersionName}`)
 
     const codePushResponse: CodePushPackage = await spin('Releasing bundle through CodePush', codePushSdk.releaseReact(
       appName,
