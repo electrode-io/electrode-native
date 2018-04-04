@@ -48,6 +48,11 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 * Specify the CodePush deployment name that this update is targeting (Production, Staging ...)
 * **Default**  The command will display a prompt asking to input the deployment name. If deployment names for your native applications are stored in the Cauldron, the prompt will display the deployment names and ask to select one.
 
+`--targetBinaryVersion/-t <targetBinaryVersion>`
+* Semver expression that specifies the binary app version(s) this release is targeting
+* If omitted, the release will target the exact version of the descriptor(s)
+* If versionModifier is specified in the codePush config , exact version of the descriptor is appended to versionModifier
+
 `--mandatory/-m`
 
 * Specify that the release is mandatory (will be immediately downloaded and installed).
