@@ -39,6 +39,11 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 * The deployment name to promote the release to (Production for example).
 * **Default** The command will prompt to input the deployment name, or display a list of deployment names stored in the Cauldron, to choose from.
 
+`--targetBinaryVersion/-t <targetBinaryVersion>`
+* Semver expression that specifies the binary app version this release is targeting
+* If omitted, the release will target the exact version of the descriptor
+* If versionModifier is specified in the codePush config , exact version of the descriptor is appended to versionModifier
+
 `--mandatory/-m`
 
 * Specify that the promoted release is mandatory (will be immediately downloaded and installed).
