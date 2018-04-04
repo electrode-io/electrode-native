@@ -271,12 +271,14 @@ export async function performCodePushPromote (
     force = false,
     mandatory,
     rollout,
-    label
+    label,
+    targetBinaryVersion
   } : {
     force?: boolean,
     mandatory?: boolean,
     rollout?: number,
-    label?: string
+    label?: string,
+    targetBinaryVersion?: string
   } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
@@ -315,7 +317,7 @@ export async function performCodePushPromote (
       }
 
       const appName = await getCodePushAppName(sourceNapDescriptor)
-      const appVersion = await getCodePushTargetVersionName(targetNapDescriptor, targetDeploymentName)
+      const appVersion = targetBinaryVersion || await getCodePushTargetVersionName(targetNapDescriptor, targetDeploymentName)
       const result = await spin(`Promoting release to ${appVersion}`,
         codePushSdk.promote(appName, sourceDeploymentName, targetDeploymentName, {
           appVersion,

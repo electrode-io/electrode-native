@@ -36,6 +36,11 @@ exports.builder = function (yargs: any) {
       type: 'string',
       describe: 'Name of the deployment environment to promote the release to'
     })
+    .option('targetBinaryVersion', {
+      describe: 'Semver expression that specifies the binary app version(s) this release is targeting',
+      alias: 't',
+      type: 'string'
+    })
     .option('mandatory', {
       type: 'bool',
       alias: 'm',
@@ -72,6 +77,7 @@ exports.handler = async function ({
   targetSemVerDescriptor,
   sourceDeploymentName,
   targetDeploymentName,
+  targetBinaryVersion,
   platform,
   mandatory,
   rollout,
@@ -84,6 +90,7 @@ exports.handler = async function ({
   targetSemVerDescriptor?: string,
   sourceDeploymentName?: string,
   targetDeploymentName?: string,
+  targetBinaryVersion?:string,
   platform: 'android' | 'ios',
   mandatory?: boolean,
   rollout?: number,
@@ -178,7 +185,8 @@ exports.handler = async function ({
         force,
         mandatory,
         rollout,
-        label
+        label,
+        targetBinaryVersion
       })
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
