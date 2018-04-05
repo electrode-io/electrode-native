@@ -12,7 +12,7 @@
 
 `<descriptor>`
 
-* A complete native application descritpor representing the native application version to update.
+* A complete native application descriptor representing the native application version to update.
 
 **Options**  
 
