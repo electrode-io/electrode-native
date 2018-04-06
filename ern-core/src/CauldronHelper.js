@@ -228,6 +228,12 @@ export default class CauldronHelper {
     return this.cauldron.updateYarnLockId(napDescriptor, key, id)
   }
 
+  async addBundle (
+    napDescriptor: NativeApplicationDescriptor,
+    bundle: string | Buffer) : Promise<void> {
+    return this.cauldron.addBundle(napDescriptor, bundle)
+  }
+
   async isNativeDependencyInContainer (
     napDescriptor: NativeApplicationDescriptor,
     dependencyName: string) : Promise<boolean> {

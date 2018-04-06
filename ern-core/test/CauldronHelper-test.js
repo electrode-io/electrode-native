@@ -85,12 +85,13 @@ const jsApiImplFixtureOne = [ PackagePath.fromString('react-native-test-js-api-i
 
 let cauldronHelper
 let documentStore
+let bundleStore
 
 function createCauldronApi(cauldronDocument) {
   documentStore = new InMemoryDocumentStore(cauldronDocument)
   const sourceMapStore = new EphemeralFileStore()
   const yarnLockStore = new EphemeralFileStore()
-  const bundleStore = new EphemeralFileStore()
+  bundleStore = new EphemeralFileStore()
   return new CauldronApi(documentStore, sourceMapStore, yarnLockStore, bundleStore)
 }
 
@@ -1003,6 +1004,38 @@ describe('CauldronHelper.js', () => {
         '1111111111111171fe5d52e31a2cfabcbb31e33e')
       const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
       expect(nativeAppVersion.yarnLocks).to.have.property('Production').eql('1111111111111171fe5d52e31a2cfabcbb31e33e')
+    })
+  })
+
+  describe('addBundle', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.addBundle,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android'), 
+        'bundleContent'))
+    })
+
+    it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.addBundle,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:0.0.0'), 
+        'bundleContent'))
+    })
+
+    it('should add the bundle', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addBundle(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'bundleContent')
+      const bundledAdded = await bundleStore.hasFile('test:android:17.7.0.zip')
+      expect(bundledAdded).true
     })
   })
 

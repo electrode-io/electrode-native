@@ -1350,6 +1350,21 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
+  // addBundle
+  // ==========================================================
+  describe('addBundle', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.addBundle, api, NativeApplicationDescriptor.fromString('test:android'), 'BUNDLE_CONTENT'))
+    })
+
+    it('should properly add the bundle', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'BUNDLE_CONTENT')
+    })
+  })
+
+  // ==========================================================
   // throwIfPartialNapDescriptor
   // ==========================================================
   describe('throwIfPartialNapDescriptor', () => {
