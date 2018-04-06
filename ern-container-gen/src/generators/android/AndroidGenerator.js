@@ -22,8 +22,12 @@ import readDir from 'fs-readdir-recursive'
 import fs from 'fs'
 import type {
   ContainerGenerator,
-  ContainerGeneratorConfig
+  ContainerGeneratorConfig,
+  ContainerGenResult
 } from '../../FlowTypes'
+import type {
+  BundlingResult
+} from 'ern-core'
 
 const ROOT_DIR = process.cwd()
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
@@ -58,7 +62,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
   }
 
-  async generate (config: ContainerGeneratorConfig) : Promise<void> {
+  async generate (config: ContainerGeneratorConfig) : Promise<ContainerGenResult> {
     try {
       this.prepareDirectories(config)
       config.plugins = sortDependenciesByName(config.plugins)
@@ -69,7 +73,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(config.plugins)
 
-      await bundleMiniApps(
+      const bundlingResult: BundlingResult = await bundleMiniApps(
         config.miniApps,
         config.compositeMiniAppDir,
         config.outDir,
@@ -79,6 +83,10 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       if (!config.ignoreRnpmAssets) {
         copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir, 'android')
+      }
+
+      return {
+        bundlingResult
       }
     } catch (e) {
       log.error('[generateContainer] Something went wrong. Aborting Container Generation')

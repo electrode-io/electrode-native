@@ -19,11 +19,15 @@ import fs from 'fs'
 import path from 'path'
 import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
+import _ from 'lodash'
 import type {
   ContainerGenerator,
-  ContainerGeneratorConfig
+  ContainerGeneratorConfig,
+  ContainerGenResult
 } from '../../FlowTypes'
-import _ from 'lodash'
+import type {
+  BundlingResult
+} from 'ern-core'
 
 const ROOT_DIR = process.cwd()
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
@@ -57,7 +61,7 @@ export default class IosGenerator implements ContainerGenerator {
     }
   }
 
-  async generate (config: ContainerGeneratorConfig) : Promise<void> {
+  async generate (config: ContainerGeneratorConfig) : Promise<ContainerGenResult> {
     try {
       this.prepareDirectories(config)
       config.plugins = sortDependenciesByName(config.plugins)
@@ -66,16 +70,14 @@ export default class IosGenerator implements ContainerGenerator {
 
       await this.fillContainerHull(config)
 
-      if (config.miniApps.length > 0) {
-        const jsApiImplDependencies = await utils.extractJsApiImplementations(config.plugins)
-        await bundleMiniApps(
-          config.miniApps,
-          config.compositeMiniAppDir,
-          config.outDir,
-          'ios',
-          { pathToYarnLock: config.pathToYarnLock },
-          jsApiImplDependencies)
-      }
+      const jsApiImplDependencies = await utils.extractJsApiImplementations(config.plugins)
+      const bundlingResult: BundlingResult = await bundleMiniApps(
+        config.miniApps,
+        config.compositeMiniAppDir,
+        config.outDir,
+        'ios',
+        { pathToYarnLock: config.pathToYarnLock },
+        jsApiImplDependencies)
 
       if (!config.ignoreRnpmAssets) {
         await copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir, 'ios')
@@ -83,6 +85,10 @@ export default class IosGenerator implements ContainerGenerator {
       }
 
       log.debug('Container generation completed!')
+
+      return {
+        bundlingResult
+      }
     } catch (e) {
       log.error('[generateContainer] Something went wrong. Aborting Container Generation')
       throw e

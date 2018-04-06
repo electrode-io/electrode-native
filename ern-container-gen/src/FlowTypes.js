@@ -4,6 +4,9 @@ import {
   PackagePath,
   MiniApp
 } from 'ern-core'
+import type {
+  BundlingResult
+} from 'ern-core'
 
 export type ContainerGeneratorPaths = {
   // Where we assemble the miniapps together
@@ -33,9 +36,14 @@ export type ContainerGeneratorConfig = {
   pathToYarnLock?: string;
 }
 
+export type ContainerGenResult = {
+  // Metadata resulting from the bundling
+  bundlingResult: BundlingResult
+}
+
 export interface ContainerGenerator {
   // Generate a Container
-  generate(config: ContainerGeneratorConfig) : Promise<void>;
+  generate(config: ContainerGeneratorConfig) : Promise<ContainerGenResult>;
   // Name of the Container Generator
   +name : string;
   // Native platform that this generator targets
