@@ -704,6 +704,15 @@ export default class CauldronApi {
     await this.commit(`Set yarn locks for ${descriptor.toString()}`)
   }
 
+  async addBundle (
+    descriptor: NativeApplicationDescriptor,
+    bundle: string | Buffer) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const filename = `${descriptor.toString()}.zip`
+    await this._bundleStore.storeFile(filename, bundle)
+    return this.commit(`Add bundle for ${descriptor.toString()}`)
+  }
+
   async addPublisher (descriptor: NativeApplicationDescriptor, publisherType: ('maven' | 'github'), url: string) {
     try {
       const platform = await this.getPlatform(descriptor)
