@@ -12,6 +12,17 @@ import {
 } from './childProcess'
 const fetch = require('node-fetch')
 
+export type BundlingResult = {
+  // The root path to the assets
+  assetsPath: string;
+  // The target platform of the bundle
+  platform: string;
+  // Indicates whether this is a dev bundle or a production one
+  dev: boolean;
+  // Full path to the bundle
+  bundlePath: string;
+}
+
 export default class ReactNativeCli {
   _binaryPath: ?string
 
@@ -45,7 +56,7 @@ export default class ReactNativeCli {
     bundleOutput: string,
     assetsDest: string,
     platform: string
-  }) {
+  }) : Promise<BundlingResult> {
     const bundleCommand =
     `${this.binaryPath} bundle \
 ${entryFile ? `--entry-file=${entryFile}` : ''} \
@@ -54,7 +65,13 @@ ${platform ? `--platform=${platform}` : ''} \
 ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
 ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
 
-    return execp(bundleCommand)
+    await execp(bundleCommand)
+    return {
+      assetsPath: assetsDest,
+      platform,
+      dev,
+      bundlePath: bundleOutput
+    }
   }
 
   startPackager (cwd: string) {

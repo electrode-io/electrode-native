@@ -16,6 +16,9 @@ import {
   ModuleTypes,
   utils
 } from 'ern-core'
+import type {
+  BundlingResult
+} from 'ern-core'
 
 export async function bundleMiniApps (
   // The miniapps to be bundled
@@ -28,7 +31,7 @@ export async function bundleMiniApps (
     pathToYarnLock?: string
   } = {},
   // JavaScript API implementations
-  jsApiImplDependencies?: Array<PackagePath>) {
+  jsApiImplDependencies?: Array<PackagePath>) : Promise<BundlingResult> {
   try {
     log.debug('[=== Starting mini apps bundling ===]')
 
@@ -41,22 +44,26 @@ export async function bundleMiniApps (
 
     clearReactPackagerCache()
 
+    let result: BundlingResult
+
     if (platform === 'android') {
       log.debug('Bundling miniapp(s) for Android')
-      await reactNativeBundleAndroid(outDir)
-    } else if (platform === 'ios') {
+      result = await reactNativeBundleAndroid(outDir)
+    } else {
       log.debug('Bundling miniapp(s) for iOS')
-      await reactNativeBundleIos(outDir)
+      result = await reactNativeBundleIos(outDir)
     }
 
     log.debug('[=== Completed mini apps bundling ===]')
+
+    return result
   } catch (e) {
     log.error(`[bundleMiniApps] Something went wrong: ${e}`)
     throw e
   }
 }
 
-export async function reactNativeBundleAndroid (outDir: string) {
+export async function reactNativeBundleAndroid (outDir: string) : Promise<BundlingResult> {
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   const bundleOutput = path.join(libSrcMainPath, 'assets', 'index.android.bundle')
   const assetsDest = path.join(libSrcMainPath, 'res')
@@ -70,7 +77,7 @@ export async function reactNativeBundleAndroid (outDir: string) {
   })
 }
 
-export async function reactNativeBundleIos (outDir: string) {
+export async function reactNativeBundleIos (outDir: string) : Promise<BundlingResult> {
   const miniAppOutPath = path.join(outDir, 'ElectrodeContainer', 'Libraries', 'MiniApp')
   const bundleOutput = path.join(miniAppOutPath, 'MiniApp.jsbundle')
   const assetsDest = miniAppOutPath

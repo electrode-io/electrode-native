@@ -120,3 +120,7 @@ export type {
   CodePushPackage,
   CodePushInitConfig
 } from './CodePushSdk'
+
+export type {
+  BundlingResult
+} from './ReactNativeCli'
