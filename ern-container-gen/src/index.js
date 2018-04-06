@@ -27,5 +27,6 @@ export type {
   ContainerGenerator,
   ContainerGeneratorConfig,
   ContainerPublisherConfig,
-  ContainerMavenPublisherConfig
+  ContainerMavenPublisherConfig,
+  ContainerGenResult
 } from './FlowTypes'
