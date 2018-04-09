@@ -184,8 +184,43 @@ describe('Ensure.js', () => {
       expect(() => Ensure.sameNativeApplicationAndPlatform(fixtures.sameNativeApplicationPlatformDescriptors)).to.not.throw()
     })
     
-    it('should throw if descriptors are not matching the same native application and platforn', () => {
+    it('should throw if descriptors are not matching the same native application and platform', () => {
       expect(() => Ensure.sameNativeApplicationAndPlatform(fixtures.differentNativeApplicationPlatformDescriptors)).to.throw()
+    })
+  })
+
+  // ==========================================================
+  // checkIfCodePushOptionsAreValid
+  // ==========================================================
+  describe('checkIfCodePushOptionsAreValid', () => {
+    it('should not throw if descriptors and semVerDescriptor are specified', () => {
+      expect(() => Ensure.checkIfCodePushOptionsAreValid(
+        fixtures.differentNativeApplicationPlatformDescriptors,
+        '',
+        '1.0.0'
+      )).to.not.throw()
+    })
+
+    it('should not throw if 1 descriptor and targetBinaryVersion are specified', () => {
+      expect(() => Ensure.checkIfCodePushOptionsAreValid(
+        ['testapp:android:1.0.0'],
+        '1.0.0'
+      )).to.not.throw()
+    })
+
+    it('should throw if more than 1 descriptor and targetBinaryVersion are specified', () => {
+      expect(() => Ensure.checkIfCodePushOptionsAreValid(
+        fixtures.differentNativeApplicationPlatformDescriptors,
+        '1.0.0'
+      )).to.throw()
+    })
+
+    it('should throw if 1 descriptor ,targetBinaryVersion and semVerDescriptor are specified', () => {
+      expect(() => Ensure.checkIfCodePushOptionsAreValid(
+        ['testapp:android:1.0.0'],
+        '1.0.0',
+        '~1.0.0'
+      )).to.throw()
     })
   })
 })

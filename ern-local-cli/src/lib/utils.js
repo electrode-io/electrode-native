@@ -324,7 +324,7 @@ async function logErrorAndExitIfNotSatisfied ({
     }
     if (checkIfCodePushOptionsAreValid) {
       spinner.text = 'Ensuring that preconditions for code-push command are valid'
-      await Ensure.checkIfCodePushOptionsAreValid(
+      Ensure.checkIfCodePushOptionsAreValid(
         checkIfCodePushOptionsAreValid.descriptors,
         checkIfCodePushOptionsAreValid.targetBinaryVersion,
         checkIfCodePushOptionsAreValid.semVerDescriptor,
