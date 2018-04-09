@@ -46,6 +46,7 @@ import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
 import * as constants from './constants'
+import yauzl from 'yauzl'
 import yazl from 'yazl'
 import readDir from 'fs-readdir-recursive'
 const {
@@ -994,6 +995,43 @@ function logNativeDependenciesConflicts (
   }
 }
 
+async function unzip (
+  zippedData: Buffer,
+  destPath: string) {
+  if (!fs.existsSync(destPath)) {
+    shell.mkdir('-p', destPath)
+  }
+  return new Promise((resolve, reject) => {
+    yauzl.fromBuffer(zippedData, {lazyEntries: true}, (err, zipfile) => {
+      if (err) {
+        reject(err)
+      } else {
+        zipfile.readEntry()
+        zipfile.on('end', () => resolve())
+        zipfile.on('entry', entry => {
+          if (/\$/.test(entry.fileName)) {
+            // Current entry is an empty directory
+            shell.mkdir('-p', path.join(destPath, entry.fileName))
+            zipfile.readEntry()
+          } else {
+            // Current entry is a file
+            shell.mkdir('-p', path.join(destPath, path.dirname(entry.fileName)))
+            const ws = fs.createWriteStream(path.join(destPath, entry.fileName))
+            zipfile.openReadStream(entry, (err, rs) => {
+              if (err) {
+                reject(err)
+              } else {
+                rs.pipe(ws)
+                rs.on('end', () => zipfile.readEntry())
+              }
+            })
+          }
+        })
+      }
+    })
+  })
+}
+
 export default {
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
@@ -1008,5 +1046,6 @@ export default {
   promptUserToUseSuffixModuleName,
   getDescriptorsMatchingSemVerDescriptor,
   normalizeVersionsToSemver,
-  logNativeDependenciesConflicts
+  logNativeDependenciesConflicts,
+  unzip
 }
