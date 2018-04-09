@@ -708,9 +708,33 @@ export default class CauldronApi {
     descriptor: NativeApplicationDescriptor,
     bundle: string | Buffer) {
     this.throwIfPartialNapDescriptor(descriptor)
-    const filename = `${descriptor.toString()}.zip`
+    const filename = this.getBundleZipFileName(descriptor)
     await this._bundleStore.storeFile(filename, bundle)
     return this.commit(`Add bundle for ${descriptor.toString()}`)
+  }
+
+  async hasBundle (
+    descriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const filename = this.getBundleZipFileName(descriptor)
+    return this._bundleStore.hasFile(filename)
+  }
+
+  async getBundle (
+    descriptor: NativeApplicationDescriptor) : Promise<Buffer> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const filename = this.getBundleZipFileName(descriptor)
+    const zippedBundle = await this._bundleStore.getFile(filename)
+    if (!zippedBundle) {
+      throw new Error(`No zipped bundle stored in Cauldron for ${descriptor.toString()}`)
+    }
+    return zippedBundle
+  }
+
+  getBundleZipFileName (
+    descriptor: NativeApplicationDescriptor) : string {
+    this.throwIfPartialNapDescriptor(descriptor)
+    return `${descriptor.toString()}.zip`
   }
 
   async addPublisher (descriptor: NativeApplicationDescriptor, publisherType: ('maven' | 'github'), url: string) {

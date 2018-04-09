@@ -1039,6 +1039,64 @@ describe('CauldronHelper.js', () => {
     })
   })
 
+  describe('hasBundle', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.hasBundle,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android')))
+    })
+
+    it('should return true if there is a stored bundle for the given native application descriptor', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addBundle(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'), 
+        'BUNDLE_CONTENT')
+      const hasBundle = await cauldronHelper.hasBundle('test:android:17.7.0')
+      expect(hasBundle).true
+    })
+
+    it('should return false if there is no stored bundle for the given native application descriptor', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const hasBundle = await cauldronHelper.hasBundle('test:android:17.7.0')
+      expect(hasBundle).false
+    })
+  })
+
+  describe('getBundle', () => {
+    it('should throw if the given native application descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getBundle,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android')))
+    })
+
+    it('should throw if there is no stored bundle for the given native application descriptor', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(doesThrow(
+        cauldronHelper.getBundle,
+        cauldronHelper,
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')))
+    })
+
+    it('should return the stored bundle for the given native application descriptor', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addBundle(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'BUNDLE_CONTENT')
+      const bundle = await cauldronHelper.getBundle('test:android:17.7.0')
+      expect(bundle.toString()).eql('BUNDLE_CONTENT')
+    })
+  })
+
   describe ('getNativeDependency', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
