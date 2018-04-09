@@ -1365,6 +1365,53 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
+  // hasBundle
+  // ==========================================================
+  describe('hasBundle', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.hasBundle, api, NativeApplicationDescriptor.fromString('test:android')))
+    })
+
+    it('should return true if there is a stored bundle for the given native application descriptor', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'BUNDLE_CONTENT')
+      assert(await api.hasBundle('test:android:17.7.0'))
+    })
+
+    it('should return false if there is no stored bundle for the given native application descriptor', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      assert(!await api.hasBundle('test:android:17.7.0'))
+    })
+  })
+
+  // ==========================================================
+  // getBundle
+  // ==========================================================
+  describe('getBundle', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.getBundle, api, NativeApplicationDescriptor.fromString('test:android')))
+    })
+
+    it('should throw if there is no stored bundle for the given native application descriptor', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      assert(await doesThrow(api.getBundle, api, NativeApplicationDescriptor.fromString('test:android:17.7.0')))
+    })
+
+    it('should return the stored bundle for the given native application descriptor', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'BUNDLE_CONTENT')
+      const result = await api.getBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0'))
+      expect(result.toString()).eql('BUNDLE_CONTENT')
+    })
+  })
+
+  // ==========================================================
   // throwIfPartialNapDescriptor
   // ==========================================================
   describe('throwIfPartialNapDescriptor', () => {

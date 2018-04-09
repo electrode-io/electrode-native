@@ -234,6 +234,16 @@ export default class CauldronHelper {
     return this.cauldron.addBundle(napDescriptor, bundle)
   }
 
+  async hasBundle (
+    napDescriptor: NativeApplicationDescriptor) : Promise<boolean> {
+    return this.cauldron.hasBundle(napDescriptor)
+  }
+
+  async getBundle (
+    napDescriptor: NativeApplicationDescriptor) : Promise<Buffer> {
+    return this.cauldron.getBundle(napDescriptor)
+  }
+
   async isNativeDependencyInContainer (
     napDescriptor: NativeApplicationDescriptor,
     dependencyName: string) : Promise<boolean> {
