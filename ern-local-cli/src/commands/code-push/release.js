@@ -106,6 +106,14 @@ exports.handler = async function ({
       throw new Error('You need to provide at least one MiniApp or one JS API implementation version to CodePush')
     }
 
+    await utils.logErrorAndExitIfNotSatisfied({
+      checkIfCodePushOptionsAreValid: {
+        descriptors,
+        targetBinaryVersion,
+        semVerDescriptor
+      }
+    })
+
     if (descriptors.length > 0) {
       // User provided one or more descriptor(s)
       await utils.logErrorAndExitIfNotSatisfied({

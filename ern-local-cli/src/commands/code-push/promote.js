@@ -101,6 +101,14 @@ exports.handler = async function ({
   try {
     let targetNapDescriptors
 
+    await utils.logErrorAndExitIfNotSatisfied({
+      checkIfCodePushOptionsAreValid: {
+        descriptors: targetDescriptors,
+        targetBinaryVersion,
+        semVerDescriptor: targetSemVerDescriptor
+      }
+    })
+
     if (!sourceDescriptor) {
       sourceDescriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
         onlyReleasedVersions: true,

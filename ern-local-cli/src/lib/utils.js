@@ -98,7 +98,8 @@ async function logErrorAndExitIfNotSatisfied ({
   dependencyNotInUseByAMiniApp,
   cauldronIsActive,
   isValidNpmPackageName,
-  isValidElectrodeNativeModuleName
+  isValidElectrodeNativeModuleName,
+  checkIfCodePushOptionsAreValid
 } : {
   noGitOrFilesystemPath?: {
     obj: string | Array<string>,
@@ -181,6 +182,12 @@ async function logErrorAndExitIfNotSatisfied ({
   },
   isValidElectrodeNativeModuleName?: {
     name: string,
+    extraErrorMessage?: string
+  },
+  checkIfCodePushOptionsAreValid? : {
+    descriptors?: Array<string>,
+    targetBinaryVersion?: string,
+    semVerDescriptor?: string,
     extraErrorMessage?: string
   }
 } = {}) {
@@ -307,6 +314,15 @@ async function logErrorAndExitIfNotSatisfied ({
       await Ensure.isValidElectrodeNativeModuleName(
         isValidElectrodeNativeModuleName.name,
         isValidElectrodeNativeModuleName.extraErrorMessage
+      )
+    }
+    if (checkIfCodePushOptionsAreValid) {
+      spinner.text = 'Ensuring that preconditions for code-push command are valid'
+      await Ensure.checkIfCodePushOptionsAreValid(
+        checkIfCodePushOptionsAreValid.descriptors,
+        checkIfCodePushOptionsAreValid.targetBinaryVersion,
+        checkIfCodePushOptionsAreValid.semVerDescriptor,
+        checkIfCodePushOptionsAreValid.extraErrorMessage
       )
     }
     spinner.succeed('Validity checks have passed')
