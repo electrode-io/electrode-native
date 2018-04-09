@@ -262,4 +262,18 @@ export default class Ensure {
       throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
     }
   }
+
+  static async checkIfCodePushOptionsAreValid (
+    descriptors?: Array<string>,
+    targetBinaryVersion?: string,
+    semVerDescriptor?: string,
+    extraErrorMessage?: string = ''
+  ) {
+    if (targetBinaryVersion && semVerDescriptor) {
+      throw new Error('Specify either targetBinaryVersion or semVerDescriptor not both')
+    }
+    if (targetBinaryVersion && descriptors && descriptors.length > 1) {
+      throw new Error('targetBinaryVersion must specify only 1 target native application version for the push')
+    }
+  }
 }
