@@ -52,6 +52,8 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 * Semver expression that specifies the binary app version this release is targeting
 * If omitted, the release will target the exact version of the descriptor
 * If versionModifier is specified in the codePush config , exact version of the descriptor is appended to versionModifier
+* For using `targetBinaryVersion` option users must target only 1 descriptor
+* For using `targetBinaryVersion` option users cannot use semVerDescriptor
 
 `--mandatory/-m`
 
