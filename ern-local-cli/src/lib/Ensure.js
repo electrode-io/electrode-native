@@ -263,7 +263,7 @@ export default class Ensure {
     }
   }
 
-  static async checkIfCodePushOptionsAreValid (
+  static checkIfCodePushOptionsAreValid (
     descriptors?: Array<string>,
     targetBinaryVersion?: string,
     semVerDescriptor?: string,

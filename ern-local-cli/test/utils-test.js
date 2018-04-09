@@ -293,16 +293,57 @@ describe('utils.js', () => {
       })
     })
 
-    it('[sameNativeApplicationAndPlatform] Shoud log error and exit process if descriptors do not all match same native application platform', async () => {
+    it('[sameNativeApplicationAndPlatform] Should log error and exit process if descriptors do not all match same native application platform', async () => {
       await utils.logErrorAndExitIfNotSatisfied({
         sameNativeApplicationAndPlatform: {descriptors: fixtures.differentNativeApplicationPlatformDescriptors}
       })
       assertLoggedErrorAndExitedProcess()
     })
 
-    it('[sameNativeApplicationAndPlatform] Shoud not log error anornd exit process if descriptors do not all match same native application platform', async () => {
+    it('[sameNativeApplicationAndPlatform] Should not log error anornd exit process if descriptors do not all match same native application platform', async () => {
       await utils.logErrorAndExitIfNotSatisfied({
         sameNativeApplicationAndPlatform: {descriptors: fixtures.sameNativeApplicationPlatformDescriptors}
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[checkIfCodePushOptionsAreValid] Should log error and exit process if targetBinaryVersion is specified with more than 1 descriptor ', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        checkIfCodePushOptionsAreValid: {
+          descriptors: fixtures.differentNativeApplicationPlatformDescriptors,
+          targetBinaryVersion: '1.1.0'
+        }
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[checkIfCodePushOptionsAreValid] Should not log error and exit process if targetBinaryVersion is specified with more than 1 descriptor ', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        checkIfCodePushOptionsAreValid: {
+          descriptors: ['testapp:android:1.0.0'],
+          targetBinaryVersion: '1.1.0'
+        }
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[checkIfCodePushOptionsAreValid] Should log error and exit process if targetBinaryVersion & semVerDescriptor are specified ', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        checkIfCodePushOptionsAreValid: {
+          descriptors: ['testapp:android:1.0.0'],
+          targetBinaryVersion: '1.1.0',
+          semVerDescriptor : '~1.1.0'
+        }
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[checkIfCodePushOptionsAreValid] Should not log error and exit process if more than 1 descriptor and semVerDescriptor are specified', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        checkIfCodePushOptionsAreValid: {
+          descriptors: fixtures.differentNativeApplicationPlatformDescriptors,
+          semVerDescriptor : '~1.1.0'
+        }
       })
       assertNoErrorLoggedAndNoProcessExit()
     })
