@@ -55,6 +55,7 @@
     "chalk": "^2.3.0",
     "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
+    "dir-compare": "^1.4.0",
     "ern-api-gen": "1000.0.0",
     "ern-api-impl-gen": "1000.0.0",
     "ern-cauldron-api": "1000.0.0",
