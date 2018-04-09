@@ -202,7 +202,7 @@ napDescriptor: NativeApplicationDescriptor, {
 
     const generator = getGeneratorForPlatform(platform)
 
-    await spin(
+    return spin(
       `Creating Container for ${napDescriptor.toString()} from Cauldron`,
       generator.generate({
         miniApps: miniAppsInstances,
