@@ -25,6 +25,9 @@ import {
   GitHubPublisher,
   JcenterPublisher
 } from 'ern-container-gen'
+import type {
+  ContainerGenResult
+} from 'ern-container-gen'
 import {
   runLocalContainerGen,
   runCauldronContainerGen
@@ -43,6 +46,8 @@ import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
 import * as constants from './constants'
+import yazl from 'yazl'
+import readDir from 'fs-readdir-recursive'
 const {
   runAndroidProject
 } = android
@@ -430,7 +435,7 @@ async function performContainerStateUpdateInCauldron (
     const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
-    await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
+    const containerGenResult: ContainerGenResult = await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
       runCauldronContainerGen(
         napDescriptor, {
           outDir,
@@ -443,6 +448,15 @@ async function performContainerStateUpdateInCauldron (
     // Update yarn lock
     const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
     await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
+
+    // Store bundle in Cauldron
+    if (containerGenResult) {
+      const zippedBundle: Buffer = await createZippedBundle({
+        bundlePath: containerGenResult.bundlingResult.bundlePath,
+        assetsPath: containerGenResult.bundlingResult.assetsPath
+      })
+      await cauldron.addBundle(napDescriptor, zippedBundle)
+    }
 
     // Commit Cauldron transaction
     await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
@@ -501,6 +515,41 @@ async function performContainerStateUpdateInCauldron (
     log.error(`[performContainerStateUpdateInCauldron] An error occurred while publishing container: ${e}`)
     throw e
   }
+}
+
+async function createZippedBundle ({
+  bundlePath,
+  assetsPath
+} : {
+  bundlePath: string,
+  assetsPath: string
+} = {}) : Promise<Buffer> {
+  log.debug('Creating zipped bundle')
+  const zippedbundle = new yazl.ZipFile()
+  log.trace(`Adding ${bundlePath} to zipped bundle`)
+  zippedbundle.addFile(bundlePath, path.basename(bundlePath))
+  const assetsFiles = readDir(assetsPath)
+  for (const assetFile of assetsFiles) {
+    const pathToAssetFile = path.join(assetsPath, assetFile)
+    log.trace(`Adding ${pathToAssetFile} to zipped bundle`)
+    zippedbundle.addFile(pathToAssetFile, assetFile)
+  }
+  zippedbundle.end()
+
+  const chunks = []
+  zippedbundle.outputStream.on('data', chunk => {
+    chunks.push(chunk)
+  })
+
+  return new Promise((resolve, reject) => {
+    zippedbundle.outputStream.on('error', err => {
+      reject(err)
+    })
+    zippedbundle.outputStream.on('end', () => {
+      log.debug('Bundle was successfully zipped')
+      resolve(Buffer.concat(chunks))
+    })
+  })
 }
 
 function epilog ({command} : {command: string}) {
