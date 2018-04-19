@@ -13,7 +13,8 @@ import {
   copyRnpmAssets,
   injectReactNativeVersionKeysInObject,
   sortDependenciesByName,
-  populateApiImplMustacheView
+  populateApiImplMustacheView,
+  addElectrodeNativeMetadataFile
 } from '../../utils.js'
 import fs from 'fs'
 import path from 'path'
@@ -83,6 +84,8 @@ export default class IosGenerator implements ContainerGenerator {
         await copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir, 'ios')
         this.addResources(config.outDir)
       }
+
+      await addElectrodeNativeMetadataFile(config)
 
       log.debug('Container generation completed!')
 

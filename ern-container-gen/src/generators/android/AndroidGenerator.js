@@ -14,7 +14,8 @@ import {
   copyRnpmAssets,
   injectReactNativeVersionKeysInObject,
   sortDependenciesByName,
-  populateApiImplMustacheView
+  populateApiImplMustacheView,
+  addElectrodeNativeMetadataFile
 } from '../../utils.js'
 import _ from 'lodash'
 import path from 'path'
@@ -84,6 +85,8 @@ export default class AndroidGenerator implements ContainerGenerator {
       if (!config.ignoreRnpmAssets) {
         copyRnpmAssets(config.miniApps, config.compositeMiniAppDir, config.outDir, 'android')
       }
+
+      await addElectrodeNativeMetadataFile(config)
 
       return {
         bundlingResult

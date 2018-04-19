@@ -19,6 +19,9 @@ import {
 import type {
   BundlingResult
 } from 'ern-core'
+import type {
+  ContainerGeneratorConfig
+} from './FlowTypes'
 
 export async function bundleMiniApps (
   // The miniapps to be bundled
@@ -523,6 +526,16 @@ export function populateApiImplMustacheView (apiImplPluginPath: string, mustache
   } else {
     log.warn(`!!!!! containerGen entry not valid for api implementation, skipping api-impl code gen in container for ${packageJson.name} !!!!`)
   }
+}
+
+export async function addElectrodeNativeMetadataFile (config: ContainerGeneratorConfig) {
+  const metadata = {
+    miniApps: config.miniApps.map(m => m.packagePath.toString()),
+    jsApiImpls: config.jsApiImpls.map(j => j.toString()),
+    nativeDeps: config.plugins.map(p => p.toString())
+  }
+  const pathToMetadataFile = path.join(config.outDir, 'container-metadata.json')
+  return writeFile(pathToMetadataFile, JSON.stringify(metadata, null, 2))
 }
 
 // =============================================================================
