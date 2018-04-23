@@ -388,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
                         responseListener.onFailure(BridgeFailureMessage.create("ERROR_NAVIGATION_FAILED", "Something went wrong.", new Exception("Data received is null. No MiniApp name provided to navigate.")));
                     }
                 } else {
-                    Log.w(TAG, "Activity is finishing or null, cannot get a valid activity context to navigate");
+                    Log.w("NAVIGATION", "Activity is finishing or null, cannot get a valid activity context to navigate");
                     responseListener.onFailure(BridgeFailureMessage.create("ERROR_NAVIGATION_FAILED", "Something went wrong.", new Exception("No valid activity context found. Current activity is either null or finishing.")));
                 }
             }
