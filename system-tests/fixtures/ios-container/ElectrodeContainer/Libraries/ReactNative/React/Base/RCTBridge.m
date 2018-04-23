@@ -1,10 +1,8 @@
 /**
  * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 #import "RCTBridge.h"
@@ -25,6 +23,7 @@
 #import "RCTUtils.h"
 
 NSString *const RCTJavaScriptWillStartLoadingNotification = @"RCTJavaScriptWillStartLoadingNotification";
+NSString *const RCTJavaScriptWillStartExecutingNotification = @"RCTJavaScriptWillStartExecutingNotification";
 NSString *const RCTJavaScriptDidLoadNotification = @"RCTJavaScriptDidLoadNotification";
 NSString *const RCTJavaScriptDidFailToLoadNotification = @"RCTJavaScriptDidFailToLoadNotification";
 NSString *const RCTDidInitializeModuleNotification = @"RCTDidInitializeModuleNotification";
@@ -251,6 +250,11 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
   return [self.batchedBridge moduleIsInitialized:moduleClass];
 }
 
+- (id)jsBoundExtraModuleForClass:(Class)moduleClass
+{
+  return [self.batchedBridge jsBoundExtraModuleForClass:moduleClass];
+}
+
 - (void)reload
 {
   #if RCT_ENABLE_INSPECTOR
@@ -359,14 +363,6 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (void)enqueueCallback:(NSNumber *)cbID args:(NSArray *)args
 {
   [self.batchedBridge enqueueCallback:cbID args:args];
-}
-
-- (JSValue *)callFunctionOnModule:(NSString *)module
-                           method:(NSString *)method
-                        arguments:(NSArray *)arguments
-                            error:(NSError **)error
-{
-  return [self.batchedBridge callFunctionOnModule:module method:method arguments:arguments error:error];
 }
 
 - (void)registerSegmentWithId:(NSUInteger)segmentId path:(NSString *)path

@@ -1,11 +1,11 @@
 {
   "miniApps": [
-    "movielistminiapp@0.0.15",
-    "moviedetailsminiapp@0.0.12"
+    "movielistminiapp@0.0.19",
+    "moviedetailsminiapp@0.0.19"
   ],
   "jsApiImpls": [],
   "nativeDeps": [
-    "react-native@0.54.0",
+    "react-native@0.55.3",
     "react-native-code-push@5.2.1",
     "react-native-electrode-bridge@1.5.10",
     "react-native-ernmovie-api@0.0.9",
