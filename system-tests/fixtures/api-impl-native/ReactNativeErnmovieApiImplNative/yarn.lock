@@ -7,8 +7,8 @@ events@^1.1.1:
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
 
 react-native-electrode-bridge@1.5.x:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/react-native-electrode-bridge/-/react-native-electrode-bridge-1.5.10.tgz#ee8d14ee423cc52abcc38f24f5241e2b07e61bce"
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/react-native-electrode-bridge/-/react-native-electrode-bridge-1.5.11.tgz#2863b641bb204adf27373e686ffb3adffee99d78"
   dependencies:
     events "^1.1.1"
     uuid "^3.0.0"
