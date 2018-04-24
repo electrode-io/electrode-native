@@ -76,7 +76,7 @@ function regenTestApiFixture() {
   logHeader("Regenerating Test API Fixture")
   shell.rm('-rf', pathsToFixtures['TestApi'])
   shell.cd(rootApiFixturesPath)
-  shell.exec(`ern create-api ${f.testApiName} -p ${f.testApiPkgName} --skipNpmCheck`)
+  shell.exec(`ern create-api ${f.testApiName} -p ${f.testApiPkgName} --schemaPath ${f.pathToTestApiSchema} --skipNpmCheck`)
 }
 
 function logHeader(message) {
