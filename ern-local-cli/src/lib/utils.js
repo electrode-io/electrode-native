@@ -25,9 +25,6 @@ import {
   GitHubPublisher,
   JcenterPublisher
 } from 'ern-container-gen'
-import type {
-  ContainerGenResult
-} from 'ern-container-gen'
 import {
   runLocalContainerGen,
   runCauldronContainerGen
@@ -452,7 +449,7 @@ async function performContainerStateUpdateInCauldron (
     const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
-    const containerGenResult: ContainerGenResult = await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
+    await spin(`Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
       runCauldronContainerGen(
         napDescriptor, {
           outDir,
@@ -465,15 +462,6 @@ async function performContainerStateUpdateInCauldron (
     // Update yarn lock
     const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
     await cauldron.addOrUpdateYarnLock(napDescriptor, constants.CONTAINER_YARN_KEY, pathToNewYarnLock)
-
-    // Store bundle in Cauldron
-    if (containerGenResult) {
-      const zippedBundle: Buffer = await createZippedBundle({
-        bundlePath: containerGenResult.bundlingResult.bundlePath,
-        assetsPath: containerGenResult.bundlingResult.assetsPath
-      })
-      await cauldron.addBundle(napDescriptor, zippedBundle)
-    }
 
     // Commit Cauldron transaction
     await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
@@ -1063,5 +1051,6 @@ export default {
   getDescriptorsMatchingSemVerDescriptor,
   normalizeVersionsToSemver,
   logNativeDependenciesConflicts,
-  unzip
+  unzip,
+  createZippedBundle
 }
