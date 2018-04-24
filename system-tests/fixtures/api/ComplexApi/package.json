@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ERN Generated API for ComplexApi",
   "main": "javascript/src/index.js",
-  "author": "b0m00ca",
+  "author": "blemair",
   "scripts": {
     "flow": "flow"
   },
@@ -17,7 +17,7 @@
     "message": {
       "moduleName": "ComplexApi",
       "namespace": "com.ComplexApi.ern",
-      "apiSchemaPath": "/Users/b0m00ca/Documents/SystemTestsNew/schema.json",
+      "apiSchemaPath": "/Users/blemair/Code/electrode-native/system-tests/fixtures/api/schema.json",
       "artifactId": "react-native-ComplexApi-api"
     },
     "moduleType": "ern-api"
