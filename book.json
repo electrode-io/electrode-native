@@ -22,13 +22,13 @@
     "theme-api": {
       "languages": [
         {
-          "lang": "ios",
           "name": "iOS",
+          "lang": "ios",
           "default": true
         },
         {
-        "lang": "android",
-        "name": "Android"
+          "name": "Android",
+          "lang": "android"
         }
       ],
       "split": false
