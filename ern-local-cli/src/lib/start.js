@@ -9,10 +9,12 @@ import {
   NativeApplicationDescriptor,
   spin,
   shell,
-  utils as coreUtils,
   reactnative,
   ErnBinaryStore
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import {
   generateMiniAppsComposite
 } from 'ern-container-gen'
@@ -51,7 +53,7 @@ export default async function start ({
   let napDescriptor
   let pathToYarnLock
 
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   if (!cauldron && descriptor) {
     throw new Error('To use a native application descriptor, a Cauldron must be active')
   }

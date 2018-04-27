@@ -5,6 +5,9 @@ import {
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
@@ -81,7 +84,7 @@ exports.handler = async function ({
       : `Add multiple native dependencies to ${napDescriptor.toString()}`}`
     ]
 
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const dependencyObj of dependenciesObjs) {

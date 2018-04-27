@@ -11,6 +11,9 @@ import {
   Platform
 } from 'ern-core'
 import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
+import {
   runLocalContainerGen,
   runCauldronContainerGen
 } from '../lib/publication'
@@ -101,7 +104,7 @@ exports.handler = async function ({
       throw new Error(`You can only provide extra native dependencies, when generating a non-JS-only / non-Cauldron based container`)
     }
 
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     if (!cauldron && !miniapps) {
       throw new Error('A Cauldron must be active, if you don\'t explicitly provide miniapps')
     }

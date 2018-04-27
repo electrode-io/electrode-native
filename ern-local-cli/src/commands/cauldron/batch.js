@@ -7,6 +7,9 @@ import {
   MiniApp,
   nativeDepenciesVersionResolution as resolver
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../../lib/utils'
 import _ from 'lodash'
 
@@ -165,7 +168,7 @@ exports.handler = async function ({
 
     const cauldronCommitMessage = [ `Batch operation on ${napDescriptor.toString()} native application` ]
 
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     await utils.performContainerStateUpdateInCauldron(async () => {
       // Del Dependencies
       for (const delDependencyObj of delDependenciesObjs) {

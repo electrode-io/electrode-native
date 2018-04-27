@@ -6,6 +6,9 @@ import {
   utils as coreUtils
 } from 'ern-core'
 import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
+import {
   performCodePushOtaUpdate,
   askUserForCodePushDeploymentName
 } from '../../lib/publication'
@@ -195,7 +198,7 @@ exports.handler = async function ({
 async function getPathToYarnLock (
   napDescriptor: NativeApplicationDescriptor,
   deploymentName: string) {
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   if (!cauldron) {
     throw new Error('[getPathToYarnLock] No active Cauldron')
   }

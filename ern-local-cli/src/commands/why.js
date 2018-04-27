@@ -6,6 +6,9 @@ import {
   PackagePath,
   NativeApplicationDescriptor
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../lib/utils'
 
 exports.command = 'why <dependency> <completeNapDescriptor>'
@@ -30,7 +33,7 @@ exports.handler = async function ({
     })
 
     const napDescriptor = NativeApplicationDescriptor.fromString(completeNapDescriptor)
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
     log.info(`This might take a while. The more MiniApps, the longer.`)
     const result = await dependencyLookup.getMiniAppsUsingNativeDependency(miniApps, PackagePath.fromString(dependency))

@@ -5,6 +5,9 @@ import {
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../../../lib/utils'
 
 exports.command = 'jsapiimpls <jsapiimpls..>'
@@ -66,7 +69,7 @@ exports.handler = async function ({
       : `Remove multiple JS API implementations from ${napDescriptor.toString()}`}`
     ]
 
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         for (const jsApiImpl of jsapiimpls) {

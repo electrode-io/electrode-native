@@ -5,12 +5,12 @@ import {
   expect
 } from 'chai'
 import {
-  CauldronHelper,
   ModuleTypes,
   NativeApplicationDescriptor,
   yarn,
   utils as coreUtils
 } from 'ern-core'
+import * as cauldron from 'ern-cauldron-api'
 import {
   doesThrow,
   doesNotThrow,
@@ -43,7 +43,7 @@ describe('utils.js', () => {
   // Before each test
   beforeEach(() => {
     beforeTest()
-    cauldronHelperStub = sandbox.createStubInstance(CauldronHelper)
+    cauldronHelperStub = sandbox.createStubInstance(cauldron.CauldronHelper)
     cauldronHelperStub.getContainerVersion.resolves('1.0.0')
     cauldronHelperStub.getTopLevelContainerVersion.resolves(topLevelContainerVersion)
     cauldronHelperStub.getVersionsNames.resolves(['1.2.3', '1.2.4', '2.0.0', '3.0'])
@@ -63,7 +63,7 @@ describe('utils.js', () => {
     processExitStub = sandbox.stub(process, 'exit')
     inquirerPromptStub = sandbox.stub(inquirer, 'prompt')
 
-    sandbox.stub(coreUtils, 'getCauldronInstance').resolves(cauldronHelperStub)
+    sandbox.stub(cauldron, 'getActiveCauldron').resolves(cauldronHelperStub)
   })
 
   afterEach(() => {

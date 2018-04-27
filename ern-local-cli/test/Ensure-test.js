@@ -4,8 +4,8 @@ import {
   assert,
   expect
 } from 'chai'
+import * as cauldron from 'ern-cauldron-api'
 import {
-  CauldronHelper,
   utils
 } from 'ern-core'
 import {
@@ -21,8 +21,8 @@ let cauldronHelperStub
 
 describe('Ensure.js', () => {
   beforeEach(() => {
-    cauldronHelperStub = sandbox.createStubInstance(CauldronHelper)
-    sandbox.stub(utils, 'getCauldronInstance').resolves(cauldronHelperStub)
+    cauldronHelperStub = sandbox.createStubInstance(cauldron.CauldronHelper)
+    sandbox.stub(cauldron, 'getActiveCauldron').resolves(cauldronHelperStub)
   })
   
   afterEach(() => {

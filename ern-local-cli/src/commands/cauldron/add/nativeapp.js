@@ -1,12 +1,15 @@
 // @flow
 
 import {
-  CauldronHelper,
   PackagePath,
   NativeApplicationDescriptor,
   spin,
   utils as coreUtils
 } from 'ern-core'
+import {
+  CauldronHelper,
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import utils from '../../../lib/utils'
@@ -51,7 +54,7 @@ exports.handler = async function ({
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   try {
-    var cauldron = await coreUtils.getCauldronInstance()
+    var cauldron = await getActiveCauldron()
     await cauldron.beginTransaction()
 
     const desc = new NativeApplicationDescriptor(napDescriptor.name, napDescriptor.platform)

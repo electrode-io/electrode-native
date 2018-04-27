@@ -1,11 +1,15 @@
 // @flow
 
-import PackagePath from './PackagePath'
-import NativeApplicationDescriptor from './NativeApplicationDescriptor'
-import spin from './spin'
-import * as utils from './utils.js'
-import manifest from './Manifest.js'
-import MiniApp from './MiniApp.js'
+import {
+  NativeApplicationDescriptor,
+  PackagePath,
+  manifest,
+  spin,
+  MiniApp
+} from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import _ from 'lodash'
 import chalk from 'chalk'
 import Table from 'cli-table'
@@ -98,7 +102,7 @@ export async function getNativeAppCompatibilityReport (miniApp: MiniApp, {
   versionName: ?string
 }= {}) {
   let result = []
-  const cauldronInstance = await utils.getCauldronInstance()
+  const cauldronInstance = await getActiveCauldron()
   if (!cauldronInstance) {
     throw new Error('[getNativeAppCompatibilityReport] No Cauldron is active')
   }

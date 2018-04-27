@@ -2,7 +2,6 @@
 
 import {
   createTmpDir,
-  utils as coreUtils,
   MiniApp,
   Platform,
   reactnative,
@@ -16,6 +15,9 @@ import {
   shell,
   MavenUtils
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import {
   generateRunnerProject,
   regenerateRunnerConfig
@@ -63,7 +65,7 @@ async function getNapDescriptorStringsFromCauldron ({
   onlyReleasedVersions?: boolean,
   onlyNonReleasedVersions?: boolean
 } = {}) {
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   const nativeApps = await cauldron.getAllNativeApps()
   return _.filter(
             _.flattenDeep(
@@ -426,7 +428,7 @@ async function performContainerStateUpdateInCauldron (
   let cauldron
 
   try {
-    cauldron = await coreUtils.getCauldronInstance()
+    cauldron = await getActiveCauldron()
 
     if (containerVersion) {
       cauldronContainerVersion = containerVersion
@@ -611,7 +613,7 @@ async function runMiniApp (platform: 'android' | 'ios', {
 
   let cauldron
   if (descriptor) {
-    cauldron = await coreUtils.getCauldronInstance()
+    cauldron = await getActiveCauldron()
     if (cauldron == null) {
       throw new Error('[runMiniApp] No cauldron instance found')
     }
@@ -948,7 +950,7 @@ async function getDescriptorsMatchingSemVerDescriptor (semVerDescriptor: NativeA
     throw new Error(`${semVerDescriptor.toString()} descriptor is missing platform and/or version`)
   }
   const result = []
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   const versionsNames = await cauldron.getVersionsNames(semVerDescriptor)
   const semVerVersionNames = normalizeVersionsToSemver(versionsNames)
   const zippedVersions = _.zipWith(versionsNames, semVerVersionNames, (nonSemVer, semVer) => ({nonSemVer, semVer}))

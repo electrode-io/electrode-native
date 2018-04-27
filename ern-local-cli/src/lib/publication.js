@@ -8,8 +8,6 @@ import {
 } from 'ern-container-gen'
 import {
   createTmpDir,
-  utils as coreUtils,
-  compatibility,
   CodePushSdk,
   PackagePath,
   config,
@@ -23,7 +21,10 @@ import type {
   CodePushPackage,
   CodePushInitConfig
 } from 'ern-core'
-
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
+import * as compatibility from './compatibility'
 import inquirer from 'inquirer'
 import _ from 'lodash'
 import path from 'path'
@@ -178,7 +179,7 @@ napDescriptor: NativeApplicationDescriptor, {
   compositeMiniAppDir?: string
 } = {}) {
   try {
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
@@ -233,7 +234,7 @@ export async function performCodePushPatch (
     rollout?: number
   }) {
   try {
-    var cauldron = await coreUtils.getCauldronInstance()
+    var cauldron = await getActiveCauldron()
     const codePushSdk = getCodePushSdk()
     await cauldron.beginTransaction()
     const appName = await getCodePushAppName(napDescriptor)
@@ -282,7 +283,7 @@ export async function performCodePushPromote (
   } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
-    var cauldron = await coreUtils.getCauldronInstance()
+    var cauldron = await getActiveCauldron()
     await cauldron.beginTransaction()
     const cauldronCommitMessage = [
       `CodePush release promotion of ${sourceNapDescriptor.toString()} ${sourceDeploymentName} to ${targetDeploymentName} of`
@@ -382,7 +383,7 @@ jsApiImpls: Array<PackagePath>, {
 } = {}) {
   try {
     const codePushSdk = getCodePushSdk()
-    var cauldron = await coreUtils.getCauldronInstance()
+    var cauldron = await getActiveCauldron()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     await cauldron.beginTransaction()
     const codePushPlugin = _.find(plugins, p => p.basePath === 'react-native-code-push')
@@ -530,7 +531,7 @@ export async function getCodePushTargetVersionName (
     throw new Error(`Native application descriptor ${napDescriptor.toString()} does not contain a version !`)
   }
   let result = napDescriptor.version
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
   if (codePushConfig && codePushConfig.versionModifiers) {
     const versionModifier = _.find(codePushConfig.versionModifiers, m => m.deploymentName === deploymentName)
@@ -544,7 +545,7 @@ export async function getCodePushTargetVersionName (
 async function getCodePushAppName (
   napDescriptor: NativeApplicationDescriptor) : Promise<string> {
   let result = napDescriptor.name
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor.withoutVersion())
   if (codePushConfig && codePushConfig.appName) {
     result = codePushConfig.appName
@@ -610,7 +611,7 @@ async function askUserToForceCodePushPublication () : Promise<boolean> {
 }
 
 export async function askUserForCodePushDeploymentName (napDescriptor: NativeApplicationDescriptor, message?: string) : Promise<string> {
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   const config = await cauldron.getConfig(napDescriptor)
   const hasCodePushDeploymentsConfig = config && config.codePush && config.codePush.deployments
   const choices = hasCodePushDeploymentsConfig ? config && config.codePush.deployments : undefined

@@ -56,7 +56,6 @@
     "code-push": "^2.0.4",
     "console-log-level": "^1.4.0",
     "decompress-zip": "^0.3.0",
-    "ern-cauldron-api": "1000.0.0",
     "fs-readdir-recursive": "^1.0.0",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.4",

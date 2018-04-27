@@ -1,15 +1,17 @@
 // @flow
 
-import PackagePath from './PackagePath'
-import NativeApplicationDescriptor from './NativeApplicationDescriptor'
-import * as fileUtils from './fileUtil'
-import * as promptUtils from './promptUtils'
 import _ from 'lodash'
+import {
+  PackagePath,
+  NativeApplicationDescriptor,
+  fileUtils,
+  promptUtils
+} from 'ern-core'
 import type {
-  CauldronApi,
   CauldronCodePushMetadata,
   CauldronCodePushEntry
-} from 'ern-cauldron-api'
+} from './FlowTypes'
+import CauldronApi from './CauldronApi'
 
 //
 // Helper class to access the cauldron

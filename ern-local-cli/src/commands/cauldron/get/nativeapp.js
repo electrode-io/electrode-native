@@ -4,6 +4,9 @@ import {
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../../../lib/utils'
 
 exports.command = 'nativeapp [descriptor]'
@@ -25,7 +28,7 @@ exports.handler = async function ({
   })
 
   try {
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     if (!descriptor) {
       const napDescriptors = await utils.getNapDescriptorStringsFromCauldron()
       napDescriptors.forEach(n => log.info(n))
