@@ -10,8 +10,7 @@ import _ from 'lodash'
 import fs from 'fs'
 import {
   isDependencyApi,
-  isDependencyApiImpl,
-  getCauldronInstance
+  isDependencyApiImpl
 } from './utils'
 import config from './config'
 
@@ -20,6 +19,11 @@ export type PluginConfig = {
   ios: Object,
   origin?: Object,
   path?: string
+}
+
+export type ManifestOverrideConfig = {
+  url: string,
+  type: 'partial' | 'full'
 }
 
 const pluginConfigFileName = 'config.json'
@@ -31,19 +35,19 @@ export class Manifest {
   _masterManifest: GitManifest
   _overrideManifest: GitManifest
   _manifestOverrideType: 'partial' | 'full'
+  static getOverrideManifestConfig: () => Promise<?ManifestOverrideConfig>
 
   constructor (masterManifest: GitManifest) {
     this._masterManifest = masterManifest
   }
 
   async initOverrideManifest () {
-    const cauldronInstance = await getCauldronInstance()
-    if (!this._overrideManifest && cauldronInstance) {
-      const manifestConfig = await cauldronInstance.getManifestConfig()
-      if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
-        const manifestOverrideUrl = this.modifyOverrideManifestUrlIfNeeded(manifestConfig.override.url)
+    if (!this._overrideManifest && Manifest.getOverrideManifestConfig) {
+      const overrideManifestConfig = await Manifest.getOverrideManifestConfig()
+      if (overrideManifestConfig) {
+        const manifestOverrideUrl = this.modifyOverrideManifestUrlIfNeeded(overrideManifestConfig.url)
+        this._manifestOverrideType = overrideManifestConfig.type
         this._overrideManifest = new GitManifest(Platform.overrideManifestDirectory, manifestOverrideUrl)
-        this._manifestOverrideType = manifestConfig.override.type || 'partial'
       }
     }
   }

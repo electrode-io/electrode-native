@@ -2,7 +2,7 @@
 
 import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
-import _manifest from './Manifest'
+import _manifest, { Manifest as _Manifest } from './Manifest'
 import _MavenUtils from './MavenUtils'
 import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
@@ -42,6 +42,7 @@ import * as _nativeDepenciesVersionResolution from './resolveNativeDependenciesV
 export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
 export const manifest = _manifest
+export const Manifest = _Manifest
 export const compatibility = _compatibility
 export const MiniApp = _MiniApp
 export const ModuleTypes = _ModuleTypes
@@ -80,6 +81,7 @@ export default ({
   handleCopyDirective: _handleCopyDirective,
   Platform: _Platform,
   manifest: _manifest,
+  Manifest: _Manifest,
   compatibility: _compatibility,
   MiniApp: _MiniApp,
   ModuleTypes: _ModuleTypes,
@@ -124,3 +126,7 @@ export type {
 export type {
   BundlingResult
 } from './ReactNativeCli'
+
+export type {
+  ManifestOverrideConfig
+} from './Manifest'
