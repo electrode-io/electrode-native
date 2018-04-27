@@ -5,7 +5,12 @@ import {
   Platform,
   ColoredLog,
   config as ernConfig,
-  shell
+  shell,
+  Manifest,
+  utils as coreUtils
+} from 'ern-core'
+import type {
+  ManifestOverrideConfig
 } from 'ern-core'
 import chalk from 'chalk'
 import yargs from 'yargs'
@@ -37,6 +42,17 @@ function showVersion () {
   const packageInfo = JSON.parse(execSync(`npm ls -g electrode-native --json`).toString())
   if (packageInfo && packageInfo.dependencies) {
     log.info(`electrode-native : ${packageInfo.dependencies['electrode-native'].version}`)
+  }
+}
+
+Manifest.getOverrideManifestConfig = async () : Promise<?ManifestOverrideConfig> => {
+  const cauldronInstance = await coreUtils.getCauldronInstance()
+  const manifestConfig = cauldronInstance && await cauldronInstance.getManifestConfig()
+  if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
+    return {
+      url: manifestConfig.override.url,
+      type: manifestConfig.override.type || 'partial'
+    }
   }
 }
 
