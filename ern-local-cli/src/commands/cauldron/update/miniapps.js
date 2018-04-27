@@ -8,6 +8,9 @@ import {
   utils as coreUtils,
   nativeDepenciesVersionResolution as resolver
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../../../lib/utils'
 import _ from 'lodash'
 
@@ -90,7 +93,7 @@ exports.handler = async function ({
       miniAppsObjs.push(m)
     }
 
-    const cauldron = await coreUtils.getCauldronInstance()
+    const cauldron = await getActiveCauldron()
     const miniAppsInCauldron = await cauldron.getContainerMiniApps(napDescriptor)
     const nonUpdatedMiniAppsInCauldron = _.xorBy(miniAppsDependencyPaths, miniAppsInCauldron, 'basePath')
     let nonUpdatedMiniAppsInCauldronObjs = []

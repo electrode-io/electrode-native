@@ -4,7 +4,6 @@ import _handleCopyDirective from './handleCopyDirective'
 import _Platform from './Platform'
 import _manifest, { Manifest as _Manifest } from './Manifest'
 import _MavenUtils from './MavenUtils'
-import * as _compatibility from './compatibility'
 import _MiniApp from './MiniApp'
 import * as _ModuleTypes from './ModuleTypes'
 import * as _utils from './utils'
@@ -15,7 +14,6 @@ import {
 import * as _dependencyLookup from './dependencyLookup'
 import _ErnBinaryStore from './ErnBinaryStore'
 import * as _iosUtil from './iosUtil'
-import _CauldronHelper from './CauldronHelper'
 import * as _nativeDependenciesLookup from './nativeDependenciesLookup'
 import * as _android from './android'
 import _shell from './shell'
@@ -43,7 +41,6 @@ export const handleCopyDirective = _handleCopyDirective
 export const Platform = _Platform
 export const manifest = _manifest
 export const Manifest = _Manifest
-export const compatibility = _compatibility
 export const MiniApp = _MiniApp
 export const ModuleTypes = _ModuleTypes
 export const yarn = _yarn
@@ -53,7 +50,6 @@ export const utils = _utils
 export const MavenUtils = _MavenUtils
 export const ErnBinaryStore = _ErnBinaryStore
 export const IosUtil = _iosUtil
-export const CauldronHelper = _CauldronHelper
 export const nativeDependenciesLookup = _nativeDependenciesLookup
 export const android = _android
 export const shell = _shell
@@ -82,7 +78,6 @@ export default ({
   Platform: _Platform,
   manifest: _manifest,
   Manifest: _Manifest,
-  compatibility: _compatibility,
   MiniApp: _MiniApp,
   ModuleTypes: _ModuleTypes,
   yarn: _yarn,
@@ -92,7 +87,6 @@ export default ({
   MavenUtils: _MavenUtils,
   ErnBinaryStore: _ErnBinaryStore,
   IosUtil: _iosUtil,
-  CauldronHelper: _CauldronHelper,
   nativeDependenciesLookup: _nativeDependenciesLookup,
   android: _android,
   shell: _shell,

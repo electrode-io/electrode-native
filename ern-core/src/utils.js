@@ -3,7 +3,6 @@
 import {
   yarn
 } from './clients'
-import config from './config'
 import PackagePath from './PackagePath'
 import gitCli from './gitCli'
 import http from 'http'
@@ -13,12 +12,6 @@ import manifest from './Manifest'
 import * as ModuleTypes from './ModuleTypes'
 import path from 'path'
 import fs from 'fs'
-import Platform from './Platform'
-import CauldronHelper from './CauldronHelper'
-import CauldronCli, {
-  getCurrentSchemaVersion
-} from 'ern-cauldron-api'
-import semver from 'semver'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -305,47 +298,6 @@ export async function extractJsApiImplementations (plugins: Array<PackagePath>) 
     }
   }
   return jsApiImplDependencies
-}
-
-// Singleton CauldronHelper
-// Returns undefined if no Cauldron is active
-// Throw error if Cauldron is not using the correct schema version
-let currentCauldronHelperInstance
-export async function getCauldronInstance ({
-    ignoreSchemaVersionMismatch
-  } : {
-    ignoreSchemaVersionMismatch?: boolean
-  } = {}) : Promise<CauldronHelper> {
-  if (!currentCauldronHelperInstance) {
-    const cauldronRepositories = config.getValue('cauldronRepositories')
-    const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
-    if (cauldronRepoInUse) {
-      const cauldronRepoUrl = cauldronRepositories[cauldronRepoInUse]
-      const cauldronRepoBranchReResult = /#(.+)$/.exec(cauldronRepoUrl)
-      const cauldronRepoUrlWithoutBranch = cauldronRepoUrl.replace(/#(.+)$/, '')
-      const cauldronCli = new CauldronCli(
-        cauldronRepoUrlWithoutBranch,
-        path.join(Platform.rootDirectory, 'cauldron'),
-        cauldronRepoBranchReResult ? cauldronRepoBranchReResult[1] : 'master')
-      currentCauldronHelperInstance = new CauldronHelper(cauldronCli)
-      const schemaVersionUsedByCauldron = await currentCauldronHelperInstance.getCauldronSchemaVersion()
-      const schemaVersionOfCurrentCauldronApi = getCurrentSchemaVersion()
-      if (!ignoreSchemaVersionMismatch && (schemaVersionUsedByCauldron !== schemaVersionOfCurrentCauldronApi)) {
-        if (semver.gt(schemaVersionUsedByCauldron, schemaVersionOfCurrentCauldronApi)) {
-          throw new Error(
-`Cauldron schema version mismatch (${schemaVersionUsedByCauldron} > ${schemaVersionOfCurrentCauldronApi}).
-You should switch to a newer platform version that supports this Cauldron schema.`
-          )
-        } else if (semver.lt(schemaVersionUsedByCauldron, schemaVersionOfCurrentCauldronApi)) {
-          throw new Error(
-`Cauldron schema version mismatch (${schemaVersionUsedByCauldron} < ${schemaVersionOfCurrentCauldronApi}.
-You should run the following command : 'ern cauldron upgrade' to upgrade your Cauldron to the latest version.
-You can also switch to an older version of the platform which supports this Cauldron schema version.`)
-        }
-      }
-    }
-  }
-  return Promise.resolve(currentCauldronHelperInstance)
 }
 
 export function logErrorAndExitProcess (e: Error, code?: number = 1) {

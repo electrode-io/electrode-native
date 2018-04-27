@@ -449,27 +449,27 @@ describe('CauldronApi.js', () => {
 
     it('should throw if incorrect version is provided', async () => {
       const api = cauldronApi()
-      assert(await doesThrow(api.getNativeDependency, api, NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'react-native-electrode-bridge@0.1.0'))
+      assert(await doesThrow(api.getContainerNativeDependency, api, NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'react-native-electrode-bridge@0.1.0'))
     })
 
     it('should throw if dependency does not exist', async () => {
       const api = cauldronApi()
-      assert(await doesThrow(api.getNativeDependency, api, NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'unexisting'))
+      assert(await doesThrow(api.getContainerNativeDependency, api, NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'unexisting'))
     })
 
     it('should throw if native application version does not exist', async () => {
       const api = cauldronApi()
-      assert(await doesThrow(api.getNativeDependency, api, NativeApplicationDescriptor.fromString('test:android:0.1.0'), 'react-native-electrode-bridge'))
+      assert(await doesThrow(api.getContainerNativeDependency, api, NativeApplicationDescriptor.fromString('test:android:0.1.0'), 'react-native-electrode-bridge'))
     })
 
     it('should throw if native application platform does not exist', async () => {
       const api = cauldronApi()
-      assert(await doesThrow(api.getNativeDependency, api, NativeApplicationDescriptor.fromString('test:unexisting:17.7.0'), 'react-native-electrode-bridge'))
+      assert(await doesThrow(api.getContainerNativeDependency, api, NativeApplicationDescriptor.fromString('test:unexisting:17.7.0'), 'react-native-electrode-bridge'))
     })
 
     it('should throw if native application name does not exist', async () => {
       const api = cauldronApi()
-      assert(await doesThrow(api.getNativeDependency, api, NativeApplicationDescriptor.fromString('unexisting:android:17.7.0'), 'react-native-electrode-bridge'))
+      assert(await doesThrow(api.getContainerNativeDependency, api, NativeApplicationDescriptor.fromString('unexisting:android:17.7.0'), 'react-native-electrode-bridge'))
     })
   })
 
@@ -1377,13 +1377,13 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       await api.addBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0'), 'BUNDLE_CONTENT')
-      assert(await api.hasBundle('test:android:17.7.0'))
+      assert(await api.hasBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0')))
     })
 
     it('should return false if there is no stored bundle for the given native application descriptor', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
-      assert(!await api.hasBundle('test:android:17.7.0'))
+      assert(!await api.hasBundle(NativeApplicationDescriptor.fromString('test:android:17.7.0')))
     })
   })
 

@@ -6,12 +6,14 @@ import {
   ColoredLog,
   config as ernConfig,
   shell,
-  Manifest,
-  utils as coreUtils
+  Manifest
 } from 'ern-core'
 import type {
   ManifestOverrideConfig
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import chalk from 'chalk'
 import yargs from 'yargs'
 import { execSync } from 'child_process'
@@ -46,7 +48,7 @@ function showVersion () {
 }
 
 Manifest.getOverrideManifestConfig = async () : Promise<?ManifestOverrideConfig> => {
-  const cauldronInstance = await coreUtils.getCauldronInstance()
+  const cauldronInstance = await getActiveCauldron()
   const manifestConfig = cauldronInstance && await cauldronInstance.getManifestConfig()
   if (manifestConfig && manifestConfig.override && manifestConfig.override.url) {
     return {

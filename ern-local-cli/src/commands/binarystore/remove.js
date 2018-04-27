@@ -2,9 +2,11 @@
 
 import {
   NativeApplicationDescriptor,
-  utils as coreUtils,
   ErnBinaryStore
 } from 'ern-core'
+import {
+  getActiveCauldron
+} from 'ern-cauldron-api'
 import utils from '../../lib/utils'
 
 exports.command = 'remove <descriptor>'
@@ -37,7 +39,7 @@ exports.handler = async function ({
 
   const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-  const cauldron = await coreUtils.getCauldronInstance()
+  const cauldron = await getActiveCauldron()
   const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
   if (!binaryStoreConfig) {
     return log.error('No binaryStore configuration was found in Cauldron')

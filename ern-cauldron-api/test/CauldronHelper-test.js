@@ -4,8 +4,10 @@ import {
 } from 'chai'
 import CauldronHelper from '../src/CauldronHelper'
 import sinon from 'sinon'
-import PackagePath from '../src/PackagePath'
-import NativeApplicationDescriptor from '../src/NativeApplicationDescriptor'
+import { 
+  PackagePath,
+  NativeApplicationDescriptor
+} from 'ern-core'
 import {
   doesThrow,
   doesNotThrow,

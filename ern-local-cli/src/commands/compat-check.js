@@ -1,13 +1,13 @@
 // @flow
 
 import {
-  compatibility,
   PackagePath,
   MiniApp,
   NativeApplicationDescriptor,
   utils as coreUtils
 } from 'ern-core'
 import utils from '../lib/utils'
+import * as compatibility from '../lib/compatibility'
 
 exports.command = 'compat-check [miniapp]'
 exports.desc = 'Run compatibility checks for one or more MiniApp(s) against a target native application version'
