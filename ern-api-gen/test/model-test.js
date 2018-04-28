@@ -2,11 +2,16 @@ import ModelImpl from '../src/models/ModelImpl'
 import RefModel from '../src/models/RefModel'
 import ArrayModel from '../src/models/ArrayModel'
 import ComposedModel from '../src/models/ComposedModel'
-import {expect} from 'chai'
+import { expect } from 'chai'
 import RefFormat from '../src/models/refs/RefFormat'
-describe('models', function () {
+describe('models', function() {
   it('should ModelImpl', () => {
-    const m = new ModelImpl().description('test model').type('object').property('key', {type: 'string'})
+    const m = new ModelImpl()
+      .description('test model')
+      .type('object')
+      .property('key', {
+        type: 'string',
+      })
     expect(m).to.be.instanceOf(ModelImpl)
     const str = m.getProperties().get('key')
 
@@ -15,7 +20,13 @@ describe('models', function () {
     expect(m.clone()).to.be.instanceOf(ModelImpl)
   })
   it('should ArrayModel', () => {
-    const m = new ArrayModel().description('test model').items({type: 'integer'}).minItems(1).maxItems(3)
+    const m = new ArrayModel()
+      .description('test model')
+      .items({
+        type: 'integer',
+      })
+      .minItems(1)
+      .maxItems(3)
     expect(m).to.be.instanceOf(ArrayModel)
     expect(m.getItems().type).to.be.eql('integer')
     const mc = m.clone()
@@ -42,6 +53,8 @@ describe('models', function () {
     expect(m.getDescription()).to.eql('test description')
   })
   it('should ComposedModel', () => {
-    const c = new ComposedModel().child(new ModelImpl().type('object')).parent(new ModelImpl())
+    const c = new ComposedModel()
+      .child(new ModelImpl().type('object'))
+      .parent(new ModelImpl())
   })
 })

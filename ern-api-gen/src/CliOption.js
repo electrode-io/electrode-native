@@ -1,57 +1,66 @@
-import {BooleanProperty} from './models/properties'
-import {StringProperty} from './models/properties'
-import {newHashMap} from './java/javaUtil'
+import { BooleanProperty } from './models/properties'
+import { StringProperty } from './models/properties'
+import { newHashMap } from './java/javaUtil'
 import StringBuilder from './java/StringBuilder'
 
 export default class CliOption {
-  static newBoolean (opt, description) {
-    return new CliOption(opt, description, BooleanProperty.TYPE).defaultValue('false')
+  static newBoolean(opt, description) {
+    return new CliOption(opt, description, BooleanProperty.TYPE).defaultValue(
+      'false'
+    )
   }
 
-  static newString (opt, description) {
+  static newString(opt, description) {
     return new CliOption(opt, description, StringProperty.TYPE)
   }
 
-  constructor (opt, description, type = StringProperty.TYPE, short, enumValues, required) {
+  constructor(
+    opt,
+    description,
+    type = StringProperty.TYPE,
+    short,
+    enumValues,
+    required
+  ) {
     this.opt = opt
     this.description = description
     this.type = type
   }
 
-  getOpt () {
+  getOpt() {
     return this.opt
   }
 
-  getDescription () {
+  getDescription() {
     return this.description
   }
 
-  setDescription (description) {
+  setDescription(description) {
     this.description = description
   }
 
-  getType () {
+  getType() {
     return this.type
   }
 
-  setType (type) {
+  setType(type) {
     this.type = type
   }
 
-  getDefault () {
+  getDefault() {
     return this.__defaultValue
   }
 
-  setDefault (defaultValue) {
+  setDefault(defaultValue) {
     this.__defaultValue = defaultValue
   }
 
-  defaultValue (defaultValue) {
+  defaultValue(defaultValue) {
     this.__defaultValue = defaultValue
     return this
   }
 
-  addEnum (value, description) {
+  addEnum(value, description) {
     if (this.enumValues == null) {
       this.enumValues = newHashMap()
     }
@@ -61,22 +70,29 @@ export default class CliOption {
     return this
   }
 
-  getEnum () {
+  getEnum() {
     return this.enumValues
   }
 
-  setEnum (enumValues) {
+  setEnum(enumValues) {
     this.enumValues = enumValues
   }
 
-  getOptionHelp () {
+  getOptionHelp() {
     let sb = new StringBuilder(this.description)
     if (this.__defaultValue != null) {
-      sb.append(' (Default: ').append(this.__defaultValue).append(')')
+      sb
+        .append(' (Default: ')
+        .append(this.__defaultValue)
+        .append(')')
     }
     if (this.enumValues != null) {
       for (const [key, value] of this.enumValues) {
-        sb.append('\n    ').append(key).append(' - ').append(value)
+        sb
+          .append('\n    ')
+          .append(key)
+          .append(' - ')
+          .append(value)
       }
     }
     return sb.toString()

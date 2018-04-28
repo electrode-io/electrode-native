@@ -43,7 +43,7 @@
     }
   ],
   "scripts": {
-    "build": "ern-babel",
+    "build": "ern-typescript",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build",
@@ -51,7 +51,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
     "chalk": "^2.3.0",
     "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
@@ -76,7 +75,7 @@
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=4.5",
+    "node": ">=6",
     "npm": ">=3"
   }
 }

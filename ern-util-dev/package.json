@@ -11,13 +11,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": [
-    "electrode",
-    "ern",
-    "react-native",
-    "utilities",
-    "node"
-  ],
+  "keywords": ["electrode", "ern", "react-native", "utilities", "node"],
   "contributors": [
     {
       "name": "Benoit Lemaire",
@@ -44,14 +38,14 @@
     "test": "node bin/ern-mocha.js"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
     "shelljs": "^0.7.6",
     "tmp": "^0.0.31"
   },
   "bin": {
-    "ern-babel": "bin/ern-babel.js",
     "ern-mocha": "bin/ern-mocha.js",
-    "ern-nyc": "bin/ern-nyc.js"
+    "ern-nyc": "bin/ern-nyc.js",
+    "ern-typescript": "bin/ern-typescript.js",
+    "ern-copyfiles": "bin/ern-copyfiles.js"
   },
   "engines": {
     "node": ">=4.5"

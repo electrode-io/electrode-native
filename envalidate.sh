@@ -63,7 +63,7 @@ normal=$(tput sgr0)
 bright=$(tput bold)
 
 # command line programs
-printf "${bright} --- Node.js 4.5 or later ---${normal}\n"
+printf "${bright} --- Node.js 6 or later ---${normal}\n"
 
 echo "node    $(echo_if $(program_is_installed node))"
 $(print_version node)

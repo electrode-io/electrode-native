@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.release.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "include": ["**/*"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "test",
+    "resources",
+    "dist",
+    "tmp"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier",
+    "tslint-no-unused-expression-chai"
+  ],
+  "defaultSeverity": "error",
+  "jsRules": {},
+  "rules": {
+    "ordered-imports": false,
+    "interface-name": false,
+    "no-angle-bracket-type-assertion": false,
+    "no-console": false
+  },
+  "rulesDirectory": []
+}

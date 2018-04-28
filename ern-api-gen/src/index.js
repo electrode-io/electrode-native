@@ -27,8 +27,8 @@ export const CodegenConfigurator = _CodegenConfigurator
 export const ApiGen = _ApiGen
 export const ApiGenUtils = _ApiGenUtils
 
-export default ({
+export default {
   Android,
   Swift,
-  ES6
-})
+  ES6,
+}

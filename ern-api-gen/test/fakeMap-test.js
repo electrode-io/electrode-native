@@ -1,9 +1,10 @@
-import {expect} from 'chai'
+import { expect } from 'chai'
 import newHashMap from '../src/java/fakeMap'
 
-describe('fakeMap', function () {
-  it('should create a new map', function () {
-    const keys = [], values = []
+describe('fakeMap', function() {
+  it('should create a new map', function() {
+    const keys = [],
+      values = []
     const stuff = newHashMap(['a', 1], ['b', 2], ['c', 3])
     for (const [key, value] of stuff) {
       keys.push(key)
@@ -15,13 +16,13 @@ describe('fakeMap', function () {
     expect(stuff.size).to.eql(3)
   })
 
-  it('should create put key value', function () {
+  it('should create put key value', function() {
     const map = newHashMap(['a', 1])
     map.put('a', 2)
     map.put('b', 1)
     expect(map.size).to.eql(2)
   })
-  it('should create get key value', function () {
+  it('should create get key value', function() {
     const map = newHashMap(['a', 1])
     map.put('a', 2)
     map.put('b', 3)

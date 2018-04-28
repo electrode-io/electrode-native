@@ -1,20 +1,34 @@
-import parameters, {RefParameter, BodyParameter} from '../src/models/parameters'
-import {ObjectProperty} from '../src/models/properties'
-import {expect} from 'chai'
+import parameters, {
+  RefParameter,
+  BodyParameter,
+} from '../src/models/parameters'
+import { ObjectProperty } from '../src/models/properties'
+import { expect } from 'chai'
 import RefFormat from '../src/models/refs/RefFormat'
 import ModelImpl from '../src/models/ModelImpl'
 
-describe('parameters', function () {
-  it('should RefParameter', function () {
-    const r = parameters({$ref: '#!/definitions/Whatever'})
+describe('parameters', function() {
+  it('should RefParameter', function() {
+    const r = parameters({
+      $ref: '#!/definitions/Whatever',
+    })
     expect(r).to.be.instanceOf(RefParameter)
 
     const rp = new RefParameter().asDefault('#/definitions/Whatever')
     expect(rp.getRefFormat()).to.eql(RefFormat.INTERNAL)
     expect(rp.getSimpleRef()).to.eql('#/definitions/Whatever')
   })
-  it('should BodyParameter', function () {
-    const r = parameters({in: 'body', schema: {properties: {name: {type: 'string'}}}})
+  it('should BodyParameter', function() {
+    const r = parameters({
+      in: 'body',
+      schema: {
+        properties: {
+          name: {
+            type: 'string',
+          },
+        },
+      },
+    })
     expect(r).to.be.instanceOf(BodyParameter)
     expect(r.getSchema()).to.be.instanceof(ModelImpl)
     const cr = r.copy()

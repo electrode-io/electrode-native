@@ -1,10 +1,10 @@
-import {HashMap, newHashMap, newHashSet} from '../src/java/javaUtil'
-import {expect} from 'chai'
+import { HashMap, newHashMap, newHashSet } from '../src/java/javaUtil'
+import { expect } from 'chai'
 import BooleanHelper from '../src/java/BooleanHelper'
 
-describe('javaUtil', function () {
-  describe('BooleanHelper', function () {
-    it('should parseBoolean', function () {
+describe('javaUtil', function() {
+  describe('BooleanHelper', function() {
+    it('should parseBoolean', function() {
       expect(BooleanHelper.parseBoolean('true')).to.be.true
       expect(BooleanHelper.parseBoolean('True')).to.be.true
       expect(BooleanHelper.parseBoolean('TRUE')).to.be.true
@@ -15,9 +15,11 @@ describe('javaUtil', function () {
       expect(BooleanHelper.parseBoolean('FALSE')).to.be.false
     })
   })
-  describe('HashMap', function () {
+  describe('HashMap', function() {
     it('should create an iterator of entrySet', () => {
-      const itr = newHashMap(['a', 1], ['b', 2], ['c', 3]).entrySet().iterator()
+      const itr = newHashMap(['a', 1], ['b', 2], ['c', 3])
+        .entrySet()
+        .iterator()
       let n = itr.next()
       expect(n.getKey()).to.eql('a')
       expect(n.getValue()).to.eql(1)
@@ -34,7 +36,7 @@ describe('javaUtil', function () {
 
       expect(itr.hasNext()).to.be.false
     })
-    it('should putAll/containsValue/get', function () {
+    it('should putAll/containsValue/get', function() {
       const p1 = newHashMap(['a', 1], ['b', 2])
       const p2 = newHashMap(['b', 4], ['c', 3])
       p1.putAll(p2)
@@ -44,7 +46,7 @@ describe('javaUtil', function () {
       expect(p1.get('c')).to.eql(3)
       expect(p1.containsValue(1)).to.be.true
     })
-    it('should keySet', function () {
+    it('should keySet', function() {
       const ks = newHashMap(['a', 1], ['b', 2]).keySet()
       expect(ks.size).to.eql(2)
       expect(ks.contains('a')).to.be.true
@@ -52,8 +54,8 @@ describe('javaUtil', function () {
       expect(ks.contains('c')).to.be.false
     })
   })
-  describe('HashSet', function () {
-    it('should add/addAll', function () {
+  describe('HashSet', function() {
+    it('should add/addAll', function() {
       const h = newHashSet('a')
       expect(h.add('a')).to.be.false
       expect(h.add('b')).to.be.true

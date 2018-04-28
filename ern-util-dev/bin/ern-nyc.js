@@ -1,24 +1,28 @@
 #!/usr/bin/env node
 var fs = require('fs')
-
 process.env['__ERN_TEST__'] = true
-
 if (!fs.existsSync('test')) {
   console.log(`No tests found in ${process.cwd()}/test`)
   process.exit(0)
 }
-
 process.argv.push(
-  '--sourceMap=false',
+  '--sourceMap=true',
   '--reportDir=.coverage',
   '--reporter=json',
-  '--reporter=text',
-  '--show-process-tree',
-  '--instrument=false',
+  '--reporter=text-summary',
+  '--instrument=true',
+  '--extension=.ts',
   '--all',
-  `--require=${__dirname}/../babelhook-coverage`,
-  '--include=src/**/*.js',
-  'mocha',
-  'test/*-test.js')
-
+  '--include=src/**/*.{ts,js}',
+  '../node_modules/.bin/mocha',
+  '-r',
+  'source-map-support/register',
+  '-r',
+  'tsconfig-paths/register',
+  '-r',
+  'ts-node/register',
+  '--full-trace',
+  '--bail',
+  'test/*-test.{ts,js}'
+)
 require('nyc/bin/nyc')

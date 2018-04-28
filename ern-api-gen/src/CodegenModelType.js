@@ -1,36 +1,39 @@
-import CodegenModel from './CodegenModel';
-import CodegenOperation from './CodegenOperation';
-import CodegenParameter from './CodegenParameter';
-import CodegenProperty from './CodegenProperty';
-import CodegenResponse from './CodegenResponse';
-import CodegenSecurity from './CodegenSecurity';
+import CodegenModel from './CodegenModel'
+import CodegenOperation from './CodegenOperation'
+import CodegenParameter from './CodegenParameter'
+import CodegenProperty from './CodegenProperty'
+import CodegenResponse from './CodegenResponse'
+import CodegenSecurity from './CodegenSecurity'
 
 class CodegenModelType {
-    constructor(defaultImplementation) {
-        this._defaultImplementation = defaultImplementation;
-    }
+  constructor(defaultImplementation) {
+    this._defaultImplementation = defaultImplementation
+  }
 
-    getDefaultImplementation() {
-        return this._defaultImplementation;
-    }
+  getDefaultImplementation() {
+    return this._defaultImplementation
+  }
 
-    static values = () => ALL;
-    ordinal = () => ALL.indexOf(this);
+  static values = () => ALL
+  ordinal = () => ALL.indexOf(this)
 }
 
-
-const forType = (type) => new CodegenModelType(type);
-
+const forType = type => new CodegenModelType(type)
 
 export const MODEL = forType(CodegenModel),
-    OPERATION = forType(CodegenOperation),
-    PARAMETER = forType(CodegenParameter),
-    PROPERTY = forType(CodegenProperty),
-    RESPONSE = forType(CodegenResponse),
-    SECURITY = forType(CodegenSecurity);
+  OPERATION = forType(CodegenOperation),
+  PARAMETER = forType(CodegenParameter),
+  PROPERTY = forType(CodegenProperty),
+  RESPONSE = forType(CodegenResponse),
+  SECURITY = forType(CodegenSecurity)
 
-const ALL = [MODEL, OPERATION, PARAMETER, PROPERTY, RESPONSE, SECURITY];
+const ALL = [MODEL, OPERATION, PARAMETER, PROPERTY, RESPONSE, SECURITY]
 
-export default ({
-    MODEL, OPERATION, PARAMETER, PROPERTY, RESPONSE, SECURITY
-})
+export default {
+  MODEL,
+  OPERATION,
+  PARAMETER,
+  PROPERTY,
+  RESPONSE,
+  SECURITY,
+}

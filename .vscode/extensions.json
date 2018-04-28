@@ -1,0 +1,12 @@
+{
+	// See http://go.microsoft.com/fwlink/?LinkId=827846
+	// for the documentation about the extensions.json format
+	"recommendations": [
+		// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+		"eg2.tslint",
+		"esbenp.prettier-vscode",
+		"eamodio.gitlens",
+		"pflannery.vscode-versionlens",
+		"dkundel.vscode-npm-source"
+	]
+}

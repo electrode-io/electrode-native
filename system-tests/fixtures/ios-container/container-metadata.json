@@ -1,9 +1,9 @@
 {
+  "jsApiImpls": [],
   "miniApps": [
     "movielistminiapp@0.0.19",
     "moviedetailsminiapp@0.0.19"
   ],
-  "jsApiImpls": [],
   "nativeDeps": [
     "react-native@0.55.3",
     "react-native-code-push@5.2.1",

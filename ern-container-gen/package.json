@@ -44,11 +44,29 @@
     }
   ],
   "scripts": {
-    "build": "ern-babel",
+    "build": "ern-typescript && ern-copyfiles",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
   },
+  "copyFiles": [
+    {
+      "source": "src/generators/android/hull",
+      "dest": "dist/generators/android"
+    },
+    {
+      "source": "src/generators/android/templates",
+      "dest": "dist/generators/android"
+    },
+    {
+      "source": "src/generators/ios/hull",
+      "dest": "dist/generators/ios"
+    },
+    {
+      "source": "src/publishers/supplements",
+      "dest": "dist/publishers"
+    }
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "ern-core": "1000.0.0",
@@ -58,9 +76,10 @@
     "xcode-ern": "1.0.1"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "1000.0.0",
+    "copyfiles": "^2.0.0"
   },
   "engines": {
-    "node": ">=4.5"
+    "node": ">=6"
   }
 }

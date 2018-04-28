@@ -5,6 +5,7 @@ if (!require('fs').existsSync(require('path').join(process.cwd(), 'test'))) {
   process.exit(0)
 }
 console.log(`running tests in ${process.cwd()}`)
-process.argv.push('--compilers', `js:${__dirname}/../babelhook`)
-process.argv.push('test/*-test.js')
-require('mocha/bin/mocha')
+process.argv.push('-r', 'tsconfig-paths/register')
+process.argv.push('-r', 'ts-node/register')
+process.argv.push('test/*-test.{ts,js}')
+require('mocha/bin/_mocha')

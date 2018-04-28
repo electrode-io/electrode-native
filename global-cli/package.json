@@ -14,13 +14,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": [
-    "electrode",
-    "ern",
-    "react-native",
-    "client",
-    "node"
-  ],
+  "keywords": ["electrode", "ern", "react-native", "client", "node"],
   "contributors": [
     {
       "name": "Benoit Lemaire",
@@ -50,7 +44,7 @@
     "update-notifier": "^1.0.3"
   },
   "engines": {
-    "node": ">=4.5",
+    "node": ">=6",
     "npm": ">=3"
   }
 }

@@ -1,5 +1,7 @@
 {
   "javascript.validate.enable": false,
-  "typescript.check.npmIsInstalled": false,
-  "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow"
+  "typescript.check.npmIsInstalled": true,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "npm.enableScriptExplorer": true
 }
