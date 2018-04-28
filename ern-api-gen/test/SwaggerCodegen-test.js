@@ -1,8 +1,9 @@
 import SwaggerCodegen from '../src/SwaggerCodegen'
-import {expect} from 'chai'
+import { expect } from 'chai'
 import ernUtilDev from 'ern-util-dev'
-function execTest (out, resolve = console.log, reject = console.error) {
-  return async function () {
+
+function execTest(out, resolve = console.log, reject = console.error) {
+  return async function() {
     try {
       const parts = this.test.title.split(' ')
       if (out) parts.push(...out.split(' '))
@@ -13,8 +14,8 @@ function execTest (out, resolve = console.log, reject = console.error) {
     }
   }
 }
-describe('SwaggerCodegen', function () {
-  const {runBefore, runAfter, cwd} = ernUtilDev(__dirname)
+describe('SwaggerCodegen', function() {
+  const { runBefore, runAfter, cwd } = ernUtilDev(__dirname)
   before(runBefore)
   after(runAfter)
   it('should parse empty', execTest())
@@ -24,8 +25,14 @@ describe('SwaggerCodegen', function () {
   it('config-help -l Swift', execTest())
   it('config-help -l javascript', execTest())
 
-  it('generate -l android -h  -i ./test/fixtures/petstore.json', execTest(`-o ${cwd('petstore')}`))
-  it('generate -l android -i ./test/fixtures/uber.json', execTest(`-o ${cwd('uber')}`))
+  it(
+    'generate -l android -h  -i ./test/fixtures/petstore.json',
+    execTest(`-o ${cwd('petstore')}`)
+  )
+  it(
+    'generate -l android -i ./test/fixtures/uber.json',
+    execTest(`-o ${cwd('uber')}`)
+  )
   it('meta -n Test', execTest(`-o ${cwd('meta')}`))
   it('generate -l android -h', execTest())
 })

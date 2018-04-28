@@ -45,7 +45,7 @@
   ],
   "scripts": {
     "test": "ern-mocha",
-    "build": "ern-babel",
+    "build": "ern-typescript",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
   },
@@ -63,6 +63,6 @@
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=4.5"
+    "node": ">=6"
   }
 }

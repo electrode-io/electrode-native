@@ -12,7 +12,7 @@
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
   "scripts": {
-    "build": "ern-babel",
+    "build": "ern-typescript",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "npm run build"
@@ -67,6 +67,6 @@
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=4.5"
+    "node": ">=6"
   }
 }

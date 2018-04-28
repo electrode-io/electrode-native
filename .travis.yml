@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '8'
+- '9'
 sudo: enabled
 install:
 - npm install
@@ -8,17 +8,14 @@ script:
 - 'set -ev;
 if [ ${TRAVIS_EVENT_TYPE} != "cron" ]; then
   npm run rebuild;
-  npm run standard --version;
-  npm run standard;
-  npm run flow version;
-  npm run flow;
+  npm run lint-check;
   npm run test;
 else
   npm install -g electrode-native;
   ern;
-  BABEL_ENV=coverage node setup-dev;
+  node setup-dev;
   ern platform use 1000.0.0;
-  npm run coverage-ci; 
+  npm run system-tests --all; 
 fi'
 notifications:
   slack:

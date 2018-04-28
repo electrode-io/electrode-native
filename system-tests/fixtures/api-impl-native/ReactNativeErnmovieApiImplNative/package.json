@@ -7,16 +7,12 @@
     "react-native-ernmovie-api": "0.0.10"
   },
   "ern": {
-    "moduleType": "ern-native-api-impl",
     "containerGen": {
       "hasConfig": false,
       "moduleName": "ReactNativeErnmovieApiImplNative",
-      "apiNames": [
-        "Movies"
-      ]
-    }
+      "apiNames": ["Movies"]
+    },
+    "moduleType": "ern-native-api-impl"
   },
-  "keywords": [
-    "ern-native-api-impl"
-  ]
+  "keywords": ["ern-native-api-impl"]
 }

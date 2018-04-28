@@ -1,8 +1,11 @@
 import StringBuilder from './java/StringBuilder'
-const middle = (templateFile, folder, destinationFilename) => destinationFilename ? [templateFile, folder, destinationFilename] : [templateFile, '', folder]
+const middle = (templateFile, folder, destinationFilename) =>
+  destinationFilename
+    ? [templateFile, folder, destinationFilename]
+    : [templateFile, '', folder]
 
 export default class SupportingFile {
-  constructor (templateFile, folder, destinationFilename) {
+  constructor(templateFile, folder, destinationFilename) {
     if (arguments.length == 2) {
       destinationFilename = folder
       folder = ''
@@ -12,11 +15,20 @@ export default class SupportingFile {
     this.destinationFilename = destinationFilename
   }
 
-  toString () {
+  toString() {
     let builder = new StringBuilder('SupportingFile:\n')
-    builder.append('\ttemplateFile: ').append(this.templateFile).append('\n')
-    builder.append('\tfolder: ').append(this.folder).append('\n')
-    builder.append('\tdestinationFilename: ').append(this.destinationFilename).append('\n')
+    builder
+      .append('\ttemplateFile: ')
+      .append(this.templateFile)
+      .append('\n')
+    builder
+      .append('\tfolder: ')
+      .append(this.folder)
+      .append('\n')
+    builder
+      .append('\tdestinationFilename: ')
+      .append(this.destinationFilename)
+      .append('\n')
     return builder.toString()
   }
 }

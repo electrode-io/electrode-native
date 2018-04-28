@@ -60,25 +60,13 @@ The way to do this is to just run `npm run rebuild` command from the root direct
 
 ## Guidelines for code contributions
 
-### Coding style
-
-We are using [Standard JS] for our JavaScript code style rules.
-
-If you want to see Standard warnings during development, you might consider configuring your JavaScript editor accordingly. Many editors have built-in support for [Standard JS]. Just check out their documentation regarding [editor plugins].
-
-You can also run [Standard JS] manually on Electrode Native through npm standard.
-
-Electrode Native has a pre-commit hook setup, that runs standard for every commit. In case a commit is not meeting some standard rules, it won't go through. You'll have to fix the issue(s) first before being able to commit your changes.
-
 ### Type checking
 
-Electrode Native uses [flow] across all of its modules.
+Electrode Native uses [Typescript] across all of its modules.
 
-[flow] comes with integration support for many JavaScript editors. If you want to see [flow] errors from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
+[Typescript] comes with integration support for many JavaScript editors. If you want to see [flow] errors from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
 
-You can also run [flow] manually on Electrode Native using the `npm flow` command.
-
-Electrode Native has a pre-commit hook setup, that will run flow for every commit. In case a commit contains some flow errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
+Electrode Native has a pre-commit hook setup, that will run [tslint] for every commit. In case a commit contains some flow errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
 
 ### Tests
 
@@ -128,9 +116,9 @@ You can keep the server running. Any time you'll do a change in the documentatio
 
 We are using [Travis] for our Continuous Integration (CI).
 
-The CI job is run on every opened Pull Request (PR). It runs [Standard JS] and [flow] checks along with running the whole platform test suite.
+The CI job is run on every opened Pull Request (PR). It runs [tslint] checks along with running the whole platform test suite.
 
-We will only merge PRs that pass the CI (green status). [Standard JS] and [flow] checks are automatically run for you on every commit, so you should not have any surprise for these checks when it comes to the CI.
+We will only merge PRs that pass the CI (green status). [tslint] checks are automatically run for you on every commit, so you should not have any surprise for these checks when it comes to the CI.
 However the tests are not automatically run on every commit, so before opening a PR please ensure that all tests are passing on your workstation by running the `npm run test` command.
 
 [travis]: https://travis-ci.org/
@@ -145,11 +133,7 @@ However the tests are not automatically run on every commit, so before opening a
 
 [editor plugins]: https://standardjs.com/awesome.html#editor-plugins
 
-[standard JS]: https://standardjs.com/
-
-[flow]: https://flow.org/
-
-[flow editors]: https://flow.org/en/docs/editors/
+[typescript]: http://www.typescriptlang.org/
 
 [mocha]: https://mochajs.org/
 
@@ -164,3 +148,5 @@ However the tests are not automatically run on every commit, so before opening a
 [lerna]: https://github.com/lerna/lerna
 
 [yarn]: https://github.com/yarnpkg/yarn
+
+[tslint]: https://palantir.github.io/tslint/

@@ -11,14 +11,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": [
-    "electrode",
-    "ern",
-    "react-native",
-    "node",
-    "android",
-    "ios"
-  ],
+  "keywords": ["electrode", "ern", "react-native", "node", "android", "ios"],
   "contributors": [
     {
       "name": "Benoit Lemaire",
@@ -42,7 +35,7 @@
     }
   ],
   "scripts": {
-    "build": "ern-babel",
+    "build": "ern-typescript",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
@@ -75,6 +68,6 @@
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=4.5"
+    "node": ">=6"
   }
 }

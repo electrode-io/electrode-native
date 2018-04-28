@@ -1,1 +1,0 @@
-declare function log(message: string) : string
