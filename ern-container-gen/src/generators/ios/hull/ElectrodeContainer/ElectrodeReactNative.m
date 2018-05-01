@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
- 
+
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- 
+
  * http://www.apache.org/licenses/LICENSE-2.0
- 
+
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,11 +56,11 @@ static dispatch_semaphore_t semaphore;
         } else {
             url = [self allJSBundleFiles][0];
         }
-        
+
         ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
         [bridgeDelegate setJsBundleURL:url];
     }
-        
+
 }
 
 - (NSArray *)allJSBundleFiles
@@ -128,25 +128,25 @@ static dispatch_semaphore_t semaphore;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[self alloc] init];
     });
-    
+
     return sharedInstance;
 }
 
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary *)properties
 {
-    
+
     UIViewController *miniAppViewController = nil;
-    
+
     // Build out the view controller
     // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-    
+
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-    
+
     miniAppViewController = [UIViewController new];
     miniAppViewController.view = rootView;
-    
+
     return miniAppViewController;}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,17 +163,17 @@ static dispatch_semaphore_t semaphore;
          {{/hasAtleastOneApiImplConfig}}
 {
     ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] init];
-    
+
     [reactContainerConfig setupConfigWithDelegate:delegate];
     {{#plugins}}
         {{#configurable}}
             [{{{lcname}}} setupConfigWithDelegate:delegate];
         {{/configurable}}
     {{/plugins}}
-    
+
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;
-    
+
      [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(notifyElectrodeReactNativeOnInitialized:)
                                                      name:RCTDidInitializeModuleNotification object:nil];
@@ -190,7 +190,7 @@ static dispatch_semaphore_t semaphore;
 }
 
 - (void)loadCustomFonts {
-    NSMutableArray *fontPaths = [[NSBundle frameworkBundle] pathsForResourcesOfType:nil inDirectory:nil];
+    NSArray *fontPaths = [[NSBundle frameworkBundle] pathsForResourcesOfType:nil inDirectory:nil];
     for (NSString *fontPath in fontPaths) {
         if ([[fontPath pathExtension] isEqualToString:@"ttf"] || [[fontPath pathExtension] isEqualToString:@"otf"]) {
             NSData *inData = [NSData dataWithContentsOfFile:fontPath];
