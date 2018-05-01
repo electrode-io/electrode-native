@@ -16,7 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-@protocol ElectrodePluginConfig;
+#import "ElectrodePluginConfig.h"
 
 {{#hasAtleastOneApiImplConfig}}
 {{#apiImplementations}}
@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  configurations for the plugins associated with the container. Only needed to be
  called once.
  
- @param configuration NSDictionary that uses ERN keys such as ERNCodePushConfig
+ @param reactContainerConfig NSDictionary that uses ERN keys such as ERNCodePushConfig
  to store NSDictionary of configurations. The main key signifies which plugin
  the configuration is for, the subsequent NSDictionary is the actual
  configuration. This allows the ability to pass in multiple configurations for
