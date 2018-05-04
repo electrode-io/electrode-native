@@ -54,10 +54,8 @@ class ElectrodeBridgeTransceiver extends ReactContextBaseJavaModule implements E
     private static final EventDispatcher sEventDispatcher = new EventDispatcherImpl(sEventRegistrar);
     private static final RequestRegistrar<ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object>> sRequestRegistrar = new RequestRegistrarImpl<>();
     private static final RequestDispatcher sRequestDispatcher = new RequestDispatcherImpl(sRequestRegistrar);
-
+    private static final List<ConstantsProvider> sConstantsProviders = new ArrayList<>();
     private static boolean sIsReactNativeReady;
-
-    private List<ConstantsProvider> constantsProviders = new ArrayList<>();
 
     /**
      * Initializes a new instance of ElectrodeBridgeTransceiver
@@ -114,10 +112,10 @@ class ElectrodeBridgeTransceiver extends ReactContextBaseJavaModule implements E
     @Nullable
     @Override
     public Map<String, Object> getConstants() {
-        if (constantsProviders != null && !constantsProviders.isEmpty()) {
+        if (sConstantsProviders != null && !sConstantsProviders.isEmpty()) {
             Map<String, Object> constants = new HashMap<>();
             try {
-                for (ConstantsProvider provider : constantsProviders) {
+                for (ConstantsProvider provider : sConstantsProviders) {
                     Map<String, Object> providerConstants;
                     if ((providerConstants = provider.getConstants()) != null) {
                         constants.putAll(providerConstants);
@@ -126,7 +124,7 @@ class ElectrodeBridgeTransceiver extends ReactContextBaseJavaModule implements E
                 return constants;
             } catch (Exception e) {
                 //GOTCHA: Added a try catch since the implementation of this would be on the client side and bridge has no control over unseen errors.
-                Logger.w(TAG, "getConstants() implementation by(%s) failed due to(%s)", constantsProviders, e.getMessage());
+                Logger.w(TAG, "getConstants() implementation by(%s) failed due to(%s)", sConstantsProviders, e.getMessage());
             }
         }
         return super.getConstants();
@@ -139,9 +137,13 @@ class ElectrodeBridgeTransceiver extends ReactContextBaseJavaModule implements E
         return sEventRegistrar.registerEventListener(name, eventListener, uuid);
     }
 
-    @Override
-    public void addConstantsProvider(@NonNull ConstantsProvider constantsProvider) {
-        this.constantsProviders.add(constantsProvider);
+    /**
+     * Registers the {@link ConstantsProvider} that will be used by the bridge module to get the constant values exposed to JavaScript
+     *
+     * @param constantsProvider
+     */
+    public static void addConstantsProvider(@NonNull ConstantsProvider constantsProvider) {
+        sConstantsProviders.add(constantsProvider);
     }
 
     @NonNull
