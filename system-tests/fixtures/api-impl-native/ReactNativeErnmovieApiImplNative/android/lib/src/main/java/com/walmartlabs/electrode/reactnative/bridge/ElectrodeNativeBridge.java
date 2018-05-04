@@ -61,13 +61,6 @@ public interface ElectrodeNativeBridge {
     boolean addEventListener(@NonNull String name, @NonNull ElectrodeBridgeEventListener<ElectrodeBridgeEvent> eventListener, UUID uuid);
 
     /**
-     * Registers the listen that will be used by the bridge module to get the constant values exposed to JavaScript
-     *
-     * @param constantsProvider
-     */
-    void addConstantsProvider(@NonNull ConstantsProvider constantsProvider);
-
-    /**
      * Query UUID of the request handler
      *
      * @param name
