@@ -24,7 +24,6 @@ import {
 } from 'ern-container-gen'
 import { runLocalContainerGen, runCauldronContainerGen } from './publication'
 import { spawn, spawnSync } from 'child_process'
-import utils from './utils'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'
@@ -687,7 +686,7 @@ async function runMiniApp(
     if (cauldron == null) {
       throw new Error('[runMiniApp] No cauldron instance found')
     }
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
       napDescriptorExistInCauldron: {
         descriptor,
