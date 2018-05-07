@@ -44,8 +44,6 @@
     "diff": "^3.4.0",
     "dir-compare": "^1.4.0",
     "dirty-chai": "^2.0.1",
-    "es6-promisify": "^6.0.0",
-    "eslint-plugin-flowtype": "^2.33.0",
     "husky": "^0.14.3",
     "inquirer": "^5.1.0",
     "install": "^0.8.7",
