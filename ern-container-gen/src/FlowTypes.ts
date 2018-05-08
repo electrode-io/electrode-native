@@ -43,6 +43,8 @@ export interface ContainerGenerator {
 }
 
 export interface ContainerPublisherConfig {
+  // Publisher name
+  publisherName: string
   // Path to the generate Container to publish
   containerPath: string
   // Version of the Container to publish

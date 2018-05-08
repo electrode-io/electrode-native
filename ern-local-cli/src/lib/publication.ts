@@ -3,6 +3,10 @@ import {
   IosGenerator,
   AndroidGenerator,
   ContainerGenerator,
+  ContainerPublisherConfig,
+  GitHubPublisher,
+  MavenPublisher,
+  JcenterPublisher,
 } from 'ern-container-gen'
 import {
   createTmpDir,
@@ -835,4 +839,17 @@ export async function askUserForCodePushDeploymentName(
   )
 
   return userSelectedDeploymentName
+}
+
+export async function publishContainer(conf: ContainerPublisherConfig) {
+  switch (conf.publisherName) {
+    case 'git':
+      return new GitHubPublisher().publish(conf)
+    case 'maven':
+      return new MavenPublisher().publish(conf)
+    case 'jcenter':
+      return new JcenterPublisher().publish(conf)
+    default:
+      throw new Error(`Unsupported Container publisher : ${conf.publisherName}`)
+  }
 }

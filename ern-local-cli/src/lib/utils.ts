@@ -36,6 +36,7 @@ import * as constants from './constants'
 import yauzl from 'yauzl'
 import yazl from 'yazl'
 import readDir from 'fs-readdir-recursive'
+import * as publication from './publication'
 const { runAndroidProject } = android
 
 //
@@ -534,39 +535,33 @@ async function performContainerStateUpdateInCauldron(
       containerGenConfig && containerGenConfig.publishers
     if (publishersFromCauldron) {
       for (const publisherFromCauldron of publishersFromCauldron) {
-        switch (publisherFromCauldron.name) {
-          case 'github':
-            await new GitHubPublisher().publish({
-              containerPath: outDir,
-              containerVersion: cauldronContainerVersion,
-              url: publisherFromCauldron.url,
-            })
-            break
-          case 'maven':
-            await new MavenPublisher().publish({
-              containerPath: outDir,
-              containerVersion: cauldronContainerVersion,
-              extra: {
+        let extra = publisherFromCauldron.extra
+        if (!extra) {
+          switch (publisherFromCauldron.name) {
+            case 'maven':
+              extra = {
                 artifactId: `${napDescriptor.name}-ern-container`,
                 groupId: 'com.walmartlabs.ern',
                 mavenPassword: publisherFromCauldron.mavenPassword,
                 mavenUser: publisherFromCauldron.mavenUser,
-              },
-              url: publisherFromCauldron.url,
-            })
-            break
-          case 'jcenter':
-            await new JcenterPublisher().publish({
-              containerPath: outDir,
-              containerVersion: cauldronContainerVersion,
-              extra: {
+              }
+              break
+            case 'jcenter':
+              extra = {
                 artifactId: `${napDescriptor.name}-ern-container`,
                 groupId: 'com.walmartlabs.ern',
-              },
-              url: '',
-            })
-            break
+              }
+              break
+          }
         }
+
+        await publication.publishContainer({
+          containerPath: outDir,
+          containerVersion: cauldronContainerVersion,
+          extra,
+          publisherName: publisherFromCauldron.name,
+          url: publisherFromCauldron.url,
+        })
       }
       log.info(
         `Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`
@@ -781,14 +776,14 @@ async function runMiniApp(
   })
 
   if (platform === 'android') {
-    const mavenPublisher = new MavenPublisher()
-    await mavenPublisher.publish({
+    await publication.publishContainer({
       containerPath: outDir,
       containerVersion: '1.0.0',
       extra: {
         artifactId: 'runner-ern-container',
         groupId: 'com.walmartlabs.ern',
       },
+      publisherName: 'maven',
       url: MavenUtils.getDefaultMavenLocalDirectory(),
     })
   }
