@@ -28,11 +28,8 @@ export default class JcenterPublisher implements ContainerPublisher {
     mustacheConfig.groupId = config.extra.groupId
     mustacheConfig.containerVersion = config.containerVersion
 
-    const workingDir = createTmpDir()
-    shell.cp('-Rf', path.join(config.containerPath, '{.*,*}'), workingDir)
-
     fs.appendFileSync(
-      path.join(workingDir, 'lib', 'build.gradle'),
+      path.join(config.containerPath, 'lib', 'build.gradle'),
       `
     task androidSourcesJar(type: Jar) {
       classifier = 'sources'
@@ -48,7 +45,7 @@ export default class JcenterPublisher implements ContainerPublisher {
     )
 
     fs.appendFileSync(
-      path.join(workingDir, 'build.gradle'),
+      path.join(config.containerPath, 'build.gradle'),
       `buildscript {
       dependencies {
           classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
@@ -58,17 +55,17 @@ export default class JcenterPublisher implements ContainerPublisher {
 
     shell.cp(
       path.join(__dirname, 'supplements', 'jcenter-publish.gradle'),
-      path.join(workingDir, 'lib')
+      path.join(config.containerPath, 'lib')
     )
     mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      path.join(workingDir, 'lib', 'jcenter-publish.gradle'),
+      path.join(config.containerPath, 'lib', 'jcenter-publish.gradle'),
       mustacheConfig,
-      path.join(workingDir, 'lib', 'jcenter-publish.gradle')
+      path.join(config.containerPath, 'lib', 'jcenter-publish.gradle')
     )
 
     try {
       log.debug('[=== Starting build and jcenter publication ===]')
-      shell.pushd(workingDir)
+      shell.pushd(config.containerPath)
       await this.buildAndUploadArchive()
       log.debug('[=== Completed build and publication of the module ===]')
     } finally {
