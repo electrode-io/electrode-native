@@ -5,6 +5,7 @@ import {
   JcenterPublisher,
 } from 'ern-container-gen'
 import utils from '../lib/utils'
+import * as publication from '../lib/publication'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
@@ -80,31 +81,13 @@ export const handler = async ({
       }
     }
 
-    switch (publisher) {
-      case 'git':
-        await new GitHubPublisher().publish({
-          containerPath,
-          containerVersion: version,
-          url,
-        })
-        break
-      case 'maven':
-        await new MavenPublisher().publish({
-          containerPath,
-          containerVersion: version,
-          extra: config ? JSON.parse(config) : undefined,
-          url,
-        })
-        break
-      case 'jcenter':
-        await new JcenterPublisher().publish({
-          containerPath,
-          containerVersion: version,
-          extra: config ? JSON.parse(config) : undefined,
-          url: '', // jcenter does not require a url
-        })
-        break
-    }
+    await publication.publishContainer({
+      containerPath,
+      containerVersion: version,
+      extra: config ? JSON.parse(config) : undefined,
+      publisherName: publisher,
+      url,
+    })
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }
