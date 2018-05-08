@@ -1,3 +1,73 @@
+#if swift(>=4.0)
+@objcMembers public class {{classname}}: NSObject  {
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    static let kEvent{{{camelizedNickName}}} = "{{package}}.event.{{operationId}}";
+    {{/isEvent}}
+
+    {{^isEvent}}
+    static let kRequest{{{camelizedNickName}}} = "{{package}}.request.{{operationId}}";
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    {{#hasEvent}}
+    public lazy var events: {{classname}}Events = {
+        return {{baseName}}Events()
+    }()
+
+    {{/hasEvent}}
+
+    public lazy var requests: {{classname}}Requests = {
+        return {{baseName}}Requests()
+    }()
+}
+
+{{#hasEvent}}
+@objcMembers public class {{classname}}Events: NSObject {
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+        assertionFailure("should override")
+    }
+    {{/isEvent}}
+    {{/operation}}
+
+    {{#operation}}
+    {{#isEvent}}
+    public func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
+        assertionFailure("should override")
+
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}
+{{/hasEvent}}
+
+@objcMembers public class {{classname}}Requests: NSObject {
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+        assertionFailure("should override")
+    }
+
+    {{/isEvent}}
+    {{/operation}}
+    {{#operation}}
+    {{^isEvent}}
+    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+        assertionFailure("should override")
+    }
+
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+}
+#else
 public class {{classname}}: NSObject  {
     {{#operations}}
     {{#operation}}
@@ -67,3 +137,4 @@ public class {{classname}}Requests: NSObject {
     {{/operations}}
 }
 
+#endif

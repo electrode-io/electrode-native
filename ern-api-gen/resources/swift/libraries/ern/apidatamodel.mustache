@@ -1,4 +1,95 @@
+#if swift(>=4.0)
+@objcMembers public class {{requestDataType}}: ElectrodeObject, Bridgeable {
 
+    private static let tag = String(describing: type(of: self))
+
+    {{#requiredParams}}
+    public let {{baseName}}: {{{dataType}}}
+    {{/requiredParams}}
+    {{#optionalParams}}
+    public let {{baseName}}: {{{dataType}}}?
+    {{/optionalParams}}
+
+    public init({{#allParams}}{{^-first}}, {{/-first}}{{baseName}}: {{dataType}}{{/allParams}}) {
+        {{#allParams}}
+        self.{{baseName}} = {{baseName}}
+        {{/allParams}}
+        super.init()
+    }
+
+    public override init() {
+        {{#requiredParams}}
+        self.{{baseName}} = {{dataType}}()
+        {{/requiredParams}}
+        {{#optionalParams}}
+        self.{{baseName}} = nil
+        {{/optionalParams}}
+        super.init()
+    }
+
+    required public init(dictionary:[AnyHashable:Any]) {
+        if
+            {{#requiredParams}}
+
+                let {{baseName}}{{^isPrimitiveType}}{{^isListContainer}}Dict{{/isListContainer}}{{#isListContainer}}Array{{/isListContainer}}{{/isPrimitiveType}} = dictionary["{{baseName}}"] as? {{#isPrimitiveType}}{{dataType}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}}{{^last}},{{/last}}{{#last}} { {{/last}}
+            {{/requiredParams}}
+            {{#requiredParams}}
+            {{#isPrimitiveType}}
+            self.{{baseName}} = {{baseName}}
+            {{/isPrimitiveType}}
+            {{^isPrimitiveType}}
+                {{^isListContainer}}
+                    self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+                {{/isListContainer}}
+                {{#isListContainer}}
+                    self.{{baseName}} = {{baseName}}Dict.map({ obj in
+                    {{complexType}}(dictionary: obj as! [AnyHashable : Any])
+                    })
+
+                {{/isListContainer}}
+            {{/isPrimitiveType}}
+            {{/requiredParams}}
+        } else {
+            assertionFailure("\({{requestDataType}}.tag) missing one or more required properties[{{#requiredParams}}{{baseName}}{{^last}},{{/last}}{{/requiredParams}}]")
+            {{#requiredParams}}
+            self.{{baseName}} = dictionary["{{baseName}}"] as! {{dataType}}
+            {{/requiredParams}}
+        }
+
+        {{#optionalParams}}
+        {{#isPrimitiveType}}
+        self.{{baseName}} = dictionary["{{baseName}}"] as? {{dataType}}
+        {{/isPrimitiveType}}
+        {{^isPrimitiveType}}
+
+        if let {{baseName}}Dict = dictionary["{{baseName}}"] as? [AnyHashable: Any] {
+            self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+        } else {
+            self.{{baseName}} = nil
+        }
+        {{/isPrimitiveType}}
+        {{/optionalParams}}
+
+        super.init(dictionary: dictionary)
+    }
+
+    public func toDictionary() -> NSDictionary {
+        var dict =  [
+            {{#requiredParams}}
+            "{{baseName}}": self.{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}{{^last}},{{/last}}
+            {{/requiredParams}}
+        ] as [AnyHashable : Any]
+
+        {{#optionalParams}}
+        if let nonNull{{baseName}} = self.{{baseName}} {
+            dict["{{baseName}}"] = nonNull{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}
+        }
+        {{/optionalParams}}
+        return dict as NSDictionary
+    }
+
+}
+#else
 public class {{requestDataType}}: ElectrodeObject, Bridgeable {
 
     private static let tag = String(describing: type(of: self))
@@ -89,3 +180,4 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     }
 
 }
+#endif
