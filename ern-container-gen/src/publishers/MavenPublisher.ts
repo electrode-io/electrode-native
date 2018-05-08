@@ -1,5 +1,5 @@
 import { ContainerPublisher, ContainerPublisherConfig } from '../FlowTypes'
-import { createTmpDir, MavenUtils, shell, childProcess, log } from 'ern-core'
+import { MavenUtils, shell, childProcess, log } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
@@ -26,9 +26,6 @@ export default class MavenPublisher implements ContainerPublisher {
     const artifactId = config.extra.artifactId
     const groupId = config.extra.groupId
 
-    const workingDir = createTmpDir()
-    shell.cp('-Rf', path.join(config.containerPath, '{.*,*}'), workingDir)
-
     if (MavenUtils.isLocalMavenRepo(config.url)) {
       MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
     }
@@ -36,7 +33,7 @@ export default class MavenPublisher implements ContainerPublisher {
     config.url = config.url.replace('file:~', `file:${os.homedir() || ''}`)
 
     fs.appendFileSync(
-      path.join(workingDir, 'lib', 'build.gradle'),
+      path.join(config.containerPath, 'lib', 'build.gradle'),
       `
   apply plugin: 'maven'
   
@@ -68,7 +65,7 @@ export default class MavenPublisher implements ContainerPublisher {
 
     try {
       log.debug('[=== Starting build and publication ===]')
-      shell.pushd(workingDir)
+      shell.pushd(config.containerPath)
       await this.buildAndUploadArchive()
       log.debug('[=== Completed build and publication of the module ===]')
     } finally {
