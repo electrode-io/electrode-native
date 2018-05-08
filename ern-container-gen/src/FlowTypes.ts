@@ -51,7 +51,7 @@ export interface ContainerPublisherConfig {
   containerVersion: string
   // Url to publish the container to
   // The url scheme is specific to the publisher type
-  url: string
+  url?: string
   // Extra optional configuration specific to the publisher
   extra?: any
 }

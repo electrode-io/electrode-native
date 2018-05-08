@@ -10,6 +10,10 @@ export default class GithubPublisher implements ContainerPublisher {
   public async publish(config: ContainerPublisherConfig) {
     const workingGitDir = createTmpDir()
 
+    if (!config.url) {
+      throw new Error('url is required for GitHub publisher')
+    }
+
     try {
       shell.pushd(workingGitDir)
       const git = gitCli()
@@ -22,6 +26,10 @@ export default class GithubPublisher implements ContainerPublisher {
       await git.tagAsync([`v${config.containerVersion}`])
       await git.pushAsync('origin', 'master')
       await git.pushTagsAsync('origin')
+      log.info('[=== Completed publication of the Container ===]')
+      log.info(`[Publication url : ${config.url}]`)
+      log.info('[Git Branch: master]')
+      log.info(`[Git Tag: v${config.containerVersion}]`)
     } finally {
       shell.popd()
     }
