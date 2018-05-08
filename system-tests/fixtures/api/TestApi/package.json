@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ERN Generated API for TestApi",
   "main": "javascript/src/index.js",
-  "author": "blemair",
+  "author": "w0l00qx",
   "scripts": {
     "flow": "flow"
   },
@@ -17,7 +17,7 @@
     "message": {
       "moduleName": "TestApi",
       "namespace": "com.TestApi.ern",
-      "apiSchemaPath": "/Users/blemair/Code/electrode-native/system-tests/fixtures/api/testapi-schema.json",
+      "apiSchemaPath": "/Users/w0l00qx/Code/electrode-native/system-tests/fixtures/api/testapi-schema.json",
       "artifactId": "react-native-TestApi-api"
     },
     "moduleType": "ern-api"
