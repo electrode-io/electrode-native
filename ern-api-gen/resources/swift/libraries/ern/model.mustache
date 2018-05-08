@@ -1,3 +1,110 @@
+#if swift(>=4.0)
+{{#description}}
+/**
+{{{description}}}
+*/
+{{/description}}
+@objcMembers public class {{classname}}: ElectrodeObject, Bridgeable {
+
+    private static let tag = String(describing: type(of: self))
+
+    {{#models}}
+    {{#model}}
+    {{#vars}}
+    {{^isEnum}}
+    {{#description}}
+    /**
+     {{{description}}}
+     */
+    {{/description}}
+    public let {{name}}: {{{datatype}}}{{^required}}?{{/required}}{{#defaultValue}} = {{{defaultValue}}}{{/defaultValue}}
+    {{/isEnum}}
+    {{/vars}}
+
+    public init({{#allVars}}{{^-first}}, {{/-first}}{{name}}: {{#isEnum}}{{datatypeWithEnum}}{{/isEnum}}{{^isEnum}}{{datatype}}{{/isEnum}}{{^required}}?{{/required}}{{/allVars}}) {
+        {{#allVars}}
+        self.{{name}} = {{name}}
+        {{/allVars}}
+        super.init()
+    }
+
+    public override init() {
+        {{#requiredVars}}
+        self.{{name}} = {{datatype}}()
+        {{/requiredVars}}
+        {{#optionalVars}}
+        self.{{name}} = nil
+        {{/optionalVars}}
+        super.init()
+    }
+
+    required public init(dictionary:[AnyHashable:Any]) {
+         {{#requiredVars}}{{#isNotContainer}}
+        {{^isPrimitiveType}}if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
+            self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
+        } else {
+            assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}] ")
+            self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
+        }{{/isPrimitiveType}}
+
+        {{#isPrimitiveType}}if let {{name}} = dictionary["{{name}}"] as? {{datatype}}  {
+                  self.{{name}} = {{name}}
+        } else {
+            assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}] ")
+            self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
+        }{{/isPrimitiveType}}
+         {{/isNotContainer}}
+
+         {{^isNotContainer}}if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+             let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}}  {
+                 self.{{name}} = {{baseName}}List
+             } else {
+             assertionFailure("\({{classname}}.tag) missing one or more required properties[{{name}}]")
+             self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
+             }
+         {{/isNotContainer}}
+         {{/requiredVars}}
+
+    {{#optionalVars}}
+
+        {{#isNotContainer}}
+
+        if let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}} {
+            self.{{name}} = {{^isPrimitiveType}}{{datatype}}(dictionary: {{name}}Dict){{/isPrimitiveType}}{{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}
+        } else {
+            self.{{name}} = nil
+        }
+        {{/isNotContainer}}
+        {{^isNotContainer}}if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+           let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
+            self.{{name}} = {{baseName}}List
+        } else {
+            self.{{name}} = nil
+        }
+        {{/isNotContainer}}
+        {{/optionalVars}}
+
+        super.init(dictionary: dictionary)
+    }
+
+    public func toDictionary() -> NSDictionary {
+
+         var dict = [:] as [AnyHashable : Any]
+
+         {{#requiredVars}}dict["{{name}}"] =  self.{{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map{$0.toDictionary()}{{/isNotContainer}}{{/isPrimitiveType}}
+         {{/requiredVars}}
+
+        {{#optionalVars}}
+        if let nonNull{{nameInCamelCase}} = self.{{name}} {
+                dict["{{name}}"] = nonNull{{nameInCamelCase}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map{$0.toDictionary()}{{/isNotContainer}}{{/isPrimitiveType}}
+        }
+        {{/optionalVars}}
+        return dict as NSDictionary
+    }
+}{{/model}}
+{{/models}}
+#else
+
 {{#description}}
 /**
 {{{description}}}
@@ -102,3 +209,4 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
     }
 }{{/model}}
 {{/models}}
+#endif
