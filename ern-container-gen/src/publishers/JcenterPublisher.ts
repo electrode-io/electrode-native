@@ -5,6 +5,9 @@ import path from 'path'
 const { execp } = childProcess
 
 export default class JcenterPublisher implements ContainerPublisher {
+  public static readonly DEFAULT_ARTIFACT_ID: string = 'local-container'
+  public static readonly DEFAULT_GROUP_ID: string = 'com.walmartlabs.ern'
+
   get name(): string {
     return 'jcenter'
   }
@@ -15,11 +18,15 @@ export default class JcenterPublisher implements ContainerPublisher {
     }
 
     if (!config.extra.artifactId) {
-      config.extra.artifactId = 'local-container'
+      log.debug(
+        `Using default artifactId: ${JcenterPublisher.DEFAULT_ARTIFACT_ID}`
+      )
+      config.extra.artifactId = JcenterPublisher.DEFAULT_ARTIFACT_ID
     }
 
     if (!config.extra.groupId) {
-      config.extra.groupId = 'com.walmartlabs.ern'
+      log.debug(`Using default groupId: ${JcenterPublisher.DEFAULT_GROUP_ID}`)
+      config.extra.groupId = JcenterPublisher.DEFAULT_GROUP_ID
     }
 
     const mustacheConfig: any = {}
@@ -64,10 +71,15 @@ export default class JcenterPublisher implements ContainerPublisher {
     )
 
     try {
-      log.debug('[=== Starting build and jcenter publication ===]')
+      log.info('[=== Starting build and jcenter publication ===]')
       shell.pushd(config.containerPath)
       await this.buildAndUploadArchive()
-      log.debug('[=== Completed build and publication of the module ===]')
+      log.info('[=== Completed build and publication of the Container ===]')
+      log.info(
+        `[Artifact: ${config.extra.groupId}:${config.extra.artifactId}:${
+          config.containerVersion
+        } ]`
+      )
     } finally {
       shell.popd()
     }

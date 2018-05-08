@@ -6,6 +6,14 @@ import os from 'os'
 const { execp } = childProcess
 
 export default class MavenPublisher implements ContainerPublisher {
+  public static readonly DEFAULT_ARTIFACT_ID: string = 'local-container'
+  public static readonly DEFAULT_GROUP_ID: string = 'com.walmartlabs.ern'
+  public static readonly DEFAULT_URL: string = `file:${path.join(
+    os.homedir() || '',
+    '.m2',
+    'repository'
+  )}`
+
   get name(): string {
     return 'maven'
   }
@@ -16,15 +24,21 @@ export default class MavenPublisher implements ContainerPublisher {
     }
 
     if (!config.extra.artifactId) {
-      config.extra.artifactId = 'local-container'
+      log.debug(
+        `Using default artifactId: ${MavenPublisher.DEFAULT_ARTIFACT_ID}`
+      )
+      config.extra.artifactId = MavenPublisher.DEFAULT_ARTIFACT_ID
     }
 
     if (!config.extra.groupId) {
-      config.extra.groupId = 'com.walmartlabs.ern'
+      log.debug(`Using default groupId: ${MavenPublisher.DEFAULT_GROUP_ID}`)
+      config.extra.groupId = MavenPublisher.DEFAULT_GROUP_ID
     }
 
-    const artifactId = config.extra.artifactId
-    const groupId = config.extra.groupId
+    if (!config.url) {
+      log.debug(`Using default url: ${MavenPublisher.DEFAULT_URL}`)
+      config.url = MavenPublisher.DEFAULT_URL
+    }
 
     if (MavenUtils.isLocalMavenRepo(config.url)) {
       MavenUtils.createLocalMavenDirectoryIfDoesNotExist()
@@ -51,8 +65,8 @@ export default class MavenPublisher implements ContainerPublisher {
       repositories {
           mavenDeployer {
               pom.version = '${config.containerVersion}'
-              pom.artifactId = '${artifactId}'
-              pom.groupId = '${groupId}'
+              pom.artifactId = '${config.extra.artifactId}'
+              pom.groupId = '${config.extra.groupId}'
               ${MavenUtils.targetRepositoryGradleStatement(config.url, {
                 mavenPassword: config.extra && config.extra.mavenPassword,
                 mavenUser: config.extra && config.extra.mavenUser,
@@ -64,10 +78,16 @@ export default class MavenPublisher implements ContainerPublisher {
     )
 
     try {
-      log.debug('[=== Starting build and publication ===]')
+      log.info('[=== Starting build and publication ===]')
       shell.pushd(config.containerPath)
       await this.buildAndUploadArchive()
-      log.debug('[=== Completed build and publication of the module ===]')
+      log.info('[=== Completed build and publication of the Container ===]')
+      log.info(`[Publication url : ${config.url}]`)
+      log.info(
+        `[Artifact: ${config.extra.groupId}:${config.extra.artifactId}:${
+          config.containerVersion
+        } ]`
+      )
     } finally {
       shell.popd()
     }

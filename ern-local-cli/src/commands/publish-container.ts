@@ -60,13 +60,6 @@ export const handler = async ({
       isValidContainerVersion: { containerVersion: version },
     })
 
-    // url validation
-    if (!url && publisher === 'git') {
-      throw new Error('url is required when using a git publisher')
-    } else if (!url && publisher === 'maven') {
-      url = `file:${path.join(os.homedir() || '', '.m2', 'repository')}`
-    }
-
     // Container path validation
     if (!fs.existsSync(containerPath)) {
       throw new Error('containerPath path does not exist')
