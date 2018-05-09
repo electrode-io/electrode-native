@@ -15,6 +15,7 @@ import {
   MavenUtils,
   utils as coreUtils,
 } from 'ern-core'
+import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { generateRunnerProject, regenerateRunnerConfig } from 'ern-runner-gen'
 import { runLocalContainerGen, runCauldronContainerGen } from './publication'
@@ -31,7 +32,6 @@ import * as constants from './constants'
 import yauzl from 'yauzl'
 import yazl from 'yazl'
 import readDir from 'fs-readdir-recursive'
-import * as publication from './publication'
 const { runAndroidProject } = android
 
 //
@@ -550,7 +550,7 @@ async function performContainerStateUpdateInCauldron(
           }
         }
 
-        await publication.publishContainer({
+        await publishContainer({
           containerPath: outDir,
           containerVersion: cauldronContainerVersion,
           extra,
@@ -771,7 +771,7 @@ async function runMiniApp(
   })
 
   if (platform === 'android') {
-    await publication.publishContainer({
+    await publishContainer({
       containerPath: outDir,
       containerVersion: '1.0.0',
       extra: {
