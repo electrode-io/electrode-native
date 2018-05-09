@@ -15,6 +15,7 @@ import {
   sortDependenciesByName,
   populateApiImplMustacheView,
   addElectrodeNativeMetadataFile,
+  prepareDirectories,
 } from '../../utils'
 import fs from 'fs'
 import path from 'path'
@@ -39,31 +40,11 @@ export default class IosGenerator implements ContainerGenerator {
     return 'ios'
   }
 
-  public prepareDirectories(config: ContainerGeneratorConfig) {
-    if (!fs.existsSync(config.outDir)) {
-      shell.mkdir('-p', config.outDir)
-    } else {
-      shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
-    }
-
-    if (!fs.existsSync(config.compositeMiniAppDir)) {
-      shell.mkdir('-p', config.compositeMiniAppDir)
-    } else {
-      shell.rm('-rf', path.join(config.compositeMiniAppDir, '{.*,*}'))
-    }
-
-    if (!fs.existsSync(config.pluginsDownloadDir)) {
-      shell.mkdir('-p', config.pluginsDownloadDir)
-    } else {
-      shell.rm('-rf', path.join(config.pluginsDownloadDir, '{.*,*}'))
-    }
-  }
-
   public async generate(
     config: ContainerGeneratorConfig
   ): Promise<ContainerGenResult> {
     try {
-      this.prepareDirectories(config)
+      prepareDirectories(config)
       config.plugins = sortDependenciesByName(config.plugins)
 
       shell.cd(config.outDir)
