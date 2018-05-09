@@ -17,6 +17,7 @@ import * as constants from '../lib/constants'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
+import fs from 'fs'
 
 export const command = 'create-container'
 export const desc = 'Create a container locally'
@@ -90,6 +91,15 @@ export const handler = async ({
   let napDescriptor: NativeApplicationDescriptor | void
 
   try {
+    if (outDir && fs.existsSync(outDir)) {
+      if (fs.readdirSync(outDir).length > 0) {
+        throw new Error(
+          `${outDir} directory exists and is not empty.
+Output directory should either not exist (it will be created) or should be empty.`
+        )
+      }
+    }
+
     await utils.logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
         extraErrorMessage:
