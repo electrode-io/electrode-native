@@ -96,7 +96,7 @@ export const handler = async ({
       },
     })
 
-    const miniAppsObjs = []
+    const miniAppsObjs: MiniApp[] = []
     const miniAppsDependencyPaths = _.map(miniapps, m =>
       PackagePath.fromString(m)
     )
@@ -117,7 +117,7 @@ export const handler = async ({
       miniAppsInCauldron,
       'basePath'
     )
-    const nonUpdatedMiniAppsInCauldronObjs = []
+    const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
     for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
       const m = await spin(
         `Retrieving ${nonUpdatedMiniAppInCauldron.toString()} MiniApp`,

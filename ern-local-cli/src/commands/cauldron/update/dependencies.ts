@@ -52,6 +52,13 @@ export const handler = async ({
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
     const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
+    const versionLessDependencies = _.filter(dependenciesObjs, d => !d.version)
+    if (versionLessDependencies.length > 0) {
+      throw new Error(
+        `You need to specify a version to upgrade each dependency to.
+The following dependencies are missing a version : ${versionLessDependencies.toString()}`
+      )
+    }
 
     await utils.logErrorAndExitIfNotSatisfied({
       dependencyIsInNativeApplicationVersionContainer: {
@@ -107,7 +114,7 @@ export const handler = async ({
           await cauldron.updateContainerNativeDependencyVersion(
             napDescriptor,
             dependencyObj.basePath,
-            dependencyObj.version
+            dependencyObj.version!
           )
           cauldronCommitMessage.push(
             `- Update ${dependencyObj.basePath} native dependency to v${

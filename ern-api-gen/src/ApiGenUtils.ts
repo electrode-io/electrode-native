@@ -17,7 +17,11 @@ export default class ApiGenUtils {
       const generator = new DefaultGenerator().opts(opts)
       const apis = generator.processPaths(generator.swagger.getPaths()).value
 
-      const result = []
+      const result: Array<{
+        apiName: string
+        requests: string[]
+        events: string[]
+      }> = []
       for (const apiKey in apis) {
         if (apis.hasOwnProperty(apiKey)) {
           const {
@@ -33,9 +37,11 @@ export default class ApiGenUtils {
     }
   }
 
-  public static generateApiEventsAndRequestNames(api: any): any {
-    const requests = []
-    const events = []
+  public static generateApiEventsAndRequestNames(
+    api: any
+  ): { requests: string[]; events: string[] } {
+    const requests: string[] = []
+    const events: string[] = []
     for (const key in api) {
       if (api.hasOwnProperty(key) && api[key].httpMethod === `EVENT`) {
         events.push(api[key].camelizedNickName)

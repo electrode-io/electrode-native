@@ -88,7 +88,7 @@ export const handler = async ({
       },
     })
 
-    const miniAppsObjs = []
+    const miniAppsObjs: MiniApp[] = []
     const miniAppsDependencyPaths = _.map(miniapps, m =>
       PackagePath.fromString(m)
     )
@@ -104,7 +104,7 @@ export const handler = async ({
     const miniAppsInCauldron = await cauldron.getContainerMiniApps(
       napDescriptor
     )
-    const miniAppsInCauldronObjs = []
+    const miniAppsInCauldronObjs: MiniApp[] = []
     for (const miniAppInCauldron of miniAppsInCauldron) {
       const m = await spin(
         `Retrieving ${miniAppInCauldron.toString()} MiniApp`,

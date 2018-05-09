@@ -58,7 +58,7 @@ export function resolvePluginsVersions(
   resolved: PackagePath[]
   pluginsWithMismatchingVersions: string[]
 } {
-  const result = {
+  const result: any = {
     pluginsWithMismatchingVersions: [],
     resolved: [],
   }
@@ -248,7 +248,7 @@ export async function runCauldronContainerGen(
       napDescriptor
     )
 
-    const miniAppsInstances = []
+    const miniAppsInstances: MiniApp[] = []
     for (const miniapp of miniapps) {
       miniAppsInstances.push(await MiniApp.fromPackagePath(miniapp))
     }

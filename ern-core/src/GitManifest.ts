@@ -126,7 +126,7 @@ export default class GitManifest {
       .filter(
         d =>
           ERN_VERSION_DIRECTORY_RE.test(d) &&
-          semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)[1], maxVersion)
+          semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)![1], maxVersion)
       )
       .map(d => path.join(this.repoAbsoluteLocalPath, 'plugins', d))
       .value()
@@ -153,6 +153,12 @@ export default class GitManifest {
     plugin: PackagePath,
     platformVersion: string = Platform.currentVersion
   ): Promise<string | void> {
+    if (!plugin.version) {
+      throw new Error(
+        `Plugin ${PackagePath.toString()} does not have a version`
+      )
+    }
+
     await this.syncIfNeeded()
     const versionRe = /_v(.+)\+/
     const scopeNameRe = /^(@.+)\/(.+)$/
@@ -168,7 +174,7 @@ export default class GitManifest {
       platformVersion
     )
       .sort((a, b) =>
-        semver.compare(versionRe.exec(a)[1], versionRe.exec(b)[1])
+        semver.compare(versionRe.exec(a)![1], versionRe.exec(b)![1])
       )
       .reverse()
 
@@ -177,8 +183,8 @@ export default class GitManifest {
       let pluginName
       let basePluginPath
       if (scopeNameRe.test(plugin.basePath)) {
-        pluginScope = scopeNameRe.exec(plugin.basePath)[1]
-        pluginName = scopeNameRe.exec(plugin.basePath)[2]
+        pluginScope = scopeNameRe.exec(plugin.basePath)![1]
+        pluginName = scopeNameRe.exec(plugin.basePath)![2]
         basePluginPath = path.join(pluginsConfigurationDirectory, pluginScope)
       } else {
         pluginName = plugin.basePath
@@ -195,12 +201,12 @@ export default class GitManifest {
 
       const pluginVersions = _.map(
         pluginConfigDirectories,
-        s => versionRe.exec(s)[1]
+        s => versionRe.exec(s)![1]
       )
 
       const matchingVersion = _.find(
         pluginVersions.sort(semver.compare).reverse(),
-        d => plugin.version >= d
+        d => semver.gte(plugin.version!, d)
       )
       if (matchingVersion) {
         let pluginConfigurationPath = ''
@@ -226,13 +232,19 @@ export default class GitManifest {
     plugin: PackagePath,
     platformVersion: string = Platform.currentVersion
   ): Promise<string | void> {
+    if (!plugin.version) {
+      throw new Error(
+        `Plugin ${PackagePath.toString()} does not have a version`
+      )
+    }
+
     await this.syncIfNeeded()
     const versionRe = /_v(.+)\+/
     const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(
       platformVersion
     )
       .sort((a, b) =>
-        semver.compare(versionRe.exec(a)[1], versionRe.exec(b)[1])
+        semver.compare(versionRe.exec(a)![1], versionRe.exec(b)![1])
       )
       .reverse()
 
@@ -244,12 +256,12 @@ export default class GitManifest {
         fs
           .readdirSync(pluginsConfigurationDirectory)
           .filter(f => f.startsWith(pluginScopeAndName)),
-        s => versionRe.exec(s)[1]
+        s => versionRe.exec(s)![1]
       )
 
       const matchingVersion = _.find(
         pluginVersions.sort(semver.compare).reverse(),
-        d => plugin.version >= d
+        d => semver.gte(plugin.version!, d)
       )
       if (matchingVersion) {
         const pluginConfigurationPath = path.join(

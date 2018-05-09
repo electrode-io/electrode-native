@@ -56,18 +56,18 @@ export class PackagePath {
     if (GIT_SSH_PATH_RE.test(path) || GIT_HTTPS_PATH_RE.test(path)) {
       this.basePath = path
     } else if (GIT_SSH_PATH_VERSION_RE.test(path)) {
-      this.basePath = GIT_SSH_PATH_VERSION_RE.exec(path)[1]
-      this.version = GIT_SSH_PATH_VERSION_RE.exec(path)[2]
+      this.basePath = GIT_SSH_PATH_VERSION_RE.exec(path)![1]
+      this.version = GIT_SSH_PATH_VERSION_RE.exec(path)![2]
     } else if (GIT_HTTPS_PATH_VERSION_RE.test(path)) {
-      this.basePath = GIT_HTTPS_PATH_VERSION_RE.exec(path)[1]
-      this.version = GIT_HTTPS_PATH_VERSION_RE.exec(path)[2]
+      this.basePath = GIT_HTTPS_PATH_VERSION_RE.exec(path)![1]
+      this.version = GIT_HTTPS_PATH_VERSION_RE.exec(path)![2]
     } else if (REGISTRY_PATH_VERSION_RE.test(path)) {
-      this.basePath = REGISTRY_PATH_VERSION_RE.exec(path)[1]
-      this.version = REGISTRY_PATH_VERSION_RE.exec(path)[2]
+      this.basePath = REGISTRY_PATH_VERSION_RE.exec(path)![1]
+      this.version = REGISTRY_PATH_VERSION_RE.exec(path)![2]
     } else if (FILE_PATH_WITH_PREFIX_RE.test(path)) {
-      this.basePath = FILE_PATH_WITH_PREFIX_RE.exec(path)[1]
+      this.basePath = FILE_PATH_WITH_PREFIX_RE.exec(path)![1]
     } else if (FILE_PATH_WITHOUT_PREFIX_RE.test(path)) {
-      this.basePath = FILE_PATH_WITHOUT_PREFIX_RE.exec(path)[1]
+      this.basePath = FILE_PATH_WITHOUT_PREFIX_RE.exec(path)![1]
     } else {
       this.basePath = path
     }

@@ -7,7 +7,7 @@ export async function getMiniAppsUsingNativeDependency(
   miniAppsPaths: PackagePath[],
   nativeDependency: PackagePath
 ): Promise<MiniApp[]> {
-  const result = []
+  const result: MiniApp[] = []
   const nativeDependencyString = nativeDependency.basePath
   for (const miniAppPath of miniAppsPaths) {
     const miniApp = await spin(

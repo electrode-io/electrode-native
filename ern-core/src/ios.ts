@@ -105,7 +105,7 @@ export function parseIOSDevicesList(
   const devicePattern = /(.*?) \((.*?)\) \[(.*?)\]/
   const noSimulatorPattern = /(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/
 
-  return text.split('\n').reduce((list, line) => {
+  return text.split('\n').reduce((list: any, line: string) => {
     const device = line.match(devicePattern)
     if (
       device &&

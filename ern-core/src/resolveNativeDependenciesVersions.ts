@@ -49,7 +49,7 @@ export function resolveNativeDependenciesVersionsGivenMismatchLevel(
   resolved: PackagePath[]
   pluginsWithMismatchingVersions: string[]
 } {
-  const result = {
+  const result: any = {
     pluginsWithMismatchingVersions: [],
     resolved: [],
   }
@@ -175,7 +175,7 @@ export function resolveNativeDependenciesVersions(
 export async function resolveNativeDependenciesVersionsOfMiniApps(
   miniapps: MiniApp[]
 ): Promise<any> {
-  const nativeDependenciesArray = []
+  const nativeDependenciesArray: NativeDependencies[] = []
   for (const miniapp of miniapps) {
     const miniappNativeDependencies = await miniapp.getNativeDependencies()
     nativeDependenciesArray.push(miniappNativeDependencies)

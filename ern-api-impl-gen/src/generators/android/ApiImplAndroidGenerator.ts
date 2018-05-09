@@ -202,7 +202,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   ) {
     log.debug('=== updating request handler implementation class ===')
     try {
-      const editableFiles = []
+      const editableFiles: string[] = []
       const {
         outputDir,
         resourceDir,

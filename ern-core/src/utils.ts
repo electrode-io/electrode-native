@@ -337,8 +337,8 @@ export function getDownloadedPluginPath(pluginOrigin: any) {
       downloadPath = path.join('node_modules', pluginOrigin.name)
     }
   } else if (pluginOrigin.type === 'git') {
-    if (pluginOrigin.version) {
-      downloadPath = gitDirectoryRe.exec(`${pluginOrigin.url}`)[1]
+    if (pluginOrigin.version && gitDirectoryRe.test(pluginOrigin.url)) {
+      downloadPath = gitDirectoryRe.exec(pluginOrigin.url)![1]
     }
   }
 

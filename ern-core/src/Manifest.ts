@@ -273,8 +273,8 @@ export class Manifest {
     if (!conf.origin) {
       if (npmScopeModuleRe.test(plugin.basePath)) {
         conf.origin = {
-          name: `${npmScopeModuleRe.exec(`${plugin.basePath}`)[2]}`,
-          scope: `${npmScopeModuleRe.exec(`${plugin.basePath}`)[1]}`,
+          name: `${npmScopeModuleRe.exec(plugin.basePath)![2]}`,
+          scope: `${npmScopeModuleRe.exec(plugin.basePath)![1]}`,
           type: 'npm',
           version: plugin.version,
         }
