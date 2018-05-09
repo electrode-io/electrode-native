@@ -1,9 +1,4 @@
 import { utils as coreUtils } from 'ern-core'
-import {
-  MavenPublisher,
-  GitHubPublisher,
-  JcenterPublisher,
-} from 'ern-container-gen'
 import utils from '../lib/utils'
 import * as publication from '../lib/publication'
 import fs from 'fs'
