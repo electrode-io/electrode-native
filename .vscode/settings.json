@@ -3,5 +3,6 @@
   "typescript.check.npmIsInstalled": true,
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
-  "npm.enableScriptExplorer": true
+  "npm.enableScriptExplorer": true,
+  "typescript.implementationsCodeLens.enabled": true
 }
