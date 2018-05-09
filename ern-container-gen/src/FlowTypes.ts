@@ -41,39 +41,3 @@ export interface ContainerGenerator {
   // Generate a Container
   generate(config: ContainerGeneratorConfig): Promise<ContainerGenResult>
 }
-
-export interface ContainerPublisherConfig {
-  // Publisher name
-  publisherName: string
-  // Path to the generate Container to publish
-  containerPath: string
-  // Version of the Container to publish
-  containerVersion: string
-  // Url to publish the container to
-  // The url scheme is specific to the publisher type
-  url?: string
-  // Extra optional configuration specific to the publisher
-  extra?: any
-}
-
-export interface ContainerMavenPublisherConfig {
-  // Maven Artifact ID to use for publication
-  // Defaults to 'local-container'
-  artifactId?: string
-  // Maven Group ID to use for publication
-  // Defaults to 'com.walmartlabs.ern'
-  groupId?: string
-  // Maven user name
-  // If not specified, by convention, it will use mavenUser from gradle.properties
-  mavenUser?: string
-  // Maven password
-  // If not specified, by convention, it will use mavenPassword from gradle.properties
-  mavenPassword?: string
-}
-
-export interface ContainerPublisher {
-  // Name of the Container Publisher
-  readonly name: string
-  // Publish a Container
-  publish(config: ContainerPublisherConfig): Promise<void>
-}
