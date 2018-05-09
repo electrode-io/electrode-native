@@ -10,7 +10,8 @@
     "moduleResolution": "node",
     "inlineSourceMap": true,
     "allowJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strictNullChecks": true
   },
   "typeAcquisition": {
     "enable": true
