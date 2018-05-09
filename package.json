@@ -7,8 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup-dev": "node setup-dev.js",
-    "rebuild":
-      "rimraf ern-*/**/dist && lerna clean --yes && lerna bootstrap && lerna run build",
+    "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
     "test": "lerna run test",
     "system-tests": "node system-tests/system-tests",
     "coverage-unit":
