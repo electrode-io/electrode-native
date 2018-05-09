@@ -92,7 +92,7 @@ export const handler = async ({
         type: 'input',
       })
 
-      label = userInputedLabel
+      label = <string>userInputedLabel
     }
 
     await performCodePushPatch(napDescriptor, deploymentName, label, {

@@ -192,7 +192,7 @@ export const handler = async ({
       PackagePath.fromString(d)
     )
 
-    const updateMiniAppsObjs = []
+    const updateMiniAppsObjs: MiniApp[] = []
     const updateMiniAppsDependencyPaths = _.map(updateMiniapps, m =>
       PackagePath.fromString(m)
     )
@@ -201,7 +201,7 @@ export const handler = async ({
       updateMiniAppsObjs.push(m)
     }
 
-    const addMiniAppsObjs = []
+    const addMiniAppsObjs: MiniApp[] = []
     // An array of miniapps strings was provided
     const addMiniAppsDependencyPaths = _.map(addMiniapps, m =>
       PackagePath.fromString(m)
@@ -282,7 +282,7 @@ export const handler = async ({
           miniAppsInCauldron,
           'basePath'
         )
-        const nonUpdatedMiniAppsInCauldronObjs = []
+        const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
         for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
           const m = await MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron)
           nonUpdatedMiniAppsInCauldronObjs.push(m)

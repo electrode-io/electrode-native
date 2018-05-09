@@ -136,7 +136,7 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       projectSpec,
       iosProject
     )
-    const editableFiles = []
+    const editableFiles: string[] = []
     for (const api of apis) {
       const { files, classNames } = ApiImplIosGenerator.getMustacheFileNamesMap(
         resourceDir,

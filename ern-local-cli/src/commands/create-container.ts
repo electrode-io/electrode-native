@@ -219,7 +219,7 @@ Output directory should either not exist (it will be created) or should be empty
             },
           ])
 
-          platform = userSelectedPlatform
+          platform = <'android' | 'ios'>userSelectedPlatform
         }
 
         await spin(

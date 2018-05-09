@@ -20,7 +20,7 @@ export async function checkCompatibilityWithNativeApp(
   platformName?: string,
   versionName?: string
 ): Promise<any> {
-  const compatReport = await spin(
+  const compatReport: any[] = await spin(
     'Checking compatibility',
     getNativeAppCompatibilityReport(miniApp, {
       appName,
@@ -132,7 +132,7 @@ export async function getNativeAppCompatibilityReport(
     versionName?: string
   }
 ) {
-  const result = []
+  const result: any[] = []
   const cauldronInstance = await getActiveCauldron()
   if (!cauldronInstance) {
     throw new Error('[getNativeAppCompatibilityReport] No Cauldron is active')
@@ -246,7 +246,11 @@ export function getCompatibility(
     uncompatibleIfARemoteDepIsMissing?: boolean
   } = {}
 ) {
-  const result = { compatible: [], compatibleNonStrict: [], incompatible: [] }
+  const result: any = {
+    compatible: [],
+    compatibleNonStrict: [],
+    incompatible: [],
+  }
 
   for (const remoteDep of remoteDeps) {
     const localDep = _.find(localDeps, d =>

@@ -155,17 +155,17 @@ export class CauldronHelper {
     platformName: string
   ): Promise<string[]> {
     const availableNativeApps = await this.getAllNativeApps()
-    const nativeAppsForGivenPlatform = []
+    const result: string[] = []
     if (availableNativeApps) {
       for (const nativeApp of availableNativeApps) {
         for (const platform of nativeApp.platforms) {
           if (platform.name === platformName) {
-            nativeAppsForGivenPlatform.push(nativeApp.name)
+            result.push(nativeApp.name)
           }
         }
       }
     }
-    return Promise.resolve(nativeAppsForGivenPlatform)
+    return result
   }
 
   public async getDescriptor(

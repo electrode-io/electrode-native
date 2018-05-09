@@ -234,7 +234,10 @@ export async function generateMiniAppsComposite(
   shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
 
   log.debug('Creating top level composite .babelrc')
-  const compositeBabelRc = { presets: ['react-native'], plugins: [] }
+  const compositeBabelRc: { plugins: string[]; presets: string[] } = {
+    plugins: [],
+    presets: ['react-native'],
+  }
 
   // Ugly hacky way of handling module-resolver babel plugin
   // At least it has some guarantees to make it safer but its just a temporary
@@ -270,7 +273,7 @@ export async function generateMiniAppsComposite(
               if (compositeBabelRc.plugins.length === 0) {
                 // First MiniApp to add module-resolver plugin & config
                 // easy enough, we just copy over the plugin & config
-                compositeBabelRc.plugins.push(babelPlugin)
+                compositeBabelRc.plugins.push(<any>babelPlugin)
                 for (const x of babelPlugin) {
                   if (x instanceof Object && x.alias) {
                     moduleResolverAliases = x.alias
@@ -445,7 +448,7 @@ export function getPackageJsonDependenciesUsingMiniAppDeltas(
   if (miniAppsDeltas.upgraded) {
     for (const m of miniAppsDeltas.upgraded) {
       const re = new RegExp(`\n${m.basePath}@(.+):`)
-      const initialVersion = re.exec(yarnlock)[1]
+      const initialVersion = re.exec(yarnlock)![1]
       result[`${m.basePath}`] = initialVersion
     }
   }
@@ -474,7 +477,7 @@ export async function generatePluginsMustacheViews(
   plugins: PackagePath[],
   platform: string
 ) {
-  const pluginsViews = []
+  const pluginsViews: any[] = []
   log.debug('Generating plugins mustache views')
   for (const plugin of plugins) {
     if (plugin.basePath === 'react-native') {

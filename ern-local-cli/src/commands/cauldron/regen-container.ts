@@ -89,7 +89,7 @@ export const handler = async ({
     // For all MiniApps that are retrieved from git, we need to check if any
     // of their native dependencies versions have changed (or new one added)
     // in order to properly update the native dependencies list in the Cauldron
-    const gitMiniAppsObjs = []
+    const gitMiniAppsObjs: MiniApp[] = []
     for (const gitMiniAppInCauldron of gitMiniAppsInCauldron) {
       const m = await spin(
         `Retrieving ${gitMiniAppInCauldron.toString()} MiniApp`,

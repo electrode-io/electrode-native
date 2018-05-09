@@ -37,12 +37,14 @@ export async function findNativeDependencies(
     const r = /^win/.test(process.platform)
       ? /^(@.*?\\.*?)\\|^(.*?)\\/.exec(nativeDepsDirectory)
       : /^(@.*?\/.*?)\/|^(.*?)\//.exec(nativeDepsDirectory)
-    if (r[1]) {
-      nativeDependenciesNames.add(
-        /^win/.test(process.platform) ? r[1].replace('\\', '/') : r[1]
-      )
-    } else {
-      nativeDependenciesNames.add(r[2])
+    if (r) {
+      if (r[1]) {
+        nativeDependenciesNames.add(
+          /^win/.test(process.platform) ? r[1].replace('\\', '/') : r[1]
+        )
+      } else {
+        nativeDependenciesNames.add(r[2])
+      }
     }
   }
 
@@ -63,11 +65,11 @@ export async function findNativeDependencies(
     )
     const nativeDepPackageJson = require(pathToNativeDependencyPackageJson)
     const name = NPM_SCOPED_MODULE_RE.test(nativeDependencyName)
-      ? NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[2]
+      ? NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)![2]
       : nativeDependencyName
     const scope =
       (NPM_SCOPED_MODULE_RE.test(nativeDependencyName) &&
-        NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)[1]) ||
+        NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)![1]) ||
       undefined
     const version = getUnprefixedVersion(nativeDepPackageJson.version)
     const dep = packagePathFrom(name, { scope, version })

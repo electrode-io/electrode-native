@@ -52,26 +52,25 @@ export default function normalizeConfig({
   packageName: string
   rest?: any
 }) {
-  let simpleName = name
+  let simpleName: string = name
 
   if (isApiRe.test(name)) {
-    simpleName = isApiRe.exec(name).pop()
+    simpleName = isApiRe.exec(name)!.pop()!
   }
 
   const config: any = {}
 
   if (simpleName) {
     if (/^@/.test(simpleName)) {
-      const [
-        ,
-        // tslint:disable-next-line:variable-name
-        _pkgName,
-        // tslint:disable-next-line:variable-name
-        _name,
-      ] = /^@(.+?)\/(?:react-native-)?(.+?)(?:-api)?$/.exec(simpleName)
-      simpleName = _name
+      const reExec = /^@(.+?)\/(?:react-native-)?(.+?)(?:-api)?$/.exec(
+        simpleName
+      )
+      const pkgName = reExec![1]
+      const apiName = reExec![2]
+
+      simpleName = apiName
       if (!namespace) {
-        namespace = _pkgName ? `com.${_pkgName}.${simpleName}` : simpleName
+        namespace = pkgName ? `com.${pkgName}.${simpleName}` : simpleName
       }
     }
     config.moduleName = simpleName

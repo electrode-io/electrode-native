@@ -47,7 +47,7 @@ export async function execp(
       if (error) {
         reject(error)
       } else {
-        resolve(stdout)
+        resolve(stdout.toString())
       }
     })
     cp.stdout.on('data', data => log.trace(data.toString()))

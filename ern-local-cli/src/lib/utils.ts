@@ -49,8 +49,8 @@ async function getNapDescriptorStringsFromCauldron({
 } = {}): Promise<string[]> {
   const cauldron = await getActiveCauldron()
   const nativeApps = await cauldron.getAllNativeApps()
-  return _.filter<string>(
-    _.flattenDeep<string>(
+  return <any>_.filter(
+    _.flattenDeep(
       _.map(nativeApps, nativeApp =>
         _.map(nativeApp.platforms, p =>
           _.map(p.versions, version => {
@@ -589,7 +589,7 @@ async function createZippedBundle({
   }
   zippedbundle.end()
 
-  const chunks = []
+  const chunks: any = []
   zippedbundle.outputStream.on('data', chunk => {
     chunks.push(chunk)
   })
@@ -689,8 +689,8 @@ async function runMiniApp(
   }
 
   let entryMiniAppName = mainMiniAppName || ''
-  let dependenciesObjs = []
-  let miniAppsPaths = []
+  let dependenciesObjs: PackagePath[] = []
+  let miniAppsPaths: PackagePath[] = []
   if (miniapps) {
     if (MiniApp.existInPath(cwd)) {
       const miniapp = MiniApp.fromPath(cwd)
@@ -726,7 +726,7 @@ async function runMiniApp(
     if (dev === undefined) {
       // If dev is not defined it will default to true in the case of standalone MiniApp runner
       dev = true
-      const args = []
+      const args: string[] = []
       if (host) {
         args.push(`--host ${host}`)
       }
@@ -1072,7 +1072,7 @@ async function getDescriptorsMatchingSemVerDescriptor(
       `${semVerDescriptor.toString()} descriptor is missing platform and/or version`
     )
   }
-  const result = []
+  const result: NativeApplicationDescriptor[] = []
   const cauldron = await getActiveCauldron()
   const versionsNames = await cauldron.getVersionsNames(semVerDescriptor)
   const semVerVersionNames = normalizeVersionsToSemver(versionsNames)
@@ -1110,6 +1110,7 @@ function normalizeVersionsToSemver(versions: string[]): string[] {
       } else if (versionMissingMinorRe.test(v)) {
         return v.replace(versionMissingMinorRe, '$1.0.0$2')
       }
+      throw new Error(`${v} is not a valid version`)
     }
   })
 }
@@ -1155,6 +1156,8 @@ async function unzip(zippedData: Buffer, destPath: string) {
     yauzl.fromBuffer(zippedData, { lazyEntries: true }, (err, zipfile) => {
       if (err) {
         reject(err)
+      } else if (zipfile == null) {
+        reject(new Error('zipFile is null or undefined'))
       } else {
         zipfile.readEntry()
         zipfile.on('end', () => resolve())
@@ -1170,6 +1173,8 @@ async function unzip(zippedData: Buffer, destPath: string) {
             zipfile.openReadStream(entry, (error, rs) => {
               if (error) {
                 reject(error)
+              } else if (rs == null) {
+                reject(new Error('rs is null or undefined'))
               } else {
                 rs.pipe(ws)
                 rs.on('end', () => zipfile.readEntry())

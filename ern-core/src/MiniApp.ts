@@ -481,7 +481,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
   public getUnscopedModuleName(moduleName: string): string {
     const npmScopeModuleRe = /(@.*)\/(.*)/
     return npmScopeModuleRe.test(moduleName)
-      ? npmScopeModuleRe.exec(`${moduleName}`)[2]
+      ? npmScopeModuleRe.exec(moduleName)![2]
       : moduleName
   }
 
