@@ -1,6 +1,6 @@
 import { utils as coreUtils } from 'ern-core'
+import { publishContainer } from 'ern-container-publisher'
 import utils from '../lib/utils'
-import * as publication from '../lib/publication'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
@@ -69,7 +69,7 @@ export const handler = async ({
       }
     }
 
-    await publication.publishContainer({
+    await publishContainer({
       containerPath,
       containerVersion: version,
       extra: config ? JSON.parse(config) : undefined,
