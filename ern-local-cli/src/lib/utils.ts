@@ -17,11 +17,6 @@ import {
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { generateRunnerProject, regenerateRunnerConfig } from 'ern-runner-gen'
-import {
-  MavenPublisher,
-  GitHubPublisher,
-  JcenterPublisher,
-} from 'ern-container-gen'
 import { runLocalContainerGen, runCauldronContainerGen } from './publication'
 import { spawn, spawnSync } from 'child_process'
 import _ from 'lodash'
