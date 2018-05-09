@@ -3,11 +3,13 @@ import {
   IosGenerator,
   AndroidGenerator,
   ContainerGenerator,
+} from 'ern-container-gen'
+import {
   ContainerPublisherConfig,
-  GitHubPublisher,
+  GithubPublisher,
   MavenPublisher,
   JcenterPublisher,
-} from 'ern-container-gen'
+} from 'ern-container-publisher'
 import {
   createTmpDir,
   CodePushSdk,
@@ -864,7 +866,7 @@ export async function publishContainer(conf: ContainerPublisherConfig) {
   // publish fumction to trigger Container publication
   switch (conf.publisherName) {
     case 'git':
-      return new GitHubPublisher().publish(conf)
+      return new GithubPublisher().publish(conf)
     case 'maven':
       return new MavenPublisher().publish(conf)
     case 'jcenter':
