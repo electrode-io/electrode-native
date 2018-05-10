@@ -19,7 +19,7 @@ export const builder = (argv: Argv) => {
     })
     .option('publisher', {
       alias: 'p',
-      choices: ['git', 'maven', 'jcenter'],
+      choices: ['github', 'maven', 'jcenter'],
       demandOption: true,
       describe: 'The publisher type',
       type: 'string',
