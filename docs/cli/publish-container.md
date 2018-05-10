@@ -25,14 +25,14 @@
 
 `--publisher/-p <publisher>`
 
-* Specify the publisher to use. Can either be `maven` or `git`.
+* Specify the publisher to use. Can either be `maven` or `github`.
 * This option is required, there is no default.
 
 `--url/-u <url>`
 
 * The publication url to publish the Container to.
 * Can either be the url of a Git repository or a Maven repository (local or remote), depending on the publisher being used.
-* This option is required for the `git` publisher. For `maven` publisher, it will default to the standard Maven local path (`~/.m2/repository`) if not specified.
+* This option is required for the `github` publisher. For `maven` publisher, it will default to the standard Maven local path (`~/.m2/repository`) if not specified.
 
 `--config/-c <config>`
 

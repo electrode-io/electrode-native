@@ -27,7 +27,7 @@ export default async function publishContainer(conf: ContainerPublisherConfig) {
   // Instantiates a Container publisher based on it's name and call
   // publish fumction to trigger Container publication
   switch (conf.publisherName) {
-    case 'git':
+    case 'github':
       return new GithubPublisher().publish(conf)
     case 'maven':
       return new MavenPublisher().publish(conf)
