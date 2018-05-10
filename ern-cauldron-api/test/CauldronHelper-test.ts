@@ -107,11 +107,11 @@ describe('CauldronHelper.js', () => {
 
   describe('constructor', () => {
     it('should throw if no CauldronApi instance is provided', () => {
-      expect(() => new CauldronHelper(undefined)).to.throw()
+      expect(() => new CauldronHelper(undefined!)).to.throw()
     })
 
     it('should thro if a null CauldronApi instance is provided', () => {
-      expect(() => new CauldronHelper(null)).to.throw()
+      expect(() => new CauldronHelper(null!)).to.throw()
     })
 
     it('should not throw if a CauldronApi instance is provided', () => {

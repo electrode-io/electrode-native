@@ -14,7 +14,7 @@ describe('InMemoryDocumentStore.js', () => {
 
   describe('constructor', () => {
     it('should throw if the initial Cauldron document is missing', () => {
-      expect(() => new InMemoryDocumentStore(undefined)).to.throw()
+      expect(() => new InMemoryDocumentStore(undefined!)).to.throw()
     })
 
     it('should not throw if an initial Cauldron document is provided', () => {
