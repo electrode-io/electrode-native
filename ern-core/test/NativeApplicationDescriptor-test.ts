@@ -24,7 +24,7 @@ describe('NativeApplicationDescriptor', () => {
 
     it('should throw if version is provided but not platform', () => {
       expect(
-        () => new NativeApplicationDescriptor('MyNativeAppName', null, '1.2.3')
+        () => new NativeApplicationDescriptor('MyNativeAppName', null!, '1.2.3')
       ).to.throw()
     })
 
