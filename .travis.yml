@@ -15,7 +15,7 @@ else
   ern;
   node setup-dev;
   ern platform use 1000.0.0;
-  npm run system-tests --all; 
+  npm run system-tests -- --all; 
 fi'
 notifications:
   slack:
