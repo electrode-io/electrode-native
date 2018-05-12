@@ -6,18 +6,12 @@ import {
   manifest,
   Platform,
   log,
+  PluginConfig,
 } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
-
-interface PluginConfig {
-  android: any
-  ios: any
-  origin?: any
-  path?: any
-}
 
 export const ROOT_DIR = shell.pwd()
 const READ_EXECUTE = '555'
@@ -147,6 +141,9 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     pluginPath: PackagePath,
     pluginConfig: PluginConfig
   ) {
+    if (!pluginConfig.android) {
+      throw new Error('Missing android plugin configuration')
+    }
     log.debug(`injecting ${pluginPath.basePath} code.`)
     const pluginSrcDirectory = path.join(
       paths.pluginsDownloadDirectory,

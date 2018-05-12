@@ -1,7 +1,7 @@
 import _CodePushSdk from './CodePushSdk'
 import _ErnBinaryStore from './ErnBinaryStore'
 import { manifest as _manifest } from './Manifest'
-export { Manifest } from './Manifest'
+export { Manifest, PluginConfig } from './Manifest'
 import _MavenUtils from './MavenUtils'
 import * as _ModuleTypes from './ModuleTypes'
 import _Platform from './Platform'
