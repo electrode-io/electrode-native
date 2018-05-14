@@ -71,7 +71,6 @@ export const handler = async ({
       )
       packageName = await promptForPackageName(defaultPackageName)
     }
-    console.log(`prepareStackTrace is ${Error.prepareStackTrace}`)
 
     await utils.logErrorAndExitIfNotSatisfied({
       isValidNpmPackageName: {
