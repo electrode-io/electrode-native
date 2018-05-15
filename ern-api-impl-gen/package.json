@@ -56,8 +56,10 @@
     "ern-core": "1000.0.0",
     "lodash": "^4.17.4",
     "mustache": "^2.3.0",
+    "semver": "5.5.0",
     "xcode": "^0.9.1",
-    "xcode-ern": "1.0.1"
+    "xcode-ern": "1.0.1",
+    "@yarnpkg/lockfile": "^1.0.1"
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0"
