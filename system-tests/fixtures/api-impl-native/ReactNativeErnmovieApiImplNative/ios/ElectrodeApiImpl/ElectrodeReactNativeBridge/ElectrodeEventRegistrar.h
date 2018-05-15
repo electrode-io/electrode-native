@@ -24,11 +24,11 @@
 
  @param name The name of the event in reverse url format.
  @param eventListener The event listener that will respond to a given event.
- @return The UUID of the registered event listener.
+ @param uuid The uuid of the listener
  */
-- (NSUUID *_Nonnull)
-registerEventListener:(NSString *_Nonnull)name
-        eventListener:(ElectrodeBridgeEventListener _Nonnull)eventListener;
+- (void) registerEventListener:(ElectrodeBridgeEventListener _Nonnull)eventListener
+                          name: (NSString *_Nonnull)name
+                          uuid: (NSUUID * _Nonnull)uuid;
 
 /**
  Remove an event listener by a given UUID. It is possible to have multiple event

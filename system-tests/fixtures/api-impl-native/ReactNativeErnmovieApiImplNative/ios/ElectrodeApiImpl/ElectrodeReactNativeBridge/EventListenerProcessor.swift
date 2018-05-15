@@ -32,7 +32,7 @@ public class EventListenerProcessor<T>: NSObject, Processor {
     }
 
     public func execute() {
-        ElectrodeBridgeHolder.addEventListner(withName: eventName, eventListner: { (eventPayload: Any?) in
+        ElectrodeBridgeHolder.addEventListener(withName: eventName, eventListner: { (eventPayload: Any?) in
             self.logger.debug("Processing final result for the event with payload bundle (\(String(describing: eventPayload)))")
             let result = try? NSObject.generateObject(data: eventPayload as AnyObject, classType: self.eventPayloadClass)
             self.appEventListener(result)

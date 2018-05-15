@@ -124,15 +124,16 @@ RCT_EXPORT_MODULE(ElectrodeBridge);
   [self handleRequest:request completionHandler:completion];
 }
 
-- (NSUUID *)
-registerRequestCompletionHandlerWithName:(NSString *)name
-                       completionHandler:
-                           (nonnull ElectrodeBridgeRequestCompletionHandler)
-                               completion {
-  NSUUID *uUID = [self.requestDispatcher.requestRegistrar
-      registerRequestCompletionHandlerWithName:name
-                                    completion:completion];
-  return uUID;
+- (void) registerRequestCompletionHandlerWithName:(NSString *)name
+                                             uuid: (NSUUID *) uuid
+                                       completion: (ElectrodeBridgeRequestCompletionHandler) completion {
+    [self.requestDispatcher.requestRegistrar registerRequestCompletionHandlerWithName:name
+                                                                                 uuid:uuid completion:completion];
+}
+
+
+- (void) unregisterRequestHandlerWithUUID:(NSUUID *)uuid {
+    [requestRegistrar unregisterRequestHandler:uuid];
 }
 
 - (void)resetRegistrar {
@@ -146,15 +147,17 @@ registerRequestCompletionHandlerWithName:(NSString *)name
   [self notifyReactNativeEventListenerWithEvent:event];
 }
 
-- (NSUUID *)addEventListenerWithName:(NSString *)name
-                       eventListener:
-                           (ElectrodeBridgeEventListener)eventListener {
+- (void) registerEventListenerWithName: (NSString *_Nonnull)name
+                                  uuid: (NSUUID * _Nonnull)uuid
+                              listener: (ElectrodeBridgeEventListener _Nonnull)eventListener {
   ERNDebug(@"%@, Adding eventListener %@ for event %@",
            NSStringFromClass([self class]), eventListener, name);
-  NSUUID *uUID =
-      [self.eventDispatcher.eventRegistrar registerEventListener:name
-                                                   eventListener:eventListener];
-  return uUID;
+  [self.eventDispatcher.eventRegistrar registerEventListener:eventListener
+                                                          name:name uuid:uuid];
+}
+- (void)removeEventListnerWithUUID: (NSUUID *) uuid {
+    ERNDebug(@"Removing event listener with NNUUID with string %@", uuid.UUIDString);
+    [eventRegistrar unregisterEventListener:uuid];
 }
 #pragma ElectrodeReactBridge
 

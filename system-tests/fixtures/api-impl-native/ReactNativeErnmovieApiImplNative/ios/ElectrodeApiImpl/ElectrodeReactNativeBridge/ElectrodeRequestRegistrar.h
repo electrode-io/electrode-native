@@ -26,13 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param name The name of the event in reverse url format.
  @param completion The request handler that will parse and process a request.
- @return A UUID is returned for a request being added.
  */
-- (NSUUID *)
-registerRequestCompletionHandlerWithName:(NSString *)name
-                              completion:
-                                  (ElectrodeBridgeRequestCompletionHandler)
-                                      completion;
+- (void) registerRequestCompletionHandlerWithName:(NSString *)name
+                                             uuid: (NSUUID *) uuid
+                                       completion: (ElectrodeBridgeRequestCompletionHandler) completion;
 
 /**
  * Unregisters a request handler
