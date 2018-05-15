@@ -158,6 +158,13 @@ export default class GitManifest {
     plugin: PackagePath,
     platformVersion: string = Platform.currentVersion
   ): Promise<string | void> {
+    if (!plugin.version) {
+      throw new Error('Plugin version is required to retrieve configuration')
+    } else if (!semver.valid(plugin.version)) {
+      throw new Error(
+        'Plugin version is required to be fixed and not ranged to retrieve configuration'
+      )
+    }
     let result = await this.getPluginConfigurationPathNew(
       plugin,
       platformVersion
