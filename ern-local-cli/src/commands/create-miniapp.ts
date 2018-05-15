@@ -92,7 +92,6 @@ export const handler = async ({
 
     logSuccessFooter(appName)
   } catch (e) {
-    console.log('BOUM')
     coreUtils.logErrorAndExitProcess(e)
   }
 }
