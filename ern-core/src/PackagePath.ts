@@ -34,7 +34,7 @@ export class PackagePath {
   /**
    * Package path without version
    * - File path        : path without scheme prefix
-   * - Git path         : path without scheme prefix nor branch/tag/commit
+   * - Git path         : path without branch/tag/commit
    * - Registry path    : package name (unscoped)
    */
   public readonly basePath: string
