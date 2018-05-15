@@ -172,11 +172,9 @@ export default class GitManifest {
     // ]
     const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(
       platformVersion
+    ).sort((a, b) =>
+      semver.rcompare(versionRe.exec(a)![1], versionRe.exec(b)![1])
     )
-      .sort((a, b) =>
-        semver.compare(versionRe.exec(a)![1], versionRe.exec(b)![1])
-      )
-      .reverse()
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       let pluginScope
@@ -204,9 +202,8 @@ export default class GitManifest {
         s => versionRe.exec(s)![1]
       )
 
-      const matchingVersion = _.find(
-        pluginVersions.sort(semver.compare).reverse(),
-        d => semver.gte(plugin.version!, d)
+      const matchingVersion = _.find(pluginVersions.sort(semver.rcompare), d =>
+        semver.gte(plugin.version!, d)
       )
       if (matchingVersion) {
         let pluginConfigurationPath = ''
@@ -242,11 +239,9 @@ export default class GitManifest {
     const versionRe = /_v(.+)\+/
     const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(
       platformVersion
+    ).sort((a, b) =>
+      semver.rcompare(versionRe.exec(a)![1], versionRe.exec(b)![1])
     )
-      .sort((a, b) =>
-        semver.compare(versionRe.exec(a)![1], versionRe.exec(b)![1])
-      )
-      .reverse()
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       // Directory names cannot contain '/', so, replaced by ':'
@@ -259,9 +254,8 @@ export default class GitManifest {
         s => versionRe.exec(s)![1]
       )
 
-      const matchingVersion = _.find(
-        pluginVersions.sort(semver.compare).reverse(),
-        d => semver.gte(plugin.version!, d)
+      const matchingVersion = _.find(pluginVersions.sort(semver.rcompare), d =>
+        semver.gte(plugin.version!, d)
       )
       if (matchingVersion) {
         const pluginConfigurationPath = path.join(
