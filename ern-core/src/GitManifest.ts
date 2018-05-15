@@ -84,11 +84,14 @@ export default class GitManifest {
     )
   }
 
-  // We only sync once during a whole "session" (in our context : "an ern command exection")
-  // This is done to speed up things as during a single command execution, multiple manifest
-  // access can be performed.
-  // If you need to access a `Manifest` in a different context, a long session, you might
-  // want to improve the code to act a bit smarter.
+  /**
+   * We only sync once during a whole "session"
+   * (in our context : "an ern command exection")
+   * This is done to speed up things as during a single command execution,
+   * multiple manifest access can be performed.
+   * If you need to access a `Manifest` in a different context, a long session,
+   *  you might want to improve the code to act a bit smarter.
+   */
   public async syncIfNeeded() {
     if (!this.cachedManifest) {
       await this.sync()
@@ -106,19 +109,29 @@ export default class GitManifest {
     )
   }
 
-  //
-  // Return an array containing all top level plugin configuration directories that
-  // are matching an Electrode Native version lower or equal than the specified maxVersion
-  // For example, given the following directories :
-  //   /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+
-  //   /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+
-  //   /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.13.0+
-  // And maxVersion = '0.10.0'
-  // The function would return :
-  // [
-  //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+',
-  //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+'
-  // ]
+  /**
+   * Return an array containing all top level plugin configuration directories
+   * are matching an Electrode Native version lower or equal than the specified
+   * maxVersion.
+   *
+   * For example, given the following directories :
+   *
+   *  /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+
+   *  /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+
+   *  /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.13.0+
+   *
+   * And maxVersion='0.10.0'
+   *
+   * The function would return :
+   *
+   *  [
+   *   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+',
+   *   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+'
+   *  ]
+   * @param maxVersion The upper bound Electrode Native version.
+   *                   Only plugin configuration directories lower than this
+   *                   version will be returned.
+   */
   public getPluginsConfigurationDirectories(
     maxVersion: string = Platform.currentVersion
   ): string[] {
@@ -132,6 +145,15 @@ export default class GitManifest {
       .value()
   }
 
+  /**
+   * Given a fixed versioned plugin, return the local file system path
+   * to the directory containing the plugin configuration files, or
+   * undefined if no configuration matching this plugin version exists
+   * in the Manifest.
+   * @param plugin Fixed versioned plugin for which to retrieve configuration
+   * @param platformVersion Platform version that is querying for
+   *                        the plugin configuration.
+   */
   public async getPluginConfigurationPath(
     plugin: PackagePath,
     platformVersion: string = Platform.currentVersion
@@ -222,9 +244,10 @@ export default class GitManifest {
     }
   }
 
-  //
-  // Old way of getting plugin configuration path
-  // -- To be deprecated --
+  /**
+   * Old way of getting plugin configuration path
+   *  -- To be deprecated --
+   */
   private async getPluginConfigurationPathLegacy(
     plugin: PackagePath,
     platformVersion: string = Platform.currentVersion
