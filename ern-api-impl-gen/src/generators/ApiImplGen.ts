@@ -4,6 +4,8 @@ import _ from 'lodash'
 import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
+import semver from 'semver'
+import * as lockfile from '@yarnpkg/lockfile'
 import ApiImplAndroidGenerator from './android/ApiImplAndroidGenerator'
 import ApiImplIosGenerator from './ios/ApiImplIosGenerator'
 import ApiImplJsGenerator from './js/ApiImplJsGenerator'
@@ -79,23 +81,66 @@ export default class ApiImplGen {
     reactNativeVersion: string
   ) {
     try {
-      shell.cd(downloadPath)
+      shell.pushd(downloadPath)
 
       await this.spinAndDownload(apiPackagePath)
       plugins = await this.getDependencies(apiPackagePath)
       plugins.push(apiPackagePath) // Also add the api as a plugin so it's src files will get copied.
+      const pluginsWithResolvedVersions: PackagePath[] = []
       if (plugins) {
         log.info('Downloading dependencies')
         for (const dependency of plugins) {
           await this.spinAndDownload(dependency)
+
+          // Not very pretty, should find a better design, was just to avoid too
+          // much refactoring at this point
+          // Problem here is with mostly with the bridge dependency which version
+          // is specified as a range and not a fixed one (ie 1.5.x for example)
+          // The problem is that later on, manifest expect a fixed version to
+          // lookup for the correct plugin configuration, and not a range
+          // We therefore update the plugin version with the one that was
+          // actually installed and not the range specified in package.json
+          if (!semver.valid(dependency.version!)) {
+            // Not a valid version. Given that it was sucessfuly installed
+            // it means that it is a range, and not a fixed version.
+            // Let's find out what version was actually installed by looking
+            // in the yarn.lock
+            const yarnLock = fs.readFileSync(
+              path.join(downloadPath, 'yarn.lock'),
+              'utf8'
+            )
+            const yarnLockJson = lockfile.parse(yarnLock)
+            const installedDependency = _.find(
+              Object.keys(yarnLockJson.object),
+              d => d.startsWith(`${dependency.basePath}@`)
+            )
+            const installedDependencyVersion =
+              yarnLockJson.object[installedDependency].version
+            const pluginWithResolvedVersion = PackagePath.fromString(
+              `${dependency.basePath}@${installedDependencyVersion}`
+            )
+            pluginsWithResolvedVersions.push(pluginWithResolvedVersion)
+
+            log.debug(
+              `Replacing plugin ${dependency.basePath} range version ${
+                dependency.version
+              } with real resolved version ${installedDependencyVersion}`
+            )
+          } else {
+            pluginsWithResolvedVersions.push(dependency)
+          }
         }
       }
+      // Replace plugins array with the one containing real valid plugin versions
+      plugins = pluginsWithResolvedVersions
       log.debug('Downloading react-native dependency')
       await this.spinAndDownload(
         new PackagePath(`react-native@${reactNativeVersion}`)
       )
     } catch (e) {
       throw new Error(`Api dependency download failed: ${e}`)
+    } finally {
+      shell.popd()
     }
   }
 
