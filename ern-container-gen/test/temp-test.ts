@@ -116,8 +116,8 @@ describe('ern-container-gen utils.js', () => {
     it('should yarn add new MiniApps', async () => {
       const miniAppsDeltas = {
         new: [
-          { name: 'MiniAppFour', version: '7.0.0' },
-          { name: 'MiniAppFive', version: '4.0.0' },
+          PackagePath.fromString('MiniAppFour@7.0.0'),
+          PackagePath.fromString('MiniAppFive@4.0.0'),
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
@@ -127,8 +127,8 @@ describe('ern-container-gen utils.js', () => {
     it('should yarn upgrade upgraded MiniApps', async () => {
       const miniAppsDeltas = {
         upgraded: [
-          { name: 'MiniAppOne', version: '7.0.0' },
-          { name: 'MiniAppTwo', version: '4.0.0' },
+          PackagePath.fromString('MiniAppOne@7.0.0'),
+          PackagePath.fromString('MiniAppTwo@4.0.0'),
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
@@ -138,8 +138,8 @@ describe('ern-container-gen utils.js', () => {
     it('should not yarn upgrade nor yarn add same MiniApps versions', async () => {
       const miniAppsDeltas = {
         same: [
-          { name: 'MiniAppOne', version: '6.0.0' },
-          { name: 'MiniAppTwo', version: '3.0.0' },
+          PackagePath.fromString('MiniAppOne@6.0.0'),
+          PackagePath.fromString('MiniAppTwo@3.0.0'),
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
@@ -149,31 +149,14 @@ describe('ern-container-gen utils.js', () => {
 
     it('should work correctly with mixed deltas', async () => {
       const miniAppsDeltas = {
-        new: [
-          {
-            basePath: 'MiniAppFour',
-            version: '7.0.0',
-          },
-        ],
+        new: [PackagePath.fromString('MiniAppFour@7.0.0')],
         same: [
-          {
-            basePath: 'MiniAppOne',
-            version: '6.0.0',
-          },
-          {
-            basePath: 'MiniAppTwo',
-            version: '3.0.0',
-          },
+          PackagePath.fromString('MiniAppOne@6.0.0'),
+          PackagePath.fromString('MiniAppTwo@3.0.0'),
         ],
         upgraded: [
-          {
-            nabasePathme: 'MiniAppOne',
-            version: '7.0.0',
-          },
-          {
-            basePath: 'MiniAppTwo',
-            version: '4.0.0',
-          },
+          PackagePath.fromString('MiniAppOne@7.0.0'),
+          PackagePath.fromString('MiniAppTwo@4.0.0'),
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
@@ -189,8 +172,8 @@ describe('ern-container-gen utils.js', () => {
     it('should inject MiniApps that have same version as previous', () => {
       const miniAppsDeltas = {
         same: [
-          { basePath: 'MiniAppOne', version: '6.0.0' },
-          { basePath: 'MiniAppTwo', version: '3.0.0' },
+          PackagePath.fromString('MiniAppOne@6.0.0'),
+          PackagePath.fromString('MiniAppTwo@3.0.0'),
         ],
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(
@@ -204,8 +187,8 @@ describe('ern-container-gen utils.js', () => {
     it('should inject MiniApps that have upgraded versions', () => {
       const miniAppsDeltas = {
         upgraded: [
-          { basePath: 'MiniAppOne', version: '7.0.0' },
-          { basePath: 'MiniAppTwo', version: '4.0.0' },
+          PackagePath.fromString('MiniAppOne@7.0.0'),
+          PackagePath.fromString('MiniAppTwo@4.0.0'),
         ],
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(
@@ -219,8 +202,8 @@ describe('ern-container-gen utils.js', () => {
     it('should not inject MiniApps that are new', () => {
       const miniAppsDeltas = {
         new: [
-          { basePath: 'MiniAppFour', version: '7.0.0' },
-          { basePath: 'MiniAppFive', version: '4.0.0' },
+          PackagePath.fromString('MiniAppFour@7.0.0'),
+          PackagePath.fromString('MiniAppFive@4.0.0'),
         ],
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(
@@ -232,24 +215,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should inject proper MiniApps', () => {
       const miniAppsDeltas = {
-        new: [
-          {
-            basePath: 'MiniAppFour',
-            version: '7.0.0',
-          },
-        ],
-        same: [
-          {
-            basePath: 'MiniAppOne',
-            version: '6.0.0',
-          },
-        ],
-        upgraded: [
-          {
-            basePath: 'MiniAppTwo',
-            version: '4.0.0',
-          },
-        ],
+        new: [PackagePath.fromString('MiniAppFour@7.0.0')],
+        same: [PackagePath.fromString('MiniAppOne@6.0.0')],
+        upgraded: [PackagePath.fromString('MiniAppTwo@4.0.0')],
       }
       const result = getPackageJsonDependenciesUsingMiniAppDeltas(
         miniAppsDeltas,
