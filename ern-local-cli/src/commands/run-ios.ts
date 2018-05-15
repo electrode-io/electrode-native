@@ -8,6 +8,7 @@ export const desc = 'Run one or more MiniApps in the iOS Runner application'
 export const builder = (argv: Argv) => {
   return argv
     .option('dev', {
+      default: true,
       describe: 'Enable or disable React Native dev support',
       type: 'boolean',
     })

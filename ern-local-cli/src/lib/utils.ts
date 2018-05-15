@@ -723,9 +723,7 @@ async function runMiniApp(
     log.debug(`Initializing Runner`)
     dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
     miniAppsPaths = [PackagePath.fromString(`file:${cwd}`)]
-    if (dev === undefined) {
-      // If dev is not defined it will default to true in the case of standalone MiniApp runner
-      dev = true
+    if (dev) {
       const args: string[] = []
       if (host) {
         args.push(`--host ${host}`)
@@ -734,6 +732,8 @@ async function runMiniApp(
         args.push(`--port ${port}`)
       }
       await reactnative.startPackagerInNewWindow(cwd, args)
+    } else {
+      log.info('Dev mode not enabled, will not start the packager.')
     }
   } else {
     miniAppsPaths =
