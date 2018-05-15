@@ -3,17 +3,29 @@
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    public override func add{{{camelizedNickName}}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public override func add{{{camelizedNickName}}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         let listenerProcessor = EventListenerProcessor(
                                 eventName: {{{classname}}}.kEvent{{{camelizedNickName}}},
                                 eventPayloadClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self,
                                 eventListener: eventListener)
 
-        listenerProcessor.execute()
+        return listenerProcessor.execute()
     }
     {{/isEvent}}
     {{/operation}}
     {{/operations}}
+
+
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    public override func remove{{{camelizedNickName}}}EventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        return ElectrodeBridgeHolder.removeEventListener(uuid)
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
 
     {{#operations}}
     {{#operation}}
@@ -27,6 +39,7 @@
     }
     {{/isEvent}}
     {{/operation}}
+
     {{/operations}}
 }
 #else
@@ -34,13 +47,23 @@ public class {{{eventsImplClassName}}}:  {{{classname}}}Events {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    public override func add{{{camelizedNickName}}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public override func add{{{camelizedNickName}}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         let listenerProcessor = EventListenerProcessor(
                                 eventName: {{{classname}}}.kEvent{{{camelizedNickName}}},
                                 eventPayloadClass: {{#requestParam}}{{{dataType}}}{{/requestParam}}.self,
                                 eventListener: eventListener)
 
-        listenerProcessor.execute()
+        return listenerProcessor.execute()
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    {{#operations}}
+    {{#operation}}
+    {{#isEvent}}
+    public override func remove{{{camelizedNickName}}}EventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        return ElectrodeBridgeHolder.removeEventListener(uuid)
     }
     {{/isEvent}}
     {{/operation}}
