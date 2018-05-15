@@ -26,19 +26,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation ElectrodeRequestRegistrar
 
-- (NSUUID *)
-registerRequestCompletionHandlerWithName:(NSString *)name
-                              completion:
-                                  (ElectrodeBridgeRequestCompletionHandler)
-                                      completion {
+- (void) registerRequestCompletionHandlerWithName:(NSString *)name
+                                             uuid: (NSUUID *) uuid
+                                       completion: (ElectrodeBridgeRequestCompletionHandler) completion {
   @synchronized(self) {
     ERNDebug(@"***Logging registering requestHandler with Name %@", name);
-    NSUUID *requestHandlerUUID = [NSUUID UUID];
     [self.requestHandlerByRequestName setObject:completion forKey:name];
-    [self.requestNameByUUID setObject:name forKey:requestHandlerUUID];
+    [self.requestNameByUUID setObject:name forKey:uuid];
     ERNDebug(@"***Logging registered requestHandlerDictionary:%@",
              self.requestHandlerByRequestName);
-    return requestHandlerUUID;
   }
 }
 

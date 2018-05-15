@@ -10,9 +10,13 @@
     "containerGen": {
       "hasConfig": false,
       "moduleName": "ReactNativeErnmovieApiImplNative",
-      "apiNames": ["Movies"]
+      "apiNames": [
+        "Movies"
+      ]
     },
     "moduleType": "ern-native-api-impl"
   },
-  "keywords": ["ern-native-api-impl"]
+  "keywords": [
+    "ern-native-api-impl"
+  ]
 }

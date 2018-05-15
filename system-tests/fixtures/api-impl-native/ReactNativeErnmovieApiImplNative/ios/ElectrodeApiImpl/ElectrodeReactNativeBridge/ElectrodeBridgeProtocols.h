@@ -79,12 +79,19 @@ typedef void (^ElectrodeBridgeEventListener)(id _Nullable eventPayload);
 /**
  * Register the request handler
  * @param name name of the request
+ * @param uuid uuid of the request handler
  * @param completion call back to be issued for a given request.
  */
-- (NSUUID *)registerRequestCompletionHandlerWithName:(NSString *)name
-                                   completionHandler:
-                                       (ElectrodeBridgeRequestCompletionHandler)
-                                           completion;
+- (void) registerRequestCompletionHandlerWithName:(NSString *)name
+                                             uuid: (NSUUID *) uuid
+                                       completion: (ElectrodeBridgeRequestCompletionHandler) completion;
+
+/**
+ * Unregister a request handler
+ * @param uuid returned when register a request handler
+ */
+
+- (void)unregisterRequestHandlerWithUUID: (NSUUID *)uuid;
 
 /**
  * Sends an event with payload to all the event listeners
@@ -96,12 +103,18 @@ typedef void (^ElectrodeBridgeEventListener)(id _Nullable eventPayload);
  * Add an event listener for the passed event
  * @param name   The event name this listener is interested in
  * @param eventListener The event listener
- * @return A UUID to pass back to unregisterEventListener
+ * @param uuid of the event listener.
  */
 
-- (NSUUID *)addEventListenerWithName:(NSString *)name
-                       eventListener:
-                           (ElectrodeBridgeEventListener)eventListener;
+- (void) registerEventListenerWithName: (NSString *_Nonnull)name
+                                  uuid: (NSUUID * _Nonnull)uuid
+                              listener: (ElectrodeBridgeEventListener _Nonnull)eventListener;
+
+/**
+ * Remove an event listener
+ * @param uuid returned when listner is added.
+ */
+- (void)removeEventListnerWithUUID: (NSUUID *) uuid;
 
 - (void)addConstantsProvider:(id<ConstantsProvider>)constantsProvider;
 

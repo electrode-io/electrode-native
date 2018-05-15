@@ -30,7 +30,7 @@ public class EventProcessor<T>: NSObject, Processor {
     }
 
     public func execute() {
-        logger.debug("\(tag) EventProcessor is emitting event (\(eventName)) with payload (\(eventPayload))")
+        logger.debug("\(tag) EventProcessor is emitting event (\(eventName)) with payload (\(String(describing: eventPayload)))")
         let event = ElectrodeBridgeEvent(name: eventName, type: .event, data: eventPayload)
         ElectrodeBridgeHolder.send(event)
     }

@@ -39,7 +39,7 @@ public class ElectrodeRequestHandlerProcessor<TReq, TResp>: NSObject, Processor 
     }
 
     public func execute() {
-        ElectrodeBridgeHolder.registerRequestHanlder(withName: requestName) { (data: Any?, responseCompletion: @escaping ElectrodeBridgeResponseCompletionHandler) in
+        ElectrodeBridgeHolder.registerRequestHandler(withName: requestName) { (data: Any?, responseCompletion: @escaping ElectrodeBridgeResponseCompletionHandler) in
             let request: Any?
             if self.reqClass == None.self {
                 request = nil
