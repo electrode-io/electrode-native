@@ -29,8 +29,18 @@
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         assertionFailure("should override")
+        return UUID()
+    }
+    {{/isEvent}}
+    {{/operation}}
+
+    {{#operation}}
+    {{#isEvent}}
+    public func remove{{camelizedNickName}}EventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        assertionFailure("should override")
+        return nil
     }
     {{/isEvent}}
     {{/operation}}
@@ -51,12 +61,24 @@
     {{#operations}}
     {{#operation}}
     {{^isEvent}}
-    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
 
     {{/isEvent}}
     {{/operation}}
+
+    {{#operation}}
+    {{^isEvent}}
+    public func unregister{{camelizedNickName}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
+    {{/isEvent}}
+    {{/operation}}
+
     {{#operation}}
     {{^isEvent}}
     public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
@@ -98,8 +120,18 @@ public class {{classname}}Events: NSObject {
     {{#operations}}
     {{#operation}}
     {{#isEvent}}
-    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         assertionFailure("should override")
+        return UUID()
+    }
+    {{/isEvent}}
+    {{/operation}}
+
+    {{#operation}}
+    {{#isEvent}}
+    public func remove{{camelizedNickName}}EventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        assertionFailure("should override")
+        return nil
     }
     {{/isEvent}}
     {{/operation}}
@@ -120,12 +152,24 @@ public class {{classname}}Requests: NSObject {
     {{#operations}}
     {{#operation}}
     {{^isEvent}}
-    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
 
     {{/isEvent}}
     {{/operation}}
+
+    {{#operation}}
+    {{^isEvent}}
+    public func unregister{{camelizedNickName}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
+    {{/isEvent}}
+    {{/operation}}
+
     {{#operation}}
     {{^isEvent}}
     public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {

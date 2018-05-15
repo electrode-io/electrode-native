@@ -4,12 +4,23 @@
     {{#operation}}
     {{^isEvent}}
 
-    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
     reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}Array<Any>{{/isList}}{{/requestParam}}.self, {{#requestParam}}{{#isList}}reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
     respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
     requestCompletionHandler: handler)
-        requestHandlerProcessor.execute()
+        return requestHandlerProcessor.execute()
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
+
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+
+    public override func unregister{{{camelizedNickName}}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
     {{/isEvent}}
     {{/operation}}
@@ -41,12 +52,12 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{#operation}}
     {{^isEvent}}
 
-    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
     reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}Array<Any>{{/isList}}{{/requestParam}}.self, {{#requestParam}}{{#isList}}reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
     respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
     requestCompletionHandler: handler)
-        requestHandlerProcessor.execute()
+        return requestHandlerProcessor.execute()
     }
     {{/isEvent}}
     {{/operation}}
@@ -57,6 +68,17 @@ public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
     {{#operations}}
     {{#operation}}
     {{^isEvent}}
+
+    {{#operations}}
+    {{#operation}}
+    {{^isEvent}}
+
+    public override func unregister{{{camelizedNickName}}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+      return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
+    }
+    {{/isEvent}}
+    {{/operation}}
+    {{/operations}}
 
     public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
         let requestProcessor = ElectrodeRequestProcessor<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}, Any>(
