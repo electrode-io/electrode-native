@@ -416,7 +416,7 @@
 					"-lc++",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = debugging;
@@ -443,7 +443,7 @@
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 			};
@@ -590,7 +590,7 @@
 					"-lc++",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -630,7 +630,7 @@
 					"-lc++",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
@@ -647,7 +647,7 @@
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 			};
@@ -671,7 +671,7 @@
 					"$(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeContainerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 			};
