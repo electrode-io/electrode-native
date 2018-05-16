@@ -649,8 +649,9 @@ async function runMiniApp(
   }
 
   if (miniapps && miniapps.length > 1 && dev) {
-    throw new Error(
-      'You cannot enable development mode yet when running multiple MiniApps'
+    dev = false
+    log.warn(
+      'Turning off dev mode since you are running multiple MiniApps. \nIf you want to start a packager, execute `ern start` command with all the miniapps in a separate terminal.\nCheck this link for more details: https://electrode.gitbooks.io/electrode-native/content/cli/start.html\n'
     )
   }
 
