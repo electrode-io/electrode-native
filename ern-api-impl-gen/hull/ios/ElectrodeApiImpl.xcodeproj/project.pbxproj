@@ -393,7 +393,7 @@
 					"-lc++",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImpl;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeApiImpl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = debugging;
@@ -417,7 +417,7 @@
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImplTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeApiImplTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 			};
@@ -550,7 +550,7 @@
 					"-lc++",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImpl;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeApiImpl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -588,7 +588,7 @@
 					"-lc++",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImpl;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeApiImpl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -605,7 +605,7 @@
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImplTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeApiImplTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 			};
@@ -626,7 +626,7 @@
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.walmart.electronics.ElectrodeApiImplTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeApiImplTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 			};

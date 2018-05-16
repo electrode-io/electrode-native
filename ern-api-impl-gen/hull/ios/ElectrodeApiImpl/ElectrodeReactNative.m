@@ -40,7 +40,7 @@ NSString * const ERNCodePushConfig = @"CodePush";
 NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
 NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey";
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
-NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmart.electronics.ElectrodeContainer";
+NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.ElectrodeContainer";
 
 @interface ElectrodeReactNative ()
 @property (nonatomic, strong) RCTBridge *bridge;
