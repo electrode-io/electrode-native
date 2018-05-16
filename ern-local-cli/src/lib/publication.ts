@@ -153,10 +153,10 @@ export async function runLocalContainerGen(
     // as when it comes to version compatibility checks, react-native-electrode-bridge should be considered
     // in the same way as APIs and APIs implementations (it's a native module exception)
     const bridgeDep = _.remove(
-      apisAndNativeApisImpls,
+      nativeModulesInManifest,
       d => d.basePath === 'react-native-electrode-bridge'
     )
-    nativeModulesInManifest = nativeModulesInManifest.concat(bridgeDep)
+    apisAndNativeApisImpls = apisAndNativeApisImpls.concat(bridgeDep)
 
     const apiAndApiImplsResolvedVersions = resolvePluginsVersions(
       apisAndNativeApisImpls,
