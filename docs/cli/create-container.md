@@ -26,7 +26,7 @@
 * Create a new custom container including all the given MiniApps  
 * The MiniApps passed to this command can be a valid Yarn package format or a Git format or file scheme.  
 
-`--dependencies/-deps <dependencies>`
+`--dependencies/--deps <dependencies>`
 
 * Inject the provided extra native dependencies in your locally generated container  
 * This option can only be used when generating a container that is not JavaScript only (`--js` switch), or based on a native application version from Cauldron (`--descriptor` option).  
@@ -39,7 +39,7 @@ You cannot use the Git or file package descriptors for referring to the dependen
 * Specify the target platform for this container   
 * If not explicitly provided, the command prompts you to choose between the iOS or the Android platform before execution.
 
-`--outDir/-o <directory>`
+`--outDir/--out <directory>`
 
 * Specify the output directory where the container generated project should be stored upon creation  
 * **Default**  If this option is not provided, the container is generated in the default platform directory `~/.ern/containergen/out`.
