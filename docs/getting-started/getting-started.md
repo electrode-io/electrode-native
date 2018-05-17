@@ -1,7 +1,7 @@
 {% method %}
 ## Getting started with Electrode Native
 
-The Getting Started tutorial walks you through creating a simple movie application using Electrode Native.  
+The Getting Started tutorial walks you through creating a simple movie application using Electrode Native. 
 {% sample lang="android" %}  
 We'll use Android for this tutorial. If you wish to use iOS instead, click the iOS tab on the top-right of this page.  
 {% sample lang="ios" %}  
