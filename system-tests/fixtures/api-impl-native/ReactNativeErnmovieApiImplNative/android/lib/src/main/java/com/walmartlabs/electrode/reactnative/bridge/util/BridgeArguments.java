@@ -220,11 +220,9 @@ public final class BridgeArguments {
         }
 
         List<Object> convertedList = new ArrayList<>();
-        if (obj instanceof Bundle[]) {
-            Bundle[] bundles = (Bundle[]) obj;
-
-            for (Bundle bundle : bundles) {
-                Object item = BridgeArguments.objectFromBundle(bundle, listItemClass);
+        if (obj.getClass().isAssignableFrom(Bundle[].class)) {
+            for (Object bundle : (Object[]) obj) {
+                Object item = BridgeArguments.objectFromBundle((Bundle) bundle, listItemClass);
                 convertedList.add(item);
             }
 

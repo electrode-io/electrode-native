@@ -18,8 +18,14 @@
 }
 
 @objcMembers public class WalmartItemAPIEvents: NSObject {
-    public func addItemAddedEventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public func addItemAddedEventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         assertionFailure("should override")
+        return UUID()
+    }
+
+    public func removeItemAddedEventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        assertionFailure("should override")
+        return nil
     }
 
     public func emitEventItemAdded(itemId: String) {
@@ -29,13 +35,27 @@
 }
 
 @objcMembers public class WalmartItemAPIRequests: NSObject {
-    public func registerAddItemRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerAddItemRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
 
-    public func registerFindItemsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerFindItemsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
+
+
+    public func unregisterAddItemRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
+    public func unregisterFindItemsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
 
     public func addItem(item: Item, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")
@@ -66,8 +86,14 @@ public class WalmartItemAPI: NSObject  {
 }
 
 public class WalmartItemAPIEvents: NSObject {
-    public func addItemAddedEventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public func addItemAddedEventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         assertionFailure("should override")
+        return UUID()
+    }
+
+    public func removeItemAddedEventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        assertionFailure("should override")
+        return nil
     }
 
     public func emitEventItemAdded(itemId: String) {
@@ -77,13 +103,27 @@ public class WalmartItemAPIEvents: NSObject {
 }
 
 public class WalmartItemAPIRequests: NSObject {
-    public func registerAddItemRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerAddItemRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
 
-    public func registerFindItemsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerFindItemsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
+
+
+    public func unregisterAddItemRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
+    public func unregisterFindItemsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
 
     public func addItem(item: Item, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")

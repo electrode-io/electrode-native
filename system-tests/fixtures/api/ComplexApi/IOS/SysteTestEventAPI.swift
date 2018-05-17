@@ -14,8 +14,14 @@
 }
 
 @objcMembers public class SysteTestEventAPIEvents: NSObject {
-    public func addTestEventEventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public func addTestEventEventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         assertionFailure("should override")
+        return UUID()
+    }
+
+    public func removeTestEventEventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        assertionFailure("should override")
+        return nil
     }
 
     public func emitEventTestEvent(buttonId: String) {
@@ -25,6 +31,8 @@
 }
 
 @objcMembers public class SysteTestEventAPIRequests: NSObject {
+
+
 }
 #else
 public class SysteTestEventAPI: NSObject  {
@@ -42,8 +50,14 @@ public class SysteTestEventAPI: NSObject  {
 }
 
 public class SysteTestEventAPIEvents: NSObject {
-    public func addTestEventEventListener(eventListener: @escaping ElectrodeBridgeEventListener) {
+    public func addTestEventEventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
         assertionFailure("should override")
+        return UUID()
+    }
+
+    public func removeTestEventEventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+        assertionFailure("should override")
+        return nil
     }
 
     public func emitEventTestEvent(buttonId: String) {
@@ -53,6 +67,8 @@ public class SysteTestEventAPIEvents: NSObject {
 }
 
 public class SysteTestEventAPIRequests: NSObject {
+
+
 }
 
 #endif

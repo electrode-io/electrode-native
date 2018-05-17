@@ -13,13 +13,27 @@
 
 
 @objcMembers public class SystemTestsAPIRequests: NSObject {
-    public func registerTestArrayOfStringsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerTestArrayOfStringsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
 
-    public func registerTestMultiArgsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerTestMultiArgsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
+
+
+    public func unregisterTestArrayOfStringsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
+    public func unregisterTestMultiArgsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
 
     public func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")
@@ -45,13 +59,27 @@ public class SystemTestsAPI: NSObject  {
 
 
 public class SystemTestsAPIRequests: NSObject {
-    public func registerTestArrayOfStringsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerTestArrayOfStringsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
 
-    public func registerTestMultiArgsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) {
+    public func registerTestMultiArgsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
         assertionFailure("should override")
+        return UUID()
     }
+
+
+    public func unregisterTestArrayOfStringsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
+    public func unregisterTestMultiArgsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+        assertionFailure("should override")
+        return nil
+    }
+
 
     public func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")

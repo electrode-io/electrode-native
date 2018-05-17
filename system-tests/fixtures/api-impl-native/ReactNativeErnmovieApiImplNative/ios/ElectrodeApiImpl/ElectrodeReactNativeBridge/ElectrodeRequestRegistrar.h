@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  * registerRequestHandler
  * call
  */
-- (void)unregisterRequestHandler:(NSUUID *)uuid;
+- (nullable ElectrodeBridgeRequestCompletionHandler)unregisterRequestHandler:(NSUUID *)uuid;
 
 /**
  Grabs a given request handler for a request name.
