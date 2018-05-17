@@ -91,7 +91,7 @@ typedef void (^ElectrodeBridgeEventListener)(id _Nullable eventPayload);
  * @param uuid returned when register a request handler
  */
 
-- (void)unregisterRequestHandlerWithUUID: (NSUUID *)uuid;
+- (nullable ElectrodeBridgeRequestCompletionHandler)unregisterRequestHandlerWithUUID: (NSUUID *)uuid;
 
 /**
  * Sends an event with payload to all the event listeners
@@ -114,7 +114,7 @@ typedef void (^ElectrodeBridgeEventListener)(id _Nullable eventPayload);
  * Remove an event listener
  * @param uuid returned when listner is added.
  */
-- (void)removeEventListnerWithUUID: (NSUUID *) uuid;
+- (nullable ElectrodeBridgeEventListener)removeEventListnerWithUUID: (NSUUID *) uuid;
 
 - (void)addConstantsProvider:(id<ConstantsProvider>)constantsProvider;
 

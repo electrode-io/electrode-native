@@ -43,13 +43,13 @@ NS_ASSUME_NONNULL_BEGIN
               requestCompletionHandler:
                   (ElectrodeBridgeRequestCompletionHandler)completion;
 
-+ (void)unregisterRequestHandlerWithUUID: (NSUUID *)uuid;
++ (nullable ElectrodeBridgeRequestCompletionHandler)unregisterRequestHandlerWithUUID: (NSUUID *)uuid;
 
 
 + (NSUUID *)addEventListenerWithName:(NSString *)name
                    eventListner:(ElectrodeBridgeEventListener)eventListner;
 
-+ (void)removeEventListener: (NSUUID *)UUID;
++ (nullable ElectrodeBridgeEventListener)removeEventListener: (NSUUID *)UUID;
 
 + (void)setBridge:(ElectrodeBridgeTransceiver *)bridge;
 + (void)addConstantsProvider:(id<ConstantsProvider>)constantsProvider;

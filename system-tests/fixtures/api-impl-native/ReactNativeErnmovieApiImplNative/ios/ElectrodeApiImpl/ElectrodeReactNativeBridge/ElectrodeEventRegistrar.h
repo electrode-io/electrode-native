@@ -36,7 +36,7 @@
 
  @param eventListenerUUID The UUID of the event listener.
  */
-- (void)unregisterEventListener:(NSUUID *_Nonnull)eventListenerUUID;
+- (nullable ElectrodeBridgeEventListener)unregisterEventListener:(NSUUID *_Nonnull)eventListenerUUID;
 
 /**
  Grabs all of the event listeners of a given name.

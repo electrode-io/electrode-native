@@ -38,8 +38,8 @@ public class ElectrodeRequestHandlerProcessor<TReq, TResp>: NSObject, Processor 
         super.init()
     }
 
-    public func execute() {
-        ElectrodeBridgeHolder.registerRequestHandler(withName: requestName) { (data: Any?, responseCompletion: @escaping ElectrodeBridgeResponseCompletionHandler) in
+    public func execute() -> UUID? {
+        let uuid = ElectrodeBridgeHolder.registerRequestHandler(withName: requestName) { (data: Any?, responseCompletion: @escaping ElectrodeBridgeResponseCompletionHandler) in
             let request: Any?
             if self.reqClass == None.self {
                 request = nil
@@ -53,5 +53,6 @@ public class ElectrodeRequestHandlerProcessor<TReq, TResp>: NSObject, Processor 
             //this is passed back to Native side.
             self.requestCompletionHandler(request, responseCompletion)
         }
+        return uuid
     }
 }

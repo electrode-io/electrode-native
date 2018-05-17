@@ -132,8 +132,8 @@ RCT_EXPORT_MODULE(ElectrodeBridge);
 }
 
 
-- (void) unregisterRequestHandlerWithUUID:(NSUUID *)uuid {
-    [requestRegistrar unregisterRequestHandler:uuid];
+- (nullable ElectrodeBridgeRequestCompletionHandler) unregisterRequestHandlerWithUUID:(NSUUID *)uuid {
+    return [requestRegistrar unregisterRequestHandler:uuid];
 }
 
 - (void)resetRegistrar {
@@ -155,9 +155,9 @@ RCT_EXPORT_MODULE(ElectrodeBridge);
   [self.eventDispatcher.eventRegistrar registerEventListener:eventListener
                                                           name:name uuid:uuid];
 }
-- (void)removeEventListnerWithUUID: (NSUUID *) uuid {
+- (nullable ElectrodeBridgeEventListener)removeEventListnerWithUUID: (NSUUID *) uuid {
     ERNDebug(@"Removing event listener with NNUUID with string %@", uuid.UUIDString);
-    [eventRegistrar unregisterEventListener:uuid];
+    return [eventRegistrar unregisterEventListener:uuid];
 }
 #pragma ElectrodeReactBridge
 

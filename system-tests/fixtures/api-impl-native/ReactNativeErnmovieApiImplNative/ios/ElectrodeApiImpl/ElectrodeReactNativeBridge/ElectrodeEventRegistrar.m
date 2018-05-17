@@ -43,10 +43,10 @@
   }
 }
 
-- (void)unregisterEventListener:(NSUUID *_Nonnull)eventListenerUUID {
-  @synchronized(self) {
-
-    ElectrodeBridgeEventListener eventListener =
+- (nullable ElectrodeBridgeEventListener) unregisterEventListener:(NSUUID *_Nonnull)eventListenerUUID {
+    ElectrodeBridgeEventListener eventListener;
+    @synchronized(self) {
+    eventListener =
         [self.eventListenerByUUID objectForKey:eventListenerUUID];
     [self.eventListenerByUUID removeObjectForKey:eventListenerUUID];
 
@@ -62,6 +62,7 @@
       }
     }
   }
+    return eventListener;
 }
 
 - (NSArray<ElectrodeBridgeEventListener> *_Nullable)getEventListnersForName:

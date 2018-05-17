@@ -31,11 +31,12 @@ public class EventListenerProcessor<T>: NSObject, Processor {
         super.init()
     }
 
-    public func execute() {
-        ElectrodeBridgeHolder.addEventListener(withName: eventName, eventListner: { (eventPayload: Any?) in
+    public func execute() -> UUID? {
+        let uuid = ElectrodeBridgeHolder.addEventListener(withName: eventName, eventListner: { (eventPayload: Any?) in
             self.logger.debug("Processing final result for the event with payload bundle (\(String(describing: eventPayload)))")
             let result = try? NSObject.generateObject(data: eventPayload as AnyObject, classType: self.eventPayloadClass)
             self.appEventListener(result)
         })
+        return uuid
     }
 }

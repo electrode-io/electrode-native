@@ -1,28 +1,28 @@
 {
-  "name": "test",
-  "version": "1.0.0",
-  "description": "ERN Generated API for TestApi",
-  "main": "javascript/src/index.js",
-  "author": "w0l00qx",
-  "scripts": {
-    "flow": "flow"
-  },
-  "devDependencies": {
-    "flow-bin": "^0.47.0"
-  },
+  "author": "blemair",
   "dependencies": {
     "react-native-electrode-bridge": "1.5.x"
+  },
+  "description": "ERN Generated API for TestApi",
+  "devDependencies": {
+    "flow-bin": "^0.47.0"
   },
   "ern": {
     "message": {
       "moduleName": "TestApi",
       "namespace": "com.TestApi.ern",
-      "apiSchemaPath": "/Users/w0l00qx/Code/electrode-native/system-tests/fixtures/api/testapi-schema.json",
+      "apiSchemaPath": "/Users/blemair/Code/electrode-native/system-tests/fixtures/api/testapi-schema.json",
       "artifactId": "react-native-TestApi-api"
     },
     "moduleType": "ern-api"
   },
   "keywords": [
     "ern-api"
-  ]
+  ],
+  "main": "javascript/src/index.js",
+  "name": "test",
+  "scripts": {
+    "flow": "flow"
+  },
+  "version": "1.0.0"
 }
