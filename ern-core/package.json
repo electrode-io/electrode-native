@@ -1,6 +1,6 @@
 {
   "name": "ern-core",
-  "version": "1000.0.0",
+  "version": "0.18.2",
   "description": "Electrode Native Core",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -11,7 +11,14 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": ["electrode", "ern", "react-native", "node", "android", "ios"],
+  "keywords": [
+    "electrode",
+    "ern",
+    "react-native",
+    "node",
+    "android",
+    "ios"
+  ],
   "contributors": [
     {
       "name": "Benoit Lemaire",
@@ -57,15 +64,15 @@
     "node-simctl": "^3.5.5",
     "ora": "^1.1.0",
     "react-native-cli": "^2.0.1",
-    "shelljs": "^0.7.6",
     "semver": "^5.4.1",
+    "shelljs": "^0.7.6",
     "simple-git": "^1.70.0",
     "tmp": "^0.0.31",
     "xcode-ern": "1.0.1",
     "yarn": "^1.3.2"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.18.2"
   },
   "engines": {
     "node": ">=6"
