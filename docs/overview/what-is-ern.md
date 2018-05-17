@@ -4,11 +4,11 @@ Electrode Native is a platform based on React Native, that simplifies developmen
 
 Electrode Native is built on top of [React Native](https://github.com/facebook/react-native) and other tools such as [Yarn](https://github.com/yarnpkg/yarn) and [CodePush](https://github.com/Microsoft/react-native-code-push). Electrode Native does not contain any code modifications to these tools and frameworks.
 
-The core of the Electrode Native is written in JavaScript (ES6). Some parts also contain native code: Java and Swift--mostly in the form of [Mustache](https://mustache.github.io/) templates used for native code generation. Some modules of Electrode Native are pure native projects--for example our Electrode Native bridge is a native Android/iOS library/framework project.
+The core of the Electrode Native is written in TypeScript and ES6. Some parts also contain native code: Java and Swift--mostly in the form of [Mustache](https://mustache.github.io/) templates used for native code generation. Some modules of Electrode Native are pure native projects--for example our Electrode Native bridge is a native Android/iOS library/framework project.
 
 When it comes to the platform code percentage of JavaScript code versus Native code, a good approximation would be 70% JavaScript and 30% native code.
 
-Electrode Native is composed of several modules that can be accessed using the Electrode Native CLI. Electrode Native runs on Node v4.5 runtime or newer versions. Electrode Native runs on Mac OS X only. Windows support is scheduled to follow. Electrode Native also runs on Linux; however only minimal testing has verified this support.
+Electrode Native is composed of several modules that can be accessed using the Electrode Native CLI. Electrode Native runs on Node 6 runtime or newer versions. Electrode Native runs on Mac OS X only. Windows support is scheduled to follow. Electrode Native also runs on Linux; however only minimal testing has verified this support.
 
 Electrode Native modules and features are briefly described below. You can find more information about each module in the specific module documentation.
 
