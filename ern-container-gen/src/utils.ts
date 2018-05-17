@@ -371,14 +371,12 @@ export async function generateMiniAppsComposite(
       fs.readFileSync(pathToReactNativePackageJson, 'utf8')
     )
 
-    //
-    // The following code will need to be uncommented and properly reworked or included
-    // in a different way, once Cart and TYP don't directly depend on code push directly
-    // We will work with Cart team in that direction
-    //
-    // await yarn.add(codePushPlugin.name, codePushPlugin.version)
-    // content += `import codePush from "react-native-code-push"\n`
-    // content += `codePush.sync()`
+    const CodePushStarterFileName = 'CodePushStarterMiniApp'
+    shell.cp(
+      path.join(__dirname, 'resources', `${CodePushStarterFileName}.file`),
+      path.join(outDir, `${CodePushStarterFileName}.js`)
+    )
+    entryIndexJsContent += `import './${CodePushStarterFileName}.js'\n`
 
     // We need to add some info to package.json for CodePush
     // In order to run, code push needs to find the following in package.json
