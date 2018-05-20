@@ -6,6 +6,7 @@
     "paths": {
       "ern-*": ["ern-*/src"]
     },
+    "typeRoots": ["node_modules/@types"],
     "module": "commonjs",
     "moduleResolution": "node",
     "inlineSourceMap": true,
