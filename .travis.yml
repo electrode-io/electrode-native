@@ -8,14 +8,14 @@ script:
 - 'set -ev;
 if [ ${TRAVIS_EVENT_TYPE} != "cron" ]; then
   npm run rebuild;
-  npm run lint-check;
-  npm run test;
+  npm run check:lint;
+  npm run test:unit;
 else
   npm install -g electrode-native;
   ern;
   node setup-dev;
   ern platform use 1000.0.0;
-  npm run system-tests -- --all; 
+  npm run test:system -- --all; 
 fi'
 notifications:
   slack:

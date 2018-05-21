@@ -8,24 +8,27 @@
   "scripts": {
     "setup-dev": "node setup-dev.js",
     "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
-    "test": "lerna run test",
-    "system-tests": "node system-tests/system-tests",
-    "coverage-unit":
+    "test": "yarn test:unit && yarn test:system",
+    "test:unit": "lerna run test",
+    "test:system": "node system-tests/system-tests",
+    "coverage": "yarn coverage:unit && yarn coverage:system",
+    "coverage:unit":
       "rimraf ern-*/.nyc_output && lerna run coverage && yarn istanbul report --include=ern-*/.coverage/coverage-final.json html",
-    "coverage-system-tests":
+    "coverage:system":
       "rimraf .nyc_output && node system-tests/system-tests-coverage",
-    "coverage-ci":
-      "yarn coverage-unit && yarn coverage-system-tests && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
+    "coverage:ci":
+      "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
     "istanbul": "istanbul",
-    "precommit":
-      "yarn yarn-lock-check && yarn lint-check && pretty-quick --staged",
+    "precommit": "yarn check:yarnlock && yarn check:lint && yarn prettier",
+    "prettier": "pretty-quick --staged",
     "postmerge": "node auto-rebuild.js",
     "regen-fixtures": "node system-tests/regen-fixtures",
     "ern-debug":
       "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
-    "lint-check":
+    "check": "yarn check:lint && yarn check:yarnlock",
+    "check:lint":
       "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e 'node_modules/**'",
-    "yarn-lock-check": "node yarn-lock-check"
+    "check:yarnlock": "node yarn-lock-check"
   },
   "workspaces": ["./ern-*"],
   "dependencies": {
