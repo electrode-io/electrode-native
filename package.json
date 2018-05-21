@@ -6,31 +6,28 @@
   "keywords": [],
   "license": "Apache-2.0",
   "scripts": {
-    "setup-dev": "node setup-dev.js",
-    "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
-    "test": "yarn test:unit && yarn test:system",
-    "test:unit": "lerna run test",
-    "test:system": "node system-tests/system-tests",
+    "check": "yarn check:lint && yarn check:yarnlock",
+    "check:lint": "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e 'node_modules/**'",
+    "check:yarnlock": "node yarn-lock-check",
     "coverage": "yarn coverage:unit && yarn coverage:system",
-    "coverage:unit":
-      "rimraf ern-*/.nyc_output && lerna run coverage && yarn istanbul report --include=ern-*/.coverage/coverage-final.json html",
-    "coverage:system":
-      "rimraf .nyc_output && node system-tests/system-tests-coverage",
-    "coverage:ci":
-      "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
+    "coverage:ci": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
+    "coverage:system": "rimraf .nyc_output && node system-tests/system-tests-coverage",
+    "coverage:unit": "rimraf ern-*/.nyc_output && lerna run coverage && yarn istanbul report --include=ern-*/.coverage/coverage-final.json html",
+    "ern-debug": "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
     "istanbul": "istanbul",
+    "postmerge": "node auto-rebuild.js",
     "precommit": "yarn check:yarnlock && yarn check:lint && yarn prettier",
     "prettier": "pretty-quick --staged",
-    "postmerge": "node auto-rebuild.js",
+    "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
     "regen-fixtures": "node system-tests/regen-fixtures",
-    "ern-debug":
-      "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
-    "check": "yarn check:lint && yarn check:yarnlock",
-    "check:lint":
-      "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e 'node_modules/**'",
-    "check:yarnlock": "node yarn-lock-check"
+    "setup-dev": "node setup-dev.js",
+    "test": "yarn test:unit && yarn test:system",
+    "test:system": "node system-tests/system-tests",
+    "test:unit": "lerna run test"
   },
-  "workspaces": ["./ern-*"],
+  "workspaces": [
+    "./ern-*"
+  ],
   "dependencies": {
     "@types/node": "^9.6.7",
     "chalk": "^2.3.0",
