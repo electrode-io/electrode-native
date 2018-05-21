@@ -1,4 +1,5 @@
 **/*.md
+*.json
 **/coverage
 **/docs
 **/.coverage
