@@ -38,7 +38,7 @@ export default function setup(
   _dev = false,
   log = EMPTY_FUNC
 ) {
-  let tmpDir = 'tmp'
+  let tmpDir = path.join(workingCwd, 'tmp')
   if (_dev) {
     console.warn(`
   --- IN DEV MODE --
