@@ -20,6 +20,15 @@ import spin from './spin'
 import { tagOneLine } from './tagoneline'
 import * as utils from './utils'
 
+const npmIgnoreContent = `ios/
+android/
+yarn.lock
+.flowconfig
+.buckconfig
+.gitattributes
+.watchmanconfig
+`
+
 export class MiniApp {
   public static fromCurrentPath() {
     return MiniApp.fromPath(process.cwd())
@@ -98,6 +107,10 @@ export class MiniApp {
         `Creating ${miniAppName} project using react-native v${reactNativeVersion}. This might take a while.`,
         reactnative.init(miniAppName, reactNativeVersion)
       )
+
+      // Create .npmignore
+      const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore')
+      fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
 
       // Inject ern specific data in MiniApp package.json
       const appPackageJsonPath = path.join(
