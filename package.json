@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "check": "yarn check:lint && yarn check:yarnlock",
-    "check:lint": "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e 'node_modules/**'",
+    "check:lint": "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e '**/node_modules/**'",
     "check:yarnlock": "node yarn-lock-check",
     "coverage": "yarn coverage:unit && yarn coverage:system",
     "coverage:ci": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
