@@ -77,12 +77,14 @@ public class ElectrodeReactContainer {
 
 
     @SuppressWarnings("unused")
-    public static void startActivitySafely(Intent intent) {
+    public static boolean startActivitySafely(@NonNull Intent intent) {
         throwIfNotInitialized();
         if (null != getReactInstanceManager() && null != getReactInstanceManager().getCurrentReactContext()) {
             new SafeActivityStarter(getReactInstanceManager().getCurrentReactContext(), intent).startActivity();
+            return true;
         } else {
             Log.w(TAG, "startActivitySafely: Unable to start activity, react context or instance manager is null");
+            return false;
         }
     }
 
