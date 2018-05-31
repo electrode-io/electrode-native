@@ -6,6 +6,7 @@ import {
   utils as coreUtils,
   Platform,
   log,
+  NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
@@ -84,7 +85,7 @@ export const handler = async ({
   miniapps?: string[]
   jsApiImpls: string[]
   dependencies: string[]
-  platform?: 'android' | 'ios'
+  platform?: NativePlatform
   publicationUrl?: string
   ignoreRnpmAssets?: boolean
 }) => {
@@ -219,7 +220,7 @@ Output directory should either not exist (it will be created) or should be empty
             },
           ])
 
-          platform = <'android' | 'ios'>userSelectedPlatform
+          platform = userSelectedPlatform as NativePlatform
         }
 
         await spin(

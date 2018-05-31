@@ -1,4 +1,9 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import {
+  NativeApplicationDescriptor,
+  utils as coreUtils,
+  log,
+  NativePlatform,
+} from 'ern-core'
 import {
   performCodePushPromote,
   askUserForCodePushDeploymentName,
@@ -96,7 +101,7 @@ export const handler = async ({
   sourceDeploymentName?: string
   targetDeploymentName?: string
   targetBinaryVersion?: string
-  platform: 'android' | 'ios'
+  platform: NativePlatform
   mandatory?: boolean
   rollout?: number
   skipConfirmation?: boolean
