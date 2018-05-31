@@ -194,6 +194,7 @@ export async function runLocalContainerGen(
           ...extraNativeDependencies,
         ],
         pluginsDownloadDir: createTmpDir(),
+        targetPlatform: platform,
       })
     )
   } catch (e) {
@@ -270,6 +271,7 @@ export async function runCauldronContainerGen(
         pathToYarnLock: pathToYarnLock || undefined,
         plugins,
         pluginsDownloadDir: createTmpDir(),
+        targetPlatform: platform,
       })
     )
   } catch (e) {
