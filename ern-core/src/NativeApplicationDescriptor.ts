@@ -1,17 +1,23 @@
+import { NativePlatform } from './NativePlatform'
+
 export class NativeApplicationDescriptor {
   public static fromString(
     napDescriptorLiteral: string
   ): NativeApplicationDescriptor {
     const arr: string[] = napDescriptorLiteral.split(':')
-    return new NativeApplicationDescriptor(arr[0], arr[1], arr[2])
+    return new NativeApplicationDescriptor(
+      arr[0],
+      arr[1] as NativePlatform,
+      arr[2]
+    )
   }
 
   public readonly name: string
-  public readonly platform?: string
+  public readonly platform?: NativePlatform
   public readonly version?: string
   public readonly toto: string = 'toto'
 
-  constructor(name: string, platform?: string, version?: string) {
+  constructor(name: string, platform?: NativePlatform, version?: string) {
     if (!name) {
       throw new Error('[NativeApplicationDescriptor] name is required')
     }

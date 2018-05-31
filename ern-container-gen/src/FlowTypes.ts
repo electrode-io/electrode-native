@@ -1,4 +1,4 @@
-import { PackagePath, MiniApp, BundlingResult } from 'ern-core'
+import { PackagePath, MiniApp, BundlingResult, NativePlatform } from 'ern-core'
 
 export interface ContainerGeneratorPaths {
   /**
@@ -40,6 +40,10 @@ export interface ContainerGeneratorConfig {
    * Directory where the MiniApps will be composed together during generation
    */
   compositeMiniAppDir: string
+  /**
+   * Target native platform
+   */
+  targetPlatform: NativePlatform
   /**
    * Indicates whether rmpm assets should be included in the Container
    */
