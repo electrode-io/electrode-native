@@ -14,6 +14,7 @@ import {
   shell,
   MavenUtils,
   utils as coreUtils,
+  NativePlatform,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -43,7 +44,7 @@ async function getNapDescriptorStringsFromCauldron({
   onlyReleasedVersions,
   onlyNonReleasedVersions,
 }: {
-  platform?: 'ios' | 'android'
+  platform?: NativePlatform
   onlyReleasedVersions?: boolean
   onlyNonReleasedVersions?: boolean
 } = {}): Promise<string[]> {
@@ -362,7 +363,7 @@ async function askUserToChooseANapDescriptorFromCauldron({
   onlyNonReleasedVersions,
   message,
 }: {
-  platform?: 'ios' | 'android'
+  platform?: NativePlatform
   onlyReleasedVersions?: boolean
   onlyNonReleasedVersions?: boolean
   message?: string
@@ -400,7 +401,7 @@ async function askUserToChooseOneOrMoreNapDescriptorFromCauldron({
   onlyNonReleasedVersions,
   message,
 }: {
-  platform?: 'ios' | 'android'
+  platform?: NativePlatform
   onlyReleasedVersions?: boolean
   onlyNonReleasedVersions?: boolean
   message?: string
@@ -617,7 +618,7 @@ function epilog({ command }: { command: string }) {
 }
 
 async function runMiniApp(
-  platform: 'android' | 'ios',
+  platform: NativePlatform,
   {
     mainMiniAppName,
     miniapps,
@@ -824,7 +825,7 @@ async function runMiniApp(
 }
 
 async function generateContainerForRunner(
-  platform: 'android' | 'ios',
+  platform: NativePlatform,
   {
     napDescriptor,
     dependenciesObjs = [],

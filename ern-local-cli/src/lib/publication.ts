@@ -23,6 +23,7 @@ import {
   CodePushPackage,
   CodePushInitConfig,
   log,
+  NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
@@ -104,7 +105,7 @@ export function resolvePluginsVersions(
 export async function runLocalContainerGen(
   miniappPackagesPaths: PackagePath[],
   jsApiImplsPackagePaths: PackagePath[],
-  platform: 'android' | 'ios',
+  platform: NativePlatform,
   {
     outDir = path.join(Platform.rootDirectory, 'containergen'),
     extraNativeDependencies = [],

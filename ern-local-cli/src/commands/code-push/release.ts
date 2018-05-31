@@ -3,6 +3,7 @@ import {
   NativeApplicationDescriptor,
   utils as coreUtils,
   log,
+  NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
@@ -102,7 +103,7 @@ export const handler = async ({
   appName: string
   deploymentName: string
   targetBinaryVersion?: string
-  platform: 'android' | 'ios'
+  platform: NativePlatform
   mandatory?: boolean
   rollout?: number
   skipConfirmation?: boolean

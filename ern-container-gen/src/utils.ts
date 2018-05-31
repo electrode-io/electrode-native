@@ -15,6 +15,7 @@ import {
   ModuleTypes,
   utils,
   log,
+  NativePlatform,
 } from 'ern-core'
 import { ContainerGeneratorConfig } from './FlowTypes'
 
@@ -46,7 +47,7 @@ export async function bundleMiniApps(
   miniapps: MiniApp[],
   compositeMiniAppDir: string,
   outDir: string,
-  platform: 'android' | 'ios',
+  platform: NativePlatform,
   {
     pathToYarnLock,
   }: {
@@ -663,7 +664,7 @@ export function copyRnpmAssets(
   miniApps: MiniApp[],
   compositeMiniAppDir: string,
   outDir: string,
-  platform: 'android' | 'ios'
+  platform: NativePlatform
 ) {
   // Case of local container for runner
   if (miniApps.length === 1 && miniApps[0].path) {
