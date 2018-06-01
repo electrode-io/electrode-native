@@ -38,8 +38,8 @@
     "test": "node bin/ern-mocha.js"
   },
   "dependencies": {
-    "shelljs": "^0.7.6",
-    "tmp": "^0.0.31"
+    "shelljs": "^0.8.2",
+    "tmp": "^0.0.33"
   },
   "bin": {
     "ern-mocha": "bin/ern-mocha.js",

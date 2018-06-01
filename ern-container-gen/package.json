@@ -70,9 +70,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "ern-core": "1000.0.0",
-    "fs-readdir-recursive": "^1.0.0",
+    "fs-readdir-recursive": "^1.1.0",
     "mustache": "^2.3.0",
-    "semver": "^5.4.1",
+    "semver": "^5.5.0",
     "xcode-ern": "1.0.1"
   },
   "devDependencies": {

@@ -51,10 +51,10 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "chalk": "^2.3.0",
+    "chalk": "^2.4.1",
     "ern-api-gen": "1000.0.0",
     "ern-core": "1000.0.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.10",
     "mustache": "^2.3.0",
     "semver": "5.5.0",
     "xcode": "^0.9.1",
