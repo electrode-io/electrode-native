@@ -817,6 +817,8 @@ export function prepareDirectories(conf: ContainerGeneratorConfig) {
   }
 }
 
+export const containerMetadataFileName = 'container-metadata.json'
+
 export async function addElectrodeNativeMetadataFile(
   conf: ContainerGeneratorConfig
 ) {
@@ -827,8 +829,56 @@ export async function addElectrodeNativeMetadataFile(
     nativeDeps: conf.plugins.map(p => p.toString()),
     platform: conf.targetPlatform,
   }
-  const pathToMetadataFile = path.join(conf.outDir, 'container-metadata.json')
+  const pathToMetadataFile = path.join(conf.outDir, containerMetadataFileName)
   return writeFile(pathToMetadataFile, JSON.stringify(metadata, null, 2))
+}
+
+/**
+ * Get the native platform of a Container given its path.
+ * The platform is retrieved from the Container metadata file if present.
+ * If Container metadata is missing (ern < 0.17) or if the platform is missing
+ * from the metadata (ern < 0.19.0) this function will fallback to infering
+ * the Container platform
+ * @param containerPath Local file system path to the Container
+ */
+export function getContainerPlatform(containerPath: string): NativePlatform {
+  if (!fs.existsSync(containerPath)) {
+    throw new Error(`${containerPath} does not exist`)
+  }
+  const containerMetadataPath = getContainerMetadataPath(containerPath)
+  if (!fs.existsSync(containerMetadataPath)) {
+    return inferContainerPlatform(containerPath)
+  }
+
+  const containerMetadataFile = fs.readFileSync(containerMetadataPath)
+  const containerMetadata = JSON.parse(containerMetadataFile.toString())
+  if (!containerMetadata.platform) {
+    return inferContainerPlatform(containerPath)
+  }
+
+  return containerMetadata.platform
+}
+
+export function getContainerMetadataPath(containerPath: string): string {
+  return path.join(containerPath, containerMetadataFileName)
+}
+
+/**
+ * Infer the native platform of a Container given its path.
+ * This method could be deprecated at some point.
+ * @param containerPath Local file system path to the Container
+ */
+export function inferContainerPlatform(containerPath: string): NativePlatform {
+  if (!fs.existsSync(containerPath)) {
+    throw new Error(`${containerPath} does not exist`)
+  }
+  log.warn(
+    `Infering Container platform as no container platform metadata was found for this Container.
+The Container was probably generated with an ern version < 0.19.0.
+Please Consider regenerating it at some point with a newer version of ern.`
+  )
+  const buildGradlePath = path.join(containerPath, 'build.gradle')
+  return fs.existsSync(buildGradlePath) ? 'android' : 'ios'
 }
 
 // =============================================================================
