@@ -9,17 +9,21 @@ const README = '### Cauldron Repository'
 
 export default class BaseGit implements ITransactional {
   public readonly fsPath: string
-  public readonly repository: string
+  public readonly repository?: string
   public readonly branch: string
   protected git: any
   protected pendingTransaction: boolean
   private hasBeenSynced: boolean
 
-  constructor(
-    cauldronPath: string,
-    repository: string,
-    branch: string = 'master'
-  ) {
+  constructor({
+    cauldronPath,
+    repository,
+    branch = 'master',
+  }: {
+    cauldronPath: string
+    repository?: string
+    branch: string
+  }) {
     this.fsPath = cauldronPath
     if (!fs.existsSync(this.fsPath)) {
       shell.mkdir('-p', this.fsPath)
@@ -32,10 +36,20 @@ export default class BaseGit implements ITransactional {
   }
 
   public async push() {
-    return this.git.pushAsync(GIT_REMOTE_NAME, this.branch)
+    return this.repository
+      ? this.git.pushAsync(GIT_REMOTE_NAME, this.branch)
+      : Promise.resolve()
   }
 
   public async sync() {
+    if (!this.repository) {
+      if (!fs.existsSync(path.resolve(this.fsPath, '.git'))) {
+        await this.git.initAsync()
+        await this.doInitialCommit()
+      }
+      return Promise.resolve()
+    }
+
     // We only sync once during a whole "session" (in our context : "an ern command exection")
     // This is done to speed up things as during a single command execution, multiple Cauldron
     // data access can be performed.
@@ -68,6 +82,7 @@ export default class BaseGit implements ITransactional {
 
     if (!heads) {
       await this.doInitialCommit()
+      await this.push()
     } else {
       log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} ${this.branch}`)
       await this.git.fetchAsync(['--all'])
@@ -117,7 +132,6 @@ export default class BaseGit implements ITransactional {
       await writeFile(fpath, README, { encoding: 'utf8' })
       await this.git.addAsync('README.md')
       await this.git.commitAsync('First Commit!')
-      return this.push()
     }
   }
 }

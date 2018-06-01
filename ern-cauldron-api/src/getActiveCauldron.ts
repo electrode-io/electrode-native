@@ -22,11 +22,17 @@ export default async function getActiveCauldron({
     const cauldronRepoUrl = cauldronRepositories[repoInUse]
     const cauldronRepoBranchReResult = /#(.+)$/.exec(cauldronRepoUrl)
     const cauldronRepoUrlWithoutBranch = cauldronRepoUrl.replace(/#(.+)$/, '')
-    const cauldronCli = defaultCauldron(
-      cauldronRepoUrlWithoutBranch,
-      path.join(Platform.rootDirectory, 'cauldron'),
-      cauldronRepoBranchReResult ? cauldronRepoBranchReResult[1] : 'master'
-    )
+    const cauldronCli = defaultCauldron({
+      branch: cauldronRepoBranchReResult
+        ? cauldronRepoBranchReResult[1]
+        : 'master',
+      cauldronPath: path.isAbsolute(cauldronRepoUrl)
+        ? cauldronRepoUrl
+        : path.join(Platform.rootDirectory, 'cauldron'),
+      repository: path.isAbsolute(cauldronRepoUrl)
+        ? undefined
+        : cauldronRepoUrlWithoutBranch,
+    })
     currentCauldronHelperInstance = new CauldronHelper(cauldronCli)
     const schemaVersionUsedByCauldron = await currentCauldronHelperInstance.getCauldronSchemaVersion()
     const schemaVersionOfCurrentCauldronApi = getCurrentSchemaVersion()
