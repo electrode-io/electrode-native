@@ -13,6 +13,8 @@
 `<version>`
 
 * The Electrode Native platform version to activate.
+* Sample values : `v0.18.0` / `0.18.0` / `latest`
+* Using `latest` will switch to the latest version of Electrode Native
 
 #### Remarks
 
