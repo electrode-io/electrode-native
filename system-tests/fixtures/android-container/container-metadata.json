@@ -1,4 +1,5 @@
 {
+  "ernVersion": "1000.0.0",
   "jsApiImpls": [],
   "miniApps": [
     "movielistminiapp@0.0.19",
@@ -10,5 +11,6 @@
     "react-native-electrode-bridge@1.5.10",
     "react-native-ernmovie-api@0.0.9",
     "react-native-ernnavigation-api@0.0.4"
-  ]
+  ],
+  "platform": "android"
 }

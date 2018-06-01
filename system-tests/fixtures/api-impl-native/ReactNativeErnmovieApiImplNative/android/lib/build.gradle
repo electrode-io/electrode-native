@@ -30,5 +30,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
     testCompile 'junit:junit:4.12'
 
-    compile 'com.walmartlabs.ern:react-native:0.55.3'
+    compile 'com.walmartlabs.ern:react-native:0.55.4'
 }
