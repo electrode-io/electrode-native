@@ -1,5 +1,6 @@
 import { utils as coreUtils } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
+import { getContainerPlatform } from 'ern-container-gen'
 import utils from '../lib/utils'
 import fs from 'fs'
 import path from 'path'
@@ -19,9 +20,8 @@ export const builder = (argv: Argv) => {
     })
     .option('publisher', {
       alias: 'p',
-      choices: ['github', 'maven', 'jcenter'],
       demandOption: true,
-      describe: 'The publisher type',
+      describe: 'The publisher to use',
       type: 'string',
     })
     .option('url', {
@@ -73,7 +73,8 @@ export const handler = async ({
       containerPath,
       containerVersion: version,
       extra: config ? JSON.parse(config) : undefined,
-      publisherName: publisher,
+      platform: getContainerPlatform(containerPath),
+      publisher,
       url,
     })
   } catch (e) {
