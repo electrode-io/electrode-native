@@ -501,6 +501,12 @@ async function performContainerStateUpdateInCauldron(
       cauldronContainerVersion
     )
 
+    // Update version of ern used to generate this Container
+    await cauldron.updateContainerErnVersion(
+      napDescriptor,
+      Platform.currentVersion
+    )
+
     // Update yarn lock
     const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
     await cauldron.addOrUpdateYarnLock(
