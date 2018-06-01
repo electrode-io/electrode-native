@@ -110,9 +110,11 @@ export class CauldronHelper {
   }
 
   public async addPublisher(
-    publisherType: 'maven' | 'github',
-    url: string,
-    napDescriptor?: NativeApplicationDescriptor
+    publisher: string,
+    supportedPlatforms: string[],
+    napDescriptor?: NativeApplicationDescriptor,
+    url?: string,
+    extra?: any
   ): Promise<void> {
     let nativeAppName
     let platform
@@ -120,13 +122,10 @@ export class CauldronHelper {
       nativeAppName = napDescriptor.name
       platform = napDescriptor.platform
     } else {
-      platform =
-        publisherType === 'maven'
-          ? 'android'
-          : await promptUtils.askUserToChooseAnOption(
-              ['android', 'ios'],
-              'Choose a platform to add this publisher'
-            )
+      platform = await promptUtils.askUserToChooseAnOption(
+        supportedPlatforms,
+        'Choose a platform to add this publisher'
+      )
 
       const nativeApps: string[] = await this.getNativeAppsForPlatform(platform)
       if (nativeApps && nativeApps.length > 0) {
@@ -145,9 +144,10 @@ export class CauldronHelper {
     }
     log.info('Adding publisher to native app')
     await this.cauldron.addPublisher(
+      publisher,
       new NativeApplicationDescriptor(nativeAppName, platform),
-      publisherType,
-      url
+      url,
+      extra
     )
   }
 

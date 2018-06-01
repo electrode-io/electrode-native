@@ -942,9 +942,10 @@ export default class CauldronApi {
   }
 
   public async addPublisher(
+    publisher: string,
     descriptor: NativeApplicationDescriptor,
-    publisherType: 'maven' | 'github',
-    url: string
+    url?: string,
+    extra?: any
   ) {
     try {
       const platform = await this.getPlatform(descriptor)
@@ -953,21 +954,21 @@ export default class CauldronApi {
         platform.config.containerGenerator || {}
       platform.config.containerGenerator.publishers =
         platform.config.containerGenerator.publishers || []
-      for (const publisher of platform.config.containerGenerator.publishers) {
-        if (publisher.name === publisherType) {
+      for (const p of platform.config.containerGenerator.publishers) {
+        if (p.name === publisher) {
           throw new Error(
-            `${publisherType} publisher(${
-              publisher.url
-            }) already exists for ${descriptor.toString()}`
+            `${publisher} publisher already exists for ${descriptor.toString()}. 
+If you want to modify this publisher configuration you need to edit it manually in your Cauldron.`
           )
         }
       }
       platform.config.containerGenerator.publishers.push({
-        name: publisherType,
+        extra,
+        name: publisher,
         url,
       })
       await this.commit(
-        `Add ${publisherType} publisher for ${descriptor.toString()}`
+        `Add ${publisher} publisher for ${descriptor.toString()}`
       )
     } catch (e) {
       throw new Error(`[cauldronApi] addPublisher: ${e}`)
