@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { ICauldronFileStore } from './FlowTypes'
+import { ICauldronFileStore } from './types'
 import { createTmpDir } from 'ern-core'
 
 export default class EphemeralFileStore implements ICauldronFileStore {

@@ -6,7 +6,7 @@ import {
   fileUtils,
   promptUtils,
 } from 'ern-core'
-import { CauldronCodePushMetadata, CauldronCodePushEntry } from './FlowTypes'
+import { CauldronCodePushMetadata, CauldronCodePushEntry } from './types'
 import CauldronApi from './CauldronApi'
 
 //

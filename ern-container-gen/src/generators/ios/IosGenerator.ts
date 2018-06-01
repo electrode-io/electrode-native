@@ -26,7 +26,7 @@ import {
   ContainerGenerator,
   ContainerGeneratorConfig,
   ContainerGenResult,
-} from '../../FlowTypes'
+} from '../../types'
 import readDir from 'fs-readdir-recursive'
 
 const ROOT_DIR = process.cwd()

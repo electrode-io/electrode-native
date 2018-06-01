@@ -13,7 +13,7 @@ export const GitFileStore = _GitFileStore
 export const GitDocumentStore = _GitDocumentStore
 export const getActiveCauldron = _getActiveCauldron
 
-export { CauldronCodePushMetadata, CauldronCodePushEntry } from './FlowTypes'
+export { CauldronCodePushMetadata, CauldronCodePushEntry } from './types'
 
 export {
   getSchemaVersionMatchingCauldronApiVersion,

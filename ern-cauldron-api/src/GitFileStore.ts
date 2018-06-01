@@ -3,7 +3,7 @@ import BaseGit from './BaseGit'
 import fs from 'fs'
 import path from 'path'
 import { log, shell } from 'ern-core'
-import { ICauldronFileStore } from './FlowTypes'
+import { ICauldronFileStore } from './types'
 
 export default class GitFileStore extends BaseGit
   implements ICauldronFileStore {

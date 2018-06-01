@@ -2,7 +2,7 @@ import { writeFile } from './fs-util'
 import fs from 'fs'
 import path from 'path'
 import { log, shell, gitCli } from 'ern-core'
-import { ITransactional } from './FlowTypes'
+import { ITransactional } from './types'
 
 const GIT_REMOTE_NAME = 'upstream'
 const README = '### Cauldron Repository'

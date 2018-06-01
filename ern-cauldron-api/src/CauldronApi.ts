@@ -10,7 +10,7 @@ import {
   CauldronNativeAppVersion,
   ICauldronDocumentStore,
   ICauldronFileStore,
-} from './FlowTypes'
+} from './types'
 import upgradeScripts from './upgrade-scripts/scripts'
 
 export default class CauldronApi {

@@ -21,4 +21,4 @@ export {
   ContainerGenerator,
   ContainerGeneratorConfig,
   ContainerGenResult,
-} from './FlowTypes'
+} from './types'

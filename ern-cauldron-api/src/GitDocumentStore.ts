@@ -2,7 +2,7 @@ import { readJSON, writeJSON } from './fs-util'
 import BaseGit from './BaseGit'
 import fs from 'fs'
 import path from 'path'
-import { Cauldron, ICauldronDocumentStore } from './FlowTypes'
+import { Cauldron, ICauldronDocumentStore } from './types'
 import { schemaVersion } from './schemas'
 const CAULDRON_FILENAME = 'cauldron.json'
 
