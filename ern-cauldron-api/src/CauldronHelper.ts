@@ -755,6 +755,19 @@ export class CauldronHelper {
     return this.cauldron.getTopLevelContainerVersion(napDescriptor)
   }
 
+  public async updateContainerErnVersion(
+    napDescriptor: NativeApplicationDescriptor,
+    ernVersion: string
+  ): Promise<void> {
+    return this.cauldron.updateContainerErnVersion(napDescriptor, ernVersion)
+  }
+
+  public async getContainerErnVersion(
+    napDescriptor: NativeApplicationDescriptor
+  ): Promise<string | void> {
+    return this.cauldron.getContainerErnVersion(napDescriptor)
+  }
+
   public async updateContainerMiniAppVersion(
     napDescriptor: NativeApplicationDescriptor,
     miniApp: PackagePath

@@ -612,6 +612,26 @@ export default class CauldronApi {
     return version.containerVersion
   }
 
+  public async updateContainerErnVersion(
+    descriptor: NativeApplicationDescriptor,
+    ernVersion: string
+  ) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    version.container.ernVersion = ernVersion
+    return this.commit(
+      `Update version of ern used to generate Container of ${descriptor.toString()}`
+    )
+  }
+
+  public async getContainerErnVersion(
+    descriptor: NativeApplicationDescriptor
+  ): Promise<string | void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    return version.container.ernVersion
+  }
+
   public async removeContainerMiniApp(
     descriptor: NativeApplicationDescriptor,
     miniAppName: string

@@ -1,6 +1,7 @@
 import Joi from 'joi'
 
 export const container = Joi.object({
+  ernVersion: Joi.string().default(undefined),
   jsApiImpls: Joi.array().default([]),
   miniApps: Joi.array().default([]),
   nativeDeps: Joi.array().default([]),
