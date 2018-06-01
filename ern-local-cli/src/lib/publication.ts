@@ -5,12 +5,6 @@ import {
   ContainerGenerator,
 } from 'ern-container-gen'
 import {
-  ContainerPublisherConfig,
-  GithubPublisher,
-  MavenPublisher,
-  JcenterPublisher,
-} from 'ern-container-publisher'
-import {
   createTmpDir,
   CodePushSdk,
   PackagePath,

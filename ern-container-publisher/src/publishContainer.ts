@@ -1,8 +1,15 @@
-import { ContainerPublisherConfig } from './types'
-import GithubPublisher from './publishers/GithubPublisher'
-import MavenPublisher from './publishers/MavenPublisher'
-import JcenterPublisher from './publishers/JcenterPublisher'
-import { createTmpDir, gitCli, shell, log } from 'ern-core'
+import { ContainerPublisherConfig, ContainerPublisher } from './types'
+import getPublisher from './getPublisher'
+import {
+  createTmpDir,
+  gitCli,
+  shell,
+  log,
+  Platform,
+  yarn,
+  PackagePath,
+} from 'ern-core'
+import fs from 'fs'
 import path from 'path'
 
 export default async function publishContainer(conf: ContainerPublisherConfig) {
@@ -24,16 +31,24 @@ export default async function publishContainer(conf: ContainerPublisherConfig) {
   )
   conf.containerPath = publicationWorkingDir
 
-  // Instantiates a Container publisher based on it's name and call
-  // publish fumction to trigger Container publication
-  switch (conf.publisherName) {
-    case 'github':
-      return new GithubPublisher().publish(conf)
-    case 'maven':
-      return new MavenPublisher().publish(conf)
-    case 'jcenter':
-      return new JcenterPublisher().publish(conf)
-    default:
-      throw new Error(`Unsupported Container publisher : ${conf.publisherName}`)
+  if (!fs.existsSync(Platform.containerPublishersCacheDirectory)) {
+    shell.mkdir('-p', Platform.containerPublishersCacheDirectory)
+    try {
+      shell.pushd(Platform.containerPublishersCacheDirectory)
+      await yarn.init()
+    } finally {
+      shell.popd()
+    }
   }
+
+  const publisher = await getPublisher(conf.publisher)
+
+  if (!publisher.platforms.includes(conf.platform)) {
+    throw new Error(
+      `The ${publisher.name} publisher does not support publication of ${
+        conf.platform
+      } Containers`
+    )
+  }
+  return publisher.publish(conf)
 }
