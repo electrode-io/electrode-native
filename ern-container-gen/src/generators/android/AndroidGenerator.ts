@@ -7,6 +7,7 @@ import {
   shell,
   BundlingResult,
   log,
+  NativePlatform,
 } from 'ern-core'
 import {
   bundleMiniApps,
@@ -37,7 +38,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     return 'AndroidGenerator'
   }
 
-  get platform(): string {
+  get platform(): NativePlatform {
     return 'android'
   }
 
