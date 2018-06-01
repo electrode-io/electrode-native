@@ -38,3 +38,19 @@ Package on npm registry:
 - `movielistminiapp`
 - `movielistminiapp@0.0.9`
 - `@myscope/movielistminiapp@0.0.9`
+
+## Container publishers
+
+The following Container publishers are currently available:
+
+- [git]
+- [maven]
+- [jcenter]
+- [dummy]
+
+The README of each of these publishers contain information related to their usage and configuration. 
+
+[git]: https://github.com/electrode-io/electrode-native/tree/master/ern-container-publisher-git
+[maven]: https://github.com/electrode-io/electrode-native/tree/master/ern-container-publisher-maven
+[jcenter]: https://github.com/electrode-io/electrode-native/tree/master/ern-container-publisher-jcenter
+[dummy]: https://github.com/electrode-io/ern-container-publisher-dummy

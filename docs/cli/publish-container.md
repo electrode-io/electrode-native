@@ -2,8 +2,7 @@
 
 #### Description
 
-* Publish a local Container
-* This command can be used to publish a Container that was generated locally (using `create-container` commmand) to a Git or Maven repository.
+* This command can be used to publish a local Container to a remote repository using a given publisher.
 
 #### Syntax
 
@@ -25,26 +24,19 @@
 
 `--publisher/-p <publisher>`
 
-* Specify the publisher to use. Can either be `maven` or `github`.
+* Specify the Container publisher to use.
 * This option is required, there is no default.
+* You can also use a local file system path to a Container publisher package (only used for developing custom publishers)
 
 `--url/-u <url>`
 
-* The publication url to publish the Container to.
-* Can either be the url of a Git repository or a Maven repository (local or remote), depending on the publisher being used.
-* This option is required for the `github` publisher. For `maven` publisher, it will default to the standard Maven local path (`~/.m2/repository`) if not specified.
+* The url to publish the Container to 
+* Some publishers might not need an url. Check the specific Container publisher documentation for reference
 
 `--config/-c <config>`
 
-* Optional publisher configuration provided as JSON.
-* As of this version of Electrode Native, Maven and jcenter publisher are the only ones to expose some extra configuration. 
-* Sample maven: `--config '{"artifactId":"test-container","groupId":"com.walmartlabs.ern","mavenUser":"user","mavenPasword":"password"}'`
-* Sample jcenter: `--config '{"artifactId":"test-container","groupId":"com.walmartlabs.ern"}'`. Other bintray related details(bintrayUser, bintrayApiKey, bintrayRepo & bintrayVcsUrl) need to be provided inside your global `~/.gradle/gradle.properties` file.
-* Configuration can be omitted or partially provided. The default configuration values used for the Maven publisher are :
-  - artifactId: `local-container`
-  - groupId: `com.walmartlabs.ern`
-  - mavenUser : `undefined` (maven only)
-  - mavePassword: `undefined` (maven only)
+* Extra configuration specific to the publisher used.
+* Some publishers might not need an extra configuration. Check the Container publisher documentation for reference.
 
 #### Related commands
 
