@@ -1,4 +1,4 @@
-import { Cauldron, ICauldronDocumentStore } from './FlowTypes'
+import { Cauldron, ICauldronDocumentStore } from './types'
 
 export default class InMemoryDocumentStore implements ICauldronDocumentStore {
   public latestCommitedCauldron: any

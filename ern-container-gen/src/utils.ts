@@ -18,7 +18,7 @@ import {
   NativePlatform,
   Platform,
 } from 'ern-core'
-import { ContainerGeneratorConfig } from './FlowTypes'
+import { ContainerGeneratorConfig } from './types'
 
 /**
  * Represent the changes (deltas) in term of MiniApps versions
