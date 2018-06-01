@@ -2,29 +2,37 @@ import CauldronApi from './CauldronApi'
 import GitFileStore from './GitFileStore'
 import GitDocumentStore from './GitDocumentStore'
 
-export function defaultCauldron(
-  repository: string,
-  cauldronPath: string,
-  branch: string = 'master'
-) {
-  const sourcemapStore = new GitFileStore(
+export function defaultCauldron({
+  repository,
+  cauldronPath,
+  branch = 'master',
+}: {
+  repository?: string
+  cauldronPath: string
+  branch: string
+}) {
+  const sourcemapStore = new GitFileStore({
+    branch,
+    cauldronPath,
+    prefix: 'sourcemaps',
+    repository,
+  })
+  const yarnlockStore = new GitFileStore({
+    branch,
+    cauldronPath,
+    prefix: 'yarnlocks',
+    repository,
+  })
+  const bundleStore = new GitFileStore({
+    branch,
+    cauldronPath,
+    prefix: 'bundles',
+    repository,
+  })
+  const dbStore = new GitDocumentStore({
+    branch,
     cauldronPath,
     repository,
-    branch,
-    'sourcemaps'
-  )
-  const yarnlockStore = new GitFileStore(
-    cauldronPath,
-    repository,
-    branch,
-    'yarnlocks'
-  )
-  const bundleStore = new GitFileStore(
-    cauldronPath,
-    repository,
-    branch,
-    'bundles'
-  )
-  const dbStore = new GitDocumentStore(cauldronPath, repository, branch)
+  })
   return new CauldronApi(dbStore, sourcemapStore, yarnlockStore, bundleStore)
 }

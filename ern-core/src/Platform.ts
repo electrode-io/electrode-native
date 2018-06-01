@@ -21,6 +21,10 @@ export default class Platform {
     return path.join(this.rootDirectory, 'cauldron')
   }
 
+  static get localCauldronsDirectory(): string {
+    return path.join(this.rootDirectory, 'local-cauldrons')
+  }
+
   static get masterManifestDirectory(): string {
     return path.join(this.rootDirectory, 'ern-master-manifest')
   }

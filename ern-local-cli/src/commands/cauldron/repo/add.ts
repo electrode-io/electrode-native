@@ -6,6 +6,7 @@ import {
   log,
 } from 'ern-core'
 import inquirer from 'inquirer'
+import path from 'path'
 import utils from '../../../lib/utils'
 import { Argv } from 'yargs'
 
@@ -34,8 +35,9 @@ export const handler = ({
   current: boolean
 }) => {
   try {
-    if (url.startsWith('https')) {
-      if (!supportedGitHttpsSchemeRe.test(url)) {
+    let cauldronUrl = url
+    if (cauldronUrl.startsWith('https')) {
+      if (!supportedGitHttpsSchemeRe.test(cauldronUrl)) {
         throw new Error(`Cauldron https urls have to be formatted as : 
 https://[username]:[password]@[repourl]
 OR
@@ -49,9 +51,13 @@ https://[token]@[repourl]`)
         `A Cauldron repository is already associated to ${alias} alias`
       )
     }
-    cauldronRepositories[alias] = url
+
+    if (cauldronUrl === 'local') {
+      cauldronUrl = path.join(Platform.localCauldronsDirectory, alias)
+    }
+    cauldronRepositories[alias] = cauldronUrl
     ernConfig.setValue('cauldronRepositories', cauldronRepositories)
-    log.info(`Added Cauldron repository ${url} with alias ${alias}`)
+    log.info(`Added Cauldron repository ${cauldronUrl} with alias ${alias}`)
     if (current) {
       useCauldronRepository(alias)
     } else if (!(current === false)) {

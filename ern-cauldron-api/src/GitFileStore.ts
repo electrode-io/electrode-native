@@ -9,13 +9,18 @@ export default class GitFileStore extends BaseGit
   implements ICauldronFileStore {
   private readonly prefix: string
 
-  constructor(
-    ernPath: string,
-    repository: string,
-    branch: string,
+  constructor({
+    cauldronPath,
+    repository,
+    branch,
+    prefix,
+  }: {
+    cauldronPath: string
+    repository?: string
+    branch: string
     prefix: string
-  ) {
-    super(ernPath, repository, branch)
+  }) {
+    super({ cauldronPath, repository, branch })
     this.prefix = prefix
   }
 

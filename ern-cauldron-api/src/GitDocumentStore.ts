@@ -11,16 +11,21 @@ export default class GitDocumentStore extends BaseGit
   public readonly jsonPath: string
   private cauldron: Cauldron
 
-  constructor(
-    cauldronPath: string,
-    repository: string,
-    branch: string = 'master',
-    cauldron: Cauldron = {
+  constructor({
+    cauldronPath,
+    repository,
+    branch = 'master',
+    cauldron = {
       nativeApps: [],
       schemaVersion,
-    }
-  ) {
-    super(cauldronPath, repository, branch)
+    },
+  }: {
+    cauldronPath: string
+    repository?: string
+    branch: string
+    cauldron?: Cauldron
+  }) {
+    super({ cauldronPath, repository, branch })
     this.jsonPath = path.resolve(this.fsPath, CAULDRON_FILENAME)
     this.cauldron = cauldron
   }
