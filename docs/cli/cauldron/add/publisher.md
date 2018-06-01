@@ -2,28 +2,36 @@
 
 ### Description
 
-* Add a githubUrl(ios or android) or a mavenUrl(android) as a publisher to cauldron config.
-* Add a publisher when you want the generated container to be pushed to remote location.
-* If a publisher config is not present, the containers will always be generated locally.
+* Add a Container publisher for a given native application to automatically publish generated Containers to a remote location.
+* A native application can have more than one Container publisher.
+* If a native application has no publishers, Containers of this application will not be published anywhere (will just be generated locally).
+* Check the specific Container publisher documentation as it contains reference on how to use this command with it.
 
 #### Syntax
 
-###### Maven publisher
-`ern cauldron add publisher --mavenUrl=<url>`
-
-###### Github publisher
-`ern cauldron add publisher --githubUrl=<url>`
-
 **Options**
+
+`--publisher/-p`
+
+* The Container publisher to add
+
+`--url/-u`
+
+* The url to publish the Container to 
+* Some publishers might not need an url. Check the specific Container publisher documentation for reference
 
 `--descriptor/-d`
 
-* partial native application descriptor
-* Add the publisher to a given native application in cauldron for a given platform.
+* Partial native application descriptor (without version)
+* If ommitted, the command will prompt interactively
 
-**Default** Prompt to pick the platform(ios|android) and the native app(if there are more than one native app defined in cauldron)
-**Example** `ern cauldron add publisher --githubUrl git@github.com:username:/org-name/repo.git -d MyNativeApp:android`
+`--config/c`
+
+* Extra configuration specific to the publisher used.
+* Some publishers might not need an extra configuration. Check the Container publisher documentation for reference.
 
 #### Remarks
 
 * The `ern cauldron add publisher` command is mostly used during the initial setup of cauldron.
+* You can create your own Container publisher if you need to !
+

@@ -55,7 +55,7 @@ The use of the [create-container] / [publish-container] commands combo, will be 
 
 **Implicitly publishing a Container**
 
-If you are using a Cauldron (you strongly should for your production setup), then a container will automatically be regenerated for any non released version(s) of your native application whenever you make a change to the content of the container of a given native application version (for example adding/removing/updating one or more MiniApp(s) or native dependency(ies) for this Container). In addition to regenerating a new Container to include the changes, the Cauldron will also trigger the publication of this new generated Container, using any publishers configured in the Cauldron, as the next section details.
+If you are using a Cauldron, then a container will automatically be regenerated for any non released version(s) of your native application whenever you make a change to the content of the container of a given native application version (for example adding/removing/updating one or more MiniApp(s) or native dependency(ies) for this Container). In addition to regenerating a new Container to include the changes, the Cauldron will also trigger the publication of this new generated Container, using any publishers configured in the Cauldron, as the next section details.
 
 Please also note that if your cauldron is properly configured for container publication, you can also use the [cauldron regen-container] command to trigger a new generation and publication of a container for a given native application version, even if there are no changes to the content of the container (this can be useful in certain scenarios).
 
@@ -114,29 +114,20 @@ The publication configuration object will be stored under in the cauldron docume
 
 The publishers array contains all the publishers you want to use to publish an Electrode Native container. In example shown above, we want to publish the Electrode Native container of `MyWeatherApp` Android to three destinations: a GitHub repository, a Maven repository and to JCenter. For the GitHub repository, the code of the Electrode Native container will be published and a Git tag will be used for the version. For the Maven repository, the Electrode Native container will be compiled and the resulting versioned AAR will be published to the Maven and JCenter repositories.
 
-#### Maven publisher remarks
+The [ern cauldron add publisher](../cli/cauldron/add/publisher.md) command can be used to add a publisher to a Cauldron, rather than adding it manually.
 
-- The Maven publisher can be used only for the Android platform.
-- If you need to provide credentials to the Maven publisher, you can either store them in the global `gradle.properties` file on your workstation (``~/.gradle/gradle.properties``) as follow
+### Creating a custom Container publisher
 
-```bash
-mavenUser=user
-mavenPassword=password
-```
+Electrode Native Container publishers are standalone node packages (published to npm) and retrieved dynamically (they are not packaged within Electrode Native itself). In that sense it is quite easy to implement (and eventually distribute) your own Container publisher if needed.
 
-or you can directly store them in the maven publisher configuration in the Cauldron, though this is less recommended as your credentials will be visible to anyone having read acccess to your Cauldron.
+Check our [dummy publisher]([https://github.com/electrode-io/ern-container-publisher-dummy) as a reference to get started. 
 
-#### Jcenter publisher remarks
+A few things to keep in mind when creating a Container publisher :
 
-- The Jcenter publisher can be used only for the Android platform.
-- You'll need to have a global `gradle.properties` file on your workstation (``~/.gradle/gradle.properties``) containing the bintry repository details
-
-```bash
-bintrayUser=user
-bintrayApiKey=apikey
-bintrayRepo=repository name
-bintrayVcsUrl=vcsUrl
-```
+- The package nampe must start by `ern-container-publisher-`. This is a convention for Electrode Native Container publishers, and is enforced by Electrode Native.
+- You should add a keyword 'ern-container-publisher' in the keywords list of the package.json. This could be used later on to enable Container publishers discovery.
+- All you have to implement is a class with two getters `get name` (to return the name of the publisher) and `get platforms` (to return the list of supported platforms of the publisher), as well as the `publish(config)` method. This class should be the default export of the module.
+- Once your Container publisher is published to npm, it will be immediately available for Electrode Native users. During development, if you need to try out your publisher before publishing it to npm, you can use `ern publish-container` command by using an absolute local file system path to your Container publisher module. `ern publish-container` will call either `index.js` (or `index.ts` as we support TypeScript) from your module directory root, or `src/index.js` if no index was found in root. Thus make sure to name your entry point as `index.js`/`index.ts`.
 
 ### Adding an Electrode Native container to your mobile application
 
