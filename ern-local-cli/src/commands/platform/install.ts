@@ -11,7 +11,7 @@ export const builder = (argv: Argv) => {
 
 export const handler = ({ version }: { version: string }) => {
   try {
-    Platform.installPlatform(version.toString().replace('v', ''))
+    Platform.installPlatform(version.toString())
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

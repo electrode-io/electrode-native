@@ -6,6 +6,7 @@ import { execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
+import semver from 'semver'
 
 const HOME_DIRECTORY = os.homedir()
 // Name of ern local client NPM package
@@ -82,6 +83,7 @@ export default class Platform {
 
   // Install a given platform version
   public static installPlatform(version: string) {
+    version = this.normalizeVersion(version)
     if (this.isPlatformVersionInstalled(version)) {
       return log.warn(`Version ${version} of ern platform is already installed`)
     }
@@ -134,17 +136,34 @@ export default class Platform {
   // If the version is not installed yet, it will install it beforehand, then
   // it will just update the config file with new activated version number
   public static switchToVersion(version: string) {
+    version = this.normalizeVersion(version)
     if (version === this.currentVersion) {
-      return log.info(`ern v${version} is now the currently activated version.`)
+      return log.info(`Already using ern v${version}`)
     }
 
     if (!this.isPlatformVersionInstalled(version)) {
+      if (!this.isPlatformVersionAvailable(version)) {
+        throw new Error(`Version ${version} of ern platform is not available`)
+      }
       log.info(`ern v${version} is not installed yet. Installing now.`)
       this.installPlatform(version)
     }
 
     config.setValue('platformVersion', version)
     log.info(`ern v${version} is now activated.`)
+  }
+
+  public static normalizeVersion(version: string) {
+    let result
+    if (version === 'latest') {
+      result = Platform.versions.pop()!
+    } else {
+      result = semver.valid(version)
+      if (!result) {
+        throw new Error(`Cannot normalize invalid version : ${version}`)
+      }
+    }
+    return result
   }
 
   public static isYarnInstalled() {

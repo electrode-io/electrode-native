@@ -13,6 +13,8 @@
 `<version>`
 
 * The version of Electrode Native platform to install. 
+* Sample values : `v0.18.0` / `0.18.0` / `latest`
+* Using `latest` will install the latest version of Electrode Native
 
 #### Related commands
 
