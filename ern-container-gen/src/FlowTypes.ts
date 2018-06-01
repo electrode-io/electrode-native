@@ -69,7 +69,7 @@ export interface ContainerGenerator {
   /**
    * Native platform that this generator targets
    */
-  readonly platform: string
+  readonly platform: NativePlatform
   /**
    *  Generate a Container
    */
