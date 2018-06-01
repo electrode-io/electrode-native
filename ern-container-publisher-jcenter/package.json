@@ -1,0 +1,61 @@
+{
+  "name": "ern-container-publisher-jcenter",
+  "version": "1000.0.0",
+  "description": "Electrode Native JCenter Container Publisher",
+  "main": "./dist/index.js",
+  "homepage": "http://www.electrode.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-native/issues"
+  },
+  "keywords": ["electrode", "ern", "react-native", "ern-container-publisher"],
+  "contributors": [
+    {
+      "name": "Benoit Lemaire",
+      "email": "blemaire@walmartlabs.com"
+    },
+    {
+      "name": "Bharath Marulasiddappa",
+      "email": "BMarulasiddappa@walmartlabs.com"
+    },
+    {
+      "name": "Deepu Ganapathiyadan",
+      "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Krunal Shah",
+      "email": "KShah1@walmartlabs.com"
+    },
+    {
+      "name": "Weijie Li",
+      "email": "WLi@walmartlabs.com"
+    }
+  ],
+  "scripts": {
+    "build": "ern-typescript && ern-copyfiles",
+    "test": "ern-mocha",
+    "coverage": "ern-nyc",
+    "prepublish": "yarn run build"
+  },
+  "copyFiles": [
+    {
+      "source": "src/publishers/supplements",
+      "dest": "dist/publishers"
+    }
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "ern-container-publisher": "1000.0.0",
+    "ern-core": "1000.0.0"
+  },
+  "devDependencies": {
+    "ern-util-dev": "1000.0.0",
+    "copyfiles": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=6"
+  }
+}
