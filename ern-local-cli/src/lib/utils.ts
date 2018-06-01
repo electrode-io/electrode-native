@@ -551,11 +551,24 @@ async function performContainerStateUpdateInCauldron(
           }
         }
 
+        // ==================================================================
+        // Legacy code. To be deprecated
+        let publisherName = publisherFromCauldron.name
+        if (publisherName === 'github') {
+          log.warn(
+            `Your Cauldron is using the 'github' publisher which has been deprecated.
+Please rename 'github' publisher name to 'git' in your Cauldron to get rid of this warning.`
+          )
+          publisherName = 'git'
+        }
+        // ==================================================================
+
         await publishContainer({
           containerPath: outDir,
           containerVersion: cauldronContainerVersion,
           extra,
-          publisherName: publisherFromCauldron.name,
+          platform: napDescriptor.platform,
+          publisher: publisherName,
           url: publisherFromCauldron.url,
         })
       }
@@ -780,7 +793,8 @@ async function runMiniApp(
         artifactId: 'runner-ern-container',
         groupId: 'com.walmartlabs.ern',
       },
-      publisherName: 'maven',
+      platform: 'android',
+      publisher: 'maven',
       url: MavenUtils.getDefaultMavenLocalDirectory(),
     })
   }

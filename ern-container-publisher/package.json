@@ -49,19 +49,12 @@
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
   },
-  "copyFiles": [
-    {
-      "source": "src/publishers/supplements",
-      "dest": "dist/publishers"
-    }
-  ],
   "license": "Apache-2.0",
   "dependencies": {
     "ern-core": "1000.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0",
-    "copyfiles": "^2.0.0"
+    "ern-util-dev": "1000.0.0"
   },
   "engines": {
     "node": ">=6"
