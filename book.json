@@ -105,9 +105,14 @@
         },
         {
           "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/master/",
-          "text": "Electrode Native [master]",
+            "https://electrode.gitbooks.io/electrode-native/content/v/v0.19/",
+          "text": "Electrode Native [v0.19]",
           "selected": true
+        },
+        {
+          "value":
+            "https://electrode.gitbooks.io/electrode-native/content/v/master/",
+          "text": "Electrode Native [master]"
         }
       ]
     },

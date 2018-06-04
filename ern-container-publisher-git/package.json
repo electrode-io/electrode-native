@@ -1,6 +1,6 @@
 {
   "name": "ern-container-publisher-git",
-  "version": "1000.0.0",
+  "version": "0.19.0",
   "description": "Electrode Native Git Container Publisher",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -11,7 +11,12 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": ["electrode", "ern", "react-native", "ern-container-publisher"],
+  "keywords": [
+    "electrode",
+    "ern",
+    "react-native",
+    "ern-container-publisher"
+  ],
   "contributors": [
     {
       "name": "Benoit Lemaire",
@@ -42,11 +47,11 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-container-publisher": "1000.0.0",
-    "ern-core": "1000.0.0"
+    "ern-container-publisher": "0.19.0",
+    "ern-core": "0.19.0"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.19.0"
   },
   "engines": {
     "node": ">=6"
