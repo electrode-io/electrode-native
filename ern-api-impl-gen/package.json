@@ -58,7 +58,7 @@
     "mustache": "^2.3.0",
     "semver": "5.5.0",
     "xcode": "^0.9.1",
-    "xcode-ern": "1.0.1",
+    "xcode-ern": "^1.0.2",
     "@yarnpkg/lockfile": "^1.0.1"
   },
   "devDependencies": {
