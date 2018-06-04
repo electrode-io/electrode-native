@@ -39,17 +39,17 @@ $ ern cauldron add publisher -p jcenter -c '{"artifactId":"[artifactId]", "group
 
 This will result in the following publisher entry in Cauldron :
 
-```json
+```
 {
   "name": "jcenter",
-  "artifactId": "[artifactId]", // Optional [Default: [nativeAppName]-ern-container],
+  "artifactId": "[artifactId]", // Optional [Default: [nativeAppName]-ern-container]],
   "groupId" : "[groupId]" // Optional [Default: com.walmartlabs.ern]
 }
 ```
 
 ### Through Code
 
-```javascript
+```js
 import JCenterPublisher from 'ern-container-publisher-jcenter'
 const publisher = new JCenterPublisher()
 publisher.publish({
