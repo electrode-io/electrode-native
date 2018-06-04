@@ -73,7 +73,7 @@
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^2.3.0",
     "semver": "^5.5.0",
-    "xcode-ern": "1.0.1"
+    "xcode-ern": "^1.0.2"
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0",

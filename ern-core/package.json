@@ -61,7 +61,7 @@
     "semver": "^5.5.0",
     "simple-git": "^1.95.0",
     "tmp": "^0.0.33",
-    "xcode-ern": "1.0.1",
+    "xcode-ern": "^1.0.2",
     "yarn": "^1.7.0"
   },
   "devDependencies": {
