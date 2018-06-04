@@ -16,7 +16,7 @@ For example, For initial publication to GitHub, a repository should be created i
 - `containerVersion` : Version of the Container to publish
 - `url` : Url of the remote git repository (SSH or HTTPS) to publish to
 
-### Usage
+## Usage
 
 ### Through `ern publish-container` CLI command
 
@@ -45,7 +45,7 @@ This will result in the following publisher entry in Cauldron :
 
 ### Through Code
 
-```javascript
+```js
 import GitPublisher from 'ern-container-publisher-git'
 const publisher = new GitPublisher()
 publisher.publish({

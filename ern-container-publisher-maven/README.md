@@ -35,7 +35,7 @@ $ ern cauldron add publisher -p maven -u [mavenRepoUrl] -c '{"artifactId":"[arti
 
 This will result in the following publisher entry in Cauldron :
 
-```json
+```
 {
   "name": "maven",
   "url": "[mavenRepoUrl]",
@@ -48,7 +48,7 @@ This will result in the following publisher entry in Cauldron :
 
 ### Through Code
 
-```javascript
+```js
 import MavenPublisher from 'ern-container-publisher-maven'
 const publisher = new JCenterPublisher()
 publisher.publish(
