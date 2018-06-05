@@ -19,6 +19,11 @@ import shell from './shell'
 import spin from './spin'
 import { tagOneLine } from './tagoneline'
 import * as utils from './utils'
+import {
+  readPackageJson,
+  readPackageJsonSync,
+  writePackageJson,
+} from './packageJsonFileUtils'
 
 const npmIgnoreContent = `ios/
 android/
@@ -52,7 +57,7 @@ export class MiniApp {
     const tmpMiniAppPath = createTmpDir()
     shell.cd(tmpMiniAppPath)
     await yarn.add(packagePath)
-    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+    const packageJson = await readPackageJson('.')
     const packageName = Object.keys(packageJson.dependencies)[0]
     shell.rm(path.join(tmpMiniAppPath, 'package.json'))
     shell.mv(
@@ -113,14 +118,8 @@ export class MiniApp {
       fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
 
       // Inject ern specific data in MiniApp package.json
-      const appPackageJsonPath = path.join(
-        process.cwd(),
-        miniAppName,
-        'package.json'
-      )
-      const appPackageJson = JSON.parse(
-        fs.readFileSync(appPackageJsonPath, 'utf-8')
-      )
+      const pathToMiniApp = path.join(process.cwd(), miniAppName)
+      const appPackageJson = await readPackageJson(pathToMiniApp)
       appPackageJson.ern = {
         moduleName: miniAppName,
         moduleType: ModuleTypes.MINIAPP,
@@ -137,10 +136,8 @@ export class MiniApp {
         appPackageJson.name = packageName
       }
 
-      fs.writeFileSync(
-        appPackageJsonPath,
-        JSON.stringify(appPackageJson, null, 2)
-      )
+      await writePackageJson(pathToMiniApp, appPackageJson)
+
       // Remove react-native generated android and ios projects
       // They will be replaced with our owns when user uses `ern run android`
       // or `ern run ios` command
@@ -181,7 +178,7 @@ export class MiniApp {
       throw new Error(`This command should be run at the root of a mini-app`)
     }
 
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+    const packageJson = readPackageJsonSync(miniAppPath)
     if (packageJson.ernPlatformVersion) {
       // TO REMOVE IN ERN 0.5.0
       log.warn(`

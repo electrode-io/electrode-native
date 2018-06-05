@@ -9,6 +9,8 @@ import {
   yarn,
   Platform,
   log,
+  readPackageJsonSync,
+  writePackageJsonSync,
 } from 'ern-core'
 import ApiImplGen from './generators/ApiImplGen'
 
@@ -172,8 +174,7 @@ function ernifyPackageJson(
   hasConfig: boolean,
   scope?: string
 ) {
-  const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+  const packageJson = readPackageJsonSync(outputDirectoryPath)
   const moduleType = nativeOnly
     ? ModuleTypes.NATIVE_API_IMPL
     : ModuleTypes.JS_API_IMPL
@@ -189,5 +190,5 @@ function ernifyPackageJson(
   packageJson.keywords
     ? packageJson.keywords.push(moduleType)
     : (packageJson.keywords = [moduleType])
-  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
+  writePackageJsonSync(outputDirectoryPath, packageJson)
 }

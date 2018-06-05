@@ -33,6 +33,12 @@ export {
 } from './nativeDependenciesLookup'
 export { tagOneLine } from './tagoneline'
 export { YarnCli } from './YarnCli'
+export {
+  readPackageJson,
+  readPackageJsonSync,
+  writePackageJson,
+  writePackageJsonSync,
+} from './packageJsonFileUtils'
 
 export const config = _config
 export const Platform = _Platform

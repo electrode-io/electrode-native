@@ -1,4 +1,12 @@
-import { spin, PackagePath, shell, yarn, log } from 'ern-core'
+import {
+  spin,
+  PackagePath,
+  shell,
+  yarn,
+  log,
+  readPackageJsonSync,
+  writePackageJsonSync,
+} from 'ern-core'
 import { ApiGenUtils } from 'ern-api-gen'
 import _ from 'lodash'
 import chalk from 'chalk'
@@ -206,9 +214,8 @@ export default class ApiImplGen {
     outputDirectoryPath: string,
     apis: any[]
   ) {
-    const packageJsonPath = path.join(outputDirectoryPath, 'package.json')
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+    const packageJson = readPackageJsonSync(outputDirectoryPath)
     packageJson.ern.containerGen.apiNames = _.map(apis, api => api.apiName)
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
+    writePackageJsonSync(outputDirectoryPath, packageJson)
   }
 }

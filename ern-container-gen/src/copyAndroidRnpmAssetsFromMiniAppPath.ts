@@ -1,4 +1,4 @@
-import { handleCopyDirective } from 'ern-core'
+import { handleCopyDirective, readPackageJsonSync } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 
@@ -6,9 +6,7 @@ export function copyAndroidRnpmAssetsFromMiniAppPath(
   miniAppPath: string,
   outputPath: string
 ) {
-  const packageJson = JSON.parse(
-    fs.readFileSync(path.join(miniAppPath, 'package.json'), 'utf-8')
-  )
+  const packageJson = readPackageJsonSync(miniAppPath)
   if (packageJson.rnpm && packageJson.rnpm.assets) {
     for (const assetDirectoryName of packageJson.rnpm.assets) {
       const source = path.join(assetDirectoryName, '*')
