@@ -1,4 +1,11 @@
-import { log, PackagePath, shell, yarn } from 'ern-core'
+import {
+  log,
+  PackagePath,
+  shell,
+  yarn,
+  readPackageJson,
+  writePackageJson,
+} from 'ern-core'
 import { cleanupMiniAppsCompositeDir } from './cleanupMiniAppsCompositeDir'
 import {
   MiniAppsDeltas,
@@ -81,11 +88,7 @@ export async function generateMiniAppsComposite(
 
     log.debug(JSON.stringify(compositePackageJson.dependencies, null, 2))
 
-    fs.writeFileSync(
-      path.join(outDir, 'package.json'),
-      JSON.stringify(compositePackageJson, null, 2),
-      'utf8'
-    )
+    await writePackageJson(outDir, compositePackageJson)
 
     // Now that the composite package.json is similar to the one used to generated yarn.lock
     // we can run yarn install to get back to the exact same dependency graph as the previously
@@ -100,16 +103,11 @@ export async function generateMiniAppsComposite(
       await yarn.add(miniappPath)
     }
 
-    const packageJsonPath = path.join(outDir, 'package.json')
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+    const packageJson = await readPackageJson(outDir)
     packageJson.scripts = {
       start: 'node node_modules/react-native/local-cli/cli.js start',
     }
-    fs.writeFileSync(
-      packageJsonPath,
-      JSON.stringify(packageJson, null, 2),
-      'utf8'
-    )
+    await writePackageJson(outDir, packageJson)
   }
 
   for (const extraJsDependency of extraJsDependencies) {
@@ -118,7 +116,7 @@ export async function generateMiniAppsComposite(
 
   let entryIndexJsContent = ''
 
-  compositePackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  compositePackageJson = await readPackageJson('.')
   for (const dependency of Object.keys(compositePackageJson.dependencies)) {
     entryIndexJsContent += `import '${dependency}'\n`
   }
@@ -148,17 +146,10 @@ export async function generateMiniAppsComposite(
   log.debug('Taking care of potential Babel plugins used by MiniApps')
   let moduleResolverAliases = {}
   for (const dependency of Object.keys(compositePackageJson.dependencies)) {
-    const miniAppPackageJsonPath = path.join(
-      outDir,
-      'node_modules',
-      dependency,
-      'package.json'
-    )
+    const miniAppPackagePath = path.join(outDir, 'node_modules', dependency)
     let miniAppPackageJson
     try {
-      miniAppPackageJson = JSON.parse(
-        fs.readFileSync(miniAppPackageJsonPath, 'utf-8')
-      )
+      miniAppPackageJson = await readPackageJson(miniAppPackagePath)
     } catch (e) {
       // swallow (for test. to be fixed)
       continue
@@ -219,11 +210,7 @@ export async function generateMiniAppsComposite(
         `Removing babel object from ${miniAppName} MiniApp package.json`
       )
       delete miniAppPackageJson.babel
-      fs.writeFileSync(
-        miniAppPackageJsonPath,
-        JSON.stringify(miniAppPackageJson, null, 2),
-        'utf-8'
-      )
+      await writePackageJson(miniAppPackagePath, miniAppPackageJson)
     }
   }
 
@@ -239,14 +226,11 @@ export async function generateMiniAppsComposite(
     'node_modules',
     'react-native'
   )
-  const pathToReactNativePackageJson = path.join(
-    pathToReactNativeNodeModuleDir,
-    'package.json'
-  )
+
   // If code push plugin is present we need to do some additional work
   if (fs.existsSync(pathToCodePushNodeModuleDir)) {
-    const reactNativePackageJson = JSON.parse(
-      fs.readFileSync(pathToReactNativePackageJson, 'utf8')
+    const reactNativePackageJson = await readPackageJson(
+      pathToReactNativeNodeModuleDir
     )
 
     //
@@ -271,10 +255,7 @@ export async function generateMiniAppsComposite(
       reactNativePackageJson.version
     compositePackageJson.name = 'container'
     compositePackageJson.version = '0.0.1'
-    fs.writeFileSync(
-      'package.json',
-      JSON.stringify(compositePackageJson, null, 2)
-    )
+    await writePackageJson('.', compositePackageJson)
   }
 
   log.debug('Creating index.android.js')

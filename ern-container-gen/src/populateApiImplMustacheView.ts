@@ -1,4 +1,4 @@
-import { log, ModuleTypes, utils } from 'ern-core'
+import { log, ModuleTypes, utils, readPackageJsonSync } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 
@@ -15,9 +15,7 @@ export function populateApiImplMustacheView(
   excludeJsImpl?: boolean,
   excludeNativeImpl?: boolean
 ) {
-  const packageJson = JSON.parse(
-    fs.readFileSync(path.join(apiImplPluginPath, 'package.json'), 'utf-8')
-  )
+  const packageJson = readPackageJsonSync(apiImplPluginPath)
   const containerGenConfig = packageJson.ern.containerGen
   if (containerGenConfig && containerGenConfig.apiNames) {
     mustacheView.apiImplementations = mustacheView.apiImplementations
