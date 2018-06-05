@@ -9,16 +9,14 @@ import {
   log,
   NativePlatform,
 } from 'ern-core'
-import {
-  bundleMiniApps,
-  generatePluginsMustacheViews,
-  copyRnpmAssets,
-  injectReactNativeVersionKeysInObject,
-  sortDependenciesByName,
-  populateApiImplMustacheView,
-  addElectrodeNativeMetadataFile,
-  prepareDirectories,
-} from '../../utils'
+import { bundleMiniApps } from '../../bundleMiniApps'
+import { generatePluginsMustacheViews } from '../../generatePluginsMustacheViews'
+import { copyRnpmAssets } from '../../copyRnpmAssets'
+import { injectReactNativeVersionKeysInObject } from '../../injectReactNativeVersionKeysInObject'
+import { sortDependenciesByName } from '../../sortDependenciesByName'
+import { populateApiImplMustacheView } from '../../populateApiImplMustacheView'
+import { addElectrodeNativeMetadataFile } from '../../addElectrodeNativeMetadataFile'
+import { prepareDirectories } from '../../prepareDirectories'
 import _ from 'lodash'
 import path from 'path'
 import fs from 'fs'

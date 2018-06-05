@@ -1,9 +1,8 @@
-import {
-  generateMiniAppsComposite as _generateMiniAppsComposite,
-  getContainerPlatform as _getContainerPlatform,
-} from './utils'
 import _IosGenerator from './generators/ios/IosGenerator'
 import _AndroidGenerator from './generators/android/AndroidGenerator'
+
+import { generateMiniAppsComposite as _generateMiniAppsComposite } from './generateMiniAppsComposite'
+import { getContainerPlatform as _getContainerPlatform } from './getContainerPlatform'
 
 export const AndroidGenerator = _AndroidGenerator
 export const IosGenerator = _IosGenerator
