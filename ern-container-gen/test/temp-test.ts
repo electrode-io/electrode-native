@@ -3,12 +3,12 @@ import { doesThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import path from 'path'
 import fs from 'fs'
+import { generateMiniAppsComposite } from '../src/generateMiniAppsComposite'
 import {
-  generateMiniAppsComposite,
   getMiniAppsDeltas,
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas,
-} from '../src/utils'
+} from '../src/miniAppsDeltasUtils'
 import { beforeTest, afterTest } from 'ern-util-dev'
 import * as ernUtil from 'ern-core'
 const { PackagePath, YarnCli, shell } = ernUtil

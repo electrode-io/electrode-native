@@ -1,19 +1,4 @@
-import { PackagePath, MiniApp, BundlingResult, NativePlatform } from 'ern-core'
-
-export interface ContainerGeneratorPaths {
-  /**
-   * Where we assemble the miniapps together
-   */
-  compositeMiniApp: string
-  /**
-   * Where we download plugins
-   */
-  pluginsDownloadDirectory: string
-  /**
-   * Where we output final generated container
-   */
-  outDirectory: string
-}
+import { MiniApp, NativePlatform, PackagePath } from 'ern-core'
 
 export interface ContainerGeneratorConfig {
   /**
@@ -52,26 +37,4 @@ export interface ContainerGeneratorConfig {
    * Path to the current yarn lock
    */
   pathToYarnLock?: string
-}
-
-export interface ContainerGenResult {
-  /**
-   *  Metadata resulting from the bundling
-   */
-  bundlingResult: BundlingResult
-}
-
-export interface ContainerGenerator {
-  /**
-   *  Name of the Container Generator
-   */
-  readonly name: string
-  /**
-   * Native platform that this generator targets
-   */
-  readonly platform: NativePlatform
-  /**
-   *  Generate a Container
-   */
-  generate(config: ContainerGeneratorConfig): Promise<ContainerGenResult>
 }
