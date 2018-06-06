@@ -1,6 +1,6 @@
 ## Electrode Native Bridge
 
-The Electrode Native bridge is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the Electrode Native repository itself--it resides in it's own [GitHub repository](https://github.com/electrode-io/react-native-electrode-bridge). The Electrode Native bridge is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the Electrode Native bridge code is native (95% native/5% JavaScript).
+The [Electrode Native Bridge] is a low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. . The [Electrode Native Bridge] is actually a React Native-native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. Most of the Electrode Native bridge code is native (95% native/5% JavaScript).
 
 Communication through the Electrode Native bridge is based on message exchanges between JavaScript and the Native mobile application. The Electrode Native bridge processes three message types: `Request`, `Response`, and `Event`.
 
@@ -17,7 +17,7 @@ An Event message is a "fire and forget" message. The sender of the Event message
 
 ### Electrode Native bridge communication
 
-The Electrode Native Bridge expose a public client surface that is consistent across all three platforms and allows requests and responses from any side:
+The [Electrode Native Bridge] expose a public client surface that is consistent across all three platforms and allows requests and responses from any side:
 
 - Send Requests (and associated responses)
 - Emit Events
@@ -34,6 +34,8 @@ Payloads for Requests, Responses, or Events can be primitive types, but the Elec
 
 ### Leveraging the Electrode Native bridge using APIs
 
-Even though the Electrode Native bridge is a standalone native module that can be used in your React Native projects (even without Electrode Native), if you are using Electrode Native, you do not directly interact with the Electrode Native bridge in your MiniApps or in your mobile applications. Instead, you'll mostly use Electrode Native APIs that are interacting with the bridge on their own. The Electrode Native APIs are generated from a Swagger schema--so they are predefined. Check out our [Electrode Native API documentation](https://electrode.gitbooks.io/electrode-native/platform-parts/apis.html).
+Even though the [Electrode Native Bridge] is a standalone native module that can be used in your React Native projects (even without Electrode Native), if you are using Electrode Native, you do not directly interact with the Electrode Native bridge in your MiniApps or in your mobile applications. Instead, you'll mostly use Electrode Native APIs that are interacting with the bridge on their own. The Electrode Native APIs are generated from a Swagger schema--so they are predefined. Check out our [Electrode Native API documentation](https://electrode.gitbooks.io/electrode-native/platform-parts/apis.html).
 
-For more information about the Electrode Native bridge, check out the [react-native-electrode-bridge repository](https://github.com/electrode-io/react-native-electrode-bridge).
+Find more information about the [Electrode Native Bridge]
+
+[Electrode Native Bridge]:https://github.com/electrode-io/react-native-electrode-bridge
