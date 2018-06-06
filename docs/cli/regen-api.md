@@ -14,7 +14,8 @@
 * Skip the step to update api version and publish to NPM.
 
 `--bridgeVersion/-b`
-* Version of the [Electrode Native Bridge] to use.
+* Specify version of the [Electrode Native Bridge] to use.
+* Target `--bridgeVersion` can be found using `yarn info react-native-electrode-bridge versions`
 
 #### Remarks
 
@@ -26,6 +27,6 @@
 [ern create-api] | Create a new API project based on a Swagger schema  
 [ern create-api-impl] | Create an implementation skeleton project for a specified API  
 
-[Electrode Native Bridge]: https://github.com/electrode-io/react-native-electrode-bridge
+[Electrode Native Bridge]: https://github.com/electrode-io/react-native-electrode-bridge/releases
 [ern create-api]: ./create-api.md
 [ern create-api-impl]: ./create-api-impl.md

@@ -12,7 +12,7 @@ You can contribute to the Electrode Native open source project in several ways:
 
 - By resolving an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code, as explained below.
 
-- You can also contribute to the [Electrode Native Bridge](https://github.com/electrode-io/react-native-electrode-bridge) library.
+- You can also contribute to the [Electrode Native Bridge] library.
 
 ## Electrode native development prerequisites
 
