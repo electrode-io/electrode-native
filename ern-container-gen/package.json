@@ -61,10 +61,6 @@
     {
       "source": "src/generators/ios/hull",
       "dest": "dist/generators/ios"
-    },
-    {
-      "source": "src/publishers/supplements",
-      "dest": "dist/publishers"
     }
   ],
   "license": "Apache-2.0",
