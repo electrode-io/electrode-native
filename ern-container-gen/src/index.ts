@@ -1,6 +1,3 @@
-import _AndroidGenerator from './generators/android/AndroidGenerator'
-import _IosGenerator from './generators/ios/IosGenerator'
-
 import { addElectrodeNativeMetadataFile as _addElectrodeNativeMetadataFile } from './addElectrodeNativeMetadataFile'
 import { bundleMiniApps as _bundleMiniApps } from './bundleMiniApps'
 import { copyRnpmAssets as _copyRnpmAssets } from './copyRnpmAssets'
@@ -12,8 +9,6 @@ import { populateApiImplMustacheView as _populateApiImplMustacheView } from './p
 import { prepareDirectories as _prepareDirectories } from './prepareDirectories'
 import { sortDependenciesByName as _sortDependenciesByName } from './sortDependenciesByName'
 
-export const AndroidGenerator = _AndroidGenerator
-export const IosGenerator = _IosGenerator
 export const addElectrodeNativeMetadataFile = _addElectrodeNativeMetadataFile
 export const bundleMiniApps = _bundleMiniApps
 export const copyRnpmAssets = _copyRnpmAssets
@@ -26,8 +21,6 @@ export const prepareDirectories = _prepareDirectories
 export const sortDependenciesByName = _sortDependenciesByName
 
 export default {
-  AndroidGenerator: _AndroidGenerator,
-  IosGenerator: _IosGenerator,
   addElectrodeNativeMetadataFile: _addElectrodeNativeMetadataFile,
   bundleMiniApps: _bundleMiniApps,
   copyRnpmAssets: _copyRnpmAssets,
