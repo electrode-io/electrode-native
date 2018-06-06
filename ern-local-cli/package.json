@@ -59,6 +59,8 @@
     "ern-api-impl-gen": "1000.0.0",
     "ern-cauldron-api": "1000.0.0",
     "ern-container-gen": "1000.0.0",
+    "ern-container-gen-android": "1000.0.0",
+    "ern-container-gen-ios": "1000.0.0",
     "ern-container-publisher": "1000.0.0",
     "ern-core": "1000.0.0",
     "ern-runner-gen": "1000.0.0",

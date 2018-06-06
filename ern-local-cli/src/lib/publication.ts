@@ -1,9 +1,9 @@
 import {
   generateMiniAppsComposite,
-  IosGenerator,
-  AndroidGenerator,
   ContainerGenerator,
 } from 'ern-container-gen'
+import { AndroidGenerator } from 'ern-container-gen-android'
+import { IosGenerator } from 'ern-container-gen-ios'
 import {
   createTmpDir,
   CodePushSdk,
@@ -792,26 +792,26 @@ async function askUserToConfirmCodePushPublication(
     jsApiImplsToBeCodePushed.forEach(m => log.info(m.toString()))
   }
 
-  const { userCodePushPublicationConfirmation } = await inquirer.prompt(
-    <inquirer.Question>{
-      message: 'Do you want to continue with CodePush publication ?',
-      name: 'userCodePushPublicationConfirmation',
-      type: 'confirm',
-    }
-  )
+  const { userCodePushPublicationConfirmation } = await inquirer.prompt(<
+    inquirer.Question
+  >{
+    message: 'Do you want to continue with CodePush publication ?',
+    name: 'userCodePushPublicationConfirmation',
+    type: 'confirm',
+  })
 
   return userCodePushPublicationConfirmation
 }
 
 async function askUserToForceCodePushPublication(): Promise<boolean> {
-  const { userCodePushForcePublication } = await inquirer.prompt(
-    <inquirer.Question>{
-      message:
-        'At least one native dependency version is not properly aligned. Do you want to force CodePush anyway ?',
-      name: 'userCodePushForcePublication',
-      type: 'confirm',
-    }
-  )
+  const { userCodePushForcePublication } = await inquirer.prompt(<
+    inquirer.Question
+  >{
+    message:
+      'At least one native dependency version is not properly aligned. Do you want to force CodePush anyway ?',
+    name: 'userCodePushForcePublication',
+    type: 'confirm',
+  })
 
   return userCodePushForcePublication
 }
@@ -828,14 +828,14 @@ export async function askUserForCodePushDeploymentName(
     ? conf && conf.codePush.deployments
     : undefined
 
-  const { userSelectedDeploymentName } = await inquirer.prompt(
-    <inquirer.Question>{
-      choices,
-      message: message || 'Deployment name',
-      name: 'userSelectedDeploymentName',
-      type: choices ? 'list' : 'input',
-    }
-  )
+  const { userSelectedDeploymentName } = await inquirer.prompt(<
+    inquirer.Question
+  >{
+    choices,
+    message: message || 'Deployment name',
+    name: 'userSelectedDeploymentName',
+    type: choices ? 'list' : 'input',
+  })
 
   return userSelectedDeploymentName
 }
