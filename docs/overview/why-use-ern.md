@@ -15,7 +15,7 @@ Electrode Native includes a well developed set of open source custom tools that 
 
 Electrode Native allows JavaScript developers to work on their own React Native based components, called MiniApps--from within their dedicated repository, using their own release lifecycle. The MiniApps can be published and reused within potentially any mobile application. Existing JavaScript React Native developers will experience little change to their workflow.
 
-The only difference: developers use a short list of Electrode Native CLI commands. The development experience remains the same as it was when developers worked on pure React Native components. A MiniApp, after all, is really nothing more that a small JavaScript React Native JavaScript application.
+The only difference: developers use a short list of Electrode Native CLI commands. The development experience remains the same as it was when developers worked on pure React Native components. A MiniApp, after all, is really nothing more than a small JavaScript React Native JavaScript application.
 
 Electrode Native allows Mobile application developers to easily integrate individual React Native components within their existing mobile application--without changes to their infrastructure or the need to deal with or install any JavaScript based tools--not even Electrode Native itself!
 
