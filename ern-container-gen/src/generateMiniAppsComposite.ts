@@ -178,8 +178,7 @@ export async function generateMiniAppsComposite(
                 // Another MiniApp  has already declared module-resolver
                 // plugin & config. If we have conflicts for aliases, we'll just abort
                 // bundling as of now to avoid generating a potentially unstable bundle
-                let item: any
-                for (item in babelPlugin) {
+                for (const item of babelPlugin) {
                   if (item instanceof Object && item.alias) {
                     for (const aliasKey of Object.keys(item.alias)) {
                       if (
