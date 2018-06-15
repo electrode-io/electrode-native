@@ -1,4 +1,4 @@
-import { ContainerPublisherConfig, ContainerPublisher } from './types'
+import { ContainerPublisherConfig } from './types'
 import getPublisher from './getPublisher'
 import {
   createTmpDir,
