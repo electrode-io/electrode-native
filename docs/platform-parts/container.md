@@ -95,8 +95,6 @@ The publication configuration object will be stored under in the cauldron docume
             "name":"ios",
             "config":{
                "containerGenerator":{
-                  "name":"github",
-                  "targetRepoUrl":"git@github.com:user/myweatherapp-ios-container.git",
                   "containerVersion":"1.0.0",
                   "publishers":[
                      {
