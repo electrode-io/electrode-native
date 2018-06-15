@@ -1,6 +1,5 @@
 import { assert, expect } from 'chai'
 import { CauldronHelper } from '../src/CauldronHelper'
-import sinon from 'sinon'
 import { PackagePath, NativeApplicationDescriptor } from 'ern-core'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import {
@@ -12,35 +11,6 @@ import {
 import jp from 'jsonpath'
 import path from 'path'
 import mockFs from 'mock-fs'
-
-const codePushEntryFixtureOne = {
-  metadata: {
-    appVersion: '17.7',
-    deploymentName: 'Production',
-    isMandatory: false,
-    label: 'v18',
-    releaseMethod: 'Upload',
-    releasedBy: 'lemaireb@gmail.com',
-    rollout: 100,
-    size: 522946,
-  },
-  miniapps: ['code-push-test-miniapp@0.0.19'],
-}
-
-const codePushEntryFixtureTwo = {
-  jsApiImpls: ['react-native-test-js-api-impl@1.0.0'],
-  metadata: {
-    appVersion: '17.7',
-    deploymentName: 'Production',
-    isMandatory: false,
-    label: 'v19',
-    releaseMethod: 'Upload',
-    releasedBy: 'lemaireb@gmail.com',
-    rollout: 100,
-    size: 522946,
-  },
-  miniapps: ['code-push-test-miniapp@0.0.20'],
-}
 
 const codePushMetadataFixtureOne = {
   appVersion: '17.7',
@@ -66,9 +36,6 @@ const codePushMetadataFixtureTwo = {
 
 const miniAppsFixtureOne = [
   PackagePath.fromString('code-push-test-miniapp@0.0.22'),
-]
-const jsApiImplFixtureOne = [
-  PackagePath.fromString('react-native-test-js-api-impl@2.0.0'),
 ]
 
 let documentStore
@@ -101,6 +68,7 @@ const testAndroid1780Path =
   '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.8.0")]'
 const testTopLevelContainerPath =
   '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].config.containerGenerator.containerVersion'
+
 describe('CauldronHelper.js', () => {
   afterEach(() => {
     mockFs.restore()
@@ -2599,12 +2567,15 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         '999.0.0'
       )
-      const nativeApplicationVersion = jp.query(fixture, testAndroid1770Path)[0]
+      const nativeApplicationContainerVersion = jp.query(
+        fixture,
+        testAndroid1770Path
+      )[0]
       const topLevelContainerVersion = jp.query(
         fixture,
         testTopLevelContainerPath
       )
-      expect(nativeApplicationVersion.containerVersion).eql('999.0.0')
+      expect(nativeApplicationContainerVersion.containerVersion).eql('999.0.0')
       expect(topLevelContainerVersion[0]).eql('999.0.0')
     })
 
