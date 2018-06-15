@@ -77,7 +77,7 @@ The publication configuration object will be stored under in the cauldron docume
                   "containerVersion":"1.0.0",
                   "publishers":[
                      {
-                        "name":"github",
+                        "name":"git",
                         "url":"git@github.com:user/myweatherapp-android-container.git"
                      },
                      {
@@ -98,7 +98,7 @@ The publication configuration object will be stored under in the cauldron docume
                   "containerVersion":"1.0.0",
                   "publishers":[
                      {
-                        "name":"github",
+                        "name":"git",
                         "url":"git@github.com:user/myweatherapp-ios-container.git"
                      }
                   ]
