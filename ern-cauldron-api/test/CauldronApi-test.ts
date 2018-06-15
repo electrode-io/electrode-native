@@ -1,6 +1,5 @@
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
-import fs from 'fs'
 import { NativeApplicationDescriptor, PackagePath } from 'ern-core'
 import { doesThrow, fixtures } from 'ern-util-dev'
 import { CauldronCodePushEntry } from '../src/types'
