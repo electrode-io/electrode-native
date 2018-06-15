@@ -1372,11 +1372,11 @@ describe('CauldronApi.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         '2.0.0'
       )
-      const topLevelContainerVersion = jp.query(
+      const nativeAppContainerVersion = jp.query(
         tmpFixture,
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].containerVersion'
       )[0]
-      expect(topLevelContainerVersion).eql('2.0.0')
+      expect(nativeAppContainerVersion).eql('2.0.0')
     })
 
     it('should commit the document store', async () => {

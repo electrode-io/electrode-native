@@ -8,6 +8,7 @@ import {
 } from 'ern-core'
 import { CauldronCodePushMetadata, CauldronCodePushEntry } from './types'
 import CauldronApi from './CauldronApi'
+import semver from 'semver'
 
 //
 // Helper class to access the cauldron
@@ -737,10 +738,19 @@ export class CauldronHelper {
     containerVersion: string
   ): Promise<void> {
     await this.cauldron.updateContainerVersion(napDescriptor, containerVersion)
-    await this.cauldron.updateTopLevelContainerVersion(
-      napDescriptor,
-      containerVersion
+    const topLevelContainerVersion = await this.getTopLevelContainerVersion(
+      napDescriptor
     )
+    if (
+      semver.valid(containerVersion) &&
+      semver.valid(topLevelContainerVersion) &&
+      semver.gt(containerVersion, topLevelContainerVersion)
+    ) {
+      await this.cauldron.updateTopLevelContainerVersion(
+        napDescriptor,
+        containerVersion
+      )
+    }
   }
 
   public async getContainerVersion(

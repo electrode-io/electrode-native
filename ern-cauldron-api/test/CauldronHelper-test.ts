@@ -99,7 +99,8 @@ const testAndroid1770Path =
   '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
 const testAndroid1780Path =
   '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.8.0")]'
-
+const testTopLevelContainerPath =
+  '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].config.containerGenerator.containerVersion'
 describe('CauldronHelper.js', () => {
   afterEach(() => {
     mockFs.restore()
@@ -2591,7 +2592,7 @@ describe('CauldronHelper.js', () => {
       )
     })
 
-    it('should update the container version', async () => {
+    it('should update the top level container version and native app container version', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.updateContainerVersion(
@@ -2599,7 +2600,28 @@ describe('CauldronHelper.js', () => {
         '999.0.0'
       )
       const nativeApplicationVersion = jp.query(fixture, testAndroid1770Path)[0]
+      const topLevelContainerVersion = jp.query(
+        fixture,
+        testTopLevelContainerPath
+      )
       expect(nativeApplicationVersion.containerVersion).eql('999.0.0')
+      expect(topLevelContainerVersion[0]).eql('999.0.0')
+    })
+
+    it('should update native app container version only[topLevelContainerVersion is gt nativeApplicationVersion]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.updateContainerVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        '1.0.0'
+      )
+      const nativeApplicationVersion = jp.query(fixture, testAndroid1770Path)[0]
+      const topLevelContainerVersion = jp.query(
+        fixture,
+        testTopLevelContainerPath
+      )
+      expect(nativeApplicationVersion.containerVersion).eql('1.0.0')
+      expect(topLevelContainerVersion[0]).eql('1.16.44')
     })
   })
 
