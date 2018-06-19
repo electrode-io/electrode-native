@@ -315,20 +315,13 @@ export default class CauldronApi {
   public async getConfig(
     descriptor?: NativeApplicationDescriptor
   ): Promise<any | void> {
-    if (descriptor) {
-      if (descriptor.platform) {
-        if (descriptor.version) {
-          const version = await this.getVersion(descriptor)
-          return version.config
-        }
-        const platform = await this.getPlatform(descriptor)
-        return platform.config
-      }
-      const app = await this.getNativeApplication(descriptor)
-      return app.config
-    }
-    const cauldron = await this.getCauldron()
-    return cauldron.config
+    const configByLevel = await this.getConfigByLevel(descriptor)
+    return (
+      configByLevel.get(CauldronConfigLevel.NativeAppVersion) ||
+      configByLevel.get(CauldronConfigLevel.NativeAppPlatform) ||
+      configByLevel.get(CauldronConfigLevel.NativeApp) ||
+      configByLevel.get(CauldronConfigLevel.Top)
+    )
   }
 
   public async getConfigByLevel(
