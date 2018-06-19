@@ -18,6 +18,9 @@
   "nativeApps": [
   {
     "name": "test",
+    "config": {
+      "test": "aValue"
+    },
     "platforms": [
       {
         "name": "android",
@@ -50,7 +53,7 @@
             "name": "17.7.0",
             "containerVersion": "1.16.44",
             "config": { 
-              "test": 0
+              "test": "value"
             },
             "ernPlatformVersion": "1000.0.0",
             "isReleased": true,
