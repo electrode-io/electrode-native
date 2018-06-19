@@ -17,9 +17,6 @@ the MiniApps assets are the fonts and images that are used by the MiniApps.
 - The MiniApps native dependencies  
 The MiniApps native dependencies are all of the native dependencies that MiniApps directly or indirectly depend on. React Native is one of them but it can also includes third-party native modules (`react-native-maps`, `react-native-vector-icons`, `react-native-electrode-bridge` to name a few) or platform APIs.
 
-- Additional native dependencies  
-Some native dependencies do not depend directly or indirectly on the MiniApps. These dependencies are primarily native platform API implementations as well as some third-party native modules that are only used from the mobile application side. These additional dependencies are uncommon.
-
 - Container-specific code  
 An Electrode Native container includes some code that is exposed to mobile application developers to properly integrate a container in their mobile application. This consists mostly of code to initialize the container along with some utility code to access and deal with the MiniApps stored within.
 
@@ -122,7 +119,7 @@ Check our [dummy publisher]([https://github.com/electrode-io/ern-container-publi
 
 A few things to keep in mind when creating a Container publisher :
 
-- The package nampe must start by `ern-container-publisher-`. This is a convention for Electrode Native Container publishers, and is enforced by Electrode Native.
+- The package name must start by `ern-container-publisher-`. This is a convention for Electrode Native Container publishers, and is enforced by Electrode Native.
 Using this convention makes it also simpler for the users as Electrode Native will prefix the publisher name with `ern-container-publisher-` if needed, so they can use a shorthand name. For example, a publisher can be reffered as `foo` and Electrode Native will look for a package named `ern-container-publisher-foo`. Please note that if you are publishing a scoped package for a publisher, Electrode Native will not prepend `ern-container-publisher-`. So if your publisher is `@mycompany/ern-container-publisher-foo`, it should be reffered to as this ful package name in Electrode Native, there is no shorthand name.
 - You should add a keyword 'ern-container-publisher' in the keywords list of the package.json. This could be used later on to enable Container publishers discovery.
 - All you have to implement is a class with two getters `get name` (to return the name of the publisher) and `get platforms` (to return the list of supported platforms of the publisher), as well as the `publish(config)` method. This class should be the default export of the module.
@@ -178,7 +175,7 @@ lintOptions {
 
 ##### Adding the Container as an AAR
 
-If a Maven publisher has been configured in the Electrode Native cauldron, Electrode Native will package and publish the Electrode Native container project as a Maven artifact containing the AAR file--either to a local or remote Maven repository.
+If a Maven publisher has been configured in the Electrode Native cauldron, Electrode Native will package and publish the Electrode Native container project as a Maven artifact containing the AAR file(either to a local or remote Maven repository)
 
 If you are implicitly publishing a container from a Cauldron (through a change in container content or the use of [cauldron regen-container] command), the Maven artifact will have the following data:
 
@@ -194,7 +191,7 @@ To add a dependency on the Electrode Native container, in your mobile applicatio
 
 ```groovy
 dependencies {
-  compile('com.walmartlabs.ern:{mobile-app-name}-ern-container:{container-version}')
+  api 'com.walmartlabs.ern:{mobile-app-name}-ern-container:{container-version}'
   //...
 }
 ```
@@ -217,7 +214,7 @@ To add the container library as an Android module, add a GitHub publisher to the
 
 **Note** Do not edit the code of the container if you use this procedure even though adding the Container directly in your project makes its code editable. The container code should not be modified manually, as any custom modification will be lost the next time the container is generated.
 
-Be sure to include the module in your project `settings.gradle`, and add a `compile project` directive to your application module `build.gradle`.
+Be sure to include the module in your project `settings.gradle`, and add a `api project` directive to your application module `build.gradle`. Find more information on [declaring API and implementation dependencies](https://docs.gradle.org/current/userguide/java_library_plugin.html)
 
 #### iOS
 
