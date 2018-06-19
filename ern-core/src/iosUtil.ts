@@ -194,6 +194,7 @@ export async function fillProjectHull(
               'project.pbxproj'
             )
             const options = {
+              addAsTargetDependency: project.addAsTargetDependency,
               frameworks: project.frameworks,
               projectAbsolutePath,
               staticLibs: project.staticLibs,

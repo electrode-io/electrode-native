@@ -294,6 +294,12 @@ export interface PluginReplaceInFileDirective {
  */
 export interface IosPluginAddProjectDirective {
   /**
+   * Indicates whether the project should be added to the
+   * Target Dependencies instead of Link Binary With Libraries
+   * section of the target project Build Phases
+   */
+  addAsTargetDependency?: boolean
+  /**
    * Relative path (from plugin root) of the xcodeproj to add
    */
   path: string
