@@ -10,6 +10,7 @@ import {
   CauldronNativeAppVersion,
   ICauldronDocumentStore,
   ICauldronFileStore,
+  CauldronConfigLevel,
 } from './types'
 import upgradeScripts from './upgrade-scripts/scripts'
 
@@ -328,6 +329,35 @@ export default class CauldronApi {
     }
     const cauldron = await this.getCauldron()
     return cauldron.config
+  }
+
+  public async getConfigByLevel(
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<Map<CauldronConfigLevel, any>> {
+    const result = new Map()
+    if (descriptor) {
+      if (descriptor.platform) {
+        if (descriptor.version) {
+          const version = await this.getVersion(descriptor)
+          if (version.config) {
+            result.set(CauldronConfigLevel.NativeAppVersion, version.config)
+          }
+        }
+        const platform = await this.getPlatform(descriptor)
+        if (platform.config) {
+          result.set(CauldronConfigLevel.NativeAppPlatform, platform.config)
+        }
+      }
+      const app = await this.getNativeApplication(descriptor)
+      if (app.config) {
+        result.set(CauldronConfigLevel.NativeApp, app.config)
+      }
+    }
+    const cauldron = await this.getCauldron()
+    if (cauldron.config) {
+      result.set(CauldronConfigLevel.Top, cauldron.config)
+    }
+    return result
   }
 
   // =====================================================================================
