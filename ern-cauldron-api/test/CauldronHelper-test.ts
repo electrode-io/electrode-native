@@ -2470,6 +2470,51 @@ describe('CauldronHelper.js', () => {
       expect(result).not.undefined
       expect(result).to.have.property('containerGenerator')
     })
+
+    it('should return parent config if not native app version config', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const configObj = await cauldronHelper.getConfig(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(configObj).not.undefined
+      const config = jp.query(
+        fixtures.defaultCauldron,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].config'
+      )[0]
+      expect(configObj).eql(config)
+    })
+  })
+
+  describe('getConfigStrict', () => {
+    it('should return the native application version config', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getConfigStrict(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      )
+      expect(result).not.undefined
+      expect(result).to.have.property('test')
+    })
+
+    it('should return the native application platform config', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getConfigStrict(
+        NativeApplicationDescriptor.fromString('test:android')
+      )
+      expect(result).not.undefined
+      expect(result).to.have.property('containerGenerator')
+    })
+
+    it('should not return parent config if not native app version config', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const configObj = await cauldronHelper.getConfigStrict(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(configObj).undefined
+    })
   })
 
   describe('getConfigForKey', () => {
@@ -2477,8 +2522,8 @@ describe('CauldronHelper.js', () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       const result = await cauldronHelper.getConfigForKey(
-        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'test'
+        'test',
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
       )
       expect(result).not.undefined
     })
@@ -2487,10 +2532,53 @@ describe('CauldronHelper.js', () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       const result = await cauldronHelper.getConfigForKey(
-        NativeApplicationDescriptor.fromString('test:android'),
-        'containerGenerator'
+        'containerGenerator',
+        NativeApplicationDescriptor.fromString('test:android')
       )
       expect(result).not.undefined
+    })
+
+    it('should return parent config key if no native app version config key', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getConfigForKey(
+        'test',
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result).not.undefined
+      expect(result).equal('aValue')
+    })
+  })
+
+  describe('getConfigForKeyStrict', () => {
+    it('should return the native application version config key', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getConfigForKeyStrict(
+        'test',
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      )
+      expect(result).not.undefined
+    })
+
+    it('should return the native application platform config key', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getConfigForKeyStrict(
+        'containerGenerator',
+        NativeApplicationDescriptor.fromString('test:android')
+      )
+      expect(result).not.undefined
+    })
+
+    it('should not return parent config key if no native app version config key', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getConfigForKeyStrict(
+        'test',
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result).undefined
     })
   })
 
