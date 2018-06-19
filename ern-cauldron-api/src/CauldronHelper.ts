@@ -6,7 +6,11 @@ import {
   fileUtils,
   promptUtils,
 } from 'ern-core'
-import { CauldronCodePushMetadata, CauldronCodePushEntry } from './types'
+import {
+  CauldronCodePushMetadata,
+  CauldronCodePushEntry,
+  CauldronConfigLevel,
+} from './types'
 import CauldronApi from './CauldronApi'
 import semver from 'semver'
 
@@ -673,57 +677,131 @@ export class CauldronHelper {
   }
 
   public async getContainerGeneratorConfig(
-    napDescriptor: NativeApplicationDescriptor
-  ): Promise<any> {
-    return this.getConfigForKey(napDescriptor, 'containerGenerator')
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<any | void> {
+    return this.getConfigForKey('containerGenerator', descriptor)
   }
 
-  public async getManifestConfig(): Promise<any | void> {
-    const config = await this.cauldron.getConfig()
-    return config && config.manifest
+  public async getManifestConfig(
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<any | void> {
+    return this.getConfigForKey('manifest', descriptor)
   }
 
-  public async getBinaryStoreConfig(): Promise<any | void> {
-    const config = await this.cauldron.getConfig()
-    return config && config.binaryStore
+  public async getBinaryStoreConfig(
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<any | void> {
+    return this.getConfigForKey('binaryStore', descriptor)
   }
 
   public async getCodePushConfig(
     descriptor?: NativeApplicationDescriptor
   ): Promise<any | void> {
-    const config = await this.cauldron.getConfig(descriptor)
-    return config && config.codePush
+    return this.getConfigForKey('codePush', descriptor)
   }
 
+  /**
+   * Gets the configuration associated with a given Native Application Descriptor.
+   * If no configuration is found for the precise Native Application Descriptor, this
+   * function will bubble up the parents and return the closest existing parent configuration.
+   * For example if the Native Application Descriptor correspond to a native application version
+   * but no config is set for this native application version, the function will instead
+   * return the configuration of the parent native application platform (if any). If none
+   * it will continue up to the native application level and final top level cauldron config.
+   * Finally, if no configuration is found when reaching the top, it will return undefined.
+   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * If undefined, will return the top level Cauldron configuration.
+   */
   public async getConfig(
+    napDescriptor?: NativeApplicationDescriptor
+  ): Promise<any | void> {
+    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
+    return (
+      configByLevel.get(CauldronConfigLevel.NativeAppVersion) ||
+      configByLevel.get(CauldronConfigLevel.NativeAppPlatform) ||
+      configByLevel.get(CauldronConfigLevel.NativeApp) ||
+      configByLevel.get(CauldronConfigLevel.Top)
+    )
+  }
+
+  /**
+   * Gets the configuration strictly associated with a given Native Application Descriptor.
+   * At the difference of `getConfig` function, this function will not bubble up the parent
+   * chain to find a config. For example, if the Native Application Descriptor correspond to
+   * a native application version, but no config is set for this native application version,
+   * then the function will not attempt to crawl up the parent levels to find a config, but
+   * will instead directly return undefined.
+   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * If undefined, will return the top level Cauldron configuration.
+   */
+  public async getConfigStrict(
     napDescriptor: NativeApplicationDescriptor
   ): Promise<any | void> {
-    let config = await this.cauldron.getConfig(napDescriptor)
-    if (!config) {
-      config = await this.cauldron.getConfig(napDescriptor.withoutVersion())
-      if (!config) {
-        config = await this.cauldron.getConfig(
-          new NativeApplicationDescriptor(napDescriptor.name)
-        )
-      }
-    }
-    return config
+    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
+    return configByLevel.get(
+      this.getCauldronConfigLevelMatchingDescriptor(napDescriptor)
+    )
   }
 
+  /**
+   * Gets the config associated with a specific key
+   * It will crawl up the parent config chain if needed.
+   * @param key The configuration key
+   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * If undefined, will look in the top level Cauldron configuration.
+   */
   public async getConfigForKey(
-    napDescriptor: NativeApplicationDescriptor,
-    key: string
-  ): Promise<any> {
-    let config = await this.cauldron.getConfig(napDescriptor)
-    if (!config || !config.hasOwnProperty(key)) {
-      config = await this.cauldron.getConfig(napDescriptor.withoutVersion())
-      if (!config || !config.hasOwnProperty(key)) {
-        config = await this.cauldron.getConfig(
-          new NativeApplicationDescriptor(napDescriptor.name)
-        )
-      }
+    key: string,
+    napDescriptor?: NativeApplicationDescriptor
+  ): Promise<any | void> {
+    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
+    return (
+      (configByLevel.has(CauldronConfigLevel.NativeAppVersion) &&
+        configByLevel.get(CauldronConfigLevel.NativeAppVersion)[key]) ||
+      (configByLevel.has(CauldronConfigLevel.NativeAppPlatform) &&
+        configByLevel.get(CauldronConfigLevel.NativeAppPlatform)[key]) ||
+      (configByLevel.has(CauldronConfigLevel.NativeApp) &&
+        configByLevel.get(CauldronConfigLevel.NativeApp)[key]) ||
+      (configByLevel.has(CauldronConfigLevel.Top) &&
+        configByLevel.get(CauldronConfigLevel.Top)[key])
+    )
+  }
+
+  /**
+   * Gets the config associated with a specific key
+   * At the difference of the `getConfigForKey` function, this function will not
+   * try to find a matching config / key in the parent config levels.
+   * @param key The configuration key
+   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * If undefined, will look in the top level Cauldron configuration.
+   */
+  public async getConfigForKeyStrict(
+    key: string,
+    napDescriptor?: NativeApplicationDescriptor
+  ): Promise<any | void> {
+    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
+    const cauldronConfigLevel = this.getCauldronConfigLevelMatchingDescriptor(
+      napDescriptor
+    )
+    return (
+      (configByLevel.has(cauldronConfigLevel) &&
+        configByLevel.get(cauldronConfigLevel)[key]) ||
+      undefined
+    )
+  }
+
+  public getCauldronConfigLevelMatchingDescriptor(
+    napDescriptor?: NativeApplicationDescriptor
+  ) {
+    if (!napDescriptor) {
+      return CauldronConfigLevel.Top
+    } else if (napDescriptor.version) {
+      return CauldronConfigLevel.NativeAppVersion
+    } else if (napDescriptor.platform) {
+      return CauldronConfigLevel.NativeAppPlatform
+    } else {
+      return CauldronConfigLevel.NativeApp
     }
-    return config ? config[key] : undefined
   }
 
   public async updateNativeAppIsReleased(
@@ -743,6 +821,7 @@ export class CauldronHelper {
     )
     if (
       semver.valid(containerVersion) &&
+      topLevelContainerVersion &&
       semver.valid(topLevelContainerVersion) &&
       semver.gt(containerVersion, topLevelContainerVersion)
     ) {
