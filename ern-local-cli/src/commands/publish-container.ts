@@ -1,13 +1,12 @@
-import { utils as coreUtils } from 'ern-core'
+import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
-import { getContainerPlatform } from 'ern-container-gen'
 import utils from '../lib/utils'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
 import { Argv } from 'yargs'
 
-export const command = 'publish-container <containerPath>'
+export const command = 'publish-container'
 export const desc = 'Publish a local Container'
 
 export const builder = (argv: Argv) => {
@@ -18,10 +17,20 @@ export const builder = (argv: Argv) => {
       describe: 'Container version to use for publication',
       type: 'string',
     })
+    .option('containerPath', {
+      describe: 'Local path to the Container to publish',
+      type: 'string',
+    })
     .option('publisher', {
       alias: 'p',
       demandOption: true,
       describe: 'The publisher to use',
+      type: 'string',
+    })
+    .option('platform', {
+      choices: ['android', 'ios'],
+      demandOption: true,
+      describe: 'The native platform of the Container',
       type: 'string',
     })
     .option('url', {
@@ -43,17 +52,28 @@ export const handler = async ({
   publisher,
   url,
   config,
+  platform,
 }: {
-  containerPath: string
+  containerPath?: string
   version: string
   publisher: string
   url: string
   config?: string
+  platform: NativePlatform
 }) => {
   try {
     await utils.logErrorAndExitIfNotSatisfied({
       isValidContainerVersion: { containerVersion: version },
     })
+
+    if (!containerPath) {
+      containerPath = path.join(
+        Platform.rootDirectory,
+        'containergen',
+        'out',
+        platform
+      )
+    }
 
     // Container path validation
     if (!fs.existsSync(containerPath)) {
@@ -73,7 +93,7 @@ export const handler = async ({
       containerPath,
       containerVersion: version,
       extra: config ? JSON.parse(config) : undefined,
-      platform: getContainerPlatform(containerPath),
+      platform,
       publisher,
       url,
     })
