@@ -18,7 +18,9 @@ import {
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { generateRunnerProject, regenerateRunnerConfig } from 'ern-runner-gen'
+import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
+import { AndroidRunnerGenerator } from 'ern-runner-gen-android'
+import { IosRunnerGenerator } from 'ern-runner-gen-ios'
 import { runLocalContainerGen, runCauldronContainerGen } from './publication'
 import { spawn, spawnSync } from 'child_process'
 import _ from 'lodash'
@@ -807,31 +809,29 @@ async function runMiniApp(
 
   const pathToRunner = path.join(cwd, platform)
 
+  const runnerGeneratorConfig: RunnerGeneratorConfig = {
+    extra: {
+      containerGenWorkingDir: Platform.containerGenDirectory,
+    },
+    mainMiniAppName: entryMiniAppName,
+    outDir: pathToRunner,
+    reactNativeDevSupportEnabled: dev,
+    reactNativePackagerHost: host,
+    reactNativePackagerPort: port,
+    targetPlatform: platform,
+  }
+
   if (!fs.existsSync(pathToRunner)) {
     shell.mkdir('-p', pathToRunner)
     await spin(
       `Generating ${platform} Runner project`,
-      generateRunnerProject(
-        platform,
-        pathToRunner,
-        path.join(Platform.rootDirectory, 'containergen'),
-        entryMiniAppName,
-        { reactNativeDevSupportEnabled: dev }
-      )
+      getRunnerGeneratorForPlatform(platform).generate(runnerGeneratorConfig)
     )
   } else {
     await spin(
       `Regenerating ${platform} Runner Configuration`,
-      regenerateRunnerConfig(
-        platform,
-        pathToRunner,
-        path.join(Platform.rootDirectory, 'containergen'),
-        entryMiniAppName,
-        {
-          host,
-          port,
-          reactNativeDevSupportEnabled: dev,
-        }
+      getRunnerGeneratorForPlatform(platform).regenerateRunnerConfig(
+        runnerGeneratorConfig
       )
     )
   }
@@ -842,6 +842,17 @@ async function runMiniApp(
     platform,
     port,
   })
+}
+
+function getRunnerGeneratorForPlatform(platform: string): RunnerGenerator {
+  switch (platform) {
+    case 'android':
+      return new AndroidRunnerGenerator()
+    case 'ios':
+      return new IosRunnerGenerator()
+    default:
+      throw new Error(`Unsupported platform : ${platform}`)
+  }
 }
 
 async function generateContainerForRunner(
