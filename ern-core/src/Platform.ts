@@ -41,6 +41,10 @@ export default class Platform {
     return path.join(this.rootDirectory, 'container-publishers-cache')
   }
 
+  static get containerGenDirectory(): string {
+    return path.join(this.rootDirectory, 'containergen')
+  }
+
   static get latestVersion(): string {
     return this.versions.slice(-1)[0]
   }
