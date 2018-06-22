@@ -628,7 +628,10 @@ async function createZippedBundle({
 }
 
 function epilog({ command }: { command: string }) {
-  const rootUrl = 'https://electrode.gitbooks.io/electrode-native/content/cli'
+  const version = `v${semver.major(Platform.currentVersion)}.${semver.minor(
+    Platform.currentVersion
+  )}`
+  const rootUrl = `https://electrode.gitbooks.io/electrode-native/content/v/${version}/cli`
   const commandWithoutOptions = command.split(' ')[0]
   const idx = _.indexOf(process.argv, commandWithoutOptions)
   let commandPath = _.slice(process.argv, 2, idx).join('/')
