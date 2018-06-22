@@ -8,13 +8,13 @@ import path from 'path'
 import os from 'os'
 import semver from 'semver'
 
-const HOME_DIRECTORY = os.homedir()
+const ROOT_DIRECTORY = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
 // Name of ern local client NPM package
 const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
 export default class Platform {
   static get rootDirectory(): string {
-    return path.join(HOME_DIRECTORY, '.ern')
+    return ROOT_DIRECTORY
   }
 
   static get cauldronDirectory(): string {
