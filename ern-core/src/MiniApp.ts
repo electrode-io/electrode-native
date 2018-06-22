@@ -40,11 +40,7 @@ export class MiniApp {
   }
 
   public static fromPath(fsPath: string) {
-    return new MiniApp(
-      fsPath,
-      true /* isLocal */,
-      PackagePath.fromString(fsPath)
-    )
+    return new MiniApp(fsPath, PackagePath.fromString(fsPath))
   }
 
   public static existInPath(p) {
@@ -65,7 +61,7 @@ export class MiniApp {
       tmpMiniAppPath
     )
     shell.rm('-rf', path.join(tmpMiniAppPath, 'node_modules', packageName, '*'))
-    return new MiniApp(tmpMiniAppPath, false /* isLocal */, packagePath)
+    return new MiniApp(tmpMiniAppPath, packagePath)
   }
 
   public static async create(
@@ -166,12 +162,10 @@ export class MiniApp {
 
   public readonly path: string
   public readonly packageJson: any
-  public readonly isLocal: boolean
   public readonly packagePath: PackagePath
 
-  constructor(miniAppPath: string, isLocal: boolean, packagePath: PackagePath) {
+  constructor(miniAppPath: string, packagePath: PackagePath) {
     this.path = miniAppPath
-    this.isLocal = isLocal
 
     const packageJsonPath = path.join(miniAppPath, 'package.json')
     if (!fs.existsSync(packageJsonPath)) {
