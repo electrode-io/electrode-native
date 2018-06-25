@@ -31,6 +31,16 @@ const availableUserConfigKeys = [
     name: 'retain-tmp-dir',
     values: [true, false],
   },
+  {
+    desc: 'Enable package cache [EXPERIMENTAL]',
+    name: 'package-cache-enabled',
+    values: [true, false],
+  },
+  {
+    desc: 'Max package cache size in bytes',
+    name: 'max-package-cache-size',
+    values: ['number'],
+  },
 ]
 
 const userConfigSchemaString = () =>
@@ -61,8 +71,12 @@ export const handler = ({ key, value }: { key: string; value?: string }) => {
       )
     }
     if (value) {
-      const valueToset =
-        value === 'true' ? true : value === 'false' ? false : value
+      let valueToset: any = value
+      if (!isNaN(+value)) {
+        valueToset = +value
+      } else {
+        valueToset = value === 'true' ? true : value === 'false' ? false : value
+      }
 
       ernConfig.setValue(key, valueToset)
       log.info(`${key} set to ${ernConfig.getValue(key)}`)
