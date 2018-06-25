@@ -24,6 +24,7 @@ import {
   readPackageJsonSync,
   writePackageJson,
 } from './packageJsonFileUtils'
+import { packageCache } from './packageCache'
 
 const npmIgnoreContent = `ios/
 android/
@@ -50,18 +51,31 @@ export class MiniApp {
   }
 
   public static async fromPackagePath(packagePath: PackagePath) {
-    const tmpMiniAppPath = createTmpDir()
-    shell.cd(tmpMiniAppPath)
-    await yarn.add(packagePath)
-    const packageJson = await readPackageJson('.')
-    const packageName = Object.keys(packageJson.dependencies)[0]
-    shell.rm(path.join(tmpMiniAppPath, 'package.json'))
-    shell.mv(
-      path.join(tmpMiniAppPath, 'node_modules', packageName, '*'),
-      tmpMiniAppPath
-    )
-    shell.rm('-rf', path.join(tmpMiniAppPath, 'node_modules', packageName, '*'))
-    return new MiniApp(tmpMiniAppPath, packagePath)
+    let fsPackagePath
+    if (!packagePath.isFilePath && config.getValue('package-cache-enabled')) {
+      if (!(await packageCache.isInCache(packagePath))) {
+        fsPackagePath = await packageCache.addToCache(packagePath)
+      } else {
+        fsPackagePath = await packageCache.getObjectCachePath(packagePath)
+        log.error(`path is ${fsPackagePath}`)
+      }
+    } else {
+      fsPackagePath = createTmpDir()
+      shell.cd(fsPackagePath)
+      await yarn.add(packagePath)
+      const packageJson = await readPackageJson('.')
+      const packageName = Object.keys(packageJson.dependencies)[0]
+      shell.rm(path.join(fsPackagePath, 'package.json'))
+      shell.mv(
+        path.join(fsPackagePath, 'node_modules', packageName, '*'),
+        fsPackagePath
+      )
+      shell.rm(
+        '-rf',
+        path.join(fsPackagePath, 'node_modules', packageName, '*')
+      )
+    }
+    return new MiniApp(fsPackagePath, packagePath)
   }
 
   public static async create(

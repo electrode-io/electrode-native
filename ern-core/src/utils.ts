@@ -8,7 +8,9 @@ import * as ModuleType from './ModuleTypes'
 import path from 'path'
 import fs from 'fs'
 import log from './log'
+import config from './config'
 import camelCase = require('lodash/camelCase')
+import { packageCache } from './packageCache'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -94,18 +96,16 @@ export function getDefaultPackageNameForCamelCaseString(
   const splitArray = splitCamelCaseString(moduleName)
   switch (moduleType) {
     case ModuleType.MINIAPP:
-      return _.filter(
-        splitArray,
-        token => !['mini', 'app'].includes(token)
-      ).join('-')
+      return _
+        .filter(splitArray, token => !['mini', 'app'].includes(token))
+        .join('-')
     case ModuleType.API:
       return _.filter(splitArray, token => !['api'].includes(token)).join('-')
     case ModuleType.JS_API_IMPL:
     case ModuleType.NATIVE_API_IMPL:
-      return _.filter(
-        splitArray,
-        token => !['api', 'impl'].includes(token)
-      ).join('-')
+      return _
+        .filter(splitArray, token => !['api', 'impl'].includes(token))
+        .join('-')
     default:
       return splitArray.join('-')
   }
@@ -269,7 +269,7 @@ export function isValidElectrodeNativeModuleName(name: string): boolean {
  */
 export async function downloadPluginSource(pluginOrigin: any): Promise<string> {
   const downloadPath = getDownloadedPluginPath(pluginOrigin)
-  const absolutePluginOutPath = path.join(process.cwd(), downloadPath)
+  let absolutePluginOutPath = path.join(process.cwd(), downloadPath)
 
   if (!fs.existsSync(absolutePluginOutPath)) {
     if (pluginOrigin.type === 'npm') {
@@ -277,7 +277,18 @@ export async function downloadPluginSource(pluginOrigin: any): Promise<string> {
         scope: pluginOrigin.scope,
         version: pluginOrigin.version,
       })
-      await yarn.add(PackagePath.fromString(dependency.toString()))
+      const p = PackagePath.fromString(dependency.toString())
+      if (config.getValue('package-cache-enabled')) {
+        if (!(await packageCache.isInCache(p))) {
+          absolutePluginOutPath = await packageCache.addToCache(p)
+        } else {
+          absolutePluginOutPath = (await packageCache.getObjectCachePath(
+            p
+          )) as string
+        }
+      } else {
+        await yarn.add(PackagePath.fromString(dependency.toString()))
+      }
     } else if (pluginOrigin.type === 'git') {
       if (pluginOrigin.version) {
         await gitCli().cloneAsync(pluginOrigin.url, {
@@ -366,6 +377,6 @@ export async function extractJsApiImplementations(plugins: PackagePath[]) {
 export function logErrorAndExitProcess(e: Error, code: number = 1) {
   // console.log(`logErrorAndExitProcess: log level is ${log.level}`)
   log.error(`An error occurred: ${e.message}`)
-  // log.debug(e.stack)
+  log.debug(e.stack!)
   process.exit(code)
 }

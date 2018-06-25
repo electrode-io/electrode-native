@@ -118,26 +118,6 @@ describe('FsCache', () => {
       await sut.addToCache('AString')
       assert(await sut.isInCache('AString'))
     })
-
-    it('should remove least recently accessed object from cache once hitting max cache size', async () => {
-      const sut = new FsCache<string>({
-        addObjectToDirectory: async (obj: string, dirPath: string) => {
-          await writeFile(
-            path.join(dirPath, 'filename'),
-            _.fill(Array(500), 0).join('')
-          )
-        },
-        maxCacheSize: 1100,
-        objectToId: (obj: string) => obj,
-        rootCachePath: testRootCachePath,
-      })
-      await sut.addToCache('AString')
-      await sut.addToCache('AnotherString')
-      await sut.addToCache('YetAnoterString')
-      assert(await sut.isInCache('YetAnoterString'))
-      assert(!(await sut.isInCache('AnotherString')))
-      assert(!(await sut.isInCache('AString')))
-    })
   })
 
   describe('getObjectCachePath', () => {
