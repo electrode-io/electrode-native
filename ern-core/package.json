@@ -50,6 +50,7 @@
     "console-log-level": "^1.4.0",
     "decompress-zip": "^0.3.1",
     "fs-readdir-recursive": "^1.1.0",
+    "get-folder-size":"^2.0.0",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.10",
     "mustache": "^2.3.0",
@@ -61,6 +62,7 @@
     "semver": "^5.5.0",
     "simple-git": "^1.95.0",
     "tmp": "^0.0.33",
+    "uuid":"^3.2.1",
     "xcode-ern": "^1.0.3",
     "yarn": "^1.7.0"
   },
