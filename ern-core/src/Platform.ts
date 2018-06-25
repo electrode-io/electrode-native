@@ -17,6 +17,10 @@ export default class Platform {
     return ROOT_DIRECTORY
   }
 
+  static get packagesCacheDirectory(): string {
+    return path.join(this.rootDirectory, 'packages-cache')
+  }
+
   static get cauldronDirectory(): string {
     return path.join(this.rootDirectory, 'cauldron')
   }

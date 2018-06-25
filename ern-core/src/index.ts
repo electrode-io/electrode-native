@@ -77,3 +77,4 @@ export { ManifestOverrideConfig } from './Manifest'
 
 export { NativePlatform } from './NativePlatform'
 export { FsCache } from './FsCache'
+export { packageCache } from './packageCache'
