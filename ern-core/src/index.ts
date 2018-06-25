@@ -76,3 +76,4 @@ export { BundlingResult } from './ReactNativeCli'
 export { ManifestOverrideConfig } from './Manifest'
 
 export { NativePlatform } from './NativePlatform'
+export { FsCache } from './FsCache'
