@@ -631,7 +631,7 @@ function epilog({ command }: { command: string }) {
   const version = `v${semver.major(Platform.currentVersion)}.${semver.minor(
     Platform.currentVersion
   )}`
-  const rootUrl = `https://electrode.gitbooks.io/electrode-native/content/v/${version}/cli`
+  const rootUrl = `https://native.electrode.io/v/${version}/cli-commands`
   const commandWithoutOptions = command.split(' ')[0]
   const idx = _.indexOf(process.argv, commandWithoutOptions)
   let commandPath = _.slice(process.argv, 2, idx).join('/')
