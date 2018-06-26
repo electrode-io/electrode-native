@@ -5,12 +5,9 @@
   "description": "Electrode Native Documentation",
   "plugins": [
     "theme-api",
-    "edit-link",
     "prism",
     "github",
-    "versions",
     "-highlight",
-    "scripts",
     "copy-code-button"
   ],
   "pluginsConfig": {
@@ -31,99 +28,8 @@
       ],
       "split": false
     },
-    "edit-link": {
-      "base":
-        "https://github.com/electrode-io/electrode-native/tree/master/docs",
-      "label": "Edit This Page"
-    },
     "github": {
       "url": "https://github.com/electrode-io/electrode-native"
-    },
-    "versions": {
-      "gitbookConfigURL":
-        "https://raw.githubusercontent.com/electrode-io/electrode-native/master/book.json",
-      "options": [
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.7/",
-          "text": "Electrode Native [v0.7]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.8/",
-          "text": "Electrode Native [v0.8]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.9/",
-          "text": "Electrode Native [v0.9]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.10/",
-          "text": "Electrode Native [v0.10]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.11/",
-          "text": "Electrode Native [v0.11]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.12/",
-          "text": "Electrode Native [v0.12]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.13/",
-          "text": "Electrode Native [v0.13]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.14/",
-          "text": "Electrode Native [v0.14]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.15/",
-          "text": "Electrode Native [v0.15]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.16/",
-          "text": "Electrode Native [v0.16]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.17/",
-          "text": "Electrode Native [v0.17]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.18/",
-          "text": "Electrode Native [v0.18]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.19/",
-          "text": "Electrode Native [v0.19]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/v0.20/",
-          "text": "Electrode Native [v0.20]"
-        },
-        {
-          "value":
-            "https://electrode.gitbooks.io/electrode-native/content/v/master/",
-          "text": "Electrode Native [master]",
-          "selected": true
-        }
-      ]
-    },
-    "scripts-styles": {
-      "js": ["./js/gitbook.js"],
-      "css": ["./styles/website.css"]
     }
   }
 }
