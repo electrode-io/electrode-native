@@ -150,6 +150,11 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
             rootView.startReactApplication(ElectrodeReactContainer.getReactInstanceManager(), applicationName, props);
             mReactRootViews.put(applicationName, rootView);
         }
+        {{#RN_VERSION_GTE_45}} 
+        else {
+            rootView.setAppProperties(props);
+        }
+        {{/RN_VERSION_GTE_45}}
 
         return rootView;
     }
