@@ -3,29 +3,36 @@ const path = require('path')
 const tmp = require('tmp')
 const inquirer = require('inquirer')
 const run = require('./utils/run')
+const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
 
 const runAll = process.argv.includes('--all')
 
 const pathToSystemTests = path.join(__dirname, 'tests')
 const testsSourceFiles = fs.readdirSync(pathToSystemTests)
 
-if (runAll) {
-  runAllTests()
-} else {
-  inquirer
-    .prompt([
-      {
-        type: 'checkbox',
-        name: 'userSelectedTests',
-        message: 'Choose one or more tests to run',
-        choices: testsSourceFiles,
-      },
-    ])
-    .then(answers => {
-      for (const userSelectedTestSourceFile of answers.userSelectedTests) {
-        runTest(userSelectedTestSourceFile)
-      }
-    })
+try {
+  if (runAll) {
+    runAllTests()
+  } else {
+    inquirer
+      .prompt([
+        {
+          type: 'checkbox',
+          name: 'userSelectedTests',
+          message: 'Choose one or more tests to run',
+          choices: testsSourceFiles,
+        },
+      ])
+      .then(answers => {
+        for (const userSelectedTestSourceFile of answers.userSelectedTests) {
+          runTest(userSelectedTestSourceFile)
+        }
+      })
+  }
+} finally {
+  if (cauldronRepoBeforeRun) {
+    run('ern cauldron repo use ${cauldronRepoBeforeRun}')
+  }
 }
 
 function runAllTests() {
