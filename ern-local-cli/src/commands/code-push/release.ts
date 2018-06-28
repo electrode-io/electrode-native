@@ -118,6 +118,10 @@ export const handler = async ({
     }
 
     await utils.logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
       checkIfCodePushOptionsAreValid: {
         descriptors,
         semVerDescriptor,
