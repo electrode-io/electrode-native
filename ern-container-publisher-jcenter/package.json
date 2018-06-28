@@ -42,8 +42,8 @@
   },
   "copyFiles": [
     {
-      "source": "src/publishers/supplements",
-      "dest": "dist/publishers"
+      "source": "src/supplements",
+      "dest": "dist/supplements"
     }
   ],
   "license": "Apache-2.0",
