@@ -159,14 +159,14 @@ function firstTimeInstall() {
         )
       } else {
         spinner.fail(
-          `Something went wrong :( Run the command again with --debug flag for more info.`
+          'Something went wrong :( Run the command again with --debug flag for more info.'
         )
         removeErnDirectory()
       }
     })
   } catch (e) {
     console.log(
-      `Something went wrong :( Run the command again with --debug flag for more info.`
+      'Something went wrong :( Run the command again with --debug flag for more info.'
     )
     removeErnDirectory()
   }
@@ -176,7 +176,7 @@ function firstTimeInstall() {
 // Done if something' gone wrong during install.
 // Don't want to leave the .ern global directory hanging around in a bad state
 function removeErnDirectory() {
-  console.log(`Performing cleanup. Please wait for the process to exit.`)
+  console.log('Performing cleanup. Please wait for the process to exit.')
   process.chdir(INITIAL_PROCESS_CWD)
   if (IS_WINDOWS_PLATFORM) {
     execSync(`rd /s /q ${ERN_PATH}`)
