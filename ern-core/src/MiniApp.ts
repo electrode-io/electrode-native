@@ -291,6 +291,9 @@ in the package.json of ${packageJson.name} MiniApp
     dependency: PackagePath,
     { dev, peer }: { dev?: boolean; peer?: boolean } = {}
   ): Promise<PackagePath | void> {
+    if (!dependency) {
+      return log.error('dependency cant be null')
+    }
     if (dev || peer) {
       // Dependency is a devDependency or peerDependency
       // In that case we don't perform any checks at all (for now)
@@ -351,15 +354,14 @@ in the package.json of ${packageJson.name} MiniApp
             } else {
               // This is a dependency which is not native itself but contains a native dependency as  transitive one (example 'native-base')
               // If ern platform contains entry in the manifest but dependency versions do not align, report error
-              const transitiveDep = await manifest.getNativeDependency(
+              const manifestDep = await manifest.getNativeDependency(
                 new PackagePath(dep.basePath)
               )
-              if (
-                transitiveDep &&
-                !dep.same(transitiveDep, { ignoreVersion: false })
-              ) {
-                return log.error(
-                  `${basePathDependency.toString()} was not added to the MiniApp. Transitive dependency ${dep.toString()} in ${basePathDependency.toString()} differs with manifest version which is ${transitiveDep.toString()}`
+              if (manifestDep) {
+                return this.validateManifestConformingDependency(
+                  dep,
+                  manifestDep,
+                  `[Transitive Dependency] ${dep.toString()} was not added to the MiniApp`
                 )
               }
             }
@@ -369,25 +371,21 @@ in the package.json of ${packageJson.name} MiniApp
         log.debug(
           `Dependency:${dependency.toString()} defined in manifest, performing version match`
         )
-        if (
-          dependency &&
-          !dependency.same(manifestDependency, { ignoreVersion: false })
-        ) {
-          return log.error(
-            `${basePathDependency.toString()} was not added to the MiniApp. Transitive dependency ${dependency.toString()} in ${basePathDependency.toString()} differs with manifest version which is ${manifestDependency.toString()}`
-          )
-        }
-      }
-      if (dependency) {
-        process.chdir(this.path)
-        await spin(
-          `Adding ${dependency.toString()} to ${this.name}`,
-          yarn.add(PackagePath.fromString(dependency.toString()))
+        // If the dependency & manifest version differ, log error and exit
+        return this.validateManifestConformingDependency(
+          dependency,
+          manifestDependency,
+          `${dependency.toString()} was not added to the MiniApp`
         )
-        return dependency
-      } else {
-        log.debug('No final dependency? expected?')
       }
+
+      // Checks have passed add the dependency
+      process.chdir(this.path)
+      await spin(
+        `Adding ${dependency.toString()} to ${this.name}`,
+        yarn.add(PackagePath.fromString(dependency.toString()))
+      )
+      return dependency
     }
   }
 
@@ -534,6 +532,21 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       await spin(
         `Adding ${dependency.toString()} to MiniApp peerDependencies`,
         yarn.add(depPath, { peer: true })
+      )
+    }
+  }
+
+  private validateManifestConformingDependency(
+    dependency: PackagePath,
+    manifestDependency: PackagePath,
+    errorMessageSuffix: string
+  ) {
+    if (
+      dependency &&
+      !dependency.same(manifestDependency, { ignoreVersion: false })
+    ) {
+      return log.error(
+        `${errorMessageSuffix} Dependency ${dependency.toString()} differs with manifest version which is ${manifestDependency.toString()}`
       )
     }
   }
