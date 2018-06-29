@@ -289,26 +289,13 @@ in the package.json of ${packageJson.name} MiniApp
 
   public async addDependency(
     dependency: PackagePath,
-    { dev, peer }: { dev?: boolean; peer?: boolean } = {},
-    addedDependencies: string[] = []
+    { dev, peer }: { dev?: boolean; peer?: boolean } = {}
   ): Promise<PackagePath | void> {
     if (dev || peer) {
       // Dependency is a devDependency or peerDependency
       // In that case we don't perform any checks at all (for now)
-      const devDependencyPath = PackagePath.fromString(dependency.toString())
-      if (dev) {
-        await spin(
-          `Adding ${dependency.toString()} to MiniApp devDependencies`,
-          yarn.add(devDependencyPath, { dev: true })
-        )
-      } else {
-        await spin(
-          `Adding ${dependency.toString()} to MiniApp peerDependencies`,
-          yarn.add(devDependencyPath, { peer: true })
-        )
-      }
+      await this.addDevOrPeerDependency(dependency, dev)
     } else {
-      let finalDependency
       // Dependency is not a development dependency
       // In that case we need to perform additional checks and operations
       const basePathDependency = new PackagePath(dependency.basePath)
@@ -336,7 +323,6 @@ in the package.json of ${packageJson.name} MiniApp
         if (_.isEmpty(nativeDependencies.all)) {
           log.debug('Pure JS dependency')
           // This is a pure JS dependency. Not much to do here -yet-
-          finalDependency = basePathDependency
         } else if (nativeDependencies.all.length >= 1) {
           log.debug(
             `One or more native dependencies identified: ${JSON.stringify(
@@ -351,11 +337,10 @@ in the package.json of ${packageJson.name} MiniApp
               })
             ) {
               if (await utils.isDependencyApiOrApiImpl(dep.basePath)) {
-                log.debug(`This is an api or api-impl`)
+                log.debug(`${dep.toString()} is an api or api-impl`)
                 log.warn(
                   `${dep.toString()} is not declared in the Manifest. You might consider adding it.`
                 )
-                finalDependency = dep
               } else {
                 // This is a third party native dependency. If it's not in the master manifest,
                 // then it means that it is not supported by the platform yet. Fail.
@@ -364,18 +349,17 @@ in the package.json of ${packageJson.name} MiniApp
                 )
               }
             } else {
-              // This is a dependency which is not native itself but contains a native dependency as as transitive one (example 'native-base')
-              // Recurse with this native dependency
+              // This is a dependency which is not native itself but contains a native dependency as  transitive one (example 'native-base')
+              // If ern platform contains entry in the manifest but dependency versions do not align, report error
+              const transitiveDep = await manifest.getNativeDependency(
+                new PackagePath(dep.basePath)
+              )
               if (
-                !addedDependencies.includes(dep.basePath) &&
-                !(await this.addDependency(
-                  dep,
-                  { dev: false, peer: false },
-                  addedDependencies
-                ))
+                transitiveDep &&
+                !dep.same(transitiveDep, { ignoreVersion: false })
               ) {
                 return log.error(
-                  `${dep.toString()} was not added to the MiniApp.`
+                  `${basePathDependency.toString()} was not added to the MiniApp. Transitive dependency ${dep.toString()} in ${basePathDependency.toString()} differs with manifest version which is ${transitiveDep.toString()}`
                 )
               }
             }
@@ -385,25 +369,24 @@ in the package.json of ${packageJson.name} MiniApp
         log.debug(
           `Dependency:${dependency.toString()} defined in manifest, performing version match`
         )
-        const d = this.manifestConformingDependency(
-          dependency,
-          manifestDependency
-        )
-        if (d) {
-          finalDependency = d
+        if (
+          dependency &&
+          !dependency.same(manifestDependency, { ignoreVersion: false })
+        ) {
+          return log.error(
+            `${basePathDependency.toString()} was not added to the MiniApp. Transitive dependency ${dependency.toString()} in ${basePathDependency.toString()} differs with manifest version which is ${manifestDependency.toString()}`
+          )
         }
       }
-
-      if (finalDependency) {
+      if (dependency) {
         process.chdir(this.path)
         await spin(
-          `Adding ${finalDependency.toString()} to ${this.name}`,
-          yarn.add(PackagePath.fromString(finalDependency.toString()))
+          `Adding ${dependency.toString()} to ${this.name}`,
+          yarn.add(PackagePath.fromString(dependency.toString()))
         )
-        addedDependencies.push(finalDependency.basePath)
-        return finalDependency
+        return dependency
       } else {
-        log.debug(`No final dependency? expected?`)
+        log.debug('No final dependency? expected?')
       }
     }
   }
@@ -534,6 +517,24 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       log.info(`${this.packageJson.name} link was removed`)
     } else {
       return log.warn(`No link exists for ${this.packageJson.name}`)
+    }
+  }
+
+  private async addDevOrPeerDependency(
+    dependency: PackagePath,
+    dev: boolean | undefined
+  ) {
+    const depPath = PackagePath.fromString(dependency.toString())
+    if (dev) {
+      await spin(
+        `Adding ${dependency.toString()} to MiniApp devDependencies`,
+        yarn.add(depPath, { dev: true })
+      )
+    } else {
+      await spin(
+        `Adding ${dependency.toString()} to MiniApp peerDependencies`,
+        yarn.add(depPath, { peer: true })
+      )
     }
   }
 }
