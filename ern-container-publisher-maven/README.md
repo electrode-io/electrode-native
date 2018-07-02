@@ -50,7 +50,7 @@ This will result in the following publisher entry in Cauldron :
 
 ```js
 import MavenPublisher from 'ern-container-publisher-maven'
-const publisher = new JCenterPublisher()
+const publisher = new MavenPublisher()
 publisher.publish(
   {
     /* Local file system path to the Container */
