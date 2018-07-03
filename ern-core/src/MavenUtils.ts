@@ -42,7 +42,15 @@ export default class MavenUtils {
     } else if (repoType === 'http') {
       mavenUser = mavenUser ? `'${mavenUser}'` : 'mavenUser'
       mavenPassword = mavenPassword ? `'${mavenPassword}'` : 'mavenPassword'
-      return `repository(url: "${mavenRepositoryUrl}") { authentication(userName: ${mavenUser}, password: ${mavenPassword}) }`
+      let authBlock = ''
+      if (mavenUser && mavenPassword) {
+        authBlock = `{ authentication(userName: ${mavenUser}, password: ${mavenPassword}) }`
+      } else if (mavenUser) {
+        authBlock = `{ authentication(userName: ${mavenUser}) }`
+      } else if (mavenPassword) {
+        authBlock = `{ authentication(password: ${mavenPassword}) }`
+      }
+      return `repository(url: "${mavenRepositoryUrl}") ${authBlock}`
     }
   }
 
