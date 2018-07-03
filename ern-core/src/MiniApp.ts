@@ -57,7 +57,6 @@ export class MiniApp {
         fsPackagePath = await packageCache.addToCache(packagePath)
       } else {
         fsPackagePath = await packageCache.getObjectCachePath(packagePath)
-        log.error(`path is ${fsPackagePath}`)
       }
     } else {
       fsPackagePath = createTmpDir()
