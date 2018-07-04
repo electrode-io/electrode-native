@@ -30,7 +30,7 @@ $ ern publish-container [pathToContainer] -p maven -v [containerVersion] -u [mav
 To automatically publish the Cauldron generated Containers of a target native application and platform, the `ern cauldron add publisher` command can be used as follow :
 
 ```bash
-$ ern cauldron add publisher -p maven -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]"}, "mavenUser":"[mavenUser]", "mavenPassword": "[mavenPassword]"}' 
+$ ern cauldron add publisher -p maven -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]", "mavenUser":"[mavenUser]", "mavenPassword": "[mavenPassword]"}' 
 ```
 
 This will result in the following publisher entry in Cauldron :
