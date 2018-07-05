@@ -5,7 +5,21 @@
 // https://github.com/dempseyatgithub/BuildSettingExtractor
 //
 
-#include "ElectrodeContainer-Shared.xcconfig"
-
+CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
+CODE_SIGN_IDENTITY = 
+DEFINES_MODULE = YES
+DYLIB_COMPATIBILITY_VERSION = 1
+DYLIB_CURRENT_VERSION = 1
+DYLIB_INSTALL_NAME_BASE = @rpath
+FRAMEWORK_SEARCH_PATHS = $(inherited)
 HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/** $(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**
+INFOPLIST_FILE = ElectrodeContainer/Info.plist
+INSTALL_PATH = $(LOCAL_LIBRARY_DIR)/Frameworks
 IPHONEOS_DEPLOYMENT_TARGET = 9.0
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
+LIBRARY_SEARCH_PATHS = $(inherited) $(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/** $(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**
+OTHER_LDFLAGS = -ObjC -lc++ -lz
+PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer
+PRODUCT_NAME = $(TARGET_NAME)
+SKIP_INSTALL = YES
+SWIFT_VERSION = 4.0
