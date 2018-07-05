@@ -16,10 +16,10 @@ export function defaultCauldron({
     cauldronPath,
     repository,
   })
-  const dbStore = new GitDocumentStore({
+  const documentStore = new GitDocumentStore({
     branch,
     cauldronPath,
     repository,
   })
-  return new CauldronApi(dbStore, fileStore)
+  return new CauldronApi(documentStore, fileStore)
 }
