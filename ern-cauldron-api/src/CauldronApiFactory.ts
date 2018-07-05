@@ -11,16 +11,9 @@ export function defaultCauldron({
   cauldronPath: string
   branch: string
 }) {
-  const yarnlockStore = new GitFileStore({
+  const fileStore = new GitFileStore({
     branch,
     cauldronPath,
-    prefix: 'yarnlocks',
-    repository,
-  })
-  const bundleStore = new GitFileStore({
-    branch,
-    cauldronPath,
-    prefix: 'bundles',
     repository,
   })
   const dbStore = new GitDocumentStore({
@@ -28,5 +21,5 @@ export function defaultCauldron({
     cauldronPath,
     repository,
   })
-  return new CauldronApi(dbStore, yarnlockStore, bundleStore)
+  return new CauldronApi(dbStore, fileStore)
 }
