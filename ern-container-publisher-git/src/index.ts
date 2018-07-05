@@ -1,7 +1,4 @@
-import {
-  ContainerPublisher,
-  ContainerPublisherConfig,
-} from 'ern-container-publisher'
+import { ContainerPublisher } from 'ern-container-publisher'
 import { createTmpDir, gitCli, shell, log, NativePlatform } from 'ern-core'
 import path from 'path'
 

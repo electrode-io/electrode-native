@@ -1,7 +1,4 @@
-import {
-  ContainerPublisher,
-  ContainerPublisherConfig,
-} from 'ern-container-publisher'
+import { ContainerPublisher } from 'ern-container-publisher'
 import { MavenUtils, shell, childProcess, log, NativePlatform } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
