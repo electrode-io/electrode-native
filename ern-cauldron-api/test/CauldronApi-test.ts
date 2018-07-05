@@ -25,20 +25,14 @@ const codePushNewEntryFixture: CauldronCodePushEntry = {
 }
 
 let documentStore
-let yarnLockStore
+let fileStore
 
 function cauldronApi(cauldronDocument?: any) {
   cauldronDocument = cauldronDocument || getCauldronFixtureClone()
   documentStore = new InMemoryDocumentStore(cauldronDocument)
-  const sourceMapStore = new EphemeralFileStore()
-  yarnLockStore = new EphemeralFileStore()
-  const bundleStore = new EphemeralFileStore()
-  return new CauldronApi(
-    documentStore,
-    sourceMapStore,
-    yarnLockStore,
-    bundleStore
-  )
+  fileStore = new EphemeralFileStore()
+
+  return new CauldronApi(documentStore, fileStore)
 }
 
 function getCauldronFixtureClone() {
@@ -113,12 +107,9 @@ describe('CauldronApi.js', () => {
       sinon.assert.calledOnce(beginTransactionStub)
     })
 
-    it('should call beginTransaction on the yarn lock store', async () => {
+    it('should call beginTransaction on the file store', async () => {
       const api = cauldronApi()
-      const beginTransactionStub = sandbox.stub(
-        yarnLockStore,
-        'beginTransaction'
-      )
+      const beginTransactionStub = sandbox.stub(fileStore, 'beginTransaction')
       await api.beginTransaction()
       sinon.assert.calledOnce(beginTransactionStub)
     })
@@ -138,10 +129,10 @@ describe('CauldronApi.js', () => {
       sinon.assert.calledOnce(discardTransactionStub)
     })
 
-    it('should call discardTransaction on the yarn lock store', async () => {
+    it('should call discardTransaction on the file store', async () => {
       const api = cauldronApi()
       const discardTransactionStub = sandbox.stub(
-        yarnLockStore,
+        fileStore,
         'discardTransaction'
       )
       await api.discardTransaction()
@@ -173,22 +164,16 @@ describe('CauldronApi.js', () => {
       sinon.assert.calledWith(commitTransactionStub, 'commit-message')
     })
 
-    it('should call commitTransaction on the yarn lock store ', async () => {
+    it('should call commitTransaction on the file store ', async () => {
       const api = cauldronApi()
-      const commitTransactionStub = sandbox.stub(
-        yarnLockStore,
-        'commitTransaction'
-      )
+      const commitTransactionStub = sandbox.stub(fileStore, 'commitTransaction')
       await api.commitTransaction('commit-message')
       sinon.assert.calledOnce(commitTransactionStub)
     })
 
-    it('should call commitTransaction on the yarn lock store with the right commit message', async () => {
+    it('should call commitTransaction on the file store with the right commit message', async () => {
       const api = cauldronApi()
-      const commitTransactionStub = sandbox.stub(
-        yarnLockStore,
-        'commitTransaction'
-      )
+      const commitTransactionStub = sandbox.stub(fileStore, 'commitTransaction')
       await api.commitTransaction('commit-message')
       sinon.assert.calledWith(commitTransactionStub, 'commit-message')
     })

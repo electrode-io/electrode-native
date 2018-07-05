@@ -39,19 +39,12 @@ const miniAppsFixtureOne = [
 ]
 
 let documentStore
-let bundleStore
+let fileStore
 
 function createCauldronApi(cauldronDocument) {
   documentStore = new InMemoryDocumentStore(cauldronDocument)
-  const sourceMapStore = new EphemeralFileStore()
-  const yarnLockStore = new EphemeralFileStore()
-  bundleStore = new EphemeralFileStore()
-  return new CauldronApi(
-    documentStore,
-    sourceMapStore,
-    yarnLockStore,
-    bundleStore
-  )
+  fileStore = new EphemeralFileStore()
+  return new CauldronApi(documentStore, fileStore)
 }
 
 function createCauldronHelper(cauldronDocument) {
@@ -1222,7 +1215,9 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'bundleContent'
       )
-      const bundledAdded = await bundleStore.hasFile('test:android:17.7.0.zip')
+      const bundledAdded = await fileStore.hasFile(
+        'bundles/test:android:17.7.0.zip'
+      )
       expect(bundledAdded).true
     })
   })
