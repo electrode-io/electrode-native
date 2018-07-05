@@ -23,6 +23,10 @@ export interface ContainerPublisherConfig {
    */
   containerVersion: string
   /**
+   * Version of Electrode Native used
+   */
+  ernVersion?: string
+  /**
    * Option url to publish the container to.
    * Specific to the publisher type
    */

@@ -30,6 +30,7 @@ export default async function publishContainer(conf: ContainerPublisherConfig) {
     publicationWorkingDir
   )
   conf.containerPath = publicationWorkingDir
+  conf.ernVersion = Platform.currentVersion
 
   if (!fs.existsSync(Platform.containerPublishersCacheDirectory)) {
     shell.mkdir('-p', Platform.containerPublishersCacheDirectory)

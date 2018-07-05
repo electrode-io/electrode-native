@@ -1,7 +1,4 @@
-import {
-  ContainerPublisher,
-  ContainerPublisherConfig,
-} from 'ern-container-publisher'
+import { ContainerPublisher } from 'ern-container-publisher'
 import {
   createTmpDir,
   shell,
