@@ -13,67 +13,64 @@ export default class GitFileStore extends BaseGit
     cauldronPath,
     repository,
     branch,
-    prefix,
   }: {
     cauldronPath: string
     repository?: string
     branch: string
-    prefix: string
   }) {
     super({ cauldronPath, repository, branch })
-    this.prefix = prefix
   }
 
   // ===========================================================
   // ICauldronFileAccess implementation
   // ===========================================================
 
-  public async storeFile(identifier: string, content: string | Buffer) {
+  public async storeFile(filePath: string, content: string | Buffer) {
     await this.sync()
-    const storeDirectoryPath = path.resolve(this.fsPath, this.prefix)
+    const storeDirectoryPath = path.resolve(this.fsPath, path.dirname(filePath))
     if (!fs.existsSync(storeDirectoryPath)) {
-      log.debug(`creating dir ${storeDirectoryPath}`)
+      log.debug(`Creating directory ${storeDirectoryPath}`)
       shell.mkdir('-p', storeDirectoryPath)
     }
-    const pathToFile = path.resolve(storeDirectoryPath, identifier)
+    const pathToFile = path.resolve(storeDirectoryPath, path.basename(filePath))
     await writeFile(pathToFile, content, { flag: 'w' })
     await this.git.addAsync(pathToFile)
     if (!this.pendingTransaction) {
-      await this.git.commitAsync(`[added file] ${identifier}`)
+      await this.git.commitAsync(`Add file ${filePath}`)
       await this.push()
     }
   }
 
-  public async hasFile(filename: string) {
+  public async hasFile(filePath: string) {
     await this.sync()
     try {
-      fs.statSync(this._pathToFile(filename)).isFile()
+      fs.statSync(this.pathToFile(filePath)).isFile()
       return true
     } catch (e) {
       return false
     }
   }
 
-  public async getPathToFile(filename: string): Promise<string | void> {
+  public async getPathToFile(filePath: string): Promise<string | void> {
     await this.sync()
-    if (fs.existsSync(this._pathToFile(filename))) {
-      return this._pathToFile(filename)
+    if (fs.existsSync(this.pathToFile(filePath))) {
+      return this.pathToFile(filePath)
     }
   }
 
-  public async getFile(filename: string): Promise<Buffer | void> {
+  public async getFile(filePath: string): Promise<Buffer | void> {
     await this.sync()
-    if (fs.existsSync(this._pathToFile(filename))) {
-      return fs.readFileSync(this._pathToFile(filename))
+    if (fs.existsSync(this.pathToFile(filePath))) {
+      return fs.readFileSync(this.pathToFile(filePath))
     }
   }
 
-  public async removeFile(filename: string): Promise<boolean> {
+  public async removeFile(filePath: string): Promise<boolean> {
     await this.sync()
-    if (fs.existsSync(this._pathToFile(filename))) {
-      await this.git.rmAsync(this._pathToFile(filename))
+    if (fs.existsSync(this.pathToFile(filePath))) {
+      await this.git.rmAsync(this.pathToFile(filePath))
       if (!this.pendingTransaction) {
-        await this.git.commitAsync(`[removed file] ${filename}`)
+        await this.git.commitAsync(`Remove file ${filePath}`)
         await this.push()
       }
       return true
@@ -81,7 +78,7 @@ export default class GitFileStore extends BaseGit
     return false
   }
 
-  private _pathToFile(filename: string) {
-    return path.join(this.fsPath, this.prefix, filename)
+  private pathToFile(filePath: string) {
+    return path.join(this.fsPath, filePath)
   }
 }

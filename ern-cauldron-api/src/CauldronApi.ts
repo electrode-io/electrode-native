@@ -13,20 +13,18 @@ import {
   CauldronConfigLevel,
 } from './types'
 import upgradeScripts from './upgrade-scripts/scripts'
+import path from 'path'
+
+const yarnLocksStoreDirectory = 'yarnlocks'
+const bundlesStoreDirectory = 'bundles'
 
 export default class CauldronApi {
   private readonly db: ICauldronDocumentStore
-  private readonly yarnlockStore: ICauldronFileStore
-  private readonly bundleStore: ICauldronFileStore
+  private readonly fileStore: ICauldronFileStore
 
-  constructor(
-    db: ICauldronDocumentStore,
-    yarnlockStore: ICauldronFileStore,
-    bundleStore: ICauldronFileStore
-  ) {
+  constructor(db: ICauldronDocumentStore, fileStore: ICauldronFileStore) {
     this.db = db
-    this.yarnlockStore = yarnlockStore
-    this.bundleStore = bundleStore
+    this.fileStore = fileStore
   }
 
   public async commit(message: string): Promise<void> {
@@ -66,17 +64,17 @@ export default class CauldronApi {
 
   public async beginTransaction(): Promise<void> {
     await this.db.beginTransaction()
-    await this.yarnlockStore.beginTransaction()
+    await this.fileStore.beginTransaction()
   }
 
   public async discardTransaction(): Promise<void> {
     await this.db.discardTransaction()
-    await this.yarnlockStore.discardTransaction()
+    await this.fileStore.discardTransaction()
   }
 
   public async commitTransaction(message: string | string[]): Promise<void> {
     await this.db.commitTransaction(message)
-    await this.yarnlockStore.commitTransaction(message)
+    await this.fileStore.commitTransaction(message)
   }
 
   // =====================================================================================
@@ -802,6 +800,19 @@ export default class CauldronApi {
   // FILE OPERATIONS
   // =====================================================================================
 
+  // -------------------------------------------------------------------------------------
+  // YARN LOCKS STORE ACCESS
+  // -------------------------------------------------------------------------------------
+
+  /**
+   * Gets the relative path (from the root of the Cauldron repo) to
+   * a given yarn lock file
+   * @param yarnLockFileName Yarn lock file name
+   */
+  public getRelativePathToYarnLock(yarnLockFileName: string): string {
+    return path.join(yarnLocksStoreDirectory, yarnLockFileName)
+  }
+
   public async hasYarnLock(
     descriptor: NativeApplicationDescriptor,
     key: string
@@ -822,9 +833,10 @@ export default class CauldronApi {
   ): Promise<void> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    const filename = shasum(yarnlock)
-    await this.yarnlockStore.storeFile(filename, yarnlock)
-    version.yarnLocks[key] = filename
+    const fileName = shasum(yarnlock)
+    const pathToYarnLock = this.getRelativePathToYarnLock(fileName)
+    await this.fileStore.storeFile(pathToYarnLock, yarnlock)
+    version.yarnLocks[key] = fileName
     return this.commit(`Add yarn.lock for ${descriptor.toString()} ${key}`)
   }
 
@@ -854,8 +866,10 @@ export default class CauldronApi {
   ): Promise<Buffer | void> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    if (version.yarnLocks[key]) {
-      return this.yarnlockStore.getFile(version.yarnLocks[key])
+    const fileName = version.yarnLocks[key]
+    if (fileName) {
+      const pathToYarnLock = this.getRelativePathToYarnLock(fileName)
+      return this.fileStore.getFile(pathToYarnLock)
     }
   }
 
@@ -865,8 +879,10 @@ export default class CauldronApi {
   ): Promise<string | void> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    if (version.yarnLocks[key]) {
-      return this.yarnlockStore.getPathToFile(version.yarnLocks[key])
+    const fileName = version.yarnLocks[key]
+    if (fileName) {
+      const pathToYarnLock = this.getRelativePathToYarnLock(fileName)
+      return this.fileStore.getPathToFile(pathToYarnLock)
     }
   }
 
@@ -876,8 +892,10 @@ export default class CauldronApi {
   ): Promise<boolean> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    if (version.yarnLocks[key]) {
-      if (await this.yarnlockStore.removeFile(version.yarnLocks[key])) {
+    const fileName = version.yarnLocks[key]
+    if (fileName) {
+      const pathToYarnLock = this.getRelativePathToYarnLock(fileName)
+      if (await this.fileStore.removeFile(pathToYarnLock)) {
         delete version.yarnLocks[key]
         await this.commit(
           `Remove yarn.lock for ${descriptor.toString()} ${key}`
@@ -895,11 +913,16 @@ export default class CauldronApi {
   ): Promise<boolean> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    if (version.yarnLocks[key]) {
-      await this.yarnlockStore.removeFile(version.yarnLocks[key])
-      const filename = shasum(yarnlock)
-      await this.yarnlockStore.storeFile(filename, yarnlock)
-      version.yarnLocks[key] = filename
+    const fileName = version.yarnLocks[key]
+    if (fileName) {
+      const pathToOldYarnLock = this.getRelativePathToYarnLock(fileName)
+      await this.fileStore.removeFile(pathToOldYarnLock)
+      const newYarnLockFileName = shasum(yarnlock)
+      const pathToNewYarnLock = this.getRelativePathToYarnLock(
+        newYarnLockFileName
+      )
+      await this.fileStore.storeFile(pathToNewYarnLock, yarnlock)
+      version.yarnLocks[key] = newYarnLockFileName
       await this.commit(`Updated yarn.lock for ${descriptor.toString()} ${key}`)
       return true
     }
@@ -913,8 +936,10 @@ export default class CauldronApi {
   ) {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    if (version.yarnLocks[key]) {
-      await this.yarnlockStore.removeFile(version.yarnLocks[key])
+    const fileName = version.yarnLocks[key]
+    if (fileName) {
+      const pathToYarnLock = this.getRelativePathToYarnLock(fileName)
+      await this.fileStore.removeFile(pathToYarnLock)
     }
     version.yarnLocks[key] = id
     await this.commit(
@@ -932,13 +957,27 @@ export default class CauldronApi {
     await this.commit(`Set yarn locks for ${descriptor.toString()}`)
   }
 
+  // -------------------------------------------------------------------------------------
+  // BUNDLES STORE ACCESS
+  // -------------------------------------------------------------------------------------
+
+  /**
+   * Gets the relative path (from the root of the Cauldron repo) to
+   * a given bundle file
+   * @param bundleFileName Bundle file name
+   */
+  public getRelativePathToBundle(bundleFileName: string): string {
+    return path.join(bundlesStoreDirectory, bundleFileName)
+  }
+
   public async addBundle(
     descriptor: NativeApplicationDescriptor,
     bundle: string | Buffer
   ) {
     this.throwIfPartialNapDescriptor(descriptor)
     const filename = this.getBundleZipFileName(descriptor)
-    await this.bundleStore.storeFile(filename, bundle)
+    const pathToBundle = this.getRelativePathToBundle(filename)
+    await this.fileStore.storeFile(pathToBundle, bundle)
     return this.commit(`Add bundle for ${descriptor.toString()}`)
   }
 
@@ -947,7 +986,8 @@ export default class CauldronApi {
   ): Promise<boolean> {
     this.throwIfPartialNapDescriptor(descriptor)
     const filename = this.getBundleZipFileName(descriptor)
-    return this.bundleStore.hasFile(filename)
+    const pathToBundle = this.getRelativePathToBundle(filename)
+    return this.fileStore.hasFile(pathToBundle)
   }
 
   public async getBundle(
@@ -955,7 +995,8 @@ export default class CauldronApi {
   ): Promise<Buffer> {
     this.throwIfPartialNapDescriptor(descriptor)
     const filename = this.getBundleZipFileName(descriptor)
-    const zippedBundle = await this.bundleStore.getFile(filename)
+    const pathToBundle = this.getRelativePathToBundle(filename)
+    const zippedBundle = await this.fileStore.getFile(pathToBundle)
     if (!zippedBundle) {
       throw new Error(
         `No zipped bundle stored in Cauldron for ${descriptor.toString()}`
