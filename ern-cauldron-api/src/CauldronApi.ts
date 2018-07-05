@@ -16,18 +16,15 @@ import upgradeScripts from './upgrade-scripts/scripts'
 
 export default class CauldronApi {
   private readonly db: ICauldronDocumentStore
-  private readonly sourceMapStore: ICauldronFileStore
   private readonly yarnlockStore: ICauldronFileStore
   private readonly bundleStore: ICauldronFileStore
 
   constructor(
     db: ICauldronDocumentStore,
-    sourcemapStore: ICauldronFileStore,
     yarnlockStore: ICauldronFileStore,
     bundleStore: ICauldronFileStore
   ) {
     this.db = db
-    this.sourceMapStore = sourcemapStore
     this.yarnlockStore = yarnlockStore
     this.bundleStore = bundleStore
   }
