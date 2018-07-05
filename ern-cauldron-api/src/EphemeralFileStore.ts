@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { ICauldronFileStore } from './types'
 import { createTmpDir } from 'ern-core'
+import shell from 'shelljs'
 
 export default class EphemeralFileStore implements ICauldronFileStore {
   public readonly storePath: string
@@ -23,6 +24,10 @@ export default class EphemeralFileStore implements ICauldronFileStore {
 
   public async storeFile(identifier: string, content: string | Buffer) {
     const pathToFile = path.join(this.storePath, identifier)
+    const pathToDir = path.dirname(pathToFile)
+    if (!fs.existsSync(pathToDir)) {
+      shell.mkdir('-p', pathToDir)
+    }
     fs.writeFileSync(pathToFile, content, 'utf8')
     return Promise.resolve()
   }
