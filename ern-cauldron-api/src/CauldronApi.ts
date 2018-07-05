@@ -19,20 +19,23 @@ const yarnLocksStoreDirectory = 'yarnlocks'
 const bundlesStoreDirectory = 'bundles'
 
 export default class CauldronApi {
-  private readonly db: ICauldronDocumentStore
+  private readonly documentStore: ICauldronDocumentStore
   private readonly fileStore: ICauldronFileStore
 
-  constructor(db: ICauldronDocumentStore, fileStore: ICauldronFileStore) {
-    this.db = db
+  constructor(
+    documentStore: ICauldronDocumentStore,
+    fileStore: ICauldronFileStore
+  ) {
+    this.documentStore = documentStore
     this.fileStore = fileStore
   }
 
   public async commit(message: string): Promise<void> {
-    return this.db.commit(message)
+    return this.documentStore.commit(message)
   }
 
   public async getCauldron(): Promise<Cauldron> {
-    return this.db.getCauldron()
+    return this.documentStore.getCauldron()
   }
 
   // =====================================================================================
@@ -63,17 +66,17 @@ export default class CauldronApi {
   // =====================================================================================
 
   public async beginTransaction(): Promise<void> {
-    await this.db.beginTransaction()
+    await this.documentStore.beginTransaction()
     await this.fileStore.beginTransaction()
   }
 
   public async discardTransaction(): Promise<void> {
-    await this.db.discardTransaction()
+    await this.documentStore.discardTransaction()
     await this.fileStore.discardTransaction()
   }
 
   public async commitTransaction(message: string | string[]): Promise<void> {
-    await this.db.commitTransaction(message)
+    await this.documentStore.commitTransaction(message)
     await this.fileStore.commitTransaction(message)
   }
 
