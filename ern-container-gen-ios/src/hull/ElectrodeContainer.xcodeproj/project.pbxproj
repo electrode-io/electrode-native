@@ -49,13 +49,10 @@
 		968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegate.m; sourceTree = "<group>"; };
 		22CB683D20C9C46A0031A349 /* Project-QADeployment.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Project-QADeployment.xcconfig"; sourceTree = "<group>"; };
 		22CB683E20C9C46A0031A349 /* Project-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
-		22CB683F20C9C46A0031A349 /* Project-Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Project-Shared.xcconfig"; sourceTree = "<group>"; };
 		22CB684020C9C46A0031A349 /* ElectrodeContainer-QADeployment.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainer-QADeployment.xcconfig"; sourceTree = "<group>"; };
 		22CB684120C9C46A0031A349 /* ElectrodeContainer-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainer-Debug.xcconfig"; sourceTree = "<group>"; };
 		22CB684220C9C46A0031A349 /* ElectrodeContainer-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainer-Release.xcconfig"; sourceTree = "<group>"; };
-		22CB684320C9C46A0031A349 /* ElectrodeContainer-Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainer-Shared.xcconfig"; sourceTree = "<group>"; };
 		22CB684420C9C46A0031A349 /* ElectrodeContainerTests-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainerTests-Release.xcconfig"; sourceTree = "<group>"; };
-		22CB684520C9C46A0031A349 /* ElectrodeContainerTests-Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainerTests-Shared.xcconfig"; sourceTree = "<group>"; };
 		22CB684620C9C46A0031A349 /* ElectrodeContainerTests-QADeployment.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainerTests-QADeployment.xcconfig"; sourceTree = "<group>"; };
 		22CB684720C9C46A0031A349 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		22CB684820C9C46B0031A349 /* ElectrodeContainerTests-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ElectrodeContainerTests-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -86,15 +83,12 @@
 				22CB684120C9C46A0031A349 /* ElectrodeContainer-Debug.xcconfig */,
 				22CB684020C9C46A0031A349 /* ElectrodeContainer-QADeployment.xcconfig */,
 				22CB684220C9C46A0031A349 /* ElectrodeContainer-Release.xcconfig */,
-				22CB684320C9C46A0031A349 /* ElectrodeContainer-Shared.xcconfig */,
 				22CB684820C9C46B0031A349 /* ElectrodeContainerTests-Debug.xcconfig */,
 				22CB684620C9C46A0031A349 /* ElectrodeContainerTests-QADeployment.xcconfig */,
 				22CB684420C9C46A0031A349 /* ElectrodeContainerTests-Release.xcconfig */,
-				22CB684520C9C46A0031A349 /* ElectrodeContainerTests-Shared.xcconfig */,
 				22CB684720C9C46A0031A349 /* Project-Debug.xcconfig */,
 				22CB683D20C9C46A0031A349 /* Project-QADeployment.xcconfig */,
 				22CB683E20C9C46A0031A349 /* Project-Release.xcconfig */,
-				22CB683F20C9C46A0031A349 /* Project-Shared.xcconfig */,
 			);
 			path = Config;
 			sourceTree = "<group>";
