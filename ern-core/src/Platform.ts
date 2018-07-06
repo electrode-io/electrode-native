@@ -45,6 +45,10 @@ export default class Platform {
     return path.join(this.rootDirectory, 'container-publishers-cache')
   }
 
+  static get containerTransformersCacheDirectory(): string {
+    return path.join(this.rootDirectory, 'container-transformers-cache')
+  }
+
   static get containerGenDirectory(): string {
     return path.join(this.rootDirectory, 'containergen')
   }
