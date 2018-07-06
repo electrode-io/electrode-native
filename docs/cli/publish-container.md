@@ -47,6 +47,8 @@
 
 * Extra configuration specific to the publisher used.
 * Some publishers might not need an extra configuration. Check the Container publisher documentation for reference.
+* The configuration is a json document.
+* Configuration can either be a json string or the path to a file holding the configuration.
 
 #### Related commands
 
