@@ -1,4 +1,9 @@
-import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
+import {
+  utils as coreUtils,
+  Platform,
+  NativePlatform,
+  fileUtils,
+} from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import utils from '../lib/utils'
 import fs from 'fs'
@@ -40,7 +45,8 @@ export const builder = (argv: Argv) => {
     })
     .option('config', {
       alias: 'c',
-      describe: 'Optional publisher configuration (as a JSON string)',
+      describe:
+        'Optional publisher configuration (json string or path to config file)',
       type: 'string',
     })
     .epilog(utils.epilog(exports))
@@ -75,15 +81,18 @@ export const handler = async ({
       )
     }
 
-    // Container path validation
     if (!fs.existsSync(containerPath)) {
       throw new Error('containerPath path does not exist')
     }
 
-    // JSON config validation
+    let configObj
     if (config) {
       try {
-        JSON.parse(config)
+        if (fs.existsSync(config)) {
+          configObj = await fileUtils.readJSON(config)
+        } else {
+          configObj = JSON.parse(config)
+        }
       } catch (e) {
         throw new Error('config should be valid JSON')
       }
@@ -92,7 +101,7 @@ export const handler = async ({
     await publishContainer({
       containerPath,
       containerVersion: version,
-      extra: config ? JSON.parse(config) : undefined,
+      extra: configObj,
       platform,
       publisher,
       url,
