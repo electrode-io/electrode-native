@@ -65,6 +65,7 @@
 - [create-api](cli/create-api.md)
 - [create-container](cli/create-container.md)
 - [publish-container](cli/publish-container.md)
+- [transform-container](cli/transform-container.md)
 - [create-miniapp](cli/create-miniapp.md)
 - [link](cli/link.md)
 - [regen-api](cli/regen-api.md)
