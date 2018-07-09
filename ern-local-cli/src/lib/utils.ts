@@ -17,6 +17,7 @@ import {
   NativePlatform,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
+import { transformContainer } from 'ern-container-transformer'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
 import { AndroidRunnerGenerator } from 'ern-runner-gen-android'
@@ -531,10 +532,25 @@ async function performContainerStateUpdateInCauldron(
     throw e
   }
   try {
-    // Publish container
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor
     )
+
+    // Run Container transformers sequentially (if any)
+    const transformersFromCauldron =
+      containerGenConfig && containerGenConfig.transformers
+    if (transformersFromCauldron) {
+      for (const transformerFromCauldron of transformersFromCauldron) {
+        await transformContainer({
+          containerPath: outDir,
+          extra: transformerFromCauldron.extra,
+          platform: napDescriptor.platform,
+          transformer: transformerFromCauldron.name,
+        })
+      }
+    }
+
+    // Run Container publishers sequentially (if any)
     const publishersFromCauldron =
       containerGenConfig && containerGenConfig.publishers
     if (publishersFromCauldron) {
