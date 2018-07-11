@@ -21,7 +21,7 @@
 * The local file system path to the directory containing the Container to publish.
 * **Default**  If this option is not provided, the command will look for a Container in the default platform directory `~/.ern/containergen/out/[platform]`.
 
-`--platform/-p <android|ios>`
+`--platform <android|ios>`
 
 * Specify the native platform of the target Container to publish.
 * This option is required, there is no default.
