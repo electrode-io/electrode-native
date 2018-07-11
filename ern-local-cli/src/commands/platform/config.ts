@@ -41,6 +41,11 @@ const availableUserConfigKeys = [
     name: 'max-package-cache-size',
     values: ['number'],
   },
+  {
+    desc: 'Code push access key associated with your account',
+    name: 'codePushAccessKey',
+    values: ['string'],
+  },
 ]
 
 const userConfigSchemaString = () =>
