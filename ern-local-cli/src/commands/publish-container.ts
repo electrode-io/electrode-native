@@ -8,7 +8,6 @@ import { publishContainer } from 'ern-container-publisher'
 import utils from '../lib/utils'
 import fs from 'fs'
 import path from 'path'
-import os from 'os'
 import { Argv } from 'yargs'
 
 export const command = 'publish-container'
@@ -43,10 +42,10 @@ export const builder = (argv: Argv) => {
       describe: 'The publication url',
       type: 'string',
     })
-    .option('config', {
-      alias: 'c',
+    .option('extra', {
+      alias: 'e',
       describe:
-        'Optional publisher configuration (json string or path to config file)',
+        'Optional extra publisher configuration (json string or path to config file)',
       type: 'string',
     })
     .epilog(utils.epilog(exports))
@@ -57,14 +56,14 @@ export const handler = async ({
   version,
   publisher,
   url,
-  config,
+  extra,
   platform,
 }: {
   containerPath?: string
   version: string
   publisher: string
   url: string
-  config?: string
+  extra?: string
   platform: NativePlatform
 }) => {
   try {
@@ -85,13 +84,13 @@ export const handler = async ({
       throw new Error('containerPath path does not exist')
     }
 
-    let configObj
-    if (config) {
+    let extraObj
+    if (extra) {
       try {
-        if (fs.existsSync(config)) {
-          configObj = await fileUtils.readJSON(config)
+        if (fs.existsSync(extra)) {
+          extraObj = await fileUtils.readJSON(extra)
         } else {
-          configObj = JSON.parse(config)
+          extraObj = JSON.parse(extra)
         }
       } catch (e) {
         throw new Error('config should be valid JSON')
@@ -101,7 +100,7 @@ export const handler = async ({
     await publishContainer({
       containerPath,
       containerVersion: version,
-      extra: configObj,
+      extra: extraObj,
       platform,
       publisher,
       url,

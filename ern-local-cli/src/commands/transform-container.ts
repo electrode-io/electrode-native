@@ -19,10 +19,10 @@ export const builder = (argv: Argv) => {
       describe: 'Local path to the Container to transform',
       type: 'string',
     })
-    .option('config', {
-      alias: 'c',
+    .option('extra', {
+      alias: 'e',
       describe:
-        'Optional transformer configuration (json string or path to config file)',
+        'Optional extra transformer configuration (json string or path to config file)',
       type: 'string',
     })
     .option('platform', {
@@ -43,12 +43,12 @@ export const builder = (argv: Argv) => {
 
 export const handler = async ({
   containerPath,
-  config,
+  extra,
   platform,
   transformer,
 }: {
   containerPath?: string
-  config?: string
+  extra?: string
   platform: NativePlatform
   transformer: string
 }) => {
@@ -66,13 +66,13 @@ export const handler = async ({
       throw new Error('containerPath path does not exist')
     }
 
-    let configObj
-    if (config) {
+    let extraObj
+    if (extra) {
       try {
-        if (fs.existsSync(config)) {
-          configObj = await fileUtils.readJSON(config)
+        if (fs.existsSync(extra)) {
+          extraObj = await fileUtils.readJSON(extra)
         } else {
-          configObj = JSON.parse(config)
+          extraObj = JSON.parse(extra)
         }
       } catch (e) {
         throw new Error('config should be valid JSON')
@@ -81,7 +81,7 @@ export const handler = async ({
 
     await transformContainer({
       containerPath,
-      extra: configObj,
+      extra: extraObj,
       platform,
       transformer,
     })
