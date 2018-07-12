@@ -1,9 +1,4 @@
-import {
-  utils as coreUtils,
-  Platform,
-  NativePlatform,
-  fileUtils,
-} from 'ern-core'
+import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
 import utils from '../lib/utils'
 import fs from 'fs'
@@ -66,18 +61,7 @@ export const handler = async ({
       throw new Error('containerPath path does not exist')
     }
 
-    let extraObj
-    if (extra) {
-      try {
-        if (fs.existsSync(extra)) {
-          extraObj = await fileUtils.readJSON(extra)
-        } else {
-          extraObj = JSON.parse(extra)
-        }
-      } catch (e) {
-        throw new Error('config should be valid JSON')
-      }
-    }
+    const extraObj = extra && (await utils.parseJsonFromStringOrFile(extra))
 
     await transformContainer({
       containerPath,

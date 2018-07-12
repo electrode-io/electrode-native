@@ -1,14 +1,8 @@
-import {
-  NativeApplicationDescriptor,
-  utils as coreUtils,
-  log,
-  fileUtils,
-} from 'ern-core'
+import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { getPublisher, ContainerPublisher } from 'ern-container-publisher'
 import utils from '../../../lib/utils'
 import { Argv } from 'yargs'
-import fs from 'fs'
 
 export const command = 'publisher'
 export const desc = 'Add a Container publisher for a native application'
@@ -49,7 +43,7 @@ export const handler = async ({
   publisher: string
   descriptor: string
   url?: string
-  extra?: any
+  extra?: string
 }) => {
   try {
     await utils.logErrorAndExitIfNotSatisfied({
@@ -59,18 +53,7 @@ export const handler = async ({
       },
     })
 
-    let extraObj
-    if (extra) {
-      try {
-        if (fs.existsSync(extra)) {
-          extraObj = await fileUtils.readJSON(extra)
-        } else {
-          extraObj = JSON.parse(extra)
-        }
-      } catch (e) {
-        throw new Error('config should be valid JSON')
-      }
-    }
+    const extraObj = extra && (await utils.parseJsonFromStringOrFile(extra))
 
     const p: ContainerPublisher = await getPublisher(publisher)
 
