@@ -15,6 +15,7 @@ import {
   MavenUtils,
   utils as coreUtils,
   NativePlatform,
+  fileUtils,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { transformContainer } from 'ern-container-transformer'
@@ -1239,6 +1240,25 @@ async function unzip(zippedData: Buffer, destPath: string) {
   })
 }
 
+/**
+ * Parse json from a string or a file and return the
+ * resulting JavaScript object
+ * @param s A json string or a path to a json file
+ */
+async function parseJsonFromStringOrFile(s: string): Promise<any> {
+  let result
+  try {
+    if (fs.existsSync(s)) {
+      result = await fileUtils.readJSON(s)
+    } else {
+      result = JSON.parse(s)
+    }
+  } catch (e) {
+    throw new Error('[parseJsonFromStringOrFile] Invalid JSON')
+  }
+  return result
+}
+
 export default {
   askUserToChooseANapDescriptorFromCauldron,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
@@ -1251,6 +1271,7 @@ export default {
   logErrorAndExitIfNotSatisfied,
   logNativeDependenciesConflicts,
   normalizeVersionsToSemver,
+  parseJsonFromStringOrFile,
   performContainerStateUpdateInCauldron,
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
