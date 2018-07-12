@@ -36,7 +36,7 @@ export const handler = async ({
     )
     if (!plugin) {
       return log.warn(
-        `No plugin named ${name} was found for platform version $platformVersion}`
+        `No plugin named ${name} was found for platform version ${platformVersion}`
       )
     }
 
