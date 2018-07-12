@@ -19,13 +19,53 @@ This publisher can be used to publish Android Electrode Native Containers to a l
 
 ## Usage
 
-### Through `ern publish-container` CLI command
+### **With `ern publish-container` CLI command**
+
+**Required**
+
+- `--publisher/-p` : `maven`
+- `--platform` : `android`
+- `--url/-u` : Url of the target maven repository to publish the container to
+- `--config/-c` : A json string (or path to a json file) containing the following  properties:
+  - `artifactId` : The artifact id to be used for the Container
+  - `groupId` : The group id to be used for the Container
+  - `mavenUser` [Optional] : The username for Maven publication (defaults to `mavenUser` gradle variable name. Retrieved from `~/.gradle/gradle.properties`)
+  - `mavenPassword` [Optional] : The username for Maven publication (defaults to `mavenPassword` gradle variable name. Retrieved from `~/.gradle/gradle.properties`)
+
+**Optional**
+
+- `--containerPath` : Path to the Container to publish.  
+Defaults to the Electrode Native default Container Generation path (`~/.ern/containergen/out/[platform]` if not changed through config)
+
+- `--containerVersion/-v` : Version of the Container to publish.  
+Default to `1.0.0`
+
+ The `ern publish-container` CLI command can be used as follow to manually publish a Container using the maven publisher :
 
 ```bash
-$ ern publish-container [pathToContainer] -p maven -v [containerVersion] -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]", "mavenUser":"[mavenUser]", "mavenPasword":"[mavenPassword]"}'
+$ ern publish-container --containerPath [pathToContainer] -p maven -v [containerVersion] -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]", "mavenUser":"[mavenUser]", "mavenPasword":"[mavenPassword]"}'
 ```  
 
-### Through Cauldron
+### **With Cauldron**
+
+**Required**
+
+- `--publisher/-p` : `maven`
+- `--url/-u` : Url of the target maven repository to publish the container to
+
+**Optional**
+
+- `--config/-c` : A json string (or path to a json file) containing the following required properties:
+  - `artifactId` : The artifact id to be used for the Container  
+  Defaults to `[nativeAppName]-ern-container`
+  - `groupId` : The group id to be used for the Container  
+  Defaults to `com.walmartlabs.ern`
+  - `mavenUser` : The username for Maven publication  
+  Defaults to `mavenUser` gradle variable name.  
+  Retrieved from `~/.gradle/gradle.properties`
+  - `mavenPassword` : The username for Maven publication
+  Defaults to `mavenPassword` gradle variable name.  
+  Retrieved from `~/.gradle/gradle.properties`
 
 To automatically publish the Cauldron generated Containers of a target native application and platform, the `ern cauldron add publisher` command can be used as follow :
 
@@ -35,18 +75,22 @@ $ ern cauldron add publisher -p maven -u [mavenRepoUrl] -c '{"artifactId":"[arti
 
 This will result in the following publisher entry in Cauldron :
 
-```
+```json
 {
   "name": "maven",
   "url": "[mavenRepoUrl]",
-  "artifactId": "[artifactId]", // Optional [Default: [nativeAppName]-ern-container],
-  "groupId" : "[groupId]", // Optional [Default: com.walmartlabs.ern],
-  "mavenUser": "[mavenUser]", // Optional [Default : retrieved from ~/.gradle/gradle.properties]
-  "mavenPassword": "[mavenPassword]" // Optional [Default : retrieved from ~/.gradle/gradle.properties]
+  "extra": {
+    "artifactId": "[artifactId]",
+    "groupId" : "[groupId]",
+    "mavenUser": "[mavenUser]",
+    "mavenPassword": "[mavenPassword]"
+  }
 }
 ```
 
-### Through Code
+This is only needed once. Once the configuration for the publisher is stored in Cauldron, any new Cauldron generated Container will be publihsed to maven.
+
+### **Programatically**
 
 ```js
 import MavenPublisher from 'ern-container-publisher-maven'
@@ -59,11 +103,11 @@ publisher.publish(
     containerVersion: string
     /* Url of the maven repository. Default: maven local */
     url?: string
-    /* Extra data specific to this publisher */
+    /* Extra config specific to this publisher */
     extra?: {
       /* Artifact id to use for publication. Default: local-container */
       artifactId?: string
-      /* Group id to use for publication. Default: com.walmartlas.ern */
+      /* Group id to use for publication. Default: com.walmartlabs.ern */
       groupId?: string
       /* Password to use for publication. Default: retrieved from ~/.gradle/gradle.properties */
       mavenPassword?: string
