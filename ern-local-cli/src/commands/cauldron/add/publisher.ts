@@ -1,8 +1,14 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import {
+  NativeApplicationDescriptor,
+  utils as coreUtils,
+  log,
+  fileUtils,
+} from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { getPublisher, ContainerPublisher } from 'ern-container-publisher'
 import utils from '../../../lib/utils'
 import { Argv } from 'yargs'
+import fs from 'fs'
 
 export const command = 'publisher'
 export const desc = 'Add a Container publisher for a native application'
@@ -26,9 +32,10 @@ export const builder = (argv: Argv) => {
         'A partial native application descriptor (NativeAppName:platform)',
       type: 'string',
     })
-    .option('config', {
-      alias: 'c',
-      describe: 'Optional extra publisher configuration (as a JSON string)',
+    .option('extra', {
+      alias: 'e',
+      describe:
+        'Optional extra publisher configuration (json string or path to config file)',
       type: 'string',
     })
 }
@@ -37,12 +44,12 @@ export const handler = async ({
   publisher,
   url,
   descriptor,
-  config,
+  extra,
 }: {
   publisher: string
   descriptor: string
   url?: string
-  config?: any
+  extra?: any
 }) => {
   try {
     await utils.logErrorAndExitIfNotSatisfied({
@@ -52,10 +59,14 @@ export const handler = async ({
       },
     })
 
-    // JSON config validation
-    if (config) {
+    let extraObj
+    if (extra) {
       try {
-        JSON.parse(config)
+        if (fs.existsSync(extra)) {
+          extraObj = await fileUtils.readJSON(extra)
+        } else {
+          extraObj = JSON.parse(extra)
+        }
       } catch (e) {
         throw new Error('config should be valid JSON')
       }
@@ -81,7 +92,7 @@ export const handler = async ({
       p.platforms,
       napDescriptor,
       url,
-      config ? JSON.parse(config) : undefined
+      extraObj
     )
     log.info(`${publisher} publisher was successfully added!`)
   } catch (e) {
