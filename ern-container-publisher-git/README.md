@@ -8,27 +8,38 @@ For example, For initial publication to GitHub, a repository should be created i
 
 **This publisher currently always publish to the master branch of the remote repository.**
 
-## Inputs
+## Usage
+
+### **With `ern publish-container` CLI command**
 
 **Required**
 
-- `containerPath` : Path to the Container to publish
-- `containerVersion` : Version of the Container to publish
-- `url` : Url of the remote git repository (SSH or HTTPS) to publish to
+- `--url/-u` : Url of the remote git repository (SSH or HTTPS) to publish to
+- `--publisher/-p` : `git`
+- `--platform` : `android` | `ios`
 
-## Usage
+**Optional**
 
-### Through `ern publish-container` CLI command
+- `--containerPath` : Path to the Container to publish.  
+Defaults to the Electrode Native default Container Generation path (`~/.ern/containergen/out/[platform]` if not changed through config)
 
-To manually publish a Container the `ern publish-container` CLI command can be used as follow :
+- `--containerVersion/-v` : Version of the Container to publish.  
+Default to `1.0.0`
+
+ The `ern publish-container` CLI command can be used as follow to manually publish a Container using the git publisher :
 
 ```bash
-$ ern publish-container [pathToContainer] -p git -u [gitRepoUrl] -v [containerVersion]
+$ ern publish-container --containerPath [pathToContainer] -p git -u [gitRepoUrl] -v [containerVersion] ---platform [android|ios]
 ```
 
-### Through Cauldron
+### **With Cauldron**
 
-To automatically publish the Cauldron generated Containers of a target native application and platform, the `ern cauldron add publisher` command can be used as follow :
+**Required**
+
+- `--publisher/-p` : `git`
+- `--url/-u` : Url of the remote git repository (SSH or HTTPS) to publish to
+
+To automatically publish Cauldron generated Containers of a target native application and platform, the `ern cauldron add publisher` command can be used as follow :
 
 ```bash
 $ ern cauldron add publisher -p git -u [gitRepoUrl]
@@ -43,7 +54,9 @@ This will result in the following publisher entry in Cauldron :
 }
 ```
 
-### Through Code
+This is only needed once. Once the configuration for the publisher is stored in Cauldron, any new Cauldron generated Container will be publihsed to git.
+
+### **Programatically**
 
 ```js
 import GitPublisher from 'ern-container-publisher-git'
