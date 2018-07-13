@@ -12,7 +12,6 @@ import {
   NativeApplicationDescriptor,
   spin,
   shell,
-  MavenUtils,
   utils as coreUtils,
   NativePlatform,
   fileUtils,
@@ -37,6 +36,7 @@ import * as constants from './constants'
 import yauzl from 'yauzl'
 import yazl from 'yazl'
 import readDir from 'fs-readdir-recursive'
+import os from 'os'
 const { runAndroidProject } = android
 
 //
@@ -658,6 +658,11 @@ function epilog({ command }: { command: string }) {
   )}`
 }
 
+const getDefaultMavenLocalDirectory = () => {
+  const pathToRepository = path.join(os.homedir(), '.m2', 'repository')
+  return `file://${pathToRepository}`
+}
+
 async function runMiniApp(
   platform: NativePlatform,
   {
@@ -823,7 +828,7 @@ async function runMiniApp(
       },
       platform: 'android',
       publisher: 'maven',
-      url: MavenUtils.getDefaultMavenLocalDirectory(),
+      url: getDefaultMavenLocalDirectory(),
     })
   }
 
