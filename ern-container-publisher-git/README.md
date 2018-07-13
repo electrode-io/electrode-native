@@ -29,7 +29,7 @@ Default to `1.0.0`
  The `ern publish-container` CLI command can be used as follow to manually publish a Container using the git publisher :
 
 ```bash
-$ ern publish-container --containerPath [pathToContainer] -p git -u [gitRepoUrl] -v [containerVersion] ---platform [android|ios]
+$ ern publish-container --containerPath [pathToContainer] -p git -u [gitRepoUrl] -v [containerVersion] --platform [android|ios]
 ```
 
 ### **With Cauldron**
