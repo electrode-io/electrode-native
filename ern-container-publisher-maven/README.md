@@ -14,7 +14,7 @@ This publisher can be used to publish Android Electrode Native Containers to a l
 - `url` : Url of the repository to publish the artifact to (default: maven local `~/.m2/repository` )
 - `artifactId` : The artifact id to be used for the Container (default : `local-container`)
 - `groupId` : The group id to be used for the Container (default: `com.walmartlabs.ern`)
-- `mavenUser`:The user to use to publication. Not needed for publication to maven local (default: retrieved from `~/.gradle/gradle.properties`)
+- `mavenUser`:The user to use for publication. Not needed for publication to maven local (default: retrieved from `~/.gradle/gradle.properties`)
 - `mavenPassword` : The password to use for publication. Not needed for publication to maven local (default: retrieved from `~/.gradle/gradle.properties`)
 
 ## Usage
@@ -29,8 +29,8 @@ This publisher can be used to publish Android Electrode Native Containers to a l
 - `--config/-c` : A json string (or path to a json file) containing the following  properties:
   - `artifactId` : The artifact id to be used for the Container
   - `groupId` : The group id to be used for the Container
-  - `mavenUser` [Optional] : The username for Maven publication (defaults to `mavenUser` gradle variable name. Retrieved from `~/.gradle/gradle.properties`)
-  - `mavenPassword` [Optional] : The username for Maven publication (defaults to `mavenPassword` gradle variable name. Retrieved from `~/.gradle/gradle.properties`)
+  - `mavenUser` [Optional] : The username for Maven publication (defaults to `mavenUser` gradle variable name. Retrieved from `~/.gradle/gradle.properties`). mavenUser can be set as a string or variable name (must enclosed in `[]`, ex. [myMavenUserVar])
+  - `mavenPassword` [Optional] : The username for Maven publication (defaults to `mavenPassword` gradle variable name. Retrieved from `~/.gradle/gradle.properties`). mavenPassword can be set as a string or variable name (must enclosed in `[]`, ex. [myMavenPasswordVar])
 
 **Optional**
 
@@ -43,7 +43,7 @@ Default to `1.0.0`
  The `ern publish-container` CLI command can be used as follow to manually publish a Container using the maven publisher :
 
 ```bash
-$ ern publish-container --containerPath [pathToContainer] -p maven -v [containerVersion] -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]", "mavenUser":"[mavenUser]", "mavenPasword":"[mavenPassword]"}'
+$ ern publish-container --containerPath [pathToContainer] -p maven -v [containerVersion] -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]", "mavenUser":"[mavenUserVar]", "mavenPasword":"[mavenPasswordVar]"}'
 ```  
 
 ### **With Cauldron**
@@ -70,7 +70,7 @@ $ ern publish-container --containerPath [pathToContainer] -p maven -v [container
 To automatically publish the Cauldron generated Containers of a target native application and platform, the `ern cauldron add publisher` command can be used as follow :
 
 ```bash
-$ ern cauldron add publisher -p maven -u [mavenRepoUrl] -c '{"artifactId":"[artifactId]", "groupId":"[groupId]", "mavenUser":"[mavenUser]", "mavenPassword": "[mavenPassword]"}' 
+$ ern cauldron add publisher -p maven -u http://domain.maven:8081/repositories -c '{"artifactId":"artifactIdVal", "groupId":"groupIdVal", "mavenUser":"[myMavenUserVar]", "mavenPassword": "[myMavenPasswordVar]"}' 
 ```
 
 This will result in the following publisher entry in Cauldron :
@@ -78,12 +78,31 @@ This will result in the following publisher entry in Cauldron :
 ```json
 {
   "name": "maven",
-  "url": "[mavenRepoUrl]",
+  "url": "http://domain.maven:8081/repositories",
   "extra": {
-    "artifactId": "[artifactId]",
-    "groupId" : "[groupId]",
-    "mavenUser": "[mavenUser]",
-    "mavenPassword": "[mavenPassword]"
+    "artifactId": "artifactIdVal",
+    "groupId" : "groupIdVal",
+    "mavenUser": "[myMavenUserVar]",
+    "mavenPassword": "[myMavenPasswordVar]"
+  }
+}
+```
+
+```bash
+$ ern cauldron add publisher -p maven -u http://domain.maven:8081/repositories -c '{"artifactId":"artifactIdVal", "groupId":"groupIdVal", "mavenUser": "myMavenUser", "mavenPassword": "myMavenPassword"}' 
+```
+
+This will result in the following publisher entry in Cauldron :
+
+```json
+{
+  "name": "maven",
+  "url": "http://domain.maven:8081/repositories",
+  "extra": {
+    "artifactId": "artifactIdVal",
+    "groupId" : "groupIdVal",
+    "mavenUser": "myMavenUser",
+    "mavenPassword": "myMavenPassword"
   }
 }
 ```
@@ -109,9 +128,13 @@ publisher.publish(
       artifactId?: string
       /* Group id to use for publication. Default: com.walmartlabs.ern */
       groupId?: string
-      /* Password to use for publication. Default: retrieved from ~/.gradle/gradle.properties */
+      /* Password to use for publication. Default: retrieved from ~/.gradle/gradle.properties 
+        mavenPassword can be set as a string or variable name (must enclosed in `[]`, ex. [myMavenPasswordVar])
+      */
       mavenPassword?: string
-       /* User to use for publication. Default: retrieved from ~/.gradle/gradle.properties */
+       /* User to use for publication. Default: retrieved from ~/.gradle/gradle.properties 
+          mavenUser can be set as a string or variable name (must enclosed in `[]`, ex. [myMavenUserVar])
+       */
       mavenUser?: string
     }
   }

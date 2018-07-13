@@ -40,9 +40,29 @@ export default class MavenUtils {
       // Replace \ by \\ for Windows
       return `repository(url: "${mavenRepositoryUrl.replace(/\\/g, '\\\\')}")`
     } else if (repoType === 'http') {
-      mavenUser = mavenUser ? `'${mavenUser}'` : 'mavenUser'
-      mavenPassword = mavenPassword ? `'${mavenPassword}'` : 'mavenPassword'
-      return `repository(url: "${mavenRepositoryUrl}") { authentication(userName: ${mavenUser}, password: ${mavenPassword}) }`
+      // User can pass userName as "value" or variable [mavenUser]
+      const isMavenUserVar = mavenUser && mavenUser.lastIndexOf('[') === 0
+      // User can pass password as "value" or variable [mavenPassword]
+      const isMavenPwdVar =
+        mavenPassword && mavenPassword.lastIndexOf('[') === 0
+      let authBlock = ''
+      // Check if mavenUser or mavenPassword is to be appended as variable in the authentication bean
+      if (isMavenUserVar || isMavenPwdVar) {
+        authBlock = `{ authentication(userName: ${mavenUser!.slice(
+          1,
+          -1
+        )}, password: ${mavenPassword!.slice(1, -1)}) }`
+      } // Check if mavenUser or mavenPassword is to be appended as value in the authentication bean
+      else if (mavenUser || mavenPassword) {
+        authBlock = `{ authentication(userName: "${mavenUser}", password: "${mavenPassword}") }`
+      }
+      // --config '{"mavenUser": "myUser","mavenPassword": "myPassword"}'
+      // Result : "repository(url: "http://domain.name:8081/repositories") { authentication(userName: "myUser", password: "myPassword") }”
+      // --config '{"mavenUser": "[myUserVar]","mavenPassword": "[myPasswordVar]”}'
+      // Result : "repository(url: "http://domain.name:8081/repositories") { authentication(userName: myUserVar, password: myPasswordVar) }”
+      // no config
+      // Result : "repository(url: "http://domain.name:8081/repositories")
+      return `repository(url: "${mavenRepositoryUrl}") ${authBlock}`
     }
   }
 
