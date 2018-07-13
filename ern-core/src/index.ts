@@ -2,7 +2,6 @@ import _CodePushSdk from './CodePushSdk'
 import _ErnBinaryStore from './ErnBinaryStore'
 import { manifest as _manifest } from './Manifest'
 export { Manifest, PluginConfig } from './Manifest'
-import _MavenUtils from './MavenUtils'
 import * as _ModuleTypes from './ModuleTypes'
 import _Platform from './Platform'
 import * as _android from './android'
@@ -53,7 +52,6 @@ export const ModuleTypes = _ModuleTypes
 export const android = _android
 export const ios = _ios
 export const spin = _spin
-export const MavenUtils = _MavenUtils
 export const mustacheUtils = _mustacheUtils
 export const manifest = _manifest
 export const handleCopyDirective = _handleCopyDirective
