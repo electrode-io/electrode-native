@@ -2,7 +2,7 @@ import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
 import {
   performCodePushPatch,
   askUserForCodePushDeploymentName,
-} from '../../lib/publication'
+} from '../../lib/codepush'
 import utils from '../../lib/utils'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
