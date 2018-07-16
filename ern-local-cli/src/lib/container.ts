@@ -12,72 +12,10 @@ import {
   NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-
 import _ from 'lodash'
 import path from 'path'
-import * as constants from './constants'
 import semver from 'semver'
-
-export function containsVersionMismatch(
-  versions: string[],
-  mismatchLevel: 'major' | 'minor' | 'patch'
-): boolean {
-  const minVersion = semver.minSatisfying(versions, '*')
-  const maxVersion = semver.maxSatisfying(versions, '*')
-  const majorMismatch = semver.major(maxVersion) !== semver.major(minVersion)
-  const minorMismatch = semver.minor(maxVersion) !== semver.minor(minVersion)
-  const patchMismatch = semver.patch(maxVersion) !== semver.patch(minVersion)
-  return (
-    majorMismatch ||
-    (minorMismatch &&
-      (mismatchLevel === 'minor' || mismatchLevel === 'patch')) ||
-    (patchMismatch && mismatchLevel === 'patch')
-  )
-}
-
-export function resolvePluginsVersions(
-  plugins: PackagePath[],
-  mismatchLevel: 'major' | 'minor' | 'patch'
-): {
-  resolved: PackagePath[]
-  pluginsWithMismatchingVersions: string[]
-} {
-  const result: any = {
-    pluginsWithMismatchingVersions: [],
-    resolved: [],
-  }
-
-  const pluginsByBasePath = _.groupBy(
-    _.unionBy(plugins, p => p.toString()),
-    'basePath'
-  )
-  for (const basePath of Object.keys(pluginsByBasePath)) {
-    const entry = pluginsByBasePath[basePath]
-    const pluginVersions = _.map(entry, 'version')
-    if (pluginVersions.length > 1) {
-      // If there are multiple versions of the dependency being used across all MiniApps
-      if (containsVersionMismatch(<string[]>pluginVersions, mismatchLevel)) {
-        // If at least one of the versions major digit differs, deem incompatibility
-        result.pluginsWithMismatchingVersions.push(basePath)
-      } else {
-        // No mismatchLevel version differences, just return the highest version
-        result.resolved.push(
-          _.find(
-            entry,
-            c =>
-              c.basePath === basePath &&
-              c.version === semver.maxSatisfying(<string[]>pluginVersions, '*')
-          )
-        )
-      }
-    } else {
-      // Only one version is used across all MiniApps, just use this version
-      result.resolved.push(entry[0])
-    }
-  }
-
-  return result
-}
+import * as constants from './constants'
 
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
@@ -186,17 +124,6 @@ export async function runLocalContainerGen(
   }
 }
 
-function getGeneratorForPlatform(platform: string): ContainerGenerator {
-  switch (platform) {
-    case 'android':
-      return new AndroidGenerator()
-    case 'ios':
-      return new IosGenerator()
-    default:
-      throw new Error(`Unsupported platform : ${platform}`)
-  }
-}
-
 // Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronContainerGen(
   napDescriptor: NativeApplicationDescriptor,
@@ -260,5 +187,77 @@ export async function runCauldronContainerGen(
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e
+  }
+}
+
+export function resolvePluginsVersions(
+  plugins: PackagePath[],
+  mismatchLevel: 'major' | 'minor' | 'patch'
+): {
+  resolved: PackagePath[]
+  pluginsWithMismatchingVersions: string[]
+} {
+  const result: any = {
+    pluginsWithMismatchingVersions: [],
+    resolved: [],
+  }
+
+  const pluginsByBasePath = _.groupBy(
+    _.unionBy(plugins, p => p.toString()),
+    'basePath'
+  )
+  for (const basePath of Object.keys(pluginsByBasePath)) {
+    const entry = pluginsByBasePath[basePath]
+    const pluginVersions = _.map(entry, 'version')
+    if (pluginVersions.length > 1) {
+      // If there are multiple versions of the dependency being used across all MiniApps
+      if (containsVersionMismatch(<string[]>pluginVersions, mismatchLevel)) {
+        // If at least one of the versions major digit differs, deem incompatibility
+        result.pluginsWithMismatchingVersions.push(basePath)
+      } else {
+        // No mismatchLevel version differences, just return the highest version
+        result.resolved.push(
+          _.find(
+            entry,
+            c =>
+              c.basePath === basePath &&
+              c.version === semver.maxSatisfying(<string[]>pluginVersions, '*')
+          )
+        )
+      }
+    } else {
+      // Only one version is used across all MiniApps, just use this version
+      result.resolved.push(entry[0])
+    }
+  }
+
+  return result
+}
+
+export function containsVersionMismatch(
+  versions: string[],
+  mismatchLevel: 'major' | 'minor' | 'patch'
+): boolean {
+  const minVersion = semver.minSatisfying(versions, '*')
+  const maxVersion = semver.maxSatisfying(versions, '*')
+  const majorMismatch = semver.major(maxVersion) !== semver.major(minVersion)
+  const minorMismatch = semver.minor(maxVersion) !== semver.minor(minVersion)
+  const patchMismatch = semver.patch(maxVersion) !== semver.patch(minVersion)
+  return (
+    majorMismatch ||
+    (minorMismatch &&
+      (mismatchLevel === 'minor' || mismatchLevel === 'patch')) ||
+    (patchMismatch && mismatchLevel === 'patch')
+  )
+}
+
+function getGeneratorForPlatform(platform: string): ContainerGenerator {
+  switch (platform) {
+    case 'android':
+      return new AndroidGenerator()
+    case 'ios':
+      return new IosGenerator()
+    default:
+      throw new Error(`Unsupported platform : ${platform}`)
   }
 }

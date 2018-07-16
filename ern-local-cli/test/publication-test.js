@@ -9,7 +9,7 @@ import { getCodePushSdk, getCodePushInitConfig } from '../src/lib/codepush'
 import {
   containsVersionMismatch,
   resolvePluginsVersions,
-} from '../src/lib/publication'
+} from '../src/lib/container'
 
 const ernRcPath = path.join(os.homedir(), '.ern', '.ernrc')
 const codePushConfigPath = path.join(

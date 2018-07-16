@@ -9,10 +9,7 @@ import {
   NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import {
-  runLocalContainerGen,
-  runCauldronContainerGen,
-} from '../lib/publication'
+import { runLocalContainerGen, runCauldronContainerGen } from '../lib/container'
 import utils from '../lib/utils'
 import * as constants from '../lib/constants'
 import _ from 'lodash'
