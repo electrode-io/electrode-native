@@ -76,7 +76,6 @@ export const handler = async ({
   jsApiImpls = [],
   dependencies = [],
   platform,
-  publicationUrl,
   ignoreRnpmAssets,
 }: {
   descriptor?: string
@@ -86,7 +85,6 @@ export const handler = async ({
   jsApiImpls: string[]
   dependencies: string[]
   platform?: NativePlatform
-  publicationUrl?: string
   ignoreRnpmAssets?: boolean
 }) => {
   let napDescriptor: NativeApplicationDescriptor | void
