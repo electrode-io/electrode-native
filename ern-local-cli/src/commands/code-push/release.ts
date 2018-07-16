@@ -9,7 +9,7 @@ import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   performCodePushOtaUpdate,
   askUserForCodePushDeploymentName,
-} from '../../lib/publication'
+} from '../../lib/codepush'
 import utils from '../../lib/utils'
 import * as constants from '../../lib/constants'
 import _ from 'lodash'

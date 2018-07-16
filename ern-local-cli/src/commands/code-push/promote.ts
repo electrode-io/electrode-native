@@ -7,7 +7,7 @@ import {
 import {
   performCodePushPromote,
   askUserForCodePushDeploymentName,
-} from '../../lib/publication'
+} from '../../lib/codepush'
 import utils from '../../lib/utils'
 import _ from 'lodash'
 import inquirer from 'inquirer'
