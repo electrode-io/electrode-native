@@ -558,21 +558,24 @@ async function performContainerStateUpdateInCauldron(
       for (const publisherFromCauldron of publishersFromCauldron) {
         let extra = publisherFromCauldron.extra
         if (!extra) {
-          switch (publisherFromCauldron.name) {
-            case 'maven':
-              extra = {
-                artifactId: `${napDescriptor.name}-ern-container`,
-                groupId: 'com.walmartlabs.ern',
-                mavenPassword: publisherFromCauldron.mavenPassword,
-                mavenUser: publisherFromCauldron.mavenUser,
-              }
-              break
-            case 'jcenter':
-              extra = {
-                artifactId: `${napDescriptor.name}-ern-container`,
-                groupId: 'com.walmartlabs.ern',
-              }
-              break
+          if (
+            publisherFromCauldron.name === 'maven' ||
+            publisherFromCauldron.name.startsWith('maven@')
+          ) {
+            extra = {
+              artifactId: `${napDescriptor.name}-ern-container`,
+              groupId: 'com.walmartlabs.ern',
+              mavenPassword: publisherFromCauldron.mavenPassword,
+              mavenUser: publisherFromCauldron.mavenUser,
+            }
+          } else if (
+            publisherFromCauldron.name === 'jcenter' ||
+            publisherFromCauldron.name.startsWith('jcenter@')
+          ) {
+            extra = {
+              artifactId: `${napDescriptor.name}-ern-container`,
+              groupId: 'com.walmartlabs.ern',
+            }
           }
         }
 
