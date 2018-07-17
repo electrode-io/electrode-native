@@ -246,6 +246,14 @@ export class CauldronHelper {
     return this.cauldron.hasFile({ cauldronFilePath })
   }
 
+  public async getFile({
+    cauldronFilePath,
+  }: {
+    cauldronFilePath: string
+  }): Promise<Buffer> {
+    return this.cauldron.getFile({ cauldronFilePath })
+  }
+
   public async hasYarnLock(
     napDescriptor: NativeApplicationDescriptor,
     key: string

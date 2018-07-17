@@ -1960,6 +1960,38 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
+  // getFile
+  // ==========================================================
+  describe('getFile', () => {
+    it('should throw if cauldronFilePath is undefined', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.getFile, api, {}))
+    })
+
+    it('should throw if file does not exist', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(api.getFile, api, {
+          cauldronFilePath: 'dir/file',
+        })
+      )
+    })
+
+    it('should not throw in nominal proper use case', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(
+        await doesNotThrow(api.getFile, api, {
+          cauldronFilePath: 'dir/file',
+        })
+      )
+    })
+  })
+
+  // ==========================================================
   // hasYarnLock
   // ==========================================================
   describe('hasYarnLock', () => {
