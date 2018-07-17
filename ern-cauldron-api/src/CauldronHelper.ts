@@ -206,6 +206,46 @@ export class CauldronHelper {
     return _.map(dependencies, PackagePath.fromString)
   }
 
+  public async addFile({
+    localFilePath,
+    cauldronFilePath,
+  }: {
+    localFilePath: string
+    cauldronFilePath: string
+  }) {
+    const fileContent = await fileUtils.readFile(localFilePath)
+    const isExecutable = await fileUtils.isExecutable(localFilePath)
+    return this.cauldron.addFile({
+      cauldronFilePath,
+      fileContent,
+      fileMode: isExecutable ? '+x' : undefined,
+    })
+  }
+
+  public async updateFile({
+    localFilePath,
+    cauldronFilePath,
+  }: {
+    localFilePath: string
+    cauldronFilePath: string
+  }) {
+    const fileContent = await fileUtils.readFile(localFilePath)
+    const isExecutable = await fileUtils.isExecutable(localFilePath)
+    return this.cauldron.updateFile({
+      cauldronFilePath,
+      fileContent,
+      fileMode: isExecutable ? '+x' : undefined,
+    })
+  }
+
+  public async removeFile({ cauldronFilePath }: { cauldronFilePath: string }) {
+    return this.cauldron.removeFile({ cauldronFilePath })
+  }
+
+  public async hasFile({ cauldronFilePath }: { cauldronFilePath: string }) {
+    return this.cauldron.hasFile({ cauldronFilePath })
+  }
+
   public async hasYarnLock(
     napDescriptor: NativeApplicationDescriptor,
     key: string

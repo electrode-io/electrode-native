@@ -804,6 +804,70 @@ export default class CauldronApi {
   // =====================================================================================
 
   // -------------------------------------------------------------------------------------
+  // ARBITRARY FILE ACCESS
+  // -------------------------------------------------------------------------------------
+
+  public async addFile({
+    cauldronFilePath,
+    fileContent,
+    fileMode,
+  }: {
+    cauldronFilePath: string
+    fileContent: string | Buffer
+    fileMode?: string
+  }) {
+    if (!cauldronFilePath) {
+      throw new Error('[addFile] cauldronFilePath is required')
+    }
+    if (!fileContent) {
+      throw new Error('[addFile] fileContent is required')
+    }
+    if (await this.hasFile({ cauldronFilePath })) {
+      throw new Error(
+        `[addFile] ${cauldronFilePath} already exists. Use updateFile instead.`
+      )
+    }
+    return this.fileStore.storeFile(cauldronFilePath, fileContent, fileMode)
+  }
+
+  public async updateFile({
+    cauldronFilePath,
+    fileContent,
+    fileMode,
+  }: {
+    cauldronFilePath: string
+    fileContent: string | Buffer
+    fileMode?: string
+  }) {
+    if (!cauldronFilePath) {
+      throw new Error('[updateFile] cauldronFilePath is required')
+    }
+    if (!fileContent) {
+      throw new Error('[updateFile] fileContent is required')
+    }
+    if (!(await this.hasFile({ cauldronFilePath }))) {
+      throw new Error(
+        `[updateFile] ${cauldronFilePath} does not exist. Use addFile first.`
+      )
+    }
+    return this.fileStore.storeFile(cauldronFilePath, fileContent, fileMode)
+  }
+
+  public async removeFile({ cauldronFilePath }: { cauldronFilePath: string }) {
+    if (!cauldronFilePath) {
+      throw new Error('[removeFile] cauldronFilePath is required')
+    }
+    if (!(await this.hasFile({ cauldronFilePath }))) {
+      throw new Error(`[removeFile] ${cauldronFilePath} does not exist`)
+    }
+    return this.fileStore.removeFile(cauldronFilePath)
+  }
+
+  public async hasFile({ cauldronFilePath }: { cauldronFilePath: string }) {
+    return this.fileStore.hasFile(cauldronFilePath)
+  }
+
+  // -------------------------------------------------------------------------------------
   // YARN LOCKS STORE ACCESS
   // -------------------------------------------------------------------------------------
 
