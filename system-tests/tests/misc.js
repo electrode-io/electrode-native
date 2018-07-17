@@ -7,12 +7,20 @@ const randomInt = require('../utils/randomInt')
 const sameDirContent = require('../utils/sameDirContent')
 const run = require('../utils/run')
 const f = require('../fixtures/constants')
+const fs = require('fs')
+const os = require('os')
 
 const workingDirectoryPath = process.cwd()
 const info = chalk.bold.blue
 const androidNativeApplicationDescriptor = `${f.systemTestNativeApplicationName}:android:${f.systemTestNativeApplicationVersion1}`
 const iosNativeApplicationDescriptor = `${f.systemTestNativeApplicationName}:ios:${f.systemTestNativeApplicationVersion1}`
 const iosNativeApplicationDescriptorNewVersion = `${f.systemTestNativeApplicationName}:ios:${f.systemTestNativeApplicationVersion2}`
+
+const ERN_ROOT_PATH = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
+const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_ROOT_PATH, '.ernrc')
+const ernConfigObj = fs.existsSync(ERN_RC_GLOBAL_FILE_PATH)
+? JSON.parse(fs.readFileSync(ERN_RC_GLOBAL_FILE_PATH, 'utf-8'))
+: {}
 
 process.env['SYSTEM_TESTS'] = 'true'
 process.on('SIGINT', () => afterAll())
@@ -112,11 +120,14 @@ run('ern platform current')
 run('ern platform list')
 run('ern platform plugins list')
 run('ern platform plugins search react-native')
-run('ern platform config keyNotSupported trace', {expectedExitCode : 1})
-run('ern platform config tmp-dir "~/dir/to/command/exec"')
-run('ern platform config retain-tmp-dir false')
-run('ern platform config package-cache-enabled true')
-run('ern platform config max-package-cache-size 1024')
-run('ern platform codePushAccessKey "keytocodepush')
-
+run('ern platform config keyNotSupported trace', { expectedExitCode: 1 })
+try{
+  run('ern platform config tmp-dir "~/dir/to/command/exec"')
+  run('ern platform config retain-tmp-dir false')
+  run('ern platform config package-cache-enabled true')
+  run('ern platform config max-package-cache-size 1024')
+  run('ern platform config codePushAccessKey "keytocodepush"')
+} finally{
+  fs.writeFileSync(ERN_RC_GLOBAL_FILE_PATH, JSON.stringify(ernConfigObj, null, 2))
+}
 afterAll()
