@@ -867,6 +867,21 @@ export default class CauldronApi {
     return this.fileStore.hasFile(cauldronFilePath)
   }
 
+  public async getFile({
+    cauldronFilePath,
+  }: {
+    cauldronFilePath: string
+  }): Promise<Buffer> {
+    if (!cauldronFilePath) {
+      throw new Error('[removeFile] cauldronFilePath is required')
+    }
+    if (!(await this.hasFile({ cauldronFilePath }))) {
+      throw new Error(`[getFile] ${cauldronFilePath} does not exist.`)
+    }
+    const result = await this.fileStore.getFile(cauldronFilePath)
+    return result as Buffer
+  }
+
   // -------------------------------------------------------------------------------------
   // YARN LOCKS STORE ACCESS
   // -------------------------------------------------------------------------------------
