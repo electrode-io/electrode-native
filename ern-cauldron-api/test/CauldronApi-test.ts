@@ -1,7 +1,7 @@
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
-import { NativeApplicationDescriptor, PackagePath } from 'ern-core'
-import { doesThrow, fixtures } from 'ern-util-dev'
+import { NativeApplicationDescriptor, PackagePath, fileUtils } from 'ern-core'
+import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import { CauldronCodePushEntry } from '../src/types'
 import CauldronApi from '../src/CauldronApi'
 import EphemeralFileStore from '../src/EphemeralFileStore'
@@ -1841,6 +1841,120 @@ describe('CauldronApi.js', () => {
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
           codePushNewEntryFixture
         )
+      )
+    })
+  })
+
+  // ==========================================================
+  // addFile
+  // ==========================================================
+  describe('addFile', () => {
+    it('should throw if cauldronFilePath is undefined', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.addFile, api, { fileContent: 'content' }))
+    })
+
+    it('should throw if fileContent is undefined', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(api.addFile, api, { cauldronFilePath: 'dir/file' })
+      )
+    })
+
+    it('should throw if file already exist', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(
+        await doesThrow(api.addFile, api, {
+          cauldronFilePath: 'dir/file',
+          fileContent: 'newcontent',
+        })
+      )
+    })
+
+    it('should not throw in nominal proper use case', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesNotThrow(api.addFile, api, {
+          cauldronFilePath: 'dir/file',
+          fileContent: 'content',
+        })
+      )
+    })
+  })
+
+  // ==========================================================
+  // updateFile
+  // ==========================================================
+  describe('updateFile', () => {
+    it('should throw if cauldronFilePath is undefined', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.updateFile, api, { fileContent: 'content' }))
+    })
+
+    it('should throw if fileContent is undefined', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(api.updateFile, api, { cauldronFilePath: 'dir/file' })
+      )
+    })
+
+    it('should throw if file does not already exist', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(api.updateFile, api, {
+          cauldronFilePath: 'dir/file',
+          fileContent: 'newcontent',
+        })
+      )
+    })
+
+    it('should not throw in nominal proper use case', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(
+        await doesNotThrow(api.updateFile, api, {
+          cauldronFilePath: 'dir/file',
+          fileContent: 'content',
+        })
+      )
+    })
+  })
+
+  // ==========================================================
+  // removeFile
+  // ==========================================================
+  describe('removeFile', () => {
+    it('should throw if cauldronFilePath is undefined', async () => {
+      const api = cauldronApi()
+      assert(await doesThrow(api.removeFile, api, {}))
+    })
+
+    it('should throw if file does not exist', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(api.removeFile, api, {
+          cauldronFilePath: 'dir/file',
+        })
+      )
+    })
+
+    it('should not throw in nominal proper use case', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(
+        await doesNotThrow(api.removeFile, api, {
+          cauldronFilePath: 'dir/file',
+        })
       )
     })
   })
