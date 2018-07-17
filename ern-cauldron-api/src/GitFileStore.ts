@@ -25,7 +25,11 @@ export default class GitFileStore extends BaseGit
   // ICauldronFileAccess implementation
   // ===========================================================
 
-  public async storeFile(filePath: string, content: string | Buffer) {
+  public async storeFile(
+    filePath: string,
+    content: string | Buffer,
+    fileMode?: string
+  ) {
     await this.sync()
     const storeDirectoryPath = path.resolve(this.fsPath, path.dirname(filePath))
     if (!fs.existsSync(storeDirectoryPath)) {
@@ -34,6 +38,9 @@ export default class GitFileStore extends BaseGit
     }
     const pathToFile = path.resolve(storeDirectoryPath, path.basename(filePath))
     await writeFile(pathToFile, content, { flag: 'w' })
+    if (fileMode) {
+      shell.chmod(fileMode, pathToFile)
+    }
     await this.git.addAsync(pathToFile)
     if (!this.pendingTransaction) {
       await this.git.commitAsync(`Add file ${filePath}`)

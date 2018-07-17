@@ -22,13 +22,20 @@ export default class EphemeralFileStore implements ICauldronFileStore {
   // ICauldronFileAccess implementation
   // ===========================================================
 
-  public async storeFile(identifier: string, content: string | Buffer) {
+  public async storeFile(
+    identifier: string,
+    content: string | Buffer,
+    fileMode?: string
+  ) {
     const pathToFile = path.join(this.storePath, identifier)
     const pathToDir = path.dirname(pathToFile)
     if (!fs.existsSync(pathToDir)) {
       shell.mkdir('-p', pathToDir)
     }
     fs.writeFileSync(pathToFile, content, 'utf8')
+    if (fileMode) {
+      shell.chmod(fileMode, pathToFile)
+    }
     return Promise.resolve()
   }
 
