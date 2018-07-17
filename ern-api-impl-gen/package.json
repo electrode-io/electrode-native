@@ -1,6 +1,6 @@
 {
   "name": "ern-api-impl-gen",
-  "version": "0.21.2",
+  "version": "0.21.3",
   "description": "Electrode Native API implementation projects generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -53,8 +53,8 @@
   "dependencies": {
     "@yarnpkg/lockfile": "^1.0.1",
     "chalk": "^2.4.1",
-    "ern-api-gen": "0.21.2",
-    "ern-core": "0.21.2",
+    "ern-api-gen": "0.21.3",
+    "ern-core": "0.21.3",
     "lodash": "^4.17.10",
     "mustache": "^2.3.0",
     "semver": "5.5.0",
@@ -62,7 +62,7 @@
     "xcode-ern": "^1.0.3"
   },
   "devDependencies": {
-    "ern-util-dev": "0.21.2"
+    "ern-util-dev": "0.21.3"
   },
   "engines": {
     "node": ">=6"

@@ -1,6 +1,6 @@
 {
   "name": "ern-container-publisher-jcenter",
-  "version": "0.21.2",
+  "version": "0.21.3",
   "description": "Electrode Native JCenter Container Publisher",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -53,12 +53,12 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-container-publisher": "0.21.2",
-    "ern-core": "0.21.2"
+    "ern-container-publisher": "0.21.3",
+    "ern-core": "0.21.3"
   },
   "devDependencies": {
     "copyfiles": "^2.0.0",
-    "ern-util-dev": "0.21.2"
+    "ern-util-dev": "0.21.3"
   },
   "engines": {
     "node": ">=6"
