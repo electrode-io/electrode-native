@@ -65,3 +65,9 @@ export function getSchemaVersionMatchingCauldronApiVersion(
 export function getCurrentSchemaVersion() {
   return schemaVersion
 }
+
+export const cauldronFileUriScheme = 'cauldron://'
+
+export function normalizeCauldronFilePath(cauldronFilePath: string): string {
+  return cauldronFilePath && cauldronFilePath.replace(cauldronFileUriScheme, '')
+}

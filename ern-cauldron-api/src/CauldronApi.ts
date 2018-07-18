@@ -1,6 +1,6 @@
 import * as schemas from './schemas'
 import { NativeApplicationDescriptor, PackagePath } from 'ern-core'
-import { exists, joiValidate, shasum } from './util'
+import { exists, joiValidate, shasum, normalizeCauldronFilePath } from './util'
 import _ from 'lodash'
 import {
   Cauldron,
@@ -822,6 +822,7 @@ export default class CauldronApi {
     if (!fileContent) {
       throw new Error('[addFile] fileContent is required')
     }
+    cauldronFilePath = normalizeCauldronFilePath(cauldronFilePath)
     if (await this.hasFile({ cauldronFilePath })) {
       throw new Error(
         `[addFile] ${cauldronFilePath} already exists. Use updateFile instead.`
@@ -845,6 +846,7 @@ export default class CauldronApi {
     if (!fileContent) {
       throw new Error('[updateFile] fileContent is required')
     }
+    cauldronFilePath = normalizeCauldronFilePath(cauldronFilePath)
     if (!(await this.hasFile({ cauldronFilePath }))) {
       throw new Error(
         `[updateFile] ${cauldronFilePath} does not exist. Use addFile first.`
@@ -857,6 +859,7 @@ export default class CauldronApi {
     if (!cauldronFilePath) {
       throw new Error('[removeFile] cauldronFilePath is required')
     }
+    cauldronFilePath = normalizeCauldronFilePath(cauldronFilePath)
     if (!(await this.hasFile({ cauldronFilePath }))) {
       throw new Error(`[removeFile] ${cauldronFilePath} does not exist`)
     }
@@ -864,6 +867,7 @@ export default class CauldronApi {
   }
 
   public async hasFile({ cauldronFilePath }: { cauldronFilePath: string }) {
+    cauldronFilePath = normalizeCauldronFilePath(cauldronFilePath)
     return this.fileStore.hasFile(cauldronFilePath)
   }
 
@@ -875,6 +879,7 @@ export default class CauldronApi {
     if (!cauldronFilePath) {
       throw new Error('[removeFile] cauldronFilePath is required')
     }
+    cauldronFilePath = normalizeCauldronFilePath(cauldronFilePath)
     if (!(await this.hasFile({ cauldronFilePath }))) {
       throw new Error(`[getFile] ${cauldronFilePath} does not exist.`)
     }

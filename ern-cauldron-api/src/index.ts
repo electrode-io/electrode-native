@@ -22,4 +22,5 @@ export {
 export {
   getSchemaVersionMatchingCauldronApiVersion,
   getCurrentSchemaVersion,
+  cauldronFileUriScheme,
 } from './util'
