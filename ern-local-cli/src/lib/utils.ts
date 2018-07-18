@@ -99,6 +99,9 @@ async function logErrorAndExitIfNotSatisfied({
   isValidNpmPackageName,
   isValidElectrodeNativeModuleName,
   checkIfCodePushOptionsAreValid,
+  isFilePath,
+  isDirectoryPath,
+  pathExist,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | string[]
@@ -187,6 +190,18 @@ async function logErrorAndExitIfNotSatisfied({
     descriptors?: string[]
     targetBinaryVersion?: string
     semVerDescriptor?: string
+    extraErrorMessage?: string
+  }
+  isFilePath?: {
+    p: fs.PathLike
+    extraErrorMessage?: string
+  }
+  isDirectoryPath?: {
+    p: fs.PathLike
+    extraErrorMessage?: string
+  }
+  pathExist?: {
+    p: fs.PathLike
     extraErrorMessage?: string
   }
 } = {}) {
@@ -350,6 +365,18 @@ async function logErrorAndExitIfNotSatisfied({
         checkIfCodePushOptionsAreValid.semVerDescriptor,
         checkIfCodePushOptionsAreValid.extraErrorMessage
       )
+    }
+    if (pathExist) {
+      spinner.text = 'Ensuring that path exist'
+      await Ensure.pathExist(pathExist.p)
+    }
+    if (isFilePath) {
+      spinner.text = 'Ensuring that path is a file path'
+      await Ensure.isFilePath(isFilePath.p)
+    }
+    if (isDirectoryPath) {
+      spinner.text = 'Ensuring that path is a directory path'
+      await Ensure.isDirectoryPath(isDirectoryPath.p)
     }
     spinner.succeed('Validity checks have passed')
   } catch (e) {
