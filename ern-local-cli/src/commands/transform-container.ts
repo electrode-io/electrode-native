@@ -17,7 +17,7 @@ export const builder = (argv: Argv) => {
     .option('extra', {
       alias: 'e',
       describe:
-        'Optional extra transformer configuration (json string or path to config file)',
+        'Optional extra transformer configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
     .option('platform', {

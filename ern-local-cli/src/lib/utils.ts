@@ -18,7 +18,7 @@ import {
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { transformContainer } from 'ern-container-transformer'
-import { getActiveCauldron } from 'ern-cauldron-api'
+import { getActiveCauldron, cauldronFileUriScheme } from 'ern-cauldron-api'
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
 import { AndroidRunnerGenerator } from 'ern-runner-gen-android'
 import { IosRunnerGenerator } from 'ern-runner-gen-ios'
@@ -542,9 +542,23 @@ async function performContainerStateUpdateInCauldron(
       containerGenConfig && containerGenConfig.transformers
     if (transformersFromCauldron) {
       for (const transformerFromCauldron of transformersFromCauldron) {
+        let extra = transformerFromCauldron.extra
+        if (
+          extra &&
+          typeof extra === 'string' &&
+          extra.startsWith(cauldronFileUriScheme)
+        ) {
+          if (!(await cauldron.hasFile(extra))) {
+            throw new Error(
+              `Cannot find transformer extra config file ${extra} in Cauldron`
+            )
+          }
+          const extraFile = await cauldron.getFile(extra)
+          extra = parseJsonFromStringOrFile(extraFile.toString())
+        }
         await transformContainer({
           containerPath: outDir,
-          extra: transformerFromCauldron.extra,
+          extra,
           platform: napDescriptor.platform,
           transformer: transformerFromCauldron.name,
         })
@@ -577,6 +591,17 @@ async function performContainerStateUpdateInCauldron(
               groupId: 'com.walmartlabs.ern',
             }
           }
+        } else if (
+          typeof extra === 'string' &&
+          extra.startsWith(cauldronFileUriScheme)
+        ) {
+          if (!(await cauldron.hasFile(extra))) {
+            throw new Error(
+              'Cannot find publisher extra config file ${extra} in Cauldron'
+            )
+          }
+          const extraFile = await cauldron.getFile(extra)
+          extra = parseJsonFromStringOrFile(extraFile.toString())
         }
 
         // ==================================================================
@@ -1251,18 +1276,26 @@ async function unzip(zippedData: Buffer, destPath: string) {
 /**
  * Parse json from a string or a file and return the
  * resulting JavaScript object
- * @param s A json string or a path to a json file
+ * @param s A json string or a local file path to a json file.
+ * Can also be a reference to a file stored in cauldron, using
+ * the cauldron:// file scheme.
  */
 async function parseJsonFromStringOrFile(s: string): Promise<any> {
   let result
   try {
-    if (fs.existsSync(s)) {
+    if (s.startsWith(cauldronFileUriScheme)) {
+      const cauldron = await getActiveCauldron()
+      const file = await cauldron.getFile({
+        cauldronFilePath: s,
+      })
+      result = JSON.parse(file.toString())
+    } else if (fs.existsSync(s)) {
       result = await fileUtils.readJSON(s)
     } else {
       result = JSON.parse(s)
     }
   } catch (e) {
-    throw new Error('[parseJsonFromStringOrFile] Invalid JSON')
+    throw new Error('[parseJsonFromStringOrFile] Invalid JSON or file')
   }
   return result
 }
