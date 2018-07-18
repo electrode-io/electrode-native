@@ -1,4 +1,4 @@
-import { PackagePath, Platform, shell, yarn } from 'ern-core'
+import { PackagePath, Platform, shell, yarn, readPackageJson } from 'ern-core'
 import { ContainerTransformer } from './types'
 import fs from 'fs'
 import path from 'path'
@@ -24,7 +24,18 @@ export default async function getTransformer(
       ) {
         transformer = `${ERN_TRANSFORMER_PACKAGE_PREFIX}${transformer}`
       }
-      await yarn.add(PackagePath.fromString(transformer))
+      const transformerPackagePath = PackagePath.fromString(transformer)
+      const packageJson = await readPackageJson(
+        Platform.containerTransformersCacheDirectory
+      )
+      if (
+        packageJson.dependencies &&
+        packageJson.dependencies[transformerPackagePath.basePath]
+      ) {
+        await yarn.upgrade(transformerPackagePath)
+      } else {
+        await yarn.add(transformerPackagePath)
+      }
       const pkgName = REGISTRY_PATH_VERSION_RE.test(transformer)
         ? REGISTRY_PATH_VERSION_RE.exec(transformer)![1]
         : transformer

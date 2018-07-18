@@ -1,4 +1,4 @@
-import { PackagePath, Platform, shell, yarn } from 'ern-core'
+import { PackagePath, Platform, shell, yarn, readPackageJson } from 'ern-core'
 import { ContainerPublisher } from './types'
 import fs from 'fs'
 import path from 'path'
@@ -22,7 +22,18 @@ export default async function getPublisher(
       ) {
         publisher = `${ERN_PUBLISHER_PACKAGE_PREFIX}${publisher}`
       }
-      await yarn.add(PackagePath.fromString(publisher))
+      const publisherPackagePath = PackagePath.fromString(publisher)
+      const packageJson = await readPackageJson(
+        Platform.containerPublishersCacheDirectory
+      )
+      if (
+        packageJson.dependencies &&
+        packageJson.dependencies[publisherPackagePath.basePath]
+      ) {
+        await yarn.upgrade(publisherPackagePath)
+      } else {
+        await yarn.add(publisherPackagePath)
+      }
       const pkgName = REGISTRY_PATH_VERSION_RE.test(publisher)
         ? REGISTRY_PATH_VERSION_RE.exec(publisher)![1]
         : publisher
