@@ -1884,6 +1884,24 @@ describe('CauldronApi.js', () => {
         })
       )
     })
+
+    it('should add the file [non cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(await api.hasFile({ cauldronFilePath: 'dir/file' }))
+    })
+
+    it('should add the file [cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'cauldron://dir/file',
+        fileContent: 'content',
+      })
+      assert(await api.hasFile({ cauldronFilePath: 'dir/file' }))
+    })
   })
 
   // ==========================================================
@@ -1925,6 +1943,34 @@ describe('CauldronApi.js', () => {
         })
       )
     })
+
+    it('should update the file [non cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(
+        await doesNotThrow(api.updateFile, api, {
+          cauldronFilePath: 'dir/file',
+          fileContent: 'content',
+        })
+      )
+    })
+
+    it('should update the file [cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      assert(
+        await doesNotThrow(api.updateFile, api, {
+          cauldronFilePath: 'cauldron://dir/file',
+          fileContent: 'content',
+        })
+      )
+    })
   })
 
   // ==========================================================
@@ -1957,6 +2003,30 @@ describe('CauldronApi.js', () => {
         })
       )
     })
+
+    it('should remove the file [non cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      await api.removeFile({
+        cauldronFilePath: 'dir/file',
+      })
+      assert(!(await api.hasFile({ cauldronFilePath: 'dir/file' })))
+    })
+
+    it('should remove the file [cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      await api.removeFile({
+        cauldronFilePath: 'cauldron://dir/file',
+      })
+      assert(!(await api.hasFile({ cauldronFilePath: 'dir/file' })))
+    })
   })
 
   // ==========================================================
@@ -1988,6 +2058,28 @@ describe('CauldronApi.js', () => {
           cauldronFilePath: 'dir/file',
         })
       )
+    })
+
+    it('should get the file [non cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      const file = await api.getFile({ cauldronFilePath: 'dir/file' })
+      expect(file.toString()).eql('content')
+    })
+
+    it('should get the file [cauldron scheme]', async () => {
+      const api = cauldronApi()
+      await api.addFile({
+        cauldronFilePath: 'dir/file',
+        fileContent: 'content',
+      })
+      const file = await api.getFile({
+        cauldronFilePath: 'cauldron://dir/file',
+      })
+      expect(file.toString()).eql('content')
     })
   })
 

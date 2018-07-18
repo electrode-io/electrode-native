@@ -1,6 +1,5 @@
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import * as util from '../src/util'
-import sinon from 'sinon'
 
 describe('util.js', () => {
   describe('exists', () => {
@@ -64,6 +63,18 @@ describe('util.js', () => {
     it('should return the correct file name extension for iOS', () => {
       const result = util.getNativeBinaryFileExt('ios')
       expect(result).eql('app')
+    })
+  })
+
+  describe('normalizeCauldronFilePath', () => {
+    it('should return the path as such for a non cauldron scheme path', () => {
+      const result = util.normalizeCauldronFilePath('dir/file')
+      expect(result).eql('dir/file')
+    })
+
+    it('should remove the cauldron scheme for a cauldron scheme path', () => {
+      const result = util.normalizeCauldronFilePath('cauldron://dir/file')
+      expect(result).eql('dir/file')
     })
   })
 })
