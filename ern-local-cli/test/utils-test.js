@@ -6,6 +6,7 @@ import {
   NativeApplicationDescriptor,
   yarn,
   utils as coreUtils,
+  createTmpDir,
 } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import {
@@ -21,6 +22,8 @@ import utils from '../src/lib/utils'
 import * as fixtures from './fixtures/common'
 import ora from 'ora'
 import inquirer from 'inquirer'
+import fs from 'fs'
+import path from 'path'
 
 // Fixtures
 const basicCauldronFixture = utilFixtures.defaultCauldron
@@ -396,6 +399,87 @@ describe('utils.js', () => {
         },
       })
       assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[pathExist] Should not log error nor exist if path exist', async () => {
+      const tmpDirPath = createTmpDir()
+      await utils.logErrorAndExitIfNotSatisfied({
+        pathExist: {
+          p: tmpDirPath,
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[pathExist] Should log error and exist if path does not exist', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        pathExist: {
+          p: '/non/existing/path',
+        },
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[isFilePath] Should not log error nor exist if path is a file path', async () => {
+      const tmpDirPath = createTmpDir()
+      const tmpFilePath = path.join(tmpDirPath, 'file.test')
+      const tmpFile = fs.writeFileSync(tmpFilePath, 'CONTENT')
+      await utils.logErrorAndExitIfNotSatisfied({
+        isFilePath: {
+          p: tmpFilePath,
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[isFilePath] Should log error and exist if path is not a file path', async () => {
+      const tmpDirPath = createTmpDir()
+      await utils.logErrorAndExitIfNotSatisfied({
+        isFilePath: {
+          p: tmpDirPath,
+        },
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[isFilePath] Should log error and exist if path does not exist', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isFilePath: {
+          p: '/non/existing/path',
+        },
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[isDirectoryPath] Should not log error nor exist if path is a directory path', async () => {
+      const tmpDirPath = createTmpDir()
+      await utils.logErrorAndExitIfNotSatisfied({
+        isDirectoryPath: {
+          p: tmpDirPath,
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[isDirectoryPath] Should log error and exist if path is not a directory path', async () => {
+      const tmpDirPath = createTmpDir()
+      const tmpFilePath = path.join(tmpDirPath, 'file.test')
+      const tmpFile = fs.writeFileSync(tmpFilePath, 'CONTENT')
+      await utils.logErrorAndExitIfNotSatisfied({
+        isDirectoryPath: {
+          p: tmpFilePath,
+        },
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[isDirectoryPath] Should log error and exist if path does not exist', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isDirectoryPath: {
+          p: '/non/existing/path',
+        },
+      })
+      assertLoggedErrorAndExitedProcess()
     })
   })
 

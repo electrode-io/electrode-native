@@ -1,21 +1,15 @@
-// @flow 
+// @flow
 
-import {
-  assert,
-  expect
-} from 'chai'
+import { assert, expect } from 'chai'
 import * as cauldron from 'ern-cauldron-api'
-import {
-  utils
-} from 'ern-core'
-import {
-  doesThrow,
-  doesNotThrow
-} from 'ern-util-dev'
+import { utils, createTmpDir } from 'ern-core'
+import { doesThrow, doesNotThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
 import * as fixtures from './fixtures/common'
 const sandbox = sinon.createSandbox()
+import fs from 'fs'
+import path from 'path'
 
 let cauldronHelperStub
 
@@ -24,7 +18,7 @@ describe('Ensure.js', () => {
     cauldronHelperStub = sandbox.createStubInstance(cauldron.CauldronHelper)
     sandbox.stub(cauldron, 'getActiveCauldron').resolves(cauldronHelperStub)
   })
-  
+
   afterEach(() => {
     sandbox.restore()
   })
@@ -35,13 +29,19 @@ describe('Ensure.js', () => {
   describe('isValidContainerVersion', () => {
     fixtures.validContainerVersions.forEach(version => {
       it('shoud not throw if version is valid', () => {
-        expect(() => Ensure.isValidContainerVersion(version), `throw for ${version}`).to.not.throw()
+        expect(
+          () => Ensure.isValidContainerVersion(version),
+          `throw for ${version}`
+        ).to.not.throw()
       })
     })
 
     fixtures.invalidContainerVersions.forEach(version => {
       it('should throw if version is invalid', () => {
-        expect(() => Ensure.isValidContainerVersion(version), `does not throw for ${version}`).to.throw()
+        expect(
+          () => Ensure.isValidContainerVersion(version),
+          `does not throw for ${version}`
+        ).to.throw()
       })
     })
   })
@@ -52,13 +52,19 @@ describe('Ensure.js', () => {
   describe('isCompleteNapDescriptorString', () => {
     fixtures.completeNapDescriptors.forEach(napDescriptor => {
       it('shoud not throw if given a complete napDescriptor string', () => {
-        expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `throw for ${napDescriptor}`).to.not.throw()
+        expect(
+          () => Ensure.isCompleteNapDescriptorString(napDescriptor),
+          `throw for ${napDescriptor}`
+        ).to.not.throw()
       })
     })
 
     fixtures.incompleteNapDescriptors.forEach(napDescriptor => {
       it('should throw if given a partial napDescriptor string', () => {
-        expect(() => Ensure.isCompleteNapDescriptorString(napDescriptor), `does not throw for ${napDescriptor}`).to.throw()
+        expect(
+          () => Ensure.isCompleteNapDescriptorString(napDescriptor),
+          `does not throw for ${napDescriptor}`
+        ).to.throw()
       })
     })
   })
@@ -69,13 +75,19 @@ describe('Ensure.js', () => {
   describe('noGitOrFilesystemPath', () => {
     fixtures.withoutGitOrFileSystemPath.forEach(obj => {
       it('shoud not throw if no git or file system path', () => {
-        expect(() => Ensure.noGitOrFilesystemPath(obj), `throw for ${obj}`).to.not.throw()
+        expect(
+          () => Ensure.noGitOrFilesystemPath(obj),
+          `throw for ${obj}`
+        ).to.not.throw()
       })
     })
 
     fixtures.withGitOrFileSystemPath.forEach(obj => {
       it('should throw if git or file system path', () => {
-        expect(() => Ensure.noGitOrFilesystemPath(obj), `does not throw for ${obj}`).to.throw()
+        expect(
+          () => Ensure.noGitOrFilesystemPath(obj),
+          `does not throw for ${obj}`
+        ).to.throw()
       })
     })
   })
@@ -86,13 +98,19 @@ describe('Ensure.js', () => {
   describe('noFileSystemPath', () => {
     fixtures.withoutFileSystemPath.forEach(obj => {
       it('shoud not throw if no file system path', () => {
-        expect(() => Ensure.noFileSystemPath(obj), `throw for ${obj}`).to.not.throw()
+        expect(
+          () => Ensure.noFileSystemPath(obj),
+          `throw for ${obj}`
+        ).to.not.throw()
       })
     })
 
     fixtures.withFileSystemPath.forEach(obj => {
       it('should throw if file system path', () => {
-        expect(() => Ensure.noFileSystemPath(obj), `does not throw for ${obj}`).to.throw()
+        expect(
+          () => Ensure.noFileSystemPath(obj),
+          `does not throw for ${obj}`
+        ).to.throw()
       })
     })
   })
@@ -103,12 +121,24 @@ describe('Ensure.js', () => {
   describe('napDescritorExistsInCauldron', () => {
     it('should not throw if nap descriptor exists in Cauldron', async () => {
       cauldronHelperStub.isDescriptorInCauldron.resolves(true)
-      assert(await doesNotThrow(Ensure.napDescritorExistsInCauldron, null, 'testapp:android:1.0.0'))
+      assert(
+        await doesNotThrow(
+          Ensure.napDescritorExistsInCauldron,
+          null,
+          'testapp:android:1.0.0'
+        )
+      )
     })
 
     it('should throw if nap descriptor does not exist in Cauldron', async () => {
       cauldronHelperStub.isDescriptorInCauldron.resolves(false)
-      assert(await doesThrow(Ensure.napDescritorExistsInCauldron, null, 'testapp:android:1.0.0'))
+      assert(
+        await doesThrow(
+          Ensure.napDescritorExistsInCauldron,
+          null,
+          'testapp:android:1.0.0'
+        )
+      )
     })
   })
 
@@ -118,7 +148,9 @@ describe('Ensure.js', () => {
   describe('publishedToNpm', () => {
     it('should not throw if dependency is published to npm', async () => {
       sandbox.stub(utils, 'isPublishedToNpm').resolves(true)
-      assert(await doesNotThrow(Ensure.publishedToNpm, null, 'nonpublished@1.0.0'))
+      assert(
+        await doesNotThrow(Ensure.publishedToNpm, null, 'nonpublished@1.0.0')
+      )
     })
 
     it('should throw if dependency is not published to npm', async () => {
@@ -148,13 +180,19 @@ describe('Ensure.js', () => {
   describe('isValidNpmPackageName', () => {
     fixtures.validNpmPackageNames.forEach(name => {
       it('shoud not throw if name is valid', () => {
-        expect(() => Ensure.isValidNpmPackageName(name), `throw for ${name}`).to.not.throw()
+        expect(
+          () => Ensure.isValidNpmPackageName(name),
+          `throw for ${name}`
+        ).to.not.throw()
       })
     })
 
     fixtures.invalidNpmPackageNames.forEach(name => {
       it('should throw if name is invalid', () => {
-        expect(() => Ensure.isValidNpmPackageName(name), `does not throw for ${name}`).to.throw()
+        expect(
+          () => Ensure.isValidNpmPackageName(name),
+          `does not throw for ${name}`
+        ).to.throw()
       })
     })
   })
@@ -165,13 +203,19 @@ describe('Ensure.js', () => {
   describe('isValidElectrodeNativeModuleName', () => {
     fixtures.validElectrodeNativeModuleNames.forEach(name => {
       it('should not throw if name is valid', () => {
-        expect(() => Ensure.isValidElectrodeNativeModuleName(name), `throw for ${name}`).to.not.throw()
+        expect(
+          () => Ensure.isValidElectrodeNativeModuleName(name),
+          `throw for ${name}`
+        ).to.not.throw()
       })
     })
 
     fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
       it('should throw if name is invalid', () => {
-        expect(() => Ensure.isValidElectrodeNativeModuleName(name), `does not throw for ${name}`).to.throw()
+        expect(
+          () => Ensure.isValidElectrodeNativeModuleName(name),
+          `does not throw for ${name}`
+        ).to.throw()
       })
     })
   })
@@ -181,11 +225,19 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('sameNativeAplicationAndPlatform', () => {
     it('should not throw if descriptors are matching the same native application and platform', () => {
-      expect(() => Ensure.sameNativeApplicationAndPlatform(fixtures.sameNativeApplicationPlatformDescriptors)).to.not.throw()
+      expect(() =>
+        Ensure.sameNativeApplicationAndPlatform(
+          fixtures.sameNativeApplicationPlatformDescriptors
+        )
+      ).to.not.throw()
     })
-    
+
     it('should throw if descriptors are not matching the same native application and platform', () => {
-      expect(() => Ensure.sameNativeApplicationAndPlatform(fixtures.differentNativeApplicationPlatformDescriptors)).to.throw()
+      expect(() =>
+        Ensure.sameNativeApplicationAndPlatform(
+          fixtures.differentNativeApplicationPlatformDescriptors
+        )
+      ).to.throw()
     })
   })
 
@@ -194,33 +246,102 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('checkIfCodePushOptionsAreValid', () => {
     it('should not throw if descriptors and semVerDescriptor are specified', () => {
-      expect(() => Ensure.checkIfCodePushOptionsAreValid(
-        fixtures.differentNativeApplicationPlatformDescriptors,
-        '',
-        '1.0.0'
-      )).to.not.throw()
+      expect(() =>
+        Ensure.checkIfCodePushOptionsAreValid(
+          fixtures.differentNativeApplicationPlatformDescriptors,
+          '',
+          '1.0.0'
+        )
+      ).to.not.throw()
     })
 
     it('should not throw if 1 descriptor and targetBinaryVersion are specified', () => {
-      expect(() => Ensure.checkIfCodePushOptionsAreValid(
-        ['testapp:android:1.0.0'],
-        '1.0.0'
-      )).to.not.throw()
+      expect(() =>
+        Ensure.checkIfCodePushOptionsAreValid(
+          ['testapp:android:1.0.0'],
+          '1.0.0'
+        )
+      ).to.not.throw()
     })
 
     it('should throw if more than 1 descriptor and targetBinaryVersion are specified', () => {
-      expect(() => Ensure.checkIfCodePushOptionsAreValid(
-        fixtures.differentNativeApplicationPlatformDescriptors,
-        '1.0.0'
-      )).to.throw()
+      expect(() =>
+        Ensure.checkIfCodePushOptionsAreValid(
+          fixtures.differentNativeApplicationPlatformDescriptors,
+          '1.0.0'
+        )
+      ).to.throw()
     })
 
     it('should throw if 1 descriptor ,targetBinaryVersion and semVerDescriptor are specified', () => {
-      expect(() => Ensure.checkIfCodePushOptionsAreValid(
-        ['testapp:android:1.0.0'],
-        '1.0.0',
-        '~1.0.0'
-      )).to.throw()
+      expect(() =>
+        Ensure.checkIfCodePushOptionsAreValid(
+          ['testapp:android:1.0.0'],
+          '1.0.0',
+          '~1.0.0'
+        )
+      ).to.throw()
+    })
+  })
+
+  // ==========================================================
+  // pathExist
+  // ==========================================================
+  describe('pathExist', () => {
+    it('should not throw if path exist', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(await doesNotThrow(Ensure.pathExist, Ensure, tmpDirPath))
+    })
+
+    it('should throw if path does not exist', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(await doesThrow(Ensure.pathExist, Ensure, '/non/existing/path'))
+    })
+  })
+
+  // ==========================================================
+  // isFilePath
+  // ==========================================================
+  describe('isFilePath', () => {
+    it('should not throw if path is a file', async () => {
+      const tmpDirPath = createTmpDir()
+      const tmpFilePath = path.join(tmpDirPath, 'file.test')
+      const tmpFile = fs.writeFileSync(tmpFilePath, 'CONTENT')
+      assert(await doesNotThrow(Ensure.isFilePath, Ensure, tmpFilePath))
+    })
+
+    it('should throw if path is not a file', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(await doesThrow(Ensure.isFilePath, Ensure, tmpDirPath))
+    })
+
+    it('should throw if path does not exist', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(await doesThrow(Ensure.isFilePath, Ensure, '/non/existing/path'))
+    })
+  })
+
+  // ==========================================================
+  // isDirectoryPath
+  // ==========================================================
+  describe('isDirectoryPath', () => {
+    it('should not throw if path is a  directory', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(await doesNotThrow(Ensure.isDirectoryPath, Ensure, tmpDirPath))
+    })
+
+    it('should throw if path is not a directory', async () => {
+      const tmpDirPath = createTmpDir()
+      const tmpFilePath = path.join(tmpDirPath, 'file.test')
+      const tmpFile = fs.writeFileSync(tmpFilePath, 'CONTENT')
+      assert(await doesThrow(Ensure.isDirectoryPath, Ensure, tmpFilePath))
+    })
+
+    it('should throw if path does not exist', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(
+        await doesThrow(Ensure.isDirectoryPath, Ensure, '/non/existing/path')
+      )
     })
   })
 })

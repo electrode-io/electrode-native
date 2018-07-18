@@ -8,7 +8,7 @@ import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
 import semver from 'semver'
 import validateNpmPackageName from 'validate-npm-package-name'
-
+import fs from 'fs'
 export default class Ensure {
   public static isValidElectrodeNativeModuleName(
     name: string,
@@ -387,6 +387,59 @@ export default class Ensure {
     if (!(await getActiveCauldron())) {
       throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
     }
+  }
+
+  public static async pathExist(
+    p: fs.PathLike,
+    extraErrorMessage: string = ''
+  ) {
+    return new Promise((resolve, reject) => {
+      fs.exists(
+        p,
+        exists =>
+          exists
+            ? resolve()
+            : reject(`${p} path does not exist.\n${extraErrorMessage}`)
+      )
+    })
+  }
+
+  public static async isFilePath(
+    p: fs.PathLike,
+    extraErrorMessage: string = ''
+  ) {
+    return new Promise((resolve, reject) => {
+      fs.stat(p, (err, stats) => {
+        if (err) {
+          reject(`${p} path does not exist.\n${extraErrorMessage}`)
+        } else {
+          if (stats.isFile()) {
+            resolve()
+          } else {
+            reject(`${p} is not a file.\n${extraErrorMessage}`)
+          }
+        }
+      })
+    })
+  }
+
+  public static async isDirectoryPath(
+    p: fs.PathLike,
+    extraErrorMessage: string = ''
+  ) {
+    return new Promise((resolve, reject) => {
+      fs.stat(p, (err, stats) => {
+        if (err) {
+          reject(`${p} path does not exist.\n${extraErrorMessage}`)
+        } else {
+          if (stats.isDirectory()) {
+            resolve()
+          } else {
+            reject(`${p} is not a directory.\n${extraErrorMessage}`)
+          }
+        }
+      })
+    })
   }
 
   public static checkIfCodePushOptionsAreValid(
