@@ -39,4 +39,4 @@ Before you upgrade to a newer version of Electrode Native, read through the foll
 ###Related commands
 `ern platform install` | Used to install a specific version
 `ern platform uninstall` | Used to uninstall a specific version
-`ern platform list` | Used to list all currently available platform versions. Versions that are installed locally and the active version are highlighted.
+`ern platform versions` | Used to list all currently available platform versions. Versions that are installed locally and the active version are highlighted.

@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const tmp = require('tmp')
+const tmp = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/tmp')
 const path = require('path')
 const afterAll = require('../utils/afterAll')
 const assert = require('../utils/assert')
@@ -117,7 +117,7 @@ run(`ern create-api ${f.invalidElectrodeNativeModuleName} --skipNpmCheck`, { exp
 
 // Platform commands
 run('ern platform current')
-run('ern platform list')
+run('ern platform versions')
 run('ern platform plugins list')
 run('ern platform plugins search react-native')
 run('ern platform config keyNotSupported trace', { expectedExitCode: 1 })

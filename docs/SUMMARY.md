@@ -116,6 +116,6 @@
   - [config](cli/platform/config.md)
   - [current](cli/platform/current.md)
   - [install](cli/platform/install.md)
-  - [list](cli/platform/list.md)
+  - [versions](cli/platform/versions.md)
   - [uninstall](cli/platform/uninstall.md)
   - [use](cli/platform/use.md)

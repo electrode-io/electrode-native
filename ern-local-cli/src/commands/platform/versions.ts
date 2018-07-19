@@ -1,4 +1,4 @@
-import { Platform, tagOneLine, utils as coreUtils, log } from 'ern-core'
+import { Platform, tagOneLine, utils as coreUtils, log } from 'ern-core/src'
 import chalk from 'chalk'
 import utils from '../../lib/utils'
 import semver from 'semver'
@@ -6,7 +6,7 @@ import { Argv } from 'yargs'
 
 const BASE_RELEASE_URL = `https://github.com/electrode-io/electrode-native/releases/tag`
 
-export const command = 'list'
+export const command = 'versions'
 export const desc = 'List platform versions'
 
 export const builder = (argv: Argv) => {
