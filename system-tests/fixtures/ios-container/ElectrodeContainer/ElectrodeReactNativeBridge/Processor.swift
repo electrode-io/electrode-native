@@ -17,5 +17,5 @@
 import Foundation
 
 @objc public protocol Processor {
-    func execute()
+    func execute() -> UUID?
 }
