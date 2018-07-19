@@ -115,6 +115,6 @@
     - [search](cli/platform/plugins/search.md)
   - [config](cli/platform/config.md)
   - [install](cli/platform/install.md)
-  - [list](cli/platform/list.md)
+  - [versions](cli/platform/versions.md)
   - [uninstall](cli/platform/uninstall.md)
   - [use](cli/platform/use.md)

@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const tmp = require('tmp')
+const tmp = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/tmp')
 const path = require('path')
 const afterAll = require('../utils/afterAll')
 const assert = require('../utils/assert')
