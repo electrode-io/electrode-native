@@ -116,7 +116,6 @@ process.chdir(workingDirectoryPath)
 run(`ern create-api ${f.invalidElectrodeNativeModuleName} --skipNpmCheck`, { expectedExitCode: 1 })
 
 // Platform commands
-run('ern platform current')
 run('ern platform list')
 run('ern platform plugins list')
 run('ern platform plugins search react-native')
