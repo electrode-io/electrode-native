@@ -26,31 +26,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation ElectrodeRequestRegistrar
 
-- (NSUUID *)
-registerRequestCompletionHandlerWithName:(NSString *)name
-                              completion:
-                                  (ElectrodeBridgeRequestCompletionHandler)
-                                      completion {
+- (void) registerRequestCompletionHandlerWithName:(NSString *)name
+                                             uuid: (NSUUID *) uuid
+                                       completion: (ElectrodeBridgeRequestCompletionHandler) completion {
   @synchronized(self) {
     ERNDebug(@"***Logging registering requestHandler with Name %@", name);
-    NSUUID *requestHandlerUUID = [NSUUID UUID];
     [self.requestHandlerByRequestName setObject:completion forKey:name];
-    [self.requestNameByUUID setObject:name forKey:requestHandlerUUID];
+    [self.requestNameByUUID setObject:name forKey:uuid];
     ERNDebug(@"***Logging registered requestHandlerDictionary:%@",
              self.requestHandlerByRequestName);
-    return requestHandlerUUID;
   }
 }
 
-- (void)unregisterRequestHandler:(NSUUID *)uuid {
+- (nullable ElectrodeBridgeRequestCompletionHandler)unregisterRequestHandler:(NSUUID *)uuid {
+  ElectrodeBridgeRequestCompletionHandler handler;
   @synchronized(self) {
-    NSUUID *requestName = [self.requestNameByUUID objectForKey:uuid];
+    NSString *requestName = [self.requestNameByUUID objectForKey:uuid];
 
     if (requestName) {
       [self.requestNameByUUID removeObjectForKey:uuid];
+      handler = [self.requestHandlerByRequestName objectForKey:requestName];
       [self.requestHandlerByRequestName removeObjectForKey:requestName];
     }
   }
+  return handler;
 }
 
 - (nullable ElectrodeBridgeRequestCompletionHandler)getRequestHandler:

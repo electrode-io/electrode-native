@@ -24,9 +24,9 @@
 @end
 
 @implementation ElectrodeEventRegistrar
-- (NSUUID *_Nonnull)
-registerEventListener:(NSString *_Nonnull)name
-        eventListener:(ElectrodeBridgeEventListener _Nonnull)eventListener {
+- (void) registerEventListener:(ElectrodeBridgeEventListener _Nonnull)eventListener
+                          name: (NSString *_Nonnull)name
+                          uuid: (NSUUID * _Nonnull)uuid {
   @synchronized(self) {
     if ([self.eventListenersByEventName objectForKey:name]) {
       NSMutableArray *eventListenerArray =
@@ -38,17 +38,15 @@ registerEventListener:(NSString *_Nonnull)name
       [eventListenerArray addObject:eventListener];
       [self.eventListenersByEventName setObject:eventListenerArray forKey:name];
     }
-    NSUUID *eventListenerUUID = [NSUUID UUID];
-    [self.eventListenerByUUID setObject:eventListener forKey:eventListenerUUID];
-
-    return eventListenerUUID;
+      
+    [self.eventListenerByUUID setObject:eventListener forKey:uuid];
   }
 }
 
-- (void)unregisterEventListener:(NSUUID *_Nonnull)eventListenerUUID {
-  @synchronized(self) {
-
-    ElectrodeBridgeEventListener eventListener =
+- (nullable ElectrodeBridgeEventListener) unregisterEventListener:(NSUUID *_Nonnull)eventListenerUUID {
+    ElectrodeBridgeEventListener eventListener;
+    @synchronized(self) {
+    eventListener =
         [self.eventListenerByUUID objectForKey:eventListenerUUID];
     [self.eventListenerByUUID removeObjectForKey:eventListenerUUID];
 
@@ -64,6 +62,7 @@ registerEventListener:(NSString *_Nonnull)name
       }
     }
   }
+    return eventListener;
 }
 
 - (NSArray<ElectrodeBridgeEventListener> *_Nullable)getEventListnersForName:

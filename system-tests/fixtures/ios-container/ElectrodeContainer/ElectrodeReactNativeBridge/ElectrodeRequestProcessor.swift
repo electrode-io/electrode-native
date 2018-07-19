@@ -40,7 +40,7 @@ public class ElectrodeRequestProcessor<TReq, TResp, TItem>: NSObject {
         super.init()
     }
 
-    public func execute() {
+    public func execute() -> UUID? {
         ElectrodeConsoleLogger.sharedInstance().debug("RequestProcessor started processing request (\(requestName)) with payload (\(String(describing: requestPayload)))")
         let bridgeMessageData = ElectrodeUtilities.convertObjectToBridgeMessageData(object: requestPayload)
 
@@ -59,6 +59,7 @@ public class ElectrodeRequestProcessor<TReq, TResp, TItem>: NSObject {
                 self.responseCompletionHandler(processedResp, nil)
             }
         }
+        return nil
     }
 
     private func processSuccessResponse(responseData: Any?) -> Any? {
