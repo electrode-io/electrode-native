@@ -521,7 +521,7 @@ export class Manifest {
     }
 
     let result: PluginConfig
-    let configFile = await fs.readFileSync(
+    let configFile = fs.readFileSync(
       path.join(pluginConfigPath, pluginConfigFileName),
       'utf-8'
     )
