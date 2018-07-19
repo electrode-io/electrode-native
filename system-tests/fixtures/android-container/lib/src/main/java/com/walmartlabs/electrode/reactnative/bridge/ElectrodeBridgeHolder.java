@@ -52,7 +52,6 @@ public final class ElectrodeBridgeHolder {
     private static final HashMap<String, EventListenerPlaceholder> mQueuedEventListenersRegistration = new HashMap<>();
     private static final HashMap<ElectrodeBridgeRequest, ElectrodeBridgeResponseListener<ElectrodeBridgeResponse>> mQueuedRequests = new HashMap<>();
     private static final List<ElectrodeBridgeEvent> mQueuedEvents = new ArrayList<>();
-    private static List<ConstantsProvider> constantsProviders = new ArrayList<>();
 
     static {
         ElectrodeBridgeTransceiver.registerReactNativeReadyListener(new ElectrodeBridgeTransceiver.ReactNativeReadyListener() {
@@ -64,7 +63,6 @@ public final class ElectrodeBridgeHolder {
                 registerQueuedRequestHandlers();
                 sendQueuedRequests();
                 emitQueuedEvents();
-                addConstantProviders();
             }
         });
 
@@ -146,11 +144,7 @@ public final class ElectrodeBridgeHolder {
     }
 
     public static void addConstantsProvider(@NonNull ConstantsProvider constantsProvider) {
-        if (!isReactNativeReady) {
-            ElectrodeBridgeHolder.constantsProviders.add(constantsProvider);
-            return;
-        }
-        electrodeNativeBridge.addConstantsProvider(constantsProvider);
+        ElectrodeBridgeTransceiver.addConstantsProvider(constantsProvider);
     }
 
     /**
@@ -205,14 +199,5 @@ public final class ElectrodeBridgeHolder {
             electrodeNativeBridge.sendEvent(event);
         }
         mQueuedEvents.clear();
-    }
-
-    private static void addConstantProviders() {
-        if (constantsProviders != null) {
-            for (ConstantsProvider provider : constantsProviders) {
-                electrodeNativeBridge.addConstantsProvider(provider);
-            }
-        }
-        constantsProviders.clear();
     }
 }
