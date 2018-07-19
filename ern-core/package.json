@@ -63,7 +63,7 @@
     "simple-git": "^1.95.0",
     "tmp": "^0.0.33",
     "uuid":"^3.2.1",
-    "xcode-ern": "^1.0.4",
+    "xcode-ern": "^1.0.8",
     "yarn": "^1.7.0"
   },
   "devDependencies": {
