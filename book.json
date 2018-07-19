@@ -8,34 +8,11 @@
     "prism",
     "github",
     "-highlight",
-    "copy-code-button",
-    "versions"
+    "copy-code-button"
   ],
   "pluginsConfig": {
     "prism": {
       "css": ["prismjs/themes/prism-tomorrow.css"]
-    },
-    "versions": {
-      "gitbookConfigURL":
-        "https://raw.githubusercontent.com/electrode-io/electrode-native/master/book.json",
-      "options": [
-        {
-          "value":
-            "https://native.electrode.io/v/v0.20/",
-          "text": "Electrode Native [v0.20]"
-        },
-        {
-          "value":
-            "https://native.electrode.io/v/v0.21/",
-          "text": "Electrode Native [v0.21]"
-        },
-        {
-          "value":
-            "https://native.electrode.io/v/master/",
-          "text": "Electrode Native [master]",
-          "selected": true
-        }
-      ]
     },
     "theme-api": {
       "languages": [
