@@ -131,7 +131,7 @@ export async function fillProjectHull(
                 relativeSourcePath
               )
               const fileNames = _.filter(fs.readdirSync(pathToSourceFiles), f =>
-                f.endsWith(path.extname(source.from))
+                f.endsWith(path.extname(source.from!))
               )
               for (const fileName of fileNames) {
                 const fileNamePath = path.join(source.path, fileName)
@@ -154,12 +154,46 @@ export async function fillProjectHull(
 
         if (pluginConfig.ios.pbxproj.addHeader) {
           for (const header of pluginConfig.ios.pbxproj.addHeader) {
-            const headerPath = header.path
-            iosProject.addHeaderFile(
-              headerPath,
-              { public: header.public },
-              iosProject.findPBXGroupKey({ name: header.group })
-            )
+            // Multiple header files
+            if (header.from) {
+              if (
+                switchToOldDirectoryStructure(pluginSourcePath, header.from)
+              ) {
+                log.debug(
+                  `Header Copy: Falling back to old directory structure for API(Backward compatibility)`
+                )
+                header.from = path.join(
+                  'IOS',
+                  'IOS',
+                  'Classes',
+                  'SwaggersAPIs',
+                  '*.swift'
+                )
+              }
+              const relativeHeaderPath = path.dirname(header.from)
+              const pathToHeaderFiles = path.join(
+                pluginSourcePath,
+                relativeHeaderPath
+              )
+              const fileNames = _.filter(fs.readdirSync(pathToHeaderFiles), f =>
+                f.endsWith(path.extname(header.from!))
+              )
+              for (const fileName of fileNames) {
+                const fileNamePath = path.join(header.path, fileName)
+                iosProject.addHeaderFile(
+                  fileNamePath,
+                  { public: header.public },
+                  iosProject.findPBXGroupKey({ name: header.group })
+                )
+              }
+            } else {
+              const headerPath = header.path
+              iosProject.addHeaderFile(
+                headerPath,
+                { public: header.public },
+                iosProject.findPBXGroupKey({ name: header.group })
+              )
+            }
           }
         }
 

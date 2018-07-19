@@ -5864,9 +5864,9 @@ write-pkg@^3.1.0:
     sort-keys "^2.0.0"
     write-json-file "^2.2.0"
 
-xcode-ern@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/xcode-ern/-/xcode-ern-1.0.4.tgz#23e9e4c5b784e49f97f933d78882c6d9143915c9"
+xcode-ern@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/xcode-ern/-/xcode-ern-1.0.8.tgz#73541eee61ee7f9ab9bdc68b0bc625f2ae3a8fe2"
   dependencies:
     pegjs "^0.10.0"
     simple-plist "^0.2.1"

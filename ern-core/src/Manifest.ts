@@ -225,7 +225,15 @@ export interface IosPluginAddFileDirective {
  */
 export interface IosPluginAddHeaderDirective {
   /**
-   * Relative path (from plugin root) to the header to add
+   * Source directory and filename widlcard to add
+   * ex: IOS/*.swift
+   *
+   */
+  from?: string
+  /**
+   * Relative path (from plugin root) to the source file(s) to add
+   * If `from` is specified, this is the path of the target directory
+   * If `from` is not specified, this is the path of the source file
    */
   path: string
   /**
@@ -243,15 +251,19 @@ export interface IosPluginAddHeaderDirective {
  */
 export interface IosPluginAddSourceDirective {
   /**
-   * ??? TODO : Check if this is really used
+   * Source directory and filename widlcard to add
+   * ex: IOS/*.swift
+   *
    */
-  from: string
+  from?: string
   /**
    * Target iOS project group to add the source file to
    */
   group: string
   /**
-   * Relative path (from plugin root) to the source file to add
+   * Relative path (from plugin root) to the source file(s) to add
+   * If `from` is specified, this is the path of the target directory
+   * If `from` is not specified, this is the path of the source file
    */
   path: string
 }
@@ -659,6 +671,14 @@ export class Manifest {
           },
         ],
         pbxproj: {
+          addHeader: [
+            {
+              from: 'IOS/*.swift',
+              group: 'APIs',
+              path: 'APIs',
+              public: true,
+            },
+          ],
           addSource: [
             {
               from: 'IOS/*.swift',
