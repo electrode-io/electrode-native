@@ -19,7 +19,7 @@ const baseConstants = {
   systemTestNativeApplicationVersion1: '1.0.0',
   systemTestNativeApplicationVersion2: '2.0.0',
   movieListMiniAppPgkName: 'movielistminiapp',
-  movieListMiniAppPkgVersion: '0.0.20',
+  movieListMiniAppPkgVersion: '0.0.21',
   movieDetailsMiniAppPkgName: 'moviedetailsminiapp',
   movieDetailsMiniAppPkgVersion: '0.0.20',
   movieApiImplJsPkgName: 'react-native-ernmovie-api-impl-js',
