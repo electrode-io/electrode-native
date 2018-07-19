@@ -1,4 +1,4 @@
-## `ern platform list`
+## `ern platform versions`
 
 #### Description
 
@@ -7,4 +7,4 @@
 
 #### Syntax
 
-`ern platform list`  
+`ern platform versions`  
