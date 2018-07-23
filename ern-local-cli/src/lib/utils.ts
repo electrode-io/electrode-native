@@ -409,7 +409,7 @@ async function logErrorAndExitIfNotSatisfied({
               isValidPlatformConfig.key
             } does not exists. Did you mean ${closestKeyName(
               isValidPlatformConfig.key
-            )} ?\n${platformSupportedConfigAsString()}`
+            )}?\n${platformSupportedConfigAsString()}`
           )
         )
       }
