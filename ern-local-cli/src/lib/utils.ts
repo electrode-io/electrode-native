@@ -37,7 +37,19 @@ import yauzl from 'yauzl'
 import yazl from 'yazl'
 import readDir from 'fs-readdir-recursive'
 import os from 'os'
+import levenshtein from 'fast-levenshtein'
+
 const { runAndroidProject } = android
+
+export const platformSupportedConfigAsString = () =>
+  'The following configuration keys are available :\n' +
+  constants.availableUserConfigKeys
+    .map(
+      e =>
+        `${e.name.padEnd(15)} : ${e.desc.padEnd(60)}  [${e.values.join('|')}]`
+    )
+    .join('\n') +
+  '\n\n'
 
 //
 // Retrieves all native applications versions from the Cauldron, optionaly
@@ -102,6 +114,7 @@ async function logErrorAndExitIfNotSatisfied({
   isFilePath,
   isDirectoryPath,
   pathExist,
+  isValidPlatformConfig,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | string[]
@@ -203,6 +216,9 @@ async function logErrorAndExitIfNotSatisfied({
   pathExist?: {
     p: fs.PathLike
     extraErrorMessage?: string
+  }
+  isValidPlatformConfig?: {
+    key: string
   }
 } = {}) {
   const spinner = ora('Performing validity checks').start()
@@ -377,6 +393,26 @@ async function logErrorAndExitIfNotSatisfied({
     if (isDirectoryPath) {
       spinner.text = 'Ensuring that path is a directory path'
       await Ensure.isDirectoryPath(isDirectoryPath.p)
+    }
+    if (isValidPlatformConfig) {
+      const availablePlatformKeys = () =>
+        constants.availableUserConfigKeys.map(e => e.name)
+      if (!availablePlatformKeys().includes(isValidPlatformConfig.key)) {
+        const closestKeyName = key =>
+          availablePlatformKeys().reduce(
+            (acc, cur) =>
+              levenshtein.get(acc, key) > levenshtein.get(cur, key) ? cur : acc
+          )
+        coreUtils.logErrorAndExitProcess(
+          new Error(
+            `Configuration key ${
+              isValidPlatformConfig.key
+            } does not exists. Did you mean ${closestKeyName(
+              isValidPlatformConfig.key
+            )} ?\n${platformSupportedConfigAsString()}`
+          )
+        )
+      }
     }
     spinner.succeed('Validity checks have passed')
   } catch (e) {
