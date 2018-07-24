@@ -9,6 +9,8 @@ import _ from 'lodash'
 import semver from 'semver'
 import validateNpmPackageName from 'validate-npm-package-name'
 import fs from 'fs'
+import levenshtein from 'fast-levenshtein'
+import * as constants from './constants'
 export default class Ensure {
   public static isValidElectrodeNativeModuleName(
     name: string,
@@ -456,6 +458,26 @@ export default class Ensure {
     if (targetBinaryVersion && descriptors && descriptors.length > 1) {
       throw new Error(
         'targetBinaryVersion must specify only 1 target native application version for the push'
+      )
+    }
+  }
+
+  public static isValidPlatformConfig(
+    key: string,
+    extraErrorMessage: string = ''
+  ) {
+    const availablePlatformKeys = () =>
+      constants.availableUserConfigKeys.map(e => e.name)
+    if (!availablePlatformKeys().includes(key)) {
+      const closestKeyName = k =>
+        availablePlatformKeys().reduce(
+          (acc, cur) =>
+            levenshtein.get(acc, k) > levenshtein.get(cur, k) ? cur : acc
+        )
+      throw new Error(
+        `Configuration key ${key} does not exists. Did you mean ${closestKeyName(
+          key
+        )}?`
       )
     }
   }

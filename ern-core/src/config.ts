@@ -26,7 +26,7 @@ export class ErnConfig {
   public setValue(key: string, value: any) {
     const c = this.obj
     c[key] = value
-    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c, null, 2))
+    this.writeConfig(c)
   }
 
   public writeConfig(obj: any) {
@@ -37,7 +37,7 @@ export class ErnConfig {
     const c = this.obj
     if (key && c.hasOwnProperty(key)) {
       delete c[key]
-      fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c, null, 2))
+      this.writeConfig(c)
       return true
     }
     return false

@@ -6,7 +6,7 @@
 
 #### Syntax
 
-`ern platform config set <key> [value]`
+`ern platform config set <key> <value>`
 
 **Arguments**
 
@@ -14,9 +14,9 @@
 
 * The key of the configuration element to set
 
-`[value]`
+`<value>`
 
-* If specified, will set the config value associated to this key. If not specified, will retrieve the config value (get) associated to this key.
+* If specified, will set the config value associated to this key. 
 
 **Configurable properties**
 
@@ -41,6 +41,6 @@ Code push access key associated with your account
 
 #### Remarks
 
-* The `ern platform config set <key> [value]` command is rarely used.  
+* The `ern platform config set <key> <value>` command is rarely used.  
 * All current configuration values are already set and retrieved transparently through the use of commands that rely on the local platform configuration.  
-* If a value is provided, the `ern platform config set <key> [value]` command sets the value associated with the given key with the specified value, overwriting any existing value stored for this key.
+* If a value is provided, the `ern platform config set <key> <value>` command sets the value associated with the given key with the specified value, overwriting any existing value stored for this key.
