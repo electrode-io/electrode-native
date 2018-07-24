@@ -1,5 +1,5 @@
-const inquirer = require('inquirer')
-const shell = require('shelljs')
+const inquirer = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/inquirer')
+const shell = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/shelljs')
 const path = require('path')
 const f = require('./fixtures/constants')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
@@ -34,7 +34,7 @@ inquirer
     },
   ])
   .then(answers => {
-    shell.exec(`ern platform config logLevel trace`)
+    shell.exec(`ern platform config set logLevel trace`)
     shell.exec(`ern cauldron repo clear`)
     try {
       for (const userSelectedFixtureToRegen of answers.userSelectedFixturesToRegen) {

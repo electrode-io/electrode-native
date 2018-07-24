@@ -21,7 +21,7 @@ After installing the App Center CLI and logging in through the CLI, please keep 
 You'll then need to add the code push access key to the local Electrode Native configuration. This needs to be done local to each workstation/box that need to issue `code-push` commands. The CodePush access key is not stored in the Cauldron, for security reasons.
 
 ```shell
-$ ern platform config codePushAccessKey YOUR_CODE_PUSH_ACCESS_KEY
+$ ern platform config set codePushAccessKey YOUR_CODE_PUSH_ACCESS_KEY
 ```
 
 2. Creating your application in CodePush
