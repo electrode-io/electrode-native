@@ -1,18 +1,18 @@
-## `ern platform config`
+## `ern platform config set`
 
 #### Description
 
-* Get or set the local platform configuration values stored in the `~/.ern/.ernrc` file  
+* Set the local platform configuration values stored in the `~/.ern/.ernrc` file  
 
 #### Syntax
 
-`ern platform config <key> [value]`
+`ern platform config set <key> [value]`
 
 **Arguments**
 
 `<key>`
 
-* The key of the configuration element to get or set
+* The key of the configuration element to set
 
 `[value]`
 
@@ -36,9 +36,11 @@ Temporary directory to use during commands execution.
 If set to `true`, the temporary directories created during some commands execution, won't be destroyed after the command execution.  
 **default** : false
 
+- `codePushAccessKey` [string]   
+Code push access key associated with your account  
+
 #### Remarks
 
-* The `ern platform config <key> [value]` command is rarely used.  
+* The `ern platform config set <key> [value]` command is rarely used.  
 * All current configuration values are already set and retrieved transparently through the use of commands that rely on the local platform configuration.  
-* If a value is not provided, the `ern platform config <key> [value]` command reads the value associated with the specified key and logs it in the terminal.  
-* If a value is provided, the `ern platform config <key> [value]` command sets the value associated with the given key with the specified value, overwriting any existing value stored for this key.
+* If a value is provided, the `ern platform config set <key> [value]` command sets the value associated with the given key with the specified value, overwriting any existing value stored for this key.
