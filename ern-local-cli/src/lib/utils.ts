@@ -42,7 +42,7 @@ import levenshtein from 'fast-levenshtein'
 const { runAndroidProject } = android
 
 export const platformSupportedConfigAsString = () =>
-  'The following configuration keys are available :\n' +
+  'Electrode Native Supports following keys :\n' +
   constants.availableUserConfigKeys
     .map(
       e =>

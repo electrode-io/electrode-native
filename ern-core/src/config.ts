@@ -32,6 +32,20 @@ export class ErnConfig {
   public writeConfig(obj: any) {
     fs.writeFileSync(this.ernRcFilePath, JSON.stringify(obj, null, 2))
   }
+
+  public deleteConfig(key: string): boolean {
+    const c = this.obj
+    if (key && c.hasOwnProperty(key)) {
+      delete c[key]
+      fs.writeFileSync(this.ernRcFilePath, JSON.stringify(c, null, 2))
+      return true
+    }
+    return false
+  }
+
+  public getAllConfig(): any {
+    return this.obj
+  }
 }
 
 export default new ErnConfig()

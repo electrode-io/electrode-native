@@ -1,6 +1,6 @@
 import { Argv } from 'yargs'
 import utils, { platformSupportedConfigAsString } from '../../../lib/utils'
-import { log } from 'ern-core'
+import { config as ernConfig, log } from 'ern-core'
 
 export const command = 'list'
 export const desc = 'Show all the config settings'
@@ -10,5 +10,6 @@ export const builder = (argv: Argv) => {
 }
 
 export const handler = async () => {
-  log.info(platformSupportedConfigAsString())
+  // TODO: Add tabular view
+  log.info(JSON.stringify(ernConfig.getAllConfig(), null, 2))
 }
