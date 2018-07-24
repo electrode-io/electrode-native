@@ -2,7 +2,7 @@ import { Argv } from 'yargs'
 import utils from '../../../lib/utils'
 import { config as ernConfig, utils as coreUtils, log } from 'ern-core'
 
-export const command = 'delete <key>'
+export const command = 'del <key>'
 export const desc = 'Deletes the key from configuration file'
 
 export const builder = (argv: Argv) => {
