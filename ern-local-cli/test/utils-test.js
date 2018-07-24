@@ -485,10 +485,55 @@ describe('utils.js', () => {
     it('[isValidPlatformConfig] Should log error and exit if key is not whitelisted', async () => {
       await utils.logErrorAndExitIfNotSatisfied({
         isValidPlatformConfig: {
-          p: 'keyNotWhiteListed',
+          key: 'keyNotWhiteListed',
         },
       })
       assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          key: 'showBanner',
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          key: 'logLevel',
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          key: 'tmp-dir',
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          key: 'retain-tmp-dir',
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
+
+    it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          key: 'codePushAccessKey',
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
     })
   })
 

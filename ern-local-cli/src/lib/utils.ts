@@ -37,7 +37,6 @@ import yauzl from 'yauzl'
 import yazl from 'yazl'
 import readDir from 'fs-readdir-recursive'
 import os from 'os'
-import levenshtein from 'fast-levenshtein'
 
 const { runAndroidProject } = android
 
@@ -395,24 +394,8 @@ async function logErrorAndExitIfNotSatisfied({
       await Ensure.isDirectoryPath(isDirectoryPath.p)
     }
     if (isValidPlatformConfig) {
-      const availablePlatformKeys = () =>
-        constants.availableUserConfigKeys.map(e => e.name)
-      if (!availablePlatformKeys().includes(isValidPlatformConfig.key)) {
-        const closestKeyName = key =>
-          availablePlatformKeys().reduce(
-            (acc, cur) =>
-              levenshtein.get(acc, key) > levenshtein.get(cur, key) ? cur : acc
-          )
-        coreUtils.logErrorAndExitProcess(
-          new Error(
-            `Configuration key ${
-              isValidPlatformConfig.key
-            } does not exists. Did you mean ${closestKeyName(
-              isValidPlatformConfig.key
-            )}?\n${platformSupportedConfigAsString()}`
-          )
-        )
-      }
+      spinner.text = 'Ensuring that config key is whitelisted'
+      Ensure.isValidPlatformConfig(isValidPlatformConfig.key)
     }
     spinner.succeed('Validity checks have passed')
   } catch (e) {
