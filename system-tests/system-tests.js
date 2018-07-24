@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const tmp = require('tmp')
-const inquirer = require('inquirer')
+const tmp = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/tmp')
+const inquirer = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/inquirer')
 const run = require('./utils/run')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
 
@@ -46,10 +46,10 @@ function runTest(testSourceFile) {
   run('ern cauldron repo clear')
   // Trace log level should be set to trace to ensure that `ora`
   // gets disabled as it can lead to issues on CI env
-  run('ern platform config logLevel trace')
+  run('ern platform config set logLevel trace')
   // Disable banner before running a test suite
   // to reduce log verbosity
-  run('ern platform config showBanner false')
+  run('ern platform config set showBanner false')
   const workingDirPath = tmp.dirSync({ unsafeCleanup: true }).name
   process.chdir(workingDirPath)
   console.log(`Running ${testSourceFile} tests`)

@@ -119,13 +119,13 @@ run(`ern create-api ${f.invalidElectrodeNativeModuleName} --skipNpmCheck`, { exp
 run('ern platform versions')
 run('ern platform plugins list')
 run('ern platform plugins search react-native')
-run('ern platform config keyNotSupported trace', { expectedExitCode: 1 })
+run('ern platform config set keyNotSupported trace', { expectedExitCode: 1 })
 try{
-  run('ern platform config tmp-dir "~/dir/to/command/exec"')
-  run('ern platform config retain-tmp-dir false')
-  run('ern platform config package-cache-enabled true')
-  run('ern platform config max-package-cache-size 1024')
-  run('ern platform config codePushAccessKey "keytocodepush"')
+  run('ern platform config set tmp-dir "~/dir/to/command/exec"')
+  run('ern platform config set retain-tmp-dir false')
+  run('ern platform config set package-cache-enabled true')
+  run('ern platform config set max-package-cache-size 1024')
+  run('ern platform config set codePushAccessKey "keytocodepush"')
 } finally{
   fs.writeFileSync(ERN_RC_GLOBAL_FILE_PATH, JSON.stringify(ernConfigObj, null, 2))
 }
