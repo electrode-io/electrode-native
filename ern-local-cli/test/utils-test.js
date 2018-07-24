@@ -401,7 +401,7 @@ describe('utils.js', () => {
       assertNoErrorLoggedAndNoProcessExit()
     })
 
-    it('[pathExist] Should not log error nor exist if path exist', async () => {
+    it('[pathExist] Should not log error nor exit if path exists', async () => {
       const tmpDirPath = createTmpDir()
       await utils.logErrorAndExitIfNotSatisfied({
         pathExist: {
@@ -461,7 +461,7 @@ describe('utils.js', () => {
       assertNoErrorLoggedAndNoProcessExit()
     })
 
-    it('[isDirectoryPath] Should log error and exist if path is not a directory path', async () => {
+    it('[isDirectoryPath] Should log error and exit if path is not a directory path', async () => {
       const tmpDirPath = createTmpDir()
       const tmpFilePath = path.join(tmpDirPath, 'file.test')
       const tmpFile = fs.writeFileSync(tmpFilePath, 'CONTENT')
@@ -473,10 +473,19 @@ describe('utils.js', () => {
       assertLoggedErrorAndExitedProcess()
     })
 
-    it('[isDirectoryPath] Should log error and exist if path does not exist', async () => {
+    it('[isDirectoryPath] Should log error and exit if path does not exists', async () => {
       await utils.logErrorAndExitIfNotSatisfied({
         isDirectoryPath: {
           p: '/non/existing/path',
+        },
+      })
+      assertLoggedErrorAndExitedProcess()
+    })
+
+    it('[isValidPlatformConfig] Should log error and exit if key is not whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          p: 'keyNotWhiteListed',
         },
       })
       assertLoggedErrorAndExitedProcess()

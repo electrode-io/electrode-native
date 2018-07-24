@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const tmp = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/tmp')
-const inquirer = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/inquirer')
+const tmp = require('tmp')
+const inquirer = require('inquirer')
 const run = require('./utils/run')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
 

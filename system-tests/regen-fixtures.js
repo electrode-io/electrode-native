@@ -1,5 +1,5 @@
-const inquirer = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/inquirer')
-const shell = require('../../../../Library/Caches/typescript/2.9/node_modules/@types/shelljs')
+const inquirer = require('inquirer')
+const shell = require('shelljs')
 const path = require('path')
 const f = require('./fixtures/constants')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
