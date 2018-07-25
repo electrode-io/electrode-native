@@ -278,7 +278,7 @@ export default class DefaultCodegen {
           for (const intf of cm.interfaces) {
             const intfModel = allModels.get(intf)
             if (intfModel != null) {
-              cm.interfaceModels.add(intfModel)
+              cm.interfaceModels.push(intfModel)
             }
           }
         }
@@ -1241,7 +1241,7 @@ export default class DefaultCodegen {
             parent = _interface
           } else {
             let interfaceRef = this.toModelName(_interface.getSimpleRef())
-            m.interfaces.add(interfaceRef)
+            m.interfaces.push(interfaceRef)
             this.addImport(m, interfaceRef)
             if (allDefinitions != null) {
               if (this.supportsInheritance) {
@@ -1764,7 +1764,7 @@ export default class DefaultCodegen {
           imports.add(r.baseType)
         }
         r.isDefault = response === methodResponse
-        op.responses.add(r)
+        op.responses.push(r)
         if (r.isBinary && r.isDefault) {
           op.isResponseBinary = true
         }
@@ -1877,9 +1877,9 @@ export default class DefaultCodegen {
           cookieParams.push(p.copy())
         } else if (param != null && param instanceof BodyParameter) {
           bodyParam = p.copy()
-          bodyParams.add(p)
+          bodyParams.push(p)
         } else if (param != null && param instanceof FormParameter) {
-          formParams.add(p)
+          formParams.push(p)
         }
         if (p.required == null || !p.required) {
           op.hasOptionalParams = true
@@ -2335,12 +2335,12 @@ export default class DefaultCodegen {
             } else {
               scope.put('hasMore', null)
             }
-            scopes.add(scope)
+            scopes.push(scope)
           }
           sec.scopes = scopes
         }
       }
-      secs.add(sec)
+      secs.push(sec)
     }
     if (sec) sec.hasMore = false
     return secs
@@ -2429,7 +2429,7 @@ export default class DefaultCodegen {
   addHeaders(response, target) {
     if (response.getHeaders() != null) {
       for (const [key, value] of response.getHeaders()) {
-        target.add(this.fromProperty(key, factory(value)))
+        target.push(this.fromProperty(key, factory(value)))
       }
     }
   }
@@ -2484,7 +2484,7 @@ export default class DefaultCodegen {
     }
     co.operationId = uniqueName
     co.operationIdLowerCase = uniqueName.toLowerCase()
-    opList.add(co)
+    opList.push(co)
     co.baseName = tag
   }
 
@@ -2603,7 +2603,12 @@ export default class DefaultCodegen {
       }
 
       let cp = this.fromProperty(key, prop)
-      cp.required = mandatory.contains(key) ? true : null
+      if (mandatory.has) {
+        cp.required = mandatory.has(key) ? true : null
+      } else {
+        cp.required = mandatory.hasOwnProperty(key) ? true : null
+      }
+
       m.hasRequired = m.hasRequired || cp.required
       if (cp.isEnum) {
         m.hasEnums = true
@@ -2627,16 +2632,16 @@ export default class DefaultCodegen {
         innerCp = innerCp.items
       }
 
-      vars.add(cp)
+      vars.push(cp)
       if (cp.required) {
-        m.requiredVars.add(cp)
+        m.requiredVars.push(cp)
       } else {
-        m.optionalVars.add(cp)
+        m.optionalVars.push(cp)
       }
       if (cp.isReadOnly) {
-        m.readOnlyVars.add(cp)
+        m.readOnlyVars.push(cp)
       } else {
-        m.readWriteVars.add(cp)
+        m.readWriteVars.push(cp)
       }
     }
   }
@@ -2830,8 +2835,7 @@ export default class DefaultCodegen {
   buildLibraryCliOption(supportedLibraries) {
     let sb = new StringBuilder('library template (sub-template) to use:')
     for (const [key, lib] of supportedLibraries) {
-      sb
-        .append('\n')
+      sb.append('\n')
         .append(key)
         .append(' - ')
         .append(lib)
@@ -2902,7 +2906,7 @@ export default class DefaultCodegen {
       folder = supportingFile.destinationFilename
     }
     if (!new File(folder).exists()) {
-      this.__supportingFiles.add(supportingFile)
+      this.__supportingFiles.push(supportingFile)
     } else {
       Log.info(
         'Skipped overwriting ' +

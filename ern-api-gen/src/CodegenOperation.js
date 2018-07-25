@@ -93,7 +93,7 @@ export default class CodegenOperation {
    */
   isMemberPath() {
     if (this.pathParams.length !== 1) return false
-    let id = this.pathParams.get(0).baseName
+    let id = this.pathParams[0].baseName
     return '/{' + id + '}' === this.pathWithoutBaseName()
   }
 

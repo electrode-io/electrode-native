@@ -291,6 +291,7 @@ export default class DefaultGenerator extends AbstractGenerator {
             models.putAll(this.config.additionalProperties())
             allProcessedModels.set(name, models)
           } catch (e) {
+            console.log(`ERROR IS ${e}`)
             rethrow(
               e,
               "Could not process model '" +
@@ -308,7 +309,7 @@ export default class DefaultGenerator extends AbstractGenerator {
             if (this.config.importMapping().containsKey(name)) {
               continue
             }
-            allModels.push(models.get('models').get(0))
+            allModels.push(models.value.models[0])
             for (const [
               templateName,
               suffix,
@@ -441,7 +442,7 @@ export default class DefaultGenerator extends AbstractGenerator {
             operation,
             'produces'
           )
-          allOperations.add(operation)
+          allOperations.push(operation)
           for (let i = 0; i < allOperations.length; i++) {
             let oo = allOperations[i]
             if (i < allOperations.length - 1) {
@@ -585,7 +586,7 @@ export default class DefaultGenerator extends AbstractGenerator {
       bundle.put('externalDocs', this.swagger.getExternalDocs())
     }
     for (let i = 0; i < allModels.length - 1; i++) {
-      let cm = allModels.get(i)
+      let cm = allModels[i]
       let m = cm.get('model')
       m.hasMoreModels = true
     }
@@ -810,7 +811,7 @@ export default class DefaultGenerator extends AbstractGenerator {
     let tags = operation.getTags()
     if (tags == null) {
       tags = []
-      tags.add('default')
+      tags.push('default')
     }
     let operationParameters = newHashSet()
     if (operation.getParameters() != null) {
@@ -1011,7 +1012,7 @@ export default class DefaultGenerator extends AbstractGenerator {
       }
     }
     for (const s of importSet) {
-      imports.add(newHashMap(['import', s]))
+      imports.push(newHashMap(['import', s]))
     }
     config.postProcessModels(objs)
 

@@ -50,7 +50,6 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "collections": "^5.1.2",
     "ern-core": "1000.0.0",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
