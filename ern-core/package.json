@@ -1,6 +1,6 @@
 {
   "name": "ern-core",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "description": "Electrode Native Core",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -74,7 +74,7 @@
     "yarn": "^1.7.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.22.0"
+    "ern-util-dev": "0.22.1"
   },
   "engines": {
     "node": ">=6"
