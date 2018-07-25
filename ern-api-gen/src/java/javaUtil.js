@@ -1,11 +1,9 @@
-import { SortedMap } from 'collections/sorted-map'
-import SortedArraySet from 'collections/sorted-array-set'
 import _newHashMap, { fakeSet, FakeHashMap, javaIterator } from './fakeMap'
 export const newHashMap = _newHashMap
 const _iterator = javaIterator
 /**
  * This provides a bunch of Java like classes.  Collections, HashMap, HashSet
- * TreeMap and a few conviences.   Attention has been paid to make it look very
+ * and a few conviences.   Attention has been paid to make it look very
  * similar, however they are not identically. Specifically "size" is not a function
  * it still a property.   This is mostly due to fear, of what will break if we change
  * that value.
@@ -15,53 +13,6 @@ const _iterator = javaIterator
  * These classes are meant to be convient hence iteration.
  *
  */
-
-function makeCompare(obj) {
-  const compare = makeSort(obj)
-  return compare ? (a, b) => compare(a, b) === 0 : null
-}
-function makeSort(obj) {
-  return obj && obj.compare.bind(obj)
-}
-
-export class TreeMap extends SortedMap {
-  iterator = _iterator
-
-  //(new SortedMap(null, (a, b) => sorter.compare(a, b) == 0, sorter.compare)
-  constructor(map, comparator) {
-    super(
-      comparator ? map : null,
-      makeCompare(comparator || map),
-      makeSort(comparator || map)
-    )
-  }
-
-  put(k, v) {
-    this.set(k, v)
-  }
-
-  putAll(itr) {
-    for (const [k, v] in itr) {
-      this.set(k, v)
-    }
-  }
-
-  isEmpty() {
-    return this.size === 0
-  }
-
-  keySet() {
-    const hs = new HashSet()
-    for (const [key] of this) {
-      hs.add(key)
-    }
-    return hs
-  }
-
-  [Symbol.iterator]() {
-    return this.entries()
-  }
-}
 
 export class HashSet extends Set {
   iterator = _iterator
