@@ -535,6 +535,15 @@ describe('utils.js', () => {
       })
       assertNoErrorLoggedAndNoProcessExit()
     })
+
+    it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+      await utils.logErrorAndExitIfNotSatisfied({
+        isValidPlatformConfig: {
+          key: 'overrideManifestUrlModifier',
+        },
+      })
+      assertNoErrorLoggedAndNoProcessExit()
+    })
   })
 
   // ==========================================================
