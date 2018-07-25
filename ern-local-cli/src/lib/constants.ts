@@ -36,4 +36,9 @@ export const availableUserConfigKeys = [
     name: 'codePushAccessKey',
     values: ['string'],
   },
+  {
+    desc: 'Override Manifest Url',
+    name: 'overrideManifestUrlModifier',
+    values: ['string'],
+  },
 ]
