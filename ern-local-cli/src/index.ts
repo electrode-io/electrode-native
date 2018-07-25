@@ -87,6 +87,7 @@ export default function run() {
   log.setLogLevel(logLevel)
   shell.config.fatal = true
   shell.config.verbose = logLevel === 'trace'
+  shell.config.silent = !(logLevel === 'trace' || logLevel === 'debug')
 
   if (config.getValue('showBanner', true)) {
     showBanner()
