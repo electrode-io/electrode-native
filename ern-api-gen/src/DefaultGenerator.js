@@ -11,7 +11,6 @@ import {
   Collections,
   newHashMap,
   newHashSet,
-  TreeMap,
   isNotEmptySet,
 } from './java/javaUtil'
 import IOUtils from './java/IOUtils'
@@ -21,6 +20,7 @@ import InlineModelResolver from './InlineModelResolver'
 import ComposedModel from './models/ComposedModel'
 import GlobalSupportingFile from './GlobalSupportingFile'
 import CodegenIgnoreProcessor from './ignore/CodegenIgnoreProcessor'
+import TreeMap from './java/TreeMap'
 
 const sortOperationId = (a, b) => a.operationId.localeCompare(b.operationId)
 const sortClassName = (a, b) => {
@@ -272,7 +272,6 @@ export default class DefaultGenerator extends AbstractGenerator {
           modelKeys = updatedKeys
         }
         let allProcessedModels = new TreeMap(
-          null,
           new InheritanceTreeSorter(this, definitions)
         )
         for (const name of modelKeys) {
@@ -290,7 +289,7 @@ export default class DefaultGenerator extends AbstractGenerator {
 
             models.put('classname', this.config.toModelName(name))
             models.putAll(this.config.additionalProperties())
-            allProcessedModels.put(name, models)
+            allProcessedModels.set(name, models)
           } catch (e) {
             rethrow(
               e,
@@ -396,7 +395,7 @@ export default class DefaultGenerator extends AbstractGenerator {
         let updatedPaths = new TreeMap()
         for (const [m, p] of paths) {
           if (apisToGenerate.contains(m)) {
-            updatedPaths.put(m, p)
+            updatedPaths.set(m, p)
           }
         }
         paths = updatedPaths
@@ -1032,10 +1031,15 @@ class InheritanceTreeSorter {
     let model1InheritanceDepth = this.getInheritanceDepth(model1)
     let model2InheritanceDepth = this.getInheritanceDepth(model2)
     if (model1InheritanceDepth === model2InheritanceDepth) {
-      return ObjectUtils.compare(
+      const cmp = ObjectUtils.compare(
         this.__parent.config.toModelName(o1),
         this.__parent.config.toModelName(o2)
       )
+      if (cmp === -1) return -1
+      if (cmp === 1) return 1
+      if (cmp === true) return -1
+      if (cmp === false) return 1
+      return cmp
     } else if (model1InheritanceDepth > model2InheritanceDepth) {
       return 1
     } else {
