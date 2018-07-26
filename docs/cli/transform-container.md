@@ -12,6 +12,10 @@ Can be used to patch one or more pbxproj (iOS project file) included in the Cont
 - [build-config](https://github.com/electrode-io/ern-container-transformer-build-config)  
  can be used to update Build Configuration(s) -build settings- of a generated iOS Container.
 
+ - [script](https://github.com/electrode-io/ern-container-transformer-script)  
+ This transformer allows for executing an arbitrary script to transform the Container in some custom way. It supports transformation of both iOS and Android Containers.
+
+
 #### Syntax
 
 `ern transformer-container`  
