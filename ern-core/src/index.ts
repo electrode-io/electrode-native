@@ -19,6 +19,7 @@ import _log from './log'
 import * as _mustacheUtils from './mustacheUtils'
 import * as _promptUtils from './promptUtils'
 import _shell from './shell'
+import _kax from './kax'
 import * as _utils from './utils'
 export { MiniApp } from './MiniApp'
 export { PackagePath } from './PackagePath'
@@ -42,6 +43,7 @@ export const config = _config
 export const Platform = _Platform
 export const log = _log
 export const shell = _shell
+export const kax = _kax
 export const createTmpDir = _createTmpDir
 export const gitCli = _gitCli
 export const fileUtils = _fileUtils
