@@ -1,9 +1,9 @@
 import {
   PackagePath,
   NativeApplicationDescriptor,
-  spin,
   utils as coreUtils,
   log,
+  kax,
 } from 'ern-core'
 import { CauldronHelper, getActiveCauldron } from 'ern-cauldron-api'
 import inquirer from 'inquirer'
@@ -66,17 +66,24 @@ export const handler = async ({
       previousApps = await cauldron.getDescriptor(nativeApplicationDescriptor)
     }
 
-    await spin(`Adding ${descriptor}`, cauldron.addDescriptor(napDescriptor))
+    await kax
+      .task(`Adding ${descriptor}`)
+      .run(cauldron.addDescriptor(napDescriptor))
     if (previousApps && previousApps.versions.length > 0) {
       const latestVersion: any = _.last(previousApps.versions)
       const latestVersionName = latestVersion.name
 
       if (copyFromVersion) {
         if (copyFromVersion === 'latest') {
-          await spin(
-            `Copying data over from latest version ${latestVersionName}`,
-            copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron)
-          )
+          await kax
+            .task(`Copying data over from latest version ${latestVersionName}`)
+            .run(
+              copyOverPreviousVersionData(
+                napDescriptor,
+                latestVersion,
+                cauldron
+              )
+            )
         } else if (copyFromVersion === 'none') {
           log.info(
             `Skipping copy over from previous version as 'none' was specified`
@@ -91,25 +98,26 @@ export const handler = async ({
               `Could not resolve native application version to copy Cauldron data from.\nExamine current value : ${copyFromVersion}`
             )
           }
-          await spin(
-            `Copying data over from version ${copyFromVersion}`,
-            copyOverPreviousVersionData(napDescriptor, version, cauldron)
-          )
+          await kax
+            .task(`Copying data over from version ${copyFromVersion}`)
+            .run(copyOverPreviousVersionData(napDescriptor, version, cauldron))
         }
       } else if (await askUserCopyPreviousVersionData(latestVersionName)) {
-        await spin(
-          `Copying data over from previous version`,
-          copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron)
-        )
+        await kax
+          .task('Copying data over from previous version')
+          .run(
+            copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron)
+          )
       }
     }
 
-    await spin(
-      `Updating Cauldron`,
-      cauldron.commitTransaction(
-        `Add ${napDescriptor.toString()} native application`
+    await kax
+      .task('Updating Cauldron')
+      .run(
+        cauldron.commitTransaction(
+          `Add ${napDescriptor.toString()} native application`
+        )
       )
-    )
     log.info(`${napDescriptor.toString()} was succesfuly added to the Cauldron`)
   } catch (e) {
     if (cauldron) {
@@ -154,13 +162,13 @@ async function copyOverPreviousVersionData(
 async function askUserCopyPreviousVersionData(
   version: string
 ): Promise<string> {
-  const { userCopyPreviousVersionData } = await inquirer.prompt(
-    <inquirer.Question>{
-      message: `Do you want to copy data from the previous version (${version}) ?`,
-      name: 'userCopyPreviousVersionData',
-      type: 'confirm',
-    }
-  )
+  const { userCopyPreviousVersionData } = await inquirer.prompt(<
+    inquirer.Question
+  >{
+    message: `Do you want to copy data from the previous version (${version}) ?`,
+    name: 'userCopyPreviousVersionData',
+    type: 'confirm',
+  })
 
   return userCopyPreviousVersionData
 }

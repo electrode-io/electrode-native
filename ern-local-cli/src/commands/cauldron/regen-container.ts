@@ -1,10 +1,10 @@
 import {
   MiniApp,
-  spin,
   NativeApplicationDescriptor,
   utils as coreUtils,
   nativeDepenciesVersionResolution as resolver,
   log,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import utils from '../../lib/utils'
@@ -91,10 +91,9 @@ export const handler = async ({
     // in order to properly update the native dependencies list in the Cauldron
     const gitMiniAppsObjs: MiniApp[] = []
     for (const gitMiniAppInCauldron of gitMiniAppsInCauldron) {
-      const m = await spin(
-        `Retrieving ${gitMiniAppInCauldron.toString()} MiniApp`,
-        MiniApp.fromPackagePath(gitMiniAppInCauldron)
-      )
+      const m = await kax
+        .task(`Retrieving ${gitMiniAppInCauldron.toString()} MiniApp`)
+        .run(MiniApp.fromPackagePath(gitMiniAppInCauldron))
       gitMiniAppsObjs.push(m)
     }
 
@@ -108,7 +107,6 @@ export const handler = async ({
       nativeDependencies.resolved,
       cauldronDependencies
     )
-
     await utils.performContainerStateUpdateInCauldron(
       async () => {
         await cauldron.syncContainerNativeDependencies(

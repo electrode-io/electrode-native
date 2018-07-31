@@ -8,6 +8,7 @@ import {
   BundlingResult,
   log,
   NativePlatform,
+  kax,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -44,215 +45,220 @@ export default class AndroidGenerator implements ContainerGenerator {
   public async generate(
     config: ContainerGeneratorConfig
   ): Promise<ContainerGenResult> {
-    try {
-      prepareDirectories(config)
-      config.plugins = sortDependenciesByName(config.plugins)
+    prepareDirectories(config)
+    config.plugins = sortDependenciesByName(config.plugins)
 
-      shell.cd(config.outDir)
+    shell.cd(config.outDir)
 
-      await this.fillContainerHull(config)
+    await this.fillContainerHull(config)
 
-      const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(
-        config.plugins
-      )
+    const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(
+      config.plugins
+    )
 
-      const bundlingResult: BundlingResult = await bundleMiniApps(
-        config.miniApps,
-        config.compositeMiniAppDir,
-        config.outDir,
-        'android',
-        { pathToYarnLock: config.pathToYarnLock },
-        jsApiImplDependencies
-      )
-
-      if (!config.ignoreRnpmAssets) {
-        copyRnpmAssets(
+    const bundlingResult: BundlingResult = await kax
+      .task('Bundling MiniApps')
+      .run(
+        bundleMiniApps(
           config.miniApps,
           config.compositeMiniAppDir,
           config.outDir,
-          'android'
+          'android',
+          { pathToYarnLock: config.pathToYarnLock },
+          jsApiImplDependencies
         )
-      }
-
-      await addElectrodeNativeMetadataFile(config)
-
-      return {
-        bundlingResult,
-      }
-    } catch (e) {
-      log.error(
-        '[generateContainer] Something went wrong. Aborting Container Generation'
       )
-      throw e
+
+    if (!config.ignoreRnpmAssets) {
+      await kax
+        .task('Coying rnpm assets -if any-')
+        .run(
+          copyRnpmAssets(
+            config.miniApps,
+            config.compositeMiniAppDir,
+            config.outDir,
+            'android'
+          )
+        )
+    }
+
+    await kax
+      .task('Adding Electrode Native Metadata File')
+      .run(addElectrodeNativeMetadataFile(config))
+
+    return {
+      bundlingResult,
     }
   }
 
   public async fillContainerHull(
     config: ContainerGeneratorConfig
   ): Promise<void> {
-    try {
-      log.debug('[=== Starting container hull filling ===]')
+    shell.cd(ROOT_DIR)
 
-      shell.cd(ROOT_DIR)
+    const copyFromPath = path.join(PATH_TO_HULL_DIR, '{.*,*}')
 
-      const copyFromPath = path.join(PATH_TO_HULL_DIR, '{.*,*}')
+    shell.cp('-R', copyFromPath, config.outDir)
 
-      shell.cp('-R', copyFromPath, config.outDir)
+    // https://github.com/npm/npm/issues/1862 : Npm renames .gitigonre to .npmignore causing the generated contaier to emit the .gitnore file. This solution below helps to bypass it.
+    shell.mv(`${config.outDir}/gitignore`, `${config.outDir}/.gitignore`)
 
-      // https://github.com/npm/npm/issues/1862 : Npm renames .gitigonre to .npmignore causing the generated contaier to emit the .gitnore file. This solution below helps to bypass it.
-      shell.mv(`${config.outDir}/gitignore`, `${config.outDir}/.gitignore`)
+    const reactNativePlugin = _.find(
+      config.plugins,
+      p => p.basePath === 'react-native'
+    )
+    if (!reactNativePlugin) {
+      throw new Error('react-native was not found in plugins list !')
+    }
+    if (!reactNativePlugin.version) {
+      throw new Error('react-native plugin does not have a version !')
+    }
 
-      const reactNativePlugin = _.find(
-        config.plugins,
-        p => p.basePath === 'react-native'
+    const mustacheView: any = {}
+    injectReactNativeVersionKeysInObject(
+      mustacheView,
+      reactNativePlugin.version
+    )
+    mustacheView.miniApps = config.miniApps
+
+    await kax
+      .task('Preparing Native Dependencies Injection')
+      .run(this.buildAndroidPluginsViews(config.plugins, mustacheView))
+
+    await kax
+      .task('Adding Native Dependencies Hooks')
+      .run(this.addAndroidPluginHookClasses(config.plugins, config.outDir))
+
+    const injectPluginsTaskMsg = 'Injecting Native Dependencies'
+    const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
+    for (const plugin of config.plugins) {
+      if (await coreUtils.isDependencyJsApiImpl(plugin.basePath)) {
+        log.debug('JS api implementation identified, skipping fill hull.')
+        continue
+      }
+
+      const pluginConfig = await manifest.getPluginConfig(plugin)
+      let pluginSourcePath
+      if (plugin.basePath === 'react-native') {
+        continue
+      }
+
+      if (!pluginConfig.android) {
+        log.warn(
+          `Skipping ${
+            plugin.basePath
+          } as it does not have an Android configuration`
+        )
+        continue
+      }
+
+      injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
+
+      shell.cd(config.pluginsDownloadDir)
+      pluginSourcePath = await coreUtils.downloadPluginSource(
+        pluginConfig.origin
       )
-      if (!reactNativePlugin) {
-        throw new Error('react-native was not found in plugins list !')
-      }
-      if (!reactNativePlugin.version) {
-        throw new Error('react-native plugin does not have a version !')
+      if (!pluginSourcePath) {
+        throw new Error(`Was not able to download ${plugin.basePath}`)
       }
 
-      const mustacheView: any = {}
-      injectReactNativeVersionKeysInObject(
-        mustacheView,
-        reactNativePlugin.version
+      if (await coreUtils.isDependencyNativeApiImpl(plugin.basePath)) {
+        populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
+      }
+
+      const pathToPluginProject = path.join(
+        pluginSourcePath,
+        pluginConfig.android.root
       )
-      mustacheView.miniApps = config.miniApps
+      shell.cd(pathToPluginProject)
 
-      await this.buildAndroidPluginsViews(config.plugins, mustacheView)
-      await this.addAndroidPluginHookClasses(config.plugins, config.outDir)
-
-      for (const plugin of config.plugins) {
-        if (await coreUtils.isDependencyJsApiImpl(plugin.basePath)) {
-          log.debug('JS api implementation identified, skipping fill hull.')
-          continue
-        }
-
-        const pluginConfig = await manifest.getPluginConfig(plugin)
-        let pluginSourcePath
-        if (plugin.basePath === 'react-native') {
-          continue
-        }
-        if (!pluginConfig.android) {
-          log.warn(
-            `Skipping ${
-              plugin.basePath
-            } as it does not have an Android configuration`
-          )
-          continue
-        }
-
-        shell.cd(config.pluginsDownloadDir)
-        pluginSourcePath = await coreUtils.downloadPluginSource(
-          pluginConfig.origin
-        )
-        if (!pluginSourcePath) {
-          throw new Error(`Was not able to download ${plugin.basePath}`)
-        }
-
-        if (await coreUtils.isDependencyNativeApiImpl(plugin.basePath)) {
-          populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
-        }
-
-        const pathToPluginProject = path.join(
-          pluginSourcePath,
-          pluginConfig.android.root
-        )
-        shell.cd(pathToPluginProject)
-
-        const relPathToPluginSource = pluginConfig.android.moduleName
-          ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
-          : path.join('src', 'main', 'java')
-        const absPathToCopyPluginSourceTo = path.join(
-          config.outDir,
-          'lib',
-          'src',
-          'main'
-        )
-        shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
-
-        if (pluginConfig.android) {
-          if (pluginConfig.android.copy) {
-            handleCopyDirective(
-              pluginSourcePath,
-              config.outDir,
-              pluginConfig.android.copy
-            )
-          }
-
-          if (pluginConfig.android.dependencies) {
-            for (const dependency of pluginConfig.android.dependencies) {
-              log.debug(`Adding compile '${dependency}'`)
-              mustacheView.pluginCompile.push({
-                compileStatement: `compile '${dependency}'`,
-              })
-            }
-          }
-        }
-      }
-
-      log.debug('Patching hull')
-      const files = readDir(
+      const relPathToPluginSource = pluginConfig.android.moduleName
+        ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
+        : path.join('src', 'main', 'java')
+      const absPathToCopyPluginSourceTo = path.join(
         config.outDir,
-        f => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')
+        'lib',
+        'src',
+        'main'
       )
-      const pathLibSrcMain = path.join('lib', 'src', 'main')
-      const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
-      const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java', 'com')
-      const pathLibSrcMainJavaComWalmartlabsErnContainer = path.join(
-        pathLibSrcMainJavaCom,
-        'walmartlabs',
-        'ern',
-        'container'
-      )
-      for (const file of files) {
-        if (
-          (file.startsWith(pathLibSrcMainJavaCom) &&
-            !file.startsWith(pathLibSrcMainJavaComWalmartlabsErnContainer)) ||
-          file.startsWith(pathLibSrcMainAssets)
-        ) {
-          // We don't want to Mustache process library files. It can lead to bad things
-          // We also don't want to process assets files ...
-          // We just want to process container specific code (which contains mustache templates)
-          log.debug(`Skipping mustaching of ${file}`)
-          continue
+      shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
+
+      if (pluginConfig.android) {
+        if (pluginConfig.android.copy) {
+          handleCopyDirective(
+            pluginSourcePath,
+            config.outDir,
+            pluginConfig.android.copy
+          )
         }
-        log.debug(`Mustaching ${file}`)
-        const pathToFile = path.join(config.outDir, file)
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-          pathToFile,
-          mustacheView,
-          pathToFile
-        )
+
+        if (pluginConfig.android.dependencies) {
+          for (const dependency of pluginConfig.android.dependencies) {
+            log.debug(`Adding compile '${dependency}'`)
+            mustacheView.pluginCompile.push({
+              compileStatement: `compile '${dependency}'`,
+            })
+          }
+        }
       }
+    }
+    injectPluginsKaxTask.succeed(injectPluginsTaskMsg)
 
-      log.debug('Creating miniapp activities')
-      for (const miniApp of config.miniApps) {
-        const activityFileName = `${miniApp.pascalCaseName}Activity.java`
-
-        log.debug(`Creating ${activityFileName}`)
-        const pathToMiniAppActivityMustacheTemplate = path.join(
-          PATH_TO_TEMPLATES_DIR,
-          'MiniAppActivity.mustache'
-        )
-        const pathToOutputActivityFile = path.join(
-          config.outDir,
-          pathLibSrcMainJavaComWalmartlabsErnContainer,
-          'miniapps',
-          activityFileName
-        )
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-          pathToMiniAppActivityMustacheTemplate,
-          miniApp,
-          pathToOutputActivityFile
-        )
+    log.debug('Patching hull')
+    const files = readDir(
+      config.outDir,
+      f => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')
+    )
+    const pathLibSrcMain = path.join('lib', 'src', 'main')
+    const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
+    const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java', 'com')
+    const pathLibSrcMainJavaComWalmartlabsErnContainer = path.join(
+      pathLibSrcMainJavaCom,
+      'walmartlabs',
+      'ern',
+      'container'
+    )
+    for (const file of files) {
+      if (
+        (file.startsWith(pathLibSrcMainJavaCom) &&
+          !file.startsWith(pathLibSrcMainJavaComWalmartlabsErnContainer)) ||
+        file.startsWith(pathLibSrcMainAssets)
+      ) {
+        // We don't want to Mustache process library files. It can lead to bad things
+        // We also don't want to process assets files ...
+        // We just want to process container specific code (which contains mustache templates)
+        log.debug(`Skipping mustaching of ${file}`)
+        continue
       }
+      log.debug(`Mustaching ${file}`)
+      const pathToFile = path.join(config.outDir, file)
+      await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+        pathToFile,
+        mustacheView,
+        pathToFile
+      )
+    }
 
-      log.debug('[=== Completed container hull filling ===]')
-    } catch (e) {
-      log.error('[fillContainerHull] Something went wrong: ' + e)
-      throw e
+    log.debug('Creating miniapp activities')
+    for (const miniApp of config.miniApps) {
+      const activityFileName = `${miniApp.pascalCaseName}Activity.java`
+
+      log.debug(`Creating ${activityFileName}`)
+      const pathToMiniAppActivityMustacheTemplate = path.join(
+        PATH_TO_TEMPLATES_DIR,
+        'MiniAppActivity.mustache'
+      )
+      const pathToOutputActivityFile = path.join(
+        config.outDir,
+        pathLibSrcMainJavaComWalmartlabsErnContainer,
+        'miniapps',
+        activityFileName
+      )
+      await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+        pathToMiniAppActivityMustacheTemplate,
+        miniApp,
+        pathToOutputActivityFile
+      )
     }
   }
 
@@ -260,52 +266,43 @@ export default class AndroidGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     outDir: string
   ): Promise<any> {
-    try {
-      log.debug('[=== Adding plugin hook classes ===]')
-
-      for (const plugin of plugins) {
-        if (plugin.basePath === 'react-native') {
-          continue
-        }
-        const pluginConfig = await manifest.getPluginConfig(plugin)
-        if (!pluginConfig.android) {
-          log.warn(
-            `Skipping ${
-              plugin.basePath
-            } as it does not have an Android configuration`
-          )
-          continue
-        }
-        const androidPluginHook = pluginConfig.android.pluginHook
-        if (androidPluginHook) {
-          log.debug(`Adding ${androidPluginHook.name}.java`)
-          if (!pluginConfig.path) {
-            throw new Error('No plugin config path was set. Cannot proceed.')
-          }
-          const pathToPluginConfigHook = path.join(
-            pluginConfig.path,
-            `${androidPluginHook.name}.java`
-          )
-          const pathToCopyPluginConfigHookTo = path.join(
-            outDir,
-            'lib',
-            'src',
-            'main',
-            'java',
-            'com',
-            'walmartlabs',
-            'ern',
-            'container',
-            'plugins'
-          )
-          shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo)
-        }
+    for (const plugin of plugins) {
+      if (plugin.basePath === 'react-native') {
+        continue
       }
-
-      log.debug('[=== Done adding plugin hook classes ===]')
-    } catch (e) {
-      log.error('[addAndroidPluginHookClasses] Something went wrong: ' + e)
-      throw e
+      const pluginConfig = await manifest.getPluginConfig(plugin)
+      if (!pluginConfig.android) {
+        log.warn(
+          `Skipping ${
+            plugin.basePath
+          } as it does not have an Android configuration`
+        )
+        continue
+      }
+      const androidPluginHook = pluginConfig.android.pluginHook
+      if (androidPluginHook) {
+        log.debug(`Adding ${androidPluginHook.name}.java`)
+        if (!pluginConfig.path) {
+          throw new Error('No plugin config path was set. Cannot proceed.')
+        }
+        const pathToPluginConfigHook = path.join(
+          pluginConfig.path,
+          `${androidPluginHook.name}.java`
+        )
+        const pathToCopyPluginConfigHookTo = path.join(
+          outDir,
+          'lib',
+          'src',
+          'main',
+          'java',
+          'com',
+          'walmartlabs',
+          'ern',
+          'container',
+          'plugins'
+        )
+        shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo)
+      }
     }
   }
 
@@ -313,38 +310,33 @@ export default class AndroidGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     mustacheView: any
   ): Promise<any> {
-    try {
-      mustacheView.plugins = await generatePluginsMustacheViews(
-        plugins,
-        'android'
+    mustacheView.plugins = await generatePluginsMustacheViews(
+      plugins,
+      'android'
+    )
+    mustacheView.pluginCompile = []
+    const reactNativePlugin = _.find(
+      plugins,
+      p => p.basePath === 'react-native'
+    )
+    if (reactNativePlugin) {
+      log.debug(
+        `Will inject: compile 'com.walmartlabs.ern:react-native:${
+          reactNativePlugin.version
+        }'`
       )
-      mustacheView.pluginCompile = []
-      const reactNativePlugin = _.find(
-        plugins,
-        p => p.basePath === 'react-native'
-      )
-      if (reactNativePlugin) {
-        log.debug(
-          `Will inject: compile 'com.walmartlabs.ern:react-native:${
-            reactNativePlugin.version
-          }'`
-        )
-        mustacheView.pluginCompile.push({
-          compileStatement: `compile 'com.walmartlabs.ern:react-native:${
-            reactNativePlugin.version
-          }'`,
-        })
-      }
-      const reactNativeCodePushPlugin = _.find(
-        plugins,
-        p => p.basePath === 'react-native-code-push'
-      )
-      if (reactNativeCodePushPlugin) {
-        mustacheView.loadJsBundleFromCustomPath = true
-      }
-    } catch (e) {
-      log.error('[buildAndroidPluginsViews] Something went wrong: ' + e)
-      throw e
+      mustacheView.pluginCompile.push({
+        compileStatement: `compile 'com.walmartlabs.ern:react-native:${
+          reactNativePlugin.version
+        }'`,
+      })
+    }
+    const reactNativeCodePushPlugin = _.find(
+      plugins,
+      p => p.basePath === 'react-native-code-push'
+    )
+    if (reactNativeCodePushPlugin) {
+      mustacheView.loadJsBundleFromCustomPath = true
     }
   }
 }

@@ -1,11 +1,11 @@
 import inquirer from 'inquirer'
 import shell from './shell'
-import spin from './spin'
 import ernConfig from './config'
 import * as deviceConfigUtil from './deviceConfig'
 import log from './log'
 import { execp, spawnp } from './childProcess'
 import os from 'os'
+import kax from './kax'
 
 // ==============================================================================
 // Misc utilities
@@ -167,7 +167,7 @@ export async function runAndroidUsingAvdImage({
   // https://issuetracker.google.com/issues/37137213
   spawnp(androidEmulatorPath(), ['-avd', avdImageName], { detached: true })
 
-  await spin('Waiting for device to start', waitForAndroidDevice())
+  await kax.task('Waiting for device to start').run(waitForAndroidDevice())
   await installAndLaunchApp({ projectPath, packageName, activityName })
 }
 
@@ -188,14 +188,13 @@ export async function installAndLaunchApp({
   activityName: string
 }) {
   if (projectPath) {
-    await spin(
-      'Building and installing application',
-      buildAndInstallApp(projectPath)
-    )
+    await kax
+      .task('Building and installing application')
+      .run(buildAndInstallApp(projectPath))
   } else if (apkPath) {
-    await spin('Installing APK', installApk(apkPath))
+    await kax.task('Installing APK').run(installApk(apkPath))
   }
-  await spin('Launching Android Application', Promise.resolve())
+  await kax.task('Launching Android Application').run(Promise.resolve())
   launchAndroidActivityDetached(packageName, activityName)
 }
 

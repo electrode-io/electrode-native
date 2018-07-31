@@ -16,7 +16,6 @@ import {
   NativeDependencies,
 } from './nativeDependenciesLookup'
 import shell from './shell'
-import spin from './spin'
 import { tagOneLine } from './tagoneline'
 import * as utils from './utils'
 import {
@@ -25,6 +24,7 @@ import {
   writePackageJson,
 } from './packageJsonFileUtils'
 import { packageCache } from './packageCache'
+import kax from './kax'
 
 const npmIgnoreContent = `ios/
 android/
@@ -88,22 +88,24 @@ export class MiniApp {
       scope?: string
     }
   ) {
+    if (fs.existsSync(path.join('node_modules', 'react-native'))) {
+      throw new Error(
+        'It seems like there is already a react native app in this directory. Use another directory.'
+      )
+    }
+
+    if (Platform.currentVersion !== platformVersion) {
+      Platform.switchToVersion(platformVersion)
+    }
+
+    let reactNativeVersion
+    const retrieveRnManifestTask = kax.task(
+      'Querying Manifest for react-native version to use'
+    )
+
     try {
-      if (fs.existsSync(path.join('node_modules', 'react-native'))) {
-        throw new Error(
-          'It seems like there is already a react native app in this directory. Use another directory.'
-        )
-      }
-
-      if (Platform.currentVersion !== platformVersion) {
-        Platform.switchToVersion(platformVersion)
-      }
-
-      log.info(`Creating ${miniAppName} MiniApp`)
-
-      const reactNativeDependency = await spin(
-        `Retrieving react-native version from Manifest`,
-        manifest.getNativeDependency(PackagePath.fromString('react-native'))
+      const reactNativeDependency = await manifest.getNativeDependency(
+        PackagePath.fromString('react-native')
       )
 
       if (!reactNativeDependency) {
@@ -112,65 +114,69 @@ export class MiniApp {
         )
       }
 
-      const reactNativeVersion = reactNativeDependency.version
+      reactNativeVersion = reactNativeDependency.version
       if (!reactNativeVersion) {
         throw new Error('React Native version needs to be explicitely defined')
       }
-
-      await spin(
-        `Creating ${miniAppName} project using react-native v${reactNativeVersion}. This might take a while.`,
-        reactnative.init(miniAppName, reactNativeVersion)
+      retrieveRnManifestTask.succeed(
+        `Retrieved react-native version from Manifest [${reactNativeVersion}]`
       )
-
-      // Create .npmignore
-      const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore')
-      fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
-
-      // Inject ern specific data in MiniApp package.json
-      const pathToMiniApp = path.join(process.cwd(), miniAppName)
-      const appPackageJson = await readPackageJson(pathToMiniApp)
-      appPackageJson.ern = {
-        moduleName: miniAppName,
-        moduleType: ModuleTypes.MINIAPP,
-        version: platformVersion,
-      }
-      appPackageJson.private = false
-      appPackageJson.keywords
-        ? appPackageJson.keywords.push(ModuleTypes.MINIAPP)
-        : (appPackageJson.keywords = [ModuleTypes.MINIAPP])
-
-      if (scope) {
-        appPackageJson.name = `@${scope}/${packageName}`
-      } else {
-        appPackageJson.name = packageName
-      }
-
-      await writePackageJson(pathToMiniApp, appPackageJson)
-
-      // Remove react-native generated android and ios projects
-      // They will be replaced with our owns when user uses `ern run android`
-      // or `ern run ios` command
-      const miniAppPath = path.join(process.cwd(), miniAppName)
-      shell.cd(miniAppPath)
-      shell.rm('-rf', 'android')
-      shell.rm('-rf', 'ios')
-
-      if (semver.gte(reactNativeVersion, '0.49.0')) {
-        // Starting from React Native v0.49.0, the generated file structure
-        // is different. There is just a single `index.js` and `App.js` in
-        // replacement of `index.ios.js` and `index.android.js`
-        // To keep backard compatibility with file structure excpected by
-        // Electrode Native, we just create `index.ios.js` and `index.android.js`
-        shell.cp('index.js', 'index.ios.js')
-        shell.cp('index.js', 'index.android.js')
-        shell.rm('index.js')
-      }
-
-      return MiniApp.fromPath(miniAppPath)
     } catch (e) {
-      log.debug(`[MiniApp.create] ${e}`)
+      retrieveRnManifestTask.fail()
       throw e
     }
+
+    await kax
+      .task(
+        `Creating ${miniAppName} project using react-native v${reactNativeVersion}`
+      )
+      .run(reactnative.init(miniAppName, reactNativeVersion))
+
+    // Create .npmignore
+    const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore')
+    fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
+
+    // Inject ern specific data in MiniApp package.json
+    const pathToMiniApp = path.join(process.cwd(), miniAppName)
+    const appPackageJson = await readPackageJson(pathToMiniApp)
+    appPackageJson.ern = {
+      moduleName: miniAppName,
+      moduleType: ModuleTypes.MINIAPP,
+      version: platformVersion,
+    }
+    appPackageJson.private = false
+    appPackageJson.keywords
+      ? appPackageJson.keywords.push(ModuleTypes.MINIAPP)
+      : (appPackageJson.keywords = [ModuleTypes.MINIAPP])
+
+    if (scope) {
+      appPackageJson.name = `@${scope}/${packageName}`
+    } else {
+      appPackageJson.name = packageName
+    }
+
+    await writePackageJson(pathToMiniApp, appPackageJson)
+
+    // Remove react-native generated android and ios projects
+    // They will be replaced with our owns when user uses `ern run android`
+    // or `ern run ios` command
+    const miniAppPath = path.join(process.cwd(), miniAppName)
+    shell.cd(miniAppPath)
+    shell.rm('-rf', 'android')
+    shell.rm('-rf', 'ios')
+
+    if (semver.gte(reactNativeVersion, '0.49.0')) {
+      // Starting from React Native v0.49.0, the generated file structure
+      // is different. There is just a single `index.js` and `App.js` in
+      // replacement of `index.ios.js` and `index.android.js`
+      // To keep backard compatibility with file structure excpected by
+      // Electrode Native, we just create `index.ios.js` and `index.android.js`
+      shell.cp('index.js', 'index.ios.js')
+      shell.cp('index.js', 'index.android.js')
+      shell.rm('index.js')
+    }
+
+    return MiniApp.fromPath(miniAppPath)
   }
 
   public readonly path: string
@@ -314,10 +320,11 @@ in the package.json of ${packageJson.name} MiniApp
         // if it contains transitive native dependencies
         const tmpPath = createTmpDir()
         process.chdir(tmpPath)
-        await spin(
-          `${basePathDependency.toString()} is not declared in the manifest. Performing additional checks.`,
-          yarn.add(PackagePath.fromString(dependency.toString()))
-        )
+        await kax
+          .task(
+            `${basePathDependency.toString()} is not declared in the manifest. Performing additional checks.`
+          )
+          .run(yarn.add(PackagePath.fromString(dependency.toString())))
 
         const nativeDependencies = await findNativeDependencies(
           path.join(tmpPath, 'node_modules')
@@ -380,10 +387,9 @@ in the package.json of ${packageJson.name} MiniApp
 
       // Checks have passed add the dependency
       process.chdir(this.path)
-      await spin(
-        `Adding ${dependency.toString()} to ${this.name}`,
-        yarn.add(PackagePath.fromString(dependency.toString()))
-      )
+      await kax
+        .task(`Adding ${dependency.toString()} to ${this.name}`)
+        .run(yarn.add(PackagePath.fromString(dependency.toString())))
       return dependency
     }
   }
@@ -468,7 +474,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     )
 
     process.chdir(this.path)
-    await spin(`Running yarn install`, yarn.install())
+    await kax.task('Running yarn install').run(yarn.install())
   }
 
   public publishToNpm() {
@@ -523,15 +529,13 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
   ) {
     const depPath = PackagePath.fromString(dependency.toString())
     if (dev) {
-      await spin(
-        `Adding ${dependency.toString()} to MiniApp devDependencies`,
-        yarn.add(depPath, { dev: true })
-      )
+      await kax
+        .task(`Adding ${dependency.toString()} to MiniApp devDependencies`)
+        .run(yarn.add(depPath, { dev: true }))
     } else {
-      await spin(
-        `Adding ${dependency.toString()} to MiniApp peerDependencies`,
-        yarn.add(depPath, { peer: true })
-      )
+      await kax
+        .task(`Adding ${dependency.toString()} to MiniApp peerDependencies`)
+        .run(yarn.add(depPath, { peer: true }))
     }
   }
 

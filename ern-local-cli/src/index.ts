@@ -8,7 +8,9 @@ import {
   ManifestOverrideConfig,
   shell,
   Platform,
+  kax,
 } from 'ern-core'
+import { KaxAdvancedRenderer, KaxSimpleRenderer } from 'kax'
 import * as yargs from 'yargs'
 
 // ==============================================================================
@@ -88,6 +90,10 @@ export default function run() {
   shell.config.fatal = true
   shell.config.verbose = logLevel === 'trace'
   shell.config.silent = !(logLevel === 'trace' || logLevel === 'debug')
+  kax.renderer =
+    logLevel === 'trace' || logLevel === 'debug'
+      ? new KaxSimpleRenderer()
+      : new KaxAdvancedRenderer()
 
   if (config.getValue('showBanner', true)) {
     showBanner()

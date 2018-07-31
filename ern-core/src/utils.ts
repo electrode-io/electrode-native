@@ -375,7 +375,6 @@ export async function extractJsApiImplementations(plugins: PackagePath[]) {
 }
 
 export function logErrorAndExitProcess(e: Error, code: number = 1) {
-  // console.log(`logErrorAndExitProcess: log level is ${log.level}`)
   log.error(`An error occurred: ${e.message}`)
   log.debug(e.stack!)
   process.exit(code)

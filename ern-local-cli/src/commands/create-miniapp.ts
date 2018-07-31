@@ -4,6 +4,7 @@ import {
   ModuleTypes,
   utils as coreUtils,
   log,
+  kax,
 } from 'ern-core'
 import utils from '../lib/utils'
 import chalk from 'chalk'
@@ -85,10 +86,12 @@ export const handler = async ({
       throw new Error(`Aborting command `)
     }
 
-    await MiniApp.create(appName, packageName, {
-      platformVersion: platformVersion && platformVersion.replace('v', ''),
-      scope,
-    })
+    await kax.task('Creating MiniApp').run(
+      MiniApp.create(appName, packageName, {
+        platformVersion: platformVersion && platformVersion.replace('v', ''),
+        scope,
+      })
+    )
 
     logSuccessFooter(appName)
   } catch (e) {

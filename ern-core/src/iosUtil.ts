@@ -10,6 +10,7 @@ import xcode from 'xcode-ern'
 import fs from 'fs'
 import _ from 'lodash'
 import readDir = require('fs-readdir-recursive')
+import kax from './kax'
 
 export async function fillProjectHull(
   pathSpec: {
@@ -60,6 +61,8 @@ export async function fillProjectHull(
   const iosProject = await getIosProject(projectPath)
   const target = iosProject.findTargetKey(projectSpec.projectName)
 
+  const injectPluginsTaskMsg = 'Injecting Native Dependencies'
+  const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
   for (const plugin of plugins) {
     if (await isDependencyJsApiImpl(plugin)) {
       log.debug('JS api implementation identified, skipping fill hull.')
@@ -70,6 +73,7 @@ export async function fillProjectHull(
       plugin,
       projectSpec.projectName
     )
+
     shell.cd(pathSpec.pluginsDownloadDirectory)
     if (pluginConfig.ios) {
       log.debug(`Retrieving ${plugin.basePath}`)
@@ -77,6 +81,8 @@ export async function fillProjectHull(
       if (!pluginSourcePath) {
         throw new Error(`Was not able to download ${plugin.basePath}`)
       }
+
+      injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
 
       if (pluginConfig.ios.copy) {
         for (const copy of pluginConfig.ios.copy) {
@@ -266,6 +272,7 @@ export async function fillProjectHull(
       }
     }
   }
+  injectPluginsKaxTask.succeed(injectPluginsTaskMsg)
 
   log.debug(`[=== Completed framework generation ===]`)
   return { iosProject, projectPath }

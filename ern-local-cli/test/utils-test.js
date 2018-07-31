@@ -20,7 +20,6 @@ import * as container from '../src/lib/container'
 import sinon from 'sinon'
 import utils from '../src/lib/utils'
 import * as fixtures from './fixtures/common'
-import ora from 'ora'
 import inquirer from 'inquirer'
 import fs from 'fs'
 import path from 'path'
@@ -35,7 +34,6 @@ const topLevelContainerVersion = '1.2.3'
 
 let cauldronHelperStub
 let yarnInfoStub
-let oraFailStub
 let processExitStub
 let inquirerPromptStub
 
@@ -54,13 +52,6 @@ describe('utils.js', () => {
       '2.0.0',
       '3.0',
     ])
-    // Ora stubs
-    const oraProto = Object.getPrototypeOf(ora())
-    oraFailStub = sandbox.stub()
-    const oraStartStub = sandbox.stub(oraProto, 'start').returns({
-      fail: oraFailStub,
-      succeed: sandbox.stub(),
-    })
 
     // yarn stub
     yarnInfoStub = sandbox.stub(yarn, 'info')
@@ -187,13 +178,10 @@ describe('utils.js', () => {
   // logErrorAndExitIfNotSatisfied
   // ==========================================================
   function assertLoggedErrorAndExitedProcess() {
-    sinon.assert.calledOnce(oraFailStub)
     sinon.assert.calledOnce(processExitStub)
-    assert(oraFailStub.calledBefore(processExitStub))
   }
 
   function assertNoErrorLoggedAndNoProcessExit() {
-    sinon.assert.notCalled(oraFailStub)
     sinon.assert.notCalled(processExitStub)
   }
 

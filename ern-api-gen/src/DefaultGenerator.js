@@ -291,7 +291,6 @@ export default class DefaultGenerator extends AbstractGenerator {
             models.putAll(this.config.additionalProperties())
             allProcessedModels.set(name, models)
           } catch (e) {
-            console.log(`ERROR IS ${e}`)
             rethrow(
               e,
               "Could not process model '" +

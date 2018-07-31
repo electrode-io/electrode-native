@@ -27,9 +27,6 @@ describe('ern-container-gen utils.js', () => {
   // Before each test
   beforeEach(() => {
     yarnCliStub = sandbox.stub(YarnCli.prototype)
-    sandbox.stub(ernUtil, 'spin').callsFake(async (msg, prom) => {
-      await prom
-    })
 
     // Go back to initial dir (otherwise we might start execution from a temporary
     // created directory that got removed and it makes shelljs go crazy)

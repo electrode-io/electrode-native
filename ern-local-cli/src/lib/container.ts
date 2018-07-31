@@ -7,9 +7,9 @@ import {
   MiniApp,
   NativeApplicationDescriptor,
   Platform,
-  spin,
   log,
   NativePlatform,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
@@ -101,8 +101,7 @@ export async function runLocalContainerGen(
 
     const generator = getGeneratorForPlatform(platform)
 
-    await spin(
-      'Generating Container',
+    await kax.task('Generating Container').run(
       generator.generate({
         compositeMiniAppDir: createTmpDir(),
         ignoreRnpmAssets,
@@ -120,6 +119,23 @@ export async function runLocalContainerGen(
     )
   } catch (e) {
     log.error(`runLocalContainerGen failed: ${e}`)
+    throw e
+  }
+}
+
+async function retrieveMiniApps(miniApps: PackagePath[]): Promise<MiniApp[]> {
+  const taskMsg = 'Retrieving MiniApps'
+  const retrieveMiniAppsTask = kax.task(taskMsg)
+  try {
+    const result: MiniApp[] = []
+    for (const miniApp of miniApps) {
+      retrieveMiniAppsTask.text = `${taskMsg} [${miniApp.basePath}]`
+      result.push(await MiniApp.fromPackagePath(miniApp))
+    }
+    retrieveMiniAppsTask.succeed(taskMsg)
+    return result
+  } catch (e) {
+    retrieveMiniAppsTask.fail()
     throw e
   }
 }
@@ -160,15 +176,11 @@ export async function runCauldronContainerGen(
       napDescriptor
     )
 
-    const miniAppsInstances: MiniApp[] = []
-    for (const miniapp of miniapps) {
-      miniAppsInstances.push(await MiniApp.fromPackagePath(miniapp))
-    }
+    const miniAppsInstances: MiniApp[] = await retrieveMiniApps(miniapps)
 
     const generator = getGeneratorForPlatform(platform)
 
-    return spin(
-      `Creating Container for ${napDescriptor.toString()} from Cauldron`,
+    return kax.task(`Generating Container for ${napDescriptor.toString()}`).run(
       generator.generate({
         compositeMiniAppDir,
         ignoreRnpmAssets:

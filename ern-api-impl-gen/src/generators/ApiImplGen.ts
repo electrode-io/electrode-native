@@ -1,11 +1,11 @@
 import {
-  spin,
   PackagePath,
   shell,
   yarn,
   log,
   readPackageJsonSync,
   writePackageJsonSync,
+  kax,
 } from 'ern-core'
 import { ApiGenUtils } from 'ern-api-gen'
 import _ from 'lodash'
@@ -153,7 +153,9 @@ export default class ApiImplGen {
   }
 
   public async spinAndDownload(dependency: PackagePath) {
-    await spin(`Downloading ${dependency.toString()}`, yarn.add(dependency))
+    await kax
+      .task(`Downloading ${dependency.toString()}`)
+      .run(yarn.add(dependency))
   }
 
   public async getDependencies(

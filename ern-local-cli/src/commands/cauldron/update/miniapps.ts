@@ -2,10 +2,10 @@ import {
   MiniApp,
   PackagePath,
   NativeApplicationDescriptor,
-  spin,
   utils as coreUtils,
   nativeDepenciesVersionResolution as resolver,
   log,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import utils from '../../../lib/utils'
@@ -101,10 +101,9 @@ export const handler = async ({
       PackagePath.fromString(m)
     )
     for (const miniAppDependencyPath of miniAppsDependencyPaths) {
-      const m = await spin(
-        `Retrieving ${miniAppDependencyPath.toString()} MiniApp`,
-        MiniApp.fromPackagePath(miniAppDependencyPath)
-      )
+      const m = await kax
+        .task(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`)
+        .run(MiniApp.fromPackagePath(miniAppDependencyPath))
       miniAppsObjs.push(m)
     }
 
@@ -119,10 +118,9 @@ export const handler = async ({
     )
     const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
     for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
-      const m = await spin(
-        `Retrieving ${nonUpdatedMiniAppInCauldron.toString()} MiniApp`,
-        MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron)
-      )
+      const m = await kax
+        .task(`Retrieving ${nonUpdatedMiniAppInCauldron.toString()} MiniApp`)
+        .run(MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron))
       nonUpdatedMiniAppsInCauldronObjs.push(m)
     }
 
