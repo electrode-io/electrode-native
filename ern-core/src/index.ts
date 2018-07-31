@@ -19,7 +19,6 @@ import _log from './log'
 import * as _mustacheUtils from './mustacheUtils'
 import * as _promptUtils from './promptUtils'
 import _shell from './shell'
-import _spin from './spin'
 import * as _utils from './utils'
 export { MiniApp } from './MiniApp'
 export { PackagePath } from './PackagePath'
@@ -51,7 +50,6 @@ export const utils = _utils
 export const ModuleTypes = _ModuleTypes
 export const android = _android
 export const ios = _ios
-export const spin = _spin
 export const mustacheUtils = _mustacheUtils
 export const manifest = _manifest
 export const handleCopyDirective = _handleCopyDirective
