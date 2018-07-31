@@ -1,6 +1,6 @@
 import {
   BundlingResult,
-  log,
+  kax,
   MiniApp,
   NativePlatform,
   PackagePath,
@@ -24,38 +24,29 @@ export async function bundleMiniApps(
   // JavaScript API implementations
   jsApiImplDependencies?: PackagePath[]
 ): Promise<BundlingResult> {
-  try {
-    log.debug('[=== Starting mini apps bundling ===]')
+  const miniAppsPaths: PackagePath[] = []
+  for (const miniapp of miniapps) {
+    miniAppsPaths.push(miniapp.packagePath)
+  }
 
-    const miniAppsPaths: PackagePath[] = []
-    for (const miniapp of miniapps) {
-      miniAppsPaths.push(miniapp.packagePath)
-    }
-
-    await generateMiniAppsComposite(
-      miniAppsPaths,
-      compositeMiniAppDir,
-      { pathToYarnLock },
-      jsApiImplDependencies
+  await kax
+    .task('Generating MiniApps Composite')
+    .run(
+      generateMiniAppsComposite(
+        miniAppsPaths,
+        compositeMiniAppDir,
+        { pathToYarnLock },
+        jsApiImplDependencies
+      )
     )
 
-    clearReactPackagerCache()
+  clearReactPackagerCache()
 
-    let result: BundlingResult
-
-    if (platform === 'android') {
-      log.debug('Bundling miniapp(s) for Android')
-      result = await reactNativeBundleAndroid(outDir)
-    } else {
-      log.debug('Bundling miniapp(s) for iOS')
-      result = await reactNativeBundleIos(outDir)
-    }
-
-    log.debug('[=== Completed mini apps bundling ===]')
-
-    return result
-  } catch (e) {
-    log.error(`[bundleMiniApps] Something went wrong: ${e}`)
-    throw e
-  }
+  return kax
+    .task('Running Metro Bundler')
+    .run(
+      platform === 'android'
+        ? reactNativeBundleAndroid(outDir)
+        : reactNativeBundleIos(outDir)
+    )
 }

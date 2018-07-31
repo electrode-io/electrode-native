@@ -1,5 +1,5 @@
 import { PackagePath } from './PackagePath'
-import spin from './spin'
+import kax from './kax'
 import { MiniApp } from './MiniApp'
 import _ from 'lodash'
 
@@ -10,10 +10,9 @@ export async function getMiniAppsUsingNativeDependency(
   const result: MiniApp[] = []
   const nativeDependencyString = nativeDependency.basePath
   for (const miniAppPath of miniAppsPaths) {
-    const miniApp = await spin(
-      `Retrieving ${miniAppPath.toString()} for dependency lookup`,
-      MiniApp.fromPackagePath(miniAppPath)
-    )
+    const miniApp = await kax
+      .task(`Retrieving ${miniAppPath.toString()} for dependency lookup`)
+      .run(MiniApp.fromPackagePath(miniAppPath))
     const miniAppNativeDependencies = await miniApp.getNativeDependencies()
     const miniAppNativeDependenciesStrings = _.map(
       miniAppNativeDependencies.all,

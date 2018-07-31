@@ -5,12 +5,12 @@ import {
   PackagePath,
   config,
   NativeApplicationDescriptor,
-  spin,
   reactnative,
   CodePushPackage,
   CodePushInitConfig,
   log,
   MiniApp,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
@@ -145,8 +145,7 @@ export async function performCodePushPromote(
           targetNapDescriptor,
           targetDeploymentName
         ))
-      const result = await spin(
-        `Promoting release to ${appVersion}`,
+      const result = await kax.task(`Promoting release to ${appVersion}`).run(
         codePushSdk.promote(
           appName,
           sourceDeploymentName,
@@ -196,10 +195,9 @@ export async function performCodePushPromote(
 
       cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
     }
-    await spin(
-      `Updating Cauldron`,
-      cauldron.commitTransaction(cauldronCommitMessage)
-    )
+    await kax
+      .task('Updating Cauldron')
+      .run(cauldron.commitTransaction(cauldronCommitMessage))
   } catch (e) {
     if (cauldron) {
       await cauldron.discardTransaction()
@@ -333,15 +331,16 @@ export async function performCodePushOtaUpdate(
       PackagePath.fromString(j.toString())
     )
 
-    await spin(
-      'Generating composite module',
-      generateMiniAppsComposite(
-        pathsToMiniAppsToBeCodePushed,
-        tmpWorkingDir,
-        { pathToYarnLock },
-        pathToJsApiImplsToBeCodePushed
+    await kax
+      .task('Generating composite module')
+      .run(
+        generateMiniAppsComposite(
+          pathsToMiniAppsToBeCodePushed,
+          tmpWorkingDir,
+          { pathToYarnLock },
+          pathToJsApiImplsToBeCodePushed
+        )
       )
-    )
 
     const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
     shell.mkdir('-p', bundleOutputDirectory)
@@ -351,8 +350,7 @@ export async function performCodePushOtaUpdate(
         ? path.join(bundleOutputDirectory, 'index.android.bundle')
         : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
-    await spin(
-      'Generating composite bundle for miniapps',
+    await kax.task('Generating composite bundle for miniapps').run(
       reactnative.bundle({
         assetsDest: bundleOutputDirectory,
         bundleOutput: bundleOutputPath,
@@ -370,19 +368,20 @@ export async function performCodePushOtaUpdate(
 
     log.info(`Target Binary version : ${targetVersionName}`)
 
-    const codePushResponse: CodePushPackage = await spin(
-      'Releasing bundle through CodePush',
-      codePushSdk.releaseReact(
-        appName,
-        deploymentName,
-        bundleOutputDirectory,
-        targetVersionName,
-        {
-          isMandatory: codePushIsMandatoryRelease,
-          rollout: codePushRolloutPercentage,
-        }
+    const codePushResponse: CodePushPackage = await kax
+      .task('Releasing bundle through CodePush')
+      .run(
+        codePushSdk.releaseReact(
+          appName,
+          deploymentName,
+          bundleOutputDirectory,
+          targetVersionName,
+          {
+            isMandatory: codePushIsMandatoryRelease,
+            rollout: codePushRolloutPercentage,
+          }
+        )
       )
-    )
 
     await cauldron.addCodePushEntry(
       napDescriptor,
@@ -401,14 +400,15 @@ export async function performCodePushOtaUpdate(
     )
 
     const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
-    await spin(
-      `Adding yarn.lock to Cauldron`,
-      cauldron.addOrUpdateYarnLock(
-        napDescriptor,
-        deploymentName,
-        pathToNewYarnLock
+    await kax
+      .task('Adding yarn.lock to Cauldron')
+      .run(
+        cauldron.addOrUpdateYarnLock(
+          napDescriptor,
+          deploymentName,
+          pathToNewYarnLock
+        )
       )
-    )
     await cauldron.commitTransaction(
       `CodePush release for ${napDescriptor.toString()} ${deploymentName}`
     )
@@ -564,10 +564,11 @@ async function areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(
   targetDescriptor: NativeApplicationDescriptor
 ): Promise<boolean> {
   for (const miniApp of miniApps) {
-    const miniAppInstance = await spin(
-      `Checking native dependencies version alignment of ${miniApp.toString()} with ${targetDescriptor.toString()}`,
-      MiniApp.fromPackagePath(new PackagePath(miniApp.toString()))
-    )
+    const miniAppInstance = await kax
+      .task(
+        `Checking native dependencies version alignment of ${miniApp.toString()} with ${targetDescriptor.toString()}`
+      )
+      .run(MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
     const report = await compatibility.checkCompatibilityWithNativeApp(
       miniAppInstance,
       targetDescriptor.name,

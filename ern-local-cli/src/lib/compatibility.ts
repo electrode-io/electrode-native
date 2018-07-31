@@ -2,9 +2,9 @@ import {
   NativeApplicationDescriptor,
   PackagePath,
   manifest,
-  spin,
   MiniApp,
   log,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
@@ -20,8 +20,7 @@ export async function checkCompatibilityWithNativeApp(
   platformName?: string,
   versionName?: string
 ): Promise<any> {
-  const compatReport: any[] = await spin(
-    'Checking compatibility',
+  const compatReport: any[] = await kax.task('Checking compatibility').run(
     getNativeAppCompatibilityReport(miniApp, {
       appName,
       platformName,

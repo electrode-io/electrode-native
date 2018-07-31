@@ -10,11 +10,11 @@ import {
   ios,
   PackagePath,
   NativeApplicationDescriptor,
-  spin,
   shell,
   utils as coreUtils,
   NativePlatform,
   fileUtils,
+  kax,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { transformContainer } from 'ern-container-transformer'
@@ -28,7 +28,6 @@ import _ from 'lodash'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import Ensure from './Ensure'
-import ora from 'ora'
 import chalk from 'chalk'
 import fs from 'fs'
 import path from 'path'
@@ -220,186 +219,231 @@ async function logErrorAndExitIfNotSatisfied({
     key: string
   }
 } = {}) {
-  const spinner = ora('Performing validity checks').start()
+  let kaxTask
   try {
     if (cauldronIsActive) {
-      spinner.text = 'Ensuring that a Cauldron is active'
+      kaxTask = kax.task('Ensuring that a Cauldron is active')
       await Ensure.cauldronIsActive(cauldronIsActive.extraErrorMessage)
+      kaxTask.succeed()
     }
     if (isValidContainerVersion) {
-      spinner.text = 'Ensuring that container version is valid'
+      kaxTask = kax.task(
+        `Ensuring that ${
+          isValidContainerVersion.containerVersion
+        } is a valid Container version`
+      )
       Ensure.isValidContainerVersion(
         isValidContainerVersion.containerVersion,
         isValidContainerVersion.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (isNewerContainerVersion) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that container version is newer compared to the current one'
+      )
       await Ensure.isNewerContainerVersion(
         isNewerContainerVersion.descriptor,
         isNewerContainerVersion.containerVersion,
         isNewerContainerVersion.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (isCompleteNapDescriptorString) {
-      spinner.text = 'Ensuring that native application descriptor is complete'
+      kaxTask = kax.task(
+        'Ensuring that native application descriptor is complete'
+      )
       Ensure.isCompleteNapDescriptorString(
         isCompleteNapDescriptorString.descriptor,
         isCompleteNapDescriptorString.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (noGitOrFilesystemPath) {
-      spinner.text = 'Ensuring that not git or file system path(s) is/are used'
+      kaxTask = kax.task(
+        'Ensuring that not git or file system path(s) is/are used'
+      )
       Ensure.noGitOrFilesystemPath(
         noGitOrFilesystemPath.obj,
         noGitOrFilesystemPath.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (noFileSystemPath) {
-      spinner.text = 'Ensuring that no file system path(s) is/are used'
+      kaxTask = kax.task('Ensuring that no file system path(s) is/are used')
       Ensure.noFileSystemPath(
         noFileSystemPath.obj,
         noFileSystemPath.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (napDescriptorExistInCauldron) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that native application descriptor exists in Cauldron'
+      )
       await Ensure.napDescritorExistsInCauldron(
         napDescriptorExistInCauldron.descriptor,
         napDescriptorExistInCauldron.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (sameNativeApplicationAndPlatform) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that all descriptors are for the same native application and platform'
+      )
       Ensure.sameNativeApplicationAndPlatform(
         sameNativeApplicationAndPlatform.descriptors,
         sameNativeApplicationAndPlatform.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (napDescritorDoesNotExistsInCauldron) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that native application descriptor does not already exist in Cauldron'
+      )
       await Ensure.napDescritorDoesNotExistsInCauldron(
         napDescritorDoesNotExistsInCauldron.descriptor,
         napDescritorDoesNotExistsInCauldron.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (publishedToNpm) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that package(s) version(s) have been published to NPM'
+      )
       await Ensure.publishedToNpm(
         publishedToNpm.obj,
         publishedToNpm.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (miniAppNotInNativeApplicationVersionContainer) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that MiniApp(s) is/are not present in native application version container'
+      )
       await Ensure.miniAppNotInNativeApplicationVersionContainer(
         miniAppNotInNativeApplicationVersionContainer.miniApp,
         miniAppNotInNativeApplicationVersionContainer.napDescriptor,
         miniAppNotInNativeApplicationVersionContainer.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (miniAppIsInNativeApplicationVersionContainer) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that MiniApp(s) is/are present in native application version container'
+      )
       await Ensure.miniAppIsInNativeApplicationVersionContainer(
         miniAppIsInNativeApplicationVersionContainer.miniApp,
         miniAppIsInNativeApplicationVersionContainer.napDescriptor,
         miniAppIsInNativeApplicationVersionContainer.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (miniAppIsInNativeApplicationVersionContainerWithDifferentVersion) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that MiniApp(s) is/are present in native application version container with different version(s)'
+      )
       await Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.miniApp,
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (dependencyNotInNativeApplicationVersionContainer) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that dependency(ies) is/are not present in native application version container'
+      )
       await Ensure.dependencyNotInNativeApplicationVersionContainer(
         dependencyNotInNativeApplicationVersionContainer.dependency,
         dependencyNotInNativeApplicationVersionContainer.napDescriptor,
         dependencyNotInNativeApplicationVersionContainer.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (dependencyIsInNativeApplicationVersionContainer) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that dependency(ies) is/are present in native application version container'
+      )
       await Ensure.dependencyIsInNativeApplicationVersionContainer(
         dependencyIsInNativeApplicationVersionContainer.dependency,
         dependencyIsInNativeApplicationVersionContainer.napDescriptor,
         dependencyIsInNativeApplicationVersionContainer.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (dependencyIsInNativeApplicationVersionContainerWithDifferentVersion) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that dependency(ies) is/are present in native application version container with different version(s)'
+      )
       await Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.dependency,
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (dependencyNotInUseByAMiniApp) {
-      spinner.text = 'Ensuring that no MiniApp(s) is/are using a dependency'
+      kaxTask = kax.task(
+        'Ensuring that no MiniApp(s) is/are using a dependency'
+      )
       await Ensure.dependencyNotInUseByAMiniApp(
         dependencyNotInUseByAMiniApp.dependency,
         dependencyNotInUseByAMiniApp.napDescriptor,
         dependencyNotInUseByAMiniApp.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (isValidNpmPackageName) {
-      spinner.text = 'Ensuring that NPM package name is valid'
+      kaxTask = kax.task('Ensuring that NPM package name is valid')
       await Ensure.isValidNpmPackageName(
         isValidNpmPackageName.name,
         isValidNpmPackageName.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (isValidElectrodeNativeModuleName) {
-      spinner.text = 'Ensuring that Electrode Native module name is valid'
+      kaxTask = kax.task('Ensuring that Electrode Native module name is valid')
       await Ensure.isValidElectrodeNativeModuleName(
         isValidElectrodeNativeModuleName.name,
         isValidElectrodeNativeModuleName.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (checkIfCodePushOptionsAreValid) {
-      spinner.text =
+      kaxTask = kax.task(
         'Ensuring that preconditions for code-push command are valid'
+      )
       Ensure.checkIfCodePushOptionsAreValid(
         checkIfCodePushOptionsAreValid.descriptors,
         checkIfCodePushOptionsAreValid.targetBinaryVersion,
         checkIfCodePushOptionsAreValid.semVerDescriptor,
         checkIfCodePushOptionsAreValid.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (pathExist) {
-      spinner.text = 'Ensuring that path exist'
+      kaxTask = kax.task('Ensuring that path exist')
       await Ensure.pathExist(pathExist.p)
+      kaxTask.succeed()
     }
     if (isFilePath) {
-      spinner.text = 'Ensuring that path is a file path'
+      kaxTask = kax.task('Ensuring that path is a file path')
       await Ensure.isFilePath(isFilePath.p)
+      kaxTask.succeed()
     }
     if (isDirectoryPath) {
-      spinner.text = 'Ensuring that path is a directory path'
+      kaxTask = kax.task('Ensuring that path is a directory path')
       await Ensure.isDirectoryPath(isDirectoryPath.p)
+      kaxTask.succeed()
     }
     if (isValidPlatformConfig) {
-      spinner.text = 'Ensuring that config key is whitelisted'
+      kaxTask = kax.task('Ensuring that config key is whitelisted')
       Ensure.isValidPlatformConfig(isValidPlatformConfig.key)
+      kaxTask.succeed()
     }
-    spinner.succeed('Validity checks have passed')
   } catch (e) {
-    spinner.fail(e.message)
+    kaxTask.fail(e.message)
     coreUtils.logErrorAndExitProcess(e, 1)
   }
 }
@@ -510,9 +554,14 @@ async function performContainerStateUpdateInCauldron(
   )
   let cauldronContainerVersion
   let cauldron
+  let containerGenConfig
 
   try {
     cauldron = await getActiveCauldron()
+
+    containerGenConfig = await cauldron.getContainerGeneratorConfig(
+      napDescriptor
+    )
 
     if (containerVersion) {
       cauldronContainerVersion = containerVersion
@@ -537,13 +586,10 @@ async function performContainerStateUpdateInCauldron(
     const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
-    await spin(
-      `Generating new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`,
-      runCauldronContainerGen(napDescriptor, {
-        compositeMiniAppDir,
-        outDir,
-      })
-    )
+    await runCauldronContainerGen(napDescriptor, {
+      compositeMiniAppDir,
+      outDir,
+    })
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(
@@ -565,24 +611,6 @@ async function performContainerStateUpdateInCauldron(
       pathToNewYarnLock
     )
 
-    // Commit Cauldron transaction
-    await spin(`Updating Cauldron`, cauldron.commitTransaction(commitMessage))
-
-    log.info(
-      `Added new container version ${cauldronContainerVersion} for ${napDescriptor.toString()} in Cauldron`
-    )
-  } catch (e) {
-    log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
-    if (cauldron) {
-      cauldron.discardTransaction()
-    }
-    throw e
-  }
-  try {
-    const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
-
     // Run Container transformers sequentially (if any)
     const transformersFromCauldron =
       containerGenConfig && containerGenConfig.transformers
@@ -602,15 +630,35 @@ async function performContainerStateUpdateInCauldron(
           const extraFile = await cauldron.getFile(extra)
           extra = parseJsonFromStringOrFile(extraFile.toString())
         }
-        await transformContainer({
-          containerPath: outDir,
-          extra,
-          platform: napDescriptor.platform,
-          transformer: transformerFromCauldron.name,
-        })
+        await kax
+          .task(`Running Container Transformer ${transformerFromCauldron.name}`)
+          .run(
+            transformContainer({
+              containerPath: outDir,
+              extra,
+              platform: napDescriptor.platform,
+              transformer: transformerFromCauldron.name,
+            })
+          )
       }
     }
 
+    // Commit Cauldron transaction
+    await kax
+      .task('Updating Cauldron')
+      .run(cauldron.commitTransaction(commitMessage))
+
+    log.info(
+      `Added new container version ${cauldronContainerVersion} for ${napDescriptor.toString()} in Cauldron`
+    )
+  } catch (e) {
+    log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
+    if (cauldron) {
+      cauldron.discardTransaction()
+    }
+    throw e
+  }
+  try {
     // Run Container publishers sequentially (if any)
     const publishersFromCauldron =
       containerGenConfig && containerGenConfig.publishers
@@ -662,14 +710,16 @@ Please rename 'github' publisher name to 'git' in your Cauldron to get rid of th
         }
         // ==================================================================
 
-        await publishContainer({
-          containerPath: outDir,
-          containerVersion: cauldronContainerVersion,
-          extra,
-          platform: napDescriptor.platform,
-          publisher: publisherName,
-          url: publisherFromCauldron.url,
-        })
+        await kax.task(`Running Container Publisher ${publisherName}`).run(
+          publishContainer({
+            containerPath: outDir,
+            containerVersion: cauldronContainerVersion,
+            extra,
+            platform: napDescriptor.platform,
+            publisher: publisherName,
+            url: publisherFromCauldron.url,
+          })
+        )
       }
       log.info(
         `Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`
@@ -922,17 +972,19 @@ async function runMiniApp(
 
   if (!fs.existsSync(pathToRunner)) {
     shell.mkdir('-p', pathToRunner)
-    await spin(
-      `Generating ${platform} Runner project`,
-      getRunnerGeneratorForPlatform(platform).generate(runnerGeneratorConfig)
-    )
-  } else {
-    await spin(
-      `Regenerating ${platform} Runner Configuration`,
-      getRunnerGeneratorForPlatform(platform).regenerateRunnerConfig(
-        runnerGeneratorConfig
+    await kax
+      .task(`Generating ${platform} Runner project`)
+      .run(
+        getRunnerGeneratorForPlatform(platform).generate(runnerGeneratorConfig)
       )
-    )
+  } else {
+    await kax
+      .task(`Regenerating ${platform} Runner Configuration`)
+      .run(
+        getRunnerGeneratorForPlatform(platform).regenerateRunnerConfig(
+          runnerGeneratorConfig
+        )
+      )
   }
 
   await launchRunner({
@@ -1019,57 +1071,61 @@ async function launchIosRunner(pathToIosRunner: string) {
 async function launchOnDevice(pathToIosRunner: string, devices) {
   const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
   shell.cd(pathToIosRunner)
-  const spinner = ora('Waiting for device to boot').start()
+
+  await kax
+    .task('Building iOS Runner project')
+    .run(buildIosRunner(pathToIosRunner, iPhoneDevice.udid))
+
+  const kaxDeployTask = kax.task(
+    `Installing iOS Runner on ${iPhoneDevice.name}`
+  )
   try {
-    spinner.text = 'Building iOS Runner project'
-    await buildIosRunner(pathToIosRunner, iPhoneDevice.udid).then(() => {
-      const iosDeployInstallArgs = [
-        '--bundle',
-        `${pathToIosRunner}/build/Debug-iphoneos/ErnRunner.app`,
-        '--id',
-        iPhoneDevice.udid,
-        '--justlaunch',
-      ]
-      log.info(`Start installing ErnRunner on ${iPhoneDevice.name}...`)
-      const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
-        encoding: 'utf8',
-      })
-      if (iosDeployOutput.error) {
-        log.error('INSTALLATION FAILED')
-        log.warn('Make sure you have done "npm install -g ios-deploy".')
-      } else {
-        spinner.succeed('Installed and Launched ErnRunner on device ')
-      }
+    const iosDeployInstallArgs = [
+      '--bundle',
+      `${pathToIosRunner}/build/Debug-iphoneos/ErnRunner.app`,
+      '--id',
+      iPhoneDevice.udid,
+      '--justlaunch',
+    ]
+    const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
+      encoding: 'utf8',
     })
+    if (iosDeployOutput.error) {
+      kaxDeployTask.fail(
+        `Installation failed. Make sure you have run 'npm install -g ios-deploy'.`
+      )
+    } else {
+      kaxDeployTask.succeed()
+    }
   } catch (e) {
-    spinner.fail(e.message)
+    kaxDeployTask.fail(e.message)
     throw e
   }
 }
 
 async function launchOnSimulator(pathToIosRunner: string) {
   const iPhoneSim = await ios.askUserToSelectAniPhoneSimulator()
-  await ios.killAllRunningSimulators()
-  const spinner = ora(`Waiting for device to boot`).start()
-  await ios.launchSimulator(iPhoneSim.udid)
-
+  await kax
+    .task('Killing all running Simulators')
+    .run(ios.killAllRunningSimulators())
+  await kax
+    .task('Booting iOS Simulator')
+    .run(ios.launchSimulator(iPhoneSim.udid))
   shell.cd(pathToIosRunner)
-
-  try {
-    spinner.text = 'Building iOS Runner project'
-    await buildIosRunner(pathToIosRunner, iPhoneSim.udid)
-    spinner.text = 'Installing runner project on simulator'
-    await ios.installApplicationOnSimulator(
-      iPhoneSim.udid,
-      `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`
+  await kax
+    .task('Building iOS Runner project')
+    .run(buildIosRunner(pathToIosRunner, iPhoneSim.udid))
+  await kax
+    .task('Installing iOS Runner on Simulator')
+    .run(
+      ios.installApplicationOnSimulator(
+        iPhoneSim.udid,
+        `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`
+      )
     )
-    spinner.text = 'Launching runner project'
-    await ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner')
-    spinner.succeed('Done')
-  } catch (e) {
-    spinner.fail(e.message)
-    throw e
-  }
+  await kax
+    .task('Launching Runner')
+    .run(ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner'))
 }
 
 async function buildIosRunner(pathToIosRunner: string, udid: string) {

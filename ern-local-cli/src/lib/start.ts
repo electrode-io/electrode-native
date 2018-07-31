@@ -5,11 +5,11 @@ import {
   config as ernConfig,
   PackagePath,
   NativeApplicationDescriptor,
-  spin,
   shell,
   reactnative,
   ErnBinaryStore,
   log,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { generateMiniAppsComposite } from 'ern-container-gen'
@@ -81,8 +81,7 @@ export default async function start({
   const compositeDir = createTmpDir()
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
-  await spin(
-    'Generating MiniApps composite',
+  await kax.task('Generating MiniApps composite').run(
     generateMiniAppsComposite(miniAppsPaths, compositeDir, {
       extraJsDependencies: extraJsDependencies || undefined,
       pathToYarnLock: pathToYarnLock || undefined,

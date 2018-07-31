@@ -7,6 +7,7 @@ import {
   BundlingResult,
   log,
   NativePlatform,
+  kax,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -43,53 +44,55 @@ export default class IosGenerator implements ContainerGenerator {
   public async generate(
     config: ContainerGeneratorConfig
   ): Promise<ContainerGenResult> {
-    try {
-      prepareDirectories(config)
-      config.plugins = sortDependenciesByName(config.plugins)
+    prepareDirectories(config)
+    config.plugins = sortDependenciesByName(config.plugins)
 
-      shell.cd(config.outDir)
+    shell.cd(config.outDir)
 
-      await this.fillContainerHull(config)
+    await this.fillContainerHull(config)
 
-      const jsApiImplDependencies = await utils.extractJsApiImplementations(
-        config.plugins
-      )
-      const bundlingResult: BundlingResult = await bundleMiniApps(
-        config.miniApps,
-        config.compositeMiniAppDir,
-        config.outDir,
-        'ios',
-        { pathToYarnLock: config.pathToYarnLock },
-        jsApiImplDependencies
-      )
-
-      if (!config.ignoreRnpmAssets) {
-        await copyRnpmAssets(
+    const jsApiImplDependencies = await utils.extractJsApiImplementations(
+      config.plugins
+    )
+    const bundlingResult: BundlingResult = await kax
+      .task('Bundling MiniApps')
+      .run(
+        bundleMiniApps(
           config.miniApps,
           config.compositeMiniAppDir,
           config.outDir,
-          'ios'
+          'ios',
+          { pathToYarnLock: config.pathToYarnLock },
+          jsApiImplDependencies
         )
-        this.addResources(config.outDir)
-      }
-
-      await addElectrodeNativeMetadataFile(config)
-
-      log.debug('Container generation completed!')
-
-      return {
-        bundlingResult,
-      }
-    } catch (e) {
-      log.error(
-        '[generateContainer] Something went wrong. Aborting Container Generation'
       )
-      throw e
+
+    if (!config.ignoreRnpmAssets) {
+      await kax
+        .task('Copying rnpm assets -if any-')
+        .run(
+          copyRnpmAssets(
+            config.miniApps,
+            config.compositeMiniAppDir,
+            config.outDir,
+            'ios'
+          )
+        )
+      this.addResources(config.outDir)
+    }
+
+    await kax
+      .task('Adding Electrode Native Metadata File')
+      .run(addElectrodeNativeMetadataFile(config))
+
+    log.debug('Container generation completed!')
+
+    return {
+      bundlingResult,
     }
   }
 
   public async addResources(outputDirectory: any) {
-    log.debug('=== ios: adding resources for miniapps')
     const containerProjectPath = path.join(
       outputDirectory,
       'ElectrodeContainer.xcodeproj',
@@ -112,7 +115,6 @@ export default class IosGenerator implements ContainerGenerator {
         containerIosProject.findPBXGroupKey({ name: 'Resources' })
       )
     })
-    log.debug('---iOS: Finished adding resource files.')
 
     fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
   }
@@ -147,14 +149,21 @@ export default class IosGenerator implements ContainerGenerator {
       mustacheView,
       reactNativePlugin.version
     )
-    await this.buildiOSPluginsViews(config.plugins, mustacheView)
-    await this.buildApiImplPluginViews(
-      config.plugins,
-      mustacheView,
-      pathSpec,
-      projectSpec
-    )
 
+    await kax
+      .task('Preparing Native Dependencies Injection')
+      .run(this.buildiOSPluginsViews(config.plugins, mustacheView))
+
+    await kax
+      .task('Preparing API Implementations Injection')
+      .run(
+        this.buildApiImplPluginViews(
+          config.plugins,
+          mustacheView,
+          pathSpec,
+          projectSpec
+        )
+      )
     const { iosProject, projectPath } = await iosUtil.fillProjectHull(
       pathSpec,
       projectSpec,
@@ -162,14 +171,13 @@ export default class IosGenerator implements ContainerGenerator {
       mustacheView
     )
 
-    await this.addiOSPluginHookClasses(
-      iosProject,
-      config.plugins,
-      config.outDir
-    )
-    fs.writeFileSync(projectPath, iosProject.writeSync())
+    await kax
+      .task('Adding Native Dependencies Hooks')
+      .run(
+        this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir)
+      )
 
-    log.debug('[=== Completed container hull filling ===]')
+    fs.writeFileSync(projectPath, iosProject.writeSync())
   }
 
   // Code to keep backward compatibility
@@ -199,12 +207,7 @@ export default class IosGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     mustacheView: any
   ): Promise<any> {
-    try {
-      mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'ios')
-    } catch (e) {
-      log.error('[buildiOSPluginsViews] Something went wrong: ' + e)
-      throw e
-    }
+    mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'ios')
   }
 
   public async addiOSPluginHookClasses(
@@ -212,64 +215,52 @@ export default class IosGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     outDir: string
   ): Promise<any> {
-    try {
-      log.debug('[=== iOS: Adding plugin hook classes ===]')
-
-      for (const plugin of plugins) {
-        if (plugin.basePath === 'react-native') {
-          continue
-        }
-        const pluginConfig = await manifest.getPluginConfig(plugin)
-        if (!pluginConfig.ios) {
-          log.warn(
-            `${
-              plugin.basePath
-            } does not have any injection configuration for iOS`
-          )
-          continue
-        }
-        const iOSPluginHook = pluginConfig.ios.pluginHook
-        if (iOSPluginHook && iOSPluginHook.name) {
-          if (!pluginConfig.path) {
-            throw new Error('No plugin config path was set. Cannot proceed.')
-          }
-
-          const pluginConfigPath = pluginConfig.path
-          const pathToCopyPluginHooksTo = path.join(
-            outDir,
-            'ElectrodeContainer'
-          )
-
-          log.debug(`Adding ${iOSPluginHook.name}.h`)
-          const pathToPluginHookHeader = path.join(
-            pluginConfigPath,
-            `${iOSPluginHook.name}.h`
-          )
-          shell.cp(pathToPluginHookHeader, pathToCopyPluginHooksTo)
-          containerIosProject.addHeaderFile(
-            `${iOSPluginHook.name}.h`,
-            { public: true },
-            containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
-          )
-
-          log.debug(`Adding ${iOSPluginHook.name}.m`)
-          const pathToPluginHookSource = path.join(
-            pluginConfigPath,
-            `${iOSPluginHook.name}.m`
-          )
-          shell.cp(pathToPluginHookSource, pathToCopyPluginHooksTo)
-          containerIosProject.addSourceFile(
-            `${iOSPluginHook.name}.m`,
-            null,
-            containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
-          )
-        }
+    for (const plugin of plugins) {
+      if (plugin.basePath === 'react-native') {
+        continue
       }
+      const pluginConfig = await manifest.getPluginConfig(plugin)
+      if (!pluginConfig.ios) {
+        log.warn(
+          `${
+            plugin.basePath
+          } does not have any injection configuration for ios platform`
+        )
+        continue
+      }
+      const iOSPluginHook = pluginConfig.ios.pluginHook
+      if (iOSPluginHook && iOSPluginHook.name) {
+        if (!pluginConfig.path) {
+          throw new Error('No plugin config path was set. Cannot proceed.')
+        }
 
-      log.debug('[=== iOS: Done adding plugin hook classes ===]')
-    } catch (e) {
-      log.error(`[addiOSPluginHookClasses] Something went wrong: ${e}`)
-      throw e
+        const pluginConfigPath = pluginConfig.path
+        const pathToCopyPluginHooksTo = path.join(outDir, 'ElectrodeContainer')
+
+        log.debug(`Adding ${iOSPluginHook.name}.h`)
+        const pathToPluginHookHeader = path.join(
+          pluginConfigPath,
+          `${iOSPluginHook.name}.h`
+        )
+        shell.cp(pathToPluginHookHeader, pathToCopyPluginHooksTo)
+        containerIosProject.addHeaderFile(
+          `${iOSPluginHook.name}.h`,
+          { public: true },
+          containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
+        )
+
+        log.debug(`Adding ${iOSPluginHook.name}.m`)
+        const pathToPluginHookSource = path.join(
+          pluginConfigPath,
+          `${iOSPluginHook.name}.m`
+        )
+        shell.cp(pathToPluginHookSource, pathToCopyPluginHooksTo)
+        containerIosProject.addSourceFile(
+          `${iOSPluginHook.name}.m`,
+          null,
+          containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
+        )
+      }
     }
   }
 

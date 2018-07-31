@@ -5,7 +5,6 @@ import Prom from 'bluebird'
 import path from 'path'
 import * as childProcess from '../src/childProcess'
 import sinon from 'sinon'
-import ora from 'ora'
 import * as android from '../src/android'
 import ernConfig from '../src/config'
 import inquirer from 'inquirer'
@@ -19,14 +18,6 @@ let execpStub
 describe('android.js', () => {
   beforeEach(() => {
     beforeTest()
-
-    // Ora stubs
-    const oraProto = Object.getPrototypeOf(ora())
-    const oraFailStub = sandbox.stub()
-    const oraStartStub = sandbox.stub(oraProto, 'start').returns({
-      fail: oraFailStub,
-      succeed: sandbox.stub(),
-    })
 
     ernConfigGetValueStub = sandbox.stub(ernConfig, 'getValue')
 

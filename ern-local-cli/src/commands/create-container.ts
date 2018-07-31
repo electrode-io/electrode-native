@@ -2,11 +2,11 @@ import { generateMiniAppsComposite } from 'ern-container-gen'
 import {
   PackagePath,
   NativeApplicationDescriptor,
-  spin,
   utils as coreUtils,
   Platform,
   log,
   NativePlatform,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runLocalContainerGen, runCauldronContainerGen } from '../lib/container'
@@ -218,8 +218,7 @@ Output directory should either not exist (it will be created) or should be empty
           platform = userSelectedPlatform as NativePlatform
         }
 
-        await spin(
-          'Generating Container locally',
+        await kax.task('Generating Container locally').run(
           runLocalContainerGen(miniAppsPaths, jsApiImplsPaths, platform, {
             extraNativeDependencies: _.map(dependencies, d =>
               PackagePath.fromString(d)

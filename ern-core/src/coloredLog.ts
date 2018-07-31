@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import kax from './kax'
 
 export default class ColoredLog {
   private log: any
@@ -31,14 +32,14 @@ export default class ColoredLog {
   }
 
   public info(msg: string) {
-    this.log.info(chalk.cyan(msg))
+    kax.info(msg)
   }
 
   public warn(msg: string) {
-    this.log.warn(chalk.yellow(msg))
+    kax.warn(msg)
   }
 
   public error(msg: string) {
-    this.log.error(chalk.red(msg))
+    kax.error(msg)
   }
 }

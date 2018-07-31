@@ -2,11 +2,11 @@ import * as fileUtils from './fileUtil'
 import fs from 'fs'
 import path from 'path'
 import shell from './shell'
-import spin from './spin'
 import createTmpDir from './createTmpDir'
 import { execp, spawnp } from './childProcess'
 import fetch from 'node-fetch'
 import log from './log'
+import kax from './kax'
 
 export interface BundlingResult {
   // The root path to the assets
@@ -77,7 +77,7 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
     const isPackagerRunning = await this.isPackagerRunning()
 
     if (!isPackagerRunning) {
-      await spin('Starting React Native packager', Promise.resolve())
+      await kax.task('Starting React Native packager').run(Promise.resolve())
       if (process.platform === 'darwin') {
         return this.darwinStartPackagerInNewWindow({ cwd, args })
       } else if (/^win/.test(process.platform)) {

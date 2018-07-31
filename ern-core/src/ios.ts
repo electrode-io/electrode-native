@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import { execSync, spawn } from 'child_process'
-import spin from './spin'
 import ernConfig from './config'
 import * as deviceConfigUtil from './deviceConfig'
 import log from './log'
 import os from 'os'
-import { Z_DEFAULT_STRATEGY } from 'zlib'
 import simctl = require('node-simctl')
+import kax from './kax'
 
 export interface IosDevice {
   name: string
@@ -158,15 +157,15 @@ export async function runIosApp({
 }) {
   const iPhoneDevice = await askUserToSelectAniPhoneSimulator()
   killAllRunningSimulators()
-  await spin('Waiting for device to boot', launchSimulator(iPhoneDevice.udid))
-  await spin(
-    'Installing application on simulator',
-    installApplicationOnSimulator(iPhoneDevice.udid, appPath)
-  )
-  await spin(
-    'Launching application',
-    launchApplication(iPhoneDevice.udid, bundleId)
-  )
+  await kax
+    .task('Waiting for device to boot')
+    .run(launchSimulator(iPhoneDevice.udid))
+  await kax
+    .task('Installing application on simulator')
+    .run(installApplicationOnSimulator(iPhoneDevice.udid, appPath))
+  await kax
+    .task('Launching application')
+    .run(launchApplication(iPhoneDevice.udid, bundleId))
 }
 
 export async function installApplicationOnSimulator(
