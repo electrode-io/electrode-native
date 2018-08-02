@@ -93,7 +93,24 @@ export default function run() {
   kax.renderer =
     logLevel === 'trace' || logLevel === 'debug'
       ? new KaxSimpleRenderer()
-      : new KaxAdvancedRenderer()
+      : new KaxAdvancedRenderer({
+          colorScheme: {
+            error: 'red',
+            info: 'cyan',
+            task: 'white',
+            warning: 'yellow',
+          },
+          shouldLogTime: true,
+          symbolScheme: {
+            error: 'error',
+            info: 'info',
+            taskFailure: 'error',
+            taskRunning: 'dots',
+            taskSuccess: 'success',
+            warning: 'warning',
+          },
+          symbolizeMultiLine: true,
+        })
 
   if (config.getValue('showBanner', true)) {
     showBanner()
