@@ -11,8 +11,20 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#if __has_include(<React/RCTAssert.h>)
 #import <React/RCTAssert.h>
+#elif __has_include("RCTAssert.h")
+#import "RCTAssert.h"
+#else
+#import "React/RCTAssert.h"
+#endif
+#if __has_include(<React/RCTDefines.h>)
 #import <React/RCTDefines.h>
+#elif __has_include("RCTDefines.h")
+#import "RCTDefines.h"
+#else
+#import "React/RCTDefines.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
