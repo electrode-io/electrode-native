@@ -220,9 +220,7 @@ export async function fillProjectHull(
           for (const framework of pluginConfig.ios.pbxproj.addFramework) {
             iosProject.addFramework(framework, {
               customFramework: true,
-              sourceTree: 'BUILT_PRODUCTS_DIR',
             })
-            iosProject.addCopyfileFrameworkCustom(framework)
           }
         }
 
