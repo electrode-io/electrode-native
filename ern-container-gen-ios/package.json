@@ -1,6 +1,6 @@
 {
   "name": "ern-container-gen-ios",
-  "version": "1000.0.0",
+  "version": "0.23.0",
   "description": "Electrode Native Official iOS Container Generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -55,15 +55,15 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-container-gen": "1000.0.0",
-    "ern-core": "1000.0.0",
-    "xcode-ern": "^1.0.9",
-    "lodash":"^4.17.10",
-    "fs-readdir-recursive": "^1.1.0"
+    "ern-container-gen": "0.23.0",
+    "ern-core": "0.23.0",
+    "fs-readdir-recursive": "^1.1.0",
+    "lodash": "^4.17.10",
+    "xcode-ern": "^1.0.9"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0",
-    "copyfiles": "^2.0.0"
+    "copyfiles": "^2.0.0",
+    "ern-util-dev": "0.23.0"
   },
   "engines": {
     "node": ">=6"
