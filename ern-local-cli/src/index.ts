@@ -79,6 +79,25 @@ Manifest.getOverrideManifestConfig = async (): Promise<ManifestOverrideConfig | 
   }
 }
 
+const kaxRendererConfig = {
+  colorScheme: {
+    error: 'red',
+    info: 'cyan',
+    task: 'white',
+    warning: 'yellow',
+  },
+  shouldLogTime: true,
+  symbolScheme: {
+    error: 'error',
+    info: 'info',
+    taskFailure: 'error',
+    taskRunning: 'dots',
+    taskSuccess: 'success',
+    warning: 'warning',
+  },
+  symbolizeMultiLine: true,
+}
+
 // ==============================================================================
 // Entry point
 // =============================================================================
@@ -90,27 +109,11 @@ export default function run() {
   shell.config.fatal = true
   shell.config.verbose = logLevel === 'trace'
   shell.config.silent = !(logLevel === 'trace' || logLevel === 'debug')
+
   kax.renderer =
     logLevel === 'trace' || logLevel === 'debug'
-      ? new KaxSimpleRenderer()
-      : new KaxAdvancedRenderer({
-          colorScheme: {
-            error: 'red',
-            info: 'cyan',
-            task: 'white',
-            warning: 'yellow',
-          },
-          shouldLogTime: true,
-          symbolScheme: {
-            error: 'error',
-            info: 'info',
-            taskFailure: 'error',
-            taskRunning: 'dots',
-            taskSuccess: 'success',
-            warning: 'warning',
-          },
-          symbolizeMultiLine: true,
-        })
+      ? new KaxSimpleRenderer(kaxRendererConfig)
+      : new KaxAdvancedRenderer(kaxRendererConfig)
 
   if (config.getValue('showBanner', true)) {
     showBanner()
