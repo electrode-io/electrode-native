@@ -3850,7 +3850,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 83CBBA3F1A601D0F00E9B192 /* Build configuration list for PBXNativeTarget "React" */;
 			buildPhases = (
-				006B79A01A781F38006873D1 /* Start Packager */,
+				
 				3D80DA181DF820500028D040 /* Headers */,
 				3D80D91E1DF6FA530028D040 /* Copy Headers */,
 				83CBBA2A1A601D0E00E9B192 /* Sources */,

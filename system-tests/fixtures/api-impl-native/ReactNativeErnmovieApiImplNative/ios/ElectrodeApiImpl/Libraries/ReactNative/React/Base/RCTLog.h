@@ -21,7 +21,13 @@
 #else
 #import "React/RCTDefines.h"
 #endif
+#if __has_include(<React/RCTUtils.h>)
 #import <React/RCTUtils.h>
+#elif __has_include("RCTUtils.h")
+#import "RCTUtils.h"
+#else
+#import "React/RCTUtils.h"
+#endif
 
 #ifndef RCTLOG_ENABLED
 #define RCTLOG_ENABLED 1
