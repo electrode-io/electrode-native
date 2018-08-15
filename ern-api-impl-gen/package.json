@@ -55,9 +55,9 @@
     "ern-api-gen": "1000.0.0",
     "ern-core": "1000.0.0",
     "lodash": "^4.17.10",
-    "mustache": "^2.3.0",
+    "mustache": "^2.3.1",
     "semver": "5.5.0",
-    "xcode": "^0.9.1",
+    "xcode": "^1.0.0",
     "xcode-ern": "^1.0.9",
     "@yarnpkg/lockfile": "^1.0.2"
   },
