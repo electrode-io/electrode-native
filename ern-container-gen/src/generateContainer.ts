@@ -2,7 +2,7 @@ import { prepareDirectories } from './prepareDirectories'
 import { sortDependenciesByName } from './sortDependenciesByName'
 import { bundleMiniApps } from './bundleMiniApps'
 import { copyRnpmAssets } from './copyRnpmAssets'
-import { addElectrodeNativeMetadataFile } from './addElectrodeNativeMetadataFile'
+import { addContainerMetadata } from './addContainerMetadata'
 import { ContainerGeneratorConfig, ContainerGenResult } from './types'
 import { kax, shell, utils, BundlingResult } from 'ern-core'
 
@@ -64,7 +64,7 @@ export async function generateContainer(
 
   await kax
     .task('Adding Electrode Native Metadata File')
-    .run(addElectrodeNativeMetadataFile(config))
+    .run(addContainerMetadata(config))
 
   return {
     bundlingResult,
