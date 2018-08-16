@@ -1,5 +1,5 @@
 import { Platform } from 'ern-core'
-import { ContainerGeneratorConfig } from './types'
+import { ContainerGeneratorConfig, ContainerMetadata } from './types'
 import { containerMetadataFileName } from './consts'
 import { writeFile } from './writeFile'
 import path from 'path'
@@ -7,7 +7,7 @@ import path from 'path'
 export async function addElectrodeNativeMetadataFile(
   conf: ContainerGeneratorConfig
 ) {
-  const metadata = {
+  const metadata: ContainerMetadata = {
     ernVersion: Platform.currentVersion,
     jsApiImpls: conf.jsApiImpls.map(j => j.toString()),
     miniApps: conf.miniApps.map(m => m.packagePath.toString()),
