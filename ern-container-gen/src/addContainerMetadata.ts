@@ -4,9 +4,7 @@ import { containerMetadataFileName } from './consts'
 import { writeFile } from './writeFile'
 import path from 'path'
 
-export async function addElectrodeNativeMetadataFile(
-  conf: ContainerGeneratorConfig
-) {
+export async function addContainerMetadata(conf: ContainerGeneratorConfig) {
   const metadata: ContainerMetadata = {
     ernVersion: Platform.currentVersion,
     jsApiImpls: conf.jsApiImpls.map(j => j.toString()),

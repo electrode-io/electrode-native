@@ -1,4 +1,4 @@
-import { addElectrodeNativeMetadataFile as _addElectrodeNativeMetadataFile } from './addElectrodeNativeMetadataFile'
+import { addContainerMetadata as _addContainerMetadata } from './addContainerMetadata'
 import { bundleMiniApps as _bundleMiniApps } from './bundleMiniApps'
 import { copyRnpmAssets as _copyRnpmAssets } from './copyRnpmAssets'
 import { generateMiniAppsComposite as _generateMiniAppsComposite } from './generateMiniAppsComposite'
@@ -11,7 +11,7 @@ import { sortDependenciesByName as _sortDependenciesByName } from './sortDepende
 import { generateContainer as _generateContainer } from './generateContainer'
 import { getContainerMetadata as _getContainerMetadata } from './getContainerMetadata'
 
-export const addElectrodeNativeMetadataFile = _addElectrodeNativeMetadataFile
+export const addContainerMetadata = _addContainerMetadata
 export const bundleMiniApps = _bundleMiniApps
 export const copyRnpmAssets = _copyRnpmAssets
 export const generateMiniAppsComposite = _generateMiniAppsComposite
@@ -25,7 +25,7 @@ export const generateContainer = _generateContainer
 export const getContainerMetadata = _getContainerMetadata
 
 export default {
-  addElectrodeNativeMetadataFile: _addElectrodeNativeMetadataFile,
+  addContainerMetadata: _addContainerMetadata,
   bundleMiniApps: _bundleMiniApps,
   copyRnpmAssets: _copyRnpmAssets,
   generateContainer: _generateContainer,
