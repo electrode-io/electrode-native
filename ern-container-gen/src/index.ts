@@ -9,6 +9,7 @@ import { populateApiImplMustacheView as _populateApiImplMustacheView } from './p
 import { prepareDirectories as _prepareDirectories } from './prepareDirectories'
 import { sortDependenciesByName as _sortDependenciesByName } from './sortDependenciesByName'
 import { generateContainer as _generateContainer } from './generateContainer'
+import { getContainerMetadata as _getContainerMetadata } from './getContainerMetadata'
 
 export const addElectrodeNativeMetadataFile = _addElectrodeNativeMetadataFile
 export const bundleMiniApps = _bundleMiniApps
@@ -21,6 +22,7 @@ export const populateApiImplMustacheView = _populateApiImplMustacheView
 export const prepareDirectories = _prepareDirectories
 export const sortDependenciesByName = _sortDependenciesByName
 export const generateContainer = _generateContainer
+export const getContainerMetadata = _getContainerMetadata
 
 export default {
   addElectrodeNativeMetadataFile: _addElectrodeNativeMetadataFile,
@@ -29,6 +31,7 @@ export default {
   generateContainer: _generateContainer,
   generateMiniAppsComposite: _generateMiniAppsComposite,
   generatePluginsMustacheViews: _generatePluginsMustacheViews,
+  getContainerMetadata: _getContainerMetadata,
   getContainerPlatform: _getContainerPlatform,
   injectReactNativeVersionKeysInObject: _injectReactNativeVersionKeysInObject,
   populateApiImplMustacheView: _populateApiImplMustacheView,
