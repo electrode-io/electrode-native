@@ -6,7 +6,6 @@ import { generatePluginsMustacheViews as _generatePluginsMustacheViews } from '.
 import { getContainerPlatform as _getContainerPlatform } from './getContainerPlatform'
 import { injectReactNativeVersionKeysInObject as _injectReactNativeVersionKeysInObject } from './injectReactNativeVersionKeysInObject'
 import { populateApiImplMustacheView as _populateApiImplMustacheView } from './populateApiImplMustacheView'
-import { prepareDirectories as _prepareDirectories } from './prepareDirectories'
 import { sortDependenciesByName as _sortDependenciesByName } from './sortDependenciesByName'
 import { generateContainer as _generateContainer } from './generateContainer'
 import { getContainerMetadata as _getContainerMetadata } from './getContainerMetadata'
@@ -19,7 +18,6 @@ export const generatePluginsMustacheViews = _generatePluginsMustacheViews
 export const getContainerPlatform = _getContainerPlatform
 export const injectReactNativeVersionKeysInObject = _injectReactNativeVersionKeysInObject
 export const populateApiImplMustacheView = _populateApiImplMustacheView
-export const prepareDirectories = _prepareDirectories
 export const sortDependenciesByName = _sortDependenciesByName
 export const generateContainer = _generateContainer
 export const getContainerMetadata = _getContainerMetadata
@@ -35,7 +33,6 @@ export default {
   getContainerPlatform: _getContainerPlatform,
   injectReactNativeVersionKeysInObject: _injectReactNativeVersionKeysInObject,
   populateApiImplMustacheView: _populateApiImplMustacheView,
-  prepareDirectories: _prepareDirectories,
   sortDependenciesByName: _sortDependenciesByName,
 }
 
