@@ -4,7 +4,6 @@ import {
   utils,
   PackagePath,
   shell,
-  BundlingResult,
   log,
   NativePlatform,
   kax,
@@ -13,14 +12,10 @@ import {
   ContainerGenerator,
   ContainerGeneratorConfig,
   ContainerGenResult,
-  addElectrodeNativeMetadataFile,
-  bundleMiniApps,
-  copyRnpmAssets,
   generatePluginsMustacheViews,
   injectReactNativeVersionKeysInObject,
   populateApiImplMustacheView,
-  prepareDirectories,
-  sortDependenciesByName,
+  generateContainer,
 } from 'ern-container-gen'
 
 import fs from 'fs'
@@ -44,61 +39,15 @@ export default class IosGenerator implements ContainerGenerator {
   public async generate(
     config: ContainerGeneratorConfig
   ): Promise<ContainerGenResult> {
-    prepareDirectories(config)
-    config.plugins = sortDependenciesByName(config.plugins)
-
-    shell.pushd(config.outDir)
-
-    try {
-      await this.fillContainerHull(config)
-
-      const jsApiImplDependencies = await utils.extractJsApiImplementations(
-        config.plugins
-      )
-      const bundlingResult: BundlingResult = await kax
-        .task('Bundling MiniApps')
-        .run(
-          bundleMiniApps(
-            config.miniApps,
-            config.compositeMiniAppDir,
-            config.outDir,
-            'ios',
-            { pathToYarnLock: config.pathToYarnLock },
-            jsApiImplDependencies
-          )
-        )
-
-      if (!config.ignoreRnpmAssets) {
-        await kax
-          .task('Copying rnpm assets -if any-')
-          .run(
-            copyRnpmAssets(
-              config.miniApps,
-              config.compositeMiniAppDir,
-              config.outDir,
-              'ios'
-            )
-          )
-        this.addResources(config.outDir)
-      }
-
-      await kax
-        .task('Adding Electrode Native Metadata File')
-        .run(addElectrodeNativeMetadataFile(config))
-
-      log.debug('Container generation completed!')
-
-      return {
-        bundlingResult,
-      }
-    } finally {
-      shell.popd()
-    }
+    return generateContainer(config, {
+      fillContainerHull: this.fillContainerHull.bind(this),
+      postCopyRnpmAssets: this.addResources.bind(this),
+    })
   }
 
-  public async addResources(outputDirectory: any) {
+  public async addResources(config: ContainerGeneratorConfig) {
     const containerProjectPath = path.join(
-      outputDirectory,
+      config.outDir,
       'ElectrodeContainer.xcodeproj',
       'project.pbxproj'
     )
@@ -107,7 +56,7 @@ export default class IosGenerator implements ContainerGenerator {
     )
 
     const containerResourcesPath = path.join(
-      outputDirectory,
+      config.outDir,
       'ElectrodeContainer',
       'Resources'
     )
