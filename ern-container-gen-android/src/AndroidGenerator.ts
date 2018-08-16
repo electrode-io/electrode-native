@@ -26,10 +26,8 @@ import {
 
 import _ from 'lodash'
 import path from 'path'
-import fs from 'fs'
 import readDir from 'fs-readdir-recursive'
 
-const ROOT_DIR = process.cwd()
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 
@@ -48,54 +46,56 @@ export default class AndroidGenerator implements ContainerGenerator {
     prepareDirectories(config)
     config.plugins = sortDependenciesByName(config.plugins)
 
-    shell.cd(config.outDir)
+    shell.pushd(config.outDir)
 
-    await this.fillContainerHull(config)
+    try {
+      await this.fillContainerHull(config)
 
-    const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(
-      config.plugins
-    )
-
-    const bundlingResult: BundlingResult = await kax
-      .task('Bundling MiniApps')
-      .run(
-        bundleMiniApps(
-          config.miniApps,
-          config.compositeMiniAppDir,
-          config.outDir,
-          'android',
-          { pathToYarnLock: config.pathToYarnLock },
-          jsApiImplDependencies
-        )
+      const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(
+        config.plugins
       )
 
-    if (!config.ignoreRnpmAssets) {
-      await kax
-        .task('Coying rnpm assets -if any-')
+      const bundlingResult: BundlingResult = await kax
+        .task('Bundling MiniApps')
         .run(
-          copyRnpmAssets(
+          bundleMiniApps(
             config.miniApps,
             config.compositeMiniAppDir,
             config.outDir,
-            'android'
+            'android',
+            { pathToYarnLock: config.pathToYarnLock },
+            jsApiImplDependencies
           )
         )
-    }
 
-    await kax
-      .task('Adding Electrode Native Metadata File')
-      .run(addElectrodeNativeMetadataFile(config))
+      if (!config.ignoreRnpmAssets) {
+        await kax
+          .task('Coying rnpm assets -if any-')
+          .run(
+            copyRnpmAssets(
+              config.miniApps,
+              config.compositeMiniAppDir,
+              config.outDir,
+              'android'
+            )
+          )
+      }
 
-    return {
-      bundlingResult,
+      await kax
+        .task('Adding Electrode Native Metadata File')
+        .run(addElectrodeNativeMetadataFile(config))
+
+      return {
+        bundlingResult,
+      }
+    } finally {
+      shell.popd()
     }
   }
 
   public async fillContainerHull(
     config: ContainerGeneratorConfig
   ): Promise<void> {
-    shell.cd(ROOT_DIR)
-
     const copyFromPath = path.join(PATH_TO_HULL_DIR, '{.*,*}')
 
     shell.cp('-R', copyFromPath, config.outDir)
@@ -154,52 +154,62 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
 
-      shell.cd(config.pluginsDownloadDir)
-      pluginSourcePath = await coreUtils.downloadPluginSource(
-        pluginConfig.origin
-      )
-      if (!pluginSourcePath) {
-        throw new Error(`Was not able to download ${plugin.basePath}`)
-      }
+      shell.pushd(config.pluginsDownloadDir)
 
-      if (await coreUtils.isDependencyNativeApiImpl(plugin.basePath)) {
-        populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
-      }
-
-      const pathToPluginProject = path.join(
-        pluginSourcePath,
-        pluginConfig.android.root
-      )
-      shell.cd(pathToPluginProject)
-
-      const relPathToPluginSource = pluginConfig.android.moduleName
-        ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
-        : path.join('src', 'main', 'java')
-      const absPathToCopyPluginSourceTo = path.join(
-        config.outDir,
-        'lib',
-        'src',
-        'main'
-      )
-      shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
-
-      if (pluginConfig.android) {
-        if (pluginConfig.android.copy) {
-          handleCopyDirective(
-            pluginSourcePath,
-            config.outDir,
-            pluginConfig.android.copy
-          )
+      let pathToPluginProject
+      try {
+        pluginSourcePath = await coreUtils.downloadPluginSource(
+          pluginConfig.origin
+        )
+        if (!pluginSourcePath) {
+          throw new Error(`Was not able to download ${plugin.basePath}`)
         }
 
-        if (pluginConfig.android.dependencies) {
-          for (const dependency of pluginConfig.android.dependencies) {
-            log.debug(`Adding compile '${dependency}'`)
-            mustacheView.pluginCompile.push({
-              compileStatement: `compile '${dependency}'`,
-            })
+        if (await coreUtils.isDependencyNativeApiImpl(plugin.basePath)) {
+          populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
+        }
+
+        pathToPluginProject = path.join(
+          pluginSourcePath,
+          pluginConfig.android.root
+        )
+      } finally {
+        shell.popd()
+      }
+
+      shell.pushd(pathToPluginProject)
+      try {
+        const relPathToPluginSource = pluginConfig.android.moduleName
+          ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
+          : path.join('src', 'main', 'java')
+        const absPathToCopyPluginSourceTo = path.join(
+          config.outDir,
+          'lib',
+          'src',
+          'main'
+        )
+        shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
+
+        if (pluginConfig.android) {
+          if (pluginConfig.android.copy) {
+            handleCopyDirective(
+              pluginSourcePath,
+              config.outDir,
+              pluginConfig.android.copy
+            )
+          }
+
+          if (pluginConfig.android.dependencies) {
+            for (const dependency of pluginConfig.android.dependencies) {
+              log.debug(`Adding compile '${dependency}'`)
+              mustacheView.pluginCompile.push({
+                compileStatement: `compile '${dependency}'`,
+              })
+            }
           }
         }
+      } finally {
+        shell.popd()
       }
     }
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg)

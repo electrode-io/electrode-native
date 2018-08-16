@@ -2,9 +2,18 @@ import { BundlingResult, reactnative, shell } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 
-export async function reactNativeBundleIos(
+export async function reactNativeBundleIos({
+  workingDir,
+  outDir,
+}: {
+  workingDir?: string
   outDir: string
-): Promise<BundlingResult> {
+}): Promise<BundlingResult> {
+  if (!outDir) {
+    throw new Error(
+      '[reactNativeBundleAndroid] missing mandatory outDir parameter'
+    )
+  }
   const miniAppOutPath = path.join(
     outDir,
     'ElectrodeContainer',
@@ -18,11 +27,21 @@ export async function reactNativeBundleIos(
     shell.mkdir('-p', miniAppOutPath)
   }
 
-  return reactnative.bundle({
-    assetsDest,
-    bundleOutput,
-    dev: false,
-    entryFile: 'index.ios.js',
-    platform: 'ios',
-  })
+  if (workingDir) {
+    shell.pushd(workingDir)
+  }
+  try {
+    const result = await reactnative.bundle({
+      assetsDest,
+      bundleOutput,
+      dev: false,
+      entryFile: 'index.ios.js',
+      platform: 'ios',
+    })
+    return result
+  } finally {
+    if (workingDir) {
+      shell.popd()
+    }
+  }
 }

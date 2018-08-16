@@ -47,48 +47,52 @@ export default class IosGenerator implements ContainerGenerator {
     prepareDirectories(config)
     config.plugins = sortDependenciesByName(config.plugins)
 
-    shell.cd(config.outDir)
+    shell.pushd(config.outDir)
 
-    await this.fillContainerHull(config)
+    try {
+      await this.fillContainerHull(config)
 
-    const jsApiImplDependencies = await utils.extractJsApiImplementations(
-      config.plugins
-    )
-    const bundlingResult: BundlingResult = await kax
-      .task('Bundling MiniApps')
-      .run(
-        bundleMiniApps(
-          config.miniApps,
-          config.compositeMiniAppDir,
-          config.outDir,
-          'ios',
-          { pathToYarnLock: config.pathToYarnLock },
-          jsApiImplDependencies
-        )
+      const jsApiImplDependencies = await utils.extractJsApiImplementations(
+        config.plugins
       )
-
-    if (!config.ignoreRnpmAssets) {
-      await kax
-        .task('Copying rnpm assets -if any-')
+      const bundlingResult: BundlingResult = await kax
+        .task('Bundling MiniApps')
         .run(
-          copyRnpmAssets(
+          bundleMiniApps(
             config.miniApps,
             config.compositeMiniAppDir,
             config.outDir,
-            'ios'
+            'ios',
+            { pathToYarnLock: config.pathToYarnLock },
+            jsApiImplDependencies
           )
         )
-      this.addResources(config.outDir)
-    }
 
-    await kax
-      .task('Adding Electrode Native Metadata File')
-      .run(addElectrodeNativeMetadataFile(config))
+      if (!config.ignoreRnpmAssets) {
+        await kax
+          .task('Copying rnpm assets -if any-')
+          .run(
+            copyRnpmAssets(
+              config.miniApps,
+              config.compositeMiniAppDir,
+              config.outDir,
+              'ios'
+            )
+          )
+        this.addResources(config.outDir)
+      }
 
-    log.debug('Container generation completed!')
+      await kax
+        .task('Adding Electrode Native Metadata File')
+        .run(addElectrodeNativeMetadataFile(config))
 
-    return {
-      bundlingResult,
+      log.debug('Container generation completed!')
+
+      return {
+        bundlingResult,
+      }
+    } finally {
+      shell.popd()
     }
   }
 
@@ -289,12 +293,16 @@ export default class IosGenerator implements ContainerGenerator {
         plugin,
         projectSpec.projectName
       )
-      shell.cd(pathSpec.pluginsDownloadDirectory)
-      if (await utils.isDependencyApiImpl(plugin.basePath)) {
-        const pluginSourcePath = await utils.downloadPluginSource(
-          pluginConfig.origin
-        )
-        populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
+      shell.pushd(pathSpec.pluginsDownloadDirectory)
+      try {
+        if (await utils.isDependencyApiImpl(plugin.basePath)) {
+          const pluginSourcePath = await utils.downloadPluginSource(
+            pluginConfig.origin
+          )
+          populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
+        }
+      } finally {
+        shell.popd()
       }
     }
 

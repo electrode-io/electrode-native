@@ -23,8 +23,12 @@ export const handler = async ({ module }: { module?: string }) => {
     let pathToModule = process.cwd()
     if (module) {
       pathToModule = createTmpDir()
-      shell.cd(pathToModule)
-      await yarn.add(PackagePath.fromString(module))
+      shell.pushd(pathToModule)
+      try {
+        await yarn.add(PackagePath.fromString(module))
+      } finally {
+        shell.popd()
+      }
     }
     const dependencies = await findNativeDependencies(
       path.join(pathToModule, 'node_modules')

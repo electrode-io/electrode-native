@@ -83,12 +83,12 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     pluginsPaths: PackagePath[],
     apis: any[]
   ) {
+    shell.pushd(ROOT_DIR)
+
     try {
       log.debug(
         `[=== Starting hull filling for api impl gen for ${this.platform} ===]`
       )
-
-      shell.cd(ROOT_DIR)
 
       const outputDirectory = path.join(paths.outDirectory, 'android')
       log.debug(
@@ -130,8 +130,8 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       await this.updateFilePermissions(srcOutputDirectory, editableFiles)
 
       await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
-    } catch (e) {
-      throw new Error(`Error during apiimpl hull: ${e}`)
+    } finally {
+      shell.popd()
     }
   }
 

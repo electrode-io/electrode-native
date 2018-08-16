@@ -118,28 +118,30 @@ async function createNodePackage(
   hasConfig: boolean,
   scope?: string
 ) {
-  const currentDirectory = process.cwd()
-  shell.cd(outputDirectoryPath)
-  await yarn.init()
-  await yarn.add(apiDependency)
-  shell.cp(
-    path.join(
-      Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen',
-      'resources',
-      'gitignore'
-    ),
-    path.join(outputDirectoryPath, '.gitignore')
-  )
-  ernifyPackageJson(
-    outputDirectoryPath,
-    apiImplName,
-    packageName,
-    nativeOnly,
-    hasConfig,
-    scope
-  )
-  shell.cd(currentDirectory)
+  shell.pushd(outputDirectoryPath)
+  try {
+    await yarn.init()
+    await yarn.add(apiDependency)
+    shell.cp(
+      path.join(
+        Platform.currentPlatformVersionPath,
+        'ern-api-impl-gen',
+        'resources',
+        'gitignore'
+      ),
+      path.join(outputDirectoryPath, '.gitignore')
+    )
+    ernifyPackageJson(
+      outputDirectoryPath,
+      apiImplName,
+      packageName,
+      nativeOnly,
+      hasConfig,
+      scope
+    )
+  } finally {
+    shell.popd()
+  }
 }
 
 function createWorkingDirectory(workingDirectoryPath: string) {

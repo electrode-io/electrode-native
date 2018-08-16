@@ -60,19 +60,23 @@ export class MiniApp {
       }
     } else {
       fsPackagePath = createTmpDir()
-      shell.cd(fsPackagePath)
-      await yarn.add(packagePath)
-      const packageJson = await readPackageJson('.')
-      const packageName = Object.keys(packageJson.dependencies)[0]
-      shell.rm(path.join(fsPackagePath, 'package.json'))
-      shell.mv(
-        path.join(fsPackagePath, 'node_modules', packageName, '*'),
-        fsPackagePath
-      )
-      shell.rm(
-        '-rf',
-        path.join(fsPackagePath, 'node_modules', packageName, '*')
-      )
+      shell.pushd(fsPackagePath)
+      try {
+        await yarn.add(packagePath)
+        const packageJson = await readPackageJson('.')
+        const packageName = Object.keys(packageJson.dependencies)[0]
+        shell.rm(path.join(fsPackagePath, 'package.json'))
+        shell.mv(
+          path.join(fsPackagePath, 'node_modules', packageName, '*'),
+          fsPackagePath
+        )
+        shell.rm(
+          '-rf',
+          path.join(fsPackagePath, 'node_modules', packageName, '*')
+        )
+      } finally {
+        shell.popd()
+      }
     }
     return new MiniApp(fsPackagePath, packagePath)
   }
@@ -161,22 +165,26 @@ export class MiniApp {
     // They will be replaced with our owns when user uses `ern run android`
     // or `ern run ios` command
     const miniAppPath = path.join(process.cwd(), miniAppName)
-    shell.cd(miniAppPath)
-    shell.rm('-rf', 'android')
-    shell.rm('-rf', 'ios')
+    shell.pushd(miniAppPath)
+    try {
+      shell.rm('-rf', 'android')
+      shell.rm('-rf', 'ios')
 
-    if (semver.gte(reactNativeVersion, '0.49.0')) {
-      // Starting from React Native v0.49.0, the generated file structure
-      // is different. There is just a single `index.js` and `App.js` in
-      // replacement of `index.ios.js` and `index.android.js`
-      // To keep backard compatibility with file structure excpected by
-      // Electrode Native, we just create `index.ios.js` and `index.android.js`
-      shell.cp('index.js', 'index.ios.js')
-      shell.cp('index.js', 'index.android.js')
-      shell.rm('index.js')
+      if (semver.gte(reactNativeVersion, '0.49.0')) {
+        // Starting from React Native v0.49.0, the generated file structure
+        // is different. There is just a single `index.js` and `App.js` in
+        // replacement of `index.ios.js` and `index.android.js`
+        // To keep backard compatibility with file structure excpected by
+        // Electrode Native, we just create `index.ios.js` and `index.android.js`
+        shell.cp('index.js', 'index.ios.js')
+        shell.cp('index.js', 'index.android.js')
+        shell.rm('index.js')
+      }
+
+      return MiniApp.fromPath(miniAppPath)
+    } finally {
+      shell.popd()
     }
-
-    return MiniApp.fromPath(miniAppPath)
   }
 
   public readonly path: string

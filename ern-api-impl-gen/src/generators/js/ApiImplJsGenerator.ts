@@ -33,43 +33,47 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
   }
 
   public async fillHull(apiDependency: PackagePath, paths: any, apis: any[]) {
-    shell.cd(shell.pwd())
-    const outputDirectory = path.join(paths.outDirectory, 'js')
-    log.debug(`Creating out directory(${outputDirectory}) for JS.`)
-    if (!fs.existsSync(outputDirectory)) {
-      shell.mkdir(outputDirectory)
-    }
-    const mustacheFile = path.join(
-      Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen',
-      'resources',
-      'js',
-      'apiimpl.mustache'
-    )
-
-    for (const api of apis) {
-      api.packageName = apiDependency.basePath
-      await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-        mustacheFile,
-        api,
-        path.join(outputDirectory, `${api.apiName}ApiImpl.js`)
+    shell.pushd(shell.pwd())
+    try {
+      const outputDirectory = path.join(paths.outDirectory, 'js')
+      log.debug(`Creating out directory(${outputDirectory}) for JS.`)
+      if (!fs.existsSync(outputDirectory)) {
+        shell.mkdir(outputDirectory)
+      }
+      const mustacheFile = path.join(
+        Platform.currentPlatformVersionPath,
+        'ern-api-impl-gen',
+        'resources',
+        'js',
+        'apiimpl.mustache'
       )
-    }
 
-    const indexMustacheFile = path.join(
-      Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen',
-      'resources',
-      'js',
-      'index.mustache'
-    )
-    const apisMustacheView = {
-      apis,
+      for (const api of apis) {
+        api.packageName = apiDependency.basePath
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+          mustacheFile,
+          api,
+          path.join(outputDirectory, `${api.apiName}ApiImpl.js`)
+        )
+      }
+
+      const indexMustacheFile = path.join(
+        Platform.currentPlatformVersionPath,
+        'ern-api-impl-gen',
+        'resources',
+        'js',
+        'index.mustache'
+      )
+      const apisMustacheView = {
+        apis,
+      }
+      await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+        indexMustacheFile,
+        apisMustacheView,
+        path.join(paths.outDirectory, 'index.js')
+      )
+    } finally {
+      shell.popd()
     }
-    await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      indexMustacheFile,
-      apisMustacheView,
-      path.join(paths.outDirectory, 'index.js')
-    )
   }
 }

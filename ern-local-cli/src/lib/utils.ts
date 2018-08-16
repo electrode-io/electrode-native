@@ -1070,36 +1070,40 @@ async function launchIosRunner(pathToIosRunner: string) {
 
 async function launchOnDevice(pathToIosRunner: string, devices) {
   const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
-  shell.cd(pathToIosRunner)
+  shell.pushd(pathToIosRunner)
 
-  await kax
-    .task('Building iOS Runner project')
-    .run(buildIosRunner(pathToIosRunner, iPhoneDevice.udid))
-
-  const kaxDeployTask = kax.task(
-    `Installing iOS Runner on ${iPhoneDevice.name}`
-  )
   try {
-    const iosDeployInstallArgs = [
-      '--bundle',
-      `${pathToIosRunner}/build/Debug-iphoneos/ErnRunner.app`,
-      '--id',
-      iPhoneDevice.udid,
-      '--justlaunch',
-    ]
-    const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
-      encoding: 'utf8',
-    })
-    if (iosDeployOutput.error) {
-      kaxDeployTask.fail(
-        `Installation failed. Make sure you have run 'npm install -g ios-deploy'.`
-      )
-    } else {
-      kaxDeployTask.succeed()
+    await kax
+      .task('Building iOS Runner project')
+      .run(buildIosRunner(pathToIosRunner, iPhoneDevice.udid))
+
+    const kaxDeployTask = kax.task(
+      `Installing iOS Runner on ${iPhoneDevice.name}`
+    )
+    try {
+      const iosDeployInstallArgs = [
+        '--bundle',
+        `${pathToIosRunner}/build/Debug-iphoneos/ErnRunner.app`,
+        '--id',
+        iPhoneDevice.udid,
+        '--justlaunch',
+      ]
+      const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
+        encoding: 'utf8',
+      })
+      if (iosDeployOutput.error) {
+        kaxDeployTask.fail(
+          `Installation failed. Make sure you have run 'npm install -g ios-deploy'.`
+        )
+      } else {
+        kaxDeployTask.succeed()
+      }
+    } catch (e) {
+      kaxDeployTask.fail(e.message)
+      throw e
     }
-  } catch (e) {
-    kaxDeployTask.fail(e.message)
-    throw e
+  } finally {
+    shell.popd()
   }
 }
 
@@ -1111,21 +1115,25 @@ async function launchOnSimulator(pathToIosRunner: string) {
   await kax
     .task('Booting iOS Simulator')
     .run(ios.launchSimulator(iPhoneSim.udid))
-  shell.cd(pathToIosRunner)
-  await kax
-    .task('Building iOS Runner project')
-    .run(buildIosRunner(pathToIosRunner, iPhoneSim.udid))
-  await kax
-    .task('Installing iOS Runner on Simulator')
-    .run(
-      ios.installApplicationOnSimulator(
-        iPhoneSim.udid,
-        `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`
+  shell.pushd(pathToIosRunner)
+  try {
+    await kax
+      .task('Building iOS Runner project')
+      .run(buildIosRunner(pathToIosRunner, iPhoneSim.udid))
+    await kax
+      .task('Installing iOS Runner on Simulator')
+      .run(
+        ios.installApplicationOnSimulator(
+          iPhoneSim.udid,
+          `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`
+        )
       )
-    )
-  await kax
-    .task('Launching Runner')
-    .run(ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner'))
+    await kax
+      .task('Launching Runner')
+      .run(ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner'))
+  } finally {
+    shell.popd()
+  }
 }
 
 async function buildIosRunner(pathToIosRunner: string, udid: string) {
