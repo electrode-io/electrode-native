@@ -42,10 +42,13 @@ export async function generateContainer(
 
   config.plugins = sortDependenciesByName(config.plugins)
 
-  shell.cd(config.outDir)
-
-  if (fillContainerHull) {
-    await fillContainerHull(config)
+  shell.pushd(config.outDir)
+  try {
+    if (fillContainerHull) {
+      await fillContainerHull(config)
+    }
+  } finally {
+    shell.popd()
   }
 
   const jsApiImplDependencies = await utils.extractJsApiImplementations(
