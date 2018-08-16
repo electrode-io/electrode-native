@@ -46,7 +46,7 @@ export async function bundleMiniApps(
     .task('Running Metro Bundler')
     .run(
       platform === 'android'
-        ? reactNativeBundleAndroid(outDir)
-        : reactNativeBundleIos(outDir)
+        ? reactNativeBundleAndroid({ workingDir: compositeMiniAppDir, outDir })
+        : reactNativeBundleIos({ workingDir: compositeMiniAppDir, outDir })
     )
 }

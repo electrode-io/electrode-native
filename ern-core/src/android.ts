@@ -221,9 +221,13 @@ export async function androidGetBootAnimProp() {
 // - projectPath : Absolute or relative path to the root of the Android project
 // containing the application
 export async function buildAndInstallApp(projectPath: string) {
-  shell.cd(projectPath)
-  const gradlew = getGradleByPlatform()
-  return execp(`${gradlew} installDebug`)
+  shell.pushd(projectPath)
+  try {
+    const gradlew = getGradleByPlatform()
+    return execp(`${gradlew} installDebug`)
+  } finally {
+    shell.popd()
+  }
 }
 
 export function getGradleByPlatform(): string {
