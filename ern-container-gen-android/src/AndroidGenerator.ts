@@ -5,7 +5,6 @@ import {
   mustacheUtils,
   PackagePath,
   shell,
-  BundlingResult,
   log,
   NativePlatform,
   kax,
@@ -14,14 +13,10 @@ import {
   ContainerGenerator,
   ContainerGeneratorConfig,
   ContainerGenResult,
-  addElectrodeNativeMetadataFile,
-  bundleMiniApps,
-  copyRnpmAssets,
   generatePluginsMustacheViews,
   injectReactNativeVersionKeysInObject,
   populateApiImplMustacheView,
-  prepareDirectories,
-  sortDependenciesByName,
+  generateContainer,
 } from 'ern-container-gen'
 
 import _ from 'lodash'
@@ -43,54 +38,9 @@ export default class AndroidGenerator implements ContainerGenerator {
   public async generate(
     config: ContainerGeneratorConfig
   ): Promise<ContainerGenResult> {
-    prepareDirectories(config)
-    config.plugins = sortDependenciesByName(config.plugins)
-
-    shell.pushd(config.outDir)
-
-    try {
-      await this.fillContainerHull(config)
-
-      const jsApiImplDependencies = await coreUtils.extractJsApiImplementations(
-        config.plugins
-      )
-
-      const bundlingResult: BundlingResult = await kax
-        .task('Bundling MiniApps')
-        .run(
-          bundleMiniApps(
-            config.miniApps,
-            config.compositeMiniAppDir,
-            config.outDir,
-            'android',
-            { pathToYarnLock: config.pathToYarnLock },
-            jsApiImplDependencies
-          )
-        )
-
-      if (!config.ignoreRnpmAssets) {
-        await kax
-          .task('Coying rnpm assets -if any-')
-          .run(
-            copyRnpmAssets(
-              config.miniApps,
-              config.compositeMiniAppDir,
-              config.outDir,
-              'android'
-            )
-          )
-      }
-
-      await kax
-        .task('Adding Electrode Native Metadata File')
-        .run(addElectrodeNativeMetadataFile(config))
-
-      return {
-        bundlingResult,
-      }
-    } finally {
-      shell.popd()
-    }
+    return generateContainer(config, {
+      fillContainerHull: this.fillContainerHull.bind(this),
+    })
   }
 
   public async fillContainerHull(
