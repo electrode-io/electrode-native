@@ -1,8 +1,7 @@
 import { Platform } from 'ern-core'
 import { ContainerGeneratorConfig, ContainerMetadata } from './types'
-import { containerMetadataFileName } from './consts'
 import { writeFile } from './writeFile'
-import path from 'path'
+import { getContainerMetadataPath } from './getContainerMetadataPath'
 
 export async function addContainerMetadata(conf: ContainerGeneratorConfig) {
   const metadata: ContainerMetadata = {
@@ -12,6 +11,6 @@ export async function addContainerMetadata(conf: ContainerGeneratorConfig) {
     nativeDeps: conf.plugins.map(p => p.toString()),
     platform: conf.targetPlatform,
   }
-  const pathToMetadataFile = path.join(conf.outDir, containerMetadataFileName)
+  const pathToMetadataFile = getContainerMetadataPath(conf.outDir)
   return writeFile(pathToMetadataFile, JSON.stringify(metadata, null, 2))
 }
