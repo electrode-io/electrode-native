@@ -13,8 +13,10 @@ let currentCauldronRepoInUse
 
 export default async function getActiveCauldron({
   ignoreSchemaVersionMismatch,
+  ignoreElectrodeNativeVersionMismatch,
 }: {
   ignoreSchemaVersionMismatch?: boolean
+  ignoreElectrodeNativeVersionMismatch?: boolean
 } = {}): Promise<CauldronHelper> {
   const repoInUse = config.getValue('cauldronRepoInUse')
   if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
@@ -61,6 +63,29 @@ You should switch to a newer platform version that supports this Cauldron schema
 You should run the following command : 'ern cauldron upgrade' to upgrade your Cauldron to the latest version.
 You can also switch to an older version of the platform which supports this Cauldron schema version.`
         )
+      }
+    }
+    const ernVersionEnforcedByCauldron = await currentCauldronHelperInstance.getElectrodeNativeVersion()
+    if (ernVersionEnforcedByCauldron && !ignoreElectrodeNativeVersionMismatch) {
+      if (
+        semver.neq(ernVersionEnforcedByCauldron, Platform.currentVersion) &&
+        Platform.currentVersion !== '10000.0.0'
+      ) {
+        if (semver.gt(ernVersionEnforcedByCauldron, Platform.currentVersion)) {
+          throw new Error(
+            `The Cauldron is enforcing the use of Electrode Native v${ernVersionEnforcedByCauldron}.
+However you are using version ${Platform.currentVersion} of Electrode Native.
+If you want to use this Cauldron, please run 'ern platform use ${ernVersionEnforcedByCauldron}' and try again.`
+          )
+        } else {
+          throw new Error(`The Cauldron is enforcing the use of Electrode Native v${ernVersionEnforcedByCauldron}.
+However you are using version ${Platform.currentVersion} of Electrode Native.
+If you want to use this Cauldron with this version of Electrode Native, you will have to update the version of Electrode Native
+enforced by this Cauldron, by running this command 'ern cauldron update ernversion --version ${
+            Platform.currentVersion
+          }'.
+Please be aware that this will enforce this version of Electrode Native to be used by all clients of the Cauldron.`)
+        }
       }
     }
     currentCauldronRepoInUse = repoInUse

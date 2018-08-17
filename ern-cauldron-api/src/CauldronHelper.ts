@@ -47,6 +47,14 @@ export class CauldronHelper {
     return this.cauldron.upgradeCauldronSchema()
   }
 
+  public async getElectrodeNativeVersion(): Promise<string | void> {
+    return this.cauldron.getElectrodeNativeVersion()
+  }
+
+  public async setElectrodeNativeVersion(version?: string): Promise<void> {
+    return this.cauldron.setElectrodeNativeVersion(version)
+  }
+
   public async isDescriptorInCauldron(
     napDescriptor: NativeApplicationDescriptor
   ): Promise<boolean> {

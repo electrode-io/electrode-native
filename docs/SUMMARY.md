@@ -106,6 +106,7 @@
   - [jsapiimpls](cli/cauldron/update/jsapiimpls.md)
   - [miniapps](cli/cauldron/update/miniapps.md)
   - [nativeapp](cli/cauldron/update/nativeapp.md)
+  - [ernversion](cli/cauldron/update/ernversion.md)
 - [cauldron batch](cli/cauldron/batch.md)
 - [cauldron regen-container](cli/cauldron/regen-container.md)
 - [cauldron upgrade](cli/cauldron/upgrade.md)
