@@ -10,6 +10,7 @@ export const builder = (argv: Argv) => {
 export const handler = async () => {
   try {
     const cauldron = await getActiveCauldron({
+      ignoreElectrodeNativeVersionMismatch: true,
       ignoreSchemaVersionMismatch: true,
     })
     if (!cauldron) {

@@ -89,6 +89,11 @@ export default class CauldronApi {
     return cauldron.schemaVersion || '0.0.0'
   }
 
+  public async getElectrodeNativeVersion(): Promise<string | void> {
+    const cauldron = await this.getCauldron()
+    return cauldron.ernVersion
+  }
+
   public async getDescriptor(
     descriptor: NativeApplicationDescriptor
   ): Promise<any> {
@@ -359,6 +364,19 @@ export default class CauldronApi {
     const cauldron = await this.getCauldron()
     cauldron.nativeApps = []
     return this.commit('Clear Cauldron')
+  }
+
+  public async setElectrodeNativeVersion(version?: string): Promise<void> {
+    const cauldron = await this.getCauldron()
+    if (!version) {
+      delete cauldron.ernVersion
+      return this.commit('Removed Electrode Native version enforcement')
+    } else {
+      cauldron.ernVersion = version
+      return this.commit(
+        `Update enforced Electrode Native Version to ${version}`
+      )
+    }
   }
 
   public async addDescriptor(
