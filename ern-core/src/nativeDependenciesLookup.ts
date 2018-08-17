@@ -10,7 +10,10 @@ export function findDirectoriesContainingNativeCode(rootDir: string): string[] {
 }
 
 export function filterDirectories(directories: string[]): string[] {
-  return _.filter(directories, d => !/sample|demo|example/i.test(d))
+  return _.filter(
+    directories,
+    d => !/sample|demo|example|appium|safari-launcher/i.test(d)
+  )
 }
 
 export function getUnprefixedVersion(version: string): string {
@@ -25,28 +28,53 @@ export interface NativeDependencies {
   all: PackagePath[]
 }
 
-export async function findNativeDependencies(
-  dir: string
-): Promise<NativeDependencies> {
-  const nativeDependenciesNames = new Set()
-
-  const directoriesWithNativeCode = findDirectoriesContainingNativeCode(dir)
-  const filteredDirectories = filterDirectories(directoriesWithNativeCode)
-
-  for (const nativeDepsDirectory of filteredDirectories) {
-    const r = /^win/.test(process.platform)
-      ? /^(@.*?\\.*?)\\|^(.*?)\\/.exec(nativeDepsDirectory)
-      : /^(@.*?\/.*?)\/|^(.*?)\//.exec(nativeDepsDirectory)
-    if (r) {
-      if (r[1]) {
-        nativeDependenciesNames.add(
-          /^win/.test(process.platform) ? r[1].replace('\\', '/') : r[1]
-        )
+export function resolvePackagePaths(paths: string[]): Set<string> {
+  const result = new Set()
+  for (const d of paths) {
+    const lastIdx = d.lastIndexOf('node_modules')
+    if (lastIdx === -1) {
+      if (d.startsWith('@')) {
+        // ex : @scoped-pkgs/pkg-native/src/code.swift
+        // should return : @scoped-pkgs/pkg-native
+        const pathSegments = d.split(path.sep)
+        const p = path.join(pathSegments[0], pathSegments[1])
+        result.add(p)
       } else {
-        nativeDependenciesNames.add(r[2])
+        // ex : pkg-native/src/code.swift
+        // should return : pkg-native
+        const p = /^(.+?)\//.exec(d)
+        result.add(p![1])
+      }
+    } else {
+      const tmp = d.slice(lastIdx + 13)
+      if (tmp.startsWith('@')) {
+        // ex : @scoped-pkgs/nested/node_modules/@scope/pkg-native/src/code.swift
+        // should return : @scoped-pkgs/nested/node_modules/@scope/pkg-native
+        const pathSegments = tmp.split(path.sep)
+        const p = path.join(
+          d.substring(0, lastIdx + 13),
+          pathSegments[0],
+          pathSegments[1]
+        )
+        result.add(p)
+      } else {
+        // ex : @scoped-pkgs/nested/node_modules/pkg-native/src/code.swift
+        // should return : @scoped-pkgs/nested/node_modules/pkg-native
+        const e = /^(.+?)\//.exec(tmp)
+        const p = path.join(d.substring(0, lastIdx + 13), e![1])
+        result.add(p)
       }
     }
   }
+  return result
+}
+
+export async function findNativeDependencies(
+  dir: string
+): Promise<NativeDependencies> {
+  const directoriesWithNativeCode = findDirectoriesContainingNativeCode(dir)
+  const filteredDirectories = filterDirectories(directoriesWithNativeCode)
+  const packagePaths = resolvePackagePaths(filteredDirectories)
 
   const result: NativeDependencies = {
     all: [],
@@ -57,19 +85,19 @@ export async function findNativeDependencies(
   }
 
   const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/
-  for (const nativeDependencyName of Array.from(nativeDependenciesNames)) {
+  for (const packagePath of packagePaths) {
     const pathToNativeDependencyPackageJson = path.join(
       dir,
-      nativeDependencyName,
+      packagePath,
       'package.json'
     )
     const nativeDepPackageJson = require(pathToNativeDependencyPackageJson)
-    const name = NPM_SCOPED_MODULE_RE.test(nativeDependencyName)
-      ? NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)![2]
-      : nativeDependencyName
+    const name = NPM_SCOPED_MODULE_RE.test(nativeDepPackageJson.name)
+      ? NPM_SCOPED_MODULE_RE.exec(nativeDepPackageJson.name)![2]
+      : nativeDepPackageJson.name
     const scope =
-      (NPM_SCOPED_MODULE_RE.test(nativeDependencyName) &&
-        NPM_SCOPED_MODULE_RE.exec(nativeDependencyName)![1]) ||
+      (NPM_SCOPED_MODULE_RE.test(nativeDepPackageJson.name) &&
+        NPM_SCOPED_MODULE_RE.exec(nativeDepPackageJson.name)![1]) ||
       undefined
     const version = getUnprefixedVersion(nativeDepPackageJson.version)
     const dep = packagePathFrom(name, { scope, version })
