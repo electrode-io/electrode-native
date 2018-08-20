@@ -1,7 +1,6 @@
 import { CauldronNativeAppVersion } from './CauldronNativeAppVersion'
+import { CauldronObject } from './CauldronObject'
 
-export interface CauldronNativeAppPlatform {
-  name: string
+export interface CauldronNativeAppPlatform extends CauldronObject {
   versions: CauldronNativeAppVersion[]
-  config?: any
 }
