@@ -16,6 +16,7 @@ export default class GitDocumentStore extends BaseGit
     repository,
     branch = 'master',
     cauldron = {
+      name: 'Cauldron',
       nativeApps: [],
       schemaVersion,
     },

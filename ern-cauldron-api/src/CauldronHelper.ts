@@ -783,7 +783,7 @@ export class CauldronHelper {
    * If undefined, will return the top level Cauldron configuration.
    */
   public async getConfigStrict(
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor?: NativeApplicationDescriptor
   ): Promise<any | void> {
     const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
     return configByLevel.get(
@@ -836,6 +836,28 @@ export class CauldronHelper {
         configByLevel.get(cauldronConfigLevel)[key]) ||
       undefined
     )
+  }
+
+  public async setConfig({
+    descriptor,
+    key,
+    value,
+  }: {
+    descriptor?: NativeApplicationDescriptor
+    key?: string
+    value: any
+  }) {
+    return this.cauldron.setConfig({ descriptor, key, value })
+  }
+
+  public async delConfig({
+    descriptor,
+    key,
+  }: {
+    descriptor?: NativeApplicationDescriptor
+    key?: string
+  }) {
+    return this.cauldron.delConfig({ descriptor, key })
   }
 
   public getCauldronConfigLevelMatchingDescriptor(
