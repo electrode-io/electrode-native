@@ -11,6 +11,7 @@ import {
   ICauldronDocumentStore,
   ICauldronFileStore,
   CauldronConfigLevel,
+  CauldronObject,
 } from './types'
 import upgradeScripts from './upgrade-scripts/scripts'
 import path from 'path'
@@ -349,6 +350,22 @@ export default class CauldronApi {
       result.set(CauldronConfigLevel.Top, cauldron.config)
     }
     return result
+  }
+
+  public async getObjectMatchingDescriptor(
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<CauldronObject> {
+    if (!descriptor) {
+      return this.getCauldron()
+    } else {
+      if (descriptor.version) {
+        return this.getVersion(descriptor)
+      } else if (descriptor.platform) {
+        return this.getPlatform(descriptor)
+      } else {
+        return this.getNativeApplication(descriptor)
+      }
+    }
   }
 
   // =====================================================================================
@@ -797,6 +814,54 @@ export default class CauldronApi {
     return this.commit(
       `Add ${miniapp.basePath} MiniApp in ${descriptor.toString()} Container`
     )
+  }
+
+  public async setConfig({
+    descriptor,
+    key,
+    value,
+  }: {
+    descriptor?: NativeApplicationDescriptor
+    key?: string
+    value: any
+  }) {
+    const obj = await this.getObjectMatchingDescriptor(descriptor)
+    if (key) {
+      obj.config[key] = value
+      return this.commit(
+        `Set config for key ${key} of ${
+          descriptor ? descriptor!.toString() : 'Cauldron'
+        }`
+      )
+    } else {
+      obj.config = value
+      return this.commit(
+        `Set config for ${descriptor ? descriptor!.toString() : 'Cauldron'}`
+      )
+    }
+  }
+
+  public async delConfig({
+    descriptor,
+    key,
+  }: {
+    descriptor?: NativeApplicationDescriptor
+    key?: string
+  }) {
+    const obj = await this.getObjectMatchingDescriptor(descriptor)
+    if (key) {
+      delete obj.config[key]
+      return this.commit(
+        `Delete config for key ${key} of ${
+          descriptor ? descriptor!.toString() : 'Cauldron'
+        }`
+      )
+    } else {
+      obj.config = {}
+      return this.commit(
+        `Delete config for ${descriptor ? descriptor!.toString() : 'Cauldron'}`
+      )
+    }
   }
 
   // =====================================================================================
