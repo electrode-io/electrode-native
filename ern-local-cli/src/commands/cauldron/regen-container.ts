@@ -116,7 +116,7 @@ export const handler = async ({
       },
       napDescriptor,
       `Regenerate Container of ${napDescriptor.toString()} native application`,
-      { containerVersion }
+      { containerVersion, forceFullGeneration: true }
     )
     log.debug(`Container was succesfully regenerated !`)
   } catch (e) {
