@@ -150,11 +150,22 @@ export default class AndroidGenerator implements ContainerGenerator {
           }
 
           if (pluginConfig.android.dependencies) {
-            for (const dependency of pluginConfig.android.dependencies) {
-              log.debug(`Adding compile '${dependency}'`)
-              mustacheView.pluginCompile.push({
-                compileStatement: `compile '${dependency}'`,
-              })
+            const transitivePrefix = 'transitive:'
+            for (let dependency of pluginConfig.android.dependencies) {
+              if (dependency.startsWith(transitivePrefix)) {
+                dependency = dependency.replace(transitivePrefix, '')
+                mustacheView.pluginCompile.push({
+                  compileStatement: `compile('${dependency}') { transitive = true }`,
+                })
+                log.debug(
+                  `Adding compile('${dependency}') { transitive = true }`
+                )
+              } else {
+                mustacheView.pluginCompile.push({
+                  compileStatement: `compile '${dependency}'`,
+                })
+                log.debug(`Adding compile '${dependency}'`)
+              }
             }
           }
         }
