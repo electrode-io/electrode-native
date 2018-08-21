@@ -1,4 +1,4 @@
-import { ContainerGenerator } from 'ern-container-gen'
+import { ContainerGenerator, ContainerGenResult } from 'ern-container-gen'
 import { AndroidGenerator } from 'ern-container-gen-android'
 import { IosGenerator } from 'ern-container-gen-ios'
 import {
@@ -146,11 +146,13 @@ export async function runCauldronContainerGen(
   {
     outDir,
     compositeMiniAppDir,
+    forceFullGeneration,
   }: {
     outDir?: string
     compositeMiniAppDir?: string
+    forceFullGeneration?: boolean
   } = {}
-) {
+): Promise<ContainerGenResult> {
   try {
     const cauldron = await getActiveCauldron()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
@@ -180,22 +182,28 @@ export async function runCauldronContainerGen(
 
     const generator = getGeneratorForPlatform(platform)
 
-    return kax.task(`Generating Container for ${napDescriptor.toString()}`).run(
-      generator.generate({
-        compositeMiniAppDir,
-        ignoreRnpmAssets:
-          containerGeneratorConfig && containerGeneratorConfig.ignoreRnpmAssets,
-        jsApiImpls,
-        miniApps: miniAppsInstances,
-        outDir:
-          outDir ||
-          path.join(Platform.rootDirectory, 'containergen', 'out', platform),
-        pathToYarnLock: pathToYarnLock || undefined,
-        plugins,
-        pluginsDownloadDir: createTmpDir(),
-        targetPlatform: platform,
-      })
-    )
+    const containerGenResult = await kax
+      .task(`Generating Container for ${napDescriptor.toString()}`)
+      .run(
+        generator.generate({
+          compositeMiniAppDir,
+          forceFullGeneration,
+          ignoreRnpmAssets:
+            containerGeneratorConfig &&
+            containerGeneratorConfig.ignoreRnpmAssets,
+          jsApiImpls,
+          miniApps: miniAppsInstances,
+          outDir:
+            outDir ||
+            path.join(Platform.rootDirectory, 'containergen', 'out', platform),
+          pathToYarnLock: pathToYarnLock || undefined,
+          plugins,
+          pluginsDownloadDir: createTmpDir(),
+          targetPlatform: platform,
+        })
+      )
+
+    return containerGenResult
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e

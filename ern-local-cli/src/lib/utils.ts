@@ -535,8 +535,10 @@ async function performContainerStateUpdateInCauldron(
   commitMessage: string | string[],
   {
     containerVersion,
+    forceFullGeneration,
   }: {
     containerVersion?: string
+    forceFullGeneration?: boolean
   } = {}
 ) {
   if (!napDescriptor.platform) {
@@ -586,8 +588,9 @@ async function performContainerStateUpdateInCauldron(
     const compositeMiniAppDir = createTmpDir()
 
     // Run container generator
-    await runCauldronContainerGen(napDescriptor, {
+    const containerGenResult = await runCauldronContainerGen(napDescriptor, {
       compositeMiniAppDir,
+      forceFullGeneration,
       outDir,
     })
 
@@ -612,9 +615,12 @@ async function performContainerStateUpdateInCauldron(
     )
 
     // Run Container transformers sequentially (if any)
+    // Only run them if the Container was fully generated and not the JS Bundle only
+    // If only JS bundle was generated, it means that we reused previous Container
+    // directory, which was already transformed
     const transformersFromCauldron =
       containerGenConfig && containerGenConfig.transformers
-    if (transformersFromCauldron) {
+    if (transformersFromCauldron && !containerGenResult.generatedJsBundleOnly) {
       for (const transformerFromCauldron of transformersFromCauldron) {
         let extra = transformerFromCauldron.extra
         if (

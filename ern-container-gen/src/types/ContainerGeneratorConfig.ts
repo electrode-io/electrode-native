@@ -37,4 +37,9 @@ export interface ContainerGeneratorConfig {
    * Path to the current yarn lock
    */
   pathToYarnLock?: string
+  /**
+   * Forces full Container generation even if no native dependencies versions
+   * have changed compared to a previous cached generation
+   */
+  forceFullGeneration?: boolean
 }

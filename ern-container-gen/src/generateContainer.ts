@@ -7,6 +7,7 @@ import { ContainerGeneratorConfig, ContainerGenResult } from './types'
 import { kax, shell, utils, BundlingResult } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
+import _ from 'lodash'
 
 type ContainerGeneratorAction = (
   config: ContainerGeneratorConfig
@@ -22,10 +23,30 @@ export async function generateContainer(
     postCopyRnpmAssets?: ContainerGeneratorAction
   } = {}
 ): Promise<ContainerGenResult> {
+  let generatedJsBundleOnly = false
   if (!fs.existsSync(config.outDir)) {
     shell.mkdir('-p', config.outDir)
   } else {
-    shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
+    if (!config.forceFullGeneration) {
+      // Let's look if we can avoid full generation and only regenerate js bundle
+      const previousGenMetadata = await getContainerMetadata(config.outDir)
+      if (previousGenMetadata && previousGenMetadata.nativeDeps) {
+        const pluginsAsStrings = config.plugins.map(p => p.toString())
+        const xored = _.xor(pluginsAsStrings, previousGenMetadata.nativeDeps)
+        if (xored.length > 0) {
+          // There is at least one difference in native dependencies versions
+          // Just clean the whole out directory and trigger a full generation
+          shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
+        } else {
+          // No difference in native dependencies versions !
+          // We can take a fast track. We just remove all plugins from the
+          // config we feed to the generator, so that it'll only regenerate the
+          // JS bundle
+          // Also we don't clean the out directory
+          generatedJsBundleOnly = true
+        }
+      }
+    }
   }
 
   if (!fs.existsSync(config.compositeMiniAppDir)) {
@@ -40,20 +61,18 @@ export async function generateContainer(
     shell.rm('-rf', path.join(config.pluginsDownloadDir, '{.*,*}'))
   }
 
-  config.plugins = sortDependenciesByName(config.plugins)
+  if (!generatedJsBundleOnly) {
+    config.plugins = sortDependenciesByName(config.plugins)
 
-  shell.pushd(config.outDir)
-  try {
-    if (fillContainerHull) {
-      await fillContainerHull(config)
+    shell.pushd(config.outDir)
+    try {
+      if (fillContainerHull) {
+        await fillContainerHull(config)
+      }
+    } finally {
+      shell.popd()
     }
-  } finally {
-    shell.popd()
   }
-
-  const jsApiImplDependencies = await utils.extractJsApiImplementations(
-    config.plugins
-  )
 
   const bundlingResult: BundlingResult = await kax
     .task('Bundling MiniApps')
@@ -64,7 +83,7 @@ export async function generateContainer(
         config.outDir,
         config.targetPlatform,
         { pathToYarnLock: config.pathToYarnLock },
-        jsApiImplDependencies
+        config.jsApiImpls
       )
     )
 
@@ -90,5 +109,6 @@ export async function generateContainer(
 
   return {
     bundlingResult,
+    generatedJsBundleOnly,
   }
 }
