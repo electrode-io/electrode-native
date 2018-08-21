@@ -139,7 +139,7 @@ export interface AndroidPluginConfig extends CommonPluginConfig {
   moduleName: string
   /**
    * Dependencies (maven artifacts) required by this plugin.
-   * Will be added as compile statements in Container build.gralde
+   * Will be added as compile statements in Container build.gradle
    */
   dependencies?: string[]
   /**

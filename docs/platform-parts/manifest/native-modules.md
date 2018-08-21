@@ -131,15 +131,26 @@ The root directory containing the Android module. By default, the plugin configu
 
 - `dependencies`  
 
-An array of one or more dependencies used to add to the container when injecting this plugin. Some plugins might have dependencies on extra libraries that need to be included in the container. The container generation adds all of these extra dependencies as `compile` statements to its `build.gradle` file.
+An array of one or more dependencies used to add to the container when injecting this plugin. Some plugins might have dependencies on extra libraries that need to be included in the container. The container generation adds all of these extra dependencies as `compile` statements to its `build.gradle` file.  
 
-**Example**
+If the `transitive` flag is needed for a given dependency, it is possible to use the prefix `transitive:` in front of the dependencies.
+
+**For example**
 
 ```json
 "dependencies": [
   "com.google.android.gms:play-services-base:10.0.1",
-  "com.google.android.gms:play-services-maps:10.0.1"
+  "com.google.android.gms:play-services-maps:10.0.1",
+  "transitive:com.crashlytics.sdk.android:crashlytics:2.9.2@aar"
 ]
+```
+
+**Will result in the following injection in build.gradle:**
+
+```gradle
+compile 'com.google.android.gms:play-services-base:10.0.1'
+compile 'com.google.android.gms:play-services-maps:10.0.1'
+compile('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') { transitive = true }
 ```
 
 #### iOS
