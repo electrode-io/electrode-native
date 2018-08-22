@@ -48,6 +48,15 @@ const miniAppPath = path.join(process.cwd(), f.systemTestMiniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
 run('ern add react-native-electrode-bridge')
+let packageJson = JSON.parse(fs.readFileSync('package.json'))
+if (!Object.keys(packageJson.dependencies).includes('react-native-electrode-bridge')) {
+  throw new Error('react-native-electrode-bridge dependency was not added to the MiniApp')
+}
+run(`ern add ${f.movieApiImplNativePkgName}@${f.movieApiImplNativePkgVersion}`)
+packageJson = JSON.parse(fs.readFileSync('package.json'))
+if (!Object.keys(packageJson.dependencies).includes(f.movieApiImplNativePkgName)) {
+  throw new Error(`${f.movieApiImplNativePkgName} dependency was not added to the MiniApp`)
+}
 
 // list dependencies command
 run('ern list dependencies')

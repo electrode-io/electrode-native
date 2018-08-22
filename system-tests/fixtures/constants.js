@@ -23,7 +23,9 @@ const baseConstants = {
   movieDetailsMiniAppPkgName: 'moviedetailsminiapp',
   movieDetailsMiniAppPkgVersion: '0.0.20',
   movieApiImplJsPkgName: 'react-native-ernmovie-api-impl-js',
-  movieApiImplJsPkgVersion: '0.0.2'
+  movieApiImplJsPkgVersion: '0.0.2',
+  movieApiImplNativePkgName: 'react-native-ernmovie-api-impl',
+  movieApiImplNativePkgVersion: '0.0.12'
 }
 
 const compositeConstants = {

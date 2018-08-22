@@ -372,33 +372,45 @@ in the package.json of ${packageJson.name} MiniApp
                 new PackagePath(dep.basePath)
               )
               if (manifestDep) {
-                return this.validateManifestConformingDependency(
-                  dep,
-                  manifestDep,
-                  `[Transitive Dependency] ${dep.toString()} was not added to the MiniApp`
-                )
+                if (!dep.same(manifestDep, { ignoreVersion: false })) {
+                  throw new Error(
+                    `[Transitive Dependency] ${dep.toString()} was not added to the MiniApp`
+                  )
+                }
               }
             }
           }
         }
       } else {
-        log.debug(
-          `Dependency:${dependency.toString()} defined in manifest, performing version match`
-        )
-        // If the dependency & manifest version differ, log error and exit
-        return this.validateManifestConformingDependency(
-          dependency,
-          manifestDependency,
-          `${dependency.toString()} was not added to the MiniApp`
-        )
+        if (dependency.version) {
+          log.debug(
+            `Dependency:${dependency.toString()} defined in manifest, performing version match`
+          )
+          // If the dependency & manifest version differ, log error and exit
+          if (!dependency.same(manifestDependency, { ignoreVersion: false })) {
+            throw new Error(
+              `${dependency.toString()} was not added to the MiniApp`
+            )
+          }
+        }
       }
 
       // Checks have passed add the dependency
       process.chdir(this.path)
       await kax
-        .task(`Adding ${dependency.toString()} to ${this.name}`)
-        .run(yarn.add(PackagePath.fromString(dependency.toString())))
-      return dependency
+        .task(
+          `Adding ${
+            manifestDependency
+              ? manifestDependency.toString()
+              : dependency.toString()
+          } to ${this.name}`
+        )
+        .run(
+          yarn.add(
+            manifestDependency || PackagePath.fromString(dependency.toString())
+          )
+        )
+      return manifestDependency ? manifestDependency : dependency
     }
   }
 
@@ -544,21 +556,6 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       await kax
         .task(`Adding ${dependency.toString()} to MiniApp peerDependencies`)
         .run(yarn.add(depPath, { peer: true }))
-    }
-  }
-
-  private validateManifestConformingDependency(
-    dependency: PackagePath,
-    manifestDependency: PackagePath,
-    errorMessageSuffix: string
-  ) {
-    if (
-      dependency &&
-      !dependency.same(manifestDependency, { ignoreVersion: false })
-    ) {
-      return log.error(
-        `${errorMessageSuffix} Dependency ${dependency.toString()} differs with manifest version which is ${manifestDependency.toString()}`
-      )
     }
   }
 }
