@@ -26,6 +26,7 @@ import Foundation
     
     private var requestHandler: MoviesApiRequestHandlerProvider?
     
+    @objc
     public func register(config: MoviesApiConfig? = nil)
     {
         // Only register once.
