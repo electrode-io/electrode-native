@@ -28,7 +28,7 @@ export async function runLocalContainerGen(
   jsApiImplsPackagePaths: PackagePath[],
   platform: NativePlatform,
   {
-    outDir = path.join(Platform.rootDirectory, 'containergen'),
+    outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform),
     extraNativeDependencies = [],
     ignoreRnpmAssets = false,
   }: {
