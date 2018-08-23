@@ -181,7 +181,7 @@ We also created a `NavigationApi` that will be of use later in this tutorial, yo
 1) Add the `MoviesApi`, the `MoviesApiImpl`, the `NavigationApi` and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as dependencies of MovieListMiniApp, using the `ern add` command.
 
 ```bash
-$ ern add react-native-ernmovie-api-impl@0.0.11 react-native-ernnavigation-api@0.0.4
+$ ern add react-native-ernmovie-api-impl@0.0.15 react-native-ernnavigation-api@0.0.5
 ```
 
 2) Open the `App.js` file and modify it as described in the next steps.
@@ -372,7 +372,7 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
 * To add this MiniApp to the local container used by the native application, use a variation of the `ern run` command that allows you to include extra MiniApps to the local Container. Let's do that magic now.  
 
 ```bash
-$ ern run-android --miniapps moviedetailsminiapp@0.0.20 --mainMiniAppName MovieListMiniApp
+$ ern run-android --miniapps moviedetailsminiapp@0.0.22 --mainMiniAppName MovieListMiniApp
 ```  
 
 Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
@@ -549,7 +549,7 @@ We also created a `NavigationApi` that will be of use later in this tutorial, yo
 1) Add the `MoviesApi`, the `MoviesApiImpl`, the `NavigationApi` and [react-native-electrode-bridge](https://github.com/electrode-io/react-native-electrode-bridge) as dependencies of MovieListMiniApp, using the `ern add` command.
 
 ```bash
-$ ern add react-native-ernmovie-api-impl@0.0.11 react-native-ernnavigation-api@0.0.4
+$ ern add react-native-ernmovie-api-impl@0.0.15 react-native-ernnavigation-api@0.0.5
 ```
 
 2) Open the `App.js` file and modify it as described in the next steps.
@@ -727,7 +727,7 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
  
 ```bash
 $ cd MovieListMiniApp //make sure you are in root dir of MovieListMiniApp
-$ ern run-ios --miniapps moviedetailsminiapp@0.0.20 --mainMiniAppName MovieListMiniApp
+$ ern run-ios --miniapps moviedetailsminiapp@0.0.22 --mainMiniAppName MovieListMiniApp
 ```  
 
 Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
