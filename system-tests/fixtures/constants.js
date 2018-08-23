@@ -19,13 +19,13 @@ const baseConstants = {
   systemTestNativeApplicationVersion1: '1.0.0',
   systemTestNativeApplicationVersion2: '2.0.0',
   movieListMiniAppPgkName: 'movielistminiapp',
-  movieListMiniAppPkgVersion: '0.0.21',
+  movieListMiniAppPkgVersion: '0.0.23',
   movieDetailsMiniAppPkgName: 'moviedetailsminiapp',
-  movieDetailsMiniAppPkgVersion: '0.0.20',
+  movieDetailsMiniAppPkgVersion: '0.0.22',
   movieApiImplJsPkgName: 'react-native-ernmovie-api-impl-js',
   movieApiImplJsPkgVersion: '0.0.2',
   movieApiImplNativePkgName: 'react-native-ernmovie-api-impl',
-  movieApiImplNativePkgVersion: '0.0.12'
+  movieApiImplNativePkgVersion: '0.0.15'
 }
 
 const compositeConstants = {
