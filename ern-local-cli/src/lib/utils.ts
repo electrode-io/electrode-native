@@ -819,16 +819,16 @@ async function runMiniApp(
 
   let napDescriptor: NativeApplicationDescriptor | void
 
-  if (miniapps && miniapps.length > 1 && !mainMiniAppName) {
+  if (miniapps && !mainMiniAppName) {
     throw new Error(
-      'If you provide multiple MiniApps you need to provide the name of the MiniApp to launch'
+      'If you run multiple MiniApps you need to provide the name of the MiniApp to launch'
     )
   }
 
-  if (miniapps && miniapps.length > 1 && dev) {
+  if (miniapps && dev) {
     dev = false
     log.warn(
-      'Turning off dev mode since you are running multiple MiniApps. \nIf you want to start a packager, execute `ern start` command with all the miniapps in a separate terminal.\nCheck this link for more details: https://electrode.gitbooks.io/electrode-native/content/cli/start.html\n'
+      'Turning off dev mode since you are running multiple MiniApps. \nIf you want to start a packager, execute `ern start` command with all the miniapps in a separate terminal.\nCheck this link for more details: https://native.electrode.io/cli-commands/start'
     )
   }
 
