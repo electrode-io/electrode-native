@@ -21,3 +21,5 @@
 - `tmp-dir`  
 - `retain-tmp-dir`
 - `codePushAccessKey`
+- `max-package-cache-size`
+- `package-cache-enabled`

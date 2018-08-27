@@ -24,7 +24,7 @@
 Set the log level to use for all commands.  
 **default** : info
 
-- `showBanner` [true|false]  
+- `showBanner` [boolean]  
 Show the Electrode Native ASCII banner for all commands.  
 **default** : true
 
@@ -32,15 +32,23 @@ Show the Electrode Native ASCII banner for all commands.
 Temporary directory to use during commands execution.  
 **default** : system default
 
-- `retain-tmp-dir` [true|false]   
+- `retain-tmp-dir` [boolean]   
 If set to `true`, the temporary directories created during some commands execution, won't be destroyed after the command execution.  
 **default** : false
 
 - `codePushAccessKey` [string]   
 Code push access key associated with your account  
 
-#### Remarks
+- `max-package-cache-size` [number]
+The maximum disk space to use for the package cache, in Bytes.  
+Only apply if the package cache is enabled (`package-cache-enabled` configuration key set to `true`).
+**default** : 2GB
 
-* The `ern platform config set <key> <value>` command is rarely used.  
-* All current configuration values are already set and retrieved transparently through the use of commands that rely on the local platform configuration.  
-* If a value is provided, the `ern platform config set <key> <value>` command sets the value associated with the given key with the specified value, overwriting any existing value stored for this key.
+- `package-cache-enabled` [boolean]
+Indicates whether the package cache should be enabled.  
+Enabling the package cache will lead to faster Containers generation, given that all packages versions used for a Container generation, will be retrieved from the cache if available rather than being downloaded upon every generation.
+**default** : false  
+
+#### Remarks
+ 
+* In case a value already exists in the configuration for a given key, this command will not fail and will overwrite the existing value.
