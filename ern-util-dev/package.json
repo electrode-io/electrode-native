@@ -39,7 +39,9 @@
   },
   "dependencies": {
     "shelljs": "^0.8.2",
-    "tmp": "^0.0.33"
+    "tmp": "^0.0.33",
+    "fs-readdir-recursive": "^1.1.0",
+    "istanbul": "^0.4.5"
   },
   "bin": {
     "ern-mocha": "bin/ern-mocha.js",
