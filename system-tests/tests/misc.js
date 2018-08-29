@@ -136,6 +136,8 @@ try{
   run('ern platform config set max-package-cache-size 1024')
   run('ern platform config set codePushAccessKey "keytocodepush"')
 } finally{
+  // Clean Cauldron test env
+  afterAll()
+  // Restore original config
   fs.writeFileSync(ERN_RC_GLOBAL_FILE_PATH, JSON.stringify(ernConfigObj, null, 2))
 }
-afterAll()
