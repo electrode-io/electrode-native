@@ -9,7 +9,6 @@
     "check": "yarn check:lint && yarn check:yarnlock",
     "check:lint": "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e '**/node_modules/**'",
     "check:yarnlock": "node yarn-lock-check",
-    "coverage": "yarn coverage:unit && yarn coverage:system",
     "coverage:ci": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | coveralls",
     "coverage:system": "rimraf .nyc_output && node system-tests/system-tests-coverage",
     "coverage:unit": "rimraf ern-*/.nyc_output && lerna run coverage && yarn istanbul report --include=ern-*/.coverage/coverage-final.json html",
