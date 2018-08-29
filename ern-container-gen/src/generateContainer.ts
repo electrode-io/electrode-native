@@ -4,7 +4,7 @@ import { copyRnpmAssets } from './copyRnpmAssets'
 import { addContainerMetadata } from './addContainerMetadata'
 import { getContainerMetadata } from './getContainerMetadata'
 import { ContainerGeneratorConfig, ContainerGenResult } from './types'
-import { kax, shell, utils, BundlingResult } from 'ern-core'
+import { kax, shell, utils, BundlingResult, Platform } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 import _ from 'lodash'
@@ -30,7 +30,15 @@ export async function generateContainer(
     if (!config.forceFullGeneration) {
       // Let's look if we can avoid full generation and only regenerate js bundle
       const previousGenMetadata = await getContainerMetadata(config.outDir)
-      if (previousGenMetadata && previousGenMetadata.nativeDeps) {
+
+      if (
+        previousGenMetadata &&
+        // Only perform partial generation if previous Container generation
+        // was done using the same Electrode Native version as the one running
+        // this new Container generation
+        previousGenMetadata.ernVersion === Platform.currentVersion &&
+        previousGenMetadata.nativeDeps
+      ) {
         const pluginsAsStrings = config.plugins.map(p => p.toString())
         const xored = _.xor(pluginsAsStrings, previousGenMetadata.nativeDeps)
         if (xored.length > 0) {
