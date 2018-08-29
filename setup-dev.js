@@ -5,9 +5,8 @@
 const childProcess = require('child_process')
 const execSync = childProcess.execSync
 
-console.log('Performing install and rebuild, this may take a few minutes, please wait..')
+console.log('Performing Electrode Native development setup. Please wait.')
 execSync(`yarn install`)
-execSync(`npm run rebuild`)
 
 const chalk = require('chalk')
 const shell = require('shelljs')
@@ -25,7 +24,7 @@ shell.cd(ERN_VERSIONS_CACHE_PATH)
 shell.ln('-sf', WORKING_DIR, '1000.0.0')
 
 console.log(
-    chalk.green(`
+  chalk.green(`
 =================================================================
 Development environment is now setup !
 Version v1000.0.0 has been created and points to your working directory.
@@ -33,4 +32,5 @@ You can switch to this version by running :
 ${chalk.yellow(`ern platform use 1000.0.0`)}
 Enjoï.
 =================================================================
-`))
+`)
+)
