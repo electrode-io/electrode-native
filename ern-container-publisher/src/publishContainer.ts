@@ -1,15 +1,6 @@
 import { ContainerPublisherConfig } from './types'
 import getPublisher from './getPublisher'
-import {
-  createTmpDir,
-  gitCli,
-  shell,
-  log,
-  Platform,
-  yarn,
-  PackagePath,
-} from 'ern-core'
-import fs from 'fs'
+import { createTmpDir, shell, Platform } from 'ern-core'
 import path from 'path'
 
 export default async function publishContainer(conf: ContainerPublisherConfig) {
@@ -31,16 +22,6 @@ export default async function publishContainer(conf: ContainerPublisherConfig) {
   )
   conf.containerPath = publicationWorkingDir
   conf.ernVersion = Platform.currentVersion
-
-  if (!fs.existsSync(Platform.containerPublishersCacheDirectory)) {
-    shell.mkdir('-p', Platform.containerPublishersCacheDirectory)
-    try {
-      shell.pushd(Platform.containerPublishersCacheDirectory)
-      await yarn.init()
-    } finally {
-      shell.popd()
-    }
-  }
 
   const publisher = await getPublisher(conf.publisher)
 

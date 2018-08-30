@@ -1,23 +1,11 @@
 import { ContainerTransformerConfig } from './types'
 import getTransformer from './getTransformer'
-import { createTmpDir, shell, Platform, yarn } from 'ern-core'
-import fs from 'fs'
-import path from 'path'
+import { Platform } from 'ern-core'
 
 export default async function transformContainer(
   conf: ContainerTransformerConfig
 ) {
   conf.ernVersion = Platform.currentVersion
-
-  if (!fs.existsSync(Platform.containerTransformersCacheDirectory)) {
-    shell.mkdir('-p', Platform.containerTransformersCacheDirectory)
-    try {
-      shell.pushd(Platform.containerTransformersCacheDirectory)
-      await yarn.init()
-    } finally {
-      shell.popd()
-    }
-  }
 
   const transformer = await getTransformer(conf.transformer)
 
