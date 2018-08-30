@@ -5,7 +5,7 @@ import fs from 'fs'
 import { assert, expect } from 'chai'
 import { ModuleFactory } from '../src/ModuleFactory'
 import { doesThrow } from 'ern-util-dev'
-import { PackagePath } from 'ern-core/dist/PackagePath'
+import { PackagePath } from '../src/PackagePath'
 import { YarnCli } from '../src/YarnCli'
 
 describe('ModuleFactory', () => {
