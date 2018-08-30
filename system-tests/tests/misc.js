@@ -21,6 +21,7 @@ const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_ROOT_PATH, '.ernrc')
 const ernConfigObj = fs.existsSync(ERN_RC_GLOBAL_FILE_PATH)
 ? JSON.parse(fs.readFileSync(ERN_RC_GLOBAL_FILE_PATH, 'utf-8'))
 : {}
+const defaultAndroidContainerGenPath = path.join(ERN_ROOT_PATH, 'containergen', 'out', 'android')
 
 process.env['SYSTEM_TESTS'] = 'true'
 process.on('SIGINT', () => afterAll())
@@ -97,6 +98,10 @@ run(`ern create-container --miniapps file:${miniAppPath} -p ios`)
 
 run(`ern create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p android`)
 run(`ern create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p ios`)
+
+// transform-container / publish-coontainer should be successful
+run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android -p dummy`)
+run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android -p dummy`)
 
 run(`ern why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
 
