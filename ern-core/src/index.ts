@@ -38,6 +38,7 @@ export {
   writePackageJson,
   writePackageJsonSync,
 } from './packageJsonFileUtils'
+export { ModuleFactory } from './ModuleFactory'
 
 export const config = _config
 export const Platform = _Platform
