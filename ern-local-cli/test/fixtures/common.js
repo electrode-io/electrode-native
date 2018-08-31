@@ -1,49 +1,31 @@
-export const validContainerVersions = [ 
-  '1.2.3', 
-  '0.0.0', 
-  '123.456.789'
-]
+export const validContainerVersions = ['1.2.3', '0.0.0', '123.456.789']
 
-export const invalidContainerVersions = [ 
-  '123',
-  '1.2',
-  '1.2.x',
-  'x.y.z',
-]
+export const invalidContainerVersions = ['123', '1.2', '1.2.x', 'x.y.z']
 
 export const withoutGitOrFileSystemPath = [
   'package@1.2.3',
-  '@scope/package@1.2.3'
+  '@scope/package@1.2.3',
+  undefined,
+  null,
 ]
 
 export const withGitOrFileSystemPath = [
   'git+ssh://github.com:electrode/react-native.git#master',
-  'file:/Users/username'
+  'file:/Users/username',
 ]
 
 export const withoutFileSystemPath = [
   'git+ssh://github.com:electrode/react-native.git#master',
-  'package@1.2.3'
+  'package@1.2.3',
 ]
 
-export const withFileSystemPath = [
-  'file:/Users/username'
-]
+export const withFileSystemPath = ['file:/Users/username']
 
-export const completeNapDescriptors = [
-  'myapp:android:17.14.0',
-  'myapp:ios:1'
-]
+export const completeNapDescriptors = ['myapp:android:17.14.0', 'myapp:ios:1']
 
-export const incompleteNapDescriptors = [
-  'myapp',
-  'myapp:android'
-]
+export const incompleteNapDescriptors = ['myapp', 'myapp:android']
 
-export const validNpmPackageNames = [
-  'hello-world',
-  '@hello/world'
-]
+export const validNpmPackageNames = ['hello-world', '@hello/world']
 
 export const invalidNpmPackageNames = [
   ' leading - space:and:weirdchars',
@@ -55,16 +37,16 @@ export const invalidNpmPackageNames = [
   'invalid-char-~',
   'invalid-char-)',
   'invalid-char-(',
-  'invalid-char-\'',
+  "invalid-char-'",
   'invalid-char-!',
-  'invalid-char-*'
+  'invalid-char-*',
 ]
 
 export const validElectrodeNativeModuleNames = [
   'MyApp',
   'myApi',
   'helloworld',
-  'MYAPIIMPLEMENTATION'
+  'MYAPIIMPLEMENTATION',
 ]
 
 export const invalidElectrodeNativeModuleNames = [
@@ -72,7 +54,7 @@ export const invalidElectrodeNativeModuleNames = [
   'my_app',
   'hell0w0rld',
   'my*app',
-  'my$app'
+  'my$app',
 ]
 
 export const miniAppNameWithSuffix = [
@@ -80,7 +62,7 @@ export const miniAppNameWithSuffix = [
   'TestMiniApp',
   'testminiapp',
   'miniappTest',
-  'thisMiniAppIsValid'
+  'thisMiniAppIsValid',
 ]
 
 export const apiNameWithSuffix = [
@@ -88,7 +70,7 @@ export const apiNameWithSuffix = [
   'TestApi',
   'testapi',
   'apiTest',
-  'thisapiIsValid'
+  'thisapiIsValid',
 ]
 
 export const apiNativeImplNameWithSuffix = [
@@ -96,7 +78,7 @@ export const apiNativeImplNameWithSuffix = [
   'TestApiimplNative',
   'testapiImplNative',
   'apiImplNativeTest',
-  'thisapiImplNativeIsValid'
+  'thisapiImplNativeIsValid',
 ]
 
 export const apiJsImplNameWithSuffix = [
@@ -104,7 +86,7 @@ export const apiJsImplNameWithSuffix = [
   'TestApiimplJs',
   'testapiImplJs',
   'apiImplJsTest',
-  'thisapiImplJsIsValid'
+  'thisapiImplJsIsValid',
 ]
 
 export const differentNativeApplicationPlatformDescriptors = [
@@ -117,7 +99,7 @@ export const differentNativeApplicationPlatformDescriptors = [
 export const sameNativeApplicationPlatformDescriptors = [
   'testapp:android:1.0.0',
   'testapp:android:2.0.0',
-  'testapp:android:3.0.0'
+  'testapp:android:3.0.0',
 ]
 
 export const npmPkgNameExists = 'chai'

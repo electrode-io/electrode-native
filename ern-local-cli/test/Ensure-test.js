@@ -10,6 +10,7 @@ import * as fixtures from './fixtures/common'
 const sandbox = sinon.createSandbox()
 import fs from 'fs'
 import path from 'path'
+import { PackagePath } from 'ern-core/dist/PackagePath'
 
 let cauldronHelperStub
 
@@ -130,11 +131,323 @@ describe('Ensure.js', () => {
       )
     })
 
+    it('should not throw if nap descriptors exists in Cauldron [array]', async () => {
+      cauldronHelperStub.isDescriptorInCauldron.resolves(true)
+      assert(
+        await doesNotThrow(Ensure.napDescritorExistsInCauldron, null, [
+          'testapp:android:1.0.0',
+        ])
+      )
+    })
+
     it('should throw if nap descriptor does not exist in Cauldron', async () => {
       cauldronHelperStub.isDescriptorInCauldron.resolves(false)
       assert(
         await doesThrow(
           Ensure.napDescritorExistsInCauldron,
+          null,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should throw if nap descriptor does not exist in Cauldron [array]', async () => {
+      cauldronHelperStub.isDescriptorInCauldron.resolves(false)
+      assert(
+        await doesThrow(Ensure.napDescritorExistsInCauldron, null, [
+          'testapp:android:1.0.0',
+        ])
+      )
+    })
+  })
+
+  // ==========================================================
+  // napDescritorDoesNotExistsInCauldron
+  // ==========================================================
+  describe('napDescritorDoesNotExistsInCauldron', () => {
+    it('should throw if nap descriptor exists in Cauldron', async () => {
+      cauldronHelperStub.isDescriptorInCauldron.resolves(true)
+      assert(
+        await doesThrow(
+          Ensure.napDescritorDoesNotExistsInCauldron,
+          null,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if nap descriptor does not exist in Cauldron', async () => {
+      cauldronHelperStub.isDescriptorInCauldron.resolves(false)
+      assert(
+        await doesNotThrow(
+          Ensure.napDescritorDoesNotExistsInCauldron,
+          null,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // dependencyNotInNativeApplicationVersionContainer
+  // ==========================================================
+  describe('dependencyNotInNativeApplicationVersionContainer', () => {
+    it('should throw if dependency is in native application version Container', async () => {
+      cauldronHelperStub.isNativeDependencyInContainer.resolves(true)
+      assert(
+        await doesThrow(
+          Ensure.dependencyNotInNativeApplicationVersionContainer,
+          null,
+          'depa@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if dependency is not in native application version Container', async () => {
+      cauldronHelperStub.isNativeDependencyInContainer.resolves(false)
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyNotInNativeApplicationVersionContainer,
+          null,
+          'depB@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if dependency is undefined', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyNotInNativeApplicationVersionContainer,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // dependencyNotInUseByAMiniApp
+  // ==========================================================
+  describe('dependencyNotInUseByAMiniApp', () => {
+    it('should not throw if dependency is undefined', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyNotInUseByAMiniApp,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // dependencyIsInNativeApplicationVersionContainer
+  // ==========================================================
+  describe('dependencyIsInNativeApplicationVersionContainer', () => {
+    it('should not throw if dependency is in native application version Container', async () => {
+      cauldronHelperStub.getContainerNativeDependency.resolves(
+        PackagePath.fromString('depA@1.0.0')
+      )
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyIsInNativeApplicationVersionContainer,
+          null,
+          'depa@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should throw if dependency is not in native application version Container', async () => {
+      cauldronHelperStub.getContainerNativeDependency.resolves(undefined)
+      assert(
+        await doesThrow(
+          Ensure.dependencyIsInNativeApplicationVersionContainer,
+          null,
+          'depB@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if dependency is undefined', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyIsInNativeApplicationVersionContainer,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // miniAppIsInNativeApplicationVersionContainer
+  // ==========================================================
+  describe('miniAppIsInNativeApplicationVersionContainer', () => {
+    it('should not throw if MiniApp is in native application version Container', async () => {
+      cauldronHelperStub.isMiniAppInContainer.resolves(true)
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainer,
+          null,
+          'miniapp@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw for undefined MiniApp', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainer,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw for null MiniApp', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainer,
+          null,
+          null,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should throw if MiniApp is not in native application version Container', async () => {
+      cauldronHelperStub.isMiniAppInContainer.resolves(false)
+      assert(
+        await doesThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainer,
+          null,
+          'miniapp@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // miniAppIsInNativeApplicationVersionContainerWithDifferentVersion
+  // ==========================================================
+  describe('miniAppIsInNativeApplicationVersionContainerWithDifferentVersion', () => {
+    it('should not throw if miniapp is in native application version Container with different version', async () => {
+      cauldronHelperStub.isMiniAppInContainer.resolves(true)
+      cauldronHelperStub.getContainerMiniApp.resolves('miniapp@2.0.0')
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion,
+          null,
+          'miniapp@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if miniapp is undefined', async () => {
+      cauldronHelperStub.isMiniAppInContainer.resolves(true)
+      cauldronHelperStub.getContainerMiniApp.resolves('miniapp@2.0.0')
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should throw if miniapp is in native application version Container with same version', async () => {
+      cauldronHelperStub.isMiniAppInContainer.resolves(true)
+      cauldronHelperStub.getContainerMiniApp.resolves('miniapp@1.0.0')
+      assert(
+        await doesThrow(
+          Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion,
+          null,
+          'miniapp@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // dependencyIsInNativeApplicationVersionContainerWithDifferentVersion
+  // ==========================================================
+  describe('dependencyIsInNativeApplicationVersionContainerWithDifferentVersion', () => {
+    it('should not throw if dependency is in native application version Container with different version', async () => {
+      cauldronHelperStub.getContainerNativeDependency.resolves(
+        PackagePath.fromString('depA@2.0.0')
+      )
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
+          null,
+          'depA@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if dependency is undefined', async () => {
+      cauldronHelperStub.getContainerNativeDependency.resolves(
+        PackagePath.fromString('depA@2.0.0')
+      )
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should throw if dependency is in native application version Container with same version', async () => {
+      cauldronHelperStub.getContainerNativeDependency.resolves(
+        PackagePath.fromString('depA@1.0.0')
+      )
+      assert(
+        await doesThrow(
+          Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
+          null,
+          'depA@1.0.0',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // miniAppNotInNativeApplicationVersionContainer
+  // ==========================================================
+  describe('miniAppNotInNativeApplicationVersionContainer', () => {
+    it('should not throw for undefined MiniApp', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppNotInNativeApplicationVersionContainer,
+          null,
+          undefined,
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw for null MiniApp', async () => {
+      assert(
+        await doesNotThrow(
+          Ensure.miniAppNotInNativeApplicationVersionContainer,
+          null,
           null,
           'testapp:android:1.0.0'
         )

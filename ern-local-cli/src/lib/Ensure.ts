@@ -288,7 +288,7 @@ export default class Ensure {
       miniAppsStrings,
       m => PackagePath.fromString(m).basePath
     )
-    await this.miniAppIsInNativeApplicationVersionContainer(
+    await Ensure.miniAppIsInNativeApplicationVersionContainer(
       basePathMiniAppsStrings,
       napDescriptor
     )
@@ -319,7 +319,7 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    await this.dependencyIsInNativeApplicationVersionContainer(
+    await Ensure.dependencyIsInNativeApplicationVersionContainer(
       obj,
       napDescriptor
     )
