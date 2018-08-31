@@ -100,8 +100,8 @@ run(`ern create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgk
 run(`ern create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p ios`)
 
 // transform-container / publish-coontainer should be successful
-run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android -p dummy`)
-run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android -p dummy`)
+run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
+run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
 
 run(`ern why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
 
