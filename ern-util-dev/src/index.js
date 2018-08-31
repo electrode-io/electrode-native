@@ -7,6 +7,8 @@ import shell from 'shelljs'
 import _tmp from 'tmp'
 import sinon from 'sinon'
 const sandbox = sinon.createSandbox()
+const jsdiff = require('diff')
+require('colors')
 
 const CLI = path.resolve(
   __dirname,
@@ -304,6 +306,31 @@ export function beforeTest() {
 
 export function afterTest() {
   sandbox.restore()
+}
+
+export function sameDirContent(pathA, pathB, filesToIgnoreContentDiff = []) {
+  let result = true
+  const directoriesDiff = dirCompare.compareSync(pathA, pathB, {
+    compareContent: true,
+  })
+  for (const diff of directoriesDiff.diffSet) {
+    if (diff.state === 'distinct') {
+      if (!filesToIgnoreContentDiff.includes(diff.name1)) {
+        console.log('A difference in content was found !')
+        console.log(JSON.stringify(diff))
+        let diffLine = jsdiff.diffLines(
+          fs.readFileSync(path.join(diff.path1, diff.name1)).toString(),
+          fs.readFileSync(path.join(diff.path2, diff.name2)).toString()
+        )
+        diffLine.forEach(part => {
+          let color = part.added ? 'green' : part.removed ? 'red' : 'grey'
+          process.stderr.write(part.value[color])
+        })
+        result = false
+      }
+    }
+  }
+  return result
 }
 
 export const fixtures = {

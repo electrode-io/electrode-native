@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NFCReaderUsageDescription</key>
+	<string>ErnRunner is requesting NFC Reader access.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>ErnRunner is requesting media library access.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>ErnRunner is requesting bluetooth access.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>ErnRunner is requesting calendar access.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>ErnRunner is requesting camera access.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>ErnRunner is requesting contacts access.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>ErnRunner is requesting FaceID access.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>ErnRunner is requesting health data access.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>ErnRunner is requesting health data write access.</string>
+	<key>NSHomeKitUsageDescription</key>
+	<string>ErnRunner is requesting HomeKit access.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>ErnRunner is requesting location access at all times.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>ErnRunner is requesting location access.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ErnRunner is requesting microphone access.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>ErnRunner is requesting accelerometer access.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>ErnRunner is requesting photo library write access.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ErnRunner is requesting photo library access.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>ErnRunner is requesting reminders access.</string>
+</dict>
+</plist>
