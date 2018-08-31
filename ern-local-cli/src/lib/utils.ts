@@ -618,35 +618,8 @@ async function performContainerStateUpdateInCauldron(
     // Only run them if the Container was fully generated and not the JS Bundle only
     // If only JS bundle was generated, it means that we reused previous Container
     // directory, which was already transformed
-    const transformersFromCauldron =
-      containerGenConfig && containerGenConfig.transformers
-    if (transformersFromCauldron && !containerGenResult.generatedJsBundleOnly) {
-      for (const transformerFromCauldron of transformersFromCauldron) {
-        let extra = transformerFromCauldron.extra
-        if (
-          extra &&
-          typeof extra === 'string' &&
-          extra.startsWith(cauldronFileUriScheme)
-        ) {
-          if (!(await cauldron.hasFile(extra))) {
-            throw new Error(
-              `Cannot find transformer extra config file ${extra} in Cauldron`
-            )
-          }
-          const extraFile = await cauldron.getFile(extra)
-          extra = parseJsonFromStringOrFile(extraFile.toString())
-        }
-        await kax
-          .task(`Running Container Transformer ${transformerFromCauldron.name}`)
-          .run(
-            transformContainer({
-              containerPath: outDir,
-              extra,
-              platform: napDescriptor.platform,
-              transformer: transformerFromCauldron.name,
-            })
-          )
-      }
+    if (containerGenResult && !containerGenResult.generatedJsBundleOnly) {
+      await runContainerTransformers({ napDescriptor, containerPath: outDir })
     }
 
     // Commit Cauldron transaction
@@ -664,78 +637,166 @@ async function performContainerStateUpdateInCauldron(
     }
     throw e
   }
-  try {
-    // Run Container publishers sequentially (if any)
-    const publishersFromCauldron =
-      containerGenConfig && containerGenConfig.publishers
-    if (publishersFromCauldron) {
-      for (const publisherFromCauldron of publishersFromCauldron) {
-        let extra = publisherFromCauldron.extra
-        if (!extra) {
-          if (
-            publisherFromCauldron.name === 'maven' ||
-            publisherFromCauldron.name.startsWith('maven@')
-          ) {
-            extra = {
-              artifactId: `${napDescriptor.name}-ern-container`,
-              groupId: 'com.walmartlabs.ern',
-              mavenPassword: publisherFromCauldron.mavenPassword,
-              mavenUser: publisherFromCauldron.mavenUser,
-            }
-          } else if (
-            publisherFromCauldron.name === 'jcenter' ||
-            publisherFromCauldron.name.startsWith('jcenter@')
-          ) {
-            extra = {
-              artifactId: `${napDescriptor.name}-ern-container`,
-              groupId: 'com.walmartlabs.ern',
-            }
-          }
-        } else if (
-          typeof extra === 'string' &&
-          extra.startsWith(cauldronFileUriScheme)
-        ) {
-          if (!(await cauldron.hasFile(extra))) {
-            throw new Error(
-              'Cannot find publisher extra config file ${extra} in Cauldron'
-            )
-          }
-          const extraFile = await cauldron.getFile(extra)
-          extra = parseJsonFromStringOrFile(extraFile.toString())
-        }
 
-        // ==================================================================
-        // Legacy code. To be deprecated
-        let publisherName = publisherFromCauldron.name
-        if (publisherName === 'github') {
-          log.warn(
-            `Your Cauldron is using the 'github' publisher which has been deprecated.
-Please rename 'github' publisher name to 'git' in your Cauldron to get rid of this warning.`
-          )
-          publisherName = 'git'
-        }
-        // ==================================================================
+  return runContainerPublishers({
+    containerPath: outDir,
+    containerVersion: cauldronContainerVersion,
+    napDescriptor,
+  })
+}
 
-        await kax.task(`Running Container Publisher ${publisherName}`).run(
-          publishContainer({
-            containerPath: outDir,
-            containerVersion: cauldronContainerVersion,
-            extra,
-            platform: napDescriptor.platform,
-            publisher: publisherName,
-            url: publisherFromCauldron.url,
-          })
+/**
+ * Given a full Native Appplication Descriptor and a local Container path,
+ * run all Container Transformers configured in Cauldron
+ */
+async function runContainerTransformers({
+  napDescriptor,
+  containerPath,
+}: {
+  napDescriptor: NativeApplicationDescriptor
+  containerPath: string
+}) {
+  if (!napDescriptor.platform || !napDescriptor.version) {
+    throw new Error('Can only work with a full native application descriptor')
+  }
+
+  const cauldron = await getActiveCauldron()
+
+  const containerGenConfig = await cauldron.getContainerGeneratorConfig(
+    napDescriptor
+  )
+
+  const transformersFromCauldron =
+    containerGenConfig && containerGenConfig.transformers
+
+  for (const transformerFromCauldron of transformersFromCauldron) {
+    let extra = transformerFromCauldron.extra
+    if (
+      extra &&
+      typeof extra === 'string' &&
+      extra.startsWith(cauldronFileUriScheme)
+    ) {
+      if (!(await cauldron.hasFile({ cauldronFilePath: extra }))) {
+        throw new Error(
+          `Cannot find transformer extra config file ${extra} in Cauldron`
         )
       }
-      log.info(
-        `Published new container version ${cauldronContainerVersion} for ${napDescriptor.toString()}`
+      const extraFile = await cauldron.getFile({ cauldronFilePath: extra })
+      extra = parseJsonFromStringOrFile(extraFile.toString())
+    }
+    await kax
+      .task(`Running Container Transformer ${transformerFromCauldron.name}`)
+      .run(
+        transformContainer({
+          containerPath,
+          extra,
+          platform: napDescriptor.platform,
+          transformer: transformerFromCauldron.name,
+        })
+      )
+  }
+}
+
+/**
+ * Given a full Native Appplication Descriptor and a local Container path,
+ * run all Container Publishers configured in Cauldron
+ */
+async function runContainerPublishers({
+  napDescriptor,
+  containerPath,
+  containerVersion,
+}: {
+  napDescriptor: NativeApplicationDescriptor
+  containerPath: string
+  containerVersion: string
+}) {
+  if (!napDescriptor.platform || !napDescriptor.version) {
+    throw new Error('Can only work with a full native application descriptor')
+  }
+
+  const cauldron = await getActiveCauldron()
+
+  const containerGenConfig = await cauldron.getContainerGeneratorConfig(
+    napDescriptor
+  )
+
+  const publishersFromCauldron =
+    containerGenConfig && containerGenConfig.publishers
+  if (publishersFromCauldron) {
+    for (const publisherFromCauldron of publishersFromCauldron) {
+      let extra = publisherFromCauldron.extra
+      if (!extra) {
+        extra = getDefaultExtraConfigurationOfPublisherFromCauldron({
+          napDescriptor,
+          publisherFromCauldron,
+        })
+      } else if (
+        typeof extra === 'string' &&
+        extra.startsWith(cauldronFileUriScheme)
+      ) {
+        if (!(await cauldron.hasFile({ cauldronFilePath: extra }))) {
+          throw new Error(
+            'Cannot find publisher extra config file ${extra} in Cauldron'
+          )
+        }
+        const extraFile = await cauldron.getFile({ cauldronFilePath: extra })
+        extra = parseJsonFromStringOrFile(extraFile.toString())
+      }
+
+      // ==================================================================
+      // Legacy code. To be deprecated
+      let publisherName = publisherFromCauldron.name
+      if (publisherName === 'github') {
+        log.warn(
+          `Your Cauldron is using the 'github' publisher which has been deprecated.
+Please rename 'github' publisher name to 'git' in your Cauldron to get rid of this warning.`
+        )
+        publisherName = 'git'
+      }
+      // ==================================================================
+
+      await kax.task(`Running Container Publisher ${publisherName}`).run(
+        publishContainer({
+          containerPath,
+          containerVersion,
+          extra,
+          platform: napDescriptor.platform,
+          publisher: publisherName,
+          url: publisherFromCauldron.url,
+        })
       )
     }
-  } catch (e) {
-    log.error(
-      `[performContainerStateUpdateInCauldron] An error occurred while publishing container: ${e}`
+    log.info(
+      `Published new Container version ${containerVersion} for ${napDescriptor.toString()}`
     )
-    throw e
+  }
+}
+
+function getDefaultExtraConfigurationOfPublisherFromCauldron({
+  publisherFromCauldron,
+  napDescriptor,
+}: {
+  publisherFromCauldron: any
+  napDescriptor: NativeApplicationDescriptor
+}): any {
+  if (
+    publisherFromCauldron.name === 'maven' ||
+    publisherFromCauldron.name.startsWith('maven@')
+  ) {
+    return {
+      artifactId: `${napDescriptor.name}-ern-container`,
+      groupId: 'com.walmartlabs.ern',
+      mavenPassword: publisherFromCauldron.mavenPassword,
+      mavenUser: publisherFromCauldron.mavenUser,
+    }
+  } else if (
+    publisherFromCauldron.name === 'jcenter' ||
+    publisherFromCauldron.name.startsWith('jcenter@')
+  ) {
+    return {
+      artifactId: `${napDescriptor.name}-ern-container`,
+      groupId: 'com.walmartlabs.ern',
+    }
   }
 }
 
@@ -1455,6 +1516,7 @@ export default {
   createZippedBundle,
   doesPackageExistInNpm,
   epilog,
+  getDefaultExtraConfigurationOfPublisherFromCauldron,
   getDescriptorsMatchingSemVerDescriptor,
   getNapDescriptorStringsFromCauldron,
   logErrorAndExitIfNotSatisfied,
@@ -1465,6 +1527,8 @@ export default {
   performContainerStateUpdateInCauldron,
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
+  runContainerPublishers,
+  runContainerTransformers,
   runMiniApp,
   unzip,
 }
