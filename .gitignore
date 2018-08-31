@@ -46,3 +46,6 @@ _book/
 # OSX
 
 .DS_STORE
+
+# Test generated
+generated
