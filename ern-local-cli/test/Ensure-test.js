@@ -2,7 +2,7 @@
 
 import { assert, expect } from 'chai'
 import * as cauldron from 'ern-cauldron-api'
-import { utils, createTmpDir } from 'ern-core'
+import { utils, createTmpDir, PackagePath } from 'ern-core'
 import { doesThrow, doesNotThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import Ensure from '../src/lib/Ensure'
@@ -10,7 +10,6 @@ import * as fixtures from './fixtures/common'
 const sandbox = sinon.createSandbox()
 import fs from 'fs'
 import path from 'path'
-import { PackagePath } from 'ern-core/dist/PackagePath'
 
 let cauldronHelperStub
 
