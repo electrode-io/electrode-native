@@ -669,7 +669,7 @@ async function runContainerTransformers({
   const transformersFromCauldron =
     containerGenConfig && containerGenConfig.transformers
 
-  for (const transformerFromCauldron of transformersFromCauldron) {
+  for (const transformerFromCauldron of transformersFromCauldron || []) {
     let extra = transformerFromCauldron.extra
     if (
       extra &&
@@ -723,7 +723,7 @@ async function runContainerPublishers({
   const publishersFromCauldron =
     containerGenConfig && containerGenConfig.publishers
   if (publishersFromCauldron) {
-    for (const publisherFromCauldron of publishersFromCauldron) {
+    for (const publisherFromCauldron of publishersFromCauldron || []) {
       let extra = publisherFromCauldron.extra
       if (!extra) {
         extra = getDefaultExtraConfigurationOfPublisherFromCauldron({
