@@ -691,6 +691,101 @@ describe('utils.js', () => {
   })
 
   // ==========================================================
+  // getDefaultExtraConfigurationOfPublisherFromCauldron
+  // ==========================================================
+
+  describe('getDefaultExtraConfigurationOfPublisherFromCauldron', () => {
+    it('should return the correct default configuration for a maven publisher [1]', () => {
+      const conf = utils.getDefaultExtraConfigurationOfPublisherFromCauldron({
+        publisherFromCauldron: {
+          name: 'maven',
+          mavenPassword: 'password',
+          mavenUser: 'user',
+        },
+        napDescriptor: NativeApplicationDescriptor.fromString(
+          'testapp:android:1.0.0'
+        ),
+      })
+      expect(conf).eql({
+        artifactId: 'testapp-ern-container',
+        groupId: 'com.walmartlabs.ern',
+        mavenPassword: 'password',
+        mavenUser: 'user',
+      })
+    })
+
+    it('should return the correct default configuration for a maven publisher [2]', () => {
+      const conf = utils.getDefaultExtraConfigurationOfPublisherFromCauldron({
+        publisherFromCauldron: {
+          name: 'maven',
+        },
+        napDescriptor: NativeApplicationDescriptor.fromString(
+          'testapp:android:1.0.0'
+        ),
+      })
+      expect(conf).eql({
+        artifactId: 'testapp-ern-container',
+        groupId: 'com.walmartlabs.ern',
+        mavenUser: undefined,
+        mavenPassword: undefined,
+      })
+    })
+
+    it('should return the correct default configuration for a maven publisher [3]', () => {
+      const conf = utils.getDefaultExtraConfigurationOfPublisherFromCauldron({
+        publisherFromCauldron: {
+          name: 'maven@^1.0.0',
+          mavenPassword: 'password',
+          mavenUser: 'user',
+        },
+        napDescriptor: NativeApplicationDescriptor.fromString(
+          'testapp:android:1.0.0'
+        ),
+      })
+      expect(conf).eql({
+        artifactId: 'testapp-ern-container',
+        groupId: 'com.walmartlabs.ern',
+        mavenPassword: 'password',
+        mavenUser: 'user',
+      })
+    })
+
+    it('should return the correct default configuration for a jcenter publisher [1]', () => {
+      const conf = utils.getDefaultExtraConfigurationOfPublisherFromCauldron({
+        publisherFromCauldron: {
+          name: 'jcenter',
+        },
+        napDescriptor: NativeApplicationDescriptor.fromString(
+          'testapp:android:1.0.0'
+        ),
+      })
+      expect(conf).eql({
+        artifactId: 'testapp-ern-container',
+        groupId: 'com.walmartlabs.ern',
+      })
+    })
+
+    it('should return the correct default configuration for a jcenter publisher [2]', () => {
+      const conf = utils.getDefaultExtraConfigurationOfPublisherFromCauldron({
+        publisherFromCauldron: {
+          name: 'jcenter',
+        },
+        napDescriptor: NativeApplicationDescriptor.fromString(
+          'testapp:android:1.0.0'
+        ),
+      })
+      expect(conf).eql({
+        artifactId: 'testapp-ern-container',
+        groupId: 'com.walmartlabs.ern',
+      })
+    })
+  })
+
+  // ==========================================================
+  // runContainerTransformers
+  // ==========================================================
+
+  // ==========================================================
   // doesPackageExistInNpm
   // ==========================================================
   describe('doesPackageExistInNpm', () => {
