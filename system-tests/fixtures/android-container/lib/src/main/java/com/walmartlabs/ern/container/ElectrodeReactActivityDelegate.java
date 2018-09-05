@@ -135,6 +135,24 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         }
     }
 
+    /**
+     * Removes the {@link ReactRootView} for the given miniapp (if present) from the list and also unmounts the application..
+     *
+     * @param applicationName {@link String} miniapp name
+     */
+    public void removeMiniAppView(@NonNull String applicationName) {
+        ReactRootView reactRootView;
+        synchronized (mReactRootViews) {
+            reactRootView = mReactRootViews.get(applicationName);
+            if (reactRootView != null) {
+                mReactRootViews.remove(applicationName);
+            }
+        }
+        if (reactRootView != null) {
+            reactRootView.unmountReactApplication();
+        }
+    }
+
     @Override
     protected void loadApp(String appKey) {
         ReactRootView rootView = (ReactRootView) getReactAppView(appKey, getLaunchOptions());
