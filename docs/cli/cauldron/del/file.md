@@ -25,8 +25,8 @@ Remove the file `bar.json` from directory `foo` of the Cauldron,
 #### Related commands
 
 [ern cauldron add file] | Add a file in the Cauldron   
-[ern cauldron del file] | Remove a file from the Cauldron
+[ern cauldron update file] | Update a file in the Cauldron
 
 ___  
 [ern cauldron add file]: ../add/file.md
-[ern cauldron del file]: ../del/file.md
+[ern cauldron update file]: ../update/file.md
