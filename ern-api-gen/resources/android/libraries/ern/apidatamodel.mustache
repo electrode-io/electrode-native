@@ -154,16 +154,16 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         {{/isListContainer}}
         {{^isListContainer}}
         {{#isString}}
-        this.{{baseName}} = bundle.getString("{{baseName}}");
+        bundle.putString("{{baseName}}", this.{{baseName}});
         {{/isString}}
         {{#isInteger}}
-        this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
+        bundle.putInt("{{baseName}}", this.{{baseName}});
         {{/isInteger}}
         {{#isBoolean}}
-        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
+        bundle.putBoolean("{{baseName}}", this.{{baseName}});
         {{/isBoolean}}
         {{^isPrimitiveType}}
-        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
+        bundle.putBundle("{{baseName}}", this.{{baseName}}.toBundle());
         {{/isPrimitiveType}}
         {{/isListContainer}}
         {{/requiredParams}}
@@ -176,22 +176,22 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
         {{^isListContainer}}
         {{#isString}}
         if({{baseName}} != null) {
-            this.{{baseName}} = bundle.getString("{{baseName}}");
+            bundle.putString("{{baseName}}", this.{{baseName}} );
         }
         {{/isString}}
         {{#isInteger}}
         if({{baseName}} != null) {
-            this.{{baseName}} = getNumberValue(bundle, "{{baseName}}") == null ? null : getNumberValue(bundle, "{{baseName}}").intValue();
+            bundle.putInt("{{baseName}}", this.{{baseName}});
         }
         {{/isInteger}}
         {{#isBoolean}}
         if({{baseName}} != null) {
-            this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
+            bundle.putBoolean("{{baseName}}", this.{{baseName}});
         }
         {{/isBoolean}}
         {{^isPrimitiveType}}
         if({{baseName}} != null) {
-            this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
+            bundle.putBundle("{{baseName}}", this.{{baseName}}.toBundle());
         }
         {{/isPrimitiveType}}
         {{/isListContainer}}
