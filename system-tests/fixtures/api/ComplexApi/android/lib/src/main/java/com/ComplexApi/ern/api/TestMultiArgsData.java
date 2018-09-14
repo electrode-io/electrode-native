@@ -97,8 +97,8 @@ public class TestMultiArgsData implements Parcelable, Bridgeable {
     @Override
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-        this.key1 = bundle.getString("key1");
-        this.key2 = getNumberValue(bundle, "key2") == null ? null : getNumberValue(bundle, "key2").intValue();
+        bundle.putString("key1", this.key1);
+        bundle.putInt("key2", this.key2);
         return bundle;
     }
 
