@@ -357,6 +357,7 @@ export async function performCodePushOtaUpdate(
         dev: false,
         entryFile: `index.${platform}.js`,
         platform,
+        workingDir: tmpWorkingDir,
       })
     )
 
