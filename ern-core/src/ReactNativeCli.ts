@@ -46,12 +46,14 @@ export default class ReactNativeCli {
     bundleOutput,
     assetsDest,
     platform,
+    workingDir,
   }: {
     entryFile: string
     dev: boolean
     bundleOutput: string
     assetsDest: string
     platform: string
+    workingDir?: string
   }): Promise<BundlingResult> {
     const bundleCommand = `${this.binaryPath} bundle \
 ${entryFile ? `--entry-file=${entryFile}` : ''} \
@@ -60,7 +62,7 @@ ${platform ? `--platform=${platform}` : ''} \
 ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
 ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
 
-    await execp(bundleCommand)
+    await execp(bundleCommand, { cwd: workingDir })
     return {
       assetsPath: assetsDest,
       bundlePath: bundleOutput,
