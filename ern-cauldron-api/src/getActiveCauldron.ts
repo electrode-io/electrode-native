@@ -13,8 +13,10 @@ let currentCauldronRepoInUse
 
 export default async function getActiveCauldron({
   ignoreSchemaVersionMismatch,
+  localRepoPath,
 }: {
   ignoreSchemaVersionMismatch?: boolean
+  localRepoPath?: string
 } = {}): Promise<CauldronHelper> {
   const repoInUse = config.getValue('cauldronRepoInUse')
   if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
@@ -28,7 +30,7 @@ export default async function getActiveCauldron({
         : 'master',
       cauldronPath: path.isAbsolute(cauldronRepoUrl)
         ? cauldronRepoUrl
-        : path.join(Platform.rootDirectory, 'cauldron'),
+        : localRepoPath || path.join(Platform.rootDirectory, 'cauldron'),
       repository: path.isAbsolute(cauldronRepoUrl)
         ? undefined
         : cauldronRepoUrlWithoutBranch,
