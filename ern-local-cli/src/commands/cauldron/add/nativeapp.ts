@@ -157,6 +157,13 @@ async function copyOverPreviousVersionData(
       nativeAppVersion.containerVersion
     )
   }
+  // Copy over ern version
+  if (nativeAppVersion.container.ernVersion) {
+    await cauldron.updateContainerErnVersion(
+      napDescriptor,
+      nativeAppVersion.container.ernVersion
+    )
+  }
 }
 
 async function askUserCopyPreviousVersionData(
