@@ -1,6 +1,6 @@
 {
   "name": "ern-container-publisher",
-  "version": "0.24.3",
+  "version": "0.24.4",
   "description": "Electrode Native Container Publisher",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -51,10 +51,10 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-core": "0.24.3"
+    "ern-core": "0.24.4"
   },
   "devDependencies": {
-    "ern-util-dev": "0.24.3"
+    "ern-util-dev": "0.24.4"
   },
   "engines": {
     "node": ">=6"
