@@ -54,6 +54,8 @@ export async function generateContainer(
           generatedJsBundleOnly = true
         }
       }
+    } else {
+      shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
     }
   }
 
