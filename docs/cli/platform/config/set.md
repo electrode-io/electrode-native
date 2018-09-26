@@ -47,7 +47,7 @@ Only apply if the package cache is enabled (`package-cache-enabled` configuratio
 - `package-cache-enabled` [boolean]
 Indicates whether the package cache should be enabled.  
 Enabling the package cache will lead to faster Containers generation, given that all packages versions used for a Container generation, will be retrieved from the cache if available rather than being downloaded upon every generation.
-**default** : false  
+**default** : true  
 
 #### Remarks
  

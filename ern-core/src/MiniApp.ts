@@ -52,7 +52,10 @@ export class MiniApp {
 
   public static async fromPackagePath(packagePath: PackagePath) {
     let fsPackagePath
-    if (!packagePath.isFilePath && config.getValue('package-cache-enabled')) {
+    if (
+      !packagePath.isFilePath &&
+      config.getValue('package-cache-enabled', true)
+    ) {
       if (!(await packageCache.isInCache(packagePath))) {
         fsPackagePath = await packageCache.addToCache(packagePath)
       } else {

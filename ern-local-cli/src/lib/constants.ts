@@ -22,7 +22,7 @@ export const availableUserConfigKeys = [
     values: [true, false],
   },
   {
-    desc: 'Enable package cache [EXPERIMENTAL]',
+    desc: 'Enable package cache',
     name: 'package-cache-enabled',
     values: [true, false],
   },
