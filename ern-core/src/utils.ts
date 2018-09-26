@@ -96,16 +96,18 @@ export function getDefaultPackageNameForCamelCaseString(
   const splitArray = splitCamelCaseString(moduleName)
   switch (moduleType) {
     case ModuleType.MINIAPP:
-      return _
-        .filter(splitArray, token => !['mini', 'app'].includes(token))
-        .join('-')
+      return _.filter(
+        splitArray,
+        token => !['mini', 'app'].includes(token)
+      ).join('-')
     case ModuleType.API:
       return _.filter(splitArray, token => !['api'].includes(token)).join('-')
     case ModuleType.JS_API_IMPL:
     case ModuleType.NATIVE_API_IMPL:
-      return _
-        .filter(splitArray, token => !['api', 'impl'].includes(token))
-        .join('-')
+      return _.filter(
+        splitArray,
+        token => !['api', 'impl'].includes(token)
+      ).join('-')
     default:
       return splitArray.join('-')
   }
@@ -278,7 +280,7 @@ export async function downloadPluginSource(pluginOrigin: any): Promise<string> {
         version: pluginOrigin.version,
       })
       const p = PackagePath.fromString(dependency.toString())
-      if (config.getValue('package-cache-enabled')) {
+      if (config.getValue('package-cache-enabled', true)) {
         if (!(await packageCache.isInCache(p))) {
           absolutePluginOutPath = await packageCache.addToCache(p)
         } else {
