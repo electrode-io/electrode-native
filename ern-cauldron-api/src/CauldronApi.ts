@@ -826,6 +826,9 @@ export default class CauldronApi {
     value: any
   }) {
     const obj = await this.getObjectMatchingDescriptor(descriptor)
+    if (!obj.config) {
+      obj.config = {}
+    }
     if (key) {
       obj.config[key] = value
       return this.commit(

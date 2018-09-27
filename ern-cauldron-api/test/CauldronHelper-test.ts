@@ -1,5 +1,6 @@
 import { assert, expect } from 'chai'
 import { CauldronHelper } from '../src/CauldronHelper'
+import { CauldronConfigLevel } from '../src/types'
 import { PackagePath, NativeApplicationDescriptor } from 'ern-core'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import {
@@ -559,6 +560,22 @@ describe('CauldronHelper.js', () => {
         .of.length(2)
       expect(result[0]).eql('17.7.0')
       expect(result[1]).eql('17.8.0')
+    })
+  })
+
+  describe('getNativeAppsForPlatform', () => {
+    it('should return the native applications for android platform', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNativeAppsForPlatform('android')
+      expect(result).eql(['test'])
+    })
+
+    it('should return the native applications for ios platform', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNativeAppsForPlatform('ios')
+      expect(result).eql([])
     })
   })
 
@@ -1181,6 +1198,127 @@ describe('CauldronHelper.js', () => {
     })
   })
 
+  describe('addFile', () => {
+    it('should add the file to the cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+        localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+      })
+      const hasAddedFile = await fileStore.hasFile(
+        'path/in/cauldron/testfile.ext'
+      )
+      expect(hasAddedFile).true
+    })
+  })
+
+  describe('updateFile', () => {
+    it('should throw if the file was not added first', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(
+        doesThrow(cauldronHelper.updateFile, cauldronHelper, {
+          cauldronFilePath: 'path/in/cauldron/testfile.ext',
+          localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+        })
+      )
+    })
+
+    it('should update the file in the cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+        localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+      })
+      await cauldronHelper.updateFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+        localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+      })
+      const hasAddedFile = await fileStore.hasFile(
+        'path/in/cauldron/testfile.ext'
+      )
+      expect(hasAddedFile).true
+    })
+  })
+
+  describe('removeFile', () => {
+    it('should throw if the file was not added first', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(
+        doesThrow(cauldronHelper.removeFile, cauldronHelper, {
+          cauldronFilePath: 'path/in/cauldron/testfile.ext',
+          localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+        })
+      )
+    })
+
+    it('should remove the file from the cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+        localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+      })
+      await cauldronHelper.removeFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+      })
+      const hasFile = await fileStore.hasFile('path/in/cauldron/testfile.ext')
+      expect(hasFile).false
+    })
+  })
+
+  describe('hasFile', () => {
+    it('should return false if the file does not exist in cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const hasFile = await cauldronHelper.hasFile({
+        cauldronFilePath: '/non/existing/file',
+      })
+      expect(hasFile).false
+    })
+
+    it('should return true if the file does exist in cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+        localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+      })
+      const hasFile = await cauldronHelper.hasFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+      })
+      expect(hasFile).true
+    })
+  })
+
+  describe('getFile', () => {
+    it('should throw if the file does not exist in cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      assert(
+        doesThrow(cauldronHelper.getFile, cauldronHelper, {
+          cauldronFilePath: '/non/existing/file',
+        })
+      )
+    })
+
+    it('should return the file content if the file does exist in cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+        localFilePath: path.resolve(__dirname, 'fixtures', 'testfile.ext'),
+      })
+      const fileContent = await cauldronHelper.getFile({
+        cauldronFilePath: 'path/in/cauldron/testfile.ext',
+      })
+      expect(fileContent.toString()).eql('dummyfile')
+    })
+  })
+
   describe('addBundle', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
@@ -1772,6 +1910,136 @@ describe('CauldronHelper.js', () => {
       expect(result)
         .to.be.an('array')
         .of.length(1)
+    })
+  })
+
+  describe('syncContainerJsApiImpls', () => {
+    it('should update the versions of existing js api implementations', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        [PackagePath.fromString('react-native-my-api-impl@1.0.1')]
+      )
+      const result = await cauldronHelper.getContainerJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(1)
+      expect(result[0].version).eql('1.0.1')
+    })
+
+    it('should add new js api implementations', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.syncContainerJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        [PackagePath.fromString('new-js-api-impl@1.0.0')]
+      )
+      const result = await cauldronHelper.getContainerJsApiImpls(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(2)
+    })
+  })
+
+  describe('getContainerErnVersion', () => {
+    it('should return the ern version of the target container', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerErnVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result).eql('1000.0.0')
+    })
+  })
+
+  describe('getCauldronConfigLevelMatchingDescriptor', () => {
+    it('should return CauldronConfigLevel.Top if descriptor is undefined', () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = cauldronHelper.getCauldronConfigLevelMatchingDescriptor(
+        undefined
+      )
+      expect(result).eql(CauldronConfigLevel.Top)
+    })
+
+    it('should return CauldronConfigLevel.NativeAppVersion if descriptor target a native application version', () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = cauldronHelper.getCauldronConfigLevelMatchingDescriptor(
+        NativeApplicationDescriptor.fromString('test:android:1.0.0')
+      )
+      expect(result).eql(CauldronConfigLevel.NativeAppVersion)
+    })
+
+    it('should return CauldronConfigLevel.NativeAppPlatform if descriptor target a native application platform', () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = cauldronHelper.getCauldronConfigLevelMatchingDescriptor(
+        NativeApplicationDescriptor.fromString('test:android')
+      )
+      expect(result).eql(CauldronConfigLevel.NativeAppPlatform)
+    })
+
+    it('should return CauldronConfigLevel.NativeApp if descriptor target a native application', () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = cauldronHelper.getCauldronConfigLevelMatchingDescriptor(
+        NativeApplicationDescriptor.fromString('test')
+      )
+      expect(result).eql(CauldronConfigLevel.NativeApp)
+    })
+  })
+
+  describe('setConfig', () => {
+    it('should create the config object if it does not exist in target descriptor', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.setConfig({
+        descriptor: NativeApplicationDescriptor.fromString(
+          'test:android:17.8.0'
+        ),
+        key: 'testKey',
+        value: 'testValue',
+      })
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.config).not.undefined
+      expect(nativeAppVersion.config.testKey).eql('testValue')
+    })
+
+    it('should add the key value pair to existing config objet', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.setConfig({
+        descriptor: NativeApplicationDescriptor.fromString(
+          'test:android:17.7.0'
+        ),
+        key: 'testKey',
+        value: 'testValue',
+      })
+      const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
+      expect(nativeAppVersion.config).not.undefined
+      expect(nativeAppVersion.config.testKey).eql('testValue')
+    })
+  })
+
+  describe('delConfig', () => {
+    it('should remove the key from config of target descriptor', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.delConfig({
+        descriptor: NativeApplicationDescriptor.fromString(
+          'test:android:17.7.0'
+        ),
+        key: 'test',
+      })
+      const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
+      expect(nativeAppVersion.config).not.undefined
+      expect(nativeAppVersion.config.testKey).undefined
     })
   })
 
