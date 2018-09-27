@@ -1,5 +1,3 @@
-// @flow
-
 import { assert, expect } from 'chai'
 import {
   ModuleTypes,
