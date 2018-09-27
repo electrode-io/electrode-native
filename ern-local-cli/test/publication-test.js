@@ -1,5 +1,3 @@
-// @flow
-
 import mockFs from 'mock-fs'
 import os from 'os'
 import path from 'path'

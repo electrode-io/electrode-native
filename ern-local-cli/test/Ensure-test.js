@@ -1,5 +1,3 @@
-// @flow
-
 import { assert, expect } from 'chai'
 import * as cauldron from 'ern-cauldron-api'
 import { utils, createTmpDir, PackagePath } from 'ern-core'

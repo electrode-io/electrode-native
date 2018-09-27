@@ -288,9 +288,11 @@ export function getCompatibility(
           semver.major(localDepVersion) ===
           semver.major(<string>remoteDep.version)
         ) {
-          result.compatibleNonStrict.push(entry)
-        } else if (semver.lt(localDepVersion, <string>remoteDep.version)) {
-          result.compatibleNonStrict.push(entry)
+          if (semver.lt(localDepVersion, <string>remoteDep.version)) {
+            result.compatibleNonStrict.push(entry)
+          } else {
+            result.incompatible.push(entry)
+          }
         } else {
           result.incompatible.push(entry)
         }
