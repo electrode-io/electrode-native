@@ -77,4 +77,21 @@ describe('util.js', () => {
       expect(result).eql('dir/file')
     })
   })
+
+  describe('getSchemaVersionMatchingCauldronApiVersion', () => {
+    it('should return 1.0.0 for version 1000.0.0', () => {
+      const result = util.getSchemaVersionMatchingCauldronApiVersion('1000.0.0')
+      expect(result).eql('1.0.0')
+    })
+
+    it('should return 1.0.0 for version 0.12.0', () => {
+      const result = util.getSchemaVersionMatchingCauldronApiVersion('0.12.0')
+      expect(result).eql('1.0.0')
+    })
+
+    it('should return 0.0.0 for version 0.50.0', () => {
+      const result = util.getSchemaVersionMatchingCauldronApiVersion('0.50.0')
+      expect(result).eql('0.0.0')
+    })
+  })
 })
