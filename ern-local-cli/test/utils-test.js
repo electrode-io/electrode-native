@@ -52,6 +52,7 @@ describe('utils.js', () => {
       '2.0.0',
       '3.0',
     ])
+    cauldronHelperStub.getFile.resolves('{"key":"value"}')
 
     // yarn stub
     yarnInfoStub = sandbox.stub(yarn, 'info')
@@ -1086,6 +1087,9 @@ describe('utils.js', () => {
     })
   })
 
+  // ==========================================================
+  // normalizeVersionsToSemver
+  // ==========================================================
   describe('normalizeVersionsToSemver', () => {
     it('should return an array containing the normalized versions', () => {
       const versions = ['1.0.0', '2.0', '3', '1.0.0-beta', '2.0-beta', '2-beta']
@@ -1100,6 +1104,84 @@ describe('utils.js', () => {
           '2.0.0-beta',
           '2.0.0-beta',
         ])
+    })
+  })
+
+  // ==========================================================
+  // parseJsonFromStringOrFile
+  // ==========================================================
+  describe('parseJsonFromStringOrFile', () => {
+    it('should throw if the passed string is not valid json', async () => {
+      assert(
+        await doesThrow(utils.parseJsonFromStringOrFile, null, 'invalidjson')
+      )
+    })
+
+    it('should return parsed json if string is a patch to a cauldron file', async () => {
+      expect(await utils.parseJsonFromStringOrFile('cauldron://dummyfile')).eql(
+        {
+          key: 'value',
+        }
+      )
+    })
+
+    it('should return parsed json if value is a json file', async () => {
+      expect(
+        await utils.parseJsonFromStringOrFile(
+          path.resolve(__dirname, 'fixtures', 'dummy.json')
+        )
+      ).eql({
+        key: 'value',
+      })
+    })
+
+    it('should return parsed json if value is a json string', async () => {
+      expect(await utils.parseJsonFromStringOrFile('{"key": "value"}')).eql({
+        key: 'value',
+      })
+    })
+  })
+
+  // ==========================================================
+  // parseArgValue
+  // ==========================================================
+  describe('parseArgValue', () => {
+    it('should return the passed value if value is a number', async () => {
+      expect(await utils.parseArgValue(5)).eql(5)
+    })
+
+    it('should return true if the value is "true"', async () => {
+      expect(await utils.parseArgValue('true')).true
+    })
+
+    it('should return false if the value is "false"', async () => {
+      expect(await utils.parseArgValue('false')).false
+    })
+
+    it('should return the passed value if value is a string', async () => {
+      expect(await utils.parseArgValue('toto')).eql('toto')
+    })
+
+    it('should return parsed json if value is a json string', async () => {
+      expect(await utils.parseArgValue('{"key": "value"}')).eql({
+        key: 'value',
+      })
+    })
+
+    it('should return parsed json if value is a path to a cauldron file', async () => {
+      expect(await utils.parseArgValue('cauldron://dummyfile')).eql({
+        key: 'value',
+      })
+    })
+
+    it('should return parsed json if value is a json file', async () => {
+      expect(
+        await utils.parseArgValue(
+          path.resolve(__dirname, 'fixtures', 'dummy.json')
+        )
+      ).eql({
+        key: 'value',
+      })
     })
   })
 })
