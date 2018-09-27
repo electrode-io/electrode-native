@@ -1,4 +1,4 @@
-import { readJSON, writeJSON } from './fs-util'
+import { fileUtils } from 'ern-core'
 import BaseGit from './BaseGit'
 import fs from 'fs'
 import path from 'path'
@@ -36,7 +36,7 @@ export default class GitDocumentStore extends BaseGit
   // ===========================================================
 
   public async commit(message: string = 'Commit') {
-    await writeJSON(this.jsonPath, this.cauldron)
+    await fileUtils.writeJSON(this.jsonPath, this.cauldron)
     await this.git.addAsync(CAULDRON_FILENAME)
     if (!this.pendingTransaction) {
       await this.git.commitAsync(message)
@@ -47,7 +47,7 @@ export default class GitDocumentStore extends BaseGit
   public async getCauldron(): Promise<Cauldron> {
     await this.sync()
     if (fs.existsSync(this.jsonPath)) {
-      this.cauldron = <Cauldron>await readJSON(this.jsonPath)
+      this.cauldron = <Cauldron>await fileUtils.readJSON(this.jsonPath)
     }
     return this.cauldron
   }

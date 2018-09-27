@@ -1,8 +1,7 @@
-import { writeFile } from './fs-util'
 import BaseGit from './BaseGit'
 import fs from 'fs'
 import path from 'path'
-import { log, shell } from 'ern-core'
+import { log, shell, fileUtils } from 'ern-core'
 import { ICauldronFileStore } from './types'
 
 export default class GitFileStore extends BaseGit
@@ -37,7 +36,7 @@ export default class GitFileStore extends BaseGit
       shell.mkdir('-p', storeDirectoryPath)
     }
     const pathToFile = path.resolve(storeDirectoryPath, path.basename(filePath))
-    await writeFile(pathToFile, content, { flag: 'w' })
+    await fileUtils.writeFile(pathToFile, content, { flag: 'w' })
     if (fileMode) {
       shell.chmod(fileMode, pathToFile)
     }

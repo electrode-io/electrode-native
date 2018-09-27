@@ -1,7 +1,6 @@
-import { writeFile } from './fs-util'
 import fs from 'fs'
 import path from 'path'
-import { log, shell, gitCli } from 'ern-core'
+import { log, shell, gitCli, fileUtils } from 'ern-core'
 import { ITransactional } from './types'
 
 const GIT_REMOTE_NAME = 'upstream'
@@ -129,7 +128,7 @@ export default class BaseGit implements ITransactional {
     if (!fs.existsSync(fpath)) {
       log.debug(`[BaseGit] Performing initial commit`)
       await this.git.rawAsync(['checkout', '-b', this.branch])
-      await writeFile(fpath, README, { encoding: 'utf8' })
+      await fileUtils.writeFile(fpath, README)
       await this.git.addAsync('README.md')
       await this.git.commitAsync('First Commit!')
     }
