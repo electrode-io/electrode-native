@@ -51,7 +51,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "ern-core": "0.24.4",
-    "joi": "^13.6.0",
+    "joi": "^12.0.0",
     "lodash": "^4.17.10",
     "semver": "^5.5.0"
   },
