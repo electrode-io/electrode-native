@@ -7,7 +7,8 @@ import {
   kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../lib/utils'
+import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { epilog, logErrorAndExitIfNotSatisfied, askUserToChooseANapDescriptorFromCauldron } from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
 
@@ -33,7 +34,7 @@ export const builder = (argv: Argv) => {
         'Force regen even if some conflicting native dependencies versions have been found',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -43,7 +44,7 @@ export const handler = async ({
   descriptor?: string
   containerVersion?: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
@@ -51,13 +52,13 @@ export const handler = async ({
   })
   try {
     if (!descriptor) {
-      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
+      descriptor = await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
       })
     }
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
@@ -107,7 +108,7 @@ export const handler = async ({
       nativeDependencies.resolved,
       cauldronDependencies
     )
-    await utils.performContainerStateUpdateInCauldron(
+    await performContainerStateUpdateInCauldron(
       async () => {
         await cauldron.syncContainerNativeDependencies(
           napDescriptor,

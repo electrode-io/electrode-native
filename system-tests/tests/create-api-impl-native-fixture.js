@@ -14,7 +14,8 @@ const filesToIgnore = [
   'README.md',
   'WalmartItemApi.spec.js',
   'SysteTestEventApi.spec.js',
-  'SystemTestsApi.spec.js'
+  'SystemTestsApi.spec.js',
+  '.yarn-integrity'
 ]
 
 run(`ern create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --nativeOnly --outputDirectory ${process.cwd()} --force`)

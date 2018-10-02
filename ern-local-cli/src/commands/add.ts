@@ -1,5 +1,5 @@
 import { log, MiniApp, PackagePath, utils as coreUtils } from 'ern-core'
-import utils from '../lib/utils'
+import { epilog } from '../lib'
 import { Argv } from 'yargs'
 
 // Note : We use `pkg` instead of `package` because `package` is
@@ -19,7 +19,7 @@ export const builder = (argv: Argv) => {
       describe: 'Add this/these packages to peerDependencies',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({

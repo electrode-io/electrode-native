@@ -3,11 +3,11 @@ import os from 'os'
 import path from 'path'
 import { assert, expect } from 'chai'
 import { PackagePath } from 'ern-core'
-import { getCodePushSdk, getCodePushInitConfig } from '../src/lib/codepush'
+import { getCodePushSdk, getCodePushInitConfig } from '../src/codepush'
 import {
   containsVersionMismatch,
   resolvePluginsVersions,
-} from '../src/lib/container'
+} from '../src/container'
 
 const ernRcPath = path.join(os.homedir(), '.ern', '.ernrc')
 const codePushConfigPath = path.join(
@@ -26,7 +26,7 @@ const codePushConfigWithAccessKey = JSON.stringify({
 const ernRcWithoutCodePushAccessKey = JSON.stringify({})
 const codePushConfigWithoutAccessKey = JSON.stringify({})
 
-describe('lib/publication.js', () => {
+describe('publication.js', () => {
   afterEach(() => {
     mockFs.restore()
   })

@@ -1,6 +1,6 @@
 import { NativeApplicationDescriptor, ErnBinaryStore, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../lib'
 import path from 'path'
 import { Argv } from 'yargs'
 
@@ -8,7 +8,7 @@ export const command = 'add <descriptor> <pathToBinary>'
 export const desc = 'Add a mobile application binary to the binary store'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -18,7 +18,7 @@ export const handler = async ({
   descriptor: string
   pathToBinary: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',

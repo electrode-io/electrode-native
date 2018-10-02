@@ -39,6 +39,7 @@ export {
   writePackageJsonSync,
 } from './packageJsonFileUtils'
 export { ModuleFactory } from './ModuleFactory'
+export { isPackagePublished } from './isPackagePublished'
 
 export const config = _config
 export const Platform = _Platform
@@ -77,3 +78,9 @@ export { ManifestOverrideConfig } from './Manifest'
 export { NativePlatform } from './NativePlatform'
 export { FsCache } from './FsCache'
 export { packageCache } from './packageCache'
+export { normalizeVersionsToSemver } from './normalizeVersionsToSemver'
+export { unzip } from './unzip'
+export { createZippedBundle } from './createZippedBundle'
+export {
+  checkIfModuleNameContainsSuffix,
+} from './checkIfModuleNameContainsSuffix'

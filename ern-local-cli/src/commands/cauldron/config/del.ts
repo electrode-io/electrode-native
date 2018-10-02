@@ -1,5 +1,5 @@
 import { Argv } from 'yargs'
-import utils from '../../../lib/utils'
+import { epilog } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { utils as coreUtils, NativeApplicationDescriptor, log } from 'ern-core'
 
@@ -18,7 +18,7 @@ export const builder = (argv: Argv) => {
         'Partial or full native application descriptor for which to delete config (top level config if not specified)',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({

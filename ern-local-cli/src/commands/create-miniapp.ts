@@ -5,8 +5,14 @@ import {
   utils as coreUtils,
   log,
   kax,
+  checkIfModuleNameContainsSuffix,
 } from 'ern-core'
-import utils from '../lib/utils'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  promptUserToUseSuffixModuleName,
+  performPkgNameConflictCheck,
+} from '../lib'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
@@ -35,7 +41,7 @@ export const builder = (argv: Argv) => {
         'Skip the check ensuring package does not already exists in NPM registry',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -52,14 +58,14 @@ export const handler = async ({
   skipNpmCheck?: boolean
 }) => {
   try {
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isValidElectrodeNativeModuleName: {
         name: appName,
       },
     })
 
-    if (!utils.checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
-      appName = await utils.promptUserToUseSuffixModuleName(
+    if (!checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
+      appName = await promptUserToUseSuffixModuleName(
         appName,
         ModuleTypes.MINIAPP
       )
@@ -73,16 +79,13 @@ export const handler = async ({
       packageName = await promptForPackageName(defaultPackageName)
     }
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isValidNpmPackageName: {
         name: packageName,
       },
     })
 
-    if (
-      !skipNpmCheck &&
-      !(await utils.performPkgNameConflictCheck(packageName))
-    ) {
+    if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
       throw new Error(`Aborting command `)
     }
 

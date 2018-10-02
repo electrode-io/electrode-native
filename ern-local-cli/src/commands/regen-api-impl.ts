@@ -8,7 +8,7 @@ import {
   PackagePath,
   log,
 } from 'ern-core'
-import cliUtils from '../lib/utils'
+import { epilog } from '../lib'
 import path from 'path'
 import fs from 'fs'
 import semver from 'semver'
@@ -30,7 +30,7 @@ export const builder = (argv: Argv) => {
         'Indicates if this api implementation requires some config during initialization. \nThis command will be stored and reused during container generation to enforce config initialization',
       type: 'boolean',
     })
-    .epilog(cliUtils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 const ERROR_MSG_NOT_IN_IMPL =

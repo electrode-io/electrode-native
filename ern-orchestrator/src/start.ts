@@ -16,8 +16,6 @@ import { generateMiniAppsComposite } from 'ern-container-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
-import * as constants from './constants'
-import utils from '../lib/utils'
 
 const { runAndroidApk } = android
 
@@ -57,7 +55,7 @@ export default async function start({
   }
 
   if (!miniapps && !descriptor) {
-    descriptor = await utils.askUserToChooseANapDescriptorFromCauldron()
+    throw new Error('Either miniapps or descriptor needs to be provided')
   }
 
   if (descriptor) {
@@ -68,7 +66,7 @@ export default async function start({
     )
     pathToYarnLock = await cauldron.getPathToYarnLock(
       napDescriptor,
-      constants.CONTAINER_YARN_KEY
+      'container'
     )
   }
 

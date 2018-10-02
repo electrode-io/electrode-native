@@ -8,7 +8,13 @@ import {
   kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../../lib/utils'
+import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  askUserToChooseANapDescriptorFromCauldron,
+  logNativeDependenciesConflicts,
+} from '../../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
 
@@ -34,7 +40,7 @@ export const builder = (argv: Argv) => {
       describe: 'Force',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 // Most/All of the logic here should be moved to the MiniApp class
@@ -50,7 +56,7 @@ export const handler = async ({
   descriptor?: string
   force?: boolean
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
@@ -58,13 +64,13 @@ export const handler = async ({
   })
   try {
     if (!descriptor) {
-      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
+      descriptor = await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
       })
     }
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
@@ -135,7 +141,7 @@ export const handler = async ({
       cauldronDependencies
     )
 
-    utils.logNativeDependenciesConflicts(nativeDependencies, {
+    logNativeDependenciesConflicts(nativeDependencies, {
       throwIfConflict: !force,
     })
 
@@ -149,7 +155,7 @@ export const handler = async ({
       }`,
     ]
 
-    await utils.performContainerStateUpdateInCauldron(
+    await performContainerStateUpdateInCauldron(
       async () => {
         for (const miniAppObj of miniAppsObjs) {
           cauldronCommitMessage.push(

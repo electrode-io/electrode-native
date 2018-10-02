@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { PackagePath } from 'ern-core'
-import { getCompatibility } from '../src/lib/compatibility'
-import { createFalse } from 'typescript'
+import { getCompatibility } from '../src/compatibility'
 
 describe('compatibility', () => {
   describe('getCompatibility', () => {

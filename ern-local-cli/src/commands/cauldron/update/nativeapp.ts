@@ -1,6 +1,6 @@
 import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'nativeapp <descriptor> [isReleased]'
@@ -14,7 +14,7 @@ export const builder = (argv: Argv) => {
       describe: 'true if version is released, false otherwise',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -25,7 +25,7 @@ export const handler = async ({
   isReleased: boolean
 }) => {
   try {
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
         extraErrorMessage:
           'A Cauldron must be active in order to use this command',

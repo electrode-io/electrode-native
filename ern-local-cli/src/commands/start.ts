@@ -1,5 +1,5 @@
-import utils from '../lib/utils'
-import start from '../lib/start'
+import { epilog, askUserToChooseANapDescriptorFromCauldron } from '../lib'
+import { start } from 'ern-orchestrator'
 import _ from 'lodash'
 import { PackagePath, utils as coreUtils } from 'ern-core'
 import { Argv } from 'yargs'
@@ -48,7 +48,7 @@ export const builder = (argv: Argv) => {
       describe: 'iOS Bundle Identifier',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -69,6 +69,10 @@ export const handler = async ({
   extraJsDependencies?: string[]
 } = {}) => {
   try {
+    if (!miniapps && !descriptor) {
+      descriptor = await askUserToChooseANapDescriptorFromCauldron()
+    }
+
     await start({
       activityName,
       bundleId,

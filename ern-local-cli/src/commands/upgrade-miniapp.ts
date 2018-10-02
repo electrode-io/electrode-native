@@ -1,5 +1,5 @@
 import { MiniApp, Platform, utils as coreUtils } from 'ern-core'
-import utils from '../lib/utils'
+import { epilog } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'upgrade-miniapp'
@@ -12,7 +12,7 @@ export const builder = (argv: Argv) => {
       describe: 'Specific platform version to upgrade MiniApp to',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = ({

@@ -1,6 +1,6 @@
 import { Platform, tagOneLine, utils as coreUtils, log } from 'ern-core'
 import chalk from 'chalk'
-import utils from '../../lib/utils'
+import { epilog } from '../../lib'
 import semver from 'semver'
 import { Argv } from 'yargs'
 
@@ -10,7 +10,7 @@ export const command = 'versions'
 export const desc = 'List platform versions'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = () => {

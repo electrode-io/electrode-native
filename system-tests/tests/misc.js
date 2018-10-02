@@ -32,8 +32,6 @@ process.chdir(workingDirectoryPath)
 console.log(info(`Creating GitHub repository (${f.gitHubCauldronRepositoryName})`))
 run(`curl -u ${f.gitUserName}:${f.gitPassword} -d '{"name": "${f.gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
-run('ern --version')
-
 // Cauldron repo
 run('ern cauldron repo clear')
 run(`ern cauldron repo add ${f.cauldronName} https://${f.gitUserName}:${f.gitPassword}@github.com/${f.gitUserName}/${f.gitHubCauldronRepositoryName}.git --current=false`)

@@ -80,7 +80,7 @@ describe('utils.js', () => {
     it('pkgName not published in npm return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoError)
-      expect(await utils.isPublishedToNpm(fixtures.pkgNameNotInNpm)).to.eql(
+      expect(await utils.isPublishedToNpm(fixtures.pkgNameUnpublished)).to.eql(
         false
       )
       yarnStub.restore()
@@ -89,7 +89,7 @@ describe('utils.js', () => {
     it('yarn info returns error return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(new Error('fake error'))
-      expect(await utils.isPublishedToNpm(fixtures.pkgNameNotInNpm)).to.eql(
+      expect(await utils.isPublishedToNpm(fixtures.pkgNameUnpublished)).to.eql(
         false
       )
       yarnStub.restore()

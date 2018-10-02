@@ -5,7 +5,7 @@ import {
   log,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../lib'
 import fs from 'fs'
 import path from 'path'
 import { Argv } from 'yargs'
@@ -14,7 +14,7 @@ export const command = 'get <descriptor> <outDir>'
 export const desc = 'Get a mobile application binary from the binary store'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -24,7 +24,7 @@ export const handler = async ({
   descriptor: string
   outDir: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',

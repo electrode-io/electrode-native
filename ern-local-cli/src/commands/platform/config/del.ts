@@ -1,16 +1,16 @@
 import { Argv } from 'yargs'
-import utils from '../../../lib/utils'
-import { config as ernConfig, utils as coreUtils, log } from 'ern-core'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
+import { config as ernConfig, log } from 'ern-core'
 
 export const command = 'del <key>'
 export const desc = 'Deletes the key from configuration file'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = async ({ key }: { key: string }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     isValidPlatformConfig: {
       key,
     },

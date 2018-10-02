@@ -5,6 +5,8 @@ import {
   NativeApplicationDescriptor,
   fileUtils,
   promptUtils,
+  NativePlatform,
+  normalizeVersionsToSemver,
 } from 'ern-core'
 import {
   CauldronCodePushMetadata,
@@ -932,6 +934,73 @@ export class CauldronHelper {
     miniApp: PackagePath
   ): Promise<void> {
     return this.cauldron.updateContainerMiniAppVersion(napDescriptor, miniApp)
+  }
+
+  //
+  // Retrieves all native applications versions from the Cauldron, optionaly
+  // filtered by platform/and or release status and returns them as an array
+  // of native application descriptor strings
+  public async getNapDescriptorStrings({
+    platform,
+    onlyReleasedVersions,
+    onlyNonReleasedVersions,
+  }: {
+    platform?: NativePlatform
+    onlyReleasedVersions?: boolean
+    onlyNonReleasedVersions?: boolean
+  } = {}): Promise<string[]> {
+    const nativeApps = await this.getAllNativeApps()
+    return <any>_.filter(
+      _.flattenDeep(
+        _.map(nativeApps, nativeApp =>
+          _.map(nativeApp.platforms, p =>
+            _.map(p.versions, version => {
+              if (!platform || platform === p.name) {
+                if (
+                  (version.isReleased && !onlyNonReleasedVersions) ||
+                  (!version.isReleased && !onlyReleasedVersions)
+                ) {
+                  return `${nativeApp.name}:${p.name}:${version.name}`
+                }
+              }
+            })
+          )
+        )
+      ),
+      elt => elt !== undefined
+    )
+  }
+
+  public async getDescriptorsMatchingSemVerDescriptor(
+    semVerDescriptor: NativeApplicationDescriptor
+  ): Promise<NativeApplicationDescriptor[]> {
+    if (!semVerDescriptor.platform || !semVerDescriptor.version) {
+      throw new Error(
+        `${semVerDescriptor.toString()} descriptor is missing platform and/or version`
+      )
+    }
+    const result: NativeApplicationDescriptor[] = []
+    const versionsNames = await this.getVersionsNames(semVerDescriptor)
+    const semVerVersionNames = normalizeVersionsToSemver(versionsNames)
+    const zippedVersions = _.zipWith(
+      versionsNames,
+      semVerVersionNames,
+      (nonSemVer, semVer) => ({ nonSemVer, semVer })
+    )
+
+    const versions = _.filter(zippedVersions, z =>
+      semver.satisfies(z.semVer, <string>semVerDescriptor.version)
+    )
+    for (const version of versions) {
+      const descriptor = new NativeApplicationDescriptor(
+        semVerDescriptor.name,
+        semVerDescriptor.platform,
+        version.nonSemVer
+      )
+      result.push(descriptor)
+    }
+
+    return result
   }
 
   public async throwIfNativeAppVersionIsReleased(

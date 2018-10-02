@@ -14,7 +14,6 @@ import {
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
-import inquirer from 'inquirer'
 import _ from 'lodash'
 import path from 'path'
 import fs from 'fs'
@@ -133,9 +132,9 @@ export async function performCodePushPromote(
           'Native dependencies versions are not aligned but ignoring due to the use of force flag'
         )
       } else if (!nativeDependenciesVersionAligned && !force) {
-        if (!(await askUserToForceCodePushPublication())) {
-          return log.info('CodePush promotion aborted')
-        }
+        throw new Error(
+          'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.'
+        )
       }
 
       const appName = await getCodePushAppName(sourceNapDescriptor)
@@ -254,9 +253,9 @@ export async function performCodePushOtaUpdate(
         'Native dependencies versions of MiniApps are not aligned but ignoring due to the use of force flag'
       )
     } else if (!miniAppsNativeDependenciesVersionAligned && !force) {
-      if (!(await askUserToForceCodePushPublication())) {
-        throw new Error('CodePush publication aborted')
-      }
+      throw new Error(
+        'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.'
+      )
     }
 
     const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(
@@ -307,22 +306,6 @@ export async function performCodePushOtaUpdate(
       referenceJsApiImplsToCodePush,
       x => x.basePath
     )
-
-    // If force or skipFinalConfirmation was not provided as option, we ask user for confirmation before proceeding
-    // with code-push publication
-    const userConfirmedCodePushPublication =
-      force ||
-      skipConfirmation ||
-      (await askUserToConfirmCodePushPublication(
-        miniAppsToBeCodePushed,
-        jsApiImplsToBeCodePushed
-      ))
-
-    if (!userConfirmedCodePushPublication) {
-      return log.info('CodePush publication aborted')
-    } else {
-      log.info('Getting things ready for CodePush publication')
-    }
 
     const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m =>
       PackagePath.fromString(m.toString())
@@ -493,71 +476,6 @@ export function getCodePushSdk() {
     throw new Error('Unable to get the CodePush config to use')
   }
   return new CodePushSdk(codePushInitConfig)
-}
-
-async function askUserToConfirmCodePushPublication(
-  miniAppsToBeCodePushed: PackagePath[],
-  jsApiImplsToBeCodePushed: PackagePath[]
-): Promise<boolean> {
-  if (miniAppsToBeCodePushed && miniAppsToBeCodePushed.length > 0) {
-    log.info(
-      `The following MiniApp versions will get shipped in this CodePush OTA update :`
-    )
-    miniAppsToBeCodePushed.forEach(m => log.info(m.toString()))
-  }
-  if (jsApiImplsToBeCodePushed && jsApiImplsToBeCodePushed.length > 0) {
-    log.info(
-      `The following JS API implementation versions will get shipped in this CodePush OTA update :`
-    )
-    jsApiImplsToBeCodePushed.forEach(m => log.info(m.toString()))
-  }
-
-  const { userCodePushPublicationConfirmation } = await inquirer.prompt(<
-    inquirer.Question
-  >{
-    message: 'Do you want to continue with CodePush publication ?',
-    name: 'userCodePushPublicationConfirmation',
-    type: 'confirm',
-  })
-
-  return userCodePushPublicationConfirmation
-}
-
-async function askUserToForceCodePushPublication(): Promise<boolean> {
-  const { userCodePushForcePublication } = await inquirer.prompt(<
-    inquirer.Question
-  >{
-    message:
-      'At least one native dependency version is not properly aligned. Do you want to force CodePush anyway ?',
-    name: 'userCodePushForcePublication',
-    type: 'confirm',
-  })
-
-  return userCodePushForcePublication
-}
-
-export async function askUserForCodePushDeploymentName(
-  napDescriptor: NativeApplicationDescriptor,
-  message?: string
-): Promise<string> {
-  const cauldron = await getActiveCauldron()
-  const conf = await cauldron.getConfig(napDescriptor)
-  const hasCodePushDeploymentsConfig =
-    conf && conf.codePush && conf.codePush.deployments
-  const choices = hasCodePushDeploymentsConfig
-    ? conf && conf.codePush.deployments
-    : undefined
-
-  const { userSelectedDeploymentName } = await inquirer.prompt(<
-    inquirer.Question
-  >{
-    choices,
-    message: message || 'Deployment name',
-    name: 'userSelectedDeploymentName',
-    type: choices ? 'list' : 'input',
-  })
-
-  return userSelectedDeploymentName
 }
 
 async function areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(

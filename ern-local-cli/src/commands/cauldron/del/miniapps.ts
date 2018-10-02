@@ -5,7 +5,12 @@ import {
   log,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../../lib/utils'
+import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  askUserToChooseANapDescriptorFromCauldron,
+} from '../../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
 
@@ -25,7 +30,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 // This command does not actually removes or offers to remove dependencies that were
@@ -40,7 +45,7 @@ export const handler = async ({
   containerVersion?: string
   descriptor?: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
@@ -48,13 +53,13 @@ export const handler = async ({
   })
   try {
     if (!descriptor) {
-      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
+      descriptor = await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
       })
     }
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
@@ -96,7 +101,7 @@ export const handler = async ({
     ]
 
     const cauldron = await getActiveCauldron()
-    await utils.performContainerStateUpdateInCauldron(
+    await performContainerStateUpdateInCauldron(
       async () => {
         for (const miniAppAsDep of miniAppsAsDeps) {
           await cauldron.removeContainerMiniApp(napDescriptor, miniAppAsDep)

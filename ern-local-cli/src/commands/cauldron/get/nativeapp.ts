@@ -1,17 +1,17 @@
 import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'nativeapp [descriptor]'
 export const desc = 'Get a native application from the cauldron'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = async ({ descriptor }: { descriptor?: string }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
@@ -21,7 +21,7 @@ export const handler = async ({ descriptor }: { descriptor?: string }) => {
   try {
     const cauldron = await getActiveCauldron()
     if (!descriptor) {
-      const napDescriptors = await utils.getNapDescriptorStringsFromCauldron()
+      const napDescriptors = await cauldron.getNapDescriptorStrings()
       napDescriptors.forEach(n => log.info(n))
     } else {
       const nativeApp = await cauldron.getDescriptor(

@@ -5,7 +5,7 @@ import {
   utils as coreUtils,
   log,
 } from 'ern-core'
-import utils from '../../../lib/utils'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 import chalk from 'chalk'
@@ -19,7 +19,7 @@ export const builder = (argv: Argv) => {
       alias: 'v',
       describe: 'Specific platform version for which to list supported plugins',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({

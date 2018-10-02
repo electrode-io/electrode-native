@@ -1,5 +1,5 @@
 import { Argv } from 'yargs'
-import utils from '../../../lib/utils'
+import { epilog, parseArgValue } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { utils as coreUtils, NativeApplicationDescriptor, log } from 'ern-core'
 
@@ -22,7 +22,7 @@ export const builder = (argv: Argv) => {
         'Value to be set for this config key. If JSON, it can be provided as a string, or json file path or cauldron file path.',
       required: true,
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -41,7 +41,7 @@ export const handler = async ({
         ? NativeApplicationDescriptor.fromString(descriptor)
         : undefined,
       key,
-      value: await utils.parseArgValue(value),
+      value: await parseArgValue(value),
     })
     log.info(
       `Successfuly set config ${key && `for key ${key}`} of ${

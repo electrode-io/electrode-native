@@ -1,5 +1,6 @@
-import utils from '../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
 import { utils as coreUtils, deviceConfig, log } from 'ern-core'
+import { utils as orchestratorUtils } from 'ern-orchestrator'
 import { Argv } from 'yargs'
 
 export const command = 'run-ios'
@@ -48,7 +49,7 @@ export const builder = (argv: Argv) => {
       describe: 'Port to use for the local package',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -76,7 +77,7 @@ export const handler = async ({
     }
     deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
 
-    await utils.runMiniApp('ios', {
+    await orchestratorUtils.runMiniApp('ios', {
       dependencies,
       descriptor,
       dev,

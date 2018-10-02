@@ -7,7 +7,7 @@ import {
 } from 'ern-core'
 import inquirer from 'inquirer'
 import path from 'path'
-import utils from '../../../lib/utils'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'add <alias> <url> [current]'
@@ -20,7 +20,7 @@ export const builder = (argv: Argv) => {
       describe: 'Set repo as the current Cauldron repository',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 const supportedGitHttpsSchemeRe = /(^https:\/\/.+:.+@.+$)|(^https:\/\/.+@.+$)/
