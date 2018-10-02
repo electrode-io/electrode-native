@@ -5,7 +5,7 @@ import {
   shell,
   PackagePath,
 } from 'ern-core'
-import utils from '../../lib/utils'
+import { epilog } from '../../lib'
 import chalk from 'chalk'
 import _ from 'lodash'
 import path from 'path'
@@ -15,7 +15,7 @@ export const command = 'dependencies [module]'
 export const desc = 'List the native dependencies of an Electrode Native module'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = async ({ module }: { module?: string }) => {

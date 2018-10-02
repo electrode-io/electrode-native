@@ -1,6 +1,7 @@
 import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
-import utils from '../lib/utils'
+import { parseJsonFromStringOrFile } from 'ern-orchestrator'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
 import fs from 'fs'
 import path from 'path'
 import { Argv } from 'yargs'
@@ -43,7 +44,7 @@ export const builder = (argv: Argv) => {
         'Optional extra publisher configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -62,7 +63,7 @@ export const handler = async ({
   platform: NativePlatform
 }) => {
   try {
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isValidContainerVersion: { containerVersion: version },
     })
 
@@ -79,7 +80,7 @@ export const handler = async ({
       throw new Error('containerPath path does not exist')
     }
 
-    const extraObj = extra && (await utils.parseJsonFromStringOrFile(extra))
+    const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
     await publishContainer({
       containerPath,

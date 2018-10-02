@@ -77,7 +77,7 @@ export default class Ensure {
   }
 
   public static noGitOrFilesystemPath(
-    obj: string | string[] | void,
+    obj: string | string[] | null | undefined,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {

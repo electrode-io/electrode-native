@@ -9,9 +9,8 @@ import {
   kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { runLocalContainerGen, runCauldronContainerGen } from '../lib/container'
-import utils from '../lib/utils'
-import * as constants from '../lib/constants'
+import { runLocalContainerGen, runCauldronContainerGen } from 'ern-orchestrator'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
@@ -62,7 +61,7 @@ export const builder = (argv: Argv) => {
       describe: 'Ignore rnpm assets from the MiniApps',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -96,7 +95,7 @@ Output directory should either not exist (it will be created) or should be empty
       }
     }
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
         extraErrorMessage:
           'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
@@ -157,7 +156,7 @@ Output directory should either not exist (it will be created) or should be empty
     }
 
     if (descriptor) {
-      await utils.logErrorAndExitIfNotSatisfied({
+      await logErrorAndExitIfNotSatisfied({
         isCompleteNapDescriptorString: { descriptor },
         napDescriptorExistInCauldron: {
           descriptor,
@@ -193,7 +192,7 @@ Output directory should either not exist (it will be created) or should be empty
       if (napDescriptor) {
         pathToYarnLock = await cauldron.getPathToYarnLock(
           napDescriptor,
-          constants.CONTAINER_YARN_KEY
+          'container'
         )
       }
 

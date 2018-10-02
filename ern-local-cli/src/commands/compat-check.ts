@@ -5,8 +5,13 @@ import {
   utils as coreUtils,
   log,
 } from 'ern-core'
-import utils from '../lib/utils'
-import * as compatibility from '../lib/compatibility'
+import { checkCompatibilityWithNativeApp } from 'ern-orchestrator'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  askUserToChooseANapDescriptorFromCauldron,
+} from '../lib'
+
 import { Argv } from 'yargs'
 
 export const command = 'compat-check [miniapp]'
@@ -25,7 +30,7 @@ export const builder = (argv: Argv) => {
       describe:
         'Full native application selector (target native application version for the push)',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -45,11 +50,11 @@ export const handler = async ({
     }
 
     if (!descriptor) {
-      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron()
+      descriptor = await askUserToChooseANapDescriptorFromCauldron()
     }
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
     })
 
@@ -58,7 +63,7 @@ export const handler = async ({
         PackagePath.fromString(miniappPath)
       )
       log.info(`=> ${miniAppPackage.name}`)
-      await compatibility.checkCompatibilityWithNativeApp(
+      await checkCompatibilityWithNativeApp(
         miniAppPackage,
         napDescriptor.name,
         napDescriptor.platform || undefined,

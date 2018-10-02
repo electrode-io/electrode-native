@@ -1,7 +1,8 @@
 import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron, cauldronFileUriScheme } from 'ern-cauldron-api'
+import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { getPublisher, ContainerPublisher } from 'ern-container-publisher'
-import utils from '../../../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'publisher'
@@ -32,6 +33,7 @@ export const builder = (argv: Argv) => {
         'Optional extra publisher configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -46,7 +48,7 @@ export const handler = async ({
   extra?: string
 }) => {
   try {
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
         extraErrorMessage:
           'A Cauldron must be active in order to use this command',
@@ -73,7 +75,7 @@ export const handler = async ({
         }
         // ... and that it is a properly formatted json file
         const cauldronFile = await cauldron.getFile({ cauldronFilePath: extra })
-        await utils.parseJsonFromStringOrFile(cauldronFile.toString())
+        await parseJsonFromStringOrFile(cauldronFile.toString())
         extraObj = extra
       } else {
         // Local file path to json file or json string.
@@ -85,7 +87,7 @@ export const handler = async ({
         //   "artifactId": "app-container",
         //   "groupId": "com.company.app"
         // }
-        extraObj = await utils.parseJsonFromStringOrFile(extra)
+        extraObj = await parseJsonFromStringOrFile(extra)
       }
     }
 

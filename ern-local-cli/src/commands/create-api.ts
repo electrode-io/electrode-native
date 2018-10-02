@@ -6,8 +6,14 @@ import {
   utils as coreUtils,
   ModuleTypes,
   log,
+  checkIfModuleNameContainsSuffix,
 } from 'ern-core'
-import utils from '../lib/utils'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  performPkgNameConflictCheck,
+  promptUserToUseSuffixModuleName,
+} from '../lib'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 
@@ -41,7 +47,7 @@ export const builder = (argv: Argv) => {
         'Skip the check ensuring package does not already exists in NPM registry',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -62,7 +68,7 @@ export const handler = async ({
   skipNpmCheck?: boolean
 }) => {
   try {
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isValidElectrodeNativeModuleName: {
         name: apiName,
       },
@@ -72,11 +78,8 @@ export const handler = async ({
       throw new Error(`Cannot resolve path to ${schemaPath}`)
     }
 
-    if (!utils.checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
-      apiName = await utils.promptUserToUseSuffixModuleName(
-        apiName,
-        ModuleTypes.API
-      )
+    if (!checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
+      apiName = await promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
     }
 
     // Construct the package name
@@ -88,16 +91,13 @@ export const handler = async ({
       packageName = await promptForPackageName(defaultPackageName)
     }
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isValidNpmPackageName: {
         name: packageName,
       },
     })
 
-    if (
-      !skipNpmCheck &&
-      !(await utils.performPkgNameConflictCheck(packageName))
-    ) {
+    if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
       throw new Error('Aborting command')
     }
 

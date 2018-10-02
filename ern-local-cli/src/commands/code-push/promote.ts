@@ -4,11 +4,15 @@ import {
   log,
   NativePlatform,
 } from 'ern-core'
+import { getActiveCauldron } from 'ern-cauldron-api'
+import { performCodePushPromote } from 'ern-orchestrator'
 import {
-  performCodePushPromote,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
-} from '../../lib/codepush'
-import utils from '../../lib/utils'
+  askUserToChooseANapDescriptorFromCauldron,
+  askUserToChooseOneOrMoreNapDescriptorFromCauldron
+} from '../../lib'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
@@ -78,7 +82,7 @@ export const builder = (argv: Argv) => {
         'Promote the release matching this label. If omitted, the latest release of sourceDescriptor/sourceDeploymentName pair will be promoted.',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -111,7 +115,7 @@ export const handler = async ({
   try {
     let targetNapDescriptors
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
         extraErrorMessage:
           'A Cauldron must be active in order to use this command',
@@ -124,12 +128,12 @@ export const handler = async ({
     })
 
     if (!sourceDescriptor) {
-      sourceDescriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
+      sourceDescriptor = await askUserToChooseANapDescriptorFromCauldron({
         message: 'Please select a source native application descriptor',
         onlyReleasedVersions: true,
       })
     } else {
-      await utils.logErrorAndExitIfNotSatisfied({
+      await logErrorAndExitIfNotSatisfied({
         isCompleteNapDescriptorString: {
           descriptor: sourceDescriptor,
         },
@@ -138,7 +142,7 @@ export const handler = async ({
 
     if (targetDescriptors.length > 0) {
       // User provided one or more target descriptor(s)
-      await utils.logErrorAndExitIfNotSatisfied({
+      await logErrorAndExitIfNotSatisfied({
         napDescriptorExistInCauldron: {
           descriptor: targetDescriptors,
           extraErrorMessage:
@@ -147,7 +151,7 @@ export const handler = async ({
       })
     } else if (targetDescriptors.length === 0 && !targetSemVerDescriptor) {
       // User provided no target descriptors, nor a target semver descriptor
-      targetDescriptors = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron(
+      targetDescriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron(
         {
           message:
             'Please select one or more target native application descriptor(s)',
@@ -159,7 +163,8 @@ export const handler = async ({
       const targetSemVerNapDescriptor = NativeApplicationDescriptor.fromString(
         targetSemVerDescriptor
       )
-      targetNapDescriptors = await utils.getDescriptorsMatchingSemVerDescriptor(
+      const cauldron = await getActiveCauldron()
+      targetNapDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
         targetSemVerNapDescriptor
       )
       if (targetNapDescriptors.length === 0) {
@@ -188,7 +193,7 @@ export const handler = async ({
       }
     }
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       sameNativeApplicationAndPlatform: {
         descriptors: targetDescriptors,
         extraErrorMessage:

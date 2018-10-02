@@ -15,7 +15,8 @@ const filesToIgnore = [
   'README.md',
   'WalmartItemApi.spec.js',
   'SysteTestEventApi.spec.js',
-  'SystemTestsApi.spec.js'
+  'SystemTestsApi.spec.js',
+  '.yarn-integrity'
 ]
 
 run(`ern create-api ${f.testApiName} -p ${f.testApiPkgName} --skipNpmCheck`)

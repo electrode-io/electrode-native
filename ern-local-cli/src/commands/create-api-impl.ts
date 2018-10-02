@@ -4,9 +4,15 @@ import {
   Platform,
   ModuleTypes,
   log,
+  checkIfModuleNameContainsSuffix,
 } from 'ern-core'
 import { generateApiImpl } from 'ern-api-impl-gen'
-import utils from '../lib/utils'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  performPkgNameConflictCheck,
+  promptUserToUseSuffixModuleName,
+} from '../lib'
 import inquirer from 'inquirer'
 import path from 'path'
 import { Argv } from 'yargs'
@@ -56,7 +62,7 @@ export const builder = (argv: Argv) => {
         'Skip the check ensuring package does not already exists in NPM registry',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 const WORKING_DIRECTORY = path.join(Platform.rootDirectory, 'api-impl-gen')
@@ -88,7 +94,7 @@ export const handler = async ({
   try {
     const apiDep = PackagePath.fromString(apiName)
     // pre conditions
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
         obj: apiName,
       },
@@ -99,7 +105,7 @@ export const handler = async ({
     })
 
     if (apiImplName) {
-      await utils.logErrorAndExitIfNotSatisfied({
+      await logErrorAndExitIfNotSatisfied({
         isValidElectrodeNativeModuleName: {
           name: apiImplName,
         },
@@ -133,9 +139,9 @@ export const handler = async ({
 
     if (
       apiImplName &&
-      !utils.checkIfModuleNameContainsSuffix(apiImplName, moduleType)
+      !checkIfModuleNameContainsSuffix(apiImplName, moduleType)
     ) {
-      apiImplName = await utils.promptUserToUseSuffixModuleName(
+      apiImplName = await promptUserToUseSuffixModuleName(
         apiImplName,
         moduleType
       )
@@ -160,17 +166,14 @@ export const handler = async ({
     }
 
     // Check if packageName is valid
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isValidNpmPackageName: {
         name: packageName,
       },
     })
 
     // Skip npm check
-    if (
-      !skipNpmCheck &&
-      !(await utils.performPkgNameConflictCheck(packageName))
-    ) {
+    if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
       throw new Error(`Aborting command `)
     }
 

@@ -1,6 +1,6 @@
 import { ApiGen } from 'ern-api-gen'
 import { manifest, PackagePath, utils as coreUtils, yarn } from 'ern-core'
-import utils from '../lib/utils'
+import { epilog } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'regen-api'
@@ -16,7 +16,7 @@ export const builder = (argv: Argv) => {
       alias: 'b',
       describe: 'Bridge version to use',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({

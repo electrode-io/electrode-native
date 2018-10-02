@@ -5,7 +5,12 @@ import {
   log,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import utils from '../../../lib/utils'
+import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  askUserToChooseANapDescriptorFromCauldron,
+} from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'jsapiimpls <jsapiimpls..>'
@@ -30,7 +35,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -44,7 +49,7 @@ export const handler = async ({
   force?: boolean
   containerVersion?: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
@@ -52,13 +57,13 @@ export const handler = async ({
   })
   try {
     if (!descriptor) {
-      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
+      descriptor = await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
       })
     }
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
@@ -89,7 +94,7 @@ export const handler = async ({
     ]
 
     const cauldron = await getActiveCauldron()
-    await utils.performContainerStateUpdateInCauldron(
+    await performContainerStateUpdateInCauldron(
       async () => {
         for (const jsApiImpl of jsapiimpls) {
           await cauldron.addContainerJsApiImpl(

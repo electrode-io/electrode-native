@@ -1,6 +1,7 @@
 import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
-import utils from '../lib/utils'
+import { parseJsonFromStringOrFile } from 'ern-orchestrator'
+import { epilog } from '../lib'
 import fs from 'fs'
 import path from 'path'
 import { Argv } from 'yargs'
@@ -33,7 +34,7 @@ export const builder = (argv: Argv) => {
       describe: 'Transformer to use',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -61,7 +62,7 @@ export const handler = async ({
       throw new Error('containerPath path does not exist')
     }
 
-    const extraObj = extra && (await utils.parseJsonFromStringOrFile(extra))
+    const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
     await transformContainer({
       containerPath,

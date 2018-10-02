@@ -1,12 +1,12 @@
 import { config as ernConfig, utils as coreUtils, log } from 'ern-core'
-import utils from '../../../lib/utils'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'list'
 export const desc = 'List all Cauldron repositories'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = () => {

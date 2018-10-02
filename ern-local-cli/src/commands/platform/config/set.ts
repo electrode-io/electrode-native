@@ -1,12 +1,16 @@
 import { config as ernConfig, utils as coreUtils, log } from 'ern-core'
-import utils, { platformSupportedConfigAsString } from '../../../lib/utils'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  platformSupportedConfigAsString,
+} from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'set <key> <value>'
 export const desc = 'Sets the key to the value in the configuration file'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(platformSupportedConfigAsString() + utils.epilog(exports))
+  return argv.epilog(platformSupportedConfigAsString() + epilog(exports))
 }
 
 export const handler = async ({
@@ -16,7 +20,7 @@ export const handler = async ({
   key: string
   value: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     isValidPlatformConfig: {
       key,
     },

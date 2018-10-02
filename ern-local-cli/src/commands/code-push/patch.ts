@@ -1,9 +1,11 @@
 import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
+import { performCodePushPatch } from 'ern-orchestrator'
 import {
-  performCodePushPatch,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
-} from '../../lib/codepush'
-import utils from '../../lib/utils'
+  askUserToChooseANapDescriptorFromCauldron,
+} from '../../lib'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 
@@ -44,7 +46,7 @@ export const builder = (argv: Argv) => {
         'Percentage of users this release should be immediately available to',
       type: 'number',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -63,7 +65,7 @@ export const handler = async ({
   rollout?: number
 }) => {
   try {
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
         extraErrorMessage:
           'A Cauldron must be active in order to use this command',
@@ -71,14 +73,14 @@ export const handler = async ({
     })
 
     if (!descriptor) {
-      descriptor = await utils.askUserToChooseANapDescriptorFromCauldron({
+      descriptor = await askUserToChooseANapDescriptorFromCauldron({
         onlyReleasedVersions: true,
       })
     }
 
     const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
       napDescriptorExistInCauldron: {
         descriptor,

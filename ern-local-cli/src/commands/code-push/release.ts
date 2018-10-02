@@ -6,12 +6,14 @@ import {
   NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
+import { performCodePushOtaUpdate } from 'ern-orchestrator'
 import {
-  performCodePushOtaUpdate,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
-} from '../../lib/codepush'
-import utils from '../../lib/utils'
-import * as constants from '../../lib/constants'
+  askUserToChooseANapDescriptorFromCauldron,
+  askUserToChooseOneOrMoreNapDescriptorFromCauldron,
+} from '../../lib'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
@@ -78,7 +80,7 @@ export const builder = (argv: Argv) => {
       describe: 'Skip confirmation prompts',
       type: 'boolean',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -117,7 +119,7 @@ export const handler = async ({
       )
     }
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
         extraErrorMessage:
           'A Cauldron must be active in order to use this command',
@@ -131,7 +133,7 @@ export const handler = async ({
 
     if (descriptors.length > 0) {
       // User provided one or more descriptor(s)
-      await utils.logErrorAndExitIfNotSatisfied({
+      await logErrorAndExitIfNotSatisfied({
         napDescriptorExistInCauldron: {
           descriptor: descriptors,
           extraErrorMessage:
@@ -145,15 +147,16 @@ export const handler = async ({
       })
     } else if (descriptors.length === 0 && !semVerDescriptor) {
       // User provided no descriptors, nor a semver descriptor
-      descriptors = await utils.askUserToChooseOneOrMoreNapDescriptorFromCauldron(
-        { onlyReleasedVersions: true }
-      )
+      descriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron({
+        onlyReleasedVersions: true,
+      })
     } else if (semVerDescriptor) {
       // User provided a semver Descriptor
       const semVerNapDescriptor = NativeApplicationDescriptor.fromString(
         semVerDescriptor
       )
-      napDescriptors = await utils.getDescriptorsMatchingSemVerDescriptor(
+      const cauldron = await getActiveCauldron()
+      napDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
         semVerNapDescriptor
       )
       if (napDescriptors.length === 0) {
@@ -186,7 +189,7 @@ export const handler = async ({
       )
     }
 
-    await utils.logErrorAndExitIfNotSatisfied({
+    await logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
         extraErrorMessage:
           'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
@@ -243,7 +246,7 @@ async function getPathToYarnLock(
   if (!pathToYarnLock) {
     pathToYarnLock = await cauldron.getPathToYarnLock(
       napDescriptor,
-      constants.CONTAINER_YARN_KEY
+      'container'
     )
   }
   return pathToYarnLock

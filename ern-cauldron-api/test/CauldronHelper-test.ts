@@ -3020,4 +3020,152 @@ describe('CauldronHelper.js', () => {
       )
     })
   })
+
+  // ==========================================================
+  // getNapDescriptorStrings
+  // ==========================================================
+  describe('getNapDescriptorStrings', () => {
+    it('should return an empty array if no match', async () => {
+      const fixture = cloneFixture(fixtures.emptyCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings()
+      expect(result).to.be.an('array').that.is.empty
+    })
+
+    it('should return all native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings()
+      expect(result).to.have.lengthOf(2)
+    })
+
+    it('should return only released native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings({
+        onlyReleasedVersions: true,
+      })
+      expect(result).to.have.lengthOf(1)
+    })
+
+    it('should return only non released native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings({
+        onlyNonReleasedVersions: true,
+      })
+      expect(result).to.have.lengthOf(1)
+    })
+
+    it('should return only android platform native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings({
+        platform: 'android',
+      })
+      expect(result).to.have.lengthOf(2)
+    })
+
+    it('should return only ios platform native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings({
+        platform: 'ios',
+      })
+      expect(result).to.have.lengthOf(0)
+    })
+
+    it('should return only android platform released native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings({
+        onlyReleasedVersions: true,
+        platform: 'android',
+      })
+      expect(result).to.have.lengthOf(1)
+      expect(result[0]).eql('test:android:17.7.0')
+    })
+
+    it('should return only android platform non released native apps descriptors', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getNapDescriptorStrings({
+        onlyNonReleasedVersions: true,
+        platform: 'android',
+      })
+      expect(result).to.have.lengthOf(1)
+      expect(result[0]).eql('test:android:17.8.0')
+    })
+  })
+
+  // ==========================================================
+  // getDescriptorsMatchingSemVerDescriptor
+  // ==========================================================
+  describe('getDescriptorsMatchingSemVerDescriptor', () => {
+    it('should throw if the descriptor does not contain a platform', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString('test')
+      assert(
+        await doesThrow(
+          cauldronHelper.getDescriptorsMatchingSemVerDescriptor,
+          null,
+          descriptor
+        )
+      )
+    })
+
+    it('should throw if the descriptor does not contain a version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString('test:android')
+      assert(
+        await doesThrow(
+          cauldronHelper.getDescriptorsMatchingSemVerDescriptor,
+          null,
+          descriptor
+        )
+      )
+    })
+
+    it('should return an empty array if the semver descriptor does not match any version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:5.0.0'
+      )
+      const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
+        descriptor
+      )
+      expect(result).to.be.an('array').empty
+    })
+
+    it('should return the right matched versions [1]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:^17.0.0'
+      )
+      const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
+        descriptor
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(2)
+    })
+
+    it('should return the right matched versions [2]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.x'
+      )
+      const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
+        descriptor
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(1)
+    })
+  })
 })

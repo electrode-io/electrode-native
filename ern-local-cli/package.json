@@ -52,7 +52,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^2.4.1",
-    "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
     "dir-compare": "^1.4.0",
     "ern-api-gen": "1000.0.0",
@@ -67,6 +66,7 @@
     "ern-runner-gen": "1000.0.0",
     "ern-runner-gen-android": "1000.0.0",
     "ern-runner-gen-ios": "1000.0.0",
+    "ern-orchestrator": "1000.0.0",
     "fast-levenshtein": "^2.0.6",
     "fs-readdir-recursive": "^1.1.0",
     "inquirer": "^3.0.6",

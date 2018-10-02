@@ -5,14 +5,14 @@ import {
   utils as coreUtils,
   log,
 } from 'ern-core'
-import utils from '../../../lib/utils'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'clear'
 export const desc = 'Do not use any Cauldron'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = ({ alias }: { alias: string }) => {

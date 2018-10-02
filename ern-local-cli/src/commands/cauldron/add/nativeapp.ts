@@ -8,7 +8,7 @@ import {
 import { CauldronHelper, getActiveCauldron } from 'ern-cauldron-api'
 import inquirer from 'inquirer'
 import _ from 'lodash'
-import utils from '../../../lib/utils'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'nativeapp <descriptor>'
@@ -25,7 +25,7 @@ export const builder = (argv: Argv) => {
       describe: 'Copy Cauldron data from a previous native application version',
       type: 'string',
     })
-    .epilog(utils.epilog(exports))
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
@@ -37,7 +37,7 @@ export const handler = async ({
   platformVersion?: string
   copyFromVersion?: string
 }) => {
-  await utils.logErrorAndExitIfNotSatisfied({
+  await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',

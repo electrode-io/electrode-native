@@ -1,12 +1,12 @@
 import { Platform, utils as coreUtils } from 'ern-core'
-import utils from '../../lib/utils'
+import { epilog } from '../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'install <version>'
 export const desc = 'Install a given ern platform version'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(utils.epilog(exports))
+  return argv.epilog(epilog(exports))
 }
 
 export const handler = ({ version }: { version: string }) => {
