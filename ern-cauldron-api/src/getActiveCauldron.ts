@@ -30,7 +30,7 @@ export default async function getActiveCauldron({
         : 'master',
       cauldronPath: path.isAbsolute(cauldronRepoUrl)
         ? cauldronRepoUrl
-        : localRepoPath || path.join(Platform.rootDirectory, 'cauldron'),
+        : localRepoPath || Platform.cauldronDirectory,
       repository: path.isAbsolute(cauldronRepoUrl)
         ? undefined
         : cauldronRepoUrlWithoutBranch,
