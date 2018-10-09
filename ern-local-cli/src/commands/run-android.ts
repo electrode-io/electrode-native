@@ -1,6 +1,6 @@
 import { epilog } from '../lib'
 import { deviceConfig, utils as coreUtils } from 'ern-core'
-import { utils as orchestratorUtils } from 'ern-orchestrator'
+import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
 
 export const command = 'run-android'
@@ -74,7 +74,7 @@ export const handler = async ({
   try {
     deviceConfig.updateDeviceConfig('android', usePreviousDevice)
 
-    await orchestratorUtils.runMiniApp('android', {
+    await runMiniApp('android', {
       dependencies,
       descriptor,
       dev,

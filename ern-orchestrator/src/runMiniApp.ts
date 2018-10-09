@@ -1,37 +1,26 @@
 import {
+  getDefaultMavenLocalDirectory,
+  kax,
   log,
   MiniApp,
+  NativeApplicationDescriptor,
+  NativePlatform,
+  PackagePath,
   Platform,
   reactnative,
-  android,
-  ios,
-  PackagePath,
-  NativeApplicationDescriptor,
   shell,
-  NativePlatform,
-  kax,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
-
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
-import { AndroidRunnerGenerator } from 'ern-runner-gen-android'
-import { IosRunnerGenerator } from 'ern-runner-gen-ios'
-import { runLocalContainerGen, runCauldronContainerGen } from './container'
-import { spawn, spawnSync } from 'child_process'
-import _ from 'lodash'
+import { RunnerGeneratorConfig } from 'ern-runner-gen'
+import { getRunnerGeneratorForPlatform } from './getRunnerGeneratorForPlatform'
+import { generateContainerForRunner } from './generateContainerForRunner'
+import { launchRunner } from './launchRunner'
 import fs from 'fs'
 import path from 'path'
-import os from 'os'
+import _ from 'lodash'
 
-const { runAndroidProject } = android
-
-const getDefaultMavenLocalDirectory = () => {
-  const pathToRepository = path.join(os.homedir(), '.m2', 'repository')
-  return `file://${pathToRepository}`
-}
-
-async function runMiniApp(
+export async function runMiniApp(
   platform: NativePlatform,
   {
     mainMiniAppName,
@@ -228,180 +217,4 @@ async function runMiniApp(
     platform,
     port,
   })
-}
-
-function getRunnerGeneratorForPlatform(platform: string): RunnerGenerator {
-  switch (platform) {
-    case 'android':
-      return new AndroidRunnerGenerator()
-    case 'ios':
-      return new IosRunnerGenerator()
-    default:
-      throw new Error(`Unsupported platform : ${platform}`)
-  }
-}
-
-async function generateContainerForRunner(
-  platform: NativePlatform,
-  {
-    napDescriptor,
-    dependenciesObjs = [],
-    miniAppsPaths = [],
-    jsApiImplsPaths = [],
-    outDir,
-  }: {
-    napDescriptor?: NativeApplicationDescriptor
-    dependenciesObjs: PackagePath[]
-    miniAppsPaths: PackagePath[]
-    jsApiImplsPaths: PackagePath[]
-    outDir: string
-  }
-) {
-  if (napDescriptor) {
-    await runCauldronContainerGen(napDescriptor, {
-      outDir,
-    })
-  } else {
-    await runLocalContainerGen(miniAppsPaths, jsApiImplsPaths, platform, {
-      extraNativeDependencies: dependenciesObjs,
-      outDir,
-    })
-  }
-}
-
-async function launchRunner({
-  platform,
-  pathToRunner,
-  host,
-  port,
-}: {
-  platform: string
-  pathToRunner: string
-  host?: string
-  port?: string
-}) {
-  if (platform === 'android') {
-    return launchAndroidRunner(pathToRunner)
-  } else if (platform === 'ios') {
-    return launchIosRunner(pathToRunner)
-  }
-}
-
-async function launchAndroidRunner(pathToAndroidRunner: string) {
-  return runAndroidProject({
-    packageName: 'com.walmartlabs.ern',
-    projectPath: pathToAndroidRunner,
-  })
-}
-
-async function launchIosRunner(pathToIosRunner: string) {
-  const iosDevices = ios.getiPhoneRealDevices()
-  if (iosDevices && iosDevices.length > 0) {
-    launchOnDevice(pathToIosRunner, iosDevices)
-  } else {
-    launchOnSimulator(pathToIosRunner)
-  }
-}
-
-async function launchOnDevice(pathToIosRunner: string, devices) {
-  const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
-  shell.pushd(pathToIosRunner)
-
-  try {
-    await kax
-      .task('Building iOS Runner project')
-      .run(buildIosRunner(pathToIosRunner, iPhoneDevice.udid))
-
-    const kaxDeployTask = kax.task(
-      `Installing iOS Runner on ${iPhoneDevice.name}`
-    )
-    try {
-      const iosDeployInstallArgs = [
-        '--bundle',
-        `${pathToIosRunner}/build/Debug-iphoneos/ErnRunner.app`,
-        '--id',
-        iPhoneDevice.udid,
-        '--justlaunch',
-      ]
-      const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
-        encoding: 'utf8',
-      })
-      if (iosDeployOutput.error) {
-        kaxDeployTask.fail(
-          `Installation failed. Make sure you have run 'npm install -g ios-deploy'.`
-        )
-      } else {
-        kaxDeployTask.succeed()
-      }
-    } catch (e) {
-      kaxDeployTask.fail(e.message)
-      throw e
-    }
-  } finally {
-    shell.popd()
-  }
-}
-
-async function launchOnSimulator(pathToIosRunner: string) {
-  const iPhoneSim = await ios.askUserToSelectAniPhoneSimulator()
-  await kax
-    .task('Killing all running Simulators')
-    .run(ios.killAllRunningSimulators())
-  await kax
-    .task('Booting iOS Simulator')
-    .run(ios.launchSimulator(iPhoneSim.udid))
-  shell.pushd(pathToIosRunner)
-  try {
-    await kax
-      .task('Building iOS Runner project')
-      .run(buildIosRunner(pathToIosRunner, iPhoneSim.udid))
-    await kax
-      .task('Installing iOS Runner on Simulator')
-      .run(
-        ios.installApplicationOnSimulator(
-          iPhoneSim.udid,
-          `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`
-        )
-      )
-    await kax
-      .task('Launching Runner')
-      .run(ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner'))
-  } finally {
-    shell.popd()
-  }
-}
-
-async function buildIosRunner(pathToIosRunner: string, udid: string) {
-  return new Promise((resolve, reject) => {
-    const xcodebuildProc = spawn(
-      'xcodebuild',
-      [
-        `-scheme`,
-        'ErnRunner',
-        'build',
-        `-destination`,
-        `id=${udid}`,
-        `SYMROOT=${pathToIosRunner}/build`,
-      ],
-      { cwd: pathToIosRunner }
-    )
-
-    xcodebuildProc.stdout.on('data', data => {
-      log.debug(data.toString())
-    })
-    xcodebuildProc.stderr.on('data', data => {
-      log.debug(data.toString())
-    })
-    xcodebuildProc.on('close', code => {
-      code === 0
-        ? resolve()
-        : reject(
-            new Error(`XCode xcbuild command failed with exit code ${code}`)
-          )
-    })
-  })
-}
-
-export default {
-  runMiniApp,
 }
