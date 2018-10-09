@@ -18,8 +18,8 @@ const sandbox = sinon.createSandbox()
 let yarnCliStub
 
 let tmpOutDir
-const currentDir = process.cwd()
-const pathToFixtures = path.join(currentDir, 'test', 'fixtures')
+const currentDir = __dirname
+const pathToFixtures = path.join(currentDir, 'fixtures')
 const pathToSampleYarnLock = path.join(pathToFixtures, 'sample.yarn.lock')
 const sampleYarnLock = fs.readFileSync(pathToSampleYarnLock, 'utf8')
 
@@ -225,6 +225,22 @@ describe('ern-container-gen utils.js', () => {
     })
   })
 
+  const createCompositeNodeModulesReactNativePackageJson = (
+    rootDir,
+    rnVersion
+  ) => {
+    const pathToCompositeNodeModulesReactNative = path.join(
+      rootDir,
+      'node_modules',
+      'react-native'
+    )
+    ernUtil.shell.mkdir('-p', pathToCompositeNodeModulesReactNative)
+    fs.writeFileSync(
+      path.join(pathToCompositeNodeModulesReactNative, 'package.json'),
+      JSON.stringify({ version: rnVersion })
+    )
+  }
+
   // ==========================================================
   // generateMiniAppsComposite [with yarn lock]
   // ==========================================================
@@ -315,6 +331,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should call yarn install prior to calling yarn add or yarn upgrade for each MiniApp', async () => {
       // One new, one same, one upgrade
+      yarnCliStub.install.callsFake(() =>
+        createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
+      )
       const miniApps = [
         PackagePath.fromString('MiniAppOne@6.0.0'), // same
         PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
@@ -332,6 +351,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should create index.android.js', async () => {
       // One new, one same, one upgrade
+      yarnCliStub.install.callsFake(() =>
+        createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
+      )
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       await generateMiniAppsComposite(miniApps, tmpOutDir, {
         pathToYarnLock: pathToSampleYarnLock,
@@ -341,6 +363,9 @@ describe('ern-container-gen utils.js', () => {
 
     it('should create index.ios.js', async () => {
       // One new, one same, one upgrade
+      yarnCliStub.install.callsFake(() =>
+        createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
+      )
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       await generateMiniAppsComposite(miniApps, tmpOutDir, {
         pathToYarnLock: pathToSampleYarnLock,
@@ -352,6 +377,14 @@ describe('ern-container-gen utils.js', () => {
   // ==========================================================
   // generateMiniAppsComposite [without yarn lock]
   // ==========================================================
+  const fakeYarnInit = (rootDir, rnVersion) => {
+    fs.writeFileSync(
+      path.join(tmpOutDir, 'package.json'),
+      JSON.stringify({ dependencies: {} })
+    )
+    createCompositeNodeModulesReactNativePackageJson(rootDir, rnVersion)
+  }
+
   describe('generateMiniAppsComposite [without yarn lock]', () => {
     // For the following tests, because in the case of no yarn lock provided
     // the package.json is created when running first yarn add, and we are using
@@ -363,13 +396,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
         PackagePath.fromString('MiniAppFour@1.0.0'), // new
       ]
-      yarnCliStub.init.callsFake(() => {
-        fs.writeFileSync(
-          path.join(tmpOutDir, 'package.json'),
-          JSON.stringify({ dependencies: {} }),
-          'utf8'
-        )
-      })
+      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
       await generateMiniAppsComposite(miniApps, tmpOutDir)
       assert(yarnCliStub.add.calledThrice)
     })
@@ -377,13 +404,7 @@ describe('ern-container-gen utils.js', () => {
     it('should create index.android.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      yarnCliStub.init.callsFake(() => {
-        fs.writeFileSync(
-          path.join(tmpOutDir, 'package.json'),
-          JSON.stringify({ dependencies: {} }),
-          'utf8'
-        )
-      })
+      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
       await generateMiniAppsComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
@@ -391,15 +412,33 @@ describe('ern-container-gen utils.js', () => {
     it('should create index.ios.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      yarnCliStub.init.callsFake(() => {
-        fs.writeFileSync(
-          path.join(tmpOutDir, 'package.json'),
-          JSON.stringify({ dependencies: {} }),
-          'utf8'
-        )
-      })
+      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
       await generateMiniAppsComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
+    })
+
+    it('should create .babelrc with react-native preset for RN < 0.57.0', async () => {
+      // One new, one same, one upgrade
+      const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
+      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.56.0'))
+      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      assert(fs.existsSync(path.join(tmpOutDir, '.babelrc')))
+      const babelRc: any = JSON.parse(
+        fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()
+      )
+      assert(babelRc.presets.includes('react-native'))
+    })
+
+    it('should create .babelrc with module:metro-react-native-babel-preset preset for RN >= 0.57.0', async () => {
+      // One new, one same, one upgrade
+      const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
+      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
+      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      assert(fs.existsSync(path.join(tmpOutDir, '.babelrc')))
+      const babelRc: any = JSON.parse(
+        fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()
+      )
+      assert(babelRc.presets.includes('module:metro-react-native-babel-preset'))
     })
   })
 })

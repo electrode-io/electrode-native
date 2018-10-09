@@ -17,6 +17,7 @@ import { runAfterJsCompositeGenerationScript } from './runAfterJsCompositeGenera
 import { writeFile } from './writeFile'
 import fs from 'fs'
 import path from 'path'
+import semver from 'semver'
 import _ from 'lodash'
 
 // Obviously too big -god- function
@@ -136,9 +137,8 @@ export async function generateMiniAppsComposite(
     shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
 
     log.debug('Creating top level composite .babelrc')
-    const compositeBabelRc: { plugins: string[]; presets: string[] } = {
+    const compositeBabelRc: { plugins: any[]; presets?: string[] } = {
       plugins: [],
-      presets: ['react-native'],
     }
 
     // Ugly hacky way of handling module-resolver babel plugin
@@ -217,8 +217,6 @@ export async function generateMiniAppsComposite(
       }
     }
 
-    await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
-
     const pathToCodePushNodeModuleDir = path.join(
       outDir,
       'node_modules',
@@ -230,12 +228,20 @@ export async function generateMiniAppsComposite(
       'react-native'
     )
 
+    const reactNativePackageJson = await readPackageJson(
+      pathToReactNativeNodeModuleDir
+    )
+    const compositeReactNativeVersion = reactNativePackageJson.version
+    if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
+      compositeBabelRc.presets = ['module:metro-react-native-babel-preset']
+    } else {
+      compositeBabelRc.presets = ['react-native']
+    }
+
+    await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
+
     // If code push plugin is present we need to do some additional work
     if (fs.existsSync(pathToCodePushNodeModuleDir)) {
-      const reactNativePackageJson = await readPackageJson(
-        pathToReactNativeNodeModuleDir
-      )
-
       //
       // The following code will need to be uncommented and properly reworked or included
       // in a different way, once Cart and TYP don't directly depend on code push directly
@@ -254,8 +260,9 @@ export async function generateMiniAppsComposite(
       // code push is not making a real use of this data
       // Investigate further.
       // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
-      compositePackageJson.dependencies['react-native'] =
-        reactNativePackageJson.version
+      compositePackageJson.dependencies[
+        'react-native'
+      ] = compositeReactNativeVersion
       compositePackageJson.name = 'container'
       compositePackageJson.version = '0.0.1'
       await writePackageJson('.', compositePackageJson)
