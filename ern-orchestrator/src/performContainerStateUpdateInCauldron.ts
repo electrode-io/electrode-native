@@ -37,12 +37,7 @@ export async function performContainerStateUpdateInCauldron(
   }
 
   const platform = napDescriptor.platform
-  const outDir = path.join(
-    Platform.rootDirectory,
-    'containergen',
-    'out',
-    platform
-  )
+  const outDir = Platform.getContainerGenOutDirectory(platform)
   let cauldronContainerVersion
   let cauldron
   let containerGenConfig

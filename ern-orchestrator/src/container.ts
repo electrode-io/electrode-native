@@ -28,7 +28,7 @@ export async function runLocalContainerGen(
   jsApiImplsPackagePaths: PackagePath[],
   platform: NativePlatform,
   {
-    outDir = path.join(Platform.rootDirectory, 'containergen', 'out', platform),
+    outDir = Platform.getContainerGenOutDirectory(platform),
     extraNativeDependencies = [],
     ignoreRnpmAssets = false,
   }: {
@@ -193,9 +193,7 @@ export async function runCauldronContainerGen(
             containerGeneratorConfig.ignoreRnpmAssets,
           jsApiImpls,
           miniApps: miniAppsInstances,
-          outDir:
-            outDir ||
-            path.join(Platform.rootDirectory, 'containergen', 'out', platform),
+          outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           pathToYarnLock: pathToYarnLock || undefined,
           plugins,
           pluginsDownloadDir: createTmpDir(),

@@ -1,6 +1,7 @@
 import config from './config'
 import shell from './shell'
 import log from './log'
+import { NativePlatform } from './NativePlatform'
 import { execSync } from 'child_process'
 
 import fs from 'fs'
@@ -51,6 +52,10 @@ export default class Platform {
 
   static get containerGenDirectory(): string {
     return path.join(this.rootDirectory, 'containergen')
+  }
+
+  public static getContainerGenOutDirectory(platform: NativePlatform): string {
+    return path.join(this.containerGenDirectory, 'out', platform)
   }
 
   static get latestVersion(): string {
