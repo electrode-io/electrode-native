@@ -27,11 +27,16 @@ export { parseJsonFromStringOrFile } from './parseJsonFromStringOrFile'
 export {
   performContainerStateUpdateInCauldron,
 } from './performContainerStateUpdateInCauldron'
+export { buildIosRunner } from './buildIosRunner'
+export { generateContainerForRunner } from './generateContainerForRunner'
+export { getRunnerGeneratorForPlatform } from './getRunnerGeneratorForPlatform'
+export { launchOnDevice } from './launchOnDevice'
+export { launchOnSimulator } from './launchOnSimulator'
+export { launchRunner } from './launchRunner'
+export { runMiniApp } from './runMiniApp'
 
-import _utils from './utils'
 import _start from './start'
 import _Ensure from './Ensure'
 
-export const utils = _utils
 export const start = _start
 export const Ensure = _Ensure

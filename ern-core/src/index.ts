@@ -40,6 +40,7 @@ export {
 } from './packageJsonFileUtils'
 export { ModuleFactory } from './ModuleFactory'
 export { isPackagePublished } from './isPackagePublished'
+export { getDefaultMavenLocalDirectory } from './getDefaultMavenLocalDirectory'
 
 export const config = _config
 export const Platform = _Platform
