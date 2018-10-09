@@ -49,23 +49,11 @@ export const handler = async ({
   transformer: string
 }) => {
   try {
-    if (!containerPath) {
-      containerPath = path.join(
-        Platform.rootDirectory,
-        'containergen',
-        'out',
-        platform
-      )
-    }
-
-    if (!fs.existsSync(path.resolve(containerPath))) {
-      throw new Error('containerPath path does not exist')
-    }
-
     const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
     await transformContainer({
-      containerPath,
+      containerPath:
+        containerPath || Platform.getContainerGenOutDirectory(platform),
       extra: extraObj,
       platform,
       transformer,

@@ -3,7 +3,6 @@ import { publishContainer } from 'ern-container-publisher'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
 import fs from 'fs'
-import path from 'path'
 import { Argv } from 'yargs'
 
 export const command = 'publish-container'
@@ -67,23 +66,11 @@ export const handler = async ({
       isValidContainerVersion: { containerVersion: version },
     })
 
-    if (!containerPath) {
-      containerPath = path.join(
-        Platform.rootDirectory,
-        'containergen',
-        'out',
-        platform
-      )
-    }
-
-    if (!fs.existsSync(containerPath)) {
-      throw new Error('containerPath path does not exist')
-    }
-
     const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
     await publishContainer({
-      containerPath,
+      containerPath:
+        containerPath || Platform.getContainerGenOutDirectory(platform),
       containerVersion: version,
       extra: extraObj,
       platform,

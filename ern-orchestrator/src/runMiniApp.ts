@@ -152,12 +152,7 @@ export async function runMiniApp(
       []
   }
 
-  const outDir = path.join(
-    Platform.rootDirectory,
-    'containergen',
-    'out',
-    platform
-  )
+  const outDir = Platform.getContainerGenOutDirectory(platform)
   await generateContainerForRunner(platform, {
     dependenciesObjs,
     jsApiImplsPaths,
