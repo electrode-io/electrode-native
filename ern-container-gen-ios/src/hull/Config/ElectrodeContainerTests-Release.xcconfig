@@ -7,10 +7,8 @@
 
 DEVELOPMENT_TEAM = DXZ5VF8836
 FRAMEWORK_SEARCH_PATHS = $(inherited)
-HEADER_SEARCH_PATHS = $(inherited) "$(SRCROOT)/ElectrodeContainer/Libraries/CodePush"
 INFOPLIST_FILE = ElectrodeContainerTests/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
-LIBRARY_SEARCH_PATHS = $(inherited) $(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/** $(SRCROOT)/ElectrodeContainer/Libraries/CodePush/**
 PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainerTests
 PRODUCT_NAME = $(TARGET_NAME)
 TEST_HOST =
