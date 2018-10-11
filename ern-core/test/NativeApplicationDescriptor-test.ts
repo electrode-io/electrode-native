@@ -135,6 +135,39 @@ describe('NativeApplicationDescriptor', () => {
       )
       expect(descriptor.name).to.equal('MyNativeAppName')
     })
+
+    it('should throw if the descriptor is not complete and throwIfNotComplete is true', () => {
+      expect(() =>
+        NativeApplicationDescriptor.fromString('MyNativeAppName', {
+          throwIfNotComplete: true,
+        })
+      ).to.throw()
+    })
+
+    it('should not throw if the descriptor is complete and throwIfNotComplete is true', () => {
+      expect(() =>
+        NativeApplicationDescriptor.fromString(
+          'MyNativeAppName:android:1.0.0',
+          { throwIfNotComplete: true }
+        )
+      ).to.not.throw()
+    })
+
+    it('should not throw if the descriptor is not complete and throwIfNotComplete is false', () => {
+      expect(() =>
+        NativeApplicationDescriptor.fromString('MyNativeAppName', {
+          throwIfNotComplete: false,
+        })
+      ).to.not.throw()
+    })
+
+    it('should not throw if the descriptor is not complete and throwIfNotComplete is undefined', () => {
+      expect(() =>
+        NativeApplicationDescriptor.fromString('MyNativeAppName', {
+          throwIfNotComplete: false,
+        })
+      ).to.not.throw()
+    })
   })
 
   describe('toString', () => {
