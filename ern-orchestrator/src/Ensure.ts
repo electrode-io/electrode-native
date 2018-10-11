@@ -47,13 +47,13 @@ export default class Ensure {
   }
 
   public static async isNewerContainerVersion(
-    napDescriptor: string,
+    descriptor: string | NativeApplicationDescriptor,
     containerVersion: string,
     extraErrorMessage: string = ''
   ) {
     const cauldron = await getActiveCauldron()
     const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(
-      NativeApplicationDescriptor.fromString(napDescriptor)
+      coreUtils.coerceToNativeApplicationDescriptor(descriptor)
     )
     if (
       cauldronContainerVersion &&
@@ -66,12 +66,12 @@ export default class Ensure {
   }
 
   public static isCompleteNapDescriptorString(
-    str: string,
+    descriptor: string | NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
-    if (NativeApplicationDescriptor.fromString(str).isPartial) {
+    if (coreUtils.coerceToNativeApplicationDescriptor(descriptor).isPartial) {
       throw new Error(
-        `${str} is not a complete native application descriptor, in the form application:platform:version\n${extraErrorMessage}`
+        `${descriptor} is not a complete native application descriptor, in the form application:platform:version\n${extraErrorMessage}`
       )
     }
   }
@@ -108,14 +108,14 @@ export default class Ensure {
   }
 
   public static async napDescritorExistsInCauldron(
-    napDescriptor: string | string[],
+    d:
+      | string
+      | NativeApplicationDescriptor
+      | Array<string | NativeApplicationDescriptor>,
     extraErrorMessage: string = ''
   ) {
     const cauldron = await getActiveCauldron()
-    const descriptors =
-      napDescriptor instanceof Array
-        ? _.map(napDescriptor, d => NativeApplicationDescriptor.fromString(d))
-        : [NativeApplicationDescriptor.fromString(napDescriptor)]
+    const descriptors = coreUtils.coerceToNativeApplicationDescriptorArray(d)
     for (const descriptor of descriptors) {
       const result = await cauldron.isDescriptorInCauldron(descriptor)
       if (!result) {
@@ -127,29 +127,29 @@ export default class Ensure {
   }
 
   public static sameNativeApplicationAndPlatform(
-    descriptors: string[],
+    descriptors: Array<string | NativeApplicationDescriptor>,
     extraErrorMessage: string = ''
   ) {
     const basePathDescriptors = _.map(
-      descriptors,
-      n => `${n.split(':')[0]}:${n.split(':')[1]}`
+      coreUtils.coerceToNativeApplicationDescriptorArray(descriptors),
+      d => `${d.name}:${d.platform}`
     )
     if (_.uniq(basePathDescriptors).length > 1) {
       throw new Error(
-        `Descriptors do not all matchthe same native application/platform.\n${extraErrorMessage}`
+        `Descriptors do not all match the same native application/platform pair.\n${extraErrorMessage}`
       )
     }
   }
 
   public static async napDescritorDoesNotExistsInCauldron(
-    napDescriptor: string,
+    d: NativeApplicationDescriptor | string,
     extraErrorMessage: string = ''
   ) {
     const cauldron = await getActiveCauldron()
-    const descriptor = NativeApplicationDescriptor.fromString(napDescriptor)
+    const descriptor = coreUtils.coerceToNativeApplicationDescriptor(d)
     if (await cauldron.isDescriptorInCauldron(descriptor)) {
       throw new Error(
-        `${descriptor.toString()} descriptor exist in Cauldron.\n${extraErrorMessage}`
+        `${descriptor} descriptor exist in Cauldron.\n${extraErrorMessage}`
       )
     }
   }
@@ -445,7 +445,7 @@ export default class Ensure {
   }
 
   public static checkIfCodePushOptionsAreValid(
-    descriptors?: string[],
+    descriptors?: Array<string | NativeApplicationDescriptor>,
     targetBinaryVersion?: string,
     semVerDescriptor?: string,
     extraErrorMessage: string = ''
