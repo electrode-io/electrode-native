@@ -2,14 +2,21 @@ import { NativePlatform } from './NativePlatform'
 
 export class NativeApplicationDescriptor {
   public static fromString(
-    napDescriptorLiteral: string
+    napDescriptorLiteral: string,
+    { throwIfNotComplete }: { throwIfNotComplete?: boolean } = {}
   ): NativeApplicationDescriptor {
     const arr: string[] = napDescriptorLiteral.split(':')
-    return new NativeApplicationDescriptor(
+    const result = new NativeApplicationDescriptor(
       arr[0],
       arr[1] as NativePlatform,
       arr[2]
     )
+    if (throwIfNotComplete && !result.isComplete) {
+      throw new Error(
+        `${result.toString()} is not a complete Native Application Descriptor`
+      )
+    }
+    return result
   }
 
   public readonly name: string
