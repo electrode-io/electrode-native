@@ -22,6 +22,7 @@ export const builder = (argv: Argv) => {
         'Value to be set for this config key. If JSON, it can be provided as a string, or json file path or cauldron file path.',
       required: true,
     })
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .epilog(epilog(exports))
 }
 
@@ -30,16 +31,14 @@ export const handler = async ({
   key,
   value,
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   key?: string
   value: any
 }) => {
   try {
     const cauldron = await getActiveCauldron()
     await cauldron.setConfig({
-      descriptor: descriptor
-        ? NativeApplicationDescriptor.fromString(descriptor)
-        : undefined,
+      descriptor,
       key,
       value: await parseArgValue(value),
     })

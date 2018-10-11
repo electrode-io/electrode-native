@@ -19,6 +19,9 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
       type: 'string',
@@ -57,7 +60,7 @@ export const handler = async ({
   mandatory,
   rollout,
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   deploymentName?: string
   label?: string
   disabled?: boolean
@@ -72,16 +75,13 @@ export const handler = async ({
       },
     })
 
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyReleasedVersions: true,
-      })
-    }
-
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
       napDescriptorExistInCauldron: {
         descriptor,
         extraErrorMessage:
@@ -90,7 +90,7 @@ export const handler = async ({
     })
 
     if (!deploymentName) {
-      deploymentName = await askUserForCodePushDeploymentName(napDescriptor)
+      deploymentName = await askUserForCodePushDeploymentName(descriptor)
     }
 
     if (!label) {
@@ -104,7 +104,7 @@ export const handler = async ({
       label = <string>userInputedLabel
     }
 
-    await performCodePushPatch(napDescriptor, deploymentName, label, {
+    await performCodePushPatch(descriptor, deploymentName, label, {
       isDisabled: disabled,
       isMandatory: mandatory,
       rollout,

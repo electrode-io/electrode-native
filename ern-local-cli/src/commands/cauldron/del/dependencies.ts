@@ -30,11 +30,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .option('force', {
-      alias: 'f',
-      describe: 'Force publish',
-      type: 'boolean',
-    })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -42,39 +40,33 @@ export const handler = async ({
   dependencies,
   containerVersion,
   descriptor,
-  force,
 }: {
   dependencies: string[]
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
-  force?: boolean
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
       dependencyIsInNativeApplicationVersionContainer: {
         dependency: dependencies,
+        descriptor,
         extraErrorMessage:
           'This command cannot remove dependency(ies) that do not exist in Cauldron.',
-        napDescriptor,
       },
       dependencyNotInUseByAMiniApp: {
         dependency: dependencies,
-        napDescriptor,
+        descriptor,
       },
-      isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -106,10 +98,8 @@ export const handler = async ({
     const cauldronCommitMessage = [
       `${
         dependencies.length === 1
-          ? `Remove ${
-              dependencies[0]
-            } native dependency from ${napDescriptor.toString()}`
-          : `Remove multiple native dependencies from ${napDescriptor.toString()}`
+          ? `Remove ${dependencies[0]} native dependency from ${descriptor}`
+          : `Remove multiple native dependencies from ${descriptor}`
       }`,
     ]
 
@@ -119,7 +109,7 @@ export const handler = async ({
         let dependencyObj: PackagePath
         for (dependencyObj of dependenciesObjs) {
           await cauldron.removeContainerNativeDependency(
-            napDescriptor,
+            descriptor!,
             dependencyObj
           )
           cauldronCommitMessage.push(
@@ -127,13 +117,11 @@ export const handler = async ({
           )
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(
-      `Dependency(ies) was/were succesfully removed from ${napDescriptor.toString()}`
-    )
+    log.info(`Dependency(ies) was/were succesfully removed from ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

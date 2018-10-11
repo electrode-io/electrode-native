@@ -14,6 +14,9 @@ export const builder = (argv: Argv) => {
       describe: 'true if version is released, false otherwise',
       type: 'boolean',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -21,7 +24,7 @@ export const handler = async ({
   descriptor,
   isReleased = true,
 }: {
-  descriptor: string
+  descriptor: NativeApplicationDescriptor
   isReleased: boolean
 }) => {
   try {
@@ -30,7 +33,6 @@ export const handler = async ({
         extraErrorMessage:
           'A Cauldron must be active in order to use this command',
       },
-      isCompleteNapDescriptorString: { descriptor },
       napDescriptorExistInCauldron: {
         descriptor,
         extraErrorMessage:
@@ -38,9 +40,8 @@ export const handler = async ({
       },
     })
 
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
     const cauldron = await getActiveCauldron()
-    cauldron.updateNativeAppIsReleased(napDescriptor, isReleased)
+    cauldron.updateNativeAppIsReleased(descriptor, isReleased)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

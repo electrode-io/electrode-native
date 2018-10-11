@@ -31,7 +31,7 @@ export default async function start({
   extraJsDependencies,
 }: {
   miniapps?: string[]
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   watchNodeModules?: string[]
   packageName?: string
   activityName?: string
@@ -39,7 +39,6 @@ export default async function start({
   extraJsDependencies?: PackagePath[]
 } = {}) {
   let miniAppsPaths: PackagePath[] = _.map(miniapps, PackagePath.fromString)
-  let napDescriptor
   let pathToYarnLock
 
   const cauldron = await getActiveCauldron()
@@ -59,15 +58,11 @@ export default async function start({
   }
 
   if (descriptor) {
-    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-    const miniAppsObjs = await cauldron.getContainerMiniApps(napDescriptor)
+    const miniAppsObjs = await cauldron.getContainerMiniApps(descriptor)
     miniAppsPaths = _.map(miniAppsObjs, m =>
       PackagePath.fromString(m.toString())
     )
-    pathToYarnLock = await cauldron.getPathToYarnLock(
-      napDescriptor,
-      'container'
-    )
+    pathToYarnLock = await cauldron.getPathToYarnLock(descriptor, 'container')
   }
 
   // Because this command can only be stoped through `CTRL+C` (or killing the process)
@@ -110,22 +105,22 @@ export default async function start({
       .join(',')}`,
   ])
 
-  if (napDescriptor) {
+  if (descriptor) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
     if (binaryStoreConfig) {
       const binaryStore = new ErnBinaryStore(binaryStoreConfig)
-      if (await binaryStore.hasBinary(napDescriptor)) {
-        if (napDescriptor.platform === 'android') {
+      if (await binaryStore.hasBinary(descriptor)) {
+        if (descriptor.platform === 'android') {
           if (!packageName) {
             return log.error('You need to provide an Android package name')
           }
-          const apkPath = await binaryStore.getBinary(napDescriptor)
+          const apkPath = await binaryStore.getBinary(descriptor)
           await runAndroidApk({ apkPath, packageName, activityName })
-        } else if (napDescriptor.platform === 'ios') {
+        } else if (descriptor.platform === 'ios') {
           if (!bundleId) {
             return log.error('You need to provide an iOS bundle ID')
           }
-          const appPath = await binaryStore.getBinary(napDescriptor)
+          const appPath = await binaryStore.getBinary(descriptor)
           await runIosApp({ appPath, bundleId })
         }
       }

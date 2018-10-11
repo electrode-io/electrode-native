@@ -69,6 +69,9 @@ export const builder = (argv: Argv) => {
         'A complete native application descriptor target of the operation',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -91,15 +94,14 @@ export const handler = async ({
   updateMiniapps: string[]
   force?: boolean
   containerVersion?: string
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
 }) => {
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
@@ -108,25 +110,25 @@ export const handler = async ({
       },
       dependencyIsInNativeApplicationVersionContainer: {
         dependency: [...delDependencies, ...updateDependencies],
+        descriptor,
         extraErrorMessage:
           'This command cannot del or update dependency(ies) that do not exist in Cauldron.',
-        napDescriptor,
       },
       dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: {
         dependency: updateDependencies,
+        descriptor,
         extraErrorMessage:
           'It seems like you are trying to update a dependency to a version that is already the one in use.',
-        napDescriptor,
       },
       dependencyNotInNativeApplicationVersionContainer: {
         dependency: addDependencies,
+        descriptor,
         extraErrorMessage:
           'You cannot add dependencies that already exit in Cauldron. Please consider using update instead.',
-        napDescriptor,
       },
       dependencyNotInUseByAMiniApp: {
         dependency: [...delDependencies],
-        napDescriptor,
+        descriptor,
       },
       isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
@@ -141,22 +143,22 @@ export const handler = async ({
         ? { containerVersion }
         : undefined,
       miniAppIsInNativeApplicationVersionContainer: {
+        descriptor,
         extraErrorMessage:
           'This command cannot remove MiniApp(s) that do not exist in Cauldron.',
         miniApp: [...delMiniapps, ...updateMiniapps],
-        napDescriptor,
       },
       miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
+        descriptor,
         extraErrorMessage:
           'It seems like you are trying to update a MiniApp to a version that is already the one in use.',
         miniApp: updateMiniapps,
-        napDescriptor,
       },
       miniAppNotInNativeApplicationVersionContainer: {
+        descriptor,
         extraErrorMessage:
           'You cannot add MiniApp(s) that already exist yet in Cauldron. Please consider using update instead.',
         miniApp: addMiniapps,
-        napDescriptor,
       },
       napDescriptorExistInCauldron: {
         descriptor,
@@ -218,7 +220,7 @@ export const handler = async ({
     }
 
     const cauldronCommitMessage = [
-      `Batch operation on ${napDescriptor.toString()} native application`,
+      `Batch operation on ${descriptor} native application`,
     ]
 
     const cauldron = await getActiveCauldron()
@@ -227,7 +229,7 @@ export const handler = async ({
         // Del Dependencies
         for (const delDependencyObj of delDependenciesObjs) {
           await cauldron.removeContainerNativeDependency(
-            napDescriptor,
+            descriptor!,
             delDependencyObj
           )
           cauldronCommitMessage.push(
@@ -236,7 +238,7 @@ export const handler = async ({
         }
         // Del MiniApps
         for (const delMiniAppAsDep of delMiniAppsAsDeps) {
-          await cauldron.removeContainerMiniApp(napDescriptor, delMiniAppAsDep)
+          await cauldron.removeContainerMiniApp(descriptor!, delMiniAppAsDep)
           cauldronCommitMessage.push(
             `- Remove ${delMiniAppAsDep.toString()} MiniApp`
           )
@@ -244,7 +246,7 @@ export const handler = async ({
         // Update Dependencies
         for (const updateDependencyObj of updateDependenciesObjs) {
           await cauldron.updateContainerNativeDependencyVersion(
-            napDescriptor,
+            descriptor!,
             updateDependencyObj.basePath,
             <string>updateDependencyObj.version
           )
@@ -258,7 +260,7 @@ export const handler = async ({
         for (const addDependencyObj of addDependenciesObjs) {
           // Add the dependency to Cauldron
           await cauldron.addContainerNativeDependency(
-            napDescriptor,
+            descriptor!,
             addDependencyObj
           )
           cauldronCommitMessage.push(
@@ -281,7 +283,7 @@ export const handler = async ({
         }
 
         const miniAppsInCauldron = await cauldron.getContainerMiniApps(
-          napDescriptor
+          descriptor!
         )
         const nonUpdatedMiniAppsInCauldron = _.xorBy(
           updateMiniAppsDependencyPaths,
@@ -302,7 +304,7 @@ export const handler = async ({
           ]
         )
         const cauldronDependencies = await cauldron.getNativeDependencies(
-          napDescriptor
+          descriptor!
         )
         const finalNativeDependencies = resolver.retainHighestVersions(
           nativeDependencies.resolved,
@@ -313,22 +315,20 @@ export const handler = async ({
           throwIfConflict: !force,
         })
 
-        await cauldron.syncContainerMiniApps(napDescriptor, [
+        await cauldron.syncContainerMiniApps(descriptor!, [
           ...addMiniAppsDependencyPaths,
           ...updateMiniAppsDependencyPaths,
         ])
         await cauldron.syncContainerNativeDependencies(
-          napDescriptor,
+          descriptor!,
           finalNativeDependencies
         )
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(
-      `Operations were succesfully performed for ${napDescriptor.toString()}`
-    )
+    log.info(`Operations were succesfully performed for ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

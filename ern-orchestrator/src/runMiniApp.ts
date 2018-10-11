@@ -9,6 +9,7 @@ import {
   Platform,
   reactnative,
   shell,
+  utils,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -36,7 +37,7 @@ export async function runMiniApp(
     miniapps?: string[]
     jsApiImpls?: string[]
     dependencies?: string[]
-    descriptor?: string
+    descriptor?: string | NativeApplicationDescriptor
     dev?: boolean
     host?: string
     port?: string
@@ -81,7 +82,7 @@ export async function runMiniApp(
     if (cauldron == null) {
       throw new Error('[runMiniApp] No cauldron instance found')
     }
-    napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+    napDescriptor = utils.coerceToNativeApplicationDescriptor(descriptor)
   }
 
   let entryMiniAppName = mainMiniAppName || ''

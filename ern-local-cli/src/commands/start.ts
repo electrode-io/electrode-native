@@ -1,7 +1,11 @@
 import { epilog, askUserToChooseANapDescriptorFromCauldron } from '../lib'
 import { start } from 'ern-orchestrator'
 import _ from 'lodash'
-import { PackagePath, utils as coreUtils } from 'ern-core'
+import {
+  PackagePath,
+  utils as coreUtils,
+  NativeApplicationDescriptor,
+} from 'ern-core'
 import { Argv } from 'yargs'
 
 export const command = 'start'
@@ -14,6 +18,9 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application selector',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more miniapps',
@@ -60,7 +67,7 @@ export const handler = async ({
   bundleId,
   extraJsDependencies = [],
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   miniapps?: string[]
   watchNodeModules?: string[]
   packageName?: string

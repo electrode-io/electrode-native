@@ -25,41 +25,39 @@ export const builder = (argv: Argv) => {
       describe: 'Copy Cauldron data from a previous native application version',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
   descriptor,
-  platformVersion,
   copyFromVersion,
 }: {
-  descriptor: string
-  platformVersion?: string
+  descriptor: NativeApplicationDescriptor
   copyFromVersion?: string
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-    isCompleteNapDescriptorString: { descriptor },
-    napDescritorDoesNotExistsInCauldron: {
-      descriptor,
-      extraErrorMessage:
-        'This version of the native application already exist in Cauldron.',
-    },
-  })
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
   let cauldron
   try {
+    await logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
+      napDescritorDoesNotExistsInCauldron: {
+        descriptor,
+        extraErrorMessage:
+          'This version of the native application already exist in Cauldron.',
+      },
+    })
+
     cauldron = await getActiveCauldron()
     await cauldron.beginTransaction()
 
     const nativeApplicationDescriptor = new NativeApplicationDescriptor(
-      napDescriptor.name,
-      napDescriptor.platform
+      descriptor.name,
+      descriptor.platform
     )
     let previousApps
     if (await cauldron.isDescriptorInCauldron(nativeApplicationDescriptor)) {
@@ -68,7 +66,7 @@ export const handler = async ({
 
     await kax
       .task(`Adding ${descriptor}`)
-      .run(cauldron.addDescriptor(napDescriptor))
+      .run(cauldron.addDescriptor(descriptor))
     if (previousApps && previousApps.versions.length > 0) {
       const latestVersion: any = _.last(previousApps.versions)
       const latestVersionName = latestVersion.name
@@ -78,11 +76,7 @@ export const handler = async ({
           await kax
             .task(`Copying data over from latest version ${latestVersionName}`)
             .run(
-              copyOverPreviousVersionData(
-                napDescriptor,
-                latestVersion,
-                cauldron
-              )
+              copyOverPreviousVersionData(descriptor, latestVersion, cauldron)
             )
         } else if (copyFromVersion === 'none') {
           log.info(
@@ -100,25 +94,19 @@ export const handler = async ({
           }
           await kax
             .task(`Copying data over from version ${copyFromVersion}`)
-            .run(copyOverPreviousVersionData(napDescriptor, version, cauldron))
+            .run(copyOverPreviousVersionData(descriptor, version, cauldron))
         }
       } else if (await askUserCopyPreviousVersionData(latestVersionName)) {
         await kax
           .task('Copying data over from previous version')
-          .run(
-            copyOverPreviousVersionData(napDescriptor, latestVersion, cauldron)
-          )
+          .run(copyOverPreviousVersionData(descriptor, latestVersion, cauldron))
       }
     }
 
     await kax
       .task('Updating Cauldron')
-      .run(
-        cauldron.commitTransaction(
-          `Add ${napDescriptor.toString()} native application`
-        )
-      )
-    log.info(`${napDescriptor.toString()} was succesfuly added to the Cauldron`)
+      .run(cauldron.commitTransaction(`Add ${descriptor} native application`))
+    log.info(`${descriptor} was succesfuly added to the Cauldron`)
   } catch (e) {
     if (cauldron) {
       await cauldron.discardTransaction()

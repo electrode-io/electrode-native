@@ -29,6 +29,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -39,30 +42,26 @@ export const handler = async ({
 }: {
   dependencies: string[]
   containerVersion?: string
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))!
 
     await logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
       dependencyNotInNativeApplicationVersionContainer: {
         dependency: dependencies,
+        descriptor,
         extraErrorMessage:
           'If you want to update dependency(ies) version(s), use -ern cauldron update dependencies- instead',
-        napDescriptor,
       },
-      isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -96,10 +95,8 @@ export const handler = async ({
     const cauldronCommitMessage = [
       `${
         dependencies.length === 1
-          ? `Add ${
-              dependencies[0]
-            } native dependency to ${napDescriptor.toString()}`
-          : `Add multiple native dependencies to ${napDescriptor.toString()}`
+          ? `Add ${dependencies[0]} native dependency to ${descriptor}`
+          : `Add multiple native dependencies to ${descriptor}`
       }`,
     ]
 
@@ -109,7 +106,7 @@ export const handler = async ({
         for (const dependencyObj of dependenciesObjs) {
           // Add the dependency to Cauldron
           await cauldron.addContainerNativeDependency(
-            napDescriptor,
+            descriptor!,
             dependencyObj
           )
           cauldronCommitMessage.push(
@@ -117,13 +114,11 @@ export const handler = async ({
           )
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(
-      `Dependency(ies) was/were succesfully added to ${napDescriptor.toString()} !`
-    )
+    log.info(`Dependency(ies) was/were succesfully added to ${descriptor} !`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

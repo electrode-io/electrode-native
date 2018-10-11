@@ -7,23 +7,22 @@ export const command = 'remove <descriptor>'
 export const desc = 'Remove a mobile application binary from the binary store'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
   descriptor,
-  pathToBinary,
 }: {
-  descriptor: string
-  pathToBinary: string
+  descriptor: NativeApplicationDescriptor
 }) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
-    },
-    isCompleteNapDescriptorString: {
-      descriptor,
     },
     napDescriptorExistInCauldron: {
       descriptor,
@@ -31,8 +30,6 @@ export const handler = async ({
         'Cannot add binary of a non existing native application version',
     },
   })
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   const cauldron = await getActiveCauldron()
   const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
@@ -42,18 +39,12 @@ export const handler = async ({
 
   try {
     const binaryStore = new ErnBinaryStore(binaryStoreConfig)
-    if (!(await binaryStore.hasBinary(napDescriptor))) {
-      return log.error(
-        `No binary was found in the store for ${napDescriptor.toString()}`
-      )
+    if (!(await binaryStore.hasBinary(descriptor))) {
+      return log.error(`No binary was found in the store for ${descriptor}`)
     }
-    await binaryStore.removeBinary(napDescriptor)
-    log.info(
-      `${napDescriptor.toString()} binary was successfuly removed from the store`
-    )
+    await binaryStore.removeBinary(descriptor)
+    log.info(`${descriptor} binary was successfuly removed from the store`)
   } catch (e) {
-    log.error(
-      `An error occurred while trying to remove ${napDescriptor.toString()} binary`
-    )
+    log.error(`An error occurred while trying to remove ${descriptor} binary`)
   }
 }

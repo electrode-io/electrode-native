@@ -35,36 +35,33 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
   jsapiimpls,
   descriptor,
-  force = false,
   containerVersion,
 }: {
   jsapiimpls: string[]
-  descriptor?: string
-  force?: boolean
+  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -86,10 +83,8 @@ export const handler = async ({
     const cauldronCommitMessage = [
       `${
         jsapiimpls.length === 1
-          ? `Add ${
-              jsapiimpls[0]
-            } JS API implementation to ${napDescriptor.toString()}`
-          : `Add multiple JS API implementations to ${napDescriptor.toString()}`
+          ? `Add ${jsapiimpls[0]} JS API implementation to ${descriptor}`
+          : `Add multiple JS API implementations to ${descriptor}`
       }`,
     ]
 
@@ -98,18 +93,18 @@ export const handler = async ({
       async () => {
         for (const jsApiImpl of jsapiimpls) {
           await cauldron.addContainerJsApiImpl(
-            napDescriptor,
+            descriptor!,
             PackagePath.fromString(jsApiImpl)
           )
           cauldronCommitMessage.push(`- Add ${jsApiImpl} JS API implementation`)
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
     log.debug(
-      `JS API implementation(s) was/were succesfully added to ${napDescriptor.toString()} in the Cauldron`
+      `JS API implementation(s) was/were succesfully added to ${descriptor} in the Cauldron`
     )
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

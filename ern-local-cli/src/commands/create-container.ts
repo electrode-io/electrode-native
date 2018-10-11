@@ -26,6 +26,9 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('jsOnly', {
       alias: 'js',
       describe: 'Generates JS only (composite app)',
@@ -74,7 +77,7 @@ export const handler = async ({
   platform,
   ignoreRnpmAssets,
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   jsOnly?: boolean
   outDir?: string
   miniapps?: string[]
@@ -83,8 +86,6 @@ export const handler = async ({
   platform?: NativePlatform
   ignoreRnpmAssets?: boolean
 }) => {
-  let napDescriptor: NativeApplicationDescriptor | void
-
   try {
     if (outDir && fs.existsSync(outDir)) {
       if (fs.readdirSync(outDir).length > 0) {
@@ -157,15 +158,12 @@ Output directory should either not exist (it will be created) or should be empty
 
     if (descriptor) {
       await logErrorAndExitIfNotSatisfied({
-        isCompleteNapDescriptorString: { descriptor },
         napDescriptorExistInCauldron: {
           descriptor,
           extraErrorMessage:
             'You cannot create a container for a non-existing native application version.',
         },
       })
-
-      napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
     }
 
     let miniAppsPaths: PackagePath[] = _.map(miniapps, PackagePath.fromString)
@@ -179,19 +177,19 @@ Output directory should either not exist (it will be created) or should be empty
     // Ony generates the composite miniapp to a provided output directory
     if (jsOnly) {
       if (!miniapps) {
-        if (!napDescriptor) {
+        if (!descriptor) {
           return log.error(
             'You need to provide a native application descriptor, if not providing miniapps'
           )
         }
-        miniAppsPaths = await cauldron.getContainerMiniApps(napDescriptor)
-        jsApiImplsPaths = await cauldron.getContainerJsApiImpls(napDescriptor)
+        miniAppsPaths = await cauldron.getContainerMiniApps(descriptor)
+        jsApiImplsPaths = await cauldron.getContainerJsApiImpls(descriptor)
       }
 
       let pathToYarnLock
-      if (napDescriptor) {
+      if (descriptor) {
         pathToYarnLock = await cauldron.getPathToYarnLock(
-          napDescriptor,
+          descriptor,
           'container'
         )
       }
@@ -203,7 +201,7 @@ Output directory should either not exist (it will be created) or should be empty
         jsApiImplsPaths
       )
     } else {
-      if (!napDescriptor && miniapps) {
+      if (!descriptor && miniapps) {
         if (!platform) {
           const { userSelectedPlatform } = await inquirer.prompt([
             <inquirer.Question>{
@@ -226,8 +224,8 @@ Output directory should either not exist (it will be created) or should be empty
             outDir,
           })
         )
-      } else if (napDescriptor) {
-        await runCauldronContainerGen(napDescriptor, { outDir })
+      } else if (descriptor) {
+        await runCauldronContainerGen(descriptor, { outDir })
       }
     }
   } catch (e) {

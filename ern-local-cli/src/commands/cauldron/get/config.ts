@@ -7,10 +7,16 @@ export const command = 'config <descriptor>'
 export const desc = 'Get configuration from the cauldron'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .coerce('descriptor', NativeApplicationDescriptor)
+    .epilog(epilog(exports))
 }
 
-export const handler = async ({ descriptor }: { descriptor: string }) => {
+export const handler = async ({
+  descriptor,
+}: {
+  descriptor: NativeApplicationDescriptor
+}) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
@@ -20,9 +26,7 @@ export const handler = async ({ descriptor }: { descriptor: string }) => {
 
   try {
     const cauldron = await getActiveCauldron()
-    const config = await cauldron.getConfig(
-      NativeApplicationDescriptor.fromString(descriptor)
-    )
+    const config = await cauldron.getConfig(descriptor)
     log.info(JSON.stringify(config, null, 2))
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

@@ -8,27 +8,33 @@ export const desc =
   'Get all the native dependencies of a given native application'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
+    .epilog(epilog(exports))
 }
 
-export const handler = async ({ descriptor }: { descriptor: string }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-    isCompleteNapDescriptorString: { descriptor },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage:
-        'This command cannot work on a non existing native application version',
-    },
-  })
-
+export const handler = async ({
+  descriptor,
+}: {
+  descriptor: NativeApplicationDescriptor
+}) => {
   try {
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+    await logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage:
+          'This command cannot work on a non existing native application version',
+      },
+    })
+
     const cauldron = await getActiveCauldron()
-    const dependencies = await cauldron.getNativeDependencies(napDescriptor)
+    const dependencies = await cauldron.getNativeDependencies(descriptor)
     for (const dependency of dependencies) {
       log.info(dependency.toString())
     }
