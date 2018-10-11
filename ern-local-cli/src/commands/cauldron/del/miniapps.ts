@@ -30,6 +30,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -43,24 +46,20 @@ export const handler = async ({
 }: {
   miniapps: string[]
   containerVersion?: string
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -73,10 +72,10 @@ export const handler = async ({
         ? { containerVersion }
         : undefined,
       miniAppIsInNativeApplicationVersionContainer: {
+        descriptor,
         extraErrorMessage:
           'This command cannot remove MiniApp(s) that do not exist in Cauldron.',
         miniApp: miniapps,
-        napDescriptor,
       },
       napDescriptorExistInCauldron: {
         descriptor,
@@ -95,8 +94,8 @@ export const handler = async ({
     const cauldronCommitMessage = [
       `${
         miniapps.length === 1
-          ? `Remove ${miniapps[0]} MiniApp from ${napDescriptor.toString()}`
-          : `Remove multiple MiniApps from ${napDescriptor.toString()}`
+          ? `Remove ${miniapps[0]} MiniApp from ${descriptor}`
+          : `Remove multiple MiniApps from ${descriptor}`
       }`,
     ]
 
@@ -104,19 +103,17 @@ export const handler = async ({
     await performContainerStateUpdateInCauldron(
       async () => {
         for (const miniAppAsDep of miniAppsAsDeps) {
-          await cauldron.removeContainerMiniApp(napDescriptor, miniAppAsDep)
+          await cauldron.removeContainerMiniApp(descriptor!, miniAppAsDep)
           cauldronCommitMessage.push(
             `- Remove ${miniAppAsDep.toString()} MiniApp`
           )
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.debug(
-      `MiniApp(s) was/were succesfully removed from ${napDescriptor.toString()}`
-    )
+    log.debug(`MiniApp(s) was/were succesfully removed from ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

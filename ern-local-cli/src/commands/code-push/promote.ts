@@ -11,7 +11,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
   askUserToChooseANapDescriptorFromCauldron,
-  askUserToChooseOneOrMoreNapDescriptorFromCauldron
+  askUserToChooseOneOrMoreNapDescriptorFromCauldron,
 } from '../../lib'
 import _ from 'lodash'
 import inquirer from 'inquirer'
@@ -28,11 +28,19 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
+    .coerce('sourceDescriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('targetDescriptors', {
       describe:
         'One or more native application descriptors matching targeted versions',
       type: 'array',
     })
+    .coerce('targetDescriptors', d =>
+      d.map(t =>
+        NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
+      )
+    )
     .option('targetSemVerDescriptor', {
       describe:
         'A target native application descriptor using a semver expression for the version',
@@ -99,8 +107,8 @@ export const handler = async ({
   force,
   label,
 }: {
-  sourceDescriptor?: string
-  targetDescriptors?: string[]
+  sourceDescriptor?: NativeApplicationDescriptor
+  targetDescriptors?: NativeApplicationDescriptor[]
   targetSemVerDescriptor?: string
   sourceDeploymentName?: string
   targetDeploymentName?: string
@@ -113,8 +121,6 @@ export const handler = async ({
   label?: string
 }) => {
   try {
-    let targetNapDescriptors
-
     await logErrorAndExitIfNotSatisfied({
       cauldronIsActive: {
         extraErrorMessage:
@@ -127,18 +133,12 @@ export const handler = async ({
       },
     })
 
-    if (!sourceDescriptor) {
-      sourceDescriptor = await askUserToChooseANapDescriptorFromCauldron({
+    sourceDescriptor =
+      sourceDescriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         message: 'Please select a source native application descriptor',
         onlyReleasedVersions: true,
-      })
-    } else {
-      await logErrorAndExitIfNotSatisfied({
-        isCompleteNapDescriptorString: {
-          descriptor: sourceDescriptor,
-        },
-      })
-    }
+      }))
 
     if (targetDescriptors.length > 0) {
       // User provided one or more target descriptor(s)
@@ -164,10 +164,10 @@ export const handler = async ({
         targetSemVerDescriptor
       )
       const cauldron = await getActiveCauldron()
-      targetNapDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
+      targetDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
         targetSemVerNapDescriptor
       )
-      if (targetNapDescriptors.length === 0) {
+      if (targetDescriptors.length === 0) {
         throw new Error(
           `No versions matching ${targetSemVerDescriptor} were found`
         )
@@ -175,8 +175,8 @@ export const handler = async ({
         log.info(
           'CodePush release will target the following native application descriptors :'
         )
-        for (const targetNapDescriptor of targetNapDescriptors) {
-          log.info(`- ${targetNapDescriptor.toString()}`)
+        for (const targetDescriptor of targetDescriptors) {
+          log.info(`- ${targetDescriptor}`)
         }
         if (!skipConfirmation) {
           const { userConfirmedVersions } = await inquirer.prompt([
@@ -201,33 +201,23 @@ export const handler = async ({
       },
     })
 
-    const sourceNapDescriptor = NativeApplicationDescriptor.fromString(
-      sourceDescriptor
-    )
-
     if (!sourceDeploymentName) {
       sourceDeploymentName = await askUserForCodePushDeploymentName(
-        sourceNapDescriptor,
+        sourceDescriptor,
         'Please select a source deployment environment'
       )
     }
 
     if (!targetDeploymentName) {
       targetDeploymentName = await askUserForCodePushDeploymentName(
-        sourceNapDescriptor,
+        sourceDescriptor,
         'Please select a target deployment environment'
       )
     }
 
-    if (!targetNapDescriptors) {
-      targetNapDescriptors = _.map(targetDescriptors, d =>
-        NativeApplicationDescriptor.fromString(d)
-      )
-    }
-
     await performCodePushPromote(
-      sourceNapDescriptor,
-      targetNapDescriptors,
+      sourceDescriptor,
+      targetDescriptors,
       sourceDeploymentName,
       targetDeploymentName,
       {

@@ -6,11 +6,7 @@ import {
   log,
 } from 'ern-core'
 import { checkCompatibilityWithNativeApp } from 'ern-orchestrator'
-import {
-  epilog,
-  logErrorAndExitIfNotSatisfied,
-  askUserToChooseANapDescriptorFromCauldron,
-} from '../lib'
+import { epilog, askUserToChooseANapDescriptorFromCauldron } from '../lib'
 
 import { Argv } from 'yargs'
 
@@ -30,6 +26,9 @@ export const builder = (argv: Argv) => {
       describe:
         'Full native application selector (target native application version for the push)',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -39,7 +38,7 @@ export const handler = async ({
   miniapps = [],
 }: {
   miniapp?: string
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   miniapps: string[]
 }) => {
   try {
@@ -49,14 +48,8 @@ export const handler = async ({
       miniapps.push(miniapp)
     }
 
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron()
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-
-    await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
-    })
+    descriptor =
+      descriptor || (await askUserToChooseANapDescriptorFromCauldron())
 
     for (const miniappPath of miniapps) {
       const miniAppPackage = await MiniApp.fromPackagePath(
@@ -65,9 +58,9 @@ export const handler = async ({
       log.info(`=> ${miniAppPackage.name}`)
       await checkCompatibilityWithNativeApp(
         miniAppPackage,
-        napDescriptor.name,
-        napDescriptor.platform || undefined,
-        napDescriptor.version || undefined
+        descriptor.name,
+        descriptor.platform || undefined,
+        descriptor.version || undefined
       )
     }
   } catch (e) {

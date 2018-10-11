@@ -23,6 +23,7 @@ export const builder = (argv: Argv) => {
         'Partial or full native application descriptor for which to get the config from (top level config if not specified)',
       type: 'string',
     })
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .epilog(epilog(exports))
 }
 
@@ -31,7 +32,7 @@ export const handler = async ({
   key,
   strict,
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   key?: string
   strict: boolean
 }) => {
@@ -41,19 +42,15 @@ export const handler = async ({
       throw new Error('A Cauldron must be active in order to use this command')
     }
 
-    const napDescriptor = descriptor
-      ? NativeApplicationDescriptor.fromString(descriptor)
-      : undefined
-
     let result: any
     if (key && strict) {
-      result = await cauldron.getConfigForKeyStrict(key, napDescriptor)
+      result = await cauldron.getConfigForKeyStrict(key, descriptor)
     } else if (key && !strict) {
-      result = await cauldron.getConfigForKey(key, napDescriptor)
+      result = await cauldron.getConfigForKey(key, descriptor)
     } else if (!key && strict) {
-      result = await cauldron.getConfigStrict(napDescriptor)
+      result = await cauldron.getConfigStrict(descriptor)
     } else if (!key && !strict) {
-      result = await cauldron.getConfig(napDescriptor)
+      result = await cauldron.getConfig(descriptor)
     }
     const jsonConfig = JSON.stringify(result, null, 2)
     console.log(jsonConfig)

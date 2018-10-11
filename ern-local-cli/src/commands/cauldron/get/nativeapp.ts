@@ -7,10 +7,16 @@ export const command = 'nativeapp [descriptor]'
 export const desc = 'Get a native application from the cauldron'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .coerce('descriptor', NativeApplicationDescriptor)
+    .epilog(epilog(exports))
 }
 
-export const handler = async ({ descriptor }: { descriptor?: string }) => {
+export const handler = async ({
+  descriptor,
+}: {
+  descriptor?: NativeApplicationDescriptor
+}) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
@@ -24,9 +30,7 @@ export const handler = async ({ descriptor }: { descriptor?: string }) => {
       const napDescriptors = await cauldron.getNapDescriptorStrings()
       napDescriptors.forEach(n => log.info(n))
     } else {
-      const nativeApp = await cauldron.getDescriptor(
-        NativeApplicationDescriptor.fromString(descriptor)
-      )
+      const nativeApp = await cauldron.getDescriptor(descriptor)
       log.info(JSON.stringify(nativeApp, null, 1))
     }
   } catch (e) {

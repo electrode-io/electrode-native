@@ -14,14 +14,18 @@ export const command = 'get <descriptor> <outDir>'
 export const desc = 'Get a mobile application binary from the binary store'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
+    .epilog(epilog(exports))
 }
 
 export const handler = async ({
   descriptor,
   outDir,
 }: {
-  descriptor: string
+  descriptor: NativeApplicationDescriptor
   outDir: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
@@ -29,17 +33,12 @@ export const handler = async ({
       extraErrorMessage:
         'A Cauldron must be active in order to use this command',
     },
-    isCompleteNapDescriptorString: {
-      descriptor,
-    },
     napDescriptorExistInCauldron: {
       descriptor,
       extraErrorMessage:
         'Cannot add binary of a non existing native application version',
     },
   })
-
-  const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
 
   const cauldron = await getActiveCauldron()
   const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
@@ -49,20 +48,16 @@ export const handler = async ({
 
   try {
     const binaryStore = new ErnBinaryStore(binaryStoreConfig)
-    if (!(await binaryStore.hasBinary(napDescriptor))) {
-      return log.error(
-        `No binary was found in the store for ${napDescriptor.toString()}`
-      )
+    if (!(await binaryStore.hasBinary(descriptor))) {
+      return log.error(`No binary was found in the store for ${descriptor}`)
     }
     const absoluteOutDirPath = path.resolve(outDir)
     if (!fs.existsSync(absoluteOutDirPath)) {
       shell.mkdir('-p', absoluteOutDirPath)
     }
-    const pathToBinary = await binaryStore.getBinary(napDescriptor, { outDir })
+    const pathToBinary = await binaryStore.getBinary(descriptor, { outDir })
     log.info(`Binary was successfuly retrieved. Path: ${pathToBinary}`)
   } catch (e) {
-    log.error(
-      `An error occurred while retrieving ${napDescriptor.toString()} binary`
-    )
+    log.error(`An error occurred while retrieving ${descriptor} binary`)
   }
 }

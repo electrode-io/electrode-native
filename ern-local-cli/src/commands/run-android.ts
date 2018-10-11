@@ -1,5 +1,9 @@
 import { epilog } from '../lib'
-import { deviceConfig, utils as coreUtils } from 'ern-core'
+import {
+  deviceConfig,
+  utils as coreUtils,
+  NativeApplicationDescriptor,
+} from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
 
@@ -29,6 +33,9 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('mainMiniAppName', {
       describe:
         'Name of the MiniApp to launch when starting the Runner application',
@@ -64,7 +71,7 @@ export const handler = async ({
 }: {
   miniapps?: string[]
   dependencies: string[]
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   mainMiniAppName?: string
   dev?: boolean
   usePreviousDevice?: boolean

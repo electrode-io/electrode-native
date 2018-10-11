@@ -18,6 +18,7 @@ export const builder = (argv: Argv) => {
         'Partial or full native application descriptor for which to delete config (top level config if not specified)',
       type: 'string',
     })
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .epilog(epilog(exports))
 }
 
@@ -25,15 +26,13 @@ export const handler = async ({
   descriptor,
   key,
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   key?: string
 }) => {
   try {
     const cauldron = await getActiveCauldron()
     await cauldron.delConfig({
-      descriptor: descriptor
-        ? NativeApplicationDescriptor.fromString(descriptor)
-        : undefined,
+      descriptor,
       key,
     })
     log.info(

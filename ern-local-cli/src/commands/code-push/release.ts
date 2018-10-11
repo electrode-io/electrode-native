@@ -3,7 +3,6 @@ import {
   NativeApplicationDescriptor,
   utils as coreUtils,
   log,
-  NativePlatform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushOtaUpdate } from 'ern-orchestrator'
@@ -11,7 +10,6 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
-  askUserToChooseANapDescriptorFromCauldron,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
 } from '../../lib'
 import _ from 'lodash'
@@ -38,6 +36,11 @@ export const builder = (argv: Argv) => {
         'Full native application descriptors (target native application versions for the push)',
       type: 'array',
     })
+    .coerce('descriptors', d =>
+      d.map(t =>
+        NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
+      )
+    )
     .option('semVerDescriptor', {
       describe:
         'A native application descriptor using a semver expression for the version',
@@ -47,9 +50,6 @@ export const builder = (argv: Argv) => {
       describe:
         'Force upgrade (ignore compatibility issues -at your own risks-)',
       type: 'boolean',
-    })
-    .option('appName', {
-      describe: 'Application name',
     })
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
@@ -89,10 +89,8 @@ export const handler = async ({
   jsApiImpls = [],
   descriptors = [],
   semVerDescriptor,
-  appName,
   deploymentName,
   targetBinaryVersion,
-  platform,
   mandatory,
   rollout,
   skipConfirmation,
@@ -100,19 +98,15 @@ export const handler = async ({
   force: boolean
   miniapps: string[]
   jsApiImpls: string[]
-  descriptors?: string[]
+  descriptors?: NativeApplicationDescriptor[]
   semVerDescriptor?: string
-  appName: string
   deploymentName: string
   targetBinaryVersion?: string
-  platform: NativePlatform
   mandatory?: boolean
   rollout?: number
   skipConfirmation?: boolean
 }) => {
   try {
-    let napDescriptors
-
     if (miniapps.length === 0 && jsApiImpls.length === 0) {
       throw new Error(
         'You need to provide at least one MiniApp or one JS API implementation version to CodePush'
@@ -156,17 +150,17 @@ export const handler = async ({
         semVerDescriptor
       )
       const cauldron = await getActiveCauldron()
-      napDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
+      descriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
         semVerNapDescriptor
       )
-      if (napDescriptors.length === 0) {
+      if (descriptors.length === 0) {
         throw new Error(`No versions matching ${semVerDescriptor} were found`)
       } else {
         log.info(
           'CodePush release will target the following native application descriptors :'
         )
-        for (const napDescriptor of napDescriptors) {
-          log.info(`- ${napDescriptor.toString()}`)
+        for (const descriptor of descriptors) {
+          log.info(`- ${descriptor}`)
         }
         if (!skipConfirmation) {
           const { userConfirmedVersions } = await inquirer.prompt([
@@ -183,12 +177,6 @@ export const handler = async ({
       }
     }
 
-    if (!napDescriptors) {
-      napDescriptors = _.map(descriptors, d =>
-        NativeApplicationDescriptor.fromString(d)
-      )
-    }
-
     await logErrorAndExitIfNotSatisfied({
       noGitOrFilesystemPath: {
         extraErrorMessage:
@@ -203,16 +191,13 @@ export const handler = async ({
     })
 
     if (!deploymentName) {
-      deploymentName = await askUserForCodePushDeploymentName(napDescriptors[0])
+      deploymentName = await askUserForCodePushDeploymentName(descriptors[0])
     }
 
-    for (const napDescriptor of napDescriptors) {
-      const pathToYarnLock = await getPathToYarnLock(
-        napDescriptor,
-        deploymentName
-      )
+    for (const descriptor of descriptors) {
+      const pathToYarnLock = await getPathToYarnLock(descriptor, deploymentName)
       await performCodePushOtaUpdate(
-        napDescriptor,
+        descriptor,
         deploymentName,
         _.map(miniapps, PackagePath.fromString),
         _.map(jsApiImpls, PackagePath.fromString),

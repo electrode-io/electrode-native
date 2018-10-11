@@ -30,6 +30,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -39,7 +42,7 @@ export const handler = async ({
   containerVersion,
 }: {
   jsapiimpls: string[]
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
@@ -50,15 +53,13 @@ export const handler = async ({
   })
 
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -82,8 +83,8 @@ export const handler = async ({
         jsapiimpls.length === 1
           ? `Update ${
               jsapiimpls[0]
-            } JS API implementation version in ${napDescriptor.toString()}`
-          : `Update multiple JS API implementations in ${napDescriptor.toString()}`
+            } JS API implementation version in ${descriptor}`
+          : `Update multiple JS API implementations in ${descriptor}`
       }`,
     ]
 
@@ -102,7 +103,7 @@ export const handler = async ({
             continue
           }
           await cauldron.updateContainerJsApiImplVersion(
-            napDescriptor,
+            descriptor!,
             jsApiImplPackagePath.basePath,
             jsApiImplPackagePath.version
           )
@@ -113,12 +114,12 @@ export const handler = async ({
           )
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
     log.debug(
-      `JS API implementation(s) was/were succesfully updated in ${napDescriptor.toString()}`
+      `JS API implementation(s) was/were succesfully updated in ${descriptor}`
     )
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

@@ -30,6 +30,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -39,26 +42,21 @@ export const handler = async ({
   containerVersion,
 }: {
   jsapiimpls: string[]
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
-
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
+      cauldronIsActive: {
+        extraErrorMessage:
+          'A Cauldron must be active in order to use this command',
+      },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -80,10 +78,8 @@ export const handler = async ({
     const cauldronCommitMessage = [
       `${
         jsapiimpls.length === 1
-          ? `Remove ${
-              jsapiimpls[0]
-            } JS API implementation from ${napDescriptor.toString()}`
-          : `Remove multiple JS API implementations from ${napDescriptor.toString()}`
+          ? `Remove ${jsapiimpls[0]} JS API implementation from ${descriptor}`
+          : `Remove multiple JS API implementations from ${descriptor}`
       }`,
     ]
 
@@ -92,7 +88,7 @@ export const handler = async ({
       async () => {
         for (const jsApiImpl of jsapiimpls) {
           await cauldron.removeContainerJsApiImpl(
-            napDescriptor,
+            descriptor!,
             PackagePath.fromString(jsApiImpl)
           )
           cauldronCommitMessage.push(
@@ -100,12 +96,12 @@ export const handler = async ({
           )
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
     log.debug(
-      `JS API implementation(s) was/were succesfully removed fron ${napDescriptor.toString()} in the Cauldron`
+      `JS API implementation(s) was/were succesfully removed fron ${descriptor} in the Cauldron`
     )
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

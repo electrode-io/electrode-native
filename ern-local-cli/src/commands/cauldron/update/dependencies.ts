@@ -30,6 +30,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .epilog(epilog(exports))
 }
 
@@ -39,7 +42,7 @@ export const handler = async ({
   containerVersion,
 }: {
   dependencies: string[]
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
@@ -49,12 +52,11 @@ export const handler = async ({
     },
   })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
     const versionLessDependencies = _.filter(dependenciesObjs, d => !d.version)
@@ -68,17 +70,16 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
     await logErrorAndExitIfNotSatisfied({
       dependencyIsInNativeApplicationVersionContainer: {
         dependency: dependencies,
+        descriptor,
         extraErrorMessage:
           'If you want to add a new dependency(ies), use -ern cauldron add dependencies- instead',
-        napDescriptor,
       },
       dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: {
         dependency: dependencies,
+        descriptor,
         extraErrorMessage:
           'It seems like you are trying to update a dependency to a version that is already the one in use.',
-        napDescriptor,
       },
-      isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -107,8 +108,8 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
         dependenciesObjs.length === 1
           ? `Update ${
               dependenciesObjs[0].basePath
-            } native dependency version in v${napDescriptor.toString()}`
-          : `Update multiple native dependencies versions in ${napDescriptor.toString()}`
+            } native dependency version in v${descriptor}`
+          : `Update multiple native dependencies versions in ${descriptor}`
       }`,
     ]
 
@@ -117,7 +118,7 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
       async () => {
         for (const dependencyObj of dependenciesObjs) {
           await cauldron.updateContainerNativeDependencyVersion(
-            napDescriptor,
+            descriptor!,
             dependencyObj.basePath,
             dependencyObj.version!
           )
@@ -128,13 +129,11 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
           )
         }
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(
-      `Dependency(ies) was/were succesfully updated in ${napDescriptor.toString()}`
-    )
+    log.info(`Dependency(ies) was/were succesfully updated in ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

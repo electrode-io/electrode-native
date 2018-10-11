@@ -7,10 +7,18 @@ export const command = 'nativeapp <descriptor>'
 export const desc = 'Remove a native application from the cauldron'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
+    .epilog(epilog(exports))
 }
 
-export const handler = async ({ descriptor }: { descriptor: string }) => {
+export const handler = async ({
+  descriptor,
+}: {
+  descriptor: NativeApplicationDescriptor
+}) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {
       extraErrorMessage:
@@ -25,9 +33,7 @@ export const handler = async ({ descriptor }: { descriptor: string }) => {
 
   try {
     const cauldron = await getActiveCauldron()
-    await cauldron.removeDescriptor(
-      NativeApplicationDescriptor.fromString(descriptor)
-    )
+    await cauldron.removeDescriptor(descriptor)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

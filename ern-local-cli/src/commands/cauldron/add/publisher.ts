@@ -27,6 +27,7 @@ export const builder = (argv: Argv) => {
         'A partial native application descriptor (NativeAppName:platform)',
       type: 'string',
     })
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .option('extra', {
       alias: 'e',
       describe:
@@ -43,7 +44,7 @@ export const handler = async ({
   extra,
 }: {
   publisher: string
-  descriptor: string
+  descriptor: NativeApplicationDescriptor
   url?: string
   extra?: string
 }) => {
@@ -93,13 +94,11 @@ export const handler = async ({
 
     const p: ContainerPublisher = await getPublisher(publisher)
 
-    let napDescriptor
     if (descriptor) {
-      napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
-      if (!p.platforms.includes(napDescriptor.platform)) {
+      if (!p.platforms.includes(descriptor.platform!)) {
         throw new Error(
           `The ${p.name} publisher does not support ${
-            napDescriptor.platform
+            descriptor.platform
           } platform`
         )
       }
@@ -108,7 +107,7 @@ export const handler = async ({
     await cauldron.addPublisher(
       publisher,
       p.platforms,
-      napDescriptor,
+      descriptor,
       url,
       extraObj
     )

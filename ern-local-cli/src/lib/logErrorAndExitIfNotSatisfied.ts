@@ -70,37 +70,37 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   miniAppNotInNativeApplicationVersionContainer?: {
     miniApp: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   miniAppIsInNativeApplicationVersionContainer?: {
     miniApp: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     miniApp: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyNotInNativeApplicationVersionContainer?: {
     dependency: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyIsInNativeApplicationVersionContainer?: {
     dependency: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     dependency: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyNotInUseByAMiniApp?: {
     dependency: string | string[] | void
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   cauldronIsActive?: {
@@ -240,7 +240,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.miniAppNotInNativeApplicationVersionContainer(
         miniAppNotInNativeApplicationVersionContainer.miniApp,
-        miniAppNotInNativeApplicationVersionContainer.napDescriptor,
+        miniAppNotInNativeApplicationVersionContainer.descriptor,
         miniAppNotInNativeApplicationVersionContainer.extraErrorMessage
       )
       kaxTask.succeed()
@@ -251,7 +251,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.miniAppIsInNativeApplicationVersionContainer(
         miniAppIsInNativeApplicationVersionContainer.miniApp,
-        miniAppIsInNativeApplicationVersionContainer.napDescriptor,
+        miniAppIsInNativeApplicationVersionContainer.descriptor,
         miniAppIsInNativeApplicationVersionContainer.extraErrorMessage
       )
       kaxTask.succeed()
@@ -262,7 +262,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.miniApp,
-        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
+        miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.descriptor,
         miniAppIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage
       )
       kaxTask.succeed()
@@ -273,7 +273,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.dependencyNotInNativeApplicationVersionContainer(
         dependencyNotInNativeApplicationVersionContainer.dependency,
-        dependencyNotInNativeApplicationVersionContainer.napDescriptor,
+        dependencyNotInNativeApplicationVersionContainer.descriptor,
         dependencyNotInNativeApplicationVersionContainer.extraErrorMessage
       )
       kaxTask.succeed()
@@ -284,7 +284,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.dependencyIsInNativeApplicationVersionContainer(
         dependencyIsInNativeApplicationVersionContainer.dependency,
-        dependencyIsInNativeApplicationVersionContainer.napDescriptor,
+        dependencyIsInNativeApplicationVersionContainer.descriptor,
         dependencyIsInNativeApplicationVersionContainer.extraErrorMessage
       )
       kaxTask.succeed()
@@ -295,7 +295,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.dependency,
-        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.napDescriptor,
+        dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.descriptor,
         dependencyIsInNativeApplicationVersionContainerWithDifferentVersion.extraErrorMessage
       )
       kaxTask.succeed()
@@ -306,7 +306,7 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.dependencyNotInUseByAMiniApp(
         dependencyNotInUseByAMiniApp.dependency,
-        dependencyNotInUseByAMiniApp.napDescriptor,
+        dependencyNotInUseByAMiniApp.descriptor,
         dependencyNotInUseByAMiniApp.extraErrorMessage
       )
       kaxTask.succeed()

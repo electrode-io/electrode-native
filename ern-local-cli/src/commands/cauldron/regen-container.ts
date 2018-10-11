@@ -8,7 +8,11 @@ import {
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
-import { epilog, logErrorAndExitIfNotSatisfied, askUserToChooseANapDescriptorFromCauldron } from '../../lib'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  askUserToChooseANapDescriptorFromCauldron,
+} from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
 
@@ -28,6 +32,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('force', {
       alias: 'f',
       describe:
@@ -41,7 +48,7 @@ export const handler = async ({
   descriptor,
   containerVersion,
 }: {
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
@@ -51,15 +58,13 @@ export const handler = async ({
     },
   })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
       isNewerContainerVersion: containerVersion
         ? {
             containerVersion,
@@ -79,9 +84,7 @@ export const handler = async ({
     })
 
     const cauldron = await getActiveCauldron()
-    const miniAppsInCauldron = await cauldron.getContainerMiniApps(
-      napDescriptor
-    )
+    const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
     const gitMiniAppsInCauldron = _.filter(
       miniAppsInCauldron,
       m => m.isGitPath === true
@@ -102,7 +105,7 @@ export const handler = async ({
       gitMiniAppsObjs
     )
     const cauldronDependencies = await cauldron.getNativeDependencies(
-      napDescriptor
+      descriptor
     )
     const finalNativeDependencies = resolver.retainHighestVersions(
       nativeDependencies.resolved,
@@ -111,12 +114,12 @@ export const handler = async ({
     await performContainerStateUpdateInCauldron(
       async () => {
         await cauldron.syncContainerNativeDependencies(
-          napDescriptor,
+          descriptor!,
           finalNativeDependencies
         )
       },
-      napDescriptor,
-      `Regenerate Container of ${napDescriptor.toString()} native application`,
+      descriptor,
+      `Regenerate Container of ${descriptor} native application`,
       { containerVersion, forceFullGeneration: true }
     )
     log.debug(`Container was succesfully regenerated !`)

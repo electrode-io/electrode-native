@@ -35,6 +35,9 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('force', {
       alias: 'f',
       describe: 'Force',
@@ -53,7 +56,7 @@ export const handler = async ({
 }: {
   miniapps: string[]
   containerVersion?: string
-  descriptor?: string
+  descriptor?: NativeApplicationDescriptor
   force?: boolean
 }) => {
   await logErrorAndExitIfNotSatisfied({
@@ -63,12 +66,11 @@ export const handler = async ({
     },
   })
   try {
-    if (!descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron({
+    descriptor =
+      descriptor ||
+      (await askUserToChooseANapDescriptorFromCauldron({
         onlyNonReleasedVersions: true,
-      })
-    }
-    const napDescriptor = NativeApplicationDescriptor.fromString(descriptor)
+      }))
 
     await logErrorAndExitIfNotSatisfied({
       isCompleteNapDescriptorString: { descriptor },
@@ -84,16 +86,16 @@ export const handler = async ({
         ? { containerVersion }
         : undefined,
       miniAppIsInNativeApplicationVersionContainer: {
+        descriptor,
         extraErrorMessage:
           'If you want to add a new MiniApp(s), use -ern cauldron add miniapps- instead',
         miniApp: miniapps,
-        napDescriptor,
       },
       miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
+        descriptor,
         extraErrorMessage:
           'It seems like you are trying to update a MiniApp to a version that is already the one in use.',
         miniApp: miniapps,
-        napDescriptor,
       },
       napDescriptorExistInCauldron: {
         descriptor,
@@ -114,9 +116,7 @@ export const handler = async ({
     }
 
     const cauldron = await getActiveCauldron()
-    const miniAppsInCauldron = await cauldron.getContainerMiniApps(
-      napDescriptor
-    )
+    const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
     const nonUpdatedMiniAppsInCauldron = _.xorBy(
       miniAppsDependencyPaths,
       miniAppsInCauldron,
@@ -134,7 +134,7 @@ export const handler = async ({
       [...miniAppsObjs, ...nonUpdatedMiniAppsInCauldronObjs]
     )
     const cauldronDependencies = await cauldron.getNativeDependencies(
-      napDescriptor
+      descriptor
     )
     const finalNativeDependencies = resolver.retainHighestVersions(
       nativeDependencies.resolved,
@@ -148,10 +148,8 @@ export const handler = async ({
     const cauldronCommitMessage = [
       `${
         miniapps.length === 1
-          ? `Update ${
-              miniapps[0]
-            } MiniApp version in ${napDescriptor.toString()}`
-          : `Update multiple MiniApps versions in ${napDescriptor.toString()}`
+          ? `Update ${miniapps[0]} MiniApp version in ${descriptor}`
+          : `Update multiple MiniApps versions in ${descriptor}`
       }`,
     ]
 
@@ -165,20 +163,20 @@ export const handler = async ({
           )
         }
         await cauldron.syncContainerMiniApps(
-          napDescriptor,
+          descriptor!,
           miniAppsDependencyPaths
         )
         await cauldron.syncContainerNativeDependencies(
-          napDescriptor,
+          descriptor!,
           finalNativeDependencies
         )
       },
-      napDescriptor,
+      descriptor,
       cauldronCommitMessage,
       { containerVersion }
     )
     log.info(
-      `MiniApp(s) version(s) was/were succesfully updated for ${napDescriptor.toString()} in Cauldron !`
+      `MiniApp(s) version(s) was/were succesfully updated for ${descriptor} in Cauldron !`
     )
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
