@@ -1,4 +1,4 @@
-import { createTmpDir, yarn } from 'ern-core'
+import { createTmpDir, yarn, NativeApplicationDescriptor } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import sinon from 'sinon'
 import * as fixtures from './fixtures/common'
@@ -73,11 +73,23 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     assertLoggedErrorAndExitedProcess()
   })
 
-  it('[isNewerContainerVersion] Should not log error and nor exit process for newer container version', async () => {
+  it('[isNewerContainerVersion] Should not log error and nor exit process for newer container version [string]', async () => {
     await logErrorAndExitIfNotSatisfied({
       isNewerContainerVersion: {
         containerVersion: '2.2.2',
         descriptor: 'myapp:android:17.14.0',
+      },
+    })
+    assertNoErrorLoggedAndNoProcessExit()
+  })
+
+  it('[isNewerContainerVersion] Should not log error and nor exit process for newer container version [NativeApplicationDescriptor]', async () => {
+    await logErrorAndExitIfNotSatisfied({
+      isNewerContainerVersion: {
+        containerVersion: '2.2.2',
+        descriptor: NativeApplicationDescriptor.fromString(
+          'myapp:android:17.14.0'
+        ),
       },
     })
     assertNoErrorLoggedAndNoProcessExit()

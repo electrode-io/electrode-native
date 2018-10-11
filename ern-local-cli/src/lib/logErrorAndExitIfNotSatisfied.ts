@@ -41,24 +41,27 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   isNewerContainerVersion?: {
-    descriptor: string
+    descriptor: string | NativeApplicationDescriptor
     containerVersion: string
     extraErrorMessage?: string
   }
   isCompleteNapDescriptorString?: {
-    descriptor: string
+    descriptor: string | NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   napDescriptorExistInCauldron?: {
-    descriptor: string | string[]
+    descriptor:
+      | string
+      | NativeApplicationDescriptor
+      | Array<string | NativeApplicationDescriptor>
     extraErrorMessage?: string
   }
   sameNativeApplicationAndPlatform?: {
-    descriptors: string[]
+    descriptors: Array<string | NativeApplicationDescriptor>
     extraErrorMessage?: string
   }
   napDescritorDoesNotExistsInCauldron?: {
-    descriptor: string
+    descriptor: string | NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   publishedToNpm?: {
@@ -112,7 +115,7 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   checkIfCodePushOptionsAreValid?: {
-    descriptors?: string[]
+    descriptors?: Array<string | NativeApplicationDescriptor>
     targetBinaryVersion?: string
     semVerDescriptor?: string
     extraErrorMessage?: string

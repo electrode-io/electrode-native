@@ -11,6 +11,7 @@ import log from './log'
 import config from './config'
 import camelCase = require('lodash/camelCase')
 import { packageCache } from './packageCache'
+import { NativeApplicationDescriptor } from './NativeApplicationDescriptor'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -380,4 +381,21 @@ export function logErrorAndExitProcess(e: Error, code: number = 1) {
   log.error(`An error occurred: ${e.message}`)
   log.debug(e.stack!)
   process.exit(code)
+}
+
+export function coerceToNativeApplicationDescriptorArray(
+  v:
+    | string
+    | NativeApplicationDescriptor
+    | Array<string | NativeApplicationDescriptor>
+): NativeApplicationDescriptor[] {
+  return v instanceof Array
+    ? v.map(coerceToNativeApplicationDescriptor)
+    : [coerceToNativeApplicationDescriptor(v)]
+}
+
+export function coerceToNativeApplicationDescriptor(
+  v: string | NativeApplicationDescriptor
+): NativeApplicationDescriptor {
+  return typeof v === 'string' ? NativeApplicationDescriptor.fromString(v) : v
 }
