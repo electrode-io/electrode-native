@@ -28,29 +28,35 @@ export const builder = (argv: Argv) => {
         'Adds one or more native dependencies to a native application version',
       type: 'array',
     })
+    .coerce('addDependencies', d => d.map(PackagePath.fromString))
     .option('addMiniapps', {
       describe: 'Adds one or more MiniApps to a native application version',
       type: 'array',
     })
+    .coerce('addMiniapps', d => d.map(PackagePath.fromString))
     .option('delDependencies', {
       describe:
         'Remove one or more native dependencies from a native application version',
       type: 'array',
     })
+    .coerce('delDependencies', d => d.map(PackagePath.fromString))
     .option('delMiniapps', {
       describe: 'Remove one or more MiniApps from a native application version',
       type: 'array',
     })
+    .coerce('delMiniapps', d => d.map(PackagePath.fromString))
     .option('updateDependencies', {
       describe:
         'Update one or more native dependencies versions in a native application version',
       type: 'array',
     })
+    .coerce('updateDependencies', d => d.map(PackagePath.fromString))
     .option('updateMiniapps', {
       describe:
         'Update one or more MiniApps versions in a native appplication version',
       type: 'array',
     })
+    .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
     .option('force', {
       alias: 'f',
       describe:
@@ -86,12 +92,12 @@ export const handler = async ({
   containerVersion,
   descriptor,
 }: {
-  addDependencies: string[]
-  addMiniapps: string[]
-  delDependencies: string[]
-  delMiniapps: string[]
-  updateDependencies: string[]
-  updateMiniapps: string[]
+  addDependencies: PackagePath[]
+  addMiniapps: PackagePath[]
+  delDependencies: PackagePath[]
+  delMiniapps: PackagePath[]
+  updateDependencies: PackagePath[]
+  updateMiniapps: PackagePath[]
   force?: boolean
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
@@ -189,33 +195,16 @@ export const handler = async ({
       },
     })
 
-    const addDependenciesObjs = _.map(addDependencies, d =>
-      PackagePath.fromString(d)
-    )
-    const delDependenciesObjs = _.map(delDependencies, d =>
-      PackagePath.fromString(d)
-    )
-    const delMiniAppsAsDeps = _.map(delMiniapps, m => PackagePath.fromString(m))
-    const updateDependenciesObjs = _.map(updateDependencies, d =>
-      PackagePath.fromString(d)
-    )
-
     const updateMiniAppsObjs: MiniApp[] = []
-    const updateMiniAppsDependencyPaths = _.map(updateMiniapps, m =>
-      PackagePath.fromString(m)
-    )
-    for (const updateMiniAppDependencyPath of updateMiniAppsDependencyPaths) {
-      const m = await MiniApp.fromPackagePath(updateMiniAppDependencyPath)
+    const addMiniAppsObjs: MiniApp[] = []
+
+    for (const updateMiniapp of updateMiniapps) {
+      const m = await MiniApp.fromPackagePath(updateMiniapp)
       updateMiniAppsObjs.push(m)
     }
 
-    const addMiniAppsObjs: MiniApp[] = []
-    // An array of miniapps strings was provided
-    const addMiniAppsDependencyPaths = _.map(addMiniapps, m =>
-      PackagePath.fromString(m)
-    )
-    for (const addMiniAppDependencyPath of addMiniAppsDependencyPaths) {
-      const m = await MiniApp.fromPackagePath(addMiniAppDependencyPath)
+    for (const addMiniApp of addMiniapps) {
+      const m = await MiniApp.fromPackagePath(addMiniApp)
       addMiniAppsObjs.push(m)
     }
 
@@ -227,45 +216,41 @@ export const handler = async ({
     await performContainerStateUpdateInCauldron(
       async () => {
         // Del Dependencies
-        for (const delDependencyObj of delDependenciesObjs) {
+        for (const delDependency of delDependencies) {
           await cauldron.removeContainerNativeDependency(
             descriptor!,
-            delDependencyObj
+            delDependency
           )
           cauldronCommitMessage.push(
-            `- Remove ${delDependencyObj.toString()} native dependency`
+            `- Remove ${delDependency} native dependency`
           )
         }
         // Del MiniApps
-        for (const delMiniAppAsDep of delMiniAppsAsDeps) {
-          await cauldron.removeContainerMiniApp(descriptor!, delMiniAppAsDep)
-          cauldronCommitMessage.push(
-            `- Remove ${delMiniAppAsDep.toString()} MiniApp`
-          )
+        for (const delMiniApp of delMiniapps) {
+          await cauldron.removeContainerMiniApp(descriptor!, delMiniApp)
+          cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`)
         }
         // Update Dependencies
-        for (const updateDependencyObj of updateDependenciesObjs) {
+        for (const updateDependency of updateDependencies) {
           await cauldron.updateContainerNativeDependencyVersion(
             descriptor!,
-            updateDependencyObj.basePath,
-            <string>updateDependencyObj.version
+            updateDependency.basePath,
+            <string>updateDependency.version
           )
           cauldronCommitMessage.push(
             `- Update ${
-              updateDependencyObj.basePath
-            } native dependency version to v${updateDependencyObj.version}`
+              updateDependency.basePath
+            } native dependency version to v${updateDependency.version}`
           )
         }
         // Add Dependencies
-        for (const addDependencyObj of addDependenciesObjs) {
+        for (const addDependency of addDependencies) {
           // Add the dependency to Cauldron
           await cauldron.addContainerNativeDependency(
             descriptor!,
-            addDependencyObj
+            addDependency
           )
-          cauldronCommitMessage.push(
-            `-Add ${addDependencyObj.toString()} native dependency`
-          )
+          cauldronCommitMessage.push(`-Add ${addDependency} native dependency`)
         }
         // Update MiniApps
         for (const updateMiniAppObj of updateMiniAppsObjs) {
@@ -286,7 +271,7 @@ export const handler = async ({
           descriptor!
         )
         const nonUpdatedMiniAppsInCauldron = _.xorBy(
-          updateMiniAppsDependencyPaths,
+          updateMiniapps,
           miniAppsInCauldron,
           'basePath'
         )
@@ -316,8 +301,8 @@ export const handler = async ({
         })
 
         await cauldron.syncContainerMiniApps(descriptor!, [
-          ...addMiniAppsDependencyPaths,
-          ...updateMiniAppsDependencyPaths,
+          ...addMiniapps,
+          ...updateMiniapps,
         ])
         await cauldron.syncContainerNativeDependencies(
           descriptor!,

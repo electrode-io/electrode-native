@@ -30,6 +30,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -44,7 +45,7 @@ export const handler = async ({
   containerVersion,
   descriptor,
 }: {
-  miniapps: string[]
+  miniapps: PackagePath[]
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
 }) => {
@@ -89,8 +90,6 @@ export const handler = async ({
       },
     })
 
-    const miniAppsAsDeps = _.map(miniapps, m => PackagePath.fromString(m))
-
     const cauldronCommitMessage = [
       `${
         miniapps.length === 1
@@ -102,11 +101,9 @@ export const handler = async ({
     const cauldron = await getActiveCauldron()
     await performContainerStateUpdateInCauldron(
       async () => {
-        for (const miniAppAsDep of miniAppsAsDeps) {
-          await cauldron.removeContainerMiniApp(descriptor!, miniAppAsDep)
-          cauldronCommitMessage.push(
-            `- Remove ${miniAppAsDep.toString()} MiniApp`
-          )
+        for (const miniapp of miniapps) {
+          await cauldron.removeContainerMiniApp(descriptor!, miniapp)
+          cauldronCommitMessage.push(`- Remove ${miniapp} MiniApp`)
         }
       },
       descriptor,

@@ -26,6 +26,7 @@ export const builder = (argv: Argv) => {
       describe: 'A list of one or more miniapps',
       type: 'array',
     })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('watchNodeModules', {
       alias: 'w',
       describe:
@@ -38,6 +39,7 @@ export const builder = (argv: Argv) => {
         'Additional JavaScript dependencies to add to the composite JavaScript bundle',
       type: 'array',
     })
+    .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
     .group(['packageName', 'activityName'], 'Android binary specific options:')
     .option('packageName', {
       alias: 'p',
@@ -68,12 +70,12 @@ export const handler = async ({
   extraJsDependencies = [],
 }: {
   descriptor?: NativeApplicationDescriptor
-  miniapps?: string[]
+  miniapps?: PackagePath[]
   watchNodeModules?: string[]
   packageName?: string
   activityName?: string
   bundleId?: string
-  extraJsDependencies?: string[]
+  extraJsDependencies?: PackagePath[]
 } = {}) => {
   try {
     if (!miniapps && !descriptor) {
@@ -84,9 +86,7 @@ export const handler = async ({
       activityName,
       bundleId,
       descriptor,
-      extraJsDependencies: _.map(extraJsDependencies, jsDep =>
-        PackagePath.fromString(jsDep)
-      ),
+      extraJsDependencies,
       miniapps,
       packageName,
       watchNodeModules,

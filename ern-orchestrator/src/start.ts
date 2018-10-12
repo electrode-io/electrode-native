@@ -30,7 +30,7 @@ export default async function start({
   bundleId,
   extraJsDependencies,
 }: {
-  miniapps?: string[]
+  miniapps?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   watchNodeModules?: string[]
   packageName?: string
@@ -38,7 +38,6 @@ export default async function start({
   bundleId?: string
   extraJsDependencies?: PackagePath[]
 } = {}) {
-  let miniAppsPaths: PackagePath[] = _.map(miniapps, PackagePath.fromString)
   let pathToYarnLock
 
   const cauldron = await getActiveCauldron()
@@ -59,9 +58,7 @@ export default async function start({
 
   if (descriptor) {
     const miniAppsObjs = await cauldron.getContainerMiniApps(descriptor)
-    miniAppsPaths = _.map(miniAppsObjs, m =>
-      PackagePath.fromString(m.toString())
-    )
+    miniapps = _.map(miniAppsObjs, m => PackagePath.fromString(m.toString()))
     pathToYarnLock = await cauldron.getPathToYarnLock(descriptor, 'container')
   }
 
@@ -75,7 +72,7 @@ export default async function start({
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
   await kax.task('Generating MiniApps composite').run(
-    generateMiniAppsComposite(miniAppsPaths, compositeDir, {
+    generateMiniAppsComposite(miniapps!, compositeDir, {
       extraJsDependencies: extraJsDependencies || undefined,
       pathToYarnLock: pathToYarnLock || undefined,
     })

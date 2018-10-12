@@ -3,6 +3,7 @@ import {
   deviceConfig,
   utils as coreUtils,
   NativeApplicationDescriptor,
+  PackagePath,
 } from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
@@ -22,12 +23,14 @@ export const builder = (argv: Argv) => {
       describe: 'One or more MiniApps to combine in the Runner Container',
       type: 'array',
     })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('dependencies', {
       alias: 'deps',
       describe:
         'One or more additional native dependencies to add to the Runner Container',
       type: 'array',
     })
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -69,8 +72,8 @@ export const handler = async ({
   host,
   port,
 }: {
-  miniapps?: string[]
-  dependencies: string[]
+  miniapps?: PackagePath[]
+  dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   mainMiniAppName?: string
   dev?: boolean
