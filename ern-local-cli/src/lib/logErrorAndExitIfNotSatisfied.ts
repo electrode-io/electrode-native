@@ -346,12 +346,15 @@ export async function logErrorAndExitIfNotSatisfied({
     }
     if (isFilePath) {
       kaxTask = kax.task('Ensuring that path is a file path')
-      await Ensure.isFilePath(isFilePath.p)
+      await Ensure.isFilePath(isFilePath.p, isFilePath.extraErrorMessage)
       kaxTask.succeed()
     }
     if (isDirectoryPath) {
       kaxTask = kax.task('Ensuring that path is a directory path')
-      await Ensure.isDirectoryPath(isDirectoryPath.p)
+      await Ensure.isDirectoryPath(
+        isDirectoryPath.p,
+        isDirectoryPath.extraErrorMessage
+      )
       kaxTask.succeed()
     }
     if (isValidPlatformConfig) {
@@ -360,7 +363,7 @@ export async function logErrorAndExitIfNotSatisfied({
       kaxTask.succeed()
     }
   } catch (e) {
-    kaxTask.fail(e.message)
+    kaxTask.fail()
     utils.logErrorAndExitProcess(e, 1)
   }
 }
