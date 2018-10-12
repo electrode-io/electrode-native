@@ -40,6 +40,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -52,7 +53,7 @@ export const handler = async ({
   force = false,
   containerVersion,
 }: {
-  miniapps: string[]
+  miniapps: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   force?: boolean
   containerVersion?: string
@@ -94,13 +95,11 @@ export const handler = async ({
     })
 
     const miniAppsObjs: MiniApp[] = []
-    const miniAppsDependencyPaths = _.map(miniapps, m =>
-      PackagePath.fromString(m)
-    )
-    for (const miniAppDependencyPath of miniAppsDependencyPaths) {
+
+    for (const miniapp of miniapps) {
       const m = await kax
-        .task(`Retrieving ${miniAppDependencyPath.toString()} MiniApp`)
-        .run(MiniApp.fromPackagePath(miniAppDependencyPath))
+        .task(`Retrieving ${miniapp} MiniApp`)
+        .run(MiniApp.fromPackagePath(miniapp))
       miniAppsObjs.push(m)
     }
 
@@ -144,10 +143,7 @@ export const handler = async ({
             `- Add ${miniAppObj.packageDescriptor} MiniApp`
           )
         }
-        await cauldron.syncContainerMiniApps(
-          descriptor!,
-          miniAppsDependencyPaths
-        )
+        await cauldron.syncContainerMiniApps(descriptor!, miniapps)
         await cauldron.syncContainerNativeDependencies(
           descriptor!,
           finalNativeDependencies

@@ -30,6 +30,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -41,7 +42,7 @@ export const handler = async ({
   descriptor,
   containerVersion,
 }: {
-  dependencies: string[]
+  dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
@@ -58,8 +59,7 @@ export const handler = async ({
         onlyNonReleasedVersions: true,
       }))
 
-    const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
-    const versionLessDependencies = _.filter(dependenciesObjs, d => !d.version)
+    const versionLessDependencies = _.filter(dependencies, d => !d.version)
     if (versionLessDependencies.length > 0) {
       throw new Error(
         `You need to specify a version to upgrade each dependency to.
@@ -105,9 +105,9 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
 
     const cauldronCommitMessage = [
       `${
-        dependenciesObjs.length === 1
+        dependencies.length === 1
           ? `Update ${
-              dependenciesObjs[0].basePath
+              dependencies[0].basePath
             } native dependency version in v${descriptor}`
           : `Update multiple native dependencies versions in ${descriptor}`
       }`,
@@ -116,15 +116,15 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
     const cauldron = await getActiveCauldron()
     await performContainerStateUpdateInCauldron(
       async () => {
-        for (const dependencyObj of dependenciesObjs) {
+        for (const dependency of dependencies) {
           await cauldron.updateContainerNativeDependencyVersion(
             descriptor!,
-            dependencyObj.basePath,
-            dependencyObj.version!
+            dependency.basePath,
+            dependency.version!
           )
           cauldronCommitMessage.push(
-            `- Update ${dependencyObj.basePath} native dependency to v${
-              dependencyObj.version
+            `- Update ${dependency.basePath} native dependency to v${
+              dependency.version
             }`
           )
         }

@@ -30,6 +30,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -41,7 +42,7 @@ export const handler = async ({
   containerVersion,
   descriptor,
 }: {
-  dependencies: string[]
+  dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
@@ -90,11 +91,6 @@ export const handler = async ({
       },
     })
 
-    const dependenciesObjs: PackagePath[] = _.map(
-      dependencies,
-      PackagePath.fromString
-    )
-
     const cauldronCommitMessage = [
       `${
         dependencies.length === 1
@@ -106,15 +102,12 @@ export const handler = async ({
     const cauldron = await getActiveCauldron()
     await performContainerStateUpdateInCauldron(
       async () => {
-        let dependencyObj: PackagePath
-        for (dependencyObj of dependenciesObjs) {
+        for (const dependency of dependencies) {
           await cauldron.removeContainerNativeDependency(
             descriptor!,
-            dependencyObj
+            dependency
           )
-          cauldronCommitMessage.push(
-            `- Remove ${dependencyObj.toString()} native dependency`
-          )
+          cauldronCommitMessage.push(`- Remove ${dependency} native dependency`)
         }
       },
       descriptor,

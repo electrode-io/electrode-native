@@ -39,16 +39,19 @@ export const builder = (argv: Argv) => {
       describe: 'A list of one or more miniapps',
       type: 'array',
     })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('jsApiImpls', {
       describe: 'A list of one or more JS API implementation',
       type: 'array',
     })
+    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('dependencies', {
       alias: 'deps',
       describe:
         'A list of one or more extra native dependencies to include in this container',
       type: 'array',
     })
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('platform', {
       alias: 'p',
       choices: ['android', 'ios', undefined],
@@ -80,9 +83,9 @@ export const handler = async ({
   descriptor?: NativeApplicationDescriptor
   jsOnly?: boolean
   outDir?: string
-  miniapps?: string[]
-  jsApiImpls: string[]
-  dependencies: string[]
+  miniapps?: PackagePath[]
+  jsApiImpls: PackagePath[]
+  dependencies: PackagePath[]
   platform?: NativePlatform
   ignoreRnpmAssets?: boolean
 }) => {
@@ -166,12 +169,6 @@ Output directory should either not exist (it will be created) or should be empty
       })
     }
 
-    let miniAppsPaths: PackagePath[] = _.map(miniapps, PackagePath.fromString)
-    let jsApiImplsPaths: PackagePath[] = _.map(
-      jsApiImpls,
-      PackagePath.fromString
-    )
-
     //
     // --jsOnly switch
     // Ony generates the composite miniapp to a provided output directory
@@ -182,8 +179,8 @@ Output directory should either not exist (it will be created) or should be empty
             'You need to provide a native application descriptor, if not providing miniapps'
           )
         }
-        miniAppsPaths = await cauldron.getContainerMiniApps(descriptor)
-        jsApiImplsPaths = await cauldron.getContainerJsApiImpls(descriptor)
+        miniapps = await cauldron.getContainerMiniApps(descriptor)
+        jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
       }
 
       let pathToYarnLock
@@ -195,10 +192,10 @@ Output directory should either not exist (it will be created) or should be empty
       }
 
       await generateMiniAppsComposite(
-        miniAppsPaths,
+        miniapps,
         outDir || `${Platform.rootDirectory}/miniAppsComposite`,
         pathToYarnLock ? { pathToYarnLock } : {},
-        jsApiImplsPaths
+        jsApiImpls
       )
     } else {
       if (!descriptor && miniapps) {
@@ -216,10 +213,8 @@ Output directory should either not exist (it will be created) or should be empty
         }
 
         await kax.task('Generating Container locally').run(
-          runLocalContainerGen(miniAppsPaths, jsApiImplsPaths, platform, {
-            extraNativeDependencies: _.map(dependencies, d =>
-              PackagePath.fromString(d)
-            ),
+          runLocalContainerGen(miniapps, jsApiImpls, platform, {
+            extraNativeDependencies: dependencies,
             ignoreRnpmAssets,
             outDir,
           })

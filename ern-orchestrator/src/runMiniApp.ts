@@ -34,9 +34,9 @@ export async function runMiniApp(
     port,
   }: {
     mainMiniAppName?: string
-    miniapps?: string[]
-    jsApiImpls?: string[]
-    dependencies?: string[]
+    miniapps?: PackagePath[]
+    jsApiImpls?: PackagePath[]
+    dependencies?: PackagePath[]
     descriptor?: string | NativeApplicationDescriptor
     dev?: boolean
     host?: string
@@ -86,12 +86,11 @@ export async function runMiniApp(
   }
 
   let entryMiniAppName = mainMiniAppName || ''
-  let dependenciesObjs: PackagePath[] = []
   let miniAppsPaths: PackagePath[] = []
   if (miniapps) {
     if (MiniApp.existInPath(cwd)) {
       const miniapp = MiniApp.fromPath(cwd)
-      miniAppsPaths = [PackagePath.fromString(`file:${cwd}`)]
+      miniapps.concat(PackagePath.fromString(`file:${cwd}`))
       log.debug(
         `This command is being run from the ${miniapp.name} MiniApp directory.`
       )
@@ -108,17 +107,13 @@ export async function runMiniApp(
         entryMiniAppName = miniapp.name
       }
     }
-    dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
-    miniAppsPaths = miniAppsPaths.concat(
-      _.map(miniapps, m => PackagePath.fromString(m))
-    )
   } else if (!miniapps && !descriptor) {
     entryMiniAppName = MiniApp.fromCurrentPath().name
     log.debug(
       `This command is being run from the ${entryMiniAppName} MiniApp directory.`
     )
     log.debug(`Initializing Runner`)
-    dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
+
     miniAppsPaths = [PackagePath.fromString(`file:${cwd}`)]
     if (dev) {
       const args: string[] = []
@@ -133,20 +128,15 @@ export async function runMiniApp(
       log.info('Dev mode not enabled, will not start the packager.')
     }
   } else {
-    miniAppsPaths =
+    miniapps =
       (cauldron &&
         napDescriptor &&
         (await cauldron.getContainerMiniApps(napDescriptor))) ||
       []
   }
 
-  let jsApiImplsPaths: PackagePath[] = []
-
-  if (jsApiImpls) {
-    jsApiImplsPaths = _.map(jsApiImpls, j => PackagePath.fromString(j))
-  }
   if (descriptor) {
-    jsApiImplsPaths =
+    jsApiImpls =
       (cauldron &&
         napDescriptor &&
         (await cauldron.getContainerJsApiImpls(napDescriptor))) ||
@@ -155,9 +145,9 @@ export async function runMiniApp(
 
   const outDir = Platform.getContainerGenOutDirectory(platform)
   await generateContainerForRunner(platform, {
-    dependenciesObjs,
-    jsApiImplsPaths,
-    miniAppsPaths,
+    dependencies,
+    jsApiImpls,
+    miniApps: miniapps,
     napDescriptor: napDescriptor || undefined,
     outDir,
   })

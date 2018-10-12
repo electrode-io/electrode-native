@@ -30,6 +30,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('jsapiimpls', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -41,7 +42,7 @@ export const handler = async ({
   descriptor,
   containerVersion,
 }: {
-  jsapiimpls: string[]
+  jsapiimpls: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
@@ -88,29 +89,23 @@ export const handler = async ({
       }`,
     ]
 
-    const jsApiImplPackagePaths = _.map(jsapiimpls, j =>
-      PackagePath.fromString(j)
-    )
-
     const cauldron = await getActiveCauldron()
     await performContainerStateUpdateInCauldron(
       async () => {
-        for (const jsApiImplPackagePath of jsApiImplPackagePaths) {
-          if (!jsApiImplPackagePath.version) {
+        for (const jsapiimpl of jsapiimpls) {
+          if (!jsapiimpl.version) {
             log.error(
-              `Will not update ${jsApiImplPackagePath.toString()} as it does not specify a version`
+              `Will not update ${jsapiimpl} as it does not specify a version`
             )
             continue
           }
           await cauldron.updateContainerJsApiImplVersion(
             descriptor!,
-            jsApiImplPackagePath.basePath,
-            jsApiImplPackagePath.version
+            jsapiimpl.basePath,
+            jsapiimpl.version
           )
           cauldronCommitMessage.push(
-            `- Update ${
-              jsApiImplPackagePath.basePath
-            } JS API implementation version`
+            `- Update ${jsapiimpl.basePath} JS API implementation version`
           )
         }
       },

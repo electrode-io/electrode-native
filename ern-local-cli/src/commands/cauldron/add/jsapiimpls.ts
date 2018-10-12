@@ -35,6 +35,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('jsapiimpls', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -46,7 +47,7 @@ export const handler = async ({
   descriptor,
   containerVersion,
 }: {
-  jsapiimpls: string[]
+  jsapiimpls: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   containerVersion?: string
 }) => {
@@ -92,10 +93,7 @@ export const handler = async ({
     await performContainerStateUpdateInCauldron(
       async () => {
         for (const jsApiImpl of jsapiimpls) {
-          await cauldron.addContainerJsApiImpl(
-            descriptor!,
-            PackagePath.fromString(jsApiImpl)
-          )
+          await cauldron.addContainerJsApiImpl(descriptor!, jsApiImpl)
           cauldronCommitMessage.push(`- Add ${jsApiImpl} JS API implementation`)
         }
       },

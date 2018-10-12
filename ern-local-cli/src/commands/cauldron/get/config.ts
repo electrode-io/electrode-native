@@ -8,7 +8,7 @@ export const desc = 'Get configuration from the cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', NativeApplicationDescriptor)
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .epilog(epilog(exports))
 }
 

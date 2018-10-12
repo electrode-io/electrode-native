@@ -26,6 +26,8 @@ export const builder = (argv: Argv) => {
       describe:
         'Full native application selector (target native application version for the push)',
     })
+    .coerce('miniapp', PackagePath.fromString)
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -37,13 +39,13 @@ export const handler = async ({
   descriptor,
   miniapps = [],
 }: {
-  miniapp?: string
+  miniapp?: PackagePath
   descriptor?: NativeApplicationDescriptor
-  miniapps: string[]
+  miniapps: PackagePath[]
 }) => {
   try {
     if (!miniapp && miniapps.length === 0) {
-      miniapps.push(MiniApp.fromCurrentPath().packageDescriptor)
+      miniapps.push(MiniApp.fromCurrentPath().packagePath)
     } else if (miniapp && miniapps.length === 0) {
       miniapps.push(miniapp)
     }
@@ -51,10 +53,8 @@ export const handler = async ({
     descriptor =
       descriptor || (await askUserToChooseANapDescriptorFromCauldron())
 
-    for (const miniappPath of miniapps) {
-      const miniAppPackage = await MiniApp.fromPackagePath(
-        PackagePath.fromString(miniappPath)
-      )
+    for (const miniappPkgPath of miniapps) {
+      const miniAppPackage = await MiniApp.fromPackagePath(miniappPkgPath)
       log.info(`=> ${miniAppPackage.name}`)
       await checkCompatibilityWithNativeApp(
         miniAppPackage,

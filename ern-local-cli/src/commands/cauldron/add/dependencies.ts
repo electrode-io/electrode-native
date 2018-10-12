@@ -29,6 +29,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -40,7 +41,7 @@ export const handler = async ({
   containerVersion,
   descriptor,
 }: {
-  dependencies: string[]
+  dependencies: PackagePath[]
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
 }) => {
@@ -80,7 +81,7 @@ export const handler = async ({
       },
       noGitOrFilesystemPath: {
         extraErrorMessage:
-          'You cannot provide dependencies using git or file schme for this command. Only the form dependency@version is allowed.',
+          'You cannot provide dependencies using git or file scheme for this command. Only the form dependency@version is allowed.',
         obj: dependencies,
       },
       publishedToNpm: {
@@ -89,8 +90,6 @@ export const handler = async ({
         obj: dependencies,
       },
     })
-
-    const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
 
     const cauldronCommitMessage = [
       `${
@@ -103,15 +102,10 @@ export const handler = async ({
     const cauldron = await getActiveCauldron()
     await performContainerStateUpdateInCauldron(
       async () => {
-        for (const dependencyObj of dependenciesObjs) {
+        for (const dependency of dependencies) {
           // Add the dependency to Cauldron
-          await cauldron.addContainerNativeDependency(
-            descriptor!,
-            dependencyObj
-          )
-          cauldronCommitMessage.push(
-            `- Add ${dependencyObj.toString()} native dependency`
-          )
+          await cauldron.addContainerNativeDependency(descriptor!, dependency)
+          cauldronCommitMessage.push(`- Add ${dependency} native dependency`)
         }
       },
       descriptor,
