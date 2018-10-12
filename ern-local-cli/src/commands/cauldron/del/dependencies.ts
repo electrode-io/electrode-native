@@ -110,7 +110,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(`Dependency(ies) was/were succesfully removed from ${descriptor}`)
+    log.info(`Dependency(ies) successfully removed from ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

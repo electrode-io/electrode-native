@@ -17,8 +17,8 @@ export const handler = async ({ key }: { key: string }) => {
   })
 
   if (ernConfig.deleteConfig(key)) {
-    log.info(`Configuration for ${key} is deleted`)
+    log.info(`Successfully deleted ${key} from config`)
   } else {
-    log.warn(`Configuration entry for ${key} not found`)
+    log.warn(`${key} was not found in config`)
   }
 }

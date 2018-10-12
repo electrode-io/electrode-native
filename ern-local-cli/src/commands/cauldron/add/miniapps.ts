@@ -92,7 +92,6 @@ export const handler = async ({
     })
 
     const miniAppsObjs: MiniApp[] = []
-
     for (const miniapp of miniapps) {
       const m = await kax
         .task(`Retrieving ${miniapp} MiniApp`)
@@ -122,7 +121,7 @@ export const handler = async ({
     )
 
     logNativeDependenciesConflicts(nativeDependencies, {
-      throwIfConflict: !force,
+      throwOnConflict: !force,
     })
 
     const cauldronCommitMessage = [
@@ -150,9 +149,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.debug(
-      `MiniApp(s) was/were succesfully added to ${descriptor} in the Cauldron`
-    )
+    log.debug(`MiniApp(s) successfully added to ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

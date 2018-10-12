@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
+import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
@@ -29,6 +29,7 @@ export const handler = async ({
     })
     const cauldron = await getActiveCauldron()
     await cauldron.removeDescriptor(descriptor)
+    log.info(`${descriptor} successfully removed from the Cauldron`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

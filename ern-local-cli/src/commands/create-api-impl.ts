@@ -198,7 +198,7 @@ export const handler = async ({
       reactNativeVersion,
       scope,
     })
-    log.info('Success!')
+    log.info('Success')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

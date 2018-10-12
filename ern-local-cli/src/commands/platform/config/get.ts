@@ -18,6 +18,6 @@ export const handler = async ({ key }: { key: string }) => {
   if (ernConfig.getValue(key)) {
     log.info(`Configuration value for ${key} is ${ernConfig.getValue(key)}`)
   } else {
-    log.warn(`Configuration value for ${key} not found`)
+    log.warn(`${key} was not found in config`)
   }
 }

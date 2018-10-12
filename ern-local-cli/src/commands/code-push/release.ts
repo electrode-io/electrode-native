@@ -207,6 +207,7 @@ export const handler = async ({
         }
       )
     }
+    log.info(`Successfully released`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

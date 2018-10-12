@@ -1,4 +1,4 @@
-import { MiniApp, Platform, utils as coreUtils } from 'ern-core'
+import { MiniApp, Platform, utils as coreUtils, log } from 'ern-core'
 import { epilog } from '../lib'
 import { Argv } from 'yargs'
 
@@ -26,6 +26,7 @@ export const handler = ({
     const miniApp = MiniApp.fromCurrentPath()
     const versionWithoutPrefix = version.toString().replace('v', '')
     miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
+    log.info('MiniApp upgraded successfully')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

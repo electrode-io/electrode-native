@@ -293,7 +293,7 @@ export const handler = async ({
         )
 
         logNativeDependenciesConflicts(nativeDependencies, {
-          throwIfConflict: !force,
+          throwOnConflict: !force,
         })
 
         await cauldron.syncContainerMiniApps(descriptor!, [
@@ -309,7 +309,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(`Operations were succesfully performed for ${descriptor}`)
+    log.info(`Batch operations were succesfully performed for ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

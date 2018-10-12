@@ -36,7 +36,7 @@ export const handler = async ({
       key,
     })
     log.info(
-      `Successfuly deleted config ${key && `for key ${key}`} of ${
+      `Successfully deleted ${key && `for key ${key}`} of ${
         descriptor ? descriptor : 'Cauldron'
       }`
     )

@@ -94,9 +94,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.debug(
-      `JS API implementation(s) was/were succesfully removed fron ${descriptor} in the Cauldron`
-    )
+    log.info(`JS API implementation(s) successfully removed from ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

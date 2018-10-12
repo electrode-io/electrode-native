@@ -44,7 +44,7 @@ export const handler = async ({
       value: await parseArgValue(value),
     })
     log.info(
-      `Successfuly set config ${key && `for key ${key}`} of ${
+      `Successfully set ${key && `for key ${key}`} of ${
         descriptor ? descriptor : 'Cauldron'
       }`
     )

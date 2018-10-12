@@ -2,7 +2,7 @@ import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron, cauldronFileUriScheme } from 'ern-cauldron-api'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { getPublisher, ContainerPublisher } from 'ern-container-publisher'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'publisher'
@@ -87,14 +87,12 @@ export const handler = async ({
 
     const p: ContainerPublisher = await getPublisher(publisher)
 
-    if (descriptor) {
-      if (!p.platforms.includes(descriptor.platform!)) {
-        throw new Error(
-          `The ${p.name} publisher does not support ${
-            descriptor.platform
-          } platform`
-        )
-      }
+    if (descriptor && !p.platforms.includes(descriptor.platform!)) {
+      throw new Error(
+        `The ${p.name} publisher does not support ${
+          descriptor.platform
+        } platform`
+      )
     }
 
     await cauldron.addPublisher(
@@ -104,7 +102,7 @@ export const handler = async ({
       url,
       extraObj
     )
-    log.info(`${publisher} publisher was successfully added!`)
+    log.info(`${publisher} publisher successfully added to ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

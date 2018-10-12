@@ -1,6 +1,6 @@
 import { utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'file <cauldronFilePath>'
@@ -15,10 +15,8 @@ export const handler = async ({
 }) => {
   try {
     const cauldron = await getActiveCauldron()
-    await cauldron.removeFile({
-      cauldronFilePath,
-    })
-    log.info(`${cauldronFilePath} file was successfully removed !`)
+    await cauldron.removeFile({ cauldronFilePath })
+    log.info(`${cauldronFilePath} file successfully removed from the Cauldron`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

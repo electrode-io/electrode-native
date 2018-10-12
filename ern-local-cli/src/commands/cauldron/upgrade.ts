@@ -13,7 +13,7 @@ export const handler = async () => {
       ignoreSchemaVersionMismatch: true,
     })
     await cauldron.upgradeCauldronSchema()
-    log.debug('Cauldron was succesfully upgraded !')
+    log.info('Cauldron was successfully upgraded')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

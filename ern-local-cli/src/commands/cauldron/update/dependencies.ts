@@ -127,7 +127,7 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(`Dependency(ies) was/were succesfully updated in ${descriptor}`)
+    log.info(`Dependency(ies) successfully updated in ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

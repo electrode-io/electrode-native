@@ -3,15 +3,15 @@ import { log } from 'ern-core'
 export function logNativeDependenciesConflicts(
   nativeDependencies: any,
   {
-    throwIfConflict,
+    throwOnConflict,
   }: {
-    throwIfConflict?: boolean
+    throwOnConflict?: boolean
   } = {}
 ) {
   const conflictingDependencies =
     nativeDependencies.pluginsWithMismatchingVersions
   if (conflictingDependencies.length > 0) {
-    if (!throwIfConflict) {
+    if (!throwOnConflict) {
       log.warn(
         '============================================================================='
       )
