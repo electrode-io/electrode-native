@@ -12,6 +12,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
+  tryCatchWrap,
 } from '../lib'
 import inquirer from 'inquirer'
 import path from 'path'
@@ -68,7 +69,7 @@ export const builder = (argv: Argv) => {
 const WORKING_DIRECTORY = path.join(Platform.rootDirectory, 'api-impl-gen')
 const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, 'plugins')
 
-export const handler = async ({
+export const commandHandler = async ({
   apiName,
   apiImplName,
   force,
@@ -91,117 +92,110 @@ export const handler = async ({
   skipNpmCheck?: boolean
   outputDirectory: string
 }) => {
-  try {
-    const apiDep = PackagePath.fromString(apiName)
-    // pre conditions
+  const apiDep = PackagePath.fromString(apiName)
+  // pre conditions
+  await logErrorAndExitIfNotSatisfied({
+    noGitOrFilesystemPath: {
+      obj: apiName,
+    },
+    publishedToNpm: {
+      extraErrorMessage: `Couldn't find package ${apiName} to generate the api implementation`,
+      obj: apiName,
+    },
+  })
+
+  if (apiImplName) {
     await logErrorAndExitIfNotSatisfied({
-      noGitOrFilesystemPath: {
-        obj: apiName,
-      },
-      publishedToNpm: {
-        extraErrorMessage: `Couldn't find package ${apiName} to generate the api implementation`,
-        obj: apiName,
+      isValidElectrodeNativeModuleName: {
+        name: apiImplName,
       },
     })
-
-    if (apiImplName) {
-      await logErrorAndExitIfNotSatisfied({
-        isValidElectrodeNativeModuleName: {
-          name: apiImplName,
-        },
-      })
-    }
-
-    log.info(`Generating API implementation for ${apiName}`)
-    const reactNativeVersion = await coreUtils.reactNativeManifestVersion()
-    if (!reactNativeVersion) {
-      throw new Error(
-        'React Native version is not defined in Manifest. This sould not happen !'
-      )
-    }
-    log.debug(
-      `Will generate api implementation using react native version: ${reactNativeVersion}`
-    )
-
-    if (jsOnly && nativeOnly) {
-      log.warn('Looks like both js and native are selected, should be only one')
-      nativeOnly = await promptPlatformSelection()
-    }
-
-    if (!jsOnly && !nativeOnly) {
-      nativeOnly = await promptPlatformSelection()
-      jsOnly = !nativeOnly
-    }
-
-    const moduleType = nativeOnly
-      ? ModuleTypes.NATIVE_API_IMPL
-      : ModuleTypes.JS_API_IMPL
-
-    if (
-      apiImplName &&
-      !checkIfModuleNameContainsSuffix(apiImplName, moduleType)
-    ) {
-      apiImplName = await promptUserToUseSuffixModuleName(
-        apiImplName,
-        moduleType
-      )
-    }
-
-    // Must conform to definition of ElectrodeNativeModuleName
-    if (!apiImplName) {
-      // camel case api name
-      const cameCaseName = coreUtils.camelize(apiDep.basePath)
-      // remove number if present
-      const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
-      apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`
-    }
-
-    // If no package name is specified get default name from apiImplName
-    if (!packageName) {
-      const defaultPackageName = (packageName = coreUtils.getDefaultPackageNameForModule(
-        apiImplName,
-        moduleType
-      ))
-      packageName = await promptForPackageName(defaultPackageName)
-    }
-
-    // Check if packageName is valid
-    await logErrorAndExitIfNotSatisfied({
-      isValidNpmPackageName: {
-        name: packageName,
-      },
-    })
-
-    // Skip npm check
-    if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-      throw new Error(`Aborting command `)
-    }
-
-    await generateApiImpl({
-      apiDependency: apiDep,
-      apiImplName,
-      forceGenerate: force,
-      hasConfig,
-      nativeOnly,
-      outputDirectory,
-      packageName,
-      paths: {
-        apiImplHull: path.join(
-          Platform.currentPlatformVersionPath,
-          'ern-api-impl-gen',
-          'hull'
-        ),
-        outDirectory: '',
-        pluginsDownloadDirectory: PLUGIN_DIRECTORY,
-        workingDirectory: WORKING_DIRECTORY,
-      },
-      reactNativeVersion,
-      scope,
-    })
-    log.info('Success')
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
   }
+
+  log.info(`Generating API implementation for ${apiName}`)
+  const reactNativeVersion = await coreUtils.reactNativeManifestVersion()
+  if (!reactNativeVersion) {
+    throw new Error(
+      'React Native version is not defined in Manifest. This sould not happen !'
+    )
+  }
+  log.debug(
+    `Will generate api implementation using react native version: ${reactNativeVersion}`
+  )
+
+  if (jsOnly && nativeOnly) {
+    log.warn('Looks like both js and native are selected, should be only one')
+    nativeOnly = await promptPlatformSelection()
+  }
+
+  if (!jsOnly && !nativeOnly) {
+    nativeOnly = await promptPlatformSelection()
+    jsOnly = !nativeOnly
+  }
+
+  const moduleType = nativeOnly
+    ? ModuleTypes.NATIVE_API_IMPL
+    : ModuleTypes.JS_API_IMPL
+
+  if (
+    apiImplName &&
+    !checkIfModuleNameContainsSuffix(apiImplName, moduleType)
+  ) {
+    apiImplName = await promptUserToUseSuffixModuleName(apiImplName, moduleType)
+  }
+
+  // Must conform to definition of ElectrodeNativeModuleName
+  if (!apiImplName) {
+    // camel case api name
+    const cameCaseName = coreUtils.camelize(apiDep.basePath)
+    // remove number if present
+    const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
+    apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`
+  }
+
+  // If no package name is specified get default name from apiImplName
+  if (!packageName) {
+    const defaultPackageName = (packageName = coreUtils.getDefaultPackageNameForModule(
+      apiImplName,
+      moduleType
+    ))
+    packageName = await promptForPackageName(defaultPackageName)
+  }
+
+  // Check if packageName is valid
+  await logErrorAndExitIfNotSatisfied({
+    isValidNpmPackageName: {
+      name: packageName,
+    },
+  })
+
+  // Skip npm check
+  if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
+    throw new Error(`Aborting command `)
+  }
+
+  await generateApiImpl({
+    apiDependency: apiDep,
+    apiImplName,
+    forceGenerate: force,
+    hasConfig,
+    nativeOnly,
+    outputDirectory,
+    packageName,
+    paths: {
+      apiImplHull: path.join(
+        Platform.currentPlatformVersionPath,
+        'ern-api-impl-gen',
+        'hull'
+      ),
+      outDirectory: '',
+      pluginsDownloadDirectory: PLUGIN_DIRECTORY,
+      workingDirectory: WORKING_DIRECTORY,
+    },
+    reactNativeVersion,
+    scope,
+  })
+  log.info('Success')
 }
 
 async function promptPlatformSelection(): Promise<boolean> {
@@ -231,3 +225,5 @@ async function promptForPackageName(
   ])
   return packageName
 }
+
+export const handler = tryCatchWrap(commandHandler)

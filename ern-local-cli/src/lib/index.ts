@@ -20,3 +20,4 @@ export {
 export {
   platformSupportedConfigAsString,
 } from './platformSupportedConfigAsString'
+export { tryCatchWrap } from './tryCatchWrap'

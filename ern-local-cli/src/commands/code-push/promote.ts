@@ -1,9 +1,4 @@
-import {
-  NativeApplicationDescriptor,
-  utils as coreUtils,
-  log,
-  NativePlatform,
-} from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushPromote } from 'ern-orchestrator'
 import {
@@ -12,6 +7,7 @@ import {
   askUserForCodePushDeploymentName,
   askUserToChooseANapDescriptorFromCauldron,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
+  tryCatchWrap,
 } from '../../lib'
 import _ from 'lodash'
 import inquirer from 'inquirer'
@@ -93,7 +89,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   force,
   label,
   mandatory,
@@ -118,112 +114,110 @@ export const handler = async ({
   rollout?: number
   skipConfirmation?: boolean
 }) => {
-  try {
+  await logErrorAndExitIfNotSatisfied({
+    checkIfCodePushOptionsAreValid: {
+      descriptors: targetDescriptors,
+      semVerDescriptor: targetSemVerDescriptor,
+      targetBinaryVersion,
+    },
+  })
+
+  sourceDescriptor =
+    sourceDescriptor ||
+    (await askUserToChooseANapDescriptorFromCauldron({
+      message: 'Please select a source native application descriptor',
+      onlyReleasedVersions: true,
+    }))
+
+  if (targetDescriptors.length > 0) {
+    // User provided one or more target descriptor(s)
     await logErrorAndExitIfNotSatisfied({
-      checkIfCodePushOptionsAreValid: {
-        descriptors: targetDescriptors,
-        semVerDescriptor: targetSemVerDescriptor,
-        targetBinaryVersion,
-      },
-    })
-
-    sourceDescriptor =
-      sourceDescriptor ||
-      (await askUserToChooseANapDescriptorFromCauldron({
-        message: 'Please select a source native application descriptor',
-        onlyReleasedVersions: true,
-      }))
-
-    if (targetDescriptors.length > 0) {
-      // User provided one or more target descriptor(s)
-      await logErrorAndExitIfNotSatisfied({
-        napDescriptorExistInCauldron: {
-          descriptor: targetDescriptors,
-          extraErrorMessage:
-            'You cannot CodePush to a non existing native application version.',
-        },
-      })
-    } else if (targetDescriptors.length === 0 && !targetSemVerDescriptor) {
-      // User provided no target descriptors, nor a target semver descriptor
-      targetDescriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron(
-        {
-          message:
-            'Please select one or more target native application descriptor(s)',
-          onlyReleasedVersions: true,
-        }
-      )
-    } else if (targetSemVerDescriptor) {
-      // User provided a target semver descriptor
-      const targetSemVerNapDescriptor = NativeApplicationDescriptor.fromString(
-        targetSemVerDescriptor
-      )
-      const cauldron = await getActiveCauldron()
-      targetDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
-        targetSemVerNapDescriptor
-      )
-      if (targetDescriptors.length === 0) {
-        throw new Error(
-          `No versions matching ${targetSemVerDescriptor} were found`
-        )
-      } else {
-        log.info(
-          'CodePush release will target the following native application descriptors :'
-        )
-        for (const targetDescriptor of targetDescriptors) {
-          log.info(`- ${targetDescriptor}`)
-        }
-        if (!skipConfirmation) {
-          const { userConfirmedVersions } = await inquirer.prompt([
-            <inquirer.Question>{
-              message: 'Do you confirm ?',
-              name: 'userConfirmedVersions',
-              type: 'confirm',
-            },
-          ])
-          if (!userConfirmedVersions) {
-            throw new Error('Aborting command execution')
-          }
-        }
-      }
-    }
-
-    await logErrorAndExitIfNotSatisfied({
-      sameNativeApplicationAndPlatform: {
-        descriptors: targetDescriptors,
+      napDescriptorExistInCauldron: {
+        descriptor: targetDescriptors,
         extraErrorMessage:
-          'You can only pass descriptors that match the same native application and version',
+          'You cannot CodePush to a non existing native application version.',
       },
     })
-
-    if (!sourceDeploymentName) {
-      sourceDeploymentName = await askUserForCodePushDeploymentName(
-        sourceDescriptor,
-        'Please select a source deployment environment'
-      )
-    }
-
-    if (!targetDeploymentName) {
-      targetDeploymentName = await askUserForCodePushDeploymentName(
-        sourceDescriptor,
-        'Please select a target deployment environment'
-      )
-    }
-
-    await performCodePushPromote(
-      sourceDescriptor,
-      targetDescriptors,
-      sourceDeploymentName,
-      targetDeploymentName,
+  } else if (targetDescriptors.length === 0 && !targetSemVerDescriptor) {
+    // User provided no target descriptors, nor a target semver descriptor
+    targetDescriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron(
       {
-        force,
-        label,
-        mandatory,
-        rollout,
-        targetBinaryVersion,
+        message:
+          'Please select one or more target native application descriptor(s)',
+        onlyReleasedVersions: true,
       }
     )
-    log.info(`Successfully promoted ${sourceDescriptor}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  } else if (targetSemVerDescriptor) {
+    // User provided a target semver descriptor
+    const targetSemVerNapDescriptor = NativeApplicationDescriptor.fromString(
+      targetSemVerDescriptor
+    )
+    const cauldron = await getActiveCauldron()
+    targetDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
+      targetSemVerNapDescriptor
+    )
+    if (targetDescriptors.length === 0) {
+      throw new Error(
+        `No versions matching ${targetSemVerDescriptor} were found`
+      )
+    } else {
+      log.info(
+        'CodePush release will target the following native application descriptors :'
+      )
+      for (const targetDescriptor of targetDescriptors) {
+        log.info(`- ${targetDescriptor}`)
+      }
+      if (!skipConfirmation) {
+        const { userConfirmedVersions } = await inquirer.prompt([
+          <inquirer.Question>{
+            message: 'Do you confirm ?',
+            name: 'userConfirmedVersions',
+            type: 'confirm',
+          },
+        ])
+        if (!userConfirmedVersions) {
+          throw new Error('Aborting command execution')
+        }
+      }
+    }
   }
+
+  await logErrorAndExitIfNotSatisfied({
+    sameNativeApplicationAndPlatform: {
+      descriptors: targetDescriptors,
+      extraErrorMessage:
+        'You can only pass descriptors that match the same native application and version',
+    },
+  })
+
+  if (!sourceDeploymentName) {
+    sourceDeploymentName = await askUserForCodePushDeploymentName(
+      sourceDescriptor,
+      'Please select a source deployment environment'
+    )
+  }
+
+  if (!targetDeploymentName) {
+    targetDeploymentName = await askUserForCodePushDeploymentName(
+      sourceDescriptor,
+      'Please select a target deployment environment'
+    )
+  }
+
+  await performCodePushPromote(
+    sourceDescriptor,
+    targetDescriptors,
+    sourceDeploymentName,
+    targetDeploymentName,
+    {
+      force,
+      label,
+      mandatory,
+      rollout,
+      targetBinaryVersion,
+    }
+  )
+  log.info(`Successfully promoted ${sourceDescriptor}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

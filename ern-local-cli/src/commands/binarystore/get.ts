@@ -1,11 +1,6 @@
-import {
-  NativeApplicationDescriptor,
-  shell,
-  log,
-  utils as coreUtils,
-} from 'ern-core'
+import { NativeApplicationDescriptor, shell, log } from 'ern-core'
 import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import fs from 'fs'
 import { Argv } from 'yargs'
 
@@ -21,26 +16,24 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   outDir,
 }: {
   descriptor: NativeApplicationDescriptor
   outDir: string
 }) => {
-  try {
-    await logErrorAndExitIfNotSatisfied({
-      napDescriptorExistInCauldron: { descriptor },
-    })
+  await logErrorAndExitIfNotSatisfied({
+    napDescriptorExistInCauldron: { descriptor },
+  })
 
-    if (!fs.existsSync(outDir)) {
-      shell.mkdir('-p', outDir)
-    }
-
-    const binaryStore = await getBinaryStoreFromCauldron()
-    const pathToBinary = await binaryStore.getBinary(descriptor, { outDir })
-    log.info(`Binary was successfuly downloaded in ${pathToBinary}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  if (!fs.existsSync(outDir)) {
+    shell.mkdir('-p', outDir)
   }
+
+  const binaryStore = await getBinaryStoreFromCauldron()
+  const pathToBinary = await binaryStore.getBinary(descriptor, { outDir })
+  log.info(`Binary was successfuly downloaded in ${pathToBinary}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

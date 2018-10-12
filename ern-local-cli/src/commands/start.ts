@@ -1,11 +1,11 @@
-import { epilog, askUserToChooseANapDescriptorFromCauldron } from '../lib'
+import {
+  epilog,
+  askUserToChooseANapDescriptorFromCauldron,
+  tryCatchWrap,
+} from '../lib'
 import { start } from 'ern-orchestrator'
 import _ from 'lodash'
-import {
-  PackagePath,
-  utils as coreUtils,
-  NativeApplicationDescriptor,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor } from 'ern-core'
 import { Argv } from 'yargs'
 
 export const command = 'start'
@@ -60,7 +60,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   activityName,
   bundleId,
   descriptor,
@@ -77,21 +77,19 @@ export const handler = async ({
   packageName?: string
   watchNodeModules?: string[]
 } = {}) => {
-  try {
-    if (!miniapps && !descriptor) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron()
-    }
-
-    await start({
-      activityName,
-      bundleId,
-      descriptor,
-      extraJsDependencies,
-      miniapps,
-      packageName,
-      watchNodeModules,
-    })
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  if (!miniapps && !descriptor) {
+    descriptor = await askUserToChooseANapDescriptorFromCauldron()
   }
+
+  await start({
+    activityName,
+    bundleId,
+    descriptor,
+    extraJsDependencies,
+    miniapps,
+    packageName,
+    watchNodeModules,
+  })
 }
+
+export const handler = tryCatchWrap(commandHandler)

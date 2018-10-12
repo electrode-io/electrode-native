@@ -13,6 +13,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
+  tryCatchWrap,
 } from '../lib'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
@@ -50,7 +51,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   apiAuthor,
   apiName,
   apiVersion,
@@ -67,79 +68,73 @@ export const handler = async ({
   scope?: string
   skipNpmCheck?: boolean
 }) => {
-  try {
-    await logErrorAndExitIfNotSatisfied({
-      isValidElectrodeNativeModuleName: {
-        name: apiName,
-      },
-    })
-
-    if (schemaPath && !fs.existsSync(schemaPath)) {
-      throw new Error(`Cannot resolve path to ${schemaPath}`)
-    }
-
-    if (!checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
-      apiName = await promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
-    }
-
-    // Construct the package name
-    if (!packageName) {
-      const defaultPackageName = coreUtils.getDefaultPackageNameForModule(
-        apiName,
-        ModuleTypes.API
-      )
-      packageName = await promptForPackageName(defaultPackageName)
-    }
-
-    await logErrorAndExitIfNotSatisfied({
-      isValidNpmPackageName: {
-        name: packageName,
-      },
-    })
-
-    if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-      throw new Error('Aborting command')
-    }
-
-    const bridgeDep = await manifest.getNativeDependency(
-      PackagePath.fromString('react-native-electrode-bridge')
-    )
-    if (!bridgeDep) {
-      throw new Error(
-        'react-native-electrode-bridge not found in manifest. cannot infer version to use'
-      )
-    }
-    if (!bridgeDep.version) {
-      throw new Error(
-        'react-native-electrode-bridge version needs to be defined'
-      )
-    }
-
-    const reactNative = await manifest.getNativeDependency(
-      PackagePath.fromString('react-native')
-    )
-    if (!reactNative) {
-      throw new Error(
-        'react-native-electrode-bridge not found in manifest. cannot infer version to use'
-      )
-    }
-
-    log.info(`Generating ${apiName} API`)
-
-    await ApiGen.generateApi({
-      apiAuthor,
-      apiSchemaPath: schemaPath,
-      apiVersion,
-      bridgeVersion: `${bridgeDep.version || ''}`,
+  await logErrorAndExitIfNotSatisfied({
+    isValidElectrodeNativeModuleName: {
       name: apiName,
-      npmScope: scope,
-      packageName,
-      reactNativeVersion: reactNative.version,
-    })
-    log.info('Success')
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+    },
+  })
+
+  if (schemaPath && !fs.existsSync(schemaPath)) {
+    throw new Error(`Cannot resolve path to ${schemaPath}`)
   }
+
+  if (!checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
+    apiName = await promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
+  }
+
+  // Construct the package name
+  if (!packageName) {
+    const defaultPackageName = coreUtils.getDefaultPackageNameForModule(
+      apiName,
+      ModuleTypes.API
+    )
+    packageName = await promptForPackageName(defaultPackageName)
+  }
+
+  await logErrorAndExitIfNotSatisfied({
+    isValidNpmPackageName: {
+      name: packageName,
+    },
+  })
+
+  if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
+    throw new Error('Aborting command')
+  }
+
+  const bridgeDep = await manifest.getNativeDependency(
+    PackagePath.fromString('react-native-electrode-bridge')
+  )
+  if (!bridgeDep) {
+    throw new Error(
+      'react-native-electrode-bridge not found in manifest. cannot infer version to use'
+    )
+  }
+  if (!bridgeDep.version) {
+    throw new Error('react-native-electrode-bridge version needs to be defined')
+  }
+
+  const reactNative = await manifest.getNativeDependency(
+    PackagePath.fromString('react-native')
+  )
+  if (!reactNative) {
+    throw new Error(
+      'react-native-electrode-bridge not found in manifest. cannot infer version to use'
+    )
+  }
+
+  log.info(`Generating ${apiName} API`)
+
+  await ApiGen.generateApi({
+    apiAuthor,
+    apiSchemaPath: schemaPath,
+    apiVersion,
+    bridgeVersion: `${bridgeDep.version || ''}`,
+    name: apiName,
+    npmScope: scope,
+    packageName,
+    reactNativeVersion: reactNative.version,
+  })
+  log.info('Success')
 }
 
 async function promptForPackageName(
@@ -156,3 +151,5 @@ async function promptForPackageName(
   ])
   return packageName
 }
+
+export const handler = tryCatchWrap(commandHandler)

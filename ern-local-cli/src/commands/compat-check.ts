@@ -2,11 +2,14 @@ import {
   PackagePath,
   MiniApp,
   NativeApplicationDescriptor,
-  utils as coreUtils,
   log,
 } from 'ern-core'
 import { checkCompatibilityWithNativeApp } from 'ern-orchestrator'
-import { epilog, askUserToChooseANapDescriptorFromCauldron } from '../lib'
+import {
+  epilog,
+  askUserToChooseANapDescriptorFromCauldron,
+  tryCatchWrap,
+} from '../lib'
 
 import { Argv } from 'yargs'
 
@@ -35,7 +38,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   miniapp,
   miniapps = [],
@@ -44,27 +47,24 @@ export const handler = async ({
   miniapp?: PackagePath
   miniapps: PackagePath[]
 }) => {
-  try {
-    if (!miniapp && miniapps.length === 0) {
-      miniapps.push(MiniApp.fromCurrentPath().packagePath)
-    } else if (miniapp && miniapps.length === 0) {
-      miniapps.push(miniapp)
-    }
+  if (!miniapp && miniapps.length === 0) {
+    miniapps.push(MiniApp.fromCurrentPath().packagePath)
+  } else if (miniapp && miniapps.length === 0) {
+    miniapps.push(miniapp)
+  }
 
-    descriptor =
-      descriptor || (await askUserToChooseANapDescriptorFromCauldron())
+  descriptor = descriptor || (await askUserToChooseANapDescriptorFromCauldron())
 
-    for (const miniappPkgPath of miniapps) {
-      const miniAppPackage = await MiniApp.fromPackagePath(miniappPkgPath)
-      log.info(`=> ${miniAppPackage.name}`)
-      await checkCompatibilityWithNativeApp(
-        miniAppPackage,
-        descriptor.name,
-        descriptor.platform || undefined,
-        descriptor.version || undefined
-      )
-    }
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  for (const miniappPkgPath of miniapps) {
+    const miniAppPackage = await MiniApp.fromPackagePath(miniappPkgPath)
+    log.info(`=> ${miniAppPackage.name}`)
+    await checkCompatibilityWithNativeApp(
+      miniAppPackage,
+      descriptor.name,
+      descriptor.platform || undefined,
+      descriptor.version || undefined
+    )
   }
 }
+
+export const handler = tryCatchWrap(commandHandler)

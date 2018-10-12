@@ -1,10 +1,11 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 import { performCodePushPatch } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
   askUserToChooseANapDescriptorFromCauldron,
+  tryCatchWrap,
 } from '../../lib'
 import inquirer from 'inquirer'
 import { Argv } from 'yargs'
@@ -52,7 +53,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   deploymentName,
   descriptor,
   disabled,
@@ -67,43 +68,41 @@ export const handler = async ({
   mandatory?: boolean
   rollout?: number
 }) => {
-  try {
-    descriptor =
-      descriptor ||
-      (await askUserToChooseANapDescriptorFromCauldron({
-        onlyReleasedVersions: true,
-      }))
+  descriptor =
+    descriptor ||
+    (await askUserToChooseANapDescriptorFromCauldron({
+      onlyReleasedVersions: true,
+    }))
 
-    await logErrorAndExitIfNotSatisfied({
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage:
-          'You cannot CodePush to a non existing native application version.',
-      },
-    })
+  await logErrorAndExitIfNotSatisfied({
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage:
+        'You cannot CodePush to a non existing native application version.',
+    },
+  })
 
-    if (!deploymentName) {
-      deploymentName = await askUserForCodePushDeploymentName(descriptor)
-    }
-
-    if (!label) {
-      const { userInputedLabel } = await inquirer.prompt(<inquirer.Question>{
-        message:
-          'Please enter a label name corresponding to the release entry to patch',
-        name: 'userSelectedDeploymentName',
-        type: 'input',
-      })
-
-      label = <string>userInputedLabel
-    }
-
-    await performCodePushPatch(descriptor, deploymentName, label, {
-      isDisabled: disabled,
-      isMandatory: mandatory,
-      rollout,
-    })
-    log.info(`Successfully patched ${descriptor} ${deploymentName} ${label}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  if (!deploymentName) {
+    deploymentName = await askUserForCodePushDeploymentName(descriptor)
   }
+
+  if (!label) {
+    const { userInputedLabel } = await inquirer.prompt(<inquirer.Question>{
+      message:
+        'Please enter a label name corresponding to the release entry to patch',
+      name: 'userSelectedDeploymentName',
+      type: 'input',
+    })
+
+    label = <string>userInputedLabel
+  }
+
+  await performCodePushPatch(descriptor, deploymentName, label, {
+    isDisabled: disabled,
+    isMandatory: mandatory,
+    rollout,
+  })
+  log.info(`Successfully patched ${descriptor} ${deploymentName} ${label}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

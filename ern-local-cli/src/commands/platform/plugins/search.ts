@@ -1,11 +1,5 @@
-import {
-  manifest,
-  Platform,
-  PackagePath,
-  utils as coreUtils,
-  log,
-} from 'ern-core'
-import { epilog } from '../../../lib'
+import { manifest, Platform, PackagePath, log } from 'ern-core'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
 import chalk from 'chalk'
@@ -22,28 +16,26 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   name,
   platformVersion = Platform.currentVersion,
 }: {
   name: string
   platformVersion?: string
 }) => {
-  try {
-    const plugin = await manifest.getNativeDependency(
-      PackagePath.fromString(name),
-      platformVersion
+  const plugin = await manifest.getNativeDependency(
+    PackagePath.fromString(name),
+    platformVersion
+  )
+  if (!plugin) {
+    return log.warn(
+      `No plugin named ${name} was found for platform version ${platformVersion}`
     )
-    if (!plugin) {
-      return log.warn(
-        `No plugin named ${name} was found for platform version ${platformVersion}`
-      )
-    }
-
-    log.info(
-      `${chalk.yellow(plugin.basePath)}@${chalk.magenta(plugin.version || '?')}`
-    )
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
   }
+
+  log.info(
+    `${chalk.yellow(plugin.basePath)}@${chalk.magenta(plugin.version || '?')}`
+  )
 }
+
+export const handler = tryCatchWrap(commandHandler)

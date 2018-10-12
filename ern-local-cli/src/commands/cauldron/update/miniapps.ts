@@ -2,7 +2,6 @@ import {
   MiniApp,
   PackagePath,
   NativeApplicationDescriptor,
-  utils as coreUtils,
   nativeDepenciesVersionResolution as resolver,
   log,
   kax,
@@ -14,6 +13,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   logNativeDependenciesConflicts,
+  tryCatchWrap,
 } from '../../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -49,7 +49,7 @@ export const builder = (argv: Argv) => {
 
 // Most/All of the logic here should be moved to the MiniApp class
 // Commands should remain as much logic less as possible
-export const handler = async ({
+export const commandHandler = async ({
   containerVersion,
   descriptor,
   force,
@@ -60,112 +60,108 @@ export const handler = async ({
   force?: boolean
   miniapps: PackagePath[]
 }) => {
-  try {
-    descriptor =
-      descriptor ||
-      (await askUserToChooseANapDescriptorFromCauldron({
-        onlyNonReleasedVersions: true,
-      }))
+  descriptor =
+    descriptor ||
+    (await askUserToChooseANapDescriptorFromCauldron({
+      onlyNonReleasedVersions: true,
+    }))
 
-    await logErrorAndExitIfNotSatisfied({
-      isCompleteNapDescriptorString: { descriptor },
-      isNewerContainerVersion: containerVersion
-        ? {
-            containerVersion,
-            descriptor,
-            extraErrorMessage:
-              'To avoid conflicts with previous versions, you can only use container version newer than the current one',
-          }
-        : undefined,
-      isValidContainerVersion: containerVersion
-        ? { containerVersion }
-        : undefined,
-      miniAppIsInNativeApplicationVersionContainer: {
-        descriptor,
-        extraErrorMessage:
-          'If you want to add a new MiniApp(s), use -ern cauldron add miniapps- instead',
-        miniApp: miniapps,
-      },
-      miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
-        descriptor,
-        extraErrorMessage:
-          'It seems like you are trying to update a MiniApp to a version that is already the one in use.',
-        miniApp: miniapps,
-      },
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage:
-          'This command cannot work on a non existing native application version',
-      },
-    })
-
-    const miniAppsObjs: MiniApp[] = []
-    for (const miniapp of miniapps) {
-      const m = await kax
-        .task(`Retrieving ${miniapp} MiniApp`)
-        .run(MiniApp.fromPackagePath(miniapp))
-      miniAppsObjs.push(m)
-    }
-
-    const cauldron = await getActiveCauldron()
-    const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
-    const nonUpdatedMiniAppsInCauldron = _.xorBy(
-      miniapps,
-      miniAppsInCauldron,
-      'basePath'
-    )
-    const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
-    for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
-      const m = await kax
-        .task(`Retrieving ${nonUpdatedMiniAppInCauldron.toString()} MiniApp`)
-        .run(MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron))
-      nonUpdatedMiniAppsInCauldronObjs.push(m)
-    }
-
-    const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-      [...miniAppsObjs, ...nonUpdatedMiniAppsInCauldronObjs]
-    )
-    const cauldronDependencies = await cauldron.getNativeDependencies(
-      descriptor
-    )
-    const finalNativeDependencies = resolver.retainHighestVersions(
-      nativeDependencies.resolved,
-      cauldronDependencies
-    )
-
-    logNativeDependenciesConflicts(nativeDependencies, {
-      throwOnConflict: !force,
-    })
-
-    const cauldronCommitMessage = [
-      `${
-        miniapps.length === 1
-          ? `Update ${miniapps[0]} MiniApp version in ${descriptor}`
-          : `Update multiple MiniApps versions in ${descriptor}`
-      }`,
-    ]
-
-    await performContainerStateUpdateInCauldron(
-      async () => {
-        for (const miniAppObj of miniAppsObjs) {
-          cauldronCommitMessage.push(
-            `- Update ${miniAppObj.name} MiniApp version to v${
-              miniAppObj.version
-            }`
-          )
+  await logErrorAndExitIfNotSatisfied({
+    isCompleteNapDescriptorString: { descriptor },
+    isNewerContainerVersion: containerVersion
+      ? {
+          containerVersion,
+          descriptor,
+          extraErrorMessage:
+            'To avoid conflicts with previous versions, you can only use container version newer than the current one',
         }
-        await cauldron.syncContainerMiniApps(descriptor!, miniapps)
-        await cauldron.syncContainerNativeDependencies(
-          descriptor!,
-          finalNativeDependencies
-        )
-      },
+      : undefined,
+    isValidContainerVersion: containerVersion
+      ? { containerVersion }
+      : undefined,
+    miniAppIsInNativeApplicationVersionContainer: {
       descriptor,
-      cauldronCommitMessage,
-      { containerVersion }
-    )
-    log.info(`MiniApp(s) version(s) successfully updated in ${descriptor}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+      extraErrorMessage:
+        'If you want to add a new MiniApp(s), use -ern cauldron add miniapps- instead',
+      miniApp: miniapps,
+    },
+    miniAppIsInNativeApplicationVersionContainerWithDifferentVersion: {
+      descriptor,
+      extraErrorMessage:
+        'It seems like you are trying to update a MiniApp to a version that is already the one in use.',
+      miniApp: miniapps,
+    },
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage:
+        'This command cannot work on a non existing native application version',
+    },
+  })
+
+  const miniAppsObjs: MiniApp[] = []
+  for (const miniapp of miniapps) {
+    const m = await kax
+      .task(`Retrieving ${miniapp} MiniApp`)
+      .run(MiniApp.fromPackagePath(miniapp))
+    miniAppsObjs.push(m)
   }
+
+  const cauldron = await getActiveCauldron()
+  const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
+  const nonUpdatedMiniAppsInCauldron = _.xorBy(
+    miniapps,
+    miniAppsInCauldron,
+    'basePath'
+  )
+  const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
+  for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
+    const m = await kax
+      .task(`Retrieving ${nonUpdatedMiniAppInCauldron.toString()} MiniApp`)
+      .run(MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron))
+    nonUpdatedMiniAppsInCauldronObjs.push(m)
+  }
+
+  const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
+    [...miniAppsObjs, ...nonUpdatedMiniAppsInCauldronObjs]
+  )
+  const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
+  const finalNativeDependencies = resolver.retainHighestVersions(
+    nativeDependencies.resolved,
+    cauldronDependencies
+  )
+
+  logNativeDependenciesConflicts(nativeDependencies, {
+    throwOnConflict: !force,
+  })
+
+  const cauldronCommitMessage = [
+    `${
+      miniapps.length === 1
+        ? `Update ${miniapps[0]} MiniApp version in ${descriptor}`
+        : `Update multiple MiniApps versions in ${descriptor}`
+    }`,
+  ]
+
+  await performContainerStateUpdateInCauldron(
+    async () => {
+      for (const miniAppObj of miniAppsObjs) {
+        cauldronCommitMessage.push(
+          `- Update ${miniAppObj.name} MiniApp version to v${
+            miniAppObj.version
+          }`
+        )
+      }
+      await cauldron.syncContainerMiniApps(descriptor!, miniapps)
+      await cauldron.syncContainerNativeDependencies(
+        descriptor!,
+        finalNativeDependencies
+      )
+    },
+    descriptor,
+    cauldronCommitMessage,
+    { containerVersion }
+  )
+  log.info(`MiniApp(s) version(s) successfully updated in ${descriptor}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

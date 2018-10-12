@@ -1,7 +1,6 @@
 import {
   MiniApp,
   NativeApplicationDescriptor,
-  utils as coreUtils,
   nativeDepenciesVersionResolution as resolver,
   log,
   kax,
@@ -12,6 +11,7 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
+  tryCatchWrap,
 } from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -44,80 +44,76 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   containerVersion,
   descriptor,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
 }) => {
-  try {
-    descriptor =
-      descriptor ||
-      (await askUserToChooseANapDescriptorFromCauldron({
-        onlyNonReleasedVersions: true,
-      }))
+  descriptor =
+    descriptor ||
+    (await askUserToChooseANapDescriptorFromCauldron({
+      onlyNonReleasedVersions: true,
+    }))
 
-    await logErrorAndExitIfNotSatisfied({
-      isNewerContainerVersion: containerVersion
-        ? {
-            containerVersion,
-            descriptor,
-            extraErrorMessage:
-              'To avoid conflicts with previous versions, you can only use container version newer than the current one',
-          }
-        : undefined,
-      isValidContainerVersion: containerVersion
-        ? { containerVersion }
-        : undefined,
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage:
-          'This command cannot work on a non existing native application version',
-      },
-    })
-
-    const cauldron = await getActiveCauldron()
-    const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
-    const gitMiniAppsInCauldron = _.filter(
-      miniAppsInCauldron,
-      m => m.isGitPath === true
-    )
-
-    // For all MiniApps that are retrieved from git, we need to check if any
-    // of their native dependencies versions have changed (or new one added)
-    // in order to properly update the native dependencies list in the Cauldron
-    const gitMiniAppsObjs: MiniApp[] = []
-    for (const gitMiniAppInCauldron of gitMiniAppsInCauldron) {
-      const m = await kax
-        .task(`Retrieving ${gitMiniAppInCauldron.toString()} MiniApp`)
-        .run(MiniApp.fromPackagePath(gitMiniAppInCauldron))
-      gitMiniAppsObjs.push(m)
-    }
-
-    const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-      gitMiniAppsObjs
-    )
-    const cauldronDependencies = await cauldron.getNativeDependencies(
-      descriptor
-    )
-    const finalNativeDependencies = resolver.retainHighestVersions(
-      nativeDependencies.resolved,
-      cauldronDependencies
-    )
-    await performContainerStateUpdateInCauldron(
-      async () => {
-        await cauldron.syncContainerNativeDependencies(
-          descriptor!,
-          finalNativeDependencies
-        )
-      },
+  await logErrorAndExitIfNotSatisfied({
+    isNewerContainerVersion: containerVersion
+      ? {
+          containerVersion,
+          descriptor,
+          extraErrorMessage:
+            'To avoid conflicts with previous versions, you can only use container version newer than the current one',
+        }
+      : undefined,
+    isValidContainerVersion: containerVersion
+      ? { containerVersion }
+      : undefined,
+    napDescriptorExistInCauldron: {
       descriptor,
-      `Regenerate Container of ${descriptor} native application`,
-      { containerVersion, forceFullGeneration: true }
-    )
-    log.info(`${descriptor} container was successfully regenerated`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+      extraErrorMessage:
+        'This command cannot work on a non existing native application version',
+    },
+  })
+
+  const cauldron = await getActiveCauldron()
+  const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
+  const gitMiniAppsInCauldron = _.filter(
+    miniAppsInCauldron,
+    m => m.isGitPath === true
+  )
+
+  // For all MiniApps that are retrieved from git, we need to check if any
+  // of their native dependencies versions have changed (or new one added)
+  // in order to properly update the native dependencies list in the Cauldron
+  const gitMiniAppsObjs: MiniApp[] = []
+  for (const gitMiniAppInCauldron of gitMiniAppsInCauldron) {
+    const m = await kax
+      .task(`Retrieving ${gitMiniAppInCauldron.toString()} MiniApp`)
+      .run(MiniApp.fromPackagePath(gitMiniAppInCauldron))
+    gitMiniAppsObjs.push(m)
   }
+
+  const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
+    gitMiniAppsObjs
+  )
+  const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
+  const finalNativeDependencies = resolver.retainHighestVersions(
+    nativeDependencies.resolved,
+    cauldronDependencies
+  )
+  await performContainerStateUpdateInCauldron(
+    async () => {
+      await cauldron.syncContainerNativeDependencies(
+        descriptor!,
+        finalNativeDependencies
+      )
+    },
+    descriptor,
+    `Regenerate Container of ${descriptor} native application`,
+    { containerVersion, forceFullGeneration: true }
+  )
+  log.info(`${descriptor} container was successfully regenerated`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

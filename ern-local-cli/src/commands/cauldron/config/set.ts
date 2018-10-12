@@ -1,7 +1,7 @@
 import { Argv } from 'yargs'
-import { epilog, parseArgValue } from '../../../lib'
+import { epilog, parseArgValue, tryCatchWrap } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { utils as coreUtils, NativeApplicationDescriptor, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 
 export const command = 'set'
 export const desc = 'Sets configuration stored in Cauldron'
@@ -27,7 +27,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   key,
   value,
@@ -36,19 +36,17 @@ export const handler = async ({
   key?: string
   value: any
 }) => {
-  try {
-    const cauldron = await getActiveCauldron()
-    await cauldron.setConfig({
-      descriptor,
-      key,
-      value: await parseArgValue(value),
-    })
-    log.info(
-      `Successfully set ${key && `for key ${key}`} of ${
-        descriptor ? descriptor : 'Cauldron'
-      }`
-    )
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  const cauldron = await getActiveCauldron()
+  await cauldron.setConfig({
+    descriptor,
+    key,
+    value: await parseArgValue(value),
+  })
+  log.info(
+    `Successfully set ${key && `for key ${key}`} of ${
+      descriptor ? descriptor : 'Cauldron'
+    }`
+  )
 }
+
+export const handler = tryCatchWrap(commandHandler)

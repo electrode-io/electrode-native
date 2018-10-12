@@ -1,5 +1,5 @@
-import { MiniApp, utils as coreUtils } from 'ern-core'
-import { epilog } from '../lib'
+import { MiniApp } from 'ern-core'
+import { epilog, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'link'
@@ -9,10 +9,8 @@ export const builder = (argv: Argv) => {
   return argv.epilog(epilog(exports))
 }
 
-export const handler = async () => {
-  try {
-    await MiniApp.fromCurrentPath().link()
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+export const commandHandler = async () => {
+  await MiniApp.fromCurrentPath().link()
 }
+
+export const handler = tryCatchWrap(commandHandler)

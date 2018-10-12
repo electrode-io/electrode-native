@@ -1,9 +1,4 @@
-import {
-  PackagePath,
-  NativeApplicationDescriptor,
-  utils as coreUtils,
-  log,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushOtaUpdate } from 'ern-orchestrator'
 import {
@@ -11,6 +6,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserForCodePushDeploymentName,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
+  tryCatchWrap,
 } from '../../lib'
 import _ from 'lodash'
 import inquirer from 'inquirer'
@@ -83,7 +79,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   deploymentName,
   descriptors = [],
   force,
@@ -106,111 +102,107 @@ export const handler = async ({
   semVerDescriptor?: string
   targetBinaryVersion?: string
 }) => {
-  try {
-    if (miniapps.length === 0 && jsApiImpls.length === 0) {
-      throw new Error(
-        'You need to provide at least one MiniApp or one JS API implementation version to CodePush'
-      )
-    }
+  if (miniapps.length === 0 && jsApiImpls.length === 0) {
+    throw new Error(
+      'You need to provide at least one MiniApp or one JS API implementation version to CodePush'
+    )
+  }
 
+  await logErrorAndExitIfNotSatisfied({
+    checkIfCodePushOptionsAreValid: {
+      descriptors,
+      semVerDescriptor,
+      targetBinaryVersion,
+    },
+  })
+
+  if (descriptors.length > 0) {
+    // User provided one or more descriptor(s)
     await logErrorAndExitIfNotSatisfied({
-      checkIfCodePushOptionsAreValid: {
+      napDescriptorExistInCauldron: {
+        descriptor: descriptors,
+        extraErrorMessage:
+          'You cannot CodePush to a non existing native application version.',
+      },
+      sameNativeApplicationAndPlatform: {
         descriptors,
-        semVerDescriptor,
-        targetBinaryVersion,
+        extraErrorMessage:
+          'You can only pass descriptors that match the same native application and version',
       },
     })
-
-    if (descriptors.length > 0) {
-      // User provided one or more descriptor(s)
-      await logErrorAndExitIfNotSatisfied({
-        napDescriptorExistInCauldron: {
-          descriptor: descriptors,
-          extraErrorMessage:
-            'You cannot CodePush to a non existing native application version.',
-        },
-        sameNativeApplicationAndPlatform: {
-          descriptors,
-          extraErrorMessage:
-            'You can only pass descriptors that match the same native application and version',
-        },
-      })
-    } else if (descriptors.length === 0 && !semVerDescriptor) {
-      // User provided no descriptors, nor a semver descriptor
-      descriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron({
-        onlyReleasedVersions: true,
-      })
-    } else if (semVerDescriptor) {
-      // User provided a semver Descriptor
-      const semVerNapDescriptor = NativeApplicationDescriptor.fromString(
-        semVerDescriptor
+  } else if (descriptors.length === 0 && !semVerDescriptor) {
+    // User provided no descriptors, nor a semver descriptor
+    descriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron({
+      onlyReleasedVersions: true,
+    })
+  } else if (semVerDescriptor) {
+    // User provided a semver Descriptor
+    const semVerNapDescriptor = NativeApplicationDescriptor.fromString(
+      semVerDescriptor
+    )
+    const cauldron = await getActiveCauldron()
+    descriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
+      semVerNapDescriptor
+    )
+    if (descriptors.length === 0) {
+      throw new Error(`No versions matching ${semVerDescriptor} were found`)
+    } else {
+      log.info(
+        'CodePush release will target the following native application descriptors :'
       )
-      const cauldron = await getActiveCauldron()
-      descriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
-        semVerNapDescriptor
-      )
-      if (descriptors.length === 0) {
-        throw new Error(`No versions matching ${semVerDescriptor} were found`)
-      } else {
-        log.info(
-          'CodePush release will target the following native application descriptors :'
-        )
-        for (const descriptor of descriptors) {
-          log.info(`- ${descriptor}`)
-        }
-        if (!skipConfirmation) {
-          const { userConfirmedVersions } = await inquirer.prompt([
-            <inquirer.Question>{
-              message: 'Do you confirm ?',
-              name: 'userConfirmedVersions',
-              type: 'confirm',
-            },
-          ])
-          if (!userConfirmedVersions) {
-            throw new Error('Aborting command execution')
-          }
+      for (const descriptor of descriptors) {
+        log.info(`- ${descriptor}`)
+      }
+      if (!skipConfirmation) {
+        const { userConfirmedVersions } = await inquirer.prompt([
+          <inquirer.Question>{
+            message: 'Do you confirm ?',
+            name: 'userConfirmedVersions',
+            type: 'confirm',
+          },
+        ])
+        if (!userConfirmedVersions) {
+          throw new Error('Aborting command execution')
         }
       }
     }
-
-    await logErrorAndExitIfNotSatisfied({
-      noGitOrFilesystemPath: {
-        extraErrorMessage:
-          'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
-        obj: [...miniapps, ...jsApiImpls],
-      },
-      publishedToNpm: {
-        extraErrorMessage:
-          'You can only CodePush MiniApps versions that have been published to NPM',
-        obj: [...miniapps, ...jsApiImpls],
-      },
-    })
-
-    if (!deploymentName) {
-      deploymentName = await askUserForCodePushDeploymentName(descriptors[0])
-    }
-
-    for (const descriptor of descriptors) {
-      const pathToYarnLock = await getPathToYarnLock(descriptor, deploymentName)
-      await performCodePushOtaUpdate(
-        descriptor,
-        deploymentName,
-        _.map(miniapps, PackagePath.fromString),
-        _.map(jsApiImpls, PackagePath.fromString),
-        {
-          codePushIsMandatoryRelease: mandatory,
-          codePushRolloutPercentage: rollout,
-          force,
-          pathToYarnLock: pathToYarnLock || undefined,
-          skipConfirmation,
-          targetBinaryVersion,
-        }
-      )
-    }
-    log.info(`Successfully released`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
   }
+
+  await logErrorAndExitIfNotSatisfied({
+    noGitOrFilesystemPath: {
+      extraErrorMessage:
+        'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
+      obj: [...miniapps, ...jsApiImpls],
+    },
+    publishedToNpm: {
+      extraErrorMessage:
+        'You can only CodePush MiniApps versions that have been published to NPM',
+      obj: [...miniapps, ...jsApiImpls],
+    },
+  })
+
+  if (!deploymentName) {
+    deploymentName = await askUserForCodePushDeploymentName(descriptors[0])
+  }
+
+  for (const descriptor of descriptors) {
+    const pathToYarnLock = await getPathToYarnLock(descriptor, deploymentName)
+    await performCodePushOtaUpdate(
+      descriptor,
+      deploymentName,
+      _.map(miniapps, PackagePath.fromString),
+      _.map(jsApiImpls, PackagePath.fromString),
+      {
+        codePushIsMandatoryRelease: mandatory,
+        codePushRolloutPercentage: rollout,
+        force,
+        pathToYarnLock: pathToYarnLock || undefined,
+        skipConfirmation,
+        targetBinaryVersion,
+      }
+    )
+  }
+  log.info(`Successfully released`)
 }
 
 async function getPathToYarnLock(
@@ -233,3 +225,5 @@ async function getPathToYarnLock(
   }
   return pathToYarnLock
 }
+
+export const handler = tryCatchWrap(commandHandler)

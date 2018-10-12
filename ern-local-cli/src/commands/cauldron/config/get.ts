@@ -1,5 +1,5 @@
 import { Argv } from 'yargs'
-import { epilog } from '../../../lib'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { utils as coreUtils, NativeApplicationDescriptor } from 'ern-core'
 
@@ -27,7 +27,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   key,
   strict,
@@ -36,22 +36,19 @@ export const handler = async ({
   key?: string
   strict: boolean
 }) => {
-  try {
-    const cauldron = await getActiveCauldron()
-
-    let result: any
-    if (key && strict) {
-      result = await cauldron.getConfigForKeyStrict(key, descriptor)
-    } else if (key && !strict) {
-      result = await cauldron.getConfigForKey(key, descriptor)
-    } else if (!key && strict) {
-      result = await cauldron.getConfigStrict(descriptor)
-    } else if (!key && !strict) {
-      result = await cauldron.getConfig(descriptor)
-    }
-    const jsonConfig = JSON.stringify(result, null, 2)
-    console.log(jsonConfig)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  const cauldron = await getActiveCauldron()
+  let result: any
+  if (key && strict) {
+    result = await cauldron.getConfigForKeyStrict(key, descriptor)
+  } else if (key && !strict) {
+    result = await cauldron.getConfigForKey(key, descriptor)
+  } else if (!key && strict) {
+    result = await cauldron.getConfigStrict(descriptor)
+  } else if (!key && !strict) {
+    result = await cauldron.getConfig(descriptor)
   }
+  const jsonConfig = JSON.stringify(result, null, 2)
+  console.log(jsonConfig)
 }
+
+export const handler = tryCatchWrap(commandHandler)

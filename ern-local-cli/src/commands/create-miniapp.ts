@@ -2,7 +2,6 @@ import {
   MiniApp,
   utils as core,
   ModuleTypes,
-  utils as coreUtils,
   log,
   kax,
   checkIfModuleNameContainsSuffix,
@@ -12,6 +11,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   promptUserToUseSuffixModuleName,
   performPkgNameConflictCheck,
+  tryCatchWrap,
 } from '../lib'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
@@ -44,7 +44,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   appName,
   packageName,
   platformVersion,
@@ -57,49 +57,45 @@ export const handler = async ({
   scope?: string
   skipNpmCheck?: boolean
 }) => {
-  try {
-    await logErrorAndExitIfNotSatisfied({
-      isValidElectrodeNativeModuleName: {
-        name: appName,
-      },
-    })
+  await logErrorAndExitIfNotSatisfied({
+    isValidElectrodeNativeModuleName: {
+      name: appName,
+    },
+  })
 
-    if (!checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
-      appName = await promptUserToUseSuffixModuleName(
-        appName,
-        ModuleTypes.MINIAPP
-      )
-    }
-
-    if (!packageName) {
-      const defaultPackageName = core.getDefaultPackageNameForModule(
-        appName,
-        ModuleTypes.MINIAPP
-      )
-      packageName = await promptForPackageName(defaultPackageName)
-    }
-
-    await logErrorAndExitIfNotSatisfied({
-      isValidNpmPackageName: {
-        name: packageName,
-      },
-    })
-
-    if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-      throw new Error(`Aborting command `)
-    }
-
-    await kax.task('Creating MiniApp').run(
-      MiniApp.create(appName, packageName, {
-        platformVersion: platformVersion && platformVersion.replace('v', ''),
-        scope,
-      })
+  if (!checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
+    appName = await promptUserToUseSuffixModuleName(
+      appName,
+      ModuleTypes.MINIAPP
     )
-
-    logSuccessFooter(appName)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
   }
+
+  if (!packageName) {
+    const defaultPackageName = core.getDefaultPackageNameForModule(
+      appName,
+      ModuleTypes.MINIAPP
+    )
+    packageName = await promptForPackageName(defaultPackageName)
+  }
+
+  await logErrorAndExitIfNotSatisfied({
+    isValidNpmPackageName: {
+      name: packageName,
+    },
+  })
+
+  if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
+    throw new Error(`Aborting command `)
+  }
+
+  await kax.task('Creating MiniApp').run(
+    MiniApp.create(appName, packageName, {
+      platformVersion: platformVersion && platformVersion.replace('v', ''),
+      scope,
+    })
+  )
+
+  logSuccessFooter(appName)
 }
 
 async function promptForPackageName(
@@ -130,3 +126,5 @@ function logSuccessFooter(appName: string) {
   log.info(chalk.white(`    > ern run-ios`))
   log.info(`================================================`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

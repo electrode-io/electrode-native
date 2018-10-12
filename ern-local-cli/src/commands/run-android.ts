@@ -1,4 +1,4 @@
-import { epilog } from '../lib'
+import { epilog, tryCatchWrap } from '../lib'
 import {
   deviceConfig,
   utils as coreUtils,
@@ -62,7 +62,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   dependencies = [],
   descriptor,
   dev,
@@ -81,20 +81,18 @@ export const handler = async ({
   port?: string
   usePreviousDevice?: boolean
 }) => {
-  try {
-    deviceConfig.updateDeviceConfig('android', usePreviousDevice)
+  deviceConfig.updateDeviceConfig('android', usePreviousDevice)
 
-    await runMiniApp('android', {
-      dependencies,
-      descriptor,
-      dev,
-      host,
-      mainMiniAppName,
-      miniapps,
-      port,
-    })
-    process.exit(0)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  await runMiniApp('android', {
+    dependencies,
+    descriptor,
+    dev,
+    host,
+    mainMiniAppName,
+    miniapps,
+    port,
+  })
+  process.exit(0)
 }
+
+export const handler = tryCatchWrap(commandHandler)
