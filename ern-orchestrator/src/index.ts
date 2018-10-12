@@ -34,6 +34,7 @@ export { launchOnDevice } from './launchOnDevice'
 export { launchOnSimulator } from './launchOnSimulator'
 export { launchRunner } from './launchRunner'
 export { runMiniApp } from './runMiniApp'
+export { getBinaryStoreFromCauldron } from './getBinaryStoreFromCauldron'
 
 import _start from './start'
 import _Ensure from './Ensure'
