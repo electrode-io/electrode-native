@@ -404,3 +404,15 @@ export function coerceToNativeApplicationDescriptor(
 ): NativeApplicationDescriptor {
   return typeof v === 'string' ? NativeApplicationDescriptor.fromString(v) : v
 }
+
+export function coerceToPackagePathArray(
+  v: string | PackagePath | Array<string | PackagePath>
+): PackagePath[] {
+  return v instanceof Array
+    ? v.map(coerceToPackagePath)
+    : [coerceToPackagePath(v)]
+}
+
+export function coerceToPackagePath(v: string | PackagePath): PackagePath {
+  return typeof v === 'string' ? PackagePath.fromString(v) : v
+}

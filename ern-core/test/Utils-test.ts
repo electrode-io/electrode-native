@@ -2,6 +2,7 @@ import sinon from 'sinon'
 import * as coreUtils from '../src/utils'
 import log from '../src/log'
 import { NativeApplicationDescriptor } from '../src/NativeApplicationDescriptor'
+import { PackagePath } from '../src/PackagePath'
 const sandbox = sinon.createSandbox()
 import { expect } from 'chai'
 
@@ -94,6 +95,50 @@ describe('Core Utils', () => {
         .of.length(2)
       expect(result[0]).eql(descriptorA)
       expect(result[1]).eql(descriptorB)
+    })
+  })
+
+  describe('coerceToPackagePath', () => {
+    it('should coerce a string to a PackagePath', () => {
+      expect(coreUtils.coerceToPackagePath('dep@1.0.0')).eql(
+        PackagePath.fromString('dep@1.0.0')
+      )
+    })
+
+    it('should coerce a PackagePath to a PackagePath (noop)', () => {
+      const dep = PackagePath.fromString('dep@1.0.0')
+      expect(coreUtils.coerceToPackagePath(dep)).eql(dep)
+    })
+  })
+
+  describe('coerceToPackagePathArray', () => {
+    it('should coerce a string to a PackagePath array', () => {
+      const dep = PackagePath.fromString('dep@1.0.0')
+      const result = coreUtils.coerceToPackagePathArray('dep@1.0.0')
+      expect(result)
+        .is.an('array')
+        .of.length(1)
+      expect(result[0]).eql(dep)
+    })
+
+    it('should coerce a PackagePath to a PackagePath array', () => {
+      const dep = PackagePath.fromString('dep@1.0.0')
+      const result = coreUtils.coerceToPackagePathArray(dep)
+      expect(result)
+        .is.an('array')
+        .of.length(1)
+      expect(result[0]).eql(dep)
+    })
+
+    it('should coerce a string|PackagePath mixed array to a PackagePath array', () => {
+      const depA = PackagePath.fromString('depA@1.0.0')
+      const depB = PackagePath.fromString('depB@1.0.0')
+      const result = coreUtils.coerceToPackagePathArray(['depA@1.0.0', depB])
+      expect(result)
+        .is.an('array')
+        .of.length(2)
+      expect(result[0]).eql(depA)
+      expect(result[1]).eql(depB)
     })
   })
 })

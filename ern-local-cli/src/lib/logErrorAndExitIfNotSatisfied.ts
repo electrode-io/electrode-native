@@ -1,4 +1,4 @@
-import { kax, NativeApplicationDescriptor, utils } from 'ern-core'
+import { kax, NativeApplicationDescriptor, PackagePath, utils } from 'ern-core'
 import { Ensure } from 'ern-orchestrator'
 import fs from 'fs'
 
@@ -29,7 +29,7 @@ export async function logErrorAndExitIfNotSatisfied({
   isValidPlatformConfig,
 }: {
   noGitOrFilesystemPath?: {
-    obj: string | string[] | null | undefined
+    obj: string | PackagePath | Array<string | PackagePath> | void
     extraErrorMessage?: string
   }
   noFileSystemPath?: {
@@ -65,41 +65,41 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   publishedToNpm?: {
-    obj: string | string[]
+    obj: string | PackagePath[] | Array<string | PackagePath>
     extraErrorMessage?: string
   }
   miniAppNotInNativeApplicationVersionContainer?: {
-    miniApp: string | string[] | void
+    miniApp: string | PackagePath | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   miniAppIsInNativeApplicationVersionContainer?: {
-    miniApp: string | string[] | void
+    miniApp: string | PackagePath[] | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
-    miniApp: string | string[] | void
+    miniApp: string | PackagePath[] | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyNotInNativeApplicationVersionContainer?: {
-    dependency: string | string[] | void
+    dependency: string | PackagePath[] | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyIsInNativeApplicationVersionContainer?: {
-    dependency: string | string[] | void
+    dependency: string | PackagePath[] | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
-    dependency: string | string[] | void
+    dependency: string | PackagePath[] | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
   dependencyNotInUseByAMiniApp?: {
-    dependency: string | string[] | void
+    dependency: string | PackagePath | Array<string | PackagePath> | void
     descriptor: NativeApplicationDescriptor
     extraErrorMessage?: string
   }
