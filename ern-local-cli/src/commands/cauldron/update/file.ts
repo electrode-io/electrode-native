@@ -26,7 +26,7 @@ export const handler = async ({
       cauldronFilePath,
       localFilePath,
     })
-    log.info(`${localFilePath} file was successfully updated !`)
+    log.info(`${cauldronFilePath} file successfully updated`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

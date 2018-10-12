@@ -136,7 +136,7 @@ export const handler = async ({
       packageName,
       reactNativeVersion: reactNative.version,
     })
-    log.info('Success!')
+    log.info('Success')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

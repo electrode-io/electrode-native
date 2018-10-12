@@ -99,7 +99,6 @@ export const handler = async ({
     await performContainerStateUpdateInCauldron(
       async () => {
         for (const dependency of dependencies) {
-          // Add the dependency to Cauldron
           await cauldron.addContainerNativeDependency(descriptor!, dependency)
           cauldronCommitMessage.push(`- Add ${dependency} native dependency`)
         }
@@ -108,7 +107,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(`Dependency(ies) was/were succesfully added to ${descriptor} !`)
+    log.info(`Dependency(ies) successfully added to ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

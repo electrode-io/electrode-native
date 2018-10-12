@@ -55,6 +55,7 @@ export const handler = async ({
       descriptor.name,
       descriptor.platform
     )
+
     let previousApps
     if (await cauldron.isDescriptorInCauldron(nativeApplicationDescriptor)) {
       previousApps = await cauldron.getDescriptor(nativeApplicationDescriptor)
@@ -63,6 +64,7 @@ export const handler = async ({
     await kax
       .task(`Adding ${descriptor}`)
       .run(cauldron.addDescriptor(descriptor))
+
     if (previousApps && previousApps.versions.length > 0) {
       const latestVersion: any = _.last(previousApps.versions)
       const latestVersionName = latestVersion.name
@@ -102,7 +104,7 @@ export const handler = async ({
     await kax
       .task('Updating Cauldron')
       .run(cauldron.commitTransaction(`Add ${descriptor} native application`))
-    log.info(`${descriptor} was succesfuly added to the Cauldron`)
+    log.info(`${descriptor} successfully added to the the Cauldron`)
   } catch (e) {
     if (cauldron) {
       await cauldron.discardTransaction()

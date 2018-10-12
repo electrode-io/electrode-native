@@ -48,7 +48,7 @@ https://[token]@[repourl]`)
     const cauldronRepositories = ernConfig.getValue('cauldronRepositories', {})
     if (cauldronRepositories[alias]) {
       throw new Error(
-        `A Cauldron repository is already associated to ${alias} alias`
+        `A Cauldron repository already exists with ${alias} alias`
       )
     }
 

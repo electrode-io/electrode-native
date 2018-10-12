@@ -2,7 +2,6 @@ import { utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
-import fs from 'fs'
 
 export const command = 'file <localFilePath> <cauldronFilePath>'
 export const desc = 'Add a file in the Cauldron'
@@ -17,16 +16,16 @@ export const handler = async ({
   localFilePath: string
 }) => {
   try {
-    if (!fs.existsSync(localFilePath)) {
-      throw new Error(`File ${localFilePath} does not exist`)
-    }
+    await logErrorAndExitIfNotSatisfied({
+      isFilePath: { p: localFilePath },
+    })
 
     const cauldron = await getActiveCauldron()
     await cauldron.addFile({
       cauldronFilePath,
       localFilePath,
     })
-    log.info(`${localFilePath} file was successfully added !`)
+    log.info(`${localFilePath} file successfully added to the Cauldron`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
+import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
 import { Argv } from 'yargs'
@@ -38,6 +38,7 @@ export const handler = async ({
 
     const cauldron = await getActiveCauldron()
     cauldron.updateNativeAppIsReleased(descriptor, isReleased)
+    log.info(`Successfully updated release status of ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

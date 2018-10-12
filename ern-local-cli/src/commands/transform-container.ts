@@ -1,4 +1,4 @@
-import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
+import { utils as coreUtils, Platform, NativePlatform, log } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog } from '../lib'
@@ -58,6 +58,7 @@ export const handler = async ({
       platform,
       transformer,
     })
+    log.info('Container transformed successfully')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

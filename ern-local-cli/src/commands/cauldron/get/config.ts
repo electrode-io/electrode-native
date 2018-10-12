@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
@@ -20,7 +20,7 @@ export const handler = async ({
   try {
     const cauldron = await getActiveCauldron()
     const config = await cauldron.getConfig(descriptor)
-    log.info(JSON.stringify(config, null, 2))
+    console.log(JSON.stringify(config, null, 2))
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

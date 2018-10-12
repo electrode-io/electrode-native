@@ -92,9 +92,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.debug(
-      `JS API implementation(s) was/were succesfully added to ${descriptor} in the Cauldron`
-    )
+    log.info(`JS API implementation(s) successfully added to ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

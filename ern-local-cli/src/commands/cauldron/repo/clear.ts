@@ -19,7 +19,7 @@ export const handler = () => {
   try {
     ernConfig.setValue('cauldronRepoInUse', undefined)
     shell.rm('-rf', Platform.cauldronDirectory)
-    log.info(`Done.`)
+    log.info(`Succesfully cleared any active Cauldron`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

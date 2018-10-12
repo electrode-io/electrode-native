@@ -106,7 +106,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.debug(`MiniApp(s) was/were succesfully removed from ${descriptor}`)
+    log.info(`MiniApp(s) successfully removed from ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

@@ -116,7 +116,7 @@ export const handler = async ({
       `Regenerate Container of ${descriptor} native application`,
       { containerVersion, forceFullGeneration: true }
     )
-    log.debug(`Container was succesfully regenerated !`)
+    log.info(`${descriptor} container was successfully regenerated`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

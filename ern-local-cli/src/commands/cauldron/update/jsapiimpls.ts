@@ -106,9 +106,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.debug(
-      `JS API implementation(s) was/were succesfully updated in ${descriptor}`
-    )
+    log.debug(`JS API implementation(s) successfully updated in ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

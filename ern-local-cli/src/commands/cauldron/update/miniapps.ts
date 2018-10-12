@@ -134,7 +134,7 @@ export const handler = async ({
     )
 
     logNativeDependenciesConflicts(nativeDependencies, {
-      throwIfConflict: !force,
+      throwOnConflict: !force,
     })
 
     const cauldronCommitMessage = [
@@ -164,9 +164,7 @@ export const handler = async ({
       cauldronCommitMessage,
       { containerVersion }
     )
-    log.info(
-      `MiniApp(s) version(s) was/were succesfully updated for ${descriptor} in Cauldron !`
-    )
+    log.info(`MiniApp(s) version(s) successfully updated in ${descriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

@@ -33,7 +33,7 @@ export const handler = async ({
       valueToset = value === 'true' ? true : value === 'false' ? false : value
     }
     ernConfig.setValue(key, valueToset)
-    log.info(`${key} set to ${ernConfig.getValue(key)}`)
+    log.info(`Successfully set ${key} value to ${ernConfig.getValue(key)}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

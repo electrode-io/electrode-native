@@ -24,7 +24,7 @@ export const handler = async ({
       napDescriptors.forEach(n => log.info(n))
     } else {
       const nativeApp = await cauldron.getDescriptor(descriptor)
-      log.info(JSON.stringify(nativeApp, null, 1))
+      console.log(JSON.stringify(nativeApp, null, 1))
     }
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

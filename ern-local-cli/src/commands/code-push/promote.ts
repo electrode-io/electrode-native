@@ -222,6 +222,7 @@ export const handler = async ({
         targetBinaryVersion,
       }
     )
+    log.info(`Successfully promoted ${sourceDescriptor}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

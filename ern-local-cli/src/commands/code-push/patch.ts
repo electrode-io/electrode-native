@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, utils as coreUtils } from 'ern-core'
+import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { performCodePushPatch } from 'ern-orchestrator'
 import {
   epilog,
@@ -102,6 +102,7 @@ export const handler = async ({
       isMandatory: mandatory,
       rollout,
     })
+    log.info(`Successfully patched ${descriptor} ${deploymentName} ${label}`)
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }

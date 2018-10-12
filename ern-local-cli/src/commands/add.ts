@@ -40,6 +40,7 @@ export const handler = async ({
         PackagePath.fromString(pkg),
         { dev, peer }
       )
+      log.info(`Successfully added ${pkg}`)
     }
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)

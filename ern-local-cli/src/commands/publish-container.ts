@@ -1,4 +1,4 @@
-import { utils as coreUtils, Platform, NativePlatform } from 'ern-core'
+import { utils as coreUtils, Platform, NativePlatform, log } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
@@ -76,6 +76,7 @@ export const handler = async ({
       publisher,
       url,
     })
+    log.info('Container published successfully')
   } catch (e) {
     coreUtils.logErrorAndExitProcess(e)
   }
