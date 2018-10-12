@@ -35,7 +35,6 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -44,21 +43,22 @@ export const builder = (argv: Argv) => {
       describe: 'Force',
       type: 'boolean',
     })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
 
 // Most/All of the logic here should be moved to the MiniApp class
 // Commands should remain as much logic less as possible
 export const handler = async ({
-  miniapps,
+  containerVersion,
   descriptor,
   force,
-  containerVersion,
+  miniapps,
 }: {
-  miniapps: PackagePath[]
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
   force?: boolean
+  miniapps: PackagePath[]
 }) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {

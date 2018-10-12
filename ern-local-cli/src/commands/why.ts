@@ -18,11 +18,11 @@ export const builder = (argv: Argv) => {
 }
 
 export const handler = async ({
-  dependency,
   completeNapDescriptor,
+  dependency,
 }: {
-  dependency: string
   completeNapDescriptor: string
+  dependency: string
 }) => {
   try {
     await logErrorAndExitIfNotSatisfied({

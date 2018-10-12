@@ -30,21 +30,21 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('jsapiimpls', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .coerce('jsapiimpls', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  jsapiimpls,
-  descriptor,
   containerVersion,
+  descriptor,
+  jsapiimpls,
 }: {
-  jsapiimpls: PackagePath[]
-  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
+  descriptor?: NativeApplicationDescriptor
+  jsapiimpls: PackagePath[]
 }) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {

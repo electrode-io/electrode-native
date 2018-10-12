@@ -27,12 +27,12 @@ const supportedGitHttpsSchemeRe = /(^https:\/\/.+:.+@.+$)|(^https:\/\/.+@.+$)/
 
 export const handler = ({
   alias,
-  url,
   current,
+  url,
 }: {
   alias: string
-  url: string
   current: boolean
+  url: string
 }) => {
   try {
     let cauldronUrl = url

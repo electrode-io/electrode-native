@@ -10,11 +10,11 @@ export const desc = 'Add a file in the Cauldron'
 export const builder = (argv: Argv) => argv.epilog(epilog(exports))
 
 export const handler = async ({
-  localFilePath,
   cauldronFilePath,
+  localFilePath,
 }: {
-  localFilePath: string
   cauldronFilePath: string
+  localFilePath: string
 }) => {
   try {
     await logErrorAndExitIfNotSatisfied({

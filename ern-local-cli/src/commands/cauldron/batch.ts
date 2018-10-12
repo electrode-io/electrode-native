@@ -39,12 +39,33 @@ export const builder = (argv: Argv) => {
         'Remove one or more native dependencies from a native application version',
       type: 'array',
     })
+    .option('containerVersion', {
+      alias: 'v',
+      describe:
+        'Version to use for generated container. If none provided, current container version will be patch bumped.',
+      type: 'string',
+    })
     .coerce('delDependencies', d => d.map(PackagePath.fromString))
     .option('delMiniapps', {
       describe: 'Remove one or more MiniApps from a native application version',
       type: 'array',
     })
     .coerce('delMiniapps', d => d.map(PackagePath.fromString))
+    .option('descriptor', {
+      alias: 'd',
+      describe:
+        'A complete native application descriptor target of the operation',
+      type: 'string',
+    })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
+    .option('force', {
+      alias: 'f',
+      describe:
+        'Force the operations even if some compatibility checks are failing',
+      type: 'boolean',
+    })
     .option('updateDependencies', {
       describe:
         'Update one or more native dependencies versions in a native application version',
@@ -57,50 +78,29 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
-    .option('force', {
-      alias: 'f',
-      describe:
-        'Force the operations even if some compatibility checks are failing',
-      type: 'boolean',
-    })
-    .option('containerVersion', {
-      alias: 'v',
-      describe:
-        'Version to use for generated container. If none provided, current container version will be patch bumped.',
-      type: 'string',
-    })
-    .option('descriptor', {
-      alias: 'd',
-      describe:
-        'A complete native application descriptor target of the operation',
-      type: 'string',
-    })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
   addDependencies = [],
   addMiniapps = [],
+  containerVersion,
   delDependencies = [],
   delMiniapps = [],
+  descriptor,
+  force,
   updateDependencies = [],
   updateMiniapps = [],
-  force,
-  containerVersion,
-  descriptor,
 }: {
   addDependencies: PackagePath[]
   addMiniapps: PackagePath[]
+  containerVersion?: string
   delDependencies: PackagePath[]
   delMiniapps: PackagePath[]
+  descriptor?: NativeApplicationDescriptor
+  force?: boolean
   updateDependencies: PackagePath[]
   updateMiniapps: PackagePath[]
-  force?: boolean
-  containerVersion?: string
-  descriptor?: NativeApplicationDescriptor
 }) => {
   try {
     descriptor =

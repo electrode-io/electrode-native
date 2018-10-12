@@ -8,15 +8,15 @@ export const desc = 'Update a native application info in cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('isReleased', {
       alias: 'r',
       default: true,
       describe: 'true if version is released, false otherwise',
       type: 'boolean',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
     .epilog(epilog(exports))
 }
 

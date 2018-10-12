@@ -22,25 +22,25 @@ export const desc = 'Create a new api'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('scope', {
-      alias: 's',
-      describe: 'Scope to use for the api NPM package',
-    })
-    .option('packageName', {
-      alias: 'p',
-      describe: 'Name to use for the api NPM package',
+    .option('apiAuthor', {
+      alias: 'u',
+      describe: 'Author of library',
     })
     .option('apiVersion', {
       alias: 'a',
       describe: 'Initial npm version',
     })
-    .option('apiAuthor', {
-      alias: 'u',
-      describe: 'Author of library',
+    .option('packageName', {
+      alias: 'p',
+      describe: 'Name to use for the api NPM package',
     })
     .option('schemaPath', {
       alias: 'm',
       describe: 'Path to pre-existing schema(swagger)',
+    })
+    .option('scope', {
+      alias: 's',
+      describe: 'Scope to use for the api NPM package',
     })
     .option('skipNpmCheck', {
       describe:
@@ -51,20 +51,20 @@ export const builder = (argv: Argv) => {
 }
 
 export const handler = async ({
-  apiName,
-  scope,
-  packageName,
-  apiVersion,
   apiAuthor,
+  apiName,
+  apiVersion,
+  packageName,
   schemaPath,
+  scope,
   skipNpmCheck,
 }: {
-  apiName: string
-  scope?: string
-  packageName: string
-  apiVersion?: string
   apiAuthor?: string
+  apiName: string
+  apiVersion?: string
+  packageName: string
   schemaPath?: string
+  scope?: string
   skipNpmCheck?: boolean
 }) => {
   try {

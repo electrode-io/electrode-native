@@ -11,11 +11,13 @@ export const builder = (argv: Argv) => {
   return argv
     .option('dev', {
       alias: 'd',
+      default: false,
       describe: 'Add this/these packages to devDependencies',
       type: 'boolean',
     })
     .option('peer', {
       alias: 'p',
+      default: false,
       describe: 'Add this/these packages to peerDependencies',
       type: 'boolean',
     })
@@ -23,12 +25,12 @@ export const builder = (argv: Argv) => {
 }
 
 export const handler = async ({
+  dev,
   packages,
-  dev = false,
-  peer = false,
+  peer,
 }: {
-  packages: string[]
   dev: boolean
+  packages: string[]
   peer: boolean
 }) => {
   try {

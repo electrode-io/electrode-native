@@ -22,16 +22,27 @@ export const desc = 'Commands to generate API implementation skeleton.'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('nativeOnly', {
-      alias: 'n',
+    .option('force', {
+      alias: 'f',
       describe:
-        'Generate native projects with proper dependencies (Implementation of the API has to be written in native',
+        'Forces a project creation even if an implementation already present inside the output location',
+      type: 'boolean',
+    })
+    .option('hasConfig', {
+      describe:
+        'Indicates if this api implementation requires some config during initialization. \nThis option will be stored and reused during container generation to enforce config initialization',
       type: 'boolean',
     })
     .option('jsOnly', {
       alias: 'j',
       describe:
         'Generate js project with proper dependencies (Implementation of the API has to be written in js',
+      type: 'boolean',
+    })
+    .option('nativeOnly', {
+      alias: 'n',
+      describe:
+        'Generate native projects with proper dependencies (Implementation of the API has to be written in native',
       type: 'boolean',
     })
     .option('packageName', {
@@ -42,25 +53,14 @@ export const builder = (argv: Argv) => {
       alias: 's',
       describe: 'Scope to use for the apiImpl NPM package',
     })
-    .option('force', {
-      alias: 'f',
+    .option('skipNpmCheck', {
       describe:
-        'Forces a project creation even if an implementation already present inside the output location',
+        'Skip the check ensuring package does not already exists in NPM registry',
       type: 'boolean',
     })
     .option('outputDirectory', {
       alias: 'o',
       describe: 'Path to output directory',
-    })
-    .option('hasConfig', {
-      describe:
-        'Indicates if this api implementation requires some config during initialization. \nThis option will be stored and reused during container generation to enforce config initialization',
-      type: 'boolean',
-    })
-    .option('skipNpmCheck', {
-      describe:
-        'Skip the check ensuring package does not already exists in NPM registry',
-      type: 'boolean',
     })
     .epilog(epilog(exports))
 }
@@ -71,25 +71,25 @@ const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, 'plugins')
 export const handler = async ({
   apiName,
   apiImplName,
-  nativeOnly,
+  force,
+  hasConfig,
   jsOnly,
+  nativeOnly,
   packageName,
   scope,
-  force,
-  outputDirectory,
-  hasConfig,
   skipNpmCheck,
+  outputDirectory,
 }: {
   apiName: string
   apiImplName?: string
-  nativeOnly: boolean
+  force: boolean
+  hasConfig: boolean
   jsOnly: boolean
+  nativeOnly: boolean
   packageName?: string
   scope?: string
-  force: boolean
-  outputDirectory: string
-  hasConfig: boolean
   skipNpmCheck?: boolean
+  outputDirectory: string
 }) => {
   try {
     const apiDep = PackagePath.fromString(apiName)

@@ -14,6 +14,10 @@ export const desc = 'Patch a CodePush release'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('deploymentName', {
+      describe: 'Deployment to release the update to',
+      type: 'string',
+    })
     .option('descriptor', {
       describe:
         'Full native application descriptor from which to promote a release',
@@ -22,20 +26,16 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
-    .option('deploymentName', {
-      describe: 'Deployment to release the update to',
-      type: 'string',
-    })
-    .option('label', {
-      alias: 'l',
-      describe: 'Label of the release to update',
-      type: 'string',
-    })
     .option('disabled', {
       alias: 'x',
       describe:
         'Specifies whether this release should be immediately downloadable',
       type: 'boolean',
+    })
+    .option('label', {
+      alias: 'l',
+      describe: 'Label of the release to update',
+      type: 'string',
     })
     .option('mandatory', {
       alias: 'm',
@@ -53,17 +53,17 @@ export const builder = (argv: Argv) => {
 }
 
 export const handler = async ({
-  descriptor,
   deploymentName,
-  label,
+  descriptor,
   disabled,
+  label,
   mandatory,
   rollout,
 }: {
-  descriptor?: NativeApplicationDescriptor
   deploymentName?: string
-  label?: string
+  descriptor?: NativeApplicationDescriptor
   disabled?: boolean
+  label?: string
   mandatory?: boolean
   rollout?: number
 }) => {

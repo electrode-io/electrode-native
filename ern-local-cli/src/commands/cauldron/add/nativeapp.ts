@@ -16,10 +16,6 @@ export const desc = 'Add a native application to the cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('platformVersion', {
-      alias: 'v',
-      describe: 'Use specified platform version',
-    })
     .option('copyFromVersion', {
       alias: 'c',
       describe: 'Copy Cauldron data from a previous native application version',
@@ -28,15 +24,19 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('platformVersion', {
+      alias: 'v',
+      describe: 'Use specified platform version',
+    })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  descriptor,
   copyFromVersion,
+  descriptor,
 }: {
-  descriptor: NativeApplicationDescriptor
   copyFromVersion?: string
+  descriptor: NativeApplicationDescriptor
 }) => {
   let cauldron
   try {

@@ -22,6 +22,10 @@ export const desc = 'Create a new ern application(miniapp)'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('packageName', {
+      alias: 'p',
+      describe: 'Name to use for the MiniApp NPM package',
+    })
     .option('platformVersion', {
       alias: 'v',
       describe:
@@ -31,10 +35,6 @@ export const builder = (argv: Argv) => {
     .option('scope', {
       alias: 's',
       describe: 'Scope to use for the MiniApp NPM package',
-    })
-    .option('packageName', {
-      alias: 'p',
-      describe: 'Name to use for the MiniApp NPM package',
     })
     .option('skipNpmCheck', {
       describe:

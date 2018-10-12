@@ -23,41 +23,16 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('sourceDescriptor', {
+    .option('force', {
+      alias: 'f',
       describe:
-        'Full native application descriptor from which to promote a release',
-      type: 'string',
+        'Force upgrade (ignore compatibility issues -at your own risks-)',
+      type: 'boolean',
     })
-    .coerce('sourceDescriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
-    .option('targetDescriptors', {
+    .option('label', {
+      alias: 'l',
       describe:
-        'One or more native application descriptors matching targeted versions',
-      type: 'array',
-    })
-    .coerce('targetDescriptors', d =>
-      d.map(t =>
-        NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
-      )
-    )
-    .option('targetSemVerDescriptor', {
-      describe:
-        'A target native application descriptor using a semver expression for the version',
-    })
-    .option('sourceDeploymentName', {
-      describe:
-        'Name of the deployment environment to promote the release from',
-      type: 'string',
-    })
-    .option('targetDeploymentName', {
-      describe: 'Name of the deployment environment to promote the release to',
-      type: 'string',
-    })
-    .option('targetBinaryVersion', {
-      alias: 't',
-      describe:
-        'Semver expression that specifies the binary app version(s) this release is targeting',
+        'Promote the release matching this label. If omitted, the latest release of sourceDescriptor/sourceDeploymentName pair will be promoted.',
       type: 'string',
     })
     .option('mandatory', {
@@ -73,52 +48,75 @@ export const builder = (argv: Argv) => {
         'Percentage of users this release should be immediately available to',
       type: 'number',
     })
-    .option('force', {
-      alias: 'f',
-      describe:
-        'Force upgrade (ignore compatibility issues -at your own risks-)',
-      type: 'boolean',
-    })
     .option('skipConfirmation', {
       alias: 's',
       describe: 'Skip confirmation prompts',
       type: 'boolean',
     })
-    .option('label', {
-      alias: 'l',
+    .option('sourceDeploymentName', {
       describe:
-        'Promote the release matching this label. If omitted, the latest release of sourceDescriptor/sourceDeploymentName pair will be promoted.',
+        'Name of the deployment environment to promote the release from',
       type: 'string',
+    })
+    .option('sourceDescriptor', {
+      describe:
+        'Full native application descriptor from which to promote a release',
+      type: 'string',
+    })
+    .coerce('sourceDescriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
+    .option('targetBinaryVersion', {
+      alias: 't',
+      describe:
+        'Semver expression that specifies the binary app version(s) this release is targeting',
+      type: 'string',
+    })
+    .option('targetDeploymentName', {
+      describe: 'Name of the deployment environment to promote the release to',
+      type: 'string',
+    })
+    .option('targetDescriptors', {
+      describe:
+        'One or more native application descriptors matching targeted versions',
+      type: 'array',
+    })
+    .coerce('targetDescriptors', d =>
+      d.map(t =>
+        NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
+      )
+    )
+    .option('targetSemVerDescriptor', {
+      describe:
+        'A target native application descriptor using a semver expression for the version',
     })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
+  force,
+  label,
+  mandatory,
+  sourceDeploymentName,
+  targetBinaryVersion,
+  targetDeploymentName,
   sourceDescriptor,
   targetDescriptors = [],
   targetSemVerDescriptor,
-  sourceDeploymentName,
-  targetDeploymentName,
-  targetBinaryVersion,
-  platform,
-  mandatory,
   rollout,
   skipConfirmation,
-  force,
-  label,
 }: {
+  force?: boolean
+  label?: string
+  mandatory?: boolean
+  sourceDeploymentName?: string
+  targetBinaryVersion?: string
+  targetDeploymentName?: string
   sourceDescriptor?: NativeApplicationDescriptor
   targetDescriptors?: NativeApplicationDescriptor[]
   targetSemVerDescriptor?: string
-  sourceDeploymentName?: string
-  targetDeploymentName?: string
-  targetBinaryVersion?: string
-  platform: NativePlatform
-  mandatory?: boolean
   rollout?: number
   skipConfirmation?: boolean
-  force?: boolean
-  label?: string
 }) => {
   try {
     await logErrorAndExitIfNotSatisfied({

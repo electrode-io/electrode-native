@@ -8,6 +8,12 @@ export const desc = 'Echoes configuration stored in Cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('descriptor', {
+      describe:
+        'Partial or full native application descriptor for which to get the config from (top level config if not specified)',
+      type: 'string',
+    })
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .option('key', {
       describe:
         'The config key (echoes the whole config object if not specified)',
@@ -18,12 +24,6 @@ export const builder = (argv: Argv) => {
       describe: 'Echoes the config strictly associated to the descriptor',
       type: 'boolean',
     })
-    .option('descriptor', {
-      describe:
-        'Partial or full native application descriptor for which to get the config from (top level config if not specified)',
-      type: 'string',
-    })
-    .coerce('descriptor', NativeApplicationDescriptor.fromString)
     .epilog(epilog(exports))
 }
 

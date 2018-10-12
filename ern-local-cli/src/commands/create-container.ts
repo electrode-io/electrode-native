@@ -21,6 +21,13 @@ export const desc = 'Create a container locally'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('dependencies', {
+      alias: 'deps',
+      describe:
+        'A list of one or more extra native dependencies to include in this container',
+      type: 'array',
+    })
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -29,6 +36,16 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('ignoreRnpmAssets', {
+      describe: 'Ignore rnpm assets from the MiniApps',
+      type: 'boolean',
+    })
+    .option('jsApiImpls', {
+      describe: 'A list of one or more JS API implementation',
+      type: 'array',
+    })
+    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+
     .option('jsOnly', {
       alias: 'js',
       describe: 'Generates JS only (composite app)',
@@ -40,18 +57,6 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('miniapps', d => d.map(PackagePath.fromString))
-    .option('jsApiImpls', {
-      describe: 'A list of one or more JS API implementation',
-      type: 'array',
-    })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
-    .option('dependencies', {
-      alias: 'deps',
-      describe:
-        'A list of one or more extra native dependencies to include in this container',
-      type: 'array',
-    })
-    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('platform', {
       alias: 'p',
       choices: ['android', 'ios', undefined],
@@ -63,31 +68,27 @@ export const builder = (argv: Argv) => {
       describe: 'Directory to output the generated container to',
       type: 'string',
     })
-    .option('ignoreRnpmAssets', {
-      describe: 'Ignore rnpm assets from the MiniApps',
-      type: 'boolean',
-    })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  descriptor,
-  jsOnly,
-  outDir,
-  miniapps,
-  jsApiImpls = [],
   dependencies = [],
-  platform,
+  descriptor,
   ignoreRnpmAssets,
+  jsApiImpls = [],
+  jsOnly,
+  miniapps,
+  outDir,
+  platform,
 }: {
-  descriptor?: NativeApplicationDescriptor
-  jsOnly?: boolean
-  outDir?: string
-  miniapps?: PackagePath[]
-  jsApiImpls: PackagePath[]
   dependencies: PackagePath[]
-  platform?: NativePlatform
+  descriptor?: NativeApplicationDescriptor
   ignoreRnpmAssets?: boolean
+  jsApiImpls: PackagePath[]
+  jsOnly?: boolean
+  miniapps?: PackagePath[]
+  outDir?: string
+  platform?: NativePlatform
 }) => {
   try {
     if (outDir && fs.existsSync(outDir)) {

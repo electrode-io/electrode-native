@@ -22,13 +22,9 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('miniapps', {
-      describe: 'One or more MiniApp to CodePush',
-      type: 'array',
-    })
-    .option('jsApiImpls', {
-      describe: 'One or more JS API implementation to CodePush',
-      type: 'array',
+    .option('deploymentName', {
+      describe: 'Deployment to release the update to',
+      type: 'string',
     })
     .option('descriptors', {
       alias: 'd',
@@ -41,31 +37,25 @@ export const builder = (argv: Argv) => {
         NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
       )
     )
-    .option('semVerDescriptor', {
-      describe:
-        'A native application descriptor using a semver expression for the version',
-    })
     .option('force', {
       alias: 'f',
       describe:
         'Force upgrade (ignore compatibility issues -at your own risks-)',
       type: 'boolean',
     })
-    .option('deploymentName', {
-      describe: 'Deployment to release the update to',
-      type: 'string',
-    })
-    .option('targetBinaryVersion', {
-      alias: 't',
-      describe:
-        'Semver expression that specifies the binary app version(s) this release is targeting',
-      type: 'string',
+    .option('jsApiImpls', {
+      describe: 'One or more JS API implementation to CodePush',
+      type: 'array',
     })
     .option('mandatory', {
       alias: 'm',
       default: false,
       describe: 'Specifies whether this release should be considered mandatory',
       type: 'boolean',
+    })
+    .option('miniapps', {
+      describe: 'One or more MiniApp to CodePush',
+      type: 'array',
     })
     .option('rollout', {
       alias: 'r',
@@ -75,36 +65,46 @@ export const builder = (argv: Argv) => {
 
       type: 'number',
     })
+    .option('semVerDescriptor', {
+      describe:
+        'A native application descriptor using a semver expression for the version',
+    })
     .option('skipConfirmation', {
       alias: 's',
       describe: 'Skip confirmation prompts',
       type: 'boolean',
     })
+    .option('targetBinaryVersion', {
+      alias: 't',
+      describe:
+        'Semver expression that specifies the binary app version(s) this release is targeting',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  force,
-  miniapps = [],
-  jsApiImpls = [],
-  descriptors = [],
-  semVerDescriptor,
   deploymentName,
-  targetBinaryVersion,
+  descriptors = [],
+  force,
+  jsApiImpls = [],
   mandatory,
+  miniapps = [],
   rollout,
   skipConfirmation,
+  semVerDescriptor,
+  targetBinaryVersion,
 }: {
-  force: boolean
-  miniapps: string[]
-  jsApiImpls: string[]
-  descriptors?: NativeApplicationDescriptor[]
-  semVerDescriptor?: string
   deploymentName: string
-  targetBinaryVersion?: string
+  descriptors?: NativeApplicationDescriptor[]
+  force: boolean
+  jsApiImpls: string[]
   mandatory?: boolean
+  miniapps: string[]
   rollout?: number
   skipConfirmation?: boolean
+  semVerDescriptor?: string
+  targetBinaryVersion?: string
 }) => {
   try {
     if (miniapps.length === 0 && jsApiImpls.length === 0) {
