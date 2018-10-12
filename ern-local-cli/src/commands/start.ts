@@ -13,6 +13,16 @@ export const desc = 'Start a composite MiniApp'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('activityName', {
+      alias: 'a',
+      describe: 'Android Activity to launch',
+      type: 'string',
+    })
+    .option('bundleId', {
+      alias: 'b',
+      describe: 'iOS Bundle Identifier',
+      type: 'string',
+    })
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application selector',
@@ -21,18 +31,6 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
-    .option('miniapps', {
-      alias: 'm',
-      describe: 'A list of one or more miniapps',
-      type: 'array',
-    })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
-    .option('watchNodeModules', {
-      alias: 'w',
-      describe:
-        'A list of one or more directory name from node_modules that should be watched for changes',
-      type: 'array',
-    })
     .option('extraJsDependencies', {
       alias: 'e',
       describe:
@@ -40,42 +38,44 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
-    .group(['packageName', 'activityName'], 'Android binary specific options:')
+    .option('miniapps', {
+      alias: 'm',
+      describe: 'A list of one or more miniapps',
+      type: 'array',
+    })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('packageName', {
       alias: 'p',
       describe: 'Android application package name',
       type: 'string',
     })
-    .option('activityName', {
-      alias: 'a',
-      describe: 'Android Activity to launch',
-      type: 'string',
+    .option('watchNodeModules', {
+      alias: 'w',
+      describe:
+        'A list of one or more directory name from node_modules that should be watched for changes',
+      type: 'array',
     })
+    .group(['packageName', 'activityName'], 'Android binary specific options:')
     .group(['bundleId'], 'iOS binary specific options:')
-    .option('bundleId', {
-      alias: 'b',
-      describe: 'iOS Bundle Identifier',
-      type: 'string',
-    })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  descriptor,
-  miniapps,
-  watchNodeModules,
-  packageName,
   activityName,
   bundleId,
+  descriptor,
   extraJsDependencies = [],
+  miniapps,
+  packageName,
+  watchNodeModules,
 }: {
-  descriptor?: NativeApplicationDescriptor
-  miniapps?: PackagePath[]
-  watchNodeModules?: string[]
-  packageName?: string
   activityName?: string
   bundleId?: string
+  descriptor?: NativeApplicationDescriptor
   extraJsDependencies?: PackagePath[]
+  miniapps?: PackagePath[]
+  packageName?: string
+  watchNodeModules?: string[]
 } = {}) => {
   try {
     if (!miniapps && !descriptor) {

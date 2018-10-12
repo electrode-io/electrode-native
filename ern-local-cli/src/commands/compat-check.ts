@@ -16,31 +16,32 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('miniapps', {
-      alias: 'm',
-      describe: 'A list of one or more miniapps',
-      type: 'array',
-    })
     .option('descriptor', {
       alias: 'd',
       describe:
         'Full native application selector (target native application version for the push)',
     })
-    .coerce('miniapp', PackagePath.fromString)
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .coerce('miniapp', PackagePath.fromString)
+    .option('miniapps', {
+      alias: 'm',
+      describe: 'A list of one or more miniapps',
+      type: 'array',
+    })
+
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  miniapp,
   descriptor,
+  miniapp,
   miniapps = [],
 }: {
-  miniapp?: PackagePath
   descriptor?: NativeApplicationDescriptor
+  miniapp?: PackagePath
   miniapps: PackagePath[]
 }) => {
   try {

@@ -24,11 +24,6 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('force', {
-      alias: 'f',
-      describe: 'Force publish',
-      type: 'boolean',
-    })
     .option('containerVersion', {
       alias: 'v',
       describe:
@@ -40,23 +35,29 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('force', {
+      alias: 'f',
+      default: false,
+      describe: 'Force publish',
+      type: 'boolean',
+    })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  miniapps,
-  descriptor,
-  force = false,
   containerVersion,
+  descriptor,
+  force,
+  miniapps,
 }: {
-  miniapps: PackagePath[]
+  containerVersion?: string
   descriptor?: NativeApplicationDescriptor
   force?: boolean
-  containerVersion?: string
+  miniapps: PackagePath[]
 }) => {
   try {
     descriptor =

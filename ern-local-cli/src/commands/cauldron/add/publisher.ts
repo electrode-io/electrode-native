@@ -10,17 +10,6 @@ export const desc = 'Add a Container publisher for a native application'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('publisher', {
-      alias: 'p',
-      demandOption: true,
-      describe: 'The publisher to add',
-      type: 'string',
-    })
-    .option('url', {
-      alias: 'u',
-      describe: 'The publication url (format is publisher specific)',
-      type: 'string',
-    })
     .option('descriptor', {
       alias: 'd',
       describe:
@@ -34,19 +23,30 @@ export const builder = (argv: Argv) => {
         'Optional extra publisher configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
+    .option('publisher', {
+      alias: 'p',
+      demandOption: true,
+      describe: 'The publisher to add',
+      type: 'string',
+    })
+    .option('url', {
+      alias: 'u',
+      describe: 'The publication url (format is publisher specific)',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  publisher,
-  url,
   descriptor,
   extra,
+  publisher,
+  url,
 }: {
-  publisher: string
   descriptor: NativeApplicationDescriptor
-  url?: string
   extra?: string
+  publisher: string
+  url?: string
 }) => {
   try {
     await logErrorAndExitIfNotSatisfied({

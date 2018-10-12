@@ -8,23 +8,24 @@ export const desc = 'Regenerates an existing api'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('skipVersion', {
-      alias: 's',
-      describe: 'Do not update API version and do not publish',
-    })
     .option('bridgeVersion', {
       alias: 'b',
       describe: 'Bridge version to use',
     })
+    .option('skipVersion', {
+      alias: 's',
+      describe: 'Do not update API version and do not publish',
+    })
+
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  skipVersion,
   bridgeVersion,
+  skipVersion,
 }: {
-  skipVersion: boolean
   bridgeVersion: string
+  skipVersion: boolean
 }) => {
   const errorMessage =
     'Run command #yarn info react-native-electrode-bridge versions# to get the valid bridgeVersion'

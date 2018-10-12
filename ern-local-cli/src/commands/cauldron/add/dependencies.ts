@@ -29,20 +29,20 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  dependencies,
   containerVersion,
+  dependencies,
   descriptor,
 }: {
-  dependencies: PackagePath[]
   containerVersion?: string
+  dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
 }) => {
   try {

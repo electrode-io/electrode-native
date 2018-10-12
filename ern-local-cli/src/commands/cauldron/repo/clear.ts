@@ -15,7 +15,7 @@ export const builder = (argv: Argv) => {
   return argv.epilog(epilog(exports))
 }
 
-export const handler = ({ alias }: { alias: string }) => {
+export const handler = () => {
   try {
     ernConfig.setValue('cauldronRepoInUse', undefined)
     shell.rm('-rf', Platform.cauldronDirectory)

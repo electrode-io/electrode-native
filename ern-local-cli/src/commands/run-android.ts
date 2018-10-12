@@ -13,17 +13,6 @@ export const desc = 'Run one or more MiniApps in the Android Runner application'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('dev', {
-      default: true,
-      describe: 'Enable or disable React Native dev support',
-      type: 'boolean',
-    })
-    .option('miniapps', {
-      alias: 'm',
-      describe: 'One or more MiniApps to combine in the Runner Container',
-      type: 'array',
-    })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('dependencies', {
       alias: 'deps',
       describe:
@@ -39,14 +28,9 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
-    .option('mainMiniAppName', {
-      describe:
-        'Name of the MiniApp to launch when starting the Runner application',
-      type: 'string',
-    })
-    .option('usePreviousDevice', {
-      alias: 'u',
-      describe: 'Use the previously selected device to avoid prompt',
+    .option('dev', {
+      default: true,
+      describe: 'Enable or disable React Native dev support',
       type: 'boolean',
     })
     .option('host', {
@@ -54,32 +38,48 @@ export const builder = (argv: Argv) => {
       describe: 'Host/IP to use for the local packager',
       type: 'string',
     })
+    .option('mainMiniAppName', {
+      describe:
+        'Name of the MiniApp to launch when starting the Runner application',
+      type: 'string',
+    })
+    .option('miniapps', {
+      alias: 'm',
+      describe: 'One or more MiniApps to combine in the Runner Container',
+      type: 'array',
+    })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('port', {
       default: '8081',
       describe: 'Port to use for the local package',
       type: 'string',
     })
+    .option('usePreviousDevice', {
+      alias: 'u',
+      describe: 'Use the previously selected device to avoid prompt',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
 export const handler = async ({
-  miniapps,
   dependencies = [],
   descriptor,
-  mainMiniAppName,
   dev,
-  usePreviousDevice,
   host,
+  mainMiniAppName,
+  miniapps,
   port,
+  usePreviousDevice,
 }: {
-  miniapps?: PackagePath[]
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
-  mainMiniAppName?: string
   dev?: boolean
-  usePreviousDevice?: boolean
   host?: string
+  mainMiniAppName?: string
+  miniapps?: PackagePath[]
   port?: string
+  usePreviousDevice?: boolean
 }) => {
   try {
     deviceConfig.updateDeviceConfig('android', usePreviousDevice)

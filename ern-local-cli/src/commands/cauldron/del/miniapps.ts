@@ -30,10 +30,10 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
 
@@ -41,13 +41,13 @@ export const builder = (argv: Argv) => {
 // only used by this MiniApp
 // It could be done as a future improvement to this command
 export const handler = async ({
-  miniapps,
   containerVersion,
   descriptor,
+  miniapps,
 }: {
-  miniapps: PackagePath[]
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
+  miniapps: PackagePath[]
 }) => {
   try {
     descriptor =

@@ -45,11 +45,11 @@ export const builder = (argv: Argv) => {
 }
 
 export const handler = async ({
-  descriptor,
   containerVersion,
+  descriptor,
 }: {
-  descriptor?: NativeApplicationDescriptor
   containerVersion?: string
+  descriptor?: NativeApplicationDescriptor
 }) => {
   await logErrorAndExitIfNotSatisfied({
     cauldronIsActive: {

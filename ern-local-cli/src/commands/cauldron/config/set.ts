@@ -8,13 +8,14 @@ export const desc = 'Sets configuration stored in Cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('key', {
-      describe: 'The config key (set the whole config object if not specified)',
-      type: 'string',
-    })
     .option('descriptor', {
       describe:
         'Partial or full native application descriptor for which to set config (top level config if not specified)',
+      type: 'string',
+    })
+    .coerce('descriptor', NativeApplicationDescriptor.fromString)
+    .option('key', {
+      describe: 'The config key (set the whole config object if not specified)',
       type: 'string',
     })
     .option('value', {
@@ -22,7 +23,7 @@ export const builder = (argv: Argv) => {
         'Value to be set for this config key. If JSON, it can be provided as a string, or json file path or cauldron file path.',
       required: true,
     })
-    .coerce('descriptor', NativeApplicationDescriptor.fromString)
+
     .epilog(epilog(exports))
 }
 
