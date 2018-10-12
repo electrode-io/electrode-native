@@ -1,6 +1,6 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'nativeapp [descriptor]'
@@ -12,21 +12,19 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
 }: {
   descriptor?: NativeApplicationDescriptor
 }) => {
-  try {
-    const cauldron = await getActiveCauldron()
-    if (!descriptor) {
-      const napDescriptors = await cauldron.getNapDescriptorStrings()
-      napDescriptors.forEach(n => log.info(n))
-    } else {
-      const nativeApp = await cauldron.getDescriptor(descriptor)
-      console.log(JSON.stringify(nativeApp, null, 1))
-    }
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  const cauldron = await getActiveCauldron()
+  if (!descriptor) {
+    const napDescriptors = await cauldron.getNapDescriptorStrings()
+    napDescriptors.forEach(n => log.info(n))
+  } else {
+    const nativeApp = await cauldron.getDescriptor(descriptor)
+    console.log(JSON.stringify(nativeApp, null, 1))
   }
 }
+
+export const handler = tryCatchWrap(commandHandler)

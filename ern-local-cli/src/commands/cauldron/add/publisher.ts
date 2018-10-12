@@ -1,8 +1,8 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron, cauldronFileUriScheme } from 'ern-cauldron-api'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { getPublisher, ContainerPublisher } from 'ern-container-publisher'
-import { epilog } from '../../../lib'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'publisher'
@@ -37,7 +37,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   extra,
   publisher,
@@ -48,62 +48,52 @@ export const handler = async ({
   publisher: string
   url?: string
 }) => {
-  try {
-    const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron()
 
-    let extraObj
-    if (extra) {
-      if (extra.startsWith(cauldronFileUriScheme)) {
-        //
-        // Cauldron file path.
-        // In that case, the extra property set for this publisher
-        // in Cauldron, will be a string, with its value being
-        // the path to the json extra config file stored in
-        // Cauldron.
-        // For example :
-        //  "extra": "cauldron://config/publishers/maven.json"
+  let extraObj
+  if (extra) {
+    if (extra.startsWith(cauldronFileUriScheme)) {
+      //
+      // Cauldron file path.
+      // In that case, the extra property set for this publisher
+      // in Cauldron, will be a string, with its value being
+      // the path to the json extra config file stored in
+      // Cauldron.
+      // For example :
+      //  "extra": "cauldron://config/publishers/maven.json"
 
-        // We just validate that the file exist in Cauldron ...
-        if (!(await cauldron.hasFile({ cauldronFilePath: extra }))) {
-          throw new Error(`File ${extra} does not exist in Cauldron.`)
-        }
-        // ... and that it is a properly formatted json file
-        const cauldronFile = await cauldron.getFile({ cauldronFilePath: extra })
-        await parseJsonFromStringOrFile(cauldronFile.toString())
-        extraObj = extra
-      } else {
-        // Local file path to json file or json string.
-        // In that case, the extra property set for this publisher
-        // in Cauldron, will be the the json string, or the
-        // content of the json file, as such
-        // For example :
-        // "extra": {
-        //   "artifactId": "app-container",
-        //   "groupId": "com.company.app"
-        // }
-        extraObj = await parseJsonFromStringOrFile(extra)
+      // We just validate that the file exist in Cauldron ...
+      if (!(await cauldron.hasFile({ cauldronFilePath: extra }))) {
+        throw new Error(`File ${extra} does not exist in Cauldron.`)
       }
+      // ... and that it is a properly formatted json file
+      const cauldronFile = await cauldron.getFile({ cauldronFilePath: extra })
+      await parseJsonFromStringOrFile(cauldronFile.toString())
+      extraObj = extra
+    } else {
+      // Local file path to json file or json string.
+      // In that case, the extra property set for this publisher
+      // in Cauldron, will be the the json string, or the
+      // content of the json file, as such
+      // For example :
+      // "extra": {
+      //   "artifactId": "app-container",
+      //   "groupId": "com.company.app"
+      // }
+      extraObj = await parseJsonFromStringOrFile(extra)
     }
-
-    const p: ContainerPublisher = await getPublisher(publisher)
-
-    if (descriptor && !p.platforms.includes(descriptor.platform!)) {
-      throw new Error(
-        `The ${p.name} publisher does not support ${
-          descriptor.platform
-        } platform`
-      )
-    }
-
-    await cauldron.addPublisher(
-      publisher,
-      p.platforms,
-      descriptor,
-      url,
-      extraObj
-    )
-    log.info(`${publisher} publisher successfully added to ${descriptor}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
   }
+
+  const p: ContainerPublisher = await getPublisher(publisher)
+
+  if (descriptor && !p.platforms.includes(descriptor.platform!)) {
+    throw new Error(
+      `The ${p.name} publisher does not support ${descriptor.platform} platform`
+    )
+  }
+
+  await cauldron.addPublisher(publisher, p.platforms, descriptor, url, extraObj)
+  log.info(`${publisher} publisher successfully added to ${descriptor}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

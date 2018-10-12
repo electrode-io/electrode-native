@@ -1,6 +1,10 @@
-import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  tryCatchWrap,
+} from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'nativeapp <descriptor> [isReleased]'
@@ -20,26 +24,24 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   isReleased = true,
 }: {
   descriptor: NativeApplicationDescriptor
   isReleased: boolean
 }) => {
-  try {
-    await logErrorAndExitIfNotSatisfied({
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage:
-          'You cannot update the release status of a non existing native application version',
-      },
-    })
+  await logErrorAndExitIfNotSatisfied({
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage:
+        'You cannot update the release status of a non existing native application version',
+    },
+  })
 
-    const cauldron = await getActiveCauldron()
-    cauldron.updateNativeAppIsReleased(descriptor, isReleased)
-    log.info(`Successfully updated release status of ${descriptor}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  const cauldron = await getActiveCauldron()
+  cauldron.updateNativeAppIsReleased(descriptor, isReleased)
+  log.info(`Successfully updated release status of ${descriptor}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

@@ -1,5 +1,5 @@
-import { MiniApp, Platform, utils as coreUtils, log } from 'ern-core'
-import { epilog } from '../lib'
+import { MiniApp, Platform, log } from 'ern-core'
+import { epilog, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'upgrade-miniapp'
@@ -15,19 +15,15 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = ({
+export const commandHandler = async ({
   version = Platform.currentVersion,
-  force = false,
 }: {
   version: string
-  force: boolean
 }) => {
-  try {
-    const miniApp = MiniApp.fromCurrentPath()
-    const versionWithoutPrefix = version.toString().replace('v', '')
-    miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
-    log.info('MiniApp upgraded successfully')
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  const miniApp = MiniApp.fromCurrentPath()
+  const versionWithoutPrefix = version.toString().replace('v', '')
+  miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
+  log.info('MiniApp upgraded successfully')
 }
+
+export const handler = tryCatchWrap(commandHandler)

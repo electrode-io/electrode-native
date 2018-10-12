@@ -8,7 +8,7 @@ import {
   PackagePath,
   log,
 } from 'ern-core'
-import { epilog } from '../lib'
+import { epilog, tryCatchWrap } from '../lib'
 import path from 'path'
 import fs from 'fs'
 import semver from 'semver'

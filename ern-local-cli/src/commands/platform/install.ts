@@ -1,5 +1,5 @@
-import { Platform, utils as coreUtils } from 'ern-core'
-import { epilog } from '../../lib'
+import { Platform } from 'ern-core'
+import { epilog, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'install <version>'
@@ -9,10 +9,8 @@ export const builder = (argv: Argv) => {
   return argv.epilog(epilog(exports))
 }
 
-export const handler = ({ version }: { version: string }) => {
-  try {
-    Platform.installPlatform(version.toString())
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+export const commandHandler = async ({ version }: { version: string }) => {
+  Platform.installPlatform(version.toString())
 }
+
+export const handler = tryCatchWrap(commandHandler)

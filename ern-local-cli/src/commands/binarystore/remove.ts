@@ -1,6 +1,6 @@
 import { NativeApplicationDescriptor, log } from 'ern-core'
 import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'remove <descriptor>'
@@ -14,20 +14,18 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
 }: {
   descriptor: NativeApplicationDescriptor
 }) => {
-  try {
-    await logErrorAndExitIfNotSatisfied({
-      napDescriptorExistInCauldron: { descriptor },
-    })
+  await logErrorAndExitIfNotSatisfied({
+    napDescriptorExistInCauldron: { descriptor },
+  })
 
-    const binaryStore = await getBinaryStoreFromCauldron()
-    await binaryStore.removeBinary(descriptor)
-    log.info(`${descriptor} binary was successfuly removed from the store`)
-  } catch (e) {
-    log.error(`An error occurred while trying to remove ${descriptor} binary`)
-  }
+  const binaryStore = await getBinaryStoreFromCauldron()
+  await binaryStore.removeBinary(descriptor)
+  log.info(`${descriptor} binary was successfuly removed from the store`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

@@ -1,7 +1,7 @@
-import { utils as coreUtils, Platform, NativePlatform, log } from 'ern-core'
+import { Platform, NativePlatform, log } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'publish-container'
@@ -45,7 +45,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   containerPath,
   extra,
   platform,
@@ -60,24 +60,22 @@ export const handler = async ({
   url: string
   version: string
 }) => {
-  try {
-    await logErrorAndExitIfNotSatisfied({
-      isValidContainerVersion: { containerVersion: version },
-    })
+  await logErrorAndExitIfNotSatisfied({
+    isValidContainerVersion: { containerVersion: version },
+  })
 
-    const extraObj = extra && (await parseJsonFromStringOrFile(extra))
+  const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
-    await publishContainer({
-      containerPath:
-        containerPath || Platform.getContainerGenOutDirectory(platform),
-      containerVersion: version,
-      extra: extraObj,
-      platform,
-      publisher,
-      url,
-    })
-    log.info('Container published successfully')
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  await publishContainer({
+    containerPath:
+      containerPath || Platform.getContainerGenOutDirectory(platform),
+    containerVersion: version,
+    extra: extraObj,
+    platform,
+    publisher,
+    url,
+  })
+  log.info('Container published successfully')
 }
+
+export const handler = tryCatchWrap(commandHandler)

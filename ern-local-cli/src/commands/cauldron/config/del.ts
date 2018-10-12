@@ -1,7 +1,7 @@
 import { Argv } from 'yargs'
-import { epilog } from '../../../lib'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { utils as coreUtils, NativeApplicationDescriptor, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 
 export const command = 'del'
 export const desc = 'Deletes configuration stored in Cauldron'
@@ -22,25 +22,23 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   descriptor,
   key,
 }: {
   descriptor?: NativeApplicationDescriptor
   key?: string
 }) => {
-  try {
-    const cauldron = await getActiveCauldron()
-    await cauldron.delConfig({
-      descriptor,
-      key,
-    })
-    log.info(
-      `Successfully deleted ${key && `for key ${key}`} of ${
-        descriptor ? descriptor : 'Cauldron'
-      }`
-    )
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  const cauldron = await getActiveCauldron()
+  await cauldron.delConfig({
+    descriptor,
+    key,
+  })
+  log.info(
+    `Successfully deleted ${key && `for key ${key}`} of ${
+      descriptor ? descriptor : 'Cauldron'
+    }`
+  )
 }
+
+export const handler = tryCatchWrap(commandHandler)

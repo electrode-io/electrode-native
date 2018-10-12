@@ -1,9 +1,7 @@
-import { utils as coreUtils, Platform, NativePlatform, log } from 'ern-core'
+import { Platform, NativePlatform, log } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
-import { epilog } from '../lib'
-import fs from 'fs'
-import path from 'path'
+import { epilog, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'transform-container'
@@ -37,7 +35,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   containerPath,
   extra,
   platform,
@@ -48,18 +46,16 @@ export const handler = async ({
   platform: NativePlatform
   transformer: string
 }) => {
-  try {
-    const extraObj = extra && (await parseJsonFromStringOrFile(extra))
+  const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
-    await transformContainer({
-      containerPath:
-        containerPath || Platform.getContainerGenOutDirectory(platform),
-      extra: extraObj,
-      platform,
-      transformer,
-    })
-    log.info('Container transformed successfully')
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+  await transformContainer({
+    containerPath:
+      containerPath || Platform.getContainerGenOutDirectory(platform),
+    extra: extraObj,
+    platform,
+    transformer,
+  })
+  log.info('Container transformed successfully')
 }
+
+export const handler = tryCatchWrap(commandHandler)

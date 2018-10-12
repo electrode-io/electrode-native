@@ -1,5 +1,5 @@
-import { config as ernConfig, utils as coreUtils, log } from 'ern-core'
-import { epilog } from '../../../lib'
+import { config as ernConfig, log } from 'ern-core'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'list'
@@ -9,17 +9,15 @@ export const builder = (argv: Argv) => {
   return argv.epilog(epilog(exports))
 }
 
-export const handler = () => {
-  try {
-    const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
-    if (!cauldronRepositories) {
-      throw new Error('No Cauldron repositories have been added yet')
-    }
-    log.info('[Cauldron Repositories]')
-    Object.keys(cauldronRepositories).forEach(alias =>
-      log.info(`${alias} -> ${cauldronRepositories[alias]}`)
-    )
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+export const commandHandler = async () => {
+  const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
+  if (!cauldronRepositories) {
+    throw new Error('No Cauldron repositories have been added yet')
   }
+  log.info('[Cauldron Repositories]')
+  Object.keys(cauldronRepositories).forEach(alias =>
+    log.info(`${alias} -> ${cauldronRepositories[alias]}`)
+  )
 }
+
+export const handler = tryCatchWrap(commandHandler)

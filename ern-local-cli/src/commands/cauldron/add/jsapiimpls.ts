@@ -1,15 +1,11 @@
-import {
-  PackagePath,
-  NativeApplicationDescriptor,
-  utils as coreUtils,
-  log,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
+  tryCatchWrap,
 } from '../../../lib'
 import { Argv } from 'yargs'
 
@@ -37,7 +33,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   containerVersion,
   descriptor,
   jsapiimpls,
@@ -46,54 +42,52 @@ export const handler = async ({
   descriptor?: NativeApplicationDescriptor
   jsapiimpls: PackagePath[]
 }) => {
-  try {
-    descriptor =
-      descriptor ||
-      (await askUserToChooseANapDescriptorFromCauldron({
-        onlyNonReleasedVersions: true,
-      }))
+  descriptor =
+    descriptor ||
+    (await askUserToChooseANapDescriptorFromCauldron({
+      onlyNonReleasedVersions: true,
+    }))
 
-    await logErrorAndExitIfNotSatisfied({
-      isNewerContainerVersion: containerVersion
-        ? {
-            containerVersion,
-            descriptor,
-            extraErrorMessage:
-              'To avoid conflicts with previous versions, you can only use container version newer than the current one',
-          }
-        : undefined,
-      isValidContainerVersion: containerVersion
-        ? { containerVersion }
-        : undefined,
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage:
-          'This command cannot work on a non existing native application version',
-      },
-    })
-
-    const cauldronCommitMessage = [
-      `${
-        jsapiimpls.length === 1
-          ? `Add ${jsapiimpls[0]} JS API implementation to ${descriptor}`
-          : `Add multiple JS API implementations to ${descriptor}`
-      }`,
-    ]
-
-    const cauldron = await getActiveCauldron()
-    await performContainerStateUpdateInCauldron(
-      async () => {
-        for (const jsApiImpl of jsapiimpls) {
-          await cauldron.addContainerJsApiImpl(descriptor!, jsApiImpl)
-          cauldronCommitMessage.push(`- Add ${jsApiImpl} JS API implementation`)
+  await logErrorAndExitIfNotSatisfied({
+    isNewerContainerVersion: containerVersion
+      ? {
+          containerVersion,
+          descriptor,
+          extraErrorMessage:
+            'To avoid conflicts with previous versions, you can only use container version newer than the current one',
         }
-      },
+      : undefined,
+    isValidContainerVersion: containerVersion
+      ? { containerVersion }
+      : undefined,
+    napDescriptorExistInCauldron: {
       descriptor,
-      cauldronCommitMessage,
-      { containerVersion }
-    )
-    log.info(`JS API implementation(s) successfully added to ${descriptor}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+      extraErrorMessage:
+        'This command cannot work on a non existing native application version',
+    },
+  })
+
+  const cauldronCommitMessage = [
+    `${
+      jsapiimpls.length === 1
+        ? `Add ${jsapiimpls[0]} JS API implementation to ${descriptor}`
+        : `Add multiple JS API implementations to ${descriptor}`
+    }`,
+  ]
+
+  const cauldron = await getActiveCauldron()
+  await performContainerStateUpdateInCauldron(
+    async () => {
+      for (const jsApiImpl of jsapiimpls) {
+        await cauldron.addContainerJsApiImpl(descriptor!, jsApiImpl)
+        cauldronCommitMessage.push(`- Add ${jsApiImpl} JS API implementation`)
+      }
+    },
+    descriptor,
+    cauldronCommitMessage,
+    { containerVersion }
+  )
+  log.info(`JS API implementation(s) successfully added to ${descriptor}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

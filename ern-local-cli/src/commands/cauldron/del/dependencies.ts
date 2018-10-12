@@ -1,15 +1,11 @@
-import {
-  PackagePath,
-  NativeApplicationDescriptor,
-  utils as coreUtils,
-  log,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
+  tryCatchWrap,
 } from '../../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -37,7 +33,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   containerVersion,
   dependencies,
   descriptor,
@@ -46,72 +42,67 @@ export const handler = async ({
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
 }) => {
-  try {
-    descriptor =
-      descriptor ||
-      (await askUserToChooseANapDescriptorFromCauldron({
-        onlyNonReleasedVersions: true,
-      }))
+  descriptor =
+    descriptor ||
+    (await askUserToChooseANapDescriptorFromCauldron({
+      onlyNonReleasedVersions: true,
+    }))
 
-    await logErrorAndExitIfNotSatisfied({
-      dependencyIsInNativeApplicationVersionContainer: {
-        dependency: dependencies,
-        descriptor,
-        extraErrorMessage:
-          'This command cannot remove dependency(ies) that do not exist in Cauldron.',
-      },
-      dependencyNotInUseByAMiniApp: {
-        dependency: dependencies,
-        descriptor,
-      },
-      isNewerContainerVersion: containerVersion
-        ? {
-            containerVersion,
-            descriptor,
-            extraErrorMessage:
-              'To avoid conflicts with previous versions, you can only use container version newer than the current one',
-          }
-        : undefined,
-      isValidContainerVersion: containerVersion
-        ? { containerVersion }
-        : undefined,
-      napDescriptorExistInCauldron: {
-        descriptor,
-        extraErrorMessage:
-          'This command cannot work on a non existing native application version',
-      },
-      noGitOrFilesystemPath: {
-        extraErrorMessage:
-          'You cannot provide dependency(ies) using git or file schme for this command. Only the form dependency@version is allowed.',
-        obj: dependencies,
-      },
-    })
-
-    const cauldronCommitMessage = [
-      `${
-        dependencies.length === 1
-          ? `Remove ${dependencies[0]} native dependency from ${descriptor}`
-          : `Remove multiple native dependencies from ${descriptor}`
-      }`,
-    ]
-
-    const cauldron = await getActiveCauldron()
-    await performContainerStateUpdateInCauldron(
-      async () => {
-        for (const dependency of dependencies) {
-          await cauldron.removeContainerNativeDependency(
-            descriptor!,
-            dependency
-          )
-          cauldronCommitMessage.push(`- Remove ${dependency} native dependency`)
-        }
-      },
+  await logErrorAndExitIfNotSatisfied({
+    dependencyIsInNativeApplicationVersionContainer: {
+      dependency: dependencies,
       descriptor,
-      cauldronCommitMessage,
-      { containerVersion }
-    )
-    log.info(`Dependency(ies) successfully removed from ${descriptor}`)
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
-  }
+      extraErrorMessage:
+        'This command cannot remove dependency(ies) that do not exist in Cauldron.',
+    },
+    dependencyNotInUseByAMiniApp: {
+      dependency: dependencies,
+      descriptor,
+    },
+    isNewerContainerVersion: containerVersion
+      ? {
+          containerVersion,
+          descriptor,
+          extraErrorMessage:
+            'To avoid conflicts with previous versions, you can only use container version newer than the current one',
+        }
+      : undefined,
+    isValidContainerVersion: containerVersion
+      ? { containerVersion }
+      : undefined,
+    napDescriptorExistInCauldron: {
+      descriptor,
+      extraErrorMessage:
+        'This command cannot work on a non existing native application version',
+    },
+    noGitOrFilesystemPath: {
+      extraErrorMessage:
+        'You cannot provide dependency(ies) using git or file schme for this command. Only the form dependency@version is allowed.',
+      obj: dependencies,
+    },
+  })
+
+  const cauldronCommitMessage = [
+    `${
+      dependencies.length === 1
+        ? `Remove ${dependencies[0]} native dependency from ${descriptor}`
+        : `Remove multiple native dependencies from ${descriptor}`
+    }`,
+  ]
+
+  const cauldron = await getActiveCauldron()
+  await performContainerStateUpdateInCauldron(
+    async () => {
+      for (const dependency of dependencies) {
+        await cauldron.removeContainerNativeDependency(descriptor!, dependency)
+        cauldronCommitMessage.push(`- Remove ${dependency} native dependency`)
+      }
+    },
+    descriptor,
+    cauldronCommitMessage,
+    { containerVersion }
+  )
+  log.info(`Dependency(ies) successfully removed from ${descriptor}`)
 }
+
+export const handler = tryCatchWrap(commandHandler)

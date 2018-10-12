@@ -1,5 +1,5 @@
-import { manifest, Platform, utils as coreUtils, log } from 'ern-core'
-import { epilog } from '../../../lib'
+import { manifest, Platform, log } from 'ern-core'
+import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
 import chalk from 'chalk'
@@ -17,24 +17,22 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   platformVersion = Platform.currentVersion,
 }: {
   platformVersion?: string
 }) => {
-  try {
-    const plugins = await manifest.getNativeDependencies(platformVersion)
+  const plugins = await manifest.getNativeDependencies(platformVersion)
 
-    log.info(`Platform v${platformVersion} suports the following plugins`)
-    const table = new Table({
-      colWidths: [40, 16],
-      head: [chalk.cyan('Name'), chalk.cyan('Version')],
-    })
-    for (const plugin of plugins) {
-      table.push([plugin.basePath, plugin.version])
-    }
-    log.info(table.toString())
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  log.info(`Platform v${platformVersion} suports the following plugins`)
+  const table = new Table({
+    colWidths: [40, 16],
+    head: [chalk.cyan('Name'), chalk.cyan('Version')],
+  })
+  for (const plugin of plugins) {
+    table.push([plugin.basePath, plugin.version])
   }
+  log.info(table.toString())
 }
+
+export const handler = tryCatchWrap(commandHandler)

@@ -1,6 +1,5 @@
-import { epilog } from '../lib'
+import { epilog, tryCatchWrap } from '../lib'
 import {
-  utils as coreUtils,
   deviceConfig,
   log,
   NativeApplicationDescriptor,
@@ -63,7 +62,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   dependencies = [],
   descriptor,
   dev,
@@ -82,22 +81,20 @@ export const handler = async ({
   port?: string
   usePreviousDevice?: boolean
 }) => {
-  try {
-    if (process.platform !== 'darwin') {
-      return log.error('This command can only be used on Mac OS X')
-    }
-    deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
-
-    await runMiniApp('ios', {
-      dependencies,
-      descriptor,
-      dev,
-      host,
-      mainMiniAppName,
-      miniapps,
-      port,
-    })
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  if (process.platform !== 'darwin') {
+    return log.error('This command can only be used on Mac OS X')
   }
+  deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
+
+  await runMiniApp('ios', {
+    dependencies,
+    descriptor,
+    dev,
+    host,
+    mainMiniAppName,
+    miniapps,
+    port,
+  })
 }
+
+export const handler = tryCatchWrap(commandHandler)

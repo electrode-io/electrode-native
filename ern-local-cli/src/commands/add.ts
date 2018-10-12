@@ -1,5 +1,5 @@
-import { log, MiniApp, PackagePath, utils as coreUtils } from 'ern-core'
-import { epilog } from '../lib'
+import { log, MiniApp, PackagePath } from 'ern-core'
+import { epilog, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 // Note : We use `pkg` instead of `package` because `package` is
@@ -24,7 +24,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
-export const handler = async ({
+export const commandHandler = async ({
   dev,
   packages,
   peer,
@@ -33,16 +33,14 @@ export const handler = async ({
   packages: string[]
   peer: boolean
 }) => {
-  try {
-    for (const pkg of packages) {
-      log.debug(`Adding package: ${pkg}`)
-      await MiniApp.fromCurrentPath().addDependency(
-        PackagePath.fromString(pkg),
-        { dev, peer }
-      )
-      log.info(`Successfully added ${pkg}`)
-    }
-  } catch (e) {
-    coreUtils.logErrorAndExitProcess(e)
+  for (const pkg of packages) {
+    log.debug(`Adding package: ${pkg}`)
+    await MiniApp.fromCurrentPath().addDependency(PackagePath.fromString(pkg), {
+      dev,
+      peer,
+    })
+    log.info(`Successfully added ${pkg}`)
   }
 }
+
+export const handler = tryCatchWrap(commandHandler)
