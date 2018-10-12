@@ -12,9 +12,6 @@ export const handler = async () => {
     const cauldron = await getActiveCauldron({
       ignoreSchemaVersionMismatch: true,
     })
-    if (!cauldron) {
-      throw new Error('A Cauldron must be active in order to use this command')
-    }
     await cauldron.upgradeCauldronSchema()
     log.debug('Cauldron was succesfully upgraded !')
   } catch (e) {

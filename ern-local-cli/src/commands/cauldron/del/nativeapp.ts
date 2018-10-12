@@ -19,19 +19,14 @@ export const handler = async ({
 }: {
   descriptor: NativeApplicationDescriptor
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage:
-        'This command cannot remove a native application version that do not exist in Cauldron.',
-    },
-  })
-
   try {
+    await logErrorAndExitIfNotSatisfied({
+      napDescriptorExistInCauldron: {
+        descriptor,
+        extraErrorMessage:
+          'This command cannot remove a native application version that do not exist in Cauldron.',
+      },
+    })
     const cauldron = await getActiveCauldron()
     await cauldron.removeDescriptor(descriptor)
   } catch (e) {

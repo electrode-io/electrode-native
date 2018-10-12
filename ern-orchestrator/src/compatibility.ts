@@ -132,11 +132,8 @@ export async function getNativeAppCompatibilityReport(
   }
 ) {
   const result: any[] = []
-  const cauldronInstance = await getActiveCauldron()
-  if (!cauldronInstance) {
-    throw new Error('[getNativeAppCompatibilityReport] No Cauldron is active')
-  }
-  const nativeApps = await cauldronInstance.getAllNativeApps()
+  const cauldron = await getActiveCauldron()
+  const nativeApps = await cauldron.getAllNativeApps()
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
   const nativeDependencies = await miniApp.getNativeDependencies()
@@ -158,7 +155,7 @@ export async function getNativeAppCompatibilityReport(
                 nativeAppPlatform.name,
                 nativeAppVersion.name
               )
-              const nativeAppDependencies = await cauldronInstance.getNativeDependencies(
+              const nativeAppDependencies = await cauldron.getNativeDependencies(
                 napDescriptor
               )
               const compatibility = getCompatibility(

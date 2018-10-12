@@ -370,7 +370,7 @@ export default class Ensure {
   }
 
   public static async cauldronIsActive(extraErrorMessage: string = '') {
-    if (!(await getActiveCauldron())) {
+    if (!(await getActiveCauldron({ throwIfNoActiveCauldron: false }))) {
       throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
     }
   }

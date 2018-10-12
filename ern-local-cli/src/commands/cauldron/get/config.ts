@@ -1,6 +1,6 @@
 import { NativeApplicationDescriptor, utils as coreUtils, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../../../lib'
+import { epilog } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'config <descriptor>'
@@ -17,13 +17,6 @@ export const handler = async ({
 }: {
   descriptor: NativeApplicationDescriptor
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
-
   try {
     const cauldron = await getActiveCauldron()
     const config = await cauldron.getConfig(descriptor)

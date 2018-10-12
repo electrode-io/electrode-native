@@ -14,11 +14,16 @@ let currentCauldronRepoInUse
 export default async function getActiveCauldron({
   ignoreSchemaVersionMismatch,
   localRepoPath,
+  throwIfNoActiveCauldron = true,
 }: {
   ignoreSchemaVersionMismatch?: boolean
   localRepoPath?: string
+  throwIfNoActiveCauldron?: boolean
 } = {}): Promise<CauldronHelper> {
   const repoInUse = config.getValue('cauldronRepoInUse')
+  if (!repoInUse && throwIfNoActiveCauldron) {
+    throw new Error('No active Cauldron')
+  }
   if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
     const cauldronRepositories = config.getValue('cauldronRepositories')
     const cauldronRepoUrl = cauldronRepositories[repoInUse]

@@ -17,13 +17,6 @@ export const handler = async ({
   localFilePath: string
 }) => {
   try {
-    await logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {
-        extraErrorMessage:
-          'A Cauldron must be active in order to use this command',
-      },
-    })
-
     if (!fs.existsSync(localFilePath)) {
       throw new Error(`File ${localFilePath} does not exist`)
     }

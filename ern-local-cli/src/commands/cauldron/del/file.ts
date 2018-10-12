@@ -14,13 +14,6 @@ export const handler = async ({
   cauldronFilePath: string
 }) => {
   try {
-    await logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {
-        extraErrorMessage:
-          'A Cauldron must be active in order to use this command',
-      },
-    })
-
     const cauldron = await getActiveCauldron()
     await cauldron.removeFile({
       cauldronFilePath,

@@ -68,13 +68,6 @@ export const handler = async ({
   rollout?: number
 }) => {
   try {
-    await logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {
-        extraErrorMessage:
-          'A Cauldron must be active in order to use this command',
-      },
-    })
-
     descriptor =
       descriptor ||
       (await askUserToChooseANapDescriptorFromCauldron({
