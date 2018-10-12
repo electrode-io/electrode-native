@@ -401,7 +401,9 @@ export default class Ensure {
         exists =>
           exists
             ? resolve()
-            : reject(`${p} path does not exist.\n${extraErrorMessage}`)
+            : reject(
+                new Error(`${p} path does not exist.\n${extraErrorMessage}`)
+              )
       )
     })
   }
@@ -413,12 +415,12 @@ export default class Ensure {
     return new Promise((resolve, reject) => {
       fs.stat(p, (err, stats) => {
         if (err) {
-          reject(`${p} path does not exist.\n${extraErrorMessage}`)
+          reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`))
         } else {
           if (stats.isFile()) {
             resolve()
           } else {
-            reject(`${p} is not a file.\n${extraErrorMessage}`)
+            reject(new Error(`${p} is not a file.\n${extraErrorMessage}`))
           }
         }
       })
@@ -432,12 +434,12 @@ export default class Ensure {
     return new Promise((resolve, reject) => {
       fs.stat(p, (err, stats) => {
         if (err) {
-          reject(`${p} path does not exist.\n${extraErrorMessage}`)
+          reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`))
         } else {
           if (stats.isDirectory()) {
             resolve()
           } else {
-            reject(`${p} is not a directory.\n${extraErrorMessage}`)
+            reject(new Error(`${p} is not a directory.\n${extraErrorMessage}`))
           }
         }
       })
