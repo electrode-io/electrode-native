@@ -1,13 +1,12 @@
 import {
   NativeApplicationDescriptor,
   shell,
-  ErnBinaryStore,
   log,
+  utils as coreUtils,
 } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
+import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied } from '../../lib'
 import fs from 'fs'
-import path from 'path'
 import { Argv } from 'yargs'
 
 export const command = 'get <descriptor> <outDir>'
@@ -18,6 +17,7 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .normalize('outDir')
     .epilog(epilog(exports))
 }
 
@@ -28,36 +28,20 @@ export const handler = async ({
   descriptor: NativeApplicationDescriptor
   outDir: string
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-    napDescriptorExistInCauldron: {
-      descriptor,
-      extraErrorMessage:
-        'Cannot add binary of a non existing native application version',
-    },
-  })
-
-  const cauldron = await getActiveCauldron()
-  const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
-  if (!binaryStoreConfig) {
-    return log.error('No binaryStore configuration was found in Cauldron')
-  }
-
   try {
-    const binaryStore = new ErnBinaryStore(binaryStoreConfig)
-    if (!(await binaryStore.hasBinary(descriptor))) {
-      return log.error(`No binary was found in the store for ${descriptor}`)
+    await logErrorAndExitIfNotSatisfied({
+      cauldronIsActive: {},
+      napDescriptorExistInCauldron: { descriptor },
+    })
+
+    if (!fs.existsSync(outDir)) {
+      shell.mkdir('-p', outDir)
     }
-    const absoluteOutDirPath = path.resolve(outDir)
-    if (!fs.existsSync(absoluteOutDirPath)) {
-      shell.mkdir('-p', absoluteOutDirPath)
-    }
+
+    const binaryStore = await getBinaryStoreFromCauldron()
     const pathToBinary = await binaryStore.getBinary(descriptor, { outDir })
-    log.info(`Binary was successfuly retrieved. Path: ${pathToBinary}`)
+    log.info(`Binary was successfuly downloaded in ${pathToBinary}`)
   } catch (e) {
-    log.error(`An error occurred while retrieving ${descriptor} binary`)
+    coreUtils.logErrorAndExitProcess(e)
   }
 }

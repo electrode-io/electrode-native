@@ -9,7 +9,7 @@ import archiver from 'archiver'
 import DecompressZip = require('decompress-zip')
 const { execp } = childProcess
 
-export default class ErnBinaryStore implements BinaryStore {
+export class ErnBinaryStore implements BinaryStore {
   private readonly config: any
 
   constructor(config: any) {
@@ -18,7 +18,7 @@ export default class ErnBinaryStore implements BinaryStore {
 
   public async addBinary(
     descriptor: NativeApplicationDescriptor,
-    binaryPath: string
+    binaryPath: fs.PathLike
   ): Promise<string | Buffer> {
     const pathToBinary = await this.zipBinary(descriptor, binaryPath)
     return execp(`curl -XPOST ${this.config.url} -F file=@"${pathToBinary}"`)
@@ -27,6 +27,7 @@ export default class ErnBinaryStore implements BinaryStore {
   public async removeBinary(
     descriptor: NativeApplicationDescriptor
   ): Promise<string | Buffer> {
+    this.throwIfNoBinaryExistForDescriptor(descriptor)
     return execp(`curl -XDELETE ${this.urlToBinary(descriptor)}`)
   }
 
@@ -38,6 +39,7 @@ export default class ErnBinaryStore implements BinaryStore {
       outDir?: string
     } = {}
   ): Promise<string> {
+    this.throwIfNoBinaryExistForDescriptor(descriptor)
     const pathToZippedBinary = await this.getZippedBinary(descriptor)
     return this.unzipBinary(descriptor, pathToZippedBinary, { outDir })
   }
@@ -75,7 +77,7 @@ export default class ErnBinaryStore implements BinaryStore {
 
   public async zipBinary(
     descriptor: NativeApplicationDescriptor,
-    binaryPath: string
+    binaryPath: fs.PathLike
   ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const tmpOutDir = createTmpDir()
@@ -89,9 +91,11 @@ export default class ErnBinaryStore implements BinaryStore {
       archive.on('error', err => reject(err))
       archive.pipe(outputZipStream)
       if (descriptor.platform === 'android') {
-        archive.file(binaryPath, { name: path.basename(binaryPath) })
+        archive.file(binaryPath.toString(), {
+          name: path.basename(binaryPath.toString()),
+        })
       } else {
-        archive.glob('**/*', { cwd: binaryPath })
+        archive.glob('**/*', { cwd: binaryPath.toString() })
       }
       archive.finalize()
     })
@@ -145,5 +149,15 @@ export default class ErnBinaryStore implements BinaryStore {
 
   public getNativeBinaryFileExt(platformName: string) {
     return platformName === 'android' ? 'apk' : 'app'
+  }
+
+  public async throwIfNoBinaryExistForDescriptor(
+    descriptor: NativeApplicationDescriptor
+  ) {
+    if (!(await this.hasBinary(descriptor))) {
+      throw new Error(
+        `No binary associated to ${descriptor} was found in the store`
+      )
+    }
   }
 }

@@ -1,5 +1,4 @@
 import _CodePushSdk from './CodePushSdk'
-import _ErnBinaryStore from './ErnBinaryStore'
 import { manifest as _manifest } from './Manifest'
 export { Manifest, PluginConfig } from './Manifest'
 import * as _ModuleTypes from './ModuleTypes'
@@ -63,7 +62,7 @@ export const childProcess = _childProcess
 export const CodePushSdk = _CodePushSdk
 export const dependencyLookup = _dependencyLookup
 export const deviceConfig = _deviceConfig
-export const ErnBinaryStore = _ErnBinaryStore
+export { ErnBinaryStore } from './ErnBinaryStore'
 export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolution
 
 export {
