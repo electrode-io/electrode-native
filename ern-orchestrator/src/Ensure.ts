@@ -77,16 +77,15 @@ export default class Ensure {
   }
 
   public static noGitOrFilesystemPath(
-    obj: string | string[] | null | undefined,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
       return
     }
-    const paths = obj instanceof Array ? obj : [obj]
-    for (const path of paths) {
-      const dependencyPath = PackagePath.fromString(path)
-      if (dependencyPath.isFilePath || dependencyPath.isGitPath) {
+    const packagePaths = coreUtils.coerceToPackagePathArray(obj)
+    for (const packagePath of packagePaths) {
+      if (packagePath.isFilePath || packagePath.isGitPath) {
         throw new Error(
           `Found a git or file system path.\n${extraErrorMessage}`
         )
@@ -155,10 +154,10 @@ export default class Ensure {
   }
 
   public static async publishedToNpm(
-    obj: string | string[],
+    obj: string | PackagePath | Array<string | PackagePath>,
     extraErrorMessage: string = ''
   ) {
-    const dependencies = obj instanceof Array ? obj : [obj]
+    const dependencies = coreUtils.coerceToPackagePathArray(obj)
     for (const dependency of dependencies) {
       if (!(await coreUtils.isPublishedToNpm(dependency))) {
         throw new Error(
@@ -169,7 +168,7 @@ export default class Ensure {
   }
 
   public static async miniAppNotInNativeApplicationVersionContainer(
-    obj: string | string[] | void,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -177,25 +176,22 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    const miniAppsStrings = obj instanceof Array ? obj : [obj]
-    for (const miniAppString of miniAppsStrings) {
-      const basePathMiniAppString = PackagePath.fromString(miniAppString)
-        .basePath
+    const miniApps = coreUtils.coerceToPackagePathArray(obj)
+    for (const miniApp of miniApps) {
       if (
-        await cauldron.isMiniAppInContainer(
-          napDescriptor,
-          basePathMiniAppString
-        )
+        await cauldron.isMiniAppInContainer(napDescriptor, miniApp.basePath)
       ) {
         throw new Error(
-          `${basePathMiniAppString} MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
+          `${
+            miniApp.basePath
+          } MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
         )
       }
     }
   }
 
   public static async dependencyNotInNativeApplicationVersionContainer(
-    obj: string | string[] | void,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -203,26 +199,25 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    const dependenciesStrings = obj instanceof Array ? obj : [obj]
-    for (const dependencyString of dependenciesStrings) {
-      const unversionedDependencyString = PackagePath.fromString(
-        dependencyString
-      ).basePath
+    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    for (const dependency of dependencies) {
       if (
         await cauldron.isNativeDependencyInContainer(
           napDescriptor,
-          unversionedDependencyString
+          dependency.basePath
         )
       ) {
         throw new Error(
-          `${unversionedDependencyString} dependency exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
+          `${
+            dependency.basePath
+          } dependency exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
         )
       }
     }
   }
 
   public static async miniAppIsInNativeApplicationVersionContainer(
-    obj: string | string[] | void,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -230,25 +225,22 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    const miniAppsStrings = obj instanceof Array ? obj : [obj]
-    for (const miniAppString of miniAppsStrings) {
-      const basePathMiniAppString = PackagePath.fromString(miniAppString)
-        .basePath
+    const miniApps = coreUtils.coerceToPackagePathArray(obj)
+    for (const miniApp of miniApps) {
       if (
-        !(await cauldron.isMiniAppInContainer(
-          napDescriptor,
-          basePathMiniAppString
-        ))
+        !(await cauldron.isMiniAppInContainer(napDescriptor, miniApp.basePath))
       ) {
         throw new Error(
-          `${basePathMiniAppString} MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`
+          `${
+            miniApp.basePath
+          } MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`
         )
       }
     }
   }
 
   public static async dependencyIsInNativeApplicationVersionContainer(
-    obj: string | string[] | void,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -256,26 +248,25 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    const dependenciesStrings = obj instanceof Array ? obj : [obj]
-    for (const dependencyString of dependenciesStrings) {
-      const unversionedDependencyString = PackagePath.fromString(
-        dependencyString
-      ).basePath
+    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    for (const dependency of dependencies) {
       if (
         !(await cauldron.getContainerNativeDependency(
           napDescriptor,
-          unversionedDependencyString
+          dependency.basePath
         ))
       ) {
         throw new Error(
-          `${unversionedDependencyString} does not exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
+          `${
+            dependency.basePath
+          } does not exists in ${napDescriptor}.\n${extraErrorMessage}`
         )
       }
     }
   }
 
   public static async miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
-    obj: string | string[] | void,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -283,35 +274,30 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    const miniAppsStrings = obj instanceof Array ? obj : [obj]
-    const basePathMiniAppsStrings = _.map(
-      miniAppsStrings,
-      m => PackagePath.fromString(m).basePath
-    )
+    const miniApps = coreUtils.coerceToPackagePathArray(obj)
     await Ensure.miniAppIsInNativeApplicationVersionContainer(
-      basePathMiniAppsStrings,
+      miniApps,
       napDescriptor
     )
-    for (const miniAppString of miniAppsStrings) {
+    for (const miniApp of miniApps) {
       const miniAppFromCauldron = await cauldron.getContainerMiniApp(
         napDescriptor,
-        PackagePath.fromString(miniAppString).basePath
+        miniApp.basePath
       )
       const cauldronMiniApp = PackagePath.fromString(miniAppFromCauldron)
-      const givenMiniApp = PackagePath.fromString(miniAppString)
-      if (cauldronMiniApp.version === givenMiniApp.version) {
+      if (cauldronMiniApp.version === miniApp.version) {
         throw new Error(
           `${
             cauldronMiniApp.basePath
-          } is already at version ${givenMiniApp.version ||
-            ''} in ${napDescriptor.toString()}.\n${extraErrorMessage}`
+          } is already at version ${miniApp.version ||
+            ''} in ${napDescriptor}.\n${extraErrorMessage}`
         )
       }
     }
   }
 
   public static async dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
-    obj: string | string[] | void,
+    obj: string | PackagePath[] | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -323,20 +309,19 @@ export default class Ensure {
       obj,
       napDescriptor
     )
-    const dependenciesStrings = obj instanceof Array ? obj : [obj]
-    for (const dependencyString of dependenciesStrings) {
+    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    for (const dependency of dependencies) {
       const dependencyFromCauldron = await cauldron.getContainerNativeDependency(
         napDescriptor,
-        PackagePath.fromString(dependencyString).basePath
+        dependency.basePath
       )
       if (
         dependencyFromCauldron &&
-        dependencyFromCauldron.version ===
-          PackagePath.fromString(dependencyString).version
+        dependencyFromCauldron.version === dependency.version
       ) {
         throw new Error(
           `${
-            PackagePath.fromString(dependencyString).basePath
+            dependency.basePath
           } is already at version ${dependencyFromCauldron.version ||
             'undefined'} in ${napDescriptor.toString()}.\n${extraErrorMessage}`
         )
@@ -345,7 +330,7 @@ export default class Ensure {
   }
 
   public static async dependencyNotInUseByAMiniApp(
-    obj: string | string[] | void,
+    obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: NativeApplicationDescriptor,
     extraErrorMessage: string = ''
   ) {
@@ -353,17 +338,16 @@ export default class Ensure {
       return
     }
     const cauldron = await getActiveCauldron()
-    const dependencies = obj instanceof Array ? obj : [obj]
-    const dependenciesObjs = _.map(dependencies, d => PackagePath.fromString(d))
+    const dependencies = coreUtils.coerceToPackagePathArray(obj)
 
     // First let's figure out if any of the MiniApps are using this/these dependency(ies)
     // to make sure that we don't remove any dependency currently used by any MiniApp
     const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
 
-    for (const dependencyObj of dependenciesObjs) {
+    for (const dependency of dependencies) {
       const miniAppsUsingDependency = await dependencyLookup.getMiniAppsUsingNativeDependency(
         miniApps,
-        dependencyObj
+        dependency
       )
       if (miniAppsUsingDependency && miniAppsUsingDependency.length > 0) {
         let errorMessage = ''

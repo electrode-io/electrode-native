@@ -5,8 +5,6 @@ export const invalidContainerVersions = ['123', '1.2', '1.2.x', 'x.y.z']
 export const withoutGitOrFileSystemPath = [
   'package@1.2.3',
   '@scope/package@1.2.3',
-  undefined,
-  null,
 ]
 
 export const withGitOrFileSystemPath = [
