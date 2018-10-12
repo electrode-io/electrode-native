@@ -41,10 +41,6 @@ export const handler = async ({
   let cauldron
   try {
     await logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {
-        extraErrorMessage:
-          'A Cauldron must be active in order to use this command',
-      },
       napDescritorDoesNotExistsInCauldron: {
         descriptor,
         extraErrorMessage:

@@ -79,9 +79,6 @@ export async function runMiniApp(
   let cauldron
   if (descriptor) {
     cauldron = await getActiveCauldron()
-    if (cauldron == null) {
-      throw new Error('[runMiniApp] No cauldron instance found')
-    }
     napDescriptor = utils.coerceToNativeApplicationDescriptor(descriptor)
   }
 

@@ -64,7 +64,9 @@ function showVersion() {
 }
 
 Manifest.getOverrideManifestConfig = async (): Promise<ManifestOverrideConfig | void> => {
-  const cauldronInstance = await getActiveCauldron()
+  const cauldronInstance = await getActiveCauldron({
+    throwIfNoActiveCauldron: false,
+  })
   const manifestConfig =
     cauldronInstance && (await cauldronInstance.getManifestConfig())
   if (

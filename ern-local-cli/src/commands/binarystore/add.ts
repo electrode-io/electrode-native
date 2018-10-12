@@ -24,7 +24,6 @@ export const handler = async ({
 }) => {
   try {
     await logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {},
       isFilePath: { p: pathToBinary },
       napDescriptorExistInCauldron: { descriptor },
     })

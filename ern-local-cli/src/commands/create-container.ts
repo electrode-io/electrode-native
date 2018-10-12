@@ -114,7 +114,7 @@ Output directory should either not exist (it will be created) or should be empty
       )
     }
 
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
     if (!cauldron && !miniapps) {
       throw new Error(
         "A Cauldron must be active, if you don't explicitly provide miniapps"

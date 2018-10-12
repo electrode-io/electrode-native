@@ -38,9 +38,6 @@ export const handler = async ({
 }) => {
   try {
     const cauldron = await getActiveCauldron()
-    if (!cauldron) {
-      throw new Error('A Cauldron must be active in order to use this command')
-    }
 
     let result: any
     if (key && strict) {

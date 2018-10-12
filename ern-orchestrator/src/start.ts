@@ -40,7 +40,7 @@ export default async function start({
 } = {}) {
   let pathToYarnLock
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && descriptor) {
     throw new Error(
       'To use a native application descriptor, a Cauldron must be active'

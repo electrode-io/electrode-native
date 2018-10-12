@@ -17,13 +17,6 @@ export const handler = async ({
 }: {
   descriptor?: NativeApplicationDescriptor
 }) => {
-  await logErrorAndExitIfNotSatisfied({
-    cauldronIsActive: {
-      extraErrorMessage:
-        'A Cauldron must be active in order to use this command',
-    },
-  })
-
   try {
     const cauldron = await getActiveCauldron()
     if (!descriptor) {

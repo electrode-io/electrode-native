@@ -18,9 +18,6 @@ export async function askUserToChooseANapDescriptorFromCauldron({
   message?: string
 } = {}): Promise<NativeApplicationDescriptor> {
   const cauldron = await getActiveCauldron()
-  if (!cauldron) {
-    throw new Error('No active Cauldron')
-  }
   const napDescriptorStrings = await cauldron.getNapDescriptorStrings({
     onlyNonReleasedVersions,
     onlyReleasedVersions,

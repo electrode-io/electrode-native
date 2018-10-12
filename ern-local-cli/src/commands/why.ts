@@ -6,7 +6,7 @@ import {
   log,
   utils as coreUtils,
 } from 'ern-core'
-import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
+import { epilog } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'why <dependency> <completeNapDescriptor>'
@@ -25,13 +25,6 @@ export const handler = async ({
   dependency: string
 }) => {
   try {
-    await logErrorAndExitIfNotSatisfied({
-      cauldronIsActive: {
-        extraErrorMessage:
-          'A Cauldron must be active in order to use this command',
-      },
-    })
-
     const napDescriptor = NativeApplicationDescriptor.fromString(
       completeNapDescriptor
     )
