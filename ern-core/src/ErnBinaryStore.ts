@@ -3,6 +3,7 @@ import { NativeApplicationDescriptor } from './NativeApplicationDescriptor'
 import * as childProcess from './childProcess'
 import createTmpDir from './createTmpDir'
 import { spawn } from 'child_process'
+import shell from './shell'
 import fs from 'fs'
 import path from 'path'
 import archiver from 'archiver'
@@ -41,6 +42,9 @@ export class ErnBinaryStore implements BinaryStore {
   ): Promise<string> {
     this.throwIfNoBinaryExistForDescriptor(descriptor)
     const pathToZippedBinary = await this.getZippedBinary(descriptor)
+    if (outDir && !fs.existsSync(outDir)) {
+      shell.mkdir('-p', outDir)
+    }
     return this.unzipBinary(descriptor, pathToZippedBinary, { outDir })
   }
 

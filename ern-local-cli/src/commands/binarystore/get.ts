@@ -27,10 +27,6 @@ export const commandHandler = async ({
     napDescriptorExistInCauldron: { descriptor },
   })
 
-  if (!fs.existsSync(outDir)) {
-    shell.mkdir('-p', outDir)
-  }
-
   const binaryStore = await getBinaryStoreFromCauldron()
   const pathToBinary = await binaryStore.getBinary(descriptor, { outDir })
   log.info(`Binary was successfuly downloaded in ${pathToBinary}`)
