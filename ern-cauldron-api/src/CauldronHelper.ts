@@ -12,6 +12,7 @@ import {
   CauldronCodePushMetadata,
   CauldronCodePushEntry,
   CauldronConfigLevel,
+  CauldronNativeAppVersion,
 } from './types'
 import CauldronApi from './CauldronApi'
 import semver from 'semver'
@@ -61,6 +62,104 @@ export class CauldronHelper {
 
   public async removeDescriptor(napDescriptor: NativeApplicationDescriptor) {
     return this.cauldron.removeDescriptor(napDescriptor)
+  }
+
+  public async addNativeApplicationVersion(
+    descriptor: NativeApplicationDescriptor,
+    { copyFromVersion }: { copyFromVersion?: string } = {}
+  ) {
+    if (descriptor.isPartial) {
+      throw new Error(`${descriptor} is partial`)
+    }
+    if (await this.cauldron.hasDescriptor(descriptor)) {
+      throw new Error(`${descriptor} already exist in Cauldron`)
+    }
+
+    if (copyFromVersion) {
+      const version =
+        copyFromVersion === 'latest'
+          ? (await this.getMostRecentNativeApplicationVersion(descriptor)).name
+          : copyFromVersion
+      await this.addDescriptor(descriptor)
+      await this.copyNativeApplicationVersion({
+        source: new NativeApplicationDescriptor(
+          descriptor.name,
+          descriptor.platform,
+          version
+        ),
+        target: descriptor,
+      })
+    } else {
+      await this.addDescriptor(descriptor)
+    }
+  }
+
+  public async copyNativeApplicationVersion({
+    source,
+    target,
+  }: {
+    source: NativeApplicationDescriptor
+    target: NativeApplicationDescriptor
+  }) {
+    if (!(await this.cauldron.hasDescriptor(source))) {
+      throw new Error(`Source descriptor ${source} does not exist in Cauldron`)
+    }
+    if (!(await this.cauldron.hasDescriptor(target))) {
+      throw new Error(`Target descriptor ${target} does not exist in Cauldron`)
+    }
+    const sourceVersion = await this.cauldron.getVersion(source)
+
+    // Copy native container dependencies
+    for (const nativeDep of sourceVersion.container.nativeDeps) {
+      await this.addContainerNativeDependency(
+        target,
+        PackagePath.fromString(nativeDep)
+      )
+    }
+    // Copy container MiniApps
+    for (const containerMiniApp of sourceVersion.container.miniApps) {
+      await this.addContainerMiniApp(
+        target,
+        PackagePath.fromString(containerMiniApp)
+      )
+    }
+    // Copy container JS API implementations
+    for (const containerJsApiImpl of sourceVersion.container.jsApiImpls) {
+      await this.addContainerJsApiImpl(
+        target,
+        PackagePath.fromString(containerJsApiImpl)
+      )
+    }
+    // Copy yarn lock if any
+    if (sourceVersion.yarnLocks) {
+      await this.setYarnLocks(target, sourceVersion.yarnLocks)
+    }
+    // Copy container version
+    if (sourceVersion.containerVersion) {
+      await this.updateContainerVersion(target, sourceVersion.containerVersion)
+    }
+    // Copy ern version
+    if (sourceVersion.container.ernVersion) {
+      await this.updateContainerErnVersion(
+        target,
+        sourceVersion.container.ernVersion
+      )
+    }
+  }
+
+  public async getMostRecentNativeApplicationVersion(
+    descriptor: NativeApplicationDescriptor
+  ): Promise<CauldronNativeAppVersion> {
+    const partialDescriptor = new NativeApplicationDescriptor(
+      descriptor.name,
+      descriptor.platform
+    )
+    if (!(await this.isDescriptorInCauldron(partialDescriptor))) {
+      throw new Error(`Cannot find ${partialDescriptor} in Cauldron`)
+    }
+
+    const nativeApp = await this.getDescriptor(partialDescriptor)
+    return _.last(nativeApp.versions) as CauldronNativeAppVersion
   }
 
   public async addContainerNativeDependency(

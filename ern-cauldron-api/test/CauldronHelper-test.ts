@@ -3168,4 +3168,281 @@ describe('CauldronHelper.js', () => {
         .of.length(1)
     })
   })
+
+  describe('addNativeApplicationVersion', () => {
+    it('should throw if the descriptor is partial', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString('test:android')
+      assert(
+        await doesThrow(
+          cauldronHelper.addNativeApplicationVersion,
+          null,
+          descriptor
+        )
+      )
+    })
+
+    it('should throw if the native application version already exist', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      assert(
+        await doesThrow(
+          cauldronHelper.addNativeApplicationVersion,
+          null,
+          descriptor
+        )
+      )
+    })
+
+    it('should add the native application version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(descriptor)
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      expect(jp.query(fixture, testAndroid2000Path)).not.empty
+    })
+
+    it('should properly copy from the latest version if copyFromVersion is set to `latest`', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(descriptor, {
+        copyFromVersion: 'latest',
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1780 = jp.query(fixture, testAndroid1780Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.container).deep.equal(version1780.container)
+    })
+
+    it('should properly copy from a given existing version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(descriptor, {
+        copyFromVersion: '17.7.0',
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.container).deep.equal(version1770.container)
+    })
+  })
+
+  describe('copyNativeApplicationVersion', () => {
+    it('should throw if source native application version does not exist', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:5.0.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      assert(
+        await doesThrow(
+          cauldronHelper.copyNativeApplicationVersion,
+          null,
+          sourceDescriptor,
+          targetDescriptor
+        )
+      )
+    })
+
+    it('should throw if target native application version does not exist', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      assert(
+        await doesThrow(
+          cauldronHelper.copyNativeApplicationVersion,
+          null,
+          sourceDescriptor,
+          targetDescriptor
+        )
+      )
+    })
+
+    it('should copy the container dependencies', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.container.nativeDeps).deep.equal(
+        version1770.container.nativeDeps
+      )
+    })
+
+    it('should copy the container miniapps', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.container.miniApps).deep.equal(
+        version1770.container.miniApps
+      )
+    })
+
+    it('should copy the container js api implementations', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.container.jsApiImpls).deep.equal(
+        version1770.container.jsApiImpls
+      )
+    })
+
+    it('should copy the yarn locks', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.yarnLocks).deep.equal(version1770.yarnLocks)
+    })
+
+    it('should copy the container version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.containerVersion).deep.equal(
+        version1770.containerVersion
+      )
+    })
+
+    it('should copy the ern version', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const testAndroid2000Path =
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
+      const version1770 = jp.query(fixture, testAndroid1770Path)[0]
+      const version2000 = jp.query(fixture, testAndroid2000Path)[0]
+      expect(version2000.container.ernVersion).deep.equal(
+        version1770.container.ernVersion
+      )
+    })
+  })
+
+  describe('getMostRecentNativeApplicationVersion', () => {
+    it('should throw if no version of the native application exist in Cauldron', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString('foo:android')
+      assert(
+        await doesThrow(
+          cauldronHelper.getMostRecentNativeApplicationVersion,
+          null,
+          descriptor
+        )
+      )
+    })
+
+    it('should return the latest version of the native application', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const descriptor = NativeApplicationDescriptor.fromString('test:android')
+      const version1780 = jp.query(fixture, testAndroid1780Path)[0]
+      const latestVersion = await cauldronHelper.getMostRecentNativeApplicationVersion(
+        descriptor
+      )
+      expect(latestVersion).deep.equal(version1780)
+    })
+  })
 })
