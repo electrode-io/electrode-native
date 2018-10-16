@@ -21,7 +21,6 @@ export const packageCache = new FsCache<PackagePath>({
       const packageName = Object.keys(packageJson.dependencies)[0]
       shell.rm('package.json')
       shell.mv(path.join('node_modules', packageName, '*'), '.')
-      shell.rm('-rf', path.join('node_modules', packageName, '*'))
     } finally {
       shell.popd()
     }
