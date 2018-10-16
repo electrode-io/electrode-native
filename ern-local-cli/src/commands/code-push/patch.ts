@@ -6,8 +6,8 @@ import {
   askUserForCodePushDeploymentName,
   askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
+  askUserForCodePushLabel,
 } from '../../lib'
-import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 
 export const command = 'patch'
@@ -82,20 +82,9 @@ export const commandHandler = async ({
     },
   })
 
-  if (!deploymentName) {
-    deploymentName = await askUserForCodePushDeploymentName(descriptor)
-  }
-
-  if (!label) {
-    const { userInputedLabel } = await inquirer.prompt(<inquirer.Question>{
-      message:
-        'Please enter a label name corresponding to the release entry to patch',
-      name: 'userSelectedDeploymentName',
-      type: 'input',
-    })
-
-    label = <string>userInputedLabel
-  }
+  deploymentName =
+    deploymentName || (await askUserForCodePushDeploymentName(descriptor))
+  label = label || (await askUserForCodePushLabel())
 
   await performCodePushPatch(descriptor, deploymentName, label, {
     isDisabled: disabled,

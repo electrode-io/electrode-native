@@ -1,5 +1,4 @@
 import { Argv } from 'yargs'
-
 import { Platform } from 'ern-core'
 import { epilog, tryCatchWrap } from '../../lib'
 

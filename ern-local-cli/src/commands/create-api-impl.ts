@@ -13,8 +13,9 @@ import {
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
   tryCatchWrap,
+  askUserToInputPackageName,
+  askUserToSelectAnEnvironment,
 } from '../lib'
-import inquirer from 'inquirer'
 import path from 'path'
 import { Argv } from 'yargs'
 
@@ -125,11 +126,12 @@ export const commandHandler = async ({
 
   if (jsOnly && nativeOnly) {
     log.warn('Looks like both js and native are selected, should be only one')
-    nativeOnly = await promptPlatformSelection()
+    nativeOnly = (await askUserToSelectAnEnvironment()) !== 'js'
+    jsOnly = !nativeOnly
   }
 
   if (!jsOnly && !nativeOnly) {
-    nativeOnly = await promptPlatformSelection()
+    nativeOnly = (await askUserToSelectAnEnvironment()) !== 'js'
     jsOnly = !nativeOnly
   }
 
@@ -159,7 +161,7 @@ export const commandHandler = async ({
       apiImplName,
       moduleType
     ))
-    packageName = await promptForPackageName(defaultPackageName)
+    packageName = await askUserToInputPackageName({ defaultPackageName })
   }
 
   // Check if packageName is valid
@@ -196,34 +198,6 @@ export const commandHandler = async ({
     scope,
   })
   log.info('Success')
-}
-
-async function promptPlatformSelection(): Promise<boolean> {
-  const { targetPlatform } = await inquirer.prompt([
-    <inquirer.Question>{
-      choices: [`js`, `native`],
-      default: `js`,
-      message: `Choose a platform that you are planning to write this api implementation in?`,
-      name: 'targetPlatform',
-      type: 'list',
-    },
-  ])
-  return targetPlatform !== `js`
-}
-
-async function promptForPackageName(
-  defaultPackageName: string
-): Promise<string> {
-  const { packageName } = await inquirer.prompt([
-    <inquirer.Question>{
-      default: defaultPackageName,
-      message:
-        'Type NPM package name to use for this API implementation. Press Enter to use the default.',
-      name: 'packageName',
-      type: 'input',
-    },
-  ])
-  return packageName
 }
 
 export const handler = tryCatchWrap(commandHandler)

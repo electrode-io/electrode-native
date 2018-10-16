@@ -12,9 +12,9 @@ import {
   promptUserToUseSuffixModuleName,
   performPkgNameConflictCheck,
   tryCatchWrap,
+  askUserToInputPackageName,
 } from '../lib'
 import chalk from 'chalk'
-import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 
 export const command = 'create-miniapp <appName>'
@@ -75,7 +75,7 @@ export const commandHandler = async ({
       appName,
       ModuleTypes.MINIAPP
     )
-    packageName = await promptForPackageName(defaultPackageName)
+    packageName = await askUserToInputPackageName({ defaultPackageName })
   }
 
   await logErrorAndExitIfNotSatisfied({
@@ -96,21 +96,6 @@ export const commandHandler = async ({
   )
 
   logSuccessFooter(appName)
-}
-
-async function promptForPackageName(
-  defaultPackageName: string
-): Promise<string> {
-  const { packageName } = await inquirer.prompt([
-    <inquirer.Question>{
-      default: defaultPackageName,
-      message:
-        'Type NPM package name to use for this MiniApp. Press Enter to use the default.',
-      name: 'packageName',
-      type: 'input',
-    },
-  ])
-  return packageName
 }
 
 function logSuccessFooter(appName: string) {

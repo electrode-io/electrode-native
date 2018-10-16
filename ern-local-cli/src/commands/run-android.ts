@@ -1,7 +1,6 @@
 import { epilog, tryCatchWrap } from '../lib'
 import {
   deviceConfig,
-  utils as coreUtils,
   NativeApplicationDescriptor,
   PackagePath,
 } from 'ern-core'

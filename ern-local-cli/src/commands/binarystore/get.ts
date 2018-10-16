@@ -1,7 +1,6 @@
-import { NativeApplicationDescriptor, shell, log } from 'ern-core'
+import { NativeApplicationDescriptor, log } from 'ern-core'
 import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
-import fs from 'fs'
 import { Argv } from 'yargs'
 
 export const command = 'get <descriptor> <outDir>'

@@ -8,9 +8,9 @@ import {
   askUserToChooseANapDescriptorFromCauldron,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
   tryCatchWrap,
+  askUserConfirmation,
 } from '../../lib'
 import _ from 'lodash'
-import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 
 export const command = 'promote'
@@ -162,19 +162,15 @@ export const commandHandler = async ({
       )
     } else {
       log.info(
-        'CodePush release will target the following native application descriptors :'
+        'CodePush promotion will target the following native application descriptors :'
       )
       for (const targetDescriptor of targetDescriptors) {
         log.info(`- ${targetDescriptor}`)
       }
       if (!skipConfirmation) {
-        const { userConfirmedVersions } = await inquirer.prompt([
-          <inquirer.Question>{
-            message: 'Do you confirm ?',
-            name: 'userConfirmedVersions',
-            type: 'confirm',
-          },
-        ])
+        const userConfirmedVersions = await askUserConfirmation(
+          'Do you want to proceed ?'
+        )
         if (!userConfirmedVersions) {
           throw new Error('Aborting command execution')
         }

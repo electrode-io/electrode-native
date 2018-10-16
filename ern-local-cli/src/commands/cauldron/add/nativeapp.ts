@@ -1,11 +1,11 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { NativeApplicationDescriptor, log, kax } from 'ern-core'
-import inquirer from 'inquirer'
 import _ from 'lodash'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
+  askUserConfirmation,
 } from '../../../lib'
 import { Argv } from 'yargs'
 
@@ -59,9 +59,13 @@ export const commandHandler = async ({
   ) {
     const mostRecentVersion = await cauldron.getMostRecentNativeApplicationVersion(
       descriptor
-    )
-    if (await askUserCopyPreviousVersionData(mostRecentVersion.name)) {
-      copyFromVersion = mostRecentVersion.name
+    ).name
+    if (
+      await askUserConfirmation(
+        `Do you want to copy data from version (${mostRecentVersion}) ?`
+      )
+    ) {
+      copyFromVersion = mostRecentVersion
     }
   }
 
@@ -73,20 +77,6 @@ export const commandHandler = async ({
     .task('Updating Cauldron')
     .run(cauldron.commitTransaction(`Add ${descriptor} native application`))
   log.info(`${descriptor} successfully added to the the Cauldron`)
-}
-
-async function askUserCopyPreviousVersionData(
-  version: string
-): Promise<string> {
-  const { userCopyPreviousVersionData } = await inquirer.prompt(<
-    inquirer.Question
-  >{
-    message: `Do you want to copy data from the previous version (${version}) ?`,
-    name: 'userCopyPreviousVersionData',
-    type: 'confirm',
-  })
-
-  return userCopyPreviousVersionData
 }
 
 export const handler = tryCatchWrap(commandHandler)

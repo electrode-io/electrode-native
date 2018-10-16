@@ -1,7 +1,7 @@
 import { Argv } from 'yargs'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { utils as coreUtils, NativeApplicationDescriptor } from 'ern-core'
+import { NativeApplicationDescriptor } from 'ern-core'
 
 export const command = 'get'
 export const desc = 'Echoes configuration stored in Cauldron'
