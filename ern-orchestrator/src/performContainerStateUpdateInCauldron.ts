@@ -40,14 +40,9 @@ export async function performContainerStateUpdateInCauldron(
   const outDir = Platform.getContainerGenOutDirectory(platform)
   let cauldronContainerVersion
   let cauldron
-  let containerGenConfig
 
   try {
     cauldron = await getActiveCauldron()
-
-    containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
 
     if (containerVersion) {
       cauldronContainerVersion = containerVersion

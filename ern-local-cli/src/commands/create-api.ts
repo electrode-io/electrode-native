@@ -14,8 +14,8 @@ import {
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
   tryCatchWrap,
+  askUserToInputPackageName,
 } from '../lib'
-import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 
 export const command = 'create-api <apiName>'
@@ -88,7 +88,7 @@ export const commandHandler = async ({
       apiName,
       ModuleTypes.API
     )
-    packageName = await promptForPackageName(defaultPackageName)
+    packageName = await askUserToInputPackageName({ defaultPackageName })
   }
 
   await logErrorAndExitIfNotSatisfied({
@@ -135,21 +135,6 @@ export const commandHandler = async ({
     reactNativeVersion: reactNative.version,
   })
   log.info('Success')
-}
-
-async function promptForPackageName(
-  defaultPackageName: string
-): Promise<string> {
-  const { packageName } = await inquirer.prompt([
-    <inquirer.Question>{
-      default: defaultPackageName,
-      message:
-        'Type NPM package name to use for this API. Press Enter to use the default.',
-      name: 'packageName',
-      type: 'input',
-    },
-  ])
-  return packageName
 }
 
 export const handler = tryCatchWrap(commandHandler)

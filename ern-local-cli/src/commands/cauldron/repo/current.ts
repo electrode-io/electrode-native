@@ -1,4 +1,4 @@
-import { config as ernConfig, utils as coreUtils, log } from 'ern-core'
+import { config as ernConfig, log } from 'ern-core'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 

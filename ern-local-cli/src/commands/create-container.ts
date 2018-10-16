@@ -9,11 +9,17 @@ import {
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runLocalContainerGen, runCauldronContainerGen } from 'ern-orchestrator'
-import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  tryCatchWrap,
+  askUserToChooseANapDescriptorFromCauldron,
+  askUserToSelectAPlatform,
+} from '../lib'
 import _ from 'lodash'
-import inquirer from 'inquirer'
 import { Argv } from 'yargs'
 import fs from 'fs'
+import path from 'path'
 
 export const command = 'create-container'
 export const desc = 'Create a container locally'
@@ -125,37 +131,9 @@ Output directory should either not exist (it will be created) or should be empty
   // containing all the native applications versions in the cauldron
   // Not needed if miniapps are directly provided
   if (!descriptor && !miniapps) {
-    const nativeApps = await cauldron.getAllNativeApps()
-
-    // Transform native apps from the cauldron to an Array
-    // of completeNapDescriptor strings
-    // [Should probably move to a Cauldron util class for reusability]
-    const result = _.filter(
-      _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
-              if (!version.isReleased) {
-                return `${nativeApp.name}:${p.name}:${version.name}`
-              }
-            })
-          )
-        )
-      ),
-      elt => elt !== undefined
-    )
-
-    const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([
-      <inquirer.Question>{
-        choices: result,
-        message:
-          'Choose a non-released native application version for which to generate container',
-        name: 'userSelectedCompleteNapDescriptor',
-        type: 'list',
-      },
-    ])
-
-    descriptor = userSelectedCompleteNapDescriptor
+    descriptor = await askUserToChooseANapDescriptorFromCauldron({
+      onlyNonReleasedVersions: true,
+    })
   }
 
   if (descriptor) {
@@ -189,24 +167,13 @@ Output directory should either not exist (it will be created) or should be empty
 
     await generateMiniAppsComposite(
       miniapps,
-      outDir || `${Platform.rootDirectory}/miniAppsComposite`,
+      outDir || path.join(Platform.rootDirectory, 'miniAppsComposite'),
       pathToYarnLock ? { pathToYarnLock } : {},
       jsApiImpls
     )
   } else {
     if (!descriptor && miniapps) {
-      if (!platform) {
-        const { userSelectedPlatform } = await inquirer.prompt([
-          <inquirer.Question>{
-            choices: ['android', 'ios'],
-            message: 'Choose platform to generate container for',
-            name: 'userSelectedPlatform',
-            type: 'list',
-          },
-        ])
-
-        platform = userSelectedPlatform as NativePlatform
-      }
+      platform = platform || (await askUserToSelectAPlatform())
 
       await kax.task('Generating Container locally').run(
         runLocalContainerGen(miniapps, jsApiImpls, platform, {

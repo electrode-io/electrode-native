@@ -1,4 +1,4 @@
-import { utils as coreUtils, log } from 'ern-core'
+import { log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'

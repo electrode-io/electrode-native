@@ -1,7 +1,6 @@
 import { Platform, config as ernConfig, shell, log } from 'ern-core'
-import inquirer from 'inquirer'
 import path from 'path'
-import { epilog, tryCatchWrap } from '../../../lib'
+import { epilog, tryCatchWrap, askUserConfirmation } from '../../../lib'
 import { Argv } from 'yargs'
 
 export const command = 'add <alias> <url> [current]'
@@ -52,19 +51,11 @@ https://[token]@[repourl]`)
   if (current) {
     useCauldronRepository(alias)
   } else if (!(current === false)) {
-    inquirer
-      .prompt([
-        <inquirer.Question>{
-          message: `Set ${alias} as the current Cauldron repository`,
-          name: 'current',
-          type: 'confirm',
-        },
-      ])
-      .then(answers => {
-        if (answers.current) {
-          useCauldronRepository(alias)
-        }
-      })
+    if (
+      await askUserConfirmation(`Set ${alias} as current Cauldron repository ?`)
+    ) {
+      useCauldronRepository(alias)
+    }
   }
 }
 
