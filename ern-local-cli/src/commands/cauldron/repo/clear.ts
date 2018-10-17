@@ -1,4 +1,5 @@
-import { Platform, config as ernConfig, shell, log } from 'ern-core'
+import { cauldronRepositories } from 'ern-cauldron-api'
+import { log } from 'ern-core'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
@@ -10,8 +11,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async () => {
-  ernConfig.setValue('cauldronRepoInUse', undefined)
-  shell.rm('-rf', Platform.cauldronDirectory)
+  cauldronRepositories.deactivate()
   log.info(`Succesfully cleared any active Cauldron`)
 }
 

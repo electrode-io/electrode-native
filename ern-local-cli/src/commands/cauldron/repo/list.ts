@@ -1,4 +1,5 @@
-import { config as ernConfig, log } from 'ern-core'
+import { cauldronRepositories } from 'ern-cauldron-api'
+import { log } from 'ern-core'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
 
@@ -10,14 +11,12 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async () => {
-  const cauldronRepositories = ernConfig.getValue('cauldronRepositories')
-  if (!cauldronRepositories) {
+  const repositories = cauldronRepositories.list()
+  if (!repositories) {
     throw new Error('No Cauldron repositories have been added yet')
   }
   log.info('[Cauldron Repositories]')
-  Object.keys(cauldronRepositories).forEach(alias =>
-    log.info(`${alias} -> ${cauldronRepositories[alias]}`)
-  )
+  repositories.forEach(repo => log.info(`${repo.alias} -> ${repo.url}`))
 }
 
 export const handler = tryCatchWrap(commandHandler)
