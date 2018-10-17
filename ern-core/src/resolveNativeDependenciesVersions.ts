@@ -42,7 +42,7 @@ export function retainHighestVersions(
   return result
 }
 
-export function resolveNativeDependenciesVersionsGivenMismatchLevel(
+export function resolvePackageVersionsGivenMismatchLevel(
   plugins: PackagePath[],
   mismatchLevel: 'major' | 'minor' | 'patch'
 ): {
@@ -137,7 +137,7 @@ export function resolveNativeDependenciesVersions(
     )
   }
   apisAndApiImplsNativeDeps = _.flatten(apisAndApiImplsNativeDeps)
-  const apiAndApiImplsResolvedVersions = resolveNativeDependenciesVersionsGivenMismatchLevel(
+  const apiAndApiImplsResolvedVersions = resolvePackageVersionsGivenMismatchLevel(
     apisAndApiImplsNativeDeps,
     'major'
   )
@@ -155,7 +155,7 @@ export function resolveNativeDependenciesVersions(
     )
   }
   thirdPartyNativeModules = _.flatten(thirdPartyNativeModules)
-  const thirdPartyNativeModulesResolvedVersions = resolveNativeDependenciesVersionsGivenMismatchLevel(
+  const thirdPartyNativeModulesResolvedVersions = resolvePackageVersionsGivenMismatchLevel(
     thirdPartyNativeModules,
     'patch'
   )

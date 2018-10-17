@@ -10,10 +10,10 @@ import {
   log,
   NativePlatform,
   kax,
+  nativeDepenciesVersionResolution,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
-import path from 'path'
 import semver from 'semver'
 import * as constants from './constants'
 
@@ -80,11 +80,11 @@ export async function runLocalContainerGen(
     )
     apisAndNativeApisImpls = apisAndNativeApisImpls.concat(bridgeDep)
 
-    const apiAndApiImplsResolvedVersions = resolvePluginsVersions(
+    const apiAndApiImplsResolvedVersions = nativeDepenciesVersionResolution.resolvePackageVersionsGivenMismatchLevel(
       apisAndNativeApisImpls,
       'major'
     )
-    const nativeModulesResolvedVersions = resolvePluginsVersions(
+    const nativeModulesResolvedVersions = nativeDepenciesVersionResolution.resolvePackageVersionsGivenMismatchLevel(
       nativeModulesInManifest,
       'patch'
     )
@@ -206,50 +206,6 @@ export async function runCauldronContainerGen(
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e
   }
-}
-
-export function resolvePluginsVersions(
-  plugins: PackagePath[],
-  mismatchLevel: 'major' | 'minor' | 'patch'
-): {
-  resolved: PackagePath[]
-  pluginsWithMismatchingVersions: string[]
-} {
-  const result: any = {
-    pluginsWithMismatchingVersions: [],
-    resolved: [],
-  }
-
-  const pluginsByBasePath = _.groupBy(
-    _.unionBy(plugins, p => p.toString()),
-    'basePath'
-  )
-  for (const basePath of Object.keys(pluginsByBasePath)) {
-    const entry = pluginsByBasePath[basePath]
-    const pluginVersions = _.map(entry, 'version')
-    if (pluginVersions.length > 1) {
-      // If there are multiple versions of the dependency being used across all MiniApps
-      if (containsVersionMismatch(<string[]>pluginVersions, mismatchLevel)) {
-        // If at least one of the versions major digit differs, deem incompatibility
-        result.pluginsWithMismatchingVersions.push(basePath)
-      } else {
-        // No mismatchLevel version differences, just return the highest version
-        result.resolved.push(
-          _.find(
-            entry,
-            c =>
-              c.basePath === basePath &&
-              c.version === semver.maxSatisfying(<string[]>pluginVersions, '*')
-          )
-        )
-      }
-    } else {
-      // Only one version is used across all MiniApps, just use this version
-      result.resolved.push(entry[0])
-    }
-  }
-
-  return result
 }
 
 export function containsVersionMismatch(

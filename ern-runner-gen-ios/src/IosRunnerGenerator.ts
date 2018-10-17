@@ -1,6 +1,5 @@
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
 import { mustacheUtils, NativePlatform, shell } from 'ern-core'
-import readDir from 'fs-readdir-recursive'
 import path from 'path'
 
 const runnerHullPath = path.join(__dirname, 'hull')
@@ -14,20 +13,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
 
   public async generate(config: RunnerGeneratorConfig): Promise<void> {
     this.validateExtraConfig(config)
-    const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(
-      path.join(config.extra.containerGenWorkingDir, 'out', 'ios')
-    )
-    const mustacheView = {
-      isReactNativeDevSupportEnabled:
-        config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
-      miniAppName: config.mainMiniAppName,
-      packagerHost:
-        config.reactNativePackagerHost || defaultReactNativePackagerHost,
-      packagerPort:
-        config.reactNativePackagerPort || defaultReactNativePackagerPort,
-      pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
-      pathToElectrodeContainerXcodeProj,
-    }
+    const mustacheView = this.createMustacheView({ config })
 
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
     const filesToMustache = [
@@ -48,20 +34,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
     config: RunnerGeneratorConfig
   ): Promise<void> {
     this.validateExtraConfig(config)
-    const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(
-      path.join(config.extra.containerGenWorkingDir, 'out', 'ios')
-    )
-    const mustacheView = {
-      isReactNativeDevSupportEnabled:
-        config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
-      miniAppName: config.mainMiniAppName,
-      packagerHost:
-        config.reactNativePackagerHost || defaultReactNativePackagerHost,
-      packagerPort:
-        config.reactNativePackagerPort || defaultReactNativePackagerPort,
-      pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
-      pathToElectrodeContainerXcodeProj,
-    }
+    const mustacheView = this.createMustacheView({ config })
     const pathToRunnerConfig = path.join(
       config.outDir,
       'ErnRunner/RunnerConfig.m'
@@ -75,6 +48,23 @@ export default class IosRunerGenerator implements RunnerGenerator {
       mustacheView,
       pathToRunnerConfig
     )
+  }
+
+  public createMustacheView({ config }: { config: RunnerGeneratorConfig }) {
+    const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(
+      path.join(config.extra.containerGenWorkingDir, 'out', 'ios')
+    )
+    return {
+      isReactNativeDevSupportEnabled:
+        config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
+      miniAppName: config.mainMiniAppName,
+      packagerHost:
+        config.reactNativePackagerHost || defaultReactNativePackagerHost,
+      packagerPort:
+        config.reactNativePackagerPort || defaultReactNativePackagerPort,
+      pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
+      pathToElectrodeContainerXcodeProj,
+    }
   }
 
   private validateExtraConfig(config: RunnerGeneratorConfig) {

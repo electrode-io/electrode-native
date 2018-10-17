@@ -1,7 +1,6 @@
 export {
   runLocalContainerGen,
   runCauldronContainerGen,
-  resolvePluginsVersions,
   containsVersionMismatch,
 } from './container'
 
