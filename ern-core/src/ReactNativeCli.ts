@@ -101,18 +101,12 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
     cwd?: string
     args?: string[]
   }) {
-    const tmpDir = createTmpDir()
-    const tmpScriptPath = path.join(tmpDir, 'packager.sh')
-    await fileUtils.writeFile(
-      tmpScriptPath,
-      `
-cd "${cwd}"; 
-echo "Running ${this.binaryPath} start ${args.join(' ')}";
-${this.binaryPath} start ${args.join(' ')};
-`
-    )
-    shell.chmod('+x', tmpScriptPath)
-    spawnp('open', ['-a', 'Terminal', tmpScriptPath])
+    const scriptPath = await this.createStartPackagerScript({
+      args,
+      cwd,
+      scriptFileName: 'packager.sh',
+    })
+    spawnp('open', ['-a', 'Terminal', scriptPath])
   }
 
   public async linuxStartPackageInNewWindow({
@@ -122,18 +116,12 @@ ${this.binaryPath} start ${args.join(' ')};
     cwd?: string
     args?: string[]
   }) {
-    const tmpDir = createTmpDir()
-    const tmpScriptPath = path.join(tmpDir, 'packager.sh')
-    await fileUtils.writeFile(
-      tmpScriptPath,
-      `
-cd "${cwd}"; 
-echo "Running ${this.binaryPath} start ${args.join(' ')}";
-${this.binaryPath} start ${args.join(' ')};
-`
-    )
-    shell.chmod('+x', tmpScriptPath)
-    spawnp('gnome-terminal', ['--command', tmpScriptPath])
+    const scriptPath = await this.createStartPackagerScript({
+      args,
+      cwd,
+      scriptFileName: 'packager.sh',
+    })
+    spawnp('gnome-terminal', ['--command', scriptPath])
   }
 
   public async windowsStartPackagerInNewWindow({
@@ -143,8 +131,25 @@ ${this.binaryPath} start ${args.join(' ')};
     cwd?: string
     args?: string[]
   }) {
+    const scriptPath = await this.createStartPackagerScript({
+      args,
+      cwd,
+      scriptFileName: 'packager.bat',
+    })
+    spawnp('cmd.exe', ['/C', scriptPath], { detached: true })
+  }
+
+  public async createStartPackagerScript({
+    cwd,
+    args,
+    scriptFileName,
+  }: {
+    cwd: string
+    args: string[]
+    scriptFileName: string
+  }): Promise<string> {
     const tmpDir = createTmpDir()
-    const tmpScriptPath = path.join(tmpDir, 'packager.bat')
+    const tmpScriptPath = path.join(tmpDir, scriptFileName)
     await fileUtils.writeFile(
       tmpScriptPath,
       `
@@ -154,7 +159,7 @@ ${this.binaryPath} start ${args.join(' ')};
 `
     )
     shell.chmod('+x', tmpScriptPath)
-    spawnp('cmd.exe', ['/C', tmpScriptPath], { detached: true })
+    return tmpScriptPath
   }
 
   public async isPackagerRunning() {
