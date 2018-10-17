@@ -24,3 +24,7 @@ export {
   getCurrentSchemaVersion,
   cauldronFileUriScheme,
 } from './util'
+
+import { CauldronRepositories } from './CauldronRepositories'
+export { CauldronRepositories } from './CauldronRepositories'
+export const cauldronRepositories = new CauldronRepositories()
