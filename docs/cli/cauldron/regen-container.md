@@ -23,10 +23,9 @@ Example: If the current container version is 1.2.3 and a version is not included
 **Default**  Lists all non-released native application versions from the Cauldron and  prompts you to choose one.
 **Example** `ern cauldron regen-api -d MyNativeApp:android:1.0.0`  
 
-`--force/-f`
+`--fullRegen`
 
-* Bypass compatibility checks and force update native dependencies versions.
-**Caution**  Before using the `--force/-f` option, be sure that you can bypass compatibility checks.
+* Performs a complete Container generation even if there was no native dependencies changes. 
 
 #### Remarks
 

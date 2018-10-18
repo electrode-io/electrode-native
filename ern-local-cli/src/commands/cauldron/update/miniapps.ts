@@ -107,22 +107,9 @@ export const commandHandler = async ({
   }
 
   const cauldron = await getActiveCauldron()
-  const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
-  const nonUpdatedMiniAppsInCauldron = _.xorBy(
-    miniapps,
-    miniAppsInCauldron,
-    'basePath'
-  )
-  const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
-  for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
-    const m = await kax
-      .task(`Retrieving ${nonUpdatedMiniAppInCauldron.toString()} MiniApp`)
-      .run(MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron))
-    nonUpdatedMiniAppsInCauldronObjs.push(m)
-  }
 
   const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-    [...miniAppsObjs, ...nonUpdatedMiniAppsInCauldronObjs]
+    miniAppsObjs
   )
   const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
   const finalNativeDependencies = resolver.retainHighestVersions(

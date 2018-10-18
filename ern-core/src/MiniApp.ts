@@ -36,6 +36,9 @@ yarn.lock
 `
 
 export class MiniApp {
+  // Session cache
+  public static miniAppFsPathByPackagePath = new Map<string, string>()
+
   public static fromCurrentPath() {
     return MiniApp.fromPath(process.cwd())
   }
@@ -62,25 +65,32 @@ export class MiniApp {
         fsPackagePath = await packageCache.getObjectCachePath(packagePath)
       }
     } else {
-      fsPackagePath = createTmpDir()
-      shell.pushd(fsPackagePath)
-      try {
-        await yarn.add(packagePath)
-        const packageJson = await readPackageJson('.')
-        const packageName = Object.keys(packageJson.dependencies)[0]
-        shell.rm(path.join(fsPackagePath, 'package.json'))
-        shell.mv(
-          path.join(fsPackagePath, 'node_modules', packageName, '*'),
-          fsPackagePath
+      if (this.miniAppFsPathByPackagePath.has(packagePath.fullPath)) {
+        fsPackagePath = this.miniAppFsPathByPackagePath.get(
+          packagePath.fullPath
         )
-        shell.rm(
-          '-rf',
-          path.join(fsPackagePath, 'node_modules', packageName, '*')
-        )
-      } finally {
-        shell.popd()
+      } else {
+        fsPackagePath = createTmpDir()
+        shell.pushd(fsPackagePath)
+        try {
+          await yarn.add(packagePath)
+          const packageJson = await readPackageJson('.')
+          const packageName = Object.keys(packageJson.dependencies)[0]
+          shell.rm(path.join(fsPackagePath, 'package.json'))
+          shell.mv(
+            path.join(fsPackagePath, 'node_modules', packageName, '*'),
+            fsPackagePath
+          )
+          shell.rm(
+            '-rf',
+            path.join(fsPackagePath, 'node_modules', packageName, '*')
+          )
+        } finally {
+          shell.popd()
+        }
       }
     }
+    this.miniAppFsPathByPackagePath.set(packagePath.fullPath, fsPackagePath)
     return new MiniApp(fsPackagePath, packagePath)
   }
 

@@ -80,7 +80,7 @@ export const commandHandler = async ({
     miniAppNotInNativeApplicationVersionContainer: {
       descriptor,
       extraErrorMessage:
-        'If you want to update MiniApp(s) version(s), use -ern cauldron update miniapps- instead',
+        'To update MiniApp(s) use -ern cauldron update miniapps- command',
       miniApp: miniapps,
     },
     napDescriptorExistInCauldron: {
@@ -99,17 +99,9 @@ export const commandHandler = async ({
   }
 
   const cauldron = await getActiveCauldron()
-  const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
-  const miniAppsInCauldronObjs: MiniApp[] = []
-  for (const miniAppInCauldron of miniAppsInCauldron) {
-    const m = await kax
-      .task(`Retrieving ${miniAppInCauldron.toString()} MiniApp`)
-      .run(MiniApp.fromPackagePath(miniAppInCauldron))
-    miniAppsInCauldronObjs.push(m)
-  }
 
   const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-    [...miniAppsObjs, ...miniAppsInCauldronObjs]
+    miniAppsObjs
   )
   const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
   const finalNativeDependencies = resolver.retainHighestVersions(
