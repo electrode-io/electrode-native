@@ -12,7 +12,7 @@ import { generateMiniAppsComposite } from './generateMiniAppsComposite'
 
 export async function bundleMiniApps(
   // The miniapps to be bundled
-  miniapps: MiniApp[],
+  miniapps: PackagePath[],
   compositeMiniAppDir: string,
   outDir: string,
   platform: NativePlatform,
@@ -24,16 +24,11 @@ export async function bundleMiniApps(
   // JavaScript API implementations
   jsApiImplDependencies?: PackagePath[]
 ): Promise<BundlingResult> {
-  const miniAppsPaths: PackagePath[] = []
-  for (const miniapp of miniapps) {
-    miniAppsPaths.push(miniapp.packagePath)
-  }
-
   await kax
     .task('Generating MiniApps Composite')
     .run(
       generateMiniAppsComposite(
-        miniAppsPaths,
+        miniapps,
         compositeMiniAppDir,
         { pathToYarnLock },
         jsApiImplDependencies

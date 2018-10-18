@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { NativeDependencies } from './nativeDependenciesLookup'
 import { MiniApp } from './MiniApp'
 import { PackagePath } from './PackagePath'
-import { AssertionError } from 'assert'
 
 export function containsVersionMismatch(
   versions: string[],

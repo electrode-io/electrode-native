@@ -1,4 +1,8 @@
-import { ContainerGenerator, ContainerGenResult } from 'ern-container-gen'
+import {
+  bundleMiniApps,
+  ContainerGenerator,
+  ContainerGenResult,
+} from 'ern-container-gen'
 import { AndroidGenerator } from 'ern-container-gen-android'
 import { IosGenerator } from 'ern-container-gen-ios'
 import {
@@ -11,6 +15,7 @@ import {
   NativePlatform,
   kax,
   nativeDepenciesVersionResolution,
+  BundlingResult,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
@@ -146,11 +151,9 @@ export async function runCauldronContainerGen(
   {
     outDir,
     compositeMiniAppDir,
-    forceFullGeneration,
   }: {
     outDir?: string
     compositeMiniAppDir?: string
-    forceFullGeneration?: boolean
   } = {}
 ): Promise<ContainerGenResult> {
   try {
@@ -164,9 +167,7 @@ export async function runCauldronContainerGen(
     )
 
     if (!napDescriptor.platform) {
-      throw new Error(
-        `napDescriptor (${napDescriptor.toString()}) does not contain a platform`
-      )
+      throw new Error(`${napDescriptor} does not specify a platform`)
     }
 
     if (!compositeMiniAppDir) {
@@ -187,7 +188,6 @@ export async function runCauldronContainerGen(
       .run(
         generator.generate({
           compositeMiniAppDir,
-          forceFullGeneration,
           ignoreRnpmAssets:
             containerGeneratorConfig &&
             containerGeneratorConfig.ignoreRnpmAssets,
@@ -202,6 +202,51 @@ export async function runCauldronContainerGen(
       )
 
     return containerGenResult
+  } catch (e) {
+    log.error(`runCauldronContainerGen failed: ${e}`)
+    throw e
+  }
+}
+
+export async function runCaudronBundleGen(
+  napDescriptor: NativeApplicationDescriptor,
+  {
+    outDir,
+    compositeMiniAppDir,
+  }: {
+    outDir: string
+    compositeMiniAppDir?: string
+  }
+): Promise<BundlingResult> {
+  try {
+    const cauldron = await getActiveCauldron()
+    const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
+    const pathToYarnLock = await cauldron.getPathToYarnLock(
+      napDescriptor,
+      constants.CONTAINER_YARN_KEY
+    )
+
+    if (!napDescriptor.platform) {
+      throw new Error(`${napDescriptor} does not specify a platform`)
+    }
+
+    if (!compositeMiniAppDir) {
+      compositeMiniAppDir = createTmpDir()
+    }
+
+    return kax
+      .task('Bundling MiniApps')
+      .run(
+        bundleMiniApps(
+          miniapps,
+          compositeMiniAppDir,
+          outDir,
+          napDescriptor.platform,
+          { pathToYarnLock: pathToYarnLock || undefined },
+          jsApiImpls
+        )
+      )
   } catch (e) {
     log.error(`runCauldronContainerGen failed: ${e}`)
     throw e

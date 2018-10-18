@@ -41,15 +41,21 @@ export const builder = (argv: Argv) => {
         'Force regen even if some conflicting native dependencies versions have been found',
       type: 'boolean',
     })
+    .option('fullRegen', {
+      describe: 'Perform complete regeneration',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   containerVersion,
   descriptor,
+  fullRegen,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
+  fullRegen?: boolean
 }) => {
   descriptor =
     descriptor ||
@@ -111,7 +117,7 @@ export const commandHandler = async ({
     },
     descriptor,
     `Regenerate Container of ${descriptor} native application`,
-    { containerVersion, forceFullGeneration: true }
+    { containerVersion, forceFullGeneration: fullRegen }
   )
   log.info(`${descriptor} container was successfully regenerated`)
 }

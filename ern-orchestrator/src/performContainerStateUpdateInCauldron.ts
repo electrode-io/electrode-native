@@ -4,14 +4,19 @@ import {
   Platform,
   kax,
   log,
+  gitCli,
+  shell,
+  fileUtils,
 } from 'ern-core'
+import { getContainerMetadataPath } from 'ern-container-gen'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { runCauldronContainerGen } from './container'
+import { runCauldronContainerGen, runCaudronBundleGen } from './container'
 import { runContainerTransformers } from './runContainerTransformers'
 import { runContainerPublishers } from './runContainerPublishers'
 import * as constants from './constants'
 import path from 'path'
 import semver from 'semver'
+import _ from 'lodash'
 
 //
 // Perform some custom work on a container in Cauldron, provided as a
@@ -31,52 +36,127 @@ export async function performContainerStateUpdateInCauldron(
   } = {}
 ) {
   if (!napDescriptor.platform) {
-    throw new Error(
-      `napDescriptor (${napDescriptor.toString()}) does not contain a platform`
-    )
+    throw new Error(`${napDescriptor} does not specify a platform`)
   }
 
   const platform = napDescriptor.platform
   const outDir = Platform.getContainerGenOutDirectory(platform)
-  let cauldronContainerVersion
+  let cauldronContainerNewVersion
   let cauldron
 
   try {
     cauldron = await getActiveCauldron()
 
+    const currentContainerVersion = await cauldron.getContainerVersion(
+      napDescriptor
+    )
+
     if (containerVersion) {
-      cauldronContainerVersion = containerVersion
+      cauldronContainerNewVersion = containerVersion
     } else {
-      cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(
+      cauldronContainerNewVersion = await cauldron.getTopLevelContainerVersion(
         napDescriptor
       )
-      if (cauldronContainerVersion) {
-        cauldronContainerVersion = semver.inc(cauldronContainerVersion, 'patch')
+      if (cauldronContainerNewVersion) {
+        cauldronContainerNewVersion = semver.inc(
+          cauldronContainerNewVersion,
+          'patch'
+        )
       } else {
         // Default to 1.0.0 for Container version
-        cauldronContainerVersion = '1.0.0'
+        cauldronContainerNewVersion = '1.0.0'
       }
     }
 
     // Begin a Cauldron transaction
     await cauldron.beginTransaction()
 
+    // Retrieve the list of native dependencies currently in Container
+    // (before state of the Container is modified)
+    const nativeDependenciesBefore = await cauldron.getNativeDependencies(
+      napDescriptor
+    )
+
     // Perform the custom container state update
     await stateUpdateFunc()
 
+    // Retrieve the list of native dependencies after the state of the Container
+    // has been modified.
+    const nativeDependenciesAfter = await cauldron.getNativeDependencies(
+      napDescriptor
+    )
+
+    // Is there any changes to native dependencies in the Container ?
+    const sameNativeDependencies =
+      _.xorBy(nativeDependenciesBefore, nativeDependenciesAfter, 'fullPath')
+        .length === 0
+
+    const containerGenConfig = await cauldron.getContainerGeneratorConfig(
+      napDescriptor
+    )
+    const publishers =
+      (containerGenConfig && containerGenConfig.publishers) || []
+    const gitPublisher = publishers.find(p => p.name.startsWith('git'))
+
+    // No need to regenerate a full Container if there were no changes to
+    // native dependencies in the Container; unless the forceFullGeneration
+    // flag is set or if there are no git publishers
+    let jsBundleOnly =
+      sameNativeDependencies && !forceFullGeneration && gitPublisher
+
     const compositeMiniAppDir = createTmpDir()
 
-    // Run container generator
-    const containerGenResult = await runCauldronContainerGen(napDescriptor, {
-      compositeMiniAppDir,
-      forceFullGeneration,
-      outDir,
-    })
+    // Only regenerate bundle if possible
+    if (jsBundleOnly) {
+      try {
+        log.info(
+          `No native dependencies changes from ${currentContainerVersion}`
+        )
+        log.info('Regenerating JS bundle only')
+        // Clean outDir
+        shell.rm('-rf', path.join(outDir, '{.*,*}'))
+        // git clone to outDir
+        await gitCli().cloneAsync(gitPublisher.url, outDir)
+        // git checkout current container version tag
+        await gitCli(outDir).checkoutAsync(`v${currentContainerVersion}`)
+        // and recreate bundle
+        await runCaudronBundleGen(napDescriptor, {
+          compositeMiniAppDir,
+          outDir,
+        })
+
+        // Remove .git dir
+        shell.rm('-rf', path.join(outDir, '.git'))
+        // Update container metadata
+        const metadata = await fileUtils.readJSON(
+          getContainerMetadataPath(outDir)
+        )
+        const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+        const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
+        metadata.miniApps = miniapps.map(m => m.fullPath)
+        metadata.jsApiImpls = jsApiImpls.map(j => j.fullPath)
+        metadata.ernVersion = Platform.currentVersion
+        await fileUtils.writeJSON(getContainerMetadataPath(outDir), metadata)
+      } catch (e) {
+        log.error(`Something went wrong trying to regenerate JS bundle only`)
+        log.error(e)
+        log.error(`Falling back to full Container generation`)
+        jsBundleOnly = false
+      }
+    }
+
+    if (!jsBundleOnly) {
+      // Otherwise full container
+      await runCauldronContainerGen(napDescriptor, {
+        compositeMiniAppDir,
+        outDir,
+      })
+    }
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(
       napDescriptor,
-      cauldronContainerVersion
+      cauldronContainerNewVersion
     )
 
     // Update version of ern used to generate this Container
@@ -94,10 +174,9 @@ export async function performContainerStateUpdateInCauldron(
     )
 
     // Run Container transformers sequentially (if any)
-    // Only run them if the Container was fully generated and not the JS Bundle only
-    // If only JS bundle was generated, it means that we reused previous Container
-    // directory, which was already transformed
-    if (containerGenResult && !containerGenResult.generatedJsBundleOnly) {
+    // Only run them if a full container was regenerated and not only js bundle
+    // otherwise it will apply transformers on top of a project already transformed
+    if (!jsBundleOnly) {
       await runContainerTransformers({ napDescriptor, containerPath: outDir })
     }
 
@@ -107,7 +186,7 @@ export async function performContainerStateUpdateInCauldron(
       .run(cauldron.commitTransaction(commitMessage))
 
     log.info(
-      `Added new container version ${cauldronContainerVersion} for ${napDescriptor.toString()} in Cauldron`
+      `Added new container version ${cauldronContainerNewVersion} for ${napDescriptor} in Cauldron`
     )
   } catch (e) {
     log.error(`[performContainerStateUpdateInCauldron] An error occurred: ${e}`)
@@ -119,7 +198,7 @@ export async function performContainerStateUpdateInCauldron(
 
   return runContainerPublishers({
     containerPath: outDir,
-    containerVersion: cauldronContainerVersion,
+    containerVersion: cauldronContainerNewVersion,
     napDescriptor,
   })
 }
