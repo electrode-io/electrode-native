@@ -419,6 +419,7 @@ export function coerceToPackagePath(v: string | PackagePath): PackagePath {
 
 const gitRefBranch = (branch: string) => `refs/heads/${branch}`
 const gitRefTag = (tag: string) => `refs/tags/${tag}`
+const gitShaLength = 40
 
 export async function isGitBranch(p: PackagePath): Promise<boolean> {
   if (!p.isGitPath) {
@@ -440,4 +441,20 @@ export async function isGitTag(p: PackagePath): Promise<boolean> {
   }
   const tags = await gitCli().listRemoteAsync(['--tags', p.basePath])
   return tags.includes(gitRefTag(p.version))
+}
+
+export async function getCommitShaOfGitBranchHead(
+  p: PackagePath
+): Promise<string> {
+  if (!p.isGitPath) {
+    throw new Error(`${p} is not a git path`)
+  }
+  if (!p.version) {
+    throw new Error(`${p} does not include a branch`)
+  }
+  const result = await gitCli().listRemoteAsync([p.basePath, p.version])
+  if (!result || result === '') {
+    throw new Error(`${p.version} branch was not found`)
+  }
+  return result.substring(0, gitShaLength)
 }

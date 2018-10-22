@@ -257,4 +257,61 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
       expect(result).false
     })
   })
+
+  describe('getCommitShaOfGitBranchHead', () => {
+    const sampleRef = `31d04959d8786113bfeaee997a1d1eaa8cb6c5f5        refs/heads/master`
+
+    it('should throw if the package path is not a git path', async () => {
+      assert(
+        await doesThrow(
+          coreUtils.getCommitShaOfGitBranchHead,
+          null,
+          PackagePath.fromString('registry-package@1.2.3')
+        )
+      )
+    })
+
+    it('should throw if the package path does not include a branch', async () => {
+      assert(
+        await doesThrow(
+          coreUtils.getCommitShaOfGitBranchHead,
+          null,
+          PackagePath.fromString(
+            'https://github.com/electrode-io/electrode-native.git'
+          )
+        )
+      )
+    })
+
+    it('should throw if the branch was not found', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemoteAsync: async () => {
+          return Promise.resolve('')
+        },
+      })
+      assert(
+        await doesThrow(
+          coreUtils.getCommitShaOfGitBranchHead,
+          null,
+          PackagePath.fromString(
+            'https://github.com/electrode-io/electrode-native.git#foo'
+          )
+        )
+      )
+    })
+
+    it('should return the commit SHA of the branch HEAD', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemoteAsync: async () => {
+          return Promise.resolve(sampleRef)
+        },
+      })
+      const result = await coreUtils.getCommitShaOfGitBranchHead(
+        PackagePath.fromString(
+          'https://github.com/electrode-io/electrode-native.git#master'
+        )
+      )
+      expect(result).eql('31d04959d8786113bfeaee997a1d1eaa8cb6c5f5')
+    })
+  })
 })
