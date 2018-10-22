@@ -1,6 +1,6 @@
 import { yarn } from './clients'
 import { PackagePath } from './PackagePath'
-import gitCli from './gitCli'
+import { gitCli } from './gitCli'
 import http from 'http'
 import _ from 'lodash'
 import { manifest } from './Manifest'
@@ -415,4 +415,29 @@ export function coerceToPackagePathArray(
 
 export function coerceToPackagePath(v: string | PackagePath): PackagePath {
   return typeof v === 'string' ? PackagePath.fromString(v) : v
+}
+
+const gitRefBranch = (branch: string) => `refs/heads/${branch}`
+const gitRefTag = (tag: string) => `refs/tags/${tag}`
+
+export async function isGitBranch(p: PackagePath): Promise<boolean> {
+  if (!p.isGitPath) {
+    throw new Error(`${p} is not a git path`)
+  }
+  if (!p.version) {
+    throw new Error(`${p} does not include the branch to check`)
+  }
+  const heads = await gitCli().listRemoteAsync(['--heads', p.basePath])
+  return heads.includes(gitRefBranch(p.version))
+}
+
+export async function isGitTag(p: PackagePath): Promise<boolean> {
+  if (!p.isGitPath) {
+    throw new Error(`${p} is not a git path`)
+  }
+  if (!p.version) {
+    throw new Error(`${p} does not include the tag to check`)
+  }
+  const tags = await gitCli().listRemoteAsync(['--tags', p.basePath])
+  return tags.includes(gitRefTag(p.version))
 }
