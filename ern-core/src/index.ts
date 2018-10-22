@@ -10,7 +10,6 @@ import _createTmpDir from './createTmpDir'
 import * as _dependencyLookup from './dependencyLookup'
 import * as _deviceConfig from './deviceConfig'
 import * as _fileUtils from './fileUtil'
-import _gitCli from './gitCli'
 import _handleCopyDirective from './handleCopyDirective'
 import * as _ios from './ios'
 import * as _iosUtil from './iosUtil'
@@ -40,6 +39,7 @@ export {
 export { ModuleFactory } from './ModuleFactory'
 export { isPackagePublished } from './isPackagePublished'
 export { getDefaultMavenLocalDirectory } from './getDefaultMavenLocalDirectory'
+export { gitCli } from './gitCli'
 
 export const config = _config
 export const Platform = _Platform
@@ -47,7 +47,6 @@ export const log = _log
 export const shell = _shell
 export const kax = _kax
 export const createTmpDir = _createTmpDir
-export const gitCli = _gitCli
 export const fileUtils = _fileUtils
 export const promptUtils = _promptUtils
 export const utils = _utils
