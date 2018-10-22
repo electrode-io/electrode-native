@@ -811,6 +811,27 @@ export class CauldronHelper {
     }
   }
 
+  public async addContainerMiniAppBranch(
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: PackagePath
+  ): Promise<void> {
+    return this.cauldron.addContainerMiniAppBranch(napDescriptor, miniApp)
+  }
+
+  public async updateContainerMiniAppBranch(
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: PackagePath
+  ): Promise<void> {
+    return this.cauldron.updateContainerMiniAppBranch(napDescriptor, miniApp)
+  }
+
+  public async removeContainerMiniAppBranch(
+    napDescriptor: NativeApplicationDescriptor,
+    miniApp: PackagePath
+  ): Promise<void> {
+    return this.cauldron.removeContainerMiniAppBranch(napDescriptor, miniApp)
+  }
+
   public async addContainerMiniApp(
     napDescriptor: NativeApplicationDescriptor,
     miniApp: PackagePath

@@ -214,6 +214,14 @@ export default class CauldronApi {
     return version.container.miniApps
   }
 
+  public async getContainerMiniAppsBranches(
+    descriptor: NativeApplicationDescriptor
+  ): Promise<string[]> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    return version.container.miniAppsBranches || []
+  }
+
   public async getContainerJsApiImpls(
     descriptor: NativeApplicationDescriptor
   ): Promise<string[]> {
@@ -797,22 +805,99 @@ export default class CauldronApi {
     return this.commit(`Set codePush entries in ${descriptor.toString()}`)
   }
 
+  public async addContainerMiniAppBranch(
+    descriptor: NativeApplicationDescriptor,
+    miniapp: PackagePath
+  ): Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    this.throwIfNoVersionInPackagePath(miniapp)
+    const version = await this.getVersion(descriptor)
+    if (!version.container.miniAppsBranches) {
+      version.container.miniAppsBranches = []
+    } else if (
+      version.container.miniAppsBranches
+        .map(m => PackagePath.fromString(m).basePath)
+        .includes(miniapp.basePath)
+    ) {
+      throw new Error(
+        `${
+          miniapp.basePath
+        } is already on a branch for ${descriptor}. Use update instead.`
+      )
+    }
+    version.container.miniAppsBranches.push(miniapp.fullPath)
+    return this.commit(
+      `Add ${miniapp.basePath} MiniApp ${
+        miniapp.version
+      } to ${descriptor} Container`
+    )
+  }
+
+  public async updateContainerMiniAppBranch(
+    descriptor: NativeApplicationDescriptor,
+    miniapp: PackagePath
+  ): Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    this.throwIfNoVersionInPackagePath(miniapp)
+    const version = await this.getVersion(descriptor)
+    if (
+      !version.container.miniAppsBranches ||
+      !version.container.miniAppsBranches
+        .map(PackagePath.fromString)
+        .find(m => m.basePath === miniapp.basePath)
+    ) {
+      return this.addContainerMiniAppBranch(descriptor, miniapp)
+    }
+    version.container.miniAppsBranches = version.container.miniAppsBranches.map(
+      m =>
+        PackagePath.fromString(m).basePath === miniapp.basePath
+          ? miniapp.fullPath
+          : m
+    )
+    return this.commit(
+      `Update ${miniapp.basePath} git branch to ${
+        miniapp.version
+      } in ${descriptor} Container`
+    )
+  }
+
+  public async removeContainerMiniAppBranch(
+    descriptor: NativeApplicationDescriptor,
+    miniapp: PackagePath
+  ): Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    if (
+      !version.container.miniAppsBranches ||
+      !version.container.miniAppsBranches.find(m =>
+        m.startsWith(miniapp.fullPath)
+      )
+    ) {
+      throw new Error(`${miniapp} does not exit in ${descriptor} Container`)
+    }
+    _.remove(
+      version.container.miniAppsBranches,
+      m => PackagePath.fromString(m).basePath === miniapp.basePath
+    )
+    return this.commit(
+      `Remove ${miniapp.fullPath} from ${descriptor} Container`
+    )
+  }
+
   public async addContainerMiniApp(
     descriptor: NativeApplicationDescriptor,
     miniapp: PackagePath
   ): Promise<void> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    if (version.container.miniApps.includes(miniapp.toString())) {
+    if (version.container.miniApps.includes(miniapp.fullPath)) {
       throw new Error(
-        `${
-          miniapp.basePath
-        } MiniApp already exists in ${descriptor.toString()} Container`
+        `${miniapp.basePath} MiniApp already exists in ${descriptor} Container`
       )
     }
-    version.container.miniApps.push(miniapp.toString())
+    version.container.miniApps.push(miniapp.fullPath)
     return this.commit(
-      `Add ${miniapp.basePath} MiniApp in ${descriptor.toString()} Container`
+      `Add ${miniapp.basePath} MiniApp to ${descriptor} Container`
     )
   }
 
@@ -1206,6 +1291,12 @@ If you want to modify this publisher configuration you need to edit it manually 
       throw new Error(
         `Cannot work with a partial native application descriptor`
       )
+    }
+  }
+
+  public throwIfNoVersionInPackagePath(packagePath: PackagePath) {
+    if (!packagePath.version) {
+      throw new Error(`No version/branch/tag specified in ${packagePath}`)
     }
   }
 }
