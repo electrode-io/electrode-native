@@ -2524,6 +2524,189 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
+  // addContainerMiniAppBranch
+  // ==========================================================
+  describe('addContainerMiniAppBranch', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.addContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+        )
+      )
+    })
+
+    it('should throw if the MiniApp path does not include a branch', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.addContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString('https://github.com/foo/MiniApp.git')
+        )
+      )
+    })
+
+    it('should add the MiniApp to the target container miniAppsBranches array', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      const miniAppsArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches'
+      )[0]
+      expect(miniAppsArr.includes('https://github.com/foo/MiniApp.git#master'))
+        .true
+    })
+
+    it('should throw if the MiniApp already has a branch specified', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.addContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString(
+            'https://github.com/foo/MiniApp.git#development'
+          )
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // updateContainerMiniAppBranch
+  // ==========================================================
+  describe('updateContainerMiniAppBranch', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.updateContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+        )
+      )
+    })
+
+    it('should throw if the MiniApp path does not include a branch', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.updateContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString('https://github.com/foo/MiniApp.git')
+        )
+      )
+    })
+
+    it('should update the MiniApp branch in the target container miniAppsBranches array', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      await cauldronApi(tmpFixture).updateContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#development')
+      )
+      const miniAppsArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches'
+      )[0]
+      expect(
+        miniAppsArr.includes('https://github.com/foo/MiniApp.git#development')
+      ).true
+    })
+  })
+
+  // ==========================================================
+  // removeContainerMiniAppBranch
+  // ==========================================================
+  describe('removeContainerMiniAppBranch', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.removeContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+        )
+      )
+    })
+
+    it('should throw if the MiniApp does not exist in the miniAppsBranches array', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.removeContainerMiniAppBranch,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString('https://github.com/foo/foo.git')
+        )
+      )
+    })
+
+    it('should remove the MiniApp branch from the target container miniAppsBranches array [branch specified]', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      await cauldronApi(tmpFixture).removeContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      const miniAppsArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches'
+      )[0]
+      expect(miniAppsArr).empty
+    })
+
+    it('should remove the MiniApp branch from the target container miniAppsBranches array [branch not specified]', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
+      )
+      await cauldronApi(tmpFixture).removeContainerMiniAppBranch(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/MiniApp.git')
+      )
+      const miniAppsArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches'
+      )[0]
+      expect(miniAppsArr).empty
+    })
+  })
+
+  // ==========================================================
   // throwIfPartialNapDescriptor
   // ==========================================================
   describe('throwIfPartialNapDescriptor', () => {

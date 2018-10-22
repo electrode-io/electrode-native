@@ -1,5 +1,10 @@
 export interface CauldronContainer {
   miniApps: string[]
+  /**
+   * MiniApp git branches feature.
+   * Introduced in 0.25.0.
+   */
+  miniAppsBranches?: string[]
   nativeDeps: string[]
   jsApiImpls: string[]
   /**
