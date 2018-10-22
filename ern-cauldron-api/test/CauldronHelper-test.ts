@@ -1,7 +1,8 @@
+import sinon from 'sinon'
 import { assert, expect } from 'chai'
 import { CauldronHelper } from '../src/CauldronHelper'
 import { CauldronConfigLevel } from '../src/types'
-import { PackagePath, NativeApplicationDescriptor } from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, utils } from 'ern-core'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import {
   CauldronApi,
@@ -12,6 +13,7 @@ import {
 import jp from 'jsonpath'
 import path from 'path'
 import mockFs from 'mock-fs'
+const sandbox = sinon.createSandbox()
 
 const codePushMetadataFixtureOne = {
   appVersion: '17.7',
@@ -66,6 +68,7 @@ const testTopLevelContainerPath =
 describe('CauldronHelper.js', () => {
   afterEach(() => {
     mockFs.restore()
+    sandbox.restore()
   })
 
   describe('constructor', () => {
@@ -135,6 +138,181 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:0.0.0')
       )
       expect(result).false
+    })
+  })
+
+  describe('addContainerMiniApp', () => {
+    it('should add the MiniApp to the container miniApps array [registry path]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addContainerMiniApp(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('registry-miniapp@1.0.0')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniApps.includes('registry-miniapp@1.0.0')
+      ).true
+    })
+
+    it('should add the MiniApp to the container miniApps array [file path]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.addContainerMiniApp(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('file:/Users/foo/test-miniapp')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniApps.includes(
+          'file:/Users/foo/test-miniapp'
+        )
+      ).true
+    })
+
+    it('should add the MiniApp to the container miniApps array [git path - no branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
+      await cauldronHelper.addContainerMiniApp(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('https://github.com/foo/test-miniapp.git#tag')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniApps.includes(
+          'https://github.com/foo/test-miniapp.git#tag'
+        )
+      ).true
+    })
+
+    it('should not add the MiniApp to the container miniAppsBranches array [git path - no branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
+      await cauldronHelper.addContainerMiniApp(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('https://github.com/foo/test-miniapp.git#tag')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(nativeAppVersion.container.miniAppsBranches).undefined
+    })
+
+    it('should add the MiniApp to the container miniApps array with proper branch HEAD SHA [git path - branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(true)
+      sandbox
+        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
+      await cauldronHelper.addContainerMiniApp(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('https://github.com/foo/test-miniapp.git#master')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      console.log(`MINIAPPS : ${nativeAppVersion.container.miniApps}`)
+      expect(
+        nativeAppVersion.container.miniApps.includes(
+          'https://github.com/foo/test-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a'
+        )
+      ).true
+    })
+
+    it('should add the MiniApp to the container miniAppsBranches array with proper branch [git path - branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(true)
+      sandbox
+        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
+      await cauldronHelper.addContainerMiniApp(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('https://github.com/foo/test-miniapp.git#master')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniAppsBranches.includes(
+          'https://github.com/foo/test-miniapp.git#master'
+        )
+      ).true
+    })
+  })
+
+  describe('updateContainerMiniAppVersion', () => {
+    it('should update the MiniApp version in the container miniApps array [registry path]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      await cauldronHelper.updateContainerMiniAppVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString('@test/react-native-foo@6.0.0')
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniApps.includes(
+          '@test/react-native-foo@6.0.0'
+        )
+      ).true
+    })
+
+    it('should update the MiniApp version in the container miniApps array [git path - no branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
+      await cauldronHelper.updateContainerMiniAppVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString(
+          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.10'
+        )
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniApps.includes(
+          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.10'
+        )
+      ).true
+    })
+
+    it('should update the MiniApp in the container miniApps array with proper branch HEAD SHA [git path - branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(true)
+      sandbox
+        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
+      await cauldronHelper.updateContainerMiniAppVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString(
+          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master'
+        )
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      console.log(`MINIAPPS : ${nativeAppVersion.container.miniApps}`)
+      expect(
+        nativeAppVersion.container.miniApps.includes(
+          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a'
+        )
+      ).true
+    })
+
+    it('should update the MiniApp in the container miniAppsBranches array with proper branch [git path - branch]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(true)
+      sandbox
+        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
+      await cauldronHelper.updateContainerMiniAppVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        PackagePath.fromString(
+          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master'
+        )
+      )
+      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
+      expect(
+        nativeAppVersion.container.miniAppsBranches.includes(
+          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master'
+        )
+      ).true
     })
   })
 
@@ -315,6 +493,7 @@ describe('CauldronHelper.js', () => {
 
   describe('removeContainerMiniApp', () => {
     it('should throw if the given native application descriptor is partial', async () => {
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
@@ -328,6 +507,7 @@ describe('CauldronHelper.js', () => {
     })
 
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
@@ -341,6 +521,7 @@ describe('CauldronHelper.js', () => {
     })
 
     it('should throw if the given native application version is released', async () => {
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
@@ -354,6 +535,7 @@ describe('CauldronHelper.js', () => {
     })
 
     it('should remove the miniapp from the native application version [1]', async () => {
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.removeContainerMiniApp(
@@ -369,6 +551,7 @@ describe('CauldronHelper.js', () => {
     })
 
     it('should remove the miniapp from the native application version [2]', async () => {
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.removeContainerMiniApp(
@@ -1752,6 +1935,7 @@ describe('CauldronHelper.js', () => {
     it('should update miniapps with different versions', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       await cauldronHelper.syncContainerMiniApps(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         [
@@ -1778,6 +1962,7 @@ describe('CauldronHelper.js', () => {
     it('should add missing miniapps and update miniapps with different versions', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
+      sandbox.stub(utils, 'isGitBranch').resolves(false)
       await cauldronHelper.syncContainerMiniApps(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         [
