@@ -7,6 +7,7 @@ import {
   promptUtils,
   NativePlatform,
   normalizeVersionsToSemver,
+  utils as coreUtils,
 } from 'ern-core'
 import {
   CauldronCodePushMetadata,
@@ -111,36 +112,39 @@ export class CauldronHelper {
 
     // Copy native container dependencies
     for (const nativeDep of sourceVersion.container.nativeDeps) {
-      await this.addContainerNativeDependency(
+      await this.cauldron.addContainerNativeDependency(
         target,
         PackagePath.fromString(nativeDep)
       )
     }
     // Copy container MiniApps
     for (const containerMiniApp of sourceVersion.container.miniApps) {
-      await this.addContainerMiniApp(
+      await this.cauldron.addContainerMiniApp(
         target,
         PackagePath.fromString(containerMiniApp)
       )
     }
     // Copy container JS API implementations
     for (const containerJsApiImpl of sourceVersion.container.jsApiImpls) {
-      await this.addContainerJsApiImpl(
+      await this.cauldron.addContainerJsApiImpl(
         target,
         PackagePath.fromString(containerJsApiImpl)
       )
     }
     // Copy yarn lock if any
     if (sourceVersion.yarnLocks) {
-      await this.setYarnLocks(target, sourceVersion.yarnLocks)
+      await this.cauldron.setYarnLocks(target, sourceVersion.yarnLocks)
     }
     // Copy container version
     if (sourceVersion.containerVersion) {
-      await this.updateContainerVersion(target, sourceVersion.containerVersion)
+      await this.cauldron.updateContainerVersion(
+        target,
+        sourceVersion.containerVersion
+      )
     }
     // Copy ern version
     if (sourceVersion.container.ernVersion) {
-      await this.updateContainerErnVersion(
+      await this.cauldron.updateContainerErnVersion(
         target,
         sourceVersion.container.ernVersion
       )
@@ -189,16 +193,25 @@ export class CauldronHelper {
 
   public async removeContainerMiniApp(
     napDescriptor: NativeApplicationDescriptor,
-    miniAppName: PackagePath
+    miniApp: PackagePath
   ): Promise<void> {
     await this.throwIfNativeAppVersionIsReleased(
       napDescriptor,
       'Cannot remove a MiniApp for a released native app version'
     )
-    return this.cauldron.removeContainerMiniApp(
-      napDescriptor,
-      miniAppName.basePath
-    )
+    try {
+      // Remove any potential branch in case previous MiniApp version
+      // was tracking a branch
+      await this.cauldron.removeContainerMiniAppBranch(
+        napDescriptor,
+        PackagePath.fromString(miniApp.basePath)
+      )
+    } catch (e) {
+      // swallow
+      // We don't really care if there was not branch associated to
+      // this MiniApp, as long as cleaning is done if there was one
+    }
+    return this.cauldron.removeContainerMiniApp(napDescriptor, miniApp.basePath)
   }
 
   public async removeContainerJsApiImpl(
@@ -836,7 +849,16 @@ export class CauldronHelper {
     napDescriptor: NativeApplicationDescriptor,
     miniApp: PackagePath
   ): Promise<void> {
-    return this.cauldron.addContainerMiniApp(napDescriptor, miniApp)
+    if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
+      const commitSha = await coreUtils.getCommitShaOfGitBranchHead(miniApp)
+      await this.cauldron.addContainerMiniAppBranch(napDescriptor, miniApp)
+      await this.cauldron.addContainerMiniApp(
+        napDescriptor,
+        PackagePath.fromString(`${miniApp.basePath}#${commitSha}`)
+      )
+    } else {
+      await this.cauldron.addContainerMiniApp(napDescriptor, miniApp)
+    }
   }
 
   public async addContainerJsApiImpl(
@@ -1053,7 +1075,28 @@ export class CauldronHelper {
     napDescriptor: NativeApplicationDescriptor,
     miniApp: PackagePath
   ): Promise<void> {
-    return this.cauldron.updateContainerMiniAppVersion(napDescriptor, miniApp)
+    if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
+      const commitSha = await coreUtils.getCommitShaOfGitBranchHead(miniApp)
+      await this.cauldron.updateContainerMiniAppBranch(napDescriptor, miniApp)
+      await this.cauldron.updateContainerMiniAppVersion(
+        napDescriptor,
+        PackagePath.fromString(`${miniApp.basePath}#${commitSha}`)
+      )
+    } else {
+      try {
+        // Remove any potential branch in case previous MiniApp version
+        // was tracking a branch
+        await this.cauldron.removeContainerMiniAppBranch(
+          napDescriptor,
+          PackagePath.fromString(miniApp.basePath)
+        )
+      } catch (e) {
+        // swallow
+        // We don't really care if there was not branch associated to
+        // this MiniApp, as long as cleaning is done if there was one
+      }
+      await this.cauldron.updateContainerMiniAppVersion(napDescriptor, miniApp)
+    }
   }
 
   //
