@@ -26,7 +26,10 @@ The following is an example of a `cauldron.json` document.
          "url": "git@github.com:user/ern-custom-manifest.git",
          "type": "partial"
        }
-     }
+     },
+     "codePush": {
+      "entriesLimit": 10
+    },
   },
   "nativeApps": [
     {
@@ -39,41 +42,76 @@ The following is an example of a `cauldron.json` document.
               "containerVersion": "1.2.3",
               "publishers": [
                 {
-                  "name": "github",
+                  "name": "git",
                   "url": "git@github.com:user/myweatherapp-android-container.git"
                 },
                 {
                   "name": "maven",
                   "url": "http://user.nexus.repo.com:8081/nexus/content/repositories"
                 }
+              ],
+              "transformers": [
+                {
+                  "name": "build-config",
+                  "extra": {
+                    "configurations": [
+                      "ElectrodeContainer-Debug",
+                      "ElectrodeContainer-Release"
+                    ],
+                    "settings": {
+                      "ENABLE_BITCODE": "NO",
+                      "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym"
+                    }
+                  }
+                }
               ]
             }
           },
           "versions": [
             {
-              "name": "1.0.0",
-              "ernPlatformVersion": "0.5.0",
-              "containerVersion": "1.2.3",
+             "name": "1.0.0",
+
               "isReleased": true,
-              "yarnlock": "3ed0a5981a22d89d3b30d6e2011b5b581581771c",
-              "nativeDeps": [
-                "react-native@0.42.0",
-                "react-native-electrode-bridge@1.5.0",
-                "react-native-ern-weather-api@0.19.0",
-                "react-native-vector-icons@4.0.0",
-                "react-native-code-push@1.17.1-beta"
-              ],
-              "miniApps": {
-                "container": [
-                  "react-native-weather-overview@1.0.0",
-                  "react-native-weather-details@2.1.3",
-                ],
-                "codePush": [
-                 [
-                   "react-native-weather-overview@1.0.0",
-                   "react-native-weather-details@2.0.0",
-                 ]
+              "binary": null,
+              "yarnLocks": {
+                "container": "3f5f0e4bac859b9e83adacacc2141e594ac1403d"
+              },
+              "codePush": {
+                "Production": [
+                  {
+                    "metadata": {
+                      "deploymentName": "Production",
+                      "isMandatory": true,
+                      "appVersion": "1.0.0",
+                      "size": 1877208,
+                      "releaseMethod": "Release",
+                      "label": "v16",
+                      "releasedBy": "whoever@whatever.com",
+                      "rollout": 100
+                    },
+                    "miniapps": [
+                      "movielistminiapp@0.0.11",
+                      "https://github.com/electrode-io/MovieDetailsMiniApp#0.0.9"
+                    ],
+                    "jsApiImpls": []
+                  }
                 ]
+              },
+              "containerVersion": "1.0.9",
+              "container": {
+                "nativeDeps": [
+                  "react-native-code-push@5.2.1",
+                  "react-native-ernmovie-api@0.0.9",
+                  "react-native-ernnavigation-api@0.0.4",
+                  "react-native@0.52.2",
+                  "react-native-electrode-bridge@1.5.9"
+                ],
+                "miniApps": [
+                  "movielistminiapp@0.0.10",
+                  "https://github.com/electrode-io/MovieDetailsMiniApp#0.0.9"
+                ],
+                "jsApiImpls": [],
+                "ernPlatformVersion": "0.24.0"
               }
             }
           ]
@@ -92,17 +130,16 @@ This example `cauldron.json` document shows the following:
 The configuration also shows the different objects stored in the cauldron--level by level.
 
 * A config object (optional) and a nativeApps array  
-* Currently the cauldron top level configuration object can only hold a manifest configuration. For details about the manifest and its configuration, see the information about the  [Electrode Native Manifest](./manifest.md).  
 
-* The `nativeapps` array contains the data of all mobile applications that are part of the cauldron. A cauldron can store multiple mobile applications, however it is not recommended--instead, we recommend that you use one cauldron per mobile application.  
+* The `nativeapps` array contains the data of all mobile applications that are part of the cauldron. A cauldron can store multiple mobile applications, however it is not recommended--instead, we recommend that you use one cauldron per mobile application. It can also be a good idea to go even more granular and have one Cauldron per native application platform (i.e `MyWeatherApp Android` / `MyWeatherApp iOS`)
 
 * For each mobile application, the second level is the platforms array. Electrode Native supports two platforms: Android and iOS. For each platform, there can be multiple versions of a mobile application. Most of the Cauldron data is stored at this level (mobile application + platform + version).
 
-* At the platform level of the `MyWeatherApp` application (Android), an optional config object contains configuration for the Container generator that applies to every version of the `MyWeatherApp` for the Android platform. It also contains CodePush configuration. For information about CodePush, see the [CodePush documentation](https://microsoft.github.io/code-push/) for more details. For information about the container generator configuration, see the [Container documentation](./container.md).
+* At the platform level of the `MyWeatherApp` application (Android), an optional config object contains configuration for the Container generator that applies to every version of the `MyWeatherApp` for the Android platform. Likewise it contains some configuration for a Container transformer. It also contains CodePush configuration. For information about CodePush, see the [CodePush documentation](https://microsoft.github.io/code-push/) for more details. For information about  Container Generator and Transformers configuration, refer to the [Container documentation](./container.md).
 
-For each version of a mobile application, the cauldron stores the following:
+For each version of a mobile application, the cauldron stores the following data:
 
 - `isReleased` : `true` if this version is released to users and `false` otherwise (this version is in development)
 - `yarnlock` : The SHA of the `yarn.lock` file stored in the cauldron file store - this is used by Electrode Native when generating the composite JavaScript bundle.
 - `nativeDeps` : An array of native dependencies descriptors, corresponding to the native dependencies (and their versions) stored in the current container of this mobile application version
-- `miniApps` : MiniApps package descriptors corresponding to the MiniApps currently part of the current Container version or released through CodePush updates
+- `miniApps` : MiniApps package descriptors corresponding to the MiniApps currently part of the current Container version or released through CodePush updates. The `miniApps` array only contains immutable versions. What this means is that any MiniApp path refer to a specific version. For example in the case of a MiniApp added as a registry path, a fixed version must be specified (ex: `movielistminiapp@0.0.10`). This cannot be a range version (ex : `movielistminiapp@^0.0.10`). In the same way, this cannot be a branch (ex : `"https://github.com/electrode-io/MovieDetailsMiniApp#master`). While it is possible to add a MiniApp this way; Electrode Native will track the branch and only keep a commit SHA in the `miniApps` array (ex : `"https://github.com/electrode-io/MovieDetailsMiniApp#ce08c19e2b707fc96a4db016c47a6f3ae8d66262`). This is done to make sure that one can know exactly what versions (and thus code) of the MiniApps are included in a given Container. Indeed, using a version range such as `^0.0.10` or a branch such as `master` would not allow one to know exactly what is included in a given Container version.
