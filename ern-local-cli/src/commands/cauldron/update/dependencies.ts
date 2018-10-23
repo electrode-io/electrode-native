@@ -106,10 +106,9 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const dependency of dependencies) {
-        await cauldron.updateContainerNativeDependencyVersion(
+        await cauldron.updateNativeDependencyVersionInContainer(
           descriptor!,
-          dependency.basePath,
-          dependency.version!
+          dependency
         )
         cauldronCommitMessage.push(
           `- Update ${dependency.basePath} native dependency to v${

@@ -467,4 +467,37 @@ export default class Ensure {
       )
     }
   }
+
+  // Electrode Native currently supports the following versions types
+  // to be added to a Container for MiniApps or JS API Implementations
+  // dependending of the path type :
+  // - File Path      : No intrisic version. Not allowed.
+  // - Git Path       : Branch/Tag/Commit SHA
+  // - Registry Path  : Fixed (and valid) semantic version. No Ranges.
+  public static isSupportedMiniAppOrJsApiImplVersion(
+    obj: string | PackagePath | Array<string | PackagePath> | void,
+    extraErrorMessage?: string
+  ) {
+    if (obj) {
+      const dependencies = coreUtils.coerceToPackagePathArray(obj)
+      for (const dependency of dependencies) {
+        if (dependency.isFilePath) {
+          throw new Error('File Path not supported')
+        } else if (dependency.isRegistryPath) {
+          if (!dependency.version) {
+            throw new Error(`Missing version for ${dependency}`)
+          } else if (!semver.valid(dependency.version)) {
+            throw new Error(
+              `Unsupported version ${dependency.version} for ${
+                dependency.basePath
+              }`
+            )
+          }
+        } else if (!dependency.version) {
+          // git path
+          throw new Error(`Missing version for ${dependency}`)
+        }
+      }
+    }
+  }
 }

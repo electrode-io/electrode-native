@@ -94,7 +94,7 @@ export const commandHandler = async ({
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const dependency of dependencies) {
-        await cauldron.addContainerNativeDependency(descriptor!, dependency)
+        await cauldron.addNativeDependencyToContainer(descriptor!, dependency)
         cauldronCommitMessage.push(`- Add ${dependency} native dependency`)
       }
     },

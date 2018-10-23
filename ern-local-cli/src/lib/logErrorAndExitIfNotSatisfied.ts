@@ -27,6 +27,7 @@ export async function logErrorAndExitIfNotSatisfied({
   isDirectoryPath,
   pathExist,
   isValidPlatformConfig,
+  isSupportedMiniAppOrJsApiImplVersion,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
@@ -134,6 +135,10 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   isValidPlatformConfig?: {
     key: string
+  }
+  isSupportedMiniAppOrJsApiImplVersion?: {
+    obj: string | PackagePath | Array<string | PackagePath> | void
+    extraErrorMessage?: string
   }
 } = {}) {
   let kaxTask
@@ -360,6 +365,14 @@ export async function logErrorAndExitIfNotSatisfied({
     if (isValidPlatformConfig) {
       kaxTask = kax.task('Ensuring that config key is whitelisted')
       Ensure.isValidPlatformConfig(isValidPlatformConfig.key)
+      kaxTask.succeed()
+    }
+    if (isSupportedMiniAppOrJsApiImplVersion) {
+      kaxTask = kax.task('Ensuring that version is fixed')
+      Ensure.isSupportedMiniAppOrJsApiImplVersion(
+        isSupportedMiniAppOrJsApiImplVersion.obj,
+        isSupportedMiniAppOrJsApiImplVersion.extraErrorMessage
+      )
       kaxTask.succeed()
     }
   } catch (e) {

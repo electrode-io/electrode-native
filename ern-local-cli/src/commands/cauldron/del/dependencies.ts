@@ -94,7 +94,10 @@ export const commandHandler = async ({
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const dependency of dependencies) {
-        await cauldron.removeContainerNativeDependency(descriptor!, dependency)
+        await cauldron.removeNativeDependencyFromContainer(
+          descriptor!,
+          dependency
+        )
         cauldronCommitMessage.push(`- Remove ${dependency} native dependency`)
       }
     },
