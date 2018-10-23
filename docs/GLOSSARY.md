@@ -28,6 +28,8 @@ Package in remote git repository:
 - `https://github.com/electrode-io/MovieListMiniApp.git`
 - `https://github.com/electrode-io/MovieListMiniApp.git#0.0.9`
 
+The string following the optional `#` denotes a branch/tag or specific commit SHA.
+
 Package on local file system :
 
 - `file:/Users/blemair/Code/MovieListMiniApp`

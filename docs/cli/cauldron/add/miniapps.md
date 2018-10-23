@@ -5,7 +5,6 @@
 * Add one or more MiniApps to a non-released native application version in a Cauldron  
 * Perform multiple checks, including MiniApp dependencies analysis, to ensure compatibility with the target native application container  
 * Generate and publish a new Container version  
-  The native application uses the new Container version to access the new MiniApp.
 
 #### Syntax
 
@@ -16,6 +15,7 @@
 `<miniapps..>`
 
 * One or more package path to MiniApps (delimited by spaces) to add to a target native application version in the Cauldron.
+* Any MiniApp path will be added to the Container in the Cauldron, as such, with the exception of a git path including a branch. In that case, the MiniApp path that will be added to the Container in the Cauldron will contain the commit SHA of the HEAD of the branch, rather than the branch itself.
 
 **Example**  
 
@@ -26,8 +26,7 @@
 `--containerVersion/-v <version>`
 
 * Specify a version for the new container  
-* **Default**  Incremental patch number of the current container version  
-Example: If the current container version is 1.2.3 and a version is not included in the command, the new container version will be 1.2.4.  
+* **Default**  Increment the patch digit of the current container version  
 
 `--descriptor/-d <descriptor>`
 
