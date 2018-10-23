@@ -117,6 +117,14 @@ export class CauldronHelper {
         PackagePath.fromString(nativeDep)
       )
     }
+    // Copy container MiniApps branches
+    for (const containerMiniAppBranch of sourceVersion.container
+      .miniAppsBranches || []) {
+      await this.cauldron.addContainerMiniAppBranch(
+        target,
+        PackagePath.fromString(containerMiniAppBranch)
+      )
+    }
     // Copy container MiniApps
     for (const containerMiniApp of sourceVersion.container.miniApps) {
       await this.cauldron.addContainerMiniApp(
@@ -1097,6 +1105,43 @@ export class CauldronHelper {
       }
       await this.cauldron.updateContainerMiniAppVersion(napDescriptor, miniApp)
     }
+  }
+
+  //
+  // For each of the MiniApps that are tracking a branch (MiniApps contained in
+  // the container miniAppsBranches array), update the miniApps array
+  // so that each miniapp version point to the latest commit sha of each branch.
+  // Returns an array that contains all MiniApps PackagePath that have been
+  // updated (new commit SHA)
+  public async syncContainerMiniAppsBranches(
+    descriptor: NativeApplicationDescriptor
+  ): Promise<PackagePath[]> {
+    const result: PackagePath[] = []
+    const miniAppsBranches = (await this.cauldron.getContainerMiniAppsBranches(
+      descriptor
+    )).map(p => PackagePath.fromString(p))
+    const miniApps = (await this.cauldron.getContainerMiniApps(descriptor)).map(
+      p => PackagePath.fromString(p)
+    )
+    for (const miniAppBranch of miniAppsBranches) {
+      const latestCommitSha = await coreUtils.getCommitShaOfGitBranchHead(
+        miniAppBranch
+      )
+      const matchingMiniApp = miniApps.find(
+        m => m.basePath === miniAppBranch.basePath
+      )
+      if (matchingMiniApp!.version !== latestCommitSha) {
+        const newPackagePath = PackagePath.fromString(
+          `${miniAppBranch.basePath}#${latestCommitSha}`
+        )
+        await this.cauldron.updateContainerMiniAppVersion(
+          descriptor,
+          newPackagePath
+        )
+        result.push(newPackagePath)
+      }
+    }
+    return result
   }
 
   //

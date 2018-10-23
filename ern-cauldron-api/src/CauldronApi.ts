@@ -843,7 +843,7 @@ export default class CauldronApi {
     if (
       !version.container.miniAppsBranches ||
       !version.container.miniAppsBranches
-        .map(PackagePath.fromString)
+        .map(p => PackagePath.fromString(p))
         .find(m => m.basePath === miniapp.basePath)
     ) {
       return this.addContainerMiniAppBranch(descriptor, miniapp)
