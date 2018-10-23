@@ -79,7 +79,7 @@ export const commandHandler = async ({
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const jsApiImpl of jsapiimpls) {
-        await cauldron.removeContainerJsApiImpl(descriptor!, jsApiImpl)
+        await cauldron.removeJsApiImplFromContainer(descriptor!, jsApiImpl)
         cauldronCommitMessage.push(
           `- Remove ${jsApiImpl} JS API implementation`
         )

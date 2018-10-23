@@ -14,7 +14,11 @@
 `<jsapiimpls..>`
 
 * One or more package path to JS API implementations(s) (delimited by spaces) to update in a target native application version in the Cauldron.
-* The version of each JS API implementation is corresponding to the version to update to. 
+* The following types of JS API Implementation paths are not supported by this command :
+  - File path (ex `file://Users/foo/JsApiImpl`)
+  - Git path missing branch/tag or commit sha (ex: `https://github.com/foo/JsApiImpl.git`)
+  - Registry path missing version (ex: `JsApiImpl`)
+  - Registry path using a version range (ex: `JsApiImpl@^1.0.0`)
 
 **Options**  
 

@@ -141,11 +141,11 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('addContainerMiniApp', () => {
+  describe('addMiniAppToContainer', () => {
     it('should add the MiniApp to the container miniApps array [registry path]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.addContainerMiniApp(
+      await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('registry-miniapp@1.0.0')
       )
@@ -155,26 +155,11 @@ describe('CauldronHelper.js', () => {
       ).true
     })
 
-    it('should add the MiniApp to the container miniApps array [file path]', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.addContainerMiniApp(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        PackagePath.fromString('file:/Users/foo/test-miniapp')
-      )
-      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(
-        nativeAppVersion.container.miniApps.includes(
-          'file:/Users/foo/test-miniapp'
-        )
-      ).true
-    })
-
     it('should add the MiniApp to the container miniApps array [git path - no branch]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(false)
-      await cauldronHelper.addContainerMiniApp(
+      await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('https://github.com/foo/test-miniapp.git#tag')
       )
@@ -190,7 +175,7 @@ describe('CauldronHelper.js', () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(false)
-      await cauldronHelper.addContainerMiniApp(
+      await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('https://github.com/foo/test-miniapp.git#tag')
       )
@@ -209,7 +194,7 @@ describe('CauldronHelper.js', () => {
       sandbox
         .stub(utils, 'getCommitShaOfGitBranchHead')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
-      await cauldronHelper.addContainerMiniApp(
+      await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('https://github.com/foo/test-miniapp.git#master')
       )
@@ -229,7 +214,7 @@ describe('CauldronHelper.js', () => {
       sandbox
         .stub(utils, 'getCommitShaOfGitBranchHead')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
-      await cauldronHelper.addContainerMiniApp(
+      await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('https://github.com/foo/test-miniapp.git#master')
       )
@@ -242,11 +227,11 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('updateContainerMiniAppVersion', () => {
+  describe('updateMiniAppVersionInContainer', () => {
     it('should update the MiniApp version in the container miniApps array [registry path]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.updateContainerMiniAppVersion(
+      await cauldronHelper.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('@test/react-native-foo@6.0.0')
       )
@@ -262,7 +247,7 @@ describe('CauldronHelper.js', () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(false)
-      await cauldronHelper.updateContainerMiniAppVersion(
+      await cauldronHelper.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
           'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.10'
@@ -283,7 +268,7 @@ describe('CauldronHelper.js', () => {
       sandbox
         .stub(utils, 'getCommitShaOfGitBranchHead')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
-      await cauldronHelper.updateContainerMiniAppVersion(
+      await cauldronHelper.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
           'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master'
@@ -305,7 +290,7 @@ describe('CauldronHelper.js', () => {
       sandbox
         .stub(utils, 'getCommitShaOfGitBranchHead')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
-      await cauldronHelper.updateContainerMiniAppVersion(
+      await cauldronHelper.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
           'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master'
@@ -320,13 +305,13 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('addContainerNativeDependency', () => {
+  describe('addNativeDependencyToContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.addContainerNativeDependency,
+          cauldronHelper.addNativeDependencyToContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('test@1.0.0')
@@ -339,7 +324,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.addContainerNativeDependency,
+          cauldronHelper.addNativeDependencyToContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           PackagePath.fromString('test@1.0.0')
@@ -352,7 +337,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.addContainerNativeDependency,
+          cauldronHelper.addNativeDependencyToContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('test@1.0.0')
@@ -363,7 +348,7 @@ describe('CauldronHelper.js', () => {
     it('should add the dependency to the native application version', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.addContainerNativeDependency(
+      await cauldronHelper.addNativeDependencyToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('test@1.0.0')
       )
@@ -372,13 +357,13 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('addContainerJsApiImpl', () => {
+  describe('addJsApiImplToContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.addContainerJsApiImpl,
+          cauldronHelper.addJsApiImplToContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('test@1.0.0')
@@ -391,7 +376,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.addContainerJsApiImpl,
+          cauldronHelper.addJsApiImplToContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           PackagePath.fromString('test@1.0.0')
@@ -404,7 +389,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.addContainerJsApiImpl,
+          cauldronHelper.addJsApiImplToContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('test@1.0.0')
@@ -415,7 +400,7 @@ describe('CauldronHelper.js', () => {
     it('should add the JS API impl to the native application version', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.addContainerJsApiImpl(
+      await cauldronHelper.addJsApiImplToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('test@1.0.0')
       )
@@ -424,13 +409,13 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('removeContainerNativeDependency', () => {
+  describe('removeNativeDependencyFromContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerNativeDependency,
+          cauldronHelper.removeNativeDependencyFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('test@1.0.0')
@@ -443,7 +428,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerNativeDependency,
+          cauldronHelper.removeNativeDependencyFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           PackagePath.fromString('test@1.0.0')
@@ -456,7 +441,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerNativeDependency,
+          cauldronHelper.removeNativeDependencyFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('test@1.0.0')
@@ -467,7 +452,7 @@ describe('CauldronHelper.js', () => {
     it('should remove the dependency from the native application version [1]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.removeContainerNativeDependency(
+      await cauldronHelper.removeNativeDependencyFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('react-native-electrode-bridge@1.4.9')
       )
@@ -482,7 +467,7 @@ describe('CauldronHelper.js', () => {
     it('should remove the dependency from the native application version [2]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.removeContainerNativeDependency(
+      await cauldronHelper.removeNativeDependencyFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('react-native-electrode-bridge')
       )
@@ -495,14 +480,14 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('removeContainerMiniApp', () => {
+  describe('removeMiniAppFromContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerMiniApp,
+          cauldronHelper.removeMiniAppFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('@test/react-native-foo@5.0.0')
@@ -516,7 +501,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerMiniApp,
+          cauldronHelper.removeMiniAppFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           PackagePath.fromString('@test/react-native-foo@5.0.0')
@@ -530,7 +515,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerMiniApp,
+          cauldronHelper.removeMiniAppFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('@test/react-native-foo@5.0.0')
@@ -542,7 +527,7 @@ describe('CauldronHelper.js', () => {
       sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.removeContainerMiniApp(
+      await cauldronHelper.removeMiniAppFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('@test/react-native-foo@5.0.0')
       )
@@ -558,7 +543,7 @@ describe('CauldronHelper.js', () => {
       sandbox.stub(utils, 'isGitBranch').resolves(false)
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.removeContainerMiniApp(
+      await cauldronHelper.removeMiniAppFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('@test/react-native-foo')
       )
@@ -571,13 +556,13 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('removeContainerJsApiImpl', () => {
+  describe('removeJsApiImplFromContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerJsApiImpl,
+          cauldronHelper.removeJsApiImplFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('react-native-my-api-impl@1.0.0')
@@ -590,7 +575,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerJsApiImpl,
+          cauldronHelper.removeJsApiImplFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           PackagePath.fromString('react-native-my-api-impl@1.0.0')
@@ -603,7 +588,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.removeContainerJsApiImpl,
+          cauldronHelper.removeJsApiImplFromContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('react-native-my-api-impl@1.0.0')
@@ -614,7 +599,7 @@ describe('CauldronHelper.js', () => {
     it('should remove the miniapp from the native application version [1]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.removeContainerJsApiImpl(
+      await cauldronHelper.removeJsApiImplFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('react-native-my-api-impl@1.0.0')
       )
@@ -629,7 +614,7 @@ describe('CauldronHelper.js', () => {
     it('should remove the miniapp from the native application version [2]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.removeContainerJsApiImpl(
+      await cauldronHelper.removeJsApiImplFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString('react-native-my-api-impl')
       )
@@ -1698,17 +1683,16 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('updateContainerNativeDependencyVersion', () => {
+  describe('updateNativeDependencyVersionInContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.updateContainerNativeDependencyVersion,
+          cauldronHelper.updateNativeDependencyVersionInContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
-          PackagePath.fromString('react-native-electrode-bridge'),
-          '1.5.0'
+          PackagePath.fromString('react-native-electrode-bridge@1.5.0')
         )
       )
     })
@@ -1718,11 +1702,10 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.updateContainerNativeDependencyVersion,
+          cauldronHelper.updateNativeDependencyVersionInContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge'),
-          '1.5.0'
+          PackagePath.fromString('react-native-electrode-bridge@1.5.0')
         )
       )
     })
@@ -1732,11 +1715,10 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.updateContainerNativeDependencyVersion,
+          cauldronHelper.updateNativeDependencyVersionInContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-electrode-bridge'),
-          '1.5.0'
+          PackagePath.fromString('react-native-electrode-bridge@1.5.0')
         )
       )
     })
@@ -1744,10 +1726,9 @@ describe('CauldronHelper.js', () => {
     it('should update the native dependency version', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.updateContainerNativeDependencyVersion(
+      await cauldronHelper.updateNativeDependencyVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        'react-native-electrode-bridge',
-        '1.5.0'
+        PackagePath.fromString('react-native-electrode-bridge@1.5.0')
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.container.nativeDeps).includes(
@@ -1993,83 +1974,16 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('syncContainerMiniAppsBranches', () => {
-    it('should update the commit sha of the miniapp to HEAD of branch if newer', async () => {
-      sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
-        .resolves('f20d6bb9c87d4847ce5bf5b7993bd0211a37cdc5')
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.syncContainerMiniAppsBranches(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(
-        nativeAppVersion.container.miniApps.includes(
-          'https://github.com/foo/foo.git#f20d6bb9c87d4847ce5bf5b7993bd0211a37cdc5'
-        )
-      ).true
-    })
-
-    it('should return updated miniapp package path if it was updated', async () => {
-      sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
-        .resolves('f20d6bb9c87d4847ce5bf5b7993bd0211a37cdc5')
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      const result = await cauldronHelper.syncContainerMiniAppsBranches(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      expect(
-        result
-          .map(p => p.fullPath)
-          .includes(
-            'https://github.com/foo/foo.git#f20d6bb9c87d4847ce5bf5b7993bd0211a37cdc5'
-          )
-      ).true
-    })
-
-    it('should not update the commit sha of the miniapp if branch HEAD has not changed', async () => {
-      sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
-        .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.syncContainerMiniAppsBranches(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(
-        nativeAppVersion.container.miniApps.includes(
-          'https://github.com/foo/foo.git#6319d9ef0c237907c784a8c472b000d5ff83b49a'
-        )
-      ).true
-    })
-
-    it('should not return miniapp package path if it was notupdated', async () => {
-      sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
-        .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      const result = await cauldronHelper.syncContainerMiniAppsBranches(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      expect(result).empty
-    })
-  })
-
-  describe('updateContainerJsApiImplVersion', () => {
+  describe('updateJsApiImplVersionInContainer', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.updateContainerJsApiImplVersion,
+          cauldronHelper.updateJsApiImplVersionInContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
-          'react-native-my-api-impl',
-          '1.5.0'
+          PackagePath.fromString('react-native-my-api-impl@1.5.0')
         )
       )
     })
@@ -2079,11 +1993,10 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.updateContainerJsApiImplVersion,
+          cauldronHelper.updateJsApiImplVersionInContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
-          'react-native-my-api-impl',
-          '1.5.0'
+          PackagePath.fromString('react-native-my-api-impl@1.5.0')
         )
       )
     })
@@ -2093,11 +2006,10 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       assert(
         doesThrow(
-          cauldronHelper.updateContainerJsApiImplVersion,
+          cauldronHelper.updateJsApiImplVersionInContainer,
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'react-native-my-api-impl',
-          '1.5.0'
+          PackagePath.fromString('react-native-my-api-impl@1.5.0')
         )
       )
     })
@@ -2105,10 +2017,9 @@ describe('CauldronHelper.js', () => {
     it('should update the native dependency version', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.updateContainerJsApiImplVersion(
+      await cauldronHelper.updateJsApiImplVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
-        'react-native-my-api-impl',
-        '1.5.0'
+        PackagePath.fromString('react-native-my-api-impl@1.5.0')
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
       expect(nativeAppVersion.container.jsApiImpls).includes(

@@ -110,7 +110,7 @@ export const commandHandler = async ({
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const updatedGitMiniApp of updatedGitMiniApps) {
-        await cauldron.updateContainerMiniAppVersion(
+        await cauldron.updateMiniAppVersionInContainer(
           descriptor!,
           updatedGitMiniApp,
           { keepBranch: true }

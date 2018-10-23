@@ -1162,14 +1162,14 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // removeContainerNativeDependency
+  // removeNativeDependencyFromContainer
   // ==========================================================
-  describe('removeContainerNativeDependency', () => {
+  describe('removeNativeDependencyFromContainer', () => {
     it('should remove the native dependency', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).removeContainerNativeDependency(
+      await cauldronApi(tmpFixture).removeNativeDependencyFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-electrode-bridge'
+        PackagePath.fromString('react-native-electrode-bridge')
       )
       const dependenciesArr = jp.query(
         tmpFixture,
@@ -1183,9 +1183,9 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.removeContainerNativeDependency(
+      await api.removeNativeDependencyFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-electrode-bridge'
+        PackagePath.fromString('react-native-electrode-bridge')
       )
       sinon.assert.calledOnce(commitStub)
     })
@@ -1194,10 +1194,10 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerNativeDependency,
+          api.removeNativeDependencyFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'unexisting'
+          PackagePath.fromString('unexisting')
         )
       )
     })
@@ -1206,7 +1206,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerNativeDependency,
+          api.removeNativeDependencyFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
           'react-native-electrode-bridge'
@@ -1216,15 +1216,14 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // updateContainerNativeDependencyVersion
+  // updateNativeDependencyVersionInContainer
   // ==========================================================
-  describe('updateContainerNativeDependencyVersion', () => {
+  describe('updateNativeDependencyVersionInContainer', () => {
     it('should update the native dependency', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).updateContainerNativeDependencyVersion(
+      await cauldronApi(tmpFixture).updateNativeDependencyVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-electrode-bridge',
-        '1.5.0'
+        PackagePath.fromString('react-native-electrode-bridge@1.5.0')
       )
       const dependenciesArr = jp.query(
         tmpFixture,
@@ -1240,10 +1239,9 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.updateContainerNativeDependencyVersion(
+      await api.updateNativeDependencyVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-electrode-bridge',
-        '1.5.0'
+        PackagePath.fromString('react-native-electrode-bridge@1.5.0')
       )
       sinon.assert.calledOnce(commitStub)
     })
@@ -1252,11 +1250,10 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerNativeDependencyVersion,
+          api.updateNativeDependencyVersionInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'unexisting',
-          '1.5.0'
+          PackagePath.fromString('unexisting@1.5.0')
         )
       )
     })
@@ -1265,23 +1262,22 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerNativeDependencyVersion,
+          api.updateNativeDependencyVersionInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
-          'react-native-electrode-bridge',
-          '1.5.0'
+          PackagePath.fromString('react-native-electrode-bridge@1.5.0')
         )
       )
     })
   })
 
   // ==========================================================
-  // updateContainerMiniAppVersion
+  // updateMiniAppVersionInContainer
   // ==========================================================
-  describe('updateContainerMiniAppVersion', () => {
+  describe('updateMiniAppVersionInContainer', () => {
     it('should update the MiniApp version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).updateContainerMiniAppVersion(
+      await cauldronApi(tmpFixture).updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('react-native-bar@3.0.0')
       )
@@ -1297,7 +1293,7 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.updateContainerMiniAppVersion(
+      await api.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('react-native-bar@3.0.0')
       )
@@ -1308,7 +1304,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerMiniAppVersion,
+          api.updateMiniAppVersionInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('react-native-foo@3.0.0')
@@ -1320,7 +1316,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerMiniAppVersion,
+          api.updateMiniAppVersionInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
           PackagePath.fromString('react-native-bar@3.0.0')
@@ -1435,14 +1431,14 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // removeContainerMiniApp
+  // removeMiniAppFromContainer
   // ==========================================================
-  describe('removeContainerMiniApp', () => {
+  describe('removeMiniAppFromContainer', () => {
     it('should remove the MiniApp from the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).removeContainerMiniApp(
+      await cauldronApi(tmpFixture).removeMiniAppFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-bar'
+        PackagePath.fromString('react-native-bar')
       )
       const miniAppsArr = jp.query(
         tmpFixture,
@@ -1455,9 +1451,9 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.removeContainerMiniApp(
+      await api.removeMiniAppFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-bar'
+        PackagePath.fromString('react-native-bar')
       )
       sinon.assert.calledOnce(commitStub)
     })
@@ -1466,10 +1462,10 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerMiniApp,
+          api.removeMiniAppFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'unexisting'
+          PackagePath.fromString('unexisting')
         )
       )
     })
@@ -1478,22 +1474,22 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerMiniApp,
+          api.removeMiniAppFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
-          'react-native-bar'
+          PackagePath.fromString('react-native-bar')
         )
       )
     })
   })
 
   // ==========================================================
-  // addContainerMiniApp
+  // addMiniAppToContainer
   // ==========================================================
-  describe('addContainerMiniApp', () => {
+  describe('addMiniAppToContainer', () => {
     it('should add the MiniApp to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerMiniApp(
+      await cauldronApi(tmpFixture).addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('newMiniApp@1.0.0')
       )
@@ -1508,7 +1504,7 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.addContainerMiniApp(
+      await api.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('newMiniApp@1.0.0')
       )
@@ -1519,7 +1515,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerMiniApp,
+          api.addMiniAppToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('react-native-bar@2.0.0')
@@ -1531,7 +1527,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerMiniApp,
+          api.addMiniAppToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
           PackagePath.fromString('newMiniApp@1.0.0')
@@ -1541,12 +1537,12 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // addContainerNativeDependency
+  // addNativeDependencyToContainer
   // ==========================================================
-  describe('addContainerNativeDependency', () => {
+  describe('addNativeDependencyToContainer', () => {
     it('should add the native dependency to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerNativeDependency(
+      await cauldronApi(tmpFixture).addNativeDependencyToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('testDep@1.0.0')
       )
@@ -1561,7 +1557,7 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.addContainerNativeDependency(
+      await api.addNativeDependencyToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('testDep@1.0.0')
       )
@@ -1572,7 +1568,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerNativeDependency,
+          api.addNativeDependencyToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('react-native-electrode-bridge@1.4.9')
@@ -1584,7 +1580,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerNativeDependency,
+          api.addNativeDependencyToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
           PackagePath.fromString('testDep@1.0.0')
@@ -1594,14 +1590,14 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // addContainerJsApiImpl
+  // addJsApiImplToContainer
   // ==========================================================
-  describe('addContainerJsApiImpl', () => {
+  describe('addJsApiImplToContainer', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerJsApiImpl,
+          api.addJsApiImplToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
           PackagePath.fromString('react-native-new-js-api-impl@1.0.0')
@@ -1613,7 +1609,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerJsApiImpl,
+          api.addJsApiImplToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('react-native-my-api-impl@1.0.0')
@@ -1625,7 +1621,7 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.addContainerJsApiImpl(
+      await api.addJsApiImplToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('react-native-new-js-api-impl@1.0.0')
       )
@@ -1634,7 +1630,7 @@ describe('CauldronApi.js', () => {
 
     it('should add the JS API impl to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerJsApiImpl(
+      await cauldronApi(tmpFixture).addJsApiImplToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('react-native-new-js-api-impl@1.0.0')
       )
@@ -1648,17 +1644,17 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // removeContainerJsApiImpl
+  // removeJsApiImplFromContainer
   // ==========================================================
-  describe('removeContainerJsApiImpl', () => {
+  describe('removeJsApiImplFromContainer', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerJsApiImpl,
+          api.removeJsApiImplFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
-          'react-native-my-api-impl@1.0.0'
+          PackagePath.fromString('react-native-my-api-impl@1.0.0')
         )
       )
     })
@@ -1667,10 +1663,10 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerJsApiImpl,
+          api.removeJsApiImplFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'react-native-unknown-api-impl'
+          PackagePath.fromString('react-native-unknown-api-impl')
         )
       )
     })
@@ -1679,10 +1675,10 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.removeContainerJsApiImpl,
+          api.removeJsApiImplFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'react-native-unknown-api-impl@1.0.0'
+          PackagePath.fromString('react-native-unknown-api-impl@1.0.0')
         )
       )
     })
@@ -1691,18 +1687,18 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.removeContainerJsApiImpl(
+      await api.removeJsApiImplFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-my-api-impl@1.0.0'
+        PackagePath.fromString('react-native-my-api-impl@1.0.0')
       )
       sinon.assert.calledOnce(commitStub)
     })
 
     it('should remove the JS API impl from the container of the native application version [1]', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).removeContainerJsApiImpl(
+      await cauldronApi(tmpFixture).removeJsApiImplFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-my-api-impl'
+        PackagePath.fromString('react-native-my-api-impl')
       )
       const dependenciesArr = jp.query(
         tmpFixture,
@@ -1713,9 +1709,9 @@ describe('CauldronApi.js', () => {
 
     it('should remove the JS API impl from the container of the native application version [2]', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).removeContainerJsApiImpl(
+      await cauldronApi(tmpFixture).removeJsApiImplFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-my-api-impl@1.0.0'
+        PackagePath.fromString('react-native-my-api-impl@1.0.0')
       )
       const dependenciesArr = jp.query(
         tmpFixture,
@@ -1726,18 +1722,17 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // updateContainerJsApiImplVersion
+  // updateJsApiImplVersionInContainer
   // ==========================================================
-  describe('updateContainerJsApiImplVersion', () => {
+  describe('updateJsApiImplVersionInContainer', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerJsApiImplVersion,
+          api.updateJsApiImplVersionInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.20.0'),
-          'react-native-my-api-impl',
-          '2.0.0'
+          PackagePath.fromString('react-native-my-api-impl@2.0.0')
         )
       )
     })
@@ -1746,11 +1741,10 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerJsApiImplVersion,
+          api.updateJsApiImplVersionInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-          'react-native-unknown-api-impl',
-          '1.0.0'
+          PackagePath.fromString('react-native-unknown-api-impl@1.0.0')
         )
       )
     })
@@ -1759,20 +1753,18 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.updateContainerJsApiImplVersion(
+      await api.updateJsApiImplVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-my-api-impl',
-        '2.0.0'
+        PackagePath.fromString('react-native-my-api-impl@2.0.0')
       )
       sinon.assert.calledOnce(commitStub)
     })
 
     it('should update the JS API impl version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).updateContainerJsApiImplVersion(
+      await cauldronApi(tmpFixture).updateJsApiImplVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'react-native-my-api-impl',
-        '2.0.0'
+        PackagePath.fromString('react-native-my-api-impl@2.0.0')
       )
       const dependenciesArr = jp.query(
         tmpFixture,
@@ -2524,14 +2516,14 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // addContainerMiniAppBranch
+  // addMiniAppBranchToContainer
   // ==========================================================
-  describe('addContainerMiniAppBranch', () => {
+  describe('addMiniAppBranchToContainer', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerMiniAppBranch,
+          api.addMiniAppBranchToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
@@ -2543,7 +2535,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.addContainerMiniAppBranch,
+          api.addMiniAppBranchToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('https://github.com/foo/MiniApp.git')
@@ -2553,7 +2545,7 @@ describe('CauldronApi.js', () => {
 
     it('should add the MiniApp to the target container miniAppsBranches array', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
@@ -2568,13 +2560,13 @@ describe('CauldronApi.js', () => {
     it('should throw if the MiniApp already has a branch specified', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
-      await api.addContainerMiniAppBranch(
+      await api.addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
       assert(
         await doesThrow(
-          api.addContainerMiniAppBranch,
+          api.addMiniAppBranchToContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString(
@@ -2586,14 +2578,79 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // updateContainerMiniAppBranch
+  // addJsApiImplBranchToContainer
   // ==========================================================
-  describe('updateContainerMiniAppBranch', () => {
+  describe('addJsApiImplBranchToContainer', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerMiniAppBranch,
+          api.addJsApiImplBranchToContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+        )
+      )
+    })
+
+    it('should throw if the JS API Impl path does not include a branch', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.addJsApiImplBranchToContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString('https://github.com/foo/JsApiImpl.git')
+        )
+      )
+    })
+
+    it('should add the JS API Impl to the target container jsApiImplsBranches array', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      const jsApiImplsBranchesArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImplsBranches'
+      )[0]
+      expect(
+        jsApiImplsBranchesArr.includes(
+          'https://github.com/foo/JsApiImpl.git#master'
+        )
+      ).true
+    })
+
+    it('should throw if the JS API impl already has a branch specified', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.addJsApiImplBranchToContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString(
+            'https://github.com/foo/JsApiImpl.git#development'
+          )
+        )
+      )
+    })
+  })
+
+  // ==========================================================
+  // updateMiniAppBranchInContainer
+  // ==========================================================
+  describe('updateMiniAppBranchInContainer', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.updateMiniAppBranchInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
@@ -2605,7 +2662,7 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi()
       assert(
         await doesThrow(
-          api.updateContainerMiniAppBranch,
+          api.updateMiniAppBranchInContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('https://github.com/foo/MiniApp.git')
@@ -2615,11 +2672,11 @@ describe('CauldronApi.js', () => {
 
     it('should update the MiniApp branch in the target container miniAppsBranches array', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
-      await cauldronApi(tmpFixture).updateContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).updateMiniAppBranchInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#development')
       )
@@ -2634,19 +2691,71 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // removeContainerMiniAppBranch
+  // updateJsApiImplBranchInContainer
   // ==========================================================
-  describe('removeContainerMiniAppBranch', () => {
+  describe('updateJsApiImplBranchInContainer', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.updateJsApiImplBranchInContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+        )
+      )
+    })
+
+    it('should throw if the JS API Impl path does not include a branch', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.updateJsApiImplBranchInContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString('https://github.com/foo/JsApiImpl.git')
+        )
+      )
+    })
+
+    it('should update the JS API Impl branch in the target container jsApiImplsBranches array', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      await cauldronApi(tmpFixture).updateJsApiImplBranchInContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString(
+          'https://github.com/foo/JsApiImpl.git#development'
+        )
+      )
+      const jsApiImplsBranchesArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImplsBranches'
+      )[0]
+      expect(
+        jsApiImplsBranchesArr.includes(
+          'https://github.com/foo/JsApiImpl.git#development'
+        )
+      ).true
+    })
+  })
+
+  // ==========================================================
+  // removeMiniAppBranchFromContainer
+  // ==========================================================
+  describe('removeMiniAppBranchFromContainer', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
-      await api.addContainerMiniAppBranch(
+      await api.addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
       assert(
         await doesThrow(
-          api.removeContainerMiniAppBranch,
+          api.removeMiniAppBranchFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android'),
           PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
@@ -2657,13 +2766,13 @@ describe('CauldronApi.js', () => {
     it('should throw if the MiniApp does not exist in the miniAppsBranches array', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
-      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
       assert(
         await doesThrow(
-          api.removeContainerMiniAppBranch,
+          api.removeMiniAppBranchFromContainer,
           api,
           NativeApplicationDescriptor.fromString('test:android:17.7.0'),
           PackagePath.fromString('https://github.com/foo/foo.git')
@@ -2673,11 +2782,11 @@ describe('CauldronApi.js', () => {
 
     it('should remove the MiniApp branch from the target container miniAppsBranches array [branch specified]', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
-      await cauldronApi(tmpFixture).removeContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).removeMiniAppBranchFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
@@ -2690,11 +2799,11 @@ describe('CauldronApi.js', () => {
 
     it('should remove the MiniApp branch from the target container miniAppsBranches array [branch not specified]', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi(tmpFixture).addContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).addMiniAppBranchToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git#master')
       )
-      await cauldronApi(tmpFixture).removeContainerMiniAppBranch(
+      await cauldronApi(tmpFixture).removeMiniAppBranchFromContainer(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         PackagePath.fromString('https://github.com/foo/MiniApp.git')
       )
@@ -2703,6 +2812,79 @@ describe('CauldronApi.js', () => {
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches'
       )[0]
       expect(miniAppsArr).empty
+    })
+  })
+
+  // ==========================================================
+  // removeJsApiImplBranchFromContainer
+  // ==========================================================
+  describe('removeJsApiImplBranchFromContainer', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.removeJsApiImplBranchFromContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+        )
+      )
+    })
+
+    it('should throw if the JS API Impl does not exist in the jsApiImplsBranches array', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await cauldronApi(tmpFixture).addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.removeJsApiImplBranchFromContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+          PackagePath.fromString('https://github.com/foo/foo.git')
+        )
+      )
+    })
+
+    it('should remove the JS API Impl branch from the target container jsApiImplsBranches array [branch specified]', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      await cauldronApi(tmpFixture).removeJsApiImplBranchFromContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      const jsApiImplBranchesArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImplsBranches'
+      )[0]
+      expect(jsApiImplBranchesArr).empty
+    })
+
+    it('should remove the JS API Impl branch from the target container miniAppsBranches array [branch not specified]', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      await cauldronApi(tmpFixture).addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      await cauldronApi(tmpFixture).removeJsApiImplBranchFromContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git')
+      )
+      const jsApiImplBranchesArr = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImplsBranches'
+      )[0]
+      expect(jsApiImplBranchesArr).empty
     })
   })
 

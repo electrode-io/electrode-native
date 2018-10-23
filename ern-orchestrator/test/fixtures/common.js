@@ -19,6 +19,25 @@ export const withoutFileSystemPath = [
   'package@1.2.3',
 ]
 
+export const supportedCauldronMiniAppsVersions = [
+  'git+ssh://github.com/MiniApp.git#master',
+  'git+ssh://github.com/MiniApp.git#v1.0.0',
+  'git+ssh://github.com/MiniApp.git#ea2e2d248c6af5eb14d76e4108ec922febd096f5',
+  'https://github.com/MiniApp.git#master',
+  'https://github.com/MiniApp.git#v1.0.0',
+  'https://github.com/MiniApp.git#ea2e2d248c6af5eb14d76e4108ec922febd096f5',
+  'MiniApp@1.0.0',
+  'MiniApp@1.0.0-beta',
+]
+
+export const unSupportedCauldronMiniAppsVersions = [
+  'git+ssh://github.com/MiniApp.git',
+  'https://github.com/MiniApp.git',
+  'MiniApp@^1.0.0',
+  'MiniApp@~1.0.0',
+  'file://Users/foo/MiniApp',
+]
+
 export const withFileSystemPath = ['file:/Users/username']
 
 export const completeNapDescriptors = ['myapp:android:17.14.0', 'myapp:ios:1']

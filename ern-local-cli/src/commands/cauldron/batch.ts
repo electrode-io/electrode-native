@@ -140,6 +140,9 @@ export const commandHandler = async ({
             'To avoid conflicts with previous versions, you can only use container version newer than the current one',
         }
       : undefined,
+    isSupportedMiniAppOrJsApiImplVersion: {
+      obj: [...updateMiniapps, ...addMiniapps],
+    },
     isValidContainerVersion: containerVersion
       ? { containerVersion }
       : undefined,
@@ -212,7 +215,7 @@ export const commandHandler = async ({
     async () => {
       // Del Dependencies
       for (const delDependency of delDependencies) {
-        await cauldron.removeContainerNativeDependency(
+        await cauldron.removeNativeDependencyFromContainer(
           descriptor!,
           delDependency
         )
@@ -222,15 +225,14 @@ export const commandHandler = async ({
       }
       // Del MiniApps
       for (const delMiniApp of delMiniapps) {
-        await cauldron.removeContainerMiniApp(descriptor!, delMiniApp)
+        await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp)
         cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`)
       }
       // Update Dependencies
       for (const updateDependency of updateDependencies) {
-        await cauldron.updateContainerNativeDependencyVersion(
+        await cauldron.updateNativeDependencyVersionInContainer(
           descriptor!,
-          updateDependency.basePath,
-          <string>updateDependency.version
+          updateDependency
         )
         cauldronCommitMessage.push(
           `- Update ${
@@ -241,7 +243,10 @@ export const commandHandler = async ({
       // Add Dependencies
       for (const addDependency of addDependencies) {
         // Add the dependency to Cauldron
-        await cauldron.addContainerNativeDependency(descriptor!, addDependency)
+        await cauldron.addNativeDependencyToContainer(
+          descriptor!,
+          addDependency
+        )
         cauldronCommitMessage.push(`-Add ${addDependency} native dependency`)
       }
       // Update MiniApps

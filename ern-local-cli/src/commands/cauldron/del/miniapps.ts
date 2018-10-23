@@ -93,7 +93,7 @@ export const commandHandler = async ({
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const miniapp of miniapps) {
-        await cauldron.removeContainerMiniApp(descriptor!, miniapp)
+        await cauldron.removeMiniAppFromContainer(descriptor!, miniapp)
         cauldronCommitMessage.push(`- Remove ${miniapp} MiniApp`)
       }
     },

@@ -57,6 +57,9 @@ export const commandHandler = async ({
             'To avoid conflicts with previous versions, you can only use container version newer than the current one',
         }
       : undefined,
+    isSupportedMiniAppOrJsApiImplVersion: {
+      obj: jsapiimpls,
+    },
     isValidContainerVersion: containerVersion
       ? { containerVersion }
       : undefined,
@@ -81,21 +84,11 @@ export const commandHandler = async ({
   await performContainerStateUpdateInCauldron(
     async () => {
       for (const jsapiimpl of jsapiimpls) {
-        if (!jsapiimpl.version) {
-          log.error(
-            `Will not update ${jsapiimpl} as it does not specify a version`
-          )
-          continue
-        }
-        await cauldron.updateContainerJsApiImplVersion(
-          descriptor!,
-          jsapiimpl.basePath,
-          jsapiimpl.version
-        )
         cauldronCommitMessage.push(
           `- Update ${jsapiimpl.basePath} JS API implementation version`
         )
       }
+      await cauldron.syncContainerJsApiImpls(descriptor!, jsapiimpls)
     },
     descriptor,
     cauldronCommitMessage,
