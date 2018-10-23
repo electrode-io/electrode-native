@@ -83,26 +83,25 @@ export const commandHandler = async ({
   })
 
   const cauldron = await getActiveCauldron()
-  const miniAppsInCauldron = await cauldron.getContainerMiniApps(descriptor)
-  const gitMiniAppsInCauldron = _.filter(
-    miniAppsInCauldron,
-    m => m.isGitPath === true
-  )
 
-  // For all MiniApps that are retrieved from git, we need to check if any
-  // of their native dependencies versions have changed (or new one added)
-  // in order to properly update the native dependencies list in the Cauldron
+  // Figure out the list of all git MiniApps that have been updated (new HEAD sha)
+  const updatedGitMiniApps = await cauldron.getLatestShasForMiniAppsBranches(
+    descriptor
+  )
   const gitMiniAppsObjs: MiniApp[] = []
-  for (const gitMiniAppInCauldron of gitMiniAppsInCauldron) {
+  // We need to retrieve these updated MiniApps as their native dependencies might
+  // have changed
+  for (const updatedGitMiniApp of updatedGitMiniApps) {
     const m = await kax
-      .task(`Retrieving ${gitMiniAppInCauldron.toString()} MiniApp`)
-      .run(MiniApp.fromPackagePath(gitMiniAppInCauldron))
+      .task(`Retrieving ${updatedGitMiniApp} MiniApp`)
+      .run(MiniApp.fromPackagePath(updatedGitMiniApp))
     gitMiniAppsObjs.push(m)
   }
 
   const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
     gitMiniAppsObjs
   )
+
   const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
   const finalNativeDependencies = resolver.retainHighestVersions(
     nativeDependencies.resolved,
@@ -110,6 +109,13 @@ export const commandHandler = async ({
   )
   await performContainerStateUpdateInCauldron(
     async () => {
+      for (const updatedGitMiniApp of updatedGitMiniApps) {
+        await cauldron.updateContainerMiniAppVersion(
+          descriptor!,
+          updatedGitMiniApp,
+          { keepBranch: true }
+        )
+      }
       await cauldron.syncContainerNativeDependencies(
         descriptor!,
         finalNativeDependencies

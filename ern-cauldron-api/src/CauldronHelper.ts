@@ -1081,7 +1081,12 @@ export class CauldronHelper {
 
   public async updateContainerMiniAppVersion(
     napDescriptor: NativeApplicationDescriptor,
-    miniApp: PackagePath
+    miniApp: PackagePath,
+    {
+      keepBranch,
+    }: {
+      keepBranch?: boolean
+    } = {}
   ): Promise<void> {
     if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
       const commitSha = await coreUtils.getCommitShaOfGitBranchHead(miniApp)
@@ -1092,12 +1097,14 @@ export class CauldronHelper {
       )
     } else {
       try {
-        // Remove any potential branch in case previous MiniApp version
-        // was tracking a branch
-        await this.cauldron.removeContainerMiniAppBranch(
-          napDescriptor,
-          PackagePath.fromString(miniApp.basePath)
-        )
+        if (!keepBranch) {
+          // Remove any potential branch in case previous MiniApp version
+          // was tracking a branch
+          await this.cauldron.removeContainerMiniAppBranch(
+            napDescriptor,
+            PackagePath.fromString(miniApp.basePath)
+          )
+        }
       } catch (e) {
         // swallow
         // We don't really care if there was not branch associated to
@@ -1116,6 +1123,21 @@ export class CauldronHelper {
   public async syncContainerMiniAppsBranches(
     descriptor: NativeApplicationDescriptor
   ): Promise<PackagePath[]> {
+    const updatedMiniApps = await this.getLatestShasForMiniAppsBranches(
+      descriptor
+    )
+    for (const updateMiniApp of updatedMiniApps) {
+      await this.cauldron.updateContainerMiniAppVersion(
+        descriptor,
+        updateMiniApp
+      )
+    }
+    return updatedMiniApps
+  }
+
+  public async getLatestShasForMiniAppsBranches(
+    descriptor: NativeApplicationDescriptor
+  ) {
     const result: PackagePath[] = []
     const miniAppsBranches = (await this.cauldron.getContainerMiniAppsBranches(
       descriptor
@@ -1133,10 +1155,6 @@ export class CauldronHelper {
       if (matchingMiniApp!.version !== latestCommitSha) {
         const newPackagePath = PackagePath.fromString(
           `${miniAppBranch.basePath}#${latestCommitSha}`
-        )
-        await this.cauldron.updateContainerMiniAppVersion(
-          descriptor,
-          newPackagePath
         )
         result.push(newPackagePath)
       }
