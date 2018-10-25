@@ -18,7 +18,9 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.PermissionListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -54,7 +56,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
     /**
      * List of ReactRootView(s) holding the view containing the ReactNative application(s)
      */
-    private Map<String, ReactRootView> mReactRootViews = new HashMap<>();
+    private final Map<String, ReactRootView> mReactRootViews = new HashMap<>();
 
     /**
      * Call this constructor if you are having one activity hosting one react native application.
@@ -318,11 +320,15 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         return ((Activity) getContext());
     }
 
-    private void unMountReactApplications() {
-        for (Map.Entry<String, ReactRootView> entry : mReactRootViews.entrySet()) {
-            ReactRootView rootView = entry.getValue();
-            rootView.unmountReactApplication();
+     private void unMountReactApplications() {
+        List<ReactRootView> list;
+        synchronized (mReactRootViews) {
+            list = new ArrayList<>(mReactRootViews.values());
+            mReactRootViews.clear();
         }
-        mReactRootViews.clear();
+
+        for (ReactRootView reactRootView : list) {
+            reactRootView.unmountReactApplication();
+        }
     }
 }
