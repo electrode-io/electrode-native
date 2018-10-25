@@ -323,3 +323,31 @@ export function getCompatibility(
 
   return result
 }
+
+export async function areCompatible(
+  miniApps: PackagePath[],
+  targetDescriptor: NativeApplicationDescriptor
+): Promise<boolean> {
+  for (const miniApp of miniApps) {
+    const miniAppInstance = await kax
+      .task(
+        `Checking native dependencies version alignment of ${miniApp} with ${targetDescriptor}`
+      )
+      .run(MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
+    const report = await checkCompatibilityWithNativeApp(
+      miniAppInstance,
+      targetDescriptor.name,
+      targetDescriptor.platform || undefined,
+      targetDescriptor.version || undefined
+    )
+    if (!report.isCompatible) {
+      log.warn('At least one native dependency version is not aligned !')
+      return false
+    } else {
+      log.info(
+        `${miniApp} native dependencies versions are aligned with ${targetDescriptor}`
+      )
+    }
+  }
+  return true
+}

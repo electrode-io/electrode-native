@@ -1,23 +1,20 @@
 import { generateMiniAppsComposite } from 'ern-container-gen'
 import {
   createTmpDir,
-  CodePushSdk,
   PackagePath,
-  config,
   NativeApplicationDescriptor,
   reactnative,
   CodePushPackage,
-  CodePushInitConfig,
+  getCodePushSdk,
   log,
-  MiniApp,
   kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
 import _ from 'lodash'
 import path from 'path'
-import fs from 'fs'
 import shell from 'shelljs'
+import fs from 'fs'
 
 export async function performCodePushPatch(
   napDescriptor: NativeApplicationDescriptor,
@@ -31,14 +28,14 @@ export async function performCodePushPatch(
     isDisabled?: boolean
     isMandatory?: boolean
     rollout?: number
-  }
+  } = {}
 ) {
   let cauldron
   try {
     cauldron = await getActiveCauldron()
-    const codePushSdk = getCodePushSdk()
     await cauldron.beginTransaction()
     const appName = await getCodePushAppName(napDescriptor)
+    const codePushSdk = getCodePushSdk()
     await codePushSdk.patch(appName, deploymentName, label, {
       isDisabled,
       isMandatory,
@@ -94,14 +91,16 @@ export async function performCodePushPromote(
         throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
       }
 
-      const codePushEntrySource = await cauldron.getCodePushEntry(
-        sourceNapDescriptor,
-        sourceDeploymentName,
-        { label }
-      )
-      if (!codePushEntrySource) {
+      let codePushEntrySource
+      try {
+        codePushEntrySource = await cauldron.getCodePushEntry(
+          sourceNapDescriptor,
+          sourceDeploymentName,
+          { label }
+        )
+      } catch (e) {
         throw new Error(
-          `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor.toString()} dep: ${sourceDeploymentName} label: ${label ||
+          `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor} dep: ${sourceDeploymentName} label: ${label ||
             'latest'}`
         )
       }
@@ -112,17 +111,8 @@ export async function performCodePushPromote(
       const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, jsapiimpl =>
         PackagePath.fromString(jsapiimpl)
       )
-      if (
-        (!miniApps || miniApps.length === 0) &&
-        (!jsApiImpls || jsApiImpls.length === 0)
-      ) {
-        log.error(
-          `No MiniApps or JS API Implementations were found in source release [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}] `
-        )
-        throw new Error(`Aborting CodePush promotion`)
-      }
 
-      const nativeDependenciesVersionAligned = await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(
+      const nativeDependenciesVersionAligned = await compatibility.areCompatible(
         miniApps,
         targetNapDescriptor
       )
@@ -144,6 +134,7 @@ export async function performCodePushPromote(
           targetNapDescriptor,
           targetDeploymentName
         ))
+
       const result = await kax.task(`Promoting release to ${appVersion}`).run(
         codePushSdk.promote(
           appName,
@@ -151,7 +142,7 @@ export async function performCodePushPromote(
           targetDeploymentName,
           {
             appVersion,
-            isMandatory: mandatory,
+            isMandatory: !!mandatory,
             label,
             rollout,
           }
@@ -216,16 +207,14 @@ export async function performCodePushOtaUpdate(
     codePushIsMandatoryRelease = false,
     codePushRolloutPercentage,
     pathToYarnLock,
-    skipConfirmation = false,
     targetBinaryVersion,
   }: {
-    force: boolean
+    force?: boolean
     codePushIsMandatoryRelease?: boolean
     codePushRolloutPercentage?: number
     pathToYarnLock?: string
-    skipConfirmation?: boolean
     targetBinaryVersion?: string
-  }
+  } = {}
 ) {
   let cauldron
   try {
@@ -243,7 +232,7 @@ export async function performCodePushOtaUpdate(
 
     const tmpWorkingDir = createTmpDir()
 
-    const miniAppsNativeDependenciesVersionAligned = await areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(
+    const miniAppsNativeDependenciesVersionAligned = await compatibility.areCompatible(
       miniApps,
       napDescriptor
     )
@@ -384,15 +373,18 @@ export async function performCodePushOtaUpdate(
     )
 
     const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
-    await kax
-      .task('Adding yarn.lock to Cauldron')
-      .run(
-        cauldron.addOrUpdateYarnLock(
-          napDescriptor,
-          deploymentName,
-          pathToNewYarnLock
+    if (fs.existsSync(pathToNewYarnLock)) {
+      await kax
+        .task('Adding yarn.lock to Cauldron')
+        .run(
+          cauldron.addOrUpdateYarnLock(
+            napDescriptor,
+            deploymentName,
+            pathToNewYarnLock
+          )
         )
-      )
+    }
+
     await cauldron.commitTransaction(
       `CodePush release for ${napDescriptor.toString()} ${deploymentName}`
     )
@@ -411,14 +403,12 @@ export async function getCodePushTargetVersionName(
 ) {
   if (!napDescriptor.version) {
     throw new Error(
-      `Native application descriptor ${napDescriptor.toString()} does not contain a version !`
+      `Native application descriptor ${napDescriptor} does not contain a version !`
     )
   }
   let result = napDescriptor.version
   const cauldron = await getActiveCauldron()
-  const codePushConfig = await cauldron.getCodePushConfig(
-    napDescriptor.withoutVersion()
-  )
+  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
   if (codePushConfig && codePushConfig.versionModifiers) {
     const versionModifier = _.find(
       codePushConfig.versionModifiers,
@@ -431,14 +421,12 @@ export async function getCodePushTargetVersionName(
   return result
 }
 
-async function getCodePushAppName(
+export async function getCodePushAppName(
   napDescriptor: NativeApplicationDescriptor
 ): Promise<string> {
   let result = napDescriptor.name
   const cauldron = await getActiveCauldron()
-  const codePushConfig = await cauldron.getCodePushConfig(
-    napDescriptor.withoutVersion()
-  )
+  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
   if (codePushConfig && codePushConfig.appName) {
     result = codePushConfig.appName
   } else {
@@ -447,61 +435,4 @@ async function getCodePushAppName(
     }`
   }
   return result
-}
-
-export function getCodePushInitConfig(): CodePushInitConfig {
-  const codePushConfigFilePath = path.join(
-    process.env.LOCALAPPDATA || process.env.HOME || '',
-    '.code-push.config'
-  )
-  let codePushInitConfig: CodePushInitConfig
-  if (fs.existsSync(codePushConfigFilePath)) {
-    codePushInitConfig = JSON.parse(
-      fs.readFileSync(codePushConfigFilePath, 'utf-8')
-    )
-  } else {
-    codePushInitConfig = {
-      accessKey: config.getValue('codePushAccessKey'),
-      customHeaders: config.getValue('codePushCustomHeaders'),
-      customServerUrl: config.getValue('codePushCustomServerUrl'),
-      proxy: config.getValue('codePushproxy'),
-    }
-  }
-  return codePushInitConfig
-}
-
-export function getCodePushSdk() {
-  const codePushInitConfig = getCodePushInitConfig()
-  if (!codePushInitConfig || !codePushInitConfig.accessKey) {
-    throw new Error('Unable to get the CodePush config to use')
-  }
-  return new CodePushSdk(codePushInitConfig)
-}
-
-async function areMiniAppsNativeDependenciesAlignedWithTargetApplicationVersion(
-  miniApps: PackagePath[],
-  targetDescriptor: NativeApplicationDescriptor
-): Promise<boolean> {
-  for (const miniApp of miniApps) {
-    const miniAppInstance = await kax
-      .task(
-        `Checking native dependencies version alignment of ${miniApp.toString()} with ${targetDescriptor.toString()}`
-      )
-      .run(MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
-    const report = await compatibility.checkCompatibilityWithNativeApp(
-      miniAppInstance,
-      targetDescriptor.name,
-      targetDescriptor.platform || undefined,
-      targetDescriptor.version || undefined
-    )
-    if (!report.isCompatible) {
-      log.warn('At least one native dependency version is not aligned !')
-      return false
-    } else {
-      log.info(
-        `${miniApp.toString()} native dependencies versions are aligned with ${targetDescriptor.toString()}`
-      )
-    }
-  }
-  return true
 }

@@ -2988,20 +2988,6 @@ describe('CauldronHelper.js', () => {
       expect(result).not.undefined
       expect(result).to.have.property('containerGenerator')
     })
-
-    it('should return parent config if not native app version config', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      const configObj = await cauldronHelper.getConfig(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      expect(configObj).not.undefined
-      const config = jp.query(
-        fixtures.defaultCauldron,
-        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].config'
-      )[0]
-      expect(configObj).eql(config)
-    })
   })
 
   describe('getConfigStrict', () => {
@@ -3023,15 +3009,6 @@ describe('CauldronHelper.js', () => {
       )
       expect(result).not.undefined
       expect(result).to.have.property('containerGenerator')
-    })
-
-    it('should not return parent config if not native app version config', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      const configObj = await cauldronHelper.getConfigStrict(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      expect(configObj).undefined
     })
   })
 
