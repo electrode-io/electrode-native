@@ -83,3 +83,5 @@ export { createZippedBundle } from './createZippedBundle'
 export {
   checkIfModuleNameContainsSuffix,
 } from './checkIfModuleNameContainsSuffix'
+export { getCodePushSdk } from './getCodePushSdk'
+export { getCodePushInitConfig } from './getCodePushInitConfig'

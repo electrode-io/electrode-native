@@ -9,8 +9,6 @@ export {
   performCodePushPromote,
   performCodePushOtaUpdate,
   getCodePushTargetVersionName,
-  getCodePushInitConfig,
-  getCodePushSdk,
 } from './codepush'
 
 export {

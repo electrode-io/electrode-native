@@ -25,14 +25,6 @@
       {
         "name": "android",
         "config": {
-          "codePush": {
-            "deployments": [
-              "QA",
-              "Development,",
-              "Production",
-              "Beta"
-            ]
-          },
           "containerGenerator": {
             "name": "maven",
             "containerVersion": "1.16.44",
@@ -146,6 +138,17 @@
             "ernPlatformVersion": "1000.0.0",
             "isReleased": false,
             "binary": null,
+            "config": {
+              "codePush": {
+                "appName": "walmart-android",
+                "versionModifiers": [
+                  {
+                    "deploymentName": "QA",
+                    "modifier": "$1-QA"
+                  }
+                ]
+              }
+            },
             "container": {
               "nativeDeps": [
                 "react-native-electrode-bridge@1.4.9",

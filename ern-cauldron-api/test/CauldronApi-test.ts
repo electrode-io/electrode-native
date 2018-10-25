@@ -762,18 +762,6 @@ describe('CauldronApi.js', () => {
         )
       )
     })
-
-    it('[get native app version config] should return parent config if not native app version config', async () => {
-      const api = cauldronApi()
-      const configObj = await cauldronApi().getConfig(
-        NativeApplicationDescriptor.fromString('test:android:17.8.0')
-      )
-      const config = jp.query(
-        fixtures.defaultCauldron,
-        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].config'
-      )[0]
-      expect(configObj).eql(config)
-    })
   })
 
   // ==========================================================
