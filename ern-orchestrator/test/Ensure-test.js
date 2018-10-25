@@ -1,6 +1,7 @@
 import { assert, expect } from 'chai'
 import * as cauldron from 'ern-cauldron-api'
 import { utils, createTmpDir, PackagePath } from 'ern-core'
+import { getContainerMetadataPath } from 'ern-container-gen'
 import { doesThrow, doesNotThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import Ensure from '../src/Ensure'
@@ -675,6 +676,25 @@ describe('Ensure.js', () => {
           `does not throw for ${pkg}`
         ).to.throw()
       })
+    })
+  })
+
+  // ==========================================================
+  // isContainerPath
+  // ==========================================================
+  describe('isContainerPath', () => {
+    it('should not throw if path points to a container', async () => {
+      const tmpDirPath = createTmpDir()
+      fs.writeFileSync(
+        getContainerMetadataPath(tmpDirPath),
+        JSON.stringify('{}')
+      )
+      assert(await doesNotThrow(Ensure.isContainerPath, Ensure, tmpDirPath))
+    })
+
+    it('should throw if path does not points to a container', async () => {
+      const tmpDirPath = createTmpDir()
+      assert(await doesThrow(Ensure.isContainerPath, Ensure, tmpDirPath))
     })
   })
 })

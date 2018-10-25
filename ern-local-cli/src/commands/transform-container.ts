@@ -1,7 +1,7 @@
 import { Platform, NativePlatform, log } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
-import { epilog, tryCatchWrap } from '../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'transform-container'
@@ -46,11 +46,20 @@ export const commandHandler = async ({
   platform: NativePlatform
   transformer: string
 }) => {
+  containerPath =
+    containerPath || Platform.getContainerGenOutDirectory(platform)
+
+  await logErrorAndExitIfNotSatisfied({
+    isContainerPath: {
+      extraErrorMessage: `Make sure that ${containerPath} is the root of a Container project`,
+      p: containerPath!,
+    },
+  })
+
   const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
   await transformContainer({
-    containerPath:
-      containerPath || Platform.getContainerGenOutDirectory(platform),
+    containerPath,
     extra: extraObj,
     platform,
     transformer,
