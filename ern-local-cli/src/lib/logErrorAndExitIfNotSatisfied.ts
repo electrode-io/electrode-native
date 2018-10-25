@@ -28,6 +28,7 @@ export async function logErrorAndExitIfNotSatisfied({
   pathExist,
   isValidPlatformConfig,
   isSupportedMiniAppOrJsApiImplVersion,
+  isContainerPath,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
@@ -138,6 +139,9 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   isSupportedMiniAppOrJsApiImplVersion?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
+  }
+  isContainerPath?: {
+    p: string
     extraErrorMessage?: string
   }
 } = {}) {
@@ -370,8 +374,15 @@ export async function logErrorAndExitIfNotSatisfied({
     if (isSupportedMiniAppOrJsApiImplVersion) {
       kaxTask = kax.task('Ensuring that version is fixed')
       Ensure.isSupportedMiniAppOrJsApiImplVersion(
-        isSupportedMiniAppOrJsApiImplVersion.obj,
-        isSupportedMiniAppOrJsApiImplVersion.extraErrorMessage
+        isSupportedMiniAppOrJsApiImplVersion.obj
+      )
+      kaxTask.succeed()
+    }
+    if (isContainerPath) {
+      kaxTask = kax.task('Ensuring that path is a container path')
+      Ensure.isContainerPath(
+        isContainerPath.p,
+        isContainerPath.extraErrorMessage
       )
       kaxTask.succeed()
     }

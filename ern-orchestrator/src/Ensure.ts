@@ -5,6 +5,7 @@ import {
   dependencyLookup,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
+import { getContainerMetadataPath } from 'ern-container-gen'
 import _ from 'lodash'
 import semver from 'semver'
 import validateNpmPackageName from 'validate-npm-package-name'
@@ -498,6 +499,14 @@ export default class Ensure {
           throw new Error(`Missing version for ${dependency}`)
         }
       }
+    }
+  }
+
+  public static isContainerPath(path: string, extraErrorMessage: string = '') {
+    if (!fs.existsSync(getContainerMetadataPath(path))) {
+      throw new Error(
+        `${path} is not a path to a Container\n${extraErrorMessage}`
+      )
     }
   }
 }

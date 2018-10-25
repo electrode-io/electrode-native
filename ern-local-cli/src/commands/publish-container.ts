@@ -60,15 +60,21 @@ export const commandHandler = async ({
   url: string
   version: string
 }) => {
+  containerPath =
+    containerPath || Platform.getContainerGenOutDirectory(platform)
+
   await logErrorAndExitIfNotSatisfied({
+    isContainerPath: {
+      extraErrorMessage: `Make sure that ${containerPath} is the root of a Container project`,
+      p: containerPath!,
+    },
     isValidContainerVersion: { containerVersion: version },
   })
 
   const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
   await publishContainer({
-    containerPath:
-      containerPath || Platform.getContainerGenOutDirectory(platform),
+    containerPath,
     containerVersion: version,
     extra: extraObj,
     platform,
