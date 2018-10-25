@@ -7,6 +7,7 @@
 
 DEVELOPMENT_TEAM = DXZ5VF8836
 FRAMEWORK_SEARCH_PATHS = $(inherited)
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/ElectrodeContainer/Libraries/ReactNative/**
 INFOPLIST_FILE = ElectrodeContainerTests/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
 PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainerTests
