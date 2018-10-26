@@ -5,6 +5,8 @@ import { manifest } from './Manifest'
 import * as ModuleTypes from './ModuleTypes'
 import readDir = require('fs-readdir-recursive')
 
+const NodeModulesLen = 'node_modules'.length
+
 export function findDirectoriesContainingNativeCode(rootDir: string): string[] {
   return readDir(rootDir).filter(a => /.swift$|.pbxproj$|.java$/.test(a))
 }
@@ -33,26 +35,25 @@ export function resolvePackagePaths(paths: string[]): Set<string> {
   for (const d of paths) {
     const lastIdx = d.lastIndexOf('node_modules')
     if (lastIdx === -1) {
+      const pathSegments = d.split(path.sep)
       if (d.startsWith('@')) {
         // ex : @scoped-pkgs/pkg-native/src/code.swift
         // should return : @scoped-pkgs/pkg-native
-        const pathSegments = d.split(path.sep)
         const p = path.join(pathSegments[0], pathSegments[1])
         result.add(p)
       } else {
         // ex : pkg-native/src/code.swift
         // should return : pkg-native
-        const p = /^(.+?)\//.exec(d)
-        result.add(p![1])
+        result.add(pathSegments[0])
       }
     } else {
-      const tmp = d.slice(lastIdx + 13)
+      const tmp = d.slice(lastIdx + NodeModulesLen + 1)
+      const pathSegments = tmp.split(path.sep)
       if (tmp.startsWith('@')) {
         // ex : @scoped-pkgs/nested/node_modules/@scope/pkg-native/src/code.swift
         // should return : @scoped-pkgs/nested/node_modules/@scope/pkg-native
-        const pathSegments = tmp.split(path.sep)
         const p = path.join(
-          d.substring(0, lastIdx + 13),
+          d.substring(0, lastIdx + NodeModulesLen + 1),
           pathSegments[0],
           pathSegments[1]
         )
@@ -60,8 +61,10 @@ export function resolvePackagePaths(paths: string[]): Set<string> {
       } else {
         // ex : @scoped-pkgs/nested/node_modules/pkg-native/src/code.swift
         // should return : @scoped-pkgs/nested/node_modules/pkg-native
-        const e = /^(.+?)\//.exec(tmp)
-        const p = path.join(d.substring(0, lastIdx + 13), e![1])
+        const p = path.join(
+          d.substring(0, lastIdx + NodeModulesLen + 1),
+          pathSegments[0]
+        )
         result.add(p)
       }
     }
