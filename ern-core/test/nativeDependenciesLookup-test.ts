@@ -89,27 +89,30 @@ describe('nativeDependenciesLookup.ts', () => {
   describe('findDirectoriesContainingNativeCode', () => {
     it('should find all directories containing native code', () => {
       const result = findDirectoriesContainingNativeCode(pathToFixture)
-      const xored = _.xor(result, [
+      const expectedResult = [
         '@scoped-pkgs/pkg-native-a/src/code.swift',
         '@scoped-pkgs/pkg-native-b/src/code.java',
         'pkg-native-c/src/code.swift',
         'pkg-native-d/src/code.java',
         '@scoped-pkgs/nested/node_modules/pkg-native-e/src/code.swift',
-      ])
-      assert(xored.length === 0)
+      ].map(p => p.replace(/\//g, path.sep))
+      expect(expectedResult).to.have.members(result)
     })
   })
 
   describe('resolvePackagePaths', () => {
     it('should properly resolve packages paths', () => {
       const result = Array.from(
-        resolvePackagePaths([
-          '@scoped-pkgs/pkg-native-a/src/code.swift',
-          '@scoped-pkgs/pkg-native-b/src/code.java',
-          'pkg-native-c/src/code.swift',
-          'pkg-native-d/src/code.java',
-          '@scoped-pkgs/nested/node_modules/pkg-native-e/src/code.swift',
-        ])
+        resolvePackagePaths(
+          [
+            '@scoped-pkgs/pkg-native-a/src/code.swift',
+            '@scoped-pkgs/pkg-native-b/src/code.java',
+            'pkg-native-c/src/code.swift',
+            'pkg-native-d/src/code.java',
+            '@scoped-pkgs/nested/node_modules/pkg-native-e/src/code.swift',
+            '@scoped-pkgs/nested/node_modules/@scope/pkg-native-e/src/code.swift',
+          ].map(p => p.replace(/\//g, path.sep))
+        )
       )
       const expectedResult = [
         '@scoped-pkgs/pkg-native-a',
@@ -117,9 +120,9 @@ describe('nativeDependenciesLookup.ts', () => {
         'pkg-native-c',
         'pkg-native-d',
         '@scoped-pkgs/nested/node_modules/pkg-native-e',
-      ]
-      const xored = _.xor(result, expectedResult)
-      assert(xored.length === 0)
+        '@scoped-pkgs/nested/node_modules/@scope/pkg-native-e',
+      ].map(p => p.replace(/\//g, path.sep))
+      expect(expectedResult).to.have.members(result)
     })
   })
 
