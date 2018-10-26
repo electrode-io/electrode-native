@@ -195,9 +195,7 @@ export async function runMiniApp(
   }
 
   await launchRunner({
-    host,
     pathToRunner,
     platform,
-    port,
   })
 }

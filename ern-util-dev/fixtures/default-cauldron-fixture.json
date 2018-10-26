@@ -37,6 +37,11 @@
                 "name": "maven",
                 "url": "http://mobilebuild.homeoffice.test.com:8081/nexus/content/repositories/hosted"
               }
+            ],
+            "transformers": [
+              {
+                "name": "dummy"
+              }
             ]
           }
         },

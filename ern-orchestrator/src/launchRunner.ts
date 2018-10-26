@@ -2,18 +2,12 @@ import { android, ios } from 'ern-core'
 import { launchOnDevice } from './launchOnDevice'
 import { launchOnSimulator } from './launchOnSimulator'
 
-const { runAndroidProject } = android
-
 export async function launchRunner({
   platform,
   pathToRunner,
-  host,
-  port,
 }: {
   platform: string
   pathToRunner: string
-  host?: string
-  port?: string
 }) {
   if (platform === 'android') {
     return launchAndroidRunner(pathToRunner)
@@ -23,7 +17,7 @@ export async function launchRunner({
 }
 
 async function launchAndroidRunner(pathToAndroidRunner: string) {
-  return runAndroidProject({
+  return android.runAndroidProject({
     packageName: 'com.walmartlabs.ern',
     projectPath: pathToAndroidRunner,
   })
