@@ -1225,7 +1225,7 @@ export default class CauldronApi {
 
   public getBundleZipFileName(descriptor: NativeApplicationDescriptor): string {
     this.throwIfPartialNapDescriptor(descriptor)
-    return `${descriptor.toString()}.zip`
+    return `${descriptor.toString().replace(/:/g, '-')}.zip`
   }
 
   public async addPublisher(
