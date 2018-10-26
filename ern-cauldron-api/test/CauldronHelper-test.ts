@@ -1526,7 +1526,7 @@ describe('CauldronHelper.js', () => {
         'bundleContent'
       )
       const bundledAdded = await fileStore.hasFile(
-        'bundles/test:android:17.7.0.zip'
+        path.join('bundles', 'test-android-17.7.0.zip')
       )
       expect(bundledAdded).true
     })
