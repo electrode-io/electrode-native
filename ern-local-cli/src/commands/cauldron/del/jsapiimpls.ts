@@ -6,6 +6,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
+  emptyContainerIfSingleMiniAppOrJsApiImpl,
 } from '../../../lib'
 import { Argv } from 'yargs'
 
@@ -75,20 +76,22 @@ export const commandHandler = async ({
     }`,
   ]
 
-  const cauldron = await getActiveCauldron()
-  await performContainerStateUpdateInCauldron(
-    async () => {
-      for (const jsApiImpl of jsapiimpls) {
-        await cauldron.removeJsApiImplFromContainer(descriptor!, jsApiImpl)
-        cauldronCommitMessage.push(
-          `- Remove ${jsApiImpl} JS API implementation`
-        )
-      }
-    },
-    descriptor,
-    cauldronCommitMessage,
-    { containerVersion }
-  )
+  if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor))) {
+    const cauldron = await getActiveCauldron()
+    await performContainerStateUpdateInCauldron(
+      async () => {
+        for (const jsApiImpl of jsapiimpls) {
+          await cauldron.removeJsApiImplFromContainer(descriptor!, jsApiImpl)
+          cauldronCommitMessage.push(
+            `- Remove ${jsApiImpl} JS API implementation`
+          )
+        }
+      },
+      descriptor,
+      cauldronCommitMessage,
+      { containerVersion }
+    )
+  }
   log.info(`JS API implementation(s) successfully removed from ${descriptor}`)
 }
 

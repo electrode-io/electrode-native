@@ -6,6 +6,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
+  emptyContainerIfSingleMiniAppOrJsApiImpl,
 } from '../../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -89,18 +90,21 @@ export const commandHandler = async ({
     }`,
   ]
 
-  const cauldron = await getActiveCauldron()
-  await performContainerStateUpdateInCauldron(
-    async () => {
-      for (const miniapp of miniapps) {
-        await cauldron.removeMiniAppFromContainer(descriptor!, miniapp)
-        cauldronCommitMessage.push(`- Remove ${miniapp} MiniApp`)
-      }
-    },
-    descriptor,
-    cauldronCommitMessage,
-    { containerVersion }
-  )
+  if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor))) {
+    const cauldron = await getActiveCauldron()
+    await performContainerStateUpdateInCauldron(
+      async () => {
+        for (const miniapp of miniapps) {
+          await cauldron.removeMiniAppFromContainer(descriptor!, miniapp)
+          cauldronCommitMessage.push(`- Remove ${miniapp} MiniApp`)
+        }
+      },
+      descriptor,
+      cauldronCommitMessage,
+      { containerVersion }
+    )
+  }
+
   log.info(`MiniApp(s) successfully removed from ${descriptor}`)
 }
 

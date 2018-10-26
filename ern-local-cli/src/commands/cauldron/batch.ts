@@ -13,6 +13,7 @@ import {
   askUserToChooseANapDescriptorFromCauldron,
   logNativeDependenciesConflicts,
   tryCatchWrap,
+  emptyContainerIfSingleMiniAppOrJsApiImpl,
 } from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -225,7 +226,9 @@ export const commandHandler = async ({
       }
       // Del MiniApps
       for (const delMiniApp of delMiniapps) {
-        await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp)
+        if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor!))) {
+          await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp)
+        }
         cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`)
       }
       // Update Dependencies
