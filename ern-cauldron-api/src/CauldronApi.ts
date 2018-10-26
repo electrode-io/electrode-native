@@ -1262,6 +1262,22 @@ If you want to modify this publisher configuration you need to edit it manually 
     }
   }
 
+  /**
+   * Empty the Container of a given native application version
+   * Removes all MiniApps/JsApiImpls and native dependencies from
+   * the target Container and Container yarn lock
+   * @param descriptor Target native application version descriptor
+   */
+  public async emptyContainer(descriptor: NativeApplicationDescriptor) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    version.container.jsApiImpls = []
+    version.container.miniApps = []
+    version.container.nativeDeps = []
+    delete version.yarnLocks.container
+    await this.commit(`Empty Container of ${descriptor}`)
+  }
+
   public throwIfPartialNapDescriptor(
     napDescriptor: NativeApplicationDescriptor
   ) {
