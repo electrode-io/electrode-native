@@ -1271,6 +1271,10 @@ export class CauldronHelper {
     return result
   }
 
+  public async emptyContainer(descriptor: NativeApplicationDescriptor) {
+    return this.cauldron.emptyContainer(descriptor)
+  }
+
   //
   // Retrieves all native applications versions from the Cauldron, optionaly
   // filtered by platform/and or release status and returns them as an array

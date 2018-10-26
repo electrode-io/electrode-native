@@ -2877,6 +2877,74 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
+  // emptyContainer
+  // ==========================================================
+  describe('emptyContainer', () => {
+    it('should throw if provided a partial native application desscriptor', async () => {
+      const cauldron = cauldronApi()
+      assert(
+        await doesThrow(
+          cauldron.emptyContainer,
+          cauldron,
+          NativeApplicationDescriptor.fromString('test:android')
+        )
+      )
+    })
+
+    it('should remove all MiniApps from Container of target native application version', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const cauldron = cauldronApi(tmpFixture)
+      await cauldron.emptyContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      )
+      const version = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
+      )[0]
+      expect(version.container.miniApps).empty
+    })
+
+    it('should remove all JS API Implementations from Container of target native application version', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const cauldron = cauldronApi(tmpFixture)
+      await cauldron.emptyContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      )
+      const version = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
+      )[0]
+      expect(version.container.jsApiImpls).empty
+    })
+
+    it('should remove all native dependencies from Container of target native application version', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const cauldron = cauldronApi(tmpFixture)
+      await cauldron.emptyContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      )
+      const version = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
+      )[0]
+      expect(version.container.nativeDeps).empty
+    })
+
+    it('should remove the Container yarn lock of target native application version', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const cauldron = cauldronApi(tmpFixture)
+      await cauldron.emptyContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      )
+      const version = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
+      )[0]
+      expect(version.yarnLocks.container).undefined
+    })
+  })
+
+  // ==========================================================
   // throwIfPartialNapDescriptor
   // ==========================================================
   describe('throwIfPartialNapDescriptor', () => {
