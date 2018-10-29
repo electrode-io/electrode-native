@@ -1,37 +1,34 @@
 export function forValue(str) {
-    str = str.toUpperCase();
-    if (str in ALL)
-        return ALL[str];
+  str = str.toUpperCase()
+  if (str in ALL) return ALL[str]
 }
-
 
 class RefType {
-    constructor(internalPrefix) {
-        this.internalPrefix = internalPrefix;
-    }
+  constructor(internalPrefix) {
+    this.internalPrefix = internalPrefix
+  }
 
-    getInternalPrefix() {
-        return this.internalPrefix;
-    }
+  getInternalPrefix() {
+    return this.internalPrefix
+  }
 
-    ordinal() {
-        return ENUMS.indexOf(this);
-    }
+  ordinal() {
+    return ENUMS.indexOf(this)
+  }
 
-    static values() {
-        return ENUMS;
-    }
+  static values() {
+    return ENUMS
+  }
 
-    static forValue = forValue;
+  static forValue = forValue
 }
 
+export const DEFINITION = new RefType('#/definitions/')
+export const PARAMETER = new RefType('#/parameters/')
+export const PATH = new RefType('#/paths/')
+export const RESPONSE = new RefType('#/responses/')
 
-export const DEFINITION = new RefType("#/definitions/");
-export const PARAMETER = new RefType("#/parameters/");
-export const PATH = new RefType("#/paths/");
-export const RESPONSE = new RefType("#/responses/");
+const ALL = { DEFINITION, PARAMETER, PATH, RESPONSE }
+const ENUMS = Object.freeze(Object.keys(ALL).map(v => ALL[v]))
 
-const ALL = {DEFINITION, PARAMETER, PATH, RESPONSE};
-const ENUMS = Object.freeze(Object.keys(ALL).map(v => ALL[v]));
-
-export default ({...ALL, forValue});
+export default { ...ALL, forValue }

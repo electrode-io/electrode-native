@@ -1,30 +1,31 @@
 import ModelImpl from '../models/ModelImpl'
 import RefModel from '../models/RefModel'
 import {
-    Property, ArrayProperty,
-    BooleanProperty,
-    DateProperty,
-    DateTimeProperty,
-    IntegerProperty,
-    LongProperty,
-    RefProperty,
-    StringProperty
+  Property,
+  ArrayProperty,
+  BooleanProperty,
+  DateProperty,
+  DateTimeProperty,
+  IntegerProperty,
+  LongProperty,
+  RefProperty,
+  StringProperty,
 } from '../models/properties'
 
 import StringUtils from '../java/StringUtils'
-import {Collections, newHashMap, newHashSet} from '../java/javaUtil'
+import { Collections, newHashMap, newHashSet } from '../java/javaUtil'
 import AbstractModel from '../models/AbstractModel'
 import StringBuilder from '../java/StringBuilder'
 
 export default class XmlExampleGenerator {
-  constructor (examples) {
+  constructor(examples) {
     this.examples = examples
     if (examples == null) {
       this.examples = newHashMap()
     }
   }
 
-  modelImplToXml (model, indent, path) {
+  modelImplToXml(model, indent, path) {
     const modelName = model.getName()
     if (path.contains(modelName)) {
       return XmlExampleGenerator.EMPTY
@@ -43,7 +44,12 @@ export default class XmlExampleGenerator {
     }
     if (model.getProperties() != null) {
       for (const [pName, p] of model.getProperties()) {
-        if (p != null && p.getXml() != null && p.getXml().getAttribute() != null && p.getXml().getAttribute()) {
+        if (
+          p != null &&
+          p.getXml() != null &&
+          p.getXml().getAttribute() != null &&
+          p.getXml().getAttribute()
+        ) {
           attributes.put(pName, p)
         } else {
           elements.put(pName, p)
@@ -53,7 +59,10 @@ export default class XmlExampleGenerator {
     sb.append(this.indent(indent)).append(XmlExampleGenerator.TAG_START)
     sb.append(name)
     for (const [p, pName] of attributes) {
-      sb.append(' ').append(pName).append('=').append(this.quote(this.toXml(null, p, 0, selfPath)))
+      sb.append(' ')
+        .append(pName)
+        .append('=')
+        .append(this.quote(this.toXml(null, p, 0, selfPath)))
     }
     sb.append(XmlExampleGenerator.CLOSE_TAG)
     sb.append(XmlExampleGenerator.NEWLINE)
@@ -65,16 +74,24 @@ export default class XmlExampleGenerator {
       sb.append(asXml)
       sb.append(XmlExampleGenerator.NEWLINE)
     }
-    sb.append(this.indent(indent)).append(XmlExampleGenerator.TAG_END).append(name).append(XmlExampleGenerator.CLOSE_TAG)
+    sb.append(this.indent(indent))
+      .append(XmlExampleGenerator.TAG_END)
+      .append(name)
+      .append(XmlExampleGenerator.CLOSE_TAG)
     return sb.toString()
   }
 
-  quote (string) {
+  quote(string) {
     return '"' + string + '"'
   }
 
-  toXml (name, property, indent, path) {
-    if ((typeof name === 'string' || name === null) && (property instanceof Property || property === null) && ((typeof indent === 'number') || indent === null) && (path === null || 'size' in path)) {
+  toXml(name, property, indent, path) {
+    if (
+      (typeof name === 'string' || name === null) &&
+      (property instanceof Property || property === null) &&
+      (typeof indent === 'number' || indent === null) &&
+      (path === null || 'size' in path)
+    ) {
       if (property == null) {
         return ''
       }
@@ -83,7 +100,11 @@ export default class XmlExampleGenerator {
         let p = property
         let inner = p.getItems()
         let wrapped = false
-        if (property.getXml() != null && property.getXml().getWrapped() != null && property.getXml().getWrapped()) {
+        if (
+          property.getXml() != null &&
+          property.getXml().getWrapped() != null &&
+          property.getXml().getWrapped()
+        ) {
           wrapped = true
         }
         if (wrapped) {
@@ -138,7 +159,7 @@ export default class XmlExampleGenerator {
     throw new Error(`unknown overload`)
   }
 
-  getExample (property) {
+  getExample(property) {
     if (property instanceof DateTimeProperty) {
       if (property.getExample() != null) {
         return property.getExample().toString()
@@ -179,15 +200,15 @@ export default class XmlExampleGenerator {
     return 'not implemented ' + property
   }
 
-  openTag (name) {
+  openTag(name) {
     return '<' + name + '>'
   }
 
-  closeTag (name) {
+  closeTag(name) {
     return '</' + name + '>'
   }
 
-  indent (indent) {
+  indent(indent) {
     let sb = new StringBuilder()
     for (let i = 0; i < indent; i++) {
       sb.append('  ')

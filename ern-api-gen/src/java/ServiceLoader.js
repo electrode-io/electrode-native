@@ -2,11 +2,11 @@ import fs from 'fs'
 import path from 'path'
 import LoggerFactory from './LoggerFactory'
 import File from './File'
-import {isEmpty} from './StringUtils'
+import { isEmpty } from './StringUtils'
 
 const Log = LoggerFactory.getLogger('ServiceLoader')
 
-const tryNewRequire = (mod) => {
+const tryNewRequire = mod => {
   try {
     const Clz = require(mod).default
     return new Clz()
@@ -16,8 +16,8 @@ const tryNewRequire = (mod) => {
 }
 export const SEARCH_PATH = [path.join(__dirname, '..', '..', 'resources')]
 
-export default ({
-  load (className) {
+export default {
+  load(className) {
     const ret = []
     const lines = []
     for (const searchPath of SEARCH_PATH) {
@@ -44,5 +44,5 @@ export default ({
     }
 
     return ret
-  }
-})
+  },
+}

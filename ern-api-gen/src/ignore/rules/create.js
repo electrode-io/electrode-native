@@ -1,18 +1,18 @@
 import IgnoreToken from './IgnoreToken'
-import {InvalidRule} from './InvalidRule'
-import {DirectoryRule} from './DirectoryRule'
-import {RootedFileRule} from './RootedFileRule'
-import {FileRule} from './FileRule'
-import {IgnoreLineParser} from './IgnoreLineParser'
+import { InvalidRule } from './InvalidRule'
+import { DirectoryRule } from './DirectoryRule'
+import { RootedFileRule } from './RootedFileRule'
+import { FileRule } from './FileRule'
+import { IgnoreLineParser } from './IgnoreLineParser'
 
-export default function create (definition) {
+export default function create(definition) {
   let rule = null
-  if ((definition === '.')) {
-    return new InvalidRule(null, definition, "Pattern \'.\' is invalid.")
-  } else if ((definition === '!.')) {
-    return new InvalidRule(null, definition, "Pattern \'!.\' is invalid.")
+  if (definition === '.') {
+    return new InvalidRule(null, definition, "Pattern '.' is invalid.")
+  } else if (definition === '!.') {
+    return new InvalidRule(null, definition, "Pattern '!.' is invalid.")
   } else if (definition.startsWith('..')) {
-    return new InvalidRule(null, definition, "Pattern \'..\' is invalid.")
+    return new InvalidRule(null, definition, "Pattern '..' is invalid.")
   }
   try {
     let result = IgnoreLineParser.parse(definition)
@@ -28,7 +28,9 @@ export default function create (definition) {
       }
     } else {
       const head = result[0].getToken()
-      directoryOnly = IgnoreToken.DIRECTORY_MARKER.equals(result[result.length - 1].getToken())
+      directoryOnly = IgnoreToken.DIRECTORY_MARKER.equals(
+        result[result.length - 1].getToken()
+      )
       if (directoryOnly) {
         rule = new DirectoryRule(result, definition)
       } else if (IgnoreToken.PATH_DELIM.equals(head)) {

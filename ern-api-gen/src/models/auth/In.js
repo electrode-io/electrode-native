@@ -1,21 +1,21 @@
 class In {
-  constructor (key) {
+  constructor(key) {
     this.key = key
   }
 
-  toValue () {
+  toValue() {
     return this.key
   }
 
-  toJSON () {
+  toJSON() {
     return this.key
   }
-  toString () {
+  toString() {
     return this.key
   }
 }
 
-export default function forValue (value) {
+export default function forValue(value) {
   if (value == null || value instanceof In) return value
   value = value.toLowerCase()
   if (value == HEADER.key) return HEADER

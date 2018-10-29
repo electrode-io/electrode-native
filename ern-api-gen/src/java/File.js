@@ -1,109 +1,109 @@
-import fs from "fs";
-import path from "path";
-import {sync as mkdirsSync} from "mkdirp";
+import fs from 'fs'
+import path from 'path'
+import { sync as mkdirsSync } from 'mkdirp'
 function canAccess(file) {
-    try {
-        fs.accessSync(file);
-        return true;
-    } catch (e) {
-    }
-    return false;
+  try {
+    fs.accessSync(file)
+    return true
+  } catch (e) {}
+  return false
 }
-const toString = String.valueOf();
+const toString = String.valueOf()
 
 export default class File {
-    static separator = path.sep;
-    static separatorChar = path.sep;
+  static separator = path.sep
+  static separatorChar = path.sep
 
-    constructor(file, ...args) {
-        if (!file) {
-            throw new Error(`File needs an argument`);
-        }
-        if (file instanceof File && args.length === 0) {
-            return file;
-        }
-        this._filename = args.length ? path.join(toString(file), ...args.map(toString)) : toString(file);
+  constructor(file, ...args) {
+    if (!file) {
+      throw new Error(`File needs an argument`)
     }
-
-    relativeTo(file) {
-
-        if (file instanceof File) {
-            file = file._filename;
-        }
-        const relPath = path.relative(file, this._filename);
-        return new File(relPath);
+    if (file instanceof File && args.length === 0) {
+      return file
     }
+    this._filename = args.length
+      ? path.join(toString(file), ...args.map(toString))
+      : toString(file)
+  }
 
-    toAbsolutePath() {
-        return this.getAbsoluteFile().getPath();
+  relativeTo(file) {
+    if (file instanceof File) {
+      file = file._filename
     }
+    const relPath = path.relative(file, this._filename)
+    return new File(relPath)
+  }
 
-    getAbsolutePath() {
-        return this.toAbsolutePath();
-    }
+  toAbsolutePath() {
+    return this.getAbsoluteFile().getPath()
+  }
 
-    isAbsolute() {
-        return this._filename.startsWith("/");
-    }
+  getAbsolutePath() {
+    return this.toAbsolutePath()
+  }
 
-    toAbsolute() {
-        return this.getAbsoluteFile();
-    }
+  isAbsolute() {
+    return this._filename.startsWith('/')
+  }
 
-    getAbsoluteFile() {
-        if (this.isAbsolute()) {
-            return this;
-        }
-        return new File(path.join(process.cwd(), this._filename));
-    }
+  toAbsolute() {
+    return this.getAbsoluteFile()
+  }
 
-    canRead() {
-        return this.exists() && canAccess(this._filename);
+  getAbsoluteFile() {
+    if (this.isAbsolute()) {
+      return this
     }
+    return new File(path.join(process.cwd(), this._filename))
+  }
 
-    exists() {
-        return fs.existsSync(this._filename);
-    }
+  canRead() {
+    return this.exists() && canAccess(this._filename)
+  }
 
-    getName() {
-        return this._filename;
-    }
+  exists() {
+    return fs.existsSync(this._filename)
+  }
 
-    getParentFile() {
-        if (this._parent) {
-            return this._parent;
-        }
-        this._parent = new File(path.resolve(this._filename, '..'));
-        return this._parent;
-    }
+  getName() {
+    return this._filename
+  }
 
-    getPath() {
-        return this._filename;
+  getParentFile() {
+    if (this._parent) {
+      return this._parent
     }
+    this._parent = new File(path.resolve(this._filename, '..'))
+    return this._parent
+  }
 
-    _() {
-        if (!this._stat) {
-            if (!this.exists()) return false;
-            this._stat = fs.statSync(this._filename);
-        }
-        return this._stat;
-    }
+  getPath() {
+    return this._filename
+  }
 
-    isDirectory() {
-        const s = this._();
-        return s && s.isDirectory();
+  _() {
+    if (!this._stat) {
+      if (!this.exists()) return false
+      this._stat = fs.statSync(this._filename)
     }
+    return this._stat
+  }
 
-    isFile() {
-        const s = this._();
-        return s && s.isFile();
-    }
+  isDirectory() {
+    const s = this._()
+    return s && s.isDirectory()
+  }
 
-    mkdirs() {
-        return mkdirsSync(this._filename);
-    }
+  isFile() {
+    const s = this._()
+    return s && s.isFile()
+  }
 
-    toString() {
-        return this._filename
-    }
+  mkdirs() {
+    return mkdirsSync(this._filename)
+  }
+
+  toString() {
+    return this._filename
+  }
 }

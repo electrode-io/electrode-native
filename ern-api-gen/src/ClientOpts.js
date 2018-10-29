@@ -39,12 +39,10 @@ export default class ClientOpts {
   toString() {
     let sb = new StringBuilder()
     sb.append('ClientOpts: {\n')
-    sb
-      .append('  uri: ')
+    sb.append('  uri: ')
       .append(this.uri)
       .append(',')
-    sb
-      .append('  auth: ')
+    sb.append('  auth: ')
       .append(this.auth)
       .append(',')
     sb.append(this.properties)

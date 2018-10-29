@@ -1,72 +1,72 @@
-import {apply} from '../java/beanUtils'
+import { apply } from '../java/beanUtils'
 
 export default class Xml {
-  constructor (obj) {
+  constructor(obj) {
     obj && apply(this, obj)
   }
 
-  name (name) {
+  name(name) {
     this.setName(name)
     return this
   }
 
-  namespace (namespace) {
+  namespace(namespace) {
     this.setNamespace(namespace)
     return this
   }
 
-  prefix (prefix) {
+  prefix(prefix) {
     this.setPrefix(prefix)
     return this
   }
 
-  attribute (attribute) {
+  attribute(attribute) {
     this.setAttribute(attribute)
     return this
   }
 
-  wrapped (wrapped) {
+  wrapped(wrapped) {
     this.setWrapped(wrapped)
     return this
   }
 
-  getName () {
+  getName() {
     return this.__name
   }
 
-  setName (name) {
+  setName(name) {
     this.__name = name
   }
 
-  getNamespace () {
+  getNamespace() {
     return this.__namespace
   }
 
-  setNamespace (namespace) {
+  setNamespace(namespace) {
     this.__namespace = namespace
   }
 
-  getPrefix () {
+  getPrefix() {
     return this.__prefix
   }
 
-  setPrefix (prefix) {
+  setPrefix(prefix) {
     this.__prefix = prefix
   }
 
-  getAttribute () {
+  getAttribute() {
     return this.__attribute
   }
 
-  setAttribute (attribute) {
+  setAttribute(attribute) {
     this.__attribute = attribute
   }
 
-  getWrapped () {
+  getWrapped() {
     return this.__wrapped
   }
 
-  setWrapped (wrapped) {
+  setWrapped(wrapped) {
     this.__wrapped = wrapped
   }
 }

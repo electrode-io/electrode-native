@@ -1,10 +1,10 @@
 import Part from './Part'
 import ParserException from './ParserException'
-import {IgnoreToken} from './IgnoreToken'
+import { IgnoreToken } from './IgnoreToken'
 import StringBuilder from '../../java/StringBuilder'
 
 export class IgnoreLineParser {
-  static parse (text) {
+  static parse(text) {
     const parts = []
     const sb = new StringBuilder()
     const characters = text.split('')
@@ -14,7 +14,7 @@ export class IgnoreLineParser {
       let current = characters[i]
       next = i < totalLength - 1 ? characters[i + 1] : null
       if (i === 0) {
-        if ((current === '#')) {
+        if (current === '#') {
           parts.push(new Part(IgnoreToken.COMMENT, text))
           i = totalLength
           continue
@@ -25,7 +25,7 @@ export class IgnoreLineParser {
             parts.push(new Part(IgnoreToken.NEGATE))
             continue
           }
-        } else if ((current === '\\') && (next === '#')) {
+        } else if (current === '\\' && next === '#') {
           current = next
           next = null
           i++
@@ -33,8 +33,8 @@ export class IgnoreLineParser {
       }
       const any = IgnoreToken.MATCH_ANY.getPattern()
       if (any === current) {
-        if ((any === next)) {
-          if ((i + 3 < totalLength) && (characters[i + 2] === any)) {
+        if (any === next) {
+          if (i + 3 < totalLength && characters[i + 2] === any) {
             throw new ParserException('The pattern *** is invalid.')
           }
           parts.push(new Part(IgnoreToken.MATCH_ALL))
@@ -49,15 +49,15 @@ export class IgnoreLineParser {
           continue
         }
       }
-      if (i === 0 && (IgnoreToken.ROOTED_MARKER.getPattern() === current)) {
+      if (i === 0 && IgnoreToken.ROOTED_MARKER.getPattern() === current) {
         parts.push(new Part(IgnoreToken.ROOTED_MARKER))
         continue
       }
-      if ((current === '\\') && (next === ' ')) {
+      if (current === '\\' && next === ' ') {
         parts.push(new Part(IgnoreToken.ESCAPED_SPACE))
         i++
         continue
-      } else if ((current === '\\') && (next === '!')) {
+      } else if (current === '\\' && next === '!') {
         parts.push(new Part(IgnoreToken.ESCAPED_EXCLAMATION))
         i++
         continue
