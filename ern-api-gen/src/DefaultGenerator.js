@@ -21,6 +21,7 @@ import ComposedModel from './models/ComposedModel'
 import GlobalSupportingFile from './GlobalSupportingFile'
 import CodegenIgnoreProcessor from './ignore/CodegenIgnoreProcessor'
 import TreeMap from './java/TreeMap'
+import path from 'path'
 
 const sortOperationId = (a, b) => a.operationId.localeCompare(b.operationId)
 const sortClassName = (a, b) => {
@@ -516,7 +517,10 @@ export default class DefaultGenerator extends AbstractGenerator {
           }
           if (generateApiDocumentation) {
             for (const [templateName] of this.config.apiDocTemplateFiles()) {
-              let filename = this.config.apiDocFilename(templateName, tag)
+              let filename = path.normalize(
+                this.config.apiDocFilename(templateName, tag)
+              )
+
               if (
                 !this.config.shouldOverwrite(filename) &&
                 new File(filename).exists()
@@ -524,6 +528,7 @@ export default class DefaultGenerator extends AbstractGenerator {
                 Log.info('Skipped overwriting ' + filename)
                 continue
               }
+
               let written = this.processTemplateToFile(
                 operation,
                 templateName,

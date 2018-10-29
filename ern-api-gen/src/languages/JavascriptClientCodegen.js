@@ -27,6 +27,7 @@ import File from '../java/File'
 import { newHashSet, newHashMap, Collections } from '../java/javaUtil'
 import StringBuilder from '../java/StringBuilder'
 import { isEmpty } from '../java/StringUtils'
+import path from 'path'
 
 export default class JavascriptClientCodegen extends DefaultCodegen {
   static PROJECT_NAME = 'projectName'
@@ -554,23 +555,31 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         buf.append(segment)
       }
     }
-    for (let i = 0; i < buf.length(); i++) {
-      let c = buf.charAt(i)
-      if ((c === '/' || c === '\\') && c !== File.separatorChar)
-        buf.setCharAt(i, File.separatorChar)
-    }
-    return buf.toString()
+
+    return path.normalize(buf.toString())
   }
 
   apiTestFileFolder() {
-    return (this.__outputFolder + '/test/' + this.apiTestPath)
-      .split('/')
+    return (
+      this.__outputFolder +
+      path.sep +
+      'test' +
+      path.sep +
+      this.apiTestPath
+    )
+      .split(path.sep)
       .join(File.separatorChar)
   }
 
   modelTestFileFolder() {
-    return (this.__outputFolder + '/test/' + this.modelTestPath)
-      .split('/')
+    return (
+      this.__outputFolder +
+      path.sep +
+      'test' +
+      path.sep +
+      this.modelTestPath
+    )
+      .split(path.sep)
       .join(File.separatorChar)
   }
 

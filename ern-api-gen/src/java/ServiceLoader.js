@@ -1,3 +1,4 @@
+import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import LoggerFactory from './LoggerFactory'
@@ -27,7 +28,7 @@ export default {
       }
 
       try {
-        lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split('\n'))
+        lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split(os.EOL))
       } catch (e) {
         Log.warn(`Error loading ${className}`, e)
         return ret

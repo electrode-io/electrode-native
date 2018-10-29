@@ -58,6 +58,7 @@ import ApiKeyAuthDefinition from './models/auth/ApiKeyAuthDefinition'
 import BasicAuthDefinition from './models/auth/BasicAuthDefinition'
 import In from './models/auth/In'
 import PropertyBuilder from './models/PropertyBuilder'
+import path from 'path'
 
 const _count2 = (_, i) => ++i
 const COMMON_PREFIX_RE = new RegExp('[a-zA-Z0-9]+\\z', 'g')
@@ -543,10 +544,10 @@ export default class DefaultCodegen {
   apiFileFolder() {
     return (
       this.__outputFolder +
-      '/' +
+      path.sep +
       this.apiPackage()
         .split('.')
-        .join('/')
+        .join(path.sep)
     )
   }
 
@@ -563,30 +564,30 @@ export default class DefaultCodegen {
   modelFileFolder() {
     return (
       this.__outputFolder +
-      '/' +
+      path.sep +
       this.modelPackage()
         .split('.')
-        .join('/')
+        .join(path.sep)
     )
   }
 
   apiTestFileFolder() {
     return (
       this.__outputFolder +
-      '/' +
+      path.sep +
       this.testPackage()
         .split('.')
-        .join('/')
+        .join(path.sep)
     )
   }
 
   modelTestFileFolder() {
     return (
       this.__outputFolder +
-      '/' +
+      path.sep +
       this.testPackage()
         .split('.')
-        .join('/')
+        .join(path.sep)
     )
   }
 
@@ -2685,12 +2686,12 @@ export default class DefaultCodegen {
 
   apiFilename(templateName, tag) {
     let suffix = this.apiTemplateFiles().get(templateName)
-    return this.apiFileFolder() + '/' + this.toApiFilename(tag) + suffix
+    return this.apiFileFolder() + path.sep + this.toApiFilename(tag) + suffix
   }
 
   apiDataFilename(templateName, tag) {
     let suffix = this.apiDataTemplateFile().get(templateName)
-    return this.apiFileFolder() + '/' + this.toModelName(tag) + suffix
+    return this.apiFileFolder() + path.sep + this.toModelName(tag) + suffix
   }
 
   /**
@@ -2703,7 +2704,7 @@ export default class DefaultCodegen {
    */
   apiDocFilename(templateName, tag) {
     let suffix = this.apiDocTemplateFiles().get(templateName)
-    return this.apiDocFileFolder() + '/' + this.toApiDocFilename(tag) + suffix
+    return this.apiDocFileFolder() + this.toApiDocFilename(tag) + suffix
   }
 
   /**
@@ -2716,7 +2717,9 @@ export default class DefaultCodegen {
    */
   apiTestFilename(templateName, tag) {
     let suffix = this.apiTestTemplateFiles().get(templateName)
-    return this.apiTestFileFolder() + '/' + this.toApiTestFilename(tag) + suffix
+    return (
+      this.apiTestFileFolder() + path.sep + this.toApiTestFilename(tag) + suffix
+    )
   }
 
   shouldOverwrite(filename) {

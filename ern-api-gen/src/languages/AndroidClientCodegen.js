@@ -9,6 +9,7 @@ import File from '../java/File'
 import { Arrays, newHashSet, newHashMap } from '../java/javaUtil'
 import DefaultCodegen from '../DefaultCodegen'
 import { parseBoolean } from '../java/BooleanHelper'
+import path from 'path'
 
 export default class AndroidClientCodegen extends DefaultCodegen {
   static USE_ANDROID_MAVEN_GRADLE_PLUGIN = 'useAndroidMavenGradlePlugin'
@@ -200,9 +201,9 @@ export default class AndroidClientCodegen extends DefaultCodegen {
   apiFileFolder() {
     return (
       this.__outputFolder +
-      '/' +
+      path.sep +
       this.sourceFolder +
-      '/' +
+      path.sep +
       this.apiPackage()
         .split('.')
         .join(File.separator)
@@ -212,9 +213,9 @@ export default class AndroidClientCodegen extends DefaultCodegen {
   modelFileFolder() {
     return (
       this.__outputFolder +
-      '/' +
+      path.sep +
       this.sourceFolder +
-      '/' +
+      path.sep +
       this.modelPackage()
         .split('.')
         .join(File.separator)
@@ -222,14 +223,14 @@ export default class AndroidClientCodegen extends DefaultCodegen {
   }
 
   apiDocFileFolder() {
-    return (this.__outputFolder + '/' + this.apiDocPath)
-      .split('/')
+    return (this.__outputFolder + path.sep + this.apiDocPath)
+      .split(path.sep)
       .join(File.separator)
   }
 
   modelDocFileFolder() {
-    return (this.__outputFolder + '/' + this.modelDocPath)
-      .split('/')
+    return (this.__outputFolder + path.sep + this.modelDocPath)
+      .split(path.sep)
       .join(File.separator)
   }
 
