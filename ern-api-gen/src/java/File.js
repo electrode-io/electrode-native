@@ -43,7 +43,7 @@ export default class File {
   }
 
   isAbsolute() {
-    return this._filename.startsWith('/')
+    return path.isAbsolute(this._filename)
   }
 
   toAbsolute() {
