@@ -1,14 +1,14 @@
 export default class Part {
-  constructor (token, value) {
+  constructor(token, value) {
     this.token = token
     this.value = arguments.length < 2 ? token.getPattern() : value
   }
 
-  getToken () {
+  getToken() {
     return this.token
   }
 
-  getValue () {
+  getValue() {
     return this.value
   }
 }

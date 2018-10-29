@@ -1,34 +1,43 @@
-import JavascriptClientCodegen from "./JavascriptClientCodegen";
-import SupportingFile from '../SupportingFile';
+import JavascriptClientCodegen from './JavascriptClientCodegen'
+import SupportingFile from '../SupportingFile'
 
 export default class ES6Codegen extends JavascriptClientCodegen {
-    __templateDir = 'es6';
-    invokerPackage = "";
+  __templateDir = 'es6'
+  invokerPackage = ''
 
+  constructor() {
+    super()
+    this.__supportingFiles = this.__supportingFiles.filter(
+      v => v.templateFile != 'mocha.opts'
+    )
+    this.__supportingFiles.push(
+      new SupportingFile('babelrc.mustache', '', '.babelrc')
+    )
+    this.__supportingFiles.push(
+      new SupportingFile('npmignore.mustache', '', '.npmignore')
+    )
+    this.__supportingFiles.push(
+      new SupportingFile('gitignore.mustache', '', '.gitignore')
+    )
 
-    constructor() {
-        super();
-        this.__supportingFiles = this.__supportingFiles.filter(v => v.templateFile != 'mocha.opts');
-        this.__supportingFiles.push(new SupportingFile("babelrc.mustache", "", ".babelrc"));
-        this.__supportingFiles.push(new SupportingFile("npmignore.mustache", "", ".npmignore"));
-        this.__supportingFiles.push(new SupportingFile("gitignore.mustache", "", ".gitignore"));
+    this.usePromises = true
+  }
 
-        this.usePromises = true;
-    }
+  processOpts() {
+    super.processOpts()
+    const f = this[
+      `addSupportingFilesFor${JavascriptClientCodegen.camelize(
+        this.getLibrary()
+      )}`
+    ]
+    f && f.call(this)
+  }
 
-    processOpts() {
-        super.processOpts();
-        const f = this[`addSupportingFilesFor${JavascriptClientCodegen.camelize(this.getLibrary())}`];
-        f && f.call(this);
-    }
+  getName() {
+    return 'ES6'
+  }
 
-    getName() {
-        return 'ES6';
-    }
-
-    apiFileFolder(templateName, tag) {
-        return this.__outputFolder + "/src/api";
-    }
-
+  apiFileFolder(templateName, tag) {
+    return this.__outputFolder + '/src/api'
+  }
 }
-

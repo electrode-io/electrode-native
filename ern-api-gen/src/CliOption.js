@@ -81,15 +81,13 @@ export default class CliOption {
   getOptionHelp() {
     let sb = new StringBuilder(this.description)
     if (this.__defaultValue != null) {
-      sb
-        .append(' (Default: ')
+      sb.append(' (Default: ')
         .append(this.__defaultValue)
         .append(')')
     }
     if (this.enumValues != null) {
       for (const [key, value] of this.enumValues) {
-        sb
-          .append('\n    ')
+        sb.append('\n    ')
           .append(key)
           .append(' - ')
           .append(value)

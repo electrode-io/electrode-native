@@ -1,44 +1,43 @@
-import {newHashMap} from "../java/javaUtil";
+import { newHashMap } from '../java/javaUtil'
 
 export default class AbstractModel {
-    vendorExtensions = newHashMap();
+  vendorExtensions = newHashMap()
 
-    getExternalDocs() {
-        return this.externalDocs;
-    };
+  getExternalDocs() {
+    return this.externalDocs
+  }
 
-    setExternalDocs(value) {
-        this.externalDocs = value;
-    };
+  setExternalDocs(value) {
+    this.externalDocs = value
+  }
 
-    getTitle() {
-        return this.title;
-    };
+  getTitle() {
+    return this.title
+  }
 
-    setTitle(title) {
-        this.title = title;
-    };
+  setTitle(title) {
+    this.title = title
+  }
 
-    getVendorExtensions() {
-        return this.vendorExtensions;
-    };
+  getVendorExtensions() {
+    return this.vendorExtensions
+  }
 
-    setVendorExtension(name, value) {
-        if (typeof name === 'string' && name.startsWith("x-")) {
-            this.vendorExtensions.put(name, value);
-        }
-    };
+  setVendorExtension(name, value) {
+    if (typeof name === 'string' && name.startsWith('x-')) {
+      this.vendorExtensions.put(name, value)
+    }
+  }
 
-    setVendorExtensions(vendorExtensions) {
-        this.vendorExtensions = vendorExtensions;
-    };
+  setVendorExtensions(vendorExtensions) {
+    this.vendorExtensions = vendorExtensions
+  }
 
+  getReference() {
+    return this.reference
+  }
 
-    getReference() {
-        return this.reference;
-    };
-
-    setReference(reference) {
-        this.reference = reference;
-    };
+  setReference(reference) {
+    this.reference = reference
+  }
 }

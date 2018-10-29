@@ -3,14 +3,14 @@ const CHARS = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  '\'': '&#39;',
+  "'": '&#39;',
   '`': '&#96;',
-  '=': '&#61;'
+  '=': '&#61;',
 }
-export default ({
-  escapeJava (str) {
+export default {
+  escapeJava(str) {
     if (!str) return str
-        /*
+    /*
 
          char[] AMP = "&amp;".toCharArray();
          char[] LT = "&lt;".toCharArray();
@@ -25,7 +25,7 @@ export default ({
     })
     return ret
 
-        /*                '&lt;')
+    /*                '&lt;')
          .replace(/>/g, '&gt;')
          .replace(/"/g, '&quot;')
          .replace(/'/g, '&#39;')
@@ -34,7 +34,7 @@ export default ({
          .replace(/&(?!amp|lt|gt|quot|#39|#96|#61);/g, '&amp;')
          ; */
   },
-  unescapeJava (str) {
+  unescapeJava(str) {
     return str
-  }
-})
+  },
+}

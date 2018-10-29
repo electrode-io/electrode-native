@@ -1,11 +1,15 @@
 import ApiKeyAuthDefinition from './auth/ApiKeyAuthDefinition'
 import BasicAuthDefinition from './auth/BasicAuthDefinition'
 import OAuth2Definition from './auth/OAuth2Definition'
-import {apply} from '../java/beanUtils'
+import { apply } from '../java/beanUtils'
 
-export const AUTHS = [ApiKeyAuthDefinition, BasicAuthDefinition, OAuth2Definition]
+export const AUTHS = [
+  ApiKeyAuthDefinition,
+  BasicAuthDefinition,
+  OAuth2Definition,
+]
 
-const resolve = (def) => {
+const resolve = def => {
   if (def == null || def.type == null) return null
   for (const o of AUTHS) {
     if (o.TYPE === def.type) {
@@ -14,7 +18,7 @@ const resolve = (def) => {
   }
 }
 
-export default function authFactory (definition) {
+export default function authFactory(definition) {
   const Type = resolve(definition)
   if (Type == null) {
     throw new Error(`Unknown Auth Type for :${JSON.stringify(definition)}`)

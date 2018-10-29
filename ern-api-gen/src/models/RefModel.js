@@ -1,90 +1,90 @@
 import AbstractModel from './AbstractModel'
-import {DEFINITION} from './refs/RefType'
+import { DEFINITION } from './refs/RefType'
 import GenericRef from './refs/GenericRef'
-import {apply} from '../java/beanUtils'
+import { apply } from '../java/beanUtils'
 
 export default class RefModel extends AbstractModel {
-  constructor (ref) {
+  constructor(ref) {
     super()
     if (typeof ref === 'string') {
       this.set$ref(ref)
     }
   }
 
-  asDefault (ref) {
+  asDefault(ref) {
     this.setReference(DEFINITION.getInternalPrefix() + ref)
     return this
-  };
+  }
 
-  getTitle () {
+  getTitle() {
     return this.title
-  };
+  }
 
-  setTitle (title) {
+  setTitle(title) {
     this.title = title
-  };
+  }
 
-  getDescription () {
+  getDescription() {
     return this.description
-  };
+  }
 
-  setDescription (description) {
+  setDescription(description) {
     this.description = description
-  };
+  }
 
-  getProperties () {
+  getProperties() {
     return this.properties
-  };
+  }
 
-  setProperties (properties) {
+  setProperties(properties) {
     this.properties = properties
-  };
+  }
 
-  getSimpleRef () {
+  getSimpleRef() {
     return this.genericRef.getSimpleRef()
-  };
+  }
 
-  get$ref () {
+  get$ref() {
     return this.genericRef.getRef()
-  };
+  }
 
-  set$ref (ref) {
+  set$ref(ref) {
     this.genericRef = new GenericRef(DEFINITION, ref)
-  };
+  }
 
-  getRefFormat () {
+  getRefFormat() {
     return this.genericRef.getFormat()
-  };
+  }
 
-  getExample () {
+  getExample() {
     return this.example
-  };
+  }
 
-  setExample (example) {
+  setExample(example) {
     this.example = example
-  };
+  }
 
-  getExternalDocs () {
+  getExternalDocs() {
     return this.externalDocs
-  };
+  }
 
-  setExternalDocs (value) {
+  setExternalDocs(value) {
     this.externalDocs = value
-  };
+  }
 
-  clone () {
+  clone() {
     return apply(new this.constructor(), this)
-  };
+  }
 
-  getVendorExtensions () {
+  getVendorExtensions() {
     return null
-  };
+  }
 
-  getReference () {
+  getReference() {
     return this.genericRef.getRef()
-  };
+  }
 
-  setReference (reference) {
+  setReference(reference) {
     this.set$ref(reference)
-  };
+  }
 }

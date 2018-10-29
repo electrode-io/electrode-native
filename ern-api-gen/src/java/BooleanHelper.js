@@ -1,4 +1,4 @@
-export function parseBoolean (str) {
+export function parseBoolean(str) {
   if (str == null) return false
   if (str === true || str === false) return str
   const cstr = ('' + str).toLowerCase()
@@ -6,6 +6,6 @@ export function parseBoolean (str) {
   if (cstr === 'false') return false
   return !!str
 }
-export default ({
-  parseBoolean
-})
+export default {
+  parseBoolean,
+}

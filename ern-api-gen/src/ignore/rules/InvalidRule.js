@@ -1,19 +1,19 @@
-import {Rule} from './Rule'
+import { Rule } from './Rule'
 export class InvalidRule extends Rule {
-  constructor (syntax, definition, reason) {
+  constructor(syntax, definition, reason) {
     super(syntax, definition)
     this.reason = reason
   }
 
-  matches (relativePath) {
+  matches(relativePath) {
     return null
   }
 
-  evaluate (relativePath) {
+  evaluate(relativePath) {
     return Rule.Operation.NOOP
   }
 
-  getReason () {
+  getReason() {
     return this.reason
   }
 }
