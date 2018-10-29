@@ -3,6 +3,7 @@ import path from 'path'
 import shell from 'shelljs'
 import { assert } from 'chai'
 import { sameDirContent } from 'ern-util-dev'
+import os from 'os'
 
 describe('IosRunnerGenerator', () => {
   const simpleIosRunnerTestGeneratedPath = path.join(
@@ -16,7 +17,11 @@ describe('IosRunnerGenerator', () => {
     'simple-ios-runner'
   )
 
-  before(() => {
+  before(function() {
+    if (os.platform() === 'win32') {
+      this.skip()
+      return
+    }
     // Recreate the directory where tests will generate the runner
     shell.rm('-rf', simpleIosRunnerTestGeneratedPath)
     shell.mkdir('-p', simpleIosRunnerTestGeneratedPath)
