@@ -47,7 +47,7 @@ export async function runMiniApp(
 
   let napDescriptor: NativeApplicationDescriptor | void
 
-  if (miniapps && !mainMiniAppName) {
+  if (miniapps && !MiniApp.existInPath(cwd) && !mainMiniAppName) {
     throw new Error(
       'If you run multiple MiniApps you need to provide the name of the MiniApp to launch'
     )
@@ -83,7 +83,6 @@ export async function runMiniApp(
   }
 
   let entryMiniAppName = mainMiniAppName || ''
-  let miniAppsPaths: PackagePath[] = []
   if (miniapps) {
     if (MiniApp.existInPath(cwd)) {
       const miniapp = MiniApp.fromPath(cwd)
@@ -111,7 +110,6 @@ export async function runMiniApp(
     )
     log.debug(`Initializing Runner`)
 
-    miniAppsPaths = [PackagePath.fromString(`file:${cwd}`)]
     if (dev) {
       const args: string[] = []
       if (host) {
