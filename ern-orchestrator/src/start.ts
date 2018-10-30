@@ -17,10 +17,6 @@ import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
 
-const { runAndroidApk } = android
-
-const { runIosApp } = ios
-
 export default async function start({
   miniapps,
   descriptor,
@@ -44,11 +40,6 @@ export default async function start({
   if (!cauldron && descriptor) {
     throw new Error(
       'To use a native application descriptor, a Cauldron must be active'
-    )
-  }
-  if (!cauldron && !miniapps) {
-    throw new Error(
-      'If no MiniApp(s) is/are specified, a Cauldron must be active'
     )
   }
 
@@ -109,16 +100,16 @@ export default async function start({
       if (await binaryStore.hasBinary(descriptor)) {
         if (descriptor.platform === 'android') {
           if (!packageName) {
-            return log.error('You need to provide an Android package name')
+            throw new Error('You need to provide an Android package name')
           }
           const apkPath = await binaryStore.getBinary(descriptor)
-          await runAndroidApk({ apkPath, packageName, activityName })
+          await android.runAndroidApk({ apkPath, packageName, activityName })
         } else if (descriptor.platform === 'ios') {
           if (!bundleId) {
-            return log.error('You need to provide an iOS bundle ID')
+            throw new Error('You need to provide an iOS bundle ID')
           }
           const appPath = await binaryStore.getBinary(descriptor)
-          await runIosApp({ appPath, bundleId })
+          await ios.runIosApp({ appPath, bundleId })
         }
       }
     }
