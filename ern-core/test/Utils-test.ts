@@ -174,7 +174,7 @@ describe('Core Utils', () => {
 
     it('shoud return true if the branch exist', async () => {
       sandbox.stub(git, 'gitCli').returns({
-        listRemoteAsync: async () => {
+        listRemote: async () => {
           return Promise.resolve(sampleHeadsRefs)
         },
       })
@@ -188,7 +188,7 @@ describe('Core Utils', () => {
 
     it('shoud return false if the branch does not exist', async () => {
       sandbox.stub(git, 'gitCli').returns({
-        listRemoteAsync: async () => {
+        listRemote: async () => {
           return Promise.resolve(sampleHeadsRefs)
         },
       })
@@ -231,7 +231,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
 
     it('shoud return true if the tag exist', async () => {
       sandbox.stub(git, 'gitCli').returns({
-        listRemoteAsync: async () => {
+        listRemote: async () => {
           return Promise.resolve(sampleTagsRefs)
         },
       })
@@ -245,7 +245,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
 
     it('shoud return false if the tag does not exist', async () => {
       sandbox.stub(git, 'gitCli').returns({
-        listRemoteAsync: async () => {
+        listRemote: async () => {
           return Promise.resolve(sampleTagsRefs)
         },
       })
@@ -285,7 +285,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
 
     it('should throw if the branch was not found', async () => {
       sandbox.stub(git, 'gitCli').returns({
-        listRemoteAsync: async () => {
+        listRemote: async () => {
           return Promise.resolve('')
         },
       })
@@ -302,7 +302,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
 
     it('should return the commit SHA of the branch HEAD', async () => {
       sandbox.stub(git, 'gitCli').returns({
-        listRemoteAsync: async () => {
+        listRemote: async () => {
           return Promise.resolve(sampleRef)
         },
       })
