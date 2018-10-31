@@ -116,9 +116,9 @@ export async function performContainerStateUpdateInCauldron(
         // Clean outDir
         shell.rm('-rf', path.join(outDir, '{.*,*}'))
         // git clone to outDir
-        await gitCli().cloneAsync(gitPublisher.url, outDir)
+        await gitCli().clone(gitPublisher.url, outDir)
         // git checkout current container version tag
-        await gitCli(outDir).checkoutAsync(`v${currentContainerVersion}`)
+        await gitCli(outDir).checkout(`v${currentContainerVersion}`)
         // and recreate bundle
         await runCaudronBundleGen(napDescriptor, {
           compositeMiniAppDir,
