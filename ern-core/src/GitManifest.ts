@@ -47,20 +47,15 @@ export default class GitManifest {
         }`
       )
       shell.mkdir('-p', this.repoAbsoluteLocalPath)
-      await this.git.initAsync()
-      await this.git.addRemoteAsync(this.remote, this.repoRemotePath)
+      await this.git.init()
+      await this.git.addRemote(this.remote, this.repoRemotePath)
     }
 
-    await this.git.rawAsync([
-      'remote',
-      'set-url',
-      this.remote,
-      this.repoRemotePath,
-    ])
+    await this.git.raw(['remote', 'set-url', this.remote, this.repoRemotePath])
 
     try {
       log.debug(`[GitManifest] Fetching from ${this.remote} master`)
-      await this.git.fetchAsync(this.remote, 'master')
+      await this.git.fetch(this.remote, 'master')
     } catch (e) {
       if (e.message.includes(`Couldn't find remote ref master`)) {
         throw new Error(
@@ -73,8 +68,8 @@ export default class GitManifest {
       }
     }
 
-    await this.git.resetAsync(['--hard', `${this.remote}/master`])
-    await this.git.pullAsync(this.remote, this.branch)
+    await this.git.reset(['--hard', `${this.remote}/master`])
+    await this.git.pull(this.remote, this.branch)
     const pathToManifestJson = path.join(
       this.repoAbsoluteLocalPath,
       manifestFileName

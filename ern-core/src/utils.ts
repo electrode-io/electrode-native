@@ -294,9 +294,10 @@ export async function downloadPluginSource(pluginOrigin: any): Promise<string> {
       }
     } else if (pluginOrigin.type === 'git') {
       if (pluginOrigin.version) {
-        await gitCli().cloneAsync(pluginOrigin.url, {
-          '--branch': pluginOrigin.version,
-        })
+        await gitCli().clone(pluginOrigin.url, '.', [
+          '--branch',
+          pluginOrigin.version,
+        ])
       }
     } else {
       throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
@@ -428,7 +429,7 @@ export async function isGitBranch(p: PackagePath): Promise<boolean> {
   if (!p.version) {
     throw new Error(`${p} does not include the branch to check`)
   }
-  const heads = await gitCli().listRemoteAsync(['--heads', p.basePath])
+  const heads = await gitCli().listRemote(['--heads', p.basePath])
   return heads.includes(gitRefBranch(p.version))
 }
 
@@ -439,7 +440,7 @@ export async function isGitTag(p: PackagePath): Promise<boolean> {
   if (!p.version) {
     throw new Error(`${p} does not include the tag to check`)
   }
-  const tags = await gitCli().listRemoteAsync(['--tags', p.basePath])
+  const tags = await gitCli().listRemote(['--tags', p.basePath])
   return tags.includes(gitRefTag(p.version))
 }
 
@@ -452,7 +453,7 @@ export async function getCommitShaOfGitBranchHead(
   if (!p.version) {
     throw new Error(`${p} does not include a branch`)
   }
-  const result = await gitCli().listRemoteAsync([p.basePath, p.version])
+  const result = await gitCli().listRemote([p.basePath, p.version])
   if (!result || result === '') {
     throw new Error(`${p.version} branch was not found`)
   }

@@ -21,7 +21,7 @@ export default class BaseGit implements ITransactional {
   }: {
     cauldronPath: string
     repository?: string
-    branch: string
+    branch?: string
   }) {
     this.fsPath = cauldronPath
     if (!fs.existsSync(this.fsPath)) {
@@ -36,14 +36,14 @@ export default class BaseGit implements ITransactional {
 
   public async push() {
     return this.repository
-      ? this.git.pushAsync(GIT_REMOTE_NAME, this.branch)
+      ? this.git.push(GIT_REMOTE_NAME, this.branch)
       : Promise.resolve()
   }
 
   public async sync() {
     if (!this.repository) {
       if (!fs.existsSync(path.resolve(this.fsPath, '.git'))) {
-        await this.git.initAsync()
+        await this.git.init()
         await this.doInitialCommit()
       }
       return Promise.resolve()
@@ -62,30 +62,21 @@ export default class BaseGit implements ITransactional {
 
     if (!fs.existsSync(path.resolve(this.fsPath, '.git'))) {
       log.debug(`[BaseGit] New local git repository creation`)
-      await this.git.initAsync()
-      await this.git.addRemoteAsync(GIT_REMOTE_NAME, this.repository)
+      await this.git.init()
+      await this.git.addRemote(GIT_REMOTE_NAME, this.repository)
     }
 
-    await this.git.rawAsync([
-      'remote',
-      'set-url',
-      GIT_REMOTE_NAME,
-      this.repository,
-    ])
+    await this.git.raw(['remote', 'set-url', GIT_REMOTE_NAME, this.repository])
 
-    const heads = await this.git.rawAsync([
-      'ls-remote',
-      '--heads',
-      GIT_REMOTE_NAME,
-    ])
+    const heads = await this.git.raw(['ls-remote', '--heads', GIT_REMOTE_NAME])
 
     if (!heads) {
       await this.doInitialCommit()
       await this.push()
     } else {
       log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} ${this.branch}`)
-      await this.git.fetchAsync(['--all'])
-      await this.git.resetAsync(['--hard', `${GIT_REMOTE_NAME}/${this.branch}`])
+      await this.git.fetch(['--all'])
+      await this.git.reset(['--hard', `${GIT_REMOTE_NAME}/${this.branch}`])
     }
 
     this.hasBeenSynced = true
@@ -109,7 +100,7 @@ export default class BaseGit implements ITransactional {
       throw new Error('No pending transaction to discard')
     }
 
-    await this.git.resetAsync(['--hard'])
+    await this.git.reset(['--hard'])
     this.pendingTransaction = false
   }
 
@@ -118,7 +109,7 @@ export default class BaseGit implements ITransactional {
       throw new Error('No pending transaction to commit')
     }
 
-    await this.git.commitAsync(message)
+    await this.git.commit(message)
     await this.push()
     this.pendingTransaction = false
   }
@@ -127,10 +118,10 @@ export default class BaseGit implements ITransactional {
     const fpath = path.resolve(this.fsPath, 'README.md')
     if (!fs.existsSync(fpath)) {
       log.debug(`[BaseGit] Performing initial commit`)
-      await this.git.rawAsync(['checkout', '-b', this.branch])
+      await this.git.raw(['checkout', '-b', this.branch])
       await fileUtils.writeFile(fpath, README)
-      await this.git.addAsync('README.md')
-      await this.git.commitAsync('First Commit!')
+      await this.git.add('README.md')
+      await this.git.commit('First Commit!')
     }
   }
 }
