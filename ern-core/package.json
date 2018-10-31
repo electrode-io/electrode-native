@@ -60,7 +60,7 @@
     "react-native-cli": "^2.0.1",
     "shelljs": "^0.8.2",
     "semver": "^5.5.0",
-    "simple-git": "^1.96.0",
+    "simple-git": "^1.106.0",
     "tmp": "^0.0.33",
     "uuid":"^3.3.2",
     "xcode-ern": "^1.0.10",
