@@ -7,6 +7,8 @@ import CauldronApi from '../src/CauldronApi'
 import EphemeralFileStore from '../src/EphemeralFileStore'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
 import jp from 'jsonpath'
+import fs from 'fs'
+import path from 'path'
 const sandbox = sinon.createSandbox()
 
 const codePushNewEntryFixture: CauldronCodePushEntry = {
@@ -42,6 +44,28 @@ function getCauldronFixtureClone() {
 describe('CauldronApi.js', () => {
   afterEach(() => {
     sandbox.restore()
+  })
+
+  // ==========================================================
+  // upgradeCauldronSchema
+  // ==========================================================
+  describe('upgradeCauldronSchema', () => {
+    it('should properly upgrade a cauldron [schema 0.0.0 => 1.0.0]', async () => {
+      const fixture = JSON.parse(
+        fs
+          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-0.0.0.json'))
+          .toString()
+      )
+      const api = cauldronApi(fixture)
+      await api.upgradeCauldronSchema()
+      const expectedCauldronDoc = JSON.parse(
+        fs
+          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-1.0.0.json'))
+          .toString()
+      )
+      const cauldronDoc = await api.getCauldron()
+      expect(cauldronDoc).eql(expectedCauldronDoc)
+    })
   })
 
   // ==========================================================
@@ -2873,6 +2897,177 @@ describe('CauldronApi.js', () => {
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImplsBranches'
       )[0]
       expect(jsApiImplBranchesArr).empty
+    })
+  })
+
+  // ==========================================================
+  // hasJsApiImplBranchInContainer
+  // ==========================================================
+  describe('hasJsApiImplBranchInContainer', () => {
+    it('should throw if the native application descriptor is partial', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      assert(
+        await doesThrow(
+          api.hasJsApiImplBranchInContainer,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+        )
+      )
+    })
+
+    it('should return false if there is not git branch for the js api impl', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      const result = await api.hasJsApiImplBranchInContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      expect(result).false
+    })
+
+    it('should return true if there is a git branch for the js api impl', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addJsApiImplBranchToContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      const result = await api.hasJsApiImplBranchInContainer(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master')
+      )
+      expect(result).true
+    })
+  })
+
+  // ==========================================================
+  // setConfig
+  // ==========================================================
+  describe('setConfig', () => {
+    it('should create the config object if it does not exist', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      delete tmpFixture.nativeApps[0].config
+      const api = cauldronApi(tmpFixture)
+      await api.setConfig({
+        descriptor: NativeApplicationDescriptor.fromString('test'),
+        key: 'key',
+        value: 'value',
+      })
+      expect(tmpFixture.nativeApps[0].config).not.undefined
+      expect(tmpFixture.nativeApps[0].config.key).eql('value')
+    })
+
+    it('should add the key value pair to the config object', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.setConfig({
+        descriptor: NativeApplicationDescriptor.fromString('test'),
+        key: 'key',
+        value: 'value',
+      })
+      expect(tmpFixture.nativeApps[0].config.test).eql('aValue')
+      expect(tmpFixture.nativeApps[0].config.key).eql('value')
+    })
+
+    it('should patch the value if the key already exists in the config object', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.setConfig({
+        descriptor: NativeApplicationDescriptor.fromString('test'),
+        key: 'test',
+        value: 'value',
+      })
+      expect(tmpFixture.nativeApps[0].config.test).eql('value')
+    })
+
+    it('should set the whole config object if no key is provided', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      const conf = { keyA: 'valueA', keyB: 'valueB' }
+      await api.setConfig({
+        descriptor: NativeApplicationDescriptor.fromString('test'),
+        value: conf,
+      })
+      expect(tmpFixture.nativeApps[0].config).eql(conf)
+    })
+  })
+
+  // ==========================================================
+  // delConfig
+  // ==========================================================
+  describe('delConfig', () => {
+    it('should delete the config key value pair if provided a key', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.delConfig({
+        descriptor: NativeApplicationDescriptor.fromString('test'),
+        key: 'test',
+      })
+      expect(tmpFixture.nativeApps[0].config).not.undefined
+      expect(tmpFixture.nativeApps[0].config.test).undefined
+    })
+
+    it('should clear the whole config object if no key is provided', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.delConfig({
+        descriptor: NativeApplicationDescriptor.fromString('test'),
+      })
+      expect(tmpFixture.nativeApps[0].config).not.undefined
+      expect(tmpFixture.nativeApps[0].config).empty
+    })
+  })
+
+  // ==========================================================
+  // addPublisher
+  // ==========================================================
+  describe('addPublisher', () => {
+    it('should throw if another publisher of the same type already exists for target native application platform', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      assert(
+        await doesThrow(
+          api.addPublisher,
+          api,
+          'maven',
+          NativeApplicationDescriptor.fromString('test:android'),
+          'http://url'
+        )
+      )
+    })
+
+    it('should throw if the target descriptor does not exist', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      assert(
+        await doesThrow(
+          api.addPublisher,
+          api,
+          'maven',
+          NativeApplicationDescriptor.fromString('doesnotexist:android'),
+          'http://url'
+        )
+      )
+    })
+
+    it('should add the publisher to the target native application platform', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      await api.addPublisher(
+        'dummy',
+        NativeApplicationDescriptor.fromString('test:android'),
+        'http://url'
+      )
+      expect(
+        tmpFixture.nativeApps[0].platforms[0].config.containerGenerator
+          .publishers
+      ).length(3)
     })
   })
 
