@@ -1,5 +1,4 @@
 import { handleCopyDirective, readPackageJsonSync } from 'ern-core'
-import fs from 'fs'
 import path from 'path'
 
 export function copyIosRnpmAssetsFromMiniAppPath(
