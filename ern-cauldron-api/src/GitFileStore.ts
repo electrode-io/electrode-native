@@ -40,9 +40,9 @@ export default class GitFileStore extends BaseGit
     if (fileMode) {
       shell.chmod(fileMode, pathToFile)
     }
-    await this.git.addAsync(pathToFile)
+    await this.git.add(pathToFile)
     if (!this.pendingTransaction) {
-      await this.git.commitAsync(`Add file ${filePath}`)
+      await this.git.commit(`Add file ${filePath}`)
       await this.push()
     }
   }
@@ -74,9 +74,9 @@ export default class GitFileStore extends BaseGit
   public async removeFile(filePath: string): Promise<boolean> {
     await this.sync()
     if (fs.existsSync(this.pathToFile(filePath))) {
-      await this.git.rmAsync(this.pathToFile(filePath))
+      await this.git.rm(this.pathToFile(filePath))
       if (!this.pendingTransaction) {
-        await this.git.commitAsync(`Remove file ${filePath}`)
+        await this.git.commit(`Remove file ${filePath}`)
         await this.push()
       }
       return true
