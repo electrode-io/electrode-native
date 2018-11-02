@@ -51,7 +51,7 @@ export default class CauldronApi {
   // =====================================================================================
 
   public async upgradeCauldronSchema(): Promise<void> {
-    const currentSchemaVersion = await this.getCauldronSchemaVersion()
+    let currentSchemaVersion = await this.getCauldronSchemaVersion()
     if (currentSchemaVersion === schemas.schemaVersion) {
       throw new Error(
         `The Cauldron is already using the proper schema version ${currentSchemaVersion}`
@@ -65,6 +65,7 @@ export default class CauldronApi {
       }
       if (isUpgradeStarted) {
         await upgradeScript.upgrade(this)
+        currentSchemaVersion = upgradeScript.to
       }
     }
   }

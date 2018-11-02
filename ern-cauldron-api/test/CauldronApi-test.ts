@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
-import { NativeApplicationDescriptor, PackagePath, fileUtils } from 'ern-core'
+import { NativeApplicationDescriptor, PackagePath, utils } from 'ern-core'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import { CauldronCodePushEntry } from '../src/types'
 import CauldronApi from '../src/CauldronApi'
@@ -50,7 +50,8 @@ describe('CauldronApi.js', () => {
   // upgradeCauldronSchema
   // ==========================================================
   describe('upgradeCauldronSchema', () => {
-    it('should properly upgrade a cauldron [schema 0.0.0 => 1.0.0]', async () => {
+    it('should properly upgrade a cauldron [schema 0.0.0 => 2.0.0]', async () => {
+      sandbox.stub(utils, 'isGitBranch').resolves(true)
       const fixture = JSON.parse(
         fs
           .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-0.0.0.json'))
@@ -60,7 +61,7 @@ describe('CauldronApi.js', () => {
       await api.upgradeCauldronSchema()
       const expectedCauldronDoc = JSON.parse(
         fs
-          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-1.0.0.json'))
+          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-2.0.0.json'))
           .toString()
       )
       const cauldronDoc = await api.getCauldron()
