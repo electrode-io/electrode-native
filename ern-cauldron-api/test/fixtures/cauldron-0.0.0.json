@@ -26,7 +26,8 @@
             "miniApps": {
               "container":[
                 "@test/react-native-foo@4.0.0",
-                "react-native-bar@2.0.0"
+                "react-native-bar@2.0.0",
+                "git+ssh://git@github.com/myminiapp.git#master"
               ]
             },
             "codePush": {
