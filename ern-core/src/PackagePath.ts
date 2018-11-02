@@ -6,10 +6,10 @@ const FILE_PATH_RE = new RegExp(
     FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.source
   }`
 )
-const GIT_SSH_PATH_RE = new RegExp(/^git\+ssh:\/\/.+\.git$/)
-const GIT_SSH_PATH_VERSION_RE = new RegExp(/^(git\+ssh:\/\/.+\.git)#(.+)$/)
-const GIT_HTTPS_PATH_RE = new RegExp(/^https:\/\/.+\.git$/)
-const GIT_HTTPS_PATH_VERSION_RE = new RegExp(/^(https:\/\/.+\.git)#(.+)$/)
+const GIT_SSH_PATH_RE = new RegExp(/^git\+ssh:\/\/.+$/)
+const GIT_SSH_PATH_VERSION_RE = new RegExp(/^(git\+ssh:\/\/.+)#(.+)$/)
+const GIT_HTTPS_PATH_RE = new RegExp(/^https:\/\/.+$/)
+const GIT_HTTPS_PATH_VERSION_RE = new RegExp(/^(https:\/\/.+)#(.+)$/)
 const GIT_PATH_RE = new RegExp(
   `${GIT_SSH_PATH_RE.source}|${GIT_SSH_PATH_VERSION_RE.source}|${
     GIT_HTTPS_PATH_RE.source
@@ -53,14 +53,14 @@ export class PackagePath {
    */
   constructor(path: string) {
     this.fullPath = path
-    if (GIT_SSH_PATH_RE.test(path) || GIT_HTTPS_PATH_RE.test(path)) {
-      this.basePath = path
-    } else if (GIT_SSH_PATH_VERSION_RE.test(path)) {
+    if (GIT_SSH_PATH_VERSION_RE.test(path)) {
       this.basePath = GIT_SSH_PATH_VERSION_RE.exec(path)![1]
       this.version = GIT_SSH_PATH_VERSION_RE.exec(path)![2]
     } else if (GIT_HTTPS_PATH_VERSION_RE.test(path)) {
       this.basePath = GIT_HTTPS_PATH_VERSION_RE.exec(path)![1]
       this.version = GIT_HTTPS_PATH_VERSION_RE.exec(path)![2]
+    } else if (GIT_SSH_PATH_RE.test(path) || GIT_HTTPS_PATH_RE.test(path)) {
+      this.basePath = path
     } else if (REGISTRY_PATH_VERSION_RE.test(path)) {
       this.basePath = REGISTRY_PATH_VERSION_RE.exec(path)![1]
       this.version = REGISTRY_PATH_VERSION_RE.exec(path)![2]
