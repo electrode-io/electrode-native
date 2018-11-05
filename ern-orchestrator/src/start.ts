@@ -16,6 +16,7 @@ import { generateMiniAppsComposite } from 'ern-container-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
+import fs from 'fs'
 
 export default async function start({
   miniapps,
@@ -69,26 +70,29 @@ export default async function start({
     })
   )
 
-  const miniAppsLinks = ernConfig.getValue('miniAppsLinks', {})
+  const miniAppsLinksObj = ernConfig.getValue('miniAppsLinks', {})
+  const linkedMiniAppsPackageNames = Object.keys(miniAppsLinksObj).filter(p =>
+    fs.existsSync(miniAppsLinksObj[p])
+  )
 
-  Object.keys(miniAppsLinks).forEach(linkName => {
+  linkedMiniAppsPackageNames.forEach(pkgName => {
     replacePackageInCompositeWithLinkedPackage(
       compositeDir,
-      linkName,
-      miniAppsLinks[linkName]
+      pkgName,
+      miniAppsLinksObj[pkgName]
     )
     log.info(
       `Watching for changes in linked MiniApp directory ${
-        miniAppsLinks[linkName]
+        miniAppsLinksObj[pkgName]
       }`
     )
-    startLinkSynchronization(compositeDir, linkName, miniAppsLinks[linkName])
+    startLinkSynchronization(compositeDir, pkgName, miniAppsLinksObj[pkgName])
   })
 
   reactnative.startPackagerInNewWindow(compositeDir, [
     '--reset-cache',
     '--providesModuleNodeModules',
-    `react-native,${Object.keys(miniAppsLinks)
+    `react-native,${linkedMiniAppsPackageNames
       .concat(watchNodeModules)
       .join(',')}`,
   ])
@@ -126,7 +130,7 @@ export default async function start({
   // project in a temporary directory which gets destroyed upon process exit.
   // If the process exits too soon, then the packager (running in a separate process)
   // fails as the directory containing the files to package, does not exist anymore.
-  if (Object.keys(miniAppsLinks).length === 0) {
+  if (linkedMiniAppsPackageNames.length === 0) {
     process.stdin.resume()
   }
 }
