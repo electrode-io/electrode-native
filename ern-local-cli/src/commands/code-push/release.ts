@@ -193,7 +193,6 @@ export const commandHandler = async ({
         codePushRolloutPercentage: rollout,
         force,
         pathToYarnLock: pathToYarnLock || undefined,
-        skipConfirmation,
         targetBinaryVersion,
       }
     )
