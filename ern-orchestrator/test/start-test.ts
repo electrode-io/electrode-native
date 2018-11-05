@@ -12,6 +12,7 @@ import {
 } from 'ern-cauldron-api'
 import * as cauldronApi from 'ern-cauldron-api'
 import * as containerGen from 'ern-container-gen'
+import fs from 'fs'
 const sandbox = sinon.createSandbox()
 
 function cloneFixture(fixture) {
@@ -68,6 +69,7 @@ describe('start', () => {
       .resolves('/path/to/binary')
     sandbox.stub(core, 'createTmpDir').returns('/tmp/dir')
     sandbox.stub(process.stdin, 'resume')
+    sandbox.stub(fs, 'existsSync').returns(true)
   })
 
   function createStubs({
