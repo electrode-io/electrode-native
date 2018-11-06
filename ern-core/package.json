@@ -1,6 +1,6 @@
 {
   "name": "ern-core",
-  "version": "1000.0.0",
+  "version": "0.25.0",
   "description": "Electrode Native Core",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -11,7 +11,14 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": ["electrode", "ern", "react-native", "node", "android", "ios"],
+  "keywords": [
+    "electrode",
+    "ern",
+    "react-native",
+    "node",
+    "android",
+    "ios"
+  ],
   "contributors": [
     {
       "name": "Benoit Lemaire",
@@ -50,26 +57,26 @@
     "console-log-level": "^1.4.0",
     "decompress-zip": "^0.3.1",
     "fs-readdir-recursive": "^1.1.0",
-    "get-folder-size":"^2.0.0",
+    "get-folder-size": "^2.0.0",
     "inquirer": "^3.0.6",
+    "kax": "^1.2.7",
     "lodash": "^4.17.10",
     "mustache": "^2.3.1",
     "node-fetch": "^2.2.0",
     "node-simctl": "^3.13.0",
-    "kax": "^1.2.7",
     "react-native-cli": "^2.0.1",
-    "shelljs": "^0.8.2",
     "semver": "^5.5.0",
+    "shelljs": "^0.8.2",
     "simple-git": "^1.106.0",
     "tmp": "^0.0.33",
-    "uuid":"^3.3.2",
+    "uuid": "^3.3.2",
     "xcode-ern": "^1.0.10",
     "yarn": "^1.9.4",
     "yauzl": "^2.10.0",
     "yazl": "^2.4.3"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.25.0"
   },
   "engines": {
     "node": ">=6"
