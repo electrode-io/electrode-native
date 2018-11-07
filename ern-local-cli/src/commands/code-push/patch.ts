@@ -19,6 +19,11 @@ export const builder = (argv: Argv) => {
       describe: 'Deployment to release the update to',
       type: 'string',
     })
+    .option('description', {
+      alias: 'des',
+      describe: 'Description of the changes made to the app with this release',
+      type: 'string',
+    })
     .option('descriptor', {
       describe:
         'Full native application descriptor from which to promote a release',
@@ -55,6 +60,7 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   deploymentName,
+  description,
   descriptor,
   disabled,
   label,
@@ -62,6 +68,7 @@ export const commandHandler = async ({
   rollout,
 }: {
   deploymentName?: string
+  description?: string
   descriptor?: NativeApplicationDescriptor
   disabled?: boolean
   label?: string
@@ -87,6 +94,7 @@ export const commandHandler = async ({
   label = label || (await askUserForCodePushLabel())
 
   await performCodePushPatch(descriptor, deploymentName, label, {
+    description,
     isDisabled: disabled,
     isMandatory: mandatory,
     rollout,

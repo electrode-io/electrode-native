@@ -19,6 +19,12 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('description', {
+      alias: 'des',
+      describe:
+        'Description of the changes made to the app with this release. If omitted, the description from the release being promoted will be used.',
+      type: 'string',
+    })
     .option('force', {
       alias: 'f',
       describe:
@@ -90,6 +96,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  description,
   force,
   label,
   mandatory,
@@ -102,6 +109,7 @@ export const commandHandler = async ({
   rollout,
   skipConfirmation,
 }: {
+  description?: string
   force?: boolean
   label?: string
   mandatory?: boolean
@@ -206,6 +214,7 @@ export const commandHandler = async ({
     sourceDeploymentName,
     targetDeploymentName,
     {
+      description,
       force,
       label,
       mandatory,

@@ -74,7 +74,12 @@ describe('codepush', () => {
         'testAndroid',
         'Production',
         'v17',
-        { isMandatory: true, isDisabled: undefined, rollout: undefined }
+        {
+          description: '',
+          isDisabled: undefined,
+          isMandatory: true,
+          rollout: undefined,
+        }
       )
     })
 
@@ -115,7 +120,12 @@ describe('codepush', () => {
         'testAndroid',
         'Production',
         'v17',
-        { isMandatory: undefined, isDisabled: true, rollout: undefined }
+        {
+          description: '',
+          isDisabled: true,
+          isMandatory: undefined,
+          rollout: undefined,
+        }
       )
     })
 
@@ -175,7 +185,12 @@ describe('codepush', () => {
         'testAndroid',
         'Production',
         'v17',
-        { isMandatory: undefined, isDisabled: undefined, rollout: 50 }
+        {
+          description: '',
+          isDisabled: undefined,
+          isMandatory: undefined,
+          rollout: 50,
+        }
       )
     })
 
@@ -241,6 +256,7 @@ describe('codepush', () => {
       sandbox.stub(core, 'getCodePushSdk').returns(codePushSdkStub)
       codePushSdkStub.promote.resolves({
         appVersion: '17.7',
+        description: 'new description',
         isMandatory: false,
         label: 'v20',
         releaseMethod: 'Promote',
@@ -341,7 +357,13 @@ describe('codepush', () => {
         'testAndroid',
         'QA',
         'Production',
-        { appVersion: '17.7.0', isMandatory: false, label: 'v18', rollout: 100 }
+        {
+          appVersion: '17.7.0',
+          description: '',
+          isMandatory: false,
+          label: 'v18',
+          rollout: 100,
+        }
       )
     })
 
@@ -376,6 +398,7 @@ describe('codepush', () => {
         'QA',
         'Production',
         {
+          description: 'new description',
           label: 'v18',
           rollout: 100,
         }
@@ -390,6 +413,7 @@ describe('codepush', () => {
         metadata: {
           appVersion: '17.7',
           deploymentName: 'Production',
+          description: 'new description',
           isMandatory: false,
           label: 'v20',
           promotedFromLabel: 'v18',
@@ -558,7 +582,7 @@ describe('codepush', () => {
         'Production',
         sinon.match.string,
         '17.7.0',
-        { isMandatory: false, rollout: 100 }
+        { description: '', isMandatory: false, rollout: 100 }
       )
     })
 

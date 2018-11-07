@@ -9,4 +9,5 @@ export interface CauldronCodePushMetadata {
   releasedBy?: string
   rollout?: number
   promotedFromLabel?: string
+  description?: string
 }
