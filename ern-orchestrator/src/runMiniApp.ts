@@ -105,6 +105,7 @@ export async function runMiniApp(
     }
   } else if (!miniapps && !descriptor) {
     entryMiniAppName = MiniApp.fromCurrentPath().name
+    miniapps = [PackagePath.fromString(`file:${cwd}`)]
     log.debug(
       `This command is being run from the ${entryMiniAppName} MiniApp directory.`
     )
