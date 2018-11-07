@@ -71,6 +71,12 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 * Promote the release matching this specific label. 
 * **Default** The latest release matching sourceDescriptor/sourceDeploymentName pair will be promoted.
 
+`--description/--des`
+
+* Description of the changes made to the app with this release. If omitted, the description from the release being promoted will be used.
+ 
+* **Default** Empty string
+
 #### Related commands
 
 [code-push release] | Issue a CodePush release 

@@ -22,6 +22,11 @@ export const builder = (argv: Argv) => {
       describe: 'Deployment to release the update to',
       type: 'string',
     })
+    .option('description', {
+      alias: 'des',
+      describe: 'Description of the changes made to the app with this release',
+      type: 'string',
+    })
     .option('descriptors', {
       alias: 'd',
       describe:
@@ -81,6 +86,7 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   deploymentName,
+  description,
   descriptors = [],
   force,
   jsApiImpls = [],
@@ -92,6 +98,7 @@ export const commandHandler = async ({
   targetBinaryVersion,
 }: {
   deploymentName: string
+  description: string
   descriptors?: NativeApplicationDescriptor[]
   force: boolean
   jsApiImpls: string[]
@@ -191,6 +198,7 @@ export const commandHandler = async ({
       {
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,
+        description,
         force,
         pathToYarnLock: pathToYarnLock || undefined,
         targetBinaryVersion,

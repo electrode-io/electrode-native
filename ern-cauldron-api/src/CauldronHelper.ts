@@ -848,10 +848,12 @@ export class CauldronHelper {
     deploymentName: string,
     label: string,
     {
+      description,
       isDisabled,
       isMandatory,
       rollout,
     }: {
+      description?: string
       isDisabled?: boolean
       isMandatory?: boolean
       rollout?: number
@@ -871,6 +873,9 @@ export class CauldronHelper {
       }
       if (rollout !== undefined) {
         entry.metadata.rollout = rollout
+      }
+      if (description !== undefined) {
+        entry.metadata.description = description
       }
       return this.cauldron.setCodePushEntries(
         napDescriptor,

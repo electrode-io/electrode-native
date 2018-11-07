@@ -21,10 +21,12 @@ export async function performCodePushPatch(
   deploymentName: string,
   label: string,
   {
+    description,
     isDisabled,
     isMandatory,
     rollout,
   }: {
+    description?: string
     isDisabled?: boolean
     isMandatory?: boolean
     rollout?: number
@@ -36,12 +38,15 @@ export async function performCodePushPatch(
     await cauldron.beginTransaction()
     const appName = await getCodePushAppName(napDescriptor)
     const codePushSdk = getCodePushSdk()
+    description = description || ''
     await codePushSdk.patch(appName, deploymentName, label, {
+      description,
       isDisabled,
       isMandatory,
       rollout,
     })
     await cauldron.updateCodePushEntry(napDescriptor, deploymentName, label, {
+      description,
       isDisabled,
       isMandatory,
       rollout,
@@ -64,12 +69,14 @@ export async function performCodePushPromote(
   sourceDeploymentName: string,
   targetDeploymentName: string,
   {
+    description,
     force = false,
     mandatory,
     rollout,
     label,
     targetBinaryVersion,
   }: {
+    description?: string
     force?: boolean
     mandatory?: boolean
     rollout?: number
@@ -134,7 +141,7 @@ export async function performCodePushPromote(
           targetNapDescriptor,
           targetDeploymentName
         ))
-
+      description = description || ''
       const result = await kax.task(`Promoting release to ${appVersion}`).run(
         codePushSdk.promote(
           appName,
@@ -142,6 +149,7 @@ export async function performCodePushPromote(
           targetDeploymentName,
           {
             appVersion,
+            description,
             isMandatory: !!mandatory,
             label,
             rollout,
@@ -171,6 +179,7 @@ export async function performCodePushPromote(
         {
           appVersion: result.appVersion,
           deploymentName: targetDeploymentName,
+          description: result.description,
           isMandatory: result.isMandatory,
           label: result.label,
           promotedFromLabel: codePushEntrySource.metadata.label,
@@ -203,15 +212,17 @@ export async function performCodePushOtaUpdate(
   miniApps: PackagePath[],
   jsApiImpls: PackagePath[],
   {
-    force = false,
     codePushIsMandatoryRelease = false,
     codePushRolloutPercentage,
+    description,
+    force = false,
     pathToYarnLock,
     targetBinaryVersion,
   }: {
-    force?: boolean
     codePushIsMandatoryRelease?: boolean
     codePushRolloutPercentage?: number
+    description?: string
+    force?: boolean
     pathToYarnLock?: string
     targetBinaryVersion?: string
   } = {}
@@ -340,7 +351,7 @@ export async function performCodePushOtaUpdate(
       (await getCodePushTargetVersionName(napDescriptor, deploymentName))
 
     log.info(`Target Binary version : ${targetVersionName}`)
-
+    description = description || ''
     const codePushResponse: CodePushPackage = await kax
       .task('Releasing bundle through CodePush')
       .run(
@@ -350,6 +361,7 @@ export async function performCodePushOtaUpdate(
           bundleOutputDirectory,
           targetVersionName,
           {
+            description,
             isMandatory: codePushIsMandatoryRelease,
             rollout: codePushRolloutPercentage,
           }
@@ -361,6 +373,7 @@ export async function performCodePushOtaUpdate(
       {
         appVersion: codePushResponse.appVersion,
         deploymentName,
+        description: codePushResponse.description,
         isMandatory: codePushResponse.isMandatory,
         label: codePushResponse.label,
         releaseMethod: codePushResponse.releaseMethod,

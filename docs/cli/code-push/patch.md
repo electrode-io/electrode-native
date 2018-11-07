@@ -44,6 +44,10 @@
 * Update the percentage of users who will have access to the CodePush release.
 * **Default**  No change to the rollout percentage.
 
+`--description/--des`
+* Description of the changes made to the app with this release
+* **Default**  Empty String
+
 #### Related commands
 
 [code-push promote] | Promote a release to a different deployment name  
