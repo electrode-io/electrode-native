@@ -104,15 +104,6 @@ export class FsCache<T> {
     maxCacheSize?: number
     rootCachePath: string
   }) {
-    if (!addObjectToCacheDirectory) {
-      throw new Error('addObjectToDirectory function is required')
-    }
-    if (!objectToId) {
-      throw new Error('objectToId function is required')
-    }
-    if (!rootCachePath) {
-      throw new Error('rootCachePath is required')
-    }
     this.rootCachePath = rootCachePath
     this.maxCacheSize = maxCacheSize
     this.addObjectToCacheDirectory = addObjectToCacheDirectory
