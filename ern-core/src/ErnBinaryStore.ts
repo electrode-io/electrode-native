@@ -1,6 +1,6 @@
 import { BinaryStore } from './BinaryStore'
 import { NativeApplicationDescriptor } from './NativeApplicationDescriptor'
-import * as childProcess from './childProcess'
+import { execp } from './childProcess'
 import createTmpDir from './createTmpDir'
 import { spawn } from 'child_process'
 import shell from './shell'
@@ -8,7 +8,6 @@ import fs from 'fs'
 import path from 'path'
 import archiver from 'archiver'
 import DecompressZip = require('decompress-zip')
-const { execp } = childProcess
 
 export class ErnBinaryStore implements BinaryStore {
   private readonly config: any
@@ -28,7 +27,7 @@ export class ErnBinaryStore implements BinaryStore {
   public async removeBinary(
     descriptor: NativeApplicationDescriptor
   ): Promise<string | Buffer> {
-    this.throwIfNoBinaryExistForDescriptor(descriptor)
+    await this.throwIfNoBinaryExistForDescriptor(descriptor)
     return execp(`curl -XDELETE ${this.urlToBinary(descriptor)}`)
   }
 
@@ -40,7 +39,7 @@ export class ErnBinaryStore implements BinaryStore {
       outDir?: string
     } = {}
   ): Promise<string> {
-    this.throwIfNoBinaryExistForDescriptor(descriptor)
+    await this.throwIfNoBinaryExistForDescriptor(descriptor)
     const pathToZippedBinary = await this.getZippedBinary(descriptor)
     if (outDir && !fs.existsSync(outDir)) {
       shell.mkdir('-p', outDir)

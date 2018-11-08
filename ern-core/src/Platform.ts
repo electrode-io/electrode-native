@@ -9,13 +9,14 @@ import path from 'path'
 import os from 'os'
 import semver from 'semver'
 
-const ROOT_DIRECTORY = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
+const ROOT_DIRECTORY = () =>
+  process.env.ERN_HOME || path.join(os.homedir(), '.ern')
 // Name of ern local client NPM package
 const ERN_LOCAL_CLI_PACKAGE = 'ern-local-cli'
 
 export default class Platform {
   static get rootDirectory(): string {
-    return ROOT_DIRECTORY
+    return ROOT_DIRECTORY()
   }
 
   static get packagesCacheDirectory(): string {
@@ -70,12 +71,6 @@ export default class Platform {
     return config.getValue('platformVersion', '1000.0.0')
   }
 
-  static get currentGitCommitSha(): string {
-    return execSync(`git -C ${this.currentPlatformVersionPath} rev-parse HEAD`)
-      .slice(0, 7)
-      .toString()
-  }
-
   public static isPlatformVersionAvailable(version: string) {
     return this.versions.includes('' + version)
   }
@@ -116,7 +111,6 @@ export default class Platform {
     const pathToVersion = this.getRootPlatformVersionPath(version)
 
     try {
-      shell.mkdir('-p', pathToVersion)
       shell.mkdir('-p', path.join(pathToVersion, 'node_modules'))
       process.chdir(pathToVersion)
       if (this.isYarnInstalled()) {
