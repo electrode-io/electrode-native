@@ -169,7 +169,7 @@ describe('runMiniApp', () => {
     sandbox.assert.calledWith(generateContainerForRunnerStub, 'android', {
       dependencies: undefined,
       jsApiImpls: undefined,
-      miniApps: undefined,
+      miniApps: sinon.match.array,
       napDescriptor: undefined,
       outDir: sinon.match.string,
     })
