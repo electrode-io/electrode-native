@@ -3088,6 +3088,25 @@ describe('CauldronHelper.js', () => {
       expect(nativeApplicationVersion.containerVersion).eql('1.0.0')
       expect(topLevelContainerVersion[0]).eql('1.16.44')
     })
+
+    it('should update native app container version only[detachContainerVersionFromRoot=true for target descriptor]', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const napVersion = fixture.nativeApps[0].platforms[0].versions[0]
+      napVersion.detachContainerVersionFromRoot = true
+      const cauldronHelper = createCauldronHelper(fixture)
+
+      await cauldronHelper.updateContainerVersion(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        '1000.0.0'
+      )
+      const nativeApplicationVersion = jp.query(fixture, testAndroid1770Path)[0]
+      const topLevelContainerVersion = jp.query(
+        fixture,
+        testTopLevelContainerPath
+      )
+      expect(nativeApplicationVersion.containerVersion).eql('1000.0.0')
+      expect(topLevelContainerVersion[0]).eql('1.16.44')
+    })
   })
 
   describe('getContainerVersion', () => {
