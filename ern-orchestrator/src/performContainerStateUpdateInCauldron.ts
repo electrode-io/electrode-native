@@ -9,7 +9,7 @@ import {
   fileUtils,
 } from 'ern-core'
 import { getContainerMetadataPath } from 'ern-container-gen'
-import { getActiveCauldron } from 'ern-cauldron-api'
+import { getActiveCauldron, CauldronNativeAppVersion } from 'ern-cauldron-api'
 import { runCauldronContainerGen, runCaudronBundleGen } from './container'
 import { runContainerTransformers } from './runContainerTransformers'
 import { runContainerPublishers } from './runContainerPublishers'
@@ -54,9 +54,12 @@ export async function performContainerStateUpdateInCauldron(
     if (containerVersion) {
       cauldronContainerNewVersion = containerVersion
     } else {
-      cauldronContainerNewVersion = await cauldron.getTopLevelContainerVersion(
+      const napVersion: CauldronNativeAppVersion = await cauldron.getDescriptor(
         napDescriptor
       )
+      cauldronContainerNewVersion = napVersion.detachContainerVersionFromRoot
+        ? await cauldron.getContainerVersion(napDescriptor)
+        : await cauldron.getTopLevelContainerVersion(napDescriptor)
       if (cauldronContainerNewVersion) {
         cauldronContainerNewVersion = semver.inc(
           cauldronContainerNewVersion,

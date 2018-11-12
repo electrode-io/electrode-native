@@ -1124,19 +1124,25 @@ export class CauldronHelper {
     containerVersion: string
   ): Promise<void> {
     await this.cauldron.updateContainerVersion(napDescriptor, containerVersion)
-    const topLevelContainerVersion = await this.getTopLevelContainerVersion(
+    const nativeApplicationVersion: CauldronNativeAppVersion = await this.getDescriptor(
       napDescriptor
     )
-    if (
-      semver.valid(containerVersion) &&
-      topLevelContainerVersion &&
-      semver.valid(topLevelContainerVersion) &&
-      semver.gt(containerVersion, topLevelContainerVersion)
-    ) {
-      await this.cauldron.updateTopLevelContainerVersion(
-        napDescriptor,
-        containerVersion
+    // Update top level Container version only for non detached container versions
+    if (!nativeApplicationVersion.detachContainerVersionFromRoot) {
+      const topLevelContainerVersion = await this.getTopLevelContainerVersion(
+        napDescriptor
       )
+      if (
+        semver.valid(containerVersion) &&
+        topLevelContainerVersion &&
+        semver.valid(topLevelContainerVersion) &&
+        semver.gt(containerVersion, topLevelContainerVersion)
+      ) {
+        await this.cauldron.updateTopLevelContainerVersion(
+          napDescriptor,
+          containerVersion
+        )
+      }
     }
   }
 

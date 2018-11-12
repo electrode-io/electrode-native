@@ -45,6 +45,7 @@ describe('utils.js', () => {
     cauldronHelperStub.getTopLevelContainerVersion.resolves(
       topLevelContainerVersion
     )
+    cauldronHelperStub.getDescriptor.resolves({})
     cauldronHelperStub.getVersionsNames.resolves([
       '1.2.3',
       '1.2.4',
