@@ -845,41 +845,32 @@ export class CauldronHelper {
 
   public async updateCodePushEntry(
     napDescriptor: NativeApplicationDescriptor,
-    deploymentName: string,
-    label: string,
-    {
-      description,
-      isDisabled,
-      isMandatory,
-      rollout,
-    }: {
-      description?: string
-      isDisabled?: boolean
-      isMandatory?: boolean
-      rollout?: number
-    }
+    metadata: CauldronCodePushMetadata
   ): Promise<void> {
     const codePushEntries = await this.cauldron.getCodePushEntries(
       napDescriptor,
-      deploymentName
+      metadata.deploymentName
     )
-    const entry = _.find(codePushEntries, c => c.metadata.label === label)
+    const entry = _.find(
+      codePushEntries,
+      c => c.metadata.label === metadata.label
+    )
     if (entry) {
-      if (isDisabled !== undefined) {
-        entry.metadata.isDisabled = isDisabled
+      if (metadata.description !== undefined) {
+        entry.metadata.description = metadata.description
       }
-      if (isMandatory !== undefined) {
-        entry.metadata.isMandatory = isMandatory
+      if (metadata.isDisabled !== undefined) {
+        entry.metadata.isDisabled = metadata.isDisabled
       }
-      if (rollout !== undefined) {
-        entry.metadata.rollout = rollout
+      if (metadata.isMandatory !== undefined) {
+        entry.metadata.isMandatory = metadata.isMandatory
       }
-      if (description !== undefined) {
-        entry.metadata.description = description
+      if (metadata.rollout !== undefined) {
+        entry.metadata.rollout = metadata.rollout
       }
       return this.cauldron.setCodePushEntries(
         napDescriptor,
-        deploymentName,
+        metadata.deploymentName,
         codePushEntries
       )
     }
