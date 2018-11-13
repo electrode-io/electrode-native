@@ -84,7 +84,6 @@ export default class CodePushSdk {
   public async patch(
     appName: string,
     deploymentName: string,
-    label: string,
     updateMetadata: CodePushPackageInfo
   ): Promise<CodePushPackage> {
     if (updateMetadata.rollout === 100) {
@@ -95,7 +94,7 @@ export default class CodePushSdk {
     return this.codePush.patchRelease(
       appName,
       deploymentName,
-      label,
+      updateMetadata.label,
       updateMetadata
     )
   }

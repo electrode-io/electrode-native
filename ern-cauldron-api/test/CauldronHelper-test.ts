@@ -2747,10 +2747,10 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.updateCodePushEntry(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'Production',
-        'v17',
         {
+          deploymentName: 'Production',
           isDisabled: true,
+          label: 'v17',
         }
       )
       const codePushEntries = jp.query(
@@ -2775,10 +2775,10 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.updateCodePushEntry(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'Production',
-        'v17',
         {
+          deploymentName: 'Production',
           isMandatory: true,
+          label: 'v17',
         }
       )
       const codePushEntries = jp.query(
@@ -2803,9 +2803,9 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       await cauldronHelper.updateCodePushEntry(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
-        'Production',
-        'v17',
         {
+          deploymentName: 'Production',
+          label: 'v17',
           rollout: 10,
         }
       )

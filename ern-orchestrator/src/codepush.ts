@@ -39,16 +39,19 @@ export async function performCodePushPatch(
     const appName = await getCodePushAppName(napDescriptor)
     const codePushSdk = getCodePushSdk()
     description = description || ''
-    await codePushSdk.patch(appName, deploymentName, label, {
+    await codePushSdk.patch(appName, deploymentName, {
       description,
       isDisabled,
       isMandatory,
+      label,
       rollout,
     })
-    await cauldron.updateCodePushEntry(napDescriptor, deploymentName, label, {
+    await cauldron.updateCodePushEntry(napDescriptor, {
+      deploymentName,
       description,
       isDisabled,
       isMandatory,
+      label,
       rollout,
     })
     await cauldron.commitTransaction(

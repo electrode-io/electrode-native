@@ -73,11 +73,11 @@ describe('codepush', () => {
         codePushSdkStub.patch,
         'testAndroid',
         'Production',
-        'v17',
         {
           description: '',
           isDisabled: undefined,
           isMandatory: true,
+          label: 'v17',
           rollout: undefined,
         }
       )
@@ -119,11 +119,11 @@ describe('codepush', () => {
         codePushSdkStub.patch,
         'testAndroid',
         'Production',
-        'v17',
         {
           description: '',
           isDisabled: true,
           isMandatory: undefined,
+          label: 'v17',
           rollout: undefined,
         }
       )
@@ -184,11 +184,11 @@ describe('codepush', () => {
         codePushSdkStub.patch,
         'testAndroid',
         'Production',
-        'v17',
         {
           description: '',
           isDisabled: undefined,
           isMandatory: undefined,
+          label: 'v17',
           rollout: 50,
         }
       )

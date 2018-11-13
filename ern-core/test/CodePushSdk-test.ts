@@ -117,8 +117,9 @@ describe('CodePushSdk', () => {
   describe('patch', () => {
     it('should call codepush patch method', async () => {
       const sut = createCodePushSdk()
-      sut.patch('test-android', 'QA', 'v1', {
+      sut.patch('test-android', 'QA', {
         isMandatory: true,
+        label: 'v1',
         rollout: 100,
       })
       sandbox.assert.called(codePushStub.patchRelease)
@@ -126,8 +127,9 @@ describe('CodePushSdk', () => {
 
     it('should delete the rollout key if rollout is 100', async () => {
       const sut = createCodePushSdk()
-      sut.patch('test-android', 'QA', 'v1', {
+      sut.patch('test-android', 'QA', {
         isMandatory: true,
+        label: 'v1',
         rollout: 100,
       })
       sandbox.assert.calledWith(
@@ -135,14 +137,15 @@ describe('CodePushSdk', () => {
         'test-android',
         'QA',
         'v1',
-        { isMandatory: true }
+        { isMandatory: true, label: 'v1' }
       )
     })
 
     it('should not delete the rollout key if rollout is not 100', async () => {
       const sut = createCodePushSdk()
-      sut.patch('test-android', 'QA', 'v1', {
+      sut.patch('test-android', 'QA', {
         isMandatory: true,
+        label: 'v1',
         rollout: 50,
       })
       sandbox.assert.calledWith(
@@ -150,7 +153,7 @@ describe('CodePushSdk', () => {
         'test-android',
         'QA',
         'v1',
-        { isMandatory: true, rollout: 50 }
+        { isMandatory: true, label: 'v1', rollout: 50 }
       )
     })
   })
