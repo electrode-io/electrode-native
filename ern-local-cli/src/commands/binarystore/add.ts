@@ -23,8 +23,8 @@ export const commandHandler = async ({
   pathToBinary: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
-    isFilePath: { p: pathToBinary },
     napDescriptorExistInCauldron: { descriptor },
+    pathExist: { p: pathToBinary },
   })
 
   const binaryStore = await getBinaryStoreFromCauldron()
