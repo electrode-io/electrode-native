@@ -785,12 +785,39 @@ export class CauldronHelper {
     return result
   }
 
+  public async getContainerMiniAppsBranches(napDescriptor) {
+    const miniAppsBranches = await this.cauldron.getContainerMiniAppsBranches(
+      napDescriptor
+    )
+    return _.map(miniAppsBranches, PackagePath.fromString)
+  }
+
   public async getContainerMiniApps(
-    napDescriptor: NativeApplicationDescriptor
+    napDescriptor: NativeApplicationDescriptor,
+    {
+      favorGitBranches,
+    }: {
+      favorGitBranches?: boolean
+    } = {}
   ): Promise<PackagePath[]> {
     try {
       const miniApps = await this.cauldron.getContainerMiniApps(napDescriptor)
-      return _.map(miniApps, PackagePath.fromString)
+      const result = _.map(miniApps, PackagePath.fromString)
+      if (favorGitBranches) {
+        const miniAppsBranches = await this.getContainerMiniAppsBranches(
+          napDescriptor
+        )
+        const miniAppsWithBranches = _.intersectionBy(
+          miniAppsBranches,
+          result,
+          'basePath'
+        )
+        _.remove(result, m =>
+          _.map(miniAppsWithBranches, 'basePath').includes(m.basePath)
+        )
+        result.push(...miniAppsWithBranches)
+      }
+      return result
     } catch (e) {
       log.error(`[getContainerMiniApps] ${e}`)
       throw e

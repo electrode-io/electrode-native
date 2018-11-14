@@ -35,8 +35,6 @@ export default async function start({
   bundleId?: string
   extraJsDependencies?: PackagePath[]
 } = {}) {
-  let pathToYarnLock
-
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && descriptor) {
     throw new Error(
@@ -49,9 +47,9 @@ export default async function start({
   }
 
   if (descriptor) {
-    const miniAppsObjs = await cauldron.getContainerMiniApps(descriptor)
-    miniapps = _.map(miniAppsObjs, m => PackagePath.fromString(m.toString()))
-    pathToYarnLock = await cauldron.getPathToYarnLock(descriptor, 'container')
+    miniapps = await cauldron.getContainerMiniApps(descriptor, {
+      favorGitBranches: true,
+    })
   }
 
   // Because this command can only be stoped through `CTRL+C` (or killing the process)
@@ -66,7 +64,6 @@ export default async function start({
   await kax.task('Generating MiniApps composite').run(
     generateMiniAppsComposite(miniapps!, compositeDir, {
       extraJsDependencies: extraJsDependencies || undefined,
-      pathToYarnLock: pathToYarnLock || undefined,
     })
   )
 
