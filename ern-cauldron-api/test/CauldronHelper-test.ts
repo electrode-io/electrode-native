@@ -2577,6 +2577,46 @@ describe('CauldronHelper.js', () => {
         .to.be.an('array')
         .of.length(2)
     })
+
+    it('should return the container MiniApps not favoring git branches by default', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(4)
+    })
+
+    it('should not favor container MiniApps git branches by default', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0')
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(4)
+      expect(result.map(m => m.toString())).contains(
+        'https://github.com/foo/foo.git#6319d9ef0c237907c784a8c472b000d5ff83b49a'
+      )
+    })
+
+    it('should favor container MiniApps git branches if favorGitBranches flag is set', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper(fixture)
+      const result = await cauldronHelper.getContainerMiniApps(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        { favorGitBranches: true }
+      )
+      expect(result)
+        .to.be.an('array')
+        .of.length(4)
+      expect(result.map(m => m.toString())).contains(
+        'https://github.com/foo/foo.git#master'
+      )
+    })
   })
 
   describe('addCodePushEntry', () => {
