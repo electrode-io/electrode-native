@@ -24,6 +24,7 @@
 
 `--mainMiniAppName`
 * Name of the MiniApp to launch when starting the Runner application
+* If you are running the command from the `MainApp` directory, only specify name of the `MiniApp` (Not the path).
 
 `--usePreviousDevice/-u`
 * Use the previously selected device to avoid prompt
@@ -42,3 +43,5 @@
 * If you want to regenerate the runner project from scratch, remove the Android directory.  
 * The miniapp can be any Yarn package descriptor, including Git or other file system path schemes.  
 * The `ern run-android` command is the `ern` equivalent of the `react-native run-android` command.
+* If you are running the command from the `MainApp` directory, only specify name of the `MiniApp` (Not the path) in the `--mainMiniAppName` option.
+
