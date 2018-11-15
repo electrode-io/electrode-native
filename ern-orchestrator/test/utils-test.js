@@ -73,6 +73,10 @@ describe('utils.js', () => {
   // performContainerStateUpdateInCauldron
   // ==========================================================
   describe('performContainerStateUpdateInCauldron', () => {
+    beforeEach(() => {
+      cauldronHelperStub.getContainerMiniApps.resolves([])
+    })
+
     const napDescriptor = NativeApplicationDescriptor.fromString(
       'testapp:android:1.0.0'
     )

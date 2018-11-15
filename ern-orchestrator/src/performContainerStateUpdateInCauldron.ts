@@ -80,6 +80,10 @@ export async function performContainerStateUpdateInCauldron(
       napDescriptor
     )
 
+    // Retrieve the list of MiniApps currently in Container
+    // (before state of the Container is modified)
+    const miniAppsBefore = await cauldron.getContainerMiniApps(napDescriptor)
+
     // Perform the custom container state update
     await stateUpdateFunc()
 
@@ -89,10 +93,17 @@ export async function performContainerStateUpdateInCauldron(
       napDescriptor
     )
 
+    // Retrieve the list of MiniApps in Container after the state of the Container
+    // has been modified
+    const miniAppsAfter = await cauldron.getContainerMiniApps(napDescriptor)
+
     // Is there any changes to native dependencies in the Container ?
     const sameNativeDependencies =
       _.xorBy(nativeDependenciesBefore, nativeDependenciesAfter, 'fullPath')
         .length === 0
+
+    // Is there any new MiniApps in the Container ?
+    const containerHasNewMiniApps = miniAppsAfter.length > miniAppsBefore.length
 
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor
@@ -101,11 +112,22 @@ export async function performContainerStateUpdateInCauldron(
       (containerGenConfig && containerGenConfig.publishers) || []
     const gitPublisher = publishers.find(p => p.name.startsWith('git'))
 
-    // No need to regenerate a full Container if there were no changes to
-    // native dependencies in the Container; unless the forceFullGeneration
-    // flag is set or if there are no git publishers
+    // No need to regenerate a full Container if all of the following
+    // conditions are met
+    // - There were no changes to any native dependencies
+    //   * Otherwise a full regen is needed to propagate native changes
+    // - There was no MiniApp added to the Container
+    //   * Otherwise a full regen is needed to in part create new MiniApp activities
+    // - The forceFullGeneration flag has not been set
+    //   * Otherwise a full regen is needed as request by the user
+    // - A git publisher exist
+    //   * Otherwise Electrode Native has no way to do a JS bundle only regen
+    //     as it has no way to retrieve current Container code base
     let jsBundleOnly =
-      sameNativeDependencies && !forceFullGeneration && gitPublisher
+      !containerHasNewMiniApps &&
+      sameNativeDependencies &&
+      !forceFullGeneration &&
+      gitPublisher
 
     const compositeMiniAppDir = createTmpDir()
 
