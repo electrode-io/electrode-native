@@ -97,17 +97,36 @@ export default async function start({
   if (descriptor) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
     if (binaryStoreConfig) {
+      const cauldronStartCommandConfig = await cauldron.getStartCommandConfig(
+        descriptor
+      )
       const binaryStore = new ErnBinaryStore(binaryStoreConfig)
       if (await binaryStore.hasBinary(descriptor)) {
         if (descriptor.platform === 'android') {
+          if (
+            cauldronStartCommandConfig &&
+            cauldronStartCommandConfig.android
+          ) {
+            packageName =
+              packageName || cauldronStartCommandConfig.android.packageName
+            activityName =
+              activityName || cauldronStartCommandConfig.android.activityName
+          }
           if (!packageName) {
-            throw new Error('You need to provide an Android package name')
+            throw new Error(
+              'You need to provide an Android package name or set it in Cauldron configuration'
+            )
           }
           const apkPath = await binaryStore.getBinary(descriptor)
           await android.runAndroidApk({ apkPath, packageName, activityName })
         } else if (descriptor.platform === 'ios') {
+          if (cauldronStartCommandConfig && cauldronStartCommandConfig.ios) {
+            bundleId = bundleId || cauldronStartCommandConfig.ios.bundleId
+          }
           if (!bundleId) {
-            throw new Error('You need to provide an iOS bundle ID')
+            throw new Error(
+              'You need to provide an iOS bundle ID or set it in Cauldron configuration'
+            )
           }
           const appPath = await binaryStore.getBinary(descriptor)
           await ios.runIosApp({ appPath, bundleId })
