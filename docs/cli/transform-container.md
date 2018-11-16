@@ -30,10 +30,15 @@ Can be used to apply one or more sequential git patches to the Container.
 * The local file system path to the directory containing the Container to transform.
 * **Default**  If this option is not provided, the command will look for a Container in the default platform directory `~/.ern/containergen/out/[platform]`.
 
+`--descriptor`
+
+* A complete native application descriptor
+* If this option is set, the `transform-container` command will apply all the transformers defined in the Cauldron for the matched descriptor. In that case, the `--transfomer` and `--platform` options should not be provided.
+
 `--platform/-p`
 
 * Specify the native platform of the target Container to transform.
-* This option is required, there is no default.
+* This option is required, there is no default (unless `--descriptor` is used)
 
 `--transformer/-t`
 
@@ -41,7 +46,7 @@ Can be used to apply one or more sequential git patches to the Container.
 * Can also include a specific version or a version range (for ex `build-config@1.0.0` or `build-config@^1.0.0`)
 * If no version is specified, the latest available version of the publisher will be used at the time of publication (this is a bit risky given that new major publisher versions will contain breaking changes. We **recommend** that you use a specific version or version range allowing minor and patch updates only)
 * It is also possible to pass a local file system path to a Container transformer package (only used for transformers development).
-* This option is required, there is no default.
+* This option is required, there is no default (unles `--descriptor` is used)
 
 `--extra/-e`
 

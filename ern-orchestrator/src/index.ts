@@ -32,6 +32,7 @@ export { launchOnSimulator } from './launchOnSimulator'
 export { launchRunner } from './launchRunner'
 export { runMiniApp } from './runMiniApp'
 export { getBinaryStoreFromCauldron } from './getBinaryStoreFromCauldron'
+export { runContainerTransformers } from './runContainerTransformers'
 
 import _start from './start'
 import _Ensure from './Ensure'

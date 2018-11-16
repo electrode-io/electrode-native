@@ -1,6 +1,14 @@
-import { Platform, NativePlatform, log } from 'ern-core'
+import {
+  Platform,
+  NativeApplicationDescriptor,
+  NativePlatform,
+  log,
+} from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
-import { parseJsonFromStringOrFile } from 'ern-orchestrator'
+import {
+  parseJsonFromStringOrFile,
+  runContainerTransformers,
+} from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
@@ -13,6 +21,14 @@ export const builder = (argv: Argv) => {
       describe: 'Local path to the Container to transform',
       type: 'string',
     })
+    .option('descriptor', {
+      alias: 'd',
+      describe: 'Full native application descritor',
+      type: 'string',
+    })
+    .coerce('descriptor', d =>
+      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+    )
     .option('extra', {
       alias: 'e',
       describe:
@@ -21,31 +37,42 @@ export const builder = (argv: Argv) => {
     })
     .option('platform', {
       alias: 'p',
-      choices: ['android', 'ios'],
-      demandOption: true,
       describe: 'Native platform of the Container',
       type: 'string',
     })
     .option('transformer', {
       alias: 't',
-      demandOption: true,
       describe: 'Transformer to use',
       type: 'string',
     })
+
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   containerPath,
+  descriptor,
   extra,
   platform,
   transformer,
 }: {
   containerPath?: string
+  descriptor?: NativeApplicationDescriptor
   extra?: string
   platform: NativePlatform
   transformer: string
 }) => {
+  if (!descriptor && !platform) {
+    throw new Error('--platform is required if not using --descriptor')
+  }
+  if (!descriptor && !transformer) {
+    throw new Error('--transformer is required if not using --descriptor')
+  }
+
+  if (descriptor) {
+    platform = descriptor.platform!
+  }
+
   containerPath =
     containerPath || Platform.getContainerGenOutDirectory(platform)
 
@@ -56,14 +83,19 @@ export const commandHandler = async ({
     },
   })
 
-  const extraObj = extra && (await parseJsonFromStringOrFile(extra))
+  if (descriptor) {
+    await runContainerTransformers({ napDescriptor: descriptor, containerPath })
+  } else {
+    const extraObj = extra && (await parseJsonFromStringOrFile(extra))
 
-  await transformContainer({
-    containerPath,
-    extra: extraObj,
-    platform,
-    transformer,
-  })
+    await transformContainer({
+      containerPath,
+      extra: extraObj,
+      platform,
+      transformer,
+    })
+  }
+
   log.info('Container transformed successfully')
 }
 
