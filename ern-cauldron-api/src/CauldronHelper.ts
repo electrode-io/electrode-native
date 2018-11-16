@@ -14,6 +14,7 @@ import {
   CauldronCodePushEntry,
   CauldronConfigLevel,
   CauldronNativeAppVersion,
+  CauldronStartCommandConfig,
 } from './types'
 import CauldronApi from './CauldronApi'
 import semver from 'semver'
@@ -984,6 +985,12 @@ export class CauldronHelper {
     descriptor?: NativeApplicationDescriptor
   ): Promise<any | void> {
     return this.getConfigForKey('codePush', descriptor)
+  }
+
+  public async getStartCommandConfig(
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<CauldronStartCommandConfig | void> {
+    return this.getConfigForKey('start', descriptor)
   }
 
   /**
