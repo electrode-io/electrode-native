@@ -81,6 +81,7 @@ https://[token]@[repourl]`)
   }
 
   public activate({ alias }: { alias: string }) {
+    this.throwIfAliasDoesNotExist({ alias })
     this.updateCauldronRepoInUse({ alias })
   }
   public deactivate() {
