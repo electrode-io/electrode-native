@@ -86,7 +86,7 @@ export async function runMiniApp(
   if (miniapps) {
     if (MiniApp.existInPath(cwd)) {
       const miniapp = MiniApp.fromPath(cwd)
-      miniapps.concat(PackagePath.fromString(`file:${cwd}`))
+      miniapps = miniapps.concat(PackagePath.fromString(`file:${cwd}`))
       log.debug(
         `This command is being run from the ${miniapp.name} MiniApp directory.`
       )
