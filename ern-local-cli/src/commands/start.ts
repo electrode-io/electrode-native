@@ -38,9 +38,14 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
+    .option('jsApiImpls', {
+      describe: 'A list of one or more JS API Implementation(s)',
+      type: 'array',
+    })
+    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
-      describe: 'A list of one or more miniapps',
+      describe: 'A list of one or more MiniApp(s)',
       type: 'array',
     })
     .coerce('miniapps', d => d.map(PackagePath.fromString))
@@ -65,6 +70,7 @@ export const commandHandler = async ({
   bundleId,
   descriptor,
   extraJsDependencies = [],
+  jsApiImpls,
   miniapps,
   packageName,
   watchNodeModules,
@@ -73,6 +79,7 @@ export const commandHandler = async ({
   bundleId?: string
   descriptor?: NativeApplicationDescriptor
   extraJsDependencies?: PackagePath[]
+  jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   packageName?: string
   watchNodeModules?: string[]
@@ -86,6 +93,7 @@ export const commandHandler = async ({
     bundleId,
     descriptor,
     extraJsDependencies,
+    jsApiImpls,
     miniapps,
     packageName,
     watchNodeModules,
