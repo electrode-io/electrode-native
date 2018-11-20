@@ -19,6 +19,7 @@ import path from 'path'
 import fs from 'fs'
 
 export default async function start({
+  jsApiImpls,
   miniapps,
   descriptor,
   watchNodeModules = [],
@@ -27,6 +28,7 @@ export default async function start({
   bundleId,
   extraJsDependencies,
 }: {
+  jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   watchNodeModules?: string[]
@@ -42,8 +44,10 @@ export default async function start({
     )
   }
 
-  if (!miniapps && !descriptor) {
-    throw new Error('Either miniapps or descriptor needs to be provided')
+  if (!miniapps && !jsApiImpls && !descriptor) {
+    throw new Error(
+      'Either miniapps, jsApiImpls or descriptor needs to be provided'
+    )
   }
 
   if (descriptor) {
@@ -62,9 +66,14 @@ export default async function start({
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
   await kax.task('Generating MiniApps composite').run(
-    generateMiniAppsComposite(miniapps!, compositeDir, {
-      extraJsDependencies: extraJsDependencies || undefined,
-    })
+    generateMiniAppsComposite(
+      miniapps!,
+      compositeDir,
+      {
+        extraJsDependencies: extraJsDependencies || undefined,
+      },
+      jsApiImpls
+    )
   )
 
   const miniAppsLinksObj = ernConfig.getValue('miniAppsLinks', {})

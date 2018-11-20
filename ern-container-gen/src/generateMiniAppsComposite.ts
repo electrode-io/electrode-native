@@ -40,12 +40,16 @@ export async function generateMiniAppsComposite(
     shell.mkdir('-p', outDir)
   }
 
+  const jsPackages = jsApiImplDependencies
+    ? [...miniappsPaths, ...jsApiImplDependencies]
+    : miniappsPaths
+
   shell.pushd(outDir)
 
   try {
     let compositePackageJson: any = {}
 
-    if (pathToYarnLock && _.some(miniappsPaths, p => p.isFilePath)) {
+    if (pathToYarnLock && _.some(jsPackages, p => p.isFilePath)) {
       log.warn(
         'Yarn lock will not be used as some of the MiniApp paths are file based'
       )
@@ -53,7 +57,7 @@ export async function generateMiniAppsComposite(
     }
 
     if (pathToYarnLock) {
-      if (_.some(miniappsPaths, m => !m.version)) {
+      if (_.some(jsPackages, m => !m.version)) {
         throw new Error(
           '[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version'
         )
@@ -70,7 +74,7 @@ export async function generateMiniAppsComposite(
 
       const yarnLock = fs.readFileSync(pathToYarnLock, 'utf8')
       const miniAppsDeltas: MiniAppsDeltas = getMiniAppsDeltas(
-        miniappsPaths,
+        jsPackages,
         yarnLock
       )
 
@@ -101,7 +105,7 @@ export async function generateMiniAppsComposite(
       // No yarn.lock path was provided, just add miniapps one by one
       log.debug('[generateMiniAppsComposite] no yarn lock provided')
       await yarn.init()
-      for (const miniappPath of miniappsPaths) {
+      for (const miniappPath of jsPackages) {
         await yarn.add(miniappPath)
       }
 
@@ -121,14 +125,6 @@ export async function generateMiniAppsComposite(
     compositePackageJson = await readPackageJson('.')
     for (const dependency of Object.keys(compositePackageJson.dependencies)) {
       entryIndexJsContent += `import '${dependency}'\n`
-    }
-
-    if (jsApiImplDependencies) {
-      log.debug('Adding imports for JS API implementations.')
-      for (const apiImpl of jsApiImplDependencies!) {
-        await yarn.add(apiImpl)
-        entryIndexJsContent += `import '${apiImpl.basePath}'\n`
-      }
     }
 
     await runAfterJsCompositeGenerationScript(outDir)
