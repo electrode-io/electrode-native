@@ -49,6 +49,11 @@ Indicates whether the package cache should be enabled.
 Enabling the package cache will lead to faster Containers generation, given that all packages versions used for a Container generation, will be retrieved from the cache if available rather than being downloaded upon every generation.
 **default** : true  
 
+- `ignore-required-ern-version` [boolean]
+Indicates whether any Cauldron ern version requirement should be ignored.
+This is mostly used for Electrode Native development and should not be set to true otherwise.
+**default** : false
+
 #### Remarks
  
 * In case a value already exists in the configuration for a given key, this command will not fail and will overwrite the existing value.

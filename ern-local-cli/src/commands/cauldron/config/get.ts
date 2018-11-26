@@ -36,7 +36,9 @@ export const commandHandler = async ({
   key?: string
   strict: boolean
 }) => {
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron({
+    ignoreRequiredErnVersionMismatch: true,
+  })
   let result: any
   if (key && strict) {
     result = await cauldron.getConfigForKeyStrict(key, descriptor)

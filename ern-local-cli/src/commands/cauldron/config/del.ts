@@ -29,7 +29,9 @@ export const commandHandler = async ({
   descriptor?: NativeApplicationDescriptor
   key?: string
 }) => {
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron({
+    ignoreRequiredErnVersionMismatch: true,
+  })
   await cauldron.delConfig({
     descriptor,
     key,

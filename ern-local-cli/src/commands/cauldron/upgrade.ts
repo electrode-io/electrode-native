@@ -10,6 +10,7 @@ export const builder = (argv: Argv) => {
 }
 export const commandHandler = async () => {
   const cauldron = await getActiveCauldron({
+    ignoreRequiredErnVersionMismatch: true,
     ignoreSchemaVersionMismatch: true,
   })
   await cauldron.upgradeCauldronSchema()

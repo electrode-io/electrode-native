@@ -30,6 +30,7 @@ The following is an example of a `cauldron.json` document.
      "codePush": {
       "entriesLimit": 10
     },
+    "requiredErnVersion": ">=0.26.0"
   },
   "nativeApps": [
     {
