@@ -41,4 +41,9 @@ export const availableUserConfigKeys = [
     name: 'overrideManifestUrlModifier',
     values: ['string'],
   },
+  {
+    desc: 'Indicates whether to ignore any Cauldron required ern version',
+    name: 'ignore-required-ern-version',
+    values: [true, false],
+  },
 ]

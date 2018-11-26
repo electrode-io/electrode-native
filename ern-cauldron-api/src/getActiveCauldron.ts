@@ -12,15 +12,21 @@ let currentCauldronHelperInstance
 let currentCauldronRepoInUse
 
 export default async function getActiveCauldron({
+  ignoreRequiredErnVersionMismatch,
   ignoreSchemaVersionMismatch,
   localRepoPath,
   throwIfNoActiveCauldron = true,
 }: {
+  ignoreRequiredErnVersionMismatch?: boolean
   ignoreSchemaVersionMismatch?: boolean
   localRepoPath?: string
   throwIfNoActiveCauldron?: boolean
 } = {}): Promise<CauldronHelper> {
   const repoInUse = config.getValue('cauldronRepoInUse')
+  ignoreRequiredErnVersionMismatch =
+    ignoreRequiredErnVersionMismatch ||
+    config.getValue('ignore-required-ern-version') ||
+    process.env.ERN_IGNORE_REQUIRED_ERN_VERSION
   if (!repoInUse && throwIfNoActiveCauldron) {
     throw new Error('No active Cauldron')
   }
@@ -68,6 +74,20 @@ You should switch to a newer platform version that supports this Cauldron schema
 You should run the following command : 'ern cauldron upgrade' to upgrade your Cauldron to the latest version.
 You can also switch to an older version of the platform which supports this Cauldron schema version.`
         )
+      }
+    }
+    if (!ignoreRequiredErnVersionMismatch) {
+      const requiredErnVersion = await currentCauldronHelperInstance.getConfigForKey(
+        'requiredErnVersion'
+      )
+      if (requiredErnVersion) {
+        if (!semver.satisfies(Platform.currentVersion, requiredErnVersion)) {
+          throw new Error(`This Cauldron requires a specific version of Electrode Native to be used.
+You are currently using Electrode Native version ${
+            Platform.currentVersion
+          } which does not satifisy version requirement of ${requiredErnVersion}.
+You should use a version of Electrode Native that satisfies the Cauldron requirement or use a different Cauldron.`)
+        }
       }
     }
     currentCauldronRepoInUse = repoInUse

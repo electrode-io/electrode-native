@@ -36,7 +36,9 @@ export const commandHandler = async ({
   key?: string
   value: any
 }) => {
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron({
+    ignoreRequiredErnVersionMismatch: true,
+  })
   await cauldron.setConfig({
     descriptor,
     key,
