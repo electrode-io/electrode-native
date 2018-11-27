@@ -9,8 +9,8 @@ export default class EphemeralFileStore implements ICauldronFileStore {
   private latestCommitMessage: string | string[]
   private transactionPending: boolean
 
-  constructor() {
-    this.storePath = createTmpDir()
+  constructor({ storePath }: { storePath?: string } = {}) {
+    this.storePath = storePath || createTmpDir()
     this.transactionPending = false
   }
 

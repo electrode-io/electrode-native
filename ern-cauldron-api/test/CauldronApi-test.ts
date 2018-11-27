@@ -2175,7 +2175,7 @@ describe('CauldronApi.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'Production'
       )
-      expect(id).eql('91bf4eff61586d71fe5d52e31a2cfabcbb31e33e')
+      expect(id).eql('a0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
     })
 
     it('should return undefined if the yarn lock key does not exists', async () => {

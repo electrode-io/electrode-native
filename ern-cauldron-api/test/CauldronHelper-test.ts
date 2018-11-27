@@ -2,7 +2,13 @@ import sinon from 'sinon'
 import { assert, expect } from 'chai'
 import { CauldronHelper } from '../src/CauldronHelper'
 import { CauldronConfigLevel } from '../src/types'
-import { PackagePath, NativeApplicationDescriptor, utils } from 'ern-core'
+import {
+  createTmpDir,
+  PackagePath,
+  NativeApplicationDescriptor,
+  utils,
+  shell,
+} from 'ern-core'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import {
   CauldronApi,
@@ -43,10 +49,17 @@ const miniAppsFixtureOne = [
 
 let documentStore
 let fileStore
+let fileStoreTmpDir
+
+const fixturesPath = path.join(__dirname, 'fixtures')
+const yarnLocksFixturesPath = path.join(fixturesPath, 'filestore', 'yarnlocks')
 
 function createCauldronApi(cauldronDocument) {
+  fileStoreTmpDir = createTmpDir()
+  // Copy fixture file store to the temporary test file store directory
+  shell.cp('-rf', yarnLocksFixturesPath, fileStoreTmpDir)
   documentStore = new InMemoryDocumentStore(cauldronDocument)
-  fileStore = new EphemeralFileStore()
+  fileStore = new EphemeralFileStore({ storePath: fileStoreTmpDir })
   return new CauldronApi(documentStore, fileStore)
 }
 
@@ -1133,8 +1146,8 @@ describe('CauldronHelper.js', () => {
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           {
-            Bar: '91bf4eff61586d71fe5d52e31a2cfabcbb31e33e',
-            Foo: '2110ae042d2bf337973c7b60615ba19fe7fb120c',
+            Bar: 'a0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+            Foo: 'b0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
           }
         )
       )
@@ -1149,8 +1162,8 @@ describe('CauldronHelper.js', () => {
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           {
-            Bar: '91bf4eff61586d71fe5d52e31a2cfabcbb31e33e',
-            Foo: '2110ae042d2bf337973c7b60615ba19fe7fb120c',
+            Bar: 'a0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+            Foo: 'b0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
           }
         )
       )
@@ -1162,17 +1175,17 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.setYarnLocks(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         {
-          Bar: '91bf4eff61586d71fe5d52e31a2cfabcbb31e33e',
-          Foo: '2110ae042d2bf337973c7b60615ba19fe7fb120c',
+          Bar: 'a0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+          Foo: 'b0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
         }
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
       expect(nativeAppVersion.yarnLocks)
         .to.have.property('Foo')
-        .eql('2110ae042d2bf337973c7b60615ba19fe7fb120c')
+        .eql('b0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
       expect(nativeAppVersion.yarnLocks)
         .to.have.property('Bar')
-        .eql('91bf4eff61586d71fe5d52e31a2cfabcbb31e33e')
+        .eql('a0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
     })
   })
 
@@ -1240,7 +1253,7 @@ describe('CauldronHelper.js', () => {
       const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
       expect(nativeAppVersion.yarnLocks)
         .to.have.property('Production')
-        .not.eql('91bf4eff61586d71fe5d52e31a2cfabcbb31e33e')
+        .not.eql('a0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
     })
   })
 
@@ -1278,7 +1291,7 @@ describe('CauldronHelper.js', () => {
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'Production'
       )
-      expect(result).eql('91bf4eff61586d71fe5d52e31a2cfabcbb31e33e')
+      expect(result).eql('a0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
     })
   })
 
@@ -1292,7 +1305,7 @@ describe('CauldronHelper.js', () => {
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           'Foo',
-          '1111111111111171fe5d52e31a2cfabcbb31e33e'
+          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
         )
       )
     })
@@ -1306,7 +1319,7 @@ describe('CauldronHelper.js', () => {
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           'Foo',
-          '1111111111111171fe5d52e31a2cfabcbb31e33e'
+          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
         )
       )
     })
@@ -1317,12 +1330,12 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.setYarnLockId(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'Foo',
-        '1111111111111171fe5d52e31a2cfabcbb31e33e'
+        'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
       expect(nativeAppVersion.yarnLocks)
         .to.have.property('Foo')
-        .eql('1111111111111171fe5d52e31a2cfabcbb31e33e')
+        .eql('c0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
     })
   })
 
@@ -1336,7 +1349,7 @@ describe('CauldronHelper.js', () => {
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android'),
           'Production',
-          '1111111111111171fe5d52e31a2cfabcbb31e33e'
+          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
         )
       )
     })
@@ -1350,7 +1363,7 @@ describe('CauldronHelper.js', () => {
           cauldronHelper,
           NativeApplicationDescriptor.fromString('test:android:0.0.0'),
           'Production',
-          '1111111111111171fe5d52e31a2cfabcbb31e33e'
+          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
         )
       )
     })
@@ -1361,12 +1374,12 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.updateYarnLockId(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),
         'Production',
-        '1111111111111171fe5d52e31a2cfabcbb31e33e'
+        'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
       expect(nativeAppVersion.yarnLocks)
         .to.have.property('Production')
-        .eql('1111111111111171fe5d52e31a2cfabcbb31e33e')
+        .eql('c0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
     })
   })
 
@@ -3555,6 +3568,7 @@ describe('CauldronHelper.js', () => {
     })
 
     it('should copy the yarn locks', async () => {
+      const tmp = fileStoreTmpDir
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper(fixture)
       const sourceDescriptor = NativeApplicationDescriptor.fromString(
@@ -3572,7 +3586,9 @@ describe('CauldronHelper.js', () => {
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="20.0.0")]'
       const version1770 = jp.query(fixture, testAndroid1770Path)[0]
       const version2000 = jp.query(fixture, testAndroid2000Path)[0]
-      expect(version2000.yarnLocks).deep.equal(version1770.yarnLocks)
+      expect(Object.keys(version2000.yarnLocks)).deep.equal(
+        Object.keys(version1770.yarnLocks)
+      )
     })
 
     it('should copy the container version', async () => {
