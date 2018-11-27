@@ -148,9 +148,11 @@ export class CauldronHelper {
         PackagePath.fromString(containerJsApiImpl)
       )
     }
-    // Copy yarn lock if any
+    // Copy yarn locks if any
     if (sourceVersion.yarnLocks) {
-      await this.cauldron.setYarnLocks(target, sourceVersion.yarnLocks)
+      for (const k of Object.keys(sourceVersion.yarnLocks)) {
+        await this.cauldron.copyYarnLock(source, target, k)
+      }
     }
     // Copy container version
     if (sourceVersion.containerVersion) {
@@ -408,7 +410,7 @@ export class CauldronHelper {
     napDescriptor: NativeApplicationDescriptor,
     key: string,
     yarnlockPath: string
-  ): Promise<void> {
+  ): Promise<string> {
     const yarnLockFile = await fileUtils.readFile(yarnlockPath)
     return this.cauldron.addYarnLock(napDescriptor, key, yarnLockFile)
   }

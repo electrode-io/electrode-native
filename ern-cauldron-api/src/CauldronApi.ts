@@ -15,6 +15,7 @@ import {
 } from './types'
 import upgradeScripts from './upgrade-scripts/scripts'
 import path from 'path'
+import uuidv4 from 'uuid/v4'
 
 const yarnLocksStoreDirectory = 'yarnlocks'
 const bundlesStoreDirectory = 'bundles'
@@ -1049,14 +1050,28 @@ export default class CauldronApi {
     descriptor: NativeApplicationDescriptor,
     key: string,
     yarnlock: string | Buffer
-  ): Promise<void> {
+  ): Promise<string> {
     this.throwIfPartialNapDescriptor(descriptor)
     const version = await this.getVersion(descriptor)
-    const fileName = shasum(yarnlock)
+    const fileName = uuidv4()
     const pathToYarnLock = this.getRelativePathToYarnLock(fileName)
     await this.fileStore.storeFile(pathToYarnLock, yarnlock)
     version.yarnLocks[key] = fileName
-    return this.commit(`Add yarn.lock for ${descriptor.toString()} ${key}`)
+    await this.commit(`Add yarn.lock for ${descriptor.toString()} ${key}`)
+    return fileName
+  }
+
+  public async copyYarnLock(
+    sourceDescriptor: NativeApplicationDescriptor,
+    targetDescriptor: NativeApplicationDescriptor,
+    key: string
+  ): Promise<string | void> {
+    this.throwIfPartialNapDescriptor(sourceDescriptor)
+    this.throwIfPartialNapDescriptor(targetDescriptor)
+    const sourceYarnLock = await this.getYarnLock(sourceDescriptor, key)
+    if (sourceYarnLock) {
+      return this.addYarnLock(targetDescriptor, key, sourceYarnLock)
+    }
   }
 
   public async getYarnLockId(

@@ -442,7 +442,7 @@ describe('codepush', () => {
 
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0]
       const yarnLockId = nativeAppVersion.yarnLocks.Production
-      expect(yarnLockId).equal('31bf4e4f61386d71fe5d52e31a2c5abcbb31e33e')
+      expect(yarnLockId).equal('2ce473a0-0bcc-4727-a72b-5bcd8bbb4ec9')
     })
 
     it('should not alter the Cauldron if call to code push sdk promote method is failing', async () => {
