@@ -24,6 +24,7 @@ export const commandHandler = async ({ module }: { module?: string }) => {
     pathToModule = createTmpDir()
     shell.pushd(pathToModule)
     try {
+      await yarn.init()
       await yarn.add(PackagePath.fromString(module))
     } finally {
       shell.popd()
