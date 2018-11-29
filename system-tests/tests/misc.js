@@ -83,8 +83,6 @@ run(`ern cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPk
 run(`ern cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`)
 run(`ern cauldron get nativeapp`)
 
-run(`ern cauldron get config ${iosNativeApplicationDescriptorNewVersion}`)
-
 // Already existing miniapp
 run(`ern cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 // Non published miniapp
