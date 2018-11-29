@@ -8,6 +8,12 @@
 
 `ern list dependencies [module]`
 
+**Options**
+
+`--json`
+
+* Output dependencies as a single line JSON record.
+
 **Arguments**
 
 `[module]`

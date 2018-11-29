@@ -9,21 +9,31 @@ export const desc = 'Get a native application from the cauldron'
 export const builder = (argv: Argv) => {
   return argv
     .coerce('descriptor', NativeApplicationDescriptor.fromString)
+    .option('json', {
+      describe: 'Output result as a single line JSON record',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   descriptor,
+  json,
 }: {
   descriptor?: NativeApplicationDescriptor
+  json?: boolean
 }) => {
   const cauldron = await getActiveCauldron()
   if (!descriptor) {
     const napDescriptors = await cauldron.getNapDescriptorStrings()
-    napDescriptors.forEach(n => log.info(n))
+    json
+      ? process.stdout.write(JSON.stringify(napDescriptors))
+      : napDescriptors.forEach(n => log.info(n))
   } else {
     const nativeApp = await cauldron.getDescriptor(descriptor)
-    console.log(JSON.stringify(nativeApp, null, 1))
+    process.stdout.write(
+      json ? JSON.stringify(nativeApp) : JSON.stringify(nativeApp, null, 1)
+    )
   }
 }
 

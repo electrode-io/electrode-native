@@ -14,9 +14,11 @@ export default class ColoredLog {
 
   public setLogLevel(level: string) {
     this.pLevel = level
-    this.log = require('console-log-level')({
-      level,
-    })
+    if (level !== 'off') {
+      this.log = require('console-log-level')({
+        level,
+      })
+    }
   }
 
   get level(): string {
@@ -24,22 +26,32 @@ export default class ColoredLog {
   }
 
   public trace(msg: string) {
-    this.log.trace(chalk.gray(msg))
+    if (this.pLevel !== 'off') {
+      this.log.trace(chalk.gray(msg))
+    }
   }
 
   public debug(msg: string) {
-    this.log.debug(chalk.green(msg))
+    if (this.pLevel !== 'off') {
+      this.log.debug(chalk.green(msg))
+    }
   }
 
   public info(msg: string) {
-    kax.info(msg)
+    if (this.pLevel !== 'off') {
+      kax.info(msg)
+    }
   }
 
   public warn(msg: string) {
-    kax.warn(msg)
+    if (this.pLevel !== 'off') {
+      kax.warn(msg)
+    }
   }
 
   public error(msg: string) {
-    kax.error(msg)
+    if (this.pLevel !== 'off') {
+      kax.error(msg)
+    }
   }
 }

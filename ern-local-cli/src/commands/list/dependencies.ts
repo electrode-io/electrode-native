@@ -15,10 +15,21 @@ export const command = 'dependencies [module]'
 export const desc = 'List the native dependencies of an Electrode Native module'
 
 export const builder = (argv: Argv) => {
-  return argv.epilog(epilog(exports))
+  return argv
+    .option('json', {
+      describe: 'Output dependencies as a single line JSON record',
+      type: 'boolean',
+    })
+    .epilog(epilog(exports))
 }
 
-export const commandHandler = async ({ module }: { module?: string }) => {
+export const commandHandler = async ({
+  module,
+  json,
+}: {
+  module?: string
+  json?: boolean
+}) => {
   let pathToModule = process.cwd()
   if (module) {
     pathToModule = createTmpDir()
@@ -34,17 +45,21 @@ export const commandHandler = async ({ module }: { module?: string }) => {
     path.join(pathToModule, 'node_modules')
   )
 
-  console.log(chalk.bold.yellow('Native dependencies :'))
-  logDependencies(dependencies.apis, 'APIs')
-  logDependencies(dependencies.nativeApisImpl, 'Native API Implementations')
-  logDependencies(
-    dependencies.thirdPartyInManifest,
-    'Third party declared in Manifest'
-  )
-  logDependencies(
-    dependencies.thirdPartyNotInManifest,
-    'Third party not declared in Manifest'
-  )
+  if (json) {
+    process.stdout.write(JSON.stringify(dependencies))
+  } else {
+    console.log(chalk.bold.yellow('Native dependencies :'))
+    logDependencies(dependencies.apis, 'APIs')
+    logDependencies(dependencies.nativeApisImpl, 'Native API Implementations')
+    logDependencies(
+      dependencies.thirdPartyInManifest,
+      'Third party declared in Manifest'
+    )
+    logDependencies(
+      dependencies.thirdPartyNotInManifest,
+      'Third party not declared in Manifest'
+    )
+  }
 }
 
 function logDependencies(dependencies: PackagePath[], type: string) {

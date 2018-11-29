@@ -20,6 +20,10 @@ Echoes configuration stored in Cauldron.
 * The target descriptor which to retrieve configuration from  
 **Default**  Returns the top level / global configuration, not associated to a specific descriptor
 
+`--json`
+
+* Output config as a single line JSON record.
+
 `--strict`
 
 * Echoes the configuration strictly associated to the descriptor  

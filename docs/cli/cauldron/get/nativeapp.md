@@ -11,10 +11,14 @@
 
 **Options**
 
-`descriptor`
+`--descriptor`
 
 * A partial or complete application descriptor representing which native application object to get
 * If not provided, the command will log the list of all complete native application descriptors stored in the Cauldron
+
+`--json`
+
+* Output result as a single line JSON record.
 
 **Examples**
 e

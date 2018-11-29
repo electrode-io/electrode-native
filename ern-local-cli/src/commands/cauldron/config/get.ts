@@ -14,6 +14,10 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('descriptor', NativeApplicationDescriptor.fromString)
+    .option('json', {
+      describe: 'Output config as a single line JSON record',
+      type: 'boolean',
+    })
     .option('key', {
       describe:
         'The config key (echoes the whole config object if not specified)',
@@ -29,10 +33,12 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   descriptor,
+  json,
   key,
   strict,
 }: {
   descriptor?: NativeApplicationDescriptor
+  json?: boolean
   key?: string
   strict: boolean
 }) => {
@@ -49,8 +55,10 @@ export const commandHandler = async ({
   } else if (!key && !strict) {
     result = await cauldron.getConfig(descriptor)
   }
-  const jsonConfig = JSON.stringify(result, null, 2)
-  console.log(jsonConfig)
+
+  process.stdout.write(
+    json ? JSON.stringify(result) : JSON.stringify(result, null, 2)
+  )
 }
 
 export const handler = tryCatchWrap(commandHandler)
