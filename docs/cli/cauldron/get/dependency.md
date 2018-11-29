@@ -9,6 +9,12 @@
 
 `ern cauldron get dependency <descriptor>`  
 
+**Options**
+
+`--json`
+
+* Output dependencies as a single line JSON array.
+
 **Arguments**
 
 `<descriptor>`

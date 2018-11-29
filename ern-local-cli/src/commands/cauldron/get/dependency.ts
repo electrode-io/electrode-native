@@ -16,13 +16,19 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('json', {
+      describe: 'Output dependencies as a single line JSON array',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   descriptor,
+  json,
 }: {
   descriptor: NativeApplicationDescriptor
+  json?: boolean
 }) => {
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: {
@@ -34,9 +40,9 @@ export const commandHandler = async ({
 
   const cauldron = await getActiveCauldron()
   const dependencies = await cauldron.getNativeDependencies(descriptor)
-  for (const dependency of dependencies) {
-    log.info(dependency.toString())
-  }
+  json
+    ? process.stdout.write(JSON.stringify(dependencies))
+    : dependencies.forEach(d => log.info(d.toString()))
 }
 
 export const handler = tryCatchWrap(commandHandler)

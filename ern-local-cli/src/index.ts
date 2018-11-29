@@ -10,7 +10,12 @@ import {
   Platform,
   kax,
 } from 'ern-core'
-import { KaxAdvancedRenderer, KaxSimpleRenderer } from 'kax'
+import {
+  KaxAdvancedRenderer,
+  KaxSimpleRenderer,
+  KaxRenderer,
+  KaxTask,
+} from 'kax'
 import * as yargs from 'yargs'
 
 // ==============================================================================
@@ -100,13 +105,32 @@ const kaxRendererConfig = {
   symbolizeMultiLine: true,
 }
 
+class KaxNullRenderer implements KaxRenderer {
+  public renderWarning(msg: string) {
+    // noop
+  }
+  public renderInfo(msg: string) {
+    // noop
+  }
+  public renderError(msg: string) {
+    // noop
+  }
+  public renderTask<T>(msg: string, task: KaxTask<T>) {
+    // noop
+  }
+}
+
 // ==============================================================================
 // Entry point
 // =============================================================================
 export default function run() {
-  const logLevel = process.env.ERN_LOG_LEVEL
-    ? process.env.ERN_LOG_LEVEL
-    : config.getValue('logLevel', 'info')
+  const hasJsonOpt = yargs.argv.json
+  const logLevel = hasJsonOpt
+    ? 'off'
+    : process.env.ERN_LOG_LEVEL
+      ? process.env.ERN_LOG_LEVEL
+      : config.getValue('logLevel', 'info')
+
   log.setLogLevel(logLevel)
   shell.config.fatal = true
   shell.config.verbose = logLevel === 'trace'
@@ -115,12 +139,16 @@ export default function run() {
   kax.renderer =
     logLevel === 'trace' || logLevel === 'debug'
       ? new KaxSimpleRenderer(kaxRendererConfig)
-      : new KaxAdvancedRenderer(kaxRendererConfig)
+      : logLevel === 'off'
+        ? new KaxNullRenderer()
+        : new KaxAdvancedRenderer(kaxRendererConfig)
 
-  if (config.getValue('showBanner', true)) {
-    showBanner()
+  if (!hasJsonOpt) {
+    if (config.getValue('showBanner', true)) {
+      showBanner()
+    }
+    showInfo()
   }
-  showInfo()
 
   if (yargs.argv._.length === 0 && yargs.argv.version) {
     return showVersion()
