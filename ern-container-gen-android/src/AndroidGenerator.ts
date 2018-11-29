@@ -25,6 +25,12 @@ import readDir from 'fs-readdir-recursive'
 
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
+// Default value for android build config
+const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.2.1'
+const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
+const DEFAULT_COMPILE_SDK_VERSION = '28'
+const DEFAULT_MIN_SDK_VERSION = '19'
+const DEFAULT_TARGET_SDK_VERSION = '28'
 
 export default class AndroidGenerator implements ContainerGenerator {
   get name(): string {
@@ -78,6 +84,9 @@ export default class AndroidGenerator implements ContainerGenerator {
     await kax
       .task('Adding Native Dependencies Hooks')
       .run(this.addAndroidPluginHookClasses(config.plugins, config.outDir))
+
+    kax.info('Configure android config hooks')
+    this.configureAndroidBuildOptions(config, mustacheView)
 
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
@@ -309,5 +318,27 @@ export default class AndroidGenerator implements ContainerGenerator {
     if (reactNativeCodePushPlugin) {
       mustacheView.loadJsBundleFromCustomPath = true
     }
+  }
+
+  public configureAndroidBuildOptions(
+    config: ContainerGeneratorConfig,
+    mustacheView: any
+  ) {
+    const androidBuildOptions = (config && config.androidConfig) || {}
+    mustacheView.androidGradlePlugin =
+      (androidBuildOptions && androidBuildOptions.androidGradlePlugin) ||
+      DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION
+    mustacheView.buildToolsVersion =
+      (androidBuildOptions && androidBuildOptions.buildToolsVersion) ||
+      DEFAULT_BUILD_TOOLS_VERSION
+    mustacheView.compileSdkVersion =
+      (androidBuildOptions && androidBuildOptions.compileSdkVersion) ||
+      DEFAULT_COMPILE_SDK_VERSION
+    mustacheView.minSdkVersion =
+      (androidBuildOptions && androidBuildOptions.minSdkVersion) ||
+      DEFAULT_MIN_SDK_VERSION
+    mustacheView.targetSdkVersion =
+      (androidBuildOptions && androidBuildOptions.targetSdkVersion) ||
+      DEFAULT_TARGET_SDK_VERSION
   }
 }
