@@ -12,11 +12,11 @@ android {
         abortOnError false
         ignoreWarnings true
     }
-    compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    compileSdkVersion {{{compileSdkVersion}}}
+    buildToolsVersion {{{buildToolsVersion}}}
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion {{{minSdkVersion}}}
+        targetSdkVersion {{{targetSdkVersion}}}
         versionCode 1
         versionName "1.0"
     }

@@ -37,4 +37,8 @@ export interface ContainerGeneratorConfig {
    * Path to the current yarn lock
    */
   pathToYarnLock?: string
+  /**
+   * Android config that should be included to override default build settings
+   */
+  androidConfig?: any
 }

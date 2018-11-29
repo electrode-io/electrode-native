@@ -187,6 +187,8 @@ export async function runCauldronContainerGen(
       .task(`Generating Container for ${napDescriptor.toString()}`)
       .run(
         generator.generate({
+          androidConfig:
+            containerGeneratorConfig && containerGeneratorConfig.androidConfig,
           compositeMiniAppDir,
           ignoreRnpmAssets:
             containerGeneratorConfig &&
