@@ -19,7 +19,7 @@
 #import <ElectrodeContainer/ElectrodeContainer.h>
 
 @interface ViewController ()
-@property(nonatomic, weak) IBOutlet UIView *rnView;
+@property(nonatomic, weak) UIView *rnView;
 @end
 
 @implementation ViewController
