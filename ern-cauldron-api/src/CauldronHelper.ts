@@ -168,6 +168,10 @@ export class CauldronHelper {
         sourceVersion.container.ernVersion
       )
     }
+    // Copy detachContainerVersionFromRoot
+    if (sourceVersion.detachContainerVersionFromRoot) {
+      await this.cauldron.enableDetachContainerVersionFromRoot(target)
+    }
   }
 
   public async getMostRecentNativeApplicationVersion(

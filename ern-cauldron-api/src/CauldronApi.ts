@@ -932,6 +932,28 @@ export default class CauldronApi {
     }
   }
 
+  public async enableDetachContainerVersionFromRoot(
+    descriptor: NativeApplicationDescriptor
+  ) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    version.detachContainerVersionFromRoot = true
+    return this.commit(
+      `Set detachContainerVersionFromRoot to true for ${descriptor.toString()}`
+    )
+  }
+
+  public async disableDetachContainerVersionFromRoot(
+    descriptor: NativeApplicationDescriptor
+  ) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    version.detachContainerVersionFromRoot = false
+    return this.commit(
+      `Set detachContainerVersionFromRoot to false for ${descriptor.toString()}`
+    )
+  }
+
   // =====================================================================================
   // FILE OPERATIONS
   // =====================================================================================
