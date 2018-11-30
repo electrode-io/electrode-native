@@ -10,6 +10,7 @@ import path from 'path'
 // Throw error if Cauldron is not using the correct schema version
 let currentCauldronHelperInstance
 let currentCauldronRepoInUse
+const ernPlatformUseCmdMsg = 'ern platform use <version> command'
 
 export default async function getActiveCauldron({
   ignoreRequiredErnVersionMismatch,
@@ -61,7 +62,7 @@ export default async function getActiveCauldron({
       ) {
         throw new Error(
           `Cauldron schema version mismatch (${schemaVersionUsedByCauldron} > ${schemaVersionOfCurrentCauldronApi}).
-You should switch to a newer platform version that supports this Cauldron schema.`
+            You should switch to a newer Electrode Native version that supports this Cauldron schema using ${ernPlatformUseCmdMsg}`
         )
       } else if (
         semver.lt(
@@ -71,8 +72,8 @@ You should switch to a newer platform version that supports this Cauldron schema
       ) {
         throw new Error(
           `Cauldron schema version mismatch (${schemaVersionUsedByCauldron} < ${schemaVersionOfCurrentCauldronApi}.
-You should run the following command : 'ern cauldron upgrade' to upgrade your Cauldron to the latest version.
-You can also switch to an older version of the platform which supports this Cauldron schema version.`
+            You can upgrade your Cauldron to the latest version using 'ern cauldron upgrade' command.
+            You can switch to an older version of the Electrode Native which supports this Cauldron schema version using ${ernPlatformUseCmdMsg}`
         )
       }
     }
@@ -82,11 +83,13 @@ You can also switch to an older version of the platform which supports this Caul
       )
       if (requiredErnVersion) {
         if (!semver.satisfies(Platform.currentVersion, requiredErnVersion)) {
-          throw new Error(`This Cauldron requires a specific version of Electrode Native to be used.
-You are currently using Electrode Native version ${
-            Platform.currentVersion
-          } which does not satifisy version requirement of ${requiredErnVersion}.
-You should use a version of Electrode Native that satisfies the Cauldron requirement or use a different Cauldron.`)
+          throw new Error(
+            `This Cauldron requires a specific version of Electrode Native to be used. 
+              You are currently using Electrode Native version ${
+                Platform.currentVersion
+              } which does not satifisy version requirement of ${requiredErnVersion}.
+              You should use a version of Electrode Native that satisfies the Cauldron requirement using ${ernPlatformUseCmdMsg} or use a different Cauldron.`
+          )
         }
       }
     }
