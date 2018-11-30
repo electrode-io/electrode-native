@@ -105,12 +105,18 @@ export async function performContainerStateUpdateInCauldron(
     // Is there any new MiniApps in the Container ?
     const containerHasNewMiniApps = miniAppsAfter.length > miniAppsBefore.length
 
+    // Are the MiniApps all using the same version as before ?
+    const sameMiniApps =
+      _.xorBy(miniAppsBefore, miniAppsAfter, 'fullPath').length === 0
+
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor
     )
     const publishers =
       (containerGenConfig && containerGenConfig.publishers) || []
     const gitPublisher = publishers.find(p => p.name.startsWith('git'))
+
+    const publishOnly = sameMiniApps && sameNativeDependencies && gitPublisher
 
     // No need to regenerate a full Container if all of the following
     // conditions are met
@@ -123,11 +129,15 @@ export async function performContainerStateUpdateInCauldron(
     // - A git publisher exist
     //   * Otherwise Electrode Native has no way to do a JS bundle only regen
     //     as it has no way to retrieve current Container code base
+    // - publishOnly is false
+    //   * Otherwise there is no need to regenerate the bundle as only publication
+    //     should be achieved
     let jsBundleOnly =
       !containerHasNewMiniApps &&
       sameNativeDependencies &&
       !forceFullGeneration &&
-      gitPublisher
+      gitPublisher &&
+      !publishOnly
 
     const compositeMiniAppDir = createTmpDir()
 
@@ -168,9 +178,26 @@ export async function performContainerStateUpdateInCauldron(
         log.error(`Falling back to full Container generation`)
         jsBundleOnly = false
       }
+    } else if (publishOnly) {
+      log.info(`No changes from ${currentContainerVersion}`)
+      log.info('Only publishing')
+      // Clean outDir
+      shell.rm('-rf', path.join(outDir, '{.*,*}'))
+      // git clone to outDir
+      await gitCli().clone(gitPublisher.url, outDir)
+      // git checkout current container version tag
+      await gitCli(outDir).checkout(`v${currentContainerVersion}`)
+      // Remove .git dir
+      shell.rm('-rf', path.join(outDir, '.git'))
+      // Update container metadata
+      const metadata = await fileUtils.readJSON(
+        getContainerMetadataPath(outDir)
+      )
+      metadata.ernVersion = Platform.currentVersion
+      await fileUtils.writeJSON(getContainerMetadataPath(outDir), metadata)
     }
 
-    if (!jsBundleOnly) {
+    if (!jsBundleOnly && !publishOnly) {
       // Otherwise full container
       await runCauldronContainerGen(napDescriptor, {
         compositeMiniAppDir,
@@ -191,17 +218,19 @@ export async function performContainerStateUpdateInCauldron(
     )
 
     // Update yarn lock
-    const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
-    await cauldron.addOrUpdateYarnLock(
-      napDescriptor,
-      constants.CONTAINER_YARN_KEY,
-      pathToNewYarnLock
-    )
+    if (!publishOnly) {
+      const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
+      await cauldron.addOrUpdateYarnLock(
+        napDescriptor,
+        constants.CONTAINER_YARN_KEY,
+        pathToNewYarnLock
+      )
+    }
 
     // Run Container transformers sequentially (if any)
     // Only run them if a full container was regenerated and not only js bundle
     // otherwise it will apply transformers on top of a project already transformed
-    if (!jsBundleOnly) {
+    if (!jsBundleOnly && !publishOnly) {
       await runContainerTransformers({ napDescriptor, containerPath: outDir })
     }
 
