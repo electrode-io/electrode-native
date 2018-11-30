@@ -173,7 +173,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0830;
-				ORGANIZATIONNAME = "Claire Weijie Li";
+				ORGANIZATIONNAME = "Walmart";
 				TargetAttributes = {
 					304F3E941EEF455C00F1E36B = {
 						CreatedOnToolsVersion = 8.3.2;
