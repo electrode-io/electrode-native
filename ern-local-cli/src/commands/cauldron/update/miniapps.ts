@@ -5,6 +5,7 @@ import {
   nativeDepenciesVersionResolution as resolver,
   log,
   kax,
+  utils,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
@@ -101,15 +102,38 @@ export const commandHandler = async ({
     },
   })
 
-  const miniAppsObjs: MiniApp[] = []
+  const cauldron = await getActiveCauldron()
+
+  // Special handling for git branch based MiniApps
+  // Indeed, if only the branch of a MiniApp has been updated, but the head commit SHA
+  // is still the same, then we shouldn't consider the MiniApp as an updated MiniApp
+  // given that it will not contain any changes at all. We should just update the branch
+  // in the Cauldron, but not go through complete handling.
+  const updatedMiniApps: PackagePath[] = []
+  const containerMiniApps = await cauldron.getContainerMiniApps(descriptor)
   for (const miniapp of miniapps) {
+    if (miniapp.isGitPath && (await utils.isGitBranch(miniapp))) {
+      const headCommitSha = await utils.getCommitShaOfGitBranchHead(miniapp)
+      if (
+        !containerMiniApps.some(
+          m => m.basePath === miniapp.basePath && m.version === headCommitSha
+        )
+      ) {
+        updatedMiniApps.push(miniapp)
+      }
+    } else {
+      updatedMiniApps.push(miniapp)
+    }
+  }
+
+  const miniAppsObjs: MiniApp[] = []
+
+  for (const miniapp of updatedMiniApps) {
     const m = await kax
       .task(`Retrieving ${miniapp} MiniApp`)
       .run(MiniApp.fromPackagePath(miniapp))
     miniAppsObjs.push(m)
   }
-
-  const cauldron = await getActiveCauldron()
 
   const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
     miniAppsObjs
