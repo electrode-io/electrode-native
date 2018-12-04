@@ -11,6 +11,7 @@ execSync(`yarn install`)
 const chalk = require('chalk')
 const shell = require('shelljs')
 const os = require('os')
+const path = require('path')
 
 // Path to ern platform root directory
 const ERN_PATH = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
