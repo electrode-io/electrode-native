@@ -35,7 +35,7 @@ If you are a MiniApp developer intending to release open source MiniApps, then y
 
 Electrode Native allows you to override the master open source manifest with your own private manifest. This is helpful if you work with private, non-open sourced native dependencies or if you want to stick to a specific React Native version for a while. Indeed, with each new release of the platform, the master manifest will be aligned with the latest available version of React Native, which might not be what you want.
 
-[Learn more about the manifest](../platform-parts/manifest.md)
+[Learn more about the manifest](../platform-parts/manifest/index.md)
 
 ### The Electrode Native cauldron
 
@@ -56,4 +56,4 @@ Because the cauldron verifies which MiniApps versions and native dependencies ve
 
 All OTA MiniApps updates move through the cauldron first as well so that Electrode Native verifies whether or not it contains any conflicting native dependencies versions with the targeted mobile application version.
 
-[Learn more about the cauldron](../platform-parts/cauldron.md)
+[Learn more about the cauldron](../platform-parts/cauldron/index.md)

@@ -21,7 +21,7 @@ Electrode Native is primarily a Node.js application therefore, Node 6+ must be i
 
 You need to have the `git` command line client installed on your workstation and declared in your PATH (i.e if you type `git` from a command prompt / terminal, it should not fail with "command not found" error).  
 
-Electrode Native is relying on the `git` client for [Cauldron](../platform-parts/cauldron.md) access as well as [Manifest](../platform-parts/manifest.md) access, and also to publish your Containers to git if you want to use such a publisher.
+Electrode Native is relying on the `git` client for [Cauldron](../platform-parts/cauldron/index.md) access as well as [Manifest](../platform-parts/manifest/index.md) access, and also to publish your Containers to git if you want to use such a publisher.
 
 ### [Android Studio](https://developer.android.com/studio/index.html)
 
