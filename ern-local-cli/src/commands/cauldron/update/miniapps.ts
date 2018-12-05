@@ -104,16 +104,15 @@ export const commandHandler = async ({
 
   const cauldron = await getActiveCauldron()
 
-  // Special handling for git branch based MiniApps
-  // Indeed, if only the branch of a MiniApp has been updated, but the head commit SHA
+  // Special handling for git based MiniApps
+  // Indeed, if only the branch or tag a MiniApp has been updated, but the head commit SHA
   // is still the same, then we shouldn't consider the MiniApp as an updated MiniApp
   // given that it will not contain any changes at all. We should just update the branch
   // in the Cauldron, but not go through complete handling.
   const updatedMiniApps: PackagePath[] = []
   const containerMiniApps = await cauldron.getContainerMiniApps(descriptor)
   for (const miniapp of miniapps) {
-    if (miniapp.isGitPath && (await utils.isGitBranch(miniapp))) {
-      const headCommitSha = await utils.getCommitShaOfGitBranchHead(miniapp)
+    if ((await utils.isGitBranch(miniapp)) || (await utils.isGitTag(miniapp))) {
       const headCommitSha = await utils.getCommitShaOfGitBranchOrTag(miniapp)
       if (
         !containerMiniApps.some(
