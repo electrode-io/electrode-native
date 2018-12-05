@@ -8,6 +8,17 @@ import os from 'os'
 import kax from './kax'
 
 // ==============================================================================
+// Default value for android build config
+// ==============================================================================
+
+export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.2.1'
+export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
+export const DEFAULT_COMPILE_SDK_VERSION = '28'
+export const DEFAULT_GRADLE_DISTRIBUTION_URL = '4.6'
+export const DEFAULT_MIN_SDK_VERSION = '19'
+export const DEFAULT_TARGET_SDK_VERSION = '28'
+
+// ==============================================================================
 // Misc utilities
 // ==============================================================================
 

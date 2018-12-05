@@ -11,12 +11,12 @@ apply plugin: 'com.android.application'
 def enableSeparateBuildPerCPUArchitecture = false
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.walmartlabs.ern"
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion 19
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

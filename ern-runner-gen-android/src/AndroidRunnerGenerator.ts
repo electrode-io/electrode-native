@@ -2,6 +2,7 @@ import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
 import { mustacheUtils, NativePlatform, shell } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
+import { android } from 'ern-core'
 
 const runnerHullPath = path.join(__dirname, 'hull')
 const defaultReactNativePackagerHost = 'localhost'
@@ -14,14 +15,20 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
 
   public async generate(config: RunnerGeneratorConfig): Promise<void> {
     const mustacheView = {
+      androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
+      buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
+      compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
+      gradleDistributionUrl: android.DEFAULT_GRADLE_DISTRIBUTION_URL,
       isReactNativeDevSupportEnabled:
         config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
+      minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,
       miniAppName: config.mainMiniAppName,
       packagerHost:
         config.reactNativePackagerHost || defaultReactNativePackagerHost,
       packagerPort:
         config.reactNativePackagerPort || defaultReactNativePackagerPort,
       pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
+      targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
     }
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
     const files = readDir(
