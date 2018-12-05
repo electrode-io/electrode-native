@@ -29,6 +29,7 @@ const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.2.1'
 const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
 const DEFAULT_COMPILE_SDK_VERSION = '28'
+const DEFAULT_GRADLE_DISTRIBUTION_URL = '4.6'
 const DEFAULT_MIN_SDK_VERSION = '19'
 const DEFAULT_TARGET_SDK_VERSION = '28'
 
@@ -334,6 +335,9 @@ export default class AndroidGenerator implements ContainerGenerator {
     mustacheView.compileSdkVersion =
       (androidBuildOptions && androidBuildOptions.compileSdkVersion) ||
       DEFAULT_COMPILE_SDK_VERSION
+    mustacheView.gradleDistributionUrl =
+      (androidBuildOptions && androidBuildOptions.gradleDistributionUrl) ||
+      DEFAULT_GRADLE_DISTRIBUTION_URL
     mustacheView.minSdkVersion =
       (androidBuildOptions && androidBuildOptions.minSdkVersion) ||
       DEFAULT_MIN_SDK_VERSION
