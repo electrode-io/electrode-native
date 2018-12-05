@@ -424,21 +424,18 @@ const gitShaLength = 40
 
 export async function isGitBranch(p: PackagePath): Promise<boolean> {
   if (!p.isGitPath) {
-    throw new Error(`${p} is not a git path`)
+    return false
   }
-  if (!p.version) {
-    throw new Error(`${p} does not include the branch to check`)
+  if (p.isGitPath && !p.version) {
+    return true
   }
   const heads = await gitCli().listRemote(['--heads', p.basePath])
-  return heads.includes(gitRefBranch(p.version))
+  return heads.includes(gitRefBranch(p.version!))
 }
 
 export async function isGitTag(p: PackagePath): Promise<boolean> {
-  if (!p.isGitPath) {
-    throw new Error(`${p} is not a git path`)
-  }
-  if (!p.version) {
-    throw new Error(`${p} does not include the tag to check`)
+  if (!p.isGitPath || !p.version) {
+    return false
   }
   const tags = await gitCli().listRemote(['--tags', p.basePath])
   return tags.includes(gitRefTag(p.version))

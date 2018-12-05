@@ -150,26 +150,20 @@ describe('Core Utils', () => {
 6319d9ef0c237907c784a8c472b000d5ff83b49a        refs/heads/v0.10
 81ac6c5ef280e46a1d643f86f47c66b11aa1f8b4        refs/heads/v0.11`
 
-    it('should throw if the package path is not a git path', async () => {
-      assert(
-        await doesThrow(
-          coreUtils.isGitBranch,
-          null,
-          PackagePath.fromString('registry-package@1.2.3')
-        )
+    it('should return false if the package path is not a git path', async () => {
+      const result = await coreUtils.isGitBranch(
+        PackagePath.fromString('registry-package@1.2.3')
       )
+      expect(result).false
     })
 
-    it('should throw if the package path does not include a branch', async () => {
-      assert(
-        await doesThrow(
-          coreUtils.isGitBranch,
-          null,
-          PackagePath.fromString(
-            'https://github.com/electrode-io/electrode-native.git'
-          )
+    it('should return true if the package path does not include a branch [as it corresponds to default branch]', async () => {
+      const result = await coreUtils.isGitBranch(
+        PackagePath.fromString(
+          'https://github.com/electrode-io/electrode-native.git'
         )
       )
+      expect(result).true
     })
 
     it('shoud return true if the branch exist', async () => {
@@ -207,26 +201,20 @@ c4191b97e0f77f8cd128275977e7f284277131e0        refs/tags/v0.1.0
 4cc7a6f041ebd9a7f4ec267cdc2e57cf0ddc61fa        refs/tags/v0.1.1
 d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
 
-    it('should throw if the package path is not a git path', async () => {
-      assert(
-        await doesThrow(
-          coreUtils.isGitTag,
-          null,
-          PackagePath.fromString('registry-package@1.2.3')
-        )
+    it('should return false if the package path is not a git path', async () => {
+      const result = await coreUtils.isGitTag(
+        PackagePath.fromString('registry-package@1.2.3')
       )
+      expect(result).false
     })
 
-    it('should throw if the package path does not include a tag', async () => {
-      assert(
-        await doesThrow(
-          coreUtils.isGitTag,
-          null,
-          PackagePath.fromString(
-            'https://github.com/electrode-io/electrode-native.git'
-          )
+    it('should return false if the package path does not include a tag', async () => {
+      const result = await coreUtils.isGitTag(
+        PackagePath.fromString(
+          'https://github.com/electrode-io/electrode-native.git'
         )
       )
+      expect(result).false
     })
 
     it('shoud return true if the tag exist', async () => {
