@@ -441,18 +441,18 @@ export async function isGitTag(p: PackagePath): Promise<boolean> {
   return tags.includes(gitRefTag(p.version))
 }
 
-export async function getCommitShaOfGitBranchHead(
+export async function getCommitShaOfGitBranchOrTag(
   p: PackagePath
 ): Promise<string> {
   if (!p.isGitPath) {
     throw new Error(`${p} is not a git path`)
   }
   if (!p.version) {
-    throw new Error(`${p} does not include a branch`)
+    throw new Error(`${p} does not include a branch or tag`)
   }
   const result = await gitCli().listRemote([p.basePath, p.version])
   if (!result || result === '') {
-    throw new Error(`${p.version} branch was not found`)
+    throw new Error(`${p.version} branch or tag not found`)
   }
   return result.substring(0, gitShaLength)
 }

@@ -114,6 +114,7 @@ export const commandHandler = async ({
   for (const miniapp of miniapps) {
     if (miniapp.isGitPath && (await utils.isGitBranch(miniapp))) {
       const headCommitSha = await utils.getCommitShaOfGitBranchHead(miniapp)
+      const headCommitSha = await utils.getCommitShaOfGitBranchOrTag(miniapp)
       if (
         !containerMiniApps.some(
           m => m.basePath === miniapp.basePath && m.version === headCommitSha

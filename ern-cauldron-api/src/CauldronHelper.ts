@@ -646,7 +646,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<void> {
     if (jsApiImpl.isGitPath && (await coreUtils.isGitBranch(jsApiImpl))) {
-      const commitSha = await coreUtils.getCommitShaOfGitBranchHead(jsApiImpl)
+      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(jsApiImpl)
       if (
         await this.cauldron.hasJsApiImplBranchInContainer(
           napDescriptor,
@@ -966,7 +966,7 @@ export class CauldronHelper {
     miniApp: PackagePath
   ): Promise<void> {
     if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
-      const commitSha = await coreUtils.getCommitShaOfGitBranchHead(miniApp)
+      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(miniApp)
       await this.cauldron.addMiniAppBranchToContainer(napDescriptor, miniApp)
       return this.cauldron.addMiniAppToContainer(
         napDescriptor,
@@ -982,7 +982,7 @@ export class CauldronHelper {
     jsApiImpl: PackagePath
   ): Promise<void> {
     if (jsApiImpl.isGitPath && (await coreUtils.isGitBranch(jsApiImpl))) {
-      const commitSha = await coreUtils.getCommitShaOfGitBranchHead(jsApiImpl)
+      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(jsApiImpl)
       await this.cauldron.addJsApiImplBranchToContainer(
         napDescriptor,
         jsApiImpl
@@ -1221,7 +1221,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<void> {
     if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
-      const commitSha = await coreUtils.getCommitShaOfGitBranchHead(miniApp)
+      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(miniApp)
       if (
         await this.cauldron.hasMiniAppBranchInContainer(napDescriptor, miniApp)
       ) {
@@ -1270,7 +1270,7 @@ export class CauldronHelper {
       p => PackagePath.fromString(p)
     )
     for (const miniAppBranch of miniAppsBranches) {
-      const latestCommitSha = await coreUtils.getCommitShaOfGitBranchHead(
+      const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         miniAppBranch
       )
       const matchingMiniApp = miniApps.find(
@@ -1297,7 +1297,7 @@ export class CauldronHelper {
       descriptor
     )).map(p => PackagePath.fromString(p))
     for (const jsApiImplBranch of jsApiImplsBranches) {
-      const latestCommitSha = await coreUtils.getCommitShaOfGitBranchHead(
+      const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         jsApiImplBranch
       )
       const matchingJsApiImpl = jsApiImpls.find(

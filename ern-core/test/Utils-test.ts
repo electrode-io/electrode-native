@@ -246,13 +246,13 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
     })
   })
 
-  describe('getCommitShaOfGitBranchHead', () => {
+  describe('getCommitShaOfGitBranchOrTag', () => {
     const sampleRef = `31d04959d8786113bfeaee997a1d1eaa8cb6c5f5        refs/heads/master`
 
     it('should throw if the package path is not a git path', async () => {
       assert(
         await doesThrow(
-          coreUtils.getCommitShaOfGitBranchHead,
+          coreUtils.getCommitShaOfGitBranchOrTag,
           null,
           PackagePath.fromString('registry-package@1.2.3')
         )
@@ -262,7 +262,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
     it('should throw if the package path does not include a branch', async () => {
       assert(
         await doesThrow(
-          coreUtils.getCommitShaOfGitBranchHead,
+          coreUtils.getCommitShaOfGitBranchOrTag,
           null,
           PackagePath.fromString(
             'https://github.com/electrode-io/electrode-native.git'
@@ -279,7 +279,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
       })
       assert(
         await doesThrow(
-          coreUtils.getCommitShaOfGitBranchHead,
+          coreUtils.getCommitShaOfGitBranchOrTag,
           null,
           PackagePath.fromString(
             'https://github.com/electrode-io/electrode-native.git#foo'
@@ -294,7 +294,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
           return Promise.resolve(sampleRef)
         },
       })
-      const result = await coreUtils.getCommitShaOfGitBranchHead(
+      const result = await coreUtils.getCommitShaOfGitBranchOrTag(
         PackagePath.fromString(
           'https://github.com/electrode-io/electrode-native.git#master'
         )
