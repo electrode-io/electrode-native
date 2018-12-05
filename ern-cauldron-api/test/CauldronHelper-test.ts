@@ -205,7 +205,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(true)
       sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .stub(utils, 'getCommitShaOfGitBranchOrTag')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
       await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
@@ -225,7 +225,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(true)
       sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .stub(utils, 'getCommitShaOfGitBranchOrTag')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
       await cauldronHelper.addMiniAppToContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
@@ -279,7 +279,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(true)
       sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .stub(utils, 'getCommitShaOfGitBranchOrTag')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
       await cauldronHelper.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
@@ -301,7 +301,7 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper(fixture)
       sandbox.stub(utils, 'isGitBranch').resolves(true)
       sandbox
-        .stub(utils, 'getCommitShaOfGitBranchHead')
+        .stub(utils, 'getCommitShaOfGitBranchOrTag')
         .resolves('6319d9ef0c237907c784a8c472b000d5ff83b49a')
       await cauldronHelper.updateMiniAppVersionInContainer(
         NativeApplicationDescriptor.fromString('test:android:17.8.0'),
