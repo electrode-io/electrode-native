@@ -56,8 +56,9 @@ export class MiniApp {
   public static async fromPackagePath(packagePath: PackagePath) {
     let fsPackagePath
     if (
+      config.getValue('package-cache-enabled', true) &&
       !packagePath.isFilePath &&
-      config.getValue('package-cache-enabled', true)
+      !(await utils.isGitBranch(packagePath))
     ) {
       if (!(await packageCache.isInCache(packagePath))) {
         fsPackagePath = await packageCache.addToCache(packagePath)
