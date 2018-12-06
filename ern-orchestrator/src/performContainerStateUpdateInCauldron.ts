@@ -7,6 +7,8 @@ import {
   gitCli,
   shell,
   fileUtils,
+  PackagePath,
+  utils,
 } from 'ern-core'
 import { getContainerMetadataPath } from 'ern-container-gen'
 import { getActiveCauldron, CauldronNativeAppVersion } from 'ern-cauldron-api'
@@ -105,9 +107,11 @@ export async function performContainerStateUpdateInCauldron(
     // Is there any new MiniApps in the Container ?
     const containerHasNewMiniApps = miniAppsAfter.length > miniAppsBefore.length
 
-    // Are the MiniApps all using the same version as before ?
-    const sameMiniApps =
-      _.xorBy(miniAppsBefore, miniAppsAfter, 'fullPath').length === 0
+    // Are the MiniApps the exact same as before ?
+    const sameMiniApps = await utils.areSamePackagePathsAndVersions(
+      miniAppsBefore,
+      miniAppsAfter
+    )
 
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor

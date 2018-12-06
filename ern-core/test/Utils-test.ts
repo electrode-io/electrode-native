@@ -302,4 +302,87 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`
       expect(result).eql('31d04959d8786113bfeaee997a1d1eaa8cb6c5f5')
     })
   })
+
+  describe('areSamePackagePathsAndVersions', () => {
+    it('should return false if the packages arrays are not of same length', async () => {
+      const a = [PackagePath.fromString('packA@1.2.3')]
+      const b = [
+        PackagePath.fromString('packA@1.2.3'),
+        PackagePath.fromString('packB@1.0.0'),
+      ]
+      const result = await coreUtils.areSamePackagePathsAndVersions(a, b)
+      expect(result).false
+    })
+
+    it('should return true if the packages arrays are identical', async () => {
+      const a = [
+        PackagePath.fromString('packA@1.2.3'),
+        PackagePath.fromString('packB@1.0.0'),
+      ]
+      const b = [
+        PackagePath.fromString('packA@1.2.3'),
+        PackagePath.fromString('packB@1.0.0'),
+      ]
+      const result = await coreUtils.areSamePackagePathsAndVersions(a, b)
+      expect(result).true
+    })
+
+    it('should return true if the packages are pointing to same commit sha [branch]', async () => {
+      const a = [
+        PackagePath.fromString(
+          'https://github.com/electrode-io/MovieListMiniApp.git#334df50afb1c18e5a42058208c5915643a661009'
+        ),
+      ]
+      const b = [
+        PackagePath.fromString(
+          'https://github.com/electrode-io/MovieListMiniApp.git#ern-v0.24'
+        ),
+      ]
+      const result = await coreUtils.areSamePackagePathsAndVersions(a, b)
+      expect(result).true
+    }).timeout(5000)
+
+    it('should return false if the packages are not pointing to same commit sha [branch]', async () => {
+      const a = [
+        PackagePath.fromString(
+          'https://github.com/electrode-io/MovieListMiniApp.git#124df50afb3c18e5a42058508c5915663a661008'
+        ),
+      ]
+      const b = [
+        PackagePath.fromString(
+          'https://github.com/electrode-io/MovieListMiniApp.git#ern-v0.24'
+        ),
+      ]
+      const result = await coreUtils.areSamePackagePathsAndVersions(a, b)
+      expect(result).false
+    }).timeout(5000)
+
+    it('should return true if the packages are pointing to same commit sha [tag]', async () => {
+      const a = [
+        PackagePath.fromString(
+          'https://github.com/electrode-io/MovieListMiniApp.git#03ecb47c9bcc693d0d6d43a3cace1b22cdd64286'
+        ),
+      ]
+      const b = [
+        PackagePath.fromString(
+          'https://github.com/electrode-io/MovieListMiniApp.git#v0.0.25'
+        ),
+      ]
+      const result = await coreUtils.areSamePackagePathsAndVersions(a, b)
+      expect(result).true
+    }).timeout(5000)
+
+    it('should return false if at least one package is not using same version', async () => {
+      const a = [
+        PackagePath.fromString('packA@1.2.3'),
+        PackagePath.fromString('packB@1.0.0'),
+      ]
+      const b = [
+        PackagePath.fromString('packA@2.0.0'),
+        PackagePath.fromString('packB@1.0.0'),
+      ]
+      const result = await coreUtils.areSamePackagePathsAndVersions(a, b)
+      expect(result).false
+    })
+  })
 })
