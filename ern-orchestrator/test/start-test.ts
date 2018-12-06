@@ -191,7 +191,7 @@ describe('start', () => {
     sandbox.assert.calledWith(chokidarWatchStub, '/path/to/myMiniApp', {
       cwd: '/path/to/myMiniApp',
       ignoreInitial: true,
-      ignored: ['node_modules/**', 'android/**', 'ios/**'],
+      ignored: ['android/**', 'ios/**'],
       persistent: true,
     })
   })

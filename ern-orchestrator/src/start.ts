@@ -193,7 +193,7 @@ function startLinkSynchronization(
   const watcher = chokidar.watch(sourceLinkDir, {
     cwd: sourceLinkDir,
     ignoreInitial: true,
-    ignored: ['node_modules/**', 'android/**', 'ios/**'],
+    ignored: ['android/**', 'ios/**'],
     persistent: true,
   })
 
