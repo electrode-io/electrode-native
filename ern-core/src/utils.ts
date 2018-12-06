@@ -456,3 +456,59 @@ export async function getCommitShaOfGitBranchOrTag(
   }
   return result.substring(0, gitShaLength)
 }
+
+export async function getCommitShaOfGitPackage(p: PackagePath) {
+  if (!p.isGitPath) {
+    throw new Error(`${p} is not a git path`)
+  }
+  if ((await isGitBranch(p)) || (await isGitTag(p))) {
+    return getCommitShaOfGitBranchOrTag(p)
+  }
+  return p.version
+}
+
+export async function areSamePackagePathsAndVersions(
+  a: PackagePath[],
+  b: PackagePath[]
+) {
+  // If lengths are different then it cannot be same
+  if (a.length !== b.length) {
+    return false
+  }
+
+  // If full package paths are matching then it means
+  // all package paths are using the same versions
+  if (_.xorBy(a, b, 'fullPath').length === 0) {
+    return true
+  }
+
+  // If one non git package path is using a different
+  // version then return false
+  if (
+    _.xorBy(
+      a.filter(p => !p.isGitPath),
+      b.filter(p => !p.isGitPath),
+      'fullPath'
+    ).length !== 0
+  ) {
+    return false
+  }
+
+  // Otherwise there is only one possible case where PackagePath that
+  // uses different versions are in fact pointing to identical version
+  // This happens if the version is a git branch/tag or SHA
+  // In that case even though the version string is different, it is
+  // possible that they point to the same commit SHA
+  const aGit: PackagePath[] = a.filter(p => p.isGitPath)
+  const bGit: PackagePath[] = b.filter(p => p.isGitPath)
+  for (const p of aGit) {
+    const other = bGit.find(x => x.basePath === p.basePath)
+    const aSha = await getCommitShaOfGitPackage(p)
+    const bSha = await getCommitShaOfGitPackage(other!)
+    if (aSha !== bSha) {
+      return false
+    }
+  }
+
+  return true
+}
