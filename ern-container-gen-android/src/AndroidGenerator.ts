@@ -335,6 +335,9 @@ export default class AndroidGenerator implements ContainerGenerator {
     mustacheView.minSdkVersion =
       (androidBuildOptions && androidBuildOptions.minSdkVersion) ||
       android.DEFAULT_MIN_SDK_VERSION
+    mustacheView.supportLibraryVersion =
+      (androidBuildOptions && androidBuildOptions.supportLibraryVersion) ||
+      android.DEFAULT_SUPPORT_LIBRARY
     mustacheView.targetSdkVersion =
       (androidBuildOptions && androidBuildOptions.targetSdkVersion) ||
       android.DEFAULT_TARGET_SDK_VERSION

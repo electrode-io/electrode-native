@@ -28,6 +28,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
       packagerPort:
         config.reactNativePackagerPort || defaultReactNativePackagerPort,
       pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
+      supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY,
       targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
     }
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)

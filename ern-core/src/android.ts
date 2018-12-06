@@ -17,6 +17,7 @@ export const DEFAULT_COMPILE_SDK_VERSION = '28'
 export const DEFAULT_GRADLE_DISTRIBUTION_URL = '4.6'
 export const DEFAULT_MIN_SDK_VERSION = '19'
 export const DEFAULT_TARGET_SDK_VERSION = '28'
+export const DEFAULT_SUPPORT_LIBRARY = '28.0.0'
 
 // ==============================================================================
 // Misc utilities
