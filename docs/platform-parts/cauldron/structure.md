@@ -65,7 +65,16 @@ The following is an example of a `cauldron.json` document.
                     }
                   }
                 }
-              ]
+              ],
+              "androidConfig":{
+                "androidGradlePlugin":"3.2.1",
+                "buildToolsVersion":"28.0.3",
+                "compileSdkVersion":"28",
+                "gradleDistributionUrl":"4.6",
+                "minSdkVersion":"19",
+                "supportLibraryVersion":"28.0.0",
+                "targetSdkVersion":"28"
+              }
             }
           },
           "versions": [
@@ -130,7 +139,7 @@ This example `cauldron.json` document shows the following:
 
 The configuration also shows the different objects stored in the cauldron--level by level.
 
-* A config object (optional) and a nativeApps array  
+* A config object (optional) and a nativeApps array. To find more about how to set `androidConfig` [visit here]( ../container/container-integration.md)
 
 * The `nativeapps` array contains the data of all mobile applications that are part of the cauldron. A cauldron can store multiple mobile applications, however it is not recommended--instead, we recommend that you use one cauldron per mobile application. It can also be a good idea to go even more granular and have one Cauldron per native application platform (i.e `MyWeatherApp Android` / `MyWeatherApp iOS`)
 
