@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import crypto from 'crypto'
 import Joi from 'joi'
 import semver from 'semver'
 import { schemaVersion, cauldronApiVersionBySchemaVersion } from './schemas'
@@ -7,11 +6,6 @@ import { schemaVersion, cauldronApiVersionBySchemaVersion } from './schemas'
 // ====================================
 // Cauldron Helper
 // ====================================
-export const shasum = (payload: string | Buffer) =>
-  crypto
-    .createHash('sha1')
-    .update(payload)
-    .digest('hex')
 
 export function exists(collection: any, name: string, version?: string) {
   if (!version) {
