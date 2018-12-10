@@ -23,12 +23,8 @@ export async function runContainerPublishers({
 
   const cauldron = await getActiveCauldron()
 
-  const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-    napDescriptor
-  )
+  const publishersFromCauldron = await cauldron.getPublishers(napDescriptor)
 
-  const publishersFromCauldron =
-    containerGenConfig && containerGenConfig.publishers
   if (publishersFromCauldron) {
     for (const publisherFromCauldron of publishersFromCauldron || []) {
       let extra = publisherFromCauldron.extra
