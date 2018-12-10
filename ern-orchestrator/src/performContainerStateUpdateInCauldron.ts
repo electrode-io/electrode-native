@@ -11,6 +11,7 @@ import {
   utils,
 } from 'ern-core'
 import { getContainerMetadataPath } from 'ern-container-gen'
+import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron, CauldronNativeAppVersion } from 'ern-cauldron-api'
 import { runCauldronContainerGen, runCaudronBundleGen } from './container'
 import { runContainerTransformers } from './runContainerTransformers'
@@ -113,14 +114,44 @@ export async function performContainerStateUpdateInCauldron(
       miniAppsAfter
     )
 
-    const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
-    const publishers =
-      (containerGenConfig && containerGenConfig.publishers) || []
-    const gitPublisher = publishers.find(p => p.name.startsWith('git'))
+    const gitPublisher =
+      (await cauldron.getPublisher(napDescriptor, 'git')) ||
+      (await cauldron.getPublisher(napDescriptor, 'github')) // to deprecate
 
-    const publishOnly = sameMiniApps && sameNativeDependencies && gitPublisher
+    if (gitPublisher && !forceFullGeneration) {
+      // Clean outDir
+      shell.rm('-rf', path.join(outDir, '{.*,*}'))
+      // git clone to outDir
+      await gitCli().clone(gitPublisher.url, outDir)
+      // Check if the raw (untransformed) container exists in the
+      // git repository, for the current container version
+      const rawContainerVersion = `v${currentContainerVersion}-raw`
+      const gitTags = await gitCli(outDir).tags()
+      if (gitTags.all.includes(rawContainerVersion)) {
+        // git checkout current container version (raw/untransformed)
+        await gitCli(outDir).checkout(rawContainerVersion)
+        // Remove .git dir
+        shell.rm('-rf', path.join(outDir, '.git'))
+      }
+      // Raw container version does not exist
+      // Most probably because Container was generated with a previous
+      // version of Electrode Native which was not publishing raw containers
+      // In that case, force full generation
+      else {
+        forceFullGeneration = true
+      }
+    }
+
+    // No need to generate a container if there was no changes at all
+    // compared to current container version
+    // In that case only publish the new container version which is
+    // basically a rebranding/promotion of an existing container version
+    // to a new version
+    const publishOnly =
+      sameMiniApps &&
+      sameNativeDependencies &&
+      !forceFullGeneration &&
+      gitPublisher
 
     // No need to regenerate a full Container if all of the following
     // conditions are met
@@ -152,20 +183,10 @@ export async function performContainerStateUpdateInCauldron(
           `No native dependencies changes from ${currentContainerVersion}`
         )
         log.info('Regenerating JS bundle only')
-        // Clean outDir
-        shell.rm('-rf', path.join(outDir, '{.*,*}'))
-        // git clone to outDir
-        await gitCli().clone(gitPublisher.url, outDir)
-        // git checkout current container version tag
-        await gitCli(outDir).checkout(`v${currentContainerVersion}`)
-        // and recreate bundle
         await runCaudronBundleGen(napDescriptor, {
           compositeMiniAppDir,
           outDir,
         })
-
-        // Remove .git dir
-        shell.rm('-rf', path.join(outDir, '.git'))
         // Update container metadata
         const metadata = await fileUtils.readJSON(
           getContainerMetadataPath(outDir)
@@ -185,14 +206,6 @@ export async function performContainerStateUpdateInCauldron(
     } else if (publishOnly) {
       log.info(`No changes from ${currentContainerVersion}`)
       log.info('Only publishing')
-      // Clean outDir
-      shell.rm('-rf', path.join(outDir, '{.*,*}'))
-      // git clone to outDir
-      await gitCli().clone(gitPublisher.url, outDir)
-      // git checkout current container version tag
-      await gitCli(outDir).checkout(`v${currentContainerVersion}`)
-      // Remove .git dir
-      shell.rm('-rf', path.join(outDir, '.git'))
       // Update container metadata
       const metadata = await fileUtils.readJSON(
         getContainerMetadataPath(outDir)
@@ -201,8 +214,8 @@ export async function performContainerStateUpdateInCauldron(
       await fileUtils.writeJSON(getContainerMetadataPath(outDir), metadata)
     }
 
+    // Full container generation
     if (!jsBundleOnly && !publishOnly) {
-      // Otherwise full container
       await runCauldronContainerGen(napDescriptor, {
         compositeMiniAppDir,
         outDir,
@@ -221,7 +234,24 @@ export async function performContainerStateUpdateInCauldron(
       Platform.currentVersion
     )
 
-    // Update yarn lock
+    // If there is a git publisher, now is the time to publish
+    // the raw (untransformed) container version, before running the transformers
+    if (gitPublisher) {
+      await kax.task('Publishing raw Container to git').run(
+        publishContainer({
+          containerPath: outDir,
+          containerVersion: `${cauldronContainerNewVersion}-raw`,
+          extra: {
+            branch: 'raw',
+          },
+          platform: napDescriptor.platform!,
+          publisher: 'git',
+          url: gitPublisher.url,
+        })
+      )
+    }
+
+    // Update yarn lock and run Container transformers sequentially
     if (!publishOnly) {
       const pathToNewYarnLock = path.join(compositeMiniAppDir, 'yarn.lock')
       await cauldron.addOrUpdateYarnLock(
@@ -229,12 +259,6 @@ export async function performContainerStateUpdateInCauldron(
         constants.CONTAINER_YARN_KEY,
         pathToNewYarnLock
       )
-    }
-
-    // Run Container transformers sequentially (if any)
-    // Only run them if a full container was regenerated and not only js bundle
-    // otherwise it will apply transformers on top of a project already transformed
-    if (!jsBundleOnly && !publishOnly) {
       await runContainerTransformers({ napDescriptor, containerPath: outDir })
     }
 

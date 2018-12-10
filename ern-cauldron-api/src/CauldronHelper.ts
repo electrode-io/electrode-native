@@ -305,6 +305,19 @@ export class CauldronHelper {
     )
   }
 
+  public async getPublishers(descriptor: NativeApplicationDescriptor) {
+    const conf = await this.getContainerGeneratorConfig(descriptor)
+    return conf && conf.publishers
+  }
+
+  public async getPublisher(
+    descriptor: NativeApplicationDescriptor,
+    name: string
+  ) {
+    const publishers = await this.getPublishers(descriptor)
+    return publishers && publishers.find(p => p.name === name)
+  }
+
   public async getNativeAppsForPlatform(
     platformName: string
   ): Promise<string[]> {

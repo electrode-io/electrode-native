@@ -68,7 +68,6 @@ export const commandHandler = async ({
       extraErrorMessage: `Make sure that ${containerPath} is the root of a Container project`,
       p: containerPath!,
     },
-    isValidContainerVersion: { containerVersion: version },
   })
 
   const extraObj = extra && (await parseJsonFromStringOrFile(extra))
