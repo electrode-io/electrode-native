@@ -1,6 +1,6 @@
 import * as schemas from './schemas'
 import { NativeApplicationDescriptor, PackagePath } from 'ern-core'
-import { exists, joiValidate, shasum, normalizeCauldronFilePath } from './util'
+import { exists, joiValidate, normalizeCauldronFilePath } from './util'
 import _ from 'lodash'
 import {
   Cauldron,
@@ -1173,7 +1173,7 @@ export default class CauldronApi {
     if (fileName) {
       const pathToOldYarnLock = this.getRelativePathToYarnLock(fileName)
       await this.fileStore.removeFile(pathToOldYarnLock)
-      const newYarnLockFileName = shasum(yarnlock)
+      const newYarnLockFileName = uuidv4()
       const pathToNewYarnLock = this.getRelativePathToYarnLock(
         newYarnLockFileName
       )
