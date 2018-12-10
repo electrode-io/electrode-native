@@ -18,7 +18,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
       androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
       buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
       compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-      gradleDistributionUrl: android.DEFAULT_GRADLE_DISTRIBUTION_URL,
+      gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
       isReactNativeDevSupportEnabled:
         config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
       minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,

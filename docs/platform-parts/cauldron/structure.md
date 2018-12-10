@@ -70,7 +70,7 @@ The following is an example of a `cauldron.json` document.
                 "androidGradlePlugin":"3.2.1",
                 "buildToolsVersion":"28.0.3",
                 "compileSdkVersion":"28",
-                "gradleDistributionUrl":"4.6",
+                "gradleDistributionVersion":"4.6",
                 "minSdkVersion":"19",
                 "supportLibraryVersion":"28.0.0",
                 "targetSdkVersion":"28"

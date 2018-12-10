@@ -102,11 +102,11 @@ The following android build parameters can be configured with application specif
       buildToolsVersion "28.0.3"
     }
     ```
-- `gradleDistributionUrl` - The url downloads the gradle wrapper. This allows executing Gradle builds without having to set up Gradle. The version specified here updates the `gradle/wrapper/gradle-wrapper.properties`
+- `gradleDistributionVersion` - The url downloads the gradle wrapper. This allows executing Gradle builds without having to set up Gradle. The version specified here updates the `gradle/wrapper/gradle-wrapper.properties`
 ```
   distributionUrl=https\://services.gradle.org/distributions/gradle-4.6-all.zip
 ```
-NOTE: Check the compatibility chart of Gradle version required for each version of the Android Gradle plugin [here](https://developer.android.com/studio/releases/gradle-plugin)
+*NOTE: Check the compatibility chart of Gradle version required for each version of the Android Gradle plugin* [here](https://developer.android.com/studio/releases/gradle-plugin)
 
 - `compileSdkVersion` - The API level designated to compile the application.
 
@@ -143,7 +143,7 @@ You can configure `androidConfig` in the cauldron as show below.
 						"androidGradlePlugin": "3.2.1",
 						"buildToolsVersion": "28.0.3",
 						"compileSdkVersion": "28",
-						"gradleDistributionUrl": "4.6",
+						"gradleDistributionVersion": "4.6",
 						"minSdkVersion": "19",
 						"supportLibraryVersion": "28.0.0",
 						"targetSdkVersion": "28"
