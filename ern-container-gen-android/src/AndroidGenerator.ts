@@ -159,14 +159,14 @@ export default class AndroidGenerator implements ContainerGenerator {
               if (dependency.startsWith(transitivePrefix)) {
                 dependency = dependency.replace(transitivePrefix, '')
                 mustacheView.pluginCompile.push({
-                  compileStatement: `compile('${dependency}') { transitive = true }`,
+                  compileStatement: `implementation('${dependency}') { transitive = true }`,
                 })
                 log.debug(
                   `Adding compile('${dependency}') { transitive = true }`
                 )
               } else {
                 mustacheView.pluginCompile.push({
-                  compileStatement: `compile '${dependency}'`,
+                  compileStatement: `implementation '${dependency}'`,
                 })
                 log.debug(`Adding compile '${dependency}'`)
               }
@@ -301,7 +301,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         }'`
       )
       mustacheView.pluginCompile.push({
-        compileStatement: `compile 'com.walmartlabs.ern:react-native:${
+        compileStatement: `api 'com.walmartlabs.ern:react-native:${
           reactNativePlugin.version
         }'`,
       })
