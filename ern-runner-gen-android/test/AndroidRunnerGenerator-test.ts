@@ -1,8 +1,8 @@
-import AndroidRunnerGenerator from '../src/AndroidRunnerGenerator'
 import path from 'path'
 import shell from 'shelljs'
 import { assert } from 'chai'
 import { sameDirContent } from 'ern-util-dev'
+import generateFixtures from '../src/utils/generatorHelper'
 
 describe('AndroidRunnerGenerator', () => {
   const simpleAndroidRunnerTestGeneratedPath = path.join(
@@ -23,12 +23,11 @@ describe('AndroidRunnerGenerator', () => {
   })
 
   it('should generate simple-android-runner fixture given same configuration ', async () => {
-    const sut = new AndroidRunnerGenerator()
-    await sut.generate({
-      mainMiniAppName: 'dummy',
-      outDir: simpleAndroidRunnerTestGeneratedPath,
-      targetPlatform: 'android',
-    })
+    await generateFixtures(
+      'dummy',
+      simpleAndroidRunnerTestGeneratedPath,
+      'android'
+    )
     assert(
       sameDirContent(
         simpleAndroidRunnerFixturePath,
@@ -40,12 +39,11 @@ describe('AndroidRunnerGenerator', () => {
   })
 
   it('should re-generate configuration of simple-android-runner fixture given same configuration ', async () => {
-    const sut = new AndroidRunnerGenerator()
-    await sut.regenerateRunnerConfig({
-      mainMiniAppName: 'dummy',
-      outDir: simpleAndroidRunnerTestGeneratedPath,
-      targetPlatform: 'android',
-    })
+    await generateFixtures(
+      'dummy',
+      simpleAndroidRunnerTestGeneratedPath,
+      'android'
+    )
     assert(
       sameDirContent(
         simpleAndroidRunnerFixturePath,

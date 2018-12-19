@@ -45,7 +45,8 @@
     "build": "ern-typescript && ern-copyfiles",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
-    "prepublish": "yarn run build"
+    "prepublish": "yarn run build",
+    "regen-fixtures": "../node_modules/.bin/ts-node test/regen-fixtures"
   },
   "copyFiles": [
     {
