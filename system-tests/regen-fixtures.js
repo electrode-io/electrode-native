@@ -34,8 +34,8 @@ inquirer
     },
   ])
   .then(answers => {
-    shell.exec(`ern platform config set logLevel trace`)
-    shell.exec(`ern cauldron repo clear`)
+    shell.exec('ern platform config set logLevel trace')
+    shell.exec('ern cauldron repo clear')
     try {
       for (const userSelectedFixtureToRegen of answers.userSelectedFixturesToRegen) {
         regenFunctionByFixtureName[userSelectedFixtureToRegen]()
