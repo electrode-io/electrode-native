@@ -33,9 +33,11 @@ export async function performContainerStateUpdateInCauldron(
   {
     containerVersion,
     forceFullGeneration,
+    publishUnmodifiedContainer,
   }: {
     containerVersion?: string
     forceFullGeneration?: boolean
+    publishUnmodifiedContainer?: boolean
   } = {}
 ) {
   if (!napDescriptor.platform) {
@@ -152,6 +154,21 @@ export async function performContainerStateUpdateInCauldron(
       sameNativeDependencies &&
       !forceFullGeneration &&
       gitPublisher
+
+    // If there is no changes in the Container (it is identical to the previous one)
+    // and the publishUnmodifiedContainer flag is false, meaning the user do not
+    // want to publish unmodified Containers, then there is nothing more to do, just
+    // exit.
+    if (publishOnly) {
+      log.info('Container is identical to previous one.')
+      if (!publishUnmodifiedContainer) {
+        log.info('Skipping publication.')
+        log.info(
+          'Set publishUnmodifiedContainer option if you wish to publish unmodified Containers'
+        )
+        return
+      }
+    }
 
     // No need to regenerate a full Container if all of the following
     // conditions are met
