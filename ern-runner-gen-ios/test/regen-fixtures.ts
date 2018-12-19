@@ -7,14 +7,17 @@ const pathToTestFixtures = path.join(__dirname, 'fixtures')
 const pathToGeneratedFixtures = path.join(
   __dirname,
   'generated',
-  'simple-android-runner'
+  'simple-ios-runner'
 )
-logHeader('Regenerating Android Runner Fixture')
-getRunnerGeneratorForPlatform('android')
+logHeader('Regenerating iOS Runner Fixture')
+getRunnerGeneratorForPlatform('ios')
   .regenerateRunnerConfig({
+    extra: {
+      containerGenWorkingDir: '/path/to/container',
+    },
     mainMiniAppName: 'dummy',
     outDir: pathToGeneratedFixtures,
-    targetPlatform: 'android',
+    targetPlatform: 'ios',
   })
   .then(() => {
     shell.cp('-Rf', pathToGeneratedFixtures, pathToTestFixtures)

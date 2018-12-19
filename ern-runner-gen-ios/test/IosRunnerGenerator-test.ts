@@ -4,6 +4,7 @@ import shell from 'shelljs'
 import { assert } from 'chai'
 import { sameDirContent } from 'ern-util-dev'
 import os from 'os'
+import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
 
 describe('IosRunnerGenerator', () => {
   const simpleIosRunnerTestGeneratedPath = path.join(
@@ -28,8 +29,7 @@ describe('IosRunnerGenerator', () => {
   })
 
   it('should generate simple-ios-runner fixture given same configuration ', async () => {
-    const sut = new IosRunnerGenerator()
-    await sut.generate({
+    await getRunnerGeneratorForPlatform('ios').generate({
       extra: {
         containerGenWorkingDir: '/path/to/container',
       },
@@ -48,8 +48,7 @@ describe('IosRunnerGenerator', () => {
   })
 
   it('should re-generate configuration of simple-ios-runner fixture given same configuration ', async () => {
-    const sut = new IosRunnerGenerator()
-    await sut.regenerateRunnerConfig({
+    await getRunnerGeneratorForPlatform('ios').regenerateRunnerConfig({
       extra: {
         containerGenWorkingDir: '/path/to/container',
       },
