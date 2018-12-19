@@ -2,7 +2,7 @@ import path from 'path'
 import shell from 'shelljs'
 import { assert } from 'chai'
 import { sameDirContent } from 'ern-util-dev'
-import generateFixtures from '../src/utils/generatorHelper'
+import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
 
 describe('AndroidRunnerGenerator', () => {
   const simpleAndroidRunnerTestGeneratedPath = path.join(
@@ -23,11 +23,11 @@ describe('AndroidRunnerGenerator', () => {
   })
 
   it('should generate simple-android-runner fixture given same configuration ', async () => {
-    await generateFixtures(
-      'dummy',
-      simpleAndroidRunnerTestGeneratedPath,
-      'android'
-    )
+    await getRunnerGeneratorForPlatform('android').generate({
+      mainMiniAppName: 'dummy',
+      outDir: simpleAndroidRunnerTestGeneratedPath,
+      targetPlatform: 'android',
+    })
     assert(
       sameDirContent(
         simpleAndroidRunnerFixturePath,
@@ -39,11 +39,11 @@ describe('AndroidRunnerGenerator', () => {
   })
 
   it('should re-generate configuration of simple-android-runner fixture given same configuration ', async () => {
-    await generateFixtures(
-      'dummy',
-      simpleAndroidRunnerTestGeneratedPath,
-      'android'
-    )
+    await getRunnerGeneratorForPlatform('android').regenerateRunnerConfig({
+      mainMiniAppName: 'dummy',
+      outDir: simpleAndroidRunnerTestGeneratedPath,
+      targetPlatform: 'android',
+    })
     assert(
       sameDirContent(
         simpleAndroidRunnerFixturePath,
