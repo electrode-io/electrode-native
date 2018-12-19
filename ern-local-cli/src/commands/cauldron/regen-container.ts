@@ -45,6 +45,10 @@ export const builder = (argv: Argv) => {
       describe: 'Perform complete regeneration',
       type: 'boolean',
     })
+    .option('publishUnmodifiedContainer', {
+      describe: 'Publish Container even if it is identical to the previous one',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
@@ -52,10 +56,12 @@ export const commandHandler = async ({
   containerVersion,
   descriptor,
   fullRegen,
+  publishUnmodifiedContainer,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
   fullRegen?: boolean
+  publishUnmodifiedContainer?: boolean
 }) => {
   descriptor =
     descriptor ||
@@ -123,7 +129,11 @@ export const commandHandler = async ({
     },
     descriptor,
     `Regenerate Container of ${descriptor} native application`,
-    { containerVersion, forceFullGeneration: fullRegen }
+    {
+      containerVersion,
+      forceFullGeneration: fullRegen,
+      publishUnmodifiedContainer,
+    }
   )
   log.info(`${descriptor} container was successfully regenerated`)
 }
