@@ -152,21 +152,16 @@ export async function isDependencyApi(
   if (/^.*react-native-.+-api$/.test(dependencyName)) {
     return true
   }
-  let result
-  try {
-    const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
-      field: 'ern 2> /dev/null',
-      json: true,
-    })
-    result =
-      depInfo && depInfo.type === 'error'
-        ? false
-        : depInfo.data && ModuleType.API === depInfo.data.moduleType
-  } catch (e) {
-    log.debug(e)
-    return false
+
+  const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
+    field: 'ern 2> /dev/null',
+    json: true,
+  })
+  if (depInfo && depInfo.type === 'error') {
+    throw new Error(`Cannot find ${dependencyName} in npm registry`)
   }
-  return result
+
+  return depInfo.data && ModuleType.API === depInfo.data.moduleType
 }
 
 /**
@@ -196,22 +191,16 @@ export async function isDependencyApiImpl(
   const modulesTypes = type
     ? [type]
     : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL]
-  let result
-  try {
-    const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
-      field: 'ern 2> /dev/null',
-      json: true,
-    })
-    result =
-      depInfo && depInfo.type === 'error'
-        ? false
-        : depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
-  } catch (e) {
-    log.debug(e)
-    return false
+
+  const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
+    field: 'ern 2> /dev/null',
+    json: true,
+  })
+  if (depInfo && depInfo.type === 'error') {
+    throw new Error(`Cannot find ${dependencyName} in npm registry`)
   }
 
-  return result
+  return depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
 }
 
 export async function isDependencyJsApiImpl(

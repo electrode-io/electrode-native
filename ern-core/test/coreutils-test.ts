@@ -2,8 +2,13 @@ import { assert, expect } from 'chai'
 import { yarn } from '../src/clients'
 import sinon from 'sinon'
 import * as utils from '../src/utils'
+import {
+  isDependencyApiImpl,
+  isDependencyApi,
+  isDependencyApiOrApiImpl,
+} from '../src/utils'
 import { PackagePath } from '../src/PackagePath'
-import { beforeTest, afterTest } from 'ern-util-dev'
+import { beforeTest, afterTest, doesThrow } from 'ern-util-dev'
 import * as fixtures from './fixtures/common'
 import * as ModuleTypes from '../src/ModuleTypes'
 import path from 'path'
@@ -501,10 +506,10 @@ describe('utils.js', () => {
       yarnStub.restore()
     })
 
-    it('return false if yarn info error', async () => {
+    it('throw if yarn info errors', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoError)
-      expect(await utils.isDependencyApiImpl('react-header')).to.eql(false)
+      assert(await doesThrow(isDependencyApiImpl, null, 'react-header'))
       yarnStub.restore()
     })
   })
@@ -526,10 +531,10 @@ describe('utils.js', () => {
       yarnStub.restore()
     })
 
-    it('return false if yarn info error', async () => {
+    it('throw if yarn info errors', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoError)
-      expect(await utils.isDependencyApi('react-header')).to.eql(false)
+      assert(await doesThrow(isDependencyApi, null, 'react-header'))
       yarnStub.restore()
     })
   })
@@ -551,10 +556,10 @@ describe('utils.js', () => {
       yarnStub.restore()
     })
 
-    it('return false if yarn info error', async () => {
+    it('throw if yarn info errors', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoError)
-      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(false)
+      assert(await doesThrow(isDependencyApiOrApiImpl, null, 'react-header'))
       yarnStub.restore()
     })
 
@@ -581,10 +586,10 @@ describe('utils.js', () => {
       yarnStub.restore()
     })
 
-    it('return false if yarn info error', async () => {
+    it('throw if yarn info errors', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoError)
-      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(false)
+      assert(await doesThrow(isDependencyApiOrApiImpl, null, 'react-header'))
       yarnStub.restore()
     })
   })
