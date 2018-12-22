@@ -44,6 +44,10 @@ export const builder = (argv: Argv) => {
       describe: 'Force',
       type: 'boolean',
     })
+    .option('publishUnmodifiedContainer', {
+      describe: 'Publish Container even if it is identical to the previous one',
+      type: 'boolean',
+    })
     .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
@@ -55,11 +59,13 @@ export const commandHandler = async ({
   descriptor,
   force,
   miniapps,
+  publishUnmodifiedContainer,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
   force?: boolean
   miniapps: PackagePath[]
+  publishUnmodifiedContainer?: boolean
 }) => {
   descriptor =
     descriptor ||
@@ -173,7 +179,10 @@ export const commandHandler = async ({
     },
     descriptor,
     cauldronCommitMessage,
-    { containerVersion }
+    {
+      containerVersion,
+      publishUnmodifiedContainer,
+    }
   )
   log.info(`MiniApp(s) version(s) successfully updated in ${descriptor}`)
 }
