@@ -45,7 +45,7 @@ export async function performContainerStateUpdateInCauldron(
   }
 
   const platform = napDescriptor.platform
-  const outDir = Platform.getContainerGenOutDirectory(platform)
+  let outDir = Platform.getContainerGenOutDirectory(platform)
   let cauldronContainerNewVersion
   let cauldron
 
@@ -135,6 +135,14 @@ export async function performContainerStateUpdateInCauldron(
         // Remove .git dir
         shell.rm('-rf', path.join(outDir, '.git'))
       }
+
+      // Git publisher has an option to store the Container in a subdirectory
+      // instead of the root directory. If that's the case, alter `outDir`
+      // to ensure that it is pointing to the real directory where the Container is
+      if (gitPublisher.subdir) {
+        outDir = path.join(outDir, gitPublisher.subdir)
+      }
+
       // Raw container version does not exist
       // Most probably because Container was generated with a previous
       // version of Electrode Native which was not publishing raw containers
