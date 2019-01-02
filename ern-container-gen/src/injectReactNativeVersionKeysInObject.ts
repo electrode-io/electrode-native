@@ -8,6 +8,7 @@ export function injectReactNativeVersionKeysInObject(
     RN_VERSION_GTE_45: semver.gte(reactNativeVersion, '0.45.0'),
     RN_VERSION_GTE_54: semver.gte(reactNativeVersion, '0.54.0'),
     RN_VERSION_LT_54: semver.lt(reactNativeVersion, '0.54.0'),
+    RN_VERSION_LT_58: semver.lt(reactNativeVersion, '0.58.0-rc.2'),
     reactNativeVersion,
   })
 }

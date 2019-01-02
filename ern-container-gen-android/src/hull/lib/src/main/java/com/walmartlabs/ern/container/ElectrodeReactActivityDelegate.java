@@ -304,6 +304,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         }
     }
 
+    {{#RN_VERSION_LT_58}} 
     /**
      * NOTE: Duplicate code since the base class has marked this method private.
      *
@@ -321,6 +322,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
     private Activity getPlainActivity() {
         return ((Activity) getContext());
     }
+    {{/RN_VERSION_LT_58}}
 
      private void unMountReactApplications() {
         List<ReactRootView> list;
