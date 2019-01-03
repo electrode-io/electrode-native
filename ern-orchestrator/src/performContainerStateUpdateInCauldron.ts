@@ -283,8 +283,9 @@ export async function performContainerStateUpdateInCauldron(
         constants.CONTAINER_YARN_KEY,
         pathToNewYarnLock
       )
-      await runContainerTransformers({ napDescriptor, containerPath: outDir })
     }
+
+    await runContainerTransformers({ napDescriptor, containerPath: outDir })
 
     // Commit Cauldron transaction
     await kax
