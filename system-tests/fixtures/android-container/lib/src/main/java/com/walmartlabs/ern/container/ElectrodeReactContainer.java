@@ -33,6 +33,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import com.microsoft.codepush.react.CodePush;
+import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -116,6 +117,10 @@ public class ElectrodeReactContainer {
             // ReactNative general config
 
             isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
+            // Set the default log level to DEBUG for dev mode
+            if (isReactNativeDeveloperSupport) {
+                Logger.overrideLogLevel(Logger.LogLevel.DEBUG);
+            }
 
             // Replace OkHttpClient with client provided instance, if any
             if (reactContainerConfig.okHttpClient != null) {
@@ -296,7 +301,7 @@ public class ElectrodeReactContainer {
             return CodePush.getJSBundleFile();
         }
     }
-    
+
     private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {
         private final OkHttpClient mOkHttpClient;
 
