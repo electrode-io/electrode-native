@@ -44,6 +44,9 @@ import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
 {{#loadJsBundleFromCustomPath}}
 import com.microsoft.codepush.react.CodePush;
 {{/loadJsBundleFromCustomPath}}
+{{#hasElectrodeBridgePlugin}}
+import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
+{{/hasElectrodeBridgePlugin}}
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -136,6 +139,12 @@ public class ElectrodeReactContainer {
             // ReactNative general config
 
             isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
+            {{#hasElectrodeBridgePlugin}}
+            // Set the default log level to DEBUG for dev mode
+            if (isReactNativeDeveloperSupport) {
+                Logger.overrideLogLevel(Logger.LogLevel.DEBUG);
+            }
+            {{/hasElectrodeBridgePlugin}}
 
             // Replace OkHttpClient with client provided instance, if any
             if (reactContainerConfig.okHttpClient != null) {
@@ -332,7 +341,7 @@ public class ElectrodeReactContainer {
         }
         {{/loadJsBundleFromCustomPath}}
     }
-    
+
     {{#RN_VERSION_GTE_54}}
     private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {
         private final OkHttpClient mOkHttpClient;

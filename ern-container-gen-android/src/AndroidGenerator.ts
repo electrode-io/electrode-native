@@ -58,6 +58,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       config.plugins,
       p => p.basePath === 'react-native'
     )
+
     if (!reactNativePlugin) {
       throw new Error('react-native was not found in plugins list !')
     }
@@ -70,6 +71,16 @@ export default class AndroidGenerator implements ContainerGenerator {
       mustacheView,
       reactNativePlugin.version
     )
+
+    const electrodeBridgePlugin = _.find(
+      config.plugins,
+      p => p.basePath === 'react-native-electrode-bridge'
+    )
+
+    if (electrodeBridgePlugin) {
+      mustacheView.hasElectrodeBridgePlugin = true
+    }
+
     mustacheView.miniApps = config.miniApps
 
     await kax
