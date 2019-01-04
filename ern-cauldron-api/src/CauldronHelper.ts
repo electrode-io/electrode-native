@@ -186,7 +186,10 @@ export class CauldronHelper {
     }
 
     const nativeApp = await this.getDescriptor(partialDescriptor)
-    return _.last(nativeApp.versions) as CauldronNativeAppVersion
+    const sortedNativeAppVersions = nativeApp.versions.sort((a, b) =>
+      semver.rcompare(semver.coerce(b.name)!, semver.coerce(a.name)!)
+    )
+    return _.last(sortedNativeAppVersions) as CauldronNativeAppVersion
   }
 
   public async addNativeDependencyToContainer(
