@@ -59,13 +59,13 @@ export const commandHandler = async ({
   ) {
     const mostRecentVersion = await cauldron.getMostRecentNativeApplicationVersion(
       descriptor
-    ).name
+    )
     if (
       await askUserConfirmation(
-        `Do you want to copy data from version (${mostRecentVersion}) ?`
+        `Do you want to copy data from version (${mostRecentVersion.name}) ?`
       )
     ) {
-      copyFromVersion = mostRecentVersion
+      copyFromVersion = mostRecentVersion.name
     }
   }
 
