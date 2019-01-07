@@ -6,12 +6,19 @@ import {
 } from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
+import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 
 export const command = 'run-android'
 export const desc = 'Run one or more MiniApps in the Android Runner application'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('extra', {
+      alias: 'e',
+      describe:
+        'Optional extra run configuration (json string or local/cauldron path to config file)',
+      type: 'string',
+    })
     .option('dependencies', {
       alias: 'deps',
       describe:
@@ -62,6 +69,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  extra,
   dependencies = [],
   descriptor,
   dev,
@@ -71,6 +79,7 @@ export const commandHandler = async ({
   port,
   usePreviousDevice,
 }: {
+  extra?: string
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   dev?: boolean
@@ -82,10 +91,13 @@ export const commandHandler = async ({
 }) => {
   deviceConfig.updateDeviceConfig('android', usePreviousDevice)
 
+  const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {}
+
   await runMiniApp('android', {
     dependencies,
     descriptor,
     dev,
+    extra: extraObj,
     host,
     mainMiniAppName,
     miniapps,

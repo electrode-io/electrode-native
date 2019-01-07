@@ -14,12 +14,14 @@ export async function generateContainerForRunner(
     miniApps = [],
     jsApiImpls = [],
     outDir,
+    extra,
   }: {
     napDescriptor?: NativeApplicationDescriptor
     dependencies?: PackagePath[]
     miniApps?: PackagePath[]
     jsApiImpls?: PackagePath[]
     outDir: string
+    extra?: any
   }
 ) {
   if (napDescriptor) {
@@ -28,6 +30,7 @@ export async function generateContainerForRunner(
     })
   } else {
     await runLocalContainerGen(miniApps, jsApiImpls, platform, {
+      extra,
       extraNativeDependencies: dependencies,
       outDir,
     })
