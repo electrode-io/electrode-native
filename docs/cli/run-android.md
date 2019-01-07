@@ -35,6 +35,19 @@
 `--port`
 * Port on which the local packager should listen on *(default: 8081)*
 
+`--extra/-e`
+* Optional extra configuration specific to local container and runner
+* Override the android build config during local container generation and runner project by passing `androidConfig` attributes
+  - **As a json string**  
+  For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","supportLibraryVersion": "28.0.0","targetSdkVersion": "28"}}'`    
+  - **As a file path**  
+  For example `--extra /Users/username/my-container-config.json`  
+  In that case, the configuration will be read from the file.  
+  - **As a Cauldron file path**  
+  For example `--extra cauldron://config/container/my-container-config.json`  
+  In that case, the configuration will be read from the file stored in Cauldron.   
+  For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+
 #### Remarks
 
 * You can launch the MiniApp located in the current working directory or on a connected Android device or running emulator if available. If a connected Android device is not available, the command prompts you to select an emulator to launch from the list of installed emulator images.  

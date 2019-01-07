@@ -14,23 +14,9 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
   }
 
   public async generate(config: RunnerGeneratorConfig): Promise<void> {
-    const mustacheView = {
-      androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
-      buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
-      compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-      gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-      isReactNativeDevSupportEnabled:
-        config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
-      minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,
-      miniAppName: config.mainMiniAppName,
-      packagerHost:
-        config.reactNativePackagerHost || defaultReactNativePackagerHost,
-      packagerPort:
-        config.reactNativePackagerPort || defaultReactNativePackagerPort,
-      pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
-      supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY,
-      targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
-    }
+    const mustacheView: any = {}
+    configureMustacheView(config, mustacheView)
+
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
     const files = readDir(
       runnerHullPath,
@@ -48,16 +34,9 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
   public async regenerateRunnerConfig(
     config: RunnerGeneratorConfig
   ): Promise<void> {
-    const mustacheView = {
-      isReactNativeDevSupportEnabled:
-        config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
-      miniAppName: config.mainMiniAppName,
-      packagerHost:
-        config.reactNativePackagerHost || defaultReactNativePackagerHost,
-      packagerPort:
-        config.reactNativePackagerPort || defaultReactNativePackagerPort,
-      pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
-    }
+    const mustacheView: any = {}
+    configureMustacheView(config, mustacheView)
+
     const subPathToRunnerConfig = path.join(
       'app',
       'src',
@@ -85,4 +64,41 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
 // Given a string returns the same string with its first letter capitalized
 function pascalCase(str: string) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
+}
+
+function configureMustacheView(
+  config: RunnerGeneratorConfig,
+  mustacheView: any
+) {
+  const androidBuildOptions =
+    (config && config.extra && config.extra.androidConfig) || {}
+  mustacheView.androidGradlePlugin =
+    (androidBuildOptions && androidBuildOptions.androidGradlePlugin) ||
+    android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION
+  mustacheView.buildToolsVersion =
+    (androidBuildOptions && androidBuildOptions.buildToolsVersion) ||
+    android.DEFAULT_BUILD_TOOLS_VERSION
+  mustacheView.compileSdkVersion =
+    (androidBuildOptions && androidBuildOptions.compileSdkVersion) ||
+    android.DEFAULT_COMPILE_SDK_VERSION
+  mustacheView.gradleDistributionVersion =
+    (androidBuildOptions && androidBuildOptions.gradleDistributionVersion) ||
+    android.DEFAULT_GRADLE_DISTRIBUTION_VERSION
+  mustacheView.minSdkVersion =
+    (androidBuildOptions && androidBuildOptions.minSdkVersion) ||
+    android.DEFAULT_MIN_SDK_VERSION
+  mustacheView.supportLibraryVersion =
+    (androidBuildOptions && androidBuildOptions.supportLibraryVersion) ||
+    android.DEFAULT_SUPPORT_LIBRARY
+  mustacheView.targetSdkVersion =
+    (androidBuildOptions && androidBuildOptions.targetSdkVersion) ||
+    android.DEFAULT_TARGET_SDK_VERSION
+  mustacheView.isReactNativeDevSupportEnabled =
+    config.reactNativeDevSupportEnabled === true ? 'true' : 'false'
+  mustacheView.miniAppName = config.mainMiniAppName
+  mustacheView.packagerHost =
+    config.reactNativePackagerHost || defaultReactNativePackagerHost
+  mustacheView.packagerPort =
+    config.reactNativePackagerPort || defaultReactNativePackagerPort
+  mustacheView.pascalCaseMiniAppName = pascalCase(config.mainMiniAppName)
 }

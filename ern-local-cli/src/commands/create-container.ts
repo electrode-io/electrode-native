@@ -20,6 +20,7 @@ import _ from 'lodash'
 import { Argv } from 'yargs'
 import fs from 'fs'
 import path from 'path'
+import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 
 export const command = 'create-container'
 export const desc = 'Create a container locally'
@@ -41,6 +42,12 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('extra', {
+      alias: 'e',
+      describe:
+        'Optional extra run configuration (json string or local/cauldron path to config file)',
+      type: 'string',
+    })
     .option('ignoreRnpmAssets', {
       describe: 'Ignore rnpm assets from the MiniApps',
       type: 'boolean',
@@ -79,6 +86,7 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   dependencies = [],
   descriptor,
+  extra,
   ignoreRnpmAssets,
   jsApiImpls = [],
   jsOnly,
@@ -88,6 +96,7 @@ export const commandHandler = async ({
 }: {
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
+  extra?: string
   ignoreRnpmAssets?: boolean
   jsApiImpls: PackagePath[]
   jsOnly?: boolean
@@ -125,7 +134,8 @@ Output directory should either not exist (it will be created) or should be empty
     )
   }
 
-  //
+  const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {}
+
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
   // containing all the native applications versions in the cauldron
@@ -146,7 +156,6 @@ Output directory should either not exist (it will be created) or should be empty
     })
   }
 
-  //
   // --jsOnly switch
   // Ony generates the composite miniapp to a provided output directory
   if (jsOnly) {
@@ -177,6 +186,7 @@ Output directory should either not exist (it will be created) or should be empty
 
       await kax.task('Generating Container locally').run(
         runLocalContainerGen(miniapps, jsApiImpls, platform, {
+          extra: extraObj,
           extraNativeDependencies: dependencies,
           ignoreRnpmAssets,
           outDir,

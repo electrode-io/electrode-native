@@ -32,6 +32,7 @@ export async function runMiniApp(
     dev,
     host,
     port,
+    extra,
   }: {
     mainMiniAppName?: string
     miniapps?: PackagePath[]
@@ -41,6 +42,7 @@ export async function runMiniApp(
     dev?: boolean
     host?: string
     port?: string
+    extra?: any
   } = {}
 ) {
   const cwd = process.cwd()
@@ -142,6 +144,7 @@ export async function runMiniApp(
   const outDir = Platform.getContainerGenOutDirectory(platform)
   await generateContainerForRunner(platform, {
     dependencies,
+    extra, // JavaScript object to pass extras e.x. androidConfig
     jsApiImpls,
     miniApps: miniapps,
     napDescriptor: napDescriptor || undefined,
@@ -166,6 +169,7 @@ export async function runMiniApp(
 
   const runnerGeneratorConfig: RunnerGeneratorConfig = {
     extra: {
+      androidConfig: (extra && extra.androidConfig) || {},
       containerGenWorkingDir: Platform.containerGenDirectory,
     },
     mainMiniAppName: entryMiniAppName,

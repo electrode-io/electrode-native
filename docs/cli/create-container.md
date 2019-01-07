@@ -50,6 +50,19 @@ You cannot use the Git or file package descriptors for referring to the dependen
 * This flag wil have no effect for a Container generated from a Cauldron as the Container configuration stored in the Cauldron will take precedence.
 * **Default** Do not ignore rnpm assets and package them inside the generated Container.
 
+`--extra/-e`
+* Optional extra configuration specific to creating container
+* Override the android build config during container generation by passing `androidConfig` attributes
+  - **As a json string**  
+  For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","supportLibraryVersion": "28.0.0","targetSdkVersion": "28"}}'`    
+  - **As a file path**  
+  For example `--extra /Users/username/my-container-config.json`  
+  In that case, the configuration will be read from the file.  
+  - **As a Cauldron file path**  
+  For example `--extra cauldron://config/container/my-container-config.json`  
+  In that case, the configuration will be read from the file stored in Cauldron.   
+  For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+
 #### Remarks
 
 * The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  

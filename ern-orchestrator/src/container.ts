@@ -36,10 +36,12 @@ export async function runLocalContainerGen(
     outDir = Platform.getContainerGenOutDirectory(platform),
     extraNativeDependencies = [],
     ignoreRnpmAssets = false,
+    extra,
   }: {
     outDir?: string
     extraNativeDependencies: PackagePath[]
     ignoreRnpmAssets?: boolean
+    extra?: any
   }
 ) {
   try {
@@ -108,6 +110,7 @@ export async function runLocalContainerGen(
 
     await kax.task('Generating Container').run(
       generator.generate({
+        androidConfig: (extra && extra.androidConfig) || {},
         compositeMiniAppDir: createTmpDir(),
         ignoreRnpmAssets,
         jsApiImpls: jsApiImplsPackagePaths,
