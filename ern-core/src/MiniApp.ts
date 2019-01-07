@@ -74,6 +74,7 @@ export class MiniApp {
         fsPackagePath = createTmpDir()
         shell.pushd(fsPackagePath)
         try {
+          await yarn.init()
           await yarn.add(packagePath)
           const packageJson = await readPackageJson('.')
           const packageName = Object.keys(packageJson.dependencies)[0]
