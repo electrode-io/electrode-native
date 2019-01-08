@@ -30,7 +30,7 @@ export async function generateContainerForRunner(
     })
   } else {
     await runLocalContainerGen(miniApps, jsApiImpls, platform, {
-      extra,
+      extra: extra || {},
       extraNativeDependencies: dependencies,
       outDir,
     })

@@ -168,6 +168,7 @@ describe('runMiniApp', () => {
     await runMiniApp('android')
     sandbox.assert.calledWith(generateContainerForRunnerStub, 'android', {
       dependencies: undefined,
+      extra: undefined,
       jsApiImpls: undefined,
       miniApps: sinon.match.array,
       napDescriptor: undefined,
@@ -195,7 +196,10 @@ describe('runMiniApp', () => {
     prepareStubs({ existsSyncReturn: false })
     await runMiniApp('android')
     sandbox.assert.calledWith(androidRunnerGenStub.generate, {
-      extra: { containerGenWorkingDir: Platform.containerGenDirectory },
+      extra: {
+        androidConfig: {},
+        containerGenWorkingDir: Platform.containerGenDirectory,
+      },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: undefined,
@@ -209,7 +213,29 @@ describe('runMiniApp', () => {
     prepareStubs({ existsSyncReturn: true })
     await runMiniApp('android')
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
-      extra: { containerGenWorkingDir: Platform.containerGenDirectory },
+      extra: {
+        androidConfig: {},
+        containerGenWorkingDir: Platform.containerGenDirectory,
+      },
+      mainMiniAppName: 'myMiniApp',
+      outDir: sinon.match.string,
+      reactNativeDevSupportEnabled: undefined,
+      reactNativePackagerHost: undefined,
+      reactNativePackagerPort: undefined,
+      targetPlatform: 'android',
+    })
+  })
+
+  it('should only regenerate the runner config if runner project already exists [local single miniapp] with android build config', async () => {
+    prepareStubs({ existsSyncReturn: true })
+    await runMiniApp('android', {
+      extra: { androidConfig: { compileSdkVersion: '28' } },
+    })
+    sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
+      extra: {
+        androidConfig: { compileSdkVersion: '28' },
+        containerGenWorkingDir: Platform.containerGenDirectory,
+      },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: undefined,
@@ -232,7 +258,10 @@ describe('runMiniApp', () => {
     })
 
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
-      extra: { containerGenWorkingDir: Platform.containerGenDirectory },
+      extra: {
+        androidConfig: {},
+        containerGenWorkingDir: Platform.containerGenDirectory,
+      },
       mainMiniAppName: 'myMiniAppA',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: false,
@@ -253,7 +282,10 @@ describe('runMiniApp', () => {
     })
 
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
-      extra: { containerGenWorkingDir: Platform.containerGenDirectory },
+      extra: {
+        androidConfig: {},
+        containerGenWorkingDir: Platform.containerGenDirectory,
+      },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: undefined,
