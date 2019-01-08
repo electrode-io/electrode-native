@@ -47,6 +47,33 @@ describe('generateContainerForRunner', () => {
       jsApiImpls,
       'android',
       {
+        extra: {},
+        extraNativeDependencies: dependencies,
+        outDir,
+      }
+    )
+  })
+
+  it('should call runLocalContainerGen with extra arguments if no descriptor is provided', async () => {
+    const outDir = '/Users/foo/test'
+    const miniApps = [PackagePath.fromString('a@1.0.0')]
+    const jsApiImpls = [PackagePath.fromString('b@1.0.0')]
+    const dependencies = [PackagePath.fromString('c@1.0.0')]
+    const extra = { androidConfig: { compileSdkVersion: '28' } }
+    await generateContainerForRunner('android', {
+      dependencies,
+      extra,
+      jsApiImpls,
+      miniApps,
+      outDir,
+    })
+    sinon.assert.calledWith(
+      containerStub.runLocalContainerGen,
+      miniApps,
+      jsApiImpls,
+      'android',
+      {
+        extra,
         extraNativeDependencies: dependencies,
         outDir,
       }
