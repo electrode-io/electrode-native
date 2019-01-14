@@ -236,6 +236,17 @@ export async function generateMiniAppsComposite(
 
     await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
 
+    // Add support for JSX source files
+    let sourceExts
+    if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
+      sourceExts =
+        "module.exports = { resolver: { sourceExts: ['jsx', 'mjs', 'js'] } };"
+    } else {
+      sourceExts =
+        "module.exports = { getSourceExts: () => [ 'jsx', 'mjs', 'js' ] }"
+    }
+    await writeFile('rn-cli.config.js', sourceExts)
+
     // If code push plugin is present we need to do some additional work
     if (fs.existsSync(pathToCodePushNodeModuleDir)) {
       //
