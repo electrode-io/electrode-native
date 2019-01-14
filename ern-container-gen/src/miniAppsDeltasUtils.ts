@@ -1,4 +1,4 @@
-import { log, PackagePath, yarn } from 'ern-core'
+import { log, PackagePath, yarn, utils } from 'ern-core'
 import {
   getYarnLockTopLevelDependencyRe,
   getYarnLockTopLevelGitDependencyRe,
@@ -136,15 +136,17 @@ export async function runYarnUsingMiniAppDeltas(
   //
   // If the MiniApp is at the same version, we don't really need
   // to run `yarn add`. There is one exception to this rule however,
-  // if the MiniApp package path is git based, we want to run `yarn add`
-  // even if the version is the same. This is because the version can
-  // be a branch or a tag name (we have no way to distinguish between the
-  // two yet). While tags are precise immutable versions, branches however
+  // if the MiniApp package path is git based and is tracking a branch,
+  // we want to run `yarn add` even if the branch is the same.
+  // While tags or SHAs are precise immutable versions, branches however
   // are mutable, and even if the branch name hasn't changed, the code
   // on the branch might have. That is why we run `yarn add` in this case.
   if (miniAppsDeltas.same) {
     for (const sameMiniAppVersion of miniAppsDeltas.same) {
-      if (sameMiniAppVersion.isGitPath) {
+      if (
+        sameMiniAppVersion.isGitPath &&
+        (await utils.isGitBranch(sameMiniAppVersion))
+      ) {
         log.debug(
           `Re-adding git based MiniApp ${sameMiniAppVersion.toString()}`
         )
