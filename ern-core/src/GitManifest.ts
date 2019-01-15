@@ -186,6 +186,7 @@ export default class GitManifest {
     await this.syncIfNeeded()
     const versionRe = /_v(.+)\+/
     const scopeNameRe = /^(@.+)\/(.+)$/
+    const packageNameRe = /(.+)_v\d+\.\d+\.\d+\+/
 
     // Top level plugin configuration directories ordered by descending
     // Electrode Native version
@@ -219,7 +220,10 @@ export default class GitManifest {
 
       const pluginConfigDirectories = fs
         .readdirSync(basePluginPath)
-        .filter(f => f.startsWith(pluginName))
+        .filter(f => {
+          const p = packageNameRe.exec(f)
+          return p ? p![1] === pluginName : false
+        })
 
       const pluginVersions = _.map(
         pluginConfigDirectories,
