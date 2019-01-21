@@ -15,6 +15,7 @@ import _ from 'lodash'
 import path from 'path'
 import shell from 'shelljs'
 import fs from 'fs'
+import semver from 'semver'
 
 export async function performCodePushPatch(
   napDescriptor: NativeApplicationDescriptor,
@@ -138,12 +139,27 @@ export async function performCodePushPromote(
       }
 
       const appName = await getCodePushAppName(sourceNapDescriptor)
-      const appVersion =
+      let appVersion =
         targetBinaryVersion ||
         (await getCodePushTargetVersionName(
           targetNapDescriptor,
           targetDeploymentName
         ))
+
+      // Remove patch digit 0 from target binary version if trimZeroPatchDigit flag is set
+      // For example, 19.3.0 => 19.3
+      const codePushConfig = await cauldron.getCodePushConfig(
+        targetNapDescriptor
+      )
+      if (
+        codePushConfig &&
+        codePushConfig.trimZeroPatchDigit &&
+        semver.valid(appVersion) &&
+        semver.patch(appVersion) === 0
+      ) {
+        appVersion = `${semver.major(appVersion)}.${semver.minor(appVersion)}`
+      }
+
       description = description || ''
       const result = await kax.task(`Promoting release to ${appVersion}`).run(
         codePushSdk.promote(
@@ -349,9 +365,23 @@ export async function performCodePushOtaUpdate(
 
     const appName = await getCodePushAppName(napDescriptor)
 
-    const targetVersionName =
+    let targetVersionName =
       targetBinaryVersion ||
       (await getCodePushTargetVersionName(napDescriptor, deploymentName))
+
+    // Remove patch digit 0 from target binary version if trimZeroPatchDigit flag is set
+    // For example, 19.3.0 => 19.3
+    const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
+    if (
+      codePushConfig &&
+      codePushConfig.trimZeroPatchDigit &&
+      semver.valid(targetVersionName) &&
+      semver.patch(targetVersionName) === 0
+    ) {
+      targetVersionName = `${semver.major(targetVersionName)}.${semver.minor(
+        targetVersionName
+      )}`
+    }
 
     log.info(`Target Binary version : ${targetVersionName}`)
     description = description || ''
