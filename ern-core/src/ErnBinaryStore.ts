@@ -121,9 +121,14 @@ export class ErnBinaryStore implements BinaryStore {
       )
       const unzipper = new DecompressZip(zippedBinaryPath)
       unzipper.on('error', err => reject(err))
-      unzipper.on('extract', () => resolve(pathToOutputBinary))
+      unzipper.on('extract', () => {
+        if (descriptor.platform === 'android') {
+          shell.mv(path.join(outputDirectory, '*.apk'), pathToOutputBinary)
+        }
+        resolve(pathToOutputBinary)
+      })
       if (descriptor.platform === 'android') {
-        unzipper.extract({ path: path.dirname(pathToOutputBinary) })
+        unzipper.extract({ path: outputDirectory })
       } else {
         unzipper.extract({ path: pathToOutputBinary })
       }
