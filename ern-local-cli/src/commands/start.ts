@@ -60,6 +60,11 @@ export const builder = (argv: Argv) => {
         'A list of one or more directory name from node_modules that should be watched for changes',
       type: 'array',
     })
+    .option('disableBinaryStore', {
+      describe:
+        'Disable automatic retrieval of the binary from the Binary Store',
+      type: 'boolean',
+    })
     .group(['packageName', 'activityName'], 'Android binary specific options:')
     .group(['bundleId'], 'iOS binary specific options:')
     .epilog(epilog(exports))
@@ -74,6 +79,7 @@ export const commandHandler = async ({
   miniapps,
   packageName,
   watchNodeModules,
+  disableBinaryStore,
 }: {
   activityName?: string
   bundleId?: string
@@ -83,6 +89,7 @@ export const commandHandler = async ({
   miniapps?: PackagePath[]
   packageName?: string
   watchNodeModules?: string[]
+  disableBinaryStore?: boolean
 } = {}) => {
   if (!miniapps && !descriptor) {
     descriptor = await askUserToChooseANapDescriptorFromCauldron()
@@ -92,6 +99,7 @@ export const commandHandler = async ({
     activityName,
     bundleId,
     descriptor,
+    disableBinaryStore,
     extraJsDependencies,
     jsApiImpls,
     miniapps,
