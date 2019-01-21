@@ -116,6 +116,7 @@ export async function runAndroid({
     const avdImageName = await askUserToSelectAvdEmulator()
     return runAndroidUsingAvdImage({
       activityName,
+      apkPath,
       avdImageName,
       packageName,
       projectPath,
@@ -166,11 +167,13 @@ export async function askUserToSelectAvdEmulator(): Promise<string> {
 // - packageName : name of the package containing the application
 // - avdImageName : name of the avd image to use (device image)
 export async function runAndroidUsingAvdImage({
+  apkPath,
   projectPath,
   packageName,
   avdImageName,
   activityName,
 }: {
+  apkPath?: string
   projectPath?: string
   packageName: string
   avdImageName: string
@@ -180,7 +183,7 @@ export async function runAndroidUsingAvdImage({
   spawnp(androidEmulatorPath(), ['-avd', avdImageName], { detached: true })
 
   await kax.task('Waiting for device to start').run(waitForAndroidDevice())
-  await installAndLaunchApp({ projectPath, packageName, activityName })
+  await installAndLaunchApp({ apkPath, projectPath, packageName, activityName })
 }
 
 // Does the job of installing and running the app
