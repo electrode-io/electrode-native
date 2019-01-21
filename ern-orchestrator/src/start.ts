@@ -27,6 +27,7 @@ export default async function start({
   activityName,
   bundleId,
   extraJsDependencies,
+  disableBinaryStore,
 }: {
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
@@ -36,6 +37,7 @@ export default async function start({
   activityName?: string
   bundleId?: string
   extraJsDependencies?: PackagePath[]
+  disableBinaryStore?: boolean
 } = {}) {
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && descriptor) {
@@ -103,7 +105,7 @@ export default async function start({
       .join(',')}`,
   ])
 
-  if (descriptor) {
+  if (descriptor && !disableBinaryStore) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig()
     if (binaryStoreConfig) {
       const cauldronStartCommandConfig = await cauldron.getStartCommandConfig(
