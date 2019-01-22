@@ -149,7 +149,7 @@ function firstTimeInstall() {
       console.log(
         `Something went wrong ${err} :( Run the command again with --debug flag for more info.`
       )
-      removeErnDirectory()
+      cleanupAndExitWithFailure()
     })
 
     installProc.on('close', function(code) {
@@ -161,15 +161,20 @@ function firstTimeInstall() {
         spinner.fail(
           'Something went wrong :( Run the command again with --debug flag for more info.'
         )
-        removeErnDirectory()
+        cleanupAndExitWithFailure()
       }
     })
   } catch (e) {
     console.log(
       'Something went wrong :( Run the command again with --debug flag for more info.'
     )
-    removeErnDirectory()
+    cleanupAndExitWithFailure()
   }
+}
+
+function cleanupAndExitWithFailure() {
+  removeErnDirectory()
+  process.exit(1)
 }
 
 // Remove .ern global directory.
