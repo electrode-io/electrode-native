@@ -1,6 +1,6 @@
 {
   "name": "ern-container-gen-android",
-  "version": "1000.0.0",
+  "version": "0.29.0",
   "description": "Electrode Native Official Android Container Generator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -59,14 +59,14 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-container-gen": "1000.0.0",
-    "ern-core": "1000.0.0",
-    "lodash": "^4.17.10",
-    "fs-readdir-recursive": "^1.1.0"
+    "ern-container-gen": "0.29.0",
+    "ern-core": "0.29.0",
+    "fs-readdir-recursive": "^1.1.0",
+    "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0",
-    "copyfiles": "^2.0.0"
+    "copyfiles": "^2.0.0",
+    "ern-util-dev": "0.29.0"
   },
   "engines": {
     "node": ">=6"
