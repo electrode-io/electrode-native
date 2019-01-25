@@ -1,4 +1,5 @@
 import { BundlingResult, reactnative, shell } from 'ern-core'
+import fs from 'fs'
 import path from 'path'
 
 export async function reactNativeBundleAndroid({
@@ -20,6 +21,9 @@ export async function reactNativeBundleAndroid({
     'index.android.bundle'
   )
   const assetsDest = path.join(libSrcMainPath, 'res')
+  if (fs.existsSync(assetsDest)) {
+    shell.rm('-rf', path.join(assetsDest, '{.*,*}'))
+  }
 
   if (workingDir) {
     shell.pushd(workingDir)
