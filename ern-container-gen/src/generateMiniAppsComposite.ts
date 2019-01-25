@@ -240,10 +240,10 @@ export async function generateMiniAppsComposite(
     let sourceExts
     if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
       sourceExts =
-        "module.exports = { resolver: { sourceExts: ['jsx', 'mjs', 'js'] } };"
+        "module.exports = { resolver: { sourceExts: ['jsx', 'mjs', 'js', 'ts', 'tsx'] } };"
     } else {
       sourceExts =
-        "module.exports = { getSourceExts: () => [ 'jsx', 'mjs', 'js' ] }"
+        "module.exports = { getSourceExts: () => ['jsx', 'mjs', 'js', 'ts', 'tsx'] }"
     }
     await writeFile('rn-cli.config.js', sourceExts)
 
