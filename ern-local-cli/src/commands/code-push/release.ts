@@ -1,4 +1,9 @@
-import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
+import {
+  PackagePath,
+  NativeApplicationDescriptor,
+  log,
+  utils as coreUtils,
+} from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushOtaUpdate } from 'ern-orchestrator'
 import {
@@ -172,17 +177,23 @@ export const commandHandler = async ({
   }
 
   await logErrorAndExitIfNotSatisfied({
-    noGitOrFilesystemPath: {
+    noFileSystemPath: {
       extraErrorMessage:
         'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
       obj: [...miniapps, ...jsApiImpls],
     },
-    publishedToNpm: {
-      extraErrorMessage:
-        'You can only CodePush MiniApps versions that have been published to NPM',
-      obj: [...miniapps, ...jsApiImpls],
-    },
   })
+
+  const miniAppsPackages = _.map(miniapps, PackagePath.fromString)
+  const jsApiImplsPackages = _.map(jsApiImpls, PackagePath.fromString)
+  const packages = [...miniAppsPackages, ...jsApiImplsPackages]
+  for (const pkg of packages) {
+    if (pkg.isGitPath && (await coreUtils.isGitBranch(pkg))) {
+      throw new Error(
+        'You cannot code push packages from a git branch. Only SHA or TAGs are supported.'
+      )
+    }
+  }
 
   if (!deploymentName) {
     deploymentName = await askUserForCodePushDeploymentName(descriptors[0])
@@ -193,8 +204,8 @@ export const commandHandler = async ({
     await performCodePushOtaUpdate(
       descriptor,
       deploymentName,
-      _.map(miniapps, PackagePath.fromString),
-      _.map(jsApiImpls, PackagePath.fromString),
+      miniAppsPackages,
+      jsApiImplsPackages,
       {
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,
