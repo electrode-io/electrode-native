@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const childProcess = require('child_process')
 const execSync = childProcess.execSync
 const fs = require('fs')
@@ -16,7 +17,7 @@ const os = require('os')
 // ....
 // |_ .ernrc
 
-const PLATFORM_VERSION = '0.29.2'
+const PLATFORM_VERSION = '0.29.3'
 // Path to ern platform root directory
 const ERN_PATH = process.env['ERN_HOME'] || path.join(os.homedir(), '.ern')
 // Path to ern global configuration file
