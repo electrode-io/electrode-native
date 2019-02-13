@@ -367,10 +367,12 @@ export async function extractJsApiImplementations(plugins: PackagePath[]) {
   return jsApiImplDependencies
 }
 
-export function logErrorAndExitProcess(e: Error | string, code: number = 1) {
+export function logErrorAndExitProcess(e: any, code: number = 1) {
   if (e instanceof Error) {
     log.error(`An error occurred: ${e.message && e.message.trimRight()}`)
     log.debug(e.stack!)
+  } else if (e instanceof Object) {
+    log.error(`An error occurred: ${JSON.stringify(e)}`)
   } else {
     log.error(`An error occurred: ${e}`)
   }
