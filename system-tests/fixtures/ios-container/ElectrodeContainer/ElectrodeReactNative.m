@@ -194,18 +194,11 @@ static dispatch_semaphore_t semaphore;
             SEL transceiverReadySelector = NSSelectorFromString(@"onTransceiverModuleInitialized");
             if ([localModuleInstance  respondsToSelector:selector]) {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    double delayInSeconds = 180.0;
-                    dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-                    long waitValue = dispatch_semaphore_wait(semaphore, dispatchTime);
-                    if (waitValue == 0) {
-                        ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
-                    }
-                    else {
-                        [NSException raise:@"Timeout occurred" format:@"waitValue is %ld & RCTJavaScriptDidLoadNotification was not raised", waitValue];
-                    }
+                     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+                     NSLog(@"RCTJavaScriptDidLoadNotification received");
+                     ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
                 });
             }
-
             if ([localModuleInstance  respondsToSelector:transceiverReadySelector]) {
                 ((void (*)(id, SEL))[localModuleInstance methodForSelector:transceiverReadySelector])(localModuleInstance, transceiverReadySelector);
             }
