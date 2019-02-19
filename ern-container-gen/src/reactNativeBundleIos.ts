@@ -24,6 +24,7 @@ export async function reactNativeBundleIos({
   const assetsDest = miniAppOutPath
   if (fs.existsSync(assetsDest)) {
     shell.rm('-rf', path.join(assetsDest, '{.*,*}'))
+    shell.mkdir('-p', path.join(assetsDest, 'assets'))
   }
 
   if (!fs.existsSync(miniAppOutPath)) {
