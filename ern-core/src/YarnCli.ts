@@ -37,7 +37,7 @@ export class YarnCli {
     // this is really weird]
     if (dependencyPath.isFilePath) {
       const tmpDirPath = createTmpDir()
-      shell.cp('-R', `${dependencyPath.basePath}/*`, tmpDirPath)
+      shell.cp('-R', path.join(dependencyPath.basePath, '{.*,*}'), tmpDirPath)
       shell.rm('-rf', path.join(tmpDirPath, 'node_modules'))
       dependencyPath = PackagePath.fromString(`file:${tmpDirPath}`)
     }
