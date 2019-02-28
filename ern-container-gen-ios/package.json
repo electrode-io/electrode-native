@@ -19,8 +19,7 @@
     "container",
     "ios"
   ],
-  "contributors": [
-    {
+  "contributors": [{
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -47,19 +46,17 @@
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
   },
-  "copyFiles": [
-    {
-      "source": "src/hull",
-      "dest": "dist"
-    }
-  ],
+  "copyFiles": [{
+    "source": "src/hull",
+    "dest": "dist"
+  }],
   "license": "Apache-2.0",
   "dependencies": {
     "ern-container-gen": "0.29.5",
     "ern-core": "0.29.5",
     "fs-readdir-recursive": "^1.1.0",
     "lodash": "^4.17.10",
-    "xcode-ern": "^1.0.10"
+    "xcode-ern": "^1.0.11"
   },
   "devDependencies": {
     "copyfiles": "^2.0.0",

@@ -21,8 +21,7 @@
     "android",
     "ios"
   ],
-  "contributors": [
-    {
+  "contributors": [{
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -49,8 +48,7 @@
     "coverage": "ern-nyc",
     "prepublish": "yarn run build"
   },
-  "copyFiles": [
-    {
+  "copyFiles": [{
       "source": "src/generators/android/hull",
       "dest": "dist/generators/android"
     },
@@ -69,7 +67,7 @@
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^2.3.1",
     "semver": "^5.5.0",
-    "xcode-ern": "^1.0.10"
+    "xcode-ern": "^1.0.11"
   },
   "devDependencies": {
     "copyfiles": "^2.0.0",

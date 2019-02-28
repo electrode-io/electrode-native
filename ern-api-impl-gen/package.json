@@ -21,8 +21,7 @@
     "android",
     "ios"
   ],
-  "contributors": [
-    {
+  "contributors": [{
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -59,7 +58,8 @@
     "mustache": "^2.3.1",
     "semver": "5.5.0",
     "xcode": "^1.0.0",
-    "xcode-ern": "^1.0.10"
+    "xcode-ern": "^1.0.11",
+    "@yarnpkg/lockfile": "^1.0.2"
   },
   "devDependencies": {
     "ern-util-dev": "0.29.5"
