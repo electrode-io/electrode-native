@@ -12,8 +12,7 @@
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
   "keywords": ["electrode", "ern", "react-native", "node", "android", "ios"],
-  "contributors": [
-    {
+  "contributors": [{
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -50,7 +49,7 @@
     "console-log-level": "^1.4.0",
     "decompress-zip": "^0.3.1",
     "fs-readdir-recursive": "^1.1.0",
-    "get-folder-size":"^2.0.0",
+    "get-folder-size": "^2.0.0",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.10",
     "mustache": "^2.3.1",
@@ -62,8 +61,8 @@
     "semver": "^5.5.0",
     "simple-git": "^1.106.0",
     "tmp": "^0.0.33",
-    "uuid":"^3.3.2",
-    "xcode-ern": "^1.0.10",
+    "uuid": "^3.3.2",
+    "xcode-ern": "^1.0.11",
     "yarn": "^1.9.4",
     "yauzl": "^2.10.0",
     "yazl": "^2.4.3"
