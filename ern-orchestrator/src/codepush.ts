@@ -333,6 +333,14 @@ export async function performCodePushOtaUpdate(
       PackagePath.fromString(j.toString())
     )
 
+    const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
+    if (codePushConfig && codePushConfig.bypassYarnLock) {
+      pathToYarnLock = undefined
+      log.debug(
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
+      )
+    }
+
     await kax
       .task('Generating composite module')
       .run(
@@ -371,7 +379,6 @@ export async function performCodePushOtaUpdate(
 
     // Remove patch digit 0 from target binary version if trimZeroPatchDigit flag is set
     // For example, 19.3.0 => 19.3
-    const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
     if (
       codePushConfig &&
       codePushConfig.trimZeroPatchDigit &&
