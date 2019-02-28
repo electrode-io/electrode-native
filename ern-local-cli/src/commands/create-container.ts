@@ -171,7 +171,19 @@ Output directory should either not exist (it will be created) or should be empty
 
     let pathToYarnLock
     if (descriptor) {
-      pathToYarnLock = await cauldron.getPathToYarnLock(descriptor, 'container')
+      const containerGenConfig = await cauldron.getContainerGeneratorConfig(
+        descriptor
+      )
+      if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
+        pathToYarnLock = await cauldron.getPathToYarnLock(
+          descriptor,
+          'container'
+        )
+      } else {
+        log.debug(
+          'Bypassing yarn.lock usage as bypassYarnLock flag is set in config'
+        )
+      }
     }
 
     await generateMiniAppsComposite(

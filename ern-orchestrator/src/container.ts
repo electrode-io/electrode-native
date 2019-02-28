@@ -164,10 +164,21 @@ export async function runCauldronContainerGen(
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
-    const pathToYarnLock = await cauldron.getPathToYarnLock(
-      napDescriptor,
-      constants.CONTAINER_YARN_KEY
+    const containerGenConfig = await cauldron.getContainerGeneratorConfig(
+      napDescriptor
     )
+    let pathToYarnLock
+
+    if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
+      pathToYarnLock = await cauldron.getPathToYarnLock(
+        napDescriptor,
+        constants.CONTAINER_YARN_KEY
+      )
+    } else {
+      log.debug(
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
+      )
+    }
 
     if (!napDescriptor.platform) {
       throw new Error(`${napDescriptor} does not specify a platform`)
@@ -227,11 +238,20 @@ export async function runCaudronBundleGen(
     const cauldron = await getActiveCauldron()
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
-    const pathToYarnLock = await cauldron.getPathToYarnLock(
-      napDescriptor,
-      constants.CONTAINER_YARN_KEY
+    const containerGenConfig = await cauldron.getContainerGeneratorConfig(
+      napDescriptor
     )
-
+    let pathToYarnLock
+    if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
+      pathToYarnLock = await cauldron.getPathToYarnLock(
+        napDescriptor,
+        constants.CONTAINER_YARN_KEY
+      )
+    } else {
+      log.debug(
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
+      )
+    }
     if (!napDescriptor.platform) {
       throw new Error(`${napDescriptor} does not specify a platform`)
     }
