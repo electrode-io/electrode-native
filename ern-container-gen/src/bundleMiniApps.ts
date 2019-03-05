@@ -1,10 +1,4 @@
-import {
-  BundlingResult,
-  kax,
-  MiniApp,
-  NativePlatform,
-  PackagePath,
-} from 'ern-core'
+import { BundlingResult, kax, NativePlatform, PackagePath } from 'ern-core'
 import { reactNativeBundleAndroid } from './reactNativeBundleAndroid'
 import { reactNativeBundleIos } from './reactNativeBundleIos'
 import { clearReactPackagerCache } from './clearReactPackagerCache'
@@ -19,9 +13,11 @@ export async function bundleMiniApps(
   {
     pathToYarnLock,
     dev,
+    sourceMapOutput,
   }: {
     pathToYarnLock?: string
     dev?: boolean
+    sourceMapOutput?: string
   } = {},
   // JavaScript API implementations
   jsApiImplDependencies?: PackagePath[]
@@ -39,11 +35,19 @@ export async function bundleMiniApps(
 
   clearReactPackagerCache()
 
-  return kax
-    .task('Running Metro Bundler')
-    .run(
-      platform === 'android'
-        ? reactNativeBundleAndroid({ workingDir: compositeMiniAppDir, outDir })
-        : reactNativeBundleIos({ workingDir: compositeMiniAppDir, outDir })
-    )
+  return kax.task('Running Metro Bundler').run(
+    platform === 'android'
+      ? reactNativeBundleAndroid({
+          dev,
+          outDir,
+          sourceMapOutput,
+          workingDir: compositeMiniAppDir,
+        })
+      : reactNativeBundleIos({
+          dev,
+          outDir,
+          sourceMapOutput,
+          workingDir: compositeMiniAppDir,
+        })
+  )
 }
