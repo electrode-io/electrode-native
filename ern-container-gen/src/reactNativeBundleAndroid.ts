@@ -5,15 +5,12 @@ import path from 'path'
 export async function reactNativeBundleAndroid({
   workingDir,
   outDir,
+  dev,
 }: {
   workingDir?: string
   outDir: string
+  dev?: boolean
 }): Promise<BundlingResult> {
-  if (!outDir) {
-    throw new Error(
-      '[reactNativeBundleAndroid] missing mandatory outDir parameter'
-    )
-  }
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   const bundleOutput = path.join(
     libSrcMainPath,
@@ -32,7 +29,7 @@ export async function reactNativeBundleAndroid({
     const result = await reactnative.bundle({
       assetsDest,
       bundleOutput,
-      dev: false,
+      dev: !!dev,
       entryFile: 'index.android.js',
       platform: 'android',
     })
