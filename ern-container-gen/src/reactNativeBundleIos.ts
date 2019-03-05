@@ -3,13 +3,15 @@ import fs from 'fs'
 import path from 'path'
 
 export async function reactNativeBundleIos({
-  workingDir,
-  outDir,
   dev,
+  outDir,
+  sourceMapOutput,
+  workingDir,
 }: {
-  workingDir?: string
-  outDir: string
   dev?: boolean
+  outDir: string
+  sourceMapOutput?: string
+  workingDir?: string
 }): Promise<BundlingResult> {
   const miniAppOutPath = path.join(
     outDir,
@@ -38,6 +40,7 @@ export async function reactNativeBundleIos({
       dev: !!dev,
       entryFile: 'index.ios.js',
       platform: 'ios',
+      sourceMapOutput,
     })
     return result
   } finally {

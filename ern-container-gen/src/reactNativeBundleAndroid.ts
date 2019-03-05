@@ -3,13 +3,15 @@ import fs from 'fs'
 import path from 'path'
 
 export async function reactNativeBundleAndroid({
-  workingDir,
-  outDir,
   dev,
+  outDir,
+  sourceMapOutput,
+  workingDir,
 }: {
-  workingDir?: string
-  outDir: string
   dev?: boolean
+  outDir: string
+  sourceMapOutput?: string
+  workingDir?: string
 }): Promise<BundlingResult> {
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   const bundleOutput = path.join(
@@ -32,6 +34,7 @@ export async function reactNativeBundleAndroid({
       dev: !!dev,
       entryFile: 'index.android.js',
       platform: 'android',
+      sourceMapOutput,
     })
     return result
   } finally {

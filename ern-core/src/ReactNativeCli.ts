@@ -17,6 +17,8 @@ export interface BundlingResult {
   dev: boolean
   // Full path to the bundle
   bundlePath: string
+  // Full path to the source map (if any)
+  sourceMapPath?: string
 }
 
 export default class ReactNativeCli {
@@ -47,6 +49,7 @@ export default class ReactNativeCli {
     assetsDest,
     platform,
     workingDir,
+    sourceMapOutput,
   }: {
     entryFile: string
     dev: boolean
@@ -54,13 +57,15 @@ export default class ReactNativeCli {
     assetsDest: string
     platform: string
     workingDir?: string
+    sourceMapOutput?: string
   }): Promise<BundlingResult> {
     const bundleCommand = `${this.binaryPath} bundle \
 ${entryFile ? `--entry-file=${entryFile}` : ''} \
 ${dev ? '--dev=true' : '--dev=false'} \
 ${platform ? `--platform=${platform}` : ''} \
 ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
-${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
+${assetsDest ? `--assets-dest=${assetsDest}` : ''} \
+${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''}`
 
     await execp(bundleCommand, { cwd: workingDir })
     return {
@@ -68,6 +73,7 @@ ${assetsDest ? `--assets-dest=${assetsDest}` : ''}`
       bundlePath: bundleOutput,
       dev,
       platform,
+      sourceMapPath: sourceMapOutput,
     }
   }
 
