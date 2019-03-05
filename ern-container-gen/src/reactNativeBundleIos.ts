@@ -5,15 +5,12 @@ import path from 'path'
 export async function reactNativeBundleIos({
   workingDir,
   outDir,
+  dev,
 }: {
   workingDir?: string
   outDir: string
+  dev?: boolean
 }): Promise<BundlingResult> {
-  if (!outDir) {
-    throw new Error(
-      '[reactNativeBundleAndroid] missing mandatory outDir parameter'
-    )
-  }
   const miniAppOutPath = path.join(
     outDir,
     'ElectrodeContainer',
@@ -38,7 +35,7 @@ export async function reactNativeBundleIos({
     const result = await reactnative.bundle({
       assetsDest,
       bundleOutput,
-      dev: false,
+      dev: !!dev,
       entryFile: 'index.ios.js',
       platform: 'ios',
     })

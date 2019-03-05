@@ -18,8 +18,10 @@ export async function bundleMiniApps(
   platform: NativePlatform,
   {
     pathToYarnLock,
+    dev,
   }: {
     pathToYarnLock?: string
+    dev?: boolean
   } = {},
   // JavaScript API implementations
   jsApiImplDependencies?: PackagePath[]
