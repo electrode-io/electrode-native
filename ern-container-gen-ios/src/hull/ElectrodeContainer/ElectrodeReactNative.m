@@ -87,6 +87,7 @@ static dispatch_semaphore_t semaphore;
 @interface ElectrodeReactNative ()
 @property (nonatomic, strong) RCTBridge *bridge;
 @property (nonatomic, strong) ElectrodeBridgeDelegate *bridgeDelegate;
+- (RCTRootView *)rootViewWithName:(NSString *)name properties:(NSDictionary *)properties;
 @end
 
 @implementation ElectrodeReactNative
@@ -138,16 +139,30 @@ static dispatch_semaphore_t semaphore;
 
     UIViewController *miniAppViewController = nil;
 
-    // Build out the view controller
-    // Use the bridge to generate the view
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-
-    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+    RCTRootView *rootView = [self rootViewWithName:name properties: properties];
 
     miniAppViewController = [UIViewController new];
     miniAppViewController.view = rootView;
 
-    return miniAppViewController;}
+    return miniAppViewController;
+}
+
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *)properties
+{
+  RCTRootView *rootView = [self rootViewWithName:name properties: properties];
+  return rootView;
+}
+
+- (RCTRootView *)rootViewWithName:(NSString *)name
+                       properties:(NSDictionary *)properties
+{
+  // Build out the view controller
+  // Use the bridge to generate the view
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  return rootView;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Convenience Methods

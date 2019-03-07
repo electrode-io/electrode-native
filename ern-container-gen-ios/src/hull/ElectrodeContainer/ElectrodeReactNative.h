@@ -89,13 +89,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Returns a react native miniapp (from a JSBundle) inside a view controller.
- 
- @param name The name of the mini app, preferably the same name as the jsbundle
- without the extension.
+
+ @param name The name of the mini app, preferably the same name as the jsbundle without the extension.
  @param properties Any configuration to set up the mini app with.
  @return A UIViewController containing the view of the miniapp.
  */
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary * _Nullable)properties;
+
+/**
+   Returns a react native miniapp (from a JSBundle) inside a view.
+
+   @param name The name of the mini app, preferably the same name as the jsbundle without the extension.
+   @param properties Any configuration to set up the mini app with.
+   @return A UIView containing the view of the miniapp.
+*/
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *)properties;
 @end
 NS_ASSUME_NONNULL_END
