@@ -175,6 +175,27 @@ export async function generateMiniAppsComposite(
     )
     const compositeReactNativeVersion = reactNativePackageJson.version
 
+    // To be removed as soon as react-native-cli make use of metro >= 0.52.0
+    // Temporary hacky code to patch an issue present in metro 0.51.1
+    // currently linked with RN 59 RC3 that impacts our bundling process
+    if (metroVersion === '0.51.1') {
+      const pathToFileToPatch = path.join(
+        compositeNodeModulesPath,
+        'metro-resolver',
+        'src',
+        'resolve.js'
+      )
+      const stringToReplace = `const assetNames = resolveAsset(dirPath, fileNameHint, platform);`
+      const replacementString = `let assetNames;
+      try { assetNames = resolveAsset(dirPath, fileNameHint, platform); } catch (e) {}`
+      const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
+      const patchedFile = fileToPatch.replace(
+        stringToReplace,
+        replacementString
+      )
+      await fileUtils.writeFile(pathToFileToPatch, patchedFile)
+    }
+
     // If React Native version is greater or equal than 0.56.0
     // it is using Babel 7
     // In that case, because we still want to process .babelrc
