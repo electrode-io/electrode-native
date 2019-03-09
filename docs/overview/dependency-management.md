@@ -50,7 +50,7 @@ The cauldron stores specific information pertaining to each version of your mobi
 
 This is mostly all what's needed to generate a container library.
 
-Every MiniApp that needs to be added to your mobile application will first need to be add to the cauldron. The cauldron, in addition of keeping track of what is included in your mobile application versions, also acts as a "gatekeeper" to verify native dependencies versions before adding a MiniApp version to a Container (or deliver it through an OTA update).
+Every MiniApp that needs to be added to your mobile application will first need to be added to the cauldron. The cauldron, in addition of keeping track of what is included in your mobile application versions, also acts as a "gatekeeper" to verify native dependencies versions before adding a MiniApp version to a Container (or deliver it through an OTA update).
 
 Because the cauldron verifies which MiniApps versions and native dependencies versions are part of any given mobile application version, it can perform necessary version control checks whenever a MiniApp needs to be added to a mobile application version. Before allowing entry of the MiniApp in the cauldron, checks are performed to ensure that the versions of the native dependencies used by the MiniApp do not conflict with current native dependencies included in the targeted mobile application version. This should not happen often if MiniApps are correctly created based on a manifest--but this can happen, so we prefer to be extra cautious and perform final checks at the cauldron level.
 
