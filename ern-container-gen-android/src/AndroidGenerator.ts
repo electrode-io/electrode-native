@@ -328,7 +328,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       p => p.basePath === 'react-native-code-push'
     )
     if (reactNativeCodePushPlugin) {
-      mustacheView.loadJsBundleFromCustomPath = true
+      mustacheView.isCodePushPluginIncluded = true
     }
   }
 
