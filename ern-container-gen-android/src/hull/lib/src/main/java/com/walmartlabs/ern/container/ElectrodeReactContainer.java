@@ -41,9 +41,10 @@ import com.ern.api.impl.{{apiName}}ApiController;
 import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
 {{/hasConfig}}
 {{/apiImplementations}}
-{{#loadJsBundleFromCustomPath}}
+{{#isCodePushPluginIncluded}}
 import com.microsoft.codepush.react.CodePush;
-{{/loadJsBundleFromCustomPath}}
+import com.microsoft.codepush.react.ReactInstanceHolder;
+{{/isCodePushPluginIncluded}}
 {{#hasElectrodeBridgePlugin}}
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 {{/hasElectrodeBridgePlugin}}
@@ -157,7 +158,9 @@ public class ElectrodeReactContainer {
             }
 
             sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
-
+            {{#isCodePushPluginIncluded}}
+            CodePush.setReactInstanceHolder(sElectrodeReactNativeHost);
+            {{/isCodePushPluginIncluded}}
             askForOverlayPermissionIfDebug(application);
 
             sReactPackages.add(new MainReactPackage());
@@ -278,7 +281,7 @@ public class ElectrodeReactContainer {
         }
     }
 
-    private static class ElectrodeReactNativeHost extends ReactNativeHost {
+    private static class ElectrodeReactNativeHost extends ReactNativeHost {{#isCodePushPluginIncluded}}implements ReactInstanceHolder{{/isCodePushPluginIncluded}}{
 
         private ElectrodeReactNativeHost(Application application) {
             super(application);
@@ -333,13 +336,13 @@ public class ElectrodeReactContainer {
             return reactInstanceManager;
         }
 
-        {{#loadJsBundleFromCustomPath}}
+        {{#isCodePushPluginIncluded}}
         @javax.annotation.Nullable
         @Override
         protected String getJSBundleFile() {
             return CodePush.getJSBundleFile();
         }
-        {{/loadJsBundleFromCustomPath}}
+        {{/isCodePushPluginIncluded}}
     }
 
     {{#RN_VERSION_GTE_54}}
