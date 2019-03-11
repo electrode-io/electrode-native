@@ -1,5 +1,5 @@
 import { getActiveCauldron, cauldronFileUriScheme } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor, kax } from 'ern-core'
+import { log, NativeApplicationDescriptor, kax } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
 import { parseJsonFromStringOrFile } from './parseJsonFromStringOrFile'
 
@@ -28,6 +28,14 @@ export async function runContainerTransformers({
     containerGenConfig && containerGenConfig.transformers
 
   for (const transformerFromCauldron of transformersFromCauldron || []) {
+    if (transformerFromCauldron.disabled) {
+      log.info(
+        `Skipping Container Transformer ${
+          transformerFromCauldron.name
+        } (disabled=true)`
+      )
+      continue
+    }
     let extra = transformerFromCauldron.extra
     if (
       extra &&

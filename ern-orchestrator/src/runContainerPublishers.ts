@@ -27,6 +27,14 @@ export async function runContainerPublishers({
 
   if (publishersFromCauldron) {
     for (const publisherFromCauldron of publishersFromCauldron || []) {
+      if (publisherFromCauldron.disabled) {
+        log.info(
+          `Skipping Container Publisher ${
+            publisherFromCauldron.name
+          } (disabled=true)`
+        )
+        continue
+      }
       let extra = publisherFromCauldron.extra
       if (!extra) {
         extra = getDefaultExtraConfigurationOfPublisherFromCauldron({
