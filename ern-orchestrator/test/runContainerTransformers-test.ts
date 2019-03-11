@@ -54,7 +54,7 @@ describe('runContainerTransformers', () => {
     )
   })
 
-  it('should call transformContainer for each transformer', async () => {
+  it('should call transformContainer only with enabled transformers', async () => {
     const fixture = cloneFixture(fixtures.defaultCauldron)
     sandbox
       .stub(cauldronApi, 'getActiveCauldron')
@@ -65,6 +65,17 @@ describe('runContainerTransformers', () => {
         'test:android:17.7.0'
       ),
     })
-    sandbox.assert.calledOnce(transformContainerStub)
+    sandbox.assert.calledWith(transformContainerStub, {
+      containerPath: '/Users/foo/test',
+      extra: undefined,
+      platform: 'android',
+      transformer: 'dummy-1',
+    })
+    sandbox.assert.calledWith(transformContainerStub, {
+      containerPath: '/Users/foo/test',
+      extra: undefined,
+      platform: 'android',
+      transformer: 'dummy-3',
+    })
   })
 })

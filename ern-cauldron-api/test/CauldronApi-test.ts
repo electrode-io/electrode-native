@@ -3093,14 +3093,14 @@ describe('CauldronApi.js', () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
       const api = cauldronApi(tmpFixture)
       await api.addPublisher(
-        'dummy',
+        'jcenter',
         NativeApplicationDescriptor.fromString('test:android'),
         'http://url'
       )
       expect(
         tmpFixture.nativeApps[0].platforms[0].config.containerGenerator
           .publishers
-      ).length(3)
+      ).length(4)
     })
   })
 
