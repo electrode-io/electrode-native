@@ -19,6 +19,10 @@ export const builder = (argv: Argv) => {
       describe: 'Copy Cauldron data from a previous native application version',
       type: 'string',
     })
+    .option('description', {
+      describe: 'Description of the native application version',
+      type: 'string',
+    })
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
@@ -31,9 +35,11 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   copyFromVersion,
+  description,
   descriptor,
 }: {
   copyFromVersion?: string
+  description?: string
   descriptor: NativeApplicationDescriptor
 }) => {
   let cauldron
@@ -72,6 +78,10 @@ export const commandHandler = async ({
   await kax
     .task(`Adding ${descriptor}`)
     .run(cauldron.addNativeApplicationVersion(descriptor, { copyFromVersion }))
+
+  if (description) {
+    await cauldron.addOrUpdateDescription(descriptor, description)
+  }
 
   await kax
     .task('Updating Cauldron')

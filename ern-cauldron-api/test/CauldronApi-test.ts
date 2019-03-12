@@ -1175,6 +1175,75 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
+  // addOrUpdateDescription
+  // ==========================================================
+
+  describe('addOrUpdateDescription', () => {
+    it('should add a description if it does not exist yet', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const newDescription = 'new description'
+      await cauldronApi(tmpFixture).addOrUpdateDescription(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        newDescription
+      )
+      const version = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
+      )[0]
+      expect(version.description).eql(newDescription)
+    })
+
+    it('should update a description if it already exist', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const updatedDescription = 'updated description'
+      await cauldronApi(tmpFixture).addOrUpdateDescription(
+        NativeApplicationDescriptor.fromString('test:android:17.8.0'),
+        updatedDescription
+      )
+      const version = jp.query(
+        tmpFixture,
+        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.8.0")]'
+      )[0]
+      expect(version.description).eql(updatedDescription)
+    })
+
+    it('should commit the document store', async () => {
+      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
+      const api = cauldronApi(tmpFixture)
+      const commitStub = sandbox.stub(documentStore, 'commit')
+      await api.addOrUpdateDescription(
+        NativeApplicationDescriptor.fromString('test:android:17.7.0'),
+        'new description'
+      )
+      sinon.assert.calledOnce(commitStub)
+    })
+
+    it('should throw if the descriptor is partial', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.addOrUpdateDescription,
+          api,
+          NativeApplicationDescriptor.fromString('test:android'),
+          'new description'
+        )
+      )
+    })
+
+    it('should throw if the version does not exists', async () => {
+      const api = cauldronApi()
+      assert(
+        await doesThrow(
+          api.addOrUpdateDescription,
+          api,
+          NativeApplicationDescriptor.fromString('test:android:0.1.0'),
+          'new description'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
   // removeNativeDependencyFromContainer
   // ==========================================================
   describe('removeNativeDependencyFromContainer', () => {

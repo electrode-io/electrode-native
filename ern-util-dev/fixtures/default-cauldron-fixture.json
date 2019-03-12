@@ -178,7 +178,8 @@
             ],
             "ernVersion": "1000.0.0"
           },
-          "codePush": {}
+          "codePush": {},
+          "description": "Some description for 17.8.0 version"
         }
       ]
     }]

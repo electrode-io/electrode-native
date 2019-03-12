@@ -35,6 +35,10 @@
 * If you use the `--copyFromVersion/-c <version>` option, you do not need to add all MiniApps again after creating a new native application version in the Cauldron.  
 * This option is commonly used.  
 
+`--description`  
+
+* Description of the native application version
+
 #### Remarks
 
 * The `ern cauldron add nativeapp <descriptor>` command is usually used when the development of a new version of the native application is started.  

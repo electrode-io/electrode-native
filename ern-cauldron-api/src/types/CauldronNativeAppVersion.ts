@@ -9,4 +9,5 @@ export interface CauldronNativeAppVersion extends CauldronObject {
   codePush: any
   containerVersion: string
   detachContainerVersionFromRoot?: boolean
+  description?: string
 }

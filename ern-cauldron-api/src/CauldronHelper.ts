@@ -62,13 +62,26 @@ export class CauldronHelper {
     return this.cauldron.addDescriptor(napDescriptor)
   }
 
+  public async addOrUpdateDescription(
+    descriptor: NativeApplicationDescriptor,
+    description: string
+  ) {
+    return this.cauldron.addOrUpdateDescription(descriptor, description)
+  }
+
   public async removeDescriptor(napDescriptor: NativeApplicationDescriptor) {
     return this.cauldron.removeDescriptor(napDescriptor)
   }
 
   public async addNativeApplicationVersion(
     descriptor: NativeApplicationDescriptor,
-    { copyFromVersion }: { copyFromVersion?: string } = {}
+    {
+      copyFromVersion,
+      description,
+    }: {
+      copyFromVersion?: string
+      description?: string
+    } = {}
   ) {
     if (descriptor.isPartial) {
       throw new Error(`${descriptor} is partial`)
@@ -93,6 +106,9 @@ export class CauldronHelper {
       })
     } else {
       await this.addDescriptor(descriptor)
+      if (description) {
+        await this.cauldron.addOrUpdateDescription(descriptor, description)
+      }
     }
   }
 
@@ -171,6 +187,14 @@ export class CauldronHelper {
     // Copy detachContainerVersionFromRoot
     if (sourceVersion.detachContainerVersionFromRoot) {
       await this.cauldron.enableDetachContainerVersionFromRoot(target)
+    }
+
+    // Copy description if any
+    if (sourceVersion.description) {
+      await this.cauldron.addOrUpdateDescription(
+        target,
+        sourceVersion.description
+      )
     }
   }
 
