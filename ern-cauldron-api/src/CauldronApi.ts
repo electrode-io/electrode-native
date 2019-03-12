@@ -553,6 +553,16 @@ export default class CauldronApi {
     }
   }
 
+  public async addOrUpdateDescription(
+    descriptor: NativeApplicationDescriptor,
+    description: string
+  ): Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const version = await this.getVersion(descriptor)
+    version.description = description
+    await this.commit(`Update description of ${descriptor.toString()}`)
+  }
+
   public async hasMiniAppBranchInContainer(
     descriptor: NativeApplicationDescriptor,
     miniApp: PackagePath

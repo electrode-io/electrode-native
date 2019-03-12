@@ -12,6 +12,7 @@ export const nativeApplicationVersion = Joi.object({
   codePush: Joi.object().default({}),
   container: container.default(),
   containerVersion: Joi.string().optional(), // optional for Backward Compat. Required in ERN 0.5.0
+  description: Joi.string().optional(),
   isReleased: Joi.boolean()
     .optional()
     .default(false),

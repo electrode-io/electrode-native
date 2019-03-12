@@ -12,12 +12,16 @@ export const desc = 'Update a native application info in cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('description', {
+      describe: 'Description of the native application version',
+      type: 'string',
+    })
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
     .option('isReleased', {
       alias: 'r',
-      default: true,
+      default: undefined,
       describe: 'true if version is released, false otherwise',
       type: 'boolean',
     })
@@ -25,11 +29,13 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  description,
   descriptor,
-  isReleased = true,
+  isReleased,
 }: {
+  description?: string
   descriptor: NativeApplicationDescriptor
-  isReleased: boolean
+  isReleased?: boolean
 }) => {
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: {
@@ -40,8 +46,14 @@ export const commandHandler = async ({
   })
 
   const cauldron = await getActiveCauldron()
-  cauldron.updateNativeAppIsReleased(descriptor, isReleased)
-  log.info(`Successfully updated release status of ${descriptor}`)
+  if (isReleased !== undefined) {
+    await cauldron.updateNativeAppIsReleased(descriptor, isReleased)
+    log.info(`Successfully updated release status of ${descriptor}`)
+  }
+  if (description) {
+    await cauldron.addOrUpdateDescription(descriptor, description)
+    log.info(`Successfully updated description of ${descriptor}`)
+  }
 }
 
 export const handler = tryCatchWrap(commandHandler)
