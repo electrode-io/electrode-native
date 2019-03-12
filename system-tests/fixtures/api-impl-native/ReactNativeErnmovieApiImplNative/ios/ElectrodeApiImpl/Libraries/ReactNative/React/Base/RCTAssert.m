@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -169,13 +169,14 @@ NSString *RCTFormatError(NSString *message, NSArray<NSDictionary<NSString *, id>
   if (stackTrace) {
     [prettyStack appendString:@", stack:\n"];
 
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^(\\d+\\.js)$"
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\b((?:seg-\\d+(?:_\\d+)?|\\d+)\\.js)"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:NULL];
     for (NSDictionary<NSString *, id> *frame in stackTrace) {
       NSString *fileName = [frame[@"file"] lastPathComponent];
-      if (fileName && [regex numberOfMatchesInString:fileName options:0 range:NSMakeRange(0, [fileName length])]) {
-        fileName = [fileName stringByAppendingString:@":"];
+      NSTextCheckingResult *match = fileName != nil ? [regex firstMatchInString:fileName options:0 range:NSMakeRange(0, fileName.length)] : nil;
+      if (match) {
+        fileName = [NSString stringWithFormat:@"%@:", [fileName substringWithRange:match.range]];
       } else {
         fileName = @"";
       }
