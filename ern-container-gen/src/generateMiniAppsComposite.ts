@@ -177,7 +177,7 @@ export async function generateMiniAppsComposite(
 
     // To be removed as soon as react-native-cli make use of metro >= 0.52.0
     // Temporary hacky code to patch an issue present in metro 0.51.1
-    // currently linked with RN 59 RC3 that impacts our bundling process
+    // currently linked with RN 59 that impacts our bundling process
     if (metroVersion === '0.51.1') {
       const pathToFileToPatch = path.join(
         compositeNodeModulesPath,
@@ -224,14 +224,27 @@ export async function generateMiniAppsComposite(
           'reactNativeTransformer.js'
         )
       } else {
-        // For versions of metro > 0.51.0, we are patching the index.js file
+        // For versions of metro >= 0.51.0, we are patching the index.js file
         // https://github.com/facebook/metro/blob/v0.51.0/packages/metro-react-native-babel-transformer/src/index.js#L120
-        pathToFileToPatch = path.join(
+        const pathInCommunityCli = path.join(
           compositeNodeModulesPath,
+          '@react-native-community',
+          'cli',
+          'node_modules',
           'metro-react-native-babel-transformer',
           'src',
           'index.js'
         )
+        if (fs.existsSync(pathInCommunityCli)) {
+          pathToFileToPatch = pathInCommunityCli
+        } else {
+          pathToFileToPatch = path.join(
+            compositeNodeModulesPath,
+            'metro-react-native-babel-transformer',
+            'src',
+            'index.js'
+          )
+        }
       }
 
       const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
