@@ -289,85 +289,78 @@ ${lineToPatch}`
     // Ugly hacky way of handling module-resolver babel plugin
     // At least it has some guarantees to make it safer but its just a temporary
     // solution until we figure out a more proper way of handling this plugin
-    // THIS WHOLE CODE BLOCK SHOULD BE REMOVED SOON
-    // STARTING WITH BABEL7 IN RN56 WE HAVE A NEW WAY OF TAKING CARE OF BABEL MODULE RESOLVER
-    // REMOVE AS SOON AS INTERNAL RN WALMART APPS ARE USING A VERSION OF RN >= 0.56.0
-    if (semver.lt(compositeReactNativeVersion, '0.56.0')) {
-      log.debug('Taking care of potential Babel plugins used by MiniApps')
-      let moduleResolverAliases = {}
-      for (const dependency of Object.keys(compositePackageJson.dependencies)) {
-        const miniAppPackagePath = path.join(
-          compositeNodeModulesPath,
-          dependency
-        )
-        let miniAppPackageJson
-        try {
-          miniAppPackageJson = await readPackageJson(miniAppPackagePath)
-        } catch (e) {
-          // swallow (for test. to be fixed)
-          continue
-        }
-        const miniAppName = miniAppPackageJson.name
-        if (miniAppPackageJson.babel) {
-          if (miniAppPackageJson.babel.plugins) {
-            for (const babelPlugin of miniAppPackageJson.babel.plugins) {
-              if (Array.isArray(babelPlugin)) {
-                if (babelPlugin.includes('module-resolver')) {
-                  // Copy over module-resolver plugin & config to top level composite .babelrc
-                  log.debug(
-                    `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`
-                  )
-                  if (compositeBabelRc.plugins.length === 0) {
-                    // First MiniApp to add module-resolver plugin & config
-                    // easy enough, we just copy over the plugin & config
-                    compositeBabelRc.plugins.push(<any>babelPlugin)
-                    for (const x of babelPlugin) {
-                      if (x instanceof Object && x.alias) {
-                        moduleResolverAliases = x.alias
-                        break
-                      }
+    log.debug(
+      'Taking care of potential Babel module-resolver plugins used by MiniApps'
+    )
+    let moduleResolverAliases = {}
+    for (const dependency of Object.keys(compositePackageJson.dependencies)) {
+      const miniAppPackagePath = path.join(compositeNodeModulesPath, dependency)
+      let miniAppPackageJson
+      try {
+        miniAppPackageJson = await readPackageJson(miniAppPackagePath)
+      } catch (e) {
+        // swallow (for test. to be fixed)
+        continue
+      }
+      const miniAppName = miniAppPackageJson.name
+      if (miniAppPackageJson.babel) {
+        if (miniAppPackageJson.babel.plugins) {
+          for (const babelPlugin of miniAppPackageJson.babel.plugins) {
+            if (Array.isArray(babelPlugin)) {
+              if (babelPlugin.includes('module-resolver')) {
+                // Copy over module-resolver plugin & config to top level composite .babelrc
+                log.debug(
+                  `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`
+                )
+                if (compositeBabelRc.plugins.length === 0) {
+                  // First MiniApp to add module-resolver plugin & config
+                  // easy enough, we just copy over the plugin & config
+                  compositeBabelRc.plugins.push(<any>babelPlugin)
+                  for (const x of babelPlugin) {
+                    if (x instanceof Object && x.alias) {
+                      moduleResolverAliases = x.alias
+                      break
                     }
-                  } else {
-                    // Another MiniApp  has already declared module-resolver
-                    // plugin & config. If we have conflicts for aliases, we'll just abort
-                    // bundling as of now to avoid generating a potentially unstable bundle
-                    for (const item of babelPlugin) {
-                      if (item instanceof Object && item.alias) {
-                        for (const aliasKey of Object.keys(item.alias)) {
-                          if (
-                            moduleResolverAliases[aliasKey] &&
-                            moduleResolverAliases[aliasKey] !==
-                              item.alias[aliasKey]
-                          ) {
-                            throw new Error(
-                              'Babel module-resolver alias conflict'
-                            )
-                          } else if (!moduleResolverAliases[aliasKey]) {
-                            moduleResolverAliases[aliasKey] =
-                              item.alias[aliasKey]
-                          }
+                  }
+                } else {
+                  // Another MiniApp  has already declared module-resolver
+                  // plugin & config. If we have conflicts for aliases, we'll just abort
+                  // bundling as of now to avoid generating a potentially unstable bundle
+                  for (const item of babelPlugin) {
+                    if (item instanceof Object && item.alias) {
+                      for (const aliasKey of Object.keys(item.alias)) {
+                        if (
+                          moduleResolverAliases[aliasKey] &&
+                          moduleResolverAliases[aliasKey] !==
+                            item.alias[aliasKey]
+                        ) {
+                          throw new Error(
+                            'Babel module-resolver alias conflict'
+                          )
+                        } else if (!moduleResolverAliases[aliasKey]) {
+                          moduleResolverAliases[aliasKey] = item.alias[aliasKey]
                         }
                       }
                     }
                   }
-                } else {
-                  log.warn(
-                    `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`
-                  )
                 }
               } else {
                 log.warn(
                   `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`
                 )
               }
+            } else {
+              log.warn(
+                `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`
+              )
             }
           }
-          log.debug(
-            `Removing babel object from ${miniAppName} MiniApp package.json`
-          )
-          delete miniAppPackageJson.babel
-          await writePackageJson(miniAppPackagePath, miniAppPackageJson)
         }
+        log.debug(
+          `Removing babel object from ${miniAppName} MiniApp package.json`
+        )
+        delete miniAppPackageJson.babel
+        await writePackageJson(miniAppPackagePath, miniAppPackageJson)
       }
     }
 
