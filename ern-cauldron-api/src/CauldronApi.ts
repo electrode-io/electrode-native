@@ -16,7 +16,6 @@ import {
 import upgradeScripts from './upgrade-scripts/scripts'
 import path from 'path'
 import uuidv4 from 'uuid/v4'
-import semver from 'semver'
 
 const yarnLocksStoreDirectory = 'yarnlocks'
 const bundlesStoreDirectory = 'bundles'
@@ -512,7 +511,6 @@ export default class CauldronApi {
       schemas.nativeApplicationVersion
     )
     platform.versions.push(validatedVersion)
-    platform.versions.sort((a, b) => semver.compare(a.name, b.name))
     return this.commit(
       `Create version ${versionName} for ${descriptor.toString()}`
     )
