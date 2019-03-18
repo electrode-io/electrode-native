@@ -302,23 +302,6 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         }
     }
 
-    /**
-     * NOTE: Duplicate code since the base class has marked this method private.
-     *
-     * @return Context
-     */
-    private Context getContext() {
-        return mCurrentActivity;
-    }
-
-    /**
-     * NOTE: Duplicate code since the base class has marked this method private.
-     *
-     * @return Activity
-     */
-    private Activity getPlainActivity() {
-        return ((Activity) getContext());
-    }
 
      private void unMountReactApplications() {
         List<ReactRootView> list;
