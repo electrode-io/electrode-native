@@ -20,6 +20,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.electrode.reactnative.bridge.None;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import java.util.UUID;
 
@@ -101,7 +102,7 @@ public final class {{classname}} {
     {{#operations}}
         {{#operation}}
         {{^isEvent}}
-        void register{{camelizedNickName}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}> handler);
+        RequestHandlerHandle register{{camelizedNickName}}RequestHandler(@NonNull final ElectrodeBridgeRequestHandler<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}> handler);
 
         {{/isEvent}}
         {{/operation}}
