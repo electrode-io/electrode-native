@@ -24,6 +24,14 @@ export async function reactNativeBundleIos({
   if (fs.existsSync(assetsDest)) {
     shell.rm('-rf', path.join(assetsDest, '{.*,*}'))
     shell.mkdir('-p', path.join(assetsDest, 'assets'))
+    // Write a dummy file to the empty `assets` directory,
+    // otherwise empty directories are not pushed to git repositories
+    // which will lead to issues when building the iOS Container
+    // if the assets directory is missing
+    fs.writeFileSync(
+      path.join(assetsDest, 'assets', 'README.md'),
+      'React Native bundled assets will be stored in this directory'
+    )
   }
 
   if (!fs.existsSync(miniAppOutPath)) {
