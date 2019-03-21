@@ -21,5 +21,8 @@
 - `tmp-dir`  
 - `retain-tmp-dir`
 - `codePushAccessKey`
+- `codePushCustomServerUrl`
+- `codePushProxy`
+- `codePushCustomHeaders`
 - `max-package-cache-size`
 - `package-cache-enabled`

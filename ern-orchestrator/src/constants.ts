@@ -37,6 +37,21 @@ export const availableUserConfigKeys = [
     values: ['string'],
   },
   {
+    desc: 'Code push custom server url',
+    name: 'codePushCustomServerUrl',
+    values: ['string'],
+  },
+  {
+    desc: 'Code push custom proxy url',
+    name: 'codePushProxy',
+    values: ['string'],
+  },
+  {
+    desc: 'Code push custom http headers',
+    name: 'codePushCustomHeaders',
+    values: ['string'],
+  },
+  {
     desc: 'Override Manifest Url',
     name: 'overrideManifestUrlModifier',
     values: ['string'],
