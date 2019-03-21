@@ -37,7 +37,16 @@ If set to `true`, the temporary directories created during some commands executi
 **default** : false
 
 - `codePushAccessKey` [string]   
-Code push access key associated with your account  
+Code push access key associated with your account 
+
+- `codePushCustomServerUrl` [string]  
+CodePush custom server url, in case you are not using the Microsoft CodePush server.  
+
+- `codePushProxy`
+CodePush proxy server url.
+
+- `codePushCustomHeaders`
+CodePush custom extra http headers.
 
 - `max-package-cache-size` [number]
 The maximum disk space to use for the package cache, in Bytes.  

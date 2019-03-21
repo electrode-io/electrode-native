@@ -18,7 +18,7 @@ export function getCodePushInitConfig(): CodePushInitConfig {
       accessKey: config.getValue('codePushAccessKey'),
       customHeaders: config.getValue('codePushCustomHeaders'),
       customServerUrl: config.getValue('codePushCustomServerUrl'),
-      proxy: config.getValue('codePushproxy'),
+      proxy: config.getValue('codePushProxy'),
     }
   }
   return codePushInitConfig
