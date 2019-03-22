@@ -342,7 +342,15 @@ export class CauldronHelper {
     name: string
   ) {
     const publishers = await this.getPublishers(descriptor)
-    return publishers && publishers.find(p => p.name === name)
+    const publisherPackage = PackagePath.fromString(name)
+    return (
+      publishers &&
+      publishers.find(p =>
+        PackagePath.fromString(p.name).same(publisherPackage, {
+          ignoreVersion: true,
+        })
+      )
+    )
   }
 
   public async getNativeAppsForPlatform(
