@@ -54,7 +54,7 @@
   "dependencies": {
     "ern-container-gen": "1000.0.0",
     "ern-core": "1000.0.0",
-    "xcode-ern": "^1.0.11",
+    "xcode-ern": "^1.0.12",
     "lodash": "^4.17.10",
     "fs-readdir-recursive": "^1.1.0"
   },
