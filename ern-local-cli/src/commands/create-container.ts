@@ -48,6 +48,11 @@ export const builder = (argv: Argv) => {
         'Optional extra run configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
+    .option('fromGitBranches', {
+      describe:
+        'Create Container based on MiniApps branches rather than current MiniApps SHAs',
+      type: 'boolean',
+    })
     .option('ignoreRnpmAssets', {
       describe: 'Ignore rnpm assets from the MiniApps',
       type: 'boolean',
@@ -57,7 +62,6 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
-
     .option('jsOnly', {
       alias: 'js',
       describe: 'Generates JS only (composite app)',
@@ -87,6 +91,7 @@ export const commandHandler = async ({
   dependencies = [],
   descriptor,
   extra,
+  fromGitBranches,
   ignoreRnpmAssets,
   jsApiImpls = [],
   jsOnly,
@@ -97,6 +102,7 @@ export const commandHandler = async ({
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   extra?: string
+  fromGitBranches?: boolean
   ignoreRnpmAssets?: boolean
   jsApiImpls: PackagePath[]
   jsOnly?: boolean
@@ -165,7 +171,9 @@ Output directory should either not exist (it will be created) or should be empty
           'You need to provide a native application descriptor, if not providing miniapps'
         )
       }
-      miniapps = await cauldron.getContainerMiniApps(descriptor)
+      miniapps = await cauldron.getContainerMiniApps(descriptor, {
+        favorGitBranches: !!fromGitBranches,
+      })
       jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
     }
 
