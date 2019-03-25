@@ -21,6 +21,12 @@
 * Create a new container including all the MiniApps listed in the Cauldron for the given *complete native application descriptor*  
 * Use this option if you want to locally generate a container that mirrors the container of a given native application version.  
 
+`--fromGitBranches`
+
+* Create Container from MiniApps git branches, rather than from current MiniApps SHAs inside the current Container version  
+* This flag is only used when creating a Container from a Cauldron descriptor  
+**Default** false
+
 `--miniapps/-m <miniapps>`
 
 * Create a new custom container including all the given MiniApps  
