@@ -57,6 +57,13 @@
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.0.0-beta.51.tgz#27cec2df409df60af58270ed8f6aa55409ea86f6"
   integrity sha1-J87C30Cd9gr1gnDtj2qlVAnqhvY=
 
+"@babel/runtime@^7.0.0":
+  version "7.4.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.4.2.tgz#f5ab6897320f16decd855eed70b705908a313fe8"
+  integrity sha512-7Bl2rALb7HpvXFL7TETNzKSAeBVCPHELzc0C//9FCxN8nsiueWSJBqaF+2oIJScyILStASR/Cx5WMkXGYTiJFA==
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
 "@babel/template@7.0.0-beta.51":
   version "7.0.0-beta.51"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.0.0-beta.51.tgz#9602a40aebcf357ae9677e2532ef5fc810f5fbff"
@@ -3885,15 +3892,15 @@ node-pre-gyp@^0.9.0:
     semver "^5.3.0"
     tar "^4"
 
-node-simctl@^3.13.0:
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/node-simctl/-/node-simctl-3.13.0.tgz#339bf1c06b0504fe39797655b1d854566d6837a3"
-  integrity sha512-lWoWdXCLz8T2xcQ3sG3nQVK+BONtdg6glJQNhhKW7c2ulix/XB6pS0fT6NjLHijVmmGDCY665AerPANOmBNIZA==
+node-simctl@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/node-simctl/-/node-simctl-4.0.2.tgz#32ad5ea24fa7e2ca050f63fcb293ef0815375875"
+  integrity sha512-W9vkzeAA/h6Tby2TijAtv0weN7TdAA3zNXlaH8hGNMXvvcdTLj/w7tIKigAPnRlN3kDmfqPHB3Hjw3WdxhZ5Ug==
   dependencies:
+    "@babel/runtime" "^7.0.0"
     appium-support "^2.4.0"
     appium-xcode "^3.1.0"
     asyncbox "^2.3.1"
-    babel-runtime "=5.8.24"
     lodash "^4.2.1"
     source-map-support "^0.5.5"
     teen_process "^1.5.1"
@@ -5013,6 +5020,11 @@ redent@^2.0.0:
   dependencies:
     indent-string "^3.0.0"
     strip-indent "^2.0.0"
+
+regenerator-runtime@^0.13.2:
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.2.tgz#32e59c9a6fb9b1a4aff09b4930ca2d4477343447"
+  integrity sha512-S/TQAZJO+D3m9xeN1WTI8dLKBBiRgXBlTJvbWjCThHWZj9EvHK70Ff50/tYj2J/fvBY6JtFVwRuazHN2E7M9BA==
 
 regex-cache@^0.4.2:
   version "0.4.4"
@@ -6460,10 +6472,10 @@ write-pkg@^3.1.0:
     sort-keys "^2.0.0"
     write-json-file "^2.2.0"
 
-xcode-ern@^1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/xcode-ern/-/xcode-ern-1.0.11.tgz#a563300733b42e9a5e35fc4d71eaecf90000d031"
-  integrity sha512-KThXsGFynXhzD7FO6Tu0fkXeVlV6gZl8vZjC7iO6kx54f988GPCK1WD5QIC2dO/eV9lbRj86314VlPL0bAbzPw==
+xcode-ern@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/xcode-ern/-/xcode-ern-1.0.12.tgz#d1abf70488f5b996d8e7e799f2ba89fc60e9da0f"
+  integrity sha512-HjN7MbyInjQCIcSANYNuyFEUZ1Qjx+YNh5+WgwNEdu2kqKLOuhM2M0Sk09LmrHOnnM7QcNIwBhxkE9iK4Ef25w==
   dependencies:
     pegjs "^0.10.0"
     simple-plist "^0.2.1"
