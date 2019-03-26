@@ -54,7 +54,7 @@
     "lodash": "^4.17.10",
     "mustache": "^2.3.1",
     "node-fetch": "^2.2.0",
-    "node-simctl": "^3.13.0",
+    "node-simctl": "^4.0.2",
     "kax": "^1.2.7",
     "react-native-cli": "^2.0.1",
     "shelljs": "^0.8.2",
