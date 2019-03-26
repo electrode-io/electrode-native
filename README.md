@@ -19,7 +19,7 @@
 - Node.js >= 6
 - NPM >= 3.0
 - Android Studio (for Android apps)
-- Xcode >= 9.2 (for iOS apps)
+- Xcode >= 9.2 (for iOS apps) < 10.2 (we're still working on 10.2 support)
 
 ### Install
 
