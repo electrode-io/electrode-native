@@ -1,67 +1,67 @@
-// Copyright (c) Facebook, Inc. and its affiliates.
+// Copyright (c) 2004-present, Facebook, Inc.
 
 // This source code is licensed under the MIT license found in the
 // LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <folly/SharedMutex.h>
 #include <memory>
-#include <shared_mutex>
+#include <mutex>
 
-#include <react/components/root/RootShadowNode.h>
-#include <react/core/LayoutConstraints.h>
-#include <react/core/ReactPrimitives.h>
-#include <react/core/ShadowNode.h>
-#include <react/mounting/ShadowViewMutation.h>
-#include <react/uimanager/ShadowTreeDelegate.h>
+#include <fabric/components/root/RootShadowNode.h>
+#include <fabric/core/LayoutConstraints.h>
+#include <fabric/core/ReactPrimitives.h>
+#include <fabric/core/ShadowNode.h>
+#include <fabric/uimanager/ShadowTreeDelegate.h>
 
 namespace facebook {
 namespace react {
 
-using ShadowTreeCommitTransaction = std::function<UnsharedRootShadowNode(
-    const SharedRootShadowNode &oldRootShadowNode)>;
+class ShadowTree;
+
+using SharedShadowTree = std::shared_ptr<ShadowTree>;
 
 /*
  * Represents the shadow tree and its lifecycle.
  */
-class ShadowTree final {
- public:
-  /*
-   * Creates a new shadow tree instance.
-   */
-  ShadowTree(
-      SurfaceId surfaceId,
-      const LayoutConstraints &layoutConstraints,
-      const LayoutContext &layoutContext);
+class ShadowTree final:
+  public std::enable_shared_from_this<ShadowTree> {
 
-  ~ShadowTree();
+public:
 
   /*
-   * Returns the `SurfaceId` associated with the shadow tree.
+   * Creates a new shadow tree instance with given `rootTag`.
    */
-  SurfaceId getSurfaceId() const;
+  ShadowTree(Tag rootTag);
 
   /*
-   * Performs commit calling `transaction` function with a `oldRootShadowNode`
-   * and expecting a `newRootShadowNode` as a return value.
-   * The `transaction` function can abort commit returning `nullptr`.
-   * If a `revision` pointer is not null, the method will store there a
-   * contiguous revision number of the successfully performed transaction.
-   * Returns `true` if the operation finished successfully.
+   * Returns the rootTag associated with the shadow tree (the tag of the
+   * root shadow node).
    */
-  bool tryCommit(
-      ShadowTreeCommitTransaction transaction,
-      long commitStartTime,
-      int *revision = nullptr) const;
+  Tag getRootTag() const;
+
+#pragma mark - Layout
 
   /*
-   * Calls `tryCommit` in a loop until it finishes successfully.
+   * Measures the shadow tree with given `layoutConstraints` and `layoutContext`.
+   * Can be called from any thread, side-effect-less.
    */
-  void commit(
-      ShadowTreeCommitTransaction transaction,
-      long commitStartTime,
-      int *revision = nullptr) const;
+  Size measure(const LayoutConstraints &layoutConstraints, const LayoutContext &layoutContext) const;
+
+  /*
+   * Applies given `layoutConstraints` and `layoutContext` and commit
+   * the new shadow tree.
+   * Can be called from any thread.
+   */
+  void constraintLayout(const LayoutConstraints &layoutConstraints, const LayoutContext &layoutContext);
+
+#pragma mark - Application
+
+  /*
+   * Create a new shadow tree with given `rootChildNodes` and commit.
+   * Can be called from any thread.
+   */
+  void complete(const SharedShadowNodeUnsharedList &rootChildNodes);
 
 #pragma mark - Delegate
 
@@ -70,22 +70,20 @@ class ShadowTree final {
    * The delegate is stored as a raw pointer, so the owner must null
    * the pointer before being destroyed.
    */
-  void setDelegate(ShadowTreeDelegate const *delegate);
-  ShadowTreeDelegate const *getDelegate() const;
+  void setDelegate(ShadowTreeDelegate *delegate);
+  ShadowTreeDelegate *getDelegate() const;
 
- private:
-  UnsharedRootShadowNode cloneRootShadowNode(
-      const SharedRootShadowNode &oldRootShadowNode,
-      const LayoutConstraints &layoutConstraints,
-      const LayoutContext &layoutContext) const;
+private:
 
-  void emitLayoutEvents(const ShadowViewMutationList &mutations) const;
+  UnsharedRootShadowNode cloneRootShadowNode(const LayoutConstraints &layoutConstraints, const LayoutContext &layoutContext) const;
+  void complete(UnsharedRootShadowNode newRootShadowNode);
+  bool commit(const SharedRootShadowNode &oldRootShadowNode, const SharedRootShadowNode &newRootShadowNode);
+  void emitLayoutEvents(const TreeMutationInstructionList &instructions);
 
-  const SurfaceId surfaceId_;
-  mutable folly::SharedMutex commitMutex_;
-  mutable SharedRootShadowNode rootShadowNode_; // Protected by `commitMutex_`.
-  mutable int revision_{1}; // Protected by `commitMutex_`.
-  ShadowTreeDelegate const *delegate_;
+  const Tag rootTag_;
+  SharedRootShadowNode rootShadowNode_;
+  ShadowTreeDelegate *delegate_;
+  mutable std::mutex commitMutex_;
 };
 
 } // namespace react

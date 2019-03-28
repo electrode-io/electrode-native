@@ -22,15 +22,13 @@ import android.support.annotation.Nullable;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 import com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments;
 
-import java.util.UUID;
-
 /**
  * This class takes care of processing a given request when {@link #execute()} is called on the instance.
  *
  * @param <TReq>
  * @param <TResp>
  */
-public class RequestProcessor<TReq, TResp> implements Processor {
+public class RequestProcessor<TReq, TResp> {
     private final String TAG = RequestProcessor.class.getSimpleName();
 
     private final String requestName;
@@ -52,8 +50,7 @@ public class RequestProcessor<TReq, TResp> implements Processor {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public UUID execute() {
+    public void execute() {
         Logger.d(TAG, "Request processor started processing request(%s)", requestName);
         ElectrodeBridgeRequest req = new ElectrodeBridgeRequest.Builder(requestName)
                 .withData(requestPayload)
@@ -82,6 +79,5 @@ public class RequestProcessor<TReq, TResp> implements Processor {
                 responseListener.onSuccess(response);
             }
         });
-        return null;
     }
 }

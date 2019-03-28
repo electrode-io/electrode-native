@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,50 +7,51 @@
 
 #pragma once
 
+#include <fabric/imagemanager/primitives.h>
+#include <fabric/graphics/conversions.h>
 #include <folly/dynamic.h>
-#include <react/graphics/conversions.h>
-#include <react/imagemanager/primitives.h>
 
 namespace facebook {
 namespace react {
 
-inline void fromRawValue(const RawValue &value, ImageSource &result) {
-  if (value.hasType<std::string>()) {
-    result = {.type = ImageSource::Type::Remote, .uri = (std::string)value};
+inline void fromDynamic(const folly::dynamic &value, ImageSource &result) {
+  if (value.isString()) {
+    result = {
+      .type = ImageSource::Type::Remote,
+      .uri = value.asString()
+    };
     return;
   }
 
-  if (value.hasType<std::unordered_map<std::string, RawValue>>()) {
-    auto items = (std::unordered_map<std::string, RawValue>)value;
+  if (value.isObject()) {
     result = {};
 
     result.type = ImageSource::Type::Remote;
 
-    if (items.find("__packager_asset") != items.end()) {
+    if (value.count("__packager_asset")) {
       result.type = ImageSource::Type::Local;
     }
 
-    if (items.find("width") != items.end() &&
-        items.find("height") != items.end()) {
-      result.size = {(Float)items.at("width"), (Float)items.at("height")};
+    if (value.count("width") && value.count("height")) {
+      fromDynamic(value, result.size);
     }
 
-    if (items.find("scale") != items.end()) {
-      result.scale = (Float)items.at("scale");
+    if (value.count("scale")) {
+      result.scale = (Float)value["scale"].asDouble();
     } else {
-      result.scale = items.find("deprecated") != items.end() ? 0.0 : 1.0;
+      result.scale = value.count("deprecated") ? 0.0 : 1.0;
     }
 
-    if (items.find("url") != items.end()) {
-      result.uri = (std::string)items.at("url");
+    if (value.count("url")) {
+      result.uri = value["url"].asString();
     }
 
-    if (items.find("uri") != items.end()) {
-      result.uri = (std::string)items.at("uri");
+    if (value.count("uri")) {
+      result.uri = value["uri"].asString();
     }
 
-    if (items.find("bundle") != items.end()) {
-      result.bundle = (std::string)items.at("bundle");
+    if (value.count("bundle")) {
+      result.bundle = value["bundle"].asString();
       result.type = ImageSource::Type::Local;
     }
 
@@ -64,44 +65,24 @@ inline std::string toString(const ImageSource &value) {
   return "{uri: " + value.uri + "}";
 }
 
-inline void fromRawValue(const RawValue &value, ImageResizeMode &result) {
-  assert(value.hasType<std::string>());
-  auto stringValue = (std::string)value;
-  if (stringValue == "cover") {
-    result = ImageResizeMode::Cover;
-    return;
-  }
-  if (stringValue == "contain") {
-    result = ImageResizeMode::Contain;
-    return;
-  }
-  if (stringValue == "stretch") {
-    result = ImageResizeMode::Stretch;
-    return;
-  }
-  if (stringValue == "center") {
-    result = ImageResizeMode::Center;
-    return;
-  }
-  if (stringValue == "repeat") {
-    result = ImageResizeMode::Repeat;
-    return;
-  }
+inline void fromDynamic(const folly::dynamic &value, ImageResizeMode &result) {
+  assert(value.isString());
+  auto stringValue = value.asString();
+  if (stringValue == "cover") { result = ImageResizeMode::Cover; return; }
+  if (stringValue == "contain") { result = ImageResizeMode::Contain; return; }
+  if (stringValue == "stretch") { result = ImageResizeMode::Stretch; return; }
+  if (stringValue == "center") { result = ImageResizeMode::Center; return; }
+  if (stringValue == "repeat") { result = ImageResizeMode::Repeat; return; }
   abort();
 }
 
 inline std::string toString(const ImageResizeMode &value) {
   switch (value) {
-    case ImageResizeMode::Cover:
-      return "cover";
-    case ImageResizeMode::Contain:
-      return "contain";
-    case ImageResizeMode::Stretch:
-      return "stretch";
-    case ImageResizeMode::Center:
-      return "center";
-    case ImageResizeMode::Repeat:
-      return "repeat";
+    case ImageResizeMode::Cover: return "cover";
+    case ImageResizeMode::Contain: return "contain";
+    case ImageResizeMode::Stretch: return "stretch";
+    case ImageResizeMode::Center: return "center";
+    case ImageResizeMode::Repeat: return "repeat";
   }
 }
 

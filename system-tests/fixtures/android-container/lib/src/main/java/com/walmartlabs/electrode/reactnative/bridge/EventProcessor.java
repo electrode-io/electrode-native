@@ -29,7 +29,7 @@ import java.util.UUID;
  * @param <T> eventPayload
  */
 
-public class EventProcessor<T> implements Processor {
+public class EventProcessor<T> {
     private static final String TAG = EventProcessor.class.getSimpleName();
 
     private final T eventPayload;
@@ -40,12 +40,11 @@ public class EventProcessor<T> implements Processor {
         this.eventName = eventName;
     }
 
-    @Override
-    public UUID execute() {
+    @SuppressWarnings("unchecked")
+    public void execute() {
         Logger.d(TAG, "EventProcessor is emitting event(%s), with payload(%s)", eventName, eventPayload);
         ElectrodeBridgeHolder.emitEvent(new ElectrodeBridgeEvent.Builder(eventName)
                 .withData(eventPayload)
                 .build());
-        return null;
     }
 }

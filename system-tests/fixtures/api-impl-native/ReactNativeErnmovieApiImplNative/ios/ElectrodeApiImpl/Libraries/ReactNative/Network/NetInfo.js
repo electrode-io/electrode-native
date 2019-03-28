@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,6 +10,7 @@
 
 'use strict';
 
+const Map = require('Map');
 const NativeEventEmitter = require('NativeEventEmitter');
 const NativeModules = require('NativeModules');
 const Platform = require('Platform');
@@ -221,7 +222,13 @@ const NetInfo = {
 
     removeEventListener(eventName: ChangeEventName, handler: Function): void {
       const listener = _isConnectedSubscriptions.get(handler);
-      NetInfo.removeEventListener(eventName, listener);
+      NetInfo.removeEventListener(
+        eventName,
+        /* $FlowFixMe(>=0.36.0 site=react_native_fb,react_native_oss) Flow error
+         * detected during the deploy of Flow v0.36.0. To see the error, remove
+         * this comment and run Flow */
+        listener,
+      );
       _isConnectedSubscriptions.delete(handler);
     },
 

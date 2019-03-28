@@ -1,0 +1,1 @@
+React Native bundled assets will be stored in this directory

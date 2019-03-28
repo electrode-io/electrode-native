@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,24 +10,25 @@
 
 'use strict';
 
-const DeprecatedImageStylePropTypes = require('DeprecatedImageStylePropTypes');
-const DeprecatedStyleSheetPropType = require('DeprecatedStyleSheetPropType');
-const DeprecatedViewPropTypes = require('DeprecatedViewPropTypes');
-const ImageViewNativeComponent = require('ImageViewNativeComponent');
+const ImageStylePropTypes = require('ImageStylePropTypes');
 const NativeModules = require('NativeModules');
-const PropTypes = require('prop-types');
 const React = require('React');
-const ReactNative = require('ReactNative'); // eslint-disable-line no-unused-vars
+const ReactNative = require('ReactNative');
+const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
+const StyleSheetPropType = require('StyleSheetPropType');
 const TextAncestor = require('TextAncestor');
+const ViewPropTypes = require('ViewPropTypes');
 
 const flattenStyle = require('flattenStyle');
 const merge = require('merge');
+const requireNativeComponent = require('requireNativeComponent');
 const resolveAssetSource = require('resolveAssetSource');
 
 const {ImageLoader} = NativeModules;
 
-const TextInlineImageNativeComponent = require('TextInlineImageNativeComponent');
+const RKImage = requireNativeComponent('RCTImageView');
+const RCTTextInlineImage = requireNativeComponent('RCTTextInlineImage');
 
 import type {ImageProps as ImagePropsType} from 'ImageProps';
 
@@ -37,8 +38,8 @@ function generateRequestId() {
 }
 
 const ImageProps = {
-  ...DeprecatedViewPropTypes,
-  style: DeprecatedStyleSheetPropType(DeprecatedImageStylePropTypes),
+  ...ViewPropTypes,
+  style: StyleSheetPropType(ImageStylePropTypes),
   /**
    * See https://facebook.github.io/react-native/docs/image.html#source
    */
@@ -181,7 +182,7 @@ declare class ImageComponentType extends ReactNative.NativeComponent<
  */
 let Image = (
   props: ImagePropsType,
-  forwardedRef: ?React.Ref<'RCTTextInlineImage' | 'ImageViewNativeComponent'>,
+  forwardedRef: ?React.Ref<'RCTTextInlineImage' | 'RKImage'>,
 ) => {
   let source = resolveAssetSource(props.source);
   const defaultSource = resolveAssetSource(props.defaultSource);
@@ -249,26 +250,24 @@ let Image = (
     <TextAncestor.Consumer>
       {hasTextAncestor =>
         hasTextAncestor ? (
-          <TextInlineImageNativeComponent {...nativeProps} />
+          <RCTTextInlineImage {...nativeProps} />
         ) : (
-          <ImageViewNativeComponent {...nativeProps} />
+          <RKImage {...nativeProps} />
         )
       }
     </TextAncestor.Consumer>
   );
 };
 
+// $FlowFixMe - TODO T29156721 `React.forwardRef` is not defined in Flow, yet.
 Image = React.forwardRef(Image);
-Image.displayName = 'Image';
 
 /**
- * Retrieve the width and height (in pixels) of an image prior to displaying it
+ * Prefetches a remote image for later use by downloading it to the disk
+ * cache
  *
- * See https://facebook.github.io/react-native/docs/image.html#getsize
+ * See https://facebook.github.io/react-native/docs/image.html#prefetch
  */
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 Image.getSize = getSize;
 
 /**
@@ -277,9 +276,6 @@ Image.getSize = getSize;
  *
  * See https://facebook.github.io/react-native/docs/image.html#prefetch
  */
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 Image.prefetch = prefetch;
 
 /**
@@ -287,9 +283,6 @@ Image.prefetch = prefetch;
  *
  * See https://facebook.github.io/react-native/docs/image.html#abortprefetch
  */
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 Image.abortPrefetch = abortPrefetch;
 
 /**
@@ -297,9 +290,6 @@ Image.abortPrefetch = abortPrefetch;
  *
  * See https://facebook.github.io/react-native/docs/image.html#querycache
  */
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 Image.queryCache = queryCache;
 
 /**
@@ -307,14 +297,8 @@ Image.queryCache = queryCache;
  *
  * See https://facebook.github.io/react-native/docs/image.html#resolveassetsource
  */
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 Image.resolveAssetSource = resolveAssetSource;
 
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 Image.propTypes = ImageProps;
 
 const styles = StyleSheet.create({
@@ -323,7 +307,4 @@ const styles = StyleSheet.create({
   },
 });
 
-/* $FlowFixMe(>=0.89.0 site=react_native_android_fb) This comment suppresses an
- * error found when Flow v0.89 was deployed. To see the error, delete this
- * comment and run Flow. */
 module.exports = (Image: Class<ImageComponentType>);

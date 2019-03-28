@@ -20,6 +20,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.electrode.reactnative.bridge.None;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import java.util.UUID;
 
@@ -47,9 +48,9 @@ public final class SystemTestsApi {
         String REQUEST_TEST_MULTI_ARGS = "com.ComplexApi.ern.api.request.testMultiArgs";
 
 
-        void registerTestArrayOfStringsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<List<String>, List<ErnObject>> handler);
+        RequestHandlerHandle registerTestArrayOfStringsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<List<String>, List<ErnObject>> handler);
 
-        void registerTestMultiArgsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<TestMultiArgsData, String> handler);
+        RequestHandlerHandle registerTestMultiArgsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<TestMultiArgsData, String> handler);
 
         void testArrayOfStrings(List<String> key, @NonNull final ElectrodeBridgeResponseListener<List<ErnObject>> responseListener);
 

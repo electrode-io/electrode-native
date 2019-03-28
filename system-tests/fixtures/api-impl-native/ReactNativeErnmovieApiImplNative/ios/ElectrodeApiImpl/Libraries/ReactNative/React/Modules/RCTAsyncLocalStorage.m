@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -423,8 +423,10 @@ RCT_EXPORT_METHOD(multiRemove:(NSArray<NSString *> *)keys
         NSString *filePath = [self _filePathForKey:key];
         [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
         [RCTGetCache() removeObjectForKey:key];
-      }
-      if (_manifest[key]) {
+        // remove the key from manifest, but no need to mark as changed just for
+        // this, as the cost of checking again next time is negligible.
+        [_manifest removeObjectForKey:key];
+      } else if (_manifest[key]) {
         changedManifest = YES;
         [_manifest removeObjectForKey:key];
       }

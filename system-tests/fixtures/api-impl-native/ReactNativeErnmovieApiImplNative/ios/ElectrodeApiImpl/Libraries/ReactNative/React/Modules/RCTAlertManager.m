@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -177,9 +177,7 @@ RCT_EXPORT_METHOD(alertWithArgs:(NSDictionary *)args
   }
   [_alertControllers addObject:alertController];
 
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [presentingController presentViewController:alertController animated:YES completion:nil];
-  });
+  [presentingController presentViewController:alertController animated:YES completion:nil];
 }
 
 @end

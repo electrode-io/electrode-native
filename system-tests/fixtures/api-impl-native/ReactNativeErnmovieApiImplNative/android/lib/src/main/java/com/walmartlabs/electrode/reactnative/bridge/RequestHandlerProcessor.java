@@ -32,13 +32,15 @@ import java.util.UUID;
  * @param <TReq>
  * @param <TResp>
  */
-public class RequestHandlerProcessor<TReq, TResp> implements Processor {
+public class RequestHandlerProcessor<TReq, TResp> implements RequestHandlerHandle {
     private final String TAG = RequestHandlerProcessor.class.getSimpleName();
 
     private final String requestName;
     private final Class<TReq> reqClazz;
     private final Class<TResp> respClazz;
-    private final ElectrodeBridgeRequestHandler<TReq, TResp> handler;
+    private ElectrodeBridgeRequestHandler<TReq, TResp> handler;
+    private UUID id;
+    private ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> intermediateRequestHandler;
 
     public RequestHandlerProcessor(@NonNull String requestName, @NonNull Class<TReq> reqClazz, @NonNull Class<TResp> respClazz, @NonNull ElectrodeBridgeRequestHandler<TReq, TResp> handler) {
         this.requestName = requestName;
@@ -48,9 +50,8 @@ public class RequestHandlerProcessor<TReq, TResp> implements Processor {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public UUID execute() {
-        final ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> intermediateRequestHandler = new ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object>() {
+    public RequestHandlerHandle execute() {
+        intermediateRequestHandler = new ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object>() {
 
             @Override
             public void onRequest(@Nullable ElectrodeBridgeRequest bridgeRequest, @NonNull final ElectrodeBridgeResponseListener<Object> responseListener) {
@@ -84,6 +85,21 @@ public class RequestHandlerProcessor<TReq, TResp> implements Processor {
             }
         };
 
-        return ElectrodeBridgeHolder.registerRequestHandler(requestName, intermediateRequestHandler);
+        id = ElectrodeBridgeHolder.registerRequestHandler(requestName, intermediateRequestHandler);
+        return this;
+    }
+
+    @Override
+    public boolean unregister() {
+        Logger.d(TAG, "Removing registered request handler %s with id %s", handler, id);
+        ElectrodeBridgeRequestHandler removedHandler = ElectrodeBridgeHolder.unregisterRequestHandler(id);
+        if (handler != null && intermediateRequestHandler == removedHandler) {
+            intermediateRequestHandler = null;
+            handler = null;
+            return true;
+        } else {
+            Logger.w(TAG, "Not able to unregister a request handler. This is not normal as the request handle should have proper reference of the registered handler. ");
+        }
+        return false;
     }
 }

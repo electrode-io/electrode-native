@@ -21,6 +21,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListe
 import com.walmartlabs.electrode.reactnative.bridge.None;
 import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerProcessor;
 import com.walmartlabs.electrode.reactnative.bridge.RequestProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import com.ComplexApi.ern.model.ErnObject;
 
@@ -30,13 +31,13 @@ final class SystemTestsRequests implements SystemTestsApi.Requests {
 
 
     @Override
-    public void registerTestArrayOfStringsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<List<String>, List<ErnObject>> handler) {
-        new RequestHandlerProcessor<>(REQUEST_TEST_ARRAY_OF_STRINGS, (Class) String.class, (Class) ErnObject.class, handler).execute();
+    public RequestHandlerHandle registerTestArrayOfStringsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<List<String>, List<ErnObject>> handler) {
+        return new RequestHandlerProcessor<>(REQUEST_TEST_ARRAY_OF_STRINGS, (Class) String.class, (Class) ErnObject.class, handler).execute();
     }
 
     @Override
-    public void registerTestMultiArgsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<TestMultiArgsData, String> handler) {
-        new RequestHandlerProcessor<>(REQUEST_TEST_MULTI_ARGS, TestMultiArgsData.class, String.class, handler).execute();
+    public RequestHandlerHandle registerTestMultiArgsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<TestMultiArgsData, String> handler) {
+        return new RequestHandlerProcessor<>(REQUEST_TEST_MULTI_ARGS, TestMultiArgsData.class, String.class, handler).execute();
     }
 
     //------------------------------------------------------------------------------------------------------------------------------------
