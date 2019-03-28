@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -9,86 +9,86 @@
 
 #include <folly/Optional.h>
 #include <folly/dynamic.h>
-#include <react/core/RawProps.h>
-#include <react/graphics/Color.h>
-#include <react/graphics/Geometry.h>
-#include <react/graphics/conversions.h>
+#include <fabric/graphics/Color.h>
+#include <fabric/graphics/Geometry.h>
+#include <fabric/graphics/conversions.h>
 
 namespace facebook {
 namespace react {
 
-template <typename T>
-void fromRawValue(const RawValue &rawValue, T &result) {
-  result = (T)rawValue;
+inline void fromDynamic(const folly::dynamic &value, bool &result) { result = value.getBool(); }
+inline void fromDynamic(const folly::dynamic &value, int &result) {
+  // All numbers from JS are treated as double, and JS cannot represent int64 in practice.
+  // So this always converts the value to int64 instead.
+  result = value.asInt();
 }
+inline void fromDynamic(const folly::dynamic &value, float &result) { result = (float)value.asDouble(); }
+inline void fromDynamic(const folly::dynamic &value, double &result) { result = value.asDouble(); }
+inline void fromDynamic(const folly::dynamic &value, std::string &result) { result = value.getString(); }
 
 template <typename T>
-void fromRawValue(const RawValue &rawValue, std::vector<T> &result) {
-  if (rawValue.hasType<std::vector<RawValue>>()) {
-    auto items = (std::vector<RawValue>)rawValue;
-    auto length = items.size();
-    result.clear();
-    result.reserve(length);
-    for (int i = 0; i < length; i++) {
-      T itemResult;
-      fromRawValue(items.at(i), itemResult);
-      result.push_back(itemResult);
-    }
+inline void fromDynamic(const folly::dynamic &value, std::vector<T> &result) {
+  if (!value.isArray()) {
+    T itemResult;
+    fromDynamic(value, itemResult);
+    result = {itemResult};
     return;
   }
 
-  // The case where `value` is not an array.
   result.clear();
-  result.reserve(1);
   T itemResult;
-  fromRawValue(rawValue, itemResult);
-  result.push_back(itemResult);
+  for (auto &itemValue : value) {
+    fromDynamic(itemValue, itemResult);
+    result.push_back(itemResult);
+  }
 }
 
 template <typename T>
-T convertRawProp(
-    const RawProps &rawProps,
-    const std::string &name,
-    const T &sourceValue,
-    const T &defaultValue = T()) {
-  const auto rawValue = rawProps.at(name);
-
-  if (!rawValue) {
+inline T convertRawProp(
+  const RawProps &rawProps,
+  const std::string &name,
+  const T &sourceValue,
+  const T &defaultValue = T()
+) {
+  const auto &iterator = rawProps.find(name);
+  if (iterator == rawProps.end()) {
     return sourceValue;
   }
 
-  // Special case: `null` always means `the prop was removed, use default
-  // value`.
-  if (!rawValue->hasValue()) {
+  const auto &value = iterator->second;
+
+  // Special case: `null` always means `the prop was removed, use default value`.
+  if (value.isNull()) {
     return defaultValue;
   }
 
   T result;
-  fromRawValue(*rawValue, result);
+  fromDynamic(value, result);
   return result;
 }
 
 template <typename T>
-static folly::Optional<T> convertRawProp(
-    const RawProps &rawProps,
-    const std::string &name,
-    const folly::Optional<T> &sourceValue,
-    const folly::Optional<T> &defaultValue = {}) {
-  const auto rawValue = rawProps.at(name);
-
-  if (!rawValue) {
+inline static folly::Optional<T> convertRawProp(
+  const RawProps &rawProps,
+  const std::string &name,
+  const folly::Optional<T> &sourceValue,
+  const folly::Optional<T> &defaultValue = {}
+) {
+  const auto &iterator = rawProps.find(name);
+  if (iterator == rawProps.end()) {
     return sourceValue;
   }
 
-  // Special case: `null` always means `the prop was removed, use default
-  // value`.
-  if (!rawValue->hasValue()) {
+  const auto &value = iterator->second;
+
+  // Special case: `null` always means `the prop was removed, use default value`.
+  if (value.isNull()) {
     return defaultValue;
   }
 
   T result;
-  fromRawValue(*rawValue, result);
-  return folly::Optional<T>{result};
+  fromDynamic(value, result);
+  return result;
 }
 
 } // namespace react

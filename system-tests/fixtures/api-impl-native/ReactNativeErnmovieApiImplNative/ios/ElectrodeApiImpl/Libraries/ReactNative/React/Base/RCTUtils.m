@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -458,10 +458,8 @@ BOOL RCTRunningInTestEnvironment(void)
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     NSDictionary *environment = [[NSProcessInfo processInfo] environment];
-    isTestEnvironment = objc_lookUpClass("SenTestCase") ||
-    objc_lookUpClass("XCTest") ||
-    objc_lookUpClass("SnapshotTestAppDelegate") ||
-    [environment[@"IS_TESTING"] boolValue];
+    isTestEnvironment = objc_lookUpClass("SenTestCase") || objc_lookUpClass("XCTest") ||
+      [environment[@"IS_TESTING"] boolValue];
   });
   return isTestEnvironment;
 }
@@ -708,11 +706,13 @@ UIImage *__nullable RCTImageFromLocalAssetURL(NSURL *imageURL)
 
   if (!image) {
     // Attempt to load from the file system
-    NSString *filePath = [NSString stringWithUTF8String:[imageURL fileSystemRepresentation]];
-    if (filePath.pathExtension.length == 0) {
-      filePath = [filePath stringByAppendingPathExtension:@"png"];
+    NSData *fileData;
+    if (imageURL.pathExtension.length == 0) {
+      fileData = [NSData dataWithContentsOfURL:[imageURL URLByAppendingPathExtension:@"png"]];
+    } else {
+      fileData = [NSData dataWithContentsOfURL:imageURL];
     }
-    image = [UIImage imageWithContentsOfFile:filePath];
+    image = [UIImage imageWithData:fileData];
   }
 
   if (!image && !bundle) {
@@ -899,15 +899,4 @@ NSURL *__nullable RCTURLByReplacingQueryParam(NSURL *__nullable URL, NSString *p
   }
   components.queryItems = queryItems;
   return components.URL;
-}
-
-RCT_EXTERN NSString *RCTDropReactPrefixes(NSString *s)
-{
-  if ([s hasPrefix:@"RK"]) {
-    return [s substringFromIndex:2];
-  } else if ([s hasPrefix:@"RCT"]) {
-    return [s substringFromIndex:3];
-  }
-
-  return s;
 }

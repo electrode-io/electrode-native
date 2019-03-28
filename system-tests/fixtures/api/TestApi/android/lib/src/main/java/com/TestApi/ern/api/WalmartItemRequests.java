@@ -21,6 +21,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListe
 import com.walmartlabs.electrode.reactnative.bridge.None;
 import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerProcessor;
 import com.walmartlabs.electrode.reactnative.bridge.RequestProcessor;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import com.TestApi.ern.model.Item;
 
@@ -30,13 +31,13 @@ final class WalmartItemRequests implements WalmartItemApi.Requests {
 
 
     @Override
-    public void registerAddItemRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Item, Boolean> handler) {
-        new RequestHandlerProcessor<>(REQUEST_ADD_ITEM, Item.class, Boolean.class, handler).execute();
+    public RequestHandlerHandle registerAddItemRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Item, Boolean> handler) {
+        return new RequestHandlerProcessor<>(REQUEST_ADD_ITEM, Item.class, Boolean.class, handler).execute();
     }
 
     @Override
-    public void registerFindItemsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Integer, List<Item>> handler) {
-        new RequestHandlerProcessor<>(REQUEST_FIND_ITEMS, Integer.class, (Class) Item.class, handler).execute();
+    public RequestHandlerHandle registerFindItemsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Integer, List<Item>> handler) {
+        return new RequestHandlerProcessor<>(REQUEST_FIND_ITEMS, Integer.class, (Class) Item.class, handler).execute();
     }
 
     //------------------------------------------------------------------------------------------------------------------------------------

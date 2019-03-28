@@ -1,4 +1,4 @@
-// Copyright (c) Facebook, Inc. and its affiliates.
+// Copyright (c) 2004-present, Facebook, Inc.
 
 // This source code is licensed under the MIT license found in the
 // LICENSE file in the root directory of this source tree.
@@ -43,6 +43,7 @@ void Instance::initializeBridge(
     std::shared_ptr<ModuleRegistry> moduleRegistry) {
   callback_ = std::move(callback);
   moduleRegistry_ = std::move(moduleRegistry);
+
   jsQueue->runOnQueueSync([this, &jsef, jsQueue]() mutable {
     nativeToJsBridge_ = folly::make_unique<NativeToJsBridge>(
         jsef.get(), moduleRegistry_, jsQueue, callback_);
@@ -147,10 +148,6 @@ void *Instance::getJavaScriptContext() {
 
 bool Instance::isInspectable() {
   return nativeToJsBridge_ ? nativeToJsBridge_->isInspectable() : false;
-}
-  
-bool Instance::isBatchActive() {
-  return nativeToJsBridge_ ? nativeToJsBridge_->isBatchActive() : false;
 }
 
 void Instance::callJSFunction(std::string &&module, std::string &&method,

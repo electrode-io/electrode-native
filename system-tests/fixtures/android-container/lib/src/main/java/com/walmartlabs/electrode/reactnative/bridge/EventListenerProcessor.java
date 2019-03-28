@@ -30,7 +30,7 @@ import java.util.UUID;
  * @param <T> Event payload type: Accepted types are Primitive wrappers and {@link Bridgeable}
  */
 
-public class EventListenerProcessor<T> implements Processor {
+public class EventListenerProcessor<T> {
     private static final String TAG = EventListenerProcessor.class.getSimpleName();
 
     private final String eventName;
@@ -44,7 +44,6 @@ public class EventListenerProcessor<T> implements Processor {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public UUID execute() {
         ElectrodeBridgeEventListener<ElectrodeBridgeEvent> intermediateEventListener = new ElectrodeBridgeEventListener<ElectrodeBridgeEvent>() {
             @Override

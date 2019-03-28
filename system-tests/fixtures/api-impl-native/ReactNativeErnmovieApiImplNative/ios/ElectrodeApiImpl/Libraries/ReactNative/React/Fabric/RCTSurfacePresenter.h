@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -9,10 +9,8 @@
 #import <memory>
 
 #import <React/RCTBridge.h>
-#import <React/RCTComponentViewFactory.h>
-#import <react/uimanager/ContextContainer.h>
 #import <React/RCTPrimitives.h>
-#import <react/config/ReactNativeConfig.h>
+#import <fabric/uimanager/FabricUIManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,29 +25,18 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RCTSurfacePresenter : NSObject
 
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-                        config:(std::shared_ptr<const facebook::react::ReactNativeConfig>)config;
-
-@property (nonatomic, readonly) RCTComponentViewFactory *componentViewFactory;
-@property (nonatomic, readonly) facebook::react::SharedContextContainer contextContainer;
+- (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @end
 
 @interface RCTSurfacePresenter (Surface)
 
 /**
- * Surface uses these methods to register itself in the Presenter.
+ * Surface uses those methods to register itself in the Presenter.
+ * Registering initiates running, rendering and mounting processes.
  */
 - (void)registerSurface:(RCTFabricSurface *)surface;
-/**
- * Starting initiates running, rendering and mounting processes.
- * Should be called after registerSurface and any other surface-specific setup is done
- */
-- (void)startSurface:(RCTFabricSurface *)surface;
 - (void)unregisterSurface:(RCTFabricSurface *)surface;
-- (void)setProps:(NSDictionary *)props
-         surface:(RCTFabricSurface *)surface;
-
 - (nullable RCTFabricSurface *)surfaceForRootTag:(ReactTag)rootTag;
 
 /**
@@ -71,15 +58,21 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RCTSurfacePresenter (Deprecated)
 
 /**
+ * We need to expose `uiManager` for registration
+ * purposes. Eventually, we will move this down to C++ side.
+ */
+- (std::shared_ptr<facebook::react::FabricUIManager>)uiManager_DO_NOT_USE;
+
+/**
  * Returns a underlying bridge.
  */
 - (RCTBridge *)bridge_DO_NOT_USE;
 
 @end
 
-@interface RCTBridge (Deprecated)
+@interface RCTBridge (RCTSurfacePresenter)
 
-@property (nonatomic) RCTSurfacePresenter *surfacePresenter;
+- (RCTSurfacePresenter *)surfacePresenter;
 
 @end
 

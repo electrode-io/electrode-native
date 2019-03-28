@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -32,21 +32,20 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
-- (void)presentViewController:(UIViewController *)alertController
-       onParentViewController:(UIViewController *)parentViewController
-                anchorViewTag:(NSNumber *)anchorViewTag
+/*
+ * The `anchor` option takes a view to set as the anchor for the share
+ * popup to point to, on iPads running iOS 8. If it is not passed, it
+ * defaults to centering the share popup on screen without any arrows.
+ */
+- (CGRect)sourceRectInView:(UIView *)sourceView
+             anchorViewTag:(NSNumber *)anchorViewTag
 {
-  alertController.modalPresentationStyle = UIModalPresentationPopover;
-  UIView *sourceView = parentViewController.view;
-
   if (anchorViewTag) {
-    sourceView = [self.bridge.uiManager viewForReactTag:anchorViewTag];
+    UIView *anchorView = [self.bridge.uiManager viewForReactTag:anchorViewTag];
+    return [anchorView convertRect:anchorView.bounds toView:sourceView];
   } else {
-    alertController.popoverPresentationController.permittedArrowDirections = 0;
+    return (CGRect){sourceView.center, {1, 1}};
   }
-  alertController.popoverPresentationController.sourceView = sourceView;
-  alertController.popoverPresentationController.sourceRect = sourceView.bounds;
-  [parentViewController presentViewController:alertController animated:YES completion:nil];
 }
 
 RCT_EXPORT_METHOD(showActionSheetWithOptions:(NSDictionary *)options
@@ -64,14 +63,8 @@ RCT_EXPORT_METHOD(showActionSheetWithOptions:(NSDictionary *)options
   NSString *title = [RCTConvert NSString:options[@"title"]];
   NSString *message = [RCTConvert NSString:options[@"message"]];
   NSArray<NSString *> *buttons = [RCTConvert NSStringArray:options[@"options"]];
+  NSInteger destructiveButtonIndex = options[@"destructiveButtonIndex"] ? [RCTConvert NSInteger:options[@"destructiveButtonIndex"]] : -1;
   NSInteger cancelButtonIndex = options[@"cancelButtonIndex"] ? [RCTConvert NSInteger:options[@"cancelButtonIndex"]] : -1;
-  NSArray<NSNumber *> *destructiveButtonIndices;
-  if ([options[@"destructiveButtonIndex"] isKindOfClass:[NSArray class]]) {
-    destructiveButtonIndices = [RCTConvert NSArray:options[@"destructiveButtonIndex"]];
-  } else {
-    NSNumber *destructiveButtonIndex = options[@"destructiveButtonIndex"] ? [RCTConvert NSNumber:options[@"destructiveButtonIndex"]] : @-1;
-    destructiveButtonIndices = @[destructiveButtonIndex];
-  }
 
   UIViewController *controller = RCTPresentedViewController();
 
@@ -86,7 +79,9 @@ RCT_EXPORT_METHOD(showActionSheetWithOptions:(NSDictionary *)options
    * defaults to centering the share popup on screen without any arrows.
    */
   NSNumber *anchorViewTag = [RCTConvert NSNumber:options[@"anchor"]];
-  
+  UIView *sourceView = controller.view;
+  CGRect sourceRect = [self sourceRectInView:sourceView anchorViewTag:anchorViewTag];
+
   UIAlertController *alertController =
   [UIAlertController alertControllerWithTitle:title
                                       message:message
@@ -95,7 +90,7 @@ RCT_EXPORT_METHOD(showActionSheetWithOptions:(NSDictionary *)options
   NSInteger index = 0;
   for (NSString *option in buttons) {
     UIAlertActionStyle style = UIAlertActionStyleDefault;
-    if ([destructiveButtonIndices containsObject:@(index)]) {
+    if (index == destructiveButtonIndex) {
       style = UIAlertActionStyleDestructive;
     } else if (index == cancelButtonIndex) {
       style = UIAlertActionStyleCancel;
@@ -111,8 +106,15 @@ RCT_EXPORT_METHOD(showActionSheetWithOptions:(NSDictionary *)options
     index++;
   }
 
+  alertController.modalPresentationStyle = UIModalPresentationPopover;
+  alertController.popoverPresentationController.sourceView = sourceView;
+  alertController.popoverPresentationController.sourceRect = sourceRect;
+  if (!anchorViewTag) {
+    alertController.popoverPresentationController.permittedArrowDirections = 0;
+  }
+  [controller presentViewController:alertController animated:YES completion:nil];
+
   alertController.view.tintColor = [RCTConvert UIColor:options[@"tintColor"]];
-  [self presentViewController:alertController onParentViewController:controller anchorViewTag:anchorViewTag];
 }
 
 RCT_EXPORT_METHOD(showShareActionSheetWithOptions:(NSDictionary *)options
@@ -171,10 +173,17 @@ RCT_EXPORT_METHOD(showShareActionSheetWithOptions:(NSDictionary *)options
     }
   };
 
+  shareController.modalPresentationStyle = UIModalPresentationPopover;
   NSNumber *anchorViewTag = [RCTConvert NSNumber:options[@"anchor"]];
+  if (!anchorViewTag) {
+    shareController.popoverPresentationController.permittedArrowDirections = 0;
+  }
+  shareController.popoverPresentationController.sourceView = controller.view;
+  shareController.popoverPresentationController.sourceRect = [self sourceRectInView:controller.view anchorViewTag:anchorViewTag];
+
+  [controller presentViewController:shareController animated:YES completion:nil];
+
   shareController.view.tintColor = [RCTConvert UIColor:options[@"tintColor"]];
-  
-  [self presentViewController:shareController onParentViewController:controller anchorViewTag:anchorViewTag];
 }
 
 @end

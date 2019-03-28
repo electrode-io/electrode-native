@@ -20,6 +20,7 @@ import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
 import com.walmartlabs.electrode.reactnative.bridge.None;
+import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import java.util.UUID;
 
@@ -63,9 +64,9 @@ public final class WalmartItemApi {
         String REQUEST_FIND_ITEMS = "com.TestApi.ern.api.request.findItems";
 
 
-        void registerAddItemRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Item, Boolean> handler);
+        RequestHandlerHandle registerAddItemRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Item, Boolean> handler);
 
-        void registerFindItemsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Integer, List<Item>> handler);
+        RequestHandlerHandle registerFindItemsRequestHandler(@NonNull final ElectrodeBridgeRequestHandler<Integer, List<Item>> handler);
 
         void addItem(Item item, @NonNull final ElectrodeBridgeResponseListener<Boolean> responseListener);
 

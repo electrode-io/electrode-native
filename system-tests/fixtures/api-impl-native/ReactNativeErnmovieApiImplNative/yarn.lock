@@ -4,21 +4,21 @@
 
 events@^1.1.1:
   version "1.1.1"
-  resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
+  resolved "http://npme.walmart.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
 
 react-native-electrode-bridge@1.5.x:
-  version "1.5.16"
-  resolved "https://registry.yarnpkg.com/react-native-electrode-bridge/-/react-native-electrode-bridge-1.5.16.tgz#49fed03cf08c0fe95d11a44315901d81b0309c08"
+  version "1.5.17"
+  resolved "http://npme.walmart.com/react-native-electrode-bridge/-/react-native-electrode-bridge-1.5.17.tgz#7aa9ad920d8f704482dd63f12c8ac55570a1d2fd"
   dependencies:
     events "^1.1.1"
     uuid "^3.0.0"
 
 react-native-ernmovie-api@0.0.11:
   version "0.0.11"
-  resolved "https://registry.yarnpkg.com/react-native-ernmovie-api/-/react-native-ernmovie-api-0.0.11.tgz#1715b1bd6e6bb976193b40d33038640be00430e9"
+  resolved "http://npme.walmart.com/react-native-ernmovie-api/-/react-native-ernmovie-api-0.0.11.tgz#1715b1bd6e6bb976193b40d33038640be00430e9"
   dependencies:
     react-native-electrode-bridge "1.5.x"
 
 uuid@^3.0.0:
   version "3.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
+  resolved "http://npme.walmart.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"

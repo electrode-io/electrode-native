@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,10 +7,12 @@
 
 #pragma once
 
-#include <react/imagemanager/ImageResponse.h>
-#include <react/imagemanager/ImageResponseObserver.h>
-#include <react/imagemanager/ImageResponseObserverCoordinator.h>
-#include <react/imagemanager/primitives.h>
+#include <mutex>
+
+#include <fabric/imagemanager/ImageResponse.h>
+#include <fabric/imagemanager/primitives.h>
+#include <folly/futures/Future.h>
+#include <folly/futures/FutureSplitter.h>
 
 namespace facebook {
 namespace react {
@@ -20,10 +22,13 @@ namespace react {
  * The separate object must be constructed for every single separate
  * image request. The object cannot be copied because it would make managing of
  * event listeners hard and inefficient; the object can be moved though.
+ * To subscribe for notifications use `getResponseFuture()` method.
  * Destroy to cancel the underlying request.
  */
 class ImageRequest final {
- public:
+
+public:
+
   /*
    * The exception which is thrown when `ImageRequest` is being deallocated
    * if the future is not ready yet.
@@ -31,9 +36,10 @@ class ImageRequest final {
   class ImageNoLongerNeededException;
 
   /*
-   * The default constructor
+   * `ImageRequest` is constructed with `ImageSource` and
+   * `ImageResponse` future which must be moved in inside the object.
    */
-  ImageRequest(const ImageSource &imageSource);
+  ImageRequest(const ImageSource &imageSource, folly::Future<ImageResponse> &&responseFuture);
 
   /*
    * The move constructor.
@@ -43,40 +49,38 @@ class ImageRequest final {
   /*
    * `ImageRequest` does not support copying by design.
    */
-  ImageRequest(const ImageRequest &other) = delete;
+  ImageRequest(const ImageRequest &) = delete;
 
   ~ImageRequest();
 
-  /**
-   * Set cancelation function.
+  /*
+   * Creates and returns a *new* future object with promised `ImageResponse`
+   * result. Multiple consumers can call this method many times to create
+   * their own subscriptions to promised value.
    */
-  void setCancelationFunction(std::function<void(void)> cancelationFunction);
+  folly::Future<ImageResponse> getResponseFuture() const;
+
+private:
 
   /*
-   * Get observer coordinator.
+   * Mutext to protect an access to the future.
    */
-  const ImageResponseObserverCoordinator *getObserverCoordinator() const;
+  mutable std::mutex mutex_;
 
- private:
   /*
    * Image source assosiated with the request.
    */
   ImageSource imageSource_;
 
   /*
-   * Event coordinator associated with the reqest.
+   * Future splitter powers factory-like `getResponseFuture()` method.
    */
-  std::shared_ptr<const ImageResponseObserverCoordinator> coordinator_{};
-
-  /*
-   * Function we can call to cancel image request (see destructor).
-   */
-  std::function<void(void)> cancelRequest_;
+  mutable folly::FutureSplitter<ImageResponse> responseFutureSplitter_;
 
   /*
    * Indicates that the object was moved and hence cannot be used anymore.
    */
-  bool moved_{false};
+  bool moved_ {false};
 };
 
 } // namespace react

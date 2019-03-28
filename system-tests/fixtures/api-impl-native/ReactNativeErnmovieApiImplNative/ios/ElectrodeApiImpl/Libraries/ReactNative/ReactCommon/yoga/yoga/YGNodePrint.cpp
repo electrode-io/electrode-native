@@ -1,9 +1,10 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
+/*
+ * Copyright (c) 2017-present, Facebook, Inc.
  *
- * This source code is licensed under the MIT license found in the LICENSE
- * file in the root directory of this source tree.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 #include "YGNodePrint.h"
 #include <stdarg.h>
 #include "YGEnums.h"
@@ -14,18 +15,18 @@ namespace facebook {
 namespace yoga {
 typedef std::string string;
 
-static void indent(string& base, uint32_t level) {
+static void indent(string* base, uint32_t level) {
   for (uint32_t i = 0; i < level; ++i) {
-    base.append("  ");
+    base->append("  ");
   }
 }
 
-static bool areFourValuesEqual(const YGStyle::Edges& four) {
+static bool areFourValuesEqual(const std::array<YGValue, YGEdgeCount>& four) {
   return YGValueEqual(four[0], four[1]) && YGValueEqual(four[0], four[2]) &&
       YGValueEqual(four[0], four[3]);
 }
 
-static void appendFormatedString(string& str, const char* fmt, ...) {
+static void appendFormatedString(string* str, const char* fmt, ...) {
   va_list args;
   va_start(args, fmt);
   va_list argsCopy;
@@ -35,25 +36,25 @@ static void appendFormatedString(string& str, const char* fmt, ...) {
   vsnprintf(buf.data(), buf.size(), fmt, argsCopy);
   va_end(argsCopy);
   string result = string(buf.begin(), buf.end() - 1);
-  str.append(result);
+  str->append(result);
 }
 
 static void appendFloatOptionalIfDefined(
-    string& base,
+    string* base,
     const string key,
     const YGFloatOptional num) {
   if (!num.isUndefined()) {
-    appendFormatedString(base, "%s: %g; ", key.c_str(), num.unwrap());
+    appendFormatedString(base, "%s: %g; ", key.c_str(), num.getValue());
   }
 }
 
 static void appendNumberIfNotUndefined(
-    string& base,
+    string* base,
     const string key,
     const YGValue number) {
   if (number.unit != YGUnitUndefined) {
     if (number.unit == YGUnitAuto) {
-      base.append(key + ": auto; ");
+      base->append(key + ": auto; ");
     } else {
       string unit = number.unit == YGUnitPoint ? "px" : "%%";
       appendFormatedString(
@@ -62,30 +63,27 @@ static void appendNumberIfNotUndefined(
   }
 }
 
-static void appendNumberIfNotAuto(
-    string& base,
-    const string& key,
-    const YGValue number) {
+static void
+appendNumberIfNotAuto(string* base, const string& key, const YGValue number) {
   if (number.unit != YGUnitAuto) {
     appendNumberIfNotUndefined(base, key, number);
   }
 }
 
-static void appendNumberIfNotZero(
-    string& base,
-    const string& str,
-    const YGValue number) {
+static void
+appendNumberIfNotZero(string* base, const string& str, const YGValue number) {
+
   if (number.unit == YGUnitAuto) {
-    base.append(str + ": auto; ");
+    base->append(str + ": auto; ");
   } else if (!YGFloatsEqual(number.value, 0)) {
     appendNumberIfNotUndefined(base, str, number);
   }
 }
 
 static void appendEdges(
-    string& base,
+    string* base,
     const string& key,
-    const YGStyle::Edges& edges) {
+    const std::array<YGValue, YGEdgeCount>& edges) {
   if (areFourValuesEqual(edges)) {
     appendNumberIfNotZero(base, key, edges[YGEdgeLeft]);
   } else {
@@ -97,18 +95,16 @@ static void appendEdges(
 }
 
 static void appendEdgeIfNotUndefined(
-    string& base,
+    string* base,
     const string& str,
-    const YGStyle::Edges& edges,
+    const std::array<YGValue, YGEdgeCount>& edges,
     const YGEdge edge) {
   appendNumberIfNotUndefined(
-      base,
-      str,
-      YGComputedEdgeValue(edges, edge, detail::CompactValue::ofUndefined()));
+      base, str, *YGComputedEdgeValue(edges, edge, &YGValueUndefined));
 }
 
 void YGNodeToString(
-    std::string& str,
+    std::string* str,
     YGNodeRef node,
     YGPrintOptions options,
     uint32_t level) {

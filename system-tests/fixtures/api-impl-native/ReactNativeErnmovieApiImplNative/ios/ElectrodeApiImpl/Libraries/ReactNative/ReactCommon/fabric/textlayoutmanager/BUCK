@@ -1,4 +1,4 @@
-load("@fbsource//tools/build_defs/apple:flag_defs.bzl", "get_debug_preprocessor_flags")
+load("//configurations/buck/apple:flag_defs.bzl", "OBJC_ARC_PREPROCESSOR_FLAGS", "get_application_ios_flags", "get_debug_preprocessor_flags")
 load(
     "//tools/build_defs/oss:rn_defs.bzl",
     "ANDROID",
@@ -6,7 +6,6 @@ load(
     "fb_xplat_cxx_test",
     "get_apple_compiler_flags",
     "get_apple_inspector_flags",
-    "react_native_target",
     "react_native_xplat_target",
     "rn_xplat_cxx_library",
     "subdir_glob",
@@ -32,7 +31,7 @@ rn_xplat_cxx_library(
         [
             ("", "*.h"),
         ],
-        prefix = "react/textlayoutmanager",
+        prefix = "fabric/textlayoutmanager",
     ),
     compiler_flags = [
         "-fexceptions",
@@ -40,15 +39,12 @@ rn_xplat_cxx_library(
         "-std=c++14",
         "-Wall",
     ],
-    fbandroid_deps = [
-        react_native_target("jni/react/jni:jni"),
-    ],
     fbandroid_exported_headers = subdir_glob(
         [
             ("", "*.h"),
             ("platform/android", "*.h"),
         ],
-        prefix = "react/textlayoutmanager",
+        prefix = "fabric/textlayoutmanager",
     ),
     fbandroid_headers = subdir_glob(
         [
@@ -63,6 +59,9 @@ rn_xplat_cxx_library(
     ),
     fbobjc_compiler_flags = APPLE_COMPILER_FLAGS,
     fbobjc_preprocessor_flags = get_debug_preprocessor_flags() + get_apple_inspector_flags(),
+    fbobjc_tests = [
+        ":tests",
+    ],
     force_static = True,
     ios_deps = [
     ],
@@ -70,7 +69,7 @@ rn_xplat_cxx_library(
         [
             ("platform/ios", "*.h"),
         ],
-        prefix = "react/textlayoutmanager",
+        prefix = "fabric/textlayoutmanager",
     ),
     ios_frameworks = [
         "$SDKROOT/System/Library/Frameworks/CoreGraphics.framework",
@@ -95,7 +94,7 @@ rn_xplat_cxx_library(
         "-DLOG_TAG=\"ReactNative\"",
         "-DWITH_FBSYSTRACE=1",
     ],
-    tests = [":tests"],
+    tests = [],
     visibility = ["PUBLIC"],
     deps = [
         "xplat//fbsystrace:fbsystrace",
@@ -108,7 +107,6 @@ rn_xplat_cxx_library(
         react_native_xplat_target("fabric/core:core"),
         react_native_xplat_target("fabric/debug:debug"),
         react_native_xplat_target("fabric/graphics:graphics"),
-        react_native_xplat_target("fabric/uimanager:uimanager"),
     ],
 )
 
@@ -123,7 +121,7 @@ fb_xplat_cxx_test(
         "-Wall",
     ],
     contacts = ["oncall+react_native@xmail.facebook.com"],
-    platforms = (ANDROID, APPLE),
+    platforms = APPLE,
     deps = [
         "xplat//folly:molly",
         "xplat//third-party/gmock:gtest",

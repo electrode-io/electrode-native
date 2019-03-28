@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -69,22 +69,22 @@ NSString *const RCTTVRemoteEventSwipeDown = @"swipeDown";
                                          name:RCTTVRemoteEventSelect];
 
     // Up
-    [self addTapGestureRecognizerWithSelector:@selector(tappedUp:)
+    [self addTapGestureRecognizerWithSelector:@selector(swipedUp:)
                                     pressType:UIPressTypeUpArrow
                                          name:RCTTVRemoteEventUp];
 
     // Down
-    [self addTapGestureRecognizerWithSelector:@selector(tappedDown:)
+    [self addTapGestureRecognizerWithSelector:@selector(swipedDown:)
                                     pressType:UIPressTypeDownArrow
                                          name:RCTTVRemoteEventDown];
 
     // Left
-    [self addTapGestureRecognizerWithSelector:@selector(tappedLeft:)
+    [self addTapGestureRecognizerWithSelector:@selector(swipedLeft:)
                                     pressType:UIPressTypeLeftArrow
                                          name:RCTTVRemoteEventLeft];
 
     // Right
-    [self addTapGestureRecognizerWithSelector:@selector(tappedRight:)
+    [self addTapGestureRecognizerWithSelector:@selector(swipedRight:)
                                     pressType:UIPressTypeRightArrow
                                          name:RCTTVRemoteEventRight];
 
@@ -158,40 +158,20 @@ NSString *const RCTTVRemoteEventSwipeDown = @"swipeDown";
 
 - (void)swipedUp:(UIGestureRecognizer *)r
 {
-  [self sendAppleTVEvent:RCTTVRemoteEventSwipeUp toView:r.view];
+  [self sendAppleTVEvent:RCTTVRemoteEventUp toView:r.view];
 }
 
 - (void)swipedDown:(UIGestureRecognizer *)r
 {
-  [self sendAppleTVEvent:RCTTVRemoteEventSwipeDown toView:r.view];
+  [self sendAppleTVEvent:RCTTVRemoteEventDown toView:r.view];
 }
 
 - (void)swipedLeft:(UIGestureRecognizer *)r
 {
-  [self sendAppleTVEvent:RCTTVRemoteEventSwipeLeft toView:r.view];
-}
-
-- (void)swipedRight:(UIGestureRecognizer *)r
-{
-  [self sendAppleTVEvent:RCTTVRemoteEventSwipeRight toView:r.view];
-}
-
-- (void)tappedUp:(UIGestureRecognizer *)r
-{
-  [self sendAppleTVEvent:RCTTVRemoteEventUp toView:r.view];
-}
-
-- (void)tappedDown:(UIGestureRecognizer *)r
-{
-  [self sendAppleTVEvent:RCTTVRemoteEventDown toView:r.view];
-}
-
-- (void)tappedLeft:(UIGestureRecognizer *)r
-{
   [self sendAppleTVEvent:RCTTVRemoteEventLeft toView:r.view];
 }
 
-- (void)tappedRight:(UIGestureRecognizer *)r
+- (void)swipedRight:(UIGestureRecognizer *)r
 {
   [self sendAppleTVEvent:RCTTVRemoteEventRight toView:r.view];
 }

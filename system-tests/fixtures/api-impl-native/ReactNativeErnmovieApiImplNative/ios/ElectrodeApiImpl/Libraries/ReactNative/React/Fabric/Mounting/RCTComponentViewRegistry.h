@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,9 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import <React/RCTComponentViewFactory.h>
 #import <React/RCTComponentViewProtocol.h>
-#import <react/core/ReactPrimitives.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,24 +17,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RCTComponentViewRegistry : NSObject
 
-@property (nonatomic, strong, readonly) RCTComponentViewFactory *componentViewFactory;
-
 /**
  * Returns a native view instance from the recycle pool (or create)
- * for given `componentHandle` and with given `tag`.
+ * for given `componentName` and with given `tag`.
  * #RefuseSingleUse
  */
-- (UIView<RCTComponentViewProtocol> *)dequeueComponentViewWithComponentHandle:
-                                          (facebook::react::ComponentHandle)componentHandle
-                                                                          tag:(ReactTag)tag;
+- (UIView<RCTComponentViewProtocol> *)dequeueComponentViewWithName:(NSString *)componentName
+                                                               tag:(ReactTag)tag;
 
 /**
  * Puts a given native component view to the recycle pool.
  * #RefuseSingleUse
  */
-- (void)enqueueComponentViewWithComponentHandle:(facebook::react::ComponentHandle)componentHandle
-                                            tag:(ReactTag)tag
-                                  componentView:(UIView<RCTComponentViewProtocol> *)componentView;
+- (void)enqueueComponentViewWithName:(NSString *)componentName
+                                 tag:(ReactTag)tag
+                       componentView:(UIView<RCTComponentViewProtocol> *)componentView;
 
 /**
  * Returns a native component view by given `tag`.
@@ -51,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Creates a component view with a given type and puts it to the recycle pool.
  */
-- (void)optimisticallyCreateComponentViewWithComponentHandle:(facebook::react::ComponentHandle)componentHandle;
+- (void)preliminaryCreateComponentViewWithName:(NSString *)componentName;
 
 @end
 

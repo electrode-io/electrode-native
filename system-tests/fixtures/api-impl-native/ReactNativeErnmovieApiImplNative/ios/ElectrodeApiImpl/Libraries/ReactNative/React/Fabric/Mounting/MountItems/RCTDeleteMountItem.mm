@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -9,18 +9,16 @@
 
 #import "RCTComponentViewRegistry.h"
 
-using namespace facebook::react;
-
 @implementation RCTDeleteMountItem {
-  ComponentHandle _componentHandle;
+  NSString *_componentName;
   ReactTag _tag;
 }
 
-- (instancetype)initWithComponentHandle:(facebook::react::ComponentHandle)componentHandle
-                                    tag:(ReactTag)tag
+- (instancetype)initWithComponentName:(NSString *)componentName
+                                  tag:(ReactTag)tag
 {
   if (self = [super init]) {
-    _componentHandle = componentHandle;
+    _componentName = componentName;
     _tag = tag;
   }
 
@@ -35,7 +33,7 @@ using namespace facebook::react;
     return;
   }
 
-  [registry enqueueComponentViewWithComponentHandle:_componentHandle tag:_tag componentView:componentView];
+  [registry enqueueComponentViewWithName:_componentName tag:_tag componentView:componentView];
 }
 
 @end
