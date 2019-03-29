@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -588,8 +588,19 @@ static inline void RCTApplyTransformationAccordingLayoutDirection(UIView *view, 
 - (void)scrollToOffset:(CGPoint)offset animated:(BOOL)animated
 {
   if (!CGPointEqualToPoint(_scrollView.contentOffset, offset)) {
+    CGRect maxRect = CGRectMake(fmin(-_scrollView.contentInset.left, 0),
+                                fmin(-_scrollView.contentInset.top, 0),
+                                fmax(_scrollView.contentSize.width - _scrollView.bounds.size.width + _scrollView.contentInset.right + fmax(_scrollView.contentInset.left, 0), 0.01),
+                                fmax(_scrollView.contentSize.height - _scrollView.bounds.size.height + _scrollView.contentInset.bottom + fmax(_scrollView.contentInset.top, 0), 0.01)); // Make width and height greater than 0
     // Ensure at least one scroll event will fire
     _allowNextScrollNoMatterWhat = YES;
+    if (!CGRectContainsPoint(maxRect, offset)) {
+      CGFloat x = fmax(offset.x, CGRectGetMinX(maxRect));
+      x = fmin(x, CGRectGetMaxX(maxRect));
+      CGFloat y = fmax(offset.y, CGRectGetMinY(maxRect));
+      y = fmin(y, CGRectGetMaxY(maxRect));
+      offset = CGPointMake(x, y);
+    }
     [_scrollView setContentOffset:offset animated:animated];
   }
 }
@@ -651,6 +662,7 @@ for (NSObject<UIScrollViewDelegate> *scrollViewListener in _scrollListeners) { \
 
 RCT_SCROLL_EVENT_HANDLER(scrollViewWillBeginDecelerating, onMomentumScrollBegin)
 RCT_SCROLL_EVENT_HANDLER(scrollViewDidZoom, onScroll)
+RCT_SCROLL_EVENT_HANDLER(scrollViewDidScrollToTop, onScrollToTop)
 
 - (void)addScrollListener:(NSObject<UIScrollViewDelegate> *)scrollListener
 {
@@ -739,6 +751,8 @@ RCT_SCROLL_EVENT_HANDLER(scrollViewDidZoom, onScroll)
 
     // Find which axis to snap
     BOOL isHorizontal = [self isHorizontal:scrollView];
+    CGFloat velocityAlongAxis = isHorizontal ? velocity.x : velocity.y;
+    CGFloat offsetAlongAxis = isHorizontal ? _scrollView.contentOffset.x : _scrollView.contentOffset.y;
 
     // Calculate maximum content offset
     CGSize viewportSize = [self _calculateViewportSize];
@@ -772,9 +786,26 @@ RCT_SCROLL_EVENT_HANDLER(scrollViewDidZoom, onScroll)
       ? smallerOffset
       : largerOffset;
 
-    // Chose the correct snap offset based on velocity
-    CGFloat velocityAlongAxis = isHorizontal ? velocity.x : velocity.y;
-    if (velocityAlongAxis > 0.0) {
+    CGFloat firstOffset = [[self.snapToOffsets firstObject] floatValue];
+    CGFloat lastOffset = [[self.snapToOffsets lastObject] floatValue];
+
+    // if scrolling after the last snap offset and snapping to the
+    // end of the list is disabled, then we allow free scrolling
+    if (!self.snapToEnd && targetOffset >= lastOffset) {
+      if (offsetAlongAxis >= lastOffset) {
+        // free scrolling
+      } else {
+        // snap to end
+        targetOffset = lastOffset;
+      }
+    } else if (!self.snapToStart && targetOffset <= firstOffset) {
+      if (offsetAlongAxis <= firstOffset) {
+        // free scrolling
+      } else {
+        // snap to beginning
+        targetOffset = firstOffset;
+      }
+    } else if (velocityAlongAxis > 0.0) {
       targetOffset = largerOffset;
     } else if (velocityAlongAxis < 0.0) {
       targetOffset = smallerOffset;
