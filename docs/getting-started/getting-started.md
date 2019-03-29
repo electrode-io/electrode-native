@@ -372,7 +372,7 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
 * To add this MiniApp to the local container used by the native application, use a variation of the `ern run` command that allows you to include extra MiniApps to the local Container. Let's do that magic now.  
 
 ```bash
-$ ern run-android --miniapps moviedetailsminiapp@0.0.25 --mainMiniAppName MovieListMiniApp
+$ ern run-android --miniapps moviedetailsminiapp@0.0.27 --mainMiniAppName MovieListMiniApp
 ```  
 
 Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
@@ -727,7 +727,7 @@ We've developed and published this MiniApp to reuse it in this tutorial. You may
  
 ```bash
 $ cd MovieListMiniApp //make sure you are in root dir of MovieListMiniApp
-$ ern run-ios --miniapps moviedetailsminiapp@0.0.25 --mainMiniAppName MovieListMiniApp
+$ ern run-ios --miniapps moviedetailsminiapp@0.0.27 --mainMiniAppName MovieListMiniApp
 ```  
 
 Once the app is launched click on any movie and you will be taken to the details page of MovieDetailsMiniApp.
