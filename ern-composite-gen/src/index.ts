@@ -1,0 +1,1 @@
+export { generateComposite } from './generateComposite'

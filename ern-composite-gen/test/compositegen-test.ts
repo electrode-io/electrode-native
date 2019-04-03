@@ -3,13 +3,12 @@ import { doesThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import path from 'path'
 import fs from 'fs'
-import { generateMiniAppsComposite } from '../src/generateMiniAppsComposite'
+import { generateComposite } from '../src/generateComposite'
 import {
   getMiniAppsDeltas,
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas,
 } from '../src/miniAppsDeltasUtils'
-import { beforeTest, afterTest } from 'ern-util-dev'
 import * as ernUtil from 'ern-core'
 const { PackagePath, YarnCli, shell } = ernUtil
 const sandbox = sinon.createSandbox()
@@ -242,13 +241,13 @@ describe('ern-container-gen utils.js', () => {
   }
 
   // ==========================================================
-  // generateMiniAppsComposite [with yarn lock]
+  // generateComposite [with yarn lock]
   // ==========================================================
-  describe('generateMiniAppsComposite [with yarn lock]', () => {
+  describe('generateComposite [with yarn lock]', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [1]', async () => {
       const miniApps = [PackagePath.fromString('file:/Code/MiniApp')]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -261,7 +260,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('file:/Code/MiniApp'),
       ]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -273,7 +272,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('git://github.com:user/MiniAppRepo'),
       ]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -286,7 +285,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('git://github.com:user/MiniAppRepo'),
       ]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -296,7 +295,7 @@ describe('ern-container-gen utils.js', () => {
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne')]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -309,7 +308,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@1.0.0'),
       ]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -322,7 +321,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@1.0.0'),
       ]
       assert(
-        await doesThrow(generateMiniAppsComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
           pathToYarnLock: path.join(tmpOutDir, 'yarn.lock'),
         }),
         'No exception was thrown !'
@@ -339,7 +338,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
         PackagePath.fromString('MiniAppFour@1.0.0'), // new
       ]
-      await generateMiniAppsComposite(miniApps, tmpOutDir, {
+      await generateComposite(miniApps, tmpOutDir, {
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(yarnCliStub.install.calledOnce)
@@ -355,7 +354,7 @@ describe('ern-container-gen utils.js', () => {
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
       )
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      await generateMiniAppsComposite(miniApps, tmpOutDir, {
+      await generateComposite(miniApps, tmpOutDir, {
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
@@ -367,7 +366,7 @@ describe('ern-container-gen utils.js', () => {
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
       )
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      await generateMiniAppsComposite(miniApps, tmpOutDir, {
+      await generateComposite(miniApps, tmpOutDir, {
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.ios.js')))
@@ -375,7 +374,7 @@ describe('ern-container-gen utils.js', () => {
   })
 
   // ==========================================================
-  // generateMiniAppsComposite [without yarn lock]
+  // generateComposite [without yarn lock]
   // ==========================================================
   const fakeYarnInit = (rootDir, rnVersion) => {
     fs.writeFileSync(
@@ -385,7 +384,7 @@ describe('ern-container-gen utils.js', () => {
     createCompositeNodeModulesReactNativePackageJson(rootDir, rnVersion)
   }
 
-  describe('generateMiniAppsComposite [without yarn lock]', () => {
+  describe('generateComposite [without yarn lock]', () => {
     // For the following tests, because in the case of no yarn lock provided
     // the package.json is created when running first yarn add, and we are using
     // a yarnAdd stub that is not going to run real yarn add, we need to create the
@@ -397,7 +396,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppFour@1.0.0'), // new
       ]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      await generateComposite(miniApps, tmpOutDir)
       assert(yarnCliStub.add.calledThrice)
     })
 
@@ -405,7 +404,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      await generateComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
 
@@ -413,7 +412,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      await generateComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
 
@@ -421,7 +420,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.56.0'))
-      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      await generateComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, '.babelrc')))
       const babelRc: any = JSON.parse(
         fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()
@@ -433,7 +432,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateMiniAppsComposite(miniApps, tmpOutDir)
+      await generateComposite(miniApps, tmpOutDir)
       assert(fs.existsSync(path.join(tmpOutDir, '.babelrc')))
       const babelRc: any = JSON.parse(
         fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()

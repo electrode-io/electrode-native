@@ -1,4 +1,4 @@
-import { generateMiniAppsComposite } from 'ern-container-gen'
+import { generateComposite } from 'ern-composite-gen'
 import {
   PackagePath,
   NativeApplicationDescriptor,
@@ -125,7 +125,7 @@ Output directory should either not exist (it will be created) or should be empty
     }
   }
 
-  await generateMiniAppsComposite(
+  await generateComposite(
     miniapps!,
     outDir || path.join(Platform.rootDirectory, 'miniAppsComposite'),
     {

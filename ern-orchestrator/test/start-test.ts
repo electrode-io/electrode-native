@@ -11,7 +11,7 @@ import {
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
 import * as cauldronApi from 'ern-cauldron-api'
-import * as containerGen from 'ern-container-gen'
+import * as compositeGen from 'ern-composite-gen'
 import fs from 'fs'
 const sandbox = sinon.createSandbox()
 
@@ -47,7 +47,7 @@ class FakeWatcher {
 }
 
 describe('start', () => {
-  let generateMiniAppsCompositeStub
+  let generateCompositeStub
   let chokidarWatchStub
   let fakeWatcherInstance
   let shellStub
@@ -58,10 +58,7 @@ describe('start', () => {
       .stub(chokidar, 'watch')
       .returns(fakeWatcherInstance)
     shellStub = sandbox.stub(core.shell)
-    generateMiniAppsCompositeStub = sandbox.stub(
-      containerGen,
-      'generateMiniAppsComposite'
-    )
+    generateCompositeStub = sandbox.stub(compositeGen, 'generateComposite')
     sandbox.stub(core.android, 'runAndroidApk')
     sandbox.stub(core.reactnative)
     sandbox
@@ -163,7 +160,7 @@ describe('start', () => {
     })
   })
 
-  it('should call generateMiniAppsComposite', async () => {
+  it('should call generateComposite', async () => {
     createStubs({
       getActiveCauldronReturn: createCauldronHelper(
         cloneFixture(fixtures.defaultCauldron)
@@ -173,7 +170,7 @@ describe('start', () => {
     await start({
       descriptor: testAndroid1770Descriptor,
     })
-    sandbox.assert.calledOnce(generateMiniAppsCompositeStub)
+    sandbox.assert.calledOnce(generateCompositeStub)
   })
 
   it('should watch all linked MiniApps directories', async () => {

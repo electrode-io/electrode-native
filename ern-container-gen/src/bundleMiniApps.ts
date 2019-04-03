@@ -1,8 +1,8 @@
+import { generateComposite } from 'ern-composite-gen'
 import { BundlingResult, kax, NativePlatform, PackagePath } from 'ern-core'
 import { reactNativeBundleAndroid } from './reactNativeBundleAndroid'
 import { reactNativeBundleIos } from './reactNativeBundleIos'
 import { clearReactPackagerCache } from './clearReactPackagerCache'
-import { generateMiniAppsComposite } from './generateMiniAppsComposite'
 
 export async function bundleMiniApps(
   // The miniapps to be bundled
@@ -25,7 +25,7 @@ export async function bundleMiniApps(
   await kax
     .task('Generating MiniApps Composite')
     .run(
-      generateMiniAppsComposite(
+      generateComposite(
         miniapps,
         compositeMiniAppDir,
         { pathToYarnLock },

@@ -1,9 +1,7 @@
 import { config, yarn } from 'ern-core'
 import fs from 'fs'
 
-// Such a long name. Seriously ?
-// Rename !
-export async function runAfterJsCompositeGenerationScript(outDir: string) {
+export async function runAfterCompositeGenerationScript(outDir: string) {
   const customScript = config.getValue('custom-script')
   if (customScript) {
     if (!fs.existsSync(customScript)) {

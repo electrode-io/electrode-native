@@ -1,7 +1,7 @@
 import { shell } from 'ern-core'
 import path from 'path'
 
-export function cleanupMiniAppsCompositeDir(dir: string) {
+export function cleanupCompositeDir(dir: string) {
   shell.rm(
     '-rf',
     [

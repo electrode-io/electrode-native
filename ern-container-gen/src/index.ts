@@ -1,7 +1,6 @@
 import { addContainerMetadata as _addContainerMetadata } from './addContainerMetadata'
 import { bundleMiniApps as _bundleMiniApps } from './bundleMiniApps'
 import { copyRnpmAssets as _copyRnpmAssets } from './copyRnpmAssets'
-import { generateMiniAppsComposite as _generateMiniAppsComposite } from './generateMiniAppsComposite'
 import { generatePluginsMustacheViews as _generatePluginsMustacheViews } from './generatePluginsMustacheViews'
 import { getContainerPlatform as _getContainerPlatform } from './getContainerPlatform'
 import { injectReactNativeVersionKeysInObject as _injectReactNativeVersionKeysInObject } from './injectReactNativeVersionKeysInObject'
@@ -14,7 +13,6 @@ import { getContainerMetadataPath as _getContainerMetadataPath } from './getCont
 export const addContainerMetadata = _addContainerMetadata
 export const bundleMiniApps = _bundleMiniApps
 export const copyRnpmAssets = _copyRnpmAssets
-export const generateMiniAppsComposite = _generateMiniAppsComposite
 export const generatePluginsMustacheViews = _generatePluginsMustacheViews
 export const getContainerPlatform = _getContainerPlatform
 export const injectReactNativeVersionKeysInObject = _injectReactNativeVersionKeysInObject
@@ -29,7 +27,6 @@ export default {
   bundleMiniApps: _bundleMiniApps,
   copyRnpmAssets: _copyRnpmAssets,
   generateContainer: _generateContainer,
-  generateMiniAppsComposite: _generateMiniAppsComposite,
   generatePluginsMustacheViews: _generatePluginsMustacheViews,
   getContainerMetadata: _getContainerMetadata,
   getContainerMetadataPath: _getContainerMetadataPath,
