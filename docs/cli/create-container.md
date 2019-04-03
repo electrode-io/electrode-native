@@ -2,19 +2,13 @@
 
 #### Description
 
-* Create a new container (native or JavaScript only) locally to the workstation.
+* Create a new Container locally.
 
 #### Syntax
 
 `ern create-container`  
 
 **Options**  
-
-`--jsOnly/--js`
-
-* Create a JavaScript-only container  
-* A JavaScript-only container is also known as a *MiniApps composite*.   
-* **Default**  If this option is not used, a full native container including the JavaScript bundle containing all MiniApps, is generated.
 
 `--descriptor/-d <descriptor>`
 
@@ -23,8 +17,9 @@
 
 `--fromGitBranches`
 
-* Create Container from MiniApps git branches, rather than from current MiniApps SHAs inside the current Container version  
+* Create Container using the latest commits made to each of the MiniApp branches (HEAD), rather than using the MiniApps SHAs that are inside the current Container version.  
 * This flag is only used when creating a Container from a Cauldron descriptor  
+* This flag will be ignored if the target descriptor does not contain any MiniApps tracking git branches
 **Default** false
 
 `--miniapps/-m <miniapps>`
@@ -35,7 +30,7 @@
 `--dependencies/--deps <dependencies>`
 
 * Inject the provided extra native dependencies in your locally generated container  
-* This option can only be used when generating a container that is not JavaScript only (`--js` switch), or based on a native application version from Cauldron (`--descriptor` option).  
+* This option can only be used when generating a container that is not based on a native application version from Cauldron (`--descriptor` option).  
 For the latter, if you want to add extra native dependencies to your container that are not listed as dependencies of any of the MiniApps, you can instead use the `ern cauldron add dependencies` command to add the extra native dependencies directly in the native application version stored in Cauldron.  
 You can only provide published dependencies to this command.  
 You cannot use the Git or file package descriptors for referring to the dependencies.
@@ -47,7 +42,8 @@ You cannot use the Git or file package descriptors for referring to the dependen
 
 `--outDir/--out <directory>`
 
-* Specify the output directory where the container generated project should be stored upon creation  
+* Specify the directory to output the generated container to
+* The output directory should either not exist (it will be created) or be empty
 * **Default**  If this option is not provided, the container is generated in the default platform directory `~/.ern/containergen/out`.
 
 `--ignoreRnpmAssets`
@@ -72,12 +68,17 @@ You cannot use the Git or file package descriptors for referring to the dependen
 #### Remarks
 
 * The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  
-* Container generation and publication are two separate processes. If you want to publish your Container (to a git or maven repository) after locally creating it, you can make use of the `ern publish-container` command.
+* Container generation and transformation/publication are separate processes (see `Related commands` section below for specific commands) 
 * To create a container that is published so that your native application team can use the container, you should use one of the Cauldron commands to add your MiniApps to a specified native application version in the Cauldron, which will trigger the generation and publication of a Container. See *Related commands*.  
-* For Android OS, the Container is also published to your local Maven repository.  
 
 #### Related commands
 
+[ern transform-container] | Transform a local Container.
 [ern publish-container] | Publish a local Container.
+[ern create-composite] | Creates a JS Composite project locally
 
+[ern transform-container]: ./transform-container.md
 [ern publish-container]: ./publish-container.md
+[ern create-composite]: ./create-composite.md
+
+

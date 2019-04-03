@@ -1,9 +1,6 @@
-import { generateMiniAppsComposite } from 'ern-container-gen'
 import {
   PackagePath,
   NativeApplicationDescriptor,
-  Platform,
-  log,
   NativePlatform,
   kax,
 } from 'ern-core'
@@ -19,11 +16,10 @@ import {
 import _ from 'lodash'
 import { Argv } from 'yargs'
 import fs from 'fs'
-import path from 'path'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 
 export const command = 'create-container'
-export const desc = 'Create a container locally'
+export const desc = 'Create a Container locally'
 
 export const builder = (argv: Argv) => {
   return argv
@@ -63,8 +59,9 @@ export const builder = (argv: Argv) => {
     })
     .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('jsOnly', {
+      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
       alias: 'js',
-      describe: 'Generates JS only (composite app)',
+      describe: 'Generates JS only (composite app) [DEPRECATED]',
       type: 'boolean',
     })
     .option('miniapps', {
@@ -88,28 +85,33 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
-  dependencies = [],
+  dependencies,
   descriptor,
   extra,
   fromGitBranches,
   ignoreRnpmAssets,
-  jsApiImpls = [],
+  jsApiImpls,
   jsOnly,
   miniapps,
   outDir,
   platform,
 }: {
-  dependencies: PackagePath[]
+  dependencies?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   extra?: string
   fromGitBranches?: boolean
   ignoreRnpmAssets?: boolean
-  jsApiImpls: PackagePath[]
+  jsApiImpls?: PackagePath[]
   jsOnly?: boolean
   miniapps?: PackagePath[]
   outDir?: string
   platform?: NativePlatform
-}) => {
+} = {}) => {
+  if (jsOnly) {
+    throw new Error(`--jsOnly/--js option flag has been deprecated in 0.31.0.
+To create a JS composite, you can now use 'ern create-composite' command.`)
+  }
+
   if (outDir && fs.existsSync(outDir)) {
     if (fs.readdirSync(outDir).length > 0) {
       throw new Error(
@@ -126,12 +128,6 @@ Output directory should either not exist (it will be created) or should be empty
       obj: dependencies,
     },
   })
-
-  if (dependencies.length > 0 && (jsOnly || descriptor)) {
-    throw new Error(
-      `You can only provide extra native dependencies, when generating a non-JS-only / non-Cauldron based container`
-    )
-  }
 
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && !miniapps) {
@@ -162,59 +158,28 @@ Output directory should either not exist (it will be created) or should be empty
     })
   }
 
-  // --jsOnly switch
-  // Ony generates the composite miniapp to a provided output directory
-  if (jsOnly) {
-    if (!miniapps) {
-      if (!descriptor) {
-        return log.error(
-          'You need to provide a native application descriptor, if not providing miniapps'
-        )
-      }
-      miniapps = await cauldron.getContainerMiniApps(descriptor, {
-        favorGitBranches: !!fromGitBranches,
-      })
-      jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
-    }
-
-    let pathToYarnLock
-    if (descriptor) {
-      const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-        descriptor
-      )
-      if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
-        pathToYarnLock = await cauldron.getPathToYarnLock(
-          descriptor,
-          'container'
-        )
-      } else {
-        log.debug(
-          'Bypassing yarn.lock usage as bypassYarnLock flag is set in config'
-        )
-      }
-    }
-
-    await generateMiniAppsComposite(
-      miniapps,
-      outDir || path.join(Platform.rootDirectory, 'miniAppsComposite'),
-      pathToYarnLock ? { pathToYarnLock } : {},
-      jsApiImpls
+  if (dependencies && descriptor) {
+    throw new Error(
+      `You cannot provide extra native dependencies, when creating a Container from Cauldron`
     )
-  } else {
-    if (!descriptor && miniapps) {
-      platform = platform || (await askUserToSelectAPlatform())
+  }
 
-      await kax.task('Generating Container locally').run(
-        runLocalContainerGen(miniapps, jsApiImpls, platform, {
-          extra: extraObj,
-          extraNativeDependencies: dependencies,
-          ignoreRnpmAssets,
-          outDir,
-        })
-      )
-    } else if (descriptor) {
-      await runCauldronContainerGen(descriptor, { outDir })
-    }
+  if (!descriptor && miniapps) {
+    platform = platform || (await askUserToSelectAPlatform())
+
+    await kax.task('Generating Container locally').run(
+      runLocalContainerGen(miniapps, jsApiImpls || [], platform, {
+        extra: extraObj,
+        extraNativeDependencies: dependencies || [],
+        ignoreRnpmAssets,
+        outDir,
+      })
+    )
+  } else if (descriptor) {
+    await runCauldronContainerGen(descriptor, {
+      favorGitBranches: !!fromGitBranches,
+      outDir,
+    })
   }
 }
 

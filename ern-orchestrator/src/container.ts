@@ -154,15 +154,17 @@ export async function runCauldronContainerGen(
   {
     outDir,
     compositeMiniAppDir,
+    favorGitBranches
   }: {
     outDir?: string
     compositeMiniAppDir?: string
+    favorGitBranches?: boolean
   } = {}
 ): Promise<ContainerGenResult> {
   try {
     const cauldron = await getActiveCauldron()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
-    const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
+    const miniapps = await cauldron.getContainerMiniApps(napDescriptor, { favorGitBranches })
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor

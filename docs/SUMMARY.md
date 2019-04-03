@@ -63,6 +63,7 @@
 - [compat-check](cli/compat-check.md)
 - [create-api-impl](cli/create-api-impl.md)
 - [create-api](cli/create-api.md)
+- [create-composite](cli/create-composite.md)
 - [create-container](cli/create-container.md)
 - [publish-container](cli/publish-container.md)
 - [transform-container](cli/transform-container.md)
