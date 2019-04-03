@@ -8,7 +8,7 @@ import {
   EphemeralFileStore,
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
-import * as containerGen from 'ern-container-gen'
+import * as compositeGen from 'ern-composite-gen'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import * as core from 'ern-core'
 import * as cauldronApi from 'ern-cauldron-api'
@@ -509,7 +509,7 @@ describe('codepush', () => {
 
       codePushSdkStub = sinon.createStubInstance(CodePushSdk)
       sandbox.stub(core, 'getCodePushSdk').returns(codePushSdkStub)
-      sandbox.stub(containerGen, 'generateMiniAppsComposite').resolves()
+      sandbox.stub(compositeGen, 'generateComposite').resolves()
       sandbox.stub(core.reactnative, 'bundle').resolves()
       codePushSdkStub.releaseReact.resolves({
         appVersion: '17.7.0',

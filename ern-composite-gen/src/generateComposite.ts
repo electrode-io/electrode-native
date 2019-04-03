@@ -7,23 +7,20 @@ import {
   writePackageJson,
   fileUtils,
 } from 'ern-core'
-import { cleanupMiniAppsCompositeDir } from './cleanupMiniAppsCompositeDir'
+import { cleanupCompositeDir } from './cleanupCompositeDir'
 import {
   MiniAppsDeltas,
   getMiniAppsDeltas,
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas,
 } from './miniAppsDeltasUtils'
-import { runAfterJsCompositeGenerationScript } from './runAfterJsCompositeGenerationScript'
-import { writeFile } from './writeFile'
+import { runAfterCompositeGenerationScript } from './runAfterCompositeGenerationScript'
 import fs from 'fs'
 import path from 'path'
 import semver from 'semver'
 import _ from 'lodash'
 
-// Obviously too big -god- function
-// Prime candidate for refactoring
-export async function generateMiniAppsComposite(
+export async function generateComposite(
   miniappsPaths: PackagePath[],
   outDir: string,
   {
@@ -36,7 +33,7 @@ export async function generateMiniAppsComposite(
   jsApiImplDependencies?: PackagePath[]
 ) {
   if (fs.existsSync(outDir)) {
-    cleanupMiniAppsCompositeDir(outDir)
+    cleanupCompositeDir(outDir)
   } else {
     shell.mkdir('-p', outDir)
   }
@@ -60,13 +57,13 @@ export async function generateMiniAppsComposite(
     if (pathToYarnLock) {
       if (_.some(jsPackages, m => !m.version)) {
         throw new Error(
-          '[generateMiniAppsComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version'
+          '[generateComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version'
         )
       }
 
       if (!fs.existsSync(pathToYarnLock)) {
         throw new Error(
-          `[generateMiniAppsComposite] Path to yarn.lock does not exist (${pathToYarnLock})`
+          `[generateComposite] Path to yarn.lock does not exist (${pathToYarnLock})`
         )
       }
 
@@ -80,9 +77,7 @@ export async function generateMiniAppsComposite(
       )
 
       log.debug(
-        `[generateMiniAppsComposite] miniAppsDeltas: ${JSON.stringify(
-          miniAppsDeltas
-        )}`
+        `[generateComposite] miniAppsDeltas: ${JSON.stringify(miniAppsDeltas)}`
       )
 
       compositePackageJson.dependencies = getPackageJsonDependenciesUsingMiniAppDeltas(
@@ -104,7 +99,7 @@ export async function generateMiniAppsComposite(
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
     } else {
       // No yarn.lock path was provided, just add miniapps one by one
-      log.debug('[generateMiniAppsComposite] no yarn lock provided')
+      log.debug('[generateComposite] no yarn lock provided')
       await yarn.init()
       for (const miniappPath of jsPackages) {
         await yarn.add(miniappPath)
@@ -130,7 +125,7 @@ export async function generateMiniAppsComposite(
       dependencies.push(dependency)
     }
 
-    await runAfterJsCompositeGenerationScript(outDir)
+    await runAfterCompositeGenerationScript(outDir)
 
     const compositeNodeModulesPath = path.join(outDir, 'node_modules')
 
@@ -388,7 +383,10 @@ ${lineToPatch}`
       compositeBabelRc.presets = ['react-native']
     }
 
-    await writeFile('.babelrc', JSON.stringify(compositeBabelRc, null, 2))
+    await fileUtils.writeFile(
+      '.babelrc',
+      JSON.stringify(compositeBabelRc, null, 2)
+    )
 
     // Add support for JSX source files
     let sourceExts
@@ -399,7 +397,7 @@ ${lineToPatch}`
       sourceExts =
         "module.exports = { getSourceExts: () => ['jsx', 'mjs', 'js', 'ts', 'tsx'] }"
     }
-    await writeFile('rn-cli.config.js', sourceExts)
+    await fileUtils.writeFile('rn-cli.config.js', sourceExts)
 
     // If code push plugin is present we need to do some additional work
     if (fs.existsSync(pathToCodePushNodeModuleDir)) {
@@ -430,9 +428,9 @@ ${lineToPatch}`
     }
 
     log.debug('Creating index.android.js')
-    await writeFile('index.android.js', entryIndexJsContent)
+    await fileUtils.writeFile('index.android.js', entryIndexJsContent)
     log.debug('Creating index.ios.js')
-    await writeFile('index.ios.js', entryIndexJsContent)
+    await fileUtils.writeFile('index.ios.js', entryIndexJsContent)
   } finally {
     shell.popd()
   }

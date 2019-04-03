@@ -1,4 +1,4 @@
-import { generateMiniAppsComposite } from 'ern-container-gen'
+import { generateComposite } from 'ern-composite-gen'
 import {
   createTmpDir,
   PackagePath,
@@ -344,7 +344,7 @@ export async function performCodePushOtaUpdate(
     await kax
       .task('Generating composite module')
       .run(
-        generateMiniAppsComposite(
+        generateComposite(
           pathsToMiniAppsToBeCodePushed,
           tmpWorkingDir,
           { pathToYarnLock },
