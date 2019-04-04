@@ -10,6 +10,10 @@
 
 **Options**  
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
+
 `--descriptor/-d <descriptor>`
 
 * Create a new JS Composite including all the MiniApps listed in the Cauldron for the given *complete native application descriptor*  
@@ -48,3 +52,4 @@
 [ern create-container] | Creates a Container locally
 
 [ern create-container]: ./create-container.md
+[custom Composite]: ./platform-parts/composite/index.md

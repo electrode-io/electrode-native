@@ -19,6 +19,7 @@ import path from 'path'
 import fs from 'fs'
 
 export default async function start({
+  baseComposite,
   jsApiImpls,
   miniapps,
   descriptor,
@@ -29,6 +30,7 @@ export default async function start({
   extraJsDependencies,
   disableBinaryStore,
 }: {
+  baseComposite?: PackagePath
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
@@ -56,6 +58,11 @@ export default async function start({
     miniapps = await cauldron.getContainerMiniApps(descriptor, {
       favorGitBranches: true,
     })
+    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+      descriptor
+    )
+    baseComposite =
+      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
   }
 
   // Because this command can only be stoped through `CTRL+C` (or killing the process)
@@ -68,14 +75,13 @@ export default async function start({
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
   await kax.task('Generating MiniApps composite').run(
-    generateComposite(
-      miniapps!,
-      compositeDir,
-      {
-        extraJsDependencies: extraJsDependencies || undefined,
-      },
-      jsApiImpls
-    )
+    generateComposite({
+      baseComposite,
+      extraJsDependencies: extraJsDependencies || undefined,
+      jsApiImplDependencies: jsApiImpls,
+      miniApps: miniapps!,
+      outDir: compositeDir,
+    })
   )
 
   const miniAppsLinksObj = ernConfig.getValue('miniAppsLinks', {})

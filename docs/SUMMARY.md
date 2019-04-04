@@ -19,6 +19,7 @@
 
 ### REFERENCE
 
+- [Composite](platform-parts/composite/index.md)
 - [Container](platform-parts/container/index.md)
   - [What's inside](platform-parts/container/inside-a-container.md)
   - [Publication](platform-parts/container/container-publication.md)

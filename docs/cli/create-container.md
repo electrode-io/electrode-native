@@ -10,6 +10,10 @@
 
 **Options**  
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
+
 `--descriptor/-d <descriptor>`
 
 * Create a new container including all the MiniApps listed in the Cauldron for the given *complete native application descriptor*  
@@ -80,5 +84,6 @@ You cannot use the Git or file package descriptors for referring to the dependen
 [ern transform-container]: ./transform-container.md
 [ern publish-container]: ./publish-container.md
 [ern create-composite]: ./create-composite.md
+[custom Composite]: ./platform-parts/composite/index.md
 
 

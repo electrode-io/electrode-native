@@ -1,4 +1,5 @@
 import {
+  gitCli,
   log,
   PackagePath,
   shell,
@@ -18,18 +19,93 @@ import fs from 'fs'
 import path from 'path'
 import semver from 'semver'
 import _ from 'lodash'
+import { CompositeGeneratorConfig } from './types'
 
-export async function generateComposite(
-  miniappsPaths: PackagePath[],
+export async function generateComposite(config: CompositeGeneratorConfig) {
+  log.debug(`generateComposite config : ${JSON.stringify(config, null, 2)}`)
+
+  return config.baseComposite
+    ? generateCompositeFromBase(
+        config.miniApps,
+        config.outDir,
+        config.baseComposite,
+        {
+          extraJsDependencies: config.extraJsDependencies,
+          jsApiImplDependencies: config.jsApiImplDependencies,
+        }
+      )
+    : generateFullComposite(config.miniApps, config.outDir, {
+        extraJsDependencies: config.extraJsDependencies,
+        jsApiImplDependencies: config.jsApiImplDependencies,
+        pathToYarnLock: config.pathToYarnLock,
+      })
+}
+
+async function generateCompositeFromBase(
+  miniApps: PackagePath[],
+  outDir: string,
+  baseComposite: PackagePath,
+  {
+    extraJsDependencies = [],
+    jsApiImplDependencies,
+  }: {
+    extraJsDependencies?: PackagePath[]
+    jsApiImplDependencies?: PackagePath[]
+  } = {}
+) {
+  if (baseComposite.isRegistryPath) {
+    throw new Error(
+      `baseComposite can only be a file or git path (${baseComposite})`
+    )
+  }
+
+  if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
+    throw new Error(
+      `${outDir} directory exists and is not empty.
+Composite output directory should either not exist (it will be created) or should be empty.`
+    )
+  } else {
+    shell.mkdir('-p', outDir)
+  }
+
+  if (baseComposite.isGitPath) {
+    await gitCli().clone(baseComposite.basePath, outDir)
+    if (baseComposite.version) {
+      await gitCli(outDir).checkout(baseComposite.version)
+    }
+  } else {
+    shell.cp('-Rf', path.join(baseComposite.basePath, '{.*,*}'), outDir)
+  }
+
+  const jsPackages = jsApiImplDependencies
+    ? [...miniApps, ...jsApiImplDependencies]
+    : miniApps
+
+  shell.pushd(outDir)
+  try {
+    await installJsPackagesWithoutYarnLock({ jsPackages, outDir })
+    await createCompositeImportsJsBasedOnPackageJson({ outDir })
+    if (extraJsDependencies) {
+      await installExtraJsDependencies({ outDir, extraJsDependencies })
+    }
+    await patchMetro51({ outDir })
+  } finally {
+    shell.popd()
+  }
+}
+
+async function generateFullComposite(
+  miniApps: PackagePath[],
   outDir: string,
   {
-    pathToYarnLock,
     extraJsDependencies = [],
+    jsApiImplDependencies,
+    pathToYarnLock,
   }: {
-    pathToYarnLock?: string
     extraJsDependencies?: PackagePath[]
-  } = {},
-  jsApiImplDependencies?: PackagePath[]
+    jsApiImplDependencies?: PackagePath[]
+    pathToYarnLock?: string
+  } = {}
 ) {
   if (fs.existsSync(outDir)) {
     cleanupCompositeDir(outDir)
@@ -41,14 +117,16 @@ export async function generateComposite(
 
   try {
     await installJsPackages({
-      extraJsDependencies,
       jsApiImplDependencies,
-      miniappsPaths,
+      miniApps,
       outDir,
       pathToYarnLock,
     })
     await addStartScriptToPackageJson({ outDir })
     await createIndexJsBasedOnPackageJson({ outDir })
+    if (extraJsDependencies) {
+      await installExtraJsDependencies({ outDir, extraJsDependencies })
+    }
     await addBabelrcRoots({ outDir })
     await patchMetro51({ outDir })
     await createCompositeBabelRc({ outDir })
@@ -139,6 +217,19 @@ async function createIndexJsBasedOnPackageJson({ outDir }) {
     path.join(outDir, 'index.ios.js'),
     entryIndexJsContent
   )
+}
+
+async function createCompositeImportsJsBasedOnPackageJson({ outDir }) {
+  let content = ''
+
+  const dependencies: string[] = []
+  const compositePackageJson = await readPackageJson(outDir)
+  for (const dependency of Object.keys(compositePackageJson.dependencies)) {
+    content += `import '${dependency}'\n`
+    dependencies.push(dependency)
+  }
+
+  await fileUtils.writeFile(path.join(outDir, 'composite-imports.js'), content)
 }
 
 async function addStartScriptToPackageJson({ outDir }: { outDir: string }) {
@@ -488,21 +579,19 @@ async function patchPackageJsonForCodePush({ outDir }: { outDir: string }) {
 }
 
 async function installJsPackages({
-  extraJsDependencies,
   jsApiImplDependencies,
-  miniappsPaths,
+  miniApps,
   outDir,
   pathToYarnLock,
 }: {
-  extraJsDependencies?: PackagePath[]
   jsApiImplDependencies?: PackagePath[]
-  miniappsPaths: PackagePath[]
+  miniApps: PackagePath[]
   outDir: string
   pathToYarnLock?: string
 }) {
   const jsPackages = jsApiImplDependencies
-    ? [...miniappsPaths, ...jsApiImplDependencies]
-    : miniappsPaths
+    ? [...miniApps, ...jsApiImplDependencies]
+    : miniApps
 
   if (pathToYarnLock && _.some(jsPackages, p => p.isFilePath)) {
     log.warn(
@@ -520,8 +609,21 @@ async function installJsPackages({
   } else {
     await installJsPackagesWithoutYarnLock({ jsPackages, outDir })
   }
+}
 
-  for (const extraJsDependency of extraJsDependencies || []) {
-    await yarn.add(extraJsDependency)
+async function installExtraJsDependencies({
+  outDir,
+  extraJsDependencies,
+}: {
+  outDir: string
+  extraJsDependencies: PackagePath[]
+}) {
+  shell.pushd(outDir)
+  try {
+    for (const extraJsDependency of extraJsDependencies || []) {
+      await yarn.add(extraJsDependency)
+    }
+  } finally {
+    shell.popd()
   }
 }

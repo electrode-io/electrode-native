@@ -7,7 +7,6 @@ import {
   gitCli,
   shell,
   fileUtils,
-  PackagePath,
   utils,
 } from 'ern-core'
 import { getContainerMetadataPath } from 'ern-container-gen'

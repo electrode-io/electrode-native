@@ -3,12 +3,12 @@ import {
   NativeApplicationDescriptor,
   NativePlatform,
 } from 'ern-core'
-
 import { runLocalContainerGen, runCauldronContainerGen } from './container'
 
 export async function generateContainerForRunner(
   platform: NativePlatform,
   {
+    baseComposite,
     napDescriptor,
     dependencies = [],
     miniApps = [],
@@ -16,6 +16,7 @@ export async function generateContainerForRunner(
     outDir,
     extra,
   }: {
+    baseComposite?: PackagePath
     napDescriptor?: NativeApplicationDescriptor
     dependencies?: PackagePath[]
     miniApps?: PackagePath[]
@@ -26,10 +27,12 @@ export async function generateContainerForRunner(
 ) {
   if (napDescriptor) {
     await runCauldronContainerGen(napDescriptor, {
+      baseComposite,
       outDir,
     })
   } else {
     await runLocalContainerGen(miniApps, jsApiImpls, platform, {
+      baseComposite,
       extra: extra || {},
       extraNativeDependencies: dependencies,
       outDir,

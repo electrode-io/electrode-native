@@ -10,6 +10,10 @@
 
 **Options**  
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
+
 `--dev [true|false]`
 * Enable or disable React Native dev support
 
@@ -58,3 +62,4 @@
 * The `ern run-android` command is the `ern` equivalent of the `react-native run-android` command.
 * If you are running the command from the `MainApp` directory, only specify name of the `MiniApp` (Not the path) in the `--mainMiniAppName` option.
 
+[custom Composite]: ./platform-parts/composite/index.md

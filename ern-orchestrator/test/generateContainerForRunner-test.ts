@@ -26,6 +26,7 @@ describe('generateContainerForRunner', () => {
       outDir,
     })
     sinon.assert.calledWith(containerStub.runCauldronContainerGen, descriptor, {
+      baseComposite: undefined,
       outDir,
     })
   })
@@ -47,6 +48,7 @@ describe('generateContainerForRunner', () => {
       jsApiImpls,
       'android',
       {
+        baseComposite: undefined,
         extra: {},
         extraNativeDependencies: dependencies,
         outDir,
@@ -73,6 +75,7 @@ describe('generateContainerForRunner', () => {
       jsApiImpls,
       'android',
       {
+        baseComposite: undefined,
         extra,
         extraNativeDependencies: dependencies,
         outDir,

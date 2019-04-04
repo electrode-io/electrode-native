@@ -18,6 +18,11 @@ export const builder = (argv: Argv) => {
       describe: 'Android Activity to launch',
       type: 'string',
     })
+    .option('baseComposite', {
+      describe: 'Base Composite',
+      type: 'string',
+    })
+    .coerce('baseComposite', d => PackagePath.fromString(d))
     .option('bundleId', {
       alias: 'b',
       describe: 'iOS Bundle Identifier',
@@ -72,6 +77,7 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   activityName,
+  baseComposite,
   bundleId,
   descriptor,
   extraJsDependencies = [],
@@ -82,6 +88,7 @@ export const commandHandler = async ({
   disableBinaryStore,
 }: {
   activityName?: string
+  baseComposite?: PackagePath
   bundleId?: string
   descriptor?: NativeApplicationDescriptor
   extraJsDependencies?: PackagePath[]
@@ -97,6 +104,7 @@ export const commandHandler = async ({
 
   await start({
     activityName,
+    baseComposite,
     bundleId,
     descriptor,
     disableBinaryStore,

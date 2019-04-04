@@ -6,7 +6,7 @@ import { clearReactPackagerCache } from './clearReactPackagerCache'
 
 export async function bundleMiniApps(
   // The miniapps to be bundled
-  miniapps: PackagePath[],
+  miniApps: PackagePath[],
   compositeMiniAppDir: string,
   outDir: string,
   platform: NativePlatform,
@@ -14,24 +14,25 @@ export async function bundleMiniApps(
     pathToYarnLock,
     dev,
     sourceMapOutput,
+    baseComposite,
   }: {
     pathToYarnLock?: string
     dev?: boolean
     sourceMapOutput?: string
+    baseComposite?: PackagePath
   } = {},
   // JavaScript API implementations
   jsApiImplDependencies?: PackagePath[]
 ): Promise<BundlingResult> {
-  await kax
-    .task('Generating MiniApps Composite')
-    .run(
-      generateComposite(
-        miniapps,
-        compositeMiniAppDir,
-        { pathToYarnLock },
-        jsApiImplDependencies
-      )
-    )
+  await kax.task('Generating MiniApps Composite').run(
+    generateComposite({
+      baseComposite,
+      jsApiImplDependencies,
+      miniApps,
+      outDir: compositeMiniAppDir,
+      pathToYarnLock,
+    })
+  )
 
   clearReactPackagerCache()
 
