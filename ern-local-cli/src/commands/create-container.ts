@@ -23,6 +23,11 @@ export const desc = 'Create a Container locally'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('baseComposite', {
+      describe: 'Base Composite',
+      type: 'string',
+    })
+    .coerce('baseComposite', d => PackagePath.fromString(d))
     .option('dependencies', {
       alias: 'deps',
       describe:
@@ -85,6 +90,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  baseComposite,
   dependencies,
   descriptor,
   extra,
@@ -96,6 +102,7 @@ export const commandHandler = async ({
   outDir,
   platform,
 }: {
+  baseComposite?: PackagePath
   dependencies?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   extra?: string
@@ -156,6 +163,11 @@ Output directory should either not exist (it will be created) or should be empty
           'You cannot create a container for a non-existing native application version.',
       },
     })
+    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+      descriptor
+    )
+    baseComposite =
+      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
   }
 
   if (dependencies && descriptor) {
@@ -169,6 +181,7 @@ Output directory should either not exist (it will be created) or should be empty
 
     await kax.task('Generating Container locally').run(
       runLocalContainerGen(miniapps, jsApiImpls || [], platform, {
+        baseComposite,
         extra: extraObj,
         extraNativeDependencies: dependencies || [],
         ignoreRnpmAssets,
@@ -177,6 +190,7 @@ Output directory should either not exist (it will be created) or should be empty
     )
   } else if (descriptor) {
     await runCauldronContainerGen(descriptor, {
+      baseComposite,
       favorGitBranches: !!fromGitBranches,
       outDir,
     })

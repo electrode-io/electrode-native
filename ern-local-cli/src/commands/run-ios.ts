@@ -13,6 +13,11 @@ export const desc = 'Run one or more MiniApps in the iOS Runner application'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('baseComposite', {
+      describe: 'Base Composite',
+      type: 'string',
+    })
+    .coerce('baseComposite', d => PackagePath.fromString(d))
     .option('dependencies', {
       alias: 'deps',
       describe:
@@ -63,6 +68,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  baseComposite,
   dependencies = [],
   descriptor,
   dev,
@@ -72,6 +78,7 @@ export const commandHandler = async ({
   port,
   usePreviousDevice,
 }: {
+  baseComposite?: PackagePath
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   dev?: boolean
@@ -87,6 +94,7 @@ export const commandHandler = async ({
   deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
 
   await runMiniApp('ios', {
+    baseComposite,
     dependencies,
     descriptor,
     dev,

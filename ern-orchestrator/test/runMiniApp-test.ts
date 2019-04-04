@@ -167,6 +167,7 @@ describe('runMiniApp', () => {
     prepareStubs()
     await runMiniApp('android')
     sandbox.assert.calledWith(generateContainerForRunnerStub, 'android', {
+      baseComposite: undefined,
       dependencies: undefined,
       extra: undefined,
       jsApiImpls: undefined,

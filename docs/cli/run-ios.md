@@ -10,6 +10,10 @@
 
 **Options**  
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom  Composite] documentation for more information).
+
  `--dev [true|false]`
  * Enable or disable React Native dev support
  
@@ -42,3 +46,5 @@
 * If you want to regenerate the runner project from scratch, remove the iOS directory.  
 * The miniapp can be any Yarn package descriptor, including Git or other file system path schemes.  
 * The `ern run-ios` command is the `ern` equivalent of the `react-native run-ios` command.
+
+[custom Composite]: ./platform-parts/composite/index.md

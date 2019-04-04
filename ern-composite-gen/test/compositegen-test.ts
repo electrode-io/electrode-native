@@ -247,7 +247,9 @@ describe('ern-container-gen utils.js', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [1]', async () => {
       const miniApps = [PackagePath.fromString('file:/Code/MiniApp')]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -260,7 +262,9 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('file:/Code/MiniApp'),
       ]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -272,7 +276,9 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('git://github.com:user/MiniAppRepo'),
       ]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -285,7 +291,9 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('git://github.com:user/MiniAppRepo'),
       ]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -295,7 +303,9 @@ describe('ern-container-gen utils.js', () => {
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
       const miniApps = [PackagePath.fromString('MiniAppOne')]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -308,7 +318,9 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@1.0.0'),
       ]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: 'hello',
         }),
         'No exception was thrown !'
@@ -321,7 +333,9 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@1.0.0'),
       ]
       assert(
-        await doesThrow(generateComposite, null, miniApps, tmpOutDir, {
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
           pathToYarnLock: path.join(tmpOutDir, 'yarn.lock'),
         }),
         'No exception was thrown !'
@@ -338,7 +352,9 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@4.0.0'), // upgraded
         PackagePath.fromString('MiniAppFour@1.0.0'), // new
       ]
-      await generateComposite(miniApps, tmpOutDir, {
+      await generateComposite({
+        miniApps,
+        outDir: tmpOutDir,
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(yarnCliStub.install.calledOnce)
@@ -354,7 +370,9 @@ describe('ern-container-gen utils.js', () => {
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
       )
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      await generateComposite(miniApps, tmpOutDir, {
+      await generateComposite({
+        miniApps,
+        outDir: tmpOutDir,
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
@@ -366,7 +384,9 @@ describe('ern-container-gen utils.js', () => {
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
       )
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      await generateComposite(miniApps, tmpOutDir, {
+      await generateComposite({
+        miniApps,
+        outDir: tmpOutDir,
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.ios.js')))
@@ -396,7 +416,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppFour@1.0.0'), // new
       ]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateComposite(miniApps, tmpOutDir)
+      await generateComposite({ miniApps, outDir: tmpOutDir })
       assert(yarnCliStub.add.calledThrice)
     })
 
@@ -404,7 +424,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateComposite(miniApps, tmpOutDir)
+      await generateComposite({ miniApps, outDir: tmpOutDir })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
 
@@ -412,7 +432,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateComposite(miniApps, tmpOutDir)
+      await generateComposite({ miniApps, outDir: tmpOutDir })
       assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
     })
 
@@ -420,7 +440,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.56.0'))
-      await generateComposite(miniApps, tmpOutDir)
+      await generateComposite({ miniApps, outDir: tmpOutDir })
       assert(fs.existsSync(path.join(tmpOutDir, '.babelrc')))
       const babelRc: any = JSON.parse(
         fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()
@@ -432,7 +452,7 @@ describe('ern-container-gen utils.js', () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateComposite(miniApps, tmpOutDir)
+      await generateComposite({ miniApps, outDir: tmpOutDir })
       assert(fs.existsSync(path.join(tmpOutDir, '.babelrc')))
       const babelRc: any = JSON.parse(
         fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()

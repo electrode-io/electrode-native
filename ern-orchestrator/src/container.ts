@@ -33,11 +33,13 @@ export async function runLocalContainerGen(
   jsApiImplsPackagePaths: PackagePath[],
   platform: NativePlatform,
   {
+    baseComposite,
     outDir = Platform.getContainerGenOutDirectory(platform),
     extraNativeDependencies = [],
     ignoreRnpmAssets = false,
     extra,
   }: {
+    baseComposite?: PackagePath
     outDir?: string
     extraNativeDependencies: PackagePath[]
     ignoreRnpmAssets?: boolean
@@ -111,6 +113,7 @@ export async function runLocalContainerGen(
     await kax.task('Generating Container').run(
       generator.generate({
         androidConfig: (extra && extra.androidConfig) || {},
+        baseComposite,
         compositeMiniAppDir: createTmpDir(),
         ignoreRnpmAssets,
         jsApiImpls: jsApiImplsPackagePaths,
@@ -152,10 +155,12 @@ async function retrieveMiniApps(miniApps: PackagePath[]): Promise<MiniApp[]> {
 export async function runCauldronContainerGen(
   napDescriptor: NativeApplicationDescriptor,
   {
+    baseComposite,
     outDir,
     compositeMiniAppDir,
-    favorGitBranches
+    favorGitBranches,
   }: {
+    baseComposite?: PackagePath
     outDir?: string
     compositeMiniAppDir?: string
     favorGitBranches?: boolean
@@ -163,8 +168,15 @@ export async function runCauldronContainerGen(
 ): Promise<ContainerGenResult> {
   try {
     const cauldron = await getActiveCauldron()
+    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+      napDescriptor
+    )
+    baseComposite =
+      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
-    const miniapps = await cauldron.getContainerMiniApps(napDescriptor, { favorGitBranches })
+    const miniapps = await cauldron.getContainerMiniApps(napDescriptor, {
+      favorGitBranches,
+    })
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor
@@ -205,6 +217,7 @@ export async function runCauldronContainerGen(
         generator.generate({
           androidConfig:
             containerGeneratorConfig && containerGeneratorConfig.androidConfig,
+          baseComposite,
           compositeMiniAppDir,
           ignoreRnpmAssets:
             containerGeneratorConfig &&
@@ -229,15 +242,22 @@ export async function runCauldronContainerGen(
 export async function runCaudronBundleGen(
   napDescriptor: NativeApplicationDescriptor,
   {
-    outDir,
+    baseComposite,
     compositeMiniAppDir,
+    outDir,
   }: {
-    outDir: string
+    baseComposite?: PackagePath
     compositeMiniAppDir?: string
+    outDir: string
   }
 ): Promise<BundlingResult> {
   try {
     const cauldron = await getActiveCauldron()
+    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+      napDescriptor
+    )
+    baseComposite =
+      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
@@ -270,7 +290,7 @@ export async function runCaudronBundleGen(
           compositeMiniAppDir,
           outDir,
           napDescriptor.platform,
-          { pathToYarnLock: pathToYarnLock || undefined },
+          { baseComposite, pathToYarnLock: pathToYarnLock || undefined },
           jsApiImpls
         )
       )

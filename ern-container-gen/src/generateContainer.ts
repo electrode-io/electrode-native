@@ -50,8 +50,8 @@ export async function generateContainer(
   // React-native plugin should be first in the dependencies
   // Otherwise any module dependent on r-n won't be able to use it
   config.plugins = [
-    ...reactNativePlugin ? [reactNativePlugin] : [],
-    ...config.plugins.filter(plugin => plugin !== reactNativePlugin)
+    ...(reactNativePlugin ? [reactNativePlugin] : []),
+    ...config.plugins.filter(plugin => plugin !== reactNativePlugin),
   ]
 
   shell.pushd(config.outDir)
@@ -71,7 +71,10 @@ export async function generateContainer(
         config.compositeMiniAppDir,
         config.outDir,
         config.targetPlatform,
-        { pathToYarnLock: config.pathToYarnLock },
+        {
+          baseComposite: config.baseComposite,
+          pathToYarnLock: config.pathToYarnLock,
+        },
         config.jsApiImpls
       )
     )

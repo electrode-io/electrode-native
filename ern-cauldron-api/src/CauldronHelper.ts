@@ -1050,6 +1050,12 @@ export class CauldronHelper {
     return this.getConfigForKey('containerGenerator', descriptor)
   }
 
+  public async getCompositeGeneratorConfig(
+    descriptor?: NativeApplicationDescriptor
+  ) {
+    return this.getConfigForKey('compositeGenerator', descriptor)
+  }
+
   public async getManifestConfig(
     descriptor?: NativeApplicationDescriptor
   ): Promise<any | void> {

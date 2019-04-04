@@ -1,6 +1,9 @@
 import { MiniApp, NativePlatform, PackagePath } from 'ern-core'
-
 export interface ContainerGeneratorConfig {
+  /**
+   * Base Composite Git repository
+   */
+  baseComposite?: PackagePath
   /**
    * The MiniApps that should be included in the generated Container
    */

@@ -14,6 +14,10 @@ If you do not pass an argument to this command, you are prompted to select a nat
 
 **Options**  
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
+
 `--descriptor/-d <descriptor>`
 
 * Target a specific native application version, associated to the provided *complete native application descriptor*.  
@@ -65,3 +69,4 @@ If you do not pass an argument to this command, you are prompted to select a nat
  [ern link] | Link to a MiniApp directory
 
 [ern link]: ./link.md
+[custom Composite]: ./platform-parts/composite/index.md

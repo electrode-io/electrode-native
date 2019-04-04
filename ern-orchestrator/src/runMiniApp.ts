@@ -24,6 +24,7 @@ import _ from 'lodash'
 export async function runMiniApp(
   platform: NativePlatform,
   {
+    baseComposite,
     mainMiniAppName,
     miniapps,
     jsApiImpls,
@@ -34,6 +35,7 @@ export async function runMiniApp(
     port,
     extra,
   }: {
+    baseComposite?: PackagePath
     mainMiniAppName?: string
     miniapps?: PackagePath[]
     jsApiImpls?: PackagePath[]
@@ -83,6 +85,11 @@ export async function runMiniApp(
     cauldron = await getActiveCauldron()
     napDescriptor = utils.coerceToNativeApplicationDescriptor(descriptor)
   }
+
+  const compositeGenConfig =
+    cauldron && (await cauldron.getCompositeGeneratorConfig(napDescriptor))
+  baseComposite =
+    baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
 
   let entryMiniAppName = mainMiniAppName || ''
   if (miniapps) {
@@ -143,6 +150,7 @@ export async function runMiniApp(
 
   const outDir = Platform.getContainerGenOutDirectory(platform)
   await generateContainerForRunner(platform, {
+    baseComposite,
     dependencies,
     extra, // JavaScript object to pass extras e.x. androidConfig
     jsApiImpls,

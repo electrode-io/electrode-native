@@ -13,6 +13,11 @@ export const desc = 'Run one or more MiniApps in the Android Runner application'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('baseComposite', {
+      describe: 'Base Composite',
+      type: 'string',
+    })
+    .coerce('baseComposite', d => PackagePath.fromString(d))
     .option('extra', {
       alias: 'e',
       describe:
@@ -69,6 +74,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  baseComposite,
   extra,
   dependencies = [],
   descriptor,
@@ -79,6 +85,7 @@ export const commandHandler = async ({
   port,
   usePreviousDevice,
 }: {
+  baseComposite?: PackagePath
   extra?: string
   dependencies: PackagePath[]
   descriptor?: NativeApplicationDescriptor
@@ -94,6 +101,7 @@ export const commandHandler = async ({
   const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {}
 
   await runMiniApp('android', {
+    baseComposite,
     dependencies,
     descriptor,
     dev,

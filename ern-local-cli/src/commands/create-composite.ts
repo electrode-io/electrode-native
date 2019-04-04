@@ -23,6 +23,11 @@ export const desc = 'Create a JS composite project locally'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('baseComposite', {
+      describe: 'Base Composite',
+      type: 'string',
+    })
+    .coerce('baseComposite', d => PackagePath.fromString(d))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -61,6 +66,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  baseComposite,
   descriptor,
   extraJsDependencies,
   fromGitBranches,
@@ -68,6 +74,7 @@ export const commandHandler = async ({
   miniapps,
   outDir,
 }: {
+  baseComposite?: PackagePath
   descriptor?: NativeApplicationDescriptor
   extraJsDependencies?: PackagePath[]
   fromGitBranches?: boolean
@@ -123,17 +130,21 @@ Output directory should either not exist (it will be created) or should be empty
         'Bypassing yarn.lock usage as bypassYarnLock flag is set in config'
       )
     }
+    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+      descriptor
+    )
+    baseComposite =
+      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
   }
 
-  await generateComposite(
-    miniapps!,
-    outDir || path.join(Platform.rootDirectory, 'miniAppsComposite'),
-    {
-      extraJsDependencies,
-      pathToYarnLock,
-    },
-    jsApiImpls
-  )
+  await generateComposite({
+    baseComposite,
+    extraJsDependencies,
+    jsApiImplDependencies: jsApiImpls,
+    miniApps: miniapps!,
+    outDir: outDir || path.join(Platform.rootDirectory, 'miniAppsComposite'),
+    pathToYarnLock,
+  })
 }
 
 export const handler = tryCatchWrap(commandHandler)

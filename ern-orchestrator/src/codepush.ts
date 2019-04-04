@@ -1,4 +1,3 @@
-import { generateComposite } from 'ern-composite-gen'
 import {
   createTmpDir,
   PackagePath,
@@ -9,6 +8,7 @@ import {
   log,
   kax,
 } from 'ern-core'
+import { generateComposite } from 'ern-composite-gen'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
 import _ from 'lodash'
@@ -231,6 +231,7 @@ export async function performCodePushOtaUpdate(
   miniApps: PackagePath[],
   jsApiImpls: PackagePath[],
   {
+    baseComposite,
     codePushIsMandatoryRelease = false,
     codePushRolloutPercentage,
     description,
@@ -238,6 +239,7 @@ export async function performCodePushOtaUpdate(
     pathToYarnLock,
     targetBinaryVersion,
   }: {
+    baseComposite?: PackagePath
     codePushIsMandatoryRelease?: boolean
     codePushRolloutPercentage?: number
     description?: string
@@ -251,6 +253,11 @@ export async function performCodePushOtaUpdate(
     const codePushSdk = getCodePushSdk()
     cauldron = await getActiveCauldron()
     const plugins = await cauldron.getNativeDependencies(napDescriptor)
+    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+      napDescriptor
+    )
+    baseComposite =
+      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
     await cauldron.beginTransaction()
     const codePushPlugin = _.find(
       plugins,
@@ -341,16 +348,15 @@ export async function performCodePushOtaUpdate(
       )
     }
 
-    await kax
-      .task('Generating composite module')
-      .run(
-        generateComposite(
-          pathsToMiniAppsToBeCodePushed,
-          tmpWorkingDir,
-          { pathToYarnLock },
-          pathToJsApiImplsToBeCodePushed
-        )
-      )
+    await kax.task('Generating composite module').run(
+      generateComposite({
+        baseComposite,
+        jsApiImplDependencies: pathToJsApiImplsToBeCodePushed,
+        miniApps: pathsToMiniAppsToBeCodePushed,
+        outDir: tmpWorkingDir,
+        pathToYarnLock,
+      })
+    )
 
     const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
     shell.mkdir('-p', bundleOutputDirectory)
