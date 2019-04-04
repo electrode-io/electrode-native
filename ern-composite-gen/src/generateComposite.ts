@@ -14,7 +14,6 @@ import {
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas,
 } from './miniAppsDeltasUtils'
-import { runAfterCompositeGenerationScript } from './runAfterCompositeGenerationScript'
 import fs from 'fs'
 import path from 'path'
 import semver from 'semver'
