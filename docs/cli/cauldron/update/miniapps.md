@@ -42,14 +42,9 @@ Example: If the current container version is 1.2.3 and a version is not included
 For example, if you are generating development Containers using `1000.0.X` versioning convention and want to promote a development Container to a release Container using a different version (`18.0.0` for example), you can use this flag to perform this.
 **Default** False. If Container is identical to the current one, if won't be published again.
 
-`--force/-f`
-
-* Bypass compatibility checks and force-update the MiniApp in the Cauldron.  
-**Caution**  Before using the `--force/-f` option, be sure that you can bypass compatibility checks.
-
 #### Remarks
 
-* If one MiniApp does not pass compatibility checks, the command will fail (unless `force` flag is used)
+* If one MiniApp does not pass compatibility checks, the command will fail
 
 #### Related commands
  [ern cauldron add miniapps] | Add one or more new MiniApps to a native application version

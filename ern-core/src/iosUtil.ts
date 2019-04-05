@@ -23,7 +23,8 @@ export async function fillProjectHull(
     projectName: string
   },
   plugins: PackagePath[],
-  mustacheView?: any
+  mustacheView?: any,
+  composite?: any
 ) {
   log.debug(`[=== Starting iOS framework project hull filling ===]`)
   shell.pushd(pathSpec.rootDir)
@@ -74,14 +75,19 @@ export async function fillProjectHull(
         plugin,
         projectSpec.projectName
       )
+      if (!pluginConfig) {
+        continue
+      }
 
       shell.pushd(pathSpec.pluginsDownloadDirectory)
       try {
         if (pluginConfig.ios) {
-          log.debug(`Retrieving ${plugin.basePath}`)
-          const pluginSourcePath = await downloadPluginSource(
-            pluginConfig.origin
-          )
+          const nativeDependencyPathInComposite =
+            composite && (await composite.getNativeDependencyPath(plugin))
+          const pluginSourcePath =
+            nativeDependencyPathInComposite ||
+            (await downloadPluginSource(pluginConfig.origin))
+
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.basePath}`)
           }

@@ -5,6 +5,7 @@ import {
   yarn,
   utils as coreUtils,
   createTmpDir,
+  PackagePath,
 } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import {
@@ -15,12 +16,14 @@ import {
   fixtures as utilFixtures,
 } from 'ern-util-dev'
 import * as container from '../src/container'
+import * as composite from '../src/composite'
+import { Composite } from 'ern-composite-gen'
 import sinon from 'sinon'
 import utils from '../src/utils'
 import * as fixtures from './fixtures/common'
 import fs from 'fs'
 import path from 'path'
-import { performContainerStateUpdateInCauldron } from '../src/performContainerStateUpdateInCauldron'
+import { syncCauldronContainer } from '../src/syncCauldronContainer'
 import { parseJsonFromStringOrFile } from '../src/parseJsonFromStringOrFile'
 import { getDefaultExtraConfigurationOfPublisherFromCauldron } from '../src/getDefaultExtraConfigurationOfPublisherFromCauldron'
 
@@ -58,6 +61,9 @@ describe('utils.js', () => {
     yarnInfoStub = sandbox.stub(yarn, 'info')
 
     // Other stubs
+    const compositeStub = sandbox.createStubInstance(Composite)
+    compositeStub.getResolvedNativeDependencies.resolves({ resolved: [] })
+    sandbox.stub(composite, 'runCauldronCompositeGen').resolves(compositeStub)
     sandbox.stub(container, 'runCauldronContainerGen')
     processExitStub = sandbox.stub(process, 'exit')
 
@@ -70,9 +76,9 @@ describe('utils.js', () => {
   })
 
   // ==========================================================
-  // performContainerStateUpdateInCauldron
+  // syncCauldronContainer
   // ==========================================================
-  describe('performContainerStateUpdateInCauldron', () => {
+  describe('syncCauldronContainer', () => {
     beforeEach(() => {
       cauldronHelperStub.getContainerMiniApps.resolves([])
     })
@@ -82,7 +88,7 @@ describe('utils.js', () => {
     )
 
     it('should update container version with provided one', async () => {
-      await performContainerStateUpdateInCauldron(
+      await syncCauldronContainer(
         () => Promise.resolve(true),
         napDescriptor,
         'commit message',
@@ -96,7 +102,7 @@ describe('utils.js', () => {
     })
 
     it('should bump existing container version if not provided one', async () => {
-      await performContainerStateUpdateInCauldron(
+      await syncCauldronContainer(
         () => Promise.resolve(true),
         napDescriptor,
         ''
@@ -109,7 +115,7 @@ describe('utils.js', () => {
     })
 
     it('should call beginTransaction and commitTransaction', async () => {
-      await performContainerStateUpdateInCauldron(
+      await syncCauldronContainer(
         () => Promise.resolve(true),
         napDescriptor,
         ''
@@ -120,7 +126,7 @@ describe('utils.js', () => {
 
     it('should call state update function during the transaction', async () => {
       const stateUpdateFunc = sinon.stub().resolves(true)
-      await performContainerStateUpdateInCauldron(
+      await syncCauldronContainer(
         stateUpdateFunc,
         napDescriptor,
         'commit message'
@@ -135,7 +141,7 @@ describe('utils.js', () => {
     it('should discard transaction if an error happens during the transaction', async () => {
       const stateUpdateFunc = sinon.stub().rejects(new Error('boum'))
       try {
-        await performContainerStateUpdateInCauldron(
+        await syncCauldronContainer(
           stateUpdateFunc,
           napDescriptor,
           'commit message'
@@ -149,7 +155,7 @@ describe('utils.js', () => {
       const stateUpdateFunc = sinon.stub().rejects(new Error('boum'))
       let hasRethrowError = false
       try {
-        await performContainerStateUpdateInCauldron(
+        await syncCauldronContainer(
           stateUpdateFunc,
           napDescriptor,
           'commit message'

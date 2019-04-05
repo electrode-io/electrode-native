@@ -1,7 +1,6 @@
 import semver from 'semver'
 import _ from 'lodash'
 import { NativeDependencies } from './nativeDependenciesLookup'
-import { MiniApp } from './MiniApp'
 import { PackagePath } from './PackagePath'
 
 export function containsVersionMismatch(
@@ -99,16 +98,6 @@ export function resolveNativeDependenciesVersions(
 
   // Build a map of all the native dependencies of each of the MiniApps
   for (const nativeDependencies of nativeDependenciesArr) {
-    // Move react-native-electrode-bridge from nativeModulesInManifest array to nativeApisImpl array
-    // as when it comes to version compatibility checks, react-native-electrode-bridge should be considered
-    // in the same way as APIs and APIs implementations (it's a native module exception)
-    const bridgeDep = _.remove(
-      nativeDependencies.thirdPartyInManifest,
-      d => d.basePath === 'react-native-electrode-bridge'
-    )
-    nativeDependencies.nativeApisImpl = nativeDependencies.nativeApisImpl.concat(
-      bridgeDep
-    )
     aggregateNativeDependencies.apis.push(...nativeDependencies.apis)
     aggregateNativeDependencies.nativeApisImpl.push(
       ...nativeDependencies.nativeApisImpl
@@ -123,16 +112,22 @@ export function resolveNativeDependenciesVersions(
     }
   }
 
+  return resolveNativeDependenciesVersionsEx(aggregateNativeDependencies)
+}
+
+export function resolveNativeDependenciesVersionsEx(
+  dependencies: NativeDependencies
+) {
   // Resolve native dependencies versions of APIs / APIs impls
   let apisAndApiImplsNativeDeps: PackagePath[] = []
-  if (aggregateNativeDependencies.apis.length > 0) {
+  if (dependencies.apis.length > 0) {
     apisAndApiImplsNativeDeps.push(
-      ..._.flatten(aggregateNativeDependencies.apis)
+      ..._.flatten(dependencies.apis.map(x => x.packagePath))
     )
   }
-  if (aggregateNativeDependencies.nativeApisImpl.length > 0) {
+  if (dependencies.nativeApisImpl.length > 0) {
     apisAndApiImplsNativeDeps.push(
-      ..._.flatten(aggregateNativeDependencies.nativeApisImpl)
+      ..._.flatten(dependencies.nativeApisImpl.map(x => x.packagePath))
     )
   }
   apisAndApiImplsNativeDeps = _.flatten(apisAndApiImplsNativeDeps)
@@ -143,14 +138,14 @@ export function resolveNativeDependenciesVersions(
 
   // Resolve native dependencies versions third party native modules
   let thirdPartyNativeModules: PackagePath[] = []
-  if (aggregateNativeDependencies.thirdPartyInManifest.length > 0) {
+  if (dependencies.thirdPartyInManifest.length > 0) {
     thirdPartyNativeModules.push(
-      ..._.flatten(aggregateNativeDependencies.thirdPartyInManifest)
+      ..._.flatten(dependencies.thirdPartyInManifest.map(x => x.packagePath))
     )
   }
-  if (aggregateNativeDependencies.thirdPartyNotInManifest.length > 0) {
+  if (dependencies.thirdPartyNotInManifest.length > 0) {
     thirdPartyNativeModules.push(
-      ..._.flatten(aggregateNativeDependencies.thirdPartyNotInManifest)
+      ..._.flatten(dependencies.thirdPartyNotInManifest.map(x => x.packagePath))
     )
   }
   thirdPartyNativeModules = _.flatten(thirdPartyNativeModules)
@@ -169,16 +164,4 @@ export function resolveNativeDependenciesVersions(
       ...thirdPartyNativeModulesResolvedVersions.resolved,
     ],
   }
-}
-
-export async function resolveNativeDependenciesVersionsOfMiniApps(
-  miniapps: MiniApp[]
-): Promise<any> {
-  const nativeDependenciesArray: NativeDependencies[] = []
-  for (const miniapp of miniapps) {
-    const miniappNativeDependencies = await miniapp.getNativeDependencies()
-    nativeDependenciesArray.push(miniappNativeDependencies)
-  }
-
-  return resolveNativeDependenciesVersions(nativeDependenciesArray)
 }

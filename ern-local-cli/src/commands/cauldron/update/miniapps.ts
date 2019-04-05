@@ -1,19 +1,10 @@
-import {
-  MiniApp,
-  PackagePath,
-  NativeApplicationDescriptor,
-  nativeDepenciesVersionResolution as resolver,
-  log,
-  kax,
-  utils,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, log, utils } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { syncCauldronContainer } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
-  logNativeDependenciesConflicts,
   tryCatchWrap,
 } from '../../../lib'
 import _ from 'lodash'
@@ -24,32 +15,40 @@ export const desc =
   'Update the version(s) of one or more MiniApp(s) in the Cauldron'
 
 export const builder = (argv: Argv) => {
-  return argv
-    .option('containerVersion', {
-      alias: 'v',
-      describe:
-        'Version to use for generated container. If none provided, patch version will be bumped by default.',
-      type: 'string',
-    })
-    .option('descriptor', {
-      alias: 'd',
-      describe: 'A complete native application descriptor',
-      type: 'string',
-    })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
-    .option('force', {
-      alias: 'f',
-      describe: 'Force',
-      type: 'boolean',
-    })
-    .option('publishUnmodifiedContainer', {
-      describe: 'Publish Container even if it is identical to the previous one',
-      type: 'boolean',
-    })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
-    .epilog(epilog(exports))
+  return (
+    argv
+      .option('containerVersion', {
+        alias: 'v',
+        describe:
+          'Version to use for generated container. If none provided, patch version will be bumped by default.',
+        type: 'string',
+      })
+      .option('descriptor', {
+        alias: 'd',
+        describe: 'A complete native application descriptor',
+        type: 'string',
+      })
+      .coerce('descriptor', d =>
+        NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+      )
+      .option('fullRegen', {
+        describe: 'Perform complete regeneration',
+        type: 'boolean',
+      })
+      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
+      .option('force [DEPRECATED]', {
+        alias: 'f',
+        describe: 'Force',
+        type: 'boolean',
+      })
+      .option('publishUnmodifiedContainer', {
+        describe:
+          'Publish Container even if it is identical to the previous one',
+        type: 'boolean',
+      })
+      .coerce('miniapps', d => d.map(PackagePath.fromString))
+      .epilog(epilog(exports))
+  )
 }
 
 // Most/All of the logic here should be moved to the MiniApp class
@@ -57,16 +56,27 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   containerVersion,
   descriptor,
+  fullRegen,
   force,
   miniapps,
   publishUnmodifiedContainer,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
+  fullRegen?: boolean
   force?: boolean
   miniapps: PackagePath[]
   publishUnmodifiedContainer?: boolean
 }) => {
+  if (publishUnmodifiedContainer!!) {
+    log.warn(`--publishUnmodifiedContainer has been deprecated in 0.31.0.
+Please use --fullRegen flag instead.`)
+    fullRegen = true
+  }
+  if (force) {
+    log.warn(`--force has been deprecated in 0.31.0.`)
+  }
+
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
@@ -132,27 +142,15 @@ export const commandHandler = async ({
     }
   }
 
-  const miniAppsObjs: MiniApp[] = []
-
-  for (const miniapp of updatedMiniApps) {
-    const m = await kax
-      .task(`Retrieving ${miniapp} MiniApp`)
-      .run(MiniApp.fromPackagePath(miniapp))
-    miniAppsObjs.push(m)
+  if (updatedMiniApps.length === 0) {
+    log.info('No Changes ...')
+    if (fullRegen) {
+      log.info('Performing regen anyway [--fullRegen]')
+    } else {
+      log.info('Skipping regen. To regenerate use the --fullRegen option.')
+      return
+    }
   }
-
-  const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-    miniAppsObjs
-  )
-  const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
-  const finalNativeDependencies = resolver.retainHighestVersions(
-    nativeDependencies.resolved,
-    cauldronDependencies
-  )
-
-  logNativeDependenciesConflicts(nativeDependencies, {
-    throwOnConflict: !force,
-  })
 
   const cauldronCommitMessage = [
     `${
@@ -162,26 +160,19 @@ export const commandHandler = async ({
     }`,
   ]
 
-  await performContainerStateUpdateInCauldron(
+  await syncCauldronContainer(
     async () => {
-      for (const miniAppObj of miniAppsObjs) {
+      for (const miniApp of miniapps) {
         cauldronCommitMessage.push(
-          `- Update ${miniAppObj.name} MiniApp version to v${
-            miniAppObj.version
-          }`
+          `- Update ${miniApp.basePath} MiniApp version to v${miniApp.version}`
         )
       }
       await cauldron.syncContainerMiniApps(descriptor!, miniapps)
-      await cauldron.syncContainerNativeDependencies(
-        descriptor!,
-        finalNativeDependencies
-      )
     },
     descriptor,
     cauldronCommitMessage,
     {
       containerVersion,
-      publishUnmodifiedContainer,
     }
   )
   log.info(`MiniApp(s) version(s) successfully updated in ${descriptor}`)

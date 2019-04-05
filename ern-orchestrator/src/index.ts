@@ -4,6 +4,8 @@ export {
   containsVersionMismatch,
 } from './container'
 
+export { runLocalCompositeGen, runCauldronCompositeGen } from './composite'
+
 export {
   performCodePushPatch,
   performCodePushPromote,
@@ -21,9 +23,7 @@ export {
 
 export { availableUserConfigKeys } from './constants'
 export { parseJsonFromStringOrFile } from './parseJsonFromStringOrFile'
-export {
-  performContainerStateUpdateInCauldron,
-} from './performContainerStateUpdateInCauldron'
+export { syncCauldronContainer } from './syncCauldronContainer'
 export { buildIosRunner } from './buildIosRunner'
 export { generateContainerForRunner } from './generateContainerForRunner'
 export { getRunnerGeneratorForPlatform } from './getRunnerGeneratorForPlatform'

@@ -32,11 +32,6 @@ Example: If the current container version is 1.2.3 and a version is not included
 
 * Performs a complete Container generation even if there was no native dependencies changes.  
 
-`--publishUnmodifiedContainer`
-
-* Publish the Container even if it's identical to the current one. This can be used to perform some sort of Container promotion.  
-For example, if you are generating development Containers using `1000.0.X` versioning convention and want to promote a development Container to a release Container using a different version (`18.0.0` for example), you can use this flag to perform this.
-**Default** False. If Container is identical to the current one, if won't be published again.
 
 #### Remarks
 

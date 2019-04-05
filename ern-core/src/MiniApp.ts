@@ -1,6 +1,5 @@
 import { execSync } from 'child_process'
 import fs from 'fs'
-import _ from 'lodash'
 import path from 'path'
 import semver from 'semver'
 import { manifest } from './Manifest'
@@ -16,15 +15,12 @@ import {
   NativeDependencies,
 } from './nativeDependenciesLookup'
 import shell from './shell'
-import { tagOneLine } from './tagoneline'
 import * as utils from './utils'
-import {
-  readPackageJson,
-  readPackageJsonSync,
-  writePackageJson,
-} from './packageJsonFileUtils'
+import { readPackageJson, writePackageJson } from './packageJsonFileUtils'
 import { packageCache } from './packageCache'
 import kax from './kax'
+import { BaseMiniApp } from './BaseMiniApp'
+import _ from 'lodash'
 
 const npmIgnoreContent = `ios/
 android/
@@ -35,7 +31,7 @@ yarn.lock
 .watchmanconfig
 `
 
-export class MiniApp {
+export class MiniApp extends BaseMiniApp {
   // Session cache
   public static miniAppFsPathByPackagePath = new Map<string, string>()
 
@@ -202,94 +198,12 @@ export class MiniApp {
     }
   }
 
-  public readonly path: string
-  public readonly packageJson: any
-  public readonly packagePath: PackagePath
-
   constructor(miniAppPath: string, packagePath: PackagePath) {
-    this.path = miniAppPath
-
-    const packageJsonPath = path.join(miniAppPath, 'package.json')
-    if (!fs.existsSync(packageJsonPath)) {
-      throw new Error(`This command should be run at the root of a mini-app`)
-    }
-
-    const packageJson = readPackageJsonSync(miniAppPath)
-    if (packageJson.ernPlatformVersion) {
-      // TO REMOVE IN ERN 0.5.0
-      log.warn(`
-=================================================================
-ernPlatformVersion will be deprecated soon
-Please replace 
-  "ernPlatformVersion" : "${packageJson.ernPlatformVersion}" 
-with 
-  "ern" : { "version" : "${packageJson.ernPlatformVersion}" }
-in the package.json of ${packageJson.name} MiniApp
-=================================================================`)
-    } else if (!packageJson.ern) {
-      throw new Error(
-        tagOneLine`No ern section found in ${
-          packageJson.name
-        } package.json. Are you sure this is a MiniApp ?`
-      )
-    }
-
-    this.packageJson = packageJson
-    this.packagePath = packagePath
-  }
-
-  get name(): string {
-    if (this.packageJson.ern) {
-      if (this.packageJson.ern.miniAppName) {
-        return this.packageJson.ern.miniAppName
-      } else if (this.packageJson.ern.moduleName) {
-        return this.packageJson.ern.moduleName
-      }
-    }
-    return this.getUnscopedModuleName(this.packageJson.name)
-  }
-
-  get normalizedName(): string {
-    return this.name.replace(/-/g, '')
-  }
-
-  get pascalCaseName(): string {
-    return `${this.normalizedName
-      .charAt(0)
-      .toUpperCase()}${this.normalizedName.slice(1)}`
-  }
-
-  get scope(): string | void {
-    const scopeCapture = /^@(.*)\//.exec(this.packageJson.name)
-    if (scopeCapture) {
-      return scopeCapture[1]
-    }
-  }
-
-  get version(): string {
-    return this.packageJson.version
-  }
-
-  get platformVersion(): string {
-    return this.packageJson.ern
-      ? this.packageJson.ern.version
-      : this.packageJson.ernPlatformVersion
-  }
-
-  get packageDescriptor(): string {
-    return `${this.packageJson.name}@${this.packageJson.version}`
+    super({ miniAppPath, packagePath })
   }
 
   public async getNativeDependencies(): Promise<NativeDependencies> {
     return findNativeDependencies(path.join(this.path, 'node_modules'))
-  }
-
-  public async isPublishedToNpm(): Promise<boolean> {
-    return utils.isPublishedToNpm(
-      PackagePath.fromString(
-        `${this.packageJson.name}@${this.packageJson.version}`
-      )
-    )
   }
 
   // Return all javascript (non native) dependencies currently used by the MiniApp
@@ -299,19 +213,13 @@ in the package.json of ${packageJson.name} MiniApp
     const nativeDependencies: NativeDependencies = await this.getNativeDependencies()
     const nativeDependenciesNames: string[] = _.map(
       nativeDependencies.all,
-      d => d.basePath
+      d => d.packagePath.basePath
     )
     const nativeAndJsDependencies = this.getPackageJsonDependencies()
 
     return _.filter(
       nativeAndJsDependencies,
       d => !nativeDependenciesNames.includes(d.basePath)
-    )
-  }
-
-  public getPackageJsonDependencies(): PackagePath[] {
-    return _.map(this.packageJson.dependencies, (val: string, key: string) =>
-      PackagePath.fromString(`${key}@${val}`)
     )
   }
 
@@ -361,35 +269,39 @@ in the package.json of ${packageJson.name} MiniApp
               nativeDependencies.all
             )}`
           )
-          let dep: PackagePath
+          let dep
           for (dep of nativeDependencies.all) {
             if (
-              dependency.same(new PackagePath(dep.basePath), {
+              dependency.same(new PackagePath(dep.packagePath.basePath), {
                 ignoreVersion: true,
               })
             ) {
-              if (await utils.isDependencyApiOrApiImpl(dep.basePath)) {
-                log.debug(`${dep.toString()} is an api or api-impl`)
+              if (
+                await utils.isDependencyApiOrApiImpl(dep.packagePath.basePath)
+              ) {
+                log.debug(`${dep.packagePath.toString()} is an api or api-impl`)
                 log.warn(
-                  `${dep.toString()} is not declared in the Manifest. You might consider adding it.`
+                  `${dep.packagePath.toString()} is not declared in the Manifest. You might consider adding it.`
                 )
               } else {
                 // This is a third party native dependency. If it's not in the master manifest,
                 // then it means that it is not supported by the platform yet. Fail.
                 return log.error(
-                  `${dep.toString()} plugin is not yet supported. Consider adding support for it to the master manifest`
+                  `${dep.packagePath.toString()} plugin is not yet supported. Consider adding support for it to the master manifest`
                 )
               }
             } else {
               // This is a dependency which is not native itself but contains a native dependency as  transitive one (example 'native-base')
               // If ern platform contains entry in the manifest but dependency versions do not align, report error
               const manifestDep = await manifest.getNativeDependency(
-                new PackagePath(dep.basePath)
+                new PackagePath(dep.packagePath.basePath)
               )
               if (manifestDep) {
-                if (!dep.same(manifestDep, { ignoreVersion: false })) {
+                if (
+                  !dep.packagePath.same(manifestDep, { ignoreVersion: false })
+                ) {
                   throw new Error(
-                    `[Transitive Dependency] ${dep.toString()} was not added to the MiniApp`
+                    `[Transitive Dependency] ${dep.packagePath.toString()} was not added to the MiniApp`
                   )
                 }
               }
@@ -514,14 +426,6 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
 
   public publishToNpm() {
     execSync(`npm publish --prefix ${this.path}`)
-  }
-
-  // Should go somewhere else. Does not belong in MiniApp class
-  public getUnscopedModuleName(moduleName: string): string {
-    const npmScopeModuleRe = /(@.*)\/(.*)/
-    return npmScopeModuleRe.test(moduleName)
-      ? npmScopeModuleRe.exec(moduleName)![2]
-      : moduleName
   }
 
   public async link() {

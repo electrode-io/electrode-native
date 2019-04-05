@@ -12,6 +12,7 @@ import config from './config'
 import camelCase = require('lodash/camelCase')
 import { packageCache } from './packageCache'
 import { NativeApplicationDescriptor } from './NativeApplicationDescriptor'
+import { readPackageJson } from './packageJsonFileUtils'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -213,6 +214,33 @@ export async function isDependencyNativeApiImpl(
   dependency: string | PackagePath
 ): Promise<boolean> {
   return isDependencyApiImpl(dependency, true, ModuleType.NATIVE_API_IMPL)
+}
+
+export async function isDependencyPathApiImpl(
+  dependencyPath: string,
+  type?: string
+): Promise<boolean> {
+  const modulesTypes = type
+    ? [type]
+    : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL]
+
+  const packageJson = await readPackageJson(dependencyPath)
+  return (
+    packageJson.ern && modulesTypes.indexOf(packageJson.ern.moduleType) > -1
+  )
+}
+
+export async function isDependencyPathJsApiImpl(
+  dependencyPath: string
+): Promise<boolean> {
+  return isDependencyPathApiImpl(dependencyPath, ModuleType.JS_API_IMPL)
+}
+
+export async function isDependencyPathNativeApiImpl(
+  dependencyPath: string,
+  type?: string
+): Promise<boolean> {
+  return isDependencyPathApiImpl(dependencyPath, ModuleType.NATIVE_API_IMPL)
 }
 
 /**

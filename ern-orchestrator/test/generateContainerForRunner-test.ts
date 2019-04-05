@@ -2,14 +2,17 @@ import sinon from 'sinon'
 import { NativeApplicationDescriptor, PackagePath } from 'ern-core'
 import { generateContainerForRunner } from '../src/generateContainerForRunner'
 import * as container from '../src/container'
+import * as composite from '../src/composite'
 
 const sandbox = sinon.createSandbox()
 
 describe('generateContainerForRunner', () => {
   let containerStub
+  let compositeStub
 
   beforeEach(() => {
     containerStub = sandbox.stub(container)
+    compositeStub = sandbox.stub(composite)
   })
 
   afterEach(() => {
@@ -25,10 +28,14 @@ describe('generateContainerForRunner', () => {
       napDescriptor: descriptor,
       outDir,
     })
-    sinon.assert.calledWith(containerStub.runCauldronContainerGen, descriptor, {
-      baseComposite: undefined,
-      outDir,
-    })
+    sinon.assert.calledWith(
+      containerStub.runCauldronContainerGen,
+      descriptor,
+      undefined,
+      {
+        outDir,
+      }
+    )
   })
 
   it('should call runLocalContainerGen with proper arguments if no descriptor is provided', async () => {
@@ -44,11 +51,9 @@ describe('generateContainerForRunner', () => {
     })
     sinon.assert.calledWith(
       containerStub.runLocalContainerGen,
-      miniApps,
-      jsApiImpls,
       'android',
+      undefined,
       {
-        baseComposite: undefined,
         extra: {},
         extraNativeDependencies: dependencies,
         outDir,
@@ -71,11 +76,9 @@ describe('generateContainerForRunner', () => {
     })
     sinon.assert.calledWith(
       containerStub.runLocalContainerGen,
-      miniApps,
-      jsApiImpls,
       'android',
+      undefined,
       {
-        baseComposite: undefined,
         extra,
         extraNativeDependencies: dependencies,
         outDir,

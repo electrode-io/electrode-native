@@ -22,12 +22,17 @@ export function getUnprefixedVersion(version: string): string {
   return version && version.startsWith('v') ? version.slice(1) : version
 }
 
+export interface NativeDependency {
+  path: string
+  packagePath: PackagePath
+}
+
 export interface NativeDependencies {
-  apis: PackagePath[]
-  nativeApisImpl: PackagePath[]
-  thirdPartyInManifest: PackagePath[]
-  thirdPartyNotInManifest: PackagePath[]
-  all: PackagePath[]
+  apis: NativeDependency[]
+  nativeApisImpl: NativeDependency[]
+  thirdPartyInManifest: NativeDependency[]
+  thirdPartyNotInManifest: NativeDependency[]
+  all: NativeDependency[]
 }
 
 export function resolvePackagePaths(paths: string[]): Set<string> {
@@ -89,9 +94,9 @@ export async function findNativeDependencies(
 
   const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/
   for (const packagePath of packagePaths) {
+    const pathToPackage = path.join(dir, packagePath)
     const pathToNativeDependencyPackageJson = path.join(
-      dir,
-      packagePath,
+      pathToPackage,
       'package.json'
     )
     const nativeDepPackageJson = require(pathToNativeDependencyPackageJson)
@@ -109,20 +114,26 @@ export async function findNativeDependencies(
         nativeDepPackageJson.ern.moduleType === ModuleTypes.API ||
         /react-native-.+-api$/.test(dep.basePath)
       ) {
-        result.apis.push(dep)
+        result.apis.push({ path: pathToPackage, packagePath: dep })
       } else if (
         nativeDepPackageJson.ern.moduleType === ModuleTypes.NATIVE_API_IMPL
       ) {
-        result.nativeApisImpl.push(dep)
+        result.nativeApisImpl.push({ path: pathToPackage, packagePath: dep })
       }
     } else {
       if (await manifest.getNativeDependency(dep)) {
-        result.thirdPartyInManifest.push(dep)
+        result.thirdPartyInManifest.push({
+          packagePath: dep,
+          path: pathToPackage,
+        })
       } else {
-        result.thirdPartyNotInManifest.push(dep)
+        result.thirdPartyNotInManifest.push({
+          packagePath: dep,
+          path: pathToPackage,
+        })
       }
     }
-    result.all.push(dep)
+    result.all.push({ path: pathToPackage, packagePath: dep })
   }
 
   return result

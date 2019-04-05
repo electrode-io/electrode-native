@@ -1,5 +1,5 @@
 import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
-import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { syncCauldronContainer } from 'ern-orchestrator'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   epilog,
@@ -91,7 +91,7 @@ export const commandHandler = async ({
   ]
 
   const cauldron = await getActiveCauldron()
-  await performContainerStateUpdateInCauldron(
+  await syncCauldronContainer(
     async () => {
       for (const dependency of dependencies) {
         await cauldron.addNativeDependencyToContainer(descriptor!, dependency)

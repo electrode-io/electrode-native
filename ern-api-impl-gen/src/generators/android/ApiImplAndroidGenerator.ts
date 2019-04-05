@@ -112,15 +112,16 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       )
       let pluginPath: PackagePath
       for (pluginPath of pluginsPaths) {
-        log.debug(`Copying ${pluginPath.basePath} to ${outputDirectory}`)
-        await manifest.getPluginConfig(pluginPath).then(pluginConfig => {
+        const pluginConfig = await manifest.getPluginConfig(pluginPath)
+        if (pluginConfig) {
+          log.debug(`Copying ${pluginPath.basePath} to ${outputDirectory}`)
           this.copyPluginToOutput(
             paths,
             srcOutputDirectory,
             pluginPath,
             pluginConfig
           )
-        })
+        }
       }
       const editableFiles = await this.generateRequestHandlerClasses(
         apiDependency,

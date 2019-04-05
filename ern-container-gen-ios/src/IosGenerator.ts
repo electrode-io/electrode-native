@@ -23,6 +23,7 @@ import path from 'path'
 import xcode from 'xcode-ern'
 import _ from 'lodash'
 import readDir from 'fs-readdir-recursive'
+import { Composite } from 'ern-composite-gen'
 
 const ROOT_DIR = process.cwd()
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
@@ -112,6 +113,7 @@ export default class IosGenerator implements ContainerGenerator {
       .run(
         this.buildApiImplPluginViews(
           config.plugins,
+          config.composite,
           mustacheView,
           pathSpec,
           projectSpec
@@ -121,7 +123,8 @@ export default class IosGenerator implements ContainerGenerator {
       pathSpec,
       projectSpec,
       config.plugins,
-      mustacheView
+      mustacheView,
+      config.composite
     )
 
     await kax
@@ -173,6 +176,9 @@ export default class IosGenerator implements ContainerGenerator {
         continue
       }
       const pluginConfig = await manifest.getPluginConfig(plugin)
+      if (!pluginConfig) {
+        continue
+      }
       if (!pluginConfig.ios) {
         log.warn(
           `${
@@ -233,6 +239,7 @@ export default class IosGenerator implements ContainerGenerator {
 
   public async buildApiImplPluginViews(
     plugins: PackagePath[],
+    composite: Composite,
     mustacheView: any,
     pathSpec: any,
     projectSpec: any
@@ -242,12 +249,22 @@ export default class IosGenerator implements ContainerGenerator {
         plugin,
         projectSpec.projectName
       )
+      if (!pluginConfig) {
+        continue
+      }
       shell.pushd(pathSpec.pluginsDownloadDirectory)
       try {
-        if (await utils.isDependencyApiImpl(plugin.basePath)) {
-          const pluginSourcePath = await utils.downloadPluginSource(
-            pluginConfig.origin
-          )
+        const nativeDependencyPathInComposite = await composite.getNativeDependencyPath(
+          plugin
+        )
+        const pluginSourcePath =
+          nativeDependencyPathInComposite ||
+          (await utils.downloadPluginSource(pluginConfig.origin))
+        if (!pluginSourcePath) {
+          throw new Error(`Was not able to retrieve ${plugin.basePath}`)
+        }
+
+        if (await utils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
           populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
         }
       } finally {

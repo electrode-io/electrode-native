@@ -46,17 +46,45 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture: NativeDependencies[] = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiTwo@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiTwo@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiTwo',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         apis: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiTwo@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiTwo@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiTwo',
+          },
         ],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [PackagePath.fromString('nativeModuleOne@1.0.0')],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
+        thirdPartyInManifest: [
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+        ],
         thirdPartyNotInManifest: [],
       },
     ]
@@ -72,17 +100,45 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture: NativeDependencies[] = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@1.0.1'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.1'),
+            path: '/Users/foo/composite/node_modules/miniAppA/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         apis: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@1.0.1'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.1'),
+            path: '/Users/foo/composite/node_modules/miniAppA/apiOne',
+          },
         ],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [PackagePath.fromString('nativeModuleOne@1.0.0')],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
+        thirdPartyInManifest: [
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+        ],
         thirdPartyNotInManifest: [],
       },
     ]
@@ -100,17 +156,45 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@1.1.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@1.1.0'),
+            path: '/Users/foo/composite/node_modules/miniAppA/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         apis: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@1.1.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@1.1.0'),
+            path: '/Users/foo/composite/node_modules/miniAppA/apiOne',
+          },
         ],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [PackagePath.fromString('nativeModuleOne@1.0.0')],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
+        thirdPartyInManifest: [
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+        ],
         thirdPartyNotInManifest: [],
       },
     ]
@@ -128,17 +212,45 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         apis: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
         ],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [PackagePath.fromString('nativeModuleOne@1.0.0')],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
+        thirdPartyInManifest: [
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+        ],
         thirdPartyNotInManifest: [],
       },
     ]
@@ -153,17 +265,45 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@2.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@2.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         apis: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('apiOne@2.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('apiOne@2.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
         ],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [PackagePath.fromString('nativeModuleOne@1.0.0')],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
+        thirdPartyInManifest: [
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+        ],
         thirdPartyNotInManifest: [],
       },
     ]
@@ -176,135 +316,48 @@ describe('resolveNativeDependenciesVersions', () => {
     expect(result.pluginsWithMismatchingVersions).includes('apiOne')
   })
 
-  it('should work as expected [react-native-electrode-bridge same version]', () => {
-    const fixture = [
-      {
-        all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-        ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-        ],
-        thirdPartyNotInManifest: [],
-      },
-    ]
-
-    const result = nativeDepenciesVersionResolution.resolveNativeDependenciesVersions(
-      fixture
-    )
-    expect(result.resolved).length(3)
-    expect(result.pluginsWithMismatchingVersions).length(0)
-  })
-
-  it('should work as expected [react-native-electrode-bridge with different patch version]', () => {
-    const fixture = [
-      {
-        all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.1'),
-        ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.1'),
-        ],
-        thirdPartyNotInManifest: [],
-      },
-    ]
-
-    const result = nativeDepenciesVersionResolution.resolveNativeDependenciesVersions(
-      fixture
-    )
-    expect(result.resolved).length(3)
-    expect(result.pluginsWithMismatchingVersions).length(0)
-    const resolvedDepsAsStrings = result.resolved.map(r => r.toString())
-    expect(resolvedDepsAsStrings).includes(
-      'react-native-electrode-bridge@1.0.1'
-    )
-  })
-
-  it('should work as expected [react-native-electrode-bridge with different minor version]', () => {
-    const fixture = [
-      {
-        all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.1.0'),
-        ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.1.0'),
-        ],
-        thirdPartyNotInManifest: [],
-      },
-    ]
-
-    const result = nativeDepenciesVersionResolution.resolveNativeDependenciesVersions(
-      fixture
-    )
-    expect(result.resolved).length(3)
-    expect(result.pluginsWithMismatchingVersions).length(0)
-    const resolvedDepsAsStrings = result.resolved.map(r => r.toString())
-    expect(resolvedDepsAsStrings).includes(
-      'react-native-electrode-bridge@1.1.0'
-    )
-  })
-
-  it('should work as expected [react-native-electrode-bridge with different major version]', () => {
-    const fixture = [
-      {
-        all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@2.0.0'),
-        ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
-        thirdPartyInManifest: [
-          PackagePath.fromString('react-native-electrode-bridge@1.0.0'),
-          PackagePath.fromString('react-native-electrode-bridge@2.0.0'),
-        ],
-        thirdPartyNotInManifest: [],
-      },
-    ]
-
-    const result = nativeDepenciesVersionResolution.resolveNativeDependenciesVersions(
-      fixture
-    )
-    expect(result.resolved).length(2)
-    expect(result.pluginsWithMismatchingVersions).length(1)
-    expect(result.pluginsWithMismatchingVersions).includes(
-      'react-native-electrode-bridge'
-    )
-  })
-
   it('should work as expected [third party native module with same version', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
+        apis: [
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+        ],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
         thirdPartyInManifest: [
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         thirdPartyNotInManifest: [],
       },
@@ -323,16 +376,44 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.1'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.1'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
+        apis: [
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+        ],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
         thirdPartyInManifest: [
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.1'),
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.1'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
         ],
         thirdPartyNotInManifest: [],
       },
@@ -350,16 +431,46 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.1.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.1.1'),
+            path:
+              '/Users/foo/composite/node_modules/miniappA/node_modules/nativeModuleOne',
+          },
         ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
+        apis: [
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+        ],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
         thirdPartyInManifest: [
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.1.0'),
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.1.1'),
+            path:
+              '/Users/foo/composite/node_modules/miniappA/node_modules/nativeModuleOne',
+          },
         ],
         thirdPartyNotInManifest: [],
       },
@@ -377,16 +488,46 @@ describe('resolveNativeDependenciesVersions', () => {
     const fixture = [
       {
         all: [
-          PackagePath.fromString('apiOne@1.0.0'),
-          PackagePath.fromString('nativeApiImplOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@2.0.0'),
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@2.0.0'),
+            path:
+              '/Users/foo/composite/node_modules/miniappA/node_modules/nativeModuleOne',
+          },
         ],
-        apis: [PackagePath.fromString('apiOne@1.0.0')],
-        nativeApisImpl: [PackagePath.fromString('nativeApiImplOne@1.0.0')],
+        apis: [
+          {
+            packagePath: PackagePath.fromString('apiOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/apiOne',
+          },
+        ],
+        nativeApisImpl: [
+          {
+            packagePath: PackagePath.fromString('nativeApiImplOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeApiImplOne',
+          },
+        ],
         thirdPartyInManifest: [
-          PackagePath.fromString('nativeModuleOne@1.0.0'),
-          PackagePath.fromString('nativeModuleOne@2.0.0'),
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@1.0.0'),
+            path: '/Users/foo/composite/node_modules/nativeModuleOne',
+          },
+          {
+            packagePath: PackagePath.fromString('nativeModuleOne@2.0.0'),
+            path:
+              '/Users/foo/composite/node_modules/miniappA/node_modules/nativeModuleOne',
+          },
         ],
         thirdPartyNotInManifest: [],
       },
