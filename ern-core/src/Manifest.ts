@@ -615,7 +615,7 @@ export class Manifest {
     plugin: PackagePath,
     projectName: string = 'ElectrodeContainer',
     platformVersion: string = Platform.currentVersion
-  ): Promise<PluginConfig> {
+  ): Promise<PluginConfig | void> {
     await this.initOverrideManifest()
     let result
     if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
@@ -638,11 +638,17 @@ export class Manifest {
       )
       result = this.getApiImplPluginDefaultConfig(plugin, projectName)
     } else {
-      throw new Error(
+      log.error(
+        `Unsupported plugin. No configuration found in manifest for ${
+          plugin.basePath
+        }.`
+      )
+      return
+      /*throw new Error(
         `Unsupported plugin. No configuration found in manifest for ${
           plugin.basePath
         }`
-      )
+      )*/
     }
 
     if (!result.origin) {

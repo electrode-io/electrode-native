@@ -1,18 +1,10 @@
-import {
-  PackagePath,
-  MiniApp,
-  NativeApplicationDescriptor,
-  nativeDepenciesVersionResolution as resolver,
-  log,
-  kax,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { syncCauldronContainer } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
-  logNativeDependenciesConflicts,
   tryCatchWrap,
 } from '../../../lib'
 import _ from 'lodash'
@@ -93,28 +85,7 @@ export const commandHandler = async ({
     },
   })
 
-  const miniAppsObjs: MiniApp[] = []
-  for (const miniapp of miniapps) {
-    const m = await kax
-      .task(`Retrieving ${miniapp} MiniApp`)
-      .run(MiniApp.fromPackagePath(miniapp))
-    miniAppsObjs.push(m)
-  }
-
   const cauldron = await getActiveCauldron()
-
-  const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-    miniAppsObjs
-  )
-  const cauldronDependencies = await cauldron.getNativeDependencies(descriptor)
-  const finalNativeDependencies = resolver.retainHighestVersions(
-    nativeDependencies.resolved,
-    cauldronDependencies
-  )
-
-  logNativeDependenciesConflicts(nativeDependencies, {
-    throwOnConflict: !force,
-  })
 
   const cauldronCommitMessage = [
     `${
@@ -124,18 +95,12 @@ export const commandHandler = async ({
     }`,
   ]
 
-  await performContainerStateUpdateInCauldron(
+  await syncCauldronContainer(
     async () => {
-      for (const miniAppObj of miniAppsObjs) {
-        cauldronCommitMessage.push(
-          `- Add ${miniAppObj.packageDescriptor} MiniApp`
-        )
+      for (const miniApp of miniapps) {
+        cauldronCommitMessage.push(`- Add ${miniApp.basePath} MiniApp`)
       }
       await cauldron.syncContainerMiniApps(descriptor!, miniapps)
-      await cauldron.syncContainerNativeDependencies(
-        descriptor!,
-        finalNativeDependencies
-      )
     },
     descriptor,
     cauldronCommitMessage,

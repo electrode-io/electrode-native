@@ -5,7 +5,12 @@ import {
   kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { runLocalContainerGen, runCauldronContainerGen } from 'ern-orchestrator'
+import {
+  runLocalContainerGen,
+  runLocalCompositeGen,
+  runCauldronContainerGen,
+  runCauldronCompositeGen,
+} from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
@@ -33,6 +38,10 @@ export const builder = (argv: Argv) => {
       describe:
         'A list of one or more extra native dependencies to include in this container',
       type: 'array',
+    })
+    .option('compositeDir', {
+      describe: 'Directory in which to generate the Composite',
+      type: 'string',
     })
     .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('descriptor', {
@@ -91,6 +100,7 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   baseComposite,
+  compositeDir,
   dependencies,
   descriptor,
   extra,
@@ -103,6 +113,7 @@ export const commandHandler = async ({
   platform,
 }: {
   baseComposite?: PackagePath
+  compositeDir?: string
   dependencies?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
   extra?: string
@@ -179,9 +190,16 @@ Output directory should either not exist (it will be created) or should be empty
   if (!descriptor && miniapps) {
     platform = platform || (await askUserToSelectAPlatform())
 
-    await kax.task('Generating Container locally').run(
-      runLocalContainerGen(miniapps, jsApiImpls || [], platform, {
+    const composite = await kax.task('Generating Composite locally').run(
+      runLocalCompositeGen(miniapps, {
         baseComposite,
+        jsApiImpls,
+        outDir: compositeDir,
+      })
+    )
+
+    await kax.task('Generating Container locally').run(
+      runLocalContainerGen(platform, composite, {
         extra: extraObj,
         extraNativeDependencies: dependencies || [],
         ignoreRnpmAssets,
@@ -189,11 +207,19 @@ Output directory should either not exist (it will be created) or should be empty
       })
     )
   } else if (descriptor) {
-    await runCauldronContainerGen(descriptor, {
-      baseComposite,
-      favorGitBranches: !!fromGitBranches,
-      outDir,
-    })
+    const composite = await kax.task('Generating Composite from Cauldron').run(
+      runCauldronCompositeGen(descriptor, {
+        baseComposite,
+        favorGitBranches: !!fromGitBranches,
+        outDir: compositeDir,
+      })
+    )
+
+    await kax.task('Generation Container from Cauldron').run(
+      runCauldronContainerGen(descriptor, composite, {
+        outDir,
+      })
+    )
   }
 }
 

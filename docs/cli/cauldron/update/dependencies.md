@@ -14,6 +14,7 @@
 `<dependencies..>`
 
 * One or more dependencies (delimited by spaces) to update in a target native application version in the Cauldron.
+* Only native dependencies that are not used by any MiniApp will be updated. It is not possible to update native dependencies used by one or more MiniApp(s).
 * You can only update with native dependency versions that have been published to NPM. 
 * You cannot use the `file` or `git` schemes for the dependency(ies).
 * The version of each dependency is corresponding to the version to update to. 

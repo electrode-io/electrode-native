@@ -1,17 +1,10 @@
-import {
-  PackagePath,
-  NativeApplicationDescriptor,
-  MiniApp,
-  nativeDepenciesVersionResolution as resolver,
-  log,
-} from 'ern-core'
+import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { syncCauldronContainer } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
-  logNativeDependenciesConflicts,
   tryCatchWrap,
   emptyContainerIfSingleMiniAppOrJsApiImpl,
 } from '../../lib'
@@ -23,63 +16,67 @@ export const desc =
   'Cauldron command to batch many operations as a single Cauldron update'
 
 export const builder = (argv: Argv) => {
-  return argv
-    .option('addDependencies', {
-      describe:
-        'Adds one or more native dependencies to a native application version',
-      type: 'array',
-    })
-    .coerce('addDependencies', d => d.map(PackagePath.fromString))
-    .option('addMiniapps', {
-      describe: 'Adds one or more MiniApps to a native application version',
-      type: 'array',
-    })
-    .coerce('addMiniapps', d => d.map(PackagePath.fromString))
-    .option('delDependencies', {
-      describe:
-        'Remove one or more native dependencies from a native application version',
-      type: 'array',
-    })
-    .option('containerVersion', {
-      alias: 'v',
-      describe:
-        'Version to use for generated container. If none provided, current container version will be patch bumped.',
-      type: 'string',
-    })
-    .coerce('delDependencies', d => d.map(PackagePath.fromString))
-    .option('delMiniapps', {
-      describe: 'Remove one or more MiniApps from a native application version',
-      type: 'array',
-    })
-    .coerce('delMiniapps', d => d.map(PackagePath.fromString))
-    .option('descriptor', {
-      alias: 'd',
-      describe:
-        'A complete native application descriptor target of the operation',
-      type: 'string',
-    })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
-    .option('force', {
-      alias: 'f',
-      describe:
-        'Force the operations even if some compatibility checks are failing',
-      type: 'boolean',
-    })
-    .option('updateDependencies', {
-      describe:
-        'Update one or more native dependencies versions in a native application version',
-      type: 'array',
-    })
-    .coerce('updateDependencies', d => d.map(PackagePath.fromString))
-    .option('updateMiniapps', {
-      describe:
-        'Update one or more MiniApps versions in a native appplication version',
-      type: 'array',
-    })
-    .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
-    .epilog(epilog(exports))
+  return (
+    argv
+      .option('addDependencies', {
+        describe:
+          'Adds one or more native dependencies to a native application version',
+        type: 'array',
+      })
+      .coerce('addDependencies', d => d.map(PackagePath.fromString))
+      .option('addMiniapps', {
+        describe: 'Adds one or more MiniApps to a native application version',
+        type: 'array',
+      })
+      .coerce('addMiniapps', d => d.map(PackagePath.fromString))
+      .option('delDependencies', {
+        describe:
+          'Remove one or more native dependencies from a native application version',
+        type: 'array',
+      })
+      .option('containerVersion', {
+        alias: 'v',
+        describe:
+          'Version to use for generated container. If none provided, current container version will be patch bumped.',
+        type: 'string',
+      })
+      .coerce('delDependencies', d => d.map(PackagePath.fromString))
+      .option('delMiniapps', {
+        describe:
+          'Remove one or more MiniApps from a native application version',
+        type: 'array',
+      })
+      .coerce('delMiniapps', d => d.map(PackagePath.fromString))
+      .option('descriptor', {
+        alias: 'd',
+        describe:
+          'A complete native application descriptor target of the operation',
+        type: 'string',
+      })
+      .coerce('descriptor', d =>
+        NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
+      )
+      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
+      .option('force [DEPRECATED]', {
+        alias: 'f',
+        describe:
+          'Force the operations even if some compatibility checks are failing',
+        type: 'boolean',
+      })
+      .option('updateDependencies', {
+        describe:
+          'Update one or more native dependencies versions in a native application version',
+        type: 'array',
+      })
+      .coerce('updateDependencies', d => d.map(PackagePath.fromString))
+      .option('updateMiniapps', {
+        describe:
+          'Update one or more MiniApps versions in a native appplication version',
+        type: 'array',
+      })
+      .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
+      .epilog(epilog(exports))
+  )
 }
 
 export const commandHandler = async ({
@@ -103,6 +100,10 @@ export const commandHandler = async ({
   updateDependencies: PackagePath[]
   updateMiniapps: PackagePath[]
 }) => {
+  if (force) {
+    log.warn(`--force has been deprecated in 0.31.0.`)
+  }
+
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
@@ -194,25 +195,12 @@ export const commandHandler = async ({
     },
   })
 
-  const updateMiniAppsObjs: MiniApp[] = []
-  const addMiniAppsObjs: MiniApp[] = []
-
-  for (const updateMiniapp of updateMiniapps) {
-    const m = await MiniApp.fromPackagePath(updateMiniapp)
-    updateMiniAppsObjs.push(m)
-  }
-
-  for (const addMiniApp of addMiniapps) {
-    const m = await MiniApp.fromPackagePath(addMiniApp)
-    addMiniAppsObjs.push(m)
-  }
-
   const cauldronCommitMessage = [
     `Batch operation on ${descriptor} native application`,
   ]
 
   const cauldron = await getActiveCauldron()
-  await performContainerStateUpdateInCauldron(
+  await syncCauldronContainer(
     async () => {
       // Del Dependencies
       for (const delDependency of delDependencies) {
@@ -253,61 +241,22 @@ export const commandHandler = async ({
         cauldronCommitMessage.push(`-Add ${addDependency} native dependency`)
       }
       // Update MiniApps
-      for (const updateMiniAppObj of updateMiniAppsObjs) {
+      for (const updatedMiniApp of updateMiniapps) {
         cauldronCommitMessage.push(
-          `- Update ${updateMiniAppObj.name} MiniApp version to v${
-            updateMiniAppObj.version
+          `- Update ${updatedMiniApp.basePath} MiniApp version to v${
+            updatedMiniApp.version
           }`
         )
       }
       // Add MiniApps
-      for (const addMiniAppObj of addMiniAppsObjs) {
-        cauldronCommitMessage.push(
-          `-Add ${addMiniAppObj.packageDescriptor} MiniApp`
-        )
+      for (const addedMiniApp of addMiniapps) {
+        cauldronCommitMessage.push(`-Add ${addedMiniApp.basePath} MiniApp`)
       }
-
-      const miniAppsInCauldron = await cauldron.getContainerMiniApps(
-        descriptor!
-      )
-      const nonUpdatedMiniAppsInCauldron = _.xorBy(
-        updateMiniapps,
-        miniAppsInCauldron,
-        'basePath'
-      )
-      const nonUpdatedMiniAppsInCauldronObjs: MiniApp[] = []
-      for (const nonUpdatedMiniAppInCauldron of nonUpdatedMiniAppsInCauldron) {
-        const m = await MiniApp.fromPackagePath(nonUpdatedMiniAppInCauldron)
-        nonUpdatedMiniAppsInCauldronObjs.push(m)
-      }
-
-      const nativeDependencies = await resolver.resolveNativeDependenciesVersionsOfMiniApps(
-        [
-          ...updateMiniAppsObjs,
-          ...addMiniAppsObjs,
-          ...nonUpdatedMiniAppsInCauldronObjs,
-        ]
-      )
-      const cauldronDependencies = await cauldron.getNativeDependencies(
-        descriptor!
-      )
-      const finalNativeDependencies = resolver.retainHighestVersions(
-        nativeDependencies.resolved,
-        cauldronDependencies
-      )
-
-      logNativeDependenciesConflicts(nativeDependencies, {
-        throwOnConflict: !force,
-      })
 
       await cauldron.syncContainerMiniApps(descriptor!, [
         ...addMiniapps,
         ...updateMiniapps,
       ])
-      await cauldron.syncContainerNativeDependencies(
-        descriptor!,
-        finalNativeDependencies
-      )
     },
     descriptor,
     cauldronCommitMessage,

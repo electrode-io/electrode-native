@@ -5,6 +5,7 @@ import {
   MiniApp,
   log,
   kax,
+  NativeDependency,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
@@ -159,7 +160,7 @@ export async function getNativeAppCompatibilityReport(
                 napDescriptor
               )
               const compatibility = getCompatibility(
-                miniappDependencies,
+                miniappDependencies.map(m => m.packagePath),
                 nativeAppDependencies,
                 {
                   uncompatibleIfARemoteDepIsMissing:

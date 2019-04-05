@@ -7,7 +7,7 @@ import { clearReactPackagerCache } from './clearReactPackagerCache'
 export async function bundleMiniApps(
   // The miniapps to be bundled
   miniApps: PackagePath[],
-  compositeMiniAppDir: string,
+  compositeDir: string,
   outDir: string,
   platform: NativePlatform,
   {
@@ -15,25 +15,47 @@ export async function bundleMiniApps(
     dev,
     sourceMapOutput,
     baseComposite,
+    jsApiImplDependencies,
   }: {
     pathToYarnLock?: string
     dev?: boolean
     sourceMapOutput?: string
     baseComposite?: PackagePath
-  } = {},
-  // JavaScript API implementations
-  jsApiImplDependencies?: PackagePath[]
+    jsApiImplDependencies?: PackagePath[]
+  } = {}
 ): Promise<BundlingResult> {
   await kax.task('Generating MiniApps Composite').run(
     generateComposite({
       baseComposite,
       jsApiImplDependencies,
       miniApps,
-      outDir: compositeMiniAppDir,
+      outDir: compositeDir,
       pathToYarnLock,
     })
   )
 
+  return bundleMiniAppsFromComposite({
+    compositeDir,
+    dev,
+    outDir,
+    platform,
+    sourceMapOutput,
+  })
+}
+
+export async function bundleMiniAppsFromComposite({
+  compositeDir,
+  dev,
+  outDir,
+  platform,
+  sourceMapOutput,
+}: {
+  compositeDir: string
+  dev?: boolean
+  outDir: string
+  platform: NativePlatform
+  sourceMapOutput?: string
+}): Promise<BundlingResult> {
   clearReactPackagerCache()
 
   return kax.task('Running Metro Bundler').run(
@@ -42,13 +64,13 @@ export async function bundleMiniApps(
           dev,
           outDir,
           sourceMapOutput,
-          workingDir: compositeMiniAppDir,
+          workingDir: compositeDir,
         })
       : reactNativeBundleIos({
           dev,
           outDir,
           sourceMapOutput,
-          workingDir: compositeMiniAppDir,
+          workingDir: compositeDir,
         })
   )
 }

@@ -11,6 +11,9 @@ export async function generatePluginsMustacheViews(
       continue
     }
     const pluginConfig = await manifest.getPluginConfig(plugin)
+    if (!pluginConfig) {
+      continue
+    }
     if (!pluginConfig[platform]) {
       log.warn(
         `${

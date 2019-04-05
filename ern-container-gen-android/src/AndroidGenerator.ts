@@ -81,7 +81,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       mustacheView.hasElectrodeBridgePlugin = true
     }
 
-    mustacheView.miniApps = config.miniApps
+    mustacheView.miniApps = config.composite.getMiniApps()
 
     await kax
       .task('Preparing Native Dependencies Injection')
@@ -97,12 +97,10 @@ export default class AndroidGenerator implements ContainerGenerator {
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
     for (const plugin of config.plugins) {
-      if (await coreUtils.isDependencyJsApiImpl(plugin.basePath)) {
-        log.debug('JS api implementation identified, skipping fill hull.')
+      const pluginConfig = await manifest.getPluginConfig(plugin)
+      if (!pluginConfig) {
         continue
       }
-
-      const pluginConfig = await manifest.getPluginConfig(plugin)
       let pluginSourcePath
       if (plugin.basePath === 'react-native') {
         continue
@@ -123,14 +121,18 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       let pathToPluginProject
       try {
-        pluginSourcePath = await coreUtils.downloadPluginSource(
-          pluginConfig.origin
+        const nativeDependencyPathInComposite = await config.composite.getNativeDependencyPath(
+          plugin
         )
+
+        pluginSourcePath =
+          nativeDependencyPathInComposite ||
+          (await coreUtils.downloadPluginSource(pluginConfig.origin))
         if (!pluginSourcePath) {
-          throw new Error(`Was not able to download ${plugin.basePath}`)
+          throw new Error(`Was not able to retrieve ${plugin.basePath}`)
         }
 
-        if (await coreUtils.isDependencyNativeApiImpl(plugin.basePath)) {
+        if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
           populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
         }
 
@@ -232,7 +234,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     log.debug('Creating miniapp activities')
-    for (const miniApp of config.miniApps) {
+    for (const miniApp of config.composite.getMiniApps()) {
       const activityFileName = `${miniApp.pascalCaseName}Activity.java`
 
       log.debug(`Creating ${activityFileName}`)
@@ -263,6 +265,9 @@ export default class AndroidGenerator implements ContainerGenerator {
         continue
       }
       const pluginConfig = await manifest.getPluginConfig(plugin)
+      if (!pluginConfig) {
+        continue
+      }
       if (!pluginConfig.android) {
         log.warn(
           `Skipping ${

@@ -181,6 +181,7 @@ export default class ApiImplGen {
       if (pluginsNames.length === 0) {
         log.info(`no other dependencies found for ${apiPackagePath.basePath}`)
       }
+
       return _.map(pluginsNames, PackagePath.fromString)
     } catch (e) {
       throw new Error(`getDependencies: ${e}`)

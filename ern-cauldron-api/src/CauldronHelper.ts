@@ -1315,7 +1315,7 @@ export class CauldronHelper {
 
   public async getLatestShasForMiniAppsBranches(
     descriptor: NativeApplicationDescriptor
-  ) {
+  ): Promise<PackagePath[]> {
     const result: PackagePath[] = []
     const miniAppsBranches = (await this.cauldron.getContainerMiniAppsBranches(
       descriptor

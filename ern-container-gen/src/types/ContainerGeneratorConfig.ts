@@ -1,21 +1,11 @@
-import { MiniApp, NativePlatform, PackagePath } from 'ern-core'
+import { NativePlatform, PackagePath, BaseMiniApp } from 'ern-core'
+import { Composite } from 'ern-composite-gen'
+
 export interface ContainerGeneratorConfig {
-  /**
-   * Base Composite Git repository
-   */
-  baseComposite?: PackagePath
-  /**
-   * The MiniApps that should be included in the generated Container
-   */
-  miniApps: MiniApp[]
   /**
    * The plugins that should be included in the generated Container
    */
   plugins: PackagePath[]
-  /**
-   * The JS API implementations that should be included in the generated Container
-   */
-  jsApiImpls: PackagePath[]
   /**
    * The output directory where to generate the Container
    */
@@ -25,9 +15,9 @@ export interface ContainerGeneratorConfig {
    */
   pluginsDownloadDir: string
   /**
-   * Directory where the MiniApps will be composed together during generation
+   * Composite
    */
-  compositeMiniAppDir: string
+  composite: Composite
   /**
    * Target native platform
    */
@@ -36,10 +26,6 @@ export interface ContainerGeneratorConfig {
    * Indicates whether rmpm assets should be included in the Container
    */
   ignoreRnpmAssets?: boolean
-  /**
-   * Path to the current yarn lock
-   */
-  pathToYarnLock?: string
   /**
    * Android config that should be included to override default build settings
    */

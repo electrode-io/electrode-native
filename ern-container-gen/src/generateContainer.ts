@@ -1,5 +1,5 @@
 import { sortDependenciesByName } from './sortDependenciesByName'
-import { bundleMiniApps } from './bundleMiniApps'
+import { bundleMiniAppsFromComposite } from './bundleMiniApps'
 import { copyRnpmAssets } from './copyRnpmAssets'
 import { addContainerMetadata } from './addContainerMetadata'
 import { ContainerGeneratorConfig, ContainerGenResult } from './types'
@@ -26,12 +26,6 @@ export async function generateContainer(
     shell.mkdir('-p', config.outDir)
   } else {
     shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
-  }
-
-  if (!fs.existsSync(config.compositeMiniAppDir)) {
-    shell.mkdir('-p', config.compositeMiniAppDir)
-  } else {
-    shell.rm('-rf', path.join(config.compositeMiniAppDir, '{.*,*}'))
   }
 
   if (!fs.existsSync(config.pluginsDownloadDir)) {
@@ -66,17 +60,11 @@ export async function generateContainer(
   const bundlingResult: BundlingResult = await kax
     .task('Bundling MiniApps')
     .run(
-      bundleMiniApps(
-        config.miniApps.map(m => m.packagePath),
-        config.compositeMiniAppDir,
-        config.outDir,
-        config.targetPlatform,
-        {
-          baseComposite: config.baseComposite,
-          pathToYarnLock: config.pathToYarnLock,
-        },
-        config.jsApiImpls
-      )
+      bundleMiniAppsFromComposite({
+        compositeDir: config.composite.path,
+        outDir: config.outDir,
+        platform: config.targetPlatform,
+      })
     )
 
   if (!config.ignoreRnpmAssets) {
@@ -84,8 +72,8 @@ export async function generateContainer(
       .task('Coying rnpm assets -if any-')
       .run(
         copyRnpmAssets(
-          config.miniApps,
-          config.compositeMiniAppDir,
+          config.composite.getMiniApps(),
+          config.composite.path,
           config.outDir,
           config.targetPlatform
         )

@@ -1,6 +1,6 @@
 import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { syncCauldronContainer } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
@@ -103,7 +103,7 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
   ]
 
   const cauldron = await getActiveCauldron()
-  await performContainerStateUpdateInCauldron(
+  await syncCauldronContainer(
     async () => {
       for (const dependency of dependencies) {
         await cauldron.updateNativeDependencyVersionInContainer(

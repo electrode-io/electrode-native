@@ -1,10 +1,10 @@
-import { MiniApp, NativePlatform } from 'ern-core'
+import { MiniApp, NativePlatform, BaseMiniApp } from 'ern-core'
 import { copyAndroidRnpmAssetsFromMiniAppPath } from './copyAndroidRnpmAssetsFromMiniAppPath'
 import { copyIosRnpmAssetsFromMiniAppPath } from './copyIosRnpmAssetsFromMiniAppPath'
 import path from 'path'
 
 export function copyRnpmAssets(
-  miniApps: MiniApp[],
+  miniApps: BaseMiniApp[],
   compositeMiniAppDir: string,
   outDir: string,
   platform: NativePlatform

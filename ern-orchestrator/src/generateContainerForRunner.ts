@@ -2,8 +2,10 @@ import {
   PackagePath,
   NativeApplicationDescriptor,
   NativePlatform,
+  kax,
 } from 'ern-core'
 import { runLocalContainerGen, runCauldronContainerGen } from './container'
+import { runLocalCompositeGen, runCauldronCompositeGen } from './composite'
 
 export async function generateContainerForRunner(
   platform: NativePlatform,
@@ -26,16 +28,31 @@ export async function generateContainerForRunner(
   }
 ) {
   if (napDescriptor) {
-    await runCauldronContainerGen(napDescriptor, {
-      baseComposite,
-      outDir,
-    })
+    const composite = await kax.task('Generating Composite from Cauldron').run(
+      runCauldronCompositeGen(napDescriptor, {
+        baseComposite,
+      })
+    )
+
+    await kax.task('Generation Container from Cauldron').run(
+      runCauldronContainerGen(napDescriptor, composite, {
+        outDir,
+      })
+    )
   } else {
-    await runLocalContainerGen(miniApps, jsApiImpls, platform, {
-      baseComposite,
-      extra: extra || {},
-      extraNativeDependencies: dependencies,
-      outDir,
-    })
+    const composite = await kax.task('Generating Composite locally').run(
+      runLocalCompositeGen(miniApps, {
+        baseComposite,
+        jsApiImpls,
+      })
+    )
+
+    await kax.task('Generating Container locally').run(
+      runLocalContainerGen(platform, composite, {
+        extra: extra || {},
+        extraNativeDependencies: dependencies || [],
+        outDir,
+      })
+    )
   }
 }

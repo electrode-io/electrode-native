@@ -27,6 +27,7 @@ export { yarn, reactnative } from './clients'
 export {
   NativeDependencies,
   findNativeDependencies,
+  NativeDependency,
 } from './nativeDependenciesLookup'
 export { tagOneLine } from './tagoneline'
 export { YarnCli } from './YarnCli'
@@ -40,6 +41,7 @@ export { ModuleFactory } from './ModuleFactory'
 export { isPackagePublished } from './isPackagePublished'
 export { getDefaultMavenLocalDirectory } from './getDefaultMavenLocalDirectory'
 export { gitCli } from './gitCli'
+export { BaseMiniApp } from './BaseMiniApp'
 
 export const config = _config
 export const Platform = _Platform
@@ -63,6 +65,7 @@ export const dependencyLookup = _dependencyLookup
 export const deviceConfig = _deviceConfig
 export { ErnBinaryStore } from './ErnBinaryStore'
 export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolution
+export { getPackagePathsDiffs } from './getPackagePathsDiffs'
 
 export {
   CodePushPackageInfo,

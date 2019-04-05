@@ -62,11 +62,11 @@ export const commandHandler = async ({
   }
 }
 
-function logDependencies(dependencies: PackagePath[], type: string) {
+function logDependencies(dependencies, type: string) {
   if (!_.isEmpty(dependencies)) {
     console.log(chalk.blue.bold(`=== ${type} ===`))
     for (const d of dependencies) {
-      console.log(d.toString())
+      console.log(d.packagePath.toString())
     }
   }
 }

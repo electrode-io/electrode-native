@@ -3,18 +3,17 @@ import {
   ContainerGenerator,
   ContainerGenResult,
 } from 'ern-container-gen'
+import { Composite } from 'ern-composite-gen'
 import { AndroidGenerator } from 'ern-container-gen-android'
 import { IosGenerator } from 'ern-container-gen-ios'
 import {
   createTmpDir,
   PackagePath,
-  MiniApp,
   NativeApplicationDescriptor,
   Platform,
   log,
   NativePlatform,
   kax,
-  nativeDepenciesVersionResolution,
   BundlingResult,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -29,17 +28,14 @@ import * as constants from './constants'
 // FROM GIT => git@github.com:username/MiniAppp.git
 // FROM FS  => file:/Users/username/Code/MiniApp
 export async function runLocalContainerGen(
-  miniappPackagesPaths: PackagePath[],
-  jsApiImplsPackagePaths: PackagePath[],
   platform: NativePlatform,
+  composite: Composite,
   {
-    baseComposite,
     outDir = Platform.getContainerGenOutDirectory(platform),
     extraNativeDependencies = [],
     ignoreRnpmAssets = false,
     extra,
   }: {
-    baseComposite?: PackagePath
     outDir?: string
     extraNativeDependencies: PackagePath[]
     ignoreRnpmAssets?: boolean
@@ -47,83 +43,16 @@ export async function runLocalContainerGen(
   }
 ) {
   try {
-    let apisAndNativeApisImpls: PackagePath[] = []
-    let nativeModulesInManifest: PackagePath[] = []
-    const miniapps: MiniApp[] = []
-
-    for (const miniappPackagePath of miniappPackagesPaths) {
-      log.debug(`Retrieving ${miniappPackagePath.toString()}`)
-
-      let currentMiniApp
-      if (miniappPackagePath.isFilePath) {
-        currentMiniApp = MiniApp.fromPath(miniappPackagePath.basePath)
-      } else {
-        currentMiniApp = await MiniApp.fromPackagePath(miniappPackagePath)
-      }
-
-      miniapps.push(currentMiniApp)
-
-      const nativeDependencies = await currentMiniApp.getNativeDependencies()
-
-      const miniAppApisAndNativeApisImpls = [
-        ...nativeDependencies.apis,
-        ...nativeDependencies.nativeApisImpl,
-      ]
-      apisAndNativeApisImpls = apisAndNativeApisImpls.concat(
-        miniAppApisAndNativeApisImpls
-      )
-
-      const miniAppNativeModulesInManifest =
-        nativeDependencies.thirdPartyInManifest
-      nativeModulesInManifest = nativeModulesInManifest.concat(
-        miniAppNativeModulesInManifest
-      )
-    }
-
-    // Move react-native-electrode-bridge from nativeModulesInManifest array to apisAndNativeApisImpls array
-    // as when it comes to version compatibility checks, react-native-electrode-bridge should be considered
-    // in the same way as APIs and APIs implementations (it's a native module exception)
-    const bridgeDep = _.remove(
-      nativeModulesInManifest,
-      d => d.basePath === 'react-native-electrode-bridge'
-    )
-    apisAndNativeApisImpls = apisAndNativeApisImpls.concat(bridgeDep)
-
-    const apiAndApiImplsResolvedVersions = nativeDepenciesVersionResolution.resolvePackageVersionsGivenMismatchLevel(
-      apisAndNativeApisImpls,
-      'major'
-    )
-    const nativeModulesResolvedVersions = nativeDepenciesVersionResolution.resolvePackageVersionsGivenMismatchLevel(
-      nativeModulesInManifest,
-      'patch'
-    )
-
-    if (
-      apiAndApiImplsResolvedVersions.pluginsWithMismatchingVersions.length >
-        0 ||
-      nativeModulesResolvedVersions.pluginsWithMismatchingVersions.length > 0
-    ) {
-      throw new Error(`The following plugins are not using compatible versions : 
-        ${apiAndApiImplsResolvedVersions.pluginsWithMismatchingVersions.toString()} 
-        ${nativeModulesResolvedVersions.pluginsWithMismatchingVersions.toString()}`)
-    }
-
     const generator = getGeneratorForPlatform(platform)
+    const nativeDependencies = await composite.getResolvedNativeDependencies()
 
     await kax.task('Generating Container').run(
       generator.generate({
         androidConfig: (extra && extra.androidConfig) || {},
-        baseComposite,
-        compositeMiniAppDir: createTmpDir(),
+        composite,
         ignoreRnpmAssets,
-        jsApiImpls: jsApiImplsPackagePaths,
-        miniApps: miniapps,
         outDir,
-        plugins: [
-          ...apiAndApiImplsResolvedVersions.resolved,
-          ...nativeModulesResolvedVersions.resolved,
-          ...extraNativeDependencies,
-        ],
+        plugins: [...nativeDependencies.resolved, ...extraNativeDependencies],
         pluginsDownloadDir: createTmpDir(),
         targetPlatform: platform,
       })
@@ -134,80 +63,52 @@ export async function runLocalContainerGen(
   }
 }
 
-async function retrieveMiniApps(miniApps: PackagePath[]): Promise<MiniApp[]> {
-  const taskMsg = 'Retrieving MiniApps'
-  const retrieveMiniAppsTask = kax.task(taskMsg)
-  try {
-    const result: MiniApp[] = []
-    for (const miniApp of miniApps) {
-      retrieveMiniAppsTask.text = `${taskMsg} [${miniApp.basePath}]`
-      result.push(await MiniApp.fromPackagePath(miniApp))
-    }
-    retrieveMiniAppsTask.succeed(taskMsg)
-    return result
-  } catch (e) {
-    retrieveMiniAppsTask.fail()
-    throw e
-  }
-}
-
 // Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronContainerGen(
   napDescriptor: NativeApplicationDescriptor,
+  composite: Composite,
   {
-    baseComposite,
     outDir,
-    compositeMiniAppDir,
-    favorGitBranches,
   }: {
-    baseComposite?: PackagePath
     outDir?: string
-    compositeMiniAppDir?: string
-    favorGitBranches?: boolean
   } = {}
 ): Promise<ContainerGenResult> {
   try {
     const cauldron = await getActiveCauldron()
-    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+    const cauldronNativeDependencies = await cauldron.getNativeDependencies(
       napDescriptor
     )
-    baseComposite =
-      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
-    const plugins = await cauldron.getNativeDependencies(napDescriptor)
-    const miniapps = await cauldron.getContainerMiniApps(napDescriptor, {
-      favorGitBranches,
-    })
-    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
-    const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
-    let pathToYarnLock
-
-    if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
-      pathToYarnLock = await cauldron.getPathToYarnLock(
-        napDescriptor,
-        constants.CONTAINER_YARN_KEY
-      )
-    } else {
-      log.debug(
-        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
-      )
-    }
 
     if (!napDescriptor.platform) {
       throw new Error(`${napDescriptor} does not specify a platform`)
     }
 
-    if (!compositeMiniAppDir) {
-      compositeMiniAppDir = createTmpDir()
-    }
+    const compositeNativeDeps = await composite.getResolvedNativeDependencies()
+
+    // Final native dependencies are the one that are in Composite
+    // plus any extra ones present in the Cauldron that are not
+    // in the Composite
+    const extraCauldronNativeDependencies = _.differenceBy(
+      cauldronNativeDependencies,
+      compositeNativeDeps.resolved,
+      'basePath'
+    )
+    log.debug(
+      `extraCauldronNativeDependencies: ${JSON.stringify(
+        extraCauldronNativeDependencies,
+        null,
+        2
+      )}`
+    )
+    const plugins = [
+      ...extraCauldronNativeDependencies,
+      ...compositeNativeDeps.resolved,
+    ]
 
     const platform = napDescriptor.platform
     const containerGeneratorConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor
     )
-
-    const miniAppsInstances: MiniApp[] = await retrieveMiniApps(miniapps)
 
     const generator = getGeneratorForPlatform(platform)
 
@@ -217,15 +118,11 @@ export async function runCauldronContainerGen(
         generator.generate({
           androidConfig:
             containerGeneratorConfig && containerGeneratorConfig.androidConfig,
-          baseComposite,
-          compositeMiniAppDir,
+          composite,
           ignoreRnpmAssets:
             containerGeneratorConfig &&
             containerGeneratorConfig.ignoreRnpmAssets,
-          jsApiImpls,
-          miniApps: miniAppsInstances,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
-          pathToYarnLock: pathToYarnLock || undefined,
           plugins,
           pluginsDownloadDir: createTmpDir(),
           targetPlatform: platform,
@@ -243,11 +140,11 @@ export async function runCaudronBundleGen(
   napDescriptor: NativeApplicationDescriptor,
   {
     baseComposite,
-    compositeMiniAppDir,
+    compositeDir,
     outDir,
   }: {
     baseComposite?: PackagePath
-    compositeMiniAppDir?: string
+    compositeDir?: string
     outDir: string
   }
 ): Promise<BundlingResult> {
@@ -278,24 +175,21 @@ export async function runCaudronBundleGen(
       throw new Error(`${napDescriptor} does not specify a platform`)
     }
 
-    if (!compositeMiniAppDir) {
-      compositeMiniAppDir = createTmpDir()
-    }
-
-    return kax
-      .task('Bundling MiniApps')
-      .run(
-        bundleMiniApps(
-          miniapps,
-          compositeMiniAppDir,
-          outDir,
-          napDescriptor.platform,
-          { baseComposite, pathToYarnLock: pathToYarnLock || undefined },
-          jsApiImpls
-        )
+    return kax.task('Bundling MiniApps').run(
+      bundleMiniApps(
+        miniapps,
+        compositeDir || createTmpDir(),
+        outDir,
+        napDescriptor.platform,
+        {
+          baseComposite,
+          jsApiImplDependencies: jsApiImpls,
+          pathToYarnLock: pathToYarnLock || undefined,
+        }
       )
+    )
   } catch (e) {
-    log.error(`runCauldronContainerGen failed: ${e}`)
+    log.error(`runCauldronBundleGen failed: ${e}`)
     throw e
   }
 }

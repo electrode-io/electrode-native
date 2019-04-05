@@ -1,7 +1,6 @@
 import { expect, assert } from 'chai'
 import {
   findDirectoriesContainingNativeCode,
-  findNativeDependencies,
   resolvePackagePaths,
 } from '../src/nativeDependenciesLookup'
 import path from 'path'
@@ -16,66 +15,6 @@ const pathToFixture = path.join(
   'fixtures',
   'nativeDependenciesLookup'
 )
-
-const nativeDependenciesResult = {
-  all: [
-    {
-      basePath: 'pkg-native-e',
-      fullPath: 'pkg-native-e@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: '@scoped-pkgs/pkg-native-a',
-      fullPath: '@scoped-pkgs/pkg-native-a@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: '@scoped-pkgs/pkg-native-b',
-      fullPath: '@scoped-pkgs/pkg-native-b@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: 'pkg-native-c',
-      fullPath: 'pkg-native-c@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: 'pkg-native-d',
-      fullPath: 'pkg-native-d@1.0.0',
-      version: '1.0.0',
-    },
-  ],
-  apis: [],
-  nativeApisImpl: [],
-  thirdPartyInManifest: [
-    {
-      basePath: 'pkg-native-e',
-      fullPath: 'pkg-native-e@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: '@scoped-pkgs/pkg-native-a',
-      fullPath: '@scoped-pkgs/pkg-native-a@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: '@scoped-pkgs/pkg-native-b',
-      fullPath: '@scoped-pkgs/pkg-native-b@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: 'pkg-native-c',
-      fullPath: 'pkg-native-c@1.0.0',
-      version: '1.0.0',
-    },
-    {
-      basePath: 'pkg-native-d',
-      fullPath: 'pkg-native-d@1.0.0',
-      version: '1.0.0',
-    },
-  ],
-  thirdPartyNotInManifest: [],
-}
 
 describe('nativeDependenciesLookup.ts', () => {
   beforeEach(() => {
@@ -123,13 +62,6 @@ describe('nativeDependenciesLookup.ts', () => {
         '@scoped-pkgs/nested/node_modules/@scope/pkg-native-e',
       ].map(p => p.replace(/\//g, path.sep))
       expect(expectedResult).to.have.members(result)
-    })
-  })
-
-  describe('findNativeDependencies', () => {
-    it('should return the correct native dependencies', async () => {
-      const result = await findNativeDependencies(pathToFixture)
-      expect(result).to.deep.equal(nativeDependenciesResult)
     })
   })
 })

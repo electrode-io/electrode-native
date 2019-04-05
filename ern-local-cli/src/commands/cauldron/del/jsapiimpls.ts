@@ -1,6 +1,6 @@
 import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { performContainerStateUpdateInCauldron } from 'ern-orchestrator'
+import { syncCauldronContainer } from 'ern-orchestrator'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
@@ -78,7 +78,7 @@ export const commandHandler = async ({
 
   if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor))) {
     const cauldron = await getActiveCauldron()
-    await performContainerStateUpdateInCauldron(
+    await syncCauldronContainer(
       async () => {
         for (const jsApiImpl of jsapiimpls) {
           await cauldron.removeJsApiImplFromContainer(descriptor!, jsApiImpl)
