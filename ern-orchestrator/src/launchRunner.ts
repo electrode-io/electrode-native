@@ -25,9 +25,7 @@ async function launchAndroidRunner(pathToAndroidRunner: string) {
 
 async function launchIosRunner(pathToIosRunner: string) {
   const iosDevices = ios.getiPhoneRealDevices()
-  if (iosDevices && iosDevices.length > 0) {
-    launchOnDevice(pathToIosRunner, iosDevices)
-  } else {
-    launchOnSimulator(pathToIosRunner)
-  }
+  return iosDevices && iosDevices.length > 0
+    ? launchOnDevice(pathToIosRunner, iosDevices)
+    : launchOnSimulator(pathToIosRunner)
 }
