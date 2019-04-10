@@ -42,6 +42,7 @@ export { isPackagePublished } from './isPackagePublished'
 export { getDefaultMavenLocalDirectory } from './getDefaultMavenLocalDirectory'
 export { gitCli } from './gitCli'
 export { BaseMiniApp } from './BaseMiniApp'
+export { YarnLockParser } from './YarnLockParser'
 
 export const config = _config
 export const Platform = _Platform

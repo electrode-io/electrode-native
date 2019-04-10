@@ -5,12 +5,12 @@ import {
   NativeApplicationDescriptor,
   log,
   kax,
+  YarnLockParser,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
+import treeify from 'treeify'
 import _ from 'lodash'
 import * as constants from './constants'
-import * as lockfile from '@yarnpkg/lockfile'
-import fs from 'fs'
 import path from 'path'
 
 export async function runLocalCompositeGen(
@@ -115,63 +115,42 @@ export async function validateCompositeNativeDependencies(
      ${resolution.pluginsWithMismatchingVersions.toString()}`)
   }
   try {
-    await logResolvedDependencies(composite, resolution.resolved)
-    if (resolution.pluginsWithMismatchingVersions.length > 0) {
-      await logMismatchingDependencies(
-        composite,
-        resolution.pluginsWithMismatchingVersions
-      )
-    }
+    logResolvedAndMismatchingDependenciesTree(composite, resolution)
   } catch (e) {
     log.error(e)
   }
 }
 
-const getTopLevelEntriesMatching = (json, dep: string) =>
-  Object.keys(json.object).filter(k => k.startsWith(`${dep}@`))
-
-function getTopLevelEntriesWithDependency(json, dep: PackagePath) {
-  return Object.entries(json.object)
-    .filter(([key, value]: [string, any]) =>
-      Object.entries(value.dependencies || []).some(
-        ([k, v]: [string, string]) => k === dep.basePath && v === dep.version
-      )
-    )
-    .map(([k, v]: [string, any]) => k)
-}
-
-export async function logResolvedDependencies(
+export function logResolvedAndMismatchingDependenciesTree(
   composite: Composite,
-  pp: PackagePath[]
+  resolution: any
 ) {
-  const file = fs.readFileSync(path.join(composite.path, 'yarn.lock'), 'utf8')
-  const lock = lockfile.parse(file)
-  lock.info(`[===== RESOLVED NATIVE DEPENDENCIES =====]`)
-  for (const p of pp) {
-    const topLevel = getTopLevelEntriesMatching(lock, p.basePath)
-    log.info(`[===== ${p.basePath} Resolved version : ${p.version} =====]`)
-    for (const t of topLevel) {
-      getTopLevelEntriesWithDependency(lock, PackagePath.fromString(t)).forEach(
-        x => log.info(`${t} => ${x}`)
-      )
-    }
+  const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
+  log.info('[ == RESOLVED NATIVE DEPENDENCIES ==]')
+  logDependenciesTree(
+    parser,
+    resolution.resolved.map(x => PackagePath.fromString(x.basePath)),
+    'debug'
+  )
+  if (resolution.pluginsWithMismatchingVersions.length > 0) {
+    log.error('[ == MISMATCHING NATIVE DEPENDENCIES ==]')
+    logDependenciesTree(
+      parser,
+      resolution.pluginsWithMismatchingVersions.map(PackagePath.fromString),
+      'error'
+    )
   }
 }
 
-export async function logMismatchingDependencies(
-  composite: Composite,
-  deps: string[]
+export function logDependenciesTree(
+  parser: YarnLockParser,
+  deps: PackagePath[],
+  logLevel: 'debug' | 'error'
 ) {
-  const file = fs.readFileSync(path.join(composite.path, 'yarn.lock'), 'utf8')
-  const lock = lockfile.parse(file)
-  lock.error(`[===== MISMATCHING NATIVE DEPENDENCIES =====]`)
-  for (const d of deps) {
-    const topLevel = getTopLevelEntriesMatching(lock, d)
-    log.info(`[===== Mismatching Native Dependency ${d}=====]`)
-    for (const t of topLevel) {
-      getTopLevelEntriesWithDependency(lock, PackagePath.fromString(t)).forEach(
-        x => log.error(`${t} => ${x}`)
-      )
-    }
+  for (const dep of deps) {
+    const depTree = parser.buildDependencyTree(dep)
+    logLevel === 'debug'
+      ? log.debug(treeify.asTree(depTree, true, true))
+      : log.error(treeify.asTree(depTree, true, true))
   }
 }
