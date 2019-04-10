@@ -9,8 +9,9 @@ import { epilog, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'why <dependency> <completeNapDescriptor>'
+// COMMAND DEPRECATED IN 0.31.0. TO BE REMOVED IN 0.35.0.
 export const desc =
-  'Why is a given native dependency included in a native application version ?'
+  'Why is a given native dependency included in a native application version ? [DEPRECATED]'
 
 export const builder = (argv: Argv) => {
   return argv.epilog(epilog(exports))
@@ -23,6 +24,9 @@ export const commandHandler = async ({
   completeNapDescriptor: string
   dependency: string
 }) => {
+  log.warn(
+    'This command has been deprecated in 0.31.0. Use `ern cauldry why` instead.'
+  )
   const napDescriptor = NativeApplicationDescriptor.fromString(
     completeNapDescriptor
   )
