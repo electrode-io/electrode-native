@@ -1,4 +1,8 @@
-## `ern why`
+## `ern why` [DEPRECATED]
+
+**This command has been deprecated in Electrode Native 0.31.0**  
+**Use [ern cauldron why] instead**
+
 
 #### Description
 
@@ -21,3 +25,5 @@
 #### Remarks
 
 * This command is similar to the `ern` equivalent of the `yarn why` command for native dependencies.  
+
+[ern cauldron why]: ./cauldron/why.md
