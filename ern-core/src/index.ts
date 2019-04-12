@@ -43,6 +43,7 @@ export { getDefaultMavenLocalDirectory } from './getDefaultMavenLocalDirectory'
 export { gitCli } from './gitCli'
 export { BaseMiniApp } from './BaseMiniApp'
 export { YarnLockParser } from './YarnLockParser'
+export { AndroidResolvedVersions } from './android'
 
 export const config = _config
 export const Platform = _Platform

@@ -224,4 +224,59 @@ describe('android.js', () => {
       expect(await android.androidGetBootAnimProp()).to.eql('Stopped')
     })
   })
+
+  // ==========================================================
+  // resolveAndroidVersions
+  // ==========================================================
+  describe('resolveAndroidVersions', () => {
+    it('should return all default versions if no versions are provided', () => {
+      const versions = android.resolveAndroidVersions()
+      expect(versions).deep.equal({
+        androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
+        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
+        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
+        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,
+        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+      })
+    })
+
+    it('should return default versions along with user provided versions', () => {
+      const versions = android.resolveAndroidVersions({
+        androidGradlePlugin: '3.0.0',
+        minSdkVersion: '15',
+      })
+      expect(versions).deep.equal({
+        androidGradlePlugin: '3.0.0',
+        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
+        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
+        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        minSdkVersion: '15',
+        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+      })
+    })
+
+    it('should return only user provided versions', () => {
+      const versions = android.resolveAndroidVersions({
+        androidGradlePlugin: '3.0.0',
+        buildToolsVersion: '27.0.0',
+        compileSdkVersion: '27',
+        gradleDistributionVersion: '4.5',
+        minSdkVersion: '15',
+        supportLibraryVersion: '27.0.0',
+        targetSdkVersion: '27',
+      })
+      expect(versions).deep.equal({
+        androidGradlePlugin: '3.0.0',
+        buildToolsVersion: '27.0.0',
+        compileSdkVersion: '27',
+        gradleDistributionVersion: '4.5',
+        minSdkVersion: '15',
+        supportLibraryVersion: '27.0.0',
+        targetSdkVersion: '27',
+      })
+    })
+  })
 })

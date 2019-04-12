@@ -66,7 +66,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       throw new Error('react-native plugin does not have a version !')
     }
 
-    const mustacheView: any = {}
+    let mustacheView: any = {}
     injectReactNativeVersionKeysInObject(
       mustacheView,
       reactNativePlugin.version
@@ -91,8 +91,9 @@ export default class AndroidGenerator implements ContainerGenerator {
       .task('Adding Native Dependencies Hooks')
       .run(this.addAndroidPluginHookClasses(config.plugins, config.outDir))
 
-    kax.info('Configure android config hooks')
-    this.configureAndroidBuildOptions(config, mustacheView)
+    kax.info('Setting Android tools and libraries versions')
+    const versions = android.resolveAndroidVersions(config.androidConfig)
+    mustacheView = Object.assign(mustacheView, versions)
 
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
@@ -335,33 +336,5 @@ export default class AndroidGenerator implements ContainerGenerator {
     if (reactNativeCodePushPlugin) {
       mustacheView.isCodePushPluginIncluded = true
     }
-  }
-
-  public configureAndroidBuildOptions(
-    config: ContainerGeneratorConfig,
-    mustacheView: any
-  ) {
-    const androidBuildOptions = (config && config.androidConfig) || {}
-    mustacheView.androidGradlePlugin =
-      (androidBuildOptions && androidBuildOptions.androidGradlePlugin) ||
-      android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION
-    mustacheView.buildToolsVersion =
-      (androidBuildOptions && androidBuildOptions.buildToolsVersion) ||
-      android.DEFAULT_BUILD_TOOLS_VERSION
-    mustacheView.compileSdkVersion =
-      (androidBuildOptions && androidBuildOptions.compileSdkVersion) ||
-      android.DEFAULT_COMPILE_SDK_VERSION
-    mustacheView.gradleDistributionVersion =
-      (androidBuildOptions && androidBuildOptions.gradleDistributionVersion) ||
-      android.DEFAULT_GRADLE_DISTRIBUTION_VERSION
-    mustacheView.minSdkVersion =
-      (androidBuildOptions && androidBuildOptions.minSdkVersion) ||
-      android.DEFAULT_MIN_SDK_VERSION
-    mustacheView.supportLibraryVersion =
-      (androidBuildOptions && androidBuildOptions.supportLibraryVersion) ||
-      android.DEFAULT_SUPPORT_LIBRARY
-    mustacheView.targetSdkVersion =
-      (androidBuildOptions && androidBuildOptions.targetSdkVersion) ||
-      android.DEFAULT_TARGET_SDK_VERSION
   }
 }
