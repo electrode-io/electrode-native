@@ -29,3 +29,4 @@ export { askUserForCodePushLabel } from './askUserForCodePushLabel'
 export {
   emptyContainerIfSingleMiniAppOrJsApiImpl,
 } from './emptyContainerIfSingleMiniAppOrJsApiImpl'
+export { askUserInput } from './askUserInput'
