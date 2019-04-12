@@ -142,16 +142,6 @@ Please use --fullRegen flag instead.`)
     }
   }
 
-  if (updatedMiniApps.length === 0) {
-    log.info('No Changes ...')
-    if (fullRegen) {
-      log.info('Performing regen anyway [--fullRegen]')
-    } else {
-      log.info('Skipping regen. To regenerate use the --fullRegen option.')
-      return
-    }
-  }
-
   const cauldronCommitMessage = [
     `${
       miniapps.length === 1
@@ -159,6 +149,25 @@ Please use --fullRegen flag instead.`)
         : `Update multiple MiniApps versions in ${descriptor}`
     }`,
   ]
+
+  if (updatedMiniApps.length === 0) {
+    log.info(
+      'No changes to MiniApps resolved SHAs (pointing to same commit(s))'
+    )
+    if (fullRegen) {
+      log.info('Performing regen anyway [--fullRegen]')
+    } else {
+      log.info(
+        `Skipping Container regen.
+Only updating Cauldron with new MiniApps versions. 
+To regenerate anyway use the --fullRegen option.`
+      )
+      await cauldron.beginTransaction()
+      await cauldron.syncContainerMiniApps(descriptor!, miniapps)
+      await cauldron.commitTransaction(cauldronCommitMessage)
+      return
+    }
+  }
 
   await syncCauldronContainer(
     async () => {
