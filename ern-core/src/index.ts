@@ -77,7 +77,10 @@ export {
 
 export { BundlingResult } from './ReactNativeCli'
 
+export { AndroidPluginConfigGenerator } from './AndroidPluginConfigGenerator'
+export { IosPluginConfigGenerator } from './IosPluginConfigGenerator'
 export { ManifestOverrideConfig } from './Manifest'
+export { PluginConfigGenerator } from './PluginConfigGenerator'
 
 export { NativePlatform } from './NativePlatform'
 export { FsCache } from './FsCache'

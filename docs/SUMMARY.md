@@ -66,6 +66,7 @@
 - [create-api](cli/create-api.md)
 - [create-composite](cli/create-composite.md)
 - [create-container](cli/create-container.md)
+- [create-plugin-config](cli/create-plugin-config.md)
 - [publish-container](cli/publish-container.md)
 - [transform-container](cli/transform-container.md)
 - [create-miniapp](cli/create-miniapp.md)

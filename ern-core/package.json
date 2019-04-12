@@ -50,6 +50,7 @@
     "decompress-zip": "^0.3.1",
     "fs-readdir-recursive": "^1.1.0",
     "get-folder-size": "^2.0.0",
+    "gradle-to-js":"^1.2.1",
     "inquirer": "^3.0.6",
     "lodash": "^4.17.10",
     "mustache": "^2.3.1",
