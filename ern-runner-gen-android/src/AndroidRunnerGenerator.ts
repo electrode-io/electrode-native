@@ -14,8 +14,8 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
   }
 
   public async generate(config: RunnerGeneratorConfig): Promise<void> {
-    const mustacheView: any = {}
-    configureMustacheView(config, mustacheView)
+    let mustacheView: any = {}
+    mustacheView = configureMustacheView(config, mustacheView)
 
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
     const files = readDir(
@@ -34,8 +34,8 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
   public async regenerateRunnerConfig(
     config: RunnerGeneratorConfig
   ): Promise<void> {
-    const mustacheView: any = {}
-    configureMustacheView(config, mustacheView)
+    let mustacheView: any = {}
+    mustacheView = configureMustacheView(config, mustacheView)
 
     const subPathToRunnerConfig = path.join(
       'app',
@@ -70,29 +70,11 @@ function configureMustacheView(
   config: RunnerGeneratorConfig,
   mustacheView: any
 ) {
-  const androidBuildOptions =
-    (config && config.extra && config.extra.androidConfig) || {}
-  mustacheView.androidGradlePlugin =
-    (androidBuildOptions && androidBuildOptions.androidGradlePlugin) ||
-    android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION
-  mustacheView.buildToolsVersion =
-    (androidBuildOptions && androidBuildOptions.buildToolsVersion) ||
-    android.DEFAULT_BUILD_TOOLS_VERSION
-  mustacheView.compileSdkVersion =
-    (androidBuildOptions && androidBuildOptions.compileSdkVersion) ||
-    android.DEFAULT_COMPILE_SDK_VERSION
-  mustacheView.gradleDistributionVersion =
-    (androidBuildOptions && androidBuildOptions.gradleDistributionVersion) ||
-    android.DEFAULT_GRADLE_DISTRIBUTION_VERSION
-  mustacheView.minSdkVersion =
-    (androidBuildOptions && androidBuildOptions.minSdkVersion) ||
-    android.DEFAULT_MIN_SDK_VERSION
-  mustacheView.supportLibraryVersion =
-    (androidBuildOptions && androidBuildOptions.supportLibraryVersion) ||
-    android.DEFAULT_SUPPORT_LIBRARY
-  mustacheView.targetSdkVersion =
-    (androidBuildOptions && androidBuildOptions.targetSdkVersion) ||
-    android.DEFAULT_TARGET_SDK_VERSION
+  const versions = android.resolveAndroidVersions(
+    config.extra && config.extra.androidConfig
+  )
+  mustacheView = Object.assign(mustacheView, versions)
+
   mustacheView.isReactNativeDevSupportEnabled =
     config.reactNativeDevSupportEnabled === true ? 'true' : 'false'
   mustacheView.miniAppName = config.mainMiniAppName
@@ -101,4 +83,6 @@ function configureMustacheView(
   mustacheView.packagerPort =
     config.reactNativePackagerPort || defaultReactNativePackagerPort
   mustacheView.pascalCaseMiniAppName = pascalCase(config.mainMiniAppName)
+
+  return mustacheView
 }
