@@ -9,6 +9,7 @@ import {
   NativePlatform,
   kax,
   android,
+  AndroidResolvedVersions,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -26,6 +27,12 @@ import readDir from 'fs-readdir-recursive'
 
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
+
+export interface AndroidDependencies {
+  files: string[]
+  transitive: string[]
+  regular: string[]
+}
 
 export default class AndroidGenerator implements ContainerGenerator {
   get name(): string {
@@ -97,6 +104,13 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
+
+    const dependencies: AndroidDependencies = {
+      files: [],
+      regular: [],
+      transitive: [],
+    }
+
     for (const plugin of config.plugins) {
       const pluginConfig = await manifest.getPluginConfig(plugin)
       if (!pluginConfig) {
@@ -170,25 +184,15 @@ export default class AndroidGenerator implements ContainerGenerator {
           if (pluginConfig.android.dependencies) {
             const transitivePrefix = 'transitive:'
             const filesPrefix = 'files'
-            for (let dependency of pluginConfig.android.dependencies) {
+            for (const dependency of pluginConfig.android.dependencies) {
               if (dependency.startsWith(transitivePrefix)) {
-                dependency = dependency.replace(transitivePrefix, '')
-                mustacheView.pluginCompile.push({
-                  compileStatement: `implementation('${dependency}') { transitive = true }`,
-                })
-                log.debug(
-                  `Adding compile('${dependency}') { transitive = true }`
+                dependencies.transitive.push(
+                  dependency.replace(transitivePrefix, '')
                 )
               } else if (dependency.startsWith(filesPrefix)) {
-                mustacheView.pluginCompile.push({
-                  compileStatement: `implementation ${dependency}`,
-                })
-                log.debug(`Adding implementation '${dependency}'`)
+                dependencies.files.push(dependency)
               } else {
-                mustacheView.pluginCompile.push({
-                  compileStatement: `implementation '${dependency}'`,
-                })
-                log.debug(`Adding compile '${dependency}'`)
+                dependencies.regular.push(dependency)
               }
             }
           }
@@ -197,6 +201,24 @@ export default class AndroidGenerator implements ContainerGenerator {
         shell.popd()
       }
     }
+
+    dependencies.regular.push(
+      `com.walmartlabs.ern:react-native:${reactNativePlugin.version}`
+    )
+    dependencies.regular.push(
+      `com.android.support:appcompat-v7:${versions.supportLibraryVersion}`
+    )
+    mustacheView.implementations = this.buildImplementationStatements(
+      dependencies,
+      versions
+    )
+
+    log.debug(
+      `Implementation statements to be injected: ${JSON.stringify(
+        mustacheView.implementations
+      )}`
+    )
+
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg)
 
     log.debug('Patching hull')
@@ -257,6 +279,63 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
   }
 
+  public buildImplementationStatements(
+    dependencies: AndroidDependencies,
+    androidVersions: AndroidResolvedVersions
+  ) {
+    const result: any[] = []
+
+    // Replace versions of support libraries with set version
+    dependencies.regular = dependencies.regular.map(
+      d =>
+        d.startsWith('com.android.support:')
+          ? `${d.slice(0, d.lastIndexOf(':'))}:${
+              androidVersions.supportLibraryVersion
+            }`
+          : d
+    )
+
+    // Dedupe dependencies with same version
+    dependencies.regular = _.uniq(dependencies.regular)
+    dependencies.files = _.uniq(dependencies.files)
+    dependencies.transitive = _.uniq(dependencies.transitive)
+
+    // Use highest versions for regular and transitive
+    // dependencies with multiple versions
+    const g = _.groupBy(dependencies.regular, x => x.match(/^[^:]+:[^:]+/)![0])
+    dependencies.regular = Object.keys(g).map(x => this.highestVersion(g[x]))
+    const h = _.groupBy(
+      dependencies.transitive,
+      x => x.match(/^[^:]+:[^:]+/)![0]
+    )
+    dependencies.transitive = Object.keys(h).map(x => this.highestVersion(h[x]))
+
+    // Add dependencies to result
+    dependencies.regular.forEach(d => result.push(`implementation '${d}'`))
+    dependencies.files.forEach(d => result.push(`implementation ${d}`))
+    dependencies.transitive.forEach(d =>
+      result.push(`implementation ('${d}') { transitive = true }`)
+    )
+
+    return result
+  }
+
+  public highestVersion(d: string[]): string {
+    if (d.length === 1) {
+      return d[0]
+    }
+    const name = d[0].match(/^[^:]+:[^:]+/)![0]
+    const version = d
+      .map(x => x.match(/^[^:]+:[^:]+:(.+)/)![1])
+      // Trick to make highest version lookup as easy
+      // as peforming a lexical sort
+      .map(x => x.replace('+', '999999'))
+      .sort()
+      .map(x => x.replace('999999', '+'))
+      .pop()
+    return `${name}:${version}`
+  }
+
   public async addAndroidPluginHookClasses(
     plugins: PackagePath[],
     outDir: string
@@ -312,23 +391,6 @@ export default class AndroidGenerator implements ContainerGenerator {
       plugins,
       'android'
     )
-    mustacheView.pluginCompile = []
-    const reactNativePlugin = _.find(
-      plugins,
-      p => p.basePath === 'react-native'
-    )
-    if (reactNativePlugin) {
-      log.debug(
-        `Will inject: compile 'com.walmartlabs.ern:react-native:${
-          reactNativePlugin.version
-        }'`
-      )
-      mustacheView.pluginCompile.push({
-        compileStatement: `api 'com.walmartlabs.ern:react-native:${
-          reactNativePlugin.version
-        }'`,
-      })
-    }
     const reactNativeCodePushPlugin = _.find(
       plugins,
       p => p.basePath === 'react-native-code-push'
