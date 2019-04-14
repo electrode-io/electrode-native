@@ -31,8 +31,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:{{{supportLibraryVersion}}}'
-  {{#pluginCompile}}
-    {{{compileStatement}}}
-  {{/pluginCompile}}
+  {{#implementations}}
+    {{{.}}}
+  {{/implementations}}
 }
