@@ -126,7 +126,7 @@ export function logResolvedAndMismatchingDependenciesTree(
   resolution: any
 ) {
   const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
-  log.info('[ == RESOLVED NATIVE DEPENDENCIES ==]')
+  log.debug('[ == RESOLVED NATIVE DEPENDENCIES ==]')
   logDependenciesTree(
     parser,
     resolution.resolved.map(x => PackagePath.fromString(x.basePath)),
