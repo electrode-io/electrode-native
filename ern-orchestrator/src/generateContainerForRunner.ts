@@ -34,7 +34,7 @@ export async function generateContainerForRunner(
       })
     )
 
-    await kax.task('Generation Container from Cauldron').run(
+    await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(napDescriptor, composite, {
         outDir,
       })

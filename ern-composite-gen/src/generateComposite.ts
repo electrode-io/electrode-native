@@ -7,6 +7,7 @@ import {
   readPackageJson,
   writePackageJson,
   fileUtils,
+  kax,
 } from 'ern-core'
 import { cleanupCompositeDir } from './cleanupCompositeDir'
 import {
@@ -180,7 +181,7 @@ async function installJsPackagesUsingYarnLock({
   // Now that the composite package.json is similar to the one used to generated yarn.lock
   // we can run yarn install to get back to the exact same dependency graph as the previously
   // generated composite
-  await yarn.install()
+  await kax.task('Running yarn install').run(yarn.install())
   await runYarnUsingMiniAppDeltas(miniAppsDeltas)
 }
 
@@ -194,8 +195,11 @@ async function installJsPackagesWithoutYarnLock({
   // No yarn.lock path was provided, just add miniapps one by one
   log.debug('[generateComposite] no yarn lock provided')
   await yarn.init()
-  for (const miniappPath of jsPackages) {
-    await yarn.add(miniappPath)
+  const nbJsPackages = jsPackages.length
+  for (let i = 0; i < nbJsPackages; i++) {
+    await kax
+      .task(`[${i + 1}/${nbJsPackages}] Adding ${jsPackages[i]}`)
+      .run(yarn.add(jsPackages[i]))
   }
 }
 

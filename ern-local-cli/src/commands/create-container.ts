@@ -3,6 +3,9 @@ import {
   NativeApplicationDescriptor,
   NativePlatform,
   kax,
+  Platform,
+  createTmpDir,
+  log,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
@@ -139,6 +142,8 @@ Output directory should either not exist (it will be created) or should be empty
     }
   }
 
+  compositeDir = compositeDir || createTmpDir()
+
   await logErrorAndExitIfNotSatisfied({
     noGitOrFilesystemPath: {
       extraErrorMessage:
@@ -198,6 +203,7 @@ Output directory should either not exist (it will be created) or should be empty
       })
     )
 
+    outDir = outDir || Platform.getContainerGenOutDirectory(platform)
     await kax.task('Generating Container locally').run(
       runLocalContainerGen(platform, composite, {
         extra: extraObj,
@@ -215,12 +221,17 @@ Output directory should either not exist (it will be created) or should be empty
       })
     )
 
-    await kax.task('Generation Container from Cauldron').run(
+    outDir =
+      outDir || Platform.getContainerGenOutDirectory(descriptor.platform!)
+    await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
         outDir,
       })
     )
   }
+  log.info(
+    `Container successfully generated in ${outDir}\nComposite generated in ${compositeDir}`
+  )
 }
 
 export const handler = tryCatchWrap(commandHandler)
