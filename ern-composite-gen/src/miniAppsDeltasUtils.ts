@@ -1,4 +1,4 @@
-import { log, PackagePath, yarn, utils } from 'ern-core'
+import { log, PackagePath, yarn, utils, kax } from 'ern-core'
 import {
   getYarnLockTopLevelDependencyRe,
   getYarnLockTopLevelGitDependencyRe,
@@ -111,7 +111,9 @@ export async function runYarnUsingMiniAppDeltas(
   if (miniAppsDeltas.new) {
     for (const newMiniAppVersion of miniAppsDeltas.new) {
       log.debug(`Adding new MiniApp ${newMiniAppVersion.toString()}`)
-      await yarn.add(newMiniAppVersion)
+      await kax
+        .task(`Adding ${newMiniAppVersion}`)
+        .run(yarn.add(newMiniAppVersion))
     }
   }
 
@@ -129,7 +131,9 @@ export async function runYarnUsingMiniAppDeltas(
     for (const upgradedMiniAppVersion of miniAppsDeltas.upgraded) {
       log.debug(`Upgrading MiniApp ${upgradedMiniAppVersion.toString()}`)
       // TODO : Once again ... Do we really want upgrade here ?
-      await yarn.upgrade(upgradedMiniAppVersion)
+      await kax
+        .task(`Upgrading ${upgradedMiniAppVersion}`)
+        .run(yarn.upgrade(upgradedMiniAppVersion))
     }
   }
 
@@ -150,7 +154,9 @@ export async function runYarnUsingMiniAppDeltas(
         log.debug(
           `Re-adding git based MiniApp ${sameMiniAppVersion.toString()}`
         )
-        await yarn.add(sameMiniAppVersion)
+        await kax
+          .task(`Adding ${sameMiniAppVersion}`)
+          .run(yarn.add(sameMiniAppVersion))
       }
     }
   }
