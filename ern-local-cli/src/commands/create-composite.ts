@@ -5,6 +5,7 @@ import {
   Platform,
   log,
   NativePlatform,
+  kax,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
@@ -91,6 +92,7 @@ Output directory should either not exist (it will be created) or should be empty
       )
     }
   }
+  outDir = outDir || path.join(Platform.rootDirectory, 'miniAppsComposite')
 
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && !miniapps) {
@@ -137,14 +139,18 @@ Output directory should either not exist (it will be created) or should be empty
       baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
   }
 
-  await generateComposite({
-    baseComposite,
-    extraJsDependencies,
-    jsApiImplDependencies: jsApiImpls,
-    miniApps: miniapps!,
-    outDir: outDir || path.join(Platform.rootDirectory, 'miniAppsComposite'),
-    pathToYarnLock,
-  })
+  await kax.task('Generating Composite').run(
+    generateComposite({
+      baseComposite,
+      extraJsDependencies,
+      jsApiImplDependencies: jsApiImpls,
+      miniApps: miniapps!,
+      outDir,
+      pathToYarnLock,
+    })
+  )
+
+  log.info(`Composite successfully generated in ${outDir}`)
 }
 
 export const handler = tryCatchWrap(commandHandler)
