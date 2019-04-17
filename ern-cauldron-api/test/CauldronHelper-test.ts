@@ -2174,38 +2174,6 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('setConfig', () => {
-    it('should create the config object if it does not exist in target descriptor', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.setConfig({
-        descriptor: NativeApplicationDescriptor.fromString(
-          'test:android:17.8.0'
-        ),
-        key: 'testKey',
-        value: 'testValue',
-      })
-      const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      expect(nativeAppVersion.config).not.undefined
-      expect(nativeAppVersion.config.testKey).eql('testValue')
-    })
-
-    it('should add the key value pair to existing config objet', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.setConfig({
-        descriptor: NativeApplicationDescriptor.fromString(
-          'test:android:17.7.0'
-        ),
-        key: 'testKey',
-        value: 'testValue',
-      })
-      const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
-      expect(nativeAppVersion.config).not.undefined
-      expect(nativeAppVersion.config.testKey).eql('testValue')
-    })
-  })
-
   describe('delConfig', () => {
     it('should remove the key from config of target descriptor', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)

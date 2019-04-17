@@ -3047,59 +3047,6 @@ describe('CauldronApi.js', () => {
       expect(result).true
     })
   })
-
-  // ==========================================================
-  // setConfig
-  // ==========================================================
-  describe('setConfig', () => {
-    it('should create the config object if it does not exist', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      delete tmpFixture.nativeApps[0].config
-      const api = cauldronApi(tmpFixture)
-      await api.setConfig({
-        descriptor: NativeApplicationDescriptor.fromString('test'),
-        key: 'key',
-        value: 'value',
-      })
-      expect(tmpFixture.nativeApps[0].config).not.undefined
-      expect(tmpFixture.nativeApps[0].config.key).eql('value')
-    })
-
-    it('should add the key value pair to the config object', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      await api.setConfig({
-        descriptor: NativeApplicationDescriptor.fromString('test'),
-        key: 'key',
-        value: 'value',
-      })
-      expect(tmpFixture.nativeApps[0].config.test).eql('aValue')
-      expect(tmpFixture.nativeApps[0].config.key).eql('value')
-    })
-
-    it('should patch the value if the key already exists in the config object', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      await api.setConfig({
-        descriptor: NativeApplicationDescriptor.fromString('test'),
-        key: 'test',
-        value: 'value',
-      })
-      expect(tmpFixture.nativeApps[0].config.test).eql('value')
-    })
-
-    it('should set the whole config object if no key is provided', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      const conf = { keyA: 'valueA', keyB: 'valueB' }
-      await api.setConfig({
-        descriptor: NativeApplicationDescriptor.fromString('test'),
-        value: conf,
-      })
-      expect(tmpFixture.nativeApps[0].config).eql(conf)
-    })
-  })
-
   // ==========================================================
   // delConfig
   // ==========================================================
