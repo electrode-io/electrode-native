@@ -893,34 +893,6 @@ export default class CauldronApi {
     return this.commit(`Set codePush entries in ${descriptor.toString()}`)
   }
 
-  public async setConfig({
-    descriptor,
-    key,
-    value,
-  }: {
-    descriptor?: NativeApplicationDescriptor
-    key?: string
-    value: any
-  }) {
-    const obj = await this.getObjectMatchingDescriptor(descriptor)
-    if (!obj.config) {
-      obj.config = {}
-    }
-    if (key) {
-      obj.config[key] = value
-      return this.commit(
-        `Set config for key ${key} of ${
-          descriptor ? descriptor!.toString() : 'Cauldron'
-        }`
-      )
-    } else {
-      obj.config = value
-      return this.commit(
-        `Set config for ${descriptor ? descriptor!.toString() : 'Cauldron'}`
-      )
-    }
-  }
-
   public async delConfig({
     descriptor,
     key,

@@ -1128,18 +1128,6 @@ export class CauldronHelper {
     )
   }
 
-  public async setConfig({
-    descriptor,
-    key,
-    value,
-  }: {
-    descriptor?: NativeApplicationDescriptor
-    key?: string
-    value: any
-  }) {
-    return this.cauldron.setConfig({ descriptor, key, value })
-  }
-
   public async delConfig({
     descriptor,
     key,
