@@ -2174,22 +2174,6 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('delConfig', () => {
-    it('should remove the key from config of target descriptor', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper(fixture)
-      await cauldronHelper.delConfig({
-        descriptor: NativeApplicationDescriptor.fromString(
-          'test:android:17.7.0'
-        ),
-        key: 'test',
-      })
-      const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
-      expect(nativeAppVersion.config).not.undefined
-      expect(nativeAppVersion.config.testKey).undefined
-    })
-  })
-
   describe('getContainerJsApiImpl', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)

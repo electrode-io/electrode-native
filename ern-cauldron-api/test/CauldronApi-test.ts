@@ -3047,31 +3047,6 @@ describe('CauldronApi.js', () => {
       expect(result).true
     })
   })
-  // ==========================================================
-  // delConfig
-  // ==========================================================
-  describe('delConfig', () => {
-    it('should delete the config key value pair if provided a key', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      await api.delConfig({
-        descriptor: NativeApplicationDescriptor.fromString('test'),
-        key: 'test',
-      })
-      expect(tmpFixture.nativeApps[0].config).not.undefined
-      expect(tmpFixture.nativeApps[0].config.test).undefined
-    })
-
-    it('should clear the whole config object if no key is provided', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      await api.delConfig({
-        descriptor: NativeApplicationDescriptor.fromString('test'),
-      })
-      expect(tmpFixture.nativeApps[0].config).not.undefined
-      expect(tmpFixture.nativeApps[0].config).empty
-    })
-  })
 
   // ==========================================================
   // emptyContainer
