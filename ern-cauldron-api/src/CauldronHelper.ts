@@ -1128,16 +1128,6 @@ export class CauldronHelper {
     )
   }
 
-  public async delConfig({
-    descriptor,
-    key,
-  }: {
-    descriptor?: NativeApplicationDescriptor
-    key?: string
-  }) {
-    return this.cauldron.delConfig({ descriptor, key })
-  }
-
   public getCauldronConfigLevelMatchingDescriptor(
     napDescriptor?: NativeApplicationDescriptor
   ) {
