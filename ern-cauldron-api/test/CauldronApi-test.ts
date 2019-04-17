@@ -3127,53 +3127,6 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // addPublisher
-  // ==========================================================
-  describe('addPublisher', () => {
-    it('should throw if another publisher of the same type already exists for target native application platform', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      assert(
-        await doesThrow(
-          api.addPublisher,
-          api,
-          'maven',
-          NativeApplicationDescriptor.fromString('test:android'),
-          'http://url'
-        )
-      )
-    })
-
-    it('should throw if the target descriptor does not exist', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      assert(
-        await doesThrow(
-          api.addPublisher,
-          api,
-          'maven',
-          NativeApplicationDescriptor.fromString('doesnotexist:android'),
-          'http://url'
-        )
-      )
-    })
-
-    it('should add the publisher to the target native application platform', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi(tmpFixture)
-      await api.addPublisher(
-        'jcenter',
-        NativeApplicationDescriptor.fromString('test:android'),
-        'http://url'
-      )
-      expect(
-        tmpFixture.nativeApps[0].platforms[0].config.containerGenerator
-          .publishers
-      ).length(4)
-    })
-  })
-
-  // ==========================================================
   // emptyContainer
   // ==========================================================
   describe('emptyContainer', () => {

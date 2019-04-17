@@ -35,7 +35,7 @@ Please also note that if your cauldron is properly configured for container publ
 
 ### Configuring container publication
 
-The container publication configuration is part of the `containerGenerator` configuration object stored in a Cauldron, so that it can be shared across users of the Cauldron. If you have properly setup your Cauldron, you can use the [cauldron add publisher] command to add a publisher to a given native application platform. You can use this command multiple times if you wish to add more than one publisher.
+The container publication configuration is part of the `containerGenerator` configuration object stored in a Cauldron, so that it can be shared across users of the Cauldron.
 
 The publication configuration object will be stored under in the cauldron document. The following illustrate such a configuration:
 
@@ -85,8 +85,6 @@ The publication configuration object will be stored under in the cauldron docume
 ```
 
 The publishers array contains all the publishers you want to use to publish an Electrode Native container. In example shown above, we want to publish the Electrode Native container of `MyWeatherApp` Android to three destinations: a GitHub repository, a Maven repository and to JCenter. For the GitHub repository, the code of the Electrode Native container will be published and a Git tag will be used for the version. For the Maven repository, the Electrode Native container will be compiled and the resulting versioned AAR will be published to the Maven and JCenter repositories.
-
-The [ern cauldron add publisher](../cli/cauldron/add/publisher.md) command can be used to add a publisher to a Cauldron, rather than adding it manually.
 
 ### Creating a custom Container publisher
 

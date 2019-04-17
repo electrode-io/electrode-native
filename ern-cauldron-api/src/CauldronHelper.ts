@@ -290,48 +290,6 @@ export class CauldronHelper {
     return this.cauldron.removeJsApiImplFromContainer(napDescriptor, jsApiImpl)
   }
 
-  public async addPublisher(
-    publisher: string,
-    supportedPlatforms: string[],
-    napDescriptor?: NativeApplicationDescriptor,
-    url?: string,
-    extra?: any
-  ): Promise<void> {
-    let nativeAppName
-    let platform
-    if (napDescriptor) {
-      nativeAppName = napDescriptor.name
-      platform = napDescriptor.platform
-    } else {
-      platform = await promptUtils.askUserToChooseAnOption(
-        supportedPlatforms,
-        'Choose a platform to add this publisher'
-      )
-
-      const nativeApps: string[] = await this.getNativeAppsForPlatform(platform)
-      if (nativeApps && nativeApps.length > 0) {
-        nativeAppName =
-          nativeApps.length === 1
-            ? nativeApps[0]
-            : await promptUtils.askUserToChooseAnOption(
-                nativeApps,
-                'Choose an application to add this publisher'
-              )
-      } else {
-        throw new Error(
-          `Looks like there are no application defined in cauldron for ${platform}`
-        )
-      }
-    }
-    log.info('Adding publisher to native app')
-    await this.cauldron.addPublisher(
-      publisher,
-      new NativeApplicationDescriptor(nativeAppName, platform),
-      url,
-      extra
-    )
-  }
-
   public async getPublishers(descriptor: NativeApplicationDescriptor) {
     const conf = await this.getContainerGeneratorConfig(descriptor)
     return conf && conf.publishers

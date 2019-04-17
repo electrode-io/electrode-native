@@ -1278,40 +1278,6 @@ export default class CauldronApi {
     return `${descriptor.toString().replace(/:/g, '-')}.zip`
   }
 
-  public async addPublisher(
-    publisher: string,
-    descriptor: NativeApplicationDescriptor,
-    url?: string,
-    extra?: any
-  ) {
-    try {
-      const platform = await this.getPlatform(descriptor)
-      platform.config = platform.config || {}
-      platform.config.containerGenerator =
-        platform.config.containerGenerator || {}
-      platform.config.containerGenerator.publishers =
-        platform.config.containerGenerator.publishers || []
-      for (const p of platform.config.containerGenerator.publishers) {
-        if (p.name === publisher) {
-          throw new Error(
-            `${publisher} publisher already exists for ${descriptor.toString()}. 
-If you want to modify this publisher configuration you need to edit it manually in your Cauldron.`
-          )
-        }
-      }
-      platform.config.containerGenerator.publishers.push({
-        extra,
-        name: publisher,
-        url,
-      })
-      await this.commit(
-        `Add ${publisher} publisher for ${descriptor.toString()}`
-      )
-    } catch (e) {
-      throw new Error(`[cauldronApi] addPublisher: ${e}`)
-    }
-  }
-
   /**
    * Empty the Container of a given native application version
    * Removes all MiniApps/JsApiImpls and native dependencies from

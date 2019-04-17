@@ -85,7 +85,6 @@
   - [jsapiimpls](cli/cauldron/add/jsapiimpls.md)
   - [miniapps](cli/cauldron/add/miniapps.md)
   - [nativeapp](cli/cauldron/add/nativeapp.md)
-  - [publisher](cli/cauldron/add/publisher.md)
 - [cauldron config](cli/cauldron/config.md)
   - [get](cli/cauldron/config/get.md)
   - [set](cli/cauldron/config/set.md)
