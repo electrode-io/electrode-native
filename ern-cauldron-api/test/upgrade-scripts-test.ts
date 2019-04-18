@@ -61,4 +61,22 @@ describe('cauldron upgrade scripts', () => {
     const cauldronDoc = await cauldronApi.getCauldron()
     expect(cauldronDoc).eql(expectedCauldronDoc)
   })
+
+  it('should correctly upgrade Cauldron structure [2.0.0 => 3.0.0]', async () => {
+    const script = scripts.find(s => s.from === '2.0.0' && s.to === '3.0.0')
+    const fixture = JSON.parse(
+      fs
+        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-2.0.0.json'))
+        .toString()
+    )
+    const cauldronApi = createCauldronApi(fixture)
+    await script!.upgrade(cauldronApi)
+    const expectedCauldronDoc = JSON.parse(
+      fs
+        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-3.0.0.json'))
+        .toString()
+    )
+    const cauldronDoc = await cauldronApi.getCauldron()
+    expect(cauldronDoc).eql(expectedCauldronDoc)
+  })
 })

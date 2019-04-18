@@ -58,7 +58,7 @@ describe('CauldronApi.js', () => {
   // upgradeCauldronSchema
   // ==========================================================
   describe('upgradeCauldronSchema', () => {
-    it('should properly upgrade a cauldron [schema 0.0.0 => 2.0.0]', async () => {
+    it('should properly upgrade a cauldron [schema 0.0.0 => 3.0.0]', async () => {
       sandbox.stub(utils, 'isGitBranch').resolves(true)
       const fixture = JSON.parse(
         fs
@@ -69,7 +69,7 @@ describe('CauldronApi.js', () => {
       await api.upgradeCauldronSchema()
       const expectedCauldronDoc = JSON.parse(
         fs
-          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-2.0.0.json'))
+          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-3.0.0.json'))
           .toString()
       )
       const cauldronDoc = await api.getCauldron()

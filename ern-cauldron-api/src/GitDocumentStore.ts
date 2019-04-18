@@ -45,8 +45,8 @@ export default class GitDocumentStore extends BaseGit
   }
 
   public async getCauldron(): Promise<Cauldron> {
-    await this.sync()
-    if (fs.existsSync(this.jsonPath)) {
+    const hasSynced = await this.sync()
+    if (hasSynced && fs.existsSync(this.jsonPath)) {
       this.cauldron = <Cauldron>await fileUtils.readJSON(this.jsonPath)
     }
     return this.cauldron
