@@ -800,10 +800,7 @@ export default class CauldronApi {
     newContainerVersion: string
   ): Promise<void> {
     const platform = await this.getPlatform(descriptor)
-    platform.config = platform.config || {}
-    platform.config.containerGenerator =
-      platform.config.containerGenerator || {}
-    platform.config.containerGenerator.containerVersion = newContainerVersion
+    platform.containerVersion = newContainerVersion
     return this.commit(
       `Update top level Container version of ${descriptor.toString()} to ${newContainerVersion}`
     )
@@ -824,10 +821,8 @@ export default class CauldronApi {
   public async getTopLevelContainerVersion(
     descriptor: NativeApplicationDescriptor
   ): Promise<string | void> {
-    const config = await this.getConfig(descriptor.withoutVersion())
-    if (config && config.containerGenerator) {
-      return config.containerGenerator.containerVersion
-    }
+    const platform = await this.getPlatform(descriptor)
+    return platform.containerVersion
   }
 
   public async getContainerVersion(
