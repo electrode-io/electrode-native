@@ -1,65 +1,13 @@
 {
-  "schemaVersion": "1.0.0",
-  "config": {
-    "codePush": {
-      "entriesLimit": 0
-    },
-    "binaryStore": {
-      "provider": "ern-binary-store",
-      "url": "http://localhost:3000"
-    },
-    "manifest": {
-      "override": {
-        "url": "git@gecgithub01.test.com:react-native/ern-test-manifest.git",
-        "type": "partial"
-      }
-    }
-  },
+  "schemaVersion": "3.0.0",
   "nativeApps": [{
     "name": "test",
-    "config": {
-      "test": "aValue"
-    },
     "platforms": [{
       "name": "android",
-      "config": {
-        "containerGenerator": {
-          "name": "maven",
-          "containerVersion": "1.16.44",
-          "publishers": [{
-              "name": "git",
-              "url": "git@gecgithub01.test.com:react-native/test-react-container-android.git"
-            },
-            {
-              "name": "maven",
-              "url": "http://mobilebuild.homeoffice.test.com:8081/nexus/content/repositories/hosted",
-              "disabled": false
-            },
-            {
-              "name": "dummy",
-              "disabled": true
-            }
-          ],
-          "transformers": [{
-              "name": "dummy-1"
-            },
-            {
-              "name": "dummy-2",
-              "disabled": true
-            },
-            {
-              "name": "dummy-3",
-              "disabled": false
-            }
-          ]
-        }
-      },
+      "containerVersion": "1.16.44",
       "versions": [{
           "name": "17.7.0",
           "containerVersion": "1.16.44",
-          "config": {
-            "test": "value"
-          },
           "ernPlatformVersion": "1000.0.0",
           "isReleased": true,
           "binary": null,

@@ -339,6 +339,9 @@ export default class CauldronApi {
   public async getConfig(
     descriptor?: NativeApplicationDescriptor
   ): Promise<any | void> {
+    if (descriptor && !(await this.hasDescriptor(descriptor))) {
+      throw new Error(`${descriptor} does not exist in Cauldron`)
+    }
     const configByLevel = await this.getConfigByLevel(descriptor)
     return (
       configByLevel.get(CauldronConfigLevel.NativeAppVersion) ||
@@ -348,31 +351,70 @@ export default class CauldronApi {
     )
   }
 
+  public getConfigFilePath(descriptor?: NativeApplicationDescriptor) {
+    return descriptor
+      ? `config/${descriptor.name ? descriptor.name : ''}${
+          descriptor.platform ? '-' + descriptor.platform : ''
+        }${descriptor.version ? '-' + descriptor.version : ''}.json`
+      : 'config/default.json'
+  }
+
   public async getConfigByLevel(
     descriptor?: NativeApplicationDescriptor
   ): Promise<Map<CauldronConfigLevel, any>> {
     const result = new Map()
+    let cauldronFilePath
+    let config
     if (descriptor) {
       if (descriptor.platform) {
         if (descriptor.version) {
-          const version = await this.getVersion(descriptor)
-          if (version.config) {
-            result.set(CauldronConfigLevel.NativeAppVersion, version.config)
+          cauldronFilePath = this.getConfigFilePath(descriptor)
+          if (
+            await this.hasFile({
+              cauldronFilePath,
+            })
+          ) {
+            config = await this.getFile({ cauldronFilePath })
+            result.set(
+              CauldronConfigLevel.NativeAppVersion,
+              JSON.parse(config.toString())
+            )
           }
         }
-        const platform = await this.getPlatform(descriptor)
-        if (platform.config) {
-          result.set(CauldronConfigLevel.NativeAppPlatform, platform.config)
+
+        cauldronFilePath = this.getConfigFilePath(descriptor.withoutVersion())
+        if (
+          await this.hasFile({
+            cauldronFilePath,
+          })
+        ) {
+          config = await this.getFile({ cauldronFilePath })
+          result.set(
+            CauldronConfigLevel.NativeAppPlatform,
+            JSON.parse(config.toString())
+          )
         }
       }
-      const app = await this.getNativeApplication(descriptor)
-      if (app.config) {
-        result.set(CauldronConfigLevel.NativeApp, app.config)
+      cauldronFilePath = this.getConfigFilePath(
+        NativeApplicationDescriptor.fromString(descriptor.name)
+      )
+      if (
+        await this.hasFile({
+          cauldronFilePath,
+        })
+      ) {
+        config = await this.getFile({ cauldronFilePath })
+        result.set(CauldronConfigLevel.NativeApp, JSON.parse(config.toString()))
       }
     }
-    const cauldron = await this.getCauldron()
-    if (cauldron.config) {
-      result.set(CauldronConfigLevel.Top, cauldron.config)
+    cauldronFilePath = this.getConfigFilePath()
+    if (
+      await this.hasFile({
+        cauldronFilePath,
+      })
+    ) {
+      config = await this.getFile({ cauldronFilePath })
+      result.set(CauldronConfigLevel.Top, JSON.parse(config.toString()))
     }
     return result
   }

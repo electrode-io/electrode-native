@@ -1,7 +1,7 @@
 import { getBinaryStoreFromCauldron } from '../src/getBinaryStoreFromCauldron'
 import { expect, assert } from 'chai'
 import { doesThrow, fixtures } from 'ern-util-dev'
-import { ErnBinaryStore } from 'ern-core'
+import { ErnBinaryStore, createTmpDir, shell } from 'ern-core'
 import {
   CauldronApi,
   CauldronHelper,
@@ -10,13 +10,30 @@ import {
 } from 'ern-cauldron-api'
 import * as cauldronApi from 'ern-cauldron-api'
 import sinon from 'sinon'
+import path from 'path'
 
 const sandbox = sinon.createSandbox()
 
+const cauldronApiFixtureFileStorePath = path.join(
+  __dirname,
+  '..',
+  '..',
+  'ern-cauldron-api',
+  'test',
+  'fixtures',
+  'filestore'
+)
+
 function createCauldronApi(cauldronDocument) {
+  const fileStoreTmpDir = createTmpDir()
+  shell.cp(
+    '-rf',
+    path.join(cauldronApiFixtureFileStorePath, '**'),
+    fileStoreTmpDir
+  )
   return new CauldronApi(
     new InMemoryDocumentStore(cauldronDocument),
-    new EphemeralFileStore()
+    new EphemeralFileStore({ storePath: fileStoreTmpDir })
   )
 }
 
@@ -31,14 +48,6 @@ function cloneFixture(fixture) {
 describe('getBinaryStoreFromCauldron', () => {
   afterEach(() => {
     sandbox.restore()
-  })
-
-  it('should throw if cauldron does not contain a binary store config', async () => {
-    const fixture = cloneFixture(fixtures.defaultCauldron)
-    delete fixture.config.binaryStore
-    const cauldronHelper = createCauldronHelper(fixture)
-    sandbox.stub(cauldronApi, 'getActiveCauldron').resolves(cauldronHelper)
-    assert(await doesThrow(getBinaryStoreFromCauldron, null))
   })
 
   it('should return a binary store instance', async () => {

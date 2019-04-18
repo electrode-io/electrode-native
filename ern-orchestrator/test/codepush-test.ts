@@ -14,6 +14,7 @@ import * as core from 'ern-core'
 import * as cauldronApi from 'ern-cauldron-api'
 import * as sut from '../src/codepush'
 import * as compatibility from '../src/compatibility'
+import path from 'path'
 
 const sandbox = sinon.createSandbox()
 
@@ -30,9 +31,25 @@ let documentStore
 let fileStore
 let cauldronDoc
 
+const cauldronApiFixtureFileStorePath = path.join(
+  __dirname,
+  '..',
+  '..',
+  'ern-cauldron-api',
+  'test',
+  'fixtures',
+  'filestore'
+)
+
 function createCauldronApi(cauldronDocument) {
+  const fileStoreTmpDir = core.createTmpDir()
+  core.shell.cp(
+    '-rf',
+    path.join(cauldronApiFixtureFileStorePath, '**'),
+    fileStoreTmpDir
+  )
   documentStore = new InMemoryDocumentStore(cauldronDocument)
-  fileStore = new EphemeralFileStore()
+  fileStore = new EphemeralFileStore({ storePath: fileStoreTmpDir })
   return new CauldronApi(documentStore, fileStore)
 }
 

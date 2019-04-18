@@ -50,42 +50,4 @@ describe('runContainerPublishers', () => {
       })
     )
   })
-
-  it('should call publishContainer only with enabled publishers', async () => {
-    const fixture = cloneFixture(fixtures.defaultCauldron)
-    sandbox
-      .stub(cauldronApi, 'getActiveCauldron')
-      .resolves(createCauldronHelper(fixture))
-    await runContainerPublishers({
-      containerPath: '/Users/foo/test',
-      containerVersion: '1000.0.0',
-      napDescriptor: NativeApplicationDescriptor.fromString(
-        'test:android:17.7.0'
-      ),
-    })
-    sandbox.assert.calledTwice(publishContainerStub)
-    sandbox.assert.calledWith(publishContainerStub, {
-      containerPath: '/Users/foo/test',
-      containerVersion: '1000.0.0',
-      extra: undefined,
-      platform: 'android',
-      publisher: 'git',
-      url:
-        'git@gecgithub01.test.com:react-native/test-react-container-android.git',
-    })
-    sandbox.assert.calledWith(publishContainerStub, {
-      containerPath: '/Users/foo/test',
-      containerVersion: '1000.0.0',
-      extra: {
-        artifactId: 'test-ern-container',
-        groupId: 'com.walmartlabs.ern',
-        mavenPassword: undefined,
-        mavenUser: undefined,
-      },
-      platform: 'android',
-      publisher: 'maven',
-      url:
-        'http://mobilebuild.homeoffice.test.com:8081/nexus/content/repositories/hosted',
-    })
-  })
 })

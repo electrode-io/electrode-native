@@ -1,0 +1,31 @@
+{
+  "containerGenerator": {
+    "name": "maven",
+    "publishers": [{
+        "name": "git",
+        "url": "git@gecgithub01.test.com:react-native/test-react-container-android.git"
+      },
+      {
+        "name": "maven",
+        "url": "http://mobilebuild.homeoffice.test.com:8081/nexus/content/repositories/hosted",
+        "disabled": false
+      },
+      {
+        "name": "dummy",
+        "disabled": true
+      }
+    ],
+    "transformers": [{
+        "name": "dummy-1"
+      },
+      {
+        "name": "dummy-2",
+        "disabled": true
+      },
+      {
+        "name": "dummy-3",
+        "disabled": false
+      }
+    ]
+  }
+}
