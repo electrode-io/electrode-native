@@ -133,19 +133,6 @@ describe('start', () => {
     })
   })
 
-  it('should throw when provided with an Android descriptor but no Android package name [with a binary available]', async () => {
-    createStubs({
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-      hasBinaryReturn: true,
-    })
-
-    assert(
-      await doesThrow(start, null, { descriptor: testAndroid1770Descriptor })
-    )
-  })
-
   it('should work when provided with an Android descriptor and an Android package name [with a binary available]', async () => {
     createStubs({
       getActiveCauldronReturn: createCauldronHelper(
