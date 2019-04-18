@@ -19,6 +19,7 @@ import {
 import jp from 'jsonpath'
 import path from 'path'
 import mockFs from 'mock-fs'
+import fs from 'fs'
 const sandbox = sinon.createSandbox()
 
 const codePushMetadataFixtureOne = {
@@ -42,7 +43,6 @@ let fileStoreTmpDir
 
 const fixturesPath = path.join(__dirname, 'fixtures')
 const fixtureFileStorePath = path.join(fixturesPath, 'filestore')
-const yarnLocksFixturesPath = path.join(fixtureFileStorePath, 'yarnlocks')
 
 function createCauldronApi({
   cauldronDocument,
@@ -53,7 +53,7 @@ function createCauldronApi({
 } = {}) {
   fileStoreTmpDir = createTmpDir()
   // Copy fixture file store to the temporary test file store directory
-  shell.cp('-rf', yarnLocksFixturesPath, fileStoreTmpDir)
+  shell.cp('-rf', path.join(fixtureFileStorePath, '**'), fileStoreTmpDir)
   documentStore = new InMemoryDocumentStore(cauldronDocument)
   fileStore = new EphemeralFileStore({
     storePath: storePath || fileStoreTmpDir,
@@ -3479,6 +3479,43 @@ describe('CauldronHelper.js', () => {
       expect(Object.keys(version2000.yarnLocks)).deep.equal(
         Object.keys(version1770.yarnLocks)
       )
+    })
+
+    it('should copy the config', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper({
+        cauldronDocument: fixture,
+      })
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const pathToSourceConfig = path.join(
+        fileStoreTmpDir,
+        'config',
+        'test-android-17.7.0.json'
+      )
+      const pathToTargetConfig = path.join(
+        fileStoreTmpDir,
+        'config',
+        'test-android-20.0.0.json'
+      )
+      const hasCreatedConfig = fs.existsSync(pathToTargetConfig)
+      expect(hasCreatedConfig).true
+      const sourceConfig = JSON.parse(
+        fs.readFileSync(pathToSourceConfig).toString()
+      )
+      const targetConfig = JSON.parse(
+        fs.readFileSync(pathToTargetConfig).toString()
+      )
+      expect(targetConfig).deep.equal(sourceConfig)
     })
 
     it('should copy the container version', async () => {
