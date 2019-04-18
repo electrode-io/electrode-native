@@ -40,13 +40,13 @@ export default class BaseGit implements ITransactional {
       : Promise.resolve()
   }
 
-  public async sync() {
+  public async sync(): Promise<boolean> {
     if (!this.repository) {
       if (!fs.existsSync(path.resolve(this.fsPath, '.git'))) {
         await this.git.init()
         await this.doInitialCommit()
       }
-      return Promise.resolve()
+      return true
     }
 
     // We only sync once during a whole "session" (in our context : "an ern command exection")
@@ -55,7 +55,7 @@ export default class BaseGit implements ITransactional {
     // If you need to access a `Cauldron` in a different context, i.e a long session, you might
     // want to improve the code to act a bit smarter
     if (this.pendingTransaction || this.hasBeenSynced) {
-      return Promise.resolve()
+      return Promise.resolve(false)
     }
 
     log.debug(`[BaseGit] Syncing ${this.fsPath}`)
@@ -80,6 +80,8 @@ export default class BaseGit implements ITransactional {
     }
 
     this.hasBeenSynced = true
+
+    return true
   }
 
   // ===========================================================

@@ -1,14 +1,30 @@
 {
   "schemaVersion": "2.0.0",
+  "config": {
+    "manifest": {
+      "override": {
+        "url": "git@gecgithub01.test.com:react-native/ern-test-manifest.git",
+        "type": "partial"
+      }
+    }
+  },
   "nativeApps": [
   {
     "name": "test",
     "platforms": [
       {
         "name": "android",
+        "config": {
+          "containerGenerator": {
+            "containerVersion": "3.0.0"
+          }
+        },
         "versions": [
           {
             "name": "1.0.0",
+            "config": {
+              "versionKey": "value"
+            },
             "containerVersion": "1.16.44",
             "ernPlatformVersion": "1000.0.0",
             "isReleased": true,
