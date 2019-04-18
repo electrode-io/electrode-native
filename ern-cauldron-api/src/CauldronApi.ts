@@ -351,6 +351,23 @@ export default class CauldronApi {
     )
   }
 
+  public async setConfig({
+    descriptor,
+    config,
+  }: {
+    descriptor?: NativeApplicationDescriptor
+    config: any
+  }) {
+    if (descriptor && !(await this.hasDescriptor(descriptor))) {
+      throw new Error(`${descriptor} does not exist in Cauldron`)
+    }
+    const configFilePath = this.getConfigFilePath(descriptor)
+    return this.fileStore.storeFile(
+      configFilePath,
+      JSON.stringify(config, null, 2)
+    )
+  }
+
   public getConfigFilePath(descriptor?: NativeApplicationDescriptor) {
     return descriptor
       ? `config/${descriptor.name ? descriptor.name : ''}${

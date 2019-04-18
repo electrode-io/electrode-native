@@ -196,6 +196,11 @@ export class CauldronHelper {
         sourceVersion.description
       )
     }
+    // Copy configuration if any
+    const config = await this.getConfigStrict(source)
+    if (config) {
+      await this.cauldron.setConfig({ descriptor: target, config })
+    }
   }
 
   public async getMostRecentNativeApplicationVersion(
