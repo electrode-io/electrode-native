@@ -35,9 +35,13 @@ export default class BaseGit implements ITransactional {
   }
 
   public async push() {
-    return this.repository
-      ? this.git.push(GIT_REMOTE_NAME, this.branch)
-      : Promise.resolve()
+    return this.repository ? this.rebaseAndPush() : Promise.resolve()
+  }
+
+  public async rebaseAndPush() {
+    await this.git.raw(['fetch', GIT_REMOTE_NAME])
+    await this.git.raw(['rebase', `${GIT_REMOTE_NAME}/${this.branch}`])
+    return this.git.push(GIT_REMOTE_NAME, this.branch)
   }
 
   public async sync() {
