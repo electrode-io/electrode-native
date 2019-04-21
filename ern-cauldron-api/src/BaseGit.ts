@@ -76,7 +76,7 @@ export default class BaseGit implements ITransactional {
 
     if (!heads) {
       await this.doInitialCommit()
-      await this.push()
+      await this.git.push(GIT_REMOTE_NAME, this.branch)
     } else {
       log.debug(`[BaseGit] Fetching from ${GIT_REMOTE_NAME} ${this.branch}`)
       await this.git.fetch(['--all'])
