@@ -39,6 +39,22 @@
 
 * Description of the native application version
 
+`--config`
+
+* Configuration to set for this new native application version
+* If not provided, the configuration of the version copied from will be used (if any).
+* There is three different ways to provide the configuration :
+  - **As a json string**  
+  For example `--config '{"configKey": "configValue"}'`  
+  - **As a file path**  
+  For example `--config /Users/username/config.json`  
+  In that case, the configuration will be read from the file
+  - **As a Cauldron file path**  
+  For example `--extra cauldron://config/myapp-android.json`  
+  In that case, the configuration will be read from the file stored in Cauldron.   
+  For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).  
+
+
 #### Remarks
 
 * The `ern cauldron add nativeapp <descriptor>` command is usually used when the development of a new version of the native application is started.  
