@@ -351,6 +351,16 @@ export default class CauldronApi {
     )
   }
 
+  public async delConfig(descriptor?: NativeApplicationDescriptor) {
+    if (descriptor && !(await this.hasDescriptor(descriptor))) {
+      throw new Error(`${descriptor} does not exist in Cauldron`)
+    }
+    const configFilePath = this.getConfigFilePath(descriptor)
+    if (await this.fileStore.hasFile(configFilePath)) {
+      await this.fileStore.removeFile(configFilePath)
+    }
+  }
+
   public async setConfig({
     descriptor,
     config,
