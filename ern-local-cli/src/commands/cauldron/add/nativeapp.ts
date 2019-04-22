@@ -1,5 +1,6 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { NativeApplicationDescriptor, log, kax } from 'ern-core'
+import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import _ from 'lodash'
 import {
   epilog,
@@ -30,14 +31,20 @@ export const builder = (argv: Argv) => {
       alias: 'v',
       describe: 'Use specified platform version',
     })
+    .option('config', {
+      describe: 'Configuration to use for this native application version',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
+  config,
   copyFromVersion,
   description,
   descriptor,
 }: {
+  config?: string
   copyFromVersion?: string
   description?: string
   descriptor: NativeApplicationDescriptor
@@ -75,13 +82,15 @@ export const commandHandler = async ({
     }
   }
 
-  await kax
-    .task(`Adding ${descriptor}`)
-    .run(cauldron.addNativeApplicationVersion(descriptor, { copyFromVersion }))
+  config = config && (await parseJsonFromStringOrFile(config))
 
-  if (description) {
-    await cauldron.addOrUpdateDescription(descriptor, description)
-  }
+  await kax.task(`Adding ${descriptor}`).run(
+    cauldron.addNativeApplicationVersion(descriptor, {
+      config,
+      copyFromVersion,
+      description,
+    })
+  )
 
   await kax
     .task('Updating Cauldron')

@@ -76,9 +76,11 @@ export class CauldronHelper {
   public async addNativeApplicationVersion(
     descriptor: NativeApplicationDescriptor,
     {
+      config,
       copyFromVersion,
       description,
     }: {
+      config?: any
       copyFromVersion?: string
       description?: string
     } = {}
@@ -97,6 +99,7 @@ export class CauldronHelper {
           : copyFromVersion
       await this.addDescriptor(descriptor)
       await this.copyNativeApplicationVersion({
+        shouldCopyConfig: !!!config,
         source: new NativeApplicationDescriptor(
           descriptor.name,
           descriptor.platform,
@@ -110,14 +113,19 @@ export class CauldronHelper {
         await this.cauldron.addOrUpdateDescription(descriptor, description)
       }
     }
+    if (config) {
+      await this.cauldron.setConfig({ descriptor, config })
+    }
   }
 
   public async copyNativeApplicationVersion({
     source,
     target,
+    shouldCopyConfig,
   }: {
     source: NativeApplicationDescriptor
     target: NativeApplicationDescriptor
+    shouldCopyConfig?: boolean
   }) {
     if (!(await this.cauldron.hasDescriptor(source))) {
       throw new Error(`Source descriptor ${source} does not exist in Cauldron`)
@@ -196,10 +204,12 @@ export class CauldronHelper {
         sourceVersion.description
       )
     }
-    // Copy configuration if any
-    const config = await this.getConfigStrict(source)
-    if (config) {
-      await this.cauldron.setConfig({ descriptor: target, config })
+    // Copy configuration if we should (and if any)
+    if (shouldCopyConfig) {
+      const config = await this.getConfigStrict(source)
+      if (config) {
+        await this.cauldron.setConfig({ descriptor: target, config })
+      }
     }
   }
 

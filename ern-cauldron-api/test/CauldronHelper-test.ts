@@ -3494,6 +3494,7 @@ describe('CauldronHelper.js', () => {
       )
       await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
       await cauldronHelper.copyNativeApplicationVersion({
+        shouldCopyConfig: true,
         source: sourceDescriptor,
         target: targetDescriptor,
       })
@@ -3516,6 +3517,37 @@ describe('CauldronHelper.js', () => {
         fs.readFileSync(pathToTargetConfig).toString()
       )
       expect(targetConfig).deep.equal(sourceConfig)
+    })
+
+    it('should not copy the config', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper({
+        cauldronDocument: fixture,
+      })
+      const sourceDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:17.7.0'
+      )
+      const targetDescriptor = NativeApplicationDescriptor.fromString(
+        'test:android:20.0.0'
+      )
+      await cauldronHelper.addNativeApplicationVersion(targetDescriptor)
+      await cauldronHelper.copyNativeApplicationVersion({
+        shouldCopyConfig: false,
+        source: sourceDescriptor,
+        target: targetDescriptor,
+      })
+      const pathToSourceConfig = path.join(
+        fileStoreTmpDir,
+        'config',
+        'test-android-17.7.0.json'
+      )
+      const pathToTargetConfig = path.join(
+        fileStoreTmpDir,
+        'config',
+        'test-android-20.0.0.json'
+      )
+      const hasCreatedConfig = fs.existsSync(pathToTargetConfig)
+      expect(hasCreatedConfig).false
     })
 
     it('should copy the container version', async () => {
