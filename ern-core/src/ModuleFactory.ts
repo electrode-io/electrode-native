@@ -6,10 +6,18 @@ import { PackagePath } from './PackagePath'
 import { readPackageJson } from './packageJsonFileUtils'
 
 export class ModuleFactory<T> {
+  private readonly packagePrefix?: string
+
   public constructor(
-    readonly packagePrefix: string,
-    readonly packageCachePath: string
-  ) {}
+    readonly packageCachePath: string,
+    {
+      packagePrefix,
+    }: {
+      packagePrefix?: string
+    } = {}
+  ) {
+    this.packagePrefix = packagePrefix
+  }
 
   public async getModuleInstance(p: PackagePath): Promise<T> {
     if (!p.isFilePath && !p.isRegistryPath) {
@@ -40,7 +48,9 @@ export class ModuleFactory<T> {
       await this.createPackageCache()
     }
 
-    const modulePackagePath = this.processPackageRegistryPath(p)
+    const modulePackagePath = this.packagePrefix
+      ? this.processPackageRegistryPath(p)
+      : p
     await this.refreshCacheFor(modulePackagePath)
 
     return path.join(
@@ -92,7 +102,7 @@ export class ModuleFactory<T> {
   private processPackageRegistryPath(p: PackagePath): PackagePath {
     if (
       !p.fullPath.startsWith('@') &&
-      !p.fullPath.startsWith(this.packagePrefix)
+      !p.fullPath.startsWith(this.packagePrefix!)
     ) {
       return PackagePath.fromString(`${this.packagePrefix}${p.fullPath}`)
     }

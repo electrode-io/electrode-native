@@ -10,73 +10,22 @@ In order to use a MiniApp in any mobile application, first you'll need to add th
 
 If compatibility checks pass, a new container version is generated and published. The new container is updated with the changes and the mobile application version data stored in the Cauldron is updated accordingly to reflect the current new state of the new container version. This occurs when the mobile application version is not released yet (in-development). If some dependencies versions are not compatible, a new container won't be created. Similar checks happen for pushing a MiniApp update as an Over-the-Air (OTA) update.
 
-The cauldron can store `yarn.lock` files that are used internally to guarantee consistency of non-updated MiniApp versions.
+The cauldron stores `yarn.lock` files that are used internally to guarantee consistency of non-updated MiniApp versions.
 
 Using the Electrode Native CLI, you can access multiple cauldrons. There can however be only one cauldron activated at a time.
 
-### The cauldron configuration file
+### The cauldron document
 
 The following is an example of a `cauldron.json` document.
 
 ```json
 {
-  "config": {
-    "manifest": {
-      "override": {
-         "url": "git@github.com:user/ern-custom-manifest.git",
-         "type": "partial"
-       }
-     },
-     "codePush": {
-      "entriesLimit": 10
-    },
-    "requiredErnVersion": ">=0.26.0"
-  },
   "nativeApps": [
     {
       "name": "MyWeatherApp",
       "platforms": [
         {
           "name": "android",
-          "config": {
-            "containerGenerator": {
-              "containerVersion": "1.2.3",
-              "publishers": [
-                {
-                  "name": "git",
-                  "url": "git@github.com:user/myweatherapp-android-container.git"
-                },
-                {
-                  "name": "maven",
-                  "url": "http://user.nexus.repo.com:8081/nexus/content/repositories"
-                }
-              ],
-              "transformers": [
-                {
-                  "name": "build-config",
-                  "extra": {
-                    "configurations": [
-                      "ElectrodeContainer-Debug",
-                      "ElectrodeContainer-Release"
-                    ],
-                    "settings": {
-                      "ENABLE_BITCODE": "NO",
-                      "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym"
-                    }
-                  }
-                }
-              ],
-              "androidConfig":{
-                "androidGradlePlugin":"3.2.1",
-                "buildToolsVersion":"28.0.3",
-                "compileSdkVersion":"28",
-                "gradleDistributionVersion":"4.6",
-                "minSdkVersion":"19",
-                "supportLibraryVersion":"28.0.0",
-                "targetSdkVersion":"28"
-              }
-            }
-          },
           "versions": [
             {
              "name": "1.0.0",
@@ -132,20 +81,13 @@ The following is an example of a `cauldron.json` document.
 }
 ```
 
-This example `cauldron.json` document shows the following:  
-* This cauldron contains global configurations as well as a single Android mobile application version: `MyWeatherApp 1.0.0`.  
+This sample `cauldron.json` document shows the following:  
 * This mobile application version contains two MiniApps (these might be two screens of the application).  
 * This mobile application version has been released and one CodePush update has been performed to update the version of one of the two MiniApps.  
-
-The configuration also shows the different objects stored in the cauldron--level by level.
-
-* A config object (optional) and a nativeApps array. To find more about how to set `androidConfig` [visit here]( ../container/container-integration.md)
 
 * The `nativeapps` array contains the data of all mobile applications that are part of the cauldron. A cauldron can store multiple mobile applications, however it is not recommended--instead, we recommend that you use one cauldron per mobile application. It can also be a good idea to go even more granular and have one Cauldron per native application platform (i.e `MyWeatherApp Android` / `MyWeatherApp iOS`)
 
 * For each mobile application, the second level is the platforms array. Electrode Native supports two platforms: Android and iOS. For each platform, there can be multiple versions of a mobile application. Most of the Cauldron data is stored at this level (mobile application + platform + version).
-
-* At the platform level of the `MyWeatherApp` application (Android), an optional config object contains configuration for the Container generator that applies to every version of the `MyWeatherApp` for the Android platform. Likewise it contains some configuration for a Container transformer. It also contains CodePush configuration. For information about CodePush, see the [CodePush documentation](https://microsoft.github.io/code-push/) for more details. For information about  Container Generator and Transformers configuration, refer to the [Container documentation](./container.md).
 
 For each version of a mobile application, the cauldron stores the following data:
 
@@ -153,3 +95,60 @@ For each version of a mobile application, the cauldron stores the following data
 - `yarnlock` : The SHA of the `yarn.lock` file stored in the cauldron file store - this is used by Electrode Native when generating the composite JavaScript bundle.
 - `nativeDeps` : An array of native dependencies descriptors, corresponding to the native dependencies (and their versions) stored in the current container of this mobile application version
 - `miniApps` : MiniApps package descriptors corresponding to the MiniApps currently part of the current Container version or released through CodePush updates. The `miniApps` array only contains immutable versions. What this means is that any MiniApp path refer to a specific version. For example in the case of a MiniApp added as a registry path, a fixed version must be specified (ex: `movielistminiapp@0.0.10`). This cannot be a range version (ex : `movielistminiapp@^0.0.10`). In the same way, this cannot be a branch (ex : `"https://github.com/electrode-io/MovieDetailsMiniApp#master`). While it is possible to add a MiniApp this way; Electrode Native will track the branch and only keep a commit SHA in the `miniApps` array (ex : `"https://github.com/electrode-io/MovieDetailsMiniApp#ce08c19e2b707fc96a4db016c47a6f3ae8d66262`). This is done to make sure that one can know exactly what versions (and thus code) of the MiniApps are included in a given Container. Indeed, using a version range such as `^0.0.10` or a branch such as `master` would not allow one to know exactly what is included in a given Container version.
+
+### Cauldron configuration files
+
+Configuration files (`.json` files) are kept in a `config` directory at the root of the Cauldron.
+At this time there is no way to set or update configuration through commands. Configuration should be done manually.
+
+* This cauldron contains global configurations as well as a single Android mobile application version: `MyWeatherApp 1.0.0`.  
+
+***default.json***
+```json
+{
+  "manifest": {
+    "override": {
+        "url": "git@github.com:user/ern-custom-manifest.git",
+        "type": "partial"
+      }
+    },
+    "codePush": {
+    "entriesLimit": 10
+  },
+  "requiredErnVersion": ">=0.26.0"
+}
+```
+
+***MyWeatherApp-android.json***
+
+```json
+{
+  "containerGenerator": {
+    "pipeline": [
+       {
+        "name": "build-config",
+        "extra": {
+          "configurations": [
+            "ElectrodeContainer-Debug",
+            "ElectrodeContainer-Release"
+          ],
+          "settings": {
+            "ENABLE_BITCODE": "NO",
+            "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym"
+          }
+        }
+      },
+      {
+        "name": "git",
+        "url": "git@github.com:user/myweatherapp-android-container.git"
+      },
+      {
+        "name": "maven",
+        "url": "http://user.nexus.repo.com:8081/nexus/content/repositories"
+      }
+    ]
+  }
+}
+```
+
+* At the platform level of the `MyWeatherApp` application (Android), an optional config object contains configuration for the Container generator that applies to every version of the `MyWeatherApp` for the Android platform. Likewise it contains some configuration for a Container transformer. It also contains CodePush configuration. For information about CodePush, see the [CodePush documentation](https://microsoft.github.io/code-push/) for more details. For information about  Container Generator and Transformers configuration, refer to the [Container documentation](./container.md).
