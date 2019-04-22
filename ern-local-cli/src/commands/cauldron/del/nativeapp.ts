@@ -31,7 +31,10 @@ export const commandHandler = async ({
     },
   })
   const cauldron = await getActiveCauldron()
+  await cauldron.beginTransaction()
+  await cauldron.delConfig(descriptor)
   await cauldron.removeDescriptor(descriptor)
+  await cauldron.commitTransaction(`Remove ${descriptor}`)
   log.info(`${descriptor} successfully removed from the Cauldron`)
 }
 
