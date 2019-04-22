@@ -12,10 +12,10 @@ Can be used to patch one or more pbxproj (iOS project file) included in the Cont
 - [build-config](https://github.com/electrode-io/ern-container-transformer-build-config)  
 Can be used to update Build Configuration(s) -build settings- of a generated iOS Container.
 
- - [script](https://github.com/electrode-io/ern-container-transformer-script)  
+- [script](https://github.com/electrode-io/ern-container-transformer-script)  
  This transformer allows for executing an arbitrary script to transform the Container in some custom way. It supports transformation of both iOS and Android Containers.
 
- - [git-patch](https://github.com/electrode-io/ern-container-transformer-git-patch)  
+- [git-patch](https://github.com/electrode-io/ern-container-transformer-git-patch)  
 Can be used to apply one or more sequential git patches to the Container.
 
 
@@ -28,12 +28,7 @@ Can be used to apply one or more sequential git patches to the Container.
 `--containerPath`
 
 * The local file system path to the directory containing the Container to transform.
-* **Default**  If this option is not provided, the command will look for a Container in the default platform directory `~/.ern/containergen/out/[platform]`.
-
-`--descriptor`
-
-* A complete native application descriptor
-* If this option is set, the `transform-container` command will apply all the transformers defined in the Cauldron for the matched descriptor. In that case, the `--transfomer` and `--platform` options should not be provided.
+* **Default**  If this option is not provided, the command will look for a Container in the default platform directory `~/.ern/containergen/out/[platform]`.=
 
 `--platform/-p`
 

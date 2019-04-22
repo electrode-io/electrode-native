@@ -17,6 +17,7 @@ import {
 } from 'ern-util-dev'
 import * as container from '../src/container'
 import * as composite from '../src/composite'
+import * as pipeline from '../src/runContainerPipelineForDescriptor'
 import { Composite } from 'ern-composite-gen'
 import sinon from 'sinon'
 import utils from '../src/utils'
@@ -65,6 +66,7 @@ describe('utils.js', () => {
     compositeStub.getResolvedNativeDependencies.resolves({ resolved: [] })
     sandbox.stub(composite, 'runCauldronCompositeGen').resolves(compositeStub)
     sandbox.stub(container, 'runCauldronContainerGen')
+    sandbox.stub(pipeline, 'runContainerPipelineForDescriptor').resolves(true)
     processExitStub = sandbox.stub(process, 'exit')
 
     sandbox.stub(cauldron, 'getActiveCauldron').resolves(cauldronHelperStub)

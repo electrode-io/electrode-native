@@ -43,7 +43,10 @@ describe('ModuleFactory', () => {
   describe('constructor', () => {
     it('should successfully instantiate a ModuleFactory', () => {
       assert.doesNotThrow(
-        () => new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH),
+        () =>
+          new ModuleFactory(PACKAGE_CACHE_PATH, {
+            packagePrefix: PACKAGE_PREFIX,
+          }),
         Error
       )
     })
@@ -51,7 +54,9 @@ describe('ModuleFactory', () => {
 
   describe('getModuleInstance', () => {
     it('should throw if provided PackagePath is a git path', async () => {
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       assert(
         await doesThrow(
           sut.getModuleInstance,
@@ -62,14 +67,18 @@ describe('ModuleFactory', () => {
     })
 
     it('should properly instantiate a local package module [without src directory]', async () => {
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       const modulePath = path.join(FIXTURES_PATH, 'moduleWithoutSrc')
       await sut.getModuleInstance(PackagePath.fromString(modulePath))
       sandbox.assert.calledWith(instantiateModuleStub, modulePath)
     })
 
     it('should properly instantiate a local package module [with src directory]', async () => {
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       const modulePath = path.join(FIXTURES_PATH, 'moduleWithSrc')
       await sut.getModuleInstance(PackagePath.fromString(modulePath))
       sandbox.assert.calledWith(
@@ -84,7 +93,9 @@ describe('ModuleFactory', () => {
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
       })
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       await sut.getModuleInstance(PackagePath.fromString('foo-package'))
       assert(fs.existsSync(PACKAGE_CACHE_PATH))
     })
@@ -94,7 +105,9 @@ describe('ModuleFactory', () => {
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
       })
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       await sut.getModuleInstance(PackagePath.fromString('foo-package'))
       sandbox.assert.called(yarnAddStub)
       expect(yarnAddStub.args[0].toString()).eql('package-prefix-foo-package')
@@ -105,7 +118,9 @@ describe('ModuleFactory', () => {
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
       })
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       await sut.getModuleInstance(PackagePath.fromString('foo-package@^1.0.0'))
       sandbox.assert.called(yarnAddStub)
       expect(yarnAddStub.args[0].toString()).eql(
@@ -118,7 +133,9 @@ describe('ModuleFactory', () => {
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
       })
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       await sut.getModuleInstance(
         PackagePath.fromString('package-prefix-foo-package')
       )
@@ -134,7 +151,9 @@ describe('ModuleFactory', () => {
           '{ "dependencies": { "package-prefix-foo-package" : "1.0.0" } }'
         )
       })
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       await sut.getModuleInstance(
         PackagePath.fromString('package-prefix-foo-package@^1.0.0')
       )
@@ -149,7 +168,9 @@ describe('ModuleFactory', () => {
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
       })
-      const sut = new ModuleFactory(PACKAGE_PREFIX, PACKAGE_CACHE_PATH)
+      const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
+        packagePrefix: PACKAGE_PREFIX,
+      })
       await sut.getModuleInstance(
         PackagePath.fromString('package-prefix-foo-package')
       )

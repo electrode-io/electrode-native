@@ -133,25 +133,17 @@ You can configure `androidConfig` in the cauldron as show below.
 
 ```json
 {
-	"nativeApps": [{
-		"name": "MyWeatherApp",
-		"platforms": [{
-			"name": "android",
-			"config": {
-				"containerGenerator": {
-					"androidConfig": {
-						"androidGradlePlugin": "3.2.1",
-						"buildToolsVersion": "28.0.3",
-						"compileSdkVersion": "28",
-						"gradleDistributionVersion": "4.6",
-						"minSdkVersion": "19",
-						"supportLibraryVersion": "28.0.0",
-						"targetSdkVersion": "28"
-					}
-				}
-			}
-		}]
-	}]
+  "containerGenerator": {
+    "androidConfig": {
+      "androidGradlePlugin": "3.2.1",
+      "buildToolsVersion": "28.0.3",
+      "compileSdkVersion": "28",
+      "gradleDistributionVersion": "4.6",
+      "minSdkVersion": "19",
+      "supportLibraryVersion": "28.0.0",
+      "targetSdkVersion": "28"
+    }
+  }
 }
 ```
 

@@ -25,66 +25,43 @@ Electrode Native offers the [publish-container] command that can be used to publ
 
 It is possible to run the [publish-container] command multiple times for the same container, if you wish to publish the container to different repositories.
 
-The use of the [create-container] / [publish-container] commands combo, will be mostly useful for development and experimentation with Electrode Native. Internally, we are also using these commands on one of our CI jobs that is in charge of generating development Containers for our native application on a scheduled basis. We use [create-container] command, providing all MiniApps GitHub repositories to the command (through the `--miniapps` option), so that it pulls the latest code of all MiniApps and generate a Container based on the latest changes. The CI job then use [publish-container] to publish the newly generated container to repositories accessed by the native application to retrieve the latest development Container.
+The use of the [create-container] / [publish-container] commands combo, will be mostly useful for development and experimentation with Electrode Native. It can also be used for automation purposes (CI) in some contexts.
 
 **Implicitly publishing a Container**
 
-If you are using a Cauldron, then a container will automatically be regenerated for any non released version(s) of your native application whenever you make a change to the content of the container of a given native application version (for example adding/removing/updating one or more MiniApp(s) or native dependency(ies) for this Container). In addition to regenerating a new Container to include the changes, the Cauldron will also trigger the publication of this new generated Container, using any publishers configured in the Cauldron, as the next section details.
+Using a Cauldron, a Container will automatically be regenerated for any non released version(s) of your native application whenever a change is made to the content of the container of a given native application version (for example adding/removing/updating one or more MiniApp(s) or native dependency(ies) for this Container, or regenerating a Container that is tracking MiniApps branches that have new commits). In addition to regenerating a new Container to include the changes, the Cauldron will also trigger the publication of this new generated Container, using any publishers configured in the Cauldron, as the next section details.
 
 Please also note that if your cauldron is properly configured for container publication, you can also use the [cauldron regen-container] command to trigger a new generation and publication of a container for a given native application version, even if there are no changes to the content of the container (this can be useful in certain scenarios).
 
 ### Configuring container publication
 
-The container publication configuration is part of the `containerGenerator` configuration object stored in a Cauldron, so that it can be shared across users of the Cauldron.
+Container publishers are part of the `pipeline` array of the `containerGenerator` configuration stored in a Cauldron, so that it can be shared across users of the Cauldron.
 
-The publication configuration object will be stored under in the cauldron document. The following illustrate such a configuration:
+All Cauldron configuration is kept in configuration files stored in the `config` directory of the Cauldron.
+
+The following illustrate such a configuration:
 
 ```json
-"nativeApps":[
-   {
-      "name":"MyWeatherApp",
-      "platforms":[
-         {
-            "name":"android",
-            "config":{
-               "containerGenerator":{
-                  "containerVersion":"1.0.0",
-                  "publishers":[
-                     {
-                        "name":"git",
-                        "url":"git@github.com:user/myweatherapp-android-container.git"
-                     },
-                     {
-                        "name":"maven",
-                        "url":"http://user.nexus.repo.com:8081/nexus/content/repositories"
-                     },
-                     {
-                        "name":"jcenter"
-                     }
-                  ]
-               }
-            }
-         },
-         {
-            "name":"ios",
-            "config":{
-               "containerGenerator":{
-                  "containerVersion":"1.0.0",
-                  "publishers":[
-                     {
-                        "name":"git",
-                        "url":"git@github.com:user/myweatherapp-ios-container.git"
-                     }
-                  ]
-               }
-            }
-         }
-      ]
-   }
-]
+{
+  "containerGenerator":{
+    "pipeline":[
+      {
+         "name":"ern-container-publisher-git",
+         "url":"git@github.com:user/myweatherapp-android-container.git"
+      },
+      {
+         "name":"ern-container-publisher-maven",
+         "url":"http://user.nexus.repo.com:8081/nexus/content/repositories"
+      },
+      {
+         "name":"ern-container-publisher-jcenter"
+      }
+    ]
+}
+
 ```
 
-The publishers array contains all the publishers you want to use to publish an Electrode Native container. In example shown above, we want to publish the Electrode Native container of `MyWeatherApp` Android to three destinations: a GitHub repository, a Maven repository and to JCenter. For the GitHub repository, the code of the Electrode Native container will be published and a Git tag will be used for the version. For the Maven repository, the Electrode Native container will be compiled and the resulting versioned AAR will be published to the Maven and JCenter repositories.
+The `pipeline` array contains all the publishers (and transformers) you want to use to publish an Electrode Native container. In the example shown above, we want to publish the Electrode Native container of `MyWeatherApp` Android to three destinations: a GitHub repository, a Maven repository and to JCenter. For the GitHub repository, the code of the Electrode Native container will be published and a Git tag will be used for the version. For the Maven repository, the Electrode Native container will be compiled and the resulting versioned AAR will be published to the Maven and JCenter repositories.
 
 ### Creating a custom Container publisher
 
@@ -95,7 +72,6 @@ Check our [dummy publisher]([https://github.com/electrode-io/ern-container-publi
 A few things to keep in mind when creating a Container publisher :
 
 - The package name must start by `ern-container-publisher-`. This is a convention for Electrode Native Container publishers, and is enforced by Electrode Native.
-Using this convention makes it also simpler for the users as Electrode Native will prefix the publisher name with `ern-container-publisher-` if needed, so they can use a shorthand name. For example, a publisher can be reffered as `foo` and Electrode Native will look for a package named `ern-container-publisher-foo`. Please note that if you are publishing a scoped package for a publisher, Electrode Native will not prepend `ern-container-publisher-`. So if your publisher is `@mycompany/ern-container-publisher-foo`, it should be reffered to as this ful package name in Electrode Native, there is no shorthand name.
 - You should add a keyword 'ern-container-publisher' in the keywords list of the package.json. This could be used later on to enable Container publishers discovery.
 - All you have to implement is a class with two getters `get name` (to return the name of the publisher) and `get platforms` (to return the list of supported platforms of the publisher), as well as the `publish(config)` method. This class should be the default export of the module.
 - Once your Container publisher is published to npm, it will be immediately available for Electrode Native users. During development, if you need to try out your publisher before publishing it to npm, you can use `ern publish-container` command by using an absolute local file system path to your Container publisher module. `ern publish-container` will call either `index.js` (or `index.ts` as we support TypeScript) from your module directory root, or `src/index.js` if no index was found in root. Thus make sure to name your entry point as `index.js`/`index.ts`.
