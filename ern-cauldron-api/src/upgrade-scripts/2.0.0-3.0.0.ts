@@ -113,7 +113,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
       delete cauldron.config
     }
     cauldron.schemaVersion = '3.0.0'
-    await cauldronApi.commit('toto')
+    await cauldronApi.commit('Upgrade Cauldron schema from v2.0.0 to v3.0.0')
     await cauldronApi.commitTransaction(
       'Upgrade Cauldron schema from v2.0.0 to v3.0.0'
     )

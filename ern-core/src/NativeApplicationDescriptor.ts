@@ -22,7 +22,6 @@ export class NativeApplicationDescriptor {
   public readonly name: string
   public readonly platform?: NativePlatform
   public readonly version?: string
-  public readonly toto: string = 'toto'
 
   constructor(name: string, platform?: NativePlatform, version?: string) {
     if (!name) {
