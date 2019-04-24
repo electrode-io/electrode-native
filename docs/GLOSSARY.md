@@ -28,6 +28,11 @@ Package in remote git repository:
 - `https://github.com/electrode-io/MovieListMiniApp.git`
 - `https://github.com/electrode-io/MovieListMiniApp.git#0.0.9`
 
+For GitHub SSH urls it is also possible to use the default GitHub format:
+
+- `git@github.com/electrode-io/MovieListMiniApp.git`
+- `git@github.com/electrode-io/MovieListMiniApp.git#0.0.9`
+
 The string following the optional `#` denotes a branch/tag or specific commit SHA.
 
 Package on local file system :
