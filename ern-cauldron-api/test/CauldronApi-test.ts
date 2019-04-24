@@ -1955,42 +1955,6 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // enableDetachContainerVersionFromRoot
-  // ==========================================================
-  describe('enableDetachContainerVersionFromRoot', async () => {
-    const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-    await cauldronApi({
-      cauldronDocument: tmpFixture,
-    }).enableDetachContainerVersionFromRoot(
-      NativeApplicationDescriptor.fromString('test:android:17.7.0')
-    )
-    const version = jp.query(
-      tmpFixture,
-      '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
-    )[0]
-
-    expect(version.detachContainerVersionFromRoot).true
-  })
-
-  // ==========================================================
-  // disableDetachContainerVersionFromRoot
-  // ==========================================================
-  describe('enableDetachContainerVersionFromRoot', async () => {
-    const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-    await cauldronApi({
-      cauldronDocument: tmpFixture,
-    }).disableDetachContainerVersionFromRoot(
-      NativeApplicationDescriptor.fromString('test:android:17.7.0')
-    )
-    const version = jp.query(
-      tmpFixture,
-      '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
-    )[0]
-
-    expect(version.detachContainerVersionFromRoot).false
-  })
-
-  // ==========================================================
   // addFile
   // ==========================================================
   describe('addFile', () => {

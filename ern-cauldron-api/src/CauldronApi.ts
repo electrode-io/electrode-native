@@ -378,6 +378,29 @@ export default class CauldronApi {
     )
   }
 
+  public async updateConfig({
+    descriptor,
+    config,
+  }: {
+    descriptor?: NativeApplicationDescriptor
+    config: any
+  }) {
+    if (descriptor && !(await this.hasDescriptor(descriptor))) {
+      throw new Error(`${descriptor} does not exist in Cauldron`)
+    }
+    let newConfig = config
+    const configFilePath = this.getConfigFilePath(descriptor)
+    if (await this.fileStore.hasFile(configFilePath)) {
+      const currentConf = await this.fileStore.getFile(configFilePath)
+      const currentConfObj = JSON.parse((currentConf as Buffer).toString())
+      newConfig = Object.assign(currentConfObj, config)
+    }
+    await this.fileStore.storeFile(
+      configFilePath,
+      JSON.stringify(newConfig, null, 2)
+    )
+  }
+
   public getConfigFilePath(descriptor?: NativeApplicationDescriptor) {
     return descriptor
       ? `config/${descriptor.name ? descriptor.name : ''}${
@@ -955,28 +978,6 @@ export default class CauldronApi {
     const version = await this.getVersion(descriptor)
     version.codePush[deploymentName] = codePushEntries
     return this.commit(`Set codePush entries in ${descriptor.toString()}`)
-  }
-
-  public async enableDetachContainerVersionFromRoot(
-    descriptor: NativeApplicationDescriptor
-  ) {
-    this.throwIfPartialNapDescriptor(descriptor)
-    const version = await this.getVersion(descriptor)
-    version.detachContainerVersionFromRoot = true
-    return this.commit(
-      `Set detachContainerVersionFromRoot to true for ${descriptor.toString()}`
-    )
-  }
-
-  public async disableDetachContainerVersionFromRoot(
-    descriptor: NativeApplicationDescriptor
-  ) {
-    this.throwIfPartialNapDescriptor(descriptor)
-    const version = await this.getVersion(descriptor)
-    version.detachContainerVersionFromRoot = false
-    return this.commit(
-      `Set detachContainerVersionFromRoot to false for ${descriptor.toString()}`
-    )
   }
 
   // =====================================================================================
