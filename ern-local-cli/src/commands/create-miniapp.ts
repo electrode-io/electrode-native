@@ -32,6 +32,10 @@ export const builder = (argv: Argv) => {
         'Overrides current platform version in use with this platform version',
       type: 'string',
     })
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry to use to create this MiniApp',
+      type: 'string',
+    })
     .option('scope', {
       alias: 's',
       describe: 'Scope to use for the MiniApp NPM package',
@@ -46,12 +50,14 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   appName,
+  manifestId,
   packageName,
   platformVersion,
   scope,
   skipNpmCheck,
 }: {
   appName: string
+  manifestId?: string
   packageName?: string
   platformVersion: string
   scope?: string
@@ -90,6 +96,7 @@ export const commandHandler = async ({
 
   await kax.task('Creating MiniApp').run(
     MiniApp.create(appName, packageName, {
+      manifestId,
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope,
     })

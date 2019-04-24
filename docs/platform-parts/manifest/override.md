@@ -2,7 +2,6 @@ You can override the master manifest partially or fully with your own manifest f
 
 - To stick to some specific native dependencies versions over time while still allowing for Electrode Native version updates
 - To allow for the use of non open-sourced (private) native modules in your MiniApps
-- To facilitate contributions to the master manifest, if you plan to add support for open source native modules
 
 To override a manifest:
 
@@ -38,6 +37,42 @@ For plugins (native modules) configurations using the partial override type, Ele
 
 For dependencies or plugin configurations, a full override means that Electrode Native only queries the override manifest. The master manifest is never used. A full override  completely masks the master manifest.
 
+#### manifest.json document
+
+Starting with Electrode Native 0.32.0, Electrode Native offers an improved `manifest.json` structure that is not used by our [Master Manifest](https://github.com/electrode-io/electrode-native-manifest/blob/master/manifest.json), but that we recommend use of, for override Manifests.
+
+This new structure get rid of the coupling between a Manifest entry and an Electrode Native version. This association proved to be too restrictive, getting in the way of advanced use cases.
+
+The new `manifest.json` document associate a `manifest id` (manifest object key) to a set of native and javascript dependencies, as follow :
+
+```json
+{
+  "default": {
+    "targetNativeDependencies": [
+      "react-native@0.59.4",
+      "react-native-electrode-bridge@1.5.17",
+      "react-native-maps@0.23.0",
+    ],
+    "targetJsDependencies": [
+      "react@16.8.3"
+    ]
+  },
+  "next": {
+     "targetNativeDependencies": [
+      "react-native@0.60.0",
+      "react-native-electrode-bridge@1.5.18",
+      "react-native-maps@0.24.0",
+    ],
+    "targetJsDependencies": [
+      "react@17.0.0"
+    ]
+  }
+}
+```
+
+The `default` manifest id will be picked up automatically, unless a different `manifest id` is explicitely provided to some `ern` commands that are accessing the manifest.
+
+For example, you might want to define a `next` manifest id with upgraded dependencies versions, and from a specific branch of your MiniApps you can then run `ern ugprade-miniapp --manifestId next` which will upgrade the MiniApp dependencies to the versions specified in the `next` manifest entry, while your main development MiniApp branches can continue tracking the `default` Manifest entry. This was not possible previously due to the fact that Manifest entries had a one to one mapping to a specific platform version.
 
 #### Guidelines for overriding Manifest use cases
 

@@ -45,8 +45,14 @@
 * **Default**  If this option is not used the command uses a default starter schema to generate the initial API. You can modify this option at a later time and then regenerate the API using the `ern regen-api` command.  
 
 `--skipNpmCheck`
+
 * Skip the check ensuring package does not already exists in NPM registry
 * **Default** The value defaults to false. 
+
+`--manifestId <manifestId>`
+
+* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+
 
 #### Examples
 
@@ -75,3 +81,4 @@ This example shows how to create a unscoped package named `weather-api`. The API
 
 [ern regen-api]: ./regen-api.md
 [ern create-api-impl]: ./create-api-impl.md
+[override Manifest]: ../platform-parts/manifest/override.md

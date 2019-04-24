@@ -31,6 +31,10 @@ export const builder = (argv: Argv) => {
       alias: 'a',
       describe: 'Initial npm version',
     })
+    .option('manifestId', {
+      describe: 'Id of the manifest entry to use',
+      type: 'string',
+    })
     .option('packageName', {
       alias: 'p',
       describe: 'Name to use for the api NPM package',
@@ -55,6 +59,7 @@ export const commandHandler = async ({
   apiAuthor,
   apiName,
   apiVersion,
+  manifestId,
   packageName,
   schemaPath,
   scope,
@@ -63,6 +68,7 @@ export const commandHandler = async ({
   apiAuthor?: string
   apiName: string
   apiVersion?: string
+  manifestId?: string
   packageName: string
   schemaPath?: string
   scope?: string
@@ -102,7 +108,8 @@ export const commandHandler = async ({
   }
 
   const bridgeDep = await manifest.getNativeDependency(
-    PackagePath.fromString('react-native-electrode-bridge')
+    PackagePath.fromString('react-native-electrode-bridge'),
+    { manifestId }
   )
   if (!bridgeDep) {
     throw new Error(
@@ -114,7 +121,8 @@ export const commandHandler = async ({
   }
 
   const reactNative = await manifest.getNativeDependency(
-    PackagePath.fromString('react-native')
+    PackagePath.fromString('react-native'),
+    { manifestId }
   )
   if (!reactNative) {
     throw new Error(

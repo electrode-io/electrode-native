@@ -12,6 +12,10 @@ export const builder = (argv: Argv) => {
       alias: 'b',
       describe: 'Bridge version to use',
     })
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry to use',
+      type: 'string',
+    })
     .option('skipVersion', {
       alias: 's',
       describe: 'Do not update API version and do not publish',
@@ -22,9 +26,11 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   bridgeVersion,
+  manifestId,
   skipVersion,
 }: {
   bridgeVersion: string
+  manifestId?: string
   skipVersion: boolean
 }) => {
   const errorMessage =
@@ -48,7 +54,9 @@ export const commandHandler = async ({
       )
     }
   } else {
-    const bridgeDep = await manifest.getNativeDependency(electrodeBridgePkg)
+    const bridgeDep = await manifest.getNativeDependency(electrodeBridgePkg, {
+      manifestId,
+    })
     if (!bridgeDep) {
       throw new Error(
         `react-native-electrode-bridge is not found in manifest. Specify explicit --bridgeVersion in the command.\n ${errorMessage}`

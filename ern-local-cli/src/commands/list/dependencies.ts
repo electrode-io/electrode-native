@@ -20,14 +20,20 @@ export const builder = (argv: Argv) => {
       describe: 'Output dependencies as a single line JSON record',
       type: 'boolean',
     })
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry to use',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   module,
+  manifestId,
   json,
 }: {
   module?: string
+  manifestId?: string
   json?: boolean
 }) => {
   let pathToModule = process.cwd()
@@ -42,7 +48,8 @@ export const commandHandler = async ({
     }
   }
   const dependencies = await findNativeDependencies(
-    path.join(pathToModule, 'node_modules')
+    path.join(pathToModule, 'node_modules'),
+    { manifestId }
   )
 
   if (json) {

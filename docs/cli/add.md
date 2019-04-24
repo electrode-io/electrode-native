@@ -20,6 +20,10 @@
 * Add the package(s) to the MiniApp `peerDependencies`  
 * Checks are not performed to add peer dependencies
 
+`--manifestId <manifestId>`
+
+* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+
 #### Remarks
 
 * The `ern add <packages..>` command is the `ern` equivalent of `yarn add` and `npm install`
@@ -36,3 +40,6 @@ When you work with a MiniApp, always use `ern add` to add packages in place of `
     - If the package contains native code in any way (the package itself is a native module or it transitively contains one or more native dependencies, the command denies the package installation until a configuration is added to the manifest for this package.
     - If the package contains only JavaScript code, then the command proceeds with the package installation without further checks.  
 -------
+
+
+[override Manifest]: ../platform-parts/manifest/override.md

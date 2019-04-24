@@ -78,7 +78,8 @@ export function resolvePackagePaths(paths: string[]): Set<string> {
 }
 
 export async function findNativeDependencies(
-  dir: string
+  dir: string,
+  { manifestId }: { manifestId?: string } = {}
 ): Promise<NativeDependencies> {
   const directoriesWithNativeCode = findDirectoriesContainingNativeCode(dir)
   const filteredDirectories = filterDirectories(directoriesWithNativeCode)
@@ -121,7 +122,7 @@ export async function findNativeDependencies(
         result.nativeApisImpl.push({ path: pathToPackage, packagePath: dep })
       }
     } else {
-      if (await manifest.getNativeDependency(dep)) {
+      if (await manifest.getNativeDependency(dep, { manifestId })) {
         result.thirdPartyInManifest.push({
           packagePath: dep,
           path: pathToPackage,

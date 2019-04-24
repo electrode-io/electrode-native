@@ -21,15 +21,21 @@ export const builder = (argv: Argv) => {
       describe: 'Add this/these packages to peerDependencies',
       type: 'boolean',
     })
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry to use to create this MiniApp',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   dev,
+  manifestId,
   packages,
   peer,
 }: {
   dev: boolean
+  manifestId?: string
   packages: string[]
   peer: boolean
 }) => {
@@ -37,6 +43,7 @@ export const commandHandler = async ({
     log.debug(`Adding package: ${pkg}`)
     await MiniApp.fromCurrentPath().addDependency(PackagePath.fromString(pkg), {
       dev,
+      manifestId,
       peer,
     })
     log.info(`Successfully added ${pkg}`)
