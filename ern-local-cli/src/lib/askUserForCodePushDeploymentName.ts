@@ -7,11 +7,10 @@ export async function askUserForCodePushDeploymentName(
   message?: string
 ): Promise<string> {
   const cauldron = await getActiveCauldron()
-  const conf = await cauldron.getConfig(napDescriptor)
-  const hasCodePushDeploymentsConfig =
-    conf && conf.codePush && conf.codePush.deployments
+  const conf = await cauldron.getCodePushConfig(napDescriptor)
+  const hasCodePushDeploymentsConfig = conf && conf.deployments
   const choices = hasCodePushDeploymentsConfig
-    ? conf && conf.codePush.deployments
+    ? conf && conf.deployments
     : undefined
 
   const { userSelectedDeploymentName } = await inquirer.prompt(<
