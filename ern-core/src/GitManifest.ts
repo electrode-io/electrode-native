@@ -130,14 +130,20 @@ export default class GitManifest {
   public getPluginsConfigurationDirectories(
     maxVersion: string = Platform.currentVersion
   ): string[] {
-    return _(fs.readdirSync(path.join(this.repoAbsoluteLocalPath, 'plugins')))
-      .filter(
-        d =>
-          ERN_VERSION_DIRECTORY_RE.test(d) &&
-          semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)![1], maxVersion)
-      )
-      .map(d => path.join(this.repoAbsoluteLocalPath, 'plugins', d))
-      .value()
+    const pathToPluginsDirectory = path.join(
+      this.repoAbsoluteLocalPath,
+      'plugins'
+    )
+    return fs.existsSync(pathToPluginsDirectory)
+      ? _(fs.readdirSync(pathToPluginsDirectory))
+          .filter(
+            d =>
+              ERN_VERSION_DIRECTORY_RE.test(d) &&
+              semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)![1], maxVersion)
+          )
+          .map(d => path.join(pathToPluginsDirectory, d))
+          .value()
+      : []
   }
 
   /**
