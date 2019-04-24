@@ -3034,9 +3034,16 @@ describe('CauldronHelper.js', () => {
 
     it('should update native app container version only[detachContainerVersionFromRoot=true for target descriptor]', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
-      const napVersion = fixture.nativeApps[0].platforms[0].versions[0]
-      napVersion.detachContainerVersionFromRoot = true
-      const cauldronHelper = createCauldronHelper({ cauldronDocument: fixture })
+      const storeTmpDir = createTmpDir()
+      shell.mkdir('-p', path.join(storeTmpDir, 'config'))
+      fs.writeFileSync(
+        path.join(storeTmpDir, 'config', 'test-android-17.7.0.json'),
+        JSON.stringify({ detachContainerVersionFromRoot: true })
+      )
+      const cauldronHelper = createCauldronHelper({
+        cauldronDocument: fixture,
+        storePath: storeTmpDir,
+      })
 
       await cauldronHelper.updateContainerVersion(
         NativeApplicationDescriptor.fromString('test:android:17.7.0'),

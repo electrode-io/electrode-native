@@ -5,7 +5,7 @@ import {
   kax,
   log,
 } from 'ern-core'
-import { getActiveCauldron, CauldronNativeAppVersion } from 'ern-cauldron-api'
+import { getActiveCauldron } from 'ern-cauldron-api'
 import { runCauldronContainerGen } from './container'
 import { runContainerPipelineForDescriptor } from './runContainerPipelineForDescriptor'
 import * as constants from './constants'
@@ -42,10 +42,11 @@ export async function syncCauldronContainer(
     if (containerVersion) {
       cauldronContainerNewVersion = containerVersion
     } else {
-      const napVersion: CauldronNativeAppVersion = await cauldron.getDescriptor(
+      const detachContainerVersionFromRoot = await cauldron.getConfigForKey(
+        'detachContainerVersionFromRoot',
         descriptor
       )
-      cauldronContainerNewVersion = napVersion.detachContainerVersionFromRoot
+      cauldronContainerNewVersion = detachContainerVersionFromRoot
         ? await cauldron.getContainerVersion(descriptor)
         : await cauldron.getTopLevelContainerVersion(descriptor)
       if (cauldronContainerNewVersion) {

@@ -4,7 +4,6 @@ import {
   PackagePath,
   NativeApplicationDescriptor,
   fileUtils,
-  promptUtils,
   NativePlatform,
   normalizeVersionsToSemver,
   utils as coreUtils,
@@ -192,11 +191,6 @@ export class CauldronHelper {
         sourceVersion.container.ernVersion
       )
     }
-    // Copy detachContainerVersionFromRoot
-    if (sourceVersion.detachContainerVersionFromRoot) {
-      await this.cauldron.enableDetachContainerVersionFromRoot(target)
-    }
-
     // Copy description if any
     if (sourceVersion.description) {
       await this.cauldron.addOrUpdateDescription(
@@ -211,6 +205,16 @@ export class CauldronHelper {
         await this.cauldron.setConfig({ descriptor: target, config })
       }
     }
+  }
+
+  public async updateConfig({
+    config,
+    descriptor,
+  }: {
+    config: any
+    descriptor?: NativeApplicationDescriptor
+  }) {
+    return this.cauldron.updateConfig({ config, descriptor })
   }
 
   public async getMostRecentNativeApplicationVersion(
@@ -1152,11 +1156,12 @@ export class CauldronHelper {
     containerVersion: string
   ): Promise<void> {
     await this.cauldron.updateContainerVersion(napDescriptor, containerVersion)
-    const nativeApplicationVersion: CauldronNativeAppVersion = await this.getDescriptor(
+    const detachContainerVersionFromRoot = await this.getConfigForKey(
+      'detachContainerVersionFromRoot',
       napDescriptor
     )
     // Update top level Container version only for non detached container versions
-    if (!nativeApplicationVersion.detachContainerVersionFromRoot) {
+    if (!detachContainerVersionFromRoot) {
       const topLevelContainerVersion = await this.getTopLevelContainerVersion(
         napDescriptor
       )
