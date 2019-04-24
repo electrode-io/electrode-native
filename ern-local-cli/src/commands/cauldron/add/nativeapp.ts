@@ -74,9 +74,10 @@ export const commandHandler = async ({
       descriptor
     )
     if (
-      await askUserConfirmation(
+      mostRecentVersion &&
+      (await askUserConfirmation(
         `Do you want to copy data from version (${mostRecentVersion.name}) ?`
-      )
+      ))
     ) {
       copyFromVersion = mostRecentVersion.name
     }
