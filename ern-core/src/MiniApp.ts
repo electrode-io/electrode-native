@@ -96,12 +96,14 @@ export class MiniApp extends BaseMiniApp {
     miniAppName: string,
     packageName: string,
     {
+      manifestId,
       platformVersion = Platform.currentVersion,
       scope,
     }: {
-      platformVersion: string
+      manifestId?: string
+      platformVersion?: string
       scope?: string
-    }
+    } = {}
   ) {
     if (fs.existsSync(path.join('node_modules', 'react-native'))) {
       throw new Error(
@@ -120,7 +122,11 @@ export class MiniApp extends BaseMiniApp {
 
     try {
       const reactNativeDependency = await manifest.getNativeDependency(
-        PackagePath.fromString('react-native')
+        PackagePath.fromString('react-native'),
+        {
+          manifestId,
+          platformVersion,
+        }
       )
 
       if (!reactNativeDependency) {
@@ -202,8 +208,12 @@ export class MiniApp extends BaseMiniApp {
     super({ miniAppPath, packagePath })
   }
 
-  public async getNativeDependencies(): Promise<NativeDependencies> {
-    return findNativeDependencies(path.join(this.path, 'node_modules'))
+  public async getNativeDependencies({
+    manifestId,
+  }: { manifestId?: string } = {}): Promise<NativeDependencies> {
+    return findNativeDependencies(path.join(this.path, 'node_modules'), {
+      manifestId,
+    })
   }
 
   // Return all javascript (non native) dependencies currently used by the MiniApp
@@ -225,7 +235,11 @@ export class MiniApp extends BaseMiniApp {
 
   public async addDependency(
     dependency: PackagePath,
-    { dev, peer }: { dev?: boolean; peer?: boolean } = {}
+    {
+      dev,
+      manifestId,
+      peer,
+    }: { dev?: boolean; manifestId?: string; peer?: boolean } = {}
   ): Promise<PackagePath | void> {
     if (!dependency) {
       return log.error('dependency cant be null')
@@ -239,11 +253,12 @@ export class MiniApp extends BaseMiniApp {
       // In that case we need to perform additional checks and operations
       const basePathDependency = new PackagePath(dependency.basePath)
       const manifestNativeDependency = await manifest.getNativeDependency(
-        basePathDependency
+        basePathDependency,
+        { manifestId }
       )
       const manifestDependency =
         manifestNativeDependency ||
-        (await manifest.getJsDependency(basePathDependency))
+        (await manifest.getJsDependency(basePathDependency, { manifestId }))
 
       if (!manifestDependency) {
         // Dependency is not declared in manifest
@@ -294,7 +309,8 @@ export class MiniApp extends BaseMiniApp {
               // This is a dependency which is not native itself but contains a native dependency as  transitive one (example 'native-base')
               // If ern platform contains entry in the manifest but dependency versions do not align, report error
               const manifestDep = await manifest.getNativeDependency(
-                new PackagePath(dep.packagePath.basePath)
+                new PackagePath(dep.packagePath.basePath),
+                { manifestId }
               )
               if (manifestDep) {
                 if (
@@ -376,13 +392,18 @@ export class MiniApp extends BaseMiniApp {
     }
   }
 
-  public async upgradeToPlatformVersion(
-    versionToUpgradeTo: string
-  ): Promise<any> {
+  public async upgrade({
+    manifestId,
+    platformVersion = Platform.currentVersion,
+  }: {
+    manifestId?: string
+    platformVersion?: string
+  } = {}): Promise<any> {
     // Update all modules versions in package.json
-    const manifestDependencies = await manifest.getJsAndNativeDependencies(
-      versionToUpgradeTo
-    )
+    const manifestDependencies = await manifest.getJsAndNativeDependencies({
+      manifestId,
+      platformVersion,
+    })
 
     for (const manifestDependency of manifestDependencies) {
       if (this.packageJson.dependencies[manifestDependency.basePath]) {
@@ -411,7 +432,7 @@ export class MiniApp extends BaseMiniApp {
 with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     }
 
-    this.packageJson.ern.version = versionToUpgradeTo
+    this.packageJson.ern.version = platformVersion
 
     // Write back package.json
     const appPackageJsonPath = path.join(this.path, 'package.json')

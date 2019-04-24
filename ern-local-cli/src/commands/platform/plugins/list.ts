@@ -10,6 +10,10 @@ export const desc = 'List supported platform plugins'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('manifestId', {
+      describe: 'Manifest id for which to list support plugins',
+      type: 'string',
+    })
     .option('platformVersion', {
       alias: 'v',
       describe: 'Specific platform version for which to list supported plugins',
@@ -18,11 +22,16 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  manifestId,
   platformVersion = Platform.currentVersion,
 }: {
+  manifestId?: string
   platformVersion?: string
 }) => {
-  const plugins = await manifest.getNativeDependencies(platformVersion)
+  const plugins = await manifest.getNativeDependencies({
+    manifestId,
+    platformVersion,
+  })
 
   log.info(`Platform v${platformVersion} suports the following plugins`)
   const table = new Table({

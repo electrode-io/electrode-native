@@ -25,6 +25,10 @@ export const builder = (argv: Argv) => {
       describe:
         'a specific version of the api for which an implementation needs to be generated. \n The version should be higher than the version for which an implementation is already generated',
     })
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry to use',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
@@ -35,7 +39,13 @@ const PLUGIN_DIRECTORY = path.join(WORKING_DIRECTORY, 'plugins')
 
 // TOO MUCH LOGIC IN THE COMMAND ITSELF
 // TO REFACTOR TO EXTRACT LOGIC OUT OF THE COMMAND FOR REUSABILITY
-export const handler = async ({ apiVersion }: { apiVersion: string }) => {
+export const handler = async ({
+  apiVersion,
+  manifestId,
+}: {
+  apiVersion: string
+  manifestId?: string
+}) => {
   try {
     const apiImplPackage = await readPackageJson()
 
@@ -50,7 +60,9 @@ export const handler = async ({ apiVersion }: { apiVersion: string }) => {
 
     log.info(`regenerating api implementation for ${api.toString()}`)
 
-    const reactNativeVersion = await coreUtils.reactNativeManifestVersion()
+    const reactNativeVersion = await coreUtils.reactNativeManifestVersion({
+      manifestId,
+    })
     if (!reactNativeVersion) {
       throw new Error(
         'React Native version is not defined in Manifest. This sould not happen !'

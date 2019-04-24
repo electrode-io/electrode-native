@@ -53,9 +53,9 @@ export async function checkCompatibilityWithPlatform(
   platformVersion: string
 ) {
   const miniappDependencies = miniApp.getPackageJsonDependencies()
-  const platformDependencies = await manifest.getJsAndNativeDependencies(
-    platformVersion
-  )
+  const platformDependencies = await manifest.getJsAndNativeDependencies({
+    platformVersion,
+  })
 
   const report = getCompatibility(miniappDependencies, platformDependencies)
   const isCompatible = report.incompatible.length === 0

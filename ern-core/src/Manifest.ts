@@ -396,18 +396,26 @@ export class Manifest {
     return url
   }
 
-  public async getManifestData(platformVersion: string) {
+  public async getManifestData({
+    manifestId = 'default',
+    platformVersion = Platform.currentVersion,
+  }: {
+    manifestId?: string
+    platformVersion?: string
+  } = {}) {
     await this.initOverrideManifest()
     let manifestData: any = {}
     if (this.overrideManifest && this.manifestOverrideType === 'partial') {
       // Merge both manifests. If a dependency exists at two different versions in both
       // manifest, the ovveride will take precedence for the version
-      const overrideManifestData = await this.overrideManifest.getManifestData(
-        platformVersion
-      )
-      const masterManifestData = await this.masterManifest.getManifestData(
-        platformVersion
-      )
+      const overrideManifestData = await this.overrideManifest.getManifestData({
+        manifestId,
+        platformVersion,
+      })
+      const masterManifestData = await this.masterManifest.getManifestData({
+        manifestId,
+        platformVersion,
+      })
 
       manifestData.targetNativeDependencies = _.unionBy(
         overrideManifestData
@@ -423,28 +431,40 @@ export class Manifest {
         d => PackagePath.fromString(<string>d).basePath
       )
     } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
-      manifestData = await this.overrideManifest.getManifestData(
-        platformVersion
-      )
+      manifestData = await this.overrideManifest.getManifestData({
+        manifestId,
+        platformVersion,
+      })
     } else {
-      manifestData = await this.masterManifest.getManifestData(platformVersion)
+      manifestData = await this.masterManifest.getManifestData({
+        manifestId,
+        platformVersion,
+      })
     }
     return manifestData
   }
 
-  public async getNativeDependencies(
-    platformVersion: string = Platform.currentVersion
-  ): Promise<PackagePath[]> {
-    const m = await this.getManifestData(platformVersion)
+  public async getNativeDependencies({
+    manifestId,
+    platformVersion,
+  }: {
+    manifestId?: string
+    platformVersion?: string
+  } = {}): Promise<PackagePath[]> {
+    const m = await this.getManifestData({ manifestId, platformVersion })
     return m
       ? _.map(m.targetNativeDependencies, d => PackagePath.fromString(d))
       : []
   }
 
-  public async getJsDependencies(
-    platformVersion: string = Platform.currentVersion
-  ): Promise<PackagePath[]> {
-    const m = await this.getManifestData(platformVersion)
+  public async getJsDependencies({
+    manifestId,
+    platformVersion,
+  }: {
+    manifestId?: string
+    platformVersion?: string
+  } = {}): Promise<PackagePath[]> {
+    const m = await this.getManifestData({ manifestId, platformVersion })
     return m
       ? _.map(m.targetJsDependencies, d => PackagePath.fromString(d))
       : []
@@ -452,22 +472,46 @@ export class Manifest {
 
   public async getNativeDependency(
     dependency: PackagePath,
-    platformVersion: string = Platform.currentVersion
+    {
+      manifestId = 'default',
+      platformVersion = Platform.currentVersion,
+    }: {
+      manifestId?: string
+      platformVersion?: string
+    } = {}
   ): Promise<PackagePath | void> {
-    const nativeDependencies = await this.getNativeDependencies(platformVersion)
+    const nativeDependencies = await this.getNativeDependencies({
+      manifestId,
+      platformVersion,
+    })
     return _.find(nativeDependencies, d => d.basePath === dependency.basePath)
   }
 
   public async getJsDependency(
     dependency: PackagePath,
-    platformVersion: string = Platform.currentVersion
+    {
+      manifestId,
+      platformVersion,
+    }: {
+      manifestId?: string
+      platformVersion?: string
+    } = {}
   ): Promise<PackagePath | void> {
-    const jsDependencies = await this.getJsDependencies(platformVersion)
+    const jsDependencies = await this.getJsDependencies({
+      manifestId,
+      platformVersion,
+    })
     return _.find(jsDependencies, d => d.basePath === dependency.basePath)
   }
 
-  public async getJsAndNativeDependencies(platformVersion: string) {
-    const m = await this.getManifestData(platformVersion)
+  public async getJsAndNativeDependencies({
+    manifestId,
+    platformVersion,
+  }: {
+    manifestId?: string
+    platformVersion?: string
+  } = {}) {
+    const m = await this.getManifestData({ manifestId, platformVersion })
     const manifestDeps = manifest
       ? _.union(m.targetJsDependencies, m.targetNativeDependencies)
       : []

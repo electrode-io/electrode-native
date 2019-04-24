@@ -9,6 +9,10 @@ export const desc = 'Search a plugin'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry in which to search plugins',
+      type: 'string',
+    })
     .option('platformVersion', {
       alias: 'v',
       describe: 'Specific platform version for which to list supported plugins',
@@ -17,15 +21,17 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  manifestId,
   name,
   platformVersion = Platform.currentVersion,
 }: {
+  manifestId?: string
   name: string
   platformVersion?: string
 }) => {
   const plugin = await manifest.getNativeDependency(
     PackagePath.fromString(name),
-    platformVersion
+    { manifestId, platformVersion }
   )
   if (!plugin) {
     return log.warn(

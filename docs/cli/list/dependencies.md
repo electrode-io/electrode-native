@@ -14,6 +14,10 @@
 
 * Output dependencies as a single line JSON record.
 
+`--manifestId <manifestId>`
+
+* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+
 **Arguments**
 
 `[module]`
@@ -39,3 +43,5 @@ react-native-electrode-bridge@1.5.9
 #### Remarks
 
 * This command will only list native dependencies.
+
+[override Manifest]: ../../platform-parts/manifest/override.md

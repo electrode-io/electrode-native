@@ -41,6 +41,10 @@ export const builder = (argv: Argv) => {
         'Generate js project with proper dependencies (Implementation of the API has to be written in js',
       type: 'boolean',
     })
+    .option('manifestId', {
+      describe: 'Id of the Manifest entry to use',
+      type: 'string',
+    })
     .option('nativeOnly', {
       alias: 'n',
       describe:
@@ -76,6 +80,7 @@ export const commandHandler = async ({
   force,
   hasConfig,
   jsOnly,
+  manifestId,
   nativeOnly,
   packageName,
   scope,
@@ -87,6 +92,7 @@ export const commandHandler = async ({
   force: boolean
   hasConfig: boolean
   jsOnly: boolean
+  manifestId?: string
   nativeOnly: boolean
   packageName?: string
   scope?: string
@@ -114,7 +120,9 @@ export const commandHandler = async ({
   }
 
   log.info(`Generating API implementation for ${apiName}`)
-  const reactNativeVersion = await coreUtils.reactNativeManifestVersion()
+  const reactNativeVersion = await coreUtils.reactNativeManifestVersion({
+    manifestId,
+  })
   if (!reactNativeVersion) {
     throw new Error(
       'React Native version is not defined in Manifest. This sould not happen !'

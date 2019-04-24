@@ -21,6 +21,12 @@
 
 * Search for a specified plugin for a specific platform version
 
+`--manifestId <manifestId>`
+
+* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+
 #### Remarks
 
 * The search results include the plugin (if supported by the current platform version) and its version.
+
+[override Manifest]: ../../../platform-parts/manifest/override.md

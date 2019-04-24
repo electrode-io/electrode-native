@@ -12,18 +12,24 @@ export const builder = (argv: Argv) => {
       describe: 'Specific platform version to upgrade MiniApp to',
       type: 'string',
     })
+    .option('manifestId', {
+      describe:
+        'Id of the manifest entry to use to retrieve versions to upgrade to',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
-  version = Platform.currentVersion,
+  manifestId,
+  version,
 }: {
-  version: string
+  manifestId?: string
+  version?: string
 }) => {
   const miniApp = MiniApp.fromCurrentPath()
-  const versionWithoutPrefix = version.toString().replace('v', '')
-  miniApp.upgradeToPlatformVersion(versionWithoutPrefix)
-  log.info('MiniApp upgraded successfully')
+  const versionWithoutPrefix = version && version.toString().replace('v', '')
+  await miniApp.upgrade({ manifestId, platformVersion: versionWithoutPrefix })
 }
 
 export const handler = tryCatchWrap(commandHandler)

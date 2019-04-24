@@ -246,10 +246,13 @@ export async function isDependencyPathNativeApiImpl(
 /**
  * Version of react-native dependency in manifest
  */
-export async function reactNativeManifestVersion() {
+export async function reactNativeManifestVersion({
+  manifestId,
+}: { manifestId?: string } = {}) {
   const reactNativebasePathDependency = PackagePath.fromString('react-native')
   const reactNativeDependency = await manifest.getNativeDependency(
-    reactNativebasePathDependency
+    reactNativebasePathDependency,
+    { manifestId }
   )
 
   if (!reactNativeDependency) {

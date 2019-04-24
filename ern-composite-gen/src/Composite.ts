@@ -95,11 +95,15 @@ export class Composite {
   /**
    * Get all native dependencies packages found in this Composite
    */
-  public async getNativeDependencies(): Promise<NativeDependencies> {
+  public async getNativeDependencies({
+    manifestId,
+  }: { manifestId?: string } = {}): Promise<NativeDependencies> {
     if (this.cachedNativeDependencies) {
       return Promise.resolve(this.cachedNativeDependencies)
     }
-    const nativeDependencies = await findNativeDependencies(this.path)
+    const nativeDependencies = await findNativeDependencies(this.path, {
+      manifestId,
+    })
 
     // Filter out MiniApps that can be falsy considered as native dependencies
     // if developer(s) forgot to npm ignore the android/ios directory

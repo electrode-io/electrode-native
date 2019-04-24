@@ -98,10 +98,22 @@ export default class GitManifest {
     return this.cachedManifest
   }
 
-  public async getManifestData(platformVersion: string): Promise<any | void> {
-    return _.find(await this.getManifest(), m =>
-      semver.satisfies(platformVersion, m.platformVersion)
-    )
+  public async getManifestData({
+    manifestId = 'default',
+    platformVersion = Platform.currentVersion,
+  }: {
+    manifestId?: string
+    platformVersion?: string
+  } = {}): Promise<any | void> {
+    const manifest = await this.getManifest()
+
+    return Array.isArray(manifest)
+      ? // Old manifest format [to be deprecated]
+        _.find(manifest, m =>
+          semver.satisfies(platformVersion, m.platformVersion)
+        )
+      : // New manifest format
+        manifest[manifestId]
   }
 
   /**

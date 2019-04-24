@@ -58,6 +58,10 @@
 * Force the creation of an API implementation project  
 * **Caution**  If there is already an implementation project in the target directory, the new project will overwrite the existing project completely. Use this option only if you are sure that you can overwrite any existing project.  
 
+`--manifestId <manifestId>`
+
+* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+
 #### Examples
 
 `ern create-api-impl react-native-weather-api`
@@ -87,5 +91,5 @@ The package name for this project is `@org/my-weather-api-impl`.
 
 [ern create-api] | Create an API
 
-
 [ern create-api]: ./create-api.md
+[override Manifest]: ../platform-parts/manifest/override.md
