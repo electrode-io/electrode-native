@@ -10,10 +10,14 @@ const GIT_SSH_PATH_RE = new RegExp(/^git\+ssh:\/\/.+$/)
 const GIT_SSH_PATH_VERSION_RE = new RegExp(/^(git\+ssh:\/\/.+)#(.+)$/)
 const GIT_HTTPS_PATH_RE = new RegExp(/^https:\/\/.+$/)
 const GIT_HTTPS_PATH_VERSION_RE = new RegExp(/^(https:\/\/.+)#(.+)$/)
+const GITHUB_SSH_PATH_RE = new RegExp(/^git@[^:]+:[^\/]+\/.+\.git$/)
+const GITHUB_SSH_PATH_VERSION_RE = new RegExp(/^git@[^:]+:[^\/]+\/.+\.git#.+$/)
 const GIT_PATH_RE = new RegExp(
   `${GIT_SSH_PATH_RE.source}|${GIT_SSH_PATH_VERSION_RE.source}|${
     GIT_HTTPS_PATH_RE.source
-  }|${GIT_HTTPS_PATH_VERSION_RE.source}`
+  }|${GIT_HTTPS_PATH_VERSION_RE.source}|${GITHUB_SSH_PATH_VERSION_RE.source}|${
+    GITHUB_SSH_PATH_RE.source
+  }`
 )
 const REGISTRY_PATH_VERSION_RE = new RegExp(/^(.+)@(.+)$/)
 
@@ -52,7 +56,14 @@ export class PackagePath {
    * @param path Full path to the package (registry|git|file)
    */
   constructor(path: string) {
-    this.fullPath = path
+    // Transform GitHub SSH urls
+    if (
+      GITHUB_SSH_PATH_VERSION_RE.test(path) ||
+      GITHUB_SSH_PATH_RE.test(path)
+    ) {
+      path = `git+ssh://${path.replace(':', '/')}`
+    }
+
     if (GIT_SSH_PATH_VERSION_RE.test(path)) {
       this.basePath = GIT_SSH_PATH_VERSION_RE.exec(path)![1]
       this.version = GIT_SSH_PATH_VERSION_RE.exec(path)![2]
@@ -71,6 +82,7 @@ export class PackagePath {
     } else {
       this.basePath = path
     }
+    this.fullPath = path
   }
 
   get isGitPath(): boolean {
