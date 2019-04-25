@@ -5,7 +5,7 @@ import fs from 'fs'
 
 export default function(): string {
   const tmpDir = config.getValue('tmp-dir')
-  if (!fs.existsSync(tmpDir)) {
+  if (tmpDir && !fs.existsSync(tmpDir)) {
     shell.mkdir('-p', tmpDir)
   }
   const retainTmpDir = config.getValue('retain-tmp-dir', false)
