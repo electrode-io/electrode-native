@@ -20,12 +20,19 @@ import uuidv4 from 'uuid/v4'
 const yarnLocksStoreDirectory = 'yarnlocks'
 const bundlesStoreDirectory = 'bundles'
 
-export type ContainerPackagesArrayKey =
-  | 'jsApiImpls'
-  | 'miniApps'
-  | 'nativeDeps'
-  | 'miniAppsBranches'
+export type ContainerJsPackagesBranchesArrayKey =
   | 'jsApiImplsBranches'
+  | 'miniAppsBranches'
+
+export type ContainerJsPackagesVersionsArrayKey = 'jsApiImpls' | 'miniApps'
+
+export type ContainerJsPackagesArrayKey =
+  | ContainerJsPackagesBranchesArrayKey
+  | ContainerJsPackagesVersionsArrayKey
+
+export type ContainerPackagesArrayKey =
+  | ContainerJsPackagesArrayKey
+  | 'nativeDeps'
 
 export default class CauldronApi {
   private readonly documentStore: ICauldronDocumentStore
@@ -653,236 +660,6 @@ export default class CauldronApi {
     await this.commit(`Update description of ${descriptor.toString()}`)
   }
 
-  public async hasMiniAppBranchInContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniApp: PackagePath
-  ): Promise<boolean> {
-    this.throwIfPartialNapDescriptor(descriptor)
-    const container = (await this.getVersion(descriptor)).container
-    return (
-      _.find(container.miniAppsBranches || [], p =>
-        miniApp.same(PackagePath.fromString(p), { ignoreVersion: true })
-      ) !== undefined
-    )
-  }
-
-  public async hasJsApiImplBranchInContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<boolean> {
-    this.throwIfPartialNapDescriptor(descriptor)
-    const container = (await this.getVersion(descriptor)).container
-    return (
-      _.find(container.jsApiImplsBranches || [], p =>
-        jsApiImpl.same(PackagePath.fromString(p), { ignoreVersion: true })
-      ) !== undefined
-    )
-  }
-
-  // ------------------------------------------------------------------------------
-  // Add packages to Container
-  // ------------------------------------------------------------------------------
-
-  public async addMiniAppToContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniapp: PackagePath
-  ): Promise<void> {
-    await this.addPackageToContainer(descriptor, miniapp, 'miniApps')
-    return this.commit(`Add ${miniapp} MiniApp to ${descriptor} Container`)
-  }
-
-  public async addMiniAppBranchToContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniapp: PackagePath
-  ): Promise<void> {
-    await this.addPackageToContainer(descriptor, miniapp, 'miniAppsBranches')
-    return this.commit(
-      `Add ${miniapp.basePath} ${
-        miniapp.version
-      } branch to ${descriptor} Container`
-    )
-  }
-
-  public async addJsApiImplToContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    await this.addPackageToContainer(descriptor, jsApiImpl, 'jsApiImpls')
-    return this.commit(
-      `Add ${jsApiImpl} JS API implementation to ${descriptor} Container`
-    )
-  }
-
-  public async addJsApiImplBranchToContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    await this.addPackageToContainer(
-      descriptor,
-      jsApiImpl,
-      'jsApiImplsBranches'
-    )
-    return this.commit(
-      `Add ${jsApiImpl.basePath} ${
-        jsApiImpl.version
-      } branch to ${descriptor} Container`
-    )
-  }
-
-  public async addNativeDependencyToContainer(
-    descriptor: NativeApplicationDescriptor,
-    dependency: PackagePath
-  ): Promise<void> {
-    await this.addPackageToContainer(descriptor, dependency, 'nativeDeps')
-    return this.commit(
-      `Add ${dependency} native dependency to ${descriptor} Container`
-    )
-  }
-
-  // ------------------------------------------------------------------------------
-  // Update packages versions in Container
-  // ------------------------------------------------------------------------------
-
-  public async updateMiniAppVersionInContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniApp: PackagePath
-  ): Promise<void> {
-    await this.updatePackageVersionInContainer(descriptor, miniApp, 'miniApps')
-    return this.commit(
-      `Update ${miniApp.basePath} MiniApp to version ${
-        miniApp.version
-      } in ${descriptor} Container`
-    )
-  }
-
-  public async updateMiniAppBranchInContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniapp: PackagePath
-  ): Promise<void> {
-    await this.updatePackageVersionInContainer(
-      descriptor,
-      miniapp,
-      'miniAppsBranches'
-    )
-    return this.commit(
-      `Update ${miniapp.basePath} git branch to ${
-        miniapp.version
-      } in ${descriptor} Container`
-    )
-  }
-
-  public async updateJsApiImplVersionInContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    await this.updatePackageVersionInContainer(
-      descriptor,
-      jsApiImpl,
-      'jsApiImpls'
-    )
-    return this.commit(
-      `Update ${jsApiImpl.basePath} JS API implementation to version ${
-        jsApiImpl.version
-      } in ${descriptor} Container`
-    )
-  }
-
-  public async updateJsApiImplBranchInContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    await this.updatePackageVersionInContainer(
-      descriptor,
-      jsApiImpl,
-      'jsApiImplsBranches'
-    )
-    return this.commit(
-      `Update ${jsApiImpl.basePath} git branch to ${
-        jsApiImpl.version
-      } in ${descriptor} Container`
-    )
-  }
-
-  public async updateNativeDependencyVersionInContainer(
-    descriptor: NativeApplicationDescriptor,
-    dependency: PackagePath
-  ): Promise<void> {
-    await this.updatePackageVersionInContainer(
-      descriptor,
-      dependency,
-      'nativeDeps'
-    )
-    return this.commit(
-      `Update ${dependency.basePath} dependency to version ${
-        dependency.version
-      } in ${descriptor} Container`
-    )
-  }
-
-  // ------------------------------------------------------------------------------
-  // Remove packages from Container
-  // ------------------------------------------------------------------------------
-
-  public async removeMiniAppFromContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniApp: PackagePath
-  ): Promise<void> {
-    await this.removePackageFromContainer(descriptor, miniApp, 'miniApps')
-    return this.commit(
-      `Remove ${miniApp.basePath} MiniApp from ${descriptor} Container`
-    )
-  }
-
-  public async removeMiniAppBranchFromContainer(
-    descriptor: NativeApplicationDescriptor,
-    miniapp: PackagePath
-  ): Promise<void> {
-    await this.removePackageFromContainer(
-      descriptor,
-      miniapp,
-      'miniAppsBranches'
-    )
-    return this.commit(
-      `Remove ${miniapp.basePath} branch from ${descriptor} Container`
-    )
-  }
-
-  public async removeJsApiImplFromContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    await this.removePackageFromContainer(descriptor, jsApiImpl, 'jsApiImpls')
-    return this.commit(
-      `Remove ${
-        jsApiImpl.basePath
-      } JS API implementation from ${descriptor} Container`
-    )
-  }
-
-  public async removeJsApiImplBranchFromContainer(
-    descriptor: NativeApplicationDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    await this.removePackageFromContainer(
-      descriptor,
-      jsApiImpl,
-      'jsApiImplsBranches'
-    )
-    return this.commit(
-      `Remove ${jsApiImpl.basePath} branch from ${descriptor} Container`
-    )
-  }
-
-  public async removeNativeDependencyFromContainer(
-    descriptor: NativeApplicationDescriptor,
-    dependency: PackagePath
-  ): Promise<void> {
-    await this.removePackageFromContainer(descriptor, dependency, 'nativeDeps')
-    return this.commit(
-      `Remove ${dependency.basePath} dependency from ${descriptor} Container`
-    )
-  }
-
   // ------------------------------------------------------------------------------
   // Container versioning
   // ------------------------------------------------------------------------------
@@ -1324,7 +1101,48 @@ export default class CauldronApi {
     }
   }
 
-  private async addPackageToContainer(
+  public async hasJsPackageBranchInContainer(
+    descriptor: NativeApplicationDescriptor,
+    jsPackage: PackagePath,
+    key: ContainerJsPackagesBranchesArrayKey
+  ) {
+    this.throwIfPartialNapDescriptor(descriptor)
+    const container = (await this.getVersion(descriptor)).container
+    return (
+      _.find(container[key] || [], p =>
+        jsPackage.same(PackagePath.fromString(p), { ignoreVersion: true })
+      ) !== undefined
+    )
+  }
+
+  public async updatePackageInContainer(
+    descriptor: NativeApplicationDescriptor,
+    pkg: PackagePath,
+    key: ContainerPackagesArrayKey
+  ): Promise<void> {
+    this.throwIfPartialNapDescriptor(descriptor)
+    this.throwIfNoVersionInPackagePath(pkg)
+    const container = (await this.getVersion(descriptor)).container
+    const existingPkg = _.find(container[key], p =>
+      pkg.same(PackagePath.fromString(p), { ignoreVersion: true })
+    )
+    if (!existingPkg) {
+      throw new Error(
+        `${pkg.basePath} does not exist in ${descriptor} Container`
+      )
+    }
+    container[key] = _.map(
+      container[key],
+      e => (e === existingPkg ? pkg.fullPath : e)
+    )
+    return this.commit(
+      `Update ${pkg.basePath} to version ${
+        pkg.version
+      } in ${descriptor} Container`
+    )
+  }
+
+  public async addPackageToContainer(
     descriptor: NativeApplicationDescriptor,
     pkg: PackagePath,
     key: ContainerPackagesArrayKey
@@ -1346,9 +1164,14 @@ export default class CauldronApi {
       )
     }
     container[key]!.push(pkg.fullPath)
+    return this.commit(
+      `Add ${pkg.basePath} with version ${
+        pkg.version
+      } in ${descriptor} Container`
+    )
   }
 
-  private async removePackageFromContainer(
+  public async removePackageFromContainer(
     descriptor: NativeApplicationDescriptor,
     pkg: PackagePath,
     key: ContainerPackagesArrayKey
@@ -1364,27 +1187,6 @@ export default class CauldronApi {
       )
     }
     _.remove(container[key]!, p => p === existingPkg)
-  }
-
-  private async updatePackageVersionInContainer(
-    descriptor: NativeApplicationDescriptor,
-    pkg: PackagePath,
-    key: ContainerPackagesArrayKey
-  ): Promise<void> {
-    this.throwIfPartialNapDescriptor(descriptor)
-    this.throwIfNoVersionInPackagePath(pkg)
-    const container = (await this.getVersion(descriptor)).container
-    const existingPkg = _.find(container[key], p =>
-      pkg.same(PackagePath.fromString(p), { ignoreVersion: true })
-    )
-    if (!existingPkg) {
-      throw new Error(
-        `${pkg.basePath} does not exist in ${descriptor} Container`
-      )
-    }
-    container[key] = _.map(
-      container[key],
-      e => (e === existingPkg ? pkg.fullPath : e)
-    )
+    return this.commit(`Remove ${pkg} branch from ${descriptor} Container`)
   }
 }
