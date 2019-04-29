@@ -41,18 +41,22 @@ export const builder = (argv: Argv) => {
         describe: 'Force',
         type: 'boolean',
       })
+      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
       .option('publishUnmodifiedContainer', {
         describe:
           'Publish Container even if it is identical to the previous one',
         type: 'boolean',
       })
       .coerce('miniapps', d => d.map(PackagePath.fromString))
+      .option('targetVersion', {
+        describe:
+          'Target version to update all MiniApps to. Can only be used if `all` is used for MiniApps.',
+        type: 'string',
+      })
       .epilog(epilog(exports))
   )
 }
 
-// Most/All of the logic here should be moved to the MiniApp class
-// Commands should remain as much logic less as possible
 export const commandHandler = async ({
   containerVersion,
   descriptor,
@@ -60,6 +64,7 @@ export const commandHandler = async ({
   force,
   miniapps,
   publishUnmodifiedContainer,
+  targetVersion,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
@@ -67,6 +72,7 @@ export const commandHandler = async ({
   force?: boolean
   miniapps: PackagePath[]
   publishUnmodifiedContainer?: boolean
+  targetVersion?: string
 }) => {
   if (publishUnmodifiedContainer!!) {
     log.warn(`--publishUnmodifiedContainer has been deprecated in 0.31.0.
@@ -82,6 +88,24 @@ Please use --fullRegen flag instead.`)
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
     }))
+
+  const cauldron = await getActiveCauldron()
+
+  if (miniapps.length === 1 && miniapps[0].basePath === 'all') {
+    if (!targetVersion) {
+      throw new Error(`missing --targetVersion option`)
+    }
+    const x = await cauldron.getContainerMiniApps(descriptor)
+    miniapps = x.map(
+      p =>
+        p.isGitPath
+          ? PackagePath.fromString(`${p.basePath}#${targetVersion}`)
+          : PackagePath.fromString(`${p.basePath}@${targetVersion}`)
+    )
+    log.info(
+      `Updating all MiniApps from ${descriptor} Container to target version ${targetVersion}`
+    )
+  }
 
   await logErrorAndExitIfNotSatisfied({
     isCompleteNapDescriptorString: { descriptor },
@@ -117,8 +141,6 @@ Please use --fullRegen flag instead.`)
         'This command cannot work on a non existing native application version',
     },
   })
-
-  const cauldron = await getActiveCauldron()
 
   // Special handling for git based MiniApps
   // Indeed, if only the branch or tag a MiniApp has been updated, but the head commit SHA
