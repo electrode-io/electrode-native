@@ -27,13 +27,14 @@ export async function runContainerPipelineForDescriptor({
 
   const pipeline = containerGenConfig && containerGenConfig.pipeline
   if (!pipeline) {
-    throw new Error(`No pipeline configuration found for ${descriptor}`)
+    log.warn(`No pipeline configuration found for ${descriptor}`)
+    return
+  } else {
+    return runContainerPipeline({
+      containerPath,
+      containerVersion,
+      pipeline,
+      platform: descriptor.platform,
+    })
   }
-
-  return runContainerPipeline({
-    containerPath,
-    containerVersion,
-    pipeline,
-    platform: descriptor.platform,
-  })
 }
