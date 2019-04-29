@@ -1,5 +1,5 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor, kax } from 'ern-core'
+import { NativeApplicationDescriptor, kax, log } from 'ern-core'
 import { runContainerPipeline } from './runContainerPipeline'
 
 /**
@@ -28,7 +28,6 @@ export async function runContainerPipelineForDescriptor({
   const pipeline = containerGenConfig && containerGenConfig.pipeline
   if (!pipeline) {
     log.warn(`No pipeline configuration found for ${descriptor}`)
-    return
   } else {
     return runContainerPipeline({
       containerPath,
