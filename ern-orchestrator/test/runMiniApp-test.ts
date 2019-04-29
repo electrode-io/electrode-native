@@ -188,7 +188,7 @@ describe('runMiniApp', () => {
         groupId: 'com.walmartlabs.ern',
       },
       platform: 'android',
-      publisher: 'maven',
+      publisher: 'ern-container-publisher-maven',
       url: sinon.match.string,
     })
   })
