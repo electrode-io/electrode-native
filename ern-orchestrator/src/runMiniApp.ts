@@ -168,7 +168,7 @@ export async function runMiniApp(
         groupId: 'com.walmartlabs.ern',
       },
       platform: 'android',
-      publisher: 'maven',
+      publisher: PackagePath.fromString('ern-container-publisher-maven'),
       url: getDefaultMavenLocalDirectory(),
     })
   }

@@ -74,14 +74,14 @@ export async function runContainerPipeline({
               containerVersion,
               extra,
               platform,
-              publisher: pipelineElt.name,
+              publisher: PackagePath.fromString(pipelineElt.name),
               url: pipelineElt.url,
             })
           : transformContainer({
               containerPath,
               extra,
               platform,
-              transformer: pipelineElt.name,
+              transformer: PackagePath.fromString(pipelineElt.name),
             })
       )
   }

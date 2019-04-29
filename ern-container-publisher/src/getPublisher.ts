@@ -8,7 +8,7 @@ const transformerFactory = new ModuleFactory<ContainerPublisher>(
 )
 
 export default async function getPublisher(
-  publisher: string
+  publisher: PackagePath
 ): Promise<ContainerPublisher> {
-  return transformerFactory.getModuleInstance(PackagePath.fromString(publisher))
+  return transformerFactory.getModuleInstance(publisher)
 }

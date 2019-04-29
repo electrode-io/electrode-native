@@ -1,4 +1,4 @@
-import { Platform, NativePlatform, log } from 'ern-core'
+import { PackagePath, Platform, NativePlatform, log } from 'ern-core'
 import { transformContainer } from 'ern-container-transformer'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
@@ -29,9 +29,11 @@ export const builder = (argv: Argv) => {
       describe: 'Transformer to use',
       type: 'string',
     })
-
+    .coerce('transformer', PackagePath.fromString)
     .epilog(epilog(exports))
 }
+
+const transformerPackagePrefix = 'ern-container-transformer-'
 
 export const commandHandler = async ({
   containerPath,
@@ -42,7 +44,7 @@ export const commandHandler = async ({
   containerPath?: string
   extra?: string
   platform: NativePlatform
-  transformer: string
+  transformer: PackagePath
 }) => {
   containerPath =
     containerPath || Platform.getContainerGenOutDirectory(platform)
@@ -55,6 +57,21 @@ export const commandHandler = async ({
   })
 
   const extraObj = extra && (await parseJsonFromStringOrFile(extra))
+
+  if (
+    transformer.isRegistryPath &&
+    !transformer.basePath.startsWith(transformerPackagePrefix)
+  ) {
+    transformer = transformer.version
+      ? PackagePath.fromString(
+          `${transformerPackagePrefix}${transformer.basePath}@${
+            transformer.version
+          }`
+        )
+      : PackagePath.fromString(
+          `${transformerPackagePrefix}${transformer.basePath}`
+        )
+  }
 
   await transformContainer({
     containerPath,

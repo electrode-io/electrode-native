@@ -1,3 +1,5 @@
+import { PackagePath } from 'ern-core'
+
 export interface ContainerPublisherConfig {
   /**
    * The publisher to use
@@ -9,7 +11,7 @@ export interface ContainerPublisherConfig {
    * - If version is omitted, the latest version will be used
    * - If version is specified, the exact version will be used
    */
-  publisher: string
+  publisher: PackagePath
   /**
    * Local file system path to the generated Container to publish
    */

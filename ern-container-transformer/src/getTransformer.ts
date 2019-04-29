@@ -9,9 +9,7 @@ const transformerFactory = new ModuleFactory<ContainerTransformer>(
 )
 
 export default async function getTransformer(
-  transformer: string
+  transformer: PackagePath
 ): Promise<ContainerTransformer> {
-  return transformerFactory.getModuleInstance(
-    PackagePath.fromString(transformer)
-  )
+  return transformerFactory.getModuleInstance(transformer)
 }

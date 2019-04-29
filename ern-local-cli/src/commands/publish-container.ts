@@ -1,4 +1,4 @@
-import { Platform, NativePlatform, log } from 'ern-core'
+import { PackagePath, Platform, NativePlatform, log } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
@@ -31,6 +31,7 @@ export const builder = (argv: Argv) => {
       describe: 'The publisher to use',
       type: 'string',
     })
+    .coerce('publisher', PackagePath.fromString)
     .option('url', {
       alias: 'u',
       describe: 'The publication url',
@@ -45,6 +46,8 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports))
 }
 
+const publisherPackagePrefix = 'ern-container-publisher-'
+
 export const commandHandler = async ({
   containerPath,
   extra,
@@ -56,7 +59,7 @@ export const commandHandler = async ({
   containerPath?: string
   extra?: string
   platform: NativePlatform
-  publisher: string
+  publisher: PackagePath
   url: string
   version: string
 }) => {
@@ -71,6 +74,17 @@ export const commandHandler = async ({
   })
 
   const extraObj = extra && (await parseJsonFromStringOrFile(extra))
+
+  if (
+    publisher.isRegistryPath &&
+    !publisher.basePath.startsWith(publisherPackagePrefix)
+  ) {
+    publisher = publisher.version
+      ? PackagePath.fromString(
+          `${publisherPackagePrefix}${publisher.basePath}@${publisher.version}`
+        )
+      : PackagePath.fromString(`${publisherPackagePrefix}${publisher.basePath}`)
+  }
 
   await publishContainer({
     containerPath,
