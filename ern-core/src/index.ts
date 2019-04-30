@@ -44,6 +44,7 @@ export { gitCli } from './gitCli'
 export { BaseMiniApp } from './BaseMiniApp'
 export { YarnLockParser } from './YarnLockParser'
 export { AndroidResolvedVersions } from './android'
+export { GitHubApi } from './GitHubApi'
 
 export const config = _config
 export const Platform = _Platform
