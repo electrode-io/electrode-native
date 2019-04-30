@@ -36,6 +36,7 @@ export { runContainerPipeline } from './runContainerPipeline'
 export {
   runContainerPipelineForDescriptor,
 } from './runContainerPipelineForDescriptor'
+export { createBranch, createTag } from './gitHub'
 
 import _start from './start'
 import _Ensure from './Ensure'
