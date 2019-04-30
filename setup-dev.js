@@ -19,7 +19,7 @@ const ERN_PATH = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
 const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
 // Path from where this script is run (wherever the user cloned the repo locally)
 const WORKING_DIR = process.cwd()
-
+console.log('WORKING_DIR is ', WORKING_DIR)
 // Create the cache directory for this version as a symlink to current working directory
 shell.cd(ERN_VERSIONS_CACHE_PATH)
 shell.ln('-sf', WORKING_DIR, '1000.0.0')
