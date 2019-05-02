@@ -8,14 +8,14 @@
 
 #### Syntax
 
-`ern github create-ref  
+`ern github create-ref` 
 
 **Options**  
 
 `--branch <name>`
 
 * Name of the new branch to create.
-* **Default** Interactive prompt to input a tag name.
+* **Default** Interactive prompt to input a branch name.
 
 `--tag <name>`
 

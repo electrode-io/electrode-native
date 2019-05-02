@@ -1,6 +1,6 @@
 import { log, NativeApplicationDescriptor, PackagePath } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { createBranch, createTag } from 'ern-orchestrator'
+import { deleteBranch, deleteTag } from 'ern-orchestrator'
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
@@ -11,42 +11,33 @@ import _ from 'lodash'
 import { Argv } from 'yargs'
 import inquirer from 'inquirer'
 
-export const command = 'create-ref'
-export const desc = 'Creates a new branch/tag in multiple GitHub repositories'
+export const command = 'delete-ref'
+export const desc = 'Deletes a branch/tag in multiple GitHub repositories'
 
 export const builder = (argv: Argv) => {
   return argv
     .option('branch', {
-      describe: 'Name of the new branch to create',
+      describe: 'Name of the branch to delete',
       type: 'string',
     })
     .option('descriptor', {
       describe:
-        'Native application version containing the packages to create a branch/tag for',
+        'Native application version containing the packages to delete a branch/tag from',
       type: 'string',
     })
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
-    .option('fromBranch', {
-      describe:
-        'Create the ref from the current tracked branches of the packages',
-      type: 'boolean',
-    })
-    .option('fromTagOrSha', {
-      describe: 'Create the ref from the current tag/sha of the packages',
-      type: 'boolean',
-    })
     .option('jsApiImplsOnly', {
-      describe: 'Create the ref for JS API Implementations only',
+      describe: 'Delete the ref for JS API Implementations only',
       type: 'boolean',
     })
     .option('miniAppsOnly', {
-      describe: 'Create the ref for MiniApps only',
+      describe: 'Delete the ref for MiniApps only',
       type: 'boolean',
     })
     .option('tag', {
-      describe: 'Name of the new tag to create',
+      describe: 'Name of the tag to delete',
       type: 'string',
     })
     .epilog(epilog(exports))
@@ -55,16 +46,12 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   branch,
   descriptor,
-  fromBranch,
-  fromTagOrSha,
   jsApiImplsOnly,
   miniAppsOnly,
   tag,
 }: {
   branch?: string
   descriptor?: NativeApplicationDescriptor
-  fromBranch?: boolean
-  fromTagOrSha?: boolean
   jsApiImplsOnly?: boolean
   miniAppsOnly?: boolean
   tag?: string
@@ -73,13 +60,13 @@ export const commandHandler = async ({
     const { branchOrTag } = await inquirer.prompt([
       <inquirer.Question>{
         choices: ['branch', 'tag'],
-        message: 'Which type of ref to create ?',
+        message: 'Which type of ref to delete ?',
         name: 'branchOrTag',
         type: 'list',
       },
     ])
     const { branchOrTagName } = await inquirer.prompt(<inquirer.Question>{
-      message: `Please input the new ${branchOrTag} name`,
+      message: `Please input the name of the ${branchOrTag} to delete`,
       name: 'branchOrTagName',
       type: 'input',
     })
@@ -87,22 +74,6 @@ export const commandHandler = async ({
       branch = branchOrTagName
     } else {
       tag = branchOrTagName
-    }
-  }
-
-  if (!fromBranch && !fromTagOrSha) {
-    const { fromBranchOrFromTagSha } = await inquirer.prompt([
-      <inquirer.Question>{
-        choices: ['fromBranch', 'fromTagOrSha'],
-        message: 'From which source to create the ref ?',
-        name: 'fromBranchOrFromTagSha',
-        type: 'list',
-      },
-    ])
-    if (fromBranchOrFromTagSha === 'fromBranch') {
-      fromBranch = true
-    } else {
-      fromTagOrSha = true
     }
   }
 
@@ -131,13 +102,13 @@ export const commandHandler = async ({
     descriptor,
     jsApiImplsOnly,
     miniAppsOnly,
-    type: fromBranch ? 'branches' : 'versions',
+    type: 'versions',
   })
 
   if (branch) {
-    await createBranch({ name: branch, packages })
+    await deleteBranch({ name: branch, packages })
   } else if (tag) {
-    await createTag({ name: tag, packages })
+    await deleteTag({ name: tag, packages })
   }
 }
 

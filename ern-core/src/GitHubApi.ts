@@ -58,7 +58,7 @@ export class GitHubApi {
 
     const opts = {
       owner: this.owner,
-      ref: this.refForBranch(name),
+      ref: this.fullBranchRef(name),
       repo: this.repo,
       sha,
     }
@@ -66,6 +66,23 @@ export class GitHubApi {
     log.debug(`git.createRef(${JSON.stringify(opts, null, 2)})`)
 
     return this.octokit.git.createRef(opts)
+  }
+
+  /**
+   * Deletes a branch from the GitHub repository
+   *
+   * name: Name of the branch to delete
+   */
+  public async deleteBranch({ name }: { name: string }) {
+    const opts = {
+      owner: this.owner,
+      ref: this.shortBranchRef(name),
+      repo: this.repo,
+    }
+
+    log.debug(`git.deleteRef(${JSON.stringify(opts, null, 2)})`)
+
+    return this.octokit.git.deleteRef(opts)
   }
 
   /**
@@ -99,7 +116,101 @@ export class GitHubApi {
 
     return this.octokit.git.createRef({
       owner: this.owner,
-      ref: this.refForTag(name),
+      ref: this.fullTagRef(name),
+      repo: this.repo,
+      sha,
+    })
+  }
+
+  /**
+   * Deletes a tag from the GitHub repository
+   *
+   * name: Name of the tag to delete
+   */
+  public async deleteTag({ name }: { name: string }) {
+    const opts = {
+      owner: this.owner,
+      ref: this.shortTagRef(name),
+      repo: this.repo,
+    }
+
+    log.debug(`git.deleteRef(${JSON.stringify(opts, null, 2)})`)
+
+    return this.octokit.git.deleteRef(opts)
+  }
+
+  /**
+   * Retrieves the content of a given file from the repository
+   *
+   * path: Path to the file in the repository
+   * fromBranch: Branch to retrieve the file from
+   * fromTag: Tag to retrieve the file from
+   *
+   * If neither of fromBranch/fromTag are provided, the file
+   * will be retrieved from the default repository branch
+   */
+  public async getFileContent({
+    path,
+    fromBranch,
+    fromTag,
+  }: {
+    path: string
+    fromBranch?: string
+    fromTag?: string
+  }): Promise<string> {
+    const opts: any = {
+      owner: this.owner,
+      path,
+      repo: this.repo,
+    }
+
+    if (fromBranch) {
+      opts.ref = this.fullBranchRef(fromBranch)
+    } else if (fromTag) {
+      opts.ref = this.fullTagRef(fromTag)
+    }
+
+    log.debug(`repos.getContents(${JSON.stringify(opts, null, 2)})`)
+    const res = await this.octokit.repos.getContents(opts)
+    const buff = new Buffer(res.data.content, 'base64')
+    return buff.toString('utf8')
+  }
+
+  /**
+   * Updates the content of a given file in the repository
+   *
+   * path: Path to the file to update
+   * onBranch: Name of the branch on which to update the file
+   * newContent: New file content
+   * commitMessage: Commit message for this update
+   */
+  public async updateFileContent({
+    path,
+    onBranch,
+    newContent,
+    commitMessage,
+  }: {
+    path: string
+    onBranch?: string
+    newContent: string
+    commitMessage: string
+  }) {
+    const sha = (await this.octokit.repos.getContents({
+      owner: this.owner,
+      path,
+      ref: onBranch || undefined,
+      repo: this.repo,
+    })).data.sha
+
+    const buff = new Buffer(newContent)
+    const content = buff.toString('base64')
+
+    return this.octokit.repos.updateFile({
+      branch: onBranch || undefined,
+      content,
+      message: commitMessage,
+      owner: this.owner,
+      path,
       repo: this.repo,
       sha,
     })
@@ -126,7 +237,7 @@ export class GitHubApi {
 
     const res = await this.octokit.repos.getCommitRefSha({
       owner: this.owner,
-      ref: ofBranch ? this.refForBranch(ofBranch!) : this.refForTag(ofTag!),
+      ref: ofBranch ? this.fullBranchRef(ofBranch!) : this.fullTagRef(ofTag!),
       repo: this.repo,
     })
 
@@ -204,11 +315,19 @@ export class GitHubApi {
     }
   }
 
-  public refForTag(tag: string): string {
-    return `refs/tags/${tag}`
+  public fullTagRef(tag: string): string {
+    return `refs/${this.shortTagRef(tag)}`
   }
 
-  public refForBranch(branch: string): string {
-    return `refs/heads/${branch}`
+  public shortTagRef(tag: string): string {
+    return `tags/${tag}`
+  }
+
+  public fullBranchRef(branch: string): string {
+    return `refs/${this.shortBranchRef(branch)}`
+  }
+
+  public shortBranchRef(branch: string): string {
+    return `heads/${branch}`
   }
 }

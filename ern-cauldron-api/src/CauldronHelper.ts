@@ -867,6 +867,35 @@ export class CauldronHelper {
     return _.map(branches, PackagePath.fromString)
   }
 
+  public async getContainerJsPackages({
+    descriptor,
+    jsApiImplsOnly = false,
+    miniAppsOnly = false,
+    type,
+  }: {
+    descriptor: NativeApplicationDescriptor
+    jsApiImplsOnly?: boolean
+    miniAppsOnly?: boolean
+    type: 'branches' | 'versions'
+  }): Promise<PackagePath[]> {
+    const result: PackagePath[] = []
+    if (!jsApiImplsOnly) {
+      const miniAppsPackages =
+        type === 'branches'
+          ? await this.getContainerMiniAppsBranches(descriptor)
+          : await this.getContainerMiniApps(descriptor)
+      result.push(...miniAppsPackages)
+    }
+    if (!miniAppsOnly) {
+      const jsApiImplsPackages =
+        type === 'branches'
+          ? await this.getContainerJsApiImplsBranches(descriptor)
+          : await this.getContainerJsApiImpls(descriptor)
+      result.push(...jsApiImplsPackages)
+    }
+    return result
+  }
+
   public async getContainerMiniApps(
     napDescriptor: NativeApplicationDescriptor,
     {

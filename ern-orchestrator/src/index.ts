@@ -36,7 +36,14 @@ export { runContainerPipeline } from './runContainerPipeline'
 export {
   runContainerPipelineForDescriptor,
 } from './runContainerPipelineForDescriptor'
-export { createBranch, createTag } from './gitHub'
+export {
+  alignPackageJsonOnManifest,
+  createBranch,
+  createTag,
+  deleteBranch,
+  deleteTag,
+  getGitHubApi,
+} from './gitHub'
 
 import _start from './start'
 import _Ensure from './Ensure'
