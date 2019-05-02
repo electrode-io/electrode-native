@@ -16,7 +16,6 @@
     "ern-debug": "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
     "istanbul": "istanbul",
     "postmerge": "node auto-rebuild.js",
-    "precommit": "yarn check:yarnlock && yarn check:lint && yarn prettier && yarn check:regen-fixtures",
     "prettier": "pretty-quick --staged",
     "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
     "regen-fixtures": "node system-tests/regen-fixtures",
