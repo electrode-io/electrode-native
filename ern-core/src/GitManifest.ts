@@ -7,6 +7,7 @@ import path from 'path'
 import semver from 'semver'
 import Platform from './Platform'
 import log from './log'
+import kax from './kax'
 
 const manifestFileName = 'manifest.json'
 const pluginConfigFileName = 'config.json'
@@ -89,7 +90,7 @@ export default class GitManifest {
    */
   public async syncIfNeeded() {
     if (!this.cachedManifest) {
-      await this.sync()
+      await kax.task(`Syncing ${this.repoRemotePath} Manifest`).run(this.sync())
     }
   }
 
