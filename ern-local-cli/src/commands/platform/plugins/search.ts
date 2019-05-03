@@ -1,5 +1,9 @@
 import { manifest, Platform, PackagePath, log } from 'ern-core'
-import { epilog, tryCatchWrap } from '../../../lib'
+import {
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  tryCatchWrap,
+} from '../../../lib'
 import { Argv } from 'yargs'
 
 import chalk from 'chalk'
@@ -29,6 +33,14 @@ export const commandHandler = async ({
   name: string
   platformVersion?: string
 }) => {
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   const plugin = await manifest.getNativeDependency(
     PackagePath.fromString(name),
     { manifestId, platformVersion }

@@ -8,7 +8,7 @@ import {
   PackagePath,
   log,
 } from 'ern-core'
-import { epilog, tryCatchWrap } from '../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import path from 'path'
 import fs from 'fs'
 import semver from 'semver'
@@ -47,6 +47,14 @@ export const handler = async ({
   manifestId?: string
 }) => {
   try {
+    if (manifestId) {
+      await logErrorAndExitIfNotSatisfied({
+        manifestIdExists: {
+          id: manifestId,
+        },
+      })
+    }
+
     const apiImplPackage = await readPackageJson()
 
     let api: PackagePath = await getApi(apiImplPackage)

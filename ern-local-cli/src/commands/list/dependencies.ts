@@ -5,7 +5,7 @@ import {
   shell,
   PackagePath,
 } from 'ern-core'
-import { epilog, tryCatchWrap } from '../../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import chalk from 'chalk'
 import _ from 'lodash'
 import path from 'path'
@@ -36,6 +36,14 @@ export const commandHandler = async ({
   manifestId?: string
   json?: boolean
 }) => {
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   let pathToModule = process.cwd()
   if (module) {
     pathToModule = createTmpDir()
