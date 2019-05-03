@@ -99,6 +99,11 @@ export default class GitManifest {
     return this.cachedManifest
   }
 
+  public async hasManifestId(manifestId: string): Promise<boolean> {
+    const manifest = await this.getManifest()
+    return !Array.isArray(manifest) && manifest[manifestId]
+  }
+
   public async getManifestData({
     manifestId = 'default',
     platformVersion = Platform.currentVersion,
