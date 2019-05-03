@@ -1,1 +1,4 @@
-system-tests/* linguist-generated=true
+system-tests/fixtures/* linguist-vendored=true
+ern-api-gen/test/fixtures/* linguist-vendored=true
+ern-runner-gen-android/test/fixtures/* linguist-vendored=true
+ern-runner-gen-ios/test/fixtures/* linguist-vendored=true
