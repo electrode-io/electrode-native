@@ -30,6 +30,7 @@ export async function logErrorAndExitIfNotSatisfied({
   isSupportedMiniAppOrJsApiImplVersion,
   isContainerPath,
   isEnvVariableDefined,
+  manifestIdExists,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
@@ -147,6 +148,10 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   isEnvVariableDefined?: {
     name: string
+    extraErrorMessage?: string
+  }
+  manifestIdExists?: {
+    id: string
     extraErrorMessage?: string
   }
 } = {}) {
@@ -398,6 +403,16 @@ export async function logErrorAndExitIfNotSatisfied({
       Ensure.isEnvVariableDefined(
         isEnvVariableDefined.name,
         isEnvVariableDefined.extraErrorMessage
+      )
+      kaxTask.succeed()
+    }
+    if (manifestIdExists) {
+      kaxTask = kax.task(
+        `Ensuring that ${manifestIdExists.id} id exists in Manifest(s)`
+      )
+      await Ensure.manifestIdExists(
+        manifestIdExists.id,
+        manifestIdExists.extraErrorMessage
       )
       kaxTask.succeed()
     }

@@ -1,4 +1,5 @@
 import {
+  manifest,
   PackagePath,
   NativeApplicationDescriptor,
   utils as coreUtils,
@@ -381,14 +382,10 @@ export default class Ensure {
     extraErrorMessage: string = ''
   ) {
     return new Promise((resolve, reject) => {
-      fs.exists(
-        p,
-        exists =>
-          exists
-            ? resolve()
-            : reject(
-                new Error(`${p} path does not exist.\n${extraErrorMessage}`)
-              )
+      fs.exists(p, exists =>
+        exists
+          ? resolve()
+          : reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`))
       )
     })
   }
@@ -457,9 +454,8 @@ export default class Ensure {
       constants.availableUserConfigKeys.map(e => e.name)
     if (!availablePlatformKeys().includes(key)) {
       const closestKeyName = k =>
-        availablePlatformKeys().reduce(
-          (acc, cur) =>
-            levenshtein.get(acc, k) > levenshtein.get(cur, k) ? cur : acc
+        availablePlatformKeys().reduce((acc, cur) =>
+          levenshtein.get(acc, k) > levenshtein.get(cur, k) ? cur : acc
         )
       throw new Error(
         `Configuration key ${key} does not exists. Did you mean ${closestKeyName(
@@ -516,6 +512,15 @@ export default class Ensure {
   ) {
     if (!process.env[envVarName]) {
       throw new Error(`${envVarName} is not defined\n${extraErrorMessage}`)
+    }
+  }
+
+  public static async manifestIdExists(
+    manifestId: string,
+    extraErrorMessage: string = ''
+  ) {
+    if (!(await manifest.hasManifestId(manifestId))) {
+      throw new Error(`${manifestId} id not found in the Manifest(s)`)
     }
   }
 }
