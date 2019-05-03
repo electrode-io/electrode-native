@@ -119,6 +119,14 @@ export const commandHandler = async ({
     })
   }
 
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   log.info(`Generating API implementation for ${apiName}`)
   const reactNativeVersion = await coreUtils.reactNativeManifestVersion({
     manifestId,

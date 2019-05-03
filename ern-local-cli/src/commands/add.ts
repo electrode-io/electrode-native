@@ -1,5 +1,5 @@
 import { log, MiniApp, PackagePath } from 'ern-core'
-import { epilog, tryCatchWrap } from '../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 // Note : We use `pkg` instead of `package` because `package` is
@@ -39,6 +39,14 @@ export const commandHandler = async ({
   packages: string[]
   peer: boolean
 }) => {
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   for (const pkg of packages) {
     log.debug(`Adding package: ${pkg}`)
     await MiniApp.fromCurrentPath().addDependency(PackagePath.fromString(pkg), {

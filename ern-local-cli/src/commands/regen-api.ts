@@ -1,6 +1,6 @@
 import { ApiGen } from 'ern-api-gen'
 import { manifest, PackagePath, yarn } from 'ern-core'
-import { epilog, tryCatchWrap } from '../lib'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'regen-api'
@@ -33,6 +33,14 @@ export const commandHandler = async ({
   manifestId?: string
   skipVersion: boolean
 }) => {
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   const errorMessage =
     'Run command #yarn info react-native-electrode-bridge versions# to get the valid bridgeVersion'
 

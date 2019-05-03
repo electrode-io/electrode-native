@@ -27,6 +27,7 @@ export const builder = (argv: Argv) => {
       type: 'boolean',
     })
     .option('manifestId', {
+      default: 'default',
       describe:
         'Id of the manifest entry to use to retrieve versions to upgrade to',
       type: 'string',
@@ -48,7 +49,7 @@ export const commandHandler = async ({
   jsApiImplsOnly?: boolean
   manifestId?: string
   miniAppsOnly?: boolean
-}) => {
+} = {}) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
@@ -60,6 +61,9 @@ export const commandHandler = async ({
       extraErrorMessage:
         'ERN_GITHUB_TOKEN environment variable must be set, to use `ern github` commands',
       name: 'ERN_GITHUB_TOKEN',
+    },
+    manifestIdExists: {
+      id: manifestId,
     },
     napDescriptorExistInCauldron: {
       descriptor,
