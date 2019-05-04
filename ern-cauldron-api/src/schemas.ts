@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi from '@hapi/joi'
 
 export const container = Joi.object({
   ernVersion: Joi.string().default(undefined),

@@ -29,6 +29,7 @@ export async function logErrorAndExitIfNotSatisfied({
   isValidPlatformConfig,
   isSupportedMiniAppOrJsApiImplVersion,
   isContainerPath,
+  isEnvVariableDefined,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
@@ -142,6 +143,10 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   isContainerPath?: {
     p: string
+    extraErrorMessage?: string
+  }
+  isEnvVariableDefined?: {
+    name: string
     extraErrorMessage?: string
   }
 } = {}) {
@@ -383,6 +388,16 @@ export async function logErrorAndExitIfNotSatisfied({
       Ensure.isContainerPath(
         isContainerPath.p,
         isContainerPath.extraErrorMessage
+      )
+      kaxTask.succeed()
+    }
+    if (isEnvVariableDefined) {
+      kaxTask = kax.task(
+        `Ensuring that ${isEnvVariableDefined.name} env variable is defined`
+      )
+      Ensure.isEnvVariableDefined(
+        isEnvVariableDefined.name,
+        isEnvVariableDefined.extraErrorMessage
       )
       kaxTask.succeed()
     }

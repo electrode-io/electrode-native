@@ -509,4 +509,13 @@ export default class Ensure {
       )
     }
   }
+
+  public static isEnvVariableDefined(
+    envVarName: string,
+    extraErrorMessage: string = ''
+  ) {
+    if (!process.env[envVarName]) {
+      throw new Error(`${envVarName} is not defined\n${extraErrorMessage}`)
+    }
+  }
 }

@@ -13,17 +13,6 @@ interface ExecOpts {
   gid?: number
 }
 
-interface SpawnOpts {
-  cwd?: string
-  env?: any
-  argv0?: string
-  stdio?: string | any[]
-  detached?: boolean
-  uid?: number
-  gid?: number
-  shell?: boolean | string
-}
-
 export function promisifyChildProcess(child: ChildProcess): Promise<void> {
   return new Promise((resolve, reject) => {
     child.addListener('error', err => reject(err))
@@ -50,15 +39,19 @@ export async function execp(
         resolve(stdout.toString())
       }
     })
-    cp.stdout.on('data', data => log.trace(data.toString()))
-    cp.stderr.on('data', data => log.debug(data.toString()))
+    if (cp.stdout) {
+      cp.stdout.on('data', data => log.trace(data.toString()))
+    }
+    if (cp.stderr) {
+      cp.stderr.on('data', data => log.debug(data.toString()))
+    }
   })
 }
 
 export async function spawnp(
   command: string,
-  args?: string[],
-  options?: SpawnOpts
+  args: string[] = [],
+  options: any = {}
 ) {
   log.trace(
     `spawnp => command: ${command} args: ${JSON.stringify(
