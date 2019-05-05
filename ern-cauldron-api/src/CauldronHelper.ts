@@ -14,6 +14,7 @@ import {
   CauldronConfigLevel,
   CauldronNativeAppVersion,
   CauldronStartCommandConfig,
+  CauldronGitHubConfig,
 } from './types'
 import CauldronApi from './CauldronApi'
 import semver from 'semver'
@@ -859,6 +860,42 @@ export class CauldronHelper {
     return _.map(miniAppsBranches, PackagePath.fromString)
   }
 
+  public async getContainerJsApiImplsBranches(napDescriptor) {
+    const branches = await this.cauldron.getContainerJsApiImplsBranches(
+      napDescriptor
+    )
+    return _.map(branches, PackagePath.fromString)
+  }
+
+  public async getContainerJsPackages({
+    descriptor,
+    jsApiImplsOnly = false,
+    miniAppsOnly = false,
+    type,
+  }: {
+    descriptor: NativeApplicationDescriptor
+    jsApiImplsOnly?: boolean
+    miniAppsOnly?: boolean
+    type: 'branches' | 'versions'
+  }): Promise<PackagePath[]> {
+    const result: PackagePath[] = []
+    if (!jsApiImplsOnly) {
+      const miniAppsPackages =
+        type === 'branches'
+          ? await this.getContainerMiniAppsBranches(descriptor)
+          : await this.getContainerMiniApps(descriptor)
+      result.push(...miniAppsPackages)
+    }
+    if (!miniAppsOnly) {
+      const jsApiImplsPackages =
+        type === 'branches'
+          ? await this.getContainerJsApiImplsBranches(descriptor)
+          : await this.getContainerJsApiImpls(descriptor)
+      result.push(...jsApiImplsPackages)
+    }
+    return result
+  }
+
   public async getContainerMiniApps(
     napDescriptor: NativeApplicationDescriptor,
     {
@@ -1056,6 +1093,12 @@ export class CauldronHelper {
     descriptor?: NativeApplicationDescriptor
   ): Promise<CauldronStartCommandConfig | void> {
     return this.getConfigForKey('start', descriptor)
+  }
+
+  public async getGitHubConfig(
+    descriptor?: NativeApplicationDescriptor
+  ): Promise<CauldronGitHubConfig | void> {
+    return this.getConfigForKey('github', descriptor)
   }
 
   /**

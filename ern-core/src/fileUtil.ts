@@ -29,7 +29,7 @@ export async function readFile(
 export async function writeFile(
   filePath: string,
   content: string | Buffer,
-  opts?: { encoding?: string | null; mode?: number | string; flag?: string }
+  opts: { encoding?: string | null; mode?: number | string; flag?: string } = {}
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     fs.writeFile(filePath, content, opts, err => {

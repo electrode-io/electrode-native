@@ -21,6 +21,8 @@
   - Registry path missing version (ex: `MiniApp`)
   - Registry path using a version range (ex: `MiniApp@^1.0.0`)
 
+* Can also be set to **all** . In this case, all MiniApps will be updated to a single specific version specified by the `--targetVersion` option.
+
 
 **Options**  
 
@@ -41,6 +43,11 @@ Example: If the current container version is 1.2.3 and a version is not included
 * Publish the Container even if it's identical to the current one. This can be used to perform some sort of Container promotion.  
 For example, if you are generating development Containers using `1000.0.X` versioning convention and want to promote a development Container to a release Container using a different version (`18.0.0` for example), you can use this flag to perform this.
 **Default** False. If Container is identical to the current one, if won't be published again.
+
+ `--targetVersion`
+
+ * Only used when running **ern cauldron update miniapps all**.
+ * The target version to update all MiniApps to.
 
 #### Remarks
 
