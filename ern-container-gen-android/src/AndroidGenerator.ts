@@ -32,6 +32,7 @@ export interface AndroidDependencies {
   files: string[]
   transitive: string[]
   regular: string[]
+  annotationProcessor: string[]
 }
 
 export default class AndroidGenerator implements ContainerGenerator {
@@ -106,6 +107,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
 
     const dependencies: AndroidDependencies = {
+      annotationProcessor: [],
       files: [],
       regular: [],
       transitive: [],
@@ -184,6 +186,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           if (pluginConfig.android.dependencies) {
             const transitivePrefix = 'transitive:'
             const filesPrefix = 'files'
+            const annotationProcessorPrefix = 'annotationProcessor:'
             for (const dependency of pluginConfig.android.dependencies) {
               if (dependency.startsWith(transitivePrefix)) {
                 dependencies.transitive.push(
@@ -191,6 +194,10 @@ export default class AndroidGenerator implements ContainerGenerator {
                 )
               } else if (dependency.startsWith(filesPrefix)) {
                 dependencies.files.push(dependency)
+              } else if (dependency.startsWith(annotationProcessorPrefix)) {
+                dependencies.annotationProcessor.push(
+                  dependency.replace(annotationProcessorPrefix, '')
+                )
               } else {
                 dependencies.regular.push(dependency)
               }
@@ -286,19 +293,19 @@ export default class AndroidGenerator implements ContainerGenerator {
     const result: any[] = []
 
     // Replace versions of support libraries with set version
-    dependencies.regular = dependencies.regular.map(
-      d =>
-        d.startsWith('com.android.support:')
-          ? `${d.slice(0, d.lastIndexOf(':'))}:${
-              androidVersions.supportLibraryVersion
-            }`
-          : d
+    dependencies.regular = dependencies.regular.map(d =>
+      d.startsWith('com.android.support:')
+        ? `${d.slice(0, d.lastIndexOf(':'))}:${
+            androidVersions.supportLibraryVersion
+          }`
+        : d
     )
 
     // Dedupe dependencies with same version
     dependencies.regular = _.uniq(dependencies.regular)
     dependencies.files = _.uniq(dependencies.files)
     dependencies.transitive = _.uniq(dependencies.transitive)
+    dependencies.annotationProcessor = _.uniq(dependencies.annotationProcessor)
 
     // Use highest versions for regular and transitive
     // dependencies with multiple versions
@@ -316,7 +323,9 @@ export default class AndroidGenerator implements ContainerGenerator {
     dependencies.transitive.forEach(d =>
       result.push(`implementation ('${d}') { transitive = true }`)
     )
-
+    dependencies.annotationProcessor.forEach(d =>
+      result.push(`annotationProcessor '${d}'`)
+    )
     return result
   }
 
