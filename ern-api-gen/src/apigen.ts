@@ -87,8 +87,8 @@ export async function regenerateCode(options: any = {}) {
       extra && extra.apiName
         ? extra.apiName
         : extra && extra.moduleName
-          ? extra.moduleName
-          : pkgName,
+        ? extra.moduleName
+        : pkgName,
   })
 
   await cleanGenerated()
@@ -250,7 +250,7 @@ async function npmPublish() {
   return execp('npm publish')
 }
 
-exports.default = {
+export default {
   cleanGenerated,
   generateApi,
   regenerateCode,
