@@ -43,6 +43,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
     const cauldron = await cauldronApi.getCauldron()
     // Patch container generator configs by moving publishers
     // and transformers to new pipeline object
+    patchContainerGenConfig(cauldron)
     for (const nativeApp of cauldron.nativeApps) {
       patchContainerGenConfig(nativeApp)
       for (const platform of nativeApp.platforms) {
