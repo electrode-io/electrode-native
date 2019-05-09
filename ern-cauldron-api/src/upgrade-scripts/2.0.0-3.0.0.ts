@@ -11,7 +11,7 @@ function patchContainerGenConfig(obj) {
       containerGenConf.pipeline = []
       for (const transformer of containerGenConf.transformers || []) {
         if (
-          !transformer.name.startsWith('@') ||
+          !transformer.name.startsWith('@') &&
           !transformer.name.startsWith(transformerPrefix)
         ) {
           transformer.name = `${transformerPrefix}${transformer.name}`
@@ -20,7 +20,7 @@ function patchContainerGenConfig(obj) {
       }
       for (const publisher of containerGenConf.publishers || []) {
         if (
-          !publisher.name.startsWith('@') ||
+          !publisher.name.startsWith('@') &&
           !publisher.name.startsWith(transformerPrefix)
         ) {
           if (publisher.name.startsWith === 'github') {
