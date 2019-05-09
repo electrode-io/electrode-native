@@ -73,7 +73,10 @@ export class Composite {
       const ppValue = PackagePath.fromString(this.packageJson.dependencies[key])
       const ppKey = PackagePath.fromString(key)
 
-      if (ppValue.isFilePath) {
+      if (
+        ppValue.isFilePath ||
+        this.config.miniApps.some(p => p.basePath === ppValue.basePath)
+      ) {
         result.push({
           packagePath: ppValue,
           path: path.join(this.path, 'node_modules', key),
