@@ -95,12 +95,6 @@ export default async function start({
       pkgName,
       miniAppsLinksObj[pkgName]
     )
-    log.info(
-      `Watching for changes in linked MiniApp directory ${
-        miniAppsLinksObj[pkgName]
-      }`
-    )
-    startLinkSynchronization(compositeDir, pkgName, miniAppsLinksObj[pkgName])
   })
 
   reactnative.startPackagerInNewWindow(compositeDir, [
@@ -151,6 +145,15 @@ export default async function start({
       }
     }
   }
+
+  linkedMiniAppsPackageNames.forEach(pkgName => {
+    log.info(
+      `Watching for changes in linked MiniApp directory ${
+        miniAppsLinksObj[pkgName]
+      }`
+    )
+    startLinkSynchronization(compositeDir, pkgName, miniAppsLinksObj[pkgName])
+  })
 
   log.warn('=========================================================')
   log.warn('Ending this process will stop monitoring linked MiniApps.')
