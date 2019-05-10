@@ -11,7 +11,7 @@ function patchContainerGenConfig(obj) {
       containerGenConf.pipeline = []
       for (const transformer of containerGenConf.transformers || []) {
         if (
-          !transformer.name.startsWith('@') ||
+          !transformer.name.startsWith('@') &&
           !transformer.name.startsWith(transformerPrefix)
         ) {
           transformer.name = `${transformerPrefix}${transformer.name}`
@@ -20,7 +20,7 @@ function patchContainerGenConfig(obj) {
       }
       for (const publisher of containerGenConf.publishers || []) {
         if (
-          !publisher.name.startsWith('@') ||
+          !publisher.name.startsWith('@') &&
           !publisher.name.startsWith(transformerPrefix)
         ) {
           if (publisher.name.startsWith === 'github') {
@@ -43,6 +43,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
     const cauldron = await cauldronApi.getCauldron()
     // Patch container generator configs by moving publishers
     // and transformers to new pipeline object
+    patchContainerGenConfig(cauldron)
     for (const nativeApp of cauldron.nativeApps) {
       patchContainerGenConfig(nativeApp)
       for (const platform of nativeApp.platforms) {

@@ -80,6 +80,14 @@ export const commandHandler = async ({
     },
   })
 
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   if (schemaPath && !fs.existsSync(schemaPath)) {
     throw new Error(`Cannot resolve path to ${schemaPath}`)
   }

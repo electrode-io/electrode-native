@@ -69,6 +69,14 @@ export const commandHandler = async ({
     },
   })
 
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   if (!checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
     appName = await promptUserToUseSuffixModuleName(
       appName,

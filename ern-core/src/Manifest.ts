@@ -396,6 +396,20 @@ export class Manifest {
     return url
   }
 
+  public async hasManifestId(manifestId: string): Promise<boolean> {
+    await this.initOverrideManifest()
+    if (this.overrideManifest && this.manifestOverrideType === 'partial') {
+      return (
+        (await this.masterManifest.hasManifestId(manifestId)) ||
+        (await this.overrideManifest.hasManifestId(manifestId))
+      )
+    } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
+      return this.overrideManifest.hasManifestId(manifestId)
+    } else {
+      return this.masterManifest.hasManifestId(manifestId)
+    }
+  }
+
   public async getManifestData({
     manifestId = 'default',
     platformVersion = Platform.currentVersion,

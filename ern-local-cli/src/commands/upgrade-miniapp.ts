@@ -1,5 +1,5 @@
-import { MiniApp, Platform, log } from 'ern-core'
-import { epilog, tryCatchWrap } from '../lib'
+import { MiniApp } from 'ern-core'
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 
 export const command = 'upgrade-miniapp'
@@ -27,6 +27,14 @@ export const commandHandler = async ({
   manifestId?: string
   version?: string
 }) => {
+  if (manifestId) {
+    await logErrorAndExitIfNotSatisfied({
+      manifestIdExists: {
+        id: manifestId,
+      },
+    })
+  }
+
   const miniApp = MiniApp.fromCurrentPath()
   const versionWithoutPrefix = version && version.toString().replace('v', '')
   await miniApp.upgrade({ manifestId, platformVersion: versionWithoutPrefix })
