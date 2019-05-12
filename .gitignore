@@ -57,3 +57,7 @@ ern-runner-gen-android/src/hull/.project
 ern-runner-gen-android/src/hull/.settings/org.eclipse.buildship.core.prefs
 system-tests/fixtures/android-container/.project
 system-tests/fixtures/android-container/.settings/org.eclipse.buildship.core.prefs
+ern-api-gen/test/fixtures/android/.project
+ern-api-gen/test/fixtures/android/.settings/org.eclipse.buildship.core.prefs
+ern-runner-gen-android/test/fixtures/simple-android-runner/.project
+ern-runner-gen-android/test/fixtures/simple-android-runner/.settings/org.eclipse.buildship.core.prefs
