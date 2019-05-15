@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const path = require('path')
 process.env.__ERN_TEST__ = true
+process.env.TS_NODE_TRANSPILE_ONLY = true
 process.env.TS_NODE_PROJECT = path.resolve('..', 'tsconfig.json')
 if (!require('fs').existsSync(require('path').join(process.cwd(), 'test'))) {
   console.log('no tests for project ', process.cwd())

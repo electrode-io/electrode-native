@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var fs = require('fs')
-process.env['__ERN_TEST__'] = true
+process.env.__ERN_TEST__ = true
+process.env.TS_NODE_TRANSPILE_ONLY = true
 if (!fs.existsSync('test')) {
   console.log(`No tests found in ${process.cwd()}/test`)
   process.exit(0)
