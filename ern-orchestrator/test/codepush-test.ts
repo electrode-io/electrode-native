@@ -672,11 +672,11 @@ describe('codepush', () => {
     })
   })
 
-  describe('getCodePushTargetVersionName', () => {
+  describe('buildCodePushTargetBinaryVersion', () => {
     it('should throw if the descriptor is missing the version', async () => {
       assert(
         await doesThrow(
-          sut.getCodePushTargetVersionName,
+          sut.buildCodePushTargetBinaryVersion,
           sut,
           NativeApplicationDescriptor.fromString('test:android'),
           'Production'
@@ -685,7 +685,7 @@ describe('codepush', () => {
     })
 
     it('should return the native application version as such if no version modifiers are defined in the config', async () => {
-      const result = await sut.getCodePushTargetVersionName(
+      const result = await sut.buildCodePushTargetBinaryVersion(
         testAndroid1770Descriptor,
         'Production'
       )
@@ -693,12 +693,59 @@ describe('codepush', () => {
     })
 
     it('should apply version modifiers if any', async () => {
-      const result = await sut.getCodePushTargetVersionName(
+      const result = await sut.buildCodePushTargetBinaryVersion(
         testAndroid1780Descriptor,
         'QA'
       )
       expect(result).equal('17.8.0-QA')
     })
+  })
+
+  describe('applyVersionModifiers', () => {
+    it('should return the unmodified target binary version if no version modifier applies', () => {
+      const result = sut.applyVersionModifiers({
+        deploymentName: 'Production',
+        targetBinaryVersion: '1.0.0',
+        versionModifiers: [
+          {
+            deploymentName: 'Staging',
+            modifier: '$1-staging',
+          },
+        ],
+      })
+      expect(result).equal('1.0.0')
+    })
+
+    it('should return the modified target binary version if a version modifier applies', () => {
+      const result = sut.applyVersionModifiers({
+        deploymentName: 'Staging',
+        targetBinaryVersion: '1.0.0',
+        versionModifiers: [
+          {
+            deploymentName: 'Staging',
+            modifier: '$1-staging',
+          },
+        ],
+      })
+      expect(result).equal('1.0.0-staging')
+    })
+  })
+
+  describe('removeZeroPatchDigit', () => {
+    const x: Array<[string, string]> = [
+      ['1.0.0', '1.0'],
+      ['1.0.0-beta', '1.0-beta'],
+      ['1.0.0-beta.1', '1.0-beta.1'],
+      ['1.0.0-beta-1', '1.0-beta-1'],
+    ]
+    for (const [targetBinaryVersion, expectedOutput] of x) {
+      it(`should properly remove patch digit from version ${targetBinaryVersion}`, () => {
+        const result = sut.removeZeroPatchDigit({
+          targetBinaryVersion,
+        })
+        expect(result).equal(expectedOutput)
+      })
+    }
   })
 
   describe('getCodePushAppName', () => {
