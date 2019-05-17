@@ -10,7 +10,7 @@ export {
   performCodePushPatch,
   performCodePushPromote,
   performCodePushOtaUpdate,
-  getCodePushTargetVersionName,
+  buildCodePushTargetBinaryVersion,
 } from './codepush'
 
 export {

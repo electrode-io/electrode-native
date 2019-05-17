@@ -139,42 +139,30 @@ export async function performCodePushPromote(
       }
 
       const appName = await getCodePushAppName(sourceNapDescriptor)
-      let appVersion =
+      targetBinaryVersion =
         targetBinaryVersion ||
-        (await getCodePushTargetVersionName(
+        (await buildCodePushTargetBinaryVersion(
           targetNapDescriptor,
           targetDeploymentName
         ))
 
-      // Remove patch digit 0 from target binary version if trimZeroPatchDigit flag is set
-      // For example, 19.3.0 => 19.3
-      const codePushConfig = await cauldron.getCodePushConfig(
-        targetNapDescriptor
-      )
-      if (
-        codePushConfig &&
-        codePushConfig.trimZeroPatchDigit &&
-        semver.valid(appVersion) &&
-        semver.patch(appVersion) === 0
-      ) {
-        appVersion = `${semver.major(appVersion)}.${semver.minor(appVersion)}`
-      }
-
       description = description || ''
-      const result = await kax.task(`Promoting release to ${appVersion}`).run(
-        codePushSdk.promote(
-          appName,
-          sourceDeploymentName,
-          targetDeploymentName,
-          {
-            appVersion,
-            description,
-            isMandatory: !!mandatory,
-            label,
-            rollout,
-          }
+      const result = await kax
+        .task(`Promoting release to ${targetBinaryVersion}`)
+        .run(
+          codePushSdk.promote(
+            appName,
+            sourceDeploymentName,
+            targetDeploymentName,
+            {
+              appVersion: targetBinaryVersion,
+              description,
+              isMandatory: !!mandatory,
+              label,
+              rollout,
+            }
+          )
         )
-      )
 
       const sourceYarnLockId = await cauldron.getYarnLockId(
         sourceNapDescriptor,
@@ -379,24 +367,11 @@ export async function performCodePushOtaUpdate(
 
     const appName = await getCodePushAppName(napDescriptor)
 
-    let targetVersionName =
+    targetBinaryVersion =
       targetBinaryVersion ||
-      (await getCodePushTargetVersionName(napDescriptor, deploymentName))
+      (await buildCodePushTargetBinaryVersion(napDescriptor, deploymentName))
 
-    // Remove patch digit 0 from target binary version if trimZeroPatchDigit flag is set
-    // For example, 19.3.0 => 19.3
-    if (
-      codePushConfig &&
-      codePushConfig.trimZeroPatchDigit &&
-      semver.valid(targetVersionName) &&
-      semver.patch(targetVersionName) === 0
-    ) {
-      targetVersionName = `${semver.major(targetVersionName)}.${semver.minor(
-        targetVersionName
-      )}`
-    }
-
-    log.info(`Target Binary version : ${targetVersionName}`)
+    log.info(`Target Binary version : ${targetBinaryVersion}`)
     description = description || ''
     const codePushResponse: CodePushPackage = await kax
       .task('Releasing bundle through CodePush')
@@ -405,7 +380,7 @@ export async function performCodePushOtaUpdate(
           appName,
           deploymentName,
           bundleOutputDirectory,
-          targetVersionName,
+          targetBinaryVersion,
           {
             description,
             isMandatory: codePushIsMandatoryRelease,
@@ -456,7 +431,7 @@ export async function performCodePushOtaUpdate(
   }
 }
 
-export async function getCodePushTargetVersionName(
+export async function buildCodePushTargetBinaryVersion(
   napDescriptor: NativeApplicationDescriptor,
   deploymentName: string
 ) {
@@ -465,19 +440,61 @@ export async function getCodePushTargetVersionName(
       `Native application descriptor ${napDescriptor} does not contain a version !`
     )
   }
-  let result = napDescriptor.version
+  let targetBinaryVersion = napDescriptor.version
   const cauldron = await getActiveCauldron()
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
-  if (codePushConfig && codePushConfig.versionModifiers) {
-    const versionModifier = _.find(
-      codePushConfig.versionModifiers,
-      m => m.deploymentName === deploymentName
-    )
-    if (versionModifier) {
-      result = result.replace(/(.+)/, versionModifier.modifier)
-    }
+  if (codePushConfig) {
+    const { versionModifiers, trimZeroPatchDigit } = codePushConfig
+    targetBinaryVersion = versionModifiers
+      ? applyVersionModifiers({
+          deploymentName,
+          targetBinaryVersion,
+          versionModifiers,
+        })
+      : targetBinaryVersion
+    targetBinaryVersion =
+      trimZeroPatchDigit &&
+      semver.valid(targetBinaryVersion) &&
+      semver.patch(targetBinaryVersion) === 0
+        ? removeZeroPatchDigit({
+            targetBinaryVersion,
+          })
+        : targetBinaryVersion
   }
-  return result
+
+  return targetBinaryVersion
+}
+
+export function applyVersionModifiers({
+  deploymentName,
+  targetBinaryVersion,
+  versionModifiers,
+}: {
+  deploymentName: string
+  targetBinaryVersion: string
+  versionModifiers: Array<{ deploymentName: string; modifier: string }>
+}): string {
+  const versionModifier = _.find(
+    versionModifiers,
+    m => m.deploymentName === deploymentName
+  )
+  return versionModifier
+    ? targetBinaryVersion.replace(/(.+)/, versionModifier.modifier)
+    : targetBinaryVersion
+}
+
+export function removeZeroPatchDigit({
+  targetBinaryVersion,
+}: {
+  targetBinaryVersion: string
+}) {
+  return semver.prerelease(targetBinaryVersion)
+    ? `${semver.major(targetBinaryVersion)}.${semver.minor(
+        targetBinaryVersion
+      )}-${semver.prerelease(targetBinaryVersion)!.join('.')}`
+    : `${semver.major(targetBinaryVersion)}.${semver.minor(
+        targetBinaryVersion
+      )}`
 }
 
 export async function getCodePushAppName(
