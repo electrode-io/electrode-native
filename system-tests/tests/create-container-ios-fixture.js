@@ -14,5 +14,5 @@ const filesToIgnoreForDiffs = [
     'MiniApp.jsbundle.meta'
 ]
   
-run(`ern create-container --miniapps ${miniapps.join(' ')} -p ios --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
+run(`create-container --miniapps ${miniapps.join(' ')} -p ios --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
 assert(sameDirContent(f.pathToIosContainerFixture, process.cwd(), filesToIgnoreForDiffs), 'Generated IOS Container differ from reference fixture !')

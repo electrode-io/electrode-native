@@ -42,7 +42,8 @@
     "build": "ern-typescript",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
-    "prepublish": "yarn run build"
+    "prepublish": "yarn run build",
+    "instrument-dist": "ern-instrument-dist"
   },
   "license": "Apache-2.0",
   "dependencies": {

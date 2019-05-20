@@ -123,13 +123,13 @@ class KaxNullRenderer implements KaxRenderer {
 // ==============================================================================
 // Entry point
 // =============================================================================
-export default function run() {
+;(function run() {
   const hasJsonOpt = yargs.argv.json
   const logLevel = hasJsonOpt
     ? 'off'
     : process.env.ERN_LOG_LEVEL
-      ? process.env.ERN_LOG_LEVEL
-      : config.getValue('logLevel', 'info')
+    ? process.env.ERN_LOG_LEVEL
+    : config.getValue('logLevel', 'info')
 
   log.setLogLevel(logLevel)
   shell.config.fatal = true
@@ -140,8 +140,8 @@ export default function run() {
     logLevel === 'trace' || logLevel === 'debug'
       ? new KaxSimpleRenderer(kaxRendererConfig)
       : logLevel === 'off'
-        ? new KaxNullRenderer()
-        : new KaxAdvancedRenderer(kaxRendererConfig)
+      ? new KaxNullRenderer()
+      : new KaxAdvancedRenderer(kaxRendererConfig)
 
   if (!hasJsonOpt) {
     if (config.getValue('showBanner', true)) {
@@ -163,4 +163,4 @@ export default function run() {
     .help('help')
     .wrap(yargs.terminalWidth())
     .strict().argv
-}
+})()

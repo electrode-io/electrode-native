@@ -18,5 +18,5 @@ const filesToIgnore = [
   '.yarn-integrity'
 ]
 
-run(`ern create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --nativeOnly --outputDirectory ${process.cwd()} --force`)
+run(`create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --nativeOnly --outputDirectory ${process.cwd()} --force`)
 assert(sameDirContent(f.pathToNativeApiImplFixture, process.cwd(), filesToIgnore), 'Generated API Native Impl differ from reference fixture !')

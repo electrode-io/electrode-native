@@ -46,7 +46,8 @@
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build",
-    "regen-fixtures": "../node_modules/.bin/ts-node test/regen-fixtures"
+    "regen-fixtures": "../node_modules/.bin/ts-node test/regen-fixtures",
+    "instrument-dist": "ern-instrument-dist && ern-copyfiles"
   },
   "copyFiles": [
     {

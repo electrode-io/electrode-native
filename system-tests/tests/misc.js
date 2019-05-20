@@ -9,6 +9,7 @@ const run = require('../utils/run')
 const f = require('../fixtures/constants')
 const fs = require('fs')
 const os = require('os')
+const shell = require('shelljs')
 
 const workingDirectoryPath = process.cwd()
 const info = chalk.bold.blue
@@ -30,112 +31,112 @@ console.log(info(`Entering temporary working directory : ${workingDirectoryPath}
 process.chdir(workingDirectoryPath)
 
 console.log(info(`Creating GitHub repository (${f.gitHubCauldronRepositoryName})`))
-run(`curl -u ${f.gitUserName}:${f.gitPassword} -d '{"name": "${f.gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
+shell.exec(`curl -u ${f.gitUserName}:${f.gitPassword} -d '{"name": "${f.gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
 
 // Cauldron repo
-run('ern cauldron repo clear')
-run(`ern cauldron repo add ${f.cauldronName} https://${f.gitUserName}:${f.gitPassword}@github.com/${f.gitUserName}/${f.gitHubCauldronRepositoryName}.git --current=false`)
-run(`ern cauldron repo use ${f.cauldronName}`)
-run('ern cauldron repo current')
-run('ern cauldron repo list')
+run('cauldron repo clear')
+run(`cauldron repo add ${f.cauldronName} https://${f.gitUserName}:${f.gitPassword}@github.com/${f.gitUserName}/${f.gitHubCauldronRepositoryName}.git --current=false`)
+run(`cauldron repo use ${f.cauldronName}`)
+run('cauldron repo current')
+run('cauldron repo list')
 
-run('ern compat-check', { expectedExitCode: 1 })
+run('compat-check', { expectedExitCode: 1 })
 
 // Miniapp commands
-run(`ern create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --skipNpmCheck`)
+run(`create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --skipNpmCheck`)
 const miniAppPath = path.join(process.cwd(), f.systemTestMiniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
-run('ern add react-native-electrode-bridge')
+run('add react-native-electrode-bridge')
 let packageJson = JSON.parse(fs.readFileSync('package.json'))
 if (!Object.keys(packageJson.dependencies).includes('react-native-electrode-bridge')) {
   throw new Error('react-native-electrode-bridge dependency was not added to the MiniApp')
 }
-run(`ern add ${f.movieApiImplNativePkgName}@${f.movieApiImplNativePkgVersion}`)
+run(`add ${f.movieApiImplNativePkgName}@${f.movieApiImplNativePkgVersion}`)
 packageJson = JSON.parse(fs.readFileSync('package.json'))
 if (!Object.keys(packageJson.dependencies).includes(f.movieApiImplNativePkgName)) {
   throw new Error(`${f.movieApiImplNativePkgName} dependency was not added to the MiniApp`)
 }
 
 // list dependencies command
-run('ern list dependencies')
-run(`ern list dependencies ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion}`)
+run('list dependencies')
+run(`list dependencies ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion}`)
 
 // Cauldron access commands
-run(`ern cauldron add nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron add miniapps ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add miniapps ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
-run(`ern cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
-run(`ern cauldron add dependencies react-native-code-push@5.2.1 -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add dependencies react-native-code-push@5.2.1 -d ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
-run(`ern cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp`)
+run(`cauldron add nativeapp ${androidNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+run(`cauldron add nativeapp ${iosNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
+run(`cauldron add miniapps ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+run(`cauldron add miniapps ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
+run(`cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+run(`cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
+run(`cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
+run(`cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
+run(`cauldron add dependencies react-native-code-push@5.2.1 -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron add dependencies react-native-code-push@5.2.1 -d ${iosNativeApplicationDescriptor}`)
+run(`cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
+run(`cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp`)
 
 // Already existing miniapp
-run(`ern cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
+run(`cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 // Non published miniapp
-run(`ern cauldron add miniapps ${f.notInNpmPkg} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
+run(`cauldron add miniapps ${f.notInNpmPkg} -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 
 // Container gen should be successful for the two following commands
-run(`ern create-container --miniapps file:${miniAppPath} -p android`)
-run(`ern create-container --miniapps file:${miniAppPath} -p ios`)
+run(`create-container --miniapps file:${miniAppPath} -p android`)
+run(`create-container --miniapps file:${miniAppPath} -p ios`)
 
-run(`ern create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p android`)
-run(`ern create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p ios`)
+run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p android`)
+run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p ios`)
 
 // transform-container / publish-coontainer should be successful
 run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
 run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
 
-run(`ern why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
+run(`why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
 
 // Del dependency should fail because its still used by MovieListMiniApp
-run(`ern cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
+run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 
 // Del miniapp
-run(`ern cauldron del miniapps ${f.movieListMiniAppPgkName} -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron del miniapps ${f.movieListMiniAppPgkName} -d ${androidNativeApplicationDescriptor}`)
 
 // Del dependency should now succeed
-run(`ern cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
-run(`ern cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
+run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 // Del jsapiimpls
-run(`ern cauldron del jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
+run(`cauldron del jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
 
 // Del nativeapp
-run(`ern cauldron del nativeapp ${androidNativeApplicationDescriptor}`)
+run(`cauldron del nativeapp ${androidNativeApplicationDescriptor}`)
 
-run(`ern compat-check -m ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`)
-run(`ern upgrade-miniapp`)
+run(`compat-check -m ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`)
+run(`upgrade-miniapp`)
 
 process.chdir(workingDirectoryPath)
 
 // api
-run(`ern create-api ${f.invalidElectrodeNativeModuleName} --skipNpmCheck`, { expectedExitCode: 1 })
+run(`create-api ${f.invalidElectrodeNativeModuleName} --skipNpmCheck`, { expectedExitCode: 1 })
 
 // Platform commands
-run('ern platform versions')
-run('ern platform plugins list')
-run('ern platform plugins search react-native')
-run('ern platform config set keyNotSupported trace', { expectedExitCode: 1 })
+run('platform versions')
+run('platform plugins list')
+run('platform plugins search react-native')
+run('platform config set keyNotSupported trace', { expectedExitCode: 1 })
 try{
-  run('ern platform config set tmp-dir "~/dir/to/command/exec"')
-  run('ern platform config set retain-tmp-dir false')
-  run('ern platform config set package-cache-enabled true')
-  run('ern platform config set max-package-cache-size 1024')
-  run('ern platform config set codePushAccessKey "keytocodepush"')
+  run('platform config set tmp-dir "~/dir/to/command/exec"')
+  run('platform config set retain-tmp-dir false')
+  run('platform config set package-cache-enabled true')
+  run('platform config set max-package-cache-size 1024')
+  run('platform config set codePushAccessKey "keytocodepush"')
 } finally{
   // Clean Cauldron test env
   afterAll()
