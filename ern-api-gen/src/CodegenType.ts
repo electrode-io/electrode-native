@@ -1,4 +1,4 @@
-class CodegenType {
+export class CodegenType {
   public static ordinal = () => ALL
   public type
 
