@@ -111,17 +111,28 @@ export async function validateCompositeNativeDependencies(
   // Validate composite native dependencies
   const resolution = await composite.getResolvedNativeDependencies()
   if (resolution.pluginsWithMismatchingVersions.length > 0) {
+    logMismatchingDependenciesTree(composite, resolution)
     throw new Error(`The following plugins are not using compatible versions : 
      ${resolution.pluginsWithMismatchingVersions.toString()}`)
   }
   try {
-    logResolvedAndMismatchingDependenciesTree(composite, resolution)
+    logResolvedDependenciesTree(composite, resolution)
   } catch (e) {
     log.error(e)
   }
 }
 
 export function logResolvedAndMismatchingDependenciesTree(
+  composite: Composite,
+  resolution: any
+) {
+  logResolvedDependenciesTree(composite, resolution)
+  if (resolution.pluginsWithMismatchingVersions.length > 0) {
+    logMismatchingDependenciesTree(composite, resolution)
+  }
+}
+
+export function logResolvedDependenciesTree(
   composite: Composite,
   resolution: any
 ) {
@@ -132,14 +143,19 @@ export function logResolvedAndMismatchingDependenciesTree(
     resolution.resolved.map(x => PackagePath.fromString(x.basePath)),
     'debug'
   )
-  if (resolution.pluginsWithMismatchingVersions.length > 0) {
-    log.error('[ == MISMATCHING NATIVE DEPENDENCIES ==]')
-    logDependenciesTree(
-      parser,
-      resolution.pluginsWithMismatchingVersions.map(PackagePath.fromString),
-      'error'
-    )
-  }
+}
+
+export function logMismatchingDependenciesTree(
+  composite: Composite,
+  resolution: any
+) {
+  const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
+  log.error('[ == MISMATCHING NATIVE DEPENDENCIES ==]')
+  logDependenciesTree(
+    parser,
+    resolution.pluginsWithMismatchingVersions.map(PackagePath.fromString),
+    'error'
+  )
 }
 
 export function logDependenciesTree(
