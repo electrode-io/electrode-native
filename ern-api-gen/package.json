@@ -15,7 +15,8 @@
     "build": "ern-typescript",
     "test": "ern-mocha",
     "coverage": "ern-nyc",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "instrument-dist": "ern-instrument-dist"
   },
   "keywords": [
     "electrode",

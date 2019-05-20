@@ -25,4 +25,4 @@ Module._load = function(file, parent) {
 
 require('tsconfig-paths/register')
 require('ts-node').register({ transpileOnly: true })
-require('./index.ts').default()
+require('./index.ts')

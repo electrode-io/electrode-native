@@ -13,5 +13,5 @@ const filesToIgnoreForDiffs = [
   'index.android.bundle.meta'
 ]
 
-run(`ern create-container --miniapps ${miniapps.join(' ')} -p android --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
+run(`create-container --miniapps ${miniapps.join(' ')} -p android --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
 assert(sameDirContent(f.pathToAndroidContainerFixture, process.cwd(), filesToIgnoreForDiffs), 'Generated Android Container differ from reference fixture !')

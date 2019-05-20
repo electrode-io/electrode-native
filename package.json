@@ -11,7 +11,8 @@
     "check:yarnlock": "node yarn-lock-check",
     "check:regen-fixtures": "node regen-fixtures-check",
     "coverage:ci": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | yarn coveralls",
-    "coverage:system": "rimraf .nyc_output && node system-tests/system-tests-coverage",
+    "coverage:local": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json html",
+    "coverage:system": "rimraf .nyc_output && lerna run build && lerna run instrument-dist && node system-tests/system-tests-coverage",
     "coverage:unit": "rimraf ern-*/.nyc_output && lerna run coverage && yarn istanbul report --include=ern-*/.coverage/coverage-final.json html",
     "ern-debug": "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
     "istanbul": "istanbul",
@@ -21,7 +22,7 @@
     "regen-fixtures": "node system-tests/regen-fixtures",
     "setup-dev": "node setup-dev.js",
     "test": "yarn test:unit && yarn test:system",
-    "test:system": "node system-tests/system-tests",
+    "test:system": "lerna run build && lerna run instrument-dist && node system-tests/system-tests",
     "test:unit": "lerna run test"
   },
   "workspaces": [
@@ -42,6 +43,7 @@
     "diff": "^4.0.1",
     "dir-compare": "^1.7.2",
     "dirty-chai": "^2.0.1",
+    "fs-readdir-recursive": "^1.1.0",
     "husky": "^2.1.0",
     "inquirer": "^5.2.0",
     "install": "^0.12.2",

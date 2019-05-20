@@ -19,5 +19,5 @@ const filesToIgnore = [
   '.yarn-integrity'
 ]
 
-run(`ern create-api ${f.complexApiName} -p ${f.testApiPkgName}  --schemaPath ${f.pathToComplexApiSchema} --skipNpmCheck`)
+run(`create-api ${f.complexApiName} -p ${f.testApiPkgName}  --schemaPath ${f.pathToComplexApiSchema} --skipNpmCheck`)
 assert(sameDirContent(f.pathToComplexApiFixture, path.join(process.cwd(), f.complexApiName), filesToIgnore), 'Generated API differ from reference fixture !')

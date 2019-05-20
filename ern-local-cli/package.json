@@ -47,7 +47,8 @@
     "test": "ern-mocha",
     "coverage": "ern-nyc",
     "prepublish": "yarn run build",
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js",
+    "instrument-dist": "ern-instrument-dist"
   },
   "license": "Apache-2.0",
   "dependencies": {

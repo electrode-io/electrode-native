@@ -31,7 +31,7 @@ try {
   }
 } finally {
   if (cauldronRepoBeforeRun) {
-    run('ern cauldron repo use ${cauldronRepoBeforeRun}')
+    run('cauldron repo use ${cauldronRepoBeforeRun}')
   }
 }
 
@@ -43,13 +43,13 @@ function runAllTests() {
 
 function runTest(testSourceFile) {
   // No Cauldron should be active when starting a test suite
-  run('ern cauldron repo clear')
+  run('cauldron repo clear')
   // Trace log level should be set to trace to ensure that `ora`
   // gets disabled as it can lead to issues on CI env
-  run('ern platform config set logLevel trace')
+  run('platform config set logLevel trace')
   // Disable banner before running a test suite
   // to reduce log verbosity
-  run('ern platform config set showBanner false')
+  run('platform config set showBanner false')
   const workingDirPath = tmp.dirSync({ unsafeCleanup: true }).name
   process.chdir(workingDirPath)
   console.log(`Running ${testSourceFile} tests`)
