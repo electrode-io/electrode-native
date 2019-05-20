@@ -3,6 +3,7 @@
   "version": "1000.0.0",
   "description": "Electrode Native Container Transformer",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "homepage": "http://www.electrode.io",
   "repository": {
     "type": "git",

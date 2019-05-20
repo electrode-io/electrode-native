@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "allowJs": true,
+    "allowJs": false,
     "esModuleInterop": true,
     "lib": ["es2017"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
     "preserveSymlinks": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "declaration": true
   }
 }
