@@ -57,3 +57,4 @@ ern-runner-gen-android/src/hull/.project
 ern-runner-gen-android/src/hull/.settings/org.eclipse.buildship.core.prefs
 system-tests/fixtures/android-container/.project
 system-tests/fixtures/android-container/.settings/org.eclipse.buildship.core.prefs
+ern-api-gen/test/tmp
