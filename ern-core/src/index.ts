@@ -94,3 +94,4 @@ export {
 } from './checkIfModuleNameContainsSuffix'
 export { getCodePushSdk } from './getCodePushSdk'
 export { getCodePushInitConfig } from './getCodePushInitConfig'
+export { PackageManager } from './PackageManager'

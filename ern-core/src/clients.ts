@@ -3,10 +3,12 @@ import { YarnCli } from './YarnCli'
 import fs from 'fs'
 import path from 'path'
 
-export const yarn = new YarnCli(getBinaryPath('yarn'))
-export const reactnative = new ReactNativeCli(getBinaryPath('react-native'))
+export const yarn = new YarnCli(getInternalBinaryPath('yarn'))
+export const reactnative = new ReactNativeCli(
+  getInternalBinaryPath('react-native')
+)
 
-function getBinaryPath(binaryName: string): string {
+function getInternalBinaryPath(binaryName: string): string {
   const pathWhenInstalledWithYarn = path.resolve(
     __dirname,
     '..',

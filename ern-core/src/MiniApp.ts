@@ -163,6 +163,7 @@ export class MiniApp extends BaseMiniApp {
     appPackageJson.ern = {
       moduleName: miniAppName,
       moduleType: ModuleTypes.MINIAPP,
+      packageManager: Platform.isYarnInstalled() ? 'yarn' : 'npm',
       version: platformVersion,
     }
     appPackageJson.private = false
@@ -270,7 +271,11 @@ export class MiniApp extends BaseMiniApp {
           .task(
             `${basePathDependency.toString()} is not declared in the manifest. Performing additional checks.`
           )
-          .run(yarn.add(PackagePath.fromString(dependency.toString())))
+          .run(
+            this.packageManager.add(
+              PackagePath.fromString(dependency.toString())
+            )
+          )
 
         const nativeDependencies = await findNativeDependencies(
           path.join(tmpPath, 'node_modules')
@@ -349,7 +354,7 @@ export class MiniApp extends BaseMiniApp {
           } to ${this.name}`
         )
         .run(
-          yarn.add(
+          this.packageManager.add(
             manifestDependency || PackagePath.fromString(dependency.toString())
           )
         )
@@ -442,7 +447,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     )
 
     process.chdir(this.path)
-    await kax.task('Running yarn install').run(yarn.install())
+    await kax.task('Running yarn install').run(this.packageManager.install())
   }
 
   public publishToNpm() {
@@ -491,11 +496,11 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     if (dev) {
       await kax
         .task(`Adding ${dependency.toString()} to MiniApp devDependencies`)
-        .run(yarn.add(depPath, { dev: true }))
+        .run(this.packageManager.add(depPath, { dev: true }))
     } else {
       await kax
         .task(`Adding ${dependency.toString()} to MiniApp peerDependencies`)
-        .run(yarn.add(depPath, { peer: true }))
+        .run(this.packageManager.add(depPath, { peer: true }))
     }
   }
 }
