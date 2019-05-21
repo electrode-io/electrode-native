@@ -1,11 +1,13 @@
 import { PackagePath } from './PackagePath'
 import { readPackageJsonSync } from './packageJsonFileUtils'
 import { tagOneLine } from './tagoneline'
+import { PackageManager } from './PackageManager'
 import * as utils from './utils'
 import fs from 'fs'
 import path from 'path'
 import log from './log'
 import _ from 'lodash'
+import Platform from './Platform'
 
 export class BaseMiniApp {
   public readonly path: string
@@ -97,6 +99,31 @@ in the package.json of ${packageJson.name} MiniApp
 
   get packageDescriptor(): string {
     return `${this.packageJson.name}@${this.packageJson.version}`
+  }
+
+  get packageManager(): PackageManager {
+    // Use ern.packageManager value from package.json if set
+    const ernPackageManager = this.packageJson.ern.packageManager
+    if (ernPackageManager) {
+      if (ernPackageManager === 'npm') {
+        return PackageManager.npm()
+      } else if (ernPackageManager === 'yarn') {
+        return PackageManager.yarn()
+      } else {
+        throw new Error(
+          `Invalid ern.packageManager value in package.json : ${ernPackageManager}. 
+Should be either yarn or npm`
+        )
+      }
+    }
+    // Otherwise favor yarn if it is installed
+    else if (Platform.isYarnInstalled()) {
+      return PackageManager.yarn()
+    }
+    // Finally fallback to npm
+    else {
+      return PackageManager.npm()
+    }
   }
 
   public async isPublishedToNpm(): Promise<boolean> {
