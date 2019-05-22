@@ -234,6 +234,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       f => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')
     )
     const pathLibSrcMain = path.join('lib', 'src', 'main')
+    const pathLibSrcMainJniLibs = path.join('lib', 'src', 'main', 'jniLibs')
     const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
     const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java', 'com')
     const pathLibSrcMainJavaComWalmartlabsErnContainer = path.join(
@@ -246,7 +247,8 @@ export default class AndroidGenerator implements ContainerGenerator {
       if (
         (file.startsWith(pathLibSrcMainJavaCom) &&
           !file.startsWith(pathLibSrcMainJavaComWalmartlabsErnContainer)) ||
-        file.startsWith(pathLibSrcMainAssets)
+        file.startsWith(pathLibSrcMainAssets) ||
+        file.startsWith(pathLibSrcMainJniLibs)
       ) {
         // We don't want to Mustache process library files. It can lead to bad things
         // We also don't want to process assets files ...
