@@ -9,6 +9,7 @@ import {
   shell,
   Platform,
   kax,
+  LogLevel,
 } from 'ern-core'
 import {
   KaxAdvancedRenderer,
@@ -115,31 +116,55 @@ class KaxNullRenderer implements KaxRenderer {
   public renderError(msg: string) {
     // noop
   }
+  public renderRaw(msg: string) {
+    // noop
+  }
   public renderTask<T>(msg: string, task: KaxTask<T>) {
     // noop
   }
 }
 
-// ==============================================================================
-// Entry point
-// =============================================================================
+const logLevelStringToEnum = level => {
+    switch (level) {
+      case 'trace':
+        return LogLevel.Trace
+      case 'debug':
+        return LogLevel.Debug
+      case 'info':
+        return LogLevel.Info
+      case 'warn':
+        return LogLevel.Warn
+      case 'error':
+        return LogLevel.Error
+      case 'off':
+        return LogLevel.Off
+      default:
+        throw new Error(`Invalid log level ${level}`)
+    }
+  }
+
+  // ==============================================================================
+  // Entry point
+  // =============================================================================
 ;(function run() {
   const hasJsonOpt = yargs.argv.json
-  const logLevel = hasJsonOpt
-    ? 'off'
+  const logLevel: LogLevel = hasJsonOpt
+    ? LogLevel.Off
     : process.env.ERN_LOG_LEVEL
-    ? process.env.ERN_LOG_LEVEL
-    : config.getValue('logLevel', 'info')
+    ? logLevelStringToEnum(process.env.ERN_LOG_LEVEL)
+    : logLevelStringToEnum(config.getValue('logLevel', 'info'))
 
   log.setLogLevel(logLevel)
   shell.config.fatal = true
-  shell.config.verbose = logLevel === 'trace'
-  shell.config.silent = !(logLevel === 'trace' || logLevel === 'debug')
+  shell.config.verbose = logLevel === LogLevel.Trace
+  shell.config.silent = !(
+    logLevel === LogLevel.Trace || logLevel === LogLevel.Debug
+  )
 
   kax.renderer =
-    logLevel === 'trace' || logLevel === 'debug'
+    logLevel === LogLevel.Trace || logLevel === LogLevel.Debug
       ? new KaxSimpleRenderer(kaxRendererConfig)
-      : logLevel === 'off'
+      : logLevel === LogLevel.Off
       ? new KaxNullRenderer()
       : new KaxAdvancedRenderer(kaxRendererConfig)
 

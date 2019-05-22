@@ -3,9 +3,8 @@ import { buildIosRunner } from './buildIosRunner'
 
 export async function launchOnSimulator(pathToIosRunner: string) {
   const iPhoneSim = await ios.askUserToSelectAniPhoneSimulator()
-  await kax
-    .task('Killing all running Simulators')
-    .run(ios.killAllRunningSimulators())
+  kax.info('Killing all running Simulators')
+  ios.killAllRunningSimulators()
   await kax
     .task('Booting iOS Simulator')
     .run(ios.launchSimulator(iPhoneSim.udid))
