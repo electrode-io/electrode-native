@@ -95,3 +95,4 @@ export {
 export { getCodePushSdk } from './getCodePushSdk'
 export { getCodePushInitConfig } from './getCodePushInitConfig'
 export { PackageManager } from './PackageManager'
+export { LogLevel } from './coloredLog'

@@ -68,16 +68,13 @@ export async function generateContainer(
     )
 
   if (!config.ignoreRnpmAssets) {
-    await kax
-      .task('Coying rnpm assets -if any-')
-      .run(
-        copyRnpmAssets(
-          config.composite.getMiniApps(),
-          config.composite.path,
-          config.outDir,
-          config.targetPlatform
-        )
-      )
+    copyRnpmAssets(
+      config.composite.getMiniApps(),
+      config.composite.path,
+      config.outDir,
+      config.targetPlatform
+    )
+
     if (postCopyRnpmAssets) {
       await postCopyRnpmAssets(config)
     }

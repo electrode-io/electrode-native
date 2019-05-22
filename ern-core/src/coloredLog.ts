@@ -1,57 +1,58 @@
-import chalk from 'chalk'
 import kax from './kax'
 
-export default class ColoredLog {
-  private log: any
-  private pLevel: string
+export enum LogLevel {
+  Trace = 0,
+  Debug = 1,
+  Info = 2,
+  Warn = 3,
+  Error = 4,
+  Off = 5,
+}
 
-  constructor(level: string = 'info') {
-    this.pLevel = level
-    this.log = require('console-log-level')({
-      level,
-    })
+export default class ColoredLog {
+  private pLevel: LogLevel
+  private loggers: any = {}
+
+  constructor(level: LogLevel = LogLevel.Info) {
+    this.setLogLevel(level)
   }
 
-  public setLogLevel(level: string) {
+  public setLogLevel(level: LogLevel) {
     this.pLevel = level
-    if (level !== 'off') {
-      this.log = require('console-log-level')({
-        level,
-      })
+    this.loggers = {
+      debug: level <= LogLevel.Debug ? msg => kax.raw(msg) : () => this.noop(),
+      error: level <= LogLevel.Warn ? msg => kax.error(msg) : () => this.noop(),
+      info: level <= LogLevel.Info ? msg => kax.info(msg) : () => this.noop(),
+      trace: level <= LogLevel.Trace ? msg => kax.raw(msg) : () => this.noop(),
+      warn: level <= LogLevel.Warn ? msg => kax.warn(msg) : () => this.noop(),
     }
   }
 
-  get level(): string {
+  get level(): LogLevel {
     return this.pLevel
   }
 
   public trace(msg: string) {
-    if (this.pLevel !== 'off') {
-      this.log.trace(chalk.gray(msg))
-    }
+    this.loggers.trace(msg)
   }
 
   public debug(msg: string) {
-    if (this.pLevel !== 'off') {
-      this.log.debug(chalk.green(msg))
-    }
+    this.loggers.debug(msg)
   }
 
   public info(msg: string) {
-    if (this.pLevel !== 'off') {
-      kax.info(msg)
-    }
+    this.loggers.info(msg)
   }
 
   public warn(msg: string) {
-    if (this.pLevel !== 'off') {
-      kax.warn(msg)
-    }
+    this.loggers.warn(msg)
   }
 
   public error(msg: string) {
-    if (this.pLevel !== 'off') {
-      kax.error(msg)
-    }
+    this.loggers.error(msg)
+  }
+
+  private noop() {
+    // noop
   }
 }

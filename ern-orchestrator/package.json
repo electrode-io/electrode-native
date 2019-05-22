@@ -69,7 +69,7 @@
     "ern-runner-gen-ios": "1000.0.0",
     "fast-levenshtein": "^2.0.6",
     "fs-readdir-recursive": "^1.1.0",
-    "kax":"^1.2.7",
+    "kax":"^2.0.1",
     "lodash": "^4.17.10",
     "semver": "^5.5.0",
     "treeify": "^1.1.0",
