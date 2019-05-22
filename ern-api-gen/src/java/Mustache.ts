@@ -1,6 +1,10 @@
+/* tslint:disable:variable-name */
 import Mustache from 'mustache'
 import Json from './Json'
 import LoggerFactory from './LoggerFactory'
+import { MustacheWriter } from './MustacheWriter'
+import { isIterable } from './isIterable'
+
 function truthy(val) {
   if (val == null || val.length === 0 || val === false) {
     return false
@@ -11,13 +15,16 @@ function isInt(val) {
   return /^\d+?$/.test(val)
 }
 class MyContext extends Mustache.Context {
-  constructor(value, parent, first, last) {
+  protected _first: any
+  protected _last: any
+
+  constructor(value, parent?: any, first?: any, last?: any) {
     super(value, parent)
     this._first = first
     this._last = last
   }
 
-  lookup(name) {
+  public lookup(name) {
     if (/-?last/.test(name)) {
       return this._last
     }
@@ -28,7 +35,7 @@ class MyContext extends Mustache.Context {
     // we will let the natural path happen.
     if (/.+?\.(?!\d+?$).+?$/.test(name)) {
       const filters = name.split(/(\-|\+|\.)/)
-      let arr = super.lookup(filters.shift())
+      const arr = super.lookup(filters.shift())
       if (!isIterable(arr)) {
         return arr
       }
@@ -38,7 +45,7 @@ class MyContext extends Mustache.Context {
         for (let i = 0, l = filters.length; i < l; i += 2) {
           const pm = filters[i]
           const prop = filters[i + 1]
-          if (pm == '+') {
+          if (pm === '+') {
             if (!truthy(v[prop])) {
               continue FILTER
             }
@@ -59,76 +66,8 @@ class MyContext extends Mustache.Context {
     return super.lookup(name)
   }
 
-  push(view, first, last) {
+  public push(view, first?: any, last?: any) {
     return new MyContext(view, this, first, last)
-  }
-}
-
-function isIterable(obj) {
-  // checks for null and undefined
-  if (obj == null) {
-    return false
-  }
-  // Don't consider a string iterable.
-  if (typeof obj === 'string') {
-    return false
-  }
-  return typeof obj[Symbol.iterator] === 'function'
-}
-
-class MustacheWriter extends Mustache.Writer {
-  renderSection(token, context, partials, originalTemplate) {
-    let buffer = ''
-    let value = context.lookup(token[1])
-
-    if (!value) return
-
-    if (isIterable(value)) {
-      const itr = value[Symbol.iterator]()
-      let first = itr.next()
-      let isFirst = true
-      while (!first.done) {
-        const next = itr.next()
-        if (first.value != null) {
-          const ctx = context.push(first.value, isFirst, next.done)
-          buffer += this.renderTokens(token[4], ctx, partials, originalTemplate)
-        }
-        isFirst = false
-        first = next
-      }
-      return buffer
-    } else if (
-      typeof value === 'object' ||
-      typeof value === 'string' ||
-      typeof value === 'number'
-    ) {
-      buffer += this.renderTokens(
-        token[4],
-        context.push(value),
-        partials,
-        originalTemplate
-      )
-    } else if (typeof value === 'function') {
-      if (typeof originalTemplate !== 'string') {
-        throw new Error(
-          'Cannot use higher-order sections without the original template'
-        )
-      }
-
-      // Extract the portion of the original template that the section contains.
-      value = value.call(
-        context.view,
-        originalTemplate.slice(token[3], token[5]),
-        template => this.render(template, context, partials)
-      )
-
-      if (value != null) {
-        buffer += value
-      }
-    } else {
-      buffer += this.renderTokens(token[4], context, partials, originalTemplate)
-    }
-    return buffer
   }
 }
 
@@ -142,11 +81,13 @@ export default {
       withLoader(_loader) {
         const handler = {
           get(target, name) {
-            if (name in target) return target[name]
+            if (name in target) {
+              return target[name]
+            }
             return (target[name] = _loader.getTemplate(name))
           },
         }
-        partialProxy = function(name) {
+        partialProxy = name => {
           return _loader.getTemplate(name)
         }
         return cret
@@ -155,8 +96,8 @@ export default {
         defValue = def
         return cret
       },
-      compile(template, file) {
-        const writer = new MustacheWriter()
+      compile(template, file?: any) {
+        const writer: any = new MustacheWriter()
 
         return {
           execute(data) {
