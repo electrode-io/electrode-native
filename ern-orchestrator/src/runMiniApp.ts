@@ -34,6 +34,7 @@ export async function runMiniApp(
     host,
     port,
     extra,
+    cwd,
   }: {
     baseComposite?: PackagePath
     mainMiniAppName?: string
@@ -45,9 +46,10 @@ export async function runMiniApp(
     host?: string
     port?: string
     extra?: any
+    cwd?: string
   } = {}
 ) {
-  const cwd = process.cwd()
+  cwd = cwd || process.cwd()
 
   let napDescriptor: NativeApplicationDescriptor | void
 
