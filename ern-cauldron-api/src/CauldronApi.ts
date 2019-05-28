@@ -1131,9 +1131,8 @@ export default class CauldronApi {
         `${pkg.basePath} does not exist in ${descriptor} Container`
       )
     }
-    container[key] = _.map(
-      container[key],
-      e => (e === existingPkg ? pkg.fullPath : e)
+    container[key] = _.map(container[key], e =>
+      e === existingPkg ? pkg.fullPath : e
     )
     return this.commit(
       `Update ${pkg.basePath} to version ${
@@ -1148,7 +1147,9 @@ export default class CauldronApi {
     key: ContainerPackagesArrayKey
   ): Promise<void> {
     this.throwIfPartialNapDescriptor(descriptor)
-    this.throwIfNoVersionInPackagePath(pkg)
+    if (!pkg.isFilePath) {
+      this.throwIfNoVersionInPackagePath(pkg)
+    }
     const container = (await this.getVersion(descriptor)).container
     if (!container[key]) {
       container[key] = []
