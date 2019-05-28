@@ -30,12 +30,6 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
-    .option('force', {
-      alias: 'f',
-      default: false,
-      describe: 'Force publish',
-      type: 'boolean',
-    })
     .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
@@ -43,12 +37,10 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   containerVersion,
   descriptor,
-  force,
   miniapps,
 }: {
   containerVersion?: string
   descriptor?: NativeApplicationDescriptor
-  force?: boolean
   miniapps: PackagePath[]
 }) => {
   descriptor =
