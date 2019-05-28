@@ -1160,7 +1160,9 @@ export default class CauldronApi {
     key: ContainerPackagesArrayKey
   ): Promise<void> {
     this.throwIfPartialNapDescriptor(descriptor)
-    this.throwIfNoVersionInPackagePath(pkg)
+    if (!pkg.isFilePath) {
+      this.throwIfNoVersionInPackagePath(pkg)
+    }
     const container = (await this.getVersion(descriptor)).container
     if (!container[key]) {
       container[key] = []
