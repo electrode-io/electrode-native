@@ -25,6 +25,10 @@ import semver from 'semver'
 export class CauldronHelper {
   private readonly cauldron: CauldronApi
 
+  public get api() {
+    return this.cauldron
+  }
+
   constructor(cauldronApi: CauldronApi) {
     if (!cauldronApi) {
       throw new Error('cauldronApi is required')
