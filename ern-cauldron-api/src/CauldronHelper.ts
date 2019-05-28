@@ -928,6 +928,29 @@ export class CauldronHelper {
     }
   }
 
+  /**
+   * Gets all the MiniApps of a given native application version.
+   * @param napDescriptor Native application version from which to retrieve MiniApps
+   * @returns A promise resolving to an array of tuples. First element of the
+   * tuple is the MiniApp PackagePath, second element is the optional MiniApp branch
+   * PackagePath -if any- or undefined otherwise.
+   */
+  public async getContainerMiniAppsWithBranches(
+    napDescriptor: NativeApplicationDescriptor
+  ): Promise<Array<[PackagePath, PackagePath | undefined]>> {
+    const miniApps = _.map(
+      await this.cauldron.getContainerMiniApps(napDescriptor),
+      PackagePath.fromString
+    )
+    const miniAppsBranches = await this.getContainerMiniAppsBranches(
+      napDescriptor
+    )
+    return _.map(miniApps, m => [
+      m,
+      _.find(miniAppsBranches, n => n.basePath === m.basePath),
+    ])
+  }
+
   public async addCodePushEntry(
     napDescriptor: NativeApplicationDescriptor,
     metadata: CauldronCodePushMetadata,
