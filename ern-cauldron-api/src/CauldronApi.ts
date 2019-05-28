@@ -16,6 +16,7 @@ import {
 import upgradeScripts from './upgrade-scripts/scripts'
 import path from 'path'
 import uuidv4 from 'uuid/v4'
+import semver from 'semver'
 
 const yarnLocksStoreDirectory = 'yarnlocks'
 const bundlesStoreDirectory = 'bundles'
@@ -610,6 +611,18 @@ export default class CauldronApi {
       schemas.nativeApplicationVersion
     )
     platform.versions.push(validatedVersion)
+    const semverCompliantVersions = platform.versions.filter(
+      v => semver.valid(v.name) !== null
+    )
+    const semverNonCompliantVersions = platform.versions.filter(
+      v => semver.valid(v.name) === null
+    )
+    semverCompliantVersions.sort((a, b) => semver.compare(a.name, b.name))
+    semverNonCompliantVersions.sort()
+    platform.versions = [
+      ...semverCompliantVersions,
+      ...semverNonCompliantVersions,
+    ]
     return this.commit(
       `Create version ${versionName} for ${descriptor.toString()}`
     )
@@ -1131,9 +1144,8 @@ export default class CauldronApi {
         `${pkg.basePath} does not exist in ${descriptor} Container`
       )
     }
-    container[key] = _.map(
-      container[key],
-      e => (e === existingPkg ? pkg.fullPath : e)
+    container[key] = _.map(container[key], e =>
+      e === existingPkg ? pkg.fullPath : e
     )
     return this.commit(
       `Update ${pkg.basePath} to version ${
