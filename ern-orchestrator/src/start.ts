@@ -185,11 +185,17 @@ function replacePackageInCompositeWithLinkedPackage(
   shell.cp('-Rf', path.join(sourceLinkDir, '{.*,*}'), pathToPackageInComposite)
   // We remove react-native and react to avoid haste collisions, as they are
   // already part of the top level composite node_modules
-  shell.rm(
-    '-Rf',
-    path.join(pathToPackageInComposite, 'node_modules', 'react-native')
+  // We also remove react-native-electrode-bridge because having multiple instances
+  // of it will create issues. We want to use top level instance.
+  const pathToPackageNodeModules = path.join(
+    pathToPackageInComposite,
+    'node_modules'
   )
-  shell.rm('-Rf', path.join(pathToPackageInComposite, 'node_modules', 'react'))
+  shell.rm('-Rf', [
+    path.join(pathToPackageNodeModules, 'react-native'),
+    path.join(pathToPackageNodeModules, 'react'),
+    path.join(pathToPackageNodeModules, 'react-native-electrode-bridge'),
+  ])
 }
 
 function startLinkSynchronization(
