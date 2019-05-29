@@ -96,10 +96,12 @@ export class MiniApp extends BaseMiniApp {
     miniAppName: string,
     packageName: string,
     {
+      language = 'JavaScript',
       manifestId,
       platformVersion = Platform.currentVersion,
       scope,
     }: {
+      language?: 'JavaScript' | 'TypeScript'
       manifestId?: string
       platformVersion?: string
       scope?: string
@@ -151,7 +153,11 @@ export class MiniApp extends BaseMiniApp {
       .task(
         `Creating ${miniAppName} project using react-native v${reactNativeVersion}`
       )
-      .run(reactnative.init(miniAppName, reactNativeVersion))
+      .run(
+        reactnative.init(miniAppName, reactNativeVersion, {
+          template: language === 'TypeScript' ? 'typescript' : undefined,
+        })
+      )
 
     // Create .npmignore
     const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore')

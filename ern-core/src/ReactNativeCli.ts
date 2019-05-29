@@ -28,18 +28,24 @@ export default class ReactNativeCli {
     this.binaryPath = binaryPath
   }
 
-  public async init(appName: string, rnVersion: string) {
+  public async init(
+    appName: string,
+    rnVersion: string,
+    { template }: { template?: string } = {}
+  ) {
     const dir = path.join(process.cwd(), appName)
 
     if (fs.existsSync(dir)) {
       throw new Error(`Path already exists will not override ${dir}`)
     }
 
-    return execp(
-      `${
-        this.binaryPath
-      } init ${appName} --version react-native@${rnVersion} --skip-jest`
-    )
+    const initCmd = `${
+      this.binaryPath
+    } init ${appName} --version react-native@${rnVersion}${
+      template ? ` --template ${template}` : ''
+    } --skip-jest`
+
+    return execp(initCmd)
   }
 
   public async bundle({
