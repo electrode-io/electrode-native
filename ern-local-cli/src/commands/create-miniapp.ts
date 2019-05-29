@@ -16,12 +16,18 @@ import {
 } from '../lib'
 import chalk from 'chalk'
 import { Argv } from 'yargs'
+import inquirer from 'inquirer'
 
 export const command = 'create-miniapp <appName>'
 export const desc = 'Create a new ern application(miniapp)'
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('language', {
+      choices: ['JavaScript', 'TypeScript', undefined],
+      describe: 'Language to use for this MiniApp',
+      type: 'string',
+    })
     .option('packageName', {
       alias: 'p',
       describe: 'Name to use for the MiniApp NPM package',
@@ -50,6 +56,7 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   appName,
+  language,
   manifestId,
   packageName,
   platformVersion,
@@ -57,6 +64,7 @@ export const commandHandler = async ({
   skipNpmCheck,
 }: {
   appName: string
+  language: 'JavaScript' | 'TypeScript'
   manifestId?: string
   packageName?: string
   platformVersion: string
@@ -92,6 +100,18 @@ export const commandHandler = async ({
     packageName = await askUserToInputPackageName({ defaultPackageName })
   }
 
+  if (!language) {
+    const { userSelectedLanguage } = await inquirer.prompt([
+      <inquirer.Question>{
+        choices: ['JavaScript', 'TypeScript'],
+        message: 'Choose the language to use for this MiniApp',
+        name: 'userSelectedLanguage',
+        type: 'list',
+      },
+    ])
+    language = userSelectedLanguage
+  }
+
   await logErrorAndExitIfNotSatisfied({
     isValidNpmPackageName: {
       name: packageName,
@@ -104,6 +124,7 @@ export const commandHandler = async ({
 
   await kax.task('Creating MiniApp').run(
     MiniApp.create(appName, packageName, {
+      language,
       manifestId,
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope,
