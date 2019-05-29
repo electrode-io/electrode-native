@@ -75,11 +75,6 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-    noGitOrFilesystemPath: {
-      extraErrorMessage:
-        'You cannot provide MiniApp(s) using git or file scheme for this command. Only the form miniapp@version is allowed.',
-      obj: miniapps,
-    },
   })
 
   const cauldronCommitMessage = [
