@@ -10,6 +10,7 @@ import {
   ErnBinaryStore,
   log,
   kax,
+  readPackageJsonSync,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { generateComposite } from 'ern-composite-gen'
@@ -88,6 +89,15 @@ export default async function start({
   const linkedMiniAppsPackageNames = Object.keys(miniAppsLinksObj).filter(p =>
     fs.existsSync(miniAppsLinksObj[p])
   )
+
+  // Auto link file based miniapps
+  miniapps!
+    .filter(m => m.isFilePath)
+    .forEach(m => {
+      const packageJson = readPackageJsonSync(m.basePath)
+      linkedMiniAppsPackageNames.push(packageJson.name)
+      miniAppsLinksObj[packageJson.name] = m.basePath
+    })
 
   linkedMiniAppsPackageNames.forEach(pkgName => {
     replacePackageInCompositeWithLinkedPackage(
