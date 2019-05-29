@@ -98,11 +98,13 @@ export class MiniApp extends BaseMiniApp {
     {
       language = 'JavaScript',
       manifestId,
+      packageManager,
       platformVersion = Platform.currentVersion,
       scope,
     }: {
       language?: 'JavaScript' | 'TypeScript'
       manifestId?: string
+      packageManager?: 'npm' | 'yarn'
       platformVersion?: string
       scope?: string
     } = {}
@@ -169,7 +171,11 @@ export class MiniApp extends BaseMiniApp {
     appPackageJson.ern = {
       moduleName: miniAppName,
       moduleType: ModuleTypes.MINIAPP,
-      packageManager: Platform.isYarnInstalled() ? 'yarn' : 'npm',
+      packageManager: packageManager
+        ? packageManager
+        : Platform.isYarnInstalled()
+        ? 'yarn'
+        : 'npm',
       version: platformVersion,
     }
     appPackageJson.private = false

@@ -51,6 +51,11 @@ export const builder = (argv: Argv) => {
         'Skip the check ensuring package does not already exists in NPM registry',
       type: 'boolean',
     })
+    .option('packageManager', {
+      choices: ['npm', 'yarn', undefined],
+      describe: 'Package manager to use for this MiniApp',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
@@ -58,6 +63,7 @@ export const commandHandler = async ({
   appName,
   language,
   manifestId,
+  packageManager,
   packageName,
   platformVersion,
   scope,
@@ -67,6 +73,7 @@ export const commandHandler = async ({
   language: 'JavaScript' | 'TypeScript'
   manifestId?: string
   packageName?: string
+  packageManager?: 'npm' | 'yarn'
   platformVersion: string
   scope?: string
   skipNpmCheck?: boolean
@@ -112,6 +119,18 @@ export const commandHandler = async ({
     language = userSelectedLanguage
   }
 
+  if (!packageManager) {
+    const { userSelectedPackageManager } = await inquirer.prompt([
+      <inquirer.Question>{
+        choices: ['yarn', 'npm'],
+        message: 'Choose the package manager to use for this MiniApp',
+        name: 'userSelectedPackageManager',
+        type: 'list',
+      },
+    ])
+    packageManager = userSelectedPackageManager
+  }
+
   await logErrorAndExitIfNotSatisfied({
     isValidNpmPackageName: {
       name: packageName,
@@ -126,6 +145,7 @@ export const commandHandler = async ({
     MiniApp.create(appName, packageName, {
       language,
       manifestId,
+      packageManager,
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope,
     })
