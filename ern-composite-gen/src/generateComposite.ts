@@ -213,14 +213,7 @@ async function createIndexJsBasedOnPackageJson({ outDir }) {
     dependencies.push(dependency)
   }
 
-  await fileUtils.writeFile(
-    path.join(outDir, 'index.android.js'),
-    entryIndexJsContent
-  )
-  await fileUtils.writeFile(
-    path.join(outDir, 'index.ios.js'),
-    entryIndexJsContent
-  )
+  await fileUtils.writeFile(path.join(outDir, 'index.js'), entryIndexJsContent)
 }
 
 async function createCompositeImportsJsBasedOnPackageJson({ outDir }) {

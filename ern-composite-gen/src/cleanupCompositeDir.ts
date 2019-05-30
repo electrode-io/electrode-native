@@ -8,6 +8,7 @@ export function cleanupCompositeDir(dir: string) {
       '.babelrc',
       'index.android.js',
       'index.ios.js',
+      'index.js',
       'node_modules',
       'package.json',
       'yarn.lock',

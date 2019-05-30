@@ -364,7 +364,7 @@ describe('ern-container-gen utils.js', () => {
       assert(yarnCliStub.install.calledBefore(yarnCliStub.upgrade))
     })
 
-    it('should create index.android.js', async () => {
+    it('should create index.js', async () => {
       // One new, one same, one upgrade
       yarnCliStub.install.callsFake(() =>
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
@@ -375,21 +375,7 @@ describe('ern-container-gen utils.js', () => {
         outDir: tmpOutDir,
         pathToYarnLock: pathToSampleYarnLock,
       })
-      assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
-    })
-
-    it('should create index.ios.js', async () => {
-      // One new, one same, one upgrade
-      yarnCliStub.install.callsFake(() =>
-        createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
-      )
-      const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      await generateComposite({
-        miniApps,
-        outDir: tmpOutDir,
-        pathToYarnLock: pathToSampleYarnLock,
-      })
-      assert(fs.existsSync(path.join(tmpOutDir, 'index.ios.js')))
+      assert(fs.existsSync(path.join(tmpOutDir, 'index.js')))
     })
   })
 
@@ -420,20 +406,12 @@ describe('ern-container-gen utils.js', () => {
       assert(yarnCliStub.add.calledThrice)
     })
 
-    it('should create index.android.js', async () => {
+    it('should create index.js', async () => {
       // One new, one same, one upgrade
       const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
       await generateComposite({ miniApps, outDir: tmpOutDir })
-      assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
-    })
-
-    it('should create index.ios.js', async () => {
-      // One new, one same, one upgrade
-      const miniApps = [PackagePath.fromString('MiniAppOne@6.0.0')]
-      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
-      await generateComposite({ miniApps, outDir: tmpOutDir })
-      assert(fs.existsSync(path.join(tmpOutDir, 'index.android.js')))
+      assert(fs.existsSync(path.join(tmpOutDir, 'index.js')))
     })
 
     it('should create .babelrc with react-native preset for RN < 0.57.0', async () => {
