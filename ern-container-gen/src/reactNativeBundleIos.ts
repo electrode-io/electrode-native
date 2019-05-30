@@ -6,13 +6,14 @@ export async function reactNativeBundleIos({
   dev,
   outDir,
   sourceMapOutput,
-  workingDir,
+  cwd,
 }: {
   dev?: boolean
   outDir: string
   sourceMapOutput?: string
-  workingDir?: string
+  cwd?: string
 }): Promise<BundlingResult> {
+  cwd = cwd || process.cwd()
   const miniAppOutPath = path.join(
     outDir,
     'ElectrodeContainer',
@@ -38,22 +39,23 @@ export async function reactNativeBundleIos({
     shell.mkdir('-p', miniAppOutPath)
   }
 
-  if (workingDir) {
-    shell.pushd(workingDir)
-  }
+  shell.pushd(cwd)
+
+  const entryFile = fs.existsSync(path.join(cwd, 'index.ios.js'))
+    ? 'index.ios.js'
+    : 'index.js'
+
   try {
     const result = await reactnative.bundle({
       assetsDest,
       bundleOutput,
       dev: !!dev,
-      entryFile: 'index.ios.js',
+      entryFile,
       platform: 'ios',
       sourceMapOutput,
     })
     return result
   } finally {
-    if (workingDir) {
-      shell.popd()
-    }
+    shell.popd()
   }
 }

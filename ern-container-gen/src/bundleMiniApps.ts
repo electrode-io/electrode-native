@@ -61,16 +61,16 @@ export async function bundleMiniAppsFromComposite({
   return kax.task('Running Metro Bundler').run(
     platform === 'android'
       ? reactNativeBundleAndroid({
+          cwd: compositeDir,
           dev,
           outDir,
           sourceMapOutput,
-          workingDir: compositeDir,
         })
       : reactNativeBundleIos({
+          cwd: compositeDir,
           dev,
           outDir,
           sourceMapOutput,
-          workingDir: compositeDir,
         })
   )
 }

@@ -6,13 +6,14 @@ export async function reactNativeBundleAndroid({
   dev,
   outDir,
   sourceMapOutput,
-  workingDir,
+  cwd,
 }: {
   dev?: boolean
   outDir: string
   sourceMapOutput?: string
-  workingDir?: string
+  cwd?: string
 }): Promise<BundlingResult> {
+  cwd = cwd || process.cwd()
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   const bundleOutput = path.join(
     libSrcMainPath,
@@ -24,22 +25,23 @@ export async function reactNativeBundleAndroid({
     shell.rm('-rf', path.join(assetsDest, '{.*,*}'))
   }
 
-  if (workingDir) {
-    shell.pushd(workingDir)
-  }
+  shell.pushd(cwd)
+
+  const entryFile = fs.existsSync(path.join(cwd, 'index.android.js'))
+    ? 'index.android.js'
+    : 'index.js'
+
   try {
     const result = await reactnative.bundle({
       assetsDest,
       bundleOutput,
       dev: !!dev,
-      entryFile: 'index.android.js',
+      entryFile,
       platform: 'android',
       sourceMapOutput,
     })
     return result
   } finally {
-    if (workingDir) {
-      shell.popd()
-    }
+    shell.popd()
   }
 }
