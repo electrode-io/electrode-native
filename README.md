@@ -81,38 +81,38 @@ Thank you.
 
 [Announcement Blog Post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
 
-[documentation of electrode native]: https://electrode.gitbooks.io/electrode-native/
+[documentation of electrode native]: https://native.electrode.io/
 
-[Getting Started with Electrode Native]: https://electrode.gitbooks.io/electrode-native/content/getting-started/getting-started.html
+[Getting Started with Electrode Native]: https://native.electrode.io/quick-start/getting-started
 
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
 
 [gitbook]: https://www.gitbook.com/
 
-[what is electrode native]: https://electrode.gitbooks.io/electrode-native/overview/what-is-ern.html
+[what is electrode native]: https://native.electrode.io/introduction/what-is-ern/what-is-ern
 
-[step by step guide]: https://electrode.gitbooks.io/electrode-native/getting-started/getting-started.html
+[step by step guide]: https://native.electrode.io/quick-start/getting-started
 
-[overview]: https://electrode.gitbooks.io/electrode-native/overview/what-is-ern.html
+[overview]: https://native.electrode.io/introduction/what-is-ern
 
-[what is Electrode Native]: https://electrode.gitbooks.io/electrode-native/overview/what-is-ern.html
+[what is Electrode Native]: https://native.electrode.io/introduction/what-is-ern/what-is-ern
 
-[what is a MiniApp]: https://electrode.gitbooks.io/electrode-native/overview/what-is-a-miniapp.html
+[what is a MiniApp]: https://native.electrode.io/introduction/what-is-ern/what-is-a-miniapp
 
-[Electrode Native workflow]: https://electrode.gitbooks.io/electrode-native/overview/ern-workflow.html
+[Electrode Native workflow]: https://native.electrode.io/introduction/what-is-ern/ern-workflow
 
-[Container]: https://electrode.gitbooks.io/electrode-native/platform-parts/container.html
+[Container]: https://native.electrode.io/reference/index-1
 
-[Cauldron]: https://electrode.gitbooks.io/electrode-native/platform-parts/cauldron.html
+[Cauldron]: https://native.electrode.io/reference/index-2
 
-[Manifest]: https://electrode.gitbooks.io/electrode-native/platform-parts/manifest.html
+[Manifest]: https://native.electrode.io/reference/index-3
 
-[apis]: https://electrode.gitbooks.io/electrode-native/platform-parts/apis.html
+[apis]: https://native.electrode.io/reference/index-5
 
-[create-miniapp]: https://electrode.gitbooks.io/electrode-native/cli/create-miniapp.html
+[create-miniapp]: https://native.electrode.io/cli-commands/create-miniapp
 
-[run-android]: https://electrode.gitbooks.io/electrode-native/cli/run-android.html
+[run-android]: https://native.electrode.io/cli-commands/run-android
 
-[platform use]: https://electrode.gitbooks.io/electrode-native/cli/platform/use.html
+[platform use]: https://native.electrode.io/cli-commands/platform/use
 
 [Electrode Native Case Study]: https://www.walmartlabs.com/case-studies/electrode-native
