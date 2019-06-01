@@ -43,7 +43,7 @@ run('cauldron repo list')
 run('compat-check', { expectedExitCode: 1 })
 
 // Miniapp commands
-run(`create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --skipNpmCheck`)
+run(`create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --language JavaScript --packageManager yarn --skipNpmCheck`)
 const miniAppPath = path.join(process.cwd(), f.systemTestMiniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
