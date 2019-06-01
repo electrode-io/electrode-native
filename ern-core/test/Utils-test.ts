@@ -1,7 +1,11 @@
 import sinon from 'sinon'
 import * as coreUtils from '../src/utils'
 import log from '../src/log'
-import { NativeApplicationDescriptor } from '../src/NativeApplicationDescriptor'
+import {
+  AppVersionDescriptor,
+  AppPlatformDescriptor,
+  AppNameDescriptor,
+} from '../src/descriptors'
 import { PackagePath } from '../src/PackagePath'
 const sandbox = sinon.createSandbox()
 import { expect, assert } from 'chai'
@@ -37,29 +41,23 @@ describe('Core Utils', () => {
     })
   })
 
-  describe('coerceToNativeApplicationDescriptor', () => {
-    it('should coerce a string to a NativeApplicationDescriptor', () => {
-      expect(
-        coreUtils.coerceToNativeApplicationDescriptor('test:android:1.0.0')
-      ).eql(NativeApplicationDescriptor.fromString('test:android:1.0.0'))
+  describe('coerceToAppVersionDescriptor', () => {
+    it('should coerce a string to a AppVersionDescriptor', () => {
+      expect(coreUtils.coerceToAppVersionDescriptor('test:android:1.0.0')).eql(
+        AppVersionDescriptor.fromString('test:android:1.0.0')
+      )
     })
 
-    it('should coerce a NativeApplicationDescriptor to a NativeApplicationDescriptor (noop)', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
-        'test:android:1.0.0'
-      )
-      expect(coreUtils.coerceToNativeApplicationDescriptor(descriptor)).eql(
-        descriptor
-      )
+    it('should coerce an AppVersionDescriptor to a AppVersionDescriptor (noop)', () => {
+      const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0')
+      expect(coreUtils.coerceToAppVersionDescriptor(descriptor)).eql(descriptor)
     })
   })
 
-  describe('coerceToNativeApplicationDescriptorArray', () => {
-    it('should coerce a string to a NativeApplicationDescriptor array', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
-        'test:android:1.0.0'
-      )
-      const result = coreUtils.coerceToNativeApplicationDescriptorArray(
+  describe('coerceToAppVersionDescriptorArray', () => {
+    it('should coerce a string to a AppVersionDescriptor array', () => {
+      const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0')
+      const result = coreUtils.coerceToAppVersionDescriptorArray(
         'test:android:1.0.0'
       )
       expect(result)
@@ -68,27 +66,19 @@ describe('Core Utils', () => {
       expect(result[0]).eql(descriptor)
     })
 
-    it('should coerce a NativeApplicationDescriptor to a NativeApplicationDescriptor array', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
-        'test:android:1.0.0'
-      )
-      const result = coreUtils.coerceToNativeApplicationDescriptorArray(
-        descriptor
-      )
+    it('should coerce a AppVersionDescriptor to a AppVersionDescriptor array', () => {
+      const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0')
+      const result = coreUtils.coerceToAppVersionDescriptorArray(descriptor)
       expect(result)
         .is.an('array')
         .of.length(1)
       expect(result[0]).eql(descriptor)
     })
 
-    it('should coerce a string|NativeApplication descriptor mixed array to a NativeApplicationDescriptor arry', () => {
-      const descriptorA = NativeApplicationDescriptor.fromString(
-        'test:android:1.0.0'
-      )
-      const descriptorB = NativeApplicationDescriptor.fromString(
-        'test:android:2.0.0'
-      )
-      const result = coreUtils.coerceToNativeApplicationDescriptorArray([
+    it('should coerce a string|AppVersionDescriptor descriptor mixed array to a AppVersionDescriptor arry', () => {
+      const descriptorA = AppVersionDescriptor.fromString('test:android:1.0.0')
+      const descriptorB = AppVersionDescriptor.fromString('test:android:2.0.0')
+      const result = coreUtils.coerceToAppVersionDescriptorArray([
         'test:android:1.0.0',
         descriptorB,
       ])

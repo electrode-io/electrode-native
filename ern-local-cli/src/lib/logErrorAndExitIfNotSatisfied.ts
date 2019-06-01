@@ -1,4 +1,10 @@
-import { kax, NativeApplicationDescriptor, PackagePath, utils } from 'ern-core'
+import {
+  kax,
+  PackagePath,
+  utils,
+  AppVersionDescriptor,
+  AnyAppDescriptor,
+} from 'ern-core'
 import { Ensure } from 'ern-orchestrator'
 import fs from 'fs'
 
@@ -7,7 +13,6 @@ export async function logErrorAndExitIfNotSatisfied({
   noFileSystemPath,
   isValidContainerVersion,
   isNewerContainerVersion,
-  isCompleteNapDescriptorString,
   napDescriptorExistInCauldron,
   sameNativeApplicationAndPlatform,
   napDescritorDoesNotExistsInCauldron,
@@ -45,27 +50,20 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   isNewerContainerVersion?: {
-    descriptor: string | NativeApplicationDescriptor
+    descriptor: string | AppVersionDescriptor
     containerVersion: string
     extraErrorMessage?: string
   }
-  isCompleteNapDescriptorString?: {
-    descriptor: string | NativeApplicationDescriptor
-    extraErrorMessage?: string
-  }
   napDescriptorExistInCauldron?: {
-    descriptor:
-      | string
-      | NativeApplicationDescriptor
-      | Array<string | NativeApplicationDescriptor>
+    descriptor: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>
     extraErrorMessage?: string
   }
   sameNativeApplicationAndPlatform?: {
-    descriptors: Array<string | NativeApplicationDescriptor>
+    descriptors: Array<string | AppVersionDescriptor>
     extraErrorMessage?: string
   }
   napDescritorDoesNotExistsInCauldron?: {
-    descriptor: string | NativeApplicationDescriptor
+    descriptor: string | AnyAppDescriptor
     extraErrorMessage?: string
   }
   publishedToNpm?: {
@@ -74,37 +72,37 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   miniAppNotInNativeApplicationVersionContainer?: {
     miniApp: string | PackagePath | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   miniAppIsInNativeApplicationVersionContainer?: {
     miniApp: string | PackagePath[] | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     miniApp: string | PackagePath[] | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   dependencyNotInNativeApplicationVersionContainer?: {
     dependency: string | PackagePath[] | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   dependencyIsInNativeApplicationVersionContainer?: {
     dependency: string | PackagePath[] | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
     dependency: string | PackagePath[] | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   dependencyNotInUseByAMiniApp?: {
     dependency: string | PackagePath | Array<string | PackagePath> | void
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     extraErrorMessage?: string
   }
   cauldronIsActive?: {
@@ -119,7 +117,7 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   checkIfCodePushOptionsAreValid?: {
-    descriptors?: Array<string | NativeApplicationDescriptor>
+    descriptors?: Array<string | AppVersionDescriptor>
     targetBinaryVersion?: string
     semVerDescriptor?: string
     extraErrorMessage?: string
@@ -182,16 +180,6 @@ export async function logErrorAndExitIfNotSatisfied({
         isNewerContainerVersion.descriptor,
         isNewerContainerVersion.containerVersion,
         isNewerContainerVersion.extraErrorMessage
-      )
-      kaxTask.succeed()
-    }
-    if (isCompleteNapDescriptorString) {
-      kaxTask = kax.task(
-        'Ensuring that native application descriptor is complete'
-      )
-      Ensure.isCompleteNapDescriptorString(
-        isCompleteNapDescriptorString.descriptor,
-        isCompleteNapDescriptorString.extraErrorMessage
       )
       kaxTask.succeed()
     }

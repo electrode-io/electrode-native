@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   epilog,
@@ -12,16 +12,14 @@ export const desc = 'Remove a native application from the cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   descriptor,
 }: {
-  descriptor: NativeApplicationDescriptor
+  descriptor: AppVersionDescriptor
 }) => {
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: {

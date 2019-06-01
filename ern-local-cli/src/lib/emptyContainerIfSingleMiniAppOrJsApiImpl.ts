@@ -1,8 +1,8 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor } from 'ern-core'
+import { AppVersionDescriptor } from 'ern-core'
 
 export async function emptyContainerIfSingleMiniAppOrJsApiImpl(
-  descriptor: NativeApplicationDescriptor
+  descriptor: AppVersionDescriptor
 ): Promise<boolean> {
   const cauldron = await getActiveCauldron()
   const containerMiniApps = await cauldron.getContainerMiniApps(descriptor)

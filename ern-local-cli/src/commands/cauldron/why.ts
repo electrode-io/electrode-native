@@ -1,5 +1,5 @@
 import {
-  NativeApplicationDescriptor,
+  AppVersionDescriptor,
   PackagePath,
   YarnLockParser,
   log,
@@ -27,9 +27,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .epilog(epilog(exports))
 }
 
@@ -38,7 +36,7 @@ export const commandHandler = async ({
   descriptor,
 }: {
   dependency: PackagePath
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
 }) => {
   if (descriptor) {
     await logErrorAndExitIfNotSatisfied({

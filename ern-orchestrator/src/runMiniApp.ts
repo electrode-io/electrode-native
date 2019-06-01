@@ -3,13 +3,13 @@ import {
   kax,
   log,
   MiniApp,
-  NativeApplicationDescriptor,
   NativePlatform,
   PackagePath,
   Platform,
   reactnative,
   shell,
   utils,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -41,7 +41,7 @@ export async function runMiniApp(
     miniapps?: PackagePath[]
     jsApiImpls?: PackagePath[]
     dependencies?: PackagePath[]
-    descriptor?: string | NativeApplicationDescriptor
+    descriptor?: string | AppVersionDescriptor
     dev?: boolean
     host?: string
     port?: string
@@ -51,7 +51,7 @@ export async function runMiniApp(
 ) {
   cwd = cwd || process.cwd()
 
-  let napDescriptor: NativeApplicationDescriptor | void
+  let napDescriptor: AppVersionDescriptor | void
 
   if (miniapps && !MiniApp.existInPath(cwd) && !mainMiniAppName) {
     throw new Error(
@@ -85,7 +85,7 @@ export async function runMiniApp(
   let cauldron
   if (descriptor) {
     cauldron = await getActiveCauldron()
-    napDescriptor = utils.coerceToNativeApplicationDescriptor(descriptor)
+    napDescriptor = utils.coerceToAppVersionDescriptor(descriptor)
   }
 
   const compositeGenConfig =

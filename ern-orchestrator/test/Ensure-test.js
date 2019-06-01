@@ -46,29 +46,6 @@ describe('Ensure.js', () => {
   })
 
   // ==========================================================
-  // isCompleteNapDescriptorString
-  // ==========================================================
-  describe('isCompleteNapDescriptorString', () => {
-    fixtures.completeNapDescriptors.forEach(napDescriptor => {
-      it('shoud not throw if given a complete napDescriptor string', () => {
-        expect(
-          () => Ensure.isCompleteNapDescriptorString(napDescriptor),
-          `throw for ${napDescriptor}`
-        ).to.not.throw()
-      })
-    })
-
-    fixtures.incompleteNapDescriptors.forEach(napDescriptor => {
-      it('should throw if given a partial napDescriptor string', () => {
-        expect(
-          () => Ensure.isCompleteNapDescriptorString(napDescriptor),
-          `does not throw for ${napDescriptor}`
-        ).to.throw()
-      })
-    })
-  })
-
-  // ==========================================================
   // noGitOrFilesystemPath
   // ==========================================================
   describe('noGitOrFilesystemPath', () => {

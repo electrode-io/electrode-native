@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushPromote } from 'ern-orchestrator'
 import {
@@ -65,9 +65,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
-    .coerce('sourceDescriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('sourceDescriptor', d => AppVersionDescriptor.fromString(d))
     .option('targetBinaryVersion', {
       alias: 't',
       describe:
@@ -84,9 +82,7 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('targetDescriptors', d =>
-      d.map(t =>
-        NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
-      )
+      d.map(t => AppVersionDescriptor.fromString(t))
     )
     .option('targetSemVerDescriptor', {
       describe:
@@ -116,8 +112,8 @@ export const commandHandler = async ({
   sourceDeploymentName?: string
   targetBinaryVersion?: string
   targetDeploymentName?: string
-  sourceDescriptor?: NativeApplicationDescriptor
-  targetDescriptors?: NativeApplicationDescriptor[]
+  sourceDescriptor?: AppVersionDescriptor
+  targetDescriptors?: AppVersionDescriptor[]
   targetSemVerDescriptor?: string
   rollout?: number
   skipConfirmation?: boolean
@@ -157,7 +153,7 @@ export const commandHandler = async ({
     )
   } else if (targetSemVerDescriptor) {
     // User provided a target semver descriptor
-    const targetSemVerNapDescriptor = NativeApplicationDescriptor.fromString(
+    const targetSemVerNapDescriptor = AppVersionDescriptor.fromString(
       targetSemVerDescriptor
     )
     const cauldron = await getActiveCauldron()

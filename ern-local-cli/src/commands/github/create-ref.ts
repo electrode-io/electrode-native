@@ -1,4 +1,4 @@
-import { log, NativeApplicationDescriptor, PackagePath } from 'ern-core'
+import { log, AppVersionDescriptor, PackagePath } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { createBranch, createTag } from 'ern-orchestrator'
 import {
@@ -25,9 +25,7 @@ export const builder = (argv: Argv) => {
         'Native application version containing the packages to create a branch/tag for',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('fromBranch', {
       describe:
         'Create the ref from the current tracked branches of the packages',
@@ -62,7 +60,7 @@ export const commandHandler = async ({
   tag,
 }: {
   branch?: string
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   fromBranch?: boolean
   fromTagOrSha?: boolean
   jsApiImplsOnly?: boolean

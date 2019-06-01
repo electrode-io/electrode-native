@@ -5,7 +5,7 @@ import {
 } from '../lib'
 import { start } from 'ern-orchestrator'
 import _ from 'lodash'
-import { PackagePath, NativeApplicationDescriptor } from 'ern-core'
+import { PackagePath, AppVersionDescriptor } from 'ern-core'
 import { Argv } from 'yargs'
 
 export const command = 'start'
@@ -33,9 +33,7 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application selector',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('extraJsDependencies', {
       alias: 'e',
       describe:
@@ -90,7 +88,7 @@ export const commandHandler = async ({
   activityName?: string
   baseComposite?: PackagePath
   bundleId?: string
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   extraJsDependencies?: PackagePath[]
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]

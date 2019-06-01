@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { AnyAppDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
@@ -8,7 +8,7 @@ export const desc = 'Get a native application from the cauldron'
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', NativeApplicationDescriptor.fromString)
+    .coerce('descriptor', (d: string) => d.toAppDescriptor())
     .option('json', {
       describe: 'Output result as a single line JSON record',
       type: 'boolean',
@@ -20,7 +20,7 @@ export const commandHandler = async ({
   descriptor,
   json,
 }: {
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AnyAppDescriptor
   json?: boolean
 }) => {
   const cauldron = await getActiveCauldron()

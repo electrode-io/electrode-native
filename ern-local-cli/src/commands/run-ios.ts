@@ -1,10 +1,5 @@
 import { epilog, tryCatchWrap } from '../lib'
-import {
-  deviceConfig,
-  log,
-  NativeApplicationDescriptor,
-  PackagePath,
-} from 'ern-core'
+import { deviceConfig, log, AppVersionDescriptor, PackagePath } from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
 
@@ -30,9 +25,7 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('dev', {
       default: true,
       describe: 'Enable or disable React Native dev support',
@@ -80,7 +73,7 @@ export const commandHandler = async ({
 }: {
   baseComposite?: PackagePath
   dependencies: PackagePath[]
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   dev?: boolean
   host?: string
   mainMiniAppName?: string

@@ -9,12 +9,12 @@ import { IosGenerator } from 'ern-container-gen-ios'
 import {
   createTmpDir,
   PackagePath,
-  NativeApplicationDescriptor,
   Platform,
   log,
   NativePlatform,
   kax,
   BundlingResult,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
@@ -65,7 +65,7 @@ export async function runLocalContainerGen(
 
 // Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronContainerGen(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   composite: Composite,
   {
     outDir,
@@ -137,7 +137,7 @@ export async function runCauldronContainerGen(
 }
 
 export async function runCaudronBundleGen(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   {
     baseComposite,
     compositeDir,

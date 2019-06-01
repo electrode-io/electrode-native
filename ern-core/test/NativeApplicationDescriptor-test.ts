@@ -1,43 +1,32 @@
 import { expect } from 'chai'
-import { NativeApplicationDescriptor } from '../src/NativeApplicationDescriptor'
+import {
+  AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+} from '../src/descriptors'
 
-describe('NativeApplicationDescriptor', () => {
+describe('Descriptors', () => {
   describe('constructor', () => {
-    it('should instantiate a patial NativeApplicationDescriptor [name]', () => {
+    it('should instantiate a patial descriptor [name]', () => {
+      expect(() => new AppNameDescriptor('MyNativeAppName')).to.not.throw()
+    })
+
+    it('should instantiate a partial descriptor [name:platform]', () => {
       expect(
-        () => new NativeApplicationDescriptor('MyNativeAppName')
+        () => new AppPlatformDescriptor('MyNativeAppName', 'android')
       ).to.not.throw()
     })
 
-    it('should instantiate a partial NativeApplicationDescriptor [name:platform]', () => {
+    it('should instantiate a complete descriptor [name:platform:version]', () => {
       expect(
-        () => new NativeApplicationDescriptor('MyNativeAppName', 'android')
+        () => new AppVersionDescriptor('MyNativeAppName', 'android', '1.2.3')
       ).to.not.throw()
-    })
-
-    it('should instantiate a complete NativeApplicationDescriptor [name:platform:version]', () => {
-      expect(
-        () =>
-          new NativeApplicationDescriptor('MyNativeAppName', 'android', '1.2.3')
-      ).to.not.throw()
-    })
-
-    it('should throw if version is provided but not platform', () => {
-      expect(
-        () => new NativeApplicationDescriptor('MyNativeAppName', null!, '1.2.3')
-      ).to.throw()
-    })
-
-    it('should throw if empty name is provided', () => {
-      expect(
-        () => new NativeApplicationDescriptor('', 'android', '1.2.3')
-      ).to.throw()
     })
   })
 
   describe('name getter', () => {
     it('should return the native application name', () => {
-      const descriptor = new NativeApplicationDescriptor(
+      const descriptor = new AppVersionDescriptor(
         'MyNativeAppName',
         'android',
         '1.2.3'
@@ -48,7 +37,7 @@ describe('NativeApplicationDescriptor', () => {
 
   describe('platform getter', () => {
     it('should return the native application platform', () => {
-      const descriptor = new NativeApplicationDescriptor(
+      const descriptor = new AppVersionDescriptor(
         'MyNativeAppName',
         'android',
         '1.2.3'
@@ -59,7 +48,7 @@ describe('NativeApplicationDescriptor', () => {
 
   describe('version getter', () => {
     it('should return the native application version', () => {
-      const descriptor = new NativeApplicationDescriptor(
+      const descriptor = new AppVersionDescriptor(
         'MyNativeAppName',
         'android',
         '1.2.3'
@@ -68,52 +57,9 @@ describe('NativeApplicationDescriptor', () => {
     })
   })
 
-  describe('isComplete getter', () => {
-    it('should return true if the NativeApplicationDescriptor is complete', () => {
-      const descriptor = new NativeApplicationDescriptor(
-        'MyNativeAppName',
-        'android',
-        '1.2.3'
-      )
-      expect(descriptor.isComplete).true
-    })
-
-    it('should return false if the NativeApplicationDescriptor is not complete', () => {
-      const descriptor = new NativeApplicationDescriptor(
-        'MyNativeAppName',
-        'android'
-      )
-      expect(descriptor.isComplete).false
-    })
-  })
-
-  describe('isPartial getter', () => {
-    it('should return true if the NativeApplicationDescriptor is partial [1]', () => {
-      const descriptor = new NativeApplicationDescriptor(
-        'MyNativeAppName',
-        'android'
-      )
-      expect(descriptor.isPartial).true
-    })
-
-    it('should return true if the NativeApplicationDescriptor is partial [2]', () => {
-      const descriptor = new NativeApplicationDescriptor('MyNativeAppName')
-      expect(descriptor.isPartial).true
-    })
-
-    it('should return false if the NativeApplicationDescriptor is not partial', () => {
-      const descriptor = new NativeApplicationDescriptor(
-        'MyNativeAppName',
-        'android',
-        '1.2.3'
-      )
-      expect(descriptor.isPartial).false
-    })
-  })
-
   describe('fromString', () => {
-    it('should work with a complete NativeApplicationDescriptor litteral', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
+    it('should work with a complete descriptor litteral', () => {
+      const descriptor = AppVersionDescriptor.fromString(
         'MyNativeAppName:android:1.2.3'
       )
       expect(descriptor.name).to.equal('MyNativeAppName')
@@ -121,85 +67,38 @@ describe('NativeApplicationDescriptor', () => {
       expect(descriptor.version).to.equal('1.2.3')
     })
 
-    it('should work with a partial NativeApplicationDescriptor litteral [1]', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
+    it('should work with a partial descriptor litteral [1]', () => {
+      const descriptor = AppPlatformDescriptor.fromString(
         'MyNativeAppName:android'
       )
       expect(descriptor.name).to.equal('MyNativeAppName')
       expect(descriptor.platform).to.equal('android')
     })
 
-    it('should work with a partial NativeApplicationDescriptor litteral [2]', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
-        'MyNativeAppName'
-      )
+    it('should work with a partial descriptor litteral [2]', () => {
+      const descriptor = AppNameDescriptor.fromString('MyNativeAppName')
       expect(descriptor.name).to.equal('MyNativeAppName')
-    })
-
-    it('should throw if the descriptor is not complete and throwIfNotComplete is true', () => {
-      expect(() =>
-        NativeApplicationDescriptor.fromString('MyNativeAppName', {
-          throwIfNotComplete: true,
-        })
-      ).to.throw()
-    })
-
-    it('should not throw if the descriptor is complete and throwIfNotComplete is true', () => {
-      expect(() =>
-        NativeApplicationDescriptor.fromString(
-          'MyNativeAppName:android:1.0.0',
-          { throwIfNotComplete: true }
-        )
-      ).to.not.throw()
-    })
-
-    it('should not throw if the descriptor is not complete and throwIfNotComplete is false', () => {
-      expect(() =>
-        NativeApplicationDescriptor.fromString('MyNativeAppName', {
-          throwIfNotComplete: false,
-        })
-      ).to.not.throw()
-    })
-
-    it('should not throw if the descriptor is not complete and throwIfNotComplete is undefined', () => {
-      expect(() =>
-        NativeApplicationDescriptor.fromString('MyNativeAppName', {
-          throwIfNotComplete: false,
-        })
-      ).to.not.throw()
     })
   })
 
   describe('toString', () => {
     it('should return the correct string [1]', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
+      const descriptor = AppVersionDescriptor.fromString(
         'MyNativeAppName:android:1.2.3'
       )
       expect(descriptor.toString()).to.equal('MyNativeAppName:android:1.2.3')
     })
 
     it('should return the correct string [2]', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
+      const descriptor = AppPlatformDescriptor.fromString(
         'MyNativeAppName:android'
       )
       expect(descriptor.toString()).to.equal('MyNativeAppName:android')
     })
 
     it('should return the correct string [3]', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
-        'MyNativeAppName'
-      )
+      const descriptor = AppNameDescriptor.fromString('MyNativeAppName')
       expect(descriptor.toString()).to.equal('MyNativeAppName')
-    })
-  })
-
-  describe('withoutVersion', () => {
-    it('should create a new native application descriptor without the version', () => {
-      const descriptor = NativeApplicationDescriptor.fromString(
-        'MyNativeAppName:android:1.2.3'
-      )
-      const newDescriptor = descriptor.withoutVersion()
-      expect(newDescriptor.toString()).to.equal('MyNativeAppName:android')
     })
   })
 })

@@ -1,6 +1,6 @@
 import {
   PackagePath,
-  NativeApplicationDescriptor,
+  AppVersionDescriptor,
   log,
   utils as coreUtils,
 } from 'ern-core'
@@ -38,11 +38,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptors (target native application versions for the push)',
       type: 'array',
     })
-    .coerce('descriptors', d =>
-      d.map(t =>
-        NativeApplicationDescriptor.fromString(t, { throwIfNotComplete: true })
-      )
-    )
+    .coerce('descriptors', d => d.map(t => AppVersionDescriptor.fromString(t)))
     .option('force', {
       alias: 'f',
       describe:
@@ -104,7 +100,7 @@ export const commandHandler = async ({
 }: {
   deploymentName: string
   description: string
-  descriptors?: NativeApplicationDescriptor[]
+  descriptors?: AppVersionDescriptor[]
   force: boolean
   jsApiImpls: string[]
   mandatory?: boolean
@@ -149,7 +145,7 @@ export const commandHandler = async ({
     })
   } else if (semVerDescriptor) {
     // User provided a semver Descriptor
-    const semVerNapDescriptor = NativeApplicationDescriptor.fromString(
+    const semVerNapDescriptor = AppVersionDescriptor.fromString(
       semVerDescriptor
     )
     const cauldron = await getActiveCauldron()
@@ -220,7 +216,7 @@ export const commandHandler = async ({
 }
 
 async function getPathToYarnLock(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   deploymentName: string
 ) {
   const cauldron = await getActiveCauldron()

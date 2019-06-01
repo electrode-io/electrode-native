@@ -1,7 +1,7 @@
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
 import jp from 'jsonpath'
-import { NativeApplicationDescriptor, CodePushSdk, PackagePath } from 'ern-core'
+import { AppVersionDescriptor, CodePushSdk, PackagePath } from 'ern-core'
 import {
   CauldronApi,
   CauldronHelper,
@@ -15,15 +15,16 @@ import * as cauldronApi from 'ern-cauldron-api'
 import * as sut from '../src/codepush'
 import * as compatibility from '../src/compatibility'
 import path from 'path'
+import { AppPlatformDescriptor } from 'ern-core'
 
 const sandbox = sinon.createSandbox()
 
 const testAndroid1770Path =
   '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")]'
-const testAndroid1770Descriptor = NativeApplicationDescriptor.fromString(
+const testAndroid1770Descriptor = AppVersionDescriptor.fromString(
   'test:android:17.7.0'
 )
-const testAndroid1780Descriptor = NativeApplicationDescriptor.fromString(
+const testAndroid1780Descriptor = AppVersionDescriptor.fromString(
   'test:android:17.8.0'
 )
 
@@ -282,20 +283,6 @@ describe('codepush', () => {
         size: 12345,
       })
     }
-
-    it('should throw if one or more target descriptor does not include a version', async () => {
-      prepareStubs()
-      assert(
-        await doesThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [NativeApplicationDescriptor.fromString('test:android')],
-          'QA',
-          'Production'
-        )
-      )
-    })
 
     it('should throw if no matching source code push entry is not found in Cauldron', async () => {
       prepareStubs()
@@ -673,17 +660,6 @@ describe('codepush', () => {
   })
 
   describe('buildCodePushTargetBinaryVersion', () => {
-    it('should throw if the descriptor is missing the version', async () => {
-      assert(
-        await doesThrow(
-          sut.buildCodePushTargetBinaryVersion,
-          sut,
-          NativeApplicationDescriptor.fromString('test:android'),
-          'Production'
-        )
-      )
-    })
-
     it('should return the native application version as such if no version modifiers are defined in the config', async () => {
       const result = await sut.buildCodePushTargetBinaryVersion(
         testAndroid1770Descriptor,

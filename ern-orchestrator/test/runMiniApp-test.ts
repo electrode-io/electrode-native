@@ -4,7 +4,7 @@ import {
   EphemeralFileStore,
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor, PackagePath, Platform } from 'ern-core'
+import { AppVersionDescriptor, PackagePath, Platform } from 'ern-core'
 import * as core from 'ern-core'
 import * as cauldronApi from 'ern-cauldron-api'
 import * as publisher from 'ern-container-publisher'
@@ -35,7 +35,7 @@ function createCauldronHelper(cauldronDocument) {
   return new CauldronHelper(createCauldronApi(cauldronDocument))
 }
 
-const testAndroid1770Descriptor = NativeApplicationDescriptor.fromString(
+const testAndroid1770Descriptor = AppVersionDescriptor.fromString(
   'test:android:17.7.0'
 )
 

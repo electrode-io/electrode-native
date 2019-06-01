@@ -6,7 +6,7 @@ import {
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
 import { fixtures } from 'ern-util-dev'
-import { NativeApplicationDescriptor } from 'ern-core'
+import { AppVersionDescriptor } from 'ern-core'
 import * as cauldronApi from 'ern-cauldron-api'
 import { expect } from 'chai'
 import sinon from 'sinon'
@@ -111,7 +111,7 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
     const result = await emptyContainerIfSingleMiniAppOrJsApiImpl(
-      NativeApplicationDescriptor.fromString('test:android:1.0.0')
+      AppVersionDescriptor.fromString('test:android:1.0.0')
     )
     expect(result).true
   })
@@ -122,7 +122,7 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
     const result = await emptyContainerIfSingleMiniAppOrJsApiImpl(
-      NativeApplicationDescriptor.fromString('test:android:17.7.0')
+      AppVersionDescriptor.fromString('test:android:17.7.0')
     )
     expect(result).false
   })
@@ -133,7 +133,7 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
     await emptyContainerIfSingleMiniAppOrJsApiImpl(
-      NativeApplicationDescriptor.fromString('test:android:1.0.0')
+      AppVersionDescriptor.fromString('test:android:1.0.0')
     )
     const version = jp.query(fixture, testAndroid100Path)[0]
     expect(version.container.miniApps).empty
@@ -147,7 +147,7 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
     await emptyContainerIfSingleMiniAppOrJsApiImpl(
-      NativeApplicationDescriptor.fromString('test:android:1.0.0')
+      AppVersionDescriptor.fromString('test:android:1.0.0')
     )
     const version = jp.query(fixture, testAndroid100Path)[0]
     expect(version.container.jsApiImpls).empty

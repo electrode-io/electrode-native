@@ -1,9 +1,9 @@
-import { NativeApplicationDescriptor } from 'ern-core'
+import { AppVersionDescriptor } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import inquirer from 'inquirer'
 
 export async function askUserForCodePushDeploymentName(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   message?: string
 ): Promise<string> {
   const cauldron = await getActiveCauldron()

@@ -1,9 +1,4 @@
-import {
-  PackagePath,
-  MiniApp,
-  NativeApplicationDescriptor,
-  log,
-} from 'ern-core'
+import { PackagePath, MiniApp, AppVersionDescriptor, log } from 'ern-core'
 import { checkCompatibilityWithNativeApp } from 'ern-orchestrator'
 import {
   epilog,
@@ -24,9 +19,7 @@ export const builder = (argv: Argv) => {
       describe:
         'Full native application selector (target native application version for the push)',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .coerce('miniapp', PackagePath.fromString)
     .option('miniapps', {
       alias: 'm',
@@ -43,7 +36,7 @@ export const commandHandler = async ({
   miniapp,
   miniapps = [],
 }: {
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   miniapp?: PackagePath
   miniapps: PackagePath[]
 }) => {

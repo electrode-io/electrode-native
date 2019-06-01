@@ -2,10 +2,10 @@ import { Composite } from 'ern-composite-gen'
 import {
   createTmpDir,
   PackagePath,
-  NativeApplicationDescriptor,
   log,
   kax,
   YarnLockParser,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import treeify from 'treeify'
@@ -46,7 +46,7 @@ export async function runLocalCompositeGen(
 
 // Run container generator using the Cauldron, given a native application descriptor
 export async function runCauldronCompositeGen(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   {
     baseComposite,
     outDir,

@@ -1,9 +1,10 @@
 import {
   manifest,
   PackagePath,
-  NativeApplicationDescriptor,
   utils as coreUtils,
   dependencyLookup,
+  AppVersionDescriptor,
+  AnyAppDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { getContainerMetadataPath } from 'ern-container-gen'
@@ -49,13 +50,13 @@ export default class Ensure {
   }
 
   public static async isNewerContainerVersion(
-    descriptor: string | NativeApplicationDescriptor,
+    descriptor: string | AppVersionDescriptor,
     containerVersion: string,
     extraErrorMessage: string = ''
   ) {
     const cauldron = await getActiveCauldron()
     const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(
-      coreUtils.coerceToNativeApplicationDescriptor(descriptor)
+      coreUtils.coerceToAppVersionDescriptor(descriptor)
     )
     if (
       cauldronContainerVersion &&
@@ -63,17 +64,6 @@ export default class Ensure {
     ) {
       throw new Error(
         `Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`
-      )
-    }
-  }
-
-  public static isCompleteNapDescriptorString(
-    descriptor: string | NativeApplicationDescriptor,
-    extraErrorMessage: string = ''
-  ) {
-    if (coreUtils.coerceToNativeApplicationDescriptor(descriptor).isPartial) {
-      throw new Error(
-        `${descriptor} is not a complete native application descriptor, in the form application:platform:version\n${extraErrorMessage}`
       )
     }
   }
@@ -109,14 +99,11 @@ export default class Ensure {
   }
 
   public static async napDescritorExistsInCauldron(
-    d:
-      | string
-      | NativeApplicationDescriptor
-      | Array<string | NativeApplicationDescriptor>,
+    d: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>,
     extraErrorMessage: string = ''
   ) {
     const cauldron = await getActiveCauldron()
-    const descriptors = coreUtils.coerceToNativeApplicationDescriptorArray(d)
+    const descriptors = coreUtils.coerceToAnyAppDescriptorArray(d)
     for (const descriptor of descriptors) {
       const result = await cauldron.isDescriptorInCauldron(descriptor)
       if (!result) {
@@ -128,11 +115,11 @@ export default class Ensure {
   }
 
   public static sameNativeApplicationAndPlatform(
-    descriptors: Array<string | NativeApplicationDescriptor>,
+    descriptors: Array<string | AppVersionDescriptor>,
     extraErrorMessage: string = ''
   ) {
     const basePathDescriptors = _.map(
-      coreUtils.coerceToNativeApplicationDescriptorArray(descriptors),
+      coreUtils.coerceToAppVersionDescriptorArray(descriptors),
       d => `${d.name}:${d.platform}`
     )
     if (_.uniq(basePathDescriptors).length > 1) {
@@ -143,11 +130,11 @@ export default class Ensure {
   }
 
   public static async napDescritorDoesNotExistsInCauldron(
-    d: NativeApplicationDescriptor | string,
+    d: AnyAppDescriptor | string,
     extraErrorMessage: string = ''
   ) {
     const cauldron = await getActiveCauldron()
-    const descriptor = coreUtils.coerceToNativeApplicationDescriptor(d)
+    const descriptor = coreUtils.coerceToAnyAppDescriptor(d)
     if (await cauldron.isDescriptorInCauldron(descriptor)) {
       throw new Error(
         `${descriptor} descriptor exist in Cauldron.\n${extraErrorMessage}`
@@ -171,7 +158,7 @@ export default class Ensure {
 
   public static async miniAppNotInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -194,7 +181,7 @@ export default class Ensure {
 
   public static async dependencyNotInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -220,7 +207,7 @@ export default class Ensure {
 
   public static async miniAppIsInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -243,7 +230,7 @@ export default class Ensure {
 
   public static async dependencyIsInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -269,7 +256,7 @@ export default class Ensure {
 
   public static async miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -300,7 +287,7 @@ export default class Ensure {
 
   public static async dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
     obj: string | PackagePath[] | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -333,7 +320,7 @@ export default class Ensure {
 
   public static async dependencyNotInUseByAMiniApp(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    napDescriptor: NativeApplicationDescriptor,
+    napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = ''
   ) {
     if (!obj) {
@@ -429,7 +416,7 @@ export default class Ensure {
   }
 
   public static checkIfCodePushOptionsAreValid(
-    descriptors?: Array<string | NativeApplicationDescriptor>,
+    descriptors?: Array<string | AppVersionDescriptor>,
     targetBinaryVersion?: string,
     semVerDescriptor?: string,
     extraErrorMessage: string = ''

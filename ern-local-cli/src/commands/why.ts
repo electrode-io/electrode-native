@@ -1,6 +1,6 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
-  NativeApplicationDescriptor,
+  AppVersionDescriptor,
   PackagePath,
   dependencyLookup,
   log,
@@ -27,9 +27,7 @@ export const commandHandler = async ({
   log.warn(
     'This command has been deprecated in 0.31.0. Use `ern cauldry why` instead.'
   )
-  const napDescriptor = NativeApplicationDescriptor.fromString(
-    completeNapDescriptor
-  )
+  const napDescriptor = AppVersionDescriptor.fromString(completeNapDescriptor)
   const cauldron = await getActiveCauldron()
   const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
   log.info(`This might take a while. The more MiniApps, the longer.`)

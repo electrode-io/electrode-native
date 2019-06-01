@@ -1,4 +1,4 @@
-import { createTmpDir, yarn, NativeApplicationDescriptor } from 'ern-core'
+import { createTmpDir, yarn, AppVersionDescriptor } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import sinon from 'sinon'
 import * as fixtures from './fixtures/common'
@@ -83,34 +83,14 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     assertNoErrorLoggedAndNoProcessExit()
   })
 
-  it('[isNewerContainerVersion] Should not log error and nor exit process for newer container version [NativeApplicationDescriptor]', async () => {
+  it('[isNewerContainerVersion] Should not log error and nor exit process for newer container version', async () => {
     await logErrorAndExitIfNotSatisfied({
       isNewerContainerVersion: {
         containerVersion: '2.2.2',
-        descriptor: NativeApplicationDescriptor.fromString(
-          'myapp:android:17.14.0'
-        ),
+        descriptor: AppVersionDescriptor.fromString('myapp:android:17.14.0'),
       },
     })
     assertNoErrorLoggedAndNoProcessExit()
-  })
-
-  fixtures.incompleteNapDescriptors.forEach(descriptor => {
-    it('[isCompleteNapDescriptorString] Should log error and exit process for incomplete nap descriptor', async () => {
-      await logErrorAndExitIfNotSatisfied({
-        isCompleteNapDescriptorString: { descriptor },
-      })
-      assertLoggedErrorAndExitedProcess()
-    })
-  })
-
-  fixtures.completeNapDescriptors.forEach(descriptor => {
-    it('[isCompleteNapDescriptorString] Should not log error nor exit process for complete nap descriptor', async () => {
-      await logErrorAndExitIfNotSatisfied({
-        isCompleteNapDescriptorString: { descriptor },
-      })
-      assertNoErrorLoggedAndNoProcessExit()
-    })
   })
 
   fixtures.withGitOrFileSystemPath.forEach(obj => {
