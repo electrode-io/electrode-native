@@ -36,7 +36,7 @@ export interface NativeDependencies {
 }
 
 export function resolvePackagePaths(paths: string[]): Set<string> {
-  const result = new Set()
+  const result = new Set<string>()
   for (const d of paths) {
     const lastIdx = d.lastIndexOf('node_modules')
     if (lastIdx === -1) {
