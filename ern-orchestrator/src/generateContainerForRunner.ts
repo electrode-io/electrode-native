@@ -1,8 +1,8 @@
 import {
   PackagePath,
-  NativeApplicationDescriptor,
   NativePlatform,
   kax,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { runLocalContainerGen, runCauldronContainerGen } from './container'
 import { runLocalCompositeGen, runCauldronCompositeGen } from './composite'
@@ -19,7 +19,7 @@ export async function generateContainerForRunner(
     extra,
   }: {
     baseComposite?: PackagePath
-    napDescriptor?: NativeApplicationDescriptor
+    napDescriptor?: AppVersionDescriptor
     dependencies?: PackagePath[]
     miniApps?: PackagePath[]
     jsApiImpls?: PackagePath[]

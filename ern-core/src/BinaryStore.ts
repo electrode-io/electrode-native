@@ -1,16 +1,11 @@
-import { NativeApplicationDescriptor } from './NativeApplicationDescriptor'
+import { AppVersionDescriptor } from './descriptors'
 
 export interface BinaryStore {
   addBinary(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     binary: any
   ): Promise<string | Buffer>
-  removeBinary(
-    descriptor: NativeApplicationDescriptor
-  ): Promise<string | Buffer>
-  getBinary(
-    descriptor: NativeApplicationDescriptor,
-    options: any
-  ): Promise<string>
-  hasBinary(descriptor: NativeApplicationDescriptor): Promise<string | Buffer>
+  removeBinary(descriptor: AppVersionDescriptor): Promise<string | Buffer>
+  getBinary(descriptor: AppVersionDescriptor, options: any): Promise<string>
+  hasBinary(descriptor: AppVersionDescriptor): Promise<string | Buffer>
 }

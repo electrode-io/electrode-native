@@ -1,6 +1,6 @@
 import {
   PackagePath,
-  NativeApplicationDescriptor,
+  AppVersionDescriptor,
   NativePlatform,
   kax,
   Platform,
@@ -52,9 +52,7 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('extra', {
       alias: 'e',
       describe:
@@ -118,7 +116,7 @@ export const commandHandler = async ({
   baseComposite?: PackagePath
   compositeDir?: string
   dependencies?: PackagePath[]
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   extra?: string
   fromGitBranches?: boolean
   ignoreRnpmAssets?: boolean

@@ -1,5 +1,10 @@
 import CauldronApi from '../CauldronApi'
-import { log, NativeApplicationDescriptor } from 'ern-core'
+import {
+  log,
+  AppVersionDescriptor,
+  AppPlatformDescriptor,
+  AppNameDescriptor,
+} from 'ern-core'
 
 const transformerPrefix = 'ern-container-transformer-'
 const publisherPrefix = 'ern-container-publisher-'
@@ -59,7 +64,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
       for (const platform of nativeApp.platforms) {
         for (const version of platform.versions) {
           if (version.config) {
-            const versionDesc = new NativeApplicationDescriptor(
+            const versionDesc = new AppVersionDescriptor(
               nativeApp.name,
               platform.name as 'android' | 'ios',
               version.name
@@ -84,7 +89,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
               platform.config.containerGenerator.containerVersion
             delete platform.config.containerGenerator.containerVersion
           }
-          const platformDesc = new NativeApplicationDescriptor(
+          const platformDesc = new AppPlatformDescriptor(
             nativeApp.name,
             platform.name as 'android' | 'ios'
           )
@@ -96,7 +101,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
         }
       }
       if (nativeApp.config) {
-        const nativeAppDesc = new NativeApplicationDescriptor(nativeApp.name)
+        const nativeAppDesc = new AppNameDescriptor(nativeApp.name)
         if (nativeApp.config.containerGenerator) {
           delete nativeApp.config.containerGenerator.containerVersion
         }
@@ -123,7 +128,7 @@ export default async function upgrade(cauldronApi: CauldronApi) {
                 detachContainerVersionFromRoot: (version as any)
                   .detachContainerVersionFromRoot,
               },
-              descriptor: NativeApplicationDescriptor.fromString(
+              descriptor: AppVersionDescriptor.fromString(
                 `${nativeApp.name}:${platform.name}:${version.name}`
               ),
             })

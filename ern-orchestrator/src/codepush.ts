@@ -1,7 +1,7 @@
 import {
   createTmpDir,
   PackagePath,
-  NativeApplicationDescriptor,
+  AppVersionDescriptor,
   reactnative,
   CodePushPackage,
   getCodePushSdk,
@@ -18,7 +18,7 @@ import fs from 'fs'
 import semver from 'semver'
 
 export async function performCodePushPatch(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   deploymentName: string,
   label: string,
   {
@@ -68,8 +68,8 @@ export async function performCodePushPatch(
 }
 
 export async function performCodePushPromote(
-  sourceNapDescriptor: NativeApplicationDescriptor,
-  targetNapDescriptors: NativeApplicationDescriptor[],
+  sourceNapDescriptor: AppVersionDescriptor,
+  targetNapDescriptors: AppVersionDescriptor[],
   sourceDeploymentName: string,
   targetDeploymentName: string,
   {
@@ -214,7 +214,7 @@ export async function performCodePushPromote(
 }
 
 export async function performCodePushOtaUpdate(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   deploymentName: string,
   miniApps: PackagePath[],
   jsApiImpls: PackagePath[],
@@ -432,7 +432,7 @@ export async function performCodePushOtaUpdate(
 }
 
 export async function buildCodePushTargetBinaryVersion(
-  napDescriptor: NativeApplicationDescriptor,
+  napDescriptor: AppVersionDescriptor,
   deploymentName: string
 ) {
   if (!napDescriptor.version) {
@@ -498,7 +498,7 @@ export function removeZeroPatchDigit({
 }
 
 export async function getCodePushAppName(
-  napDescriptor: NativeApplicationDescriptor
+  napDescriptor: AppVersionDescriptor
 ): Promise<string> {
   let result = napDescriptor.name
   const cauldron = await getActiveCauldron()

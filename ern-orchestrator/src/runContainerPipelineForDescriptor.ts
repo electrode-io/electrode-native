@@ -1,5 +1,5 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor, kax, log } from 'ern-core'
+import { AppVersionDescriptor, kax, log } from 'ern-core'
 import { runContainerPipeline } from './runContainerPipeline'
 
 /**
@@ -11,7 +11,7 @@ export async function runContainerPipelineForDescriptor({
   containerPath,
   containerVersion,
 }: {
-  descriptor: NativeApplicationDescriptor
+  descriptor: AppVersionDescriptor
   containerPath: string
   containerVersion: string
 }) {

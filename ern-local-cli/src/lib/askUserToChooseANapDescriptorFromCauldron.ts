@@ -1,5 +1,5 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor, NativePlatform } from 'ern-core'
+import { AppVersionDescriptor, NativePlatform } from 'ern-core'
 import _ from 'lodash'
 import inquirer from 'inquirer'
 
@@ -16,7 +16,7 @@ export async function askUserToChooseANapDescriptorFromCauldron({
   onlyReleasedVersions?: boolean
   onlyNonReleasedVersions?: boolean
   message?: string
-} = {}): Promise<NativeApplicationDescriptor> {
+} = {}): Promise<AppVersionDescriptor> {
   const cauldron = await getActiveCauldron()
   const napDescriptorStrings = await cauldron.getNapDescriptorStrings({
     onlyNonReleasedVersions,
@@ -39,7 +39,5 @@ export async function askUserToChooseANapDescriptorFromCauldron({
     },
   ])
 
-  return NativeApplicationDescriptor.fromString(
-    userSelectedCompleteNapDescriptor
-  )
+  return AppVersionDescriptor.fromString(userSelectedCompleteNapDescriptor)
 }

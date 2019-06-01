@@ -1,4 +1,4 @@
-import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
+import { PackagePath, AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { syncCauldronContainer } from 'ern-orchestrator'
 import {
@@ -53,9 +53,7 @@ export const builder = (argv: Argv) => {
           'A complete native application descriptor target of the operation',
         type: 'string',
       })
-      .coerce('descriptor', d =>
-        NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-      )
+      .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
       // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
       .option('force [DEPRECATED]', {
         alias: 'f',
@@ -95,7 +93,7 @@ export const commandHandler = async ({
   containerVersion?: string
   delDependencies: PackagePath[]
   delMiniapps: PackagePath[]
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   force?: boolean
   updateDependencies: PackagePath[]
   updateMiniapps: PackagePath[]
@@ -133,7 +131,6 @@ export const commandHandler = async ({
       dependency: [...delDependencies],
       descriptor,
     },
-    isCompleteNapDescriptorString: { descriptor },
     isNewerContainerVersion: containerVersion
       ? {
           containerVersion,

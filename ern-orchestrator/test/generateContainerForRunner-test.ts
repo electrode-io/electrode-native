@@ -1,8 +1,9 @@
 import sinon from 'sinon'
-import { NativeApplicationDescriptor, PackagePath } from 'ern-core'
+import { PackagePath } from 'ern-core'
 import { generateContainerForRunner } from '../src/generateContainerForRunner'
 import * as container from '../src/container'
 import * as composite from '../src/composite'
+import { AppVersionDescriptor } from 'ern-core'
 
 const sandbox = sinon.createSandbox()
 
@@ -20,9 +21,7 @@ describe('generateContainerForRunner', () => {
   })
 
   it('should call runCauldronContainerGen with proper arguments if a descriptor is provided', async () => {
-    const descriptor = NativeApplicationDescriptor.fromString(
-      'test:android:1.0.0'
-    )
+    const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0')
     const outDir = '/Users/foo/test'
     await generateContainerForRunner('android', {
       napDescriptor: descriptor,

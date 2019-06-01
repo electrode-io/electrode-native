@@ -1,5 +1,5 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { log, NativeApplicationDescriptor, PackagePath } from 'ern-core'
+import { log, AppVersionDescriptor, PackagePath } from 'ern-core'
 import { alignPackageJsonOnManifest, getGitHubApi } from 'ern-orchestrator'
 import {
   askUserToChooseANapDescriptorFromCauldron,
@@ -19,9 +19,7 @@ export const builder = (argv: Argv) => {
       describe: 'Native application version containing the packages to upgrade',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('jsApiImplsOnly', {
       describe: 'Only update package.json of JS API Implementations',
       type: 'boolean',
@@ -45,7 +43,7 @@ export const commandHandler = async ({
   manifestId = 'default',
   miniAppsOnly,
 }: {
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   jsApiImplsOnly?: boolean
   manifestId?: string
   miniAppsOnly?: boolean

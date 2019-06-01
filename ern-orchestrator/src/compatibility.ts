@@ -1,11 +1,11 @@
 import {
-  NativeApplicationDescriptor,
   PackagePath,
   manifest,
   MiniApp,
   log,
   kax,
   NativeDependency,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'
@@ -151,7 +151,7 @@ export async function getNativeAppCompatibilityReport(
         if (!platformName || nativeAppPlatform.name === platformName) {
           for (const nativeAppVersion of nativeAppPlatform.versions) {
             if (!versionName || nativeAppVersion.name === versionName) {
-              const napDescriptor = new NativeApplicationDescriptor(
+              const napDescriptor = new AppVersionDescriptor(
                 nativeApp.name,
                 nativeAppPlatform.name,
                 nativeAppVersion.name
@@ -327,7 +327,7 @@ export function getCompatibility(
 
 export async function areCompatible(
   miniApps: PackagePath[],
-  targetDescriptor: NativeApplicationDescriptor
+  targetDescriptor: AppVersionDescriptor
 ): Promise<boolean> {
   for (const miniApp of miniApps) {
     const miniAppInstance = await kax

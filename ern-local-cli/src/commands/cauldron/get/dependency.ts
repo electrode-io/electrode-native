@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   epilog,
@@ -13,9 +13,7 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('json', {
       describe: 'Output dependencies as a single line JSON array',
       type: 'boolean',
@@ -27,7 +25,7 @@ export const commandHandler = async ({
   descriptor,
   json,
 }: {
-  descriptor: NativeApplicationDescriptor
+  descriptor: AppVersionDescriptor
   json?: boolean
 }) => {
   await logErrorAndExitIfNotSatisfied({

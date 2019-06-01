@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   epilog,
@@ -16,9 +16,7 @@ export const builder = (argv: Argv) => {
       describe: 'Description of the native application version',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('isReleased', {
       alias: 'r',
       default: undefined,
@@ -34,7 +32,7 @@ export const commandHandler = async ({
   isReleased,
 }: {
   description?: string
-  descriptor: NativeApplicationDescriptor
+  descriptor: AppVersionDescriptor
   isReleased?: boolean
 }) => {
   await logErrorAndExitIfNotSatisfied({

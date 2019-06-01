@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log } from 'ern-core'
 import { performCodePushPatch } from 'ern-orchestrator'
 import {
   epilog,
@@ -29,9 +29,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('disabled', {
       alias: 'x',
       describe:
@@ -69,7 +67,7 @@ export const commandHandler = async ({
 }: {
   deploymentName?: string
   description?: string
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   disabled?: boolean
   label?: string
   mandatory?: boolean

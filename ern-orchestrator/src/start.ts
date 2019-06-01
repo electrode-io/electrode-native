@@ -4,13 +4,13 @@ import {
   ios,
   config as ernConfig,
   PackagePath,
-  NativeApplicationDescriptor,
   shell,
   reactnative,
   ErnBinaryStore,
   log,
   kax,
   readPackageJsonSync,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { generateComposite } from 'ern-composite-gen'
@@ -34,7 +34,7 @@ export default async function start({
   baseComposite?: PackagePath
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   watchNodeModules?: string[]
   packageName?: string
   activityName?: string

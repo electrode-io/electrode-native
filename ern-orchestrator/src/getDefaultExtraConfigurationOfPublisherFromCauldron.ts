@@ -1,11 +1,11 @@
-import { NativeApplicationDescriptor } from 'ern-core'
+import { AnyAppDescriptor } from 'ern-core'
 
 export function getDefaultExtraConfigurationOfPublisherFromCauldron({
   publisherFromCauldron,
   napDescriptor,
 }: {
   publisherFromCauldron: any
-  napDescriptor: NativeApplicationDescriptor
+  napDescriptor: AnyAppDescriptor
 }): any {
   if (
     publisherFromCauldron.name === 'maven' ||

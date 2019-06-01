@@ -30,7 +30,7 @@ function createCauldronHelper(cauldronDocument) {
   return new CauldronHelper(createCauldronApi(cauldronDocument))
 }
 
-const testAndroid1770Descriptor = core.NativeApplicationDescriptor.fromString(
+const testAndroid1770Descriptor = core.AppVersionDescriptor.fromString(
   'test:android:17.7.0'
 )
 

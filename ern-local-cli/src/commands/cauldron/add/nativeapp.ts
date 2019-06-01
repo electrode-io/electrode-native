@@ -1,5 +1,5 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor, log, kax } from 'ern-core'
+import { AppVersionDescriptor, log, kax, AppPlatformDescriptor } from 'ern-core'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import _ from 'lodash'
 import {
@@ -24,9 +24,7 @@ export const builder = (argv: Argv) => {
       describe: 'Description of the native application version',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('platformVersion', {
       alias: 'v',
       describe: 'Use specified platform version',
@@ -47,7 +45,7 @@ export const commandHandler = async ({
   config?: string
   copyFromVersion?: string
   description?: string
-  descriptor: NativeApplicationDescriptor
+  descriptor: AppVersionDescriptor
 }) => {
   let cauldron
 
@@ -67,7 +65,7 @@ export const commandHandler = async ({
   } else if (
     !copyFromVersion &&
     (await cauldron.isDescriptorInCauldron(
-      new NativeApplicationDescriptor(descriptor.name, descriptor.platform)
+      new AppPlatformDescriptor(descriptor.name, descriptor.platform)
     ))
   ) {
     const mostRecentVersion = await cauldron.getMostRecentNativeApplicationVersion(

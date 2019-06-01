@@ -1,4 +1,4 @@
-import { PackagePath, NativeApplicationDescriptor, log } from 'ern-core'
+import { PackagePath, AppVersionDescriptor, log } from 'ern-core'
 import { syncCauldronContainer } from 'ern-orchestrator'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
@@ -25,9 +25,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .coerce('dependencies', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
@@ -39,7 +37,7 @@ export const commandHandler = async ({
 }: {
   containerVersion?: string
   dependencies: PackagePath[]
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
 }) => {
   descriptor =
     descriptor ||

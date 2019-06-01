@@ -2,11 +2,13 @@ import _ from 'lodash'
 import {
   log,
   PackagePath,
-  NativeApplicationDescriptor,
   fileUtils,
   NativePlatform,
   normalizeVersionsToSemver,
   utils as coreUtils,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+  AnyAppDescriptor,
 } from 'ern-core'
 import {
   CauldronCodePushMetadata,
@@ -57,28 +59,28 @@ export class CauldronHelper {
   }
 
   public async isDescriptorInCauldron(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AnyAppDescriptor
   ): Promise<boolean> {
-    return this.cauldron.hasDescriptor(napDescriptor)
+    return this.cauldron.hasDescriptor(descriptor)
   }
 
-  public async addDescriptor(napDescriptor: NativeApplicationDescriptor) {
-    return this.cauldron.addDescriptor(napDescriptor)
+  public async addDescriptor(descriptor: AnyAppDescriptor) {
+    return this.cauldron.addDescriptor(descriptor)
   }
 
   public async addOrUpdateDescription(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     description: string
   ) {
     return this.cauldron.addOrUpdateDescription(descriptor, description)
   }
 
-  public async removeDescriptor(napDescriptor: NativeApplicationDescriptor) {
-    return this.cauldron.removeDescriptor(napDescriptor)
+  public async removeDescriptor(descriptor: AnyAppDescriptor) {
+    return this.cauldron.removeDescriptor(descriptor)
   }
 
   public async addNativeApplicationVersion(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     {
       config,
       copyFromVersion,
@@ -89,9 +91,6 @@ export class CauldronHelper {
       description?: string
     } = {}
   ) {
-    if (descriptor.isPartial) {
-      throw new Error(`${descriptor} is partial`)
-    }
     if (await this.cauldron.hasDescriptor(descriptor)) {
       throw new Error(`${descriptor} already exist in Cauldron`)
     }
@@ -104,7 +103,7 @@ export class CauldronHelper {
       await this.addDescriptor(descriptor)
       await this.copyNativeApplicationVersion({
         shouldCopyConfig: !!!config,
-        source: new NativeApplicationDescriptor(
+        source: new AppVersionDescriptor(
           descriptor.name,
           descriptor.platform,
           version
@@ -127,8 +126,8 @@ export class CauldronHelper {
     target,
     shouldCopyConfig,
   }: {
-    source: NativeApplicationDescriptor
-    target: NativeApplicationDescriptor
+    source: AppVersionDescriptor
+    target: AppVersionDescriptor
     shouldCopyConfig?: boolean
   }) {
     if (!(await this.cauldron.hasDescriptor(source))) {
@@ -222,23 +221,20 @@ export class CauldronHelper {
     descriptor,
   }: {
     config: any
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   }) {
     return this.cauldron.updateConfig({ config, descriptor })
   }
 
   public async getMostRecentNativeApplicationVersion(
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppPlatformDescriptor | AppVersionDescriptor
   ): Promise<CauldronNativeAppVersion> {
-    const partialDescriptor = new NativeApplicationDescriptor(
-      descriptor.name,
-      descriptor.platform
-    )
-    if (!(await this.isDescriptorInCauldron(partialDescriptor))) {
-      throw new Error(`Cannot find ${partialDescriptor} in Cauldron`)
+    const platformDescriptor = descriptor.toAppPlatformDescriptor()
+    if (!(await this.isDescriptorInCauldron(platformDescriptor))) {
+      throw new Error(`Cannot find ${platformDescriptor} in Cauldron`)
     }
 
-    const nativeApp = await this.getDescriptor(partialDescriptor)
+    const nativeApp = await this.getDescriptor(platformDescriptor)
     const sortedNativeAppVersions = nativeApp.versions.sort((a, b) =>
       semver.rcompare(semver.coerce(b.name)!, semver.coerce(a.name)!)
     )
@@ -246,37 +242,37 @@ export class CauldronHelper {
   }
 
   public async addNativeDependencyToContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     dependency: PackagePath
   ): Promise<void> {
     await this.throwIfNativeAppVersionIsReleased(
-      napDescriptor,
+      descriptor,
       'Cannot add a native dependency to a released native app version'
     )
     return this.cauldron.addPackageToContainer(
-      napDescriptor,
+      descriptor,
       dependency,
       'nativeDeps'
     )
   }
 
   public async removeNativeDependencyFromContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     dependency: PackagePath
   ): Promise<void> {
     await this.throwIfNativeAppVersionIsReleased(
-      napDescriptor,
+      descriptor,
       'Cannot remove a native dependency from a released native app version'
     )
     return this.cauldron.removePackageFromContainer(
-      napDescriptor,
+      descriptor,
       dependency,
       'nativeDeps'
     )
   }
 
   public async removeMiniAppFromContainer(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     miniApp: PackagePath
   ): Promise<void> {
     return this.removeJsPackageFromContainer({
@@ -287,7 +283,7 @@ export class CauldronHelper {
   }
 
   public async removeJsApiImplFromContainer(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     jsApiImpl: PackagePath
   ): Promise<void> {
     return this.removeJsPackageFromContainer({
@@ -302,7 +298,7 @@ export class CauldronHelper {
     jsPackage,
     type,
   }: {
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     jsPackage: PackagePath
     type: 'miniapp' | 'jsapiimpl'
   }) {
@@ -347,36 +343,25 @@ export class CauldronHelper {
     return result
   }
 
-  public async getDescriptor(
-    napDescriptor: NativeApplicationDescriptor
-  ): Promise<any> {
-    return this.cauldron.getDescriptor(napDescriptor)
+  public async getDescriptor(descriptor: AnyAppDescriptor): Promise<any> {
+    return this.cauldron.getDescriptor(descriptor)
   }
 
-  public async getVersions(
-    napDescriptor: NativeApplicationDescriptor
-  ): Promise<any> {
-    if (!napDescriptor.platform) {
-      throw new Error(
-        `[getVersions] platform must be present in the NativeApplicationDesctiptor`
-      )
-    }
-    return this.cauldron.getVersions(napDescriptor)
+  public async getVersions(descriptor: AppPlatformDescriptor): Promise<any> {
+    return this.cauldron.getVersions(descriptor)
   }
 
   public async getVersionsNames(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppPlatformDescriptor
   ): Promise<string[]> {
-    const versions = await this.getVersions(napDescriptor)
+    const versions = await this.getVersions(descriptor)
     return _.map(versions, v => v.name)
   }
 
   public async getNativeDependencies(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<PackagePath[]> {
-    const dependencies = await this.cauldron.getNativeDependencies(
-      napDescriptor
-    )
+    const dependencies = await this.cauldron.getNativeDependencies(descriptor)
     return _.map(dependencies, PackagePath.fromString)
   }
 
@@ -429,128 +414,124 @@ export class CauldronHelper {
   }
 
   public async hasYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string
   ): Promise<boolean> {
-    return this.cauldron.hasYarnLock(napDescriptor, key)
+    return this.cauldron.hasYarnLock(descriptor, key)
   }
 
   public async addYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string,
     yarnlockPath: string
   ): Promise<string> {
     const yarnLockFile = await fileUtils.readFile(yarnlockPath)
-    return this.cauldron.addYarnLock(napDescriptor, key, yarnLockFile)
+    return this.cauldron.addYarnLock(descriptor, key, yarnLockFile)
   }
 
   public async getYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string
   ): Promise<Buffer | void> {
-    return this.cauldron.getYarnLock(napDescriptor, key)
+    return this.cauldron.getYarnLock(descriptor, key)
   }
 
   public async getPathToYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string
   ): Promise<string | void> {
-    return this.cauldron.getPathToYarnLock(napDescriptor, key)
+    return this.cauldron.getPathToYarnLock(descriptor, key)
   }
 
   public async removeYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string
   ): Promise<boolean> {
-    return this.cauldron.removeYarnLock(napDescriptor, key)
+    return this.cauldron.removeYarnLock(descriptor, key)
   }
 
   public async updateYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string,
     yarnlockPath: string
   ): Promise<boolean> {
     const yarnLockFile = await fileUtils.readFile(yarnlockPath)
-    return this.cauldron.updateYarnLock(napDescriptor, key, yarnLockFile)
+    return this.cauldron.updateYarnLock(descriptor, key, yarnLockFile)
   }
 
   public async setYarnLocks(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     yarnLocks: any
   ): Promise<void> {
-    return this.cauldron.setYarnLocks(napDescriptor, yarnLocks)
+    return this.cauldron.setYarnLocks(descriptor, yarnLocks)
   }
 
   public async addOrUpdateYarnLock(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string,
     yarnlockPath: string
   ): Promise<any> {
-    if (await this.hasYarnLock(napDescriptor, key)) {
-      return this.updateYarnLock(napDescriptor, key, yarnlockPath)
+    if (await this.hasYarnLock(descriptor, key)) {
+      return this.updateYarnLock(descriptor, key, yarnlockPath)
     } else {
-      return this.addYarnLock(napDescriptor, key, yarnlockPath)
+      return this.addYarnLock(descriptor, key, yarnlockPath)
     }
   }
 
   public async getYarnLockId(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string
   ): Promise<string | void> {
-    return this.cauldron.getYarnLockId(napDescriptor, key)
+    return this.cauldron.getYarnLockId(descriptor, key)
   }
 
   public async setYarnLockId(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string,
     id: string
   ): Promise<void> {
-    return this.cauldron.setYarnLockId(napDescriptor, key, id)
+    return this.cauldron.setYarnLockId(descriptor, key, id)
   }
 
   public async updateYarnLockId(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     key: string,
     id: string
   ): Promise<void> {
-    return this.cauldron.updateYarnLockId(napDescriptor, key, id)
+    return this.cauldron.updateYarnLockId(descriptor, key, id)
   }
 
   public async addBundle(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     bundle: string | Buffer
   ): Promise<void> {
-    return this.cauldron.addBundle(napDescriptor, bundle)
+    return this.cauldron.addBundle(descriptor, bundle)
   }
 
-  public async hasBundle(
-    napDescriptor: NativeApplicationDescriptor
-  ): Promise<boolean> {
-    return this.cauldron.hasBundle(napDescriptor)
+  public async hasBundle(descriptor: AppVersionDescriptor): Promise<boolean> {
+    return this.cauldron.hasBundle(descriptor)
   }
 
-  public async getBundle(
-    napDescriptor: NativeApplicationDescriptor
-  ): Promise<Buffer> {
-    return this.cauldron.getBundle(napDescriptor)
+  public async getBundle(descriptor: AppVersionDescriptor): Promise<Buffer> {
+    return this.cauldron.getBundle(descriptor)
   }
 
   public async isNativeDependencyInContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     dependencyName: string
   ): Promise<boolean> {
     return this.cauldron.isNativeDependencyInContainer(
-      napDescriptor,
+      descriptor,
       dependencyName
     )
   }
 
   public async getContainerNativeDependency(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     dependencyName: string
   ): Promise<PackagePath> {
     const dependency = await this.cauldron.getContainerNativeDependency(
-      napDescriptor,
+      descriptor,
       dependencyName
     )
     return PackagePath.fromString(dependency)
@@ -563,16 +544,16 @@ export class CauldronHelper {
     funcUpdatePackageInContainer,
     localPackages,
   }: {
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     funcAddPackageToContainer: (
-      x: NativeApplicationDescriptor,
+      x: AppVersionDescriptor,
       y: PackagePath
     ) => Promise<void>
     funcGetPackagesFromContainer: (
-      x: NativeApplicationDescriptor
+      x: AppVersionDescriptor
     ) => Promise<PackagePath[]>
     funcUpdatePackageInContainer: (
-      x: NativeApplicationDescriptor,
+      x: AppVersionDescriptor,
       y: PackagePath
     ) => Promise<void>
     localPackages: PackagePath[]
@@ -600,7 +581,7 @@ export class CauldronHelper {
   }
 
   public async syncContainerMiniApps(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     localPackages: PackagePath[]
   ): Promise<void> {
     return this.syncContainerPackages({
@@ -615,7 +596,7 @@ export class CauldronHelper {
   }
 
   public async syncContainerJsApiImpls(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     localPackages: PackagePath[]
   ): Promise<void> {
     return this.syncContainerPackages({
@@ -630,7 +611,7 @@ export class CauldronHelper {
   }
 
   public async syncContainerNativeDependencies(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     localPackages: PackagePath[]
   ): Promise<void> {
     return this.syncContainerPackages({
@@ -650,7 +631,7 @@ export class CauldronHelper {
     keepBranch,
     type,
   }: {
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     jsPackage: PackagePath
     keepBranch?: boolean
     type: 'miniapp' | 'jsapiimpl'
@@ -707,7 +688,7 @@ export class CauldronHelper {
   }
 
   public async updateMiniAppVersionInContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     miniApp: PackagePath,
     {
       keepBranch,
@@ -716,7 +697,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<void> {
     return this.updateJsPackageVersionInContainer({
-      descriptor: napDescriptor,
+      descriptor,
       jsPackage: miniApp,
       keepBranch,
       type: 'miniapp',
@@ -724,7 +705,7 @@ export class CauldronHelper {
   }
 
   public async updateJsApiImplVersionInContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     jsApiImpl: PackagePath,
     {
       keepBranch,
@@ -733,7 +714,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<void> {
     return this.updateJsPackageVersionInContainer({
-      descriptor: napDescriptor,
+      descriptor,
       jsPackage: jsApiImpl,
       keepBranch,
       type: 'jsapiimpl',
@@ -741,15 +722,15 @@ export class CauldronHelper {
   }
 
   public async updateNativeDependencyVersionInContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     dependency: PackagePath
   ): Promise<void> {
     await this.throwIfNativeAppVersionIsReleased(
-      napDescriptor,
+      descriptor,
       'Cannot update a native dependency for a released native app version'
     )
     return this.cauldron.updatePackageInContainer(
-      napDescriptor,
+      descriptor,
       dependency,
       'nativeDeps'
     )
@@ -760,24 +741,21 @@ export class CauldronHelper {
   }
 
   public async getContainerJsApiImpls(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<PackagePath[]> {
-    const jsApiImpls = await this.cauldron.getContainerJsApiImpls(napDescriptor)
+    const jsApiImpls = await this.cauldron.getContainerJsApiImpls(descriptor)
     return _.map(jsApiImpls, j => PackagePath.fromString(j))
   }
 
   public async getContainerJsApiImpl(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     jsApiImpl: PackagePath
   ): Promise<string> {
-    return this.cauldron.getContainerJsApiImpl(
-      napDescriptor,
-      jsApiImpl.toString()
-    )
+    return this.cauldron.getContainerJsApiImpl(descriptor, jsApiImpl.toString())
   }
 
   public async getCodePushJsApiImpls(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     deploymentName: string,
     {
       label,
@@ -786,7 +764,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<PackagePath[] | void> {
     const codePushEntry = await this.getCodePushEntry(
-      napDescriptor,
+      descriptor,
       deploymentName,
       { label }
     )
@@ -796,21 +774,21 @@ export class CauldronHelper {
   }
 
   public async isMiniAppInContainer(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     miniApp: any
   ): Promise<boolean> {
-    return this.cauldron.isMiniAppInContainer(napDescriptor, miniApp.toString())
+    return this.cauldron.isMiniAppInContainer(descriptor, miniApp.toString())
   }
 
   public async getContainerMiniApp(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     miniApp: any
   ): Promise<string> {
-    return this.cauldron.getContainerMiniApp(napDescriptor, miniApp.toString())
+    return this.cauldron.getContainerMiniApp(descriptor, miniApp.toString())
   }
 
   public async getCodePushMiniApps(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     deploymentName: string,
     {
       label,
@@ -819,7 +797,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<PackagePath[] | void> {
     const codePushEntry = await this.getCodePushEntry(
-      napDescriptor,
+      descriptor,
       deploymentName,
       { label }
     )
@@ -829,7 +807,7 @@ export class CauldronHelper {
   }
 
   public async getCodePushEntry(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     deploymentName: string,
     {
       label,
@@ -838,7 +816,7 @@ export class CauldronHelper {
     } = {}
   ): Promise<CauldronCodePushEntry | void> {
     const codePushEntries = await this.cauldron.getCodePushEntries(
-      napDescriptor,
+      descriptor,
       deploymentName
     )
     let result
@@ -847,7 +825,7 @@ export class CauldronHelper {
         result = _.find(codePushEntries, e => e.metadata.label === label)
         if (!result || result.length === 0) {
           throw new Error(
-            `No CodePush entry matching label ${label} was found in ${napDescriptor.toString()}`
+            `No CodePush entry matching label ${label} was found in ${descriptor.toString()}`
           )
         }
       } else {
@@ -857,16 +835,16 @@ export class CauldronHelper {
     return result
   }
 
-  public async getContainerMiniAppsBranches(napDescriptor) {
+  public async getContainerMiniAppsBranches(descriptor) {
     const miniAppsBranches = await this.cauldron.getContainerMiniAppsBranches(
-      napDescriptor
+      descriptor
     )
     return _.map(miniAppsBranches, PackagePath.fromString)
   }
 
-  public async getContainerJsApiImplsBranches(napDescriptor) {
+  public async getContainerJsApiImplsBranches(descriptor) {
     const branches = await this.cauldron.getContainerJsApiImplsBranches(
-      napDescriptor
+      descriptor
     )
     return _.map(branches, PackagePath.fromString)
   }
@@ -877,7 +855,7 @@ export class CauldronHelper {
     miniAppsOnly = false,
     type,
   }: {
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     jsApiImplsOnly?: boolean
     miniAppsOnly?: boolean
     type: 'branches' | 'versions'
@@ -901,7 +879,7 @@ export class CauldronHelper {
   }
 
   public async getContainerMiniApps(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     {
       favorGitBranches,
     }: {
@@ -909,11 +887,11 @@ export class CauldronHelper {
     } = {}
   ): Promise<PackagePath[]> {
     try {
-      const miniApps = await this.cauldron.getContainerMiniApps(napDescriptor)
+      const miniApps = await this.cauldron.getContainerMiniApps(descriptor)
       const result = _.map(miniApps, PackagePath.fromString)
       if (favorGitBranches) {
         const miniAppsBranches = await this.getContainerMiniAppsBranches(
-          napDescriptor
+          descriptor
         )
         const miniAppsWithBranches = _.intersectionBy(
           miniAppsBranches,
@@ -934,21 +912,19 @@ export class CauldronHelper {
 
   /**
    * Gets all the MiniApps of a given native application version.
-   * @param napDescriptor Native application version from which to retrieve MiniApps
+   * @param descriptor Native application version from which to retrieve MiniApps
    * @returns A promise resolving to an array of tuples. First element of the
    * tuple is the MiniApp PackagePath, second element is the optional MiniApp branch
    * PackagePath -if any- or undefined otherwise.
    */
   public async getContainerMiniAppsWithBranches(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<Array<[PackagePath, PackagePath | undefined]>> {
     const miniApps = _.map(
-      await this.cauldron.getContainerMiniApps(napDescriptor),
+      await this.cauldron.getContainerMiniApps(descriptor),
       PackagePath.fromString
     )
-    const miniAppsBranches = await this.getContainerMiniAppsBranches(
-      napDescriptor
-    )
+    const miniAppsBranches = await this.getContainerMiniAppsBranches(descriptor)
     return _.map(miniApps, m => [
       m,
       _.find(miniAppsBranches, n => n.basePath === m.basePath),
@@ -956,7 +932,7 @@ export class CauldronHelper {
   }
 
   public async addCodePushEntry(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     metadata: CauldronCodePushMetadata,
     miniApps: PackagePath[],
     jsApiImplementations: PackagePath[]
@@ -967,12 +943,12 @@ export class CauldronHelper {
     let codePushEntries
     if (
       await this.cauldron.hasCodePushEntries(
-        napDescriptor,
+        descriptor,
         metadata.deploymentName
       )
     ) {
       codePushEntries = await this.cauldron.getCodePushEntries(
-        napDescriptor,
+        descriptor,
         metadata.deploymentName
       )
     }
@@ -995,18 +971,18 @@ export class CauldronHelper {
     }
 
     return this.cauldron.setCodePushEntries(
-      napDescriptor,
+      descriptor,
       metadata.deploymentName,
       updatedEntriesArr
     )
   }
 
   public async updateCodePushEntry(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     metadata: CauldronCodePushMetadata
   ): Promise<void> {
     const codePushEntries = await this.cauldron.getCodePushEntries(
-      napDescriptor,
+      descriptor,
       metadata.deploymentName
     )
     const entry = _.find(
@@ -1027,7 +1003,7 @@ export class CauldronHelper {
         entry.metadata.rollout = metadata.rollout
       }
       return this.cauldron.setCodePushEntries(
-        napDescriptor,
+        descriptor,
         metadata.deploymentName,
         codePushEntries
       )
@@ -1035,7 +1011,7 @@ export class CauldronHelper {
   }
 
   public async addMiniAppToContainer(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     miniapp: PackagePath
   ) {
     return this.addJsPackageToContainer({
@@ -1046,7 +1022,7 @@ export class CauldronHelper {
   }
 
   public async addJsApiImplToContainer(
-    descriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     jsapiimpl: PackagePath
   ) {
     return this.addJsPackageToContainer({
@@ -1061,7 +1037,7 @@ export class CauldronHelper {
     jsPackage,
     type,
   }: {
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
     jsPackage: PackagePath
     type: 'miniapp' | 'jsapiimpl'
   }) {
@@ -1087,43 +1063,41 @@ export class CauldronHelper {
   }
 
   public async getContainerGeneratorConfig(
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<any | void> {
     return this.getConfigForKey('containerGenerator', descriptor)
   }
 
-  public async getCompositeGeneratorConfig(
-    descriptor?: NativeApplicationDescriptor
-  ) {
+  public async getCompositeGeneratorConfig(descriptor?: AnyAppDescriptor) {
     return this.getConfigForKey('compositeGenerator', descriptor)
   }
 
   public async getManifestConfig(
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<any | void> {
     return this.getConfigForKey('manifest', descriptor)
   }
 
   public async getBinaryStoreConfig(
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<any | void> {
     return this.getConfigForKey('binaryStore', descriptor)
   }
 
   public async getCodePushConfig(
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<any | void> {
     return this.getConfigForKey('codePush', descriptor)
   }
 
   public async getStartCommandConfig(
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<CauldronStartCommandConfig | void> {
     return this.getConfigForKey('start', descriptor)
   }
 
   public async getGitHubConfig(
-    descriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<CauldronGitHubConfig | void> {
     return this.getConfigForKey('github', descriptor)
   }
@@ -1137,13 +1111,11 @@ export class CauldronHelper {
    * return the configuration of the parent native application platform (if any). If none
    * it will continue up to the native application level and final top level cauldron config.
    * Finally, if no configuration is found when reaching the top, it will return undefined.
-   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * @param descriptor Partial/Full or undefined Native Application Descriptor
    * If undefined, will return the top level Cauldron configuration.
    */
-  public async getConfig(
-    napDescriptor?: NativeApplicationDescriptor
-  ): Promise<any | void> {
-    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
+  public async getConfig(descriptor?: AnyAppDescriptor): Promise<any | void> {
+    const configByLevel = await this.cauldron.getConfigByLevel(descriptor)
     return (
       configByLevel.get(CauldronConfigLevel.NativeAppVersion) ||
       configByLevel.get(CauldronConfigLevel.NativeAppPlatform) ||
@@ -1159,30 +1131,25 @@ export class CauldronHelper {
    * a native application version, but no config is set for this native application version,
    * then the function will not attempt to crawl up the parent levels to find a config, but
    * will instead directly return undefined.
-   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * @param descriptor Partial/Full or undefined Native Application Descriptor
    * If undefined, will return the top level Cauldron configuration.
    */
-  public async getConfigStrict(
-    napDescriptor?: NativeApplicationDescriptor
-  ): Promise<any | void> {
-    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
-    return configByLevel.get(
-      this.getCauldronConfigLevelMatchingDescriptor(napDescriptor)
-    )
+  public async getConfigStrict(descriptor?: AnyAppDescriptor): Promise<any> {
+    return this.cauldron.getConfigStrict(descriptor)
   }
 
   /**
    * Gets the config associated with a specific key
    * It will crawl up the parent config chain if needed.
    * @param key The configuration key
-   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * @param descriptor Partial/Full or undefined Native Application Descriptor
    * If undefined, will look in the top level Cauldron configuration.
    */
   public async getConfigForKey(
     key: string,
-    napDescriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ): Promise<any | void> {
-    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
+    const configByLevel = await this.cauldron.getConfigByLevel(descriptor)
     return (
       (configByLevel.has(CauldronConfigLevel.NativeAppVersion) &&
         configByLevel.get(CauldronConfigLevel.NativeAppVersion)[key]) ||
@@ -1200,62 +1167,53 @@ export class CauldronHelper {
    * At the difference of the `getConfigForKey` function, this function will not
    * try to find a matching config / key in the parent config levels.
    * @param key The configuration key
-   * @param napDescriptor Partial/Full or undefined Native Application Descriptor
+   * @param descriptor Partial/Full or undefined Native Application Descriptor
    * If undefined, will look in the top level Cauldron configuration.
    */
   public async getConfigForKeyStrict(
     key: string,
-    napDescriptor?: NativeApplicationDescriptor
-  ): Promise<any | void> {
-    const configByLevel = await this.cauldron.getConfigByLevel(napDescriptor)
-    const cauldronConfigLevel = this.getCauldronConfigLevelMatchingDescriptor(
-      napDescriptor
-    )
-    return (
-      (configByLevel.has(cauldronConfigLevel) &&
-        configByLevel.get(cauldronConfigLevel)[key]) ||
-      undefined
-    )
+    descriptor?: AnyAppDescriptor
+  ): Promise<any> {
+    const config = await this.cauldron.getConfigStrict(descriptor)
+    return config[key]
   }
 
-  public async delConfig(napDescriptor?: NativeApplicationDescriptor) {
-    return this.cauldron.delConfig(napDescriptor)
+  public async delConfig(descriptor?: AnyAppDescriptor) {
+    return this.cauldron.delConfig(descriptor)
   }
 
   public getCauldronConfigLevelMatchingDescriptor(
-    napDescriptor?: NativeApplicationDescriptor
+    descriptor?: AnyAppDescriptor
   ) {
-    if (!napDescriptor) {
-      return CauldronConfigLevel.Top
-    } else if (napDescriptor.version) {
-      return CauldronConfigLevel.NativeAppVersion
-    } else if (napDescriptor.platform) {
-      return CauldronConfigLevel.NativeAppPlatform
-    } else {
-      return CauldronConfigLevel.NativeApp
-    }
+    return !descriptor
+      ? CauldronConfigLevel.Top
+      : descriptor instanceof AppVersionDescriptor
+      ? CauldronConfigLevel.NativeAppVersion
+      : descriptor instanceof AppPlatformDescriptor
+      ? CauldronConfigLevel.NativeAppPlatform
+      : CauldronConfigLevel.NativeApp
   }
 
   public async updateNativeAppIsReleased(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     isReleased: boolean
   ): Promise<void> {
-    return this.cauldron.updateVersion(napDescriptor, { isReleased })
+    return this.cauldron.updateVersion(descriptor, { isReleased })
   }
 
   public async updateContainerVersion(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     containerVersion: string
   ): Promise<void> {
-    await this.cauldron.updateContainerVersion(napDescriptor, containerVersion)
+    await this.cauldron.updateContainerVersion(descriptor, containerVersion)
     const detachContainerVersionFromRoot = await this.getConfigForKey(
       'detachContainerVersionFromRoot',
-      napDescriptor
+      descriptor
     )
     // Update top level Container version only for non detached container versions
     if (!detachContainerVersionFromRoot) {
       const topLevelContainerVersion = await this.getTopLevelContainerVersion(
-        napDescriptor
+        descriptor
       )
       if (
         semver.valid(containerVersion) &&
@@ -1264,7 +1222,7 @@ export class CauldronHelper {
         semver.gt(containerVersion, topLevelContainerVersion)
       ) {
         await this.cauldron.updateTopLevelContainerVersion(
-          napDescriptor,
+          descriptor,
           containerVersion
         )
       }
@@ -1272,32 +1230,32 @@ export class CauldronHelper {
   }
 
   public async getContainerVersion(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<string> {
-    return this.cauldron.getContainerVersion(napDescriptor)
+    return this.cauldron.getContainerVersion(descriptor)
   }
 
   public async getTopLevelContainerVersion(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<string | void> {
-    return this.cauldron.getTopLevelContainerVersion(napDescriptor)
+    return this.cauldron.getTopLevelContainerVersion(descriptor)
   }
 
   public async updateContainerErnVersion(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     ernVersion: string
   ): Promise<void> {
-    return this.cauldron.updateContainerErnVersion(napDescriptor, ernVersion)
+    return this.cauldron.updateContainerErnVersion(descriptor, ernVersion)
   }
 
   public async getContainerErnVersion(
-    napDescriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<string | void> {
-    return this.cauldron.getContainerErnVersion(napDescriptor)
+    return this.cauldron.getContainerErnVersion(descriptor)
   }
 
   public async getLatestShasForMiniAppsBranches(
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ): Promise<PackagePath[]> {
     const result: PackagePath[] = []
     const miniAppsBranches = (await this.cauldron.getContainerMiniAppsBranches(
@@ -1324,7 +1282,7 @@ export class CauldronHelper {
   }
 
   public async getLatestShasForJsApiImplsBranches(
-    descriptor: NativeApplicationDescriptor
+    descriptor: AppVersionDescriptor
   ) {
     const result: PackagePath[] = []
     const jsApiImplsBranches = (await this.cauldron.getContainerJsApiImplsBranches(
@@ -1350,7 +1308,7 @@ export class CauldronHelper {
     return result
   }
 
-  public async emptyContainer(descriptor: NativeApplicationDescriptor) {
+  public async emptyContainer(descriptor: AppVersionDescriptor) {
     return this.cauldron.emptyContainer(descriptor)
   }
 
@@ -1390,14 +1348,9 @@ export class CauldronHelper {
   }
 
   public async getDescriptorsMatchingSemVerDescriptor(
-    semVerDescriptor: NativeApplicationDescriptor
-  ): Promise<NativeApplicationDescriptor[]> {
-    if (!semVerDescriptor.platform || !semVerDescriptor.version) {
-      throw new Error(
-        `${semVerDescriptor.toString()} descriptor is missing platform and/or version`
-      )
-    }
-    const result: NativeApplicationDescriptor[] = []
+    semVerDescriptor: AppVersionDescriptor
+  ): Promise<AppVersionDescriptor[]> {
+    const result: AppVersionDescriptor[] = []
     const versionsNames = await this.getVersionsNames(semVerDescriptor)
     const semVerVersionNames = normalizeVersionsToSemver(versionsNames)
     const zippedVersions = _.zipWith(
@@ -1410,7 +1363,7 @@ export class CauldronHelper {
       semver.satisfies(z.semVer, <string>semVerDescriptor.version)
     )
     for (const version of versions) {
-      const descriptor = new NativeApplicationDescriptor(
+      const descriptor = new AppVersionDescriptor(
         semVerDescriptor.name,
         semVerDescriptor.platform,
         version.nonSemVer
@@ -1422,10 +1375,10 @@ export class CauldronHelper {
   }
 
   public async throwIfNativeAppVersionIsReleased(
-    napDescriptor: NativeApplicationDescriptor,
+    descriptor: AppVersionDescriptor,
     errorMessage: string
   ) {
-    const nativeAppVersion = await this.cauldron.getVersion(napDescriptor)
+    const nativeAppVersion = await this.cauldron.getVersion(descriptor)
     if (nativeAppVersion.isReleased) {
       throw new Error(errorMessage)
     }

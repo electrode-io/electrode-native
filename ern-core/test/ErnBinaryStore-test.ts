@@ -1,5 +1,5 @@
 import { ErnBinaryStore } from '../src/ErnBinaryStore'
-import { NativeApplicationDescriptor } from '../src/NativeApplicationDescriptor'
+import { AppVersionDescriptor } from '../src/descriptors'
 import * as coreChildProcess from '../src/childProcess'
 import { doesThrow } from 'ern-util-dev'
 import fs from 'fs'
@@ -28,9 +28,7 @@ describe('ErnBinaryStore', () => {
     execpStub.returns(execpReturn)
   }
 
-  const descriptor = NativeApplicationDescriptor.fromString(
-    'test:android:17.7.0'
-  )
+  const descriptor = AppVersionDescriptor.fromString('test:android:17.7.0')
   const binaryStoreUrl = 'http://binarystore'
   const createBinaryStore = () => new ErnBinaryStore({ url: binaryStoreUrl })
   const fakeBinaryApkPath = path.join(

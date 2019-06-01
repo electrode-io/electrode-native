@@ -1,4 +1,4 @@
-import { PackagePath, NativeApplicationDescriptor, log, utils } from 'ern-core'
+import { PackagePath, AppVersionDescriptor, log, utils } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { syncCauldronContainer } from 'ern-orchestrator'
 import {
@@ -28,9 +28,7 @@ export const builder = (argv: Argv) => {
         describe: 'A complete native application descriptor',
         type: 'string',
       })
-      .coerce('descriptor', d =>
-        NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-      )
+      .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
       .option('fullRegen', {
         describe: 'Perform complete regeneration',
         type: 'boolean',
@@ -67,7 +65,7 @@ export const commandHandler = async ({
   targetVersion,
 }: {
   containerVersion?: string
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   fullRegen?: boolean
   force?: boolean
   miniapps: PackagePath[]
@@ -96,11 +94,10 @@ Please use --fullRegen flag instead.`)
       throw new Error(`missing --targetVersion option`)
     }
     const x = await cauldron.getContainerMiniApps(descriptor)
-    miniapps = x.map(
-      p =>
-        p.isGitPath
-          ? PackagePath.fromString(`${p.basePath}#${targetVersion}`)
-          : PackagePath.fromString(`${p.basePath}@${targetVersion}`)
+    miniapps = x.map(p =>
+      p.isGitPath
+        ? PackagePath.fromString(`${p.basePath}#${targetVersion}`)
+        : PackagePath.fromString(`${p.basePath}@${targetVersion}`)
     )
     log.info(
       `Updating all MiniApps from ${descriptor} Container to target version ${targetVersion}`
@@ -108,7 +105,6 @@ Please use --fullRegen flag instead.`)
   }
 
   await logErrorAndExitIfNotSatisfied({
-    isCompleteNapDescriptorString: { descriptor },
     isNewerContainerVersion: containerVersion
       ? {
           containerVersion,

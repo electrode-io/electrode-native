@@ -11,8 +11,13 @@ import log from './log'
 import config from './config'
 import camelCase = require('lodash/camelCase')
 import { packageCache } from './packageCache'
-import { NativeApplicationDescriptor } from './NativeApplicationDescriptor'
 import { readPackageJson } from './packageJsonFileUtils'
+import {
+  AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+  AnyAppDescriptor,
+} from './descriptors'
 
 const gitDirectoryRe = /.*\/(.*).git/
 
@@ -411,21 +416,66 @@ export function logErrorAndExitProcess(e: any, code: number = 1) {
   process.exit(code)
 }
 
-export function coerceToNativeApplicationDescriptorArray(
-  v:
-    | string
-    | NativeApplicationDescriptor
-    | Array<string | NativeApplicationDescriptor>
-): NativeApplicationDescriptor[] {
+export function coerceToAppNameDescriptorArray(
+  v: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>
+): AppNameDescriptor[] {
   return v instanceof Array
-    ? v.map(coerceToNativeApplicationDescriptor)
-    : [coerceToNativeApplicationDescriptor(v)]
+    ? v.map(coerceToAppNameDescriptor)
+    : [coerceToAppNameDescriptor(v)]
 }
 
-export function coerceToNativeApplicationDescriptor(
-  v: string | NativeApplicationDescriptor
-): NativeApplicationDescriptor {
-  return typeof v === 'string' ? NativeApplicationDescriptor.fromString(v) : v
+export function coerceToAppPlatformDescriptorArray(
+  v:
+    | string
+    | AppVersionDescriptor
+    | AppPlatformDescriptor
+    | Array<string | AppVersionDescriptor | AppPlatformDescriptor>
+): AppPlatformDescriptor[] {
+  return v instanceof Array
+    ? v.map(coerceToAppPlatformDescriptor)
+    : [coerceToAppPlatformDescriptor(v)]
+}
+
+export function coerceToAnyAppDescriptorArray(
+  v: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>
+) {
+  return v instanceof Array
+    ? v.map(coerceToAnyAppDescriptor)
+    : [coerceToAnyAppDescriptor(v)]
+}
+
+export function coerceToAppVersionDescriptorArray(
+  v: string | AppVersionDescriptor | Array<string | AppVersionDescriptor>
+): AppVersionDescriptor[] {
+  return v instanceof Array
+    ? v.map(coerceToAppVersionDescriptor)
+    : [coerceToAppVersionDescriptor(v)]
+}
+
+export function coerceToAppNameDescriptor(
+  v: string | AnyAppDescriptor
+): AppNameDescriptor {
+  return typeof v === 'string'
+    ? AppVersionDescriptor.fromString(v)
+    : v.toAppNameDescriptor()
+}
+
+export function coerceToAppPlatformDescriptor(
+  v: string | AppPlatformDescriptor | AppVersionDescriptor
+): AppPlatformDescriptor {
+  return typeof v === 'string'
+    ? AppPlatformDescriptor.fromString(v)
+    : v.toAppPlatformDescriptor()
+}
+
+export function coerceToAppVersionDescriptor(
+  v: string | AppVersionDescriptor
+): AppVersionDescriptor {
+  return typeof v === 'string' ? AppVersionDescriptor.fromString(v) : v
+}
+
+export function coerceToAnyAppDescriptor(v: string | AnyAppDescriptor) {
+  return typeof v === 'string' ? v.toAppDescriptor() : v
 }
 
 export function coerceToPackagePathArray(

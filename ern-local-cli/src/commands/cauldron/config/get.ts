@@ -1,7 +1,7 @@
 import { Argv } from 'yargs'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { NativeApplicationDescriptor } from 'ern-core'
+import { AnyAppDescriptor } from 'ern-core'
 
 export const command = 'get'
 export const desc = 'Echoes configuration stored in Cauldron'
@@ -13,7 +13,7 @@ export const builder = (argv: Argv) => {
         'Partial or full native application descriptor for which to get the config from (top level config if not specified)',
       type: 'string',
     })
-    .coerce('descriptor', NativeApplicationDescriptor.fromString)
+    .coerce('descriptor', (d: string) => d.toAppDescriptor())
     .option('json', {
       describe: 'Output config as a single line JSON record',
       type: 'boolean',
@@ -37,7 +37,7 @@ export const commandHandler = async ({
   key,
   strict,
 }: {
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AnyAppDescriptor
   json?: boolean
   key?: string
   strict: boolean

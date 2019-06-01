@@ -1,9 +1,9 @@
 import {
   createTmpDir,
-  NativeApplicationDescriptor,
   Platform,
   kax,
   log,
+  AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runCauldronContainerGen } from './container'
@@ -16,7 +16,7 @@ import { runCauldronCompositeGen } from './composite'
 
 export async function syncCauldronContainer(
   stateUpdateFunc: () => Promise<any>,
-  descriptor: NativeApplicationDescriptor,
+  descriptor: AppVersionDescriptor,
   commitMessage: string | string[],
   {
     containerVersion,

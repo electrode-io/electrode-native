@@ -1,4 +1,4 @@
-import { log, NativeApplicationDescriptor, PackagePath } from 'ern-core'
+import { log, AppVersionDescriptor, PackagePath } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { deleteBranch, deleteTag } from 'ern-orchestrator'
 import {
@@ -25,9 +25,7 @@ export const builder = (argv: Argv) => {
         'Native application version containing the packages to delete a branch/tag from',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('jsApiImplsOnly', {
       describe: 'Delete the ref for JS API Implementations only',
       type: 'boolean',
@@ -51,7 +49,7 @@ export const commandHandler = async ({
   tag,
 }: {
   branch?: string
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   jsApiImplsOnly?: boolean
   miniAppsOnly?: boolean
   tag?: string

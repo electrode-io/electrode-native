@@ -1,11 +1,11 @@
 import { assert, expect } from 'chai'
 import {
   ModuleTypes,
-  NativeApplicationDescriptor,
   yarn,
   utils as coreUtils,
   createTmpDir,
   PackagePath,
+  AppVersionDescriptor,
 } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import {
@@ -85,7 +85,7 @@ describe('utils.js', () => {
       cauldronHelperStub.getContainerMiniApps.resolves([])
     })
 
-    const napDescriptor = NativeApplicationDescriptor.fromString(
+    const napDescriptor = AppVersionDescriptor.fromString(
       'testapp:android:1.0.0'
     )
 
@@ -183,9 +183,7 @@ describe('utils.js', () => {
           mavenPassword: 'password',
           mavenUser: 'user',
         },
-        napDescriptor: NativeApplicationDescriptor.fromString(
-          'testapp:android:1.0.0'
-        ),
+        napDescriptor: AppVersionDescriptor.fromString('testapp:android:1.0.0'),
       })
       expect(conf).eql({
         artifactId: 'testapp-ern-container',
@@ -200,9 +198,7 @@ describe('utils.js', () => {
         publisherFromCauldron: {
           name: 'maven',
         },
-        napDescriptor: NativeApplicationDescriptor.fromString(
-          'testapp:android:1.0.0'
-        ),
+        napDescriptor: AppVersionDescriptor.fromString('testapp:android:1.0.0'),
       })
       expect(conf).eql({
         artifactId: 'testapp-ern-container',
@@ -219,9 +215,7 @@ describe('utils.js', () => {
           mavenPassword: 'password',
           mavenUser: 'user',
         },
-        napDescriptor: NativeApplicationDescriptor.fromString(
-          'testapp:android:1.0.0'
-        ),
+        napDescriptor: AppVersionDescriptor.fromString('testapp:android:1.0.0'),
       })
       expect(conf).eql({
         artifactId: 'testapp-ern-container',
@@ -236,9 +230,7 @@ describe('utils.js', () => {
         publisherFromCauldron: {
           name: 'jcenter',
         },
-        napDescriptor: NativeApplicationDescriptor.fromString(
-          'testapp:android:1.0.0'
-        ),
+        napDescriptor: AppVersionDescriptor.fromString('testapp:android:1.0.0'),
       })
       expect(conf).eql({
         artifactId: 'testapp-ern-container',
@@ -251,9 +243,7 @@ describe('utils.js', () => {
         publisherFromCauldron: {
           name: 'jcenter',
         },
-        napDescriptor: NativeApplicationDescriptor.fromString(
-          'testapp:android:1.0.0'
-        ),
+        napDescriptor: AppVersionDescriptor.fromString('testapp:android:1.0.0'),
       })
       expect(conf).eql({
         artifactId: 'testapp-ern-container',

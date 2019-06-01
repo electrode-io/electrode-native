@@ -1,7 +1,7 @@
 import { generateComposite } from 'ern-composite-gen'
 import {
   PackagePath,
-  NativeApplicationDescriptor,
+  AppVersionDescriptor,
   Platform,
   log,
   NativePlatform,
@@ -34,9 +34,7 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d =>
-      NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
-    )
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .option('extraJsDependencies', {
       alias: 'e',
       describe: 'Additional JS dependency(ies)',
@@ -76,7 +74,7 @@ export const commandHandler = async ({
   outDir,
 }: {
   baseComposite?: PackagePath
-  descriptor?: NativeApplicationDescriptor
+  descriptor?: AppVersionDescriptor
   extraJsDependencies?: PackagePath[]
   fromGitBranches?: boolean
   jsApiImpls?: PackagePath[]
