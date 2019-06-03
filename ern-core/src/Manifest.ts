@@ -162,6 +162,10 @@ export interface IosPluginConfig extends CommonPluginConfig {
    * Directives specific to Container pbxproj patching
    */
   pbxproj: PbxProjDirectives
+  /**
+   * Set specific build settings in the plugin pbxproj
+   */
+  setBuildSettings?: IosPluginSetBuildSettingsDirective[]
 }
 
 /**
@@ -327,6 +331,23 @@ export interface IosPluginAddProjectDirective {
    * Group to add the xcodeproj to
    */
   group: string
+}
+
+export interface IosPluginBuildSettings {
+  /**
+   * Configuration(s) for which these build settings apply.
+   * For example [ 'Debug' , 'Release' ]
+   */
+  configurations: string[]
+
+  /**
+   * Build settings as key values pairs
+   */
+  settings: { [key: string]: string }
+}
+export interface IosPluginSetBuildSettingsDirective {
+  path: string
+  buildSettings: IosPluginBuildSettings[] | IosPluginBuildSettings
 }
 
 /**
