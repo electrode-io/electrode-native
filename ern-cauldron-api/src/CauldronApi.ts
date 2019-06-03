@@ -210,12 +210,21 @@ export default class CauldronApi {
   }
 
   public async getCodePushEntries(
+    descriptor: AppVersionDescriptor
+  ): Promise<{ [deploymentName: string]: CauldronCodePushEntry[] }>
+  public async getCodePushEntries(
     descriptor: AppVersionDescriptor,
     deploymentName: string
-  ): Promise<CauldronCodePushEntry[]> {
+  ): Promise<CauldronCodePushEntry[]>
+  public async getCodePushEntries(
+    descriptor: AppVersionDescriptor,
+    deploymentName?: string
+  ): Promise<
+    | { [deploymentName: string]: CauldronCodePushEntry[] }
+    | CauldronCodePushEntry[]
+  > {
     const version = await this.getVersion(descriptor)
-    const result = version.codePush[deploymentName]
-    return result
+    return deploymentName ? version.codePush[deploymentName] : version.codePush
   }
 
   public async getContainerMiniApps(
