@@ -233,3 +233,20 @@ Adds a source file from the plugin project to the container list of sources.
   "group": "ElectrodeReactNativeBridge"
 }
 ```
+
+- `setBuildSettings`
+
+Set one or more build setting(s) in one or more pbxproj(s) associated to the plugin.
+For example setting `ENABLE_BITCODE` to `NO` for `Debug` and `Release` configurations of `Foo` plugin project :
+
+```json
+"setBuildSettings": [
+  { 
+    "path": "{{{projectName}}}/Libraries/Foo/Foo.xcodeproj/project.pbxproj",
+    "buildSettings": {
+      "configurations": ["Debug", "Release"],
+      "settings": { "ENABLE_BITCODE": "NO" }
+    }
+  }
+]
+```

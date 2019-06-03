@@ -128,6 +128,35 @@ export async function fillProjectHull(
             }
           }
 
+          if (pluginConfig.ios.setBuildSettings) {
+            for (const s of pluginConfig.ios.setBuildSettings) {
+              const pathToPbxProj = path.join(pathSpec.outputDir, s.path)
+              // Add any missing section in the target pbxproj
+              // This is necessary for proper parsing and modification of
+              // the pbxproj with the xcode-ern library
+              xcode
+                .pbxProjFileUtils()
+                .addMissingSectionsToPbxProj(pathToPbxProj)
+              const iosProj = await getIosProject(projectPath)
+              const buildSettings =
+                s.buildSettings instanceof Array
+                  ? s.buildSettings
+                  : [s.buildSettings]
+              for (const buildSettingsEntry of buildSettings) {
+                for (const buildType of buildSettingsEntry.configurations) {
+                  for (const key of Object.keys(buildSettingsEntry.settings)) {
+                    iosProj.updateBuildProperty(
+                      key,
+                      buildSettingsEntry.settings[key],
+                      buildType
+                    )
+                  }
+                }
+              }
+              fs.writeFileSync(pathToPbxProj, iosProj.writeSync())
+            }
+          }
+
           if (pluginConfig.ios.pbxproj) {
             if (pluginConfig.ios.pbxproj.addSource) {
               for (const source of pluginConfig.ios.pbxproj.addSource) {
