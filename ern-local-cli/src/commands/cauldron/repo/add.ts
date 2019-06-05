@@ -31,9 +31,7 @@ export const commandHandler = async ({
     )
   }
 
-  url === 'local'
-    ? cauldronRepositories.addLocal({ alias, activate: current })
-    : cauldronRepositories.addRemote({ alias, url, activate: current })
+  cauldronRepositories.add(alias, url, { activate: current })
 
   log.info(`Added Cauldron repository ${url} with alias ${alias}`)
 }

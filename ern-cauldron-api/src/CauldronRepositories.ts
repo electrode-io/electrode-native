@@ -1,17 +1,16 @@
 import { Platform, config, shell } from 'ern-core'
 import { CauldronRepository } from './types'
-import path from 'path'
 
 export class CauldronRepositories {
-  public addRemote({
-    alias,
-    activate,
-    url,
-  }: {
-    alias: string
-    activate?: boolean
-    url: string
-  }): CauldronRepository {
+  public add(
+    alias: string,
+    url: string,
+    {
+      activate,
+    }: {
+      activate?: boolean
+    }
+  ): CauldronRepository {
     this.throwIfAliasExist({ alias })
 
     const supportedGitHttpsSchemeRe = /(^https:\/\/.+:.+@.+$)|(^https:\/\/.+@.+$)/
@@ -24,18 +23,13 @@ https://[token]@[repourl]`)
       }
     }
 
-    return this.add({ alias, activate, url })
-  }
-
-  public addLocal({
-    alias,
-    activate,
-  }: {
-    alias: string
-    activate?: boolean
-  }): CauldronRepository {
-    const url = path.join(Platform.localCauldronsDirectory, alias)
-    return this.add({ alias, activate, url })
+    const cauldronRepositories = config.getValue('cauldronRepositories', {})
+    cauldronRepositories[alias] = url
+    config.setValue('cauldronRepositories', cauldronRepositories)
+    if (activate) {
+      this.activate({ alias })
+    }
+    return { alias, url }
   }
 
   public doesExist({ alias }: { alias: string }) {
@@ -91,24 +85,6 @@ https://[token]@[repourl]`)
   private updateCauldronRepoInUse({ alias }: { alias?: string } = {}) {
     config.setValue('cauldronRepoInUse', alias)
     shell.rm('-rf', Platform.cauldronDirectory)
-  }
-
-  private add({
-    alias,
-    activate,
-    url,
-  }: {
-    alias: string
-    activate?: boolean
-    url: string
-  }): CauldronRepository {
-    const cauldronRepositories = config.getValue('cauldronRepositories', {})
-    cauldronRepositories[alias] = url
-    config.setValue('cauldronRepositories', cauldronRepositories)
-    if (activate) {
-      this.activate({ alias })
-    }
-    return { alias, url }
   }
 
   private throwIfAliasExist({ alias }: { alias: string }) {
