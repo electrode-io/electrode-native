@@ -30,12 +30,9 @@ process.on('SIGINT', () => afterAll())
 console.log(info(`Entering temporary working directory : ${workingDirectoryPath}`))
 process.chdir(workingDirectoryPath)
 
-console.log(info(`Creating GitHub repository (${f.gitHubCauldronRepositoryName})`))
-shell.exec(`curl -u ${f.gitUserName}:${f.gitPassword} -d '{"name": "${f.gitHubCauldronRepositoryName}"}' https://api.github.com/user/repos`)
-
 // Cauldron repo
 run('cauldron repo clear')
-run(`cauldron repo add ${f.cauldronName} https://${f.gitUserName}:${f.gitPassword}@github.com/${f.gitUserName}/${f.gitHubCauldronRepositoryName}.git --current=false`)
+run(`cauldron repo add ${f.cauldronName} ${tmp.dirSync({ unsafeCleanup: true }).name} --current=false`)
 run(`cauldron repo use ${f.cauldronName}`)
 run('cauldron repo current')
 run('cauldron repo list')
