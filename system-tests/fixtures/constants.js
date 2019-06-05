@@ -6,8 +6,6 @@ const baseConstants = {
   movieApiPkgName: 'react-native-ernmovie-api',
   movieApiImplName: 'ErnMovieApiImplNative',
   movieApiImplPkgName: 'ern-movie-api-impl',
-  gitUserName: 'ernplatformtest',
-  gitPassword: 'ernplatformtest12345',
   cauldronName: 'cauldron-system-tests',
   systemTestMiniAppName: 'MiniAppSystemTest',
   systemTestMiniAppPkgName: 'miniapp-system-test',
@@ -28,10 +26,6 @@ const baseConstants = {
   movieApiImplNativePkgVersion: '0.0.16'
 }
 
-const compositeConstants = {
-  gitHubCauldronRepositoryName: `${baseConstants.cauldronName}-${randomInt(0, 1000)}`
-}
-
 const pathConstants = {
   pathToJsApiImplFixture: path.join(__dirname, 'api-impl-js'),
   pathToNativeApiImplFixture: path.join(__dirname, 'api-impl-native'),
@@ -43,4 +37,4 @@ const pathConstants = {
   pathToTestApiSchema: path.join(__dirname, 'api', 'testapi-schema.json')
 }
 
-module.exports = Object.freeze(Object.assign({}, baseConstants, compositeConstants, pathConstants))
+module.exports = Object.freeze(Object.assign({}, baseConstants, pathConstants))

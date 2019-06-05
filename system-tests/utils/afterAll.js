@@ -11,14 +11,6 @@ module.exports = function() {
     '==========================================================================='
   )
   console.log(info('Cleaning up test env'))
-  console.log(info(`Removing GitHub repository (${f.cauldronName})`))
-  shell.exec(
-    `curl -u ${f.gitUserName}:${
-      f.gitPassword
-    } -X DELETE https://api.github.com/repos/${f.gitUserName}/${
-      f.gitHubCauldronRepositoryName
-    }`
-  )
   console.log(info('Deactivating current Cauldron'))
   runErnCommand('cauldron repo clear')
   console.log(info('Removing Cauldron alias'))
