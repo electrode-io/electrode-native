@@ -14,67 +14,73 @@ const pluginConfigFileName = 'config.json'
 const ERN_VERSION_DIRECTORY_RE = /ern_v(.+)\+/
 
 export default class GitManifest {
-  public readonly repoRemotePath: string
-  public readonly remote: string
-  public readonly branch: string
+  public readonly remote?: string
+  public readonly branch?: string
   private readonly git: any
-  private readonly repoAbsoluteLocalPath: string
+
   private cachedManifest: any
 
-  constructor(
-    repoLocalPath: string,
-    repoRemotePath: string,
-    remote: string = 'origin',
-    branch: string = 'master'
-  ) {
-    this.repoAbsoluteLocalPath = path.resolve(repoLocalPath)
-    if (!fs.existsSync(this.repoAbsoluteLocalPath)) {
-      shell.mkdir('-p', this.repoAbsoluteLocalPath)
+  public constructor(
+    public readonly repoLocalPath: string,
+    public readonly repoRemotePath?: string,
+    { branch, remote }: { branch: string; remote: string } = {
+      branch: 'master',
+      remote: 'origin',
     }
-    this.git = gitCli(this.repoAbsoluteLocalPath)
-    this.repoRemotePath = repoRemotePath
+  ) {
+    if (!fs.existsSync(repoLocalPath)) {
+      shell.mkdir('-p', repoLocalPath)
+    }
+    this.git = gitCli(repoLocalPath)
     this.remote = remote
     this.branch = branch
     this.cachedManifest = null
   }
 
   public async sync() {
-    log.debug(`[GitManifest] Syncing ${this.repoRemotePath}`)
-
-    if (!fs.existsSync(path.join(this.repoAbsoluteLocalPath, '.git'))) {
-      log.debug(
-        `[GitManifest] Creating local repository in ${
-          this.repoAbsoluteLocalPath
-        }`
-      )
-      shell.mkdir('-p', this.repoAbsoluteLocalPath)
-      await this.git.init()
-      await this.git.addRemote(this.remote, this.repoRemotePath)
+    if (this.repoRemotePath) {
+      log.debug(`[GitManifest] Syncing ${this.repoRemotePath}`)
     }
 
-    await this.git.raw(['remote', 'set-url', this.remote, this.repoRemotePath])
-
-    try {
-      log.debug(`[GitManifest] Fetching from ${this.remote} master`)
-      await this.git.fetch(this.remote, 'master')
-    } catch (e) {
-      if (e.message.includes(`Couldn't find remote ref master`)) {
-        throw new Error(
-          `It looks like no remote Manifest repository exist at ${
-            this.repoRemotePath
-          }`
-        )
-      } else {
-        throw e
+    if (!fs.existsSync(path.join(this.repoLocalPath, '.git'))) {
+      log.debug(
+        `[GitManifest] Creating local repository in ${this.repoLocalPath}`
+      )
+      shell.mkdir('-p', this.repoLocalPath)
+      await this.git.init()
+      if (this.repoRemotePath) {
+        await this.git.addRemote(this.remote, this.repoRemotePath)
       }
     }
 
-    await this.git.reset(['--hard', `${this.remote}/master`])
-    await this.git.pull(this.remote, this.branch)
-    const pathToManifestJson = path.join(
-      this.repoAbsoluteLocalPath,
-      manifestFileName
-    )
+    if (this.repoRemotePath) {
+      await this.git.raw([
+        'remote',
+        'set-url',
+        this.remote,
+        this.repoRemotePath,
+      ])
+
+      try {
+        log.debug(`[GitManifest] Fetching from ${this.remote} master`)
+        await this.git.fetch(this.remote, 'master')
+      } catch (e) {
+        if (e.message.includes(`Couldn't find remote ref master`)) {
+          throw new Error(
+            `It looks like no remote Manifest repository exist at ${
+              this.repoRemotePath
+            }`
+          )
+        } else {
+          throw e
+        }
+      }
+
+      await this.git.reset(['--hard', `${this.remote}/master`])
+      await this.git.pull(this.remote, this.branch)
+    }
+
+    const pathToManifestJson = path.join(this.repoLocalPath, manifestFileName)
     this.cachedManifest = JSON.parse(
       fs.readFileSync(pathToManifestJson, 'utf-8')
     )
@@ -90,7 +96,9 @@ export default class GitManifest {
    */
   public async syncIfNeeded() {
     if (!this.cachedManifest) {
-      await kax.task(`Syncing ${this.repoRemotePath} Manifest`).run(this.sync())
+      await kax
+        .task(`Syncing ${this.repoRemotePath || this.repoLocalPath} Manifest`)
+        .run(this.sync())
     }
   }
 
@@ -148,10 +156,7 @@ export default class GitManifest {
   public getPluginsConfigurationDirectories(
     maxVersion: string = Platform.currentVersion
   ): string[] {
-    const pathToPluginsDirectory = path.join(
-      this.repoAbsoluteLocalPath,
-      'plugins'
-    )
+    const pathToPluginsDirectory = path.join(this.repoLocalPath, 'plugins')
     return fs.existsSync(pathToPluginsDirectory)
       ? _(fs.readdirSync(pathToPluginsDirectory))
           .filter(
