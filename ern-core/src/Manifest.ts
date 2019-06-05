@@ -393,10 +393,14 @@ export class Manifest {
           overrideManifestConfig.url
         )
         this.manifestOverrideType = overrideManifestConfig.type
-        this.overrideManifest = new GitManifest(
-          Platform.overrideManifestDirectory,
-          manifestOverrideUrl
-        )
+        if (fs.existsSync(manifestOverrideUrl)) {
+          this.overrideManifest = new GitManifest(manifestOverrideUrl)
+        } else {
+          this.overrideManifest = new GitManifest(
+            Platform.overrideManifestDirectory,
+            manifestOverrideUrl
+          )
+        }
       }
     }
   }
