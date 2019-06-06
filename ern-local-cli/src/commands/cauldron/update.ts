@@ -5,8 +5,7 @@ export const desc = 'Update objects in the Cauldron'
 export const builder = (argv: Argv) => {
   return argv
     .commandDir('update', {
-      extensions:
-        process.env.NODE_ENV === 'development' ? ['js', 'ts'] : ['js'],
+      extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
     .demandCommand(1, 'Need a command')
     .strict()
