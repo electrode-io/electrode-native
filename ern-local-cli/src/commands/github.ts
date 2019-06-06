@@ -5,8 +5,7 @@ export const desc = 'Helper commands for GitHub based MiniApps'
 export const builder = (argv: Argv) => {
   return argv
     .commandDir('github', {
-      extensions:
-        process.env.NODE_ENV === 'development' ? ['js', 'ts'] : ['js'],
+      extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
     .demandCommand(1, 'github needs a command')
     .strict()

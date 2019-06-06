@@ -5,8 +5,7 @@ export const desc = 'Get objects from the Cauldron'
 export const builder = (argv: Argv) => {
   return argv
     .commandDir('get', {
-      extensions:
-        process.env.NODE_ENV === 'development' ? ['js', 'ts'] : ['js'],
+      extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
     .demandCommand(1, 'add needs a command')
     .strict()

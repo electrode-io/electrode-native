@@ -3,7 +3,7 @@ const path = require('path')
 const Module = require('module')
 const oload = Module._load
 
-process.env.NODE_ENV = 'development'
+process.env.ERN_ENV = 'development'
 process.env.TS_NODE_PROJECT = path.resolve(
   __dirname,
   '..',

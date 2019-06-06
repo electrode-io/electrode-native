@@ -181,8 +181,7 @@ const logLevelStringToEnum = level => {
 
   return yargs
     .commandDir('commands', {
-      extensions:
-        process.env.NODE_ENV === 'development' ? ['js', 'ts'] : ['js'],
+      extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
     .demandCommand(1, 'Need a command')
     .help('help')
