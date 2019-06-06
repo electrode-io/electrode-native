@@ -189,6 +189,32 @@ function ernifyPackageJson(
     containerGen,
     moduleType,
   }
+
+  if (nativeOnly) {
+    packageJson.ern.pluginConfig = {
+      android: {
+        root: 'android/lib',
+      },
+      ios: {
+        copy: [
+          {
+            dest: '{{{projectName}}}/APIImpls',
+            source: 'ios/ElectrodeApiImpl/APIImpls/*',
+          },
+        ],
+        pbxproj: {
+          addSource: [
+            {
+              from: 'ios/ElectrodeApiImpl/APIImpls/*.swift',
+              group: 'APIImpls',
+              path: 'APIImpls',
+            },
+          ],
+        },
+      },
+    }
+  }
+
   packageJson.keywords
     ? packageJson.keywords.push(moduleType)
     : (packageJson.keywords = [moduleType])
