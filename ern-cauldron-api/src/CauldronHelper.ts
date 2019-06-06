@@ -100,14 +100,20 @@ export class CauldronHelper {
         copyFromVersion === 'latest'
           ? (await this.getMostRecentNativeApplicationVersion(descriptor)).name
           : copyFromVersion
+      const sourceVersion = new AppVersionDescriptor(
+        descriptor.name,
+        descriptor.platform,
+        version
+      )
+      if (!(await this.cauldron.hasDescriptor(sourceVersion))) {
+        throw new Error(
+          `Cannot copy from unexisting source version ${sourceVersion}`
+        )
+      }
       await this.addDescriptor(descriptor)
       await this.copyNativeApplicationVersion({
         shouldCopyConfig: !!!config,
-        source: new AppVersionDescriptor(
-          descriptor.name,
-          descriptor.platform,
-          version
-        ),
+        source: sourceVersion,
         target: descriptor,
       })
     } else {
