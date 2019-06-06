@@ -5,8 +5,7 @@ export const desc = 'List information associated to an Electrode Native module'
 export const builder = (argv: Argv) => {
   return argv
     .commandDir('list', {
-      extensions:
-        process.env.NODE_ENV === 'development' ? ['js', 'ts'] : ['js'],
+      extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
     .demandCommand(1, 'list needs a command')
     .strict()
