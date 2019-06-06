@@ -1,5 +1,6 @@
 import { PackagePath } from './PackagePath'
 import * as mustacheUtils from './mustacheUtils'
+import Mustache from 'mustache'
 import shell from './shell'
 import { manifest } from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
@@ -11,6 +12,8 @@ import fs from 'fs'
 import _ from 'lodash'
 import readDir = require('fs-readdir-recursive')
 import kax from './kax'
+import { isDependencyPathNativeApiImpl } from './utils'
+import { readPackageJson } from './packageJsonFileUtils'
 
 export async function fillProjectHull(
   pathSpec: {
@@ -71,7 +74,7 @@ export async function fillProjectHull(
         continue
       }
 
-      const pluginConfig = await manifest.getPluginConfig(
+      let pluginConfig: any = await manifest.getPluginConfig(
         plugin,
         projectSpec.projectName
       )
@@ -90,6 +93,20 @@ export async function fillProjectHull(
 
           if (!pluginSourcePath) {
             throw new Error(`Was not able to download ${plugin.basePath}`)
+          }
+
+          if (await isDependencyPathNativeApiImpl(pluginSourcePath)) {
+            // For native api implementations, if a 'ern.pluginConfig' object
+            // exists in its package.json, replace pluginConfig with this one.
+            const pluginPackageJson = await readPackageJson(pluginSourcePath)
+            if (pluginPackageJson.ern.pluginConfig) {
+              pluginConfig = pluginPackageJson.ern.pluginConfig
+              pluginConfig = JSON.parse(
+                Mustache.render(JSON.stringify(pluginConfig), {
+                  projectName: projectSpec.projectName,
+                })
+              )
+            }
           }
 
           injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${

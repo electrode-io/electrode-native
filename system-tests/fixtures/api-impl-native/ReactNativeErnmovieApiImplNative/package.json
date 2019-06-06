@@ -14,7 +14,29 @@
         "Movies"
       ]
     },
-    "moduleType": "ern-native-api-impl"
+    "moduleType": "ern-native-api-impl",
+    "pluginConfig": {
+      "android": {
+        "root": "android/lib"
+      },
+      "ios": {
+        "copy": [
+          {
+            "dest": "{{{projectName}}}/APIImpls",
+            "source": "ios/ElectrodeApiImpl/APIImpls/*"
+          }
+        ],
+        "pbxproj": {
+          "addSource": [
+            {
+              "from": "ios/ElectrodeApiImpl/APIImpls/*.swift",
+              "group": "APIImpls",
+              "path": "APIImpls"
+            }
+          ]
+        }
+      }
+    }
   },
   "keywords": [
     "ern-native-api-impl"

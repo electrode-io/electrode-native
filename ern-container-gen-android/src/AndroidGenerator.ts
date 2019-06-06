@@ -10,6 +10,7 @@ import {
   kax,
   android,
   AndroidResolvedVersions,
+  readPackageJson,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -116,7 +117,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     for (const plugin of config.plugins) {
-      const pluginConfig = await manifest.getPluginConfig(plugin)
+      let pluginConfig: any = await manifest.getPluginConfig(plugin)
       if (!pluginConfig) {
         continue
       }
@@ -152,6 +153,12 @@ export default class AndroidGenerator implements ContainerGenerator {
         }
 
         if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
+          // For native api implementations, if a 'ern.pluginConfig' object
+          // exists in its package.json, replace pluginConfig with this one.
+          const pluginPackageJson = await readPackageJson(pluginSourcePath)
+          if (pluginPackageJson.ern.pluginConfig) {
+            pluginConfig = pluginPackageJson.ern.pluginConfig
+          }
           populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
         }
 
@@ -165,16 +172,37 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       shell.pushd(pathToPluginProject)
       try {
-        const relPathToPluginSource = pluginConfig.android.moduleName
-          ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
-          : path.join('src', 'main', 'java')
-        const absPathToCopyPluginSourceTo = path.join(
-          config.outDir,
-          'lib',
-          'src',
-          'main'
-        )
-        shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
+        if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
+          // Special handling for native api implementation as we don't
+          // want to copy the API and bridge code (part of native api implementations projects)
+          const relPathToApiImplSource = path.join(
+            'src',
+            'main',
+            'java',
+            'com',
+            'ern'
+          )
+          const absPathToCopyPluginSourceTo = path.join(
+            config.outDir,
+            'lib',
+            'src',
+            'main',
+            'java',
+            'com'
+          )
+          shell.cp('-R', relPathToApiImplSource, absPathToCopyPluginSourceTo)
+        } else {
+          const relPathToPluginSource = pluginConfig.android.moduleName
+            ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
+            : path.join('src', 'main', 'java')
+          const absPathToCopyPluginSourceTo = path.join(
+            config.outDir,
+            'lib',
+            'src',
+            'main'
+          )
+          shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
+        }
 
         if (pluginConfig.android) {
           if (pluginConfig.android.copy) {
