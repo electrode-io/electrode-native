@@ -1,4 +1,4 @@
-import { execSync } from 'child_process'
+import { execSync, execFile } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import semver from 'semver'
@@ -101,12 +101,14 @@ export class MiniApp extends BaseMiniApp {
       packageManager,
       platformVersion = Platform.currentVersion,
       scope,
+      template,
     }: {
       language?: 'JavaScript' | 'TypeScript'
       manifestId?: string
       packageManager?: 'npm' | 'yarn'
       platformVersion?: string
       scope?: string
+      template?: string
     } = {}
   ) {
     if (fs.existsSync(path.join('node_modules', 'react-native'))) {
@@ -157,13 +159,20 @@ export class MiniApp extends BaseMiniApp {
       )
       .run(
         reactnative.init(miniAppName, reactNativeVersion, {
-          template: language === 'TypeScript' ? 'typescript' : undefined,
+          template:
+            language === 'TypeScript'
+              ? 'typescript'
+              : template
+              ? template
+              : undefined,
         })
       )
 
-    // Create .npmignore
+    // Create .npmignore if it does not exist
     const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore')
-    fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
+    if (!npmIgnorePath) {
+      fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
+    }
 
     // Inject ern specific data in MiniApp package.json
     const pathToMiniApp = path.join(process.cwd(), miniAppName)

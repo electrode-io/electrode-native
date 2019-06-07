@@ -56,6 +56,10 @@ export const builder = (argv: Argv) => {
       describe: 'Package manager to use for this MiniApp',
       type: 'string',
     })
+    .option('template', {
+      describe: 'Template to use to create the MiniApp',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
@@ -68,6 +72,7 @@ export const commandHandler = async ({
   platformVersion,
   scope,
   skipNpmCheck,
+  template,
 }: {
   appName: string
   language: 'JavaScript' | 'TypeScript'
@@ -77,6 +82,7 @@ export const commandHandler = async ({
   platformVersion: string
   scope?: string
   skipNpmCheck?: boolean
+  template?: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
     isValidElectrodeNativeModuleName: {
@@ -107,7 +113,7 @@ export const commandHandler = async ({
     packageName = await askUserToInputPackageName({ defaultPackageName })
   }
 
-  if (!language) {
+  if (!language && !template) {
     const { userSelectedLanguage } = await inquirer.prompt([
       <inquirer.Question>{
         choices: ['JavaScript', 'TypeScript'],
@@ -148,6 +154,7 @@ export const commandHandler = async ({
       packageManager,
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope,
+      template,
     })
   )
 
