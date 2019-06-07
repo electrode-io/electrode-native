@@ -4,10 +4,13 @@ import path from 'path'
 import shell from './shell'
 import createTmpDir from './createTmpDir'
 import { execp, spawnp } from './childProcess'
+import { exec, spawn, execSync, execFileSync } from 'child_process'
 import fetch from 'node-fetch'
 import log from './log'
 import kax from './kax'
-
+import util from 'util'
+const ex = util.promisify(exec)
+const sp = util.promisify(spawn)
 export interface BundlingResult {
   // The root path to the assets
   assetsPath: string
@@ -39,13 +42,22 @@ export default class ReactNativeCli {
       throw new Error(`Path already exists will not override ${dir}`)
     }
 
-    const initCmd = `${
-      this.binaryPath
-    } init ${appName} --version react-native@${rnVersion}${
+    const initCmd = `init ${appName} --version react-native@${rnVersion}${
       template ? ` --template ${template}` : ''
-    } --skip-jest`
+    }`
 
-    return execp(initCmd)
+    return template
+      ? // For some reason, when using 'react-native init' with
+        // the template option, stdin redirection matters.
+        // By default using 'pipe' for stdin, but this cause
+        // 'react-native init' command to stall with Node 8.
+        // The problem is not present with Node 10 and above
+        // But because Electrode Native min requirement is Node 8
+        // we need to handle this specific case.
+        spawnp(this.binaryPath, initCmd.split(' '), {
+          stdio: ['ignore', 'pipe', 'pipe'],
+        })
+      : execp(`${this.binaryPath} ${initCmd}`)
   }
 
   public async bundle({
