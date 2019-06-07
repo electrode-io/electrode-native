@@ -51,7 +51,7 @@ static dispatch_semaphore_t semaphore;
     if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
         NSURL *url;
         if (self.debugEnabled) {
-            url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+            url = [NSURL URLWithString:@"http://localhost:8081/{{{jsMainModuleName}}}.bundle?platform=ios&dev=true"];
             NSLog(@"using local port to debug");
         } else {
             url = [self allJSBundleFiles][0];

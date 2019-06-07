@@ -92,6 +92,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     mustacheView.miniApps = config.composite.getMiniApps()
+    mustacheView.jsMainModuleName = config.jsMainModuleName || 'index'
 
     await kax
       .task('Preparing Native Dependencies Injection')

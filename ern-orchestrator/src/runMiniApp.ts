@@ -59,6 +59,13 @@ export async function runMiniApp(
     )
   }
 
+  let jsMainModuleName
+  if (MiniApp.existInPath(cwd)) {
+    jsMainModuleName = fs.existsSync(path.join(cwd, `index.${platform}.js`))
+      ? `index.${platform}`
+      : 'index'
+  }
+
   if (miniapps && dev) {
     dev = false
     log.warn(
@@ -156,6 +163,7 @@ export async function runMiniApp(
     dependencies,
     extra, // JavaScript object to pass extras e.x. androidConfig
     jsApiImpls,
+    jsMainModuleName,
     miniApps: miniapps,
     napDescriptor: napDescriptor || undefined,
     outDir,

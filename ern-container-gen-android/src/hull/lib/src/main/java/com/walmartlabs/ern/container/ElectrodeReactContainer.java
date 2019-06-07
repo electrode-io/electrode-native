@@ -305,7 +305,7 @@ public class ElectrodeReactContainer {
 
         @Override
         protected String getJSMainModuleName() {
-            return "index.android";
+            return "{{{jsMainModuleName}}}";
         }
 
         @Override
