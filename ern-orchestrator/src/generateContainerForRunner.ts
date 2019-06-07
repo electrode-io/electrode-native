@@ -16,6 +16,7 @@ export async function generateContainerForRunner(
     miniApps = [],
     jsApiImpls = [],
     outDir,
+    jsMainModuleName,
     extra,
   }: {
     baseComposite?: PackagePath
@@ -24,6 +25,7 @@ export async function generateContainerForRunner(
     miniApps?: PackagePath[]
     jsApiImpls?: PackagePath[]
     outDir: string
+    jsMainModuleName?: string
     extra?: any
   }
 ) {
@@ -36,6 +38,7 @@ export async function generateContainerForRunner(
 
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(napDescriptor, composite, {
+        jsMainModuleName,
         outDir,
       })
     )
@@ -51,6 +54,7 @@ export async function generateContainerForRunner(
       runLocalContainerGen(platform, composite, {
         extra: extra || {},
         extraNativeDependencies: dependencies || [],
+        jsMainModuleName,
         outDir,
       })
     )

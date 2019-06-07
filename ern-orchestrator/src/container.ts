@@ -34,11 +34,13 @@ export async function runLocalContainerGen(
     outDir = Platform.getContainerGenOutDirectory(platform),
     extraNativeDependencies = [],
     ignoreRnpmAssets = false,
+    jsMainModuleName,
     extra,
   }: {
     outDir?: string
     extraNativeDependencies: PackagePath[]
     ignoreRnpmAssets?: boolean
+    jsMainModuleName?: string
     extra?: any
   }
 ) {
@@ -51,6 +53,7 @@ export async function runLocalContainerGen(
         androidConfig: (extra && extra.androidConfig) || {},
         composite,
         ignoreRnpmAssets,
+        jsMainModuleName,
         outDir,
         plugins: [...nativeDependencies.resolved, ...extraNativeDependencies],
         pluginsDownloadDir: createTmpDir(),
@@ -68,8 +71,10 @@ export async function runCauldronContainerGen(
   napDescriptor: AppVersionDescriptor,
   composite: Composite,
   {
+    jsMainModuleName,
     outDir,
   }: {
+    jsMainModuleName?: string
     outDir?: string
   } = {}
 ): Promise<ContainerGenResult> {
@@ -122,6 +127,7 @@ export async function runCauldronContainerGen(
           ignoreRnpmAssets:
             containerGeneratorConfig &&
             containerGeneratorConfig.ignoreRnpmAssets,
+          jsMainModuleName,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           plugins,
           pluginsDownloadDir: createTmpDir(),

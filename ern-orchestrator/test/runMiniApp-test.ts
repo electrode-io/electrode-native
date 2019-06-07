@@ -171,6 +171,7 @@ describe('runMiniApp', () => {
       dependencies: undefined,
       extra: undefined,
       jsApiImpls: undefined,
+      jsMainModuleName: 'index.android',
       miniApps: sinon.match.array,
       napDescriptor: undefined,
       outDir: sinon.match.string,

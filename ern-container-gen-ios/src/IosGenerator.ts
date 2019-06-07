@@ -98,7 +98,8 @@ export default class IosGenerator implements ContainerGenerator {
       throw new Error('react-native plugin does not have a version !')
     }
 
-    const mustacheView = {}
+    const mustacheView: any = {}
+    mustacheView.jsMainModuleName = config.jsMainModuleName || 'index'
     injectReactNativeVersionKeysInObject(
       mustacheView,
       reactNativePlugin.version

@@ -32,6 +32,7 @@ describe('generateContainerForRunner', () => {
       descriptor,
       undefined,
       {
+        jsMainModuleName: undefined,
         outDir,
       }
     )
@@ -55,6 +56,7 @@ describe('generateContainerForRunner', () => {
       {
         extra: {},
         extraNativeDependencies: dependencies,
+        jsMainModuleName: undefined,
         outDir,
       }
     )
@@ -80,6 +82,7 @@ describe('generateContainerForRunner', () => {
       {
         extra,
         extraNativeDependencies: dependencies,
+        jsMainModuleName: undefined,
         outDir,
       }
     )

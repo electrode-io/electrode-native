@@ -30,4 +30,9 @@ export interface ContainerGeneratorConfig {
    * Android config that should be included to override default build settings
    */
   androidConfig?: any
+  /**
+   * JS main module name. Usually 'index' (for newest RN version) or
+   * 'index.android'/'index.ios' (for older RN versions)
+   */
+  jsMainModuleName?: string
 }
