@@ -200,10 +200,47 @@ export class MiniApp extends BaseMiniApp {
 
     await writePackageJson(pathToMiniApp, appPackageJson)
 
+    const miniAppPath = path.join(process.cwd(), miniAppName)
+
+    // For RN > 0.57
+    // Write custom metro.config.js to make sure that packager does not crash
+    // on Windows while building the Runner.
+    // Do not write this file if creating a MiniApp from a project template
+    // as the template might contain a custom metro.config.js file.
+    // This is the responsibility of the template project owner to add
+    // resolver blacklisted paths.
+    // See https://github.com/facebook/react-native/issues/9136#issuecomment-348773574
+    if (semver.gt(reactNativeVersion, '0.57.0') && !template) {
+      fs.writeFileSync(
+        path.join(miniAppPath, 'metro.config.js'),
+        `
+const blacklist = require('metro-config/src/defaults/blacklist');
+module.exports = {
+  resolver: {
+    blacklistRE: blacklist([
+      // Ignore IntelliJ directories
+      /.*\.idea\/.*/,
+      // ignore git directories
+      /.*\.git\/.*/,
+      // Ignore android directories
+      /.*\/app\/build\/.*/      
+    ])
+  },
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
+};`
+      )
+    }
+
     // Remove react-native generated android and ios projects
     // They will be replaced with our owns when user uses `ern run android`
     // or `ern run ios` command
-    const miniAppPath = path.join(process.cwd(), miniAppName)
     shell.pushd(miniAppPath)
     try {
       shell.rm('-rf', 'android')
