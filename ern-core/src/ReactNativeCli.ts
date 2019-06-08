@@ -177,9 +177,9 @@ ${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''}`
     await fileUtils.writeFile(
       tmpScriptPath,
       `
-cd "${cwd}"; 
-echo "Running ${this.binaryPath} start ${args.join(' ')}";
-${this.binaryPath} start ${args.join(' ')};
+cd ${cwd}
+echo "Running ${this.binaryPath} start ${args.join(' ')}"
+${this.binaryPath} start ${args.join(' ')}
 `
     )
     shell.chmod('+x', tmpScriptPath)
