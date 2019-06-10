@@ -219,11 +219,11 @@ module.exports = {
   resolver: {
     blacklistRE: blacklist([
       // Ignore IntelliJ directories
-      /.*\.idea\/.*/,
+      /.*\\.idea\\/.*/,
       // ignore git directories
-      /.*\.git\/.*/,
+      /.*\\.git\\/.*/,
       // Ignore android directories
-      /.*\/app\/build\/.*/      
+      /.*\\/app\\/build\\/.*/      
     ])
   },
   transformer: {
