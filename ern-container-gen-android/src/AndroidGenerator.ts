@@ -173,15 +173,18 @@ export default class AndroidGenerator implements ContainerGenerator {
       shell.pushd(pathToPluginProject)
       try {
         if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
+          log.error(`pathToPluginProject: ${pathToPluginProject}`)
           // Special handling for native api implementation as we don't
           // want to copy the API and bridge code (part of native api implementations projects)
           const relPathToApiImplSource = path.join(
+            'lib',
             'src',
             'main',
             'java',
             'com',
             'ern'
           )
+          log.error(`relPathToApiImplSource: ${relPathToApiImplSource}`)
           const absPathToCopyPluginSourceTo = path.join(
             config.outDir,
             'lib',
@@ -189,6 +192,9 @@ export default class AndroidGenerator implements ContainerGenerator {
             'main',
             'java',
             'com'
+          )
+          log.error(
+            `absPathToCopyPluginSourceTo: ${absPathToCopyPluginSourceTo}`
           )
           shell.cp('-R', relPathToApiImplSource, absPathToCopyPluginSourceTo)
         } else {
