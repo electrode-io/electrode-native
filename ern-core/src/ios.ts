@@ -61,7 +61,10 @@ export async function askUserToSelectAniPhoneSimulator() {
   }))
 
   // Check if user has set the usePreviousEmulator flag to true
-  const deviceConfig = ernConfig.getValue(deviceConfigUtil.IOS_DEVICE_CONFIG)
+  const deviceConfig = ernConfig.getValue(
+    deviceConfigUtil.IOS_DEVICE_CONFIG,
+    {}
+  )
   if (choices && deviceConfig) {
     if (deviceConfig.usePreviousDevice) {
       // Get the name of previously used simulator
