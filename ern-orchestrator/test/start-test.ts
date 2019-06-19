@@ -13,6 +13,7 @@ import {
 import * as cauldronApi from 'ern-cauldron-api'
 import * as compositeGen from 'ern-composite-gen'
 import fs from 'fs'
+import path from 'path'
 const sandbox = sinon.createSandbox()
 
 function cloneFixture(fixture) {
@@ -196,8 +197,8 @@ describe('start', () => {
 
     sandbox.assert.calledWith(
       shellStub.cp,
-      '/path/to/myMiniApp/fileName',
-      '/tmp/dir/node_modules/myMiniApp/fileName'
+      path.normalize('/path/to/myMiniApp/fileName'),
+      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
     )
   })
 
@@ -217,8 +218,8 @@ describe('start', () => {
 
     sandbox.assert.calledWith(
       shellStub.cp,
-      '/path/to/myMiniApp/fileName',
-      '/tmp/dir/node_modules/myMiniApp/fileName'
+      path.normalize('/path/to/myMiniApp/fileName'),
+      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
     )
   })
 
@@ -238,7 +239,7 @@ describe('start', () => {
 
     sandbox.assert.calledWith(
       shellStub.rm,
-      '/tmp/dir/node_modules/myMiniApp/fileName'
+      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
     )
   })
 
@@ -258,7 +259,7 @@ describe('start', () => {
 
     sandbox.assert.calledWith(
       shellStub.mkdir,
-      '/tmp/dir/node_modules/myMiniApp/fileName'
+      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
     )
   })
 
@@ -279,7 +280,7 @@ describe('start', () => {
     sandbox.assert.calledWith(
       shellStub.rm,
       '-rf',
-      '/tmp/dir/node_modules/myMiniApp/fileName'
+      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
     )
   })
 })
