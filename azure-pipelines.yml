@@ -1,25 +1,58 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
-
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run rebuild
-  displayName: 'npm install and build'
-
-- script: |
-    npm run check:lint
-  displayName: 'lint checks'
-
-- script: |
-    npm run test:unit
-  displayName: 'unit tests'
-
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+  - script: |
+      npm install
+      npm run rebuild
+    displayName: 'npm install and build'
+  - script: |
+      npm run check:lint
+    displayName: 'lint checks'
+  - script: |
+      npm run test:unit
+    displayName: 'unit tests'
+- job: macOS
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+  - script: |
+      npm install
+      npm run rebuild
+    displayName: 'npm install and build'
+  - script: |
+      npm run check:lint
+    displayName: 'lint checks'
+  - script: |
+      npm run test:unit
+    displayName: 'unit tests'
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+  - script: |
+      npm install
+      npm run rebuild
+    displayName: 'npm install and build'
+  - script: |
+      npm run check:lint
+    displayName: 'lint checks'
+  - script: |
+      npm run test:unit
+    displayName: 'unit tests'
