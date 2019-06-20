@@ -1,6 +1,6 @@
 {
   "name": "ern-composite-gen",
-  "version": "1000.0.0",
+  "version": "0.34.1",
   "description": "Electrode Native Composite Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +20,8 @@
     "composite",
     "node"
   ],
-  "contributors": [{
+  "contributors": [
+    {
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -46,15 +47,16 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "ern-core": "1000.0.0",
+    "ern-core": "0.34.1",
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^2.3.1",
     "semver": "^5.5.0"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.34.1"
   },
   "engines": {
     "node": ">=6"
-  }
+  },
+  "gitHead": "17657e69fd867633e048b129dffa2e3dbfb3acec"
 }

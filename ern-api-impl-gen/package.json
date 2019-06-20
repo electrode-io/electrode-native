@@ -1,6 +1,6 @@
 {
   "name": "ern-api-impl-gen",
-  "version": "1000.0.0",
+  "version": "0.34.1",
   "description": "Electrode Native API implementation projects generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,7 +22,8 @@
     "android",
     "ios"
   ],
-  "contributors": [{
+  "contributors": [
+    {
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -52,20 +53,21 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@yarnpkg/lockfile": "^1.0.2",
     "chalk": "^2.4.1",
-    "ern-api-gen": "1000.0.0",
-    "ern-core": "1000.0.0",
+    "ern-api-gen": "0.34.1",
+    "ern-core": "0.34.1",
     "lodash": "^4.17.10",
     "mustache": "^2.3.1",
     "semver": "5.5.0",
     "xcode": "^1.0.0",
-    "xcode-ern": "^1.0.12",
-    "@yarnpkg/lockfile": "^1.0.2"
+    "xcode-ern": "^1.0.12"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.34.1"
   },
   "engines": {
     "node": ">=6"
-  }
+  },
+  "gitHead": "17657e69fd867633e048b129dffa2e3dbfb3acec"
 }
