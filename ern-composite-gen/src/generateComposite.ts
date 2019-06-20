@@ -214,6 +214,18 @@ async function createIndexJsBasedOnPackageJson({ outDir }) {
   }
 
   await fileUtils.writeFile(path.join(outDir, 'index.js'), entryIndexJsContent)
+  // Still also generate index.android.js and index.ios.js for backward compatibility with
+  // Container generated with Electrode Native < 0.33.0, as these Containers are still
+  // looking for these files.
+  // TO BE REMOVED IN 0.40.0
+  await fileUtils.writeFile(
+    path.join(outDir, 'index.ios.js'),
+    entryIndexJsContent
+  )
+  await fileUtils.writeFile(
+    path.join(outDir, 'index.android.js'),
+    entryIndexJsContent
+  )
 }
 
 async function createCompositeImportsJsBasedOnPackageJson({ outDir }) {
