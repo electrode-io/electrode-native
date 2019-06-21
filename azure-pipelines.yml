@@ -1,58 +1,19 @@
 trigger:
-- master
+  - master
 
 jobs:
-- job: Windows
-  pool:
-    vmImage: 'vs2017-win2016'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '10.x'
-    displayName: 'Install Node.js'
-  - script: |
-      npm install
-      npm run rebuild
-    displayName: 'npm install and build'
-  - script: |
-      npm run check:lint
-    displayName: 'lint checks'
-  - script: |
-      npm run test:unit
-    displayName: 'unit tests'
-- job: macOS
-  pool:
-    vmImage: 'macOS-10.13'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '10.x'
-    displayName: 'Install Node.js'
-  - script: |
-      npm install
-      npm run rebuild
-    displayName: 'npm install and build'
-  - script: |
-      npm run check:lint
-    displayName: 'lint checks'
-  - script: |
-      npm run test:unit
-    displayName: 'unit tests'
-- job: Linux
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '10.x'
-    displayName: 'Install Node.js'
-  - script: |
-      npm install
-      npm run rebuild
-    displayName: 'npm install and build'
-  - script: |
-      npm run check:lint
-    displayName: 'lint checks'
-  - script: |
-      npm run test:unit
-    displayName: 'unit tests'
+  - job: Windows
+    pool:
+      vmImage: 'win1803'
+    steps:
+      - template: azure/templates/unit-tests.yml
+  - job: macOS
+    pool:
+      vmImage: 'macOS-10.13'
+    steps:
+      - template: azure/templates/unit-tests.yml
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - template: azure/templates/unit-tests.yml
