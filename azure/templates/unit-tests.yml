@@ -1,0 +1,17 @@
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+  - script: |
+      yarn install
+    displayName: 'Install'
+  - script: |
+      yarn build
+    displayName: 'Build'
+  - script: |
+      yarn check:lint
+    displayName: 'Run lint checks'
+  - script: |
+      yarn test:unit
+    displayName: 'Run unit tests'
