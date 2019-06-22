@@ -1,6 +1,9 @@
 trigger:
   - master
 
+variables:
+  ENV_AZURE_PIPELINE: true
+
 jobs:
   - job: Windows
     pool:
