@@ -15,3 +15,10 @@ steps:
   - script: |
       yarn test:unit
     displayName: 'Run unit tests'
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'ern-*/test-results.xml'
+      mergeTestResults: true
+      testRunTitle: $(Agent.OS)
