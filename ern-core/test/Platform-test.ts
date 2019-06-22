@@ -18,19 +18,25 @@ describe('Platform', () => {
   const platformVersions = '["1.0.0", "2.0.0", "3.0.0"]'
   let execSyncStub
   let isYarnInstalledReturn = true
+  let throwOnExecSync = false
 
   beforeEach(() => {
     ernHomePath = path.join(createTmpDir(), 'ern_home')
     process.env.ERN_HOME = ernHomePath
     execSyncStub = sandbox.stub(childProcess, 'execSync').callsFake(cmd => {
+      if (throwOnExecSync) {
+        throw new Error()
+      }
       if (cmd === 'npm info ern-local-cli versions --json') {
-        return platformVersions
+        return Buffer.from(platformVersions)
       } else if (cmd.startsWith('yarn --version')) {
         if (isYarnInstalledReturn) {
-          return true
+          return Buffer.from('1.16.0')
         } else {
           throw new Error()
         }
+      } else {
+        return Buffer.from('unsupported test command')
       }
     })
   })
@@ -41,6 +47,7 @@ describe('Platform', () => {
       : (process.env.ERN_HOME = processEnvErnHomeBackup)
     sandbox.restore()
     isYarnInstalledReturn = true
+    throwOnExecSync = false
   })
 
   describe('rootDirectory', () => {
@@ -240,13 +247,12 @@ describe('Platform', () => {
     })
 
     it('should throw something went wrong during install', () => {
-      sandbox.stub(process, 'chdir').throws(new Error())
-
+      throwOnExecSync = true
       expect(() => Platform.installPlatform('3.0.0')).to.throw
     })
 
     it('should remove the version directory if something went wrong during install', () => {
-      sandbox.stub(process, 'chdir').throws(new Error())
+      throwOnExecSync = true
       try {
         Platform.installPlatform('3.0.0')
       } catch (e) {
