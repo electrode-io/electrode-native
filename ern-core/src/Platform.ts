@@ -112,7 +112,7 @@ export default class Platform {
 
     try {
       shell.mkdir('-p', path.join(pathToVersion, 'node_modules'))
-      process.chdir(pathToVersion)
+      shell.pushd(pathToVersion)
       if (this.isYarnInstalled()) {
         // Favor yarn if it is installed as it will greatly speed up install
         execSync(`yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, {
@@ -129,6 +129,8 @@ export default class Platform {
       )
       shell.rm('-rf', pathToVersion)
       throw e
+    } finally {
+      shell.popd()
     }
   }
 
