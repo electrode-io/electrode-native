@@ -23,7 +23,7 @@
     "setup-dev": "node setup-dev.js",
     "test": "yarn test:unit && yarn test:system",
     "test:system": "lerna run build && lerna run instrument-dist && node system-tests/system-tests",
-    "test:unit": "lerna run test"
+    "test:unit": "lerna run test --no-bail"
   },
   "workspaces": [
     "./ern-*"
