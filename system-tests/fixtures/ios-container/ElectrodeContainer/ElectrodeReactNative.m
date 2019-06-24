@@ -122,19 +122,26 @@ static dispatch_semaphore_t semaphore;
 - (UIViewController *)miniAppWithName:(NSString *)name
                            properties:(NSDictionary *)properties
 {
+    UIViewController *miniAppViewController = [UIViewController new];
+    miniAppViewController.view = [self miniAppViewWithName:name properties:properties];;
+    
+    return miniAppViewController;
+}
 
-    UIViewController *miniAppViewController = nil;
-
-    // Build out the view controller
+- (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *)properties {
     // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-
+    
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+    
+    return rootView;
+}
 
-    miniAppViewController = [UIViewController new];
-    miniAppViewController.view = rootView;
-
-    return miniAppViewController;}
+- (void) updateView: (UIView *) view withProps:(NSDictionary *) newProps {
+    if([view isKindOfClass:[RCTRootView class]]) {
+        [((RCTRootView *) view) setAppProperties:newProps];
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Convenience Methods
