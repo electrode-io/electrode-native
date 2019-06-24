@@ -1,0 +1,20 @@
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+  - script: |
+      npm install -g electrode-native;
+    displayName: 'Install ern global CLI'
+  - script: |
+      ern
+    displayName: 'Install ern local CLI'
+  - script: |
+      node setup-dev
+    displayName: 'Setup dev version of ern'
+  - script: |
+      ern platform use 1000.0.0
+    displayName: 'Use dev version of ern'
+  - script: |
+      yarn coverage:ci
+    displayName: 'Run full test suite with coverage'
