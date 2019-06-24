@@ -1,22 +1,42 @@
 trigger:
   - master
 
+schedules:
+  - cron: '00 19 * * *'
+    displayName: Daily Build
+    branches:
+      include:
+        - master
+    always: true
+
 variables:
   ENV_AZURE_PIPELINE: true
 
-jobs:
-  - job: Windows
-    pool:
-      vmImage: 'win1803'
-    steps:
-      - template: azure/templates/unit-tests.yml
-  - job: macOS
-    pool:
-      vmImage: 'macOS-10.13'
-    steps:
-      - template: azure/templates/unit-tests.yml
-  - job: Linux
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-      - template: azure/templates/unit-tests.yml
+stages:
+  - stage: UnitTests
+    condition: ne(variables['Build.Reason'], 'Schedule')
+    jobs:
+      - job: Windows
+        pool:
+          vmImage: 'win1803'
+        steps:
+          - template: azure/templates/unit-tests.yml
+      - job: macOS
+        pool:
+          vmImage: 'macOS-10.13'
+        steps:
+          - template: azure/templates/unit-tests.yml
+      - job: Linux
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - template: azure/templates/unit-tests.yml
+  - stage: SystemTests
+    dependsOn: []
+    condition: eq(variables['Build.Reason'], 'Schedule')
+    jobs:
+      - job: Linux
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - template: azure/templates/system-tests.yml
