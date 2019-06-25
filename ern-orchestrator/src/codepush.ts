@@ -79,17 +79,19 @@ export async function performCodePushPromote(
   {
     description,
     force = false,
-    mandatory,
-    rollout,
     label,
+    mandatory,
+    noDuplicateReleaseError = false,
+    rollout,
     reuseReleaseBinaryVersion,
     targetBinaryVersion,
   }: {
     description?: string
     force?: boolean
-    mandatory?: boolean
-    rollout?: number
     label?: string
+    mandatory?: boolean
+    noDuplicateReleaseError?: boolean
+    rollout?: number
     reuseReleaseBinaryVersion?: boolean
     targetBinaryVersion?: string
   } = {}
@@ -173,6 +175,7 @@ export async function performCodePushPromote(
               description,
               isMandatory: !!mandatory,
               label,
+              noDuplicateReleaseError,
               rollout,
             }
           )
@@ -238,6 +241,7 @@ export async function performCodePushOtaUpdate(
     codePushRolloutPercentage,
     description,
     force = false,
+    noDuplicateReleaseError = false,
     pathToYarnLock,
     targetBinaryVersion,
   }: {
@@ -246,6 +250,7 @@ export async function performCodePushOtaUpdate(
     codePushRolloutPercentage?: number
     description?: string
     force?: boolean
+    noDuplicateReleaseError?: boolean
     pathToYarnLock?: string
     targetBinaryVersion?: string
   } = {}
@@ -399,6 +404,7 @@ export async function performCodePushOtaUpdate(
           {
             description,
             isMandatory: codePushIsMandatoryRelease,
+            noDuplicateReleaseError,
             rollout: codePushRolloutPercentage,
           }
         )

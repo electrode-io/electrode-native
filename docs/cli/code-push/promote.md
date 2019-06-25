@@ -85,6 +85,12 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
  
 * **Default** Empty string
 
+`--noDuplicateReleaseError`
+
+* When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error
+
+* **Default** false
+
 #### Related commands
 
 [code-push release] | Issue a CodePush release 

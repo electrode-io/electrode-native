@@ -78,6 +78,12 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 
 * **Default** Empty String
 
+`--noDuplicateReleaseError`
+
+* When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error
+
+* **Default** false
+
 #### Remarks
 
 * MiniApps are packaged in a single JavaScript bundle. If the native application version contains 5 MiniApps and only one MiniApp is updated, then the remaining 4 MiniApp versions will remain untouched in the bundle.

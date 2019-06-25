@@ -366,6 +366,7 @@ describe('codepush', () => {
           description: '',
           isMandatory: false,
           label: 'v18',
+          noDuplicateReleaseError: false,
           rollout: 100,
         }
       )
@@ -669,7 +670,12 @@ describe('codepush', () => {
         'Production',
         sinon.match.string,
         '17.7.0',
-        { description: '', isMandatory: false, rollout: 100 }
+        {
+          description: '',
+          isMandatory: false,
+          noDuplicateReleaseError: false,
+          rollout: 100,
+        }
       )
     })
 
