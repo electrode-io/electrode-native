@@ -128,8 +128,6 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
         paths,
         apis
       )
-      await this.updateFilePermissions(srcOutputDirectory, editableFiles)
-
       await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
     } finally {
       shell.popd()
