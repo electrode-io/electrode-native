@@ -7,6 +7,7 @@ import {
   Platform,
   log,
   PluginConfig,
+  android,
 } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
@@ -128,6 +129,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
         paths,
         apis
       )
+      await this.updateGradleProperties(paths, outputDirectory)
       await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory)
     } finally {
       shell.popd()
@@ -182,12 +184,46 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     reactNativeVersion: string,
     outputDirectory: string
   ): Promise<any> {
-    const mustacheView: any = {}
+    let mustacheView: any = {}
+    const versions = android.resolveAndroidVersions({
+      androidGradlePlugin: '3.2.1',
+    })
     mustacheView.reactNativeVersion = reactNativeVersion
+    mustacheView = Object.assign(mustacheView, versions)
+    mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+      path.join(paths.apiImplHull, 'android', 'build.gradle'),
+      mustacheView,
+      path.join(outputDirectory, 'build.gradle')
+    )
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(paths.apiImplHull, 'android', 'lib', 'build.gradle'),
       mustacheView,
       path.join(outputDirectory, 'lib', 'build.gradle')
+    )
+  }
+
+  public updateGradleProperties(
+    paths: any,
+    outputDirectory: string
+  ): Promise<any> {
+    let mustacheView: any = {}
+    const versions = android.resolveAndroidVersions()
+    mustacheView = Object.assign(mustacheView, versions)
+    return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+      path.join(
+        paths.apiImplHull,
+        'android',
+        'gradle',
+        'wrapper',
+        'gradle-wrapper.properties'
+      ),
+      mustacheView,
+      path.join(
+        outputDirectory,
+        'gradle',
+        'wrapper',
+        'gradle-wrapper.properties'
+      )
     )
   }
 
