@@ -6,6 +6,7 @@ export interface CodePushPackageInfo {
   isDisabled?: boolean
   isMandatory?: boolean
   /* generated */ label?: string
+  noDuplicateReleaseError?: boolean
   /* generated */ packageHash?: string
   rollout?: number
 }

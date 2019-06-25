@@ -59,6 +59,12 @@ export const builder = (argv: Argv) => {
       describe: 'One or more MiniApp to CodePush',
       type: 'array',
     })
+    .option('noDuplicateReleaseError', {
+      default: false,
+      describe:
+        'When this flag is set, promoting a package that is identical to the latest release on the target deployment will produce a warning instead of an error',
+      type: 'boolean',
+    })
     .option('rollout', {
       alias: 'r',
       default: 100,
@@ -93,6 +99,7 @@ export const commandHandler = async ({
   jsApiImpls = [],
   mandatory,
   miniapps = [],
+  noDuplicateReleaseError,
   rollout,
   skipConfirmation,
   semVerDescriptor,
@@ -105,6 +112,7 @@ export const commandHandler = async ({
   jsApiImpls: string[]
   mandatory?: boolean
   miniapps: string[]
+  noDuplicateReleaseError: boolean
   rollout?: number
   skipConfirmation?: boolean
   semVerDescriptor?: string
@@ -207,6 +215,7 @@ export const commandHandler = async ({
         codePushRolloutPercentage: rollout,
         description,
         force,
+        noDuplicateReleaseError,
         pathToYarnLock: pathToYarnLock || undefined,
         targetBinaryVersion,
       }

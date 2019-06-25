@@ -43,6 +43,12 @@ export const builder = (argv: Argv) => {
       describe: 'Specifies whether this release should be considered mandatory',
       type: 'boolean',
     })
+    .option('noDuplicateReleaseError', {
+      default: false,
+      describe:
+        'When this flag is set, promoting a package that is identical to the latest release on the target deployment will produce a warning instead of an error',
+      type: 'boolean',
+    })
     .option('reuseReleaseBinaryVersion', {
       describe:
         'Indicates whether to reuse the target binary version that was used for the initial release',
@@ -101,6 +107,7 @@ export const commandHandler = async ({
   force,
   label,
   mandatory,
+  noDuplicateReleaseError,
   reuseReleaseBinaryVersion,
   sourceDeploymentName,
   targetBinaryVersion,
@@ -115,6 +122,7 @@ export const commandHandler = async ({
   force?: boolean
   label?: string
   mandatory?: boolean
+  noDuplicateReleaseError?: boolean
   reuseReleaseBinaryVersion?: boolean
   sourceDeploymentName?: string
   targetBinaryVersion?: string
@@ -227,6 +235,7 @@ export const commandHandler = async ({
       force,
       label,
       mandatory,
+      noDuplicateReleaseError,
       reuseReleaseBinaryVersion,
       rollout,
       targetBinaryVersion,
