@@ -83,7 +83,8 @@ ${dev ? '--dev=true' : '--dev=false'} \
 ${platform ? `--platform=${platform}` : ''} \
 ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
 ${assetsDest ? `--assets-dest=${assetsDest}` : ''} \
-${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''}`
+${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
+--reset-cache`
 
     await execp(bundleCommand, { cwd: workingDir })
     return {
