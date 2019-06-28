@@ -82,6 +82,7 @@ function firstTimeInstall() {
     )
     fs.mkdirSync(pathToVersionDirectory)
     fs.mkdirSync(path.join(pathToVersionDirectory, 'node_modules'))
+    fs.writeFileSync(path.join(pathToVersionDirectory, 'package.json'), '{}')
     process.chdir(pathToVersionDirectory)
     let installProc
 
