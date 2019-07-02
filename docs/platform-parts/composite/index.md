@@ -8,6 +8,30 @@ Electrode Native will also create a Composite when using [ern start] command, to
 
 You can also manually generate a Composite project, with the [ern create-composite] command.
 
+## Babel support
+
+Electrode Native has support for using Babel plugins in MiniApps.  
+Babel support is still in an early phase and will be improved and simplified over time.  
+To enable proper Babel support for a MiniApp, here are the requirements :
+
+- Have a `.babelrc` file at the root of the MiniApp, containing the Babel configuration. Electrode Native doesn't support `babel.config.js` which is appropriate for a top level babel configuration, but given that the MiniApps will end up inside a Composite, they won't be top level anymore.
+
+- Set `useBabelRc` to `true` in the `ern` section of the MiniApp `package.json`, as follow :
+
+  ```json
+  "ern": {
+    "useBabelRc": true
+  }
+  ```
+
+  This is required so that Electrode Native can let Babel know that this MiniApp should be added to the [babelrcRoots](https://babeljs.io/docs/en/options#babelrcroots). 
+
+- Make sure that all Babel plugins used by the MiniApp are inside the `dependencies` sections of the `package.json` rather than `devDependencies`. This is not the standard, and can look unclean, however it won't have any nasty side effects. The reason for this constraint is that when Electrode Native generates a Composite with one or more MiniApp(s) it `yarn add` (`npm install`) each of the MiniApps in the Composite project, which does not install any `devDependencies` of the the MiniApps. Therefore, if Babel plugins are kept inside `devDependencies` they won't be installed during Composite generation, and bundling/packaging will fail when trying to resolve babel plugins.
+
+### Note for [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver)
+
+If this plugin is being used, in the Babel plugin config (in `.babelrc`) the [`cwd` option](https://github.com/tleunen/babel-plugin-module-resolver/blob/v3.2.0/DOCS.md#cwd) should be set to `babelrc`. This is needed, otherwise the base directory for `root`  will resolve to top level composite rather than the MiniApp root directory.
+
 ## Using a custom Composite
 
 In the majority of cases, there is no need to create a custom composite, as Electrode Native comes with a built-in one. However in some specific cases, having more control on the Composite project is needed. For example, you might want to add some custom initialization code for the whole bundle, or you might want more control on some configuration files (`rn-cli.config.js`/ `metro.config.js`/`babel.config.js`).
