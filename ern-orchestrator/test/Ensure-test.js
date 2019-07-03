@@ -204,6 +204,53 @@ describe('Ensure.js', () => {
   })
 
   // ==========================================================
+  // dependencyIsOrphaned
+  // ==========================================================
+  describe('dependencyIsOrphaned', async () => {
+    it('should throw if dependency is not orphaned', async () => {
+      cauldronHelperStub.getYarnLock.resolves(
+        fs.readFileSync(path.join(__dirname, 'fixtures', 'sample.yarn.lock'))
+      )
+      assert(
+        await doesThrow(
+          Ensure.dependencyIsOrphaned,
+          null,
+          'DependencyB',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if dependency is orphaned [not in lock file]', async () => {
+      cauldronHelperStub.getYarnLock.resolves(
+        fs.readFileSync(path.join(__dirname, 'fixtures', 'sample.yarn.lock'))
+      )
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyIsOrphaned,
+          null,
+          'DependencyD',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+
+    it('should not throw if dependency is orphaned [in lock file]', async () => {
+      cauldronHelperStub.getYarnLock.resolves(
+        fs.readFileSync(path.join(__dirname, 'fixtures', 'sample.yarn.lock'))
+      )
+      assert(
+        await doesNotThrow(
+          Ensure.dependencyIsOrphaned,
+          null,
+          'DependencyOutOfLockFile',
+          'testapp:android:1.0.0'
+        )
+      )
+    })
+  })
+
+  // ==========================================================
   // dependencyNotInUseByAMiniApp
   // ==========================================================
   describe('dependencyNotInUseByAMiniApp', () => {

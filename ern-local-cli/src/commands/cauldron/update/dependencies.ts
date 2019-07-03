@@ -67,6 +67,11 @@ The following dependencies are missing a version : ${versionLessDependencies.toS
       extraErrorMessage:
         'It seems like you are trying to update a dependency to a version that is already the one in use.',
     },
+    dependencyIsOrphaned: {
+      dependency: dependencies,
+      descriptor,
+      extraErrorMessage: `It is only possible to update the version of orphaned dependencies`,
+    },
     isNewerContainerVersion: containerVersion
       ? {
           containerVersion,
