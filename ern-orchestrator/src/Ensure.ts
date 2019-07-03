@@ -5,6 +5,7 @@ import {
   dependencyLookup,
   AppVersionDescriptor,
   AnyAppDescriptor,
+  YarnLockParser,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { getContainerMetadataPath } from 'ern-container-gen'
@@ -14,6 +15,7 @@ import validateNpmPackageName from 'validate-npm-package-name'
 import fs from 'fs'
 import levenshtein from 'fast-levenshtein'
 import * as constants from './constants'
+import treeify from 'treeify'
 export default class Ensure {
   public static isValidElectrodeNativeModuleName(
     name: string,
@@ -352,9 +354,48 @@ export default class Ensure {
           '- Remove the native dependency from the MiniApp(s) that are using it\n'
         errorMessage += '- Remove the MiniApps that are using this dependency\n'
         errorMessage +=
-          '- Provide the force flag to this command (if you really now what you are doing !)'
+          '- Provide the force flag to this command (if you really now what you are doing !)\n'
+        errorMessage += extraErrorMessage
         throw new Error(errorMessage)
       }
+    }
+  }
+
+  public static async dependencyIsOrphaned(
+    obj: string | PackagePath | Array<string | PackagePath> | void,
+    napDescriptor: AppVersionDescriptor,
+    extraErrorMessage: string = ''
+  ) {
+    if (!obj) {
+      return
+    }
+    const cauldron = await getActiveCauldron()
+    const lock = await cauldron.getYarnLock(napDescriptor, 'container')
+    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    if (!lock) {
+      return
+    }
+    const parser = YarnLockParser.fromContent(lock.toString())
+
+    let errorMessage = ''
+    for (const dependency of dependencies) {
+      const tree = parser.buildDependencyTree(dependency)
+      if (
+        _.isEmpty(tree) ||
+        _.isEmpty(
+          Object.keys(tree).filter(k => Object.keys(tree[k]).length > 0)
+        )
+      ) {
+        continue
+      }
+
+      errorMessage += `${dependency} is not orphaned. It is used by one or more packages :\n`
+      errorMessage += `${treeify.asTree(tree, true, true)}\n`
+    }
+
+    if (errorMessage !== '') {
+      errorMessage += extraErrorMessage
+      throw new Error(errorMessage)
     }
   }
 

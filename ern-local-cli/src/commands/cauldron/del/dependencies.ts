@@ -54,9 +54,11 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot remove dependency(ies) that do not exist in Cauldron.',
     },
-    dependencyNotInUseByAMiniApp: {
+    dependencyIsOrphaned: {
       dependency: dependencies,
       descriptor,
+      extraErrorMessage:
+        'Only orphaned dependencies can be removed from the Cauldron',
     },
     isNewerContainerVersion: containerVersion
       ? {

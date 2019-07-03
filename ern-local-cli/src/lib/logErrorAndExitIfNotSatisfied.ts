@@ -21,6 +21,7 @@ export async function logErrorAndExitIfNotSatisfied({
   miniAppIsInNativeApplicationVersionContainer,
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion,
   dependencyNotInNativeApplicationVersionContainer,
+  dependencyIsOrphaned,
   dependencyIsInNativeApplicationVersionContainer,
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
   dependencyNotInUseByAMiniApp,
@@ -86,6 +87,11 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   dependencyNotInNativeApplicationVersionContainer?: {
+    dependency: string | PackagePath[] | Array<string | PackagePath> | void
+    descriptor: AppVersionDescriptor
+    extraErrorMessage?: string
+  }
+  dependencyIsOrphaned?: {
     dependency: string | PackagePath[] | Array<string | PackagePath> | void
     descriptor: AppVersionDescriptor
     extraErrorMessage?: string
@@ -317,6 +323,14 @@ export async function logErrorAndExitIfNotSatisfied({
         dependencyNotInUseByAMiniApp.extraErrorMessage
       )
       kaxTask.succeed()
+    }
+    if (dependencyIsOrphaned) {
+      kaxTask = kax.task('Ensuring that depedency/dependencies is/are orphaned')
+      await Ensure.dependencyIsOrphaned(
+        dependencyIsOrphaned.dependency,
+        dependencyIsOrphaned.descriptor,
+        dependencyIsOrphaned.extraErrorMessage
+      )
     }
     if (isValidNpmPackageName) {
       kaxTask = kax.task('Ensuring that NPM package name is valid')
