@@ -9,7 +9,11 @@ import {
   kax,
 } from 'ern-core'
 import { generateComposite } from 'ern-composite-gen'
-import { getActiveCauldron } from 'ern-cauldron-api'
+import {
+  CauldronCodePushMetadata,
+  CauldronCodePushEntry,
+  getActiveCauldron,
+} from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
 import _ from 'lodash'
 import path from 'path'
@@ -78,6 +82,7 @@ export async function performCodePushPromote(
     mandatory,
     rollout,
     label,
+    reuseReleaseBinaryVersion,
     targetBinaryVersion,
   }: {
     description?: string
@@ -85,11 +90,18 @@ export async function performCodePushPromote(
     mandatory?: boolean
     rollout?: number
     label?: string
+    reuseReleaseBinaryVersion?: boolean
     targetBinaryVersion?: string
   } = {}
 ) {
   let cauldron
   try {
+    if (reuseReleaseBinaryVersion && targetBinaryVersion) {
+      throw new Error(
+        `sameBinaryVersionAsRelease and targetBinaryVersion options are mutually exclusive`
+      )
+    }
+
     const codePushSdk = getCodePushSdk()
     cauldron = await getActiveCauldron()
     await cauldron.beginTransaction()
@@ -102,7 +114,7 @@ export async function performCodePushPromote(
         throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
       }
 
-      let codePushEntrySource
+      let codePushEntrySource: CauldronCodePushEntry
       try {
         codePushEntrySource = await cauldron.getCodePushEntry(
           sourceNapDescriptor,
@@ -139,12 +151,14 @@ export async function performCodePushPromote(
       }
 
       const appName = await getCodePushAppName(sourceNapDescriptor)
-      targetBinaryVersion =
-        targetBinaryVersion ||
-        (await buildCodePushTargetBinaryVersion(
-          targetNapDescriptor,
-          targetDeploymentName
-        ))
+      targetBinaryVersion = targetBinaryVersion
+        ? targetBinaryVersion
+        : reuseReleaseBinaryVersion
+        ? codePushEntrySource.metadata.appVersion
+        : await buildCodePushTargetBinaryVersion(
+            targetNapDescriptor,
+            targetDeploymentName
+          )
 
       description = description || ''
       const result = await kax

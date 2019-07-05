@@ -74,7 +74,7 @@
               "metadata": {
                 "deploymentName": "QA",
                 "isMandatory": true,
-                "appVersion": "17.7",
+                "appVersion": "~17.7",
                 "size": 522938,
                 "releaseMethod": "Upload",
                 "label": "v18",

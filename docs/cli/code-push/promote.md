@@ -12,6 +12,12 @@
 
 **Options**  
 
+`--reuseReleaseBinaryVersion`
+
+* Indicates whether to reuse the target binary version that was used for the initial release
+* If omitted, and `targetBinaryVersion` is not set, the promotion will target the exact version of the descriptor
+* This option is mutually exclusive with `targetBinaryVersion`
+
 `--sourceDescriptor <descriptor>`
 
 * Specify the native application version from which to promote a release in the form of a *complete native application descriptor*.
@@ -40,11 +46,13 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 * **Default** The command will prompt to input the deployment name, or display a list of deployment names stored in the Cauldron, to choose from.
 
 `--targetBinaryVersion/-t <targetBinaryVersion>`
-* Semver expression that specifies the binary app version this release is targeting
-* If omitted, the release will target the exact version of the descriptor
-* If versionModifier is specified in the codePush config , exact version of the descriptor is appended to versionModifier
+
+* Semver expression that specifies the binary app version this promotion is targeting
+* If omitted, and `reuseReleaseBinaryVersion` is not set, the promotion will target the exact version of the descriptor
+* If `versionModifier` is specified in the codePush config, it will be applied
 * For using `targetBinaryVersion` option users must target only 1 descriptor
 * For using `targetBinaryVersion` option users cannot use semVerDescriptor
+* This option is mutually exclusive with `reuseReleaseBinaryVersion`
 
 `--mandatory/-m`
 

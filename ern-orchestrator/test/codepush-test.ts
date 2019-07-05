@@ -430,6 +430,89 @@ describe('codepush', () => {
       })
     })
 
+    it('should reuse the initial release binary version if reuseReleaseBinaryVersion is set', async () => {
+      prepareStubs()
+
+      await sut.performCodePushPromote(
+        testAndroid1770Descriptor,
+        [testAndroid1770Descriptor],
+        'QA',
+        'Production',
+        {
+          description: 'new description',
+          label: 'v18',
+          reuseReleaseBinaryVersion: true,
+          rollout: 100,
+        }
+      )
+
+      sandbox.assert.calledWith(
+        codePushSdkStub.promote,
+        'testAndroid',
+        'QA',
+        'Production',
+        {
+          appVersion: '~17.7',
+          description: 'new description',
+          isMandatory: false,
+          label: 'v18',
+          rollout: 100,
+        }
+      )
+    })
+
+    it('should not reuse the initial release binary version if reuseReleaseBinaryVersion is not set', async () => {
+      prepareStubs()
+
+      await sut.performCodePushPromote(
+        testAndroid1770Descriptor,
+        [testAndroid1770Descriptor],
+        'QA',
+        'Production',
+        {
+          description: 'new description',
+          label: 'v18',
+          rollout: 100,
+        }
+      )
+
+      sandbox.assert.calledWith(
+        codePushSdkStub.promote,
+        'testAndroid',
+        'QA',
+        'Production',
+        {
+          appVersion: '17.7.0',
+          description: 'new description',
+          isMandatory: false,
+          label: 'v18',
+          rollout: 100,
+        }
+      )
+    })
+
+    it('should throw if both reuseReleaseBinaryVersion and targetBinaryVersion are set', async () => {
+      prepareStubs()
+      codePushSdkStub.promote.rejects(new Error('fail'))
+
+      assert(
+        await doesThrow(
+          sut.performCodePushPromote,
+          sut,
+          testAndroid1770Descriptor,
+          [testAndroid1770Descriptor],
+          'QA',
+          'Production',
+          {
+            label: 'v18',
+            reuseReleaseBinaryVersion: true,
+            rollout: 100,
+            targetBinaryVersion: '17.7.0',
+          }
+        )
+      )
+    })
+
     it('should properly update target deployment yarn lock id in Cauldron', async () => {
       prepareStubs()
 
