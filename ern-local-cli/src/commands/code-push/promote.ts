@@ -43,6 +43,11 @@ export const builder = (argv: Argv) => {
       describe: 'Specifies whether this release should be considered mandatory',
       type: 'boolean',
     })
+    .option('reuseReleaseBinaryVersion', {
+      describe:
+        'Indicates whether to reuse the target binary version that was used for the initial release',
+      type: 'boolean',
+    })
     .option('rollout', {
       alias: 'r',
       default: 100,
@@ -96,6 +101,7 @@ export const commandHandler = async ({
   force,
   label,
   mandatory,
+  reuseReleaseBinaryVersion,
   sourceDeploymentName,
   targetBinaryVersion,
   targetDeploymentName,
@@ -109,6 +115,7 @@ export const commandHandler = async ({
   force?: boolean
   label?: string
   mandatory?: boolean
+  reuseReleaseBinaryVersion?: boolean
   sourceDeploymentName?: string
   targetBinaryVersion?: string
   targetDeploymentName?: string
@@ -125,6 +132,12 @@ export const commandHandler = async ({
       targetBinaryVersion,
     },
   })
+
+  if (reuseReleaseBinaryVersion && targetBinaryVersion) {
+    throw new Error(
+      `reuseReleaseBinaryVersion and targetBinaryVersion options are mutually exclusive`
+    )
+  }
 
   sourceDescriptor =
     sourceDescriptor ||
@@ -214,6 +227,7 @@ export const commandHandler = async ({
       force,
       label,
       mandatory,
+      reuseReleaseBinaryVersion,
       rollout,
       targetBinaryVersion,
     }
