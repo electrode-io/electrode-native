@@ -15,72 +15,45 @@ export const desc =
   'Update the version(s) of one or more MiniApp(s) in the Cauldron'
 
 export const builder = (argv: Argv) => {
-  return (
-    argv
-      .option('containerVersion', {
-        alias: 'v',
-        describe:
-          'Version to use for generated container. If none provided, patch version will be bumped by default.',
-        type: 'string',
-      })
-      .option('descriptor', {
-        alias: 'd',
-        describe: 'A complete native application descriptor',
-        type: 'string',
-      })
-      .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-      .option('fullRegen', {
-        describe: 'Perform complete regeneration',
-        type: 'boolean',
-      })
-      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
-      .option('force [DEPRECATED]', {
-        alias: 'f',
-        describe: 'Force',
-        type: 'boolean',
-      })
-      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
-      .option('publishUnmodifiedContainer', {
-        describe:
-          'Publish Container even if it is identical to the previous one',
-        type: 'boolean',
-      })
-      .coerce('miniapps', d => d.map(PackagePath.fromString))
-      .option('targetVersion', {
-        describe:
-          'Target version to update all MiniApps to. Can only be used if `all` is used for MiniApps.',
-        type: 'string',
-      })
-      .epilog(epilog(exports))
-  )
+  return argv
+    .option('containerVersion', {
+      alias: 'v',
+      describe:
+        'Version to use for generated container. If none provided, patch version will be bumped by default.',
+      type: 'string',
+    })
+    .option('descriptor', {
+      alias: 'd',
+      describe: 'A complete native application descriptor',
+      type: 'string',
+    })
+    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .option('fullRegen', {
+      describe: 'Perform complete regeneration',
+      type: 'boolean',
+    })
+    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .option('targetVersion', {
+      describe:
+        'Target version to update all MiniApps to. Can only be used if `all` is used for MiniApps.',
+      type: 'string',
+    })
+    .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   containerVersion,
   descriptor,
   fullRegen,
-  force,
   miniapps,
-  publishUnmodifiedContainer,
   targetVersion,
 }: {
   containerVersion?: string
   descriptor?: AppVersionDescriptor
   fullRegen?: boolean
-  force?: boolean
   miniapps: PackagePath[]
-  publishUnmodifiedContainer?: boolean
   targetVersion?: string
 }) => {
-  if (publishUnmodifiedContainer!!) {
-    log.warn(`--publishUnmodifiedContainer has been deprecated in 0.31.0.
-Please use --fullRegen flag instead.`)
-    fullRegen = true
-  }
-  if (force) {
-    log.warn(`--force has been deprecated in 0.31.0.`)
-  }
-
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({

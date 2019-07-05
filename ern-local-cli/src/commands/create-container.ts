@@ -73,12 +73,6 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
-    .option('jsOnly', {
-      // DEPRECATED IN 0.31.0 TO BE REMOVED IN 0.35.0
-      alias: 'js',
-      describe: 'Generates JS only (composite app) [DEPRECATED]',
-      type: 'boolean',
-    })
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more miniapps',
@@ -108,7 +102,6 @@ export const commandHandler = async ({
   fromGitBranches,
   ignoreRnpmAssets,
   jsApiImpls,
-  jsOnly,
   miniapps,
   outDir,
   platform,
@@ -121,16 +114,10 @@ export const commandHandler = async ({
   fromGitBranches?: boolean
   ignoreRnpmAssets?: boolean
   jsApiImpls?: PackagePath[]
-  jsOnly?: boolean
   miniapps?: PackagePath[]
   outDir?: string
   platform?: NativePlatform
 } = {}) => {
-  if (jsOnly) {
-    throw new Error(`--jsOnly/--js option flag has been deprecated in 0.31.0.
-To create a JS composite, you can now use 'ern create-composite' command.`)
-  }
-
   if (outDir && fs.existsSync(outDir)) {
     if (fs.readdirSync(outDir).length > 0) {
       throw new Error(
