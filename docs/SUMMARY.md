@@ -78,7 +78,6 @@
 - [start](cli/start.md)
 - [unlink](cli/unlink.md)
 - [upgrade-miniapp](cli/upgrade-miniapp.md)
-- [why](cli/why.md)
 - [cauldron add](cli/cauldron/add.md)
   - [dependencies](cli/cauldron/add/dependencies.md)
   - [file](cli/cauldron/add/file.md)
