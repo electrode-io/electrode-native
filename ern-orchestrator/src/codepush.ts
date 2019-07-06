@@ -343,6 +343,7 @@ export async function performCodePushOtaUpdate(
         miniApps: pathsToMiniAppsToBeCodePushed,
         outDir: tmpWorkingDir,
         pathToYarnLock,
+        resolutions: compositeGenConfig && compositeGenConfig.resolutions,
       })
     )
 

@@ -32,6 +32,26 @@ To enable proper Babel support for a MiniApp, here are the requirements :
 
 If this plugin is being used, in the Babel plugin config (in `.babelrc`) the [`cwd` option](https://github.com/tleunen/babel-plugin-module-resolver/blob/v3.2.0/DOCS.md#cwd) should be set to `babelrc`. This is needed, otherwise the base directory for `root`  will resolve to top level composite rather than the MiniApp root directory.
 
+## Selective dependency resolutions support
+
+Because Electrode Native uses [yarn](https://yarnpkg.com) under the hood to generate the Composite project, it also supports yarn [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) feature.  
+This feature allows you to force version resolution of selected dependencies to specific versions.  
+It can be very useful in certain context. For example if a deeply nested package that you don't have direct control on is breaking because a newer version has a bug, you can easily force the use of a previous version while waiting for package maintainer to publish a new version of it.  
+Resolutions configuration can be done in the `compositeGenerator` config in the Cauldron. The `resolutions` field is a 1:1 mapping to the `resolutions` field that will be added to the `package.json` of the composite. Refer to the [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) documentation for more information.
+
+```json
+"config": {
+  "compositeGenerator": {
+    "resolutions": {
+      "d2/left-pad": "1.1.1",
+      "c/**/left-pad": "1.1.2"
+    }
+  }
+}
+```
+
+Please note that this configuration will be ignored if you are using a custom composite. Because a custom composite offers full control of the Composite project, it is the responsibility of the custom composite project maintainer to manually add `resolutions` to the `package.json` of the custom composite.
+
 ## Using a custom Composite
 
 In the majority of cases, there is no need to create a custom composite, as Electrode Native comes with a built-in one. However in some specific cases, having more control on the Composite project is needed. For example, you might want to add some custom initialization code for the whole bundle, or you might want more control on some configuration files (`rn-cli.config.js`/ `metro.config.js`/`babel.config.js`).

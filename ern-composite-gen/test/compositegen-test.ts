@@ -3,7 +3,10 @@ import { doesThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import path from 'path'
 import fs from 'fs'
-import { generateComposite } from '../src/generateComposite'
+import {
+  applyYarnResolutions,
+  generateComposite,
+} from '../src/generateComposite'
 import {
   getMiniAppsDeltas,
   getPackageJsonDependenciesUsingMiniAppDeltas,
@@ -436,6 +439,50 @@ describe('ern-container-gen utils.js', () => {
         fs.readFileSync(path.join(tmpOutDir, '.babelrc')).toString()
       )
       assert(babelRc.presets.includes('module:metro-react-native-babel-preset'))
+    })
+  })
+
+  // ==========================================================
+  // applyYarnResolutions
+  // ==========================================================
+  describe('applyYarnResolutions', () => {
+    it('should add resolutions field to the package.json', async () => {
+      const packageJsonPath = path.join(tmpOutDir, 'package.json')
+      fs.writeFileSync(packageJsonPath, '{}')
+      const resolutions = {
+        'c/**/left-pad': '1.1.2',
+        'd2/left-pad': '1.1.1',
+      }
+      await applyYarnResolutions({ outDir: tmpOutDir, resolutions })
+      const packageJson: any = JSON.parse(
+        fs.readFileSync(packageJsonPath).toString()
+      )
+      expect(packageJson.resolutions).to.be.an('object')
+    })
+
+    it('should add correct resolutions to the package.json', async () => {
+      const packageJsonPath = path.join(tmpOutDir, 'package.json')
+      fs.writeFileSync(packageJsonPath, '{}')
+      const resolutions = {
+        'c/**/left-pad': '1.1.2',
+        'd2/left-pad': '1.1.1',
+      }
+      await applyYarnResolutions({ outDir: tmpOutDir, resolutions })
+      const packageJson: any = JSON.parse(
+        fs.readFileSync(packageJsonPath).toString()
+      )
+      expect(packageJson.resolutions).deep.equal(resolutions)
+    })
+
+    it('should call yarn install', async () => {
+      const packageJsonPath = path.join(tmpOutDir, 'package.json')
+      fs.writeFileSync(packageJsonPath, '{}')
+      const resolutions = {
+        'c/**/left-pad': '1.1.2',
+        'd2/left-pad': '1.1.1',
+      }
+      await applyYarnResolutions({ outDir: tmpOutDir, resolutions })
+      assert(yarnCliStub.install.calledOnce)
     })
   })
 })
