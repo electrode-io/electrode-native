@@ -148,10 +148,12 @@ export async function runCaudronBundleGen(
     baseComposite,
     compositeDir,
     outDir,
+    resolutions,
   }: {
     baseComposite?: PackagePath
     compositeDir?: string
     outDir: string
+    resolutions?: { [pkg: string]: string }
   }
 ): Promise<BundlingResult> {
   try {
@@ -191,6 +193,7 @@ export async function runCaudronBundleGen(
           baseComposite,
           jsApiImplDependencies: jsApiImpls,
           pathToYarnLock: pathToYarnLock || undefined,
+          resolutions,
         }
       )
     )

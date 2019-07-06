@@ -19,10 +19,12 @@ export async function runLocalCompositeGen(
     baseComposite,
     jsApiImpls,
     outDir,
+    resolutions,
   }: {
     baseComposite?: PackagePath
     jsApiImpls?: PackagePath[]
     outDir?: string
+    resolutions?: { [pkg: string]: string }
   }
 ): Promise<Composite> {
   try {
@@ -32,6 +34,7 @@ export async function runLocalCompositeGen(
         jsApiImplDependencies: jsApiImpls,
         miniApps: miniappPackagesPaths,
         outDir: outDir || createTmpDir(),
+        resolutions,
       })
     )
 
@@ -93,6 +96,7 @@ export async function runCauldronCompositeGen(
         miniApps: miniapps,
         outDir: outDir || createTmpDir(),
         pathToYarnLock,
+        resolutions: compositeGenConfig && compositeGenConfig.resolutions,
       })
     )
 

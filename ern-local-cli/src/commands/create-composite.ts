@@ -108,6 +108,7 @@ Output directory should either not exist (it will be created) or should be empty
   }
 
   let pathToYarnLock
+  let resolutions
   if (descriptor) {
     await logErrorAndExitIfNotSatisfied({
       napDescriptorExistInCauldron: {
@@ -135,6 +136,7 @@ Output directory should either not exist (it will be created) or should be empty
     )
     baseComposite =
       baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+    resolutions = compositeGenConfig.resolutions
   }
 
   await kax.task('Generating Composite').run(
@@ -145,6 +147,7 @@ Output directory should either not exist (it will be created) or should be empty
       miniApps: miniapps!,
       outDir,
       pathToYarnLock,
+      resolutions,
     })
   )
 
