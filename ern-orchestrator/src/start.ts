@@ -55,6 +55,7 @@ export default async function start({
     )
   }
 
+  let resolutions
   if (descriptor) {
     miniapps = await cauldron.getContainerMiniApps(descriptor, {
       favorGitBranches: true,
@@ -64,6 +65,7 @@ export default async function start({
     )
     baseComposite =
       baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+    resolutions = compositeGenConfig && compositeGenConfig.resolutions
   }
 
   // Because this command can only be stoped through `CTRL+C` (or killing the process)
@@ -82,6 +84,7 @@ export default async function start({
       jsApiImplDependencies: jsApiImpls,
       miniApps: miniapps!,
       outDir: compositeDir,
+      resolutions,
     })
   )
 

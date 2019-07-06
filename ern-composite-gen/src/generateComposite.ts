@@ -39,6 +39,7 @@ export async function generateComposite(config: CompositeGeneratorConfig) {
         extraJsDependencies: config.extraJsDependencies,
         jsApiImplDependencies: config.jsApiImplDependencies,
         pathToYarnLock: config.pathToYarnLock,
+        resolutions: config.resolutions,
       })
 }
 
@@ -102,10 +103,12 @@ async function generateFullComposite(
     extraJsDependencies = [],
     jsApiImplDependencies,
     pathToYarnLock,
+    resolutions,
   }: {
     extraJsDependencies?: PackagePath[]
     jsApiImplDependencies?: PackagePath[]
     pathToYarnLock?: string
+    resolutions?: { [pkg: string]: string }
   } = {}
 ) {
   if (fs.existsSync(outDir)) {
@@ -133,6 +136,9 @@ async function generateFullComposite(
     await createCompositeBabelRc({ outDir })
     await createRnCliConfig({ outDir })
     await patchPackageJsonForCodePush({ outDir })
+    if (resolutions) {
+      await applyYarnResolutions({ outDir, resolutions })
+    }
   } finally {
     shell.popd()
   }
@@ -429,6 +435,26 @@ async function patchMetro51({ outDir }: { outDir: string }) {
     const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
     const patchedFile = fileToPatch.replace(stringToReplace, replacementString)
     return fileUtils.writeFile(pathToFileToPatch, patchedFile)
+  }
+}
+
+export async function applyYarnResolutions({
+  outDir,
+  resolutions,
+}: {
+  outDir: string
+  resolutions: { [pkg: string]: string }
+}) {
+  log.debug('Adding yarn resolutions to package.json')
+  log.trace(`resolutions : ${JSON.stringify(resolutions, null, 2)}`)
+  const compositePackageJson = await readPackageJson(outDir)
+  compositePackageJson.resolutions = resolutions
+  await writePackageJson(outDir, compositePackageJson)
+  try {
+    shell.pushd(outDir)
+    await yarn.install()
+  } finally {
+    shell.popd()
   }
 }
 

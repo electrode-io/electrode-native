@@ -16,12 +16,14 @@ export async function bundleMiniApps(
     sourceMapOutput,
     baseComposite,
     jsApiImplDependencies,
+    resolutions,
   }: {
     pathToYarnLock?: string
     dev?: boolean
     sourceMapOutput?: string
     baseComposite?: PackagePath
     jsApiImplDependencies?: PackagePath[]
+    resolutions?: { [pkg: string]: string }
   } = {}
 ): Promise<BundlingResult> {
   await kax.task('Generating MiniApps Composite').run(
@@ -31,6 +33,7 @@ export async function bundleMiniApps(
       miniApps,
       outDir: compositeDir,
       pathToYarnLock,
+      resolutions,
     })
   )
 
