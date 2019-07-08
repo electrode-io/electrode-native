@@ -132,13 +132,13 @@ async function generateFullComposite(
       await installExtraJsDependencies({ outDir, extraJsDependencies })
     }
     await addBabelrcRoots({ outDir })
-    await patchMetro51({ outDir })
     await createCompositeBabelRc({ outDir })
     await createRnCliConfig({ outDir })
     await patchPackageJsonForCodePush({ outDir })
     if (resolutions) {
       await applyYarnResolutions({ outDir, resolutions })
     }
+    await patchMetro51({ outDir })
   } finally {
     shell.popd()
   }
@@ -422,6 +422,9 @@ async function patchMetro51({ outDir }: { outDir: string }) {
   // To be removed as soon as react-native-cli make use of metro >= 0.52.0
   // Temporary hacky code to patch an issue present in metro 0.51.1
   // currently linked with RN 59 that impacts our bundling process
+  // EDIT: This will not be needed anymore starting with React Native 0.60.0
+  // as it is using CLI v2x line, using metro 0.53
+  // https://github.com/react-native-community/cli/blob/v2.0.0/packages/cli/package.json#L36
   if (metroVersion === '0.51.1') {
     const pathToFileToPatch = path.join(
       compositeNodeModulesPath,
