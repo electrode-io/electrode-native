@@ -45,6 +45,12 @@ export const builder = (argv: Argv) => {
         'Force upgrade (ignore compatibility issues -at your own risks-)',
       type: 'boolean',
     })
+    .option('disableDuplicateReleaseError', {
+      default: false,
+      describe:
+        'When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error',
+      type: 'boolean',
+    })
     .option('jsApiImpls', {
       describe: 'One or more JS API implementation to CodePush',
       type: 'array',
@@ -58,12 +64,6 @@ export const builder = (argv: Argv) => {
     .option('miniapps', {
       describe: 'One or more MiniApp to CodePush',
       type: 'array',
-    })
-    .option('noDuplicateReleaseError', {
-      default: false,
-      describe:
-        'When this flag is set, promoting a package that is identical to the latest release on the target deployment will produce a warning instead of an error',
-      type: 'boolean',
     })
     .option('rollout', {
       alias: 'r',
@@ -95,11 +95,11 @@ export const commandHandler = async ({
   deploymentName,
   description,
   descriptors = [],
+  disableDuplicateReleaseError,
   force,
   jsApiImpls = [],
   mandatory,
   miniapps = [],
-  noDuplicateReleaseError,
   rollout,
   skipConfirmation,
   semVerDescriptor,
@@ -108,11 +108,11 @@ export const commandHandler = async ({
   deploymentName: string
   description: string
   descriptors?: AppVersionDescriptor[]
+  disableDuplicateReleaseError: boolean
   force: boolean
   jsApiImpls: string[]
   mandatory?: boolean
   miniapps: string[]
-  noDuplicateReleaseError: boolean
   rollout?: number
   skipConfirmation?: boolean
   semVerDescriptor?: string
@@ -214,8 +214,8 @@ export const commandHandler = async ({
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,
         description,
+        disableDuplicateReleaseError,
         force,
-        noDuplicateReleaseError,
         pathToYarnLock: pathToYarnLock || undefined,
         targetBinaryVersion,
       }

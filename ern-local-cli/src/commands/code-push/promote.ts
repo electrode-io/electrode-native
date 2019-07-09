@@ -25,6 +25,12 @@ export const builder = (argv: Argv) => {
         'Description of the changes made to the app with this release. If omitted, the description from the release being promoted will be used.',
       type: 'string',
     })
+    .option('disableDuplicateReleaseError', {
+      default: false,
+      describe:
+        'When this flag is set, promoting a package that is identical to the latest release on the target deployment will produce a warning instead of an error',
+      type: 'boolean',
+    })
     .option('force', {
       alias: 'f',
       describe:
@@ -41,12 +47,6 @@ export const builder = (argv: Argv) => {
       alias: 'm',
       default: false,
       describe: 'Specifies whether this release should be considered mandatory',
-      type: 'boolean',
-    })
-    .option('noDuplicateReleaseError', {
-      default: false,
-      describe:
-        'When this flag is set, promoting a package that is identical to the latest release on the target deployment will produce a warning instead of an error',
       type: 'boolean',
     })
     .option('reuseReleaseBinaryVersion', {
@@ -104,10 +104,10 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   description,
+  disableDuplicateReleaseError,
   force,
   label,
   mandatory,
-  noDuplicateReleaseError,
   reuseReleaseBinaryVersion,
   sourceDeploymentName,
   targetBinaryVersion,
@@ -119,10 +119,10 @@ export const commandHandler = async ({
   skipConfirmation,
 }: {
   description?: string
+  disableDuplicateReleaseError?: boolean
   force?: boolean
   label?: string
   mandatory?: boolean
-  noDuplicateReleaseError?: boolean
   reuseReleaseBinaryVersion?: boolean
   sourceDeploymentName?: string
   targetBinaryVersion?: string
@@ -232,10 +232,10 @@ export const commandHandler = async ({
     targetDeploymentName,
     {
       description,
+      disableDuplicateReleaseError,
       force,
       label,
       mandatory,
-      noDuplicateReleaseError,
       reuseReleaseBinaryVersion,
       rollout,
       targetBinaryVersion,

@@ -366,9 +366,9 @@ describe('codepush', () => {
           description: '',
           isMandatory: false,
           label: 'v18',
-          noDuplicateReleaseError: false,
           rollout: 100,
-        }
+        },
+        false
       )
     })
 
@@ -458,7 +458,8 @@ describe('codepush', () => {
           isMandatory: false,
           label: 'v18',
           rollout: 100,
-        }
+        },
+        false
       )
     })
 
@@ -472,6 +473,7 @@ describe('codepush', () => {
         'Production',
         {
           description: 'new description',
+          disableDuplicateReleaseError: true,
           label: 'v18',
           rollout: 100,
         }
@@ -488,7 +490,8 @@ describe('codepush', () => {
           isMandatory: false,
           label: 'v18',
           rollout: 100,
-        }
+        },
+        true
       )
     })
 
@@ -673,9 +676,9 @@ describe('codepush', () => {
         {
           description: '',
           isMandatory: false,
-          noDuplicateReleaseError: false,
           rollout: 100,
-        }
+        },
+        false
       )
     })
 
