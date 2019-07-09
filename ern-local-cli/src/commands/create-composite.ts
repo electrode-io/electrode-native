@@ -136,7 +136,7 @@ Output directory should either not exist (it will be created) or should be empty
     )
     baseComposite =
       baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
-    resolutions = compositeGenConfig.resolutions
+    resolutions = compositeGenConfig && compositeGenConfig.resolutions
   }
 
   await kax.task('Generating Composite').run(
