@@ -376,7 +376,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)/**",
-					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
+
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
 				INFOPLIST_FILE = ElectrodeApiImpl/Info.plist;
@@ -534,7 +534,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
+
 				);
 				INFOPLIST_FILE = ElectrodeApiImpl/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -571,7 +571,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/ElectrodeApiImpl/Libraries/ReactNative/**",
+
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
 				INFOPLIST_FILE = ElectrodeApiImpl/Info.plist;
