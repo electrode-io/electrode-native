@@ -8,9 +8,9 @@ events@^1.1.1:
   integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
 
 react-native-electrode-bridge@1.5.x:
-  version "1.5.17"
-  resolved "https://registry.yarnpkg.com/react-native-electrode-bridge/-/react-native-electrode-bridge-1.5.17.tgz#7aa9ad920d8f704482dd63f12c8ac55570a1d2fd"
-  integrity sha512-IUaOusHhkoH6pbAe7c6j3enqrgBEwulnQiNrR3f7tNaouHYK25fZk6gV+MsDNAW7dlT7YQJLTs7swxqj1ne7ag==
+  version "1.5.19"
+  resolved "https://registry.yarnpkg.com/react-native-electrode-bridge/-/react-native-electrode-bridge-1.5.19.tgz#146051a478a0a709bc15e6d9746f7ea23061d46a"
+  integrity sha512-15PTawA0jYSpcG0Ej8GXjwOFCAWW4hbP/NK7ZAL/gxVifhiBhN2GcCxAP76hd4iwJCNMDn6D6qmTh542/ck+Fw==
   dependencies:
     events "^1.1.1"
     uuid "^3.0.0"
