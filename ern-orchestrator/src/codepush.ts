@@ -78,19 +78,19 @@ export async function performCodePushPromote(
   targetDeploymentName: string,
   {
     description,
+    disableDuplicateReleaseError = false,
     force = false,
     label,
     mandatory,
-    noDuplicateReleaseError = false,
     rollout,
     reuseReleaseBinaryVersion,
     targetBinaryVersion,
   }: {
     description?: string
+    disableDuplicateReleaseError?: boolean
     force?: boolean
     label?: string
     mandatory?: boolean
-    noDuplicateReleaseError?: boolean
     rollout?: number
     reuseReleaseBinaryVersion?: boolean
     targetBinaryVersion?: string
@@ -163,7 +163,7 @@ export async function performCodePushPromote(
           )
 
       description = description || ''
-      const result = await kax
+      const codePushResponse: CodePushPackage | void = await kax
         .task(`Promoting release to ${targetBinaryVersion}`)
         .run(
           codePushSdk.promote(
@@ -175,52 +175,54 @@ export async function performCodePushPromote(
               description,
               isMandatory: !!mandatory,
               label,
-              noDuplicateReleaseError,
               rollout,
-            }
+            },
+            disableDuplicateReleaseError
           )
         )
 
-      const sourceYarnLockId = await cauldron.getYarnLockId(
-        sourceNapDescriptor,
-        sourceDeploymentName
-      )
-      if (!sourceYarnLockId) {
-        log.error(
-          `No yarn.lock was found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}]`
+      if (codePushResponse) {
+        const sourceYarnLockId = await cauldron.getYarnLockId(
+          sourceNapDescriptor,
+          sourceDeploymentName
         )
-        log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
-        continue
+        if (!sourceYarnLockId) {
+          log.error(
+            `No yarn.lock was found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}]`
+          )
+          log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
+          continue
+        }
+        await cauldron.updateYarnLockId(
+          targetNapDescriptor,
+          targetDeploymentName,
+          sourceYarnLockId
+        )
+
+        await cauldron.addCodePushEntry(
+          targetNapDescriptor,
+          {
+            appVersion: codePushResponse.appVersion,
+            deploymentName: targetDeploymentName,
+            description: codePushResponse.description,
+            isMandatory: codePushResponse.isMandatory,
+            label: codePushResponse.label,
+            promotedFromLabel: codePushEntrySource.metadata.label,
+            releaseMethod: codePushResponse.releaseMethod,
+            releasedBy: codePushResponse.releasedBy,
+            rollout: codePushResponse.rollout,
+            size: codePushResponse.size,
+          },
+          miniApps,
+          jsApiImpls || []
+        )
+
+        cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
       }
-      await cauldron.updateYarnLockId(
-        targetNapDescriptor,
-        targetDeploymentName,
-        sourceYarnLockId
-      )
-
-      await cauldron.addCodePushEntry(
-        targetNapDescriptor,
-        {
-          appVersion: result.appVersion,
-          deploymentName: targetDeploymentName,
-          description: result.description,
-          isMandatory: result.isMandatory,
-          label: result.label,
-          promotedFromLabel: codePushEntrySource.metadata.label,
-          releaseMethod: result.releaseMethod,
-          releasedBy: result.releasedBy,
-          rollout: result.rollout,
-          size: result.size,
-        },
-        miniApps,
-        jsApiImpls || []
-      )
-
-      cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
+      await kax
+        .task('Updating Cauldron')
+        .run(cauldron.commitTransaction(cauldronCommitMessage))
     }
-    await kax
-      .task('Updating Cauldron')
-      .run(cauldron.commitTransaction(cauldronCommitMessage))
   } catch (e) {
     if (cauldron) {
       await cauldron.discardTransaction()
@@ -240,8 +242,8 @@ export async function performCodePushOtaUpdate(
     codePushIsMandatoryRelease = false,
     codePushRolloutPercentage,
     description,
+    disableDuplicateReleaseError = false,
     force = false,
-    noDuplicateReleaseError = false,
     pathToYarnLock,
     targetBinaryVersion,
   }: {
@@ -249,8 +251,8 @@ export async function performCodePushOtaUpdate(
     codePushIsMandatoryRelease?: boolean
     codePushRolloutPercentage?: number
     description?: string
+    disableDuplicateReleaseError?: boolean
     force?: boolean
-    noDuplicateReleaseError?: boolean
     pathToYarnLock?: string
     targetBinaryVersion?: string
   } = {}
@@ -393,7 +395,7 @@ export async function performCodePushOtaUpdate(
 
     log.info(`Target Binary version : ${targetBinaryVersion}`)
     description = description || ''
-    const codePushResponse: CodePushPackage = await kax
+    const codePushResponse: CodePushPackage | void = await kax
       .task('Releasing bundle through CodePush')
       .run(
         codePushSdk.releaseReact(
@@ -404,50 +406,52 @@ export async function performCodePushOtaUpdate(
           {
             description,
             isMandatory: codePushIsMandatoryRelease,
-            noDuplicateReleaseError,
             rollout: codePushRolloutPercentage,
-          }
+          },
+          disableDuplicateReleaseError
         )
       )
+    if (codePushResponse) {
+      await cauldron.addCodePushEntry(
+        napDescriptor,
+        {
+          appVersion: codePushResponse.appVersion,
+          deploymentName,
+          description: codePushResponse.description,
+          isMandatory: codePushResponse.isMandatory,
+          label: codePushResponse.label,
+          releaseMethod: codePushResponse.releaseMethod,
+          releasedBy: codePushResponse.releasedBy,
+          rollout: codePushResponse.rollout,
+          size: codePushResponse.size,
+        },
+        miniAppsToBeCodePushed,
+        jsApiImplsToBeCodePushed
+      )
 
-    await cauldron.addCodePushEntry(
-      napDescriptor,
-      {
-        appVersion: codePushResponse.appVersion,
-        deploymentName,
-        description: codePushResponse.description,
-        isMandatory: codePushResponse.isMandatory,
-        label: codePushResponse.label,
-        releaseMethod: codePushResponse.releaseMethod,
-        releasedBy: codePushResponse.releasedBy,
-        rollout: codePushResponse.rollout,
-        size: codePushResponse.size,
-      },
-      miniAppsToBeCodePushed,
-      jsApiImplsToBeCodePushed
-    )
-
-    const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
-    if (fs.existsSync(pathToNewYarnLock)) {
-      await kax
-        .task('Adding yarn.lock to Cauldron')
-        .run(
-          cauldron.addOrUpdateYarnLock(
-            napDescriptor,
-            deploymentName,
-            pathToNewYarnLock
+      const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
+      if (fs.existsSync(pathToNewYarnLock)) {
+        await kax
+          .task('Adding yarn.lock to Cauldron')
+          .run(
+            cauldron.addOrUpdateYarnLock(
+              napDescriptor,
+              deploymentName,
+              pathToNewYarnLock
+            )
           )
-        )
-    }
+      }
 
-    await cauldron.commitTransaction(
-      `CodePush release for ${napDescriptor.toString()} ${deploymentName}`
-    )
+      await cauldron.commitTransaction(
+        `CodePush release for ${napDescriptor.toString()} ${deploymentName}`
+      )
+    }
   } catch (e) {
     if (cauldron) {
       await cauldron.discardTransaction()
     }
     log.error(`performCodePushOtaUpdate {e}`)
+
     throw e
   }
 }

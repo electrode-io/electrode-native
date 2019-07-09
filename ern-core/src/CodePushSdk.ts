@@ -1,4 +1,5 @@
 import CodePush from 'code-push'
+import log from './log'
 
 export interface CodePushPackageInfo {
   appVersion?: string
@@ -6,7 +7,6 @@ export interface CodePushPackageInfo {
   isDisabled?: boolean
   isMandatory?: boolean
   /* generated */ label?: string
-  noDuplicateReleaseError?: boolean
   /* generated */ packageHash?: string
   rollout?: number
 }
@@ -47,39 +47,61 @@ export default class CodePushSdk {
     deploymentName: string,
     filePath: string,
     targetBinaryVersion: string,
-    updateMetadata: CodePushPackageInfo
-  ): Promise<CodePushPackage> {
+    updateMetadata: CodePushPackageInfo,
+    disableDuplicateReleaseError?: boolean
+  ): Promise<CodePushPackage | void> {
     if (updateMetadata.rollout === 100) {
       // If rollout is 100% we shouldn't pass it in the HTTP request
       delete updateMetadata.rollout
     }
-
-    return this.codePush.release(
-      appName,
-      deploymentName,
-      filePath,
-      targetBinaryVersion,
-      updateMetadata
-    )
+    try {
+      return this.codePush.release(
+        appName,
+        deploymentName,
+        filePath,
+        targetBinaryVersion,
+        updateMetadata
+      )
+    } catch (error) {
+      if (
+        disableDuplicateReleaseError &&
+        error.statusCode === CodePush.ERROR_CONFLICT
+      ) {
+        log.warn(error.message)
+      } else {
+        throw new Error(error)
+      }
+    }
   }
 
   public async promote(
     appName: string,
     sourceDeploymentName: string,
     destinationDeploymentName: string,
-    updateMetadata: CodePushPackageInfo
-  ): Promise<CodePushPackage> {
+    updateMetadata: CodePushPackageInfo,
+    disableDuplicateReleaseError?: boolean
+  ): Promise<CodePushPackage | void> {
     if (updateMetadata.rollout === 100) {
       // If rollout is 100% we shouldn't pass it in the HTTP request
       delete updateMetadata.rollout
     }
-
-    return this.codePush.promote(
-      appName,
-      sourceDeploymentName,
-      destinationDeploymentName,
-      updateMetadata
-    )
+    try {
+      return this.codePush.promote(
+        appName,
+        sourceDeploymentName,
+        destinationDeploymentName,
+        updateMetadata
+      )
+    } catch (error) {
+      if (
+        disableDuplicateReleaseError &&
+        error.statusCode === CodePush.ERROR_CONFLICT
+      ) {
+        log.warn(error.message)
+      } else {
+        throw new Error(error)
+      }
+    }
   }
 
   public async patch(

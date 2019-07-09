@@ -78,7 +78,7 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 
 * **Default** Empty String
 
-`--noDuplicateReleaseError`
+`--disableDuplicateReleaseError`
 
 * When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error
 
