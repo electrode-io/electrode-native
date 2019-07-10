@@ -52,6 +52,12 @@ Resolutions configuration can be done in the `compositeGenerator` config in the 
 
 Please note that this configuration will be ignored if you are using a custom composite. Because a custom composite offers full control of the Composite project, it is the responsibility of the custom composite project maintainer to manually add `resolutions` to the `package.json` of the custom composite.
 
+## Note in regards to local `.npmrc`
+
+When generating a Composite, Electrode Native will not consider any local `.npmrc` file present in the root of a MiniApp.  
+This is due to the fact that when generating a Composite project, Electrode Native just `yarn add` every MiniApp to the Composite project. Each MiniApp becomes a dependency of the Composite project and is not a top level app anymore.  
+Therefore, when needing a custom `.npmrc` configuration, the `.npmrc` should be global rather than local, or be part of a custom Composite project (see below).
+
 ## Using a custom Composite
 
 In the majority of cases, there is no need to create a custom composite, as Electrode Native comes with a built-in one. However in some specific cases, having more control on the Composite project is needed. For example, you might want to add some custom initialization code for the whole bundle, or you might want more control on some configuration files (`rn-cli.config.js`/ `metro.config.js`/`babel.config.js`).
