@@ -130,14 +130,11 @@ export async function runMiniApp(
     log.debug(`Initializing Runner`)
 
     if (dev) {
-      const args: string[] = []
-      if (host) {
-        args.push(`--host ${host}`)
-      }
-      if (port) {
-        args.push(`--port ${port}`)
-      }
-      await reactnative.startPackagerInNewWindow(cwd, args)
+      await reactnative.startPackagerInNewWindow({
+        cwd,
+        host,
+        port,
+      })
     } else {
       log.info('Dev mode not enabled, will not start the packager.')
     }

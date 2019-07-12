@@ -30,6 +30,8 @@ export default async function start({
   bundleId,
   extraJsDependencies,
   disableBinaryStore,
+  host,
+  port,
 }: {
   baseComposite?: PackagePath
   jsApiImpls?: PackagePath[]
@@ -41,6 +43,8 @@ export default async function start({
   bundleId?: string
   extraJsDependencies?: PackagePath[]
   disableBinaryStore?: boolean
+  host?: string
+  port?: string
 } = {}) {
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && descriptor) {
@@ -110,13 +114,17 @@ export default async function start({
     )
   })
 
-  reactnative.startPackagerInNewWindow(compositeDir, [
-    '--reset-cache',
-    '--providesModuleNodeModules',
-    `react-native,${linkedMiniAppsPackageNames
-      .concat(watchNodeModules)
-      .join(',')}`,
-  ])
+  reactnative.startPackagerInNewWindow({
+    cwd: compositeDir,
+    host,
+    port,
+    provideModuleNodeModules: [
+      'react-native',
+      ...linkedMiniAppsPackageNames,
+      ...watchNodeModules,
+    ],
+    resetCache: true,
+  })
 
   if (descriptor && !disableBinaryStore) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig()

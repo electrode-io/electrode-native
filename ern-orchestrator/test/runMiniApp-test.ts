@@ -145,22 +145,22 @@ describe('runMiniApp', () => {
 
   it('should start react native packager with host if provided [local single miniapp]', async () => {
     prepareStubs()
-    await runMiniApp('android', { dev: true, host: 'localhost' })
-    sandbox.assert.calledWith(
-      startPackagerStub,
-      sinon.match.string,
-      sinon.match.array.contains(['--host localhost'])
-    )
+    await runMiniApp('android', { dev: true, host: '192.168.1.1' })
+    sandbox.assert.calledWith(startPackagerStub, {
+      cwd: sinon.match.string,
+      host: '192.168.1.1',
+      port: undefined,
+    })
   })
 
   it('should start react native packager with port if provided [local single miniapp]', async () => {
     prepareStubs()
     await runMiniApp('android', { dev: true, port: '1234' })
-    sandbox.assert.calledWith(
-      startPackagerStub,
-      sinon.match.string,
-      sinon.match.array.contains(['--port 1234'])
-    )
+    sandbox.assert.calledWith(startPackagerStub, {
+      cwd: sinon.match.string,
+      host: undefined,
+      port: '1234',
+    })
   })
 
   it('should generate container for runner [local single miniapp]', async () => {

@@ -100,11 +100,41 @@ ${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
     spawnp(this.binaryPath, ['start'], { cwd })
   }
 
-  public async startPackagerInNewWindow(cwd: string, args: string[] = []) {
-    const isPackagerRunning = await this.isPackagerRunning()
+  public async startPackagerInNewWindow({
+    cwd = process.cwd(),
+    host = 'localhost',
+    port = '8081',
+    resetCache = true,
+    provideModuleNodeModules,
+  }: {
+    cwd?: string
+    host?: string
+    port?: string
+    resetCache?: boolean
+    provideModuleNodeModules?: string[]
+  } = {}) {
+    const args: string[] = []
+    if (host) {
+      args.push(`--host ${host}`)
+    }
+    if (port) {
+      args.push(`--port ${port}`)
+    }
+    if (resetCache!!) {
+      args.push(`--reset-cache`)
+    }
+    if (provideModuleNodeModules) {
+      args.push(
+        `--providesModuleNodeModules ${provideModuleNodeModules.join(',')}`
+      )
+    }
+
+    const isPackagerRunning = await this.isPackagerRunning(host, port)
 
     if (!isPackagerRunning) {
-      await kax.task('Starting React Native packager').run(Promise.resolve())
+      await kax
+        .task(`Starting React Native Packager [http://${host}:${port}]`)
+        .run(Promise.resolve())
       if (process.platform === 'darwin') {
         return this.darwinStartPackagerInNewWindow({ cwd, args })
       } else if (/^win/.test(process.platform)) {
@@ -187,8 +217,8 @@ ${this.binaryPath} start ${args.join(' ')}
     return tmpScriptPath
   }
 
-  public async isPackagerRunning() {
-    return fetch('http://localhost:8081/status').then(
+  public async isPackagerRunning(host: string, port: string) {
+    return fetch(`http://${host}:${port}/status`).then(
       res => res.text().then(body => body === 'packager-status:running'),
       () => false
     )
