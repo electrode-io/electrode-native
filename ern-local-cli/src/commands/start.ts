@@ -68,6 +68,15 @@ export const builder = (argv: Argv) => {
         'Disable automatic retrieval of the binary from the Binary Store',
       type: 'boolean',
     })
+    .option('host', {
+      describe: 'Host/IP to use for the local packager',
+      type: 'string',
+    })
+    .option('port', {
+      default: '8081',
+      describe: 'Port to use for the local package',
+      type: 'string',
+    })
     .group(['packageName', 'activityName'], 'Android binary specific options:')
     .group(['bundleId'], 'iOS binary specific options:')
     .epilog(epilog(exports))
@@ -79,9 +88,11 @@ export const commandHandler = async ({
   bundleId,
   descriptor,
   extraJsDependencies = [],
+  host,
   jsApiImpls,
   miniapps,
   packageName,
+  port,
   watchNodeModules,
   disableBinaryStore,
 }: {
@@ -90,9 +101,11 @@ export const commandHandler = async ({
   bundleId?: string
   descriptor?: AppVersionDescriptor
   extraJsDependencies?: PackagePath[]
+  host?: string
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   packageName?: string
+  port?: string
   watchNodeModules?: string[]
   disableBinaryStore?: boolean
 } = {}) => {
@@ -107,9 +120,11 @@ export const commandHandler = async ({
     descriptor,
     disableBinaryStore,
     extraJsDependencies,
+    host,
     jsApiImpls,
     miniapps,
     packageName,
+    port,
     watchNodeModules,
   })
 }

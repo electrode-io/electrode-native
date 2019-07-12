@@ -44,6 +44,12 @@ If you do not pass an argument to this command, you are prompted to select a nat
 * Setting this option will bypass retrieval and installation of the binary from the Binary Store.  
 * It can be useful in case you want to use `ern start` command in conjunction with your own mobile application native binary, build locally on your workstation or retrieved from a specific location.
 
+`--host`
+* Host or ip to launch the local packager on *(default: localhost)*
+
+`--port`
+* Port on which the local packager should listen on *(default: 8081)*
+
 **Platform Specific Options**
 
 `Android`
