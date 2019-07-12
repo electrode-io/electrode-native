@@ -33,7 +33,8 @@
  * Use the previously selected device to avoid prompt
 
 `--host`
-* Host or ip to launch the local packager on *(default: localhost)*
+* Host or ip to launch the local packager on.
+* By default it will use the IP address that is returned by the `ipconfig getifaddr en0` command, and fallback to `localhost` in the case the command fails.
 
 `--port`
 * Port on which the local packager should listen on *(default: 8081)*

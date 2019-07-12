@@ -1,5 +1,12 @@
 import { epilog, tryCatchWrap } from '../lib'
-import { deviceConfig, log, AppVersionDescriptor, PackagePath } from 'ern-core'
+import {
+  deviceConfig,
+  log,
+  AppVersionDescriptor,
+  PackagePath,
+  shell,
+  getLocalIp,
+} from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
 
@@ -32,7 +39,6 @@ export const builder = (argv: Argv) => {
       type: 'boolean',
     })
     .option('host', {
-      default: 'localhost',
       describe: 'Host/IP to use for the local packager',
       type: 'string',
     })
@@ -86,12 +92,21 @@ export const commandHandler = async ({
   }
   deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
 
+  if (!host && dev) {
+    try {
+      host = getLocalIp()
+    } catch (e) {
+      // Swallow
+      log.debug(e)
+    }
+  }
+
   await runMiniApp('ios', {
     baseComposite,
     dependencies,
     descriptor,
     dev,
-    host,
+    host: host || 'localhost',
     mainMiniAppName,
     miniapps,
     port,
