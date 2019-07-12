@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
- 
+
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- 
+
  * http://www.apache.org/licenses/LICENSE-2.0
- 
+
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
 @property (nonatomic, assign) BOOL debugEnabled;
+@property (nonatomic, copy) NSString *packagerHost;
+@property (nonatomic, copy) NSString *packagerPort;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Create a singleton instance of ElectrodeReactNative with the ability to set
  configurations for the plugins associated with the container.
- 
+
  @return A singleton instance of ElectrodeReactNative.
  */
 + (instancetype)sharedInstance;
@@ -68,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  Start an instance of ElectrodeReactNative with the ability to set
  configurations for the plugins associated with the container. Only needed to be
  called once.
- 
+
  @param reactContainerConfig NSDictionary that uses ERN keys such as ERNCodePushConfig
  to store NSDictionary of configurations. The main key signifies which plugin
  the configuration is for, the subsequent NSDictionary is the actual
@@ -89,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Returns a react native miniapp (from a JSBundle) inside a view controller.
- 
+
  @param name The name of the mini app, preferably the same name as the jsbundle
  without the extension.
  @param properties Any configuration to set up the mini app with.
