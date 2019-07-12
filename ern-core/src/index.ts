@@ -45,6 +45,7 @@ export { BaseMiniApp } from './BaseMiniApp'
 export { YarnLockParser } from './YarnLockParser'
 export { AndroidResolvedVersions } from './android'
 export { GitHubApi } from './GitHubApi'
+export * from './getLocalIp'
 
 export const config = _config
 export const Platform = _Platform
