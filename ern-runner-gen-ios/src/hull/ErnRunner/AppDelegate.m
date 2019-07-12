@@ -27,11 +27,12 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Start the container
+    // Configure the container
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] init];
     containerConfig.debugEnabled = RnDevSupportEnabled;
+    containerConfig.packagerHost = (PackagerHost)? PackagerHost : containerConfig.packagerHost;
+    containerConfig.packagerPort = (PackagerPort)? PackagerPort : containerConfig.packagerPort;
     [ElectrodeReactNative startWithConfigurations:containerConfig];
-
     return YES;
 }
 

@@ -16,3 +16,5 @@
 
 extern NSString *const MainMiniAppName;
 extern BOOL const RnDevSupportEnabled;
+extern NSString *const PackagerHost;
+extern NSString *const PackagerPort;

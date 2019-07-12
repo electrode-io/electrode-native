@@ -47,12 +47,24 @@ static dispatch_semaphore_t semaphore;
 
 @implementation ElectrodeContainerConfig
 
-- (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        //default values
+        self.packagerHost = @"localhost";
+        self.packagerPort = @"8081";
+    }
+    return self;
+}
+
+- (void)setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
     if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
         NSURL *url;
         if (self.debugEnabled) {
-            url = [NSURL URLWithString:@"http://localhost:8081/{{{jsMainModuleName}}}.bundle?platform=ios&dev=true"];
-            NSLog(@"using local port to debug");
+            // iOS device and Macbook must be on the same Wi-fi & metro packager (bundler) by default runs on 8081 port.
+            NSString *urlString = [NSString stringWithFormat:@"http://%@:%@/index.bundle?platform=ios&dev=true",self.packagerHost,self.packagerPort];
+            url = [NSURL URLWithString:urlString];
         } else {
             url = [self allJSBundleFiles][0];
         }
