@@ -47,12 +47,23 @@ static dispatch_semaphore_t semaphore;
 
 @implementation ElectrodeContainerConfig
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        //default values
+        self.packagerHost= @"localhost";
+        self.packagerPort = @"8081";
+    }
+    return self;
+}
+
 - (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
     if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
         NSURL *url;
         if (self.debugEnabled) {
-            url = [NSURL URLWithString:@"http://localhost:8081/{{{jsMainModuleName}}}.bundle?platform=ios&dev=true"];
-            NSLog(@"using local port to debug");
+          // iOS device and Macbook must be on the same Wi-fi & metro packager (bundler) by default runs on 8081 port.
+            NSString *urlString = [NSString stringWithFormat:@"http://%@:%@/{{{jsMainModuleName}}}.bundle?platform=ios&dev=true",self.packagerHost,self.packagerPort];
+            url = [NSURL URLWithString:urlString];
         } else {
             url = [self allJSBundleFiles][0];
         }
@@ -137,20 +148,18 @@ static dispatch_semaphore_t semaphore;
 {
     UIViewController *miniAppViewController = [UIViewController new];
     miniAppViewController.view = [self miniAppViewWithName:name properties:properties];;
-    
+
     return miniAppViewController;
 }
 
 - (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *)properties {
     // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-    
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-    
     return rootView;
 }
 
-- (void) updateView: (UIView *) view withProps:(NSDictionary *) newProps {
+- (void)updateView:(UIView *)view withProps:(NSDictionary *)newProps {
     if([view isKindOfClass:[RCTRootView class]]) {
         [((RCTRootView *) view) setAppProperties:newProps];
     }
