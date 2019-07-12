@@ -3,7 +3,7 @@
   "jsApiImpls": [],
   "miniApps": [
     "moviedetailsminiapp@0.0.29",
-    "movielistminiapp@0.0.32"
+    "movielistminiapp@0.0.33"
   ],
   "nativeDeps": [
     "react-native@0.59.8",
