@@ -211,10 +211,14 @@ public final class BridgeArguments {
 
     /**
      * @param obj           input array
-     * @param listItemClass Defines the conent type of the list
+     * @param listItemClass Defines the content type of the list
      * @return List<listItemClass>
      */
-    public static List getList(Object obj, @NonNull Class listItemClass) {
+    public static List getList(@Nullable Object obj, @NonNull Class listItemClass) {
+        if (obj == null) {
+            return new ArrayList<>();
+        }
+
         if (!isArray(obj)) {
             throw new IllegalArgumentException("Should never reach here, expected an array, received: " + obj);
         }

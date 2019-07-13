@@ -137,22 +137,24 @@ public class ArgumentsEx {
                     break;
                 case Array: {
                     ReadableArray readableArray = readableMap.getArray(key);
-                    switch (readableArray.getType(0)) {
-                        case String:
-                            bundle.putStringArray(key, ArgumentsEx.toStringArray(readableArray));
-                            break;
-                        case Boolean:
-                            bundle.putBooleanArray(key, ArgumentsEx.toBooleanArray(readableArray));
-                            break;
-                        case Number:
-                            // Can be int or double but we just assume double for now
-                            bundle.putDoubleArray(key, ArgumentsEx.toDoubleArray(readableArray));
-                            break;
-                        case Map:
-                            bundle.putParcelableArray(key, ArgumentsEx.toBundleArray(readableArray));
-                            break;
-                        case Array:
-                            throw new UnsupportedOperationException("Arrays of arrays is not supported");
+                    if(readableArray.size() > 0) {
+                        switch (readableArray.getType(0)) {
+                            case String:
+                                bundle.putStringArray(key, ArgumentsEx.toStringArray(readableArray));
+                                break;
+                            case Boolean:
+                                bundle.putBooleanArray(key, ArgumentsEx.toBooleanArray(readableArray));
+                                break;
+                            case Number:
+                                // Can be int or double but we just assume double for now
+                                bundle.putDoubleArray(key, ArgumentsEx.toDoubleArray(readableArray));
+                                break;
+                            case Map:
+                                bundle.putParcelableArray(key, ArgumentsEx.toBundleArray(readableArray));
+                                break;
+                            case Array:
+                                throw new UnsupportedOperationException("Arrays of arrays is not supported");
+                        }
                     }
                 }
                 break;
