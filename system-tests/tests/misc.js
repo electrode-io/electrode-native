@@ -97,20 +97,19 @@ run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName
 run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
 run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
 
-run(`why react-native-ernmovie-api ${androidNativeApplicationDescriptor}`)
-
-// Del dependency should fail because its still used by MovieListMiniApp
+// Del dependency should fail because its still used by MovieListMiniApp and  js api impl
 run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
 
 // Del miniapp
 run(`cauldron del miniapps ${f.movieListMiniAppPgkName} -d ${androidNativeApplicationDescriptor}`)
 
-// Del dependency should now succeed
-run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
 run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 // Del jsapiimpls
 run(`cauldron del jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
+
+// Del dependency should now succeed
+run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
 
 // Del nativeapp
 run(`cauldron del nativeapp ${androidNativeApplicationDescriptor}`)
