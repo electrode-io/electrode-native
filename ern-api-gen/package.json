@@ -55,7 +55,7 @@
     "ern-core": "1000.0.0",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.14",
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.1",

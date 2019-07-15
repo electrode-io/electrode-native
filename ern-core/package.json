@@ -55,7 +55,7 @@
     "get-folder-size": "^2.0.0",
     "gradle-to-js":"^1.2.1",
     "inquirer": "^3.0.6",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.14",
     "mustache": "^2.3.1",
     "node-fetch": "^2.2.0",
     "node-simctl": "^4.0.2",
