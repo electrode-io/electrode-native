@@ -2,7 +2,6 @@ package com.walmartlabs.ern.container;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,8 +19,11 @@ import com.facebook.react.modules.core.PermissionListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 
 import javax.annotation.Nullable;
 
@@ -56,7 +58,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
     /**
      * List of ReactRootView(s) holding the view containing the ReactNative application(s)
      */
-    private final Map<String, ReactRootView> mReactRootViews = new HashMap<>();
+    private final Map<String, ReactRootViewHolder> mReactRootViews = new HashMap<>();
 
     /**
      * Call this constructor if you are having one activity hosting one react native application.
@@ -97,11 +99,13 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
      * For example: you have an activity and would like to use the reactApp view as one of the view component(partial screen) in your activities view.
      * Or if you have an activity that is hosting multiple fragments you can use this method to obtain view for your fragments.
      *
-     * @param applicationName name of the react native app component.
-     * @return
+     * @param componentName name of the react native app view component.
+     * @return View
+     * @deprecated use {@link #createReactRootView(String, Bundle)}
      */
-    public View createMiniAppRootView(@NonNull String applicationName) {
-        return this.createMiniAppRootView(applicationName, null);
+    @Deprecated
+    public View createMiniAppRootView(@NonNull String componentName) {
+        return this.createReactRootView(componentName, null, false);
     }
 
     /**
@@ -109,10 +113,27 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
      * For example: you have an activity and would like to use the reactApp view as one of the view component(partial screen) in your activities view.
      * Or if you have an activity that is hosting multiple fragments you can use this method to obtain view for your fragments.
      *
-     * @param applicationName name of the react native app component.
-     * @return
+     * @param componentName name of the react native app component.
+     * @return View
+     * @deprecated use {@link #createReactRootView(String, Bundle)}. If you were relying on {@link #createReactRootView(String, Bundle)} to update the props for an already existing instance, please note that this functionality will be broken my moving to {@link #createReactRootView(String, Bundle)}.
+     * To update the props on an existing view call {@link ReactRootView#setAppProperties(Bundle)} on the instance that is returned by {@link #createReactRootView(String, Bundle)}.
      */
-    public View createMiniAppRootView(@NonNull String applicationName, @Nullable Bundle props) {
+    @Deprecated
+    public View createMiniAppRootView(@NonNull String componentName, @Nullable Bundle props) {
+        return createReactRootView(componentName, props, false);
+    }
+
+    /**
+     * Creates a new instance of ReactRootView instance or the given component.
+     * @param componentName name of the react view component.
+     * @param props Props that will be passed to the component as initial props.
+     * @return ReactRootView
+     */
+    public ReactRootView createReactRootView(@NonNull String componentName, @Nullable Bundle props) {
+        return createReactRootView(componentName, props, true);
+    }
+
+    private ReactRootView createReactRootView(@NonNull String componentName, @Nullable Bundle props, boolean newInstance) {
         // Ask for overlay permission. This is required only during development and is needed for
         // ReactNative to display the Debug menu as an overlay
         if (ElectrodeReactContainer.isReactNativeDeveloperSupport()
@@ -133,50 +154,58 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
                     finalProps = props;
                 }
             }
-            return getReactAppView(applicationName, finalProps);
+            return getReactAppView(componentName, finalProps, newInstance);
         }
     }
 
     /**
      * Removes the {@link ReactRootView} for the given miniapp (if present) from the list and also unmounts the application..
      *
-     * @param applicationName {@link String} miniapp name
+     * @param componentName {@link String} React native app view component name
+     * @deprecated use {@link #removeMiniAppView(String, ReactRootView)}.
      */
-    public void removeMiniAppView(@NonNull String applicationName) {
-        ReactRootView reactRootView;
-        synchronized (mReactRootViews) {
-            reactRootView = mReactRootViews.get(applicationName);
-            if (reactRootView != null) {
-                mReactRootViews.remove(applicationName);
-            }
+    @Deprecated
+    public void removeMiniAppView(@NonNull String componentName) {
+        ReactRootViewHolder reactRootViewHolder = mReactRootViews.get(componentName);
+        if (reactRootViewHolder != null) {
+            reactRootViewHolder.remove(componentName);
         }
-        if (reactRootView != null) {
-            reactRootView.unmountReactApplication();
+    }
+
+    public void removeMiniAppView(@NonNull String componentName, @NonNull ReactRootView rootView) {
+        ReactRootViewHolder reactRootViewHolder = mReactRootViews.get(componentName);
+        if (reactRootViewHolder != null) {
+            reactRootViewHolder.remove(rootView);
         }
     }
 
     @Override
     protected void loadApp(String appKey) {
-        ReactRootView rootView = (ReactRootView) getReactAppView(appKey, getLaunchOptions());
+        ReactRootView rootView = (ReactRootView) getReactAppView(appKey, getLaunchOptions(), false);
         getPlainActivity().setContentView(rootView);
     }
 
     @Nullable
-    private View getReactAppView(@NonNull String applicationName, @Nullable Bundle props) {
-        ReactRootView rootView = mReactRootViews.get(applicationName);
+    private ReactRootView getReactAppView(@NonNull String componentName, @Nullable Bundle props, boolean newInstance) {
+        ReactRootViewHolder rootViewHolder = mReactRootViews.get(componentName);
 
-        if (rootView == null) {
-            rootView = createRootView();
-            rootView.startReactApplication(ElectrodeReactContainer.getReactInstanceManager(), applicationName, props);
-            mReactRootViews.put(applicationName, rootView);
-        }
-        {{#RN_VERSION_GTE_45}} 
-        else {
+        if (rootViewHolder == null || newInstance || rootViewHolder.size() > 1) {
+            ReactRootView rootView = createRootView();
+            rootView.startReactApplication(ElectrodeReactContainer.getReactInstanceManager(), componentName, props);
+            if (rootViewHolder == null) {
+                rootViewHolder = new ReactRootViewHolder(componentName, rootView);
+                mReactRootViews.put(componentName, rootViewHolder);
+            } else {
+                rootViewHolder.add(rootView);
+            }
+            return rootView;
+        } else {
+            ReactRootView rootView = rootViewHolder.getFirstIfSingle();
+            {{#RN_VERSION_GTE_45}} 
             rootView.setAppProperties(props);
+            {{/RN_VERSION_GTE_45}} 
+            return rootView;
         }
-        {{/RN_VERSION_GTE_45}}
-
-        return rootView;
     }
 
     @Override
@@ -325,14 +354,84 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
     {{/RN_VERSION_LT_58}}
 
      private void unMountReactApplications() {
-        List<ReactRootView> list;
+        List<ReactRootViewHolder> list;
         synchronized (mReactRootViews) {
             list = new ArrayList<>(mReactRootViews.values());
             mReactRootViews.clear();
         }
 
-        for (ReactRootView reactRootView : list) {
-            reactRootView.unmountReactApplication();
+        for (ReactRootViewHolder viewHolder : list) {
+            viewHolder.unMountAll();
+        }
+    }
+
+    private class ReactRootViewHolder {
+        private final String componentName;
+        private final Set<ReactRootView> rootViews = new HashSet<>();
+
+        private ReactRootViewHolder(@NonNull String componentName, @NonNull ReactRootView rootView) {
+            this.componentName = componentName;
+            rootViews.add(rootView);
+        }
+
+        /**
+         * Removes the react native view if present.
+         * @param rView {@link ReactRootView}
+         * @return true | false
+         */
+        public boolean remove(@NonNull final ReactRootView rView) {
+            for (ReactRootView rrv : rootViews) {
+                if (rrv == rView) {
+                    rrv.unmountReactApplication();
+                    rootViews.remove(rView);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void unMountAll() {
+            for (ReactRootView rrv : rootViews) {
+                rrv.unmountReactApplication();
+            }
+            rootViews.clear();
+        }
+
+        /**
+         * This method is kept for backward compatibility only. Should we cleaned once the deprecated {@link #removeMiniAppView(String)} methods are removed.
+         * Un-mounts and remove the view only if this application has only one view created.
+         *
+         * @param componentName name of the react component
+         * @return true | false
+         */
+        public boolean remove(@NonNull String componentName) {
+            if (rootViews.size() == 1) {
+                rootViews.iterator().next().unmountReactApplication();
+                rootViews.clear();
+                return true;
+            }
+            return false;
+        }
+
+        public void add(@NonNull ReactRootView rootView) {
+            rootViews.add(rootView);
+        }
+
+        public int size() {
+            return rootViews.size();
+        }
+
+        /**
+         * This method is kept for keeping the backward compatibility.
+         * Should we cleaned once the deprecated {@link #createMiniAppRootView(String)} methods are removed.
+         * @return
+         */
+        public ReactRootView getFirstIfSingle() {
+            if (rootViews.size() == 1) {
+                return rootViews.iterator().next();
+            } else {
+                throw new IllegalStateException("Expected one react root view in the list but found " + rootViews.size());
+            }
         }
     }
 }
