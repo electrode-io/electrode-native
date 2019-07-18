@@ -379,7 +379,9 @@ export default class Ensure {
 
     let errorMessage = ''
     for (const dependency of dependencies) {
-      const tree = parser.buildDependencyTree(dependency)
+      const tree = parser.buildDependencyTree(
+        PackagePath.fromString(dependency.basePath)
+      )
       if (
         _.isEmpty(tree) ||
         _.isEmpty(
