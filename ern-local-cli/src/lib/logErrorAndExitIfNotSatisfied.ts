@@ -331,6 +331,7 @@ export async function logErrorAndExitIfNotSatisfied({
         dependencyIsOrphaned.descriptor,
         dependencyIsOrphaned.extraErrorMessage
       )
+      kaxTask.succeed()
     }
     if (isValidNpmPackageName) {
       kaxTask = kax.task('Ensuring that NPM package name is valid')
