@@ -1,5 +1,10 @@
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
-import { mustacheUtils, NativePlatform, shell } from 'ern-core'
+import {
+  mustacheUtils,
+  NativePlatform,
+  shell,
+  injectReactNativeVersionKeysInObject,
+} from 'ern-core'
 import path from 'path'
 
 const runnerHullPath = path.join(__dirname, 'hull')
@@ -54,7 +59,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
     const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(
       path.join(config.extra.containerGenWorkingDir, 'out', 'ios')
     )
-    return {
+    const mustacheView = {
       isReactNativeDevSupportEnabled:
         config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
       miniAppName: config.mainMiniAppName,
@@ -65,6 +70,13 @@ export default class IosRunerGenerator implements RunnerGenerator {
       pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
       pathToElectrodeContainerXcodeProj,
     }
+
+    injectReactNativeVersionKeysInObject(
+      mustacheView,
+      config.reactNativeVersion
+    )
+
+    return mustacheView
   }
 
   private validateExtraConfig(config: RunnerGeneratorConfig) {

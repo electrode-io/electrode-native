@@ -155,7 +155,7 @@ export async function runMiniApp(
   }
 
   const outDir = Platform.getContainerGenOutDirectory(platform)
-  await generateContainerForRunner(platform, {
+  const containerGenResult = await generateContainerForRunner(platform, {
     baseComposite,
     dependencies,
     extra, // JavaScript object to pass extras e.x. androidConfig
@@ -182,6 +182,12 @@ export async function runMiniApp(
 
   const pathToRunner = path.join(cwd, platform)
 
+  const compositeNativeDeps = await containerGenResult.config.composite.getNativeDependencies()
+  const reactNativeDep = _.find(
+    compositeNativeDeps.all,
+    p => p.packagePath.basePath === 'react-native'
+  )
+
   const runnerGeneratorConfig: RunnerGeneratorConfig = {
     extra: {
       androidConfig: (extra && extra.androidConfig) || {},
@@ -192,6 +198,7 @@ export async function runMiniApp(
     reactNativeDevSupportEnabled: dev,
     reactNativePackagerHost: host,
     reactNativePackagerPort: port,
+    reactNativeVersion: reactNativeDep!.packagePath.version!,
     targetPlatform: platform,
   }
 
