@@ -29,4 +29,8 @@ export interface RunnerGeneratorConfig {
    * Extra configuration specific to the target Runner generator
    */
   extra?: any
+  /**
+   * React Native version
+   */
+  reactNativeVersion: string
 }

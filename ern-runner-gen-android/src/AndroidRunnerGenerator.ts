@@ -1,5 +1,10 @@
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
-import { mustacheUtils, NativePlatform, shell } from 'ern-core'
+import {
+  mustacheUtils,
+  NativePlatform,
+  shell,
+  injectReactNativeVersionKeysInObject,
+} from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
 import { android } from 'ern-core'
@@ -83,6 +88,8 @@ function configureMustacheView(
   mustacheView.packagerPort =
     config.reactNativePackagerPort || defaultReactNativePackagerPort
   mustacheView.pascalCaseMiniAppName = pascalCase(config.mainMiniAppName)
+
+  injectReactNativeVersionKeysInObject(mustacheView, config.reactNativeVersion)
 
   return mustacheView
 }
