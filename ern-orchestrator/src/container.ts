@@ -43,12 +43,12 @@ export async function runLocalContainerGen(
     jsMainModuleName?: string
     extra?: any
   }
-) {
+): Promise<ContainerGenResult> {
   try {
     const generator = getGeneratorForPlatform(platform)
     const nativeDependencies = await composite.getResolvedNativeDependencies()
 
-    await kax.task('Generating Container').run(
+    return kax.task('Generating Container').run(
       generator.generate({
         androidConfig: (extra && extra.androidConfig) || {},
         composite,
