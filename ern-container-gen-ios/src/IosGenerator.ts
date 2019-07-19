@@ -1,6 +1,7 @@
 import {
   manifest,
   iosUtil,
+  injectReactNativeVersionKeysInObject,
   utils,
   PackagePath,
   shell,
@@ -13,7 +14,6 @@ import {
   ContainerGeneratorConfig,
   ContainerGenResult,
   generatePluginsMustacheViews,
-  injectReactNativeVersionKeysInObject,
   populateApiImplMustacheView,
   generateContainer,
 } from 'ern-container-gen'

@@ -5,6 +5,7 @@ import {
   mustacheUtils,
   PackagePath,
   shell,
+  injectReactNativeVersionKeysInObject,
   log,
   NativePlatform,
   kax,
@@ -17,7 +18,6 @@ import {
   ContainerGeneratorConfig,
   ContainerGenResult,
   generatePluginsMustacheViews,
-  injectReactNativeVersionKeysInObject,
   populateApiImplMustacheView,
   generateContainer,
 } from 'ern-container-gen'
