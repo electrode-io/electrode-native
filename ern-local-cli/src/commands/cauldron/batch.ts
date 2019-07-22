@@ -17,29 +17,17 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .option('addDependencies', {
-      describe:
-        'Adds one or more native dependencies to a native application version',
-      type: 'array',
-    })
-    .coerce('addDependencies', d => d.map(PackagePath.fromString))
     .option('addMiniapps', {
       describe: 'Adds one or more MiniApps to a native application version',
       type: 'array',
     })
     .coerce('addMiniapps', d => d.map(PackagePath.fromString))
-    .option('delDependencies', {
-      describe:
-        'Remove one or more native dependencies from a native application version',
-      type: 'array',
-    })
     .option('containerVersion', {
       alias: 'v',
       describe:
         'Version to use for generated container. If none provided, current container version will be patch bumped.',
       type: 'string',
     })
-    .coerce('delDependencies', d => d.map(PackagePath.fromString))
     .option('delMiniapps', {
       describe: 'Remove one or more MiniApps from a native application version',
       type: 'array',
@@ -52,12 +40,6 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .option('updateDependencies', {
-      describe:
-        'Update one or more native dependencies versions in a native application version',
-      type: 'array',
-    })
-    .coerce('updateDependencies', d => d.map(PackagePath.fromString))
     .option('updateMiniapps', {
       describe:
         'Update one or more MiniApps versions in a native appplication version',
@@ -68,22 +50,20 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
-  addDependencies = [],
   addMiniapps = [],
   containerVersion,
-  delDependencies = [],
+
   delMiniapps = [],
   descriptor,
-  updateDependencies = [],
+
   updateMiniapps = [],
 }: {
-  addDependencies: PackagePath[]
   addMiniapps: PackagePath[]
   containerVersion?: string
-  delDependencies: PackagePath[]
+
   delMiniapps: PackagePath[]
   descriptor?: AppVersionDescriptor
-  updateDependencies: PackagePath[]
+
   updateMiniapps: PackagePath[]
 }) => {
   descriptor =
@@ -93,28 +73,6 @@ export const commandHandler = async ({
     }))
 
   await logErrorAndExitIfNotSatisfied({
-    dependencyIsInNativeApplicationVersionContainer: {
-      dependency: [...delDependencies, ...updateDependencies],
-      descriptor,
-      extraErrorMessage:
-        'This command cannot del or update dependency(ies) that do not exist in Cauldron.',
-    },
-    dependencyIsInNativeApplicationVersionContainerWithDifferentVersion: {
-      dependency: updateDependencies,
-      descriptor,
-      extraErrorMessage:
-        'It seems like you are trying to update a dependency to a version that is already the one in use.',
-    },
-    dependencyNotInNativeApplicationVersionContainer: {
-      dependency: addDependencies,
-      descriptor,
-      extraErrorMessage:
-        'You cannot add dependencies that already exit in Cauldron. Please consider using update instead.',
-    },
-    dependencyNotInUseByAMiniApp: {
-      dependency: [...delDependencies],
-      descriptor,
-    },
     isNewerContainerVersion: containerVersion
       ? {
           containerVersion,
@@ -155,24 +113,12 @@ export const commandHandler = async ({
     noGitOrFilesystemPath: {
       extraErrorMessage:
         'You cannot provide dependency(ies) or MiniApp(s) using git or file scheme for this command. Only the form name@version is allowed.',
-      obj: [
-        ...addDependencies,
-        ...addMiniapps,
-        ...delDependencies,
-        ...delMiniapps,
-        ...updateDependencies,
-        ...updateMiniapps,
-      ],
+      obj: [...addMiniapps, ...delMiniapps, ...updateMiniapps],
     },
     publishedToNpm: {
       extraErrorMessage:
         'You can only add or update dependency(ies) or MiniApp(s) wtih version(s) that have been published to NPM',
-      obj: [
-        ...addDependencies,
-        ...addMiniapps,
-        ...updateDependencies,
-        ...updateMiniapps,
-      ],
+      obj: [...addMiniapps, ...updateMiniapps],
     },
   })
 
@@ -183,43 +129,12 @@ export const commandHandler = async ({
   const cauldron = await getActiveCauldron()
   await syncCauldronContainer(
     async () => {
-      // Del Dependencies
-      for (const delDependency of delDependencies) {
-        await cauldron.removeNativeDependencyFromContainer(
-          descriptor!,
-          delDependency
-        )
-        cauldronCommitMessage.push(
-          `- Remove ${delDependency} native dependency`
-        )
-      }
       // Del MiniApps
       for (const delMiniApp of delMiniapps) {
         if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor!))) {
           await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp)
         }
         cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`)
-      }
-      // Update Dependencies
-      for (const updateDependency of updateDependencies) {
-        await cauldron.updateNativeDependencyVersionInContainer(
-          descriptor!,
-          updateDependency
-        )
-        cauldronCommitMessage.push(
-          `- Update ${
-            updateDependency.basePath
-          } native dependency version to v${updateDependency.version}`
-        )
-      }
-      // Add Dependencies
-      for (const addDependency of addDependencies) {
-        // Add the dependency to Cauldron
-        await cauldron.addNativeDependencyToContainer(
-          descriptor!,
-          addDependency
-        )
-        cauldronCommitMessage.push(`-Add ${addDependency} native dependency`)
       }
       // Update MiniApps
       for (const updatedMiniApp of updateMiniapps) {
