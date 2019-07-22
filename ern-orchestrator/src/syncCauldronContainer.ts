@@ -83,30 +83,11 @@ export async function syncCauldronContainer(
       })
     )
 
-    // ================================================================
-    // Sync native dependencies in Cauldron with any changes of native
-    // dependencies in Composite (new or updated native dependencies)
-    // ================================================================
-    const cauldronNativeDependencies = await cauldron.getNativeDependencies(
-      descriptor
-    )
+    // Sync native dependencies in Cauldron
     const compositeNativeDeps = await composite.getResolvedNativeDependencies()
-
-    // Final native dependencies are the one that are in Composite
-    // plus any extra ones present in the Cauldron that are not
-    // in the Composite
-    const extraCauldronNativeDependencies = _.differenceBy(
-      cauldronNativeDependencies,
-      compositeNativeDeps.resolved,
-      'basePath'
-    )
-    const nativeDependencies = [
-      ...extraCauldronNativeDependencies,
-      ...compositeNativeDeps.resolved,
-    ]
-    await cauldron.syncContainerNativeDependencies(
+    await cauldron.setNativeDependenciesInContainer(
       descriptor,
-      nativeDependencies
+      compositeNativeDeps.resolved
     )
 
     // Generate Container from Cauldron

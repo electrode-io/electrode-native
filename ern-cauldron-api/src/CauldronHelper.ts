@@ -247,32 +247,17 @@ export class CauldronHelper {
     return _.last(sortedNativeAppVersions) as CauldronNativeAppVersion
   }
 
-  public async addNativeDependencyToContainer(
+  public async setNativeDependenciesInContainer(
     descriptor: AppVersionDescriptor,
-    dependency: PackagePath
+    dependencies: PackagePath[]
   ): Promise<void> {
     await this.throwIfNativeAppVersionIsReleased(
       descriptor,
       'Cannot add a native dependency to a released native app version'
     )
-    return this.cauldron.addPackageToContainer(
+    return this.cauldron.setPackagesInContainer(
       descriptor,
-      dependency,
-      'nativeDeps'
-    )
-  }
-
-  public async removeNativeDependencyFromContainer(
-    descriptor: AppVersionDescriptor,
-    dependency: PackagePath
-  ): Promise<void> {
-    await this.throwIfNativeAppVersionIsReleased(
-      descriptor,
-      'Cannot remove a native dependency from a released native app version'
-    )
-    return this.cauldron.removePackageFromContainer(
-      descriptor,
-      dependency,
+      dependencies,
       'nativeDeps'
     )
   }
@@ -616,21 +601,6 @@ export class CauldronHelper {
     })
   }
 
-  public async syncContainerNativeDependencies(
-    descriptor: AppVersionDescriptor,
-    localPackages: PackagePath[]
-  ): Promise<void> {
-    return this.syncContainerPackages({
-      descriptor,
-      funcAddPackageToContainer: this.addNativeDependencyToContainer.bind(this),
-      funcGetPackagesFromContainer: this.getNativeDependencies.bind(this),
-      funcUpdatePackageInContainer: this.updateNativeDependencyVersionInContainer.bind(
-        this
-      ),
-      localPackages,
-    })
-  }
-
   public async updateJsPackageVersionInContainer({
     descriptor,
     jsPackage,
@@ -725,21 +695,6 @@ export class CauldronHelper {
       keepBranch,
       type: 'jsapiimpl',
     })
-  }
-
-  public async updateNativeDependencyVersionInContainer(
-    descriptor: AppVersionDescriptor,
-    dependency: PackagePath
-  ): Promise<void> {
-    await this.throwIfNativeAppVersionIsReleased(
-      descriptor,
-      'Cannot update a native dependency for a released native app version'
-    )
-    return this.cauldron.updatePackageInContainer(
-      descriptor,
-      dependency,
-      'nativeDeps'
-    )
   }
 
   public async getAllNativeApps(): Promise<any> {
