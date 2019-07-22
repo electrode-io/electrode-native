@@ -1310,68 +1310,6 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // updatePackageInContainer [native dependency]
-  // ==========================================================
-  describe('updateNativeDependencyVersionInContainer [Native Dependency]', () => {
-    it('should update the native dependency', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi({
-        cauldronDocument: tmpFixture,
-      }).updatePackageInContainer(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('react-native-electrode-bridge@1.5.0'),
-        'nativeDeps'
-      )
-      const dependenciesArr = jp.query(
-        tmpFixture,
-        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.nativeDeps'
-      )[0]
-      expect(dependenciesArr.includes('react-native-electrode-bridge@1.4.9'))
-        .false
-      expect(dependenciesArr.includes('react-native-electrode-bridge@1.5.0'))
-        .true
-    })
-
-    it('should commit the document store', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi({ cauldronDocument: tmpFixture })
-      const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.updatePackageInContainer(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('react-native-electrode-bridge@1.5.0'),
-        'nativeDeps'
-      )
-      sinon.assert.calledOnce(commitStub)
-    })
-
-    it('should throw if the dependency is not found', async () => {
-      const api = cauldronApi()
-      assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('unexisting@1.5.0'),
-          'nativeDeps'
-        )
-      )
-    })
-
-    it('should throw if the native application version is not found', async () => {
-      const api = cauldronApi()
-      assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.5.0'),
-          'nativeDeps'
-        )
-      )
-    })
-  })
-
-  // ==========================================================
   // updatePackageInContainer [MiniApp]
   // ==========================================================
   describe('updatePackageInContainer [MiniApp]', () => {

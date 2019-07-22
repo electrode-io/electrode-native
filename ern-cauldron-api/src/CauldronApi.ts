@@ -1127,4 +1127,14 @@ export default class CauldronApi {
     _.remove(container[key]!, p => p === existingPkg)
     return this.commit(`Remove ${pkg} branch from ${descriptor} Container`)
   }
+
+  public async setPackagesInContainer(
+    descriptor: AppVersionDescriptor,
+    pkgs: PackagePath[],
+    key: ContainerPackagesArrayKey
+  ): Promise<void> {
+    const container = (await this.getVersion(descriptor)).container
+    container[key]! = pkgs.map(p => p.fullPath).sort()
+    return this.commit(`Set native dependencies in ${descriptor} Container`)
+  }
 }
