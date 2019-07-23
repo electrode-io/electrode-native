@@ -59,10 +59,26 @@ describe('runMiniApp', () => {
     )
     sandbox.stub(core.shell)
     launchRunnerStub = sandbox.stub(launch, 'launchRunner')
-    generateContainerForRunnerStub = sandbox.stub(
-      gen,
-      'generateContainerForRunner'
-    )
+    generateContainerForRunnerStub = sandbox
+      .stub(gen, 'generateContainerForRunner')
+      .resolves({
+        config: {
+          composite: {
+            getNativeDependencies: () =>
+              Promise.resolve({
+                all: [
+                  {
+                    packagePath: PackagePath.fromString('react-native@0.59.8'),
+                  },
+                ],
+                apis: [],
+                nativeApisImpl: [],
+                thirdPartyInManifest: [],
+                thirdPartyNotInManifest: [],
+              }),
+          },
+        },
+      })
     publishContainerStub = sandbox.stub(publisher, 'publishContainer')
     androidRunnerGenStub = sandbox.createStubInstance(AndroidRunnerGenerator)
     getRunnerGeneratorForPlatformStub = sandbox
@@ -207,6 +223,7 @@ describe('runMiniApp', () => {
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,
       reactNativePackagerPort: undefined,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
   })
@@ -224,6 +241,7 @@ describe('runMiniApp', () => {
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,
       reactNativePackagerPort: undefined,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
   })
@@ -243,6 +261,7 @@ describe('runMiniApp', () => {
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,
       reactNativePackagerPort: undefined,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
   })
@@ -269,6 +288,7 @@ describe('runMiniApp', () => {
       reactNativeDevSupportEnabled: false,
       reactNativePackagerHost: undefined,
       reactNativePackagerPort: undefined,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
   })
@@ -293,6 +313,7 @@ describe('runMiniApp', () => {
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,
       reactNativePackagerPort: undefined,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
   })

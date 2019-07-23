@@ -26,6 +26,7 @@ describe('AndroidRunnerGenerator', () => {
     await getRunnerGeneratorForPlatform('android').generate({
       mainMiniAppName: 'dummy',
       outDir: simpleAndroidRunnerTestGeneratedPath,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
     assert(
@@ -42,6 +43,7 @@ describe('AndroidRunnerGenerator', () => {
     await getRunnerGeneratorForPlatform('android').regenerateRunnerConfig({
       mainMiniAppName: 'dummy',
       outDir: simpleAndroidRunnerTestGeneratedPath,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'android',
     })
     assert(
