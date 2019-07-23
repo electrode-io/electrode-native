@@ -205,7 +205,7 @@ export class GitHubApi {
     const buff = new Buffer(newContent)
     const content = buff.toString('base64')
 
-    return this.octokit.repos.updateFile({
+    return this.octokit.repos.createOrUpdateFile({
       branch: onBranch || undefined,
       content,
       message: commitMessage,

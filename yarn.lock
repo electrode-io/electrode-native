@@ -1027,10 +1027,28 @@
     universal-user-agent "^2.0.1"
     url-template "^2.0.8"
 
+"@octokit/endpoint@^5.1.0":
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@octokit/endpoint/-/endpoint-5.3.2.tgz#2deda2d869cac9ba7f370287d55667be2a808d4b"
+  integrity sha512-gRjteEM9I6f4D8vtwU2iGUTn9RX/AJ0SVXiqBUEuYEWVGGAVjSXdT0oNmghH5lvQNWs8mwt6ZaultuG6yXivNw==
+  dependencies:
+    deepmerge "4.0.0"
+    is-plain-object "^3.0.0"
+    universal-user-agent "^3.0.0"
+    url-template "^2.0.8"
+
 "@octokit/plugin-enterprise-rest@^2.1.1":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@octokit/plugin-enterprise-rest/-/plugin-enterprise-rest-2.2.2.tgz#c0e22067a043e19f96ff9c7832e2a3019f9be75c"
   integrity sha512-CTZr64jZYhGWNTDGlSJ2mvIlFsm9OEO3LqWn9I/gmoHI4jRBp4kpHoFYNemG4oA75zUAcmbuWblb7jjP877YZw==
+
+"@octokit/request-error@^1.0.1", "@octokit/request-error@^1.0.2":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@octokit/request-error/-/request-error-1.0.4.tgz#15e1dc22123ba4a9a4391914d80ec1e5303a23be"
+  integrity sha512-L4JaJDXn8SGT+5G0uX79rZLv0MNJmfGa4vb4vy1NnpjSnWDLJRy6m90udGwvMmavwsStgbv2QNkPzzTCMmL+ig==
+  dependencies:
+    deprecation "^2.0.0"
+    once "^1.4.0"
 
 "@octokit/request@3.0.1":
   version "3.0.1"
@@ -1044,7 +1062,20 @@
     once "^1.4.0"
     universal-user-agent "^2.0.1"
 
-"@octokit/rest@^16.16.0", "@octokit/rest@^16.25.0":
+"@octokit/request@^5.0.0":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@octokit/request/-/request-5.0.1.tgz#6705c9a883db0ac0f58cee717e806b6575d4a199"
+  integrity sha512-SHOk/APYpfrzV1RNf7Ux8SZi+vZXhMIB2dBr4TQR6ExMX8R4jcy/0gHw26HLe1dWV7Wxe9WzYyDSEC0XwnoCSQ==
+  dependencies:
+    "@octokit/endpoint" "^5.1.0"
+    "@octokit/request-error" "^1.0.1"
+    deprecation "^2.0.0"
+    is-plain-object "^3.0.0"
+    node-fetch "^2.3.0"
+    once "^1.4.0"
+    universal-user-agent "^3.0.0"
+
+"@octokit/rest@^16.16.0":
   version "16.25.1"
   resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-16.25.1.tgz#60a3171018dbc4feb23d1bf9805a06aad106d53e"
   integrity sha512-a1Byzjj07OMQNUQDP5Ng/rChaI7aq6TNMY1ZFf8+zCVEEtYzCgcmrFG9BDerFbLPPKGQ5TAeRRFyLujUUN1HIg==
@@ -1060,6 +1091,25 @@
     octokit-pagination-methods "^1.1.0"
     once "^1.4.0"
     universal-user-agent "^2.0.0"
+    url-template "^2.0.8"
+
+"@octokit/rest@^16.28.6":
+  version "16.28.6"
+  resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-16.28.6.tgz#9e73104077c9c06cf3b1628603b4b0c55a117809"
+  integrity sha512-ERfzS6g6ZNPJkEUclxLenr+UEncbymCe//IBrWWdp59nslYDeJboq07Ue9brX05Uv0+SY3kwA33cdiVBVPAOMQ==
+  dependencies:
+    "@octokit/request" "^5.0.0"
+    "@octokit/request-error" "^1.0.2"
+    atob-lite "^2.0.0"
+    before-after-hook "^2.0.0"
+    btoa-lite "^1.0.0"
+    deprecation "^2.0.0"
+    lodash.get "^4.4.2"
+    lodash.set "^4.3.2"
+    lodash.uniq "^4.5.0"
+    octokit-pagination-methods "^1.1.0"
+    once "^1.4.0"
+    universal-user-agent "^3.0.0"
     url-template "^2.0.8"
 
 "@sinonjs/commons@^1", "@sinonjs/commons@^1.0.2", "@sinonjs/commons@^1.4.0":
@@ -1592,6 +1642,11 @@ before-after-hook@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/before-after-hook/-/before-after-hook-1.4.0.tgz#2b6bf23dca4f32e628fd2747c10a37c74a4b484d"
   integrity sha512-l5r9ir56nda3qu14nAXIlyq1MmUSs0meCIaFAh8HwkFwP1F8eToOuS3ah2VAHHcY04jaYD7FpJC5JTXHYRbkzg==
+
+before-after-hook@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/before-after-hook/-/before-after-hook-2.1.0.tgz#b6c03487f44e24200dd30ca5e6a1979c5d2fb635"
+  integrity sha512-IWIbu7pMqyw3EAJHzzHbWa85b6oud/yfKYg5rqB5hNE8CeMi3nX+2C2sj0HswfblST86hpVEOAb9x34NZd6P7A==
 
 big-integer@^1.6.7:
   version "1.6.43"
@@ -2660,6 +2715,11 @@ deepmerge@3.2.0:
   resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-3.2.0.tgz#58ef463a57c08d376547f8869fdc5bcee957f44e"
   integrity sha512-6+LuZGU7QCNUnAJyX8cIrlzoEgggTM6B7mm+znKOX4t5ltluT9KLjN6g61ECMS0LTsLW7yDpNoxhix5FZcrIow==
 
+deepmerge@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.0.0.tgz#3e3110ca29205f120d7cb064960a39c3d2087c09"
+  integrity sha512-YZ1rOP5+kHor4hMAH+HRQnBQHg+wvS1un1hAOuIcxcBy0hzcUf6Jg2a1w65kpoOUnurOfZbERwjI1TfZxNjcww==
+
 deepmerge@^2.0.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-2.2.1.tgz#5d3ff22a01c00f645405a2fbc17d0778a1801170"
@@ -2736,6 +2796,11 @@ deprecation@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/deprecation/-/deprecation-1.0.1.tgz#2df79b79005752180816b7b6e079cbd80490d711"
   integrity sha512-ccVHpE72+tcIKaGMql33x5MAjKQIZrk+3x2GbJ7TeraUCZWHoT+KSZpoC+JQFsUBlSTXUrBaGiF0j6zVTepPLg==
+
+deprecation@^2.0.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/deprecation/-/deprecation-2.3.1.tgz#6368cbdb40abf3373b525ac87e4a260c3a700919"
+  integrity sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==
 
 deref@~0.6.3:
   version "0.6.4"
@@ -8408,6 +8473,13 @@ universal-user-agent@^2.0.0, universal-user-agent@^2.0.1:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/universal-user-agent/-/universal-user-agent-2.0.3.tgz#9f6f09f9cc33de867bb720d84c08069b14937c6c"
   integrity sha512-eRHEHhChCBHrZsA4WEhdgiOKgdvgrMIHwnwnqD0r5C6AO8kwKcG7qSku3iXdhvHL3YvsS9ZkSGN8h/hIpoFC8g==
+  dependencies:
+    os-name "^3.0.0"
+
+universal-user-agent@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/universal-user-agent/-/universal-user-agent-3.0.0.tgz#4cc88d68097bffd7ac42e3b7c903e7481424b4b9"
+  integrity sha512-T3siHThqoj5X0benA5H0qcDnrKGXzU8TKoX15x/tQHw1hQBvIEBHjxQ2klizYsqBOO/Q+WuxoQUihadeeqDnoA==
   dependencies:
     os-name "^3.0.0"
 
