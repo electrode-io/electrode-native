@@ -44,7 +44,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@yarnpkg/lockfile": "^1.1.0",
-    "@octokit/rest": "^16.25.0",
+    "@octokit/rest": "^16.28.6",
     "archiver": "^2.1.1",
     "bluebird": "^3.5.1",
     "chalk": "^2.4.1",
