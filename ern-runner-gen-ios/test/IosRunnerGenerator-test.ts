@@ -35,6 +35,7 @@ describe('IosRunnerGenerator', () => {
       },
       mainMiniAppName: 'dummy',
       outDir: simpleIosRunnerTestGeneratedPath,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'ios',
     })
     assert(
@@ -54,6 +55,7 @@ describe('IosRunnerGenerator', () => {
       },
       mainMiniAppName: 'dummy',
       outDir: simpleIosRunnerTestGeneratedPath,
+      reactNativeVersion: '0.59.8',
       targetPlatform: 'ios',
     })
     assert(
