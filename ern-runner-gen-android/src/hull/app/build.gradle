@@ -20,13 +20,23 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        {{#RN_VERSION_LT_59}}
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+        {{/RN_VERSION_LT_59}}
     }
     splits {
        abi {
            reset()
            enable enableSeparateBuildPerCPUArchitecture
            universalApk false  // If true, also generate a universal APK
+           {{#RN_VERSION_LT_59}}
+           include "armeabi-v7a", "x86"
+           {{/RN_VERSION_LT_59}}
+           {{#RN_VERSION_GTE_59}}
            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+           {{/RN_VERSION_GTE_59}}
        }
    }
     buildTypes {
@@ -48,7 +58,12 @@ android {
        variant.outputs.each { output ->
            // For each separate APK per architecture, set a unique version code as described here:
            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+           {{#RN_VERSION_LT_59}}
+           def versionCodes = ["armeabi-v7a":1, "x86":2]
+           {{/RN_VERSION_LT_59}}
+           {{#RN_VERSION_GTE_59}}
            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
+           {{/RN_VERSION_GTE_59}}
            def abi = output.getFilter(com.android.build.OutputFile.ABI)
            if (abi != null) {  // null for the universal-debug, universal-release variants
                output.versionCodeOverride =
