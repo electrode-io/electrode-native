@@ -721,7 +721,7 @@ export class Manifest {
       )
       result = this.getApiImplPluginDefaultConfig(plugin, projectName)
     } else {
-      log.error(
+      log.warn(
         `Unsupported plugin. No configuration found in manifest for ${
           plugin.basePath
         }.`
