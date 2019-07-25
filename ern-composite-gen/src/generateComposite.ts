@@ -273,14 +273,16 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
   //
   // ... is added to the babelRcRoots array, so that we can properly
   // configure Babel to process the .babelrc of these dependencies.
-  const babelRcRoots: string[] = []
+  const babelRcRootsRe: RegExp[] = []
+  const babelRcRootsPaths: string[] = []
   for (const dependency of dependencies) {
     if (fs.existsSync(path.join(compositeNodeModulesPath, dependency))) {
       const depPackageJson = await readPackageJson(
         path.join(compositeNodeModulesPath, dependency)
       )
       if (depPackageJson.ern && depPackageJson.ern.useBabelRc === true) {
-        babelRcRoots.push(`./node_modules/${dependency}`)
+        babelRcRootsRe.push(new RegExp(`node_modules\/${dependency}(?!.+\/)`))
+        babelRcRootsPaths.push(`./node_modules/${dependency}`)
       }
     }
   }
@@ -301,7 +303,7 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
   // It will be deprecated at some point.
   if (
     semver.gte(compositeReactNativeVersion, '0.56.0') &&
-    babelRcRoots.length > 0
+    babelRcRootsRe.length > 0
   ) {
     let pathToFileToPatch
     if (semver.lt(compositeMetroVersion, '0.51.0')) {
@@ -340,11 +342,9 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
     const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
     const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`
     // Just add extra code line to inject babelrcRoots option
-    const patch = `extraConfig.babelrcRoots = ${JSON.stringify(
-      babelRcRoots,
-      null,
-      2
-    )}
+
+    const patch = `extraConfig.babelrcRoots = [ 
+${babelRcRootsRe.map(b => b.toString()).join(',')} ]
 ${lineToPatch}`
     const patchedFile = fileToPatch.replace(lineToPatch, patch)
     await fileUtils.writeFile(pathToFileToPatch, patchedFile)
@@ -358,15 +358,15 @@ ${lineToPatch}`
   // as we want them to be processed.
   if (semver.lt(compositeReactNativeVersion, '0.56.0')) {
     log.debug('Removing .babelrc files from all modules')
-    if (babelRcRoots.length > 0) {
+    if (babelRcRootsPaths.length > 0) {
       log.debug(
         `Preserving .babelrc of whitelisted node_modules : ${JSON.stringify(
-          babelRcRoots,
+          babelRcRootsPaths,
           null,
           2
         )}`
       )
-      for (const babelRcRoot of babelRcRoots) {
+      for (const babelRcRoot of babelRcRootsPaths) {
         shell.cp(
           path.join(babelRcRoot, '.babelrc'),
           path.join(babelRcRoot, '.babelrcback')
@@ -374,8 +374,8 @@ ${lineToPatch}`
       }
     }
     shell.rm('-rf', path.join('node_modules', '**', '.babelrc'))
-    if (babelRcRoots.length > 0) {
-      for (const babelRcRoot of babelRcRoots) {
+    if (babelRcRootsPaths.length > 0) {
+      for (const babelRcRoot of babelRcRootsPaths) {
         shell.cp(
           path.join(babelRcRoot, '.babelrcback'),
           path.join(babelRcRoot, '.babelrc')
