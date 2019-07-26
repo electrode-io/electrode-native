@@ -32,6 +32,12 @@ To enable proper Babel support for a MiniApp, here are the requirements :
 
 If this plugin is being used, in the Babel plugin config (in `.babelrc`) the [`cwd` option](https://github.com/tleunen/babel-plugin-module-resolver/blob/v3.2.0/DOCS.md#cwd) should be set to `babelrc`. This is needed, otherwise the base directory for `root`  will resolve to top level composite rather than the MiniApp root directory.
 
+### Note regarding BABEL_ENV
+
+React Native Metro bundler will [force set `BABEL_ENV`](https://github.com/facebook/metro/blob/fcb096d3286c67cac8a727c23f1e97be98a04cf5/packages/metro-react-native-babel-transformer/src/index.js#L152-L154) environment variable during transpilation to one out of only two values : `development` or `production`. Keep that in mind if using the [`env` option](https://new.babeljs.io/docs/en/next/babelrc.html#env-environment-option) in a Babel configuration. Whatever value is manually set for `BABEL_ENV` will be overwritten during transpilation by Metro bundler.
+
+`development` will be set for any development bundle (local packager for example) and `production` will be set for any production bundle (bundle that we store in Container).
+
 ## Selective dependency resolutions support
 
 Because Electrode Native uses [yarn](https://yarnpkg.com) under the hood to generate the Composite project, it also supports yarn [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) feature.  
