@@ -68,6 +68,11 @@ export class Composite {
     const dependencies = await this.getResolvedNativeDependencies()
     const result: PackagePath[] = []
     for (const dependency of dependencies.resolved) {
+      // Always include react-native
+      if (dependency.basePath === 'react-native') {
+        result.push(dependency)
+        continue
+      }
       const pluginConfig = await manifest.getPluginConfig(dependency)
       if (pluginConfig) {
         if (platform === 'android' && pluginConfig.android) {
