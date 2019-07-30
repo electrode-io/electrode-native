@@ -6,6 +6,8 @@ import {
   readPackageJsonSync,
   BaseMiniApp,
   nativeDepenciesVersionResolution,
+  manifest,
+  NativePlatform,
 } from 'ern-core'
 import { CompositeGeneratorConfig } from './types'
 import { generateComposite } from './generateComposite'
@@ -58,6 +60,24 @@ export class Composite {
     return nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
       nativeDependencies
     )
+  }
+
+  public async getInjectableNativeDependencies(
+    platform: NativePlatform
+  ): Promise<any> {
+    const dependencies = await this.getResolvedNativeDependencies()
+    const result: PackagePath[] = []
+    for (const dependency of dependencies.resolved) {
+      const pluginConfig = await manifest.getPluginConfig(dependency)
+      if (pluginConfig) {
+        if (platform === 'android' && pluginConfig.android) {
+          result.push(dependency)
+        } else if (platform === 'ios' && pluginConfig.ios) {
+          result.push(dependency)
+        }
+      }
+    }
+    return result
   }
 
   /**

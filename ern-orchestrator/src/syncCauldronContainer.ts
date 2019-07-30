@@ -84,10 +84,12 @@ export async function syncCauldronContainer(
     )
 
     // Sync native dependencies in Cauldron
-    const compositeNativeDeps = await composite.getResolvedNativeDependencies()
+    const compositeNativeDeps = await composite.getInjectableNativeDependencies(
+      platform
+    )
     await cauldron.setNativeDependenciesInContainer(
       descriptor,
-      compositeNativeDeps.resolved
+      compositeNativeDeps
     )
 
     // Generate Container from Cauldron
