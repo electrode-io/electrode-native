@@ -88,27 +88,9 @@ export async function runCauldronContainerGen(
       throw new Error(`${napDescriptor} does not specify a platform`)
     }
 
-    const compositeNativeDeps = await composite.getResolvedNativeDependencies()
-
-    // Final native dependencies are the one that are in Composite
-    // plus any extra ones present in the Cauldron that are not
-    // in the Composite
-    const extraCauldronNativeDependencies = _.differenceBy(
-      cauldronNativeDependencies,
-      compositeNativeDeps.resolved,
-      'basePath'
+    const plugins = await composite.getInjectableNativeDependencies(
+      napDescriptor.platform
     )
-    log.debug(
-      `extraCauldronNativeDependencies: ${JSON.stringify(
-        extraCauldronNativeDependencies,
-        null,
-        2
-      )}`
-    )
-    const plugins = [
-      ...extraCauldronNativeDependencies,
-      ...compositeNativeDeps.resolved,
-    ]
 
     const platform = napDescriptor.platform
     const containerGeneratorConfig = await cauldron.getContainerGeneratorConfig(
