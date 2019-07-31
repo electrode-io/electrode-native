@@ -35,8 +35,8 @@ import Foundation
             return
         }
 
-        self.requestHandler = MoviesApiRequestHandlerProvider(handlerConfig: config)
-        self.requestHandler?.registerGetTopRatedMoviesRequestHandler()
-        self.requestHandler?.registerGetMovieDetailRequestHandler()
+        MoviesApiController.instance.requestHandler = MoviesApiRequestHandlerProvider(handlerConfig: config)
+        MoviesApiController.instance.requestHandler?.registerGetTopRatedMoviesRequestHandler()
+        MoviesApiController.instance.requestHandler?.registerGetMovieDetailRequestHandler()
     }
 }
