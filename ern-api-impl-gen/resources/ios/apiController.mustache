@@ -35,9 +35,9 @@ import Foundation
             return
         }
 
-        self.requestHandler = {{apiName}}ApiRequestHandlerProvider(handlerConfig: config)
+        {{apiName}}ApiController.instance.requestHandler = {{apiName}}ApiRequestHandlerProvider(handlerConfig: config)
         {{#requests}}
-        self.requestHandler?.register{{.}}RequestHandler()
+        {{apiName}}ApiController.instance.requestHandler?.register{{.}}RequestHandler()
         {{/requests}}
     }
 }
