@@ -164,11 +164,14 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
      * @param componentName {@link String} React native app view component name
      * @deprecated use {@link #removeMiniAppView(String, ReactRootView)}.
      */
-    @Deprecated
+     @Deprecated
     public void removeMiniAppView(@NonNull String componentName) {
         ReactRootViewHolder reactRootViewHolder = mReactRootViews.get(componentName);
         if (reactRootViewHolder != null) {
             reactRootViewHolder.remove(componentName);
+            if(reactRootViewHolder.size() == 0) {
+                mReactRootViews.remove(componentName);
+            }
         }
     }
 
@@ -176,6 +179,9 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         ReactRootViewHolder reactRootViewHolder = mReactRootViews.get(componentName);
         if (reactRootViewHolder != null) {
             reactRootViewHolder.remove(rootView);
+            if(reactRootViewHolder.size() == 0) {
+                mReactRootViews.remove(componentName);
+            }
         }
     }
 
@@ -195,8 +201,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
             if (rootViewHolder == null) {
                 rootViewHolder = new ReactRootViewHolder(componentName, rootView);
                 mReactRootViews.put(componentName, rootViewHolder);
-            }
-             else {
+            } else {
                 rootViewHolder.add(rootView);
             }
             return rootView;
