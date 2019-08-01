@@ -46,7 +46,9 @@ export async function runLocalContainerGen(
 ): Promise<ContainerGenResult> {
   try {
     const generator = getGeneratorForPlatform(platform)
-    const nativeDependencies = await composite.getResolvedNativeDependencies()
+    const nativeDependencies = await composite.getInjectableNativeDependencies(
+      platform
+    )
 
     return kax.task('Generating Container').run(
       generator.generate({
@@ -55,7 +57,7 @@ export async function runLocalContainerGen(
         ignoreRnpmAssets,
         jsMainModuleName,
         outDir,
-        plugins: [...nativeDependencies.resolved, ...extraNativeDependencies],
+        plugins: [...nativeDependencies, ...extraNativeDependencies],
         pluginsDownloadDir: createTmpDir(),
         targetPlatform: platform,
       })
