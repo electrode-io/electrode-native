@@ -2,7 +2,7 @@
 
 #### Description
 
-* This command can be used to publish a local Container to a remote repository using a given publisher.
+* This command can be used to publish a local Container to a repository, using a given publisher.
 
 ### Currently Available Official Publishers
 
