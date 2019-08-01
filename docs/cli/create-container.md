@@ -2,7 +2,7 @@
 
 #### Description
 
-* Create a new Container locally.
+* Create a new Container project locally.
 
 #### Syntax
 
