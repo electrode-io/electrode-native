@@ -8,9 +8,9 @@ import readDir = require('fs-readdir-recursive')
 const NodeModulesLen = 'node_modules'.length
 
 export function findDirectoriesContainingNativeCode(rootDir: string): string[] {
-  return readDir(rootDir).filter(a =>
-    /.swift$|.pbxproj$|.java$|.framework\//.test(a)
-  )
+  return readDir(rootDir)
+    .filter(a => /.swift$|.pbxproj$|.java$|.framework\//.test(a))
+    .filter(a => !/ElectrodeContainer.framework/.test(a))
 }
 
 export function filterDirectories(directories: string[]): string[] {
