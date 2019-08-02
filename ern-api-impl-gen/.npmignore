@@ -4,5 +4,5 @@ src
 test
 tsconfig.release.json
 yarn.lock
-hull/android/.project
-hull/android/.settings/
+**/hull/android/.project
+**/hull/android/.settings
