@@ -17,6 +17,7 @@ import { runMiniApp } from '../src/runMiniApp'
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
+import path from 'path'
 
 const sandbox = sinon.createSandbox()
 
@@ -58,6 +59,7 @@ describe('runMiniApp', () => {
       'startPackagerInNewWindow'
     )
     sandbox.stub(core.shell)
+
     launchRunnerStub = sandbox.stub(launch, 'launchRunner')
     generateContainerForRunnerStub = sandbox
       .stub(gen, 'generateContainerForRunner')
@@ -76,6 +78,7 @@ describe('runMiniApp', () => {
                 thirdPartyInManifest: [],
                 thirdPartyNotInManifest: [],
               }),
+            path: path.join(__dirname, 'fixtures'),
           },
         },
       })
@@ -210,24 +213,6 @@ describe('runMiniApp', () => {
     })
   })
 
-  it('should generate the runner project if it does not exist yet [local single miniapp]', async () => {
-    prepareStubs({ existsSyncReturn: false })
-    await runMiniApp('android')
-    sandbox.assert.calledWith(androidRunnerGenStub.generate, {
-      extra: {
-        androidConfig: {},
-        containerGenWorkingDir: Platform.containerGenDirectory,
-      },
-      mainMiniAppName: 'myMiniApp',
-      outDir: sinon.match.string,
-      reactNativeDevSupportEnabled: undefined,
-      reactNativePackagerHost: undefined,
-      reactNativePackagerPort: undefined,
-      reactNativeVersion: '0.59.8',
-      targetPlatform: 'android',
-    })
-  })
-
   it('should only regenerate the runner config if runner project already exists [local single miniapp]', async () => {
     prepareStubs({ existsSyncReturn: true })
     await runMiniApp('android')
@@ -235,6 +220,7 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: {},
         containerGenWorkingDir: Platform.containerGenDirectory,
+        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
@@ -255,6 +241,7 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: { compileSdkVersion: '28' },
         containerGenWorkingDir: Platform.containerGenDirectory,
+        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
@@ -282,6 +269,7 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: {},
         containerGenWorkingDir: Platform.containerGenDirectory,
+        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniAppA',
       outDir: sinon.match.string,
@@ -307,6 +295,7 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: {},
         containerGenWorkingDir: Platform.containerGenDirectory,
+        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
