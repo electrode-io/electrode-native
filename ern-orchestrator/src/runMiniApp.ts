@@ -10,6 +10,7 @@ import {
   shell,
   utils,
   AppVersionDescriptor,
+  YarnLockParser,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -188,10 +189,16 @@ export async function runMiniApp(
     p => p.packagePath.basePath === 'react-native'
   )
 
+  const hasErnNavigation =
+    YarnLockParser.fromPath(
+      path.join(containerGenResult.config.composite.path, 'yarn.lock')
+    ).findPackage(PackagePath.fromString('ern-navigation')).length > 0
+
   const runnerGeneratorConfig: RunnerGeneratorConfig = {
     extra: {
       androidConfig: (extra && extra.androidConfig) || {},
       containerGenWorkingDir: Platform.containerGenDirectory,
+      hullPath: hasErnNavigation ? 'hullx' : 'hull',
     },
     mainMiniAppName: entryMiniAppName,
     outDir: pathToRunner,
