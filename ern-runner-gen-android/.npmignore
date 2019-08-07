@@ -5,3 +5,5 @@ tsconfig.release.json
 yarn.lock
 **/hull/.project
 **/hull/.settings
+**/hullx/.project
+**/hullx/.settings
