@@ -7,7 +7,6 @@ import {
 } from 'ern-core'
 import path from 'path'
 
-const runnerHullPath = path.join(__dirname, 'hull')
 const defaultReactNativePackagerHost = 'localhost'
 const defaultReactNativePackagerPort = '8081'
 
@@ -20,7 +19,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
     this.validateExtraConfig(config)
     const mustacheView = this.createMustacheView({ config })
 
-    shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
+    shell.cp('-R', path.join(getHullPath(config), '*'), config.outDir)
     const filesToMustache = [
       path.join(config.outDir, 'ErnRunner', 'RunnerConfig.m'),
       path.join(config.outDir, 'ErnRunner.xcodeproj', 'project.pbxproj'),
@@ -45,7 +44,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
       'ErnRunner/RunnerConfig.m'
     )
     shell.cp(
-      path.join(runnerHullPath, 'ErnRunner', 'RunnerConfig.m'),
+      path.join(getHullPath(config), 'ErnRunner', 'RunnerConfig.m'),
       pathToRunnerConfig
     )
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
@@ -93,4 +92,10 @@ function pascalCase(str: string) {
 
 function replaceHomePathWithTidle(p: string) {
   return process.env.HOME ? p.replace(process.env.HOME, '~') : p
+}
+
+function getHullPath(config: RunnerGeneratorConfig): string {
+  return config.extra && config.extra.hullPath
+    ? path.join(__dirname, config.extra.hullPath)
+    : path.join(__dirname, 'hull')
 }
