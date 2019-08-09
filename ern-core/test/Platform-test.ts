@@ -231,7 +231,7 @@ describe('Platform', () => {
       Platform.installPlatform('3.0.0')
       sandbox.assert.calledWith(
         execSyncStub,
-        'yarn add ern-local-cli@3.0.0 --exact',
+        'yarn add ern-local-cli@3.0.0 --exact --ignore-engines',
         sinon.match.any
       )
     })
