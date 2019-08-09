@@ -115,9 +115,12 @@ export default class Platform {
       shell.pushd(pathToVersion)
       if (this.isYarnInstalled()) {
         // Favor yarn if it is installed as it will greatly speed up install
-        execSync(`yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, {
-          cwd: pathToVersion,
-        })
+        execSync(
+          `yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact --ignore-engines`,
+          {
+            cwd: pathToVersion,
+          }
+        )
       } else {
         execSync(`npm install ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, {
           cwd: pathToVersion,
