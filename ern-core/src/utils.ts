@@ -268,8 +268,9 @@ export async function reactNativeManifestVersion({
 }
 
 export function isValidElectrodeNativeModuleName(name: string): boolean {
-  return /^[a-zA-Z]+$/.test(name)
+  return /^[A-Z][0-9A-Z_]*$/i.test(name)
 }
+
 /**
  * Download the plugin source given a plugin origin if not already downloaded
  * pluginOrigin: A plugin origin object
