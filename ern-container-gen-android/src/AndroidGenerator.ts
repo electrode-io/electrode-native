@@ -12,6 +12,8 @@ import {
   android,
   AndroidResolvedVersions,
   readPackageJson,
+  createTmpDir,
+  yarn,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -26,9 +28,14 @@ import _ from 'lodash'
 import path from 'path'
 import fs from 'fs'
 import readDir from 'fs-readdir-recursive'
+import DecompressZip from 'decompress-zip'
+import semver from 'semver'
 
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
+
+const DEFAULT_JSC_VARIANT = 'android-jsc'
+const DEFAULT_JSC_VERSION = '245459'
 
 export interface AndroidDependencies {
   files: string[]
@@ -339,6 +346,67 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     for (const perform of replacements) {
       perform()
+    }
+
+    if (semver.gte(reactNativePlugin.version, '0.60.0')) {
+      await this.injectJavaScriptCoreEngine(config)
+    }
+  }
+
+  /**
+   * Starting with React Native 0.60.0, JavaScriptCore engine is distributed
+   * separately from React Native and comes in two variants :
+   * 'android-jsc' and 'android-jsc-intl'.
+   *
+   * More details@ https://github.com/react-native-community/jsc-android-buildscript
+   *
+   * Prior to React Native 0.60.0, the 'libjsc.so' native library files were
+   * shipped inside React Native AAR itself. This is not the case anymore.
+   * The 'libjsc.so' files are now distributed in the 'jsc-android' npm package,
+   * inside an aar library.
+   *
+   * This function retrieve the 'jsc-android' package and unzip the AAR
+   * matching the desired JSC variant ('android-jsc' or 'android-jsc-intl').
+   * It then copy the 'libjsc.so' files to the 'jniLibs' directory of the
+   * Container. This way, the JSC engine is shipped within the Container and
+   * applications won't crash at runtime when trying to load this library.
+   */
+  public async injectJavaScriptCoreEngine(config: ContainerGeneratorConfig) {
+    const jscVersion =
+      (config.androidConfig && config.androidConfig.jscVersion) ||
+      DEFAULT_JSC_VERSION
+    const jscVariant =
+      (config.androidConfig && config.androidConfig.jscVariant) ||
+      DEFAULT_JSC_VARIANT
+    const workingDir = createTmpDir()
+    try {
+      shell.pushd(workingDir)
+      await yarn.init()
+      await yarn.add(PackagePath.fromString(`jsc-android@${jscVersion}.0.0`))
+      const jscVersionPath = path.resolve(
+        `./node_modules/jsc-android/dist/org/webkit/${jscVariant}/r${jscVersion}`
+      )
+      const jscAARPath = path.join(
+        jscVersionPath,
+        `${jscVariant}-r${jscVersion}.aar`
+      )
+      return new Promise((resolve, reject) => {
+        const unzipper = new DecompressZip(jscAARPath)
+        const unzipOutDir = createTmpDir()
+        const containerJniLibsPath = path.join(
+          config.outDir,
+          'lib/src/main/jniLibs'
+        )
+        const unzippedJniPath = path.join(unzipOutDir, 'jni')
+        unzipper.on('error', err => reject(err))
+        unzipper.on('extract', () => {
+          shell.cp('-Rf', unzippedJniPath, containerJniLibsPath)
+          resolve()
+        })
+        unzipper.extract({ path: unzipOutDir })
+      })
+    } finally {
+      shell.popd()
     }
   }
 
