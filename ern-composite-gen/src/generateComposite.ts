@@ -8,6 +8,7 @@ import {
   writePackageJson,
   fileUtils,
   kax,
+  YarnLockParser,
 } from 'ern-core'
 import { cleanupCompositeDir } from './cleanupCompositeDir'
 import {
@@ -91,7 +92,6 @@ Composite output directory should either not exist (it will be created) or shoul
     if (extraJsDependencies) {
       await installExtraJsDependencies({ outDir, extraJsDependencies })
     }
-    await patchMetro51({ outDir })
   } finally {
     shell.popd()
   }
@@ -135,14 +135,26 @@ async function generateFullComposite(
     await addBabelrcRoots({ outDir })
     await createCompositeBabelRc({ outDir })
     await createRnCliConfig({ outDir })
-    await patchPackageJsonForCodePush({ outDir })
     if (resolutions) {
       await applyYarnResolutions({ outDir, resolutions })
     }
-    await patchMetro51({ outDir })
+    const rnVersion = await getCompositeReactNativeVersion({ outDir })
+    await addReactNativeDependencyToPackageJson(outDir, rnVersion)
+    if (semver.lt(rnVersion, '0.60.0')) {
+      await patchMetro51({ outDir })
+    }
   } finally {
     shell.popd()
   }
+}
+
+async function addReactNativeDependencyToPackageJson(
+  dir: string,
+  version: string
+) {
+  const compositePackageJson = await readPackageJson(dir)
+  compositePackageJson.dependencies['react-native'] = version
+  await writePackageJson(dir, compositePackageJson)
 }
 
 async function installJsPackagesUsingYarnLock({
@@ -420,12 +432,7 @@ async function getCompositeMetroVersion({
 async function patchMetro51({ outDir }: { outDir: string }) {
   const metroVersion = await getCompositeMetroVersion({ outDir })
   const compositeNodeModulesPath = path.join(outDir, 'node_modules')
-  // To be removed as soon as react-native-cli make use of metro >= 0.52.0
-  // Temporary hacky code to patch an issue present in metro 0.51.1
-  // currently linked with RN 59 that impacts our bundling process
-  // EDIT: This will not be needed anymore starting with React Native 0.60.0
-  // as it is using CLI v2x line, using metro 0.53
-  // https://github.com/react-native-community/cli/blob/v2.0.0/packages/cli/package.json#L36
+  // Only of use for RN < 0.60.0
   if (metroVersion === '0.51.1') {
     const pathToFileToPatch = path.join(
       compositeNodeModulesPath,
@@ -579,47 +586,6 @@ async function createRnCliConfig({ outDir }: { outDir: string }) {
       "module.exports = { getSourceExts: () => ['jsx', 'mjs', 'js', 'ts', 'tsx'] }"
   }
   await fileUtils.writeFile(path.join(outDir, 'rn-cli.config.js'), sourceExts)
-}
-
-async function patchPackageJsonForCodePush({ outDir }: { outDir: string }) {
-  const compositePackageJson = await readPackageJson(outDir)
-  const compositeNodeModulesPath = path.join(outDir, 'node_modules')
-  const compositeReactNativeVersion = await getCompositeReactNativeVersion({
-    outDir,
-  })
-
-  const pathToCodePushNodeModuleDir = path.join(
-    compositeNodeModulesPath,
-    'react-native-code-push'
-  )
-
-  // If code push plugin is present we need to do some additional work
-  if (fs.existsSync(pathToCodePushNodeModuleDir)) {
-    //
-    // The following code will need to be uncommented and properly reworked or included
-    // in a different way, once Cart and TYP don't directly depend on code push directly
-    // We will work with Cart team in that direction
-    //
-    // await yarn.add(codePushPlugin.name, codePushPlugin.version)
-    // content += `import codePush from "react-native-code-push"\n`
-    // content += `codePush.sync()`
-
-    // We need to add some info to package.json for CodePush
-    // In order to run, code push needs to find the following in package.json
-    // - name & version
-    // - react-native in the dependency block
-    // TODO :For now we hardcode these values for demo purposes. That being said it
-    // might not be needed to do something better because it seems like
-    // code push is not making a real use of this data
-    // Investigate further.
-    // https://github.com/Microsoft/code-push/blob/master/cli/script/command-executor.ts#L1246
-    compositePackageJson.dependencies[
-      'react-native'
-    ] = compositeReactNativeVersion
-    compositePackageJson.name = 'container'
-    compositePackageJson.version = '0.0.1'
-    await writePackageJson(outDir, compositePackageJson)
-  }
 }
 
 async function installJsPackages({
