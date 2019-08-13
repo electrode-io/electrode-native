@@ -2,61 +2,48 @@
 #
 .DS_Store
 
-# Android
+# Xcode
 #
+build/
+project.xcworkspace/
+xcuserdata/
+
+# Android/IntelliJ
+#
+build/
+.idea/
+.gradle/
+local.properties
 *.iml
-.gradle
-/local.properties
-.idea
-/.idea/workspace.xml
-/.idea/libraries
-/build
-build
-/captures
-.externalNativeBuild
 
 # node.js
 #
 node_modules/
 npm-debug.log
-*/node_modules
-
-# distrib
-distrib
-
-*/dist
-*/tmp
-
-ern-cauldron-api/test/.cauldron-test
-
-*/.cauldron
-*/dist
-**/dist
-lerna-debug.*
-**/lerna-debug.*
-**/coverage/**
-**/.nyc_output/**
-**/.coverage/**
 yarn-error.log
+lerna-debug.log
 
-# GitBook
+# Visual Studio Code (Java plugin)
+#
+.classpath
+.project
+.settings/
 
+# Coverage data
+#
+.coverage/
+.nyc_output/
+coverage/
+
+# Other generated folders
+#
+.cauldron/
 _book/
+dist/
+generated/
+tmp/
 
-# OSX
-
-.DS_STORE
-
-# Test generated
-generated
-ern-api-impl-gen/hull/android/.project
-ern-api-impl-gen/hull/android/.settings/org.eclipse.buildship.core.prefs
-ern-container-gen-android/src/hull/.project
-ern-container-gen-android/src/hull/.settings/org.eclipse.buildship.core.prefs
-ern-runner-gen-android/src/hull/.project
-ern-runner-gen-android/src/hull/.settings/org.eclipse.buildship.core.prefs
-system-tests/fixtures/android-container/.project
-system-tests/fixtures/android-container/.settings/org.eclipse.buildship.core.prefs
-ern-api-gen/test/tmp
-system-tests/fixtures/**/Libraries
-system-tests/fixtures/**/jniLibs
+# Test fixture libraries
+#
+system-tests/fixtures/**/Libraries/
+system-tests/fixtures/**/jniLibs/
