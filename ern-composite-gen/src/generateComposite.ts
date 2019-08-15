@@ -22,6 +22,7 @@ import path from 'path'
 import semver from 'semver'
 import _ from 'lodash'
 import { CompositeGeneratorConfig } from './types'
+import uuidv4 from 'uuid/v4'
 
 export async function generateComposite(config: CompositeGeneratorConfig) {
   log.debug(`generateComposite config : ${JSON.stringify(config, null, 2)}`)
@@ -502,6 +503,11 @@ async function createCompositeBabelRc({ outDir }: { outDir: string }) {
         for (const babelPlugin of miniAppPackageJson.babel.plugins) {
           if (Array.isArray(babelPlugin)) {
             if (babelPlugin.includes('module-resolver')) {
+              // Add unique name to this composite top level module-resolver to avoid
+              // it messing with other module-resolver plugin configurations that could
+              // be defined in the .babelrc config of individual MiniApps
+              // https://babeljs.io/docs/en/options#plugin-preset-merging
+              babelPlugin.push(uuidv4())
               // Copy over module-resolver plugin & config to top level composite .babelrc
               log.debug(
                 `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`
