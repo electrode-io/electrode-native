@@ -12,8 +12,17 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": ["electrode", "ern", "react-native", "node", "android", "ios"],
-  "contributors": [{
+  "keywords": [
+    "electrode",
+    "electrode-native",
+    "ern",
+    "react-native",
+    "node",
+    "android",
+    "ios"
+  ],
+  "contributors": [
+    {
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -24,6 +33,10 @@
     {
       "name": "Deepu Ganapathiyadan",
       "email": "DGanapathiyadan@walmartlabs.com"
+    },
+    {
+      "name": "Frieder Bluemle",
+      "email": "frieder.bluemle@walmartlabs.com"
     },
     {
       "name": "Krunal Shah",
@@ -43,8 +56,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@yarnpkg/lockfile": "^1.1.0",
     "@octokit/rest": "^16.28.6",
+    "@yarnpkg/lockfile": "^1.1.0",
     "archiver": "^2.1.1",
     "bluebird": "^3.5.1",
     "chalk": "^2.4.1",
@@ -53,16 +66,16 @@
     "decompress-zip": "^0.3.1",
     "fs-readdir-recursive": "^1.1.0",
     "get-folder-size": "^2.0.0",
-    "gradle-to-js":"^1.2.1",
+    "gradle-to-js": "^2.0.0",
     "inquirer": "^3.0.6",
+    "kax": "^2.0.1",
     "lodash": "^4.17.14",
     "mustache": "^2.3.1",
     "node-fetch": "^2.2.0",
     "node-simctl": "^4.0.2",
-    "kax": "^2.0.1",
     "react-native-cli": "^2.0.1",
-    "shelljs": "^0.8.2",
     "semver": "^5.5.0",
+    "shelljs": "^0.8.2",
     "simple-git": "^1.106.0",
     "tmp": "^0.0.33",
     "treeify": "^1.1.0",
