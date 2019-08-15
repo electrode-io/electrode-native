@@ -116,7 +116,7 @@ export async function validateCompositeNativeDependencies(
   const resolution = await composite.getResolvedNativeDependencies()
   if (resolution.pluginsWithMismatchingVersions.length > 0) {
     logMismatchingDependenciesTree(composite, resolution)
-    throw new Error(`The following plugins are not using compatible versions : 
+    throw new Error(`The following plugins are using incompatible versions:
      ${resolution.pluginsWithMismatchingVersions.toString()}`)
   }
   try {

@@ -87,10 +87,10 @@ export default async function getActiveCauldron({
         if (requiredErnVersion) {
           if (!semver.satisfies(Platform.currentVersion, requiredErnVersion)) {
             throw new Error(
-              `This Cauldron requires a specific version of Electrode Native to be used. 
+              `This Cauldron requires a specific version of Electrode Native to be used.
                 You are currently using Electrode Native version ${
                   Platform.currentVersion
-                } which does not satifisy version requirement of ${requiredErnVersion}.
+                } which does not satisfy version requirement of ${requiredErnVersion}.
                 You should use a version of Electrode Native that satisfies the Cauldron requirement using ${ernPlatformUseCmdMsg} or use a different Cauldron.`
             )
           }

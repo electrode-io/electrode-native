@@ -16,7 +16,7 @@
     "coverage:system": "rimraf .nyc_output && lerna run build && lerna run instrument-dist && node system-tests/system-tests-coverage",
     "coverage:unit": "rimraf ern-*/.nyc_output && lerna run coverage && yarn istanbul report --include=ern-*/.coverage/coverage-final.json html",
     "ern-debug": "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
-    "istanbul": "istanbul",    
+    "istanbul": "istanbul",
     "prettier": "pretty-quick --staged",
     "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
     "regen-fixtures": "node system-tests/regen-fixtures",

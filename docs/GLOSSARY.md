@@ -57,7 +57,7 @@ The following Container publishers are currently available:
 - [jcenter]
 - [dummy]
 
-The README of each of these publishers contain information related to their usage and configuration. 
+The README of each of these publishers contain information related to their usage and configuration.
 
 [git]: https://github.com/electrode-io/ern-container-publisher-git
 [maven]: https://github.com/electrode-io/ern-container-publisher-maven

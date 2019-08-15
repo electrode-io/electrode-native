@@ -26,12 +26,12 @@ export async function buildIosRunner(pathToIosRunner: string, udid: string) {
       code === 0
         ? resolve()
         : reject(
-            new Error(`iOS Runner build failed [xcbuild exit code ${code}].
-To troubleshoot this build failure, we recommend building the Runner iOS project from XCode.
-You can open the Runner project in XCode manually or by running 'open ios/ErnRunner.xcodeproj'.
-Building the Runner from XCode will provide more meaningful error reporting that can be of help 
+          new Error(`iOS Runner build failed [xcbuild exit code ${code}].
+To troubleshoot this build failure, we recommend building the Runner iOS project from Xcode.
+You can open the Runner project in Xcode manually or by running 'open ios/ErnRunner.xcodeproj'.
+Building the Runner from Xcode will provide more meaningful error reporting that can be of help
 to pinpoint the cause of the build failure.`)
-          )
+        )
     })
   })
 }

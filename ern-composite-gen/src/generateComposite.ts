@@ -356,7 +356,7 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
     const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`
     // Just add extra code line to inject babelrcRoots option
 
-    const patch = `extraConfig.babelrcRoots = [ 
+    const patch = `extraConfig.babelrcRoots = [
 ${babelRcRootsRe.map(b => b.toString()).join(',')} ]
 ${lineToPatch}`
     const patchedFile = fileToPatch.replace(lineToPatch, patch)

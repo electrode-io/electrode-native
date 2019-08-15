@@ -206,17 +206,16 @@ export async function generateInitialSchema({
 }
 
 export function generateFlowConfig(): string {
-  return `
-  [ignore]
-  
-  [include]
-  
-  [libs]
-  
-  [lints]
-  
-  [options]
-  `
+  return `[ignore]
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+`
 }
 
 export default async function generateProject(

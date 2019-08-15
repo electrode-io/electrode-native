@@ -41,7 +41,7 @@ Let's assume there are three tracked MiniApps fro version `1000.0.0`, this would
 }
 ```
 
-Your mobile application release workflow might include a `code-freeze`, where release branches are cut for all MiniApps.   
+Your mobile application release workflow might include a `code-freeze`, where release branches are cut for all MiniApps.
 For example, assuming you are preparing release of version `1.0.0` of your mobile application, what could be done is the following :
 
 - Create new application version `MyAwesomeApp:android:1.0.0` in Cauldron using [ern cauldron add nativeapp] command, copying data over from `1000.0.0` version.
@@ -68,7 +68,7 @@ This would result in the following entry in Cauldron:
 }
 ```
 
-Then it's possible to regenerate post freeze Containers for `1.0.0`, by just using [ern cauldron regen-container] command for `1.0.0`. As long as MiniApp developpers are pushing post code freeze bug fixes to the `Release/1.0.0` of the MiniApps branches. Developers can continue pushing changes to their `development` branch to continue generating `development` Containers for the next release.
+Then it's possible to regenerate post freeze Containers for `1.0.0`, by just using [ern cauldron regen-container] command for `1.0.0`. As long as MiniApp developers are pushing post code freeze bug fixes to the `Release/1.0.0` of the MiniApps branches. Developers can continue pushing changes to their `development` branch to continue generating `development` Containers for the next release.
 
 At release time (when `1.0.0` is released to the store) you might want to create tags in the MiniApps repositories, to exactly know what was shipped for each MiniApps.
 

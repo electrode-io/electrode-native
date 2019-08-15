@@ -174,7 +174,7 @@ It is possible to change these defaults, using the `androidConfig` object of `co
 #### iOS
 
 An Electrode Native container can be added as a dependency to an Xcode project in two ways:
-* Use a dependency manager such as Carthage (Cocoapods will be supported in the future) or,  
+* Use a dependency manager such as Carthage (CocoaPods will be supported in the future) or,  
 * Perform a manual installation  
 
 ##### Using Carthage to add a container

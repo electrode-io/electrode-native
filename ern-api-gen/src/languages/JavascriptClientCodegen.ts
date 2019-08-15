@@ -340,7 +340,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
   }
 
   public getHelp() {
-    return 'Generates a Javascript client library.'
+    return 'Generates a JavaScript client library.'
   }
 
   public processOpts() {
