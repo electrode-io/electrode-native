@@ -32,6 +32,9 @@ import com.facebook.react.modules.network.OkHttpClientFactory;
 {{/RN_VERSION_GTE_54}}
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.shell.MainReactPackage;
+{{#RN_VERSION_GTE_60_1}}
+import com.facebook.soloader.SoLoader;
+{{/RN_VERSION_GTE_60_1}}
 {{#plugins}}
 import com.walmartlabs.ern.container.plugins.{{name}};
 {{/plugins}}
@@ -136,6 +139,10 @@ public class ElectrodeReactContainer {
             {{/apiImplementations}}
      ) {
         if (sElectrodeReactNativeHost == null) {
+            
+            {{#RN_VERSION_GTE_60_1}}
+            SoLoader.init(application, /* native exopackage */ false);
+            {{/RN_VERSION_GTE_60_1}}
 
             // ReactNative general config
 
