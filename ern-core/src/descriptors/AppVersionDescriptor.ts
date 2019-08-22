@@ -7,7 +7,7 @@ export class AppVersionDescriptor {
     const [name, platform, version] = s.split(':')
     if (!version || !platform) {
       throw new Error(`Invalid AppVersionDescriptor literal ${s}.
-An AppVersionDescriptor literal must be formatted as <appPlatform>:<appPlatform>:<appVersion>.`)
+An AppVersionDescriptor literal must be formatted as <appName>:<appPlatform>:<appVersion>.`)
     }
     if (!supportedNativePlatforms.includes(platform)) {
       throw new Error(`${platform} is not a supported platform.
