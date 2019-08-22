@@ -114,6 +114,7 @@ public class ElectrodeReactContainer {
             , @NonNull final CodePushPlugin.Config codePushPluginConfig
      ) {
         if (sElectrodeReactNativeHost == null) {
+            
 
             // ReactNative general config
 
