@@ -13,9 +13,11 @@ A partial native application descriptor is a string with format `[nativeAppName]
 ## Electrode Native module name
 
 The Electrode Native module name applies to modules created with Electrode Native cli.
-- Electrode Native recommends module name must only contain upper and/or lower case letters.
-- `create-miniapp`, `create-api` and `create-api-impl` commands allow passing Electrode Native module name as it's arguments.
-   For example, `ern create-miniapp Mymovie`, `ern create-api ReactNativeMymovie` will create `MymovieMiniApp` and `react-native-mymovie-api` respectively.
+
+- Module names should be alphanumeric and cannot start with a digit or underscore
+- `create-miniapp`, `create-api` and `create-api-impl` commands allow passing Electrode Native module name as its arguments.
+
+For example, `ern create-miniapp Mymovie`, `ern create-api ReactNativeMymovie` will create `MymovieMiniApp` and `react-native-mymovie-api` respectively.
 
 ## package path
 

@@ -22,12 +22,13 @@ export const validElectrodeNativeModuleNames = [
   'myApi',
   'helloworld',
   'MYAPIIMPLEMENTATION',
+  'hell0w0rld',
+  'my_app',
 ]
 
 export const invalidElectrodeNativeModuleNames = [
   'My-App',
-  'my_app',
-  'hell0w0rld',
+  '1nvalid',
   'my*app',
   'my$app',
 ]
