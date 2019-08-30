@@ -71,6 +71,7 @@ export const deviceConfig = _deviceConfig
 export { ErnBinaryStore } from './ErnBinaryStore'
 export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolution
 export { getPackagePathsDiffs } from './getPackagePathsDiffs'
+export * from './findDirectoriesHavingRnConfig'
 
 export {
   CodePushPackageInfo,

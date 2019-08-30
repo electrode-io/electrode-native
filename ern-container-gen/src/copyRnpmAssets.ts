@@ -1,10 +1,10 @@
 import {
-  MiniApp,
   NativePlatform,
   BaseMiniApp,
   readPackageJsonSync,
   handleCopyDirective,
 } from 'ern-core'
+import { getAssetsPath } from './getAssetsPath'
 import path from 'path'
 
 export function copyRnpmAssets(
@@ -27,12 +27,7 @@ export function copyRnpmAssets(
     if (packageJson.rnpm && packageJson.rnpm.assets) {
       for (const assetDirectoryName of packageJson.rnpm.assets) {
         const source = path.join(assetDirectoryName, '*')
-        const dest =
-          platform === 'android'
-            ? path.normalize(
-                `lib/src/main/assets/${assetDirectoryName.toLowerCase()}`
-              )
-            : path.normalize('ElectrodeContainer/Resources')
+        const dest = getAssetsPath(platform, assetDirectoryName)
         handleCopyDirective(miniAppPath, outDir, [{ source, dest }])
       }
     }
