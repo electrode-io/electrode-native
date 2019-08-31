@@ -66,6 +66,7 @@
     "decompress-zip": "^0.3.1",
     "fs-readdir-recursive": "^1.1.0",
     "get-folder-size": "^2.0.0",
+    "glob": "^7.1.4",
     "gradle-to-js": "^2.0.0",
     "inquirer": "^3.0.6",
     "kax": "^2.0.1",

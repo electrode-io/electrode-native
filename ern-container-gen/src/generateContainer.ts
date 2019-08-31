@@ -1,6 +1,7 @@
 import { sortDependenciesByName } from './sortDependenciesByName'
 import { bundleMiniAppsFromComposite } from './bundleMiniApps'
 import { copyRnpmAssets } from './copyRnpmAssets'
+import { copyRnConfigAssets } from './copyRnConfigAssets'
 import { addContainerMetadata } from './addContainerMetadata'
 import { ContainerGeneratorConfig, ContainerGenResult } from './types'
 import { kax, shell, BundlingResult } from 'ern-core'
@@ -74,6 +75,12 @@ export async function generateContainer(
       config.outDir,
       config.targetPlatform
     )
+
+    await copyRnConfigAssets({
+      compositePath: config.composite.path,
+      outDir: config.outDir,
+      platform: config.targetPlatform,
+    })
 
     if (postCopyRnpmAssets) {
       await postCopyRnpmAssets(config)
