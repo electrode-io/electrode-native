@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 #import <UIKit/UIKit.h>
+#import <ElectrodeContainer/ElectrodeContainer.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UINavigationController <ENMiniAppNavDataProvider>
 
 @end

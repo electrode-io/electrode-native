@@ -11,6 +11,7 @@ import { android } from 'ern-core'
 
 const defaultReactNativePackagerHost = 'localhost'
 const defaultReactNativePackagerPort = '8081'
+const runnerHullPath = path.join(__dirname, 'hull')
 
 export default class AndroidRunnerGenerator implements RunnerGenerator {
   public get platform(): NativePlatform {
@@ -21,7 +22,6 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
     let mustacheView: any = {}
     mustacheView = configureMustacheView(config, mustacheView)
 
-    const runnerHullPath = getHullPath(config)
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
     const files = readDir(
       runnerHullPath,
@@ -53,7 +53,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
       'RunnerConfig.java'
     )
     const pathToRunnerConfigHull = path.join(
-      getHullPath(config),
+      runnerHullPath,
       subPathToRunnerConfig
     )
     const pathToRunnerConfig = path.join(config.outDir, subPathToRunnerConfig)
@@ -64,12 +64,6 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
       pathToRunnerConfig
     )
   }
-}
-
-function getHullPath(config: RunnerGeneratorConfig) {
-  return config.extra && config.extra.hullPath
-    ? path.join(__dirname, config.extra.hullPath)
-    : path.join(__dirname, 'hull')
 }
 
 // Given a string returns the same string with its first letter capitalized

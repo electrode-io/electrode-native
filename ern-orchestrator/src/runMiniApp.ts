@@ -198,7 +198,6 @@ export async function runMiniApp(
     extra: {
       androidConfig: (extra && extra.androidConfig) || {},
       containerGenWorkingDir: Platform.containerGenDirectory,
-      hullPath: hasErnNavigation ? 'hullx' : 'hull',
     },
     mainMiniAppName: entryMiniAppName,
     outDir: pathToRunner,

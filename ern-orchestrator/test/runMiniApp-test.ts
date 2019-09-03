@@ -220,7 +220,6 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: {},
         containerGenWorkingDir: Platform.containerGenDirectory,
-        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
@@ -241,7 +240,6 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: { compileSdkVersion: '28' },
         containerGenWorkingDir: Platform.containerGenDirectory,
-        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
@@ -269,7 +267,6 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: {},
         containerGenWorkingDir: Platform.containerGenDirectory,
-        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniAppA',
       outDir: sinon.match.string,
@@ -295,7 +292,6 @@ describe('runMiniApp', () => {
       extra: {
         androidConfig: {},
         containerGenWorkingDir: Platform.containerGenDirectory,
-        hullPath: 'hull',
       },
       mainMiniAppName: 'myMiniApp',
       outDir: sinon.match.string,
