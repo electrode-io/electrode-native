@@ -54,10 +54,6 @@
     {
       "source": "src/hull",
       "dest": "dist"
-    },
-    {
-      "source": "src/hullx",
-      "dest": "dist"
     }
   ],
   "license": "Apache-2.0",
