@@ -18,9 +18,7 @@
 #import "RunnerConfig.h"
 #import <ElectrodeContainer/ElectrodeContainer.h>
 
-@interface ViewController ()
-@property(nonatomic, weak) UIView *rnView;
-@end
+typedef void(^MiniAppFinishedCallback)(NSString *_Nullable);
 
 @implementation ViewController
 
@@ -28,23 +26,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    UIViewController *viewController =
-    [[ElectrodeReactNative sharedInstance] miniAppWithName:MainMiniAppName properties:nil];
-    viewController.view.frame = [UIScreen mainScreen].bounds;
-    [self.view addSubview:viewController.view];
-
-
-    self.rnView = viewController.view;
-    self.rnView.frame = [UIScreen mainScreen].bounds;
-    [self.view addSubview:self.rnView];
-    [self.view layoutIfNeeded];
-}
-
-- (void) viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    if (@available(iOS 11.0, *)){
-        self.rnView.frame = self.view.safeAreaLayoutGuide.layoutFrame;
-    }
+    ENNavigationDelegate *delegate = [[ENNavigationDelegate alloc] init];
+    [delegate viewDidLoadWithViewController:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -61,5 +44,23 @@
     // Pass the selected object to the new view controller.
 }
 */
-
+- (NSString * _Nonnull)rootComponentName {
+    return MainMiniAppName;
+}
+    
+- (NSDictionary * _Nullable)properties {
+    return nil;
+}
+    
+- (MiniAppFinishedCallback _Nullable)finishedCallback {
+    return ^(NSString *payload){
+        exit(0);
+    };
+}
+    
+@synthesize finishedCallback;
+    
+@synthesize properties;
+    
+@synthesize rootComponentName;
 @end
