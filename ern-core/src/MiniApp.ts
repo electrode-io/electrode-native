@@ -241,10 +241,26 @@ module.exports = {
     // Remove react-native generated android and ios projects
     // They will be replaced with our owns when user uses `ern run android`
     // or `ern run ios` command
+    // Also add ern-navigation dependency to the MiniApp.
     shell.pushd(miniAppPath)
     try {
       shell.rm('-rf', 'android')
       shell.rm('-rf', 'ios')
+      const ernNavigationDependency =
+        (await kax
+          .task('Querying Manifest for ern-navigation version to use')
+          .run(
+            manifest.getNativeDependency(
+              PackagePath.fromString('ern-navigation'),
+              {
+                manifestId,
+                platformVersion,
+              }
+            )
+          )) || PackagePath.fromString('ern-navigation')
+      await kax
+        .task(`Adding ${ernNavigationDependency} dependency`)
+        .run(yarn.add(ernNavigationDependency))
       return MiniApp.fromPath(miniAppPath)
     } finally {
       shell.popd()
