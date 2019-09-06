@@ -15,7 +15,7 @@ The tutorial shows how easy it is to integrate multiple React Native application
 ## Before you begin
 
 - Install [Android Studio](https://developer.android.com/studio/index.html) and [Electrode Native](https://electrode.gitbooks.io/electrode-native/#installation) if they're not already installed.
-- Download Android 7.0 (Nougat) and accept it's license:
+- Download Android 7.0 (Nougat) and accept its license:
     1. In Android Studio go to Tools → Android → SDK Manager
     2. Select the “Android 7.0 (Nougat)” checkbox
     3. Click “Apply” and follow the prompts:
@@ -46,7 +46,7 @@ $ cd MovieListMiniApp
 $ ern run-android
 ```
 
-4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission for ErnRunner app . ([Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)).
+4) First time users will need to grant the `SYSTEM_ALERT_WINDOW` permission for ErnRunner app. ([Learn More](https://developer.android.com/reference/android/Manifest.permission.html#SYSTEM_ALERT_WINDOW)).
 Once done exit from the ErnRunner app and launch it again from applications.
 
 ![Overlay Permission Window](../images/OverlayPermissionWindow.png) ![Select ErnRunner](../images/ErnRunnerSelected.png)

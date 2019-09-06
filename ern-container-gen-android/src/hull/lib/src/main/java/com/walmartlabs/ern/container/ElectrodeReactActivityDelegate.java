@@ -207,9 +207,9 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
             return rootView;
         } else {
             ReactRootView rootView = rootViewHolder.getFirstIfSingle();
-            {{#RN_VERSION_GTE_45}} 
+            {{#RN_VERSION_GTE_45}}
             rootView.setAppProperties(props);
-            {{/RN_VERSION_GTE_45}} 
+            {{/RN_VERSION_GTE_45}}
             return rootView;
         }
     }
@@ -339,7 +339,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         }
     }
 
-    {{#RN_VERSION_LT_58}} 
+    {{#RN_VERSION_LT_58}}
     /**
      * NOTE: Duplicate code since the base class has marked this method private.
      *

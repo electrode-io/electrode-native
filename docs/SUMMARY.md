@@ -27,7 +27,7 @@
   - [Initialization](platform-parts/container/container-initialization.md)
   - [Launching MiniApps](platform-parts/container/launching-miniapps.md)
 - [Cauldron](platform-parts/cauldron/index.md)
-  - [Structure](platform-parts/cauldron/structure.md)  
+  - [Structure](platform-parts/cauldron/structure.md)
   - [Setup](platform-parts/cauldron/setup.md)
   - [Compatibility checks](platform-parts/cauldron/compatibility-checks.md)
   - [Guidelines](platform-parts/cauldron/guidelines.md)

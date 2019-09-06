@@ -132,7 +132,7 @@ export default function setup(
                   `Not the same ${diff.relativePath.replace(/^\//, '')}/${
                     diff.name2
                   } ${diff.path1}/${diff.name1}
-${diffOut}  
+${diffOut}
 `
                 )
               }

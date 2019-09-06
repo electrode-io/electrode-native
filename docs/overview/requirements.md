@@ -37,7 +37,7 @@ $ export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
 
 You need to install [Xcode](https://developer.apple.com/xcode/) if you want your MiniApp to target the iOS platform  or if you need to generate containers targeting iOS mobile applications.
 
-- **XCode 9.2** or later version is required.
+**Xcode 9.2** or later version is required.
 
 ### Additional optional requirements
 

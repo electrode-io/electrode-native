@@ -146,7 +146,7 @@ export async function launchSimulator(deviceUdid: string) {
     xcrunProc.on('close', code => {
       code === (0 || 255) /* 255 code because we don't provide -t option */
         ? resolve()
-        : reject(new Error(`XCode xcrun command failed with exit code ${code}`))
+        : reject(new Error(`Xcode xcrun command failed with exit code ${code}`))
     })
   })
 }

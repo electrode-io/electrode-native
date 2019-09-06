@@ -31,11 +31,11 @@ export class IosPluginConfigGenerator {
         : this.pbxprojPaths[0]
     const projName = this.getProjectName(pbxProjPath)
     const xcodeprojPath = path.dirname(pbxProjPath)
-    const rootXCodeProjPath = path.dirname(xcodeprojPath)
+    const rootXcodeProjPath = path.dirname(xcodeprojPath)
     config.copy = [
       {
         dest: `{{{projectName}}}/Libraries/${projName}`,
-        source: `${rootXCodeProjPath}/**`,
+        source: `${rootXcodeProjPath}/**`,
       },
     ]
 

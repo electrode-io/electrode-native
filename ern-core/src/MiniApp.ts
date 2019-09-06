@@ -143,7 +143,7 @@ export class MiniApp extends BaseMiniApp {
 
       reactNativeVersion = reactNativeDependency.version
       if (!reactNativeVersion) {
-        throw new Error('React Native version needs to be explicitely defined')
+        throw new Error('React Native version needs to be explicitly defined')
       }
       retrieveRnManifestTask.succeed(
         `Retrieved react-native version from Manifest [${reactNativeVersion}]`
@@ -223,7 +223,7 @@ module.exports = {
       // ignore git directories
       /.*\\.git\\/.*/,
       // Ignore android directories
-      /.*\\/app\\/build\\/.*/      
+      /.*\\/app\\/build\\/.*/
     ])
   },
   transformer: {
@@ -305,7 +305,7 @@ module.exports = {
     }: { dev?: boolean; manifestId?: string; peer?: boolean } = {}
   ): Promise<PackagePath | void> {
     if (!dependency) {
-      return log.error('dependency cant be null')
+      return log.error('dependency cannot be null')
     }
     if (dev || peer) {
       // Dependency is a devDependency or peerDependency

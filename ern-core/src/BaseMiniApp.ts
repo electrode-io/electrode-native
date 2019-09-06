@@ -34,9 +34,9 @@ export class BaseMiniApp {
       log.warn(`
 =================================================================
 ernPlatformVersion will be deprecated soon
-Please replace 
-  "ernPlatformVersion" : "${packageJson.ernPlatformVersion}" 
-with 
+Please replace
+  "ernPlatformVersion" : "${packageJson.ernPlatformVersion}"
+with
   "ern" : { "version" : "${packageJson.ernPlatformVersion}" }
 in the package.json of ${packageJson.name} MiniApp
 =================================================================`)
@@ -111,7 +111,7 @@ in the package.json of ${packageJson.name} MiniApp
         return PackageManager.yarn()
       } else {
         throw new Error(
-          `Invalid ern.packageManager value in package.json : ${ernPackageManager}. 
+          `Invalid ern.packageManager value in package.json : ${ernPackageManager}.
 Should be either yarn or npm`
         )
       }

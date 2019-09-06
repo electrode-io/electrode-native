@@ -150,7 +150,7 @@ export const commandHandler = async ({
     } else {
       log.info(
         `Skipping Container regen.
-Only updating Cauldron with new MiniApps versions. 
+Only updating Cauldron with new MiniApps versions.
 To regenerate anyway use the --fullRegen option.`
       )
       await cauldron.beginTransaction()

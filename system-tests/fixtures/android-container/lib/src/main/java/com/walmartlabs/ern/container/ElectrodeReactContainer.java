@@ -114,7 +114,6 @@ public class ElectrodeReactContainer {
             , @NonNull final CodePushPlugin.Config codePushPluginConfig
      ) {
         if (sElectrodeReactNativeHost == null) {
-            
 
             // ReactNative general config
 
@@ -150,7 +149,7 @@ public class ElectrodeReactContainer {
 
     private static void askForOverlayPermissionIfDebug(Application application) {
         // Ask for overlay permission for the application if
-        // developper mode is enabled and android version is Marshmallow
+        // developer mode is enabled and Android version is Marshmallow
         // or above
         if (isReactNativeDeveloperSupport &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -164,7 +163,6 @@ public class ElectrodeReactContainer {
     public static ReactNativeHost getReactNativeHost() {
         return sElectrodeReactNativeHost;
     }
-
 
     @SuppressWarnings("WeakerAccess")
     public static boolean isReactNativeDeveloperSupport() {

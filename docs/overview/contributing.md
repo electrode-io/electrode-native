@@ -62,9 +62,9 @@ The way to do this is to just run `npm run rebuild` command from the root direct
 
 ### Type checking
 
-Electrode Native uses [Typescript] across all of its modules.
+Electrode Native uses [TypeScript] across all of its modules.
 
-[Typescript] comes with integration support for many JavaScript editors. If you want to see [flow] errors from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
+[TypeScript] comes with integration support for many JavaScript editors. If you want to see [flow] errors from within your editor, please check the list of supported [flow editors] and configure your editor accordingly.
 
 Electrode Native has a pre-commit hook setup, that will run [tslint] for every commit. In case a commit contains some flow errors, it won't go through. You'll have to fix the error(s) first before being able to commit your changes.
 
@@ -133,7 +133,7 @@ However the tests are not automatically run on every commit, so before opening a
 
 [editor plugins]: https://standardjs.com/awesome.html#editor-plugins
 
-[typescript]: http://www.typescriptlang.org/
+[TypeScript]: http://www.typescriptlang.org/
 
 [mocha]: https://mochajs.org/
 

@@ -82,7 +82,7 @@ export async function runMiniApp(
 
   if (jsApiImpls && jsApiImpls.length > 0 && descriptor) {
     throw new Error(
-      'You cannot pass Javascript API implementations when using a Native Application Descriptor'
+      'You cannot pass JavaScript API implementations when using a Native Application Descriptor'
     )
   }
 

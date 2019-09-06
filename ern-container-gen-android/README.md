@@ -1,1 +1,1 @@
-### Electrode Native Official Android Container Generator 
+# Electrode Native Container Generator for Android

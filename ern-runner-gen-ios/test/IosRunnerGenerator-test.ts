@@ -44,7 +44,7 @@ describe('IosRunnerGenerator', () => {
         simpleIosRunnerTestGeneratedPath,
         []
       ),
-      'Generated Ios Runner project differs from simple-ios-runner fixture'
+      'Generated iOS Runner project differs from simple-ios-runner fixture'
     )
   })
 
@@ -64,7 +64,7 @@ describe('IosRunnerGenerator', () => {
         simpleIosRunnerTestGeneratedPath,
         []
       ),
-      'Generated Ios Runner project differs from simple-ios-runner fixture'
+      'Generated iOS Runner project differs from simple-ios-runner fixture'
     )
   })
 })

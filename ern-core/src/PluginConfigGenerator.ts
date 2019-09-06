@@ -35,7 +35,7 @@ export class PluginConfigGenerator {
         log.info('Generated Android plugin configuration')
       } catch (e) {
         throw new Error(`Failed to generate Android Plugin Configuration.
-  
+
 Reason: ${e.message}`)
       }
     } else {
@@ -54,7 +54,7 @@ Reason: ${e.message}`)
         log.info('Generated iOS plugin configuration')
       } catch (e) {
         throw new Error(`Failed to generate iOS Plugin Configuration.
-  
+
 Reason: ${e.message}`)
       }
     } else {
