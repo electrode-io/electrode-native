@@ -1,11 +1,9 @@
+[ignore]
 
-  [ignore]
-  
-  [include]
-  
-  [libs]
-  
-  [lints]
-  
-  [options]
-  
+[include]
+
+[libs]
+
+[lints]
+
+[options]
