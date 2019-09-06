@@ -18,7 +18,8 @@
 #import "RunnerConfig.h"
 #import <ElectrodeContainer/ElectrodeContainer.h>
 
-typedef void(^MiniAppFinishedCallback)(NSString *_Nullable);
+typedef void(^Payload)(NSDictionary *_Nullable);
+typedef BOOL(^NavigateWithRoute)(NSDictionary *_Nullable);
 
 @implementation ViewController
 
@@ -52,9 +53,15 @@ typedef void(^MiniAppFinishedCallback)(NSString *_Nullable);
     return nil;
 }
 
-- (MiniAppFinishedCallback _Nullable)finishedCallback {
-    return ^(NSString *payload){
-        exit(0);
+- (Payload _Nullable)finish {
+    return ^(NSDictionary *payload) {
+        return;
+    };
+}
+
+-(NavigateWithRoute _Nonnull)navigateWithRoute {
+    return ^BOOL(NSDictionary * _Nullable dict) {
+        return false;
     };
 }
 
@@ -63,4 +70,9 @@ typedef void(^MiniAppFinishedCallback)(NSString *_Nullable);
 @synthesize properties;
 
 @synthesize rootComponentName;
+
+@synthesize finish;
+
+@synthesize navigateWithRoute;
+
 @end
