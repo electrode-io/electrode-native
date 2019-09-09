@@ -14,7 +14,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     defaultConfig {
-        applicationId "com.walmartlabs.ern"
+        applicationId "com.walmartlabs.ern.dummy"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -60,5 +60,5 @@ android {
 
 dependencies {
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
-    api('com.walmartlabs.ern:runner-ern-container:1.0.0') { changing = true }
+    api('com.walmartlabs.ern:runner-ern-container-dummy:1.0.0') { changing = true }
 }

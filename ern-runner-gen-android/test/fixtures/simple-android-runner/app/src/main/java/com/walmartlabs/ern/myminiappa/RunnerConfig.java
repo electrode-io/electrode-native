@@ -1,4 +1,4 @@
-package com.walmartlabs.ern;
+package com.walmartlabs.ern.dummy;
 
 //
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
