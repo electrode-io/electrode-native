@@ -1,9 +1,9 @@
-package com.walmartlabs.ern;
+package com.walmartlabs.ern.{{{lowerCaseMiniAppName}}};
 
 import android.app.Application;
 
 import com.walmartlabs.ern.container.ElectrodeReactContainer;
-import com.walmartlabs.ern.RunnerConfig;
+import com.walmartlabs.ern.{{{lowerCaseMiniAppName}}}.RunnerConfig;
 
 public class MainApplication extends Application {
 

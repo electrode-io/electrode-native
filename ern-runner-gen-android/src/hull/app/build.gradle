@@ -14,7 +14,7 @@ android {
     compileSdkVersion {{{compileSdkVersion}}}
     buildToolsVersion "{{{buildToolsVersion}}}"
     defaultConfig {
-        applicationId "com.walmartlabs.ern"
+        applicationId "com.walmartlabs.ern.{{{lowerCaseMiniAppName}}}"
         minSdkVersion {{{minSdkVersion}}}
         targetSdkVersion {{{targetSdkVersion}}}
         versionCode 1
@@ -75,5 +75,5 @@ android {
 
 dependencies {
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
-    api('com.walmartlabs.ern:runner-ern-container:1.0.0') { changing = true }
+    api('{{{groupId}}}:{{{artifactId}}}:1.0.0') { changing = true }
 }

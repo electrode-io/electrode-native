@@ -1,4 +1,4 @@
-package com.walmartlabs.ern;
+package com.walmartlabs.ern.{{{lowerCaseMiniAppName}}};
 
 import android.content.Intent;
 import android.os.Bundle;

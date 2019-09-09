@@ -4,6 +4,7 @@ import {
   NativePlatform,
   shell,
   injectReactNativeVersionKeysInObject,
+  log,
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
@@ -21,10 +22,17 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
   public async generate(config: RunnerGeneratorConfig): Promise<void> {
     let mustacheView: any = {}
     mustacheView = configureMustacheView(config, mustacheView)
-
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
+    shell.mv(
+      path.join(config.outDir, 'app/src/main/java/com/walmartlabs/ern/miniapp'),
+      path.join(
+        config.outDir,
+        'app/src/main/java',
+        config.extra.androidConfig.packageFilePath
+      )
+    )
     const files = readDir(
-      runnerHullPath,
+      config.outDir,
       f => !f.endsWith('.jar') && !f.endsWith('.png')
     )
     for (const file of files) {
@@ -42,21 +50,19 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
     let mustacheView: any = {}
     mustacheView = configureMustacheView(config, mustacheView)
 
-    const subPathToRunnerConfig = path.join(
-      'app',
-      'src',
-      'main',
-      'java',
-      'com',
-      'walmartlabs',
-      'ern',
-      'RunnerConfig.java'
-    )
+    const subPathToRunnerConfig =
+      'app/src/main/java/com/walmartlabs/ern/miniapp/RunnerConfig.java'
+
     const pathToRunnerConfigHull = path.join(
       runnerHullPath,
       subPathToRunnerConfig
     )
-    const pathToRunnerConfig = path.join(config.outDir, subPathToRunnerConfig)
+    const pathToRunnerConfig = path.join(
+      config.outDir,
+      'app/src/main/java',
+      config.extra.androidConfig.packageFilePath,
+      'RunnerConfig.java'
+    )
     shell.cp(pathToRunnerConfigHull, pathToRunnerConfig)
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       pathToRunnerConfig,
@@ -88,7 +94,10 @@ function configureMustacheView(
   mustacheView.packagerPort =
     config.reactNativePackagerPort || defaultReactNativePackagerPort
   mustacheView.pascalCaseMiniAppName = pascalCase(config.mainMiniAppName)
-
+  mustacheView.lowerCaseMiniAppName = config.mainMiniAppName.toLowerCase()
+  mustacheView.artifactId = config.extra.androidConfig.artifactId
+  mustacheView.groupId = config.extra.androidConfig.groupId
+  mustacheView.isOldRunner = config.extra.androidConfig.isOldRunner
   injectReactNativeVersionKeysInObject(mustacheView, config.reactNativeVersion)
 
   return mustacheView

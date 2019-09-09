@@ -11,6 +11,8 @@ import {
   utils,
   AppVersionDescriptor,
   YarnLockParser,
+  manifest,
+  yarn,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -21,6 +23,7 @@ import { launchRunner } from './launchRunner'
 import fs from 'fs'
 import path from 'path'
 import _ from 'lodash'
+import { LaunchRunnerConfig } from 'ern-runner-gen/src/types/LaunchRunnerConfig'
 
 export async function runMiniApp(
   platform: NativePlatform,
@@ -168,13 +171,18 @@ export async function runMiniApp(
   })
 
   if (platform === 'android') {
+    extra = extra || {}
+    extra.androidConfig = {
+      ...(extra && extra.androidConfig),
+      artifactId: `runner-ern-container-${entryMiniAppName.toLowerCase()}`,
+      groupId: 'com.walmartlabs.ern',
+      packageFilePath: `com/walmartlabs/ern/${entryMiniAppName.toLowerCase()}`,
+      packageName: `com.walmartlabs.ern.${entryMiniAppName.toLowerCase()}`,
+    }
     await publishContainer({
       containerPath: outDir,
       containerVersion: '1.0.0',
-      extra: {
-        artifactId: 'runner-ern-container',
-        groupId: 'com.walmartlabs.ern',
-      },
+      extra: extra.androidConfig,
       platform: 'android',
       publisher: PackagePath.fromString('ern-container-publisher-maven'),
       url: getDefaultMavenLocalDirectory(),
@@ -216,6 +224,17 @@ export async function runMiniApp(
         getRunnerGeneratorForPlatform(platform).generate(runnerGeneratorConfig)
       )
   } else {
+    if (platform === 'android' && isOldAndroidRunner()) {
+      log.warn(
+        'Looks like you are running on an older version of the adroid runner project generated using ern version < 0.38.0. \n We recommend that you delete your current Android directory and regenerate the new runner by executing `ern run-android` command again.'
+      )
+      // Change back to old runner package.
+      runnerGeneratorConfig.extra.androidConfig.packageFilePath =
+        'com/walmartlabs/ern'
+      runnerGeneratorConfig.extra.androidConfig.packageName =
+        'com.walmartlabs.ern'
+      runnerGeneratorConfig.extra.androidConfig.isOldRunner = true
+    }
     await kax
       .task(`Regenerating ${platform} Runner Configuration`)
       .run(
@@ -225,8 +244,24 @@ export async function runMiniApp(
       )
   }
 
-  await launchRunner({
+  function isOldAndroidRunner(): boolean {
+    const paths = path.join(
+      pathToRunner,
+      'app/src/main/java',
+      extra.androidConfig.packageFilePath
+    )
+    return !fs.existsSync(paths)
+  }
+
+  const launchRunnerConfig: LaunchRunnerConfig = {
+    extra: {},
     pathToRunner,
     platform,
-  })
+  }
+
+  if (platform === 'android') {
+    launchRunnerConfig.extra.packageName = extra.androidConfig.packageName
+  }
+
+  await launchRunner(launchRunnerConfig)
 }

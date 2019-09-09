@@ -1,31 +1,26 @@
 import { android, ios } from 'ern-core'
 import { launchOnDevice } from './launchOnDevice'
 import { launchOnSimulator } from './launchOnSimulator'
+import { LaunchRunnerConfig } from 'ern-runner-gen/src/types/LaunchRunnerConfig'
 
-export async function launchRunner({
-  platform,
-  pathToRunner,
-}: {
-  platform: string
-  pathToRunner: string
-}) {
-  if (platform === 'android') {
-    return launchAndroidRunner(pathToRunner)
-  } else if (platform === 'ios') {
-    return launchIosRunner(pathToRunner)
+export async function launchRunner(config: LaunchRunnerConfig) {
+  if (config.platform === 'android') {
+    return launchAndroidRunner(config)
+  } else if (config.platform === 'ios') {
+    return launchIosRunner(config)
   }
 }
 
-async function launchAndroidRunner(pathToAndroidRunner: string) {
+async function launchAndroidRunner(config: LaunchRunnerConfig) {
   return android.runAndroidProject({
-    packageName: 'com.walmartlabs.ern',
-    projectPath: pathToAndroidRunner,
+    packageName: config.extra.packageName,
+    projectPath: config.pathToRunner,
   })
 }
 
-async function launchIosRunner(pathToIosRunner: string) {
+async function launchIosRunner(config: LaunchRunnerConfig) {
   const iosDevices = ios.getiPhoneRealDevices()
   return iosDevices && iosDevices.length > 0
-    ? launchOnDevice(pathToIosRunner, iosDevices)
-    : launchOnSimulator(pathToIosRunner)
+    ? launchOnDevice(config.pathToRunner, iosDevices)
+    : launchOnSimulator(config.pathToRunner)
 }
