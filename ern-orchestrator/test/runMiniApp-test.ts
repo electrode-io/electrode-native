@@ -204,8 +204,10 @@ describe('runMiniApp', () => {
       containerPath: sinon.match.string,
       containerVersion: '1.0.0',
       extra: {
-        artifactId: 'runner-ern-container',
+        artifactId: 'runner-ern-container-myminiapp',
         groupId: 'com.walmartlabs.ern',
+        packageFilePath: 'com/walmartlabs/ern/myminiapp',
+        packageName: 'com.walmartlabs.ern.myminiapp',
       },
       platform: 'android',
       publisher: sinon.match.any,
@@ -218,7 +220,12 @@ describe('runMiniApp', () => {
     await runMiniApp('android')
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
-        androidConfig: {},
+        androidConfig: {
+          artifactId: 'runner-ern-container-myminiapp',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/myminiapp',
+          packageName: 'com.walmartlabs.ern.myminiapp',
+        },
         containerGenWorkingDir: Platform.containerGenDirectory,
       },
       mainMiniAppName: 'myMiniApp',
@@ -234,11 +241,25 @@ describe('runMiniApp', () => {
   it('should only regenerate the runner config if runner project already exists [local single miniapp] with android build config', async () => {
     prepareStubs({ existsSyncReturn: true })
     await runMiniApp('android', {
-      extra: { androidConfig: { compileSdkVersion: '28' } },
+      extra: {
+        androidConfig: {
+          artifactId: 'runner-ern-container-myminiapp',
+          compileSdkVersion: '28',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/myminiapp',
+          packageName: 'com.walmartlabs.ern.myminiapp',
+        },
+      },
     })
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
-        androidConfig: { compileSdkVersion: '28' },
+        androidConfig: {
+          artifactId: 'runner-ern-container-myminiapp',
+          compileSdkVersion: '28',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/myminiapp',
+          packageName: 'com.walmartlabs.ern.myminiapp',
+        },
         containerGenWorkingDir: Platform.containerGenDirectory,
       },
       mainMiniAppName: 'myMiniApp',
@@ -265,7 +286,12 @@ describe('runMiniApp', () => {
 
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
-        androidConfig: {},
+        androidConfig: {
+          artifactId: 'runner-ern-container-myminiappa',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/myminiappa',
+          packageName: 'com.walmartlabs.ern.myminiappa',
+        },
         containerGenWorkingDir: Platform.containerGenDirectory,
       },
       mainMiniAppName: 'myMiniAppA',
@@ -290,7 +316,12 @@ describe('runMiniApp', () => {
 
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
-        androidConfig: {},
+        androidConfig: {
+          artifactId: 'runner-ern-container-myminiapp',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/myminiapp',
+          packageName: 'com.walmartlabs.ern.myminiapp',
+        },
         containerGenWorkingDir: Platform.containerGenDirectory,
       },
       mainMiniAppName: 'myMiniApp',

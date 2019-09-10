@@ -22,7 +22,11 @@ describe('launchRunner', () => {
   })
 
   it('should call runAndroidProject to launch the Android runner [android]', async () => {
-    await launchRunner({ platform: 'android', pathToRunner: '/Users/foo/test' })
+    await launchRunner({
+      extra: { packageName: 'com.walmartlabs.ern' },
+      pathToRunner: '/Users/foo/test',
+      platform: 'android',
+    })
     sandbox.assert.calledWith(runAndroidProjectStub, {
       packageName: 'com.walmartlabs.ern',
       projectPath: '/Users/foo/test',

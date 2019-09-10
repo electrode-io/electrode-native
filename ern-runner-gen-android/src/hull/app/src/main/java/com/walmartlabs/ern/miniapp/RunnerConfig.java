@@ -1,4 +1,9 @@
+{{#isOldRunner}}
 package com.walmartlabs.ern;
+{{/isOldRunner}}
+{{^isOldRunner}}
+package com.walmartlabs.ern.{{{lowerCaseMiniAppName}}};
+{{/isOldRunner}}
 
 //
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

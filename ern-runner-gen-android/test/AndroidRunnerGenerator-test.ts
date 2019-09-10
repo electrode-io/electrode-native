@@ -24,6 +24,14 @@ describe('AndroidRunnerGenerator', () => {
 
   it('should generate simple-android-runner fixture given same configuration ', async () => {
     await getRunnerGeneratorForPlatform('android').generate({
+      extra: {
+        androidConfig: {
+          artifactId: 'runner-ern-container-dummy',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/dummy',
+          packageName: 'com.walmartlabs.ern.dummy',
+        },
+      },
       mainMiniAppName: 'dummy',
       outDir: simpleAndroidRunnerTestGeneratedPath,
       reactNativeVersion: '0.59.8',
@@ -41,6 +49,14 @@ describe('AndroidRunnerGenerator', () => {
 
   it('should re-generate configuration of simple-android-runner fixture given same configuration ', async () => {
     await getRunnerGeneratorForPlatform('android').regenerateRunnerConfig({
+      extra: {
+        androidConfig: {
+          artifactId: 'runner-ern-container-dummy',
+          groupId: 'com.walmartlabs.ern',
+          packageFilePath: 'com/walmartlabs/ern/dummy',
+          packageName: 'com.walmartlabs.ern.dummy',
+        },
+      },
       mainMiniAppName: 'dummy',
       outDir: simpleAndroidRunnerTestGeneratedPath,
       reactNativeVersion: '0.59.8',
