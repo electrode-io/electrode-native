@@ -8,10 +8,10 @@ const miniapps = [
   `${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion}`
 ]
 
-const filesToIgnoreForDiffs = [
+const excludeFilter = [
   'index.android.bundle',
   'index.android.bundle.meta'
-]
+].map(s => `**/${s}`).join(',')
 
 run(`create-container --miniapps ${miniapps.join(' ')} -p android --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
-assert(sameDirContent(f.pathToAndroidContainerFixture, process.cwd(), filesToIgnoreForDiffs), 'Generated Android Container differ from reference fixture !')
+assert(sameDirContent(f.pathToAndroidContainerFixture, process.cwd(), {excludeFilter}), 'Generated Android Container differ from reference fixture !')
