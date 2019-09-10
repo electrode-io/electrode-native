@@ -1,5 +1,5 @@
 import { generateComposite } from 'ern-composite-gen'
-import { BundlingResult, kax, NativePlatform, PackagePath } from 'ern-core'
+import { BundlingResult, kax, NativePlatform, PackagePath, log } from 'ern-core'
 import { reactNativeBundleAndroid } from './reactNativeBundleAndroid'
 import { reactNativeBundleIos } from './reactNativeBundleIos'
 import { clearReactPackagerCache } from './clearReactPackagerCache'
@@ -11,24 +11,29 @@ export async function bundleMiniApps(
   outDir: string,
   platform: NativePlatform,
   {
+    bundleOutput,
     pathToYarnLock,
     dev,
     sourceMapOutput,
     baseComposite,
     jsApiImplDependencies,
     resolutions,
+    extraJsDependencies,
   }: {
+    bundleOutput?: string
     pathToYarnLock?: string
     dev?: boolean
     sourceMapOutput?: string
     baseComposite?: PackagePath
     jsApiImplDependencies?: PackagePath[]
     resolutions?: { [pkg: string]: string }
+    extraJsDependencies?: PackagePath[]
   } = {}
 ): Promise<BundlingResult> {
   await kax.task('Generating MiniApps Composite').run(
     generateComposite({
       baseComposite,
+      extraJsDependencies,
       jsApiImplDependencies,
       miniApps,
       outDir: compositeDir,
@@ -38,6 +43,7 @@ export async function bundleMiniApps(
   )
 
   return bundleMiniAppsFromComposite({
+    bundleOutput,
     compositeDir,
     dev,
     outDir,
@@ -47,12 +53,14 @@ export async function bundleMiniApps(
 }
 
 export async function bundleMiniAppsFromComposite({
+  bundleOutput,
   compositeDir,
   dev,
   outDir,
   platform,
   sourceMapOutput,
 }: {
+  bundleOutput?: string
   compositeDir: string
   dev?: boolean
   outDir: string
@@ -64,12 +72,14 @@ export async function bundleMiniAppsFromComposite({
   return kax.task('Running Metro Bundler').run(
     platform === 'android'
       ? reactNativeBundleAndroid({
+          bundleOutput,
           cwd: compositeDir,
           dev,
           outDir,
           sourceMapOutput,
         })
       : reactNativeBundleIos({
+          bundleOutput,
           cwd: compositeDir,
           dev,
           outDir,

@@ -362,7 +362,7 @@ describe('ern-container-gen utils.js', () => {
       })
       assert(yarnCliStub.install.calledOnce)
       assert(yarnCliStub.upgrade.calledOnce)
-      assert(yarnCliStub.add.calledOnce)
+      assert(yarnCliStub.add.calledTwice)
       assert(yarnCliStub.install.calledBefore(yarnCliStub.add))
       assert(yarnCliStub.install.calledBefore(yarnCliStub.upgrade))
     })
@@ -406,7 +406,7 @@ describe('ern-container-gen utils.js', () => {
       ]
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'))
       await generateComposite({ miniApps, outDir: tmpOutDir })
-      assert(yarnCliStub.add.calledThrice)
+      assert(yarnCliStub.add.callCount === 4)
     })
 
     it('should create index.js', async () => {

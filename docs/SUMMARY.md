@@ -19,6 +19,7 @@
 
 ### REFERENCE
 
+- [Bundle Store](cli/bundlestore.md)
 - [Composite](platform-parts/composite/index.md)
 - [Container](platform-parts/container/index.md)
   - [What's inside](platform-parts/container/inside-a-container.md)
@@ -53,6 +54,11 @@
 ### CLI COMMANDS
 
 - [add](cli/add.md)
+- [bundlestore](cli/bundlestore.md)
+  - [create](cli/bundlestore/create.md)
+  - [delete](cli/bundlestore/delete.md)
+  - [upload](cli/bundlestore/upload.md)
+  - [use](cli/bundlestore/use.md)
 - binarystore
   - [add](cli/binarystore/add.md)
   - [get](cli/binarystore/get.md)

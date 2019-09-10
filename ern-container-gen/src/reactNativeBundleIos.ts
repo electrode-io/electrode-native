@@ -3,11 +3,13 @@ import fs from 'fs'
 import path from 'path'
 
 export async function reactNativeBundleIos({
+  bundleOutput,
   dev,
   outDir,
   sourceMapOutput,
   cwd,
 }: {
+  bundleOutput?: string
   dev?: boolean
   outDir: string
   sourceMapOutput?: string
@@ -20,7 +22,7 @@ export async function reactNativeBundleIos({
     'Libraries',
     'MiniApp'
   )
-  const bundleOutput = path.join(miniAppOutPath, 'MiniApp.jsbundle')
+  bundleOutput = bundleOutput || path.join(miniAppOutPath, 'MiniApp.jsbundle')
   const assetsDest = miniAppOutPath
   if (fs.existsSync(assetsDest)) {
     shell.rm('-rf', path.join(assetsDest, '{.*,*}'))

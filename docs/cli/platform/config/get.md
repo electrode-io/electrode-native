@@ -16,13 +16,14 @@
 
 **Whitelisted properties**
 
-- `logLevel`  
-- `showBanner`  
-- `tmp-dir`  
-- `retain-tmp-dir`
+- `bundlestore-host`
 - `codePushAccessKey`
+- `codePushCustomHeaders`
 - `codePushCustomServerUrl`
 - `codePushProxy`
-- `codePushCustomHeaders`
+- `logLevel` 
 - `max-package-cache-size`
 - `package-cache-enabled`
+- `retain-tmp-dir` 
+- `showBanner`  
+- `tmp-dir`  
