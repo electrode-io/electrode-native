@@ -8,11 +8,10 @@ const miniapps = [
   `${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion}`
 ]
 
-const filesToIgnoreForDiffs = [
+const excludeFilter = [
     'project.pbxproj',
-    'MiniApp.jsbundle',
-    'MiniApp.jsbundle.meta'
-]
+    'ElectrodeContainer/Libraries/**'
+].map(s => `**/${s}`).join(',')
 
 run(`create-container --miniapps ${miniapps.join(' ')} -p ios --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
-assert(sameDirContent(f.pathToIosContainerFixture, process.cwd(), filesToIgnoreForDiffs), 'Generated IOS Container differ from reference fixture !')
+assert(sameDirContent(f.pathToIosContainerFixture, process.cwd(), {excludeFilter}), 'Generated IOS Container differ from reference fixture !')

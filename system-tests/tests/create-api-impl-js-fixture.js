@@ -3,7 +3,7 @@ const assert = require('../utils/assert')
 const sameDirContent = require('../utils/sameDirContent')
 const f = require('../fixtures/constants')
 
-const filesToIgnore = [
+const excludeFilter = [
   'ElectrodeApiImpl.xcodeproj',
   'project.pbxproj',
   'package.json',
@@ -16,7 +16,7 @@ const filesToIgnore = [
   'SysteTestEventApi.spec.js',
   'SystemTestsApi.spec.js',
   '.yarn-integrity'
-]
+].map(s => `**/${s}`).join(',')
 
 run(`create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --jsOnly --outputDirectory ${process.cwd()} --force`)
-assert(sameDirContent(f.pathToJsApiImplFixture, process.cwd(), filesToIgnore), 'Generated API JS Impl differ from reference fixture !')
+assert(sameDirContent(f.pathToJsApiImplFixture, process.cwd(), {excludeFilter}), 'Generated API JS Impl differ from reference fixture !')
