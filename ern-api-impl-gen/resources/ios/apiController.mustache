@@ -23,9 +23,9 @@ import Foundation
     // Singleton
     static let instance = {{apiName}}ApiController()
     private override init() {}
-    
+
     private var requestHandler: {{apiName}}ApiRequestHandlerProvider?
-    
+
     @objc
     public func register(config: {{apiName}}ApiConfig? = nil)
     {

@@ -4,7 +4,7 @@
 
 /* import { generateApiImpl } from '../src/index'
 import {
-  shell 
+  shell
 }from 'ern-core'
 import fs from 'fs'
 import { assert } from 'chai'

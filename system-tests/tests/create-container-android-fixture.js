@@ -9,7 +9,7 @@ const miniapps = [
 ]
 
 const filesToIgnoreForDiffs = [
-  'index.android.bundle', 
+  'index.android.bundle',
   'index.android.bundle.meta'
 ]
 

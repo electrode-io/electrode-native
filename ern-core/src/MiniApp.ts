@@ -495,7 +495,7 @@ module.exports = {
     if (!this.packageJson.ern) {
       throw new Error(`In order to upgrade, please first replace "ernPlatformVersion" : "${
         this.packageJson.ernPlatformVersion
-      }" in your package.json 
+      }" in your package.json
 with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     }
 

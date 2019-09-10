@@ -23,9 +23,9 @@ import Foundation
     // Singleton
     static let instance = MoviesApiController()
     private override init() {}
-    
+
     private var requestHandler: MoviesApiRequestHandlerProvider?
-    
+
     @objc
     public func register(config: MoviesApiConfig? = nil)
     {
