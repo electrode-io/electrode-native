@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ern_bundle_store_host" translatable="false">ern_bundle_store_host</string>
+    <string name="ern_bundle_store_store_id" translatable="false">ern_bundle_store_store_id</string>
+    <string name="ern_bundle_store_bundle_id" translatable="false">ern_bundle_store_bundle_id</string>
+    <string name="ern_bundle_store_auto_reload" translatable="false">ern_bundle_store_auto_reload</string>
+    <string name="ern_bundle_store_enabled" translatable="false">ern_bundle_store_enabled</string>
+    <string name="debug_http_host" translatable="false">debug_http_host</string>
+</resources>

@@ -1,4 +1,4 @@
-import { BundlingResult, reactnative, shell } from 'ern-core'
+import { BundlingResult, log, reactnative, shell } from 'ern-core'
 import fs from 'fs'
 import path from 'path'
 
@@ -20,10 +20,14 @@ export async function reactNativeBundleAndroid({
   bundleOutput =
     bundleOutput || path.join(libSrcMainPath, 'assets', 'index.android.bundle')
   const assetsDest = path.join(libSrcMainPath, 'res')
-  /* if (fs.existsSync(assetsDest)) {
-    shell.rm('-rf', path.join(assetsDest, '{.*,*}'))
-  }*/
-
+  // Cleanup everything from 'res' directory but 'devassist'
+  if (fs.existsSync(assetsDest)) {
+    fs.readdirSync(assetsDest)
+    .filter(p => p !== 'devassist')
+    .map(p => path.join(assetsDest, p))
+    .forEach(p => shell.rm('-rf', p))
+  }
+  
   shell.pushd(cwd)
 
   const entryFile = fs.existsSync(path.join(cwd, 'index.android.js'))

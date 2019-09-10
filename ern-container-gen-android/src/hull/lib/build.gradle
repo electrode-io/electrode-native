@@ -28,6 +28,9 @@ android {
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
     }
+    sourceSets.main {
+        res.srcDirs = [ "src/main/res", "src/main/res/devassist" ]
+    }
 }
 
 dependencies {
