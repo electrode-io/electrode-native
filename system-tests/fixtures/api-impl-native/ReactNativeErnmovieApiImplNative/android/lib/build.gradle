@@ -33,5 +33,5 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
 
-    implementation 'com.walmartlabs.ern:react-native:0.59.10'
+    implementation 'com.walmartlabs.ern:react-native:0.60.5'
 }
