@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
- 
+
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- 
+
  * http://www.apache.org/licenses/LICENSE-2.0
- 
+
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
 + (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
-    
+
     static dispatch_once_t startOnceToken;
     dispatch_once(&startOnceToken, ^{
         [sharedInstance startContainerWithConfiguration:configuration];
@@ -69,7 +69,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     dispatch_once(&onceToken, ^{
         sharedInstance = [[self alloc] init];
     });
-    
+
     return sharedInstance;
 }
 
@@ -78,16 +78,16 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
 {
 
     UIViewController *miniAppViewController = nil;
-    
+
     // Build out the view controller
         // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-    
+
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-    
+
     miniAppViewController = [UIViewController new];
     miniAppViewController.view = rootView;
-    
+
     return miniAppViewController;}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     /*
     [CodePush initialize];
     [self configureCodePush:configuration];
-    
+
     NSURL *url;
     if([configuration isDebugEnabled]) {
         url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
@@ -116,9 +116,9 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
 
     //NSArray* bundleFiles = [self allJSBundleFiles];
     //ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:bundleFiles[0]];
-    
+
     ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:url];
-    
+
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;
 
@@ -149,7 +149,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     NSArray *returnFiles = nil;
     NSURL *bundle = [[NSBundle bundleForClass:self.class] bundleURL];
     NSError *error = nil;
-    
+
     NSArray *files =
     [[NSFileManager defaultManager] contentsOfDirectoryAtURL:bundle
                                   includingPropertiesForKeys:nil
@@ -171,7 +171,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     {
         // [self setUpCodePushWithID:[configuration codePushWithIDString]];
     }
-    
+
     if (configuration && [configuration respondsToSelector:@selector(codePushWithServerURLString)])
     {
        // [self setUpCodePushWithServer:[configuration codePushWithServerURLString]];
@@ -200,13 +200,13 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     self = [super init];
     if (self)
     {
-        
+
         if (plist)
         {
             [self configure:plist];
         }
     }
-    
+
     return self;
 }
 
@@ -214,7 +214,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     if (self = [super init]) {
         [self configureWithData:data];
     }
-    
+
     return self;
 }
 
@@ -228,13 +228,13 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
             {
                 _isDebugEnabled = debugEnabled.boolValue;
             }
-            
+
             NSString *codePushID = [data objectForKey:ERNCodePushConfigDeploymentKey];
             if (codePushID && [codePushID isKindOfClass:[NSString class]])
             {
                 _codePushWithIDString = codePushID;
             }
-            
+
             NSString *codePushURL = [data objectForKey:ERNCodePushConfigServerUrl];
             if (codePushURL && [codePushURL isKindOfClass:[NSString class]])
             {
@@ -260,7 +260,7 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     NSDictionary *data =
     [NSDictionary dictionaryWithContentsOfFile:
      [[NSBundle bundleForClass:self.class] pathForResource:plist ofType:@"plist"]];
-    
+
     return data;
 }
 

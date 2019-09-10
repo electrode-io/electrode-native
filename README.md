@@ -33,18 +33,19 @@ We have created a [step by step guide], for iOS and Android, to present some of 
 
 ## Documentation
 
-The [documentation of Electrode Native] is maintained as [GitBook] pages in the [docs](/docs) directory.  
-It is divided into multiple sections :
+The [documentation of Electrode Native] is maintained as [GitBook] pages in the [docs](/docs) directory. It is divided into multiple sections:
 
-- An [Overview] of Electrode Native  
-This should be read first, as an introduction to learn about [what is Electrode Native] or [what is a MiniApp]. This section also contains some documentation regarding the [Electrode Native workflow], native dependencies management or JS/Native communication.
+- An [Overview] of Electrode Native
 
-- A Platform Reference section  
-This section covers each Electrode Native module in depth, such as [Container], [Cauldron], [Manifest], [Apis] ...
+ This should be read first, as an introduction to learn about [what is Electrode Native] or [what is a MiniApp]. This section also contains some documentation regarding the [Electrode Native workflow], native dependencies management or JS/Native communication.
 
-- A CLI command reference section  
-In this section you will find a documentation page for each of the CLI commands available in Electrode Native, for example [create-miniapp], 
-[run-android], [platform use] ...
+- A Platform Reference section
+
+ This section covers each Electrode Native module in depth, such as [Container], [Cauldron], [Manifest], [Apis] ...
+
+- A CLI command reference section
+
+ In this section you will find a documentation page for each of the CLI commands available in Electrode Native, for example [create-miniapp], [run-android], [platform use] ...
 
 ## Contributing
 
@@ -67,11 +68,11 @@ Licensed under the [Apache License, Version 2.0].
 
 ## Support and Acknowledgment
 
-We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects. 
+We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects.
 
-We love the public community and the support we get, and we address your requests as much as we can.  
+We love the public community and the support we get, and we address your requests as much as we can.
 
-We are always excited to get feedback, bug reports, and pull requests.  
+We are always excited to get feedback, bug reports, and pull requests.
 
 Thank you.
 

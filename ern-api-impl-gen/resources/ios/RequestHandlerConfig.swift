@@ -23,5 +23,5 @@ import Foundation
  */
 @objc public class RequestHandlerConfig: NSObject
 {
-    
+
 }

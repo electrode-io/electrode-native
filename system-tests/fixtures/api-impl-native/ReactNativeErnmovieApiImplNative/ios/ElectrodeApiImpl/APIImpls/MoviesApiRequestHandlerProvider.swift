@@ -42,5 +42,5 @@ import Foundation
 // DO NOT rename this class as this naming convention is used when a container is generated.
 public class MoviesApiConfig : RequestHandlerConfig
 {
-    
+
 }

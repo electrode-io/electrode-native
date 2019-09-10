@@ -22,7 +22,7 @@ import Foundation
 @objc public class RequestHandlerProvider: NSObject
 {
     internal var requestHandlerConfig: RequestHandlerConfig?
-    
+
     /**
      * - Parameter config: Optional config object that can be passed to an api impl provider.
      */
