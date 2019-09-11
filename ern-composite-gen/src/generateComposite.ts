@@ -580,10 +580,10 @@ async function createRnCliConfig({ outDir }: { outDir: string }) {
   let sourceExts
   if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
     sourceExts =
-      "module.exports = { resolver: { sourceExts: ['jsx', 'mjs', 'js', 'ts', 'tsx'] } };"
+      "module.exports = { resolver: { sourceExts: ['jsx', 'js', 'ts', 'tsx', 'mjs'] } };"
   } else {
     sourceExts =
-      "module.exports = { getSourceExts: () => ['jsx', 'mjs', 'js', 'ts', 'tsx'] }"
+      "module.exports = { getSourceExts: () => ['jsx', 'js', 'ts', 'tsx', 'mjs'] }"
   }
   await fileUtils.writeFile(path.join(outDir, 'rn-cli.config.js'), sourceExts)
 }
