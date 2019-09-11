@@ -84,7 +84,7 @@
     "xcode-ern": "^1.0.12",
     "yarn": "^1.17.3",
     "yauzl": "^2.10.0",
-    "yazl": "^2.4.3"
+    "yazl": "^2.5.1"
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0"
