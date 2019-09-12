@@ -361,6 +361,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CB684020C9C46A0031A349 /* ElectrodeContainer-QADeployment.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 			};
 			name = QADeployment;
 		};
@@ -389,6 +390,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CB684120C9C46A0031A349 /* ElectrodeContainer-Debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 			};
 			name = Debug;
 		};
@@ -396,6 +398,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CB684220C9C46A0031A349 /* ElectrodeContainer-Release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 			};
 			name = Release;
 		};
