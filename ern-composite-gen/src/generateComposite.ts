@@ -130,10 +130,17 @@ async function generateFullComposite(
     await addStartScriptToPackageJson({ outDir })
     await createIndexJsBasedOnPackageJson({ outDir })
     if (extraJsDependencies) {
-      await installExtraJsDependencies({ outDir, extraJsDependencies })
+      await installExtraJsDependencies({
+        extraJsDependencies: [
+          PackagePath.fromString('ern-bundle-store-metro-asset-plugin'),
+          ...extraJsDependencies,
+        ],
+        outDir,
+      })
     }
     await addBabelrcRoots({ outDir })
     await createCompositeBabelRc({ outDir })
+    await createMetroConfigJs({ outDir })
     await createRnCliConfig({ outDir })
     if (resolutions) {
       await applyYarnResolutions({ outDir, resolutions })
@@ -570,6 +577,35 @@ async function createCompositeBabelRc({ outDir }: { outDir: string }) {
   return fileUtils.writeFile(
     path.join(outDir, '.babelrc'),
     JSON.stringify(compositeBabelRc, null, 2)
+  )
+}
+
+async function createMetroConfigJs({ outDir }: { outDir: string }) {
+  return fileUtils.writeFile(
+    path.join(outDir, 'metro.config.js'),
+    `const blacklist = require('metro-config/src/defaults/blacklist');
+module.exports = {
+  resolver: {
+    blacklistRE: blacklist([
+      // Ignore IntelliJ directories
+      /.*\\.idea\\/.*/,
+      // ignore git directories
+      /.*\\.git\\/.*/,
+      // Ignore android directories
+      /.*\\/app\\/build\\/.*/
+    ])
+  },
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+    assetPlugins: ['ern-bundle-store-metro-asset-plugin'],
+  },
+};
+`
   )
 }
 

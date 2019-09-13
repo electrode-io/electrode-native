@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="ern_bundle_store"
+        android:title="Bundle Store">
+        <SwitchPreference
+            android:defaultValue="0"
+            android:key="ern_bundle_store_enabled"
+            android:title="Enable" />
+        <EditTextPreference
+            android:key="@string/ern_bundle_store_host"
+            android:title="Server host and port" />
+        <ListPreference
+            android:key="@string/ern_bundle_store_store_id"
+            android:summary="%s"
+            android:title="Store" />
+        <ListPreference
+            android:key="@string/ern_bundle_store_bundle_id"
+            android:summary="%s"
+            android:title="Bundle" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/ern_bundle_store_auto_reload"
+            android:summary="Auto reload JS bundle"
+            android:title="Auto reload" />
+    </PreferenceCategory>
+</PreferenceScreen>

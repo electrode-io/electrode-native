@@ -37,6 +37,8 @@ export async function logErrorAndExitIfNotSatisfied({
   isContainerPath,
   isEnvVariableDefined,
   manifestIdExists,
+  bundleStoreHostIsSet,
+  bundleStoreAccessKeyIsSet,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
@@ -156,6 +158,12 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   manifestIdExists?: {
     id: string
+    extraErrorMessage?: string
+  }
+  bundleStoreHostIsSet?: {
+    extraErrorMessage?: string
+  }
+  bundleStoreAccessKeyIsSet?: {
     extraErrorMessage?: string
   }
 } = {}) {
@@ -416,6 +424,22 @@ export async function logErrorAndExitIfNotSatisfied({
       await Ensure.manifestIdExists(
         manifestIdExists.id,
         manifestIdExists.extraErrorMessage
+      )
+      kaxTask.succeed()
+    }
+    if (bundleStoreHostIsSet) {
+      kaxTask = kax.task(
+        `Ensuring that bundlestore-host is set in configuration`
+      )
+      await Ensure.bundleStoreHostIsSet(bundleStoreHostIsSet.extraErrorMessage)
+      kaxTask.succeed()
+    }
+    if (bundleStoreAccessKeyIsSet) {
+      kaxTask = kax.task(
+        `Ensuring that bundlestore-accesskey is set in configuration`
+      )
+      await Ensure.bundleStoreAccessKeyIsSet(
+        bundleStoreAccessKeyIsSet.extraErrorMessage
       )
       kaxTask.succeed()
     }

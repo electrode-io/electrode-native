@@ -1,5 +1,8 @@
 import { addContainerMetadata as _addContainerMetadata } from './addContainerMetadata'
-import { bundleMiniApps as _bundleMiniApps } from './bundleMiniApps'
+import {
+  bundleMiniApps as _bundleMiniApps,
+  bundleMiniAppsFromComposite as _bundleMiniAppsFromComposite,
+} from './bundleMiniApps'
 import { copyRnpmAssets as _copyRnpmAssets } from './copyRnpmAssets'
 import { generatePluginsMustacheViews as _generatePluginsMustacheViews } from './generatePluginsMustacheViews'
 import { getContainerPlatform as _getContainerPlatform } from './getContainerPlatform'
@@ -11,6 +14,7 @@ import { getContainerMetadataPath as _getContainerMetadataPath } from './getCont
 
 export const addContainerMetadata = _addContainerMetadata
 export const bundleMiniApps = _bundleMiniApps
+export const bundleMiniAppsFromComposite = _bundleMiniAppsFromComposite
 export const copyRnpmAssets = _copyRnpmAssets
 export const generatePluginsMustacheViews = _generatePluginsMustacheViews
 export const getContainerPlatform = _getContainerPlatform
@@ -23,6 +27,7 @@ export const getContainerMetadataPath = _getContainerMetadataPath
 export default {
   addContainerMetadata: _addContainerMetadata,
   bundleMiniApps: _bundleMiniApps,
+  bundleMiniAppsFromComposite: _bundleMiniAppsFromComposite,
   copyRnpmAssets: _copyRnpmAssets,
   generateContainer: _generateContainer,
   generatePluginsMustacheViews: _generatePluginsMustacheViews,

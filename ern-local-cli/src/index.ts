@@ -44,9 +44,12 @@ function showBanner() {
 
 function showInfo() {
   const currentCauldronRepo = config.getValue('cauldronRepoInUse') || '-NONE-'
+  const bundleStoreId = config.getValue('bundlestore-id')
+  const l = bundleStoreId ? chalk.cyan(` [BundleStore: ${bundleStoreId}]`) : ''
   console.log(
     chalk.cyan(`[v${Platform.currentVersion}]`) +
-      chalk.cyan(` [Cauldron: ${currentCauldronRepo}]`)
+      chalk.cyan(` [Cauldron: ${currentCauldronRepo}]`) +
+      l
   )
   console.log('')
 }

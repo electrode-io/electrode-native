@@ -47,6 +47,8 @@ export { YarnLockParser } from './YarnLockParser'
 export { AndroidResolvedVersions } from './android'
 export { GitHubApi } from './GitHubApi'
 export * from './getLocalIp'
+export * from './BundleStoreSdk'
+export * from './BundleStoreEngine'
 
 export const config = _config
 export const Platform = _Platform
@@ -72,6 +74,7 @@ export { ErnBinaryStore } from './ErnBinaryStore'
 export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolution
 export { getPackagePathsDiffs } from './getPackagePathsDiffs'
 export * from './findDirectoriesHavingRnConfig'
+export * from './BundleStoreSdk'
 
 export {
   CodePushPackageInfo,

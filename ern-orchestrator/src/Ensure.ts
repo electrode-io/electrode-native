@@ -1,4 +1,5 @@
 import {
+  config,
   manifest,
   PackagePath,
   utils as coreUtils,
@@ -550,7 +551,25 @@ export default class Ensure {
     extraErrorMessage: string = ''
   ) {
     if (!(await manifest.hasManifestId(manifestId))) {
-      throw new Error(`${manifestId} id not found in the Manifest(s)`)
+      throw new Error(
+        `${manifestId} id not found in the Manifest(s)\n${extraErrorMessage}`
+      )
+    }
+  }
+
+  public static bundleStoreHostIsSet(extraErrorMessage: string = '') {
+    if (!config.getValue('bundlestore-host')) {
+      throw new Error(
+        `bundlestore-host is not set in configuration\n${extraErrorMessage}`
+      )
+    }
+  }
+
+  public static bundleStoreAccessKeyIsSet(extraErrorMessage: string = '') {
+    if (!config.getValue('bundlestore-accesskey')) {
+      throw new Error(
+        `bundlestore-accesskey is not set in configuration\n${extraErrorMessage}`
+      )
     }
   }
 }

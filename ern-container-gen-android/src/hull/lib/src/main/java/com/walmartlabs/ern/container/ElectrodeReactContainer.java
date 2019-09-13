@@ -52,6 +52,9 @@ import com.microsoft.codepush.react.ReactInstanceHolder;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 {{/hasElectrodeBridgePlugin}}
 
+import com.facebook.react.devsupport.interfaces.DevOptionHandler;
+import com.walmartlabs.ern.container.devassist.ErnDevSettingsActivity;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ public class ElectrodeReactContainer {
     private static boolean sIsReactNativeReady;
     private static List<ReactPackage> sReactPackages = new ArrayList<>();
     private static ElectrodeReactNativeHost sElectrodeReactNativeHost;
+    private static Config sConfig;
 
     private static boolean isReactNativeDeveloperSupport;
 
@@ -125,8 +129,14 @@ public class ElectrodeReactContainer {
         return null;
     }
 
+    @SuppressWarnings("unused")
+    public static Config getConfig() {
+        throwIfNotInitialized();
+        return sConfig;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
-    public synchronized static void initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
+    public synchronized static void initialize(@NonNull final Application application, @NonNull final Config reactContainerConfig
             {{#plugins}}
             {{#configurable}}
             , @NonNull final {{name}}.Config {{lcname}}Config
@@ -139,6 +149,8 @@ public class ElectrodeReactContainer {
             {{/apiImplementations}}
      ) {
         if (sElectrodeReactNativeHost == null) {
+            sConfig = reactContainerConfig;
+            
             {{#RN_VERSION_GTE_60_1}}
             SoLoader.init(application, /* native exopackage */ false);
             {{/RN_VERSION_GTE_60_1}}
@@ -179,6 +191,16 @@ public class ElectrodeReactContainer {
             {{/configurable}}
             {{/plugins}}
             sReactPackages.removeAll(Collections.singleton((ReactPackage)null));
+
+            // Add Electrode Native Settings item to React Native dev menu
+            getReactInstanceManager().getDevSupportManager().addCustomDevOption("Electrode Native Settings", new DevOptionHandler() {
+                @Override
+                public void onOptionSelected() {
+                    Intent intent = new Intent(application, ErnDevSettingsActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    application.startActivity(intent);
+                }
+            });
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
@@ -232,6 +254,7 @@ public class ElectrodeReactContainer {
     public static class Config {
         private boolean isReactNativeDeveloperSupport;
         private OkHttpClient okHttpClient;
+        private String bundleStoreHostPort = "localhost:3000";
 
         public Config isReactNativeDeveloperSupport(boolean value) {
             isReactNativeDeveloperSupport = value;
@@ -244,10 +267,22 @@ public class ElectrodeReactContainer {
             return this;
         }
 
+        @SuppressWarnings("unused")
+        public Config bundleStoreHostPort(String value) {
+            bundleStoreHostPort = value;
+            return this;
+        }
+
+        @SuppressWarnings("unused")
+        public String getBundleStoreHostPort() {
+          return bundleStoreHostPort;
+        }
+
         @Override
         public String toString() {
             return "Config{" +
                     "isReactNativeDeveloperSupport=" + isReactNativeDeveloperSupport +
+                    "bundleStoreHostPort=" + bundleStoreHostPort +
                     '}';
         }
     }
