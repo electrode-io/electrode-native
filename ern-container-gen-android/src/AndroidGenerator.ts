@@ -129,7 +129,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       if (!pluginConfig) {
         continue
       }
-      let pluginSourcePath
+
       if (plugin.basePath === 'react-native') {
         continue
       }
@@ -145,38 +145,29 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
 
-      shell.pushd(config.pluginsDownloadDir)
-
       let pathToPluginProject
-      try {
-        const nativeDependencyPathInComposite = await config.composite.getNativeDependencyPath(
-          plugin
-        )
 
-        pluginSourcePath =
-          nativeDependencyPathInComposite ||
-          (await coreUtils.downloadPluginSource(pluginConfig.origin))
-        if (!pluginSourcePath) {
-          throw new Error(`Was not able to retrieve ${plugin.basePath}`)
-        }
-
-        if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
-          // For native api implementations, if a 'ern.pluginConfig' object
-          // exists in its package.json, replace pluginConfig with this one.
-          const pluginPackageJson = await readPackageJson(pluginSourcePath)
-          if (pluginPackageJson.ern.pluginConfig) {
-            pluginConfig = pluginPackageJson.ern.pluginConfig
-          }
-          populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
-        }
-
-        pathToPluginProject = path.join(
-          pluginSourcePath,
-          pluginConfig.android.root
-        )
-      } finally {
-        shell.popd()
+      const pluginSourcePath = await config.composite.getNativeDependencyPath(
+        plugin
+      )
+      if (!pluginSourcePath) {
+        throw new Error(`path to ${plugin.basePath} not found in composite`)
       }
+
+      if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
+        // For native api implementations, if a 'ern.pluginConfig' object
+        // exists in its package.json, replace pluginConfig with this one.
+        const pluginPackageJson = await readPackageJson(pluginSourcePath)
+        if (pluginPackageJson.ern.pluginConfig) {
+          pluginConfig = pluginPackageJson.ern.pluginConfig
+        }
+        populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
+      }
+
+      pathToPluginProject = path.join(
+        pluginSourcePath,
+        pluginConfig.android.root
+      )
 
       shell.pushd(pathToPluginProject)
       try {

@@ -17,8 +17,6 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
   public async generate(
     apiDependency: PackagePath,
     paths: {
-      workingDirectory: string
-      pluginsDownloadDirectory: string
       apiImplHull: string
       outDirectory: string
     },

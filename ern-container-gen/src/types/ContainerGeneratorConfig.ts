@@ -11,10 +11,6 @@ export interface ContainerGeneratorConfig {
    */
   outDir: string
   /**
-   * Directory where the plugins should be downloaded to during generation
-   */
-  pluginsDownloadDir: string
-  /**
    * Composite
    */
   composite: Composite

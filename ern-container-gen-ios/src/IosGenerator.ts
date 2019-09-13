@@ -78,7 +78,6 @@ export default class IosGenerator implements ContainerGenerator {
   ): Promise<void> {
     const pathSpec = {
       outputDir: config.outDir,
-      pluginsDownloadDirectory: config.pluginsDownloadDir,
       projectHullDir: path.join(PATH_TO_HULL_DIR, '{.*,*}'),
       rootDir: ROOT_DIR,
     }
@@ -116,7 +115,6 @@ export default class IosGenerator implements ContainerGenerator {
           config.plugins,
           config.composite,
           mustacheView,
-          pathSpec,
           projectSpec
         )
       )
@@ -242,7 +240,6 @@ export default class IosGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     composite: Composite,
     mustacheView: any,
-    pathSpec: any,
     projectSpec: any
   ) {
     for (const plugin of plugins) {
@@ -253,23 +250,14 @@ export default class IosGenerator implements ContainerGenerator {
       if (!pluginConfig) {
         continue
       }
-      shell.pushd(pathSpec.pluginsDownloadDirectory)
-      try {
-        const nativeDependencyPathInComposite = await composite.getNativeDependencyPath(
-          plugin
-        )
-        const pluginSourcePath =
-          nativeDependencyPathInComposite ||
-          (await utils.downloadPluginSource(pluginConfig.origin))
-        if (!pluginSourcePath) {
-          throw new Error(`Was not able to retrieve ${plugin.basePath}`)
-        }
 
-        if (await utils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
-          populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
-        }
-      } finally {
-        shell.popd()
+      const pluginSourcePath = await composite.getNativeDependencyPath(plugin)
+      if (!pluginSourcePath) {
+        throw new Error(`path to ${plugin.basePath} not found in composite`)
+      }
+
+      if (await utils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
+        populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
       }
     }
 

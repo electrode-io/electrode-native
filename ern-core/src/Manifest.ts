@@ -701,16 +701,7 @@ export class Manifest {
   ): Promise<PluginConfig | void> {
     await this.initOverrideManifest()
     let result
-    if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
-      log.debug(
-        'Third party plugin detected. Retrieving plugin configuration from manifest'
-      )
-      result = await this.getPluginConfigFromManifest(
-        plugin,
-        platformVersion,
-        projectName
-      )
-    } else if (await isDependencyApi(plugin.basePath)) {
+    if (await isDependencyApi(plugin.basePath)) {
       log.debug(
         'API plugin detected. Retrieving API plugin default configuration'
       )
@@ -720,6 +711,15 @@ export class Manifest {
         'APIImpl plugin detected. Retrieving APIImpl plugin default configuration'
       )
       result = this.getApiImplPluginDefaultConfig(plugin, projectName)
+    } else if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
+      log.debug(
+        'Third party plugin detected. Retrieving plugin configuration from manifest'
+      )
+      result = await this.getPluginConfigFromManifest(
+        plugin,
+        platformVersion,
+        projectName
+      )
     } else {
       log.warn(
         `Unsupported plugin. No configuration found in manifest for ${

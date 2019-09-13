@@ -183,7 +183,9 @@ export default class GitManifest {
     platformVersion: string = Platform.currentVersion
   ): Promise<string | void> {
     if (!plugin.version) {
-      throw new Error('Plugin version is required to retrieve configuration')
+      throw new Error(
+        `Plugin version is required to retrieve configuration. No version was specified for ${plugin}`
+      )
     } else if (!semver.valid(plugin.version)) {
       throw new Error(
         'Plugin version is required to be fixed and not ranged to retrieve configuration'

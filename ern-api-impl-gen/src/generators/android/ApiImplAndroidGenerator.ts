@@ -142,12 +142,15 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     pluginPath: PackagePath,
     pluginConfig: PluginConfig
   ) {
+    if (pluginPath.basePath === 'react-native') {
+      return
+    }
     if (!pluginConfig.android) {
       throw new Error('Missing android plugin configuration')
     }
     log.debug(`injecting ${pluginPath.basePath} code.`)
     const pluginSrcDirectory = path.join(
-      paths.pluginsDownloadDirectory,
+      paths.outDirectory,
       'node_modules',
       pluginPath.basePath,
       'android',

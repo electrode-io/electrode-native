@@ -29,12 +29,6 @@ export async function generateContainer(
     shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
   }
 
-  if (!fs.existsSync(config.pluginsDownloadDir)) {
-    shell.mkdir('-p', config.pluginsDownloadDir)
-  } else {
-    shell.rm('-rf', path.join(config.pluginsDownloadDir, '{.*,*}'))
-  }
-
   config.plugins = sortDependenciesByName(config.plugins)
 
   const reactNativePlugin = _.find(
