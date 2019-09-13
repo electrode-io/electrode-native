@@ -65,13 +65,13 @@ Make sure this command is run from a Manifest directory.`)
     `${plugin.basePath}_v${pluginVersion}+`
   )
   if (!fs.existsSync(pathToPluginConfig)) {
-    shell.mkdir('-p', pathToPluginConfig)
+    await shell.mkdir('-p', pathToPluginConfig)
   } else {
     throw new Error(`path ${pathToPluginConfig} already exist`)
   }
   fs.writeFileSync(
     path.join(pathToPluginConfig, 'config.json'),
-    JSON.stringify(conf.pluginConfig, null, 2)
+    JSON.stringify(conf.pluginConfig, null, 2).concat('\n')
   )
   if (conf.androidPluginSource) {
     fs.writeFileSync(
