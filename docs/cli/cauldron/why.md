@@ -2,7 +2,7 @@
 
 #### Description
 
-* Why is a dependency (native or JS) in the Container of a native application verstion
+* Why is a dependency (native or JS) in the Container of a native application version
 * Logs a formatted dependency tree
 
 #### Syntax

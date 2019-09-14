@@ -17,11 +17,11 @@ This is a `Personal Access Token`, generated from GitHub, having read/write acce
 
 ### Usage
 
-The `github` commands can be used to automate some advanced custom development/release workflows when working with MiniApps / JS API Implementations that are handled as GitHub urls in the Cauldron rather than NPM published versions.
+The `github` commands can be used to automate some advanced custom development/release workflows when working with MiniApps / JS API Implementations that are handled as GitHub urls in the Cauldron rather than npm published versions.
 
-For example, in an hypothetical development workflow for `MyAwesomeApp Android` you might use dummy version `1000.0.0` in your Cauldron, with all MiniApps tracking the `development` branch. Then to regenerate a new development Container, you would just invoke [ern cauldron regen-container] container, which would pull the latest from the `development` branches, generate and publish a new Container and update the `SHAs` in the Cauldron.
+For example, in a hypothetical development workflow for `MyAwesomeApp Android` you might use dummy version `1000.0.0` in your Cauldron, with all MiniApps tracking the `development` branch. Then to regenerate a new development Container, you would just invoke [ern cauldron regen-container] container, which would pull the latest from the `development` branches, generate and publish a new Container and update the `SHAs` in the Cauldron.
 
-Let's assume there are three tracked MiniApps fro version `1000.0.0`, this would result in the following entry in the Cauldron (excluding some data):
+Let's assume there are three tracked MiniApps from version `1000.0.0`, this would result in the following entry in the Cauldron (excluding some data):
 
 ```json
 {

@@ -26,7 +26,7 @@
 * This command will only work if the following conditions are met:
   * A binary store server is running
   * There is an active Cauldron
-  * The active Cauldron contains proper configuration of the binary store
+  * The active Cauldron contains a proper configuration of the binary store
 
 * If no binary exists in the store for the targeted native application version, the command will fail with an appropriate error message
 

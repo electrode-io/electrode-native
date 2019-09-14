@@ -67,7 +67,7 @@ dependencies {
 }
 ```
 
-If you are explicitely publishing a container through the use of [publish-container] command, the Maven artifact id will be `local-ern-container`. The group id will remain the same though `com.walmartlabs.ern`. You can pass options to the command to change the artifact id and group id at your convenience. Please see [publish-container] documentation for more details.  
+If you are explicitly publishing a container through the use of [publish-container] command, the Maven artifact id will be `local-ern-container`. The group id will remain the same though `com.walmartlabs.ern`. You can pass options to the command to change the artifact id and group id at your convenience. Please see [publish-container] documentation for more details.  
 Also, if you use or plan to use a locally published Electrode Native container (to your maven local repository), make sure to declare `mavenLocal` in the list of repositories. This is located in the top-level project `build.gradle`.
 
 ```groovy

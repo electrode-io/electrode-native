@@ -152,7 +152,7 @@ Electrode Native contains a few commands that are generating a Composite as part
 - [ern start]
 
 These commands are exposing a `baseComposite` option being either a valid git repository path or a local path on the workstation to a custom composite project. Please note that using this option will take precedence over any `baseComposite` configuration stored in Cauldron.  
-If you are using a Cauldron, there is very limited use to explicitely providing the `baseComposite` to these command.
+If you are using a Cauldron, there is very limited use to explicitly providing the `baseComposite` to these command.
 
 This option can however be very useful for experimentation or to test a custom Composite project before committing it to git / using it in Cauldron. For example, if your custom Composite project is stored in `/Users/foo/custom-composite` you can easily try it out with some of the commands above, before committing it to git / setting it up in Cauldron.
 

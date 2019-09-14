@@ -60,8 +60,10 @@
 By default Electrode Native will run the MiniApp with a Container that uses JavaScriptCore engine. If you'd rather like to run the MiniApp with [Hermes](https://hermesengine.dev) engine, you should add the following inside the `ern` object of the MiniApp package.json :
 
 ```json
- "androidConfig": {
-  "jsEngine": "hermes"
+{
+  "androidConfig": {
+    "jsEngine": "hermes"
+  }
 }
 ```
 

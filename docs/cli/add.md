@@ -22,18 +22,20 @@
 
 `--manifestId <manifestId>`
 
-* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+* ID of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
 
 #### Remarks
 
 * The `ern add <packages..>` command is the `ern` equivalent of `yarn add` and `npm install`
 When you work with a MiniApp, always use `ern add` to add packages in place of `yarn add` or `npm install`.
 
-* Based on your preference, you can select which package manager (`npm` or `yarn`) to be used by this command to add the package. This can be done by adding or updating `packageManager` field in the `ern` object kept in the MiniApp package.json. For example, to use `npm`. If this field is missing from configuration, `yarn` will be used over `npm` if it is installed on the workstation.
+* Based on your preference, you can select which package manager (`npm` or `yarn`) to be used by this command to add the package. This can be done by adding or updating `packageManager` field in the `ern` object kept in the MiniApp package.json. For example, to use `npm`. If this field is missing from the configuration, `yarn` will be used over `npm` if it is installed on the workstation.
 
 ```json
-"ern": {
+{
+  "ern": {
     "packageManager": "npm"
+  }
 }
 ```
 

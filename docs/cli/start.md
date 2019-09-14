@@ -10,7 +10,7 @@
 
 **Note**
 
-If you do not pass an argument to this command, you are prompted to select a native application version from the Cauldron. The command uses whatever MiniApp versions are curently declared in this native application version container to launch the command.  
+If you do not pass an argument to this command, you are prompted to select a native application version from the Cauldron. The command uses whatever MiniApp versions are currently declared in this native application version container to launch the command.  
 
 **Options**  
 
@@ -22,7 +22,7 @@ If you do not pass an argument to this command, you are prompted to select a nat
 
 * Directory in which to generate the composite
 * The directory should either not exist (will be created) or be empty
-* By default the composite will be generated in a temorary directory
+* By default the composite will be generated in a temporary directory
 
 `--descriptor/-d <descriptor>`
 

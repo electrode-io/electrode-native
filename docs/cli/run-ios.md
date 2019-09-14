@@ -2,7 +2,7 @@
 
 #### Description
 
-* Runs a MiniApp on an iOS emulator or connected device  
+* Runs a MiniApp on an iOS simulator or connected device
 
 #### Syntax
 
@@ -11,7 +11,7 @@
 **Options**  
 
 `--baseComposite <compositePath>`
-* Git or File System path, to the custom Composite repository (refer to the [custom  Composite] documentation for more information).
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
 
 `--descriptor, -d`
 * complete native application descriptor

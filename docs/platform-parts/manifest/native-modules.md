@@ -40,7 +40,7 @@ The plugin configuration file is located within these sub-directories.
 #### Configuration example  
 
 The following example shows the configuration files for the `react-native-code-push` plugin.  
-The directory is view-able [here](https://github.com/electrode-io/electrode-native-manifest/tree/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B)
+The directory is located [here](https://github.com/electrode-io/electrode-native-manifest/tree/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B)
 
 
 ```

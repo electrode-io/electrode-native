@@ -70,9 +70,9 @@ The new `manifest.json` document associate a `manifest id` (manifest object key)
 }
 ```
 
-The `default` manifest id will be picked up automatically, unless a different `manifest id` is explicitely provided to some `ern` commands that are accessing the manifest.
+The `default` manifest id will be picked up automatically, unless a different `manifest id` is explicitly provided to some `ern` commands that are accessing the manifest.
 
-For example, you might want to define a `next` manifest id with upgraded dependencies versions, and from a specific branch of your MiniApps you can then run `ern ugprade-miniapp --manifestId next` which will upgrade the MiniApp dependencies to the versions specified in the `next` manifest entry, while your main development MiniApp branches can continue tracking the `default` Manifest entry. This was not possible previously due to the fact that Manifest entries had a one to one mapping to a specific platform version.
+For example, you might want to define a `next` manifest id with upgraded dependencies versions, and from a specific branch of your MiniApps you can then run `ern upgrade-miniapp --manifestId next` which will upgrade the MiniApp dependencies to the versions specified in the `next` manifest entry, while your main development MiniApp branches can continue tracking the `default` Manifest entry. This was not possible previously due to the fact that Manifest entries had a one to one mapping to a specific platform version.
 
 #### Guidelines for overriding Manifest use cases
 

@@ -72,10 +72,10 @@ Upload a JS bundle to the current store.
 
 `--prod`
 
-* Set this flag to geenrate and upload a production bundle.
+* Set this flag to generate and upload a production bundle.
 * If this flag is not set, a development bundle will be generated and uploaded.
 
-`--resetCache`\
+`--resetCache`
 
 * Indicates whether to reset the React Native cache prior to bundling
 * **Default** false
