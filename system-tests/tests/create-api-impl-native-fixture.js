@@ -15,7 +15,7 @@ const excludeFilter = [
   'WalmartItemApi.spec.js',
   'SysteTestEventApi.spec.js',
   'SystemTestsApi.spec.js',
-  '.yarn-integrity'
+  '.yarn-integrity',
   'ElectrodeApiImpl/Libraries'
 ].map(s => `**/${s}`).join(',')
 
