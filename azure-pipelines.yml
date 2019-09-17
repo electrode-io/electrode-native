@@ -11,6 +11,10 @@ schedules:
 
 variables:
   ENV_AZURE_PIPELINE: true
+  CI_NAME: 'Azure DevOps'
+  CI_BRANCH: $(Build.SourceBranch)
+  CI_BUILD_NUMBER: $(Build.BuildNumber)
+  CI_BUILD_URL: $(Build.BuildUri)
 
 stages:
   - stage: UnitTests

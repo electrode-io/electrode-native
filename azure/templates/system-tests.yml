@@ -4,6 +4,10 @@ steps:
       versionSpec: '10.x'
     displayName: 'Install Node.js'
   - script: |
+      git config --global user.email "electrodenative@gmail.com"
+      git config --global user.name "Electrode Native"
+    displayName: 'Set git user'
+  - script: |
       npm install -g electrode-native;
     displayName: 'Install ern global CLI'
   - script: |
@@ -17,4 +21,6 @@ steps:
     displayName: 'Use dev version of ern'
   - script: |
       yarn coverage:ci
+    env:
+      COVERALLS_REPO_TOKEN: $(coverallsToken)
     displayName: 'Run full test suite with coverage'
