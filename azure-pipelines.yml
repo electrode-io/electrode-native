@@ -14,7 +14,6 @@ variables:
 
 stages:
   - stage: UnitTests
-    condition: ne(variables['Build.Reason'], 'Schedule')
     jobs:
       - job: Windows
         pool:
