@@ -8,9 +8,13 @@
 > Electrode Native is a mobile platform that streamlines the integration of React Native components into existing mobile applications. With minimal changes required to the application code base and infrastructure, Electrode Native makes it simpler to leverage React Native potential in any mobile application.
 
 ![Current version](https://img.shields.io/npm/v/ern-local-cli.svg?label=current)
-[![travis ci](https://travis-ci.org/electrode-io/electrode-native.svg?branch=master)](https://travis-ci.org/electrode-io/electrode-native?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/electrode-io/electrode-native/badge.svg?branch=master&service=github)](https://coveralls.io/github/electrode-io/electrode-native?branch=master&service=github)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+| Test Suite | Status |
+| :--- | :--- |
+| Unit Tests | [![Unit Tests](https://dev.azure.com/ElectrodeNative/Electrode%20Native/_apis/build/status/electrode-io.electrode-native?branchName=master&stageName=UnitTests)](https://dev.azure.com/ElectrodeNative/Electrode%20Native/_build/latest?definitionId=1&branchName=master) |
+| System Tests | [![System Tests](https://dev.azure.com/ElectrodeNative/Electrode%20Native/_apis/build/status/electrode-io.electrode-native?branchName=master&stageName=SystemTests)](https://dev.azure.com/ElectrodeNative/Electrode%20Native/_build/latest?definitionId=1&branchName=master)|
 
 ## Getting Started
 
