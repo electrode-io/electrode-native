@@ -29,24 +29,24 @@
     //------------------------------------------------------------------------------------------------------------------------------------
 
 
-    public override func addItem(item: Item, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<Item, Bool, Any>(
             requestName: WalmartItemAPI.kRequestAddItem,
             requestPayload: item,
             respClass: Bool.self,
             responseItemType: nil,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? Bool, errorMessage) })
 
         requestProcessor.execute()
     }
 
-    public override func findItems(limit: Int, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<Int, [Item], Any>(
             requestName: WalmartItemAPI.kRequestFindItems,
             requestPayload: limit,
             respClass: [Item].self,
             responseItemType: Item.self,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [Item], errorMessage) })
 
         requestProcessor.execute()
     }
@@ -82,13 +82,13 @@ public class WalmartItemRequests: WalmartItemAPIRequests {
       return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
-    public override func addItem(item: Item, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<Item, Bool, Any>(
             requestName: WalmartItemAPI.kRequestAddItem,
             requestPayload: item,
             respClass: Bool.self,
             responseItemType: nil,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? Bool, errorMessage) })
 
         requestProcessor.execute()
     }
@@ -102,13 +102,13 @@ public class WalmartItemRequests: WalmartItemAPIRequests {
       return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
-    public override func findItems(limit: Int, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<Int, [Item], Any>(
             requestName: WalmartItemAPI.kRequestFindItems,
             requestPayload: limit,
             respClass: [Item].self,
             responseItemType: Item.self,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [Item], errorMessage) })
 
         requestProcessor.execute()
     }
