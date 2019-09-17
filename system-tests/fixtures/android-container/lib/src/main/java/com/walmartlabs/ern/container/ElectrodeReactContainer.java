@@ -30,6 +30,7 @@ import com.facebook.react.bridge.SafeActivityStarter;
 import com.facebook.react.modules.network.OkHttpClientFactory;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.shell.MainReactPackage;
+import com.facebook.soloader.SoLoader;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import com.microsoft.codepush.react.CodePush;
@@ -126,6 +127,7 @@ public class ElectrodeReactContainer {
         if (sElectrodeReactNativeHost == null) {
             sConfig = reactContainerConfig;
             
+            SoLoader.init(application, /* native exopackage */ false);
 
             // ReactNative general config
 

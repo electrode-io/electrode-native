@@ -2,11 +2,11 @@
   "ernVersion": "1000.0.0",
   "jsApiImpls": [],
   "miniApps": [
-    "moviedetailsminiapp@0.0.29",
-    "movielistminiapp@0.0.33"
+    "moviedetailsminiapp@0.0.30",
+    "movielistminiapp@0.0.34"
   ],
   "nativeDeps": [
-    "react-native@0.59.8",
+    "react-native@0.60.5",
     "react-native-code-push@5.2.1",
     "react-native-electrode-bridge@1.5.19",
     "react-native-ernmovie-api@0.0.11",
