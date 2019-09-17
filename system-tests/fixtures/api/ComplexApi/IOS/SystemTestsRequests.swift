@@ -29,24 +29,24 @@
     //------------------------------------------------------------------------------------------------------------------------------------
 
 
-    public override func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ([ErnObject]?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<[String], [ErnObject], Any>(
             requestName: SystemTestsAPI.kRequestTestArrayOfStrings,
             requestPayload: key,
             respClass: [ErnObject].self,
             responseItemType: ErnObject.self,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [ErnObject], errorMessage) })
 
         requestProcessor.execute()
     }
 
-    public override func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping (String?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<TestMultiArgsData, String, Any>(
             requestName: SystemTestsAPI.kRequestTestMultiArgs,
             requestPayload: testMultiArgsData,
             respClass: String.self,
             responseItemType: nil,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? String, errorMessage) })
 
         requestProcessor.execute()
     }
@@ -82,13 +82,13 @@ public class SystemTestsRequests: SystemTestsAPIRequests {
       return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
-    public override func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ([ErnObject]?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<[String], [ErnObject], Any>(
             requestName: SystemTestsAPI.kRequestTestArrayOfStrings,
             requestPayload: key,
             respClass: [ErnObject].self,
             responseItemType: ErnObject.self,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [ErnObject], errorMessage) })
 
         requestProcessor.execute()
     }
@@ -102,13 +102,13 @@ public class SystemTestsRequests: SystemTestsAPIRequests {
       return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
-    public override func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public override func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping (String?, ElectrodeFailureMessage?) -> ()) {
         let requestProcessor = ElectrodeRequestProcessor<TestMultiArgsData, String, Any>(
             requestName: SystemTestsAPI.kRequestTestMultiArgs,
             requestPayload: testMultiArgsData,
             respClass: String.self,
             responseItemType: nil,
-            responseCompletionHandler: responseCompletionHandler)
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? String, errorMessage) })
 
         requestProcessor.execute()
     }
