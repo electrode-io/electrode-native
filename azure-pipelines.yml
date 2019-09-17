@@ -2,7 +2,7 @@ trigger:
   - master
 
 schedules:
-  - cron: '00 23 * * *'
+  - cron: '00 04 * * *'
     displayName: Daily Build
     branches:
       include:
