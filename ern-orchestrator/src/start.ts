@@ -22,6 +22,7 @@ export default async function start({
   jsApiImpls,
   miniapps,
   descriptor,
+  flavor,
   watchNodeModules = [],
   packageName,
   activityName,
@@ -32,6 +33,7 @@ export default async function start({
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   descriptor?: NativeApplicationDescriptor
+  flavor?: string
   watchNodeModules?: string[]
   packageName?: string
   activityName?: string
@@ -112,7 +114,7 @@ export default async function start({
         descriptor
       )
       const binaryStore = new ErnBinaryStore(binaryStoreConfig)
-      if (await binaryStore.hasBinary(descriptor)) {
+      if (await binaryStore.hasBinary(descriptor, { flavor })) {
         if (descriptor.platform === 'android') {
           if (
             cauldronStartCommandConfig &&
@@ -128,7 +130,9 @@ export default async function start({
               'You need to provide an Android package name or set it in Cauldron configuration'
             )
           }
-          const apkPath = await binaryStore.getBinary(descriptor)
+          const apkPath = await kax
+            .task('Downloading binary from store')
+            .run(binaryStore.getBinary(descriptor, { flavor }))
           await android.runAndroidApk({ apkPath, packageName, activityName })
         } else if (descriptor.platform === 'ios') {
           if (cauldronStartCommandConfig && cauldronStartCommandConfig.ios) {
@@ -139,7 +143,9 @@ export default async function start({
               'You need to provide an iOS bundle ID or set it in Cauldron configuration'
             )
           }
-          const appPath = await binaryStore.getBinary(descriptor)
+          const appPath = await kax
+            .task('Downloading binary from store')
+            .run(binaryStore.getBinary(descriptor, { flavor }))
           await ios.runIosApp({ appPath, bundleId })
         }
       }

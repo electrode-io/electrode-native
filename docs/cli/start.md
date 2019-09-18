@@ -54,6 +54,18 @@ If you do not pass an argument to this command, you are prompted to select a nat
 `--bundleId/-b`
 *   iOS Bundle Identifier unique to your app.
 
+**Binary Store Specific Options**
+
+`--disableBinaryStore`
+
+* Setting this option will bypass retrieval and installation of the binary from the Binary Store.  
+* It can be useful in case you want to use `ern start` command in conjunction with your own mobile application native binary, build locally on your workstation or retrieved from a specific location.
+
+`--flavor`
+
+* Flavor of the binary to retrieve from the store.
+* The binary of a specific application version (for ex `1.0.0`) can have different flavors, representing different build types of the same application version (for example `Dev`/`Prod`/`QA` ...).
+
 #### Remarks
 
 * This command can be used to package multiple MiniApps inside a single composite bundle and automatically start the react-native local packager to serve this bundle.  

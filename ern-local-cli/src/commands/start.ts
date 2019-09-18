@@ -43,6 +43,9 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+    .option('flavor', {
+      describe: 'Custom binary flavor',
+    })
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more MiniApp(s)',
@@ -67,6 +70,7 @@ export const builder = (argv: Argv) => {
     })
     .group(['packageName', 'activityName'], 'Android binary specific options:')
     .group(['bundleId'], 'iOS binary specific options:')
+    .group(['disableBinaryStore', 'flavor'], 'Binary store specific options:')
     .epilog(epilog(exports))
 }
 
@@ -75,6 +79,7 @@ export const commandHandler = async ({
   bundleId,
   descriptor,
   extraJsDependencies = [],
+  flavor,
   jsApiImpls,
   miniapps,
   packageName,
@@ -85,6 +90,7 @@ export const commandHandler = async ({
   bundleId?: string
   descriptor?: NativeApplicationDescriptor
   extraJsDependencies?: PackagePath[]
+  flavor?: string
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   packageName?: string
@@ -101,6 +107,7 @@ export const commandHandler = async ({
     descriptor,
     disableBinaryStore,
     extraJsDependencies,
+    flavor,
     jsApiImpls,
     miniapps,
     packageName,
