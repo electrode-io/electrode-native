@@ -20,8 +20,10 @@ export async function syncCauldronContainer(
   commitMessage: string | string[],
   {
     containerVersion,
+    sourceMapOutput,
   }: {
     containerVersion?: string
+    sourceMapOutput?: string
   } = {}
 ) {
   if (!descriptor.platform) {
@@ -96,6 +98,7 @@ export async function syncCauldronContainer(
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
         outDir,
+        sourceMapOutput,
       })
     )
 

@@ -32,6 +32,9 @@ Example: If the current container version is 1.2.3 and a version is not included
 
 * Performs a complete Container generation even if there was no native dependencies changes.  
 
+`--sourceMapOutput`
+
+* Path to source map file to generate for this container bundle
 
 #### Remarks
 

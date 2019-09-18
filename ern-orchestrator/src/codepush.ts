@@ -245,6 +245,7 @@ export async function performCodePushOtaUpdate(
     disableDuplicateReleaseError = false,
     force = false,
     pathToYarnLock,
+    sourceMapOutput,
     targetBinaryVersion,
   }: {
     baseComposite?: PackagePath
@@ -254,6 +255,7 @@ export async function performCodePushOtaUpdate(
     disableDuplicateReleaseError?: boolean
     force?: boolean
     pathToYarnLock?: string
+    sourceMapOutput?: string
     targetBinaryVersion?: string
   } = {}
 ) {
@@ -383,6 +385,7 @@ export async function performCodePushOtaUpdate(
         dev: false,
         entryFile: `index.${platform}.js`,
         platform,
+        sourceMapOutput,
         workingDir: tmpWorkingDir,
       })
     )

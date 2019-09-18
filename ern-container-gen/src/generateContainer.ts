@@ -59,6 +59,7 @@ export async function generateContainer(
         compositeDir: config.composite.path,
         outDir: config.outDir,
         platform: config.targetPlatform,
+        sourceMapOutput: config.sourceMapOutput,
       })
     )
 

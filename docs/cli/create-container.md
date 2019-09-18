@@ -61,6 +61,10 @@
   In that case, the configuration will be read from the file stored in Cauldron.   
   For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
 
+`--sourceMapOutput`
+
+* Path to source map file to generate for this container bundle
+
 #### Remarks
 
 * The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  

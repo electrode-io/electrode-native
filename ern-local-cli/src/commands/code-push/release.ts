@@ -70,7 +70,6 @@ export const builder = (argv: Argv) => {
       default: 100,
       describe:
         'Percentage of users this release should be immediately available to',
-
       type: 'number',
     })
     .option('semVerDescriptor', {
@@ -81,6 +80,10 @@ export const builder = (argv: Argv) => {
       alias: 's',
       describe: 'Skip confirmation prompts',
       type: 'boolean',
+    })
+    .option('sourceMapOutput', {
+      describe: 'Path to source map file to generate for this codepush',
+      type: 'string',
     })
     .option('targetBinaryVersion', {
       alias: 't',
@@ -103,6 +106,7 @@ export const commandHandler = async ({
   rollout,
   skipConfirmation,
   semVerDescriptor,
+  sourceMapOutput,
   targetBinaryVersion,
 }: {
   deploymentName: string
@@ -116,6 +120,7 @@ export const commandHandler = async ({
   rollout?: number
   skipConfirmation?: boolean
   semVerDescriptor?: string
+  sourceMapOutput?: string
   targetBinaryVersion?: string
 }) => {
   if (miniapps.length === 0 && jsApiImpls.length === 0) {
@@ -217,6 +222,7 @@ export const commandHandler = async ({
         disableDuplicateReleaseError,
         force,
         pathToYarnLock: pathToYarnLock || undefined,
+        sourceMapOutput,
         targetBinaryVersion,
       }
     )

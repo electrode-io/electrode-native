@@ -31,6 +31,10 @@ export const builder = (argv: Argv) => {
       describe: 'Perform complete regeneration',
       type: 'boolean',
     })
+    .option('sourceMapOutput', {
+      describe: 'Path to source map file to generate for this container bundle',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
@@ -38,10 +42,12 @@ export const commandHandler = async ({
   containerVersion,
   descriptor,
   fullRegen,
+  sourceMapOutput,
 }: {
   containerVersion?: string
   descriptor?: AppVersionDescriptor
   fullRegen?: boolean
+  sourceMapOutput?: string
 }) => {
   descriptor =
     descriptor ||
@@ -99,6 +105,7 @@ export const commandHandler = async ({
     `Regenerate Container of ${descriptor} native application`,
     {
       containerVersion,
+      sourceMapOutput,
     }
   )
   log.info(`${descriptor} container was successfully regenerated`)
