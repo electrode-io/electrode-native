@@ -10,7 +10,8 @@ const miniapps = [
 
 const excludeFilter = [
   'index.android.bundle',
-  'index.android.bundle.meta'
+  'index.android.bundle.meta',
+  'jniLibs/**'
 ].map(s => `**/${s}`).join(',')
 
 run(`create-container --miniapps ${miniapps.join(' ')} -p android --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)

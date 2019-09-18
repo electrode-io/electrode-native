@@ -59,3 +59,4 @@ system-tests/fixtures/android-container/.project
 system-tests/fixtures/android-container/.settings/org.eclipse.buildship.core.prefs
 ern-api-gen/test/tmp
 system-tests/fixtures/**/Libraries
+system-tests/fixtures/**/jniLibs

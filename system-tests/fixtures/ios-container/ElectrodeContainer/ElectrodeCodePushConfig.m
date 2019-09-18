@@ -36,7 +36,6 @@
         _serverURL = serverURL;
         _containerConfig = containerConfig;
     }
-    
     return self;
 }
 
@@ -59,8 +58,6 @@
                                   withExtension:@"jsbundle"
                                    subdirectory:nil
                                          bundle:[NSBundle bundleForClass:[self class]]];
-    
-    
     return url;
 }
 

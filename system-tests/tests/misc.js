@@ -74,8 +74,6 @@ run(`cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniA
 run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(`cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
 run(`cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
-run(`cauldron add dependencies react-native-code-push@5.2.1 -d ${androidNativeApplicationDescriptor}`)
-run(`cauldron add dependencies react-native-code-push@5.2.1 -d ${iosNativeApplicationDescriptor}`)
 run(`cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
 run(`cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
 run(`cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`)
@@ -97,9 +95,6 @@ run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName
 run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
 run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
 
-// Del dependency should fail because its still used by MovieListMiniApp and  js api impl
-run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`, { expectedExitCode: 1 })
-
 // Del miniapp
 run(`cauldron del miniapps ${f.movieListMiniAppPgkName} -d ${androidNativeApplicationDescriptor}`)
 
@@ -107,9 +102,6 @@ run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 
 // Del jsapiimpls
 run(`cauldron del jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
-
-// Del dependency should now succeed
-run(`cauldron del dependencies react-native-ernmovie-api -d ${androidNativeApplicationDescriptor}`)
 
 // Del nativeapp
 run(`cauldron del nativeapp ${androidNativeApplicationDescriptor}`)

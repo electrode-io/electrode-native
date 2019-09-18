@@ -2,7 +2,7 @@ trigger:
   - master
 
 schedules:
-  - cron: '00 23 * * *'
+  - cron: '00 04 * * *'
     displayName: Daily Build
     branches:
       include:
@@ -11,10 +11,13 @@ schedules:
 
 variables:
   ENV_AZURE_PIPELINE: true
+  CI_NAME: 'Azure DevOps'
+  CI_BRANCH: $(Build.SourceBranch)
+  CI_BUILD_NUMBER: $(Build.BuildNumber)
+  CI_BUILD_URL: $(Build.BuildUri)
 
 stages:
   - stage: UnitTests
-    condition: ne(variables['Build.Reason'], 'Schedule')
     jobs:
       - job: Windows
         pool:
