@@ -94,7 +94,7 @@ export default class Platform {
   public static get versions(): string[] {
     return JSON.parse(
       execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`).toString()
-    )
+    ).sort(semver.compare)
   }
 
   // Install a given platform version
