@@ -156,3 +156,13 @@ function packagePathFrom(
     `${scope ? `@${scope}/` : ''}${name}${version ? `@${version}` : ''}`
   )
 }
+
+export async function getNativeDependencyPath(dir: string, d: PackagePath) {
+  const dependencies = await findNativeDependencies(dir)
+  const dependency: NativeDependency | void = dependencies.all.find(x =>
+    x.packagePath.same(d, { ignoreVersion: true })
+  )
+  if (dependency) {
+    return dependency.path
+  }
+}

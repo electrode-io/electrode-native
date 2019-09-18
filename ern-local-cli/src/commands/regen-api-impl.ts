@@ -93,8 +93,6 @@ export const handler = async ({
           'hull'
         ),
         outDirectory: process.cwd(),
-        pluginsDownloadDirectory: PLUGIN_DIRECTORY,
-        workingDirectory: WORKING_DIRECTORY,
       },
       platforms: getPlatforms(),
       reactNativeVersion,

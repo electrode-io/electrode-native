@@ -4,10 +4,6 @@ export interface ContainerGeneratorPaths {
    */
   compositeMiniApp: string
   /**
-   * Where we download plugins
-   */
-  pluginsDownloadDirectory: string
-  /**
    * Where we output final generated container
    */
   outDirectory: string

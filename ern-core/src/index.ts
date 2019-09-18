@@ -29,6 +29,7 @@ export {
   NativeDependencies,
   findNativeDependencies,
   NativeDependency,
+  getNativeDependencyPath,
 } from './nativeDependenciesLookup'
 export { tagOneLine } from './tagoneline'
 export { YarnCli } from './YarnCli'

@@ -58,7 +58,6 @@ export async function runLocalContainerGen(
         jsMainModuleName,
         outDir,
         plugins: [...nativeDependencies, ...extraNativeDependencies],
-        pluginsDownloadDir: createTmpDir(),
         targetPlatform: platform,
       })
     )
@@ -114,7 +113,6 @@ export async function runCauldronContainerGen(
           jsMainModuleName,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           plugins,
-          pluginsDownloadDir: createTmpDir(),
           targetPlatform: platform,
         })
       )

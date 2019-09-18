@@ -36,8 +36,6 @@ export default async function generateApiImpl({
   packageName: string
   scope?: string
   paths: {
-    workingDirectory: string
-    pluginsDownloadDirectory: string
     apiImplHull: string
     outDirectory: string
   }
@@ -57,14 +55,11 @@ export default async function generateApiImpl({
       packageName,
       nativeOnly,
       hasConfig,
+      reactNativeVersion,
       scope
     )
 
     const platforms = getPlatforms(nativeOnly)
-
-    // Creates a working directory to collect all the necessary files/directories for the api-impl generation.
-    createWorkingDirectory(paths.workingDirectory)
-    createPluginsDownloadDirectory(paths.pluginsDownloadDirectory)
 
     await new ApiImplGen().generateApiImplementation(
       apiDependency,
@@ -116,11 +111,16 @@ async function createNodePackage(
   packageName: string,
   nativeOnly: boolean,
   hasConfig: boolean,
+  reactNativeVersion: string,
   scope?: string
 ) {
   shell.pushd(outputDirectoryPath)
   try {
     await yarn.init()
+    await yarn.add(
+      PackagePath.fromString(`react-native@${reactNativeVersion}`),
+      { dev: true }
+    )
     await yarn.add(apiDependency)
     shell.cp(
       path.join(
@@ -137,22 +137,12 @@ async function createNodePackage(
       packageName,
       nativeOnly,
       hasConfig,
+      reactNativeVersion,
       scope
     )
   } finally {
     shell.popd()
   }
-}
-
-function createWorkingDirectory(workingDirectoryPath: string) {
-  shell.rm('-rf', workingDirectoryPath)
-  shell.mkdir('-p', workingDirectoryPath)
-  log.debug(`Working directory created: ${workingDirectoryPath}`)
-}
-
-function createPluginsDownloadDirectory(pluginsDownloadPath: string) {
-  shell.rm('-rf', pluginsDownloadPath)
-  shell.mkdir('-p', pluginsDownloadPath)
 }
 
 function formOutputDirectoryName(
@@ -174,6 +164,7 @@ function ernifyPackageJson(
   packageName: string,
   nativeOnly: boolean,
   hasConfig: boolean,
+  reactNativeVersion: string,
   scope?: string
 ) {
   const packageJson = readPackageJsonSync(outputDirectoryPath)

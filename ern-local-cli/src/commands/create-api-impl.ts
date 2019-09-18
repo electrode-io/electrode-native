@@ -207,8 +207,6 @@ export const commandHandler = async ({
         'hull'
       ),
       outDirectory: '',
-      pluginsDownloadDirectory: PLUGIN_DIRECTORY,
-      workingDirectory: WORKING_DIRECTORY,
     },
     reactNativeVersion,
     scope,

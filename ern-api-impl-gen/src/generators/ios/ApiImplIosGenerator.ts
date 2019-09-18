@@ -46,19 +46,13 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
   ) {
     log.debug(`Starting project generation for ${this.platform}`)
     this.regenerateApiImpl = regen
-    await this.fillHull(paths, reactNativeVersion, plugins, apis)
+    await this.fillHull(paths, plugins, apis)
   }
 
-  public async fillHull(
-    paths: any,
-    reactNativeVersion: string,
-    plugins: PackagePath[],
-    apis: any[]
-  ) {
+  public async fillHull(paths: any, plugins: PackagePath[], apis: any[]) {
     try {
       const pathSpec = {
         outputDir: path.join(paths.outDirectory, 'ios'),
-        pluginsDownloadDirectory: paths.pluginsDownloadDirectory,
         projectHullDir: path.join(paths.apiImplHull, 'ios', '{.*,*}'),
         rootDir: ROOT_DIR,
       }
@@ -66,8 +60,6 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       const projectSpec = {
         projectName: 'ElectrodeApiImpl',
       }
-
-      this.injectReactNativeToPlugins(reactNativeVersion, plugins)
 
       const { iosProject, projectPath } = await iosUtil.fillProjectHull(
         pathSpec,
@@ -89,20 +81,6 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       log.error('Error while generating api impl hull for ios')
       throw e
     }
-  }
-
-  public injectReactNativeToPlugins(
-    reactNativeVersion: string,
-    plugins: PackagePath[]
-  ) {
-    const reactNativePlugin = new PackagePath(
-      `react-native@${reactNativeVersion}`
-    )
-
-    log.debug(
-      `Manually injecting react-native(${reactNativePlugin.toString()}) plugin to dependencies.`
-    )
-    plugins.push(reactNativePlugin)
   }
 
   public async getIosApiImplProject(apiImplProjectPath: string): Promise<any> {
