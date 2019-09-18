@@ -15,7 +15,7 @@ const sandbox = sinon.createSandbox()
 describe('Platform', () => {
   let ernHomePath
   const processEnvErnHomeBackup = process.env.ern_home
-  const platformVersions = '["1.0.0", "2.0.0", "3.0.0"]'
+  const platformVersions = '["1.0.0", "2.0.0", "3.0.0", "1.0.1"]'
   let execSyncStub
   let isYarnInstalledReturn = true
   let throwOnExecSync = false
@@ -208,8 +208,8 @@ describe('Platform', () => {
   })
 
   describe('versions', () => {
-    it('should return the list of versions', () => {
-      expect(Platform.versions).eql(JSON.parse(platformVersions))
+    it('should return the list of versions in ascending order', () => {
+      expect(Platform.versions).eql(['1.0.0', '1.0.1', '2.0.0', '3.0.0'])
     })
   })
 
