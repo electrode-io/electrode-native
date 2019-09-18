@@ -66,7 +66,7 @@ export function readJSONSync(filePath: string): any {
  * @param obj The object to store as JSON
  */
 export async function writeJSON(filePath: string, obj: any): Promise<string> {
-  await writeFile(filePath, JSON.stringify(obj, null, 2))
+  await writeFile(filePath, JSON.stringify(obj, null, 2).concat('\n'))
   return filePath
 }
 
@@ -77,7 +77,7 @@ export async function writeJSON(filePath: string, obj: any): Promise<string> {
  * @param obj The object to store as JSON
  */
 export function writeJSONSync(filePath: string, obj: any): string {
-  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2))
+  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2).concat('\n'))
   return filePath
 }
 

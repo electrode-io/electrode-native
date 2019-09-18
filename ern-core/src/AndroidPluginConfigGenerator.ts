@@ -11,16 +11,15 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
 import {{fullyQualifiedPackageClassName}};
 
 public class {{packageClassName}}Plugin implements ReactPlugin {
-    public ReactPackage hook(@NonNull Application application,
-                     @Nullable ReactPluginConfig config) {
+    public ReactPackage hook(@NonNull Application application, @Nullable ReactPluginConfig config) {
         return new {{packageClassName}}();
     }
-}`
+}
+`
 
 export class AndroidPluginConfigGenerator {
   public static fromPath(p: string) {
@@ -99,7 +98,7 @@ export class AndroidPluginConfigGenerator {
           if (x.group) {
             return `${x.group}:${x.name}:${x.version}`
           } else {
-            // Handle this kind of string where version is dynnamicaly retrieved
+            // Handle this kind of string where version is dynamically retrieved
             // "com.android.support:exifinterface:${safeExtGet('supportLibVersion', '28.0.0')}"
             const match = x.name.replace('"', '').match(/^(.+):(.+):(.+)/)
             if (match) {
