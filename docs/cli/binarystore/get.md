@@ -18,6 +18,13 @@
 
 * Relative or absolute path to a directory where the binary will be transfered to. If the directory does not exist, it will be ecreated.
 
+**Options**
+
+`--flavor`
+
+* Custom flavor of this binary that should be retrieved.
+* The binary of a specific application version (for ex `1.0.0`) can have different flavors, representing different build types of the same application version (for example `Dev`/`Prod`/`QA` ...).
+
 #### Remarks
 
 * This command will only work if the following conditions are met:

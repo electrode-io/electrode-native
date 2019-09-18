@@ -21,11 +21,11 @@ describe('ErnBinaryStore', () => {
   })
 
   function prepareStubs({
-    execpReturn = true,
+    execpReturn = '200',
   }: {
     execpReturn?: any
   } = {}) {
-    execpStub.returns(execpReturn)
+    execpStub.resolves(execpReturn)
   }
 
   const descriptor = AppVersionDescriptor.fromString('test:android:17.7.0')
@@ -37,15 +37,6 @@ describe('ErnBinaryStore', () => {
     'ErnBinaryStore',
     'fakebinary.apk'
   )
-  const fakeBinaryZippedPath = path.join(
-    __dirname,
-    'fixtures',
-    'ErnBinaryStore',
-    'test-android-17.7.0.zip'
-  )
-  const expectedFakeBinaryZipContent = fs
-    .readFileSync(fakeBinaryZippedPath)
-    .toString()
 
   describe('addBinary', () => {
     const httpCurlPostRe = /curl -XPOST http:\/\/binarystore -F file=@"(.+)"/
@@ -58,7 +49,7 @@ describe('ErnBinaryStore', () => {
   })
 
   describe('removeBinary', () => {
-    it('should use curl to DELETE the binary from the binary store', async () => {
+    it('should use curl to DELETE the binary from the binary store [non flavored]', async () => {
       prepareStubs()
       const sut = createBinaryStore()
       await sut.removeBinary(descriptor)
@@ -68,8 +59,20 @@ describe('ErnBinaryStore', () => {
       )
     })
 
+    it('should use curl to DELETE the binary from the binary store [flavored]', async () => {
+      prepareStubs()
+      const sut = createBinaryStore()
+      await sut.removeBinary(descriptor, { flavor: 'QA' })
+      sandbox.assert.calledWith(
+        execpStub,
+        sinon.match(
+          'curl -XDELETE http://binarystore/test-android-17.7.0-QA.zip'
+        )
+      )
+    })
+
     it('should throw if the binary does not exist', async () => {
-      prepareStubs({ execpReturn: false })
+      prepareStubs({ execpReturn: '404' })
       const sut = createBinaryStore()
       assert(await doesThrow(sut.removeBinary, sut, descriptor))
     })
@@ -77,7 +80,7 @@ describe('ErnBinaryStore', () => {
 
   describe('getBinary', () => {
     it('should throw if the binary does not exist', async () => {
-      prepareStubs({ execpReturn: false })
+      prepareStubs({ execpReturn: '404' })
       const sut = createBinaryStore()
       assert(await doesThrow(sut.getBinary, sut, descriptor))
     })
@@ -93,7 +96,7 @@ describe('ErnBinaryStore', () => {
       )
     })
 
-    it('should properly name the zip file', async () => {
+    it('should properly name the zip file [non flavored]', async () => {
       prepareStubs()
       const sut = createBinaryStore()
       const zippedBinaryPath = await sut.zipBinary(
@@ -102,6 +105,50 @@ describe('ErnBinaryStore', () => {
       )
       const actualZipFileName = path.basename(zippedBinaryPath)
       expect(actualZipFileName).eql('test-android-17.7.0.zip')
+    })
+
+    it('should properly name the zip file [flavored]', async () => {
+      prepareStubs()
+      const sut = createBinaryStore()
+      const zippedBinaryPath = await sut.zipBinary(
+        descriptor,
+        fakeBinaryApkPath,
+        { flavor: 'QA' }
+      )
+      const actualZipFileName = path.basename(zippedBinaryPath)
+      expect(actualZipFileName).eql('test-android-17.7.0-QA.zip')
+    })
+  })
+
+  describe('buildZipBinaryFileName', () => {
+    it('should build the correct file name [non flavored]', () => {
+      prepareStubs()
+      const sut = createBinaryStore()
+      const fileName = sut.buildZipBinaryFileName(descriptor)
+      expect(fileName).eql('test-android-17.7.0.zip')
+    })
+
+    it('should build the correct file name [flavored]', () => {
+      const sut = createBinaryStore()
+      const fileName = sut.buildZipBinaryFileName(descriptor, { flavor: 'QA' })
+      expect(fileName).eql('test-android-17.7.0-QA.zip')
+    })
+  })
+
+  describe('buildNativeBinaryFileName', () => {
+    it('should build the correct file name [non flavored]', () => {
+      prepareStubs()
+      const sut = createBinaryStore()
+      const fileName = sut.buildNativeBinaryFileName(descriptor)
+      expect(fileName).eql('test-android-17.7.0.apk')
+    })
+
+    it('should build the correct file name [flavored]', () => {
+      const sut = createBinaryStore()
+      const fileName = sut.buildNativeBinaryFileName(descriptor, {
+        flavor: 'QA',
+      })
+      expect(fileName).eql('test-android-17.7.0-QA.apk')
     })
   })
 })
