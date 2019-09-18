@@ -18,75 +18,115 @@ export class ErnBinaryStore implements BinaryStore {
 
   public async addBinary(
     descriptor: NativeApplicationDescriptor,
-    binaryPath: fs.PathLike
+    binaryPath: fs.PathLike,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
   ): Promise<string | Buffer> {
-    const pathToBinary = await this.zipBinary(descriptor, binaryPath)
+    const pathToBinary = await this.zipBinary(descriptor, binaryPath, {
+      flavor,
+    })
     return execp(`curl -XPOST ${this.config.url} -F file=@"${pathToBinary}"`)
   }
 
   public async removeBinary(
-    descriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
   ): Promise<string | Buffer> {
-    await this.throwIfNoBinaryExistForDescriptor(descriptor)
-    return execp(`curl -XDELETE ${this.urlToBinary(descriptor)}`)
+    await this.throwIfNoBinaryExistForDescriptor(descriptor, { flavor })
+    return execp(`curl -XDELETE ${this.urlToBinary(descriptor, { flavor })}`)
   }
 
   public async getBinary(
     descriptor: NativeApplicationDescriptor,
     {
+      flavor,
       outDir,
     }: {
+      flavor?: string
       outDir?: string
     } = {}
   ): Promise<string> {
-    await this.throwIfNoBinaryExistForDescriptor(descriptor)
-    const pathToZippedBinary = await this.getZippedBinary(descriptor)
+    await this.throwIfNoBinaryExistForDescriptor(descriptor, { flavor })
+    const pathToZippedBinary = await this.getZippedBinary(descriptor, {
+      flavor,
+    })
     if (outDir && !fs.existsSync(outDir)) {
       shell.mkdir('-p', outDir)
     }
-    return this.unzipBinary(descriptor, pathToZippedBinary, { outDir })
+    return this.unzipBinary(descriptor, pathToZippedBinary, { flavor, outDir })
   }
 
   public async hasBinary(
-    descriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
   ): Promise<string | Buffer> {
     return execp(
       `curl -XOPTIONS -s -o /dev/null -w '%{http_code}' ${this.urlToBinary(
-        descriptor
+        descriptor,
+        { flavor }
       )}`
     )
   }
 
   public async getZippedBinary(
-    descriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
   ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const tmpOutDir = createTmpDir()
       const outputFilePath = path.join(
         tmpOutDir,
-        this.buildZipBinaryFileName(descriptor)
+        this.buildZipBinaryFileName(descriptor, { flavor })
       )
       const outputFile = fs.createWriteStream(outputFilePath)
-      const curl = spawn('curl', [this.urlToBinary(descriptor)])
+      const curl = spawn('curl', [this.urlToBinary(descriptor, { flavor })])
       curl.stdout.pipe(outputFile)
       outputFile.on('error', err => reject(err))
       curl.on('close', err => (err ? reject(err) : resolve(outputFilePath)))
     })
   }
-
-  public urlToBinary(descriptor: NativeApplicationDescriptor) {
-    return `${this.config.url}/${this.buildZipBinaryFileName(descriptor)}`
+  public urlToBinary(
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
+  ) {
+    return `${this.config.url}/${this.buildZipBinaryFileName(descriptor, {
+      flavor,
+    })}`
   }
 
   public async zipBinary(
     descriptor: NativeApplicationDescriptor,
-    binaryPath: fs.PathLike
+    binaryPath: fs.PathLike,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
   ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const tmpOutDir = createTmpDir()
       const pathToZipFile = path.join(
         tmpOutDir,
-        this.buildZipBinaryFileName(descriptor)
+        this.buildZipBinaryFileName(descriptor, { flavor })
       )
       const outputZipStream = fs.createWriteStream(pathToZipFile)
       const archive = archiver('zip', { zlib: { level: 9 } })
@@ -108,8 +148,10 @@ export class ErnBinaryStore implements BinaryStore {
     descriptor: NativeApplicationDescriptor,
     zippedBinaryPath: string,
     {
+      flavor,
       outDir,
     }: {
+      flavor?: string
       outDir?: string
     } = {}
   ): Promise<string> {
@@ -117,7 +159,7 @@ export class ErnBinaryStore implements BinaryStore {
       const outputDirectory = outDir || createTmpDir()
       const pathToOutputBinary = path.join(
         outputDirectory,
-        this.buildNativeBinaryFileName(descriptor)
+        this.buildNativeBinaryFileName(descriptor, { flavor })
       )
       const unzipper = new DecompressZip(zippedBinaryPath)
       unzipper.on('error', err => reject(err))
@@ -135,23 +177,39 @@ export class ErnBinaryStore implements BinaryStore {
     })
   }
 
-  public buildZipBinaryFileName(descriptor: NativeApplicationDescriptor) {
+  public buildZipBinaryFileName(
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
+  ) {
     if (!descriptor.version || !descriptor.platform) {
       throw new Error(
         '[buildZipBinaryFileName] Require a complete native application descriptor'
       )
     }
-    return `${descriptor.name}-${descriptor.platform}-${descriptor.version}.zip`
+    return `${descriptor.name}-${descriptor.platform}-${descriptor.version}${
+      flavor ? `-${flavor}` : ''
+    }.zip`
   }
 
-  public buildNativeBinaryFileName(descriptor: NativeApplicationDescriptor) {
+  public buildNativeBinaryFileName(
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
+  ) {
     if (!descriptor.version || !descriptor.platform) {
       throw new Error(
         '[buildNativeBinaryFileName] Require a complete native application descriptor'
       )
     }
-    return `${descriptor.name}-${descriptor.platform}-${
-      descriptor.version
+    return `${descriptor.name}-${descriptor.platform}-${descriptor.version}${
+      flavor ? `-${flavor}` : ''
     }.${this.getNativeBinaryFileExt(descriptor.platform)}`
   }
 
@@ -160,11 +218,18 @@ export class ErnBinaryStore implements BinaryStore {
   }
 
   public async throwIfNoBinaryExistForDescriptor(
-    descriptor: NativeApplicationDescriptor
+    descriptor: NativeApplicationDescriptor,
+    {
+      flavor,
+    }: {
+      flavor?: string
+    } = {}
   ) {
-    if (!(await this.hasBinary(descriptor))) {
+    if ((await this.hasBinary(descriptor, { flavor })) === '404') {
       throw new Error(
-        `No binary associated to ${descriptor} was found in the store`
+        `No binary associated to ${descriptor} ${
+          flavor ? `[flavor: ${flavor}]` : ''
+        } was found in the store`
       )
     }
   }

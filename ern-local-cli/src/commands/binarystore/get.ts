@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { NativeApplicationDescriptor, kax, log } from 'ern-core'
 import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
@@ -11,15 +11,21 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('flavor', {
+      describe: 'Custom flavor of this binary',
+      type: 'string',
+    })
     .normalize('outDir')
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   descriptor,
+  flavor,
   outDir,
 }: {
   descriptor: NativeApplicationDescriptor
+  flavor?: string
   outDir: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
@@ -27,8 +33,17 @@ export const commandHandler = async ({
   })
 
   const binaryStore = await getBinaryStoreFromCauldron()
-  const pathToBinary = await binaryStore.getBinary(descriptor, { outDir })
-  log.info(`Binary was successfuly downloaded in ${pathToBinary}`)
+  const pathToBinary = await kax.task('Downloading binary from store').run(
+    binaryStore.getBinary(descriptor, {
+      flavor,
+      outDir,
+    })
+  )
+  log.info(
+    `${descriptor} binary ${
+      flavor ? `[flavor: ${flavor}]` : ''
+    } was successfuly downloaded from the store [path: ${pathToBinary}]`
+  )
 }
 
 export const handler = tryCatchWrap(commandHandler)

@@ -1,4 +1,4 @@
-import { NativeApplicationDescriptor, log } from 'ern-core'
+import { NativeApplicationDescriptor, kax, log } from 'ern-core'
 import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
@@ -11,21 +11,33 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d =>
       NativeApplicationDescriptor.fromString(d, { throwIfNotComplete: true })
     )
+    .option('flavor', {
+      describe: 'Custom flavor of this binary',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   descriptor,
+  flavor,
 }: {
   descriptor: NativeApplicationDescriptor
+  flavor?: string
 }) => {
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: { descriptor },
   })
 
   const binaryStore = await getBinaryStoreFromCauldron()
-  await binaryStore.removeBinary(descriptor)
-  log.info(`${descriptor} binary was successfuly removed from the store`)
+  await kax
+    .task('Removing binary from store')
+    .run(binaryStore.removeBinary(descriptor, { flavor }))
+  log.info(
+    `${descriptor} binary ${
+      flavor ? `[flavor: ${flavor}]` : ''
+    } was successfuly removed from the store`
+  )
 }
 
 export const handler = tryCatchWrap(commandHandler)

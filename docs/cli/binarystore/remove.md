@@ -14,6 +14,13 @@
 
 * A complete native application descriptor (ex: `myapp:android:1.0.0`), representing the native application version associated to this binary.
 
+**Options**  
+
+`--flavor`
+
+* Custom flavor of the binary that should be removed.
+* The binary of a specific application version (for ex `1.0.0`) can have different flavors, representing different build types of the same application version (for example `Dev`/`Prod`/`QA` ...).
+
 #### Remarks
 
 * This command will only work if the following conditions are met:
