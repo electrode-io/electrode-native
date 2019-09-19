@@ -58,9 +58,7 @@ function regenAndroidContainerFixture() {
   shell.exec(
     `ern create-container --miniapps ${containerMiniapps.join(
       ' '
-    )} -p android --dependencies react-native-code-push@5.2.1 --out ${
-      pathsToFixtures['android-container']
-    }`
+    )} -p android --out ${pathsToFixtures['android-container']}`
   )
 }
 
@@ -70,9 +68,7 @@ function regenIosContainerFixture() {
   shell.exec(
     `ern create-container --miniapps ${containerMiniapps.join(
       ' '
-    )} -p ios --dependencies react-native-code-push@5.2.1 --out ${
-      pathsToFixtures['ios-container']
-    }`
+    )} -p ios --out ${pathsToFixtures['ios-container']}`
   )
 }
 

@@ -36,17 +36,10 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('baseComposite', d => PackagePath.fromString(d))
-    .option('dependencies', {
-      alias: 'deps',
-      describe:
-        'A list of one or more extra native dependencies to include in this container',
-      type: 'array',
-    })
     .option('compositeDir', {
       describe: 'Directory in which to generate the Composite',
       type: 'string',
     })
-    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -96,7 +89,6 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   baseComposite,
   compositeDir,
-  dependencies,
   descriptor,
   extra,
   fromGitBranches,
@@ -108,7 +100,6 @@ export const commandHandler = async ({
 }: {
   baseComposite?: PackagePath
   compositeDir?: string
-  dependencies?: PackagePath[]
   descriptor?: AppVersionDescriptor
   extra?: string
   fromGitBranches?: boolean
@@ -128,14 +119,6 @@ Output directory should either not exist (it will be created) or should be empty
   }
 
   compositeDir = compositeDir || createTmpDir()
-
-  await logErrorAndExitIfNotSatisfied({
-    noGitOrFilesystemPath: {
-      extraErrorMessage:
-        'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
-      obj: dependencies,
-    },
-  })
 
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && !miniapps) {
@@ -171,12 +154,6 @@ Output directory should either not exist (it will be created) or should be empty
       baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
   }
 
-  if (dependencies && descriptor) {
-    throw new Error(
-      `You cannot provide extra native dependencies, when creating a Container from Cauldron`
-    )
-  }
-
   if (!descriptor && miniapps) {
     platform = platform || (await askUserToSelectAPlatform())
 
@@ -192,7 +169,6 @@ Output directory should either not exist (it will be created) or should be empty
     await kax.task('Generating Container locally').run(
       runLocalContainerGen(platform, composite, {
         extra: extraObj,
-        extraNativeDependencies: dependencies || [],
         ignoreRnpmAssets,
         outDir,
       })
