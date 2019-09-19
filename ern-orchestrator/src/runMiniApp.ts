@@ -32,7 +32,6 @@ export async function runMiniApp(
     mainMiniAppName,
     miniapps,
     jsApiImpls,
-    dependencies,
     descriptor,
     dev,
     host,
@@ -44,7 +43,6 @@ export async function runMiniApp(
     mainMiniAppName?: string
     miniapps?: PackagePath[]
     jsApiImpls?: PackagePath[]
-    dependencies?: PackagePath[]
     descriptor?: string | AppVersionDescriptor
     dev?: boolean
     host?: string
@@ -74,12 +72,6 @@ export async function runMiniApp(
     dev = false
     log.warn(
       'Turning off dev mode since you are running multiple MiniApps. \nIf you want to start a packager, execute `ern start` command with all the miniapps in a separate terminal.\nCheck this link for more details: https://native.electrode.io/cli-commands/start'
-    )
-  }
-
-  if (dependencies && dependencies.length > 0 && descriptor) {
-    throw new Error(
-      'You cannot pass extra native dependencies when using a Native Application Descriptor'
     )
   }
 
@@ -161,7 +153,6 @@ export async function runMiniApp(
   const outDir = Platform.getContainerGenOutDirectory(platform)
   const containerGenResult = await generateContainerForRunner(platform, {
     baseComposite,
-    dependencies,
     extra, // JavaScript object to pass extras e.x. androidConfig
     jsApiImpls,
     jsMainModuleName,

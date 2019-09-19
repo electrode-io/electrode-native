@@ -13,5 +13,5 @@ const excludeFilter = [
     'ElectrodeContainer/Libraries/**'
 ].map(s => `**/${s}`).join(',')
 
-run(`create-container --miniapps ${miniapps.join(' ')} -p ios --dependencies react-native-code-push@5.2.1 --out ${process.cwd()}`)
+run(`create-container --miniapps ${miniapps.join(' ')} -p ios --out ${process.cwd()}`)
 assert(sameDirContent(f.pathToIosContainerFixture, process.cwd(), {excludeFilter}), 'Generated IOS Container differ from reference fixture !')

@@ -116,16 +116,6 @@ describe('runMiniApp', () => {
     )
   })
 
-  it('should throw if native dependencies are provided along with a descriptor', async () => {
-    prepareStubs()
-    assert(
-      await doesThrow(runMiniApp, null, 'android', {
-        dependencies: [PackagePath.fromString('dep@1.0.0')],
-        descriptor: testAndroid1770Descriptor,
-      })
-    )
-  })
-
   it('should throw if js api implementations are provided along with a descriptor', async () => {
     prepareStubs()
     assert(
@@ -187,7 +177,6 @@ describe('runMiniApp', () => {
     await runMiniApp('android')
     sandbox.assert.calledWith(generateContainerForRunnerStub, 'android', {
       baseComposite: undefined,
-      dependencies: undefined,
       extra: undefined,
       jsApiImpls: undefined,
       jsMainModuleName: 'index.android',

@@ -16,75 +16,75 @@
 		48500A991E2FF55B009B6610 /* ElectrodeReactNative.m in Sources */ = {isa = PBXBuildFile; fileRef = 48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */; };
 		968333D71E54E3470031C565 /* ElectrodeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		968333D81E54E3470031C565 /* ElectrodeBridgeDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */; };
-		17F9BBE36AA444F1A53DD3BA /* BirthYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F25758546444D4993DFD2AB /* BirthYear.swift */; };
-		621D3BE9BE174B848014B724 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32577FAF83EB4D85A0C6086C /* Movie.swift */; };
-		698A5D4A095642C091F5477D /* MoviesAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59659E6D2B646BD8FF2B76C /* MoviesAPI.swift */; };
-		5E191AEF07014C969884FD44 /* MoviesRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F2D92E531944999C2FA94D /* MoviesRequests.swift */; };
-		E5EBA99AE76843D1AA31F75F /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76EFE1AFF381405DA742CCBA /* Person.swift */; };
-		D03233D34FB54E2996B7E888 /* Synopsis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B972CBF3E9194CDD81062262 /* Synopsis.swift */; };
-		67E9AC7838AC435787B9CAB2 /* BirthYear.swift in Headers */ = {isa = PBXBuildFile; fileRef = 1F25758546444D4993DFD2AB /* BirthYear.swift */; settings = {ATTRIBUTES = (Public, ); }; };
-		6BC658B0A5754B54AA1D3756 /* Movie.swift in Headers */ = {isa = PBXBuildFile; fileRef = 32577FAF83EB4D85A0C6086C /* Movie.swift */; settings = {ATTRIBUTES = (Public, ); }; };
-		3F7C0D2182CB494D9305E41E /* MoviesAPI.swift in Headers */ = {isa = PBXBuildFile; fileRef = D59659E6D2B646BD8FF2B76C /* MoviesAPI.swift */; settings = {ATTRIBUTES = (Public, ); }; };
-		03E2C9E5EB8A44B9B726D480 /* MoviesRequests.swift in Headers */ = {isa = PBXBuildFile; fileRef = 02F2D92E531944999C2FA94D /* MoviesRequests.swift */; settings = {ATTRIBUTES = (Public, ); }; };
-		538BB29EB8E848629B30FACB /* Person.swift in Headers */ = {isa = PBXBuildFile; fileRef = 76EFE1AFF381405DA742CCBA /* Person.swift */; settings = {ATTRIBUTES = (Public, ); }; };
-		268A70B25D8C4D7BB2C3055E /* Synopsis.swift in Headers */ = {isa = PBXBuildFile; fileRef = B972CBF3E9194CDD81062262 /* Synopsis.swift */; settings = {ATTRIBUTES = (Public, ); }; };
-		E2CAEE0394964492A5741FA7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2163673E1FBB4547A0575D61 /* libReact.a */; };
-		97B61AEC83CA4845981BF185 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F539D42E8824547997A6B4B /* libRCTActionSheet.a */; };
-		6186A0590B94417CA0789B87 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52F853B00B524AEE8582550C /* libRCTImage.a */; };
-		A6847D9AC2414BC6A075BCE9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF1965BFBB8418CBD9C2028 /* libRCTAnimation.a */; };
-		A464496F8883443799F63A0C /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46CA8B012C1D4BDC920F1ADE /* libRCTText.a */; };
-		1BA9A5C9228B4B14A5B77C0F /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BA939B8D34947B3AD376DF2 /* libRCTWebSocket.a */; };
-		6F35BF7E2E834D2CAC622E73 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 093C5CF55E8E451BACC8C3C1 /* libRCTLinking.a */; };
-		F3B1DB57EF4C412BABFB831C /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A11C9F1621742C296929FA9 /* libRCTNetwork.a */; };
-		9B3CE81E7BCC4B88815994B6 /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB7EE00D55A47C6AB7E9A6D /* libRCTSettings.a */; };
-		2AA78FF16E4E4762B842A55E /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6669E888B44EB288CFF90B /* libRCTVibration.a */; };
-		239A99D6A86647EAAE8A2613 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D24904D68A146CB944BDB6A /* libRCTCameraRoll.a */; };
-		FB999956ECE44DB1A0B372E0 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF6A34CAA2AE410F9E22E5A4 /* libART.a */; };
-		503343D5795A4AA8BED248B5 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8E38019534D4A61867AF384 /* JavaScriptCore.framework */; };
-		40E4DE49FA5A4EBB8EE19C0E /* ElectrodeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA740D19C6439C87674376 /* ElectrodeObject.swift */; };
-		43A42C5435E64142B403D802 /* Bridgeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCF1085175D4D939D78FBEB /* Bridgeable.swift */; };
-		BCC72818F21E4271A6F16C79 /* ElectrodeRequestHandlerProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9E7EFE74BE44D0A833BE64 /* ElectrodeRequestHandlerProcessor.swift */; };
-		F3B464D51C584D2181B3DF02 /* ElectrodeRequestProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB5BA0E931642EFA30DEB1C /* ElectrodeRequestProcessor.swift */; };
-		8227091E1B3C48CE894AB0BC /* ElectrodeUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB6238650894E74ACA7FE20 /* ElectrodeUtilities.swift */; };
-		AC1BC14219474B51BD634516 /* EventListenerProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7417E585F29C4AC1A4A71F1E /* EventListenerProcessor.swift */; };
-		042CA74EED674A4EBBB089E1 /* EventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F813FFD98642208CD13A34 /* EventProcessor.swift */; };
-		541B9D6E21574F52A6EBE30D /* Processor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B307A8AB0E94F668164004A /* Processor.swift */; };
-		82B7790435514A118E9DE1E4 /* None.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71DEA81E3EB04CF3A110ED23 /* None.swift */; };
-		8846DD68BE664FA9B5B7BD68 /* ElectrodeBridgeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = AF09C124578E4C39B702982C /* ElectrodeBridgeEvent.m */; };
-		9F542D8434FA4BB0BD564A86 /* ElectrodeBridgeFailureMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 437D493B38C1474693BAFE3C /* ElectrodeBridgeFailureMessage.m */; };
-		35048AB565E54DDEACD171FB /* ElectrodeBridgeHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = FF8B307F88F6407687247688 /* ElectrodeBridgeHolder.m */; };
-		0367D3E0536B4740B1D9F32A /* ElectrodeBridgeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = D5FE78CCE6F344BE9379A271 /* ElectrodeBridgeMessage.m */; };
-		9CBA3A9FF3494882A900D0A8 /* ElectrodeBridgeProtocols.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CADAC653B4242932D9EB3 /* ElectrodeBridgeProtocols.m */; };
-		532E6AABCFF942C1AE355350 /* ElectrodeBridgeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 711E033A952B4F0B8FFEC4EF /* ElectrodeBridgeRequest.m */; };
-		2D506DCDC0AB4B58A64CE168 /* ElectrodeBridgeResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EDC4887006042358F896BE6 /* ElectrodeBridgeResponse.m */; };
-		A73113FBBE2F41A8AC5AE320 /* ElectrodeBridgeTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 78BE42EACB2D4244BC96353D /* ElectrodeBridgeTransaction.m */; };
-		70CDBF3E7F664A42B81CE6A0 /* ElectrodeBridgeTransceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = D666310F92164214B8C5C5F3 /* ElectrodeBridgeTransceiver.m */; };
-		5DFBC149AC924B408761C3A1 /* ElectrodeEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 04EBB62A17D746DCB7B877D3 /* ElectrodeEventDispatcher.m */; };
-		DD64CDC4F7F84E97A4C6EF2F /* ElectrodeEventRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = EC3D187B3F3A4708BEC072F8 /* ElectrodeEventRegistrar.m */; };
-		376BA731D3CC4D07964DEE2E /* ElectrodeRequestDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 215FB55EC64548D4939BF18E /* ElectrodeRequestDispatcher.m */; };
-		09C710E91931490C8049AF08 /* ElectrodeRequestRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5C8384B9074307AAD6C340 /* ElectrodeRequestRegistrar.m */; };
-		34B7A53EA4BA43D2AFE64DAD /* ElectrodeLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 547222CF195143DCB495589B /* ElectrodeLogger.m */; };
-		190FF83CCCF247FE99EBAD7D /* ElectrodeBridgeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 20CC50214889402B8E47277D /* ElectrodeBridgeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D440D9E3FAC14F4AA04D4C72 /* ElectrodeBridgeFailureMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 365BFCCFAB26455484285EAD /* ElectrodeBridgeFailureMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3F662DB6B7F545668CBF08D3 /* ElectrodeBridgeHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 71CF888ECD554273AF543F42 /* ElectrodeBridgeHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A1A291FA155463A93C669B8 /* ElectrodeBridgeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A2B63A70BC43818832D23A /* ElectrodeBridgeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5799067C1D074A2FB7E9B459 /* ElectrodeBridgeProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = EA06960BB3DE4F95BFD1E2DF /* ElectrodeBridgeProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7D8640D2B0D44F5786D0759B /* ElectrodeBridgeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AC0A66FCDD94F3F901320B8 /* ElectrodeBridgeRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3272331405244CF29783B090 /* ElectrodeBridgeTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F0F3BAEDC0943C0BA0C6098 /* ElectrodeBridgeTransaction.h */; };
-		757AF383E3894832AE8E3279 /* ElectrodeBridgeTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B508CFE50D48C1BE2A5B0D /* ElectrodeBridgeTransceiver.h */; };
-		09B91F020F914B44A9E3488A /* ElectrodeBridgeTransceiver_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A3579EA890148F0ABFDACEB /* ElectrodeBridgeTransceiver_Internal.h */; };
-		8F4940B6E81A4EE0AF5392B1 /* ElectrodeEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 94334412DD1E4BF4BF8A23BB /* ElectrodeEventDispatcher.h */; };
-		5BBAAB580D9C4025A91933D7 /* ElectrodeEventRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = C45F7A27F67D41D8B6AEACEC /* ElectrodeEventRegistrar.h */; };
-		11BABFEAA5FF4046A6577886 /* ElectrodeRequestDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BA0429C1254A88AB2302ED /* ElectrodeRequestDispatcher.h */; };
-		5D085CB40EF04EA3B0C8CDDE /* ElectrodeRequestRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2058BBE9DD1940348C7405C8 /* ElectrodeRequestRegistrar.h */; };
-		F3CE3EF3A6964F6C8DC899ED /* ElectrodeReactNativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A2A494997714B58B8994BF6 /* ElectrodeReactNativeBridge.h */; };
-		796B5DD624CE48889A97A1C2 /* ElectrodeBridgeResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = B973E396C8CD45A88CE6215F /* ElectrodeBridgeResponse.h */; };
-		E6F6B4EFE04A4643B59AB141 /* ElectrodeLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3D32B845DA4C2893A63BD1 /* ElectrodeLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1E671501B8EF4CEE84075D81 /* RequestHandlerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343D7D096D48448E8AECA6AD /* RequestHandlerConfig.swift */; };
-		7A68CB947D8C4AFDA9EF1DD6 /* RequestHandlerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00787F496C8443FFB3CF5DFA /* RequestHandlerProvider.swift */; };
-		8DFF7D1CDA3F4A96AB92E972 /* MoviesApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163CF902F6E54272B01E422F /* MoviesApiController.swift */; };
-		C81EFF38AF1140E1B8A7B3D0 /* MoviesApiRequestHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073D0BD3EC5843D284360737 /* MoviesApiRequestHandlerDelegate.swift */; };
-		3533ACC77CA9453EB8F2D976 /* MoviesApiRequestHandlerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260698F5493747E596DDD18E /* MoviesApiRequestHandlerProvider.swift */; };
+		9FFFB709FA934199B8371C61 /* BirthYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 922AB0516B794DE199B9C2FA /* BirthYear.swift */; };
+		B564A86FC75846948872FAE3 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89444EF457C44E4BA8568BF4 /* Movie.swift */; };
+		77C865A1071F4320A4015BCC /* MoviesAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9F065F09BA497C9D19A8F4 /* MoviesAPI.swift */; };
+		FA670D7560914A589B0FCE2B /* MoviesRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2040C7A12F48B99AFDB78E /* MoviesRequests.swift */; };
+		C636FC82FEF4421CAB6CC086 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A87EEFE9D02499B88560CB1 /* Person.swift */; };
+		FCCC88BA9B40441881CB2CCA /* Synopsis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746E0A02ADE6412EB6410CDB /* Synopsis.swift */; };
+		95FA7029C262409882F17FFF /* BirthYear.swift in Headers */ = {isa = PBXBuildFile; fileRef = 922AB0516B794DE199B9C2FA /* BirthYear.swift */; settings = {ATTRIBUTES = (Public, ); }; };
+		675152A6B90D48F6B5E5423C /* Movie.swift in Headers */ = {isa = PBXBuildFile; fileRef = 89444EF457C44E4BA8568BF4 /* Movie.swift */; settings = {ATTRIBUTES = (Public, ); }; };
+		11CDB21C18AD48418FD47233 /* MoviesAPI.swift in Headers */ = {isa = PBXBuildFile; fileRef = 3D9F065F09BA497C9D19A8F4 /* MoviesAPI.swift */; settings = {ATTRIBUTES = (Public, ); }; };
+		205CE59DB2054B0F9A002AB0 /* MoviesRequests.swift in Headers */ = {isa = PBXBuildFile; fileRef = 4B2040C7A12F48B99AFDB78E /* MoviesRequests.swift */; settings = {ATTRIBUTES = (Public, ); }; };
+		164210A9789C4649A3528D7C /* Person.swift in Headers */ = {isa = PBXBuildFile; fileRef = 3A87EEFE9D02499B88560CB1 /* Person.swift */; settings = {ATTRIBUTES = (Public, ); }; };
+		5796ABC351204FA28783A1D0 /* Synopsis.swift in Headers */ = {isa = PBXBuildFile; fileRef = 746E0A02ADE6412EB6410CDB /* Synopsis.swift */; settings = {ATTRIBUTES = (Public, ); }; };
+		1D29B26C1DF14F00904D7AC7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 342ACF96D6004DC3BA3ECB4A /* libReact.a */; };
+		F38D5A88B53245EC8602899B /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8377F0EC1644AD087327E76 /* libRCTActionSheet.a */; };
+		9EFE1764FF904EABA3C3C567 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756CCFE460A74914B31F152F /* libRCTImage.a */; };
+		1DFD252BC2674C6695E497A7 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A00A5B08C01A4E9FAB6AC128 /* libRCTAnimation.a */; };
+		D18E55B006A74C8E93F222DD /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D31630C788847C795184181 /* libRCTText.a */; };
+		731C7D69EC664CB0AB9E26D0 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA8CB8DF5660447DB08588B9 /* libRCTWebSocket.a */; };
+		CEF4A00F578A4B5A923F335D /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D587F64962B54B42BCE87221 /* libRCTLinking.a */; };
+		E891452223214EFDB4D832C3 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 29279E8AB8A34CADBF2E12E5 /* libRCTNetwork.a */; };
+		D31F656E0C4F44D3A1CE5F64 /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 879203F5F2D04719A2E77912 /* libRCTSettings.a */; };
+		7ED53936168041438C60A6BC /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57C87EFEFAC746178BA5AD09 /* libRCTVibration.a */; };
+		59D427DD6D244CBE8E650DBE /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8750E888785C4AC5B682995C /* libRCTCameraRoll.a */; };
+		9EAF4616667E4D5E946ACDC3 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0521DEC3C240BCBBAAABEF /* libART.a */; };
+		C3CBC753A1FB4911A4DB720B /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5956E2AADA44929787B251 /* JavaScriptCore.framework */; };
+		BBC1A7AF1CEB451A93DAD2CD /* ElectrodeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A36683066BC490889DF4393 /* ElectrodeObject.swift */; };
+		C13F2C3D2330409F994D2E31 /* Bridgeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8673ED2F04D47958AE2E8DC /* Bridgeable.swift */; };
+		FA96F01717664CA7B932C20E /* ElectrodeRequestHandlerProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED899B5E7CDA465C8D654D54 /* ElectrodeRequestHandlerProcessor.swift */; };
+		0D26150FE4EA4A85AEF975B9 /* ElectrodeRequestProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72926F73F12148E48BF3E8FC /* ElectrodeRequestProcessor.swift */; };
+		AA3F41E300FA4F49B95DBFF0 /* ElectrodeUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E165BC6B41C9411CA0E180AC /* ElectrodeUtilities.swift */; };
+		C9CF3234AB2341AFB4649A98 /* EventListenerProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66D0AE0F04E7183ECEE4C /* EventListenerProcessor.swift */; };
+		F002B5EFD5CD4332B6DE381C /* EventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3B8C73DB8341DF84D68A61 /* EventProcessor.swift */; };
+		9553CFA0BC434CCD92FC69BF /* Processor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09E853E565444288CD1964C /* Processor.swift */; };
+		F3CC2B941C034C539C37FC3F /* None.swift in Sources */ = {isa = PBXBuildFile; fileRef = D537440A144B4B878288603C /* None.swift */; };
+		B9CF8B6DE246400F84005064 /* ElectrodeBridgeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 821B84A2A482485A97E9283E /* ElectrodeBridgeEvent.m */; };
+		851B536347604511B6E3A1DF /* ElectrodeBridgeFailureMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F7BA40A42A084F4FA3F273A6 /* ElectrodeBridgeFailureMessage.m */; };
+		353D6A2F14A94507BA484DC3 /* ElectrodeBridgeHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 454B74BB01D04911BC46DE7C /* ElectrodeBridgeHolder.m */; };
+		C6E475A6A4FC4EC6ABD6FD63 /* ElectrodeBridgeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = FA3D9732CAC64FF9BF4DA10E /* ElectrodeBridgeMessage.m */; };
+		F7916C8A50AC42D1B1CBE6CE /* ElectrodeBridgeProtocols.m in Sources */ = {isa = PBXBuildFile; fileRef = 94A12E1EC03C405990498784 /* ElectrodeBridgeProtocols.m */; };
+		F0497EFD088C48959542CF8B /* ElectrodeBridgeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6C8ACFDF684F6B9670237B /* ElectrodeBridgeRequest.m */; };
+		06FB3ABAEE7F49D2AB29D060 /* ElectrodeBridgeResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A78C56A2BD94F8D9670B207 /* ElectrodeBridgeResponse.m */; };
+		8C3AE94331BE4A128AC95ABE /* ElectrodeBridgeTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB3F8332E943B5B5C6070B /* ElectrodeBridgeTransaction.m */; };
+		A24494D32E82492DB19F7214 /* ElectrodeBridgeTransceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 98B9046C45844779B41D5151 /* ElectrodeBridgeTransceiver.m */; };
+		20212A28174C4E66A6C09EB5 /* ElectrodeEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DB5A3306FA945308A2CE6F4 /* ElectrodeEventDispatcher.m */; };
+		A9758458F8DD48B79CE51A95 /* ElectrodeEventRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = B56DA748483D47E5B2820C4F /* ElectrodeEventRegistrar.m */; };
+		B3E66CBC1EF846A59559F7B6 /* ElectrodeRequestDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1283577C4EFC4094840520AF /* ElectrodeRequestDispatcher.m */; };
+		0584D37782D44684B94DAB8E /* ElectrodeRequestRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A981CC9CF3C4C419884A133 /* ElectrodeRequestRegistrar.m */; };
+		628998D472D7457DB8E3C0EC /* ElectrodeLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA3D4EC06B64B1DB8064458 /* ElectrodeLogger.m */; };
+		C23EAF2CB1474B0E8DDF2DF8 /* ElectrodeBridgeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E52B1E80A394F31A798B099 /* ElectrodeBridgeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FE1E25388CFA4579A4B74323 /* ElectrodeBridgeFailureMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = B4E57F46A5764F04BD3B4F69 /* ElectrodeBridgeFailureMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		87498F35A38A4C4D9957A267 /* ElectrodeBridgeHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1288768B5F864D9CA8352858 /* ElectrodeBridgeHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A65961AC242F402FA33C1870 /* ElectrodeBridgeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A4B741955942139F174160 /* ElectrodeBridgeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17D981AAAAF2409D8220271B /* ElectrodeBridgeProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF0643E2004494590BC19B2 /* ElectrodeBridgeProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D874B8FCBD2741AE9757177B /* ElectrodeBridgeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 544D80E6740C4A4FA51E6260 /* ElectrodeBridgeRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E8CE40513D0426E9AF4CC73 /* ElectrodeBridgeTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FC08E34E024FBDB01030E7 /* ElectrodeBridgeTransaction.h */; };
+		2C412BD40F424C09B8420E20 /* ElectrodeBridgeTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 9442118C673445808FD8FB2F /* ElectrodeBridgeTransceiver.h */; };
+		EC98153D553345FEB1392FFE /* ElectrodeBridgeTransceiver_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 47C408392DAC4AF08E05C347 /* ElectrodeBridgeTransceiver_Internal.h */; };
+		332138ACE45B40C4BE902653 /* ElectrodeEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BAE20E8B32804BAF8040B9C6 /* ElectrodeEventDispatcher.h */; };
+		1F42260A5273410DA41E0822 /* ElectrodeEventRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = A4190F10A88342CE9336B5D6 /* ElectrodeEventRegistrar.h */; };
+		FC6180DC037142A88A353178 /* ElectrodeRequestDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D0EBB0C58F4B87817F92CA /* ElectrodeRequestDispatcher.h */; };
+		B122825FE1BE4B94BF69A882 /* ElectrodeRequestRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C40D7317CA742C58FE043BA /* ElectrodeRequestRegistrar.h */; };
+		6C68C376F7B84ECF898737B2 /* ElectrodeReactNativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = DAD2D24668D7419994AEA019 /* ElectrodeReactNativeBridge.h */; };
+		FCA3F3A6EF6B488F9D07BABC /* ElectrodeBridgeResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F54A0B8AF294B0DBB75439B /* ElectrodeBridgeResponse.h */; };
+		A267DB259E6E45118C7EA2CE /* ElectrodeLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 17DB6581B3DE48BF8E550663 /* ElectrodeLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A9C41B75D74C4481A3DCA8E8 /* RequestHandlerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57738B93AF4C989CEC135B /* RequestHandlerConfig.swift */; };
+		8508E94F74C74474A7E2DE2F /* RequestHandlerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E23073932764A4494D0A022 /* RequestHandlerProvider.swift */; };
+		15401B3EFC2B40A683BA6AF9 /* MoviesApiController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84419EE64FA5431CBA6CF718 /* MoviesApiController.swift */; };
+		2F53C92653994F51A6CCC6C4 /* MoviesApiRequestHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9BDC4A11AC4923A4C3A3A5 /* MoviesApiRequestHandlerDelegate.swift */; };
+		7B5B02311BA442F4B33714E3 /* MoviesApiRequestHandlerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F860445AE44DCC8BF853D2 /* MoviesApiRequestHandlerProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,170 +95,170 @@
 			remoteGlobalIDString = 485009E21E2FF23B009B6610;
 			remoteInfo = ElectrodeApiImpl;
 		};
-		AA00A9A87D1643CFB1AC2791 /* PBXContainerItemProxy */ = {
+		EE1DBF2392A94B8FAE9EA52D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 619E0F92D95C4728B617DB7B /* React.xcodeproj */;
+			containerPortal = C524D9876CE64F81867DFFA7 /* React.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E2CAEE0394964492A5741FA7;
+			remoteGlobalIDString = 1D29B26C1DF14F00904D7AC7;
 			remoteInfo = React;
 		};
-		72CC94209F5E45DE93D6D812 /* PBXContainerItemProxy */ = {
+		9B00B06B0ABD47B4B1DAB48D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 619E0F92D95C4728B617DB7B /* React.xcodeproj */;
+			containerPortal = C524D9876CE64F81867DFFA7 /* React.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
 		};
-		54376A70CD014EE4AC417C71 /* PBXContainerItemProxy */ = {
+		20625B9C7B0A424880FCE5F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 526E85DE9C394257A6CA7146 /* RCTActionSheet.xcodeproj */;
+			containerPortal = A4064CFB9A0A4EBB8FC79DAA /* RCTActionSheet.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 97B61AEC83CA4845981BF185;
+			remoteGlobalIDString = F38D5A88B53245EC8602899B;
 			remoteInfo = RCTActionSheet;
 		};
-		B6C22AD1C3F448739A6C40D4 /* PBXContainerItemProxy */ = {
+		94AD3FA22C9E428BAC291CB7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 526E85DE9C394257A6CA7146 /* RCTActionSheet.xcodeproj */;
+			containerPortal = A4064CFB9A0A4EBB8FC79DAA /* RCTActionSheet.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTActionSheet;
 		};
-		5FDF80137FF7462E875ABA6C /* PBXContainerItemProxy */ = {
+		DD7EADE1A0B746708E9E462F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 934639A4E9444DAE811EA083 /* RCTImage.xcodeproj */;
+			containerPortal = CD75E435684348F39C854F37 /* RCTImage.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6186A0590B94417CA0789B87;
+			remoteGlobalIDString = 9EFE1764FF904EABA3C3C567;
 			remoteInfo = RCTImage;
 		};
-		7CCEEDB7647C4735813AF1AD /* PBXContainerItemProxy */ = {
+		34224277956349EDAF2976D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 934639A4E9444DAE811EA083 /* RCTImage.xcodeproj */;
+			containerPortal = CD75E435684348F39C854F37 /* RCTImage.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
 			remoteInfo = RCTImage;
 		};
-		AE5EE68775A94AC392FB2415 /* PBXContainerItemProxy */ = {
+		03774759791944ACB1CCBC5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F468C225B0F54042B2B85D6E /* RCTAnimation.xcodeproj */;
+			containerPortal = EBA9F2845C5648DBB47A488A /* RCTAnimation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A6847D9AC2414BC6A075BCE9;
+			remoteGlobalIDString = 1DFD252BC2674C6695E497A7;
 			remoteInfo = RCTAnimation;
 		};
-		5BAD33F0B4C7461381A5A32C /* PBXContainerItemProxy */ = {
+		E4581D952885429A91ED69C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F468C225B0F54042B2B85D6E /* RCTAnimation.xcodeproj */;
+			containerPortal = EBA9F2845C5648DBB47A488A /* RCTAnimation.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTAnimation;
 		};
-		E9763571F7CB4F08BC3888F7 /* PBXContainerItemProxy */ = {
+		93884F884A6B48AD9DAAC0BB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B00EFE40F4C2425EBCF77798 /* RCTText.xcodeproj */;
+			containerPortal = 5E99B0891E684A61ACF345FA /* RCTText.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A464496F8883443799F63A0C;
+			remoteGlobalIDString = D18E55B006A74C8E93F222DD;
 			remoteInfo = RCTText;
 		};
-		8CBE3837628446A393140515 /* PBXContainerItemProxy */ = {
+		7A1280F8D847461DA2F65956 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B00EFE40F4C2425EBCF77798 /* RCTText.xcodeproj */;
+			containerPortal = 5E99B0891E684A61ACF345FA /* RCTText.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
-		5D57D331E9414466A55EAD8A /* PBXContainerItemProxy */ = {
+		CFAA3CEB493843B895C79274 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 02E2F690119A447D86F69CCF /* RCTWebSocket.xcodeproj */;
+			containerPortal = 7DFEB507D6D84D2CB01B428D /* RCTWebSocket.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1BA9A5C9228B4B14A5B77C0F;
+			remoteGlobalIDString = 731C7D69EC664CB0AB9E26D0;
 			remoteInfo = RCTWebSocket;
 		};
-		9E093E8419574C91AB21882D /* PBXContainerItemProxy */ = {
+		F679EA0410A045B59A3D1975 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 02E2F690119A447D86F69CCF /* RCTWebSocket.xcodeproj */;
+			containerPortal = 7DFEB507D6D84D2CB01B428D /* RCTWebSocket.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 3C86DF461ADF2C930047B81A;
 			remoteInfo = RCTWebSocket;
 		};
-		ECB23D1C1550425D86EBE145 /* PBXContainerItemProxy */ = {
+		2CAB32BCF4F74720A656C629 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 63A3A3AB513343AEA094996A /* RCTLinking.xcodeproj */;
+			containerPortal = 5D057527313744F7A94EF68E /* RCTLinking.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6F35BF7E2E834D2CAC622E73;
+			remoteGlobalIDString = CEF4A00F578A4B5A923F335D;
 			remoteInfo = RCTLinking;
 		};
-		7047A3F0F4DC4C37BE1F9999 /* PBXContainerItemProxy */ = {
+		718E5B0C384143FC8CF87603 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 63A3A3AB513343AEA094996A /* RCTLinking.xcodeproj */;
+			containerPortal = 5D057527313744F7A94EF68E /* RCTLinking.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTLinking;
 		};
-		6F4FC63F065D47FE932B011F /* PBXContainerItemProxy */ = {
+		0915A4BAA7444B01BD581B47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CDBFC6191844217AB3A3EE5 /* RCTNetwork.xcodeproj */;
+			containerPortal = 5FC4D815F8084A9B8D7CFA94 /* RCTNetwork.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = F3B1DB57EF4C412BABFB831C;
+			remoteGlobalIDString = E891452223214EFDB4D832C3;
 			remoteInfo = RCTNetwork;
 		};
-		3C3B88650CDD448BB32D1790 /* PBXContainerItemProxy */ = {
+		427F2F57269F40D7AC21AE6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CDBFC6191844217AB3A3EE5 /* RCTNetwork.xcodeproj */;
+			containerPortal = 5FC4D815F8084A9B8D7CFA94 /* RCTNetwork.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 58B511DB1A9E6C8500147676;
 			remoteInfo = RCTNetwork;
 		};
-		C9D56C12A7284596A86BAAC7 /* PBXContainerItemProxy */ = {
+		183B800F57574D3992972D76 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 53530E36F22D4DE28F6E716B /* RCTSettings.xcodeproj */;
+			containerPortal = F1A6094908DC41C1A13BE6E6 /* RCTSettings.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9B3CE81E7BCC4B88815994B6;
+			remoteGlobalIDString = D31F656E0C4F44D3A1CE5F64;
 			remoteInfo = RCTSettings;
 		};
-		2F8EE478A3C94075BBD0AA66 /* PBXContainerItemProxy */ = {
+		8B758344F05F44778F052309 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 53530E36F22D4DE28F6E716B /* RCTSettings.xcodeproj */;
+			containerPortal = F1A6094908DC41C1A13BE6E6 /* RCTSettings.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTSettings;
 		};
-		0C68FF2D021D4D7B92714F09 /* PBXContainerItemProxy */ = {
+		842628DC7E494198ADC721BB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D75CE2B3823C45378800207D /* RCTVibration.xcodeproj */;
+			containerPortal = 66EC659CFBAF433F8ACA76D8 /* RCTVibration.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 2AA78FF16E4E4762B842A55E;
+			remoteGlobalIDString = 7ED53936168041438C60A6BC;
 			remoteInfo = RCTVibration;
 		};
-		21E96B3C084C470A9FA173BD /* PBXContainerItemProxy */ = {
+		A690D3E4408F4E5DACCD5E17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D75CE2B3823C45378800207D /* RCTVibration.xcodeproj */;
+			containerPortal = 66EC659CFBAF433F8ACA76D8 /* RCTVibration.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 832C81801AAF6DEF007FA2F7;
 			remoteInfo = RCTVibration;
 		};
-		DE96A488B3754F348A59CC36 /* PBXContainerItemProxy */ = {
+		BF49BC485E394C76A843FF50 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = C70619FDBDE14B3A912AAE20 /* RCTCameraRoll.xcodeproj */;
+			containerPortal = D03FDDAEC40B4EC29104B2E4 /* RCTCameraRoll.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 239A99D6A86647EAAE8A2613;
+			remoteGlobalIDString = 59D427DD6D244CBE8E650DBE;
 			remoteInfo = RCTCameraRoll;
 		};
-		790819279B8348F1AD153070 /* PBXContainerItemProxy */ = {
+		88725C57E2CE461CA4A9DFD3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = C70619FDBDE14B3A912AAE20 /* RCTCameraRoll.xcodeproj */;
+			containerPortal = D03FDDAEC40B4EC29104B2E4 /* RCTCameraRoll.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
 			remoteInfo = RCTCameraRoll;
 		};
-		A97BB249368748198336136F /* PBXContainerItemProxy */ = {
+		2EDD100319C14AB09C9C0B5C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E360FEA9EF44A3CA2663CDA /* ART.xcodeproj */;
+			containerPortal = 1300F5CC4AF748B190246657 /* ART.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = FB999956ECE44DB1A0B372E0;
+			remoteGlobalIDString = 9EAF4616667E4D5E946ACDC3;
 			remoteInfo = ART;
 		};
-		82ADB1DD7F484A72BFEE0B6C /* PBXContainerItemProxy */ = {
+		7CAF460658244A2A8936F781 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E360FEA9EF44A3CA2663CDA /* ART.xcodeproj */;
+			containerPortal = 1300F5CC4AF748B190246657 /* ART.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
 			remoteInfo = ART;
@@ -279,81 +279,81 @@
 		48500A971E2FF55B009B6610 /* ElectrodeReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeReactNative.m; sourceTree = "<group>"; };
 		968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElectrodeBridgeDelegate.h; sourceTree = "<group>"; };
 		968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElectrodeBridgeDelegate.m; sourceTree = "<group>"; };
-		1F25758546444D4993DFD2AB /* BirthYear.swift */ = {isa = PBXFileReference; name = "BirthYear.swift"; path = "APIs/BirthYear.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 1F25758546444D4993DFD2AB; basename = BirthYear.swift; target = undefined; uuid = 67E9AC7838AC435787B9CAB2; settings = {ATTRIBUTES = (Public, ); }; };
-		32577FAF83EB4D85A0C6086C /* Movie.swift */ = {isa = PBXFileReference; name = "Movie.swift"; path = "APIs/Movie.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 32577FAF83EB4D85A0C6086C; basename = Movie.swift; target = undefined; uuid = 6BC658B0A5754B54AA1D3756; settings = {ATTRIBUTES = (Public, ); }; };
-		D59659E6D2B646BD8FF2B76C /* MoviesAPI.swift */ = {isa = PBXFileReference; name = "MoviesAPI.swift"; path = "APIs/MoviesAPI.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = D59659E6D2B646BD8FF2B76C; basename = MoviesAPI.swift; target = undefined; uuid = 3F7C0D2182CB494D9305E41E; settings = {ATTRIBUTES = (Public, ); }; };
-		02F2D92E531944999C2FA94D /* MoviesRequests.swift */ = {isa = PBXFileReference; name = "MoviesRequests.swift"; path = "APIs/MoviesRequests.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 02F2D92E531944999C2FA94D; basename = MoviesRequests.swift; target = undefined; uuid = 03E2C9E5EB8A44B9B726D480; settings = {ATTRIBUTES = (Public, ); }; };
-		76EFE1AFF381405DA742CCBA /* Person.swift */ = {isa = PBXFileReference; name = "Person.swift"; path = "APIs/Person.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 76EFE1AFF381405DA742CCBA; basename = Person.swift; target = undefined; uuid = 538BB29EB8E848629B30FACB; settings = {ATTRIBUTES = (Public, ); }; };
-		B972CBF3E9194CDD81062262 /* Synopsis.swift */ = {isa = PBXFileReference; name = "Synopsis.swift"; path = "APIs/Synopsis.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = B972CBF3E9194CDD81062262; basename = Synopsis.swift; target = undefined; uuid = 268A70B25D8C4D7BB2C3055E; settings = {ATTRIBUTES = (Public, ); }; };
-		619E0F92D95C4728B617DB7B /* React.xcodeproj */ = {isa = PBXFileReference; name = "React.xcodeproj"; path = "ReactNative/React/React.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		2163673E1FBB4547A0575D61 /* libReact.a */ = {isa = PBXFileReference; name = "libReact.a"; path = "libReact.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		526E85DE9C394257A6CA7146 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; name = "RCTActionSheet.xcodeproj"; path = "ReactNative/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		0F539D42E8824547997A6B4B /* libRCTActionSheet.a */ = {isa = PBXFileReference; name = "libRCTActionSheet.a"; path = "libRCTActionSheet.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		934639A4E9444DAE811EA083 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; name = "RCTImage.xcodeproj"; path = "ReactNative/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		52F853B00B524AEE8582550C /* libRCTImage.a */ = {isa = PBXFileReference; name = "libRCTImage.a"; path = "libRCTImage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		F468C225B0F54042B2B85D6E /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; name = "RCTAnimation.xcodeproj"; path = "ReactNative/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		1DF1965BFBB8418CBD9C2028 /* libRCTAnimation.a */ = {isa = PBXFileReference; name = "libRCTAnimation.a"; path = "libRCTAnimation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		B00EFE40F4C2425EBCF77798 /* RCTText.xcodeproj */ = {isa = PBXFileReference; name = "RCTText.xcodeproj"; path = "ReactNative/Text/RCTText.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		46CA8B012C1D4BDC920F1ADE /* libRCTText.a */ = {isa = PBXFileReference; name = "libRCTText.a"; path = "libRCTText.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		02E2F690119A447D86F69CCF /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; name = "RCTWebSocket.xcodeproj"; path = "ReactNative/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		4BA939B8D34947B3AD376DF2 /* libRCTWebSocket.a */ = {isa = PBXFileReference; name = "libRCTWebSocket.a"; path = "libRCTWebSocket.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		63A3A3AB513343AEA094996A /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; name = "RCTLinking.xcodeproj"; path = "ReactNative/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		093C5CF55E8E451BACC8C3C1 /* libRCTLinking.a */ = {isa = PBXFileReference; name = "libRCTLinking.a"; path = "libRCTLinking.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		3CDBFC6191844217AB3A3EE5 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; name = "RCTNetwork.xcodeproj"; path = "ReactNative/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		3A11C9F1621742C296929FA9 /* libRCTNetwork.a */ = {isa = PBXFileReference; name = "libRCTNetwork.a"; path = "libRCTNetwork.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		53530E36F22D4DE28F6E716B /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; name = "RCTSettings.xcodeproj"; path = "ReactNative/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		CEB7EE00D55A47C6AB7E9A6D /* libRCTSettings.a */ = {isa = PBXFileReference; name = "libRCTSettings.a"; path = "libRCTSettings.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		D75CE2B3823C45378800207D /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; name = "RCTVibration.xcodeproj"; path = "ReactNative/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		8E6669E888B44EB288CFF90B /* libRCTVibration.a */ = {isa = PBXFileReference; name = "libRCTVibration.a"; path = "libRCTVibration.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		C70619FDBDE14B3A912AAE20 /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; name = "RCTCameraRoll.xcodeproj"; path = "ReactNative/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		5D24904D68A146CB944BDB6A /* libRCTCameraRoll.a */ = {isa = PBXFileReference; name = "libRCTCameraRoll.a"; path = "libRCTCameraRoll.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		6E360FEA9EF44A3CA2663CDA /* ART.xcodeproj */ = {isa = PBXFileReference; name = "ART.xcodeproj"; path = "ReactNative/ART/ART.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		AF6A34CAA2AE410F9E22E5A4 /* libART.a */ = {isa = PBXFileReference; name = "libART.a"; path = "libART.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		A8E38019534D4A61867AF384 /* JavaScriptCore.framework */ = {isa = PBXFileReference; name = "JavaScriptCore.framework"; path = "/System/Library/Frameworks/JavaScriptCore.framework"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
-		34BA740D19C6439C87674376 /* ElectrodeObject.swift */ = {isa = PBXFileReference; name = "ElectrodeObject.swift"; path = "ElectrodeReactNativeBridge/ElectrodeObject.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		4FCF1085175D4D939D78FBEB /* Bridgeable.swift */ = {isa = PBXFileReference; name = "Bridgeable.swift"; path = "ElectrodeReactNativeBridge/Bridgeable.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		2F9E7EFE74BE44D0A833BE64 /* ElectrodeRequestHandlerProcessor.swift */ = {isa = PBXFileReference; name = "ElectrodeRequestHandlerProcessor.swift"; path = "ElectrodeReactNativeBridge/ElectrodeRequestHandlerProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		3FB5BA0E931642EFA30DEB1C /* ElectrodeRequestProcessor.swift */ = {isa = PBXFileReference; name = "ElectrodeRequestProcessor.swift"; path = "ElectrodeReactNativeBridge/ElectrodeRequestProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		3EB6238650894E74ACA7FE20 /* ElectrodeUtilities.swift */ = {isa = PBXFileReference; name = "ElectrodeUtilities.swift"; path = "ElectrodeReactNativeBridge/ElectrodeUtilities.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		7417E585F29C4AC1A4A71F1E /* EventListenerProcessor.swift */ = {isa = PBXFileReference; name = "EventListenerProcessor.swift"; path = "ElectrodeReactNativeBridge/EventListenerProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		E3F813FFD98642208CD13A34 /* EventProcessor.swift */ = {isa = PBXFileReference; name = "EventProcessor.swift"; path = "ElectrodeReactNativeBridge/EventProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		6B307A8AB0E94F668164004A /* Processor.swift */ = {isa = PBXFileReference; name = "Processor.swift"; path = "ElectrodeReactNativeBridge/Processor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		71DEA81E3EB04CF3A110ED23 /* None.swift */ = {isa = PBXFileReference; name = "None.swift"; path = "ElectrodeReactNativeBridge/None.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		AF09C124578E4C39B702982C /* ElectrodeBridgeEvent.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeEvent.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		437D493B38C1474693BAFE3C /* ElectrodeBridgeFailureMessage.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeFailureMessage.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeFailureMessage.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		FF8B307F88F6407687247688 /* ElectrodeBridgeHolder.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeHolder.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeHolder.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		D5FE78CCE6F344BE9379A271 /* ElectrodeBridgeMessage.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeMessage.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeMessage.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		0A9CADAC653B4242932D9EB3 /* ElectrodeBridgeProtocols.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeProtocols.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeProtocols.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		711E033A952B4F0B8FFEC4EF /* ElectrodeBridgeRequest.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeRequest.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeRequest.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		3EDC4887006042358F896BE6 /* ElectrodeBridgeResponse.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeResponse.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeResponse.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		78BE42EACB2D4244BC96353D /* ElectrodeBridgeTransaction.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransaction.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransaction.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		D666310F92164214B8C5C5F3 /* ElectrodeBridgeTransceiver.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransceiver.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		04EBB62A17D746DCB7B877D3 /* ElectrodeEventDispatcher.m */ = {isa = PBXFileReference; name = "ElectrodeEventDispatcher.m"; path = "ElectrodeReactNativeBridge/ElectrodeEventDispatcher.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		EC3D187B3F3A4708BEC072F8 /* ElectrodeEventRegistrar.m */ = {isa = PBXFileReference; name = "ElectrodeEventRegistrar.m"; path = "ElectrodeReactNativeBridge/ElectrodeEventRegistrar.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		215FB55EC64548D4939BF18E /* ElectrodeRequestDispatcher.m */ = {isa = PBXFileReference; name = "ElectrodeRequestDispatcher.m"; path = "ElectrodeReactNativeBridge/ElectrodeRequestDispatcher.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		7D5C8384B9074307AAD6C340 /* ElectrodeRequestRegistrar.m */ = {isa = PBXFileReference; name = "ElectrodeRequestRegistrar.m"; path = "ElectrodeReactNativeBridge/ElectrodeRequestRegistrar.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		547222CF195143DCB495589B /* ElectrodeLogger.m */ = {isa = PBXFileReference; name = "ElectrodeLogger.m"; path = "ElectrodeReactNativeBridge/ElectrodeLogger.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		20CC50214889402B8E47277D /* ElectrodeBridgeEvent.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeEvent.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		365BFCCFAB26455484285EAD /* ElectrodeBridgeFailureMessage.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeFailureMessage.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeFailureMessage.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		71CF888ECD554273AF543F42 /* ElectrodeBridgeHolder.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeHolder.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeHolder.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		A7A2B63A70BC43818832D23A /* ElectrodeBridgeMessage.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeMessage.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeMessage.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		EA06960BB3DE4F95BFD1E2DF /* ElectrodeBridgeProtocols.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeProtocols.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeProtocols.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		4AC0A66FCDD94F3F901320B8 /* ElectrodeBridgeRequest.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeRequest.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeRequest.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		7F0F3BAEDC0943C0BA0C6098 /* ElectrodeBridgeTransaction.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransaction.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransaction.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		27B508CFE50D48C1BE2A5B0D /* ElectrodeBridgeTransceiver.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransceiver.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		0A3579EA890148F0ABFDACEB /* ElectrodeBridgeTransceiver_Internal.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransceiver_Internal.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver_Internal.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		94334412DD1E4BF4BF8A23BB /* ElectrodeEventDispatcher.h */ = {isa = PBXFileReference; name = "ElectrodeEventDispatcher.h"; path = "ElectrodeReactNativeBridge/ElectrodeEventDispatcher.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		C45F7A27F67D41D8B6AEACEC /* ElectrodeEventRegistrar.h */ = {isa = PBXFileReference; name = "ElectrodeEventRegistrar.h"; path = "ElectrodeReactNativeBridge/ElectrodeEventRegistrar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		97BA0429C1254A88AB2302ED /* ElectrodeRequestDispatcher.h */ = {isa = PBXFileReference; name = "ElectrodeRequestDispatcher.h"; path = "ElectrodeReactNativeBridge/ElectrodeRequestDispatcher.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		2058BBE9DD1940348C7405C8 /* ElectrodeRequestRegistrar.h */ = {isa = PBXFileReference; name = "ElectrodeRequestRegistrar.h"; path = "ElectrodeReactNativeBridge/ElectrodeRequestRegistrar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		5A2A494997714B58B8994BF6 /* ElectrodeReactNativeBridge.h */ = {isa = PBXFileReference; name = "ElectrodeReactNativeBridge.h"; path = "ElectrodeReactNativeBridge/ElectrodeReactNativeBridge.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		B973E396C8CD45A88CE6215F /* ElectrodeBridgeResponse.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeResponse.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeResponse.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		4B3D32B845DA4C2893A63BD1 /* ElectrodeLogger.h */ = {isa = PBXFileReference; name = "ElectrodeLogger.h"; path = "ElectrodeReactNativeBridge/ElectrodeLogger.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		343D7D096D48448E8AECA6AD /* RequestHandlerConfig.swift */ = {isa = PBXFileReference; name = "RequestHandlerConfig.swift"; path = "APIImpls/RequestHandlerConfig.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		00787F496C8443FFB3CF5DFA /* RequestHandlerProvider.swift */ = {isa = PBXFileReference; name = "RequestHandlerProvider.swift"; path = "APIImpls/RequestHandlerProvider.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		163CF902F6E54272B01E422F /* MoviesApiController.swift */ = {isa = PBXFileReference; name = "MoviesApiController.swift"; path = "APIImpls/MoviesApiController.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		073D0BD3EC5843D284360737 /* MoviesApiRequestHandlerDelegate.swift */ = {isa = PBXFileReference; name = "MoviesApiRequestHandlerDelegate.swift"; path = "APIImpls/MoviesApiRequestHandlerDelegate.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		260698F5493747E596DDD18E /* MoviesApiRequestHandlerProvider.swift */ = {isa = PBXFileReference; name = "MoviesApiRequestHandlerProvider.swift"; path = "APIImpls/MoviesApiRequestHandlerProvider.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		922AB0516B794DE199B9C2FA /* BirthYear.swift */ = {isa = PBXFileReference; name = "BirthYear.swift"; path = "APIs/BirthYear.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 922AB0516B794DE199B9C2FA; basename = BirthYear.swift; target = undefined; uuid = 95FA7029C262409882F17FFF; settings = {ATTRIBUTES = (Public, ); }; };
+		89444EF457C44E4BA8568BF4 /* Movie.swift */ = {isa = PBXFileReference; name = "Movie.swift"; path = "APIs/Movie.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 89444EF457C44E4BA8568BF4; basename = Movie.swift; target = undefined; uuid = 675152A6B90D48F6B5E5423C; settings = {ATTRIBUTES = (Public, ); }; };
+		3D9F065F09BA497C9D19A8F4 /* MoviesAPI.swift */ = {isa = PBXFileReference; name = "MoviesAPI.swift"; path = "APIs/MoviesAPI.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 3D9F065F09BA497C9D19A8F4; basename = MoviesAPI.swift; target = undefined; uuid = 11CDB21C18AD48418FD47233; settings = {ATTRIBUTES = (Public, ); }; };
+		4B2040C7A12F48B99AFDB78E /* MoviesRequests.swift */ = {isa = PBXFileReference; name = "MoviesRequests.swift"; path = "APIs/MoviesRequests.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 4B2040C7A12F48B99AFDB78E; basename = MoviesRequests.swift; target = undefined; uuid = 205CE59DB2054B0F9A002AB0; settings = {ATTRIBUTES = (Public, ); }; };
+		3A87EEFE9D02499B88560CB1 /* Person.swift */ = {isa = PBXFileReference; name = "Person.swift"; path = "APIs/Person.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 3A87EEFE9D02499B88560CB1; basename = Person.swift; target = undefined; uuid = 164210A9789C4649A3528D7C; settings = {ATTRIBUTES = (Public, ); }; };
+		746E0A02ADE6412EB6410CDB /* Synopsis.swift */ = {isa = PBXFileReference; name = "Synopsis.swift"; path = "APIs/Synopsis.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; fileRef = 746E0A02ADE6412EB6410CDB; basename = Synopsis.swift; target = undefined; uuid = 5796ABC351204FA28783A1D0; settings = {ATTRIBUTES = (Public, ); }; };
+		C524D9876CE64F81867DFFA7 /* React.xcodeproj */ = {isa = PBXFileReference; name = "React.xcodeproj"; path = "ReactNative/React/React.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		342ACF96D6004DC3BA3ECB4A /* libReact.a */ = {isa = PBXFileReference; name = "libReact.a"; path = "libReact.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		A4064CFB9A0A4EBB8FC79DAA /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; name = "RCTActionSheet.xcodeproj"; path = "ReactNative/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		B8377F0EC1644AD087327E76 /* libRCTActionSheet.a */ = {isa = PBXFileReference; name = "libRCTActionSheet.a"; path = "libRCTActionSheet.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		CD75E435684348F39C854F37 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; name = "RCTImage.xcodeproj"; path = "ReactNative/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		756CCFE460A74914B31F152F /* libRCTImage.a */ = {isa = PBXFileReference; name = "libRCTImage.a"; path = "libRCTImage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		EBA9F2845C5648DBB47A488A /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; name = "RCTAnimation.xcodeproj"; path = "ReactNative/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A00A5B08C01A4E9FAB6AC128 /* libRCTAnimation.a */ = {isa = PBXFileReference; name = "libRCTAnimation.a"; path = "libRCTAnimation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		5E99B0891E684A61ACF345FA /* RCTText.xcodeproj */ = {isa = PBXFileReference; name = "RCTText.xcodeproj"; path = "ReactNative/Text/RCTText.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		2D31630C788847C795184181 /* libRCTText.a */ = {isa = PBXFileReference; name = "libRCTText.a"; path = "libRCTText.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		7DFEB507D6D84D2CB01B428D /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; name = "RCTWebSocket.xcodeproj"; path = "ReactNative/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		DA8CB8DF5660447DB08588B9 /* libRCTWebSocket.a */ = {isa = PBXFileReference; name = "libRCTWebSocket.a"; path = "libRCTWebSocket.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		5D057527313744F7A94EF68E /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; name = "RCTLinking.xcodeproj"; path = "ReactNative/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D587F64962B54B42BCE87221 /* libRCTLinking.a */ = {isa = PBXFileReference; name = "libRCTLinking.a"; path = "libRCTLinking.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		5FC4D815F8084A9B8D7CFA94 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; name = "RCTNetwork.xcodeproj"; path = "ReactNative/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		29279E8AB8A34CADBF2E12E5 /* libRCTNetwork.a */ = {isa = PBXFileReference; name = "libRCTNetwork.a"; path = "libRCTNetwork.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		F1A6094908DC41C1A13BE6E6 /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; name = "RCTSettings.xcodeproj"; path = "ReactNative/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		879203F5F2D04719A2E77912 /* libRCTSettings.a */ = {isa = PBXFileReference; name = "libRCTSettings.a"; path = "libRCTSettings.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		66EC659CFBAF433F8ACA76D8 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; name = "RCTVibration.xcodeproj"; path = "ReactNative/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		57C87EFEFAC746178BA5AD09 /* libRCTVibration.a */ = {isa = PBXFileReference; name = "libRCTVibration.a"; path = "libRCTVibration.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		D03FDDAEC40B4EC29104B2E4 /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; name = "RCTCameraRoll.xcodeproj"; path = "ReactNative/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		8750E888785C4AC5B682995C /* libRCTCameraRoll.a */ = {isa = PBXFileReference; name = "libRCTCameraRoll.a"; path = "libRCTCameraRoll.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		1300F5CC4AF748B190246657 /* ART.xcodeproj */ = {isa = PBXFileReference; name = "ART.xcodeproj"; path = "ReactNative/ART/ART.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		EC0521DEC3C240BCBBAAABEF /* libART.a */ = {isa = PBXFileReference; name = "libART.a"; path = "libART.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		2A5956E2AADA44929787B251 /* JavaScriptCore.framework */ = {isa = PBXFileReference; name = "JavaScriptCore.framework"; path = "/System/Library/Frameworks/JavaScriptCore.framework"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		0A36683066BC490889DF4393 /* ElectrodeObject.swift */ = {isa = PBXFileReference; name = "ElectrodeObject.swift"; path = "ElectrodeReactNativeBridge/ElectrodeObject.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		F8673ED2F04D47958AE2E8DC /* Bridgeable.swift */ = {isa = PBXFileReference; name = "Bridgeable.swift"; path = "ElectrodeReactNativeBridge/Bridgeable.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		ED899B5E7CDA465C8D654D54 /* ElectrodeRequestHandlerProcessor.swift */ = {isa = PBXFileReference; name = "ElectrodeRequestHandlerProcessor.swift"; path = "ElectrodeReactNativeBridge/ElectrodeRequestHandlerProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		72926F73F12148E48BF3E8FC /* ElectrodeRequestProcessor.swift */ = {isa = PBXFileReference; name = "ElectrodeRequestProcessor.swift"; path = "ElectrodeReactNativeBridge/ElectrodeRequestProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		E165BC6B41C9411CA0E180AC /* ElectrodeUtilities.swift */ = {isa = PBXFileReference; name = "ElectrodeUtilities.swift"; path = "ElectrodeReactNativeBridge/ElectrodeUtilities.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		D0C66D0AE0F04E7183ECEE4C /* EventListenerProcessor.swift */ = {isa = PBXFileReference; name = "EventListenerProcessor.swift"; path = "ElectrodeReactNativeBridge/EventListenerProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		AF3B8C73DB8341DF84D68A61 /* EventProcessor.swift */ = {isa = PBXFileReference; name = "EventProcessor.swift"; path = "ElectrodeReactNativeBridge/EventProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		F09E853E565444288CD1964C /* Processor.swift */ = {isa = PBXFileReference; name = "Processor.swift"; path = "ElectrodeReactNativeBridge/Processor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		D537440A144B4B878288603C /* None.swift */ = {isa = PBXFileReference; name = "None.swift"; path = "ElectrodeReactNativeBridge/None.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		821B84A2A482485A97E9283E /* ElectrodeBridgeEvent.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeEvent.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		F7BA40A42A084F4FA3F273A6 /* ElectrodeBridgeFailureMessage.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeFailureMessage.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeFailureMessage.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		454B74BB01D04911BC46DE7C /* ElectrodeBridgeHolder.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeHolder.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeHolder.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		FA3D9732CAC64FF9BF4DA10E /* ElectrodeBridgeMessage.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeMessage.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeMessage.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		94A12E1EC03C405990498784 /* ElectrodeBridgeProtocols.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeProtocols.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeProtocols.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		4D6C8ACFDF684F6B9670237B /* ElectrodeBridgeRequest.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeRequest.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeRequest.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		7A78C56A2BD94F8D9670B207 /* ElectrodeBridgeResponse.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeResponse.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeResponse.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		F9AB3F8332E943B5B5C6070B /* ElectrodeBridgeTransaction.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransaction.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransaction.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		98B9046C45844779B41D5151 /* ElectrodeBridgeTransceiver.m */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransceiver.m"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		0DB5A3306FA945308A2CE6F4 /* ElectrodeEventDispatcher.m */ = {isa = PBXFileReference; name = "ElectrodeEventDispatcher.m"; path = "ElectrodeReactNativeBridge/ElectrodeEventDispatcher.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		B56DA748483D47E5B2820C4F /* ElectrodeEventRegistrar.m */ = {isa = PBXFileReference; name = "ElectrodeEventRegistrar.m"; path = "ElectrodeReactNativeBridge/ElectrodeEventRegistrar.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		1283577C4EFC4094840520AF /* ElectrodeRequestDispatcher.m */ = {isa = PBXFileReference; name = "ElectrodeRequestDispatcher.m"; path = "ElectrodeReactNativeBridge/ElectrodeRequestDispatcher.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		2A981CC9CF3C4C419884A133 /* ElectrodeRequestRegistrar.m */ = {isa = PBXFileReference; name = "ElectrodeRequestRegistrar.m"; path = "ElectrodeReactNativeBridge/ElectrodeRequestRegistrar.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		6EA3D4EC06B64B1DB8064458 /* ElectrodeLogger.m */ = {isa = PBXFileReference; name = "ElectrodeLogger.m"; path = "ElectrodeReactNativeBridge/ElectrodeLogger.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		6E52B1E80A394F31A798B099 /* ElectrodeBridgeEvent.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeEvent.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeEvent.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		B4E57F46A5764F04BD3B4F69 /* ElectrodeBridgeFailureMessage.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeFailureMessage.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeFailureMessage.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		1288768B5F864D9CA8352858 /* ElectrodeBridgeHolder.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeHolder.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeHolder.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		A0A4B741955942139F174160 /* ElectrodeBridgeMessage.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeMessage.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeMessage.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		2AF0643E2004494590BC19B2 /* ElectrodeBridgeProtocols.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeProtocols.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeProtocols.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		544D80E6740C4A4FA51E6260 /* ElectrodeBridgeRequest.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeRequest.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeRequest.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		F3FC08E34E024FBDB01030E7 /* ElectrodeBridgeTransaction.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransaction.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransaction.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		9442118C673445808FD8FB2F /* ElectrodeBridgeTransceiver.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransceiver.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		47C408392DAC4AF08E05C347 /* ElectrodeBridgeTransceiver_Internal.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeTransceiver_Internal.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeTransceiver_Internal.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		BAE20E8B32804BAF8040B9C6 /* ElectrodeEventDispatcher.h */ = {isa = PBXFileReference; name = "ElectrodeEventDispatcher.h"; path = "ElectrodeReactNativeBridge/ElectrodeEventDispatcher.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		A4190F10A88342CE9336B5D6 /* ElectrodeEventRegistrar.h */ = {isa = PBXFileReference; name = "ElectrodeEventRegistrar.h"; path = "ElectrodeReactNativeBridge/ElectrodeEventRegistrar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		A1D0EBB0C58F4B87817F92CA /* ElectrodeRequestDispatcher.h */ = {isa = PBXFileReference; name = "ElectrodeRequestDispatcher.h"; path = "ElectrodeReactNativeBridge/ElectrodeRequestDispatcher.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		4C40D7317CA742C58FE043BA /* ElectrodeRequestRegistrar.h */ = {isa = PBXFileReference; name = "ElectrodeRequestRegistrar.h"; path = "ElectrodeReactNativeBridge/ElectrodeRequestRegistrar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		DAD2D24668D7419994AEA019 /* ElectrodeReactNativeBridge.h */ = {isa = PBXFileReference; name = "ElectrodeReactNativeBridge.h"; path = "ElectrodeReactNativeBridge/ElectrodeReactNativeBridge.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		7F54A0B8AF294B0DBB75439B /* ElectrodeBridgeResponse.h */ = {isa = PBXFileReference; name = "ElectrodeBridgeResponse.h"; path = "ElectrodeReactNativeBridge/ElectrodeBridgeResponse.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		17DB6581B3DE48BF8E550663 /* ElectrodeLogger.h */ = {isa = PBXFileReference; name = "ElectrodeLogger.h"; path = "ElectrodeReactNativeBridge/ElectrodeLogger.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		3A57738B93AF4C989CEC135B /* RequestHandlerConfig.swift */ = {isa = PBXFileReference; name = "RequestHandlerConfig.swift"; path = "APIImpls/RequestHandlerConfig.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		3E23073932764A4494D0A022 /* RequestHandlerProvider.swift */ = {isa = PBXFileReference; name = "RequestHandlerProvider.swift"; path = "APIImpls/RequestHandlerProvider.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		84419EE64FA5431CBA6CF718 /* MoviesApiController.swift */ = {isa = PBXFileReference; name = "MoviesApiController.swift"; path = "APIImpls/MoviesApiController.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		FA9BDC4A11AC4923A4C3A3A5 /* MoviesApiRequestHandlerDelegate.swift */ = {isa = PBXFileReference; name = "MoviesApiRequestHandlerDelegate.swift"; path = "APIImpls/MoviesApiRequestHandlerDelegate.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		E8F860445AE44DCC8BF853D2 /* MoviesApiRequestHandlerProvider.swift */ = {isa = PBXFileReference; name = "MoviesApiRequestHandlerProvider.swift"; path = "APIImpls/MoviesApiRequestHandlerProvider.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -361,19 +361,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E2CAEE0394964492A5741FA7 /* libReact.a in Frameworks */,
-				97B61AEC83CA4845981BF185 /* libRCTActionSheet.a in Frameworks */,
-				6186A0590B94417CA0789B87 /* libRCTImage.a in Frameworks */,
-				A6847D9AC2414BC6A075BCE9 /* libRCTAnimation.a in Frameworks */,
-				A464496F8883443799F63A0C /* libRCTText.a in Frameworks */,
-				1BA9A5C9228B4B14A5B77C0F /* libRCTWebSocket.a in Frameworks */,
-				6F35BF7E2E834D2CAC622E73 /* libRCTLinking.a in Frameworks */,
-				F3B1DB57EF4C412BABFB831C /* libRCTNetwork.a in Frameworks */,
-				9B3CE81E7BCC4B88815994B6 /* libRCTSettings.a in Frameworks */,
-				2AA78FF16E4E4762B842A55E /* libRCTVibration.a in Frameworks */,
-				239A99D6A86647EAAE8A2613 /* libRCTCameraRoll.a in Frameworks */,
-				FB999956ECE44DB1A0B372E0 /* libART.a in Frameworks */,
-				503343D5795A4AA8BED248B5 /* JavaScriptCore.framework in Frameworks */,
+				1D29B26C1DF14F00904D7AC7 /* libReact.a in Frameworks */,
+				F38D5A88B53245EC8602899B /* libRCTActionSheet.a in Frameworks */,
+				9EFE1764FF904EABA3C3C567 /* libRCTImage.a in Frameworks */,
+				1DFD252BC2674C6695E497A7 /* libRCTAnimation.a in Frameworks */,
+				D18E55B006A74C8E93F222DD /* libRCTText.a in Frameworks */,
+				731C7D69EC664CB0AB9E26D0 /* libRCTWebSocket.a in Frameworks */,
+				CEF4A00F578A4B5A923F335D /* libRCTLinking.a in Frameworks */,
+				E891452223214EFDB4D832C3 /* libRCTNetwork.a in Frameworks */,
+				D31F656E0C4F44D3A1CE5F64 /* libRCTSettings.a in Frameworks */,
+				7ED53936168041438C60A6BC /* libRCTVibration.a in Frameworks */,
+				59D427DD6D244CBE8E650DBE /* libRCTCameraRoll.a in Frameworks */,
+				9EAF4616667E4D5E946ACDC3 /* libART.a in Frameworks */,
+				C3CBC753A1FB4911A4DB720B /* JavaScriptCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,18 +391,18 @@
 		226325CE1E80594F00CD0B10 /* ReactNative */ = {
 			isa = PBXGroup;
 			children = (
-				619E0F92D95C4728B617DB7B /* React.xcodeproj */,
-				526E85DE9C394257A6CA7146 /* RCTActionSheet.xcodeproj */,
-				934639A4E9444DAE811EA083 /* RCTImage.xcodeproj */,
-				F468C225B0F54042B2B85D6E /* RCTAnimation.xcodeproj */,
-				B00EFE40F4C2425EBCF77798 /* RCTText.xcodeproj */,
-				02E2F690119A447D86F69CCF /* RCTWebSocket.xcodeproj */,
-				63A3A3AB513343AEA094996A /* RCTLinking.xcodeproj */,
-				3CDBFC6191844217AB3A3EE5 /* RCTNetwork.xcodeproj */,
-				53530E36F22D4DE28F6E716B /* RCTSettings.xcodeproj */,
-				D75CE2B3823C45378800207D /* RCTVibration.xcodeproj */,
-				C70619FDBDE14B3A912AAE20 /* RCTCameraRoll.xcodeproj */,
-				6E360FEA9EF44A3CA2663CDA /* ART.xcodeproj */,
+				C524D9876CE64F81867DFFA7 /* React.xcodeproj */,
+				A4064CFB9A0A4EBB8FC79DAA /* RCTActionSheet.xcodeproj */,
+				CD75E435684348F39C854F37 /* RCTImage.xcodeproj */,
+				EBA9F2845C5648DBB47A488A /* RCTAnimation.xcodeproj */,
+				5E99B0891E684A61ACF345FA /* RCTText.xcodeproj */,
+				7DFEB507D6D84D2CB01B428D /* RCTWebSocket.xcodeproj */,
+				5D057527313744F7A94EF68E /* RCTLinking.xcodeproj */,
+				5FC4D815F8084A9B8D7CFA94 /* RCTNetwork.xcodeproj */,
+				F1A6094908DC41C1A13BE6E6 /* RCTSettings.xcodeproj */,
+				66EC659CFBAF433F8ACA76D8 /* RCTVibration.xcodeproj */,
+				D03FDDAEC40B4EC29104B2E4 /* RCTCameraRoll.xcodeproj */,
+				1300F5CC4AF748B190246657 /* ART.xcodeproj */,
 			);
 			name = ReactNative;
 			sourceTree = "<group>";
@@ -410,12 +410,12 @@
 		22C096A91EA0893F00E1486A /* APIs */ = {
 			isa = PBXGroup;
 			children = (
-				1F25758546444D4993DFD2AB /* BirthYear.swift */,
-				32577FAF83EB4D85A0C6086C /* Movie.swift */,
-				D59659E6D2B646BD8FF2B76C /* MoviesAPI.swift */,
-				02F2D92E531944999C2FA94D /* MoviesRequests.swift */,
-				76EFE1AFF381405DA742CCBA /* Person.swift */,
-				B972CBF3E9194CDD81062262 /* Synopsis.swift */,
+				922AB0516B794DE199B9C2FA /* BirthYear.swift */,
+				89444EF457C44E4BA8568BF4 /* Movie.swift */,
+				3D9F065F09BA497C9D19A8F4 /* MoviesAPI.swift */,
+				4B2040C7A12F48B99AFDB78E /* MoviesRequests.swift */,
+				3A87EEFE9D02499B88560CB1 /* Person.swift */,
+				746E0A02ADE6412EB6410CDB /* Synopsis.swift */,
 			);
 			name = APIs;
 			sourceTree = "<group>";
@@ -423,45 +423,45 @@
 		22FD4D1E1E96ECBB00FC81DB /* ElectrodeReactNativeBridge */ = {
 			isa = PBXGroup;
 			children = (
-				34BA740D19C6439C87674376 /* ElectrodeObject.swift */,
-				4FCF1085175D4D939D78FBEB /* Bridgeable.swift */,
-				2F9E7EFE74BE44D0A833BE64 /* ElectrodeRequestHandlerProcessor.swift */,
-				3FB5BA0E931642EFA30DEB1C /* ElectrodeRequestProcessor.swift */,
-				3EB6238650894E74ACA7FE20 /* ElectrodeUtilities.swift */,
-				7417E585F29C4AC1A4A71F1E /* EventListenerProcessor.swift */,
-				E3F813FFD98642208CD13A34 /* EventProcessor.swift */,
-				6B307A8AB0E94F668164004A /* Processor.swift */,
-				71DEA81E3EB04CF3A110ED23 /* None.swift */,
-				AF09C124578E4C39B702982C /* ElectrodeBridgeEvent.m */,
-				437D493B38C1474693BAFE3C /* ElectrodeBridgeFailureMessage.m */,
-				FF8B307F88F6407687247688 /* ElectrodeBridgeHolder.m */,
-				D5FE78CCE6F344BE9379A271 /* ElectrodeBridgeMessage.m */,
-				0A9CADAC653B4242932D9EB3 /* ElectrodeBridgeProtocols.m */,
-				711E033A952B4F0B8FFEC4EF /* ElectrodeBridgeRequest.m */,
-				3EDC4887006042358F896BE6 /* ElectrodeBridgeResponse.m */,
-				78BE42EACB2D4244BC96353D /* ElectrodeBridgeTransaction.m */,
-				D666310F92164214B8C5C5F3 /* ElectrodeBridgeTransceiver.m */,
-				04EBB62A17D746DCB7B877D3 /* ElectrodeEventDispatcher.m */,
-				EC3D187B3F3A4708BEC072F8 /* ElectrodeEventRegistrar.m */,
-				215FB55EC64548D4939BF18E /* ElectrodeRequestDispatcher.m */,
-				7D5C8384B9074307AAD6C340 /* ElectrodeRequestRegistrar.m */,
-				547222CF195143DCB495589B /* ElectrodeLogger.m */,
-				20CC50214889402B8E47277D /* ElectrodeBridgeEvent.h */,
-				365BFCCFAB26455484285EAD /* ElectrodeBridgeFailureMessage.h */,
-				71CF888ECD554273AF543F42 /* ElectrodeBridgeHolder.h */,
-				A7A2B63A70BC43818832D23A /* ElectrodeBridgeMessage.h */,
-				EA06960BB3DE4F95BFD1E2DF /* ElectrodeBridgeProtocols.h */,
-				4AC0A66FCDD94F3F901320B8 /* ElectrodeBridgeRequest.h */,
-				7F0F3BAEDC0943C0BA0C6098 /* ElectrodeBridgeTransaction.h */,
-				27B508CFE50D48C1BE2A5B0D /* ElectrodeBridgeTransceiver.h */,
-				0A3579EA890148F0ABFDACEB /* ElectrodeBridgeTransceiver_Internal.h */,
-				94334412DD1E4BF4BF8A23BB /* ElectrodeEventDispatcher.h */,
-				C45F7A27F67D41D8B6AEACEC /* ElectrodeEventRegistrar.h */,
-				97BA0429C1254A88AB2302ED /* ElectrodeRequestDispatcher.h */,
-				2058BBE9DD1940348C7405C8 /* ElectrodeRequestRegistrar.h */,
-				5A2A494997714B58B8994BF6 /* ElectrodeReactNativeBridge.h */,
-				B973E396C8CD45A88CE6215F /* ElectrodeBridgeResponse.h */,
-				4B3D32B845DA4C2893A63BD1 /* ElectrodeLogger.h */,
+				0A36683066BC490889DF4393 /* ElectrodeObject.swift */,
+				F8673ED2F04D47958AE2E8DC /* Bridgeable.swift */,
+				ED899B5E7CDA465C8D654D54 /* ElectrodeRequestHandlerProcessor.swift */,
+				72926F73F12148E48BF3E8FC /* ElectrodeRequestProcessor.swift */,
+				E165BC6B41C9411CA0E180AC /* ElectrodeUtilities.swift */,
+				D0C66D0AE0F04E7183ECEE4C /* EventListenerProcessor.swift */,
+				AF3B8C73DB8341DF84D68A61 /* EventProcessor.swift */,
+				F09E853E565444288CD1964C /* Processor.swift */,
+				D537440A144B4B878288603C /* None.swift */,
+				821B84A2A482485A97E9283E /* ElectrodeBridgeEvent.m */,
+				F7BA40A42A084F4FA3F273A6 /* ElectrodeBridgeFailureMessage.m */,
+				454B74BB01D04911BC46DE7C /* ElectrodeBridgeHolder.m */,
+				FA3D9732CAC64FF9BF4DA10E /* ElectrodeBridgeMessage.m */,
+				94A12E1EC03C405990498784 /* ElectrodeBridgeProtocols.m */,
+				4D6C8ACFDF684F6B9670237B /* ElectrodeBridgeRequest.m */,
+				7A78C56A2BD94F8D9670B207 /* ElectrodeBridgeResponse.m */,
+				F9AB3F8332E943B5B5C6070B /* ElectrodeBridgeTransaction.m */,
+				98B9046C45844779B41D5151 /* ElectrodeBridgeTransceiver.m */,
+				0DB5A3306FA945308A2CE6F4 /* ElectrodeEventDispatcher.m */,
+				B56DA748483D47E5B2820C4F /* ElectrodeEventRegistrar.m */,
+				1283577C4EFC4094840520AF /* ElectrodeRequestDispatcher.m */,
+				2A981CC9CF3C4C419884A133 /* ElectrodeRequestRegistrar.m */,
+				6EA3D4EC06B64B1DB8064458 /* ElectrodeLogger.m */,
+				6E52B1E80A394F31A798B099 /* ElectrodeBridgeEvent.h */,
+				B4E57F46A5764F04BD3B4F69 /* ElectrodeBridgeFailureMessage.h */,
+				1288768B5F864D9CA8352858 /* ElectrodeBridgeHolder.h */,
+				A0A4B741955942139F174160 /* ElectrodeBridgeMessage.h */,
+				2AF0643E2004494590BC19B2 /* ElectrodeBridgeProtocols.h */,
+				544D80E6740C4A4FA51E6260 /* ElectrodeBridgeRequest.h */,
+				F3FC08E34E024FBDB01030E7 /* ElectrodeBridgeTransaction.h */,
+				9442118C673445808FD8FB2F /* ElectrodeBridgeTransceiver.h */,
+				47C408392DAC4AF08E05C347 /* ElectrodeBridgeTransceiver_Internal.h */,
+				BAE20E8B32804BAF8040B9C6 /* ElectrodeEventDispatcher.h */,
+				A4190F10A88342CE9336B5D6 /* ElectrodeEventRegistrar.h */,
+				A1D0EBB0C58F4B87817F92CA /* ElectrodeRequestDispatcher.h */,
+				4C40D7317CA742C58FE043BA /* ElectrodeRequestRegistrar.h */,
+				DAD2D24668D7419994AEA019 /* ElectrodeReactNativeBridge.h */,
+				7F54A0B8AF294B0DBB75439B /* ElectrodeBridgeResponse.h */,
+				17DB6581B3DE48BF8E550663 /* ElectrodeLogger.h */,
 			);
 			name = ElectrodeReactNativeBridge;
 			sourceTree = "<group>";
@@ -527,7 +527,7 @@
 		48500AA71E2FFA14009B6610 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A8E38019534D4A61867AF384 /* JavaScriptCore.framework */,
+				2A5956E2AADA44929787B251 /* JavaScriptCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -535,11 +535,11 @@
 		7F1C6B771FAD343A00F68360 /* APIImpls */ = {
 			isa = PBXGroup;
 			children = (
-				343D7D096D48448E8AECA6AD /* RequestHandlerConfig.swift */,
-				00787F496C8443FFB3CF5DFA /* RequestHandlerProvider.swift */,
-				163CF902F6E54272B01E422F /* MoviesApiController.swift */,
-				073D0BD3EC5843D284360737 /* MoviesApiRequestHandlerDelegate.swift */,
-				260698F5493747E596DDD18E /* MoviesApiRequestHandlerProvider.swift */,
+				3A57738B93AF4C989CEC135B /* RequestHandlerConfig.swift */,
+				3E23073932764A4494D0A022 /* RequestHandlerProvider.swift */,
+				84419EE64FA5431CBA6CF718 /* MoviesApiController.swift */,
+				FA9BDC4A11AC4923A4C3A3A5 /* MoviesApiRequestHandlerDelegate.swift */,
+				E8F860445AE44DCC8BF853D2 /* MoviesApiRequestHandlerProvider.swift */,
 			);
 			name = APIImpls;
 			sourceTree = "<group>";
@@ -551,109 +551,109 @@
 			path = MiniApp;
 			sourceTree = "<group>";
 		};
-		99E4D9B81404452097E29160 /* Products */ = {
+		33E31D23B9784F6385E105CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2163673E1FBB4547A0575D61 /* libReact.a */,
+				342ACF96D6004DC3BA3ECB4A /* libReact.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		D90A196FF68440E9AC8C98C4 /* Products */ = {
+		9303A283A6E84B52899CD575 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0F539D42E8824547997A6B4B /* libRCTActionSheet.a */,
+				B8377F0EC1644AD087327E76 /* libRCTActionSheet.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		920231552E584D7BBECDB08A /* Products */ = {
+		CED86B66C64047F7807C7B21 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				52F853B00B524AEE8582550C /* libRCTImage.a */,
+				756CCFE460A74914B31F152F /* libRCTImage.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		E4745EFF33D14440805B4D3D /* Products */ = {
+		479DE006C87743418E07B9CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1DF1965BFBB8418CBD9C2028 /* libRCTAnimation.a */,
+				A00A5B08C01A4E9FAB6AC128 /* libRCTAnimation.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		305CE6C67530460FACDBEE9B /* Products */ = {
+		DF43F9C24C084DBA9CEE7226 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				46CA8B012C1D4BDC920F1ADE /* libRCTText.a */,
+				2D31630C788847C795184181 /* libRCTText.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		0B91059B95B74EE38B58AA43 /* Products */ = {
+		6A1EA6428DCF44F59A553FFD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4BA939B8D34947B3AD376DF2 /* libRCTWebSocket.a */,
+				DA8CB8DF5660447DB08588B9 /* libRCTWebSocket.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		5894A6B428654721B5DF2BDC /* Products */ = {
+		54847B062FE34A459356DA6C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				093C5CF55E8E451BACC8C3C1 /* libRCTLinking.a */,
+				D587F64962B54B42BCE87221 /* libRCTLinking.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		CDB29271AE2346AF894ED077 /* Products */ = {
+		D1001014244A49AB93970801 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3A11C9F1621742C296929FA9 /* libRCTNetwork.a */,
+				29279E8AB8A34CADBF2E12E5 /* libRCTNetwork.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		9846C22BAC01474B9CEC501D /* Products */ = {
+		3F36D741DC144FA79924D7A1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CEB7EE00D55A47C6AB7E9A6D /* libRCTSettings.a */,
+				879203F5F2D04719A2E77912 /* libRCTSettings.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		3B9C450D0023478C907C4AE3 /* Products */ = {
+		57D43446B6574165893E550C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8E6669E888B44EB288CFF90B /* libRCTVibration.a */,
+				57C87EFEFAC746178BA5AD09 /* libRCTVibration.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		C7A7D98114CF43389F15A5FF /* Products */ = {
+		34ED9413504E4F0CB9DE8644 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5D24904D68A146CB944BDB6A /* libRCTCameraRoll.a */,
+				8750E888785C4AC5B682995C /* libRCTCameraRoll.a */,
 			);
 			name = Products;
 			path = undefined;
 			sourceTree = "<group>";
 		};
-		856C46B6494A4318B89BBBA2 /* Products */ = {
+		7C89599B9E6645C0B741DB8F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AF6A34CAA2AE410F9E22E5A4 /* libART.a */,
+				EC0521DEC3C240BCBBAAABEF /* libART.a */,
 			);
 			name = Products;
 			path = undefined;
@@ -670,28 +670,28 @@
 				968333D71E54E3470031C565 /* ElectrodeBridgeDelegate.h in Headers */,
 				30F8CDEE1E67946E00413247 /* ElectrodeReactNative_Internal.h in Headers */,
 				48500A981E2FF55B009B6610 /* ElectrodeReactNative.h in Headers */,
-				67E9AC7838AC435787B9CAB2 /* BirthYear.swift in Headers */,
-				6BC658B0A5754B54AA1D3756 /* Movie.swift in Headers */,
-				3F7C0D2182CB494D9305E41E /* MoviesAPI.swift in Headers */,
-				03E2C9E5EB8A44B9B726D480 /* MoviesRequests.swift in Headers */,
-				538BB29EB8E848629B30FACB /* Person.swift in Headers */,
-				268A70B25D8C4D7BB2C3055E /* Synopsis.swift in Headers */,
-				190FF83CCCF247FE99EBAD7D /* ElectrodeBridgeEvent.h in Headers */,
-				D440D9E3FAC14F4AA04D4C72 /* ElectrodeBridgeFailureMessage.h in Headers */,
-				3F662DB6B7F545668CBF08D3 /* ElectrodeBridgeHolder.h in Headers */,
-				3A1A291FA155463A93C669B8 /* ElectrodeBridgeMessage.h in Headers */,
-				5799067C1D074A2FB7E9B459 /* ElectrodeBridgeProtocols.h in Headers */,
-				7D8640D2B0D44F5786D0759B /* ElectrodeBridgeRequest.h in Headers */,
-				3272331405244CF29783B090 /* ElectrodeBridgeTransaction.h in Headers */,
-				757AF383E3894832AE8E3279 /* ElectrodeBridgeTransceiver.h in Headers */,
-				09B91F020F914B44A9E3488A /* ElectrodeBridgeTransceiver_Internal.h in Headers */,
-				8F4940B6E81A4EE0AF5392B1 /* ElectrodeEventDispatcher.h in Headers */,
-				5BBAAB580D9C4025A91933D7 /* ElectrodeEventRegistrar.h in Headers */,
-				11BABFEAA5FF4046A6577886 /* ElectrodeRequestDispatcher.h in Headers */,
-				5D085CB40EF04EA3B0C8CDDE /* ElectrodeRequestRegistrar.h in Headers */,
-				F3CE3EF3A6964F6C8DC899ED /* ElectrodeReactNativeBridge.h in Headers */,
-				796B5DD624CE48889A97A1C2 /* ElectrodeBridgeResponse.h in Headers */,
-				E6F6B4EFE04A4643B59AB141 /* ElectrodeLogger.h in Headers */,
+				95FA7029C262409882F17FFF /* BirthYear.swift in Headers */,
+				675152A6B90D48F6B5E5423C /* Movie.swift in Headers */,
+				11CDB21C18AD48418FD47233 /* MoviesAPI.swift in Headers */,
+				205CE59DB2054B0F9A002AB0 /* MoviesRequests.swift in Headers */,
+				164210A9789C4649A3528D7C /* Person.swift in Headers */,
+				5796ABC351204FA28783A1D0 /* Synopsis.swift in Headers */,
+				C23EAF2CB1474B0E8DDF2DF8 /* ElectrodeBridgeEvent.h in Headers */,
+				FE1E25388CFA4579A4B74323 /* ElectrodeBridgeFailureMessage.h in Headers */,
+				87498F35A38A4C4D9957A267 /* ElectrodeBridgeHolder.h in Headers */,
+				A65961AC242F402FA33C1870 /* ElectrodeBridgeMessage.h in Headers */,
+				17D981AAAAF2409D8220271B /* ElectrodeBridgeProtocols.h in Headers */,
+				D874B8FCBD2741AE9757177B /* ElectrodeBridgeRequest.h in Headers */,
+				6E8CE40513D0426E9AF4CC73 /* ElectrodeBridgeTransaction.h in Headers */,
+				2C412BD40F424C09B8420E20 /* ElectrodeBridgeTransceiver.h in Headers */,
+				EC98153D553345FEB1392FFE /* ElectrodeBridgeTransceiver_Internal.h in Headers */,
+				332138ACE45B40C4BE902653 /* ElectrodeEventDispatcher.h in Headers */,
+				1F42260A5273410DA41E0822 /* ElectrodeEventRegistrar.h in Headers */,
+				FC6180DC037142A88A353178 /* ElectrodeRequestDispatcher.h in Headers */,
+				B122825FE1BE4B94BF69A882 /* ElectrodeRequestRegistrar.h in Headers */,
+				6C68C376F7B84ECF898737B2 /* ElectrodeReactNativeBridge.h in Headers */,
+				FCA3F3A6EF6B488F9D07BABC /* ElectrodeBridgeResponse.h in Headers */,
+				A267DB259E6E45118C7EA2CE /* ElectrodeLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -710,18 +710,18 @@
 			buildRules = (
 			);
 			dependencies = (
-				403893EF154A4A9687C02103 /* PBXTargetDependency */,
-				2E453EE429F84FDD985D9B36 /* PBXTargetDependency */,
-				8BC0AF148D3642E2912ED0A2 /* PBXTargetDependency */,
-				8274832D464B41A4AFA33C1A /* PBXTargetDependency */,
-				95DBCD7571FC47B8BBF524E2 /* PBXTargetDependency */,
-				67B1D55319ED4CA39111417E /* PBXTargetDependency */,
-				98E040A99C3541B6B8A3ECD2 /* PBXTargetDependency */,
-				0F5FAFEFE71241AC9594AE24 /* PBXTargetDependency */,
-				E18073B657984594923FA9D2 /* PBXTargetDependency */,
-				52F54D91AA564FAD8D4E8E89 /* PBXTargetDependency */,
-				5A9877BCCADB4958ACE46445 /* PBXTargetDependency */,
-				C4DE5513097F4978BDF7C341 /* PBXTargetDependency */,
+				3F48AB4D6AA846D9BF0E5133 /* PBXTargetDependency */,
+				19550F21BED74D229BCB062D /* PBXTargetDependency */,
+				F4723BEE5DD94B55ACD1F594 /* PBXTargetDependency */,
+				A09C47804BE8419F95C7840A /* PBXTargetDependency */,
+				308291E992354B46A810870F /* PBXTargetDependency */,
+				2DB0C8266AE84234896120EE /* PBXTargetDependency */,
+				7D6832B6FB1644B3B12735D1 /* PBXTargetDependency */,
+				4BA2828001D64A20A73B355B /* PBXTargetDependency */,
+				D86D44989CE944C7964CF6B1 /* PBXTargetDependency */,
+				F507A4E0F8AD4FE9A58CA7CF /* PBXTargetDependency */,
+				2BDB65C0D72A4C6681B1F9FB /* PBXTargetDependency */,
+				9CAD3FD3ACC5479986BC11FA /* PBXTargetDependency */,
 			);
 			name = ElectrodeApiImpl;
 			productName = ElectrodeApiImpl;
@@ -783,140 +783,140 @@
 			);
 			projectReferences = (
 				{
-					ProjectRef = 619E0F92D95C4728B617DB7B /* React.xcodeproj */;
-					ProductGroup = 99E4D9B81404452097E29160 /* Products */;
+					ProjectRef = C524D9876CE64F81867DFFA7 /* React.xcodeproj */;
+					ProductGroup = 33E31D23B9784F6385E105CB /* Products */;
 				},
 				{
-					ProjectRef = 526E85DE9C394257A6CA7146 /* RCTActionSheet.xcodeproj */;
-					ProductGroup = D90A196FF68440E9AC8C98C4 /* Products */;
+					ProjectRef = A4064CFB9A0A4EBB8FC79DAA /* RCTActionSheet.xcodeproj */;
+					ProductGroup = 9303A283A6E84B52899CD575 /* Products */;
 				},
 				{
-					ProjectRef = 934639A4E9444DAE811EA083 /* RCTImage.xcodeproj */;
-					ProductGroup = 920231552E584D7BBECDB08A /* Products */;
+					ProjectRef = CD75E435684348F39C854F37 /* RCTImage.xcodeproj */;
+					ProductGroup = CED86B66C64047F7807C7B21 /* Products */;
 				},
 				{
-					ProjectRef = F468C225B0F54042B2B85D6E /* RCTAnimation.xcodeproj */;
-					ProductGroup = E4745EFF33D14440805B4D3D /* Products */;
+					ProjectRef = EBA9F2845C5648DBB47A488A /* RCTAnimation.xcodeproj */;
+					ProductGroup = 479DE006C87743418E07B9CF /* Products */;
 				},
 				{
-					ProjectRef = B00EFE40F4C2425EBCF77798 /* RCTText.xcodeproj */;
-					ProductGroup = 305CE6C67530460FACDBEE9B /* Products */;
+					ProjectRef = 5E99B0891E684A61ACF345FA /* RCTText.xcodeproj */;
+					ProductGroup = DF43F9C24C084DBA9CEE7226 /* Products */;
 				},
 				{
-					ProjectRef = 02E2F690119A447D86F69CCF /* RCTWebSocket.xcodeproj */;
-					ProductGroup = 0B91059B95B74EE38B58AA43 /* Products */;
+					ProjectRef = 7DFEB507D6D84D2CB01B428D /* RCTWebSocket.xcodeproj */;
+					ProductGroup = 6A1EA6428DCF44F59A553FFD /* Products */;
 				},
 				{
-					ProjectRef = 63A3A3AB513343AEA094996A /* RCTLinking.xcodeproj */;
-					ProductGroup = 5894A6B428654721B5DF2BDC /* Products */;
+					ProjectRef = 5D057527313744F7A94EF68E /* RCTLinking.xcodeproj */;
+					ProductGroup = 54847B062FE34A459356DA6C /* Products */;
 				},
 				{
-					ProjectRef = 3CDBFC6191844217AB3A3EE5 /* RCTNetwork.xcodeproj */;
-					ProductGroup = CDB29271AE2346AF894ED077 /* Products */;
+					ProjectRef = 5FC4D815F8084A9B8D7CFA94 /* RCTNetwork.xcodeproj */;
+					ProductGroup = D1001014244A49AB93970801 /* Products */;
 				},
 				{
-					ProjectRef = 53530E36F22D4DE28F6E716B /* RCTSettings.xcodeproj */;
-					ProductGroup = 9846C22BAC01474B9CEC501D /* Products */;
+					ProjectRef = F1A6094908DC41C1A13BE6E6 /* RCTSettings.xcodeproj */;
+					ProductGroup = 3F36D741DC144FA79924D7A1 /* Products */;
 				},
 				{
-					ProjectRef = D75CE2B3823C45378800207D /* RCTVibration.xcodeproj */;
-					ProductGroup = 3B9C450D0023478C907C4AE3 /* Products */;
+					ProjectRef = 66EC659CFBAF433F8ACA76D8 /* RCTVibration.xcodeproj */;
+					ProductGroup = 57D43446B6574165893E550C /* Products */;
 				},
 				{
-					ProjectRef = C70619FDBDE14B3A912AAE20 /* RCTCameraRoll.xcodeproj */;
-					ProductGroup = C7A7D98114CF43389F15A5FF /* Products */;
+					ProjectRef = D03FDDAEC40B4EC29104B2E4 /* RCTCameraRoll.xcodeproj */;
+					ProductGroup = 34ED9413504E4F0CB9DE8644 /* Products */;
 				},
 				{
-					ProjectRef = 6E360FEA9EF44A3CA2663CDA /* ART.xcodeproj */;
-					ProductGroup = 856C46B6494A4318B89BBBA2 /* Products */;
+					ProjectRef = 1300F5CC4AF748B190246657 /* ART.xcodeproj */;
+					ProductGroup = 7C89599B9E6645C0B741DB8F /* Products */;
 				},
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		2163673E1FBB4547A0575D61 /* libReact.a */ = {
+		342ACF96D6004DC3BA3ECB4A /* libReact.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libReact.a;
-			remoteRef = 72CC94209F5E45DE93D6D812 /* PBXContainerItemProxy */;
+			remoteRef = 9B00B06B0ABD47B4B1DAB48D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		0F539D42E8824547997A6B4B /* libRCTActionSheet.a */ = {
+		B8377F0EC1644AD087327E76 /* libRCTActionSheet.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTActionSheet.a;
-			remoteRef = B6C22AD1C3F448739A6C40D4 /* PBXContainerItemProxy */;
+			remoteRef = 94AD3FA22C9E428BAC291CB7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		52F853B00B524AEE8582550C /* libRCTImage.a */ = {
+		756CCFE460A74914B31F152F /* libRCTImage.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTImage.a;
-			remoteRef = 7CCEEDB7647C4735813AF1AD /* PBXContainerItemProxy */;
+			remoteRef = 34224277956349EDAF2976D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1DF1965BFBB8418CBD9C2028 /* libRCTAnimation.a */ = {
+		A00A5B08C01A4E9FAB6AC128 /* libRCTAnimation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTAnimation.a;
-			remoteRef = 5BAD33F0B4C7461381A5A32C /* PBXContainerItemProxy */;
+			remoteRef = E4581D952885429A91ED69C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		46CA8B012C1D4BDC920F1ADE /* libRCTText.a */ = {
+		2D31630C788847C795184181 /* libRCTText.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTText.a;
-			remoteRef = 8CBE3837628446A393140515 /* PBXContainerItemProxy */;
+			remoteRef = 7A1280F8D847461DA2F65956 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4BA939B8D34947B3AD376DF2 /* libRCTWebSocket.a */ = {
+		DA8CB8DF5660447DB08588B9 /* libRCTWebSocket.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTWebSocket.a;
-			remoteRef = 9E093E8419574C91AB21882D /* PBXContainerItemProxy */;
+			remoteRef = F679EA0410A045B59A3D1975 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		093C5CF55E8E451BACC8C3C1 /* libRCTLinking.a */ = {
+		D587F64962B54B42BCE87221 /* libRCTLinking.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTLinking.a;
-			remoteRef = 7047A3F0F4DC4C37BE1F9999 /* PBXContainerItemProxy */;
+			remoteRef = 718E5B0C384143FC8CF87603 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3A11C9F1621742C296929FA9 /* libRCTNetwork.a */ = {
+		29279E8AB8A34CADBF2E12E5 /* libRCTNetwork.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTNetwork.a;
-			remoteRef = 3C3B88650CDD448BB32D1790 /* PBXContainerItemProxy */;
+			remoteRef = 427F2F57269F40D7AC21AE6D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CEB7EE00D55A47C6AB7E9A6D /* libRCTSettings.a */ = {
+		879203F5F2D04719A2E77912 /* libRCTSettings.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTSettings.a;
-			remoteRef = 2F8EE478A3C94075BBD0AA66 /* PBXContainerItemProxy */;
+			remoteRef = 8B758344F05F44778F052309 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8E6669E888B44EB288CFF90B /* libRCTVibration.a */ = {
+		57C87EFEFAC746178BA5AD09 /* libRCTVibration.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTVibration.a;
-			remoteRef = 21E96B3C084C470A9FA173BD /* PBXContainerItemProxy */;
+			remoteRef = A690D3E4408F4E5DACCD5E17 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5D24904D68A146CB944BDB6A /* libRCTCameraRoll.a */ = {
+		8750E888785C4AC5B682995C /* libRCTCameraRoll.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRCTCameraRoll.a;
-			remoteRef = 790819279B8348F1AD153070 /* PBXContainerItemProxy */;
+			remoteRef = 88725C57E2CE461CA4A9DFD3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AF6A34CAA2AE410F9E22E5A4 /* libART.a */ = {
+		EC0521DEC3C240BCBBAAABEF /* libART.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libART.a;
-			remoteRef = 82ADB1DD7F484A72BFEE0B6C /* PBXContainerItemProxy */;
+			remoteRef = 7CAF460658244A2A8936F781 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -945,40 +945,40 @@
 			files = (
 				48500A991E2FF55B009B6610 /* ElectrodeReactNative.m in Sources */,
 				968333D81E54E3470031C565 /* ElectrodeBridgeDelegate.m in Sources */,
-				17F9BBE36AA444F1A53DD3BA /* BirthYear.swift in Sources */,
-				621D3BE9BE174B848014B724 /* Movie.swift in Sources */,
-				698A5D4A095642C091F5477D /* MoviesAPI.swift in Sources */,
-				5E191AEF07014C969884FD44 /* MoviesRequests.swift in Sources */,
-				E5EBA99AE76843D1AA31F75F /* Person.swift in Sources */,
-				D03233D34FB54E2996B7E888 /* Synopsis.swift in Sources */,
-				40E4DE49FA5A4EBB8EE19C0E /* ElectrodeObject.swift in Sources */,
-				43A42C5435E64142B403D802 /* Bridgeable.swift in Sources */,
-				BCC72818F21E4271A6F16C79 /* ElectrodeRequestHandlerProcessor.swift in Sources */,
-				F3B464D51C584D2181B3DF02 /* ElectrodeRequestProcessor.swift in Sources */,
-				8227091E1B3C48CE894AB0BC /* ElectrodeUtilities.swift in Sources */,
-				AC1BC14219474B51BD634516 /* EventListenerProcessor.swift in Sources */,
-				042CA74EED674A4EBBB089E1 /* EventProcessor.swift in Sources */,
-				541B9D6E21574F52A6EBE30D /* Processor.swift in Sources */,
-				82B7790435514A118E9DE1E4 /* None.swift in Sources */,
-				8846DD68BE664FA9B5B7BD68 /* ElectrodeBridgeEvent.m in Sources */,
-				9F542D8434FA4BB0BD564A86 /* ElectrodeBridgeFailureMessage.m in Sources */,
-				35048AB565E54DDEACD171FB /* ElectrodeBridgeHolder.m in Sources */,
-				0367D3E0536B4740B1D9F32A /* ElectrodeBridgeMessage.m in Sources */,
-				9CBA3A9FF3494882A900D0A8 /* ElectrodeBridgeProtocols.m in Sources */,
-				532E6AABCFF942C1AE355350 /* ElectrodeBridgeRequest.m in Sources */,
-				2D506DCDC0AB4B58A64CE168 /* ElectrodeBridgeResponse.m in Sources */,
-				A73113FBBE2F41A8AC5AE320 /* ElectrodeBridgeTransaction.m in Sources */,
-				70CDBF3E7F664A42B81CE6A0 /* ElectrodeBridgeTransceiver.m in Sources */,
-				5DFBC149AC924B408761C3A1 /* ElectrodeEventDispatcher.m in Sources */,
-				DD64CDC4F7F84E97A4C6EF2F /* ElectrodeEventRegistrar.m in Sources */,
-				376BA731D3CC4D07964DEE2E /* ElectrodeRequestDispatcher.m in Sources */,
-				09C710E91931490C8049AF08 /* ElectrodeRequestRegistrar.m in Sources */,
-				34B7A53EA4BA43D2AFE64DAD /* ElectrodeLogger.m in Sources */,
-				1E671501B8EF4CEE84075D81 /* RequestHandlerConfig.swift in Sources */,
-				7A68CB947D8C4AFDA9EF1DD6 /* RequestHandlerProvider.swift in Sources */,
-				8DFF7D1CDA3F4A96AB92E972 /* MoviesApiController.swift in Sources */,
-				C81EFF38AF1140E1B8A7B3D0 /* MoviesApiRequestHandlerDelegate.swift in Sources */,
-				3533ACC77CA9453EB8F2D976 /* MoviesApiRequestHandlerProvider.swift in Sources */,
+				9FFFB709FA934199B8371C61 /* BirthYear.swift in Sources */,
+				B564A86FC75846948872FAE3 /* Movie.swift in Sources */,
+				77C865A1071F4320A4015BCC /* MoviesAPI.swift in Sources */,
+				FA670D7560914A589B0FCE2B /* MoviesRequests.swift in Sources */,
+				C636FC82FEF4421CAB6CC086 /* Person.swift in Sources */,
+				FCCC88BA9B40441881CB2CCA /* Synopsis.swift in Sources */,
+				BBC1A7AF1CEB451A93DAD2CD /* ElectrodeObject.swift in Sources */,
+				C13F2C3D2330409F994D2E31 /* Bridgeable.swift in Sources */,
+				FA96F01717664CA7B932C20E /* ElectrodeRequestHandlerProcessor.swift in Sources */,
+				0D26150FE4EA4A85AEF975B9 /* ElectrodeRequestProcessor.swift in Sources */,
+				AA3F41E300FA4F49B95DBFF0 /* ElectrodeUtilities.swift in Sources */,
+				C9CF3234AB2341AFB4649A98 /* EventListenerProcessor.swift in Sources */,
+				F002B5EFD5CD4332B6DE381C /* EventProcessor.swift in Sources */,
+				9553CFA0BC434CCD92FC69BF /* Processor.swift in Sources */,
+				F3CC2B941C034C539C37FC3F /* None.swift in Sources */,
+				B9CF8B6DE246400F84005064 /* ElectrodeBridgeEvent.m in Sources */,
+				851B536347604511B6E3A1DF /* ElectrodeBridgeFailureMessage.m in Sources */,
+				353D6A2F14A94507BA484DC3 /* ElectrodeBridgeHolder.m in Sources */,
+				C6E475A6A4FC4EC6ABD6FD63 /* ElectrodeBridgeMessage.m in Sources */,
+				F7916C8A50AC42D1B1CBE6CE /* ElectrodeBridgeProtocols.m in Sources */,
+				F0497EFD088C48959542CF8B /* ElectrodeBridgeRequest.m in Sources */,
+				06FB3ABAEE7F49D2AB29D060 /* ElectrodeBridgeResponse.m in Sources */,
+				8C3AE94331BE4A128AC95ABE /* ElectrodeBridgeTransaction.m in Sources */,
+				A24494D32E82492DB19F7214 /* ElectrodeBridgeTransceiver.m in Sources */,
+				20212A28174C4E66A6C09EB5 /* ElectrodeEventDispatcher.m in Sources */,
+				A9758458F8DD48B79CE51A95 /* ElectrodeEventRegistrar.m in Sources */,
+				B3E66CBC1EF846A59559F7B6 /* ElectrodeRequestDispatcher.m in Sources */,
+				0584D37782D44684B94DAB8E /* ElectrodeRequestRegistrar.m in Sources */,
+				628998D472D7457DB8E3C0EC /* ElectrodeLogger.m in Sources */,
+				A9C41B75D74C4481A3DCA8E8 /* RequestHandlerConfig.swift in Sources */,
+				8508E94F74C74474A7E2DE2F /* RequestHandlerProvider.swift in Sources */,
+				15401B3EFC2B40A683BA6AF9 /* MoviesApiController.swift in Sources */,
+				2F53C92653994F51A6CCC6C4 /* MoviesApiRequestHandlerDelegate.swift in Sources */,
+				7B5B02311BA442F4B33714E3 /* MoviesApiRequestHandlerProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1000,65 +1000,65 @@
 			target = 485009E21E2FF23B009B6610 /* ElectrodeApiImpl */;
 			targetProxy = 485009EE1E2FF23C009B6610 /* PBXContainerItemProxy */;
 		};
-		403893EF154A4A9687C02103 /* PBXTargetDependency */ = {
+		3F48AB4D6AA846D9BF0E5133 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = React;
-			targetProxy = AA00A9A87D1643CFB1AC2791 /* PBXContainerItemProxy */;
+			targetProxy = EE1DBF2392A94B8FAE9EA52D /* PBXContainerItemProxy */;
 		};
-		2E453EE429F84FDD985D9B36 /* PBXTargetDependency */ = {
+		19550F21BED74D229BCB062D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTActionSheet;
-			targetProxy = 54376A70CD014EE4AC417C71 /* PBXContainerItemProxy */;
+			targetProxy = 20625B9C7B0A424880FCE5F3 /* PBXContainerItemProxy */;
 		};
-		8BC0AF148D3642E2912ED0A2 /* PBXTargetDependency */ = {
+		F4723BEE5DD94B55ACD1F594 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTImage;
-			targetProxy = 5FDF80137FF7462E875ABA6C /* PBXContainerItemProxy */;
+			targetProxy = DD7EADE1A0B746708E9E462F /* PBXContainerItemProxy */;
 		};
-		8274832D464B41A4AFA33C1A /* PBXTargetDependency */ = {
+		A09C47804BE8419F95C7840A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTAnimation;
-			targetProxy = AE5EE68775A94AC392FB2415 /* PBXContainerItemProxy */;
+			targetProxy = 03774759791944ACB1CCBC5B /* PBXContainerItemProxy */;
 		};
-		95DBCD7571FC47B8BBF524E2 /* PBXTargetDependency */ = {
+		308291E992354B46A810870F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTText;
-			targetProxy = E9763571F7CB4F08BC3888F7 /* PBXContainerItemProxy */;
+			targetProxy = 93884F884A6B48AD9DAAC0BB /* PBXContainerItemProxy */;
 		};
-		67B1D55319ED4CA39111417E /* PBXTargetDependency */ = {
+		2DB0C8266AE84234896120EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTWebSocket;
-			targetProxy = 5D57D331E9414466A55EAD8A /* PBXContainerItemProxy */;
+			targetProxy = CFAA3CEB493843B895C79274 /* PBXContainerItemProxy */;
 		};
-		98E040A99C3541B6B8A3ECD2 /* PBXTargetDependency */ = {
+		7D6832B6FB1644B3B12735D1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTLinking;
-			targetProxy = ECB23D1C1550425D86EBE145 /* PBXContainerItemProxy */;
+			targetProxy = 2CAB32BCF4F74720A656C629 /* PBXContainerItemProxy */;
 		};
-		0F5FAFEFE71241AC9594AE24 /* PBXTargetDependency */ = {
+		4BA2828001D64A20A73B355B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTNetwork;
-			targetProxy = 6F4FC63F065D47FE932B011F /* PBXContainerItemProxy */;
+			targetProxy = 0915A4BAA7444B01BD581B47 /* PBXContainerItemProxy */;
 		};
-		E18073B657984594923FA9D2 /* PBXTargetDependency */ = {
+		D86D44989CE944C7964CF6B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTSettings;
-			targetProxy = C9D56C12A7284596A86BAAC7 /* PBXContainerItemProxy */;
+			targetProxy = 183B800F57574D3992972D76 /* PBXContainerItemProxy */;
 		};
-		52F54D91AA564FAD8D4E8E89 /* PBXTargetDependency */ = {
+		F507A4E0F8AD4FE9A58CA7CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTVibration;
-			targetProxy = 0C68FF2D021D4D7B92714F09 /* PBXContainerItemProxy */;
+			targetProxy = 842628DC7E494198ADC721BB /* PBXContainerItemProxy */;
 		};
-		5A9877BCCADB4958ACE46445 /* PBXTargetDependency */ = {
+		2BDB65C0D72A4C6681B1F9FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RCTCameraRoll;
-			targetProxy = DE96A488B3754F348A59CC36 /* PBXContainerItemProxy */;
+			targetProxy = BF49BC485E394C76A843FF50 /* PBXContainerItemProxy */;
 		};
-		C4DE5513097F4978BDF7C341 /* PBXTargetDependency */ = {
+		9CAD3FD3ACC5479986BC11FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ART;
-			targetProxy = A97BB249368748198336136F /* PBXContainerItemProxy */;
+			targetProxy = 2EDD100319C14AB09C9C0B5C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -20,13 +20,6 @@ export const builder = (argv: Argv) => {
         'Optional extra run configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
-    .option('dependencies', {
-      alias: 'deps',
-      describe:
-        'One or more additional native dependencies to add to the Runner Container',
-      type: 'array',
-    })
-    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -70,7 +63,6 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   baseComposite,
   extra,
-  dependencies = [],
   descriptor,
   dev,
   host,
@@ -81,7 +73,6 @@ export const commandHandler = async ({
 }: {
   baseComposite?: PackagePath
   extra?: string
-  dependencies: PackagePath[]
   descriptor?: AppVersionDescriptor
   dev?: boolean
   host?: string
@@ -96,7 +87,6 @@ export const commandHandler = async ({
 
   await runMiniApp('android', {
     baseComposite,
-    dependencies,
     descriptor,
     dev,
     extra: extraObj,

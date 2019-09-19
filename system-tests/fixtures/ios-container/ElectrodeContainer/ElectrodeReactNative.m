@@ -106,7 +106,6 @@ static dispatch_semaphore_t semaphore;
 #pragma mark - Public Methods
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
-                electrodeCodePushConfig: (id<ElectrodePluginConfig>) electrodeCodePushConfig
 
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
@@ -114,7 +113,6 @@ static dispatch_semaphore_t semaphore;
     semaphore = dispatch_semaphore_create(0);
     dispatch_once(&startOnceToken, ^{
         [sharedInstance startContainerWithConfiguration:reactContainerConfig
-         electrodeCodePushConfig:electrodeCodePushConfig
 ];
     });
 }
@@ -156,12 +154,10 @@ static dispatch_semaphore_t semaphore;
 #pragma mark - Convenience Methods
 
 - (void)startContainerWithConfiguration:(id<ElectrodePluginConfig>)reactContainerConfig
-                electrodeCodePushConfig: (id<ElectrodePluginConfig>) electrodeCodePushConfig
 {
     ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] init];
 
     [reactContainerConfig setupConfigWithDelegate:delegate];
-            [electrodeCodePushConfig setupConfigWithDelegate:delegate];
 
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;

@@ -20,9 +20,6 @@
 `--miniapps/m`
 * One or more MiniApps to combine in the Runner Container
 
-`--dependencies, --deps`
-* One or more native dependencies to add to the Runner Container
-
 `--descriptor, -d`
 * complete native application descriptor
 

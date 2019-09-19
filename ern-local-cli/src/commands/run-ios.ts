@@ -4,7 +4,6 @@ import {
   log,
   AppVersionDescriptor,
   PackagePath,
-  shell,
   getLocalIp,
 } from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
@@ -20,13 +19,6 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('baseComposite', d => PackagePath.fromString(d))
-    .option('dependencies', {
-      alias: 'deps',
-      describe:
-        'One or more additional native dependencies to add to the Runner Container',
-      type: 'array',
-    })
-    .coerce('dependencies', d => d.map(PackagePath.fromString))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -68,7 +60,6 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({
   baseComposite,
-  dependencies = [],
   descriptor,
   dev,
   host,
@@ -78,7 +69,6 @@ export const commandHandler = async ({
   usePreviousDevice,
 }: {
   baseComposite?: PackagePath
-  dependencies: PackagePath[]
   descriptor?: AppVersionDescriptor
   dev?: boolean
   host?: string
@@ -103,7 +93,6 @@ export const commandHandler = async ({
 
   await runMiniApp('ios', {
     baseComposite,
-    dependencies,
     descriptor,
     dev,
     host: host || 'localhost',

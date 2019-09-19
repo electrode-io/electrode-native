@@ -32,13 +32,11 @@ export async function runLocalContainerGen(
   composite: Composite,
   {
     outDir = Platform.getContainerGenOutDirectory(platform),
-    extraNativeDependencies = [],
     ignoreRnpmAssets = false,
     jsMainModuleName,
     extra,
   }: {
     outDir?: string
-    extraNativeDependencies: PackagePath[]
     ignoreRnpmAssets?: boolean
     jsMainModuleName?: string
     extra?: any
@@ -57,7 +55,7 @@ export async function runLocalContainerGen(
         ignoreRnpmAssets,
         jsMainModuleName,
         outDir,
-        plugins: [...nativeDependencies, ...extraNativeDependencies],
+        plugins: nativeDependencies,
         targetPlatform: platform,
       })
     )
@@ -81,9 +79,6 @@ export async function runCauldronContainerGen(
 ): Promise<ContainerGenResult> {
   try {
     const cauldron = await getActiveCauldron()
-    const cauldronNativeDependencies = await cauldron.getNativeDependencies(
-      napDescriptor
-    )
 
     if (!napDescriptor.platform) {
       throw new Error(`${napDescriptor} does not specify a platform`)

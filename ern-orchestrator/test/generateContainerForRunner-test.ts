@@ -44,7 +44,6 @@ describe('generateContainerForRunner', () => {
     const jsApiImpls = [PackagePath.fromString('b@1.0.0')]
     const dependencies = [PackagePath.fromString('c@1.0.0')]
     await generateContainerForRunner('android', {
-      dependencies,
       jsApiImpls,
       miniApps,
       outDir,
@@ -55,7 +54,6 @@ describe('generateContainerForRunner', () => {
       undefined,
       {
         extra: {},
-        extraNativeDependencies: dependencies,
         jsMainModuleName: undefined,
         outDir,
       }
@@ -69,7 +67,6 @@ describe('generateContainerForRunner', () => {
     const dependencies = [PackagePath.fromString('c@1.0.0')]
     const extra = { androidConfig: { compileSdkVersion: '28' } }
     await generateContainerForRunner('android', {
-      dependencies,
       extra,
       jsApiImpls,
       miniApps,
@@ -81,7 +78,6 @@ describe('generateContainerForRunner', () => {
       undefined,
       {
         extra,
-        extraNativeDependencies: dependencies,
         jsMainModuleName: undefined,
         outDir,
       }

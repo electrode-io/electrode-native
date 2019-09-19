@@ -13,7 +13,6 @@ export async function generateContainerForRunner(
   {
     baseComposite,
     napDescriptor,
-    dependencies = [],
     miniApps = [],
     jsApiImpls = [],
     outDir,
@@ -22,7 +21,6 @@ export async function generateContainerForRunner(
   }: {
     baseComposite?: PackagePath
     napDescriptor?: AppVersionDescriptor
-    dependencies?: PackagePath[]
     miniApps?: PackagePath[]
     jsApiImpls?: PackagePath[]
     outDir: string
@@ -54,7 +52,6 @@ export async function generateContainerForRunner(
     return kax.task('Generating Container locally').run(
       runLocalContainerGen(platform, composite, {
         extra: extra || {},
-        extraNativeDependencies: dependencies || [],
         jsMainModuleName,
         outDir,
       })

@@ -31,10 +31,7 @@ import com.facebook.react.modules.network.OkHttpClientFactory;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
-import com.microsoft.codepush.react.CodePush;
-import com.microsoft.codepush.react.ReactInstanceHolder;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 
 import com.facebook.react.devsupport.interfaces.DevOptionHandler;
@@ -122,7 +119,6 @@ public class ElectrodeReactContainer {
 
     @SuppressWarnings("UnusedReturnValue")
     public synchronized static void initialize(@NonNull final Application application, @NonNull final Config reactContainerConfig
-            , @NonNull final CodePushPlugin.Config codePushPluginConfig
      ) {
         if (sElectrodeReactNativeHost == null) {
             sConfig = reactContainerConfig;
@@ -143,11 +139,9 @@ public class ElectrodeReactContainer {
             }
 
             sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
-            CodePush.setReactInstanceHolder(sElectrodeReactNativeHost);
             askForOverlayPermissionIfDebug(application);
 
             sReactPackages.add(new MainReactPackage());
-            sReactPackages.add(new CodePushPlugin().hook(application, codePushPluginConfig));
             sReactPackages.add(new BridgePlugin().hook(application, null));
             sReactPackages.removeAll(Collections.singleton((ReactPackage)null));
 
@@ -277,7 +271,7 @@ public class ElectrodeReactContainer {
         }
     }
 
-    private static class ElectrodeReactNativeHost extends ReactNativeHost implements ReactInstanceHolder{
+    private static class ElectrodeReactNativeHost extends ReactNativeHost {
 
         private ElectrodeReactNativeHost(Application application) {
             super(application);
@@ -332,11 +326,6 @@ public class ElectrodeReactContainer {
             return reactInstanceManager;
         }
 
-        @javax.annotation.Nullable
-        @Override
-        protected String getJSBundleFile() {
-            return CodePush.getJSBundleFile();
-        }
     }
 
     private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {

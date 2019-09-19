@@ -31,14 +31,6 @@
 * Create a new custom container including all the given MiniApps  
 * The MiniApps passed to this command can be a valid Yarn package format or a Git format or file scheme.  
 
-`--dependencies/--deps <dependencies>`
-
-* Inject the provided extra native dependencies in your locally generated container  
-* This option can only be used when generating a container that is not based on a native application version from Cauldron (`--descriptor` option).  
-For the latter, if you want to add extra native dependencies to your container that are not listed as dependencies of any of the MiniApps, you can instead use the `ern cauldron add dependencies` command to add the extra native dependencies directly in the native application version stored in Cauldron.  
-You can only provide published dependencies to this command.  
-You cannot use the Git or file package descriptors for referring to the dependencies.
-
 `--platform/-p <android|ios>`
 
 * Specify the target platform for this container   
