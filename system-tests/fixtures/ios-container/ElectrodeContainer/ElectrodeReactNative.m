@@ -146,6 +146,14 @@ static dispatch_semaphore_t semaphore;
     return rootView;
 }
 
+- (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *_Nullable)properties
+            sizeFlexibility:(NSInteger)sizeFlexibilty {
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
+    rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibilty;
+    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+    return rootView;
+}
+
 - (void)updateView:(UIView *)view withProps:(NSDictionary *)newProps {
     if([view isKindOfClass:[RCTRootView class]]) {
         [((RCTRootView *) view) setAppProperties:newProps];

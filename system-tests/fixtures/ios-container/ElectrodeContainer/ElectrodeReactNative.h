@@ -85,6 +85,14 @@ NS_ASSUME_NONNULL_BEGIN
                      properties:(NSDictionary *_Nullable)properties;
 
 /**
+ @param name The name of the mini app, that is registered with the AppComponent.
+ @param properties initialprops for a React Native miniapp.
+ @param sizeFlexibilty defines size flexibility type of the root view
+ @return UIView
+ */
+- (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *_Nullable)properties sizeFlexibility:(NSInteger)sizeFlexibilty;
+
+/**
  Call this to update an RCTRootView with new props. Calling this with new props will cause the view to be rerendered.
  Request will be ignored if the returned view is not an RCTRootView instance.
  */
