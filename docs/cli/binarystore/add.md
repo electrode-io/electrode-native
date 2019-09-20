@@ -18,6 +18,13 @@
 
 * Relative or absolute path to the binary to add to the binary store. For an `Android` binary the path should point to a `.apk` file, whereas of `iOS` it should point to a `.app`.
 
+**Options**  
+
+`--flavor`
+
+* Custom flavor to attach to this binary.
+* The binary of a specific application version (for ex `1.0.0`) can have different flavors, representing different build types of the same application version (for example `Dev`/`Prod`/`QA` ...).
+
 #### Remarks
 
 * This command will only work if the following conditions are met:
