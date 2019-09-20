@@ -143,6 +143,7 @@ async function generateFullComposite(
     if (semver.lt(rnVersion, '0.60.0')) {
       await patchMetro51({ outDir })
     }
+    await patchMetroBabelEnv({ outDir })
   } finally {
     shell.popd()
   }
@@ -446,6 +447,35 @@ async function patchMetro51({ outDir }: { outDir: string }) {
     const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
     const patchedFile = fileToPatch.replace(stringToReplace, replacementString)
     return fileUtils.writeFile(pathToFileToPatch, patchedFile)
+  }
+}
+
+//
+// Patch a metro bug related to BABEL_ENV resolution
+// This bug was fixed in metro through:
+// https://github.com/facebook/metro/commit/c509a89af9015b6d6b34c07a26ea59b73d87cd53
+// It has not been released yet and will anyway not be available for older
+// versions of React Native.
+// Patching is therefore done here, independently of the version of RN used.
+// We can keep this patch potentially forever as the replacement it is doing can
+// also be safely applied in any case, even on top of a metro release that contain the fix.
+async function patchMetroBabelEnv({ outDir }: { outDir: string }) {
+  const filesToPach = [
+    path.join(
+      outDir,
+      'node_modules/metro-react-native-babel-transformer/src/index.js'
+    ),
+    path.join(outDir, 'node_modules/metro-babel-transformer/src/index.js'),
+  ]
+  const stringToReplace = 'process.env.BABEL_ENV = OLD_BABEL_ENV;'
+  const replacementString =
+    'if (OLD_BABEL_ENV) { process.env.BABEL_ENV = OLD_BABEL_ENV; }'
+  for (const fileToPatch of filesToPach) {
+    if (fs.existsSync(fileToPatch)) {
+      const file = await fileUtils.readFile(fileToPatch)
+      const patchedFile = file.replace(stringToReplace, replacementString)
+      await fileUtils.writeFile(fileToPatch, patchedFile)
+    }
   }
 }
 
