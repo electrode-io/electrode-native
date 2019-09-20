@@ -31,4 +31,8 @@ export interface ContainerGeneratorConfig {
    * 'index.android'/'index.ios' (for older RN versions)
    */
   jsMainModuleName?: string
+  /**
+   * Path to source map file
+   */
+  sourceMapOutput?: string
 }

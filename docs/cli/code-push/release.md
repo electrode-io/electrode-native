@@ -40,6 +40,10 @@
 
 If no `descriptors` nor a `semVerDescriptor` is specified, the command will list all released native application versions stored in the Cauldron and will display a prompt to select one or more target native application version(s).
 
+`--sourceMapOutput`
+
+* Path to source map file to generate for this code push bundle
+
 `--force/-f`
 
 * Bypass all compatibility checks and force OTA update through CodePush.

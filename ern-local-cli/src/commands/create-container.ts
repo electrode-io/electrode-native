@@ -83,6 +83,10 @@ export const builder = (argv: Argv) => {
       describe: 'Directory to output the generated container to',
       type: 'string',
     })
+    .option('sourceMapOutput', {
+      describe: 'Path to source map file to generate for this container bundle',
+      type: 'string',
+    })
     .epilog(epilog(exports))
 }
 
@@ -97,6 +101,7 @@ export const commandHandler = async ({
   miniapps,
   outDir,
   platform,
+  sourceMapOutput,
 }: {
   baseComposite?: PackagePath
   compositeDir?: string
@@ -108,6 +113,7 @@ export const commandHandler = async ({
   miniapps?: PackagePath[]
   outDir?: string
   platform?: NativePlatform
+  sourceMapOutput?: string
 } = {}) => {
   if (outDir && fs.existsSync(outDir)) {
     if (fs.readdirSync(outDir).length > 0) {
@@ -171,6 +177,7 @@ Output directory should either not exist (it will be created) or should be empty
         extra: extraObj,
         ignoreRnpmAssets,
         outDir,
+        sourceMapOutput,
       })
     )
   } else if (descriptor) {
@@ -187,6 +194,7 @@ Output directory should either not exist (it will be created) or should be empty
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
         outDir,
+        sourceMapOutput,
       })
     )
   }

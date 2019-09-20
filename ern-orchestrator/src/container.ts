@@ -35,11 +35,13 @@ export async function runLocalContainerGen(
     ignoreRnpmAssets = false,
     jsMainModuleName,
     extra,
+    sourceMapOutput,
   }: {
     outDir?: string
     ignoreRnpmAssets?: boolean
     jsMainModuleName?: string
     extra?: any
+    sourceMapOutput?: string
   }
 ): Promise<ContainerGenResult> {
   try {
@@ -72,9 +74,11 @@ export async function runCauldronContainerGen(
   {
     jsMainModuleName,
     outDir,
+    sourceMapOutput,
   }: {
     jsMainModuleName?: string
     outDir?: string
+    sourceMapOutput?: string
   } = {}
 ): Promise<ContainerGenResult> {
   try {
@@ -108,6 +112,7 @@ export async function runCauldronContainerGen(
           jsMainModuleName,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           plugins,
+          sourceMapOutput,
           targetPlatform: platform,
         })
       )
