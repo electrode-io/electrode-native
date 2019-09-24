@@ -34,6 +34,7 @@ inquirer
     },
   ])
   .then(answers => {
+    shell.exec('ern platform use 1000.0.0')
     shell.exec('ern platform config set logLevel trace')
     shell.exec('ern cauldron repo clear')
     try {
