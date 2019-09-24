@@ -4,6 +4,7 @@ import {
   kax,
   log,
   AppVersionDescriptor,
+  SourceMapStoreSdk,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runCauldronContainerGen } from './container'
@@ -95,6 +96,7 @@ export async function syncCauldronContainer(
     )
 
     // Generate Container from Cauldron
+    sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map')
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
         outDir,
@@ -130,6 +132,29 @@ export async function syncCauldronContainer(
         descriptor,
       })
     )
+
+    // Upload source map if a source map store server is configured
+    const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig()
+    if (sourcemapStoreConfig) {
+      try {
+        const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
+        await kax
+          .task(
+            `Uploading source map to source map store [${
+              sourcemapStoreConfig.url
+            }]`
+          )
+          .run(
+            sdk.uploadContainerSourceMap({
+              containerVersion: cauldronContainerNewVersion,
+              descriptor,
+              sourceMapPath: sourceMapOutput,
+            })
+          )
+      } catch (e) {
+        log.error(`Source map upload failed : ${e}`)
+      }
+    }
 
     // Commit Cauldron transaction
     await kax

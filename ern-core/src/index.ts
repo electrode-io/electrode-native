@@ -50,6 +50,7 @@ export { GitHubApi } from './GitHubApi'
 export * from './getLocalIp'
 export * from './BundleStoreSdk'
 export * from './BundleStoreEngine'
+export * from './SourceMapStoreSdk'
 
 export const config = _config
 export const Platform = _Platform
