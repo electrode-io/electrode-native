@@ -20,7 +20,6 @@ export const builder = (argv: Argv) => {
       alias: 's',
       describe: 'Do not update API version and do not publish',
     })
-
     .epilog(epilog(exports))
 }
 

@@ -1,5 +1,5 @@
 {
-  "author": "blemair",
+  "author": "k0s00ly",
   "dependencies": {
     "react-native-electrode-bridge": "1.5.x"
   },
@@ -11,7 +11,7 @@
     "message": {
       "moduleName": "TestApi",
       "namespace": "com.TestApi.ern",
-      "apiSchemaPath": "/Users/blemair/Code/electrode-native/system-tests/fixtures/api/testapi-schema.json",
+      "apiSchemaPath": "schema.json",
       "artifactId": "react-native-TestApi-api"
     },
     "moduleType": "ern-api"
