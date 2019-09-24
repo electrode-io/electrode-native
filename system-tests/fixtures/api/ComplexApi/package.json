@@ -1,5 +1,5 @@
 {
-  "author": "blemair",
+  "author": "k0s00ly",
   "dependencies": {
     "react-native-electrode-bridge": "1.5.x"
   },
@@ -11,7 +11,7 @@
     "message": {
       "moduleName": "ComplexApi",
       "namespace": "com.ComplexApi.ern",
-      "apiSchemaPath": "/Users/blemair/Code/electrode-native/system-tests/fixtures/api/complexapi-schema.json",
+      "apiSchemaPath": "schema.json",
       "artifactId": "react-native-ComplexApi-api"
     },
     "moduleType": "ern-api"

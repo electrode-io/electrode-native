@@ -63,6 +63,9 @@ export function generatePackageJson({
   packageName?: string
   config?: any
 }) {
+  // Reset the apiSchemaPath to schema.json
+  // if --schemaPath option is used to create the Api
+  const options = { ...conf, apiSchemaPath: MODEL_FILE }
   return JSON.stringify(
     {
       author: apiAuthor,
@@ -76,7 +79,7 @@ export function generatePackageJson({
         'flow-bin': FLOW_BIN_VERSION,
       },
       ern: {
-        message: conf,
+        message: options,
         moduleType: `${ModuleTypes.API}`,
       },
       keywords: [`${ModuleTypes.API}`],
