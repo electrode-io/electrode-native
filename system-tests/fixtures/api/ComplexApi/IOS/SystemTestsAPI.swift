@@ -35,11 +35,11 @@
     }
 
 
-    public func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ([ErnObject]?, ElectrodeFailureMessage?) -> ())
+    public func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ([ErnObject]?, ElectrodeFailureMessage?) -> ()) {
         assertionFailure("should override")
     }
 
-    public func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping (String?, ElectrodeFailureMessage?) -> ())
+    public func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping (String?, ElectrodeFailureMessage?) -> ()) {
         assertionFailure("should override")
     }
 

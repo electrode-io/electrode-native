@@ -81,7 +81,7 @@
 
     {{#operation}}
     {{^isEvent}}
-    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> ())
+    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> ()) {
         assertionFailure("should override")
     }
 

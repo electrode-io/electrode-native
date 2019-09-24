@@ -57,11 +57,11 @@
     }
 
 
-    public func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> ())
+    public func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> ()) {
         assertionFailure("should override")
     }
 
-    public func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> ())
+    public func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> ()) {
         assertionFailure("should override")
     }
 
