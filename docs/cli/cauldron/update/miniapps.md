@@ -38,10 +38,10 @@ Example: If the current container version is 1.2.3 and a version is not included
 * You can only pass a complete native application descriptor as the MiniApps updated using this command targets only a specific single native application version.  
 **Default**  Lists all non-released native application versions from the Cauldron and prompts you to choose a descriptor.   
 
- `--targetVersion`
+`--targetVersion`
 
- * Only used when running **ern cauldron update miniapps all**.
- * The target version to update all MiniApps to.
+* Only used when running **ern cauldron update miniapps all**.
+* The target version to update all MiniApps to.
 
 #### Remarks
 
