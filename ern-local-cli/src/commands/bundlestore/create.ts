@@ -1,3 +1,4 @@
+import { getActiveCauldron } from 'ern-cauldron-api'
 import { AppVersionDescriptor, BundleStoreSdk, log, config } from 'ern-core'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
@@ -14,12 +15,14 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async ({ store }: { store: string }) => {
   await logErrorAndExitIfNotSatisfied({
-    bundleStoreHostIsSet: {
-      extraErrorMessage: `You can use 'ern platform config set bundlestore-host <host>' to set the bundle store server host`,
+    bundleStoreUrlSetInCauldron: {
+      extraErrorMessage: `You should add bundleStore config in your Cauldron`,
     },
   })
 
-  const sdk = new BundleStoreSdk(config.getValue('bundlestore-host'))
+  const cauldron = await getActiveCauldron()
+  const bundleStoreUrl = (await cauldron.getBundleStoreConfig()).url
+  const sdk = new BundleStoreSdk(bundleStoreUrl)
   const accessKey = await sdk.createStore({ store })
 
   config.setValue('bundlestore-id', store)

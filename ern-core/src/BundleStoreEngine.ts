@@ -13,10 +13,8 @@ export class BundleStoreEngine {
   private readonly sdk: BundleStoreSdk
   private assets: any[]
 
-  constructor() {
-    this.sdk = new BundleStoreSdk(
-      config.getValue('bundlestore-host', 'localhost:3000')
-    )
+  constructor(public readonly host: string) {
+    this.sdk = new BundleStoreSdk(host)
     this.assets = []
 
     ipc.config.silent = true

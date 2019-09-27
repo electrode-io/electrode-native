@@ -10,6 +10,20 @@ Once a bundle store server is available, any development team or individual deve
 
 The bundle store server keeps all bundles that have been pushed to the different stores, and all these bundles are accessible within the native app. The bundle store also supports source maps out of the box, meaning that if the loaded bundled is crashing at some point, the red screen will show the symbolicated stack trace. Bundle "time machine" and source map support can be very useful, used in conjunction, to pin point the exact location of a crash and in which bundle (which point in time) the problem was introduced.
 
+## Configuring access to bundle store server
+
+The url to the bundle store server should be set in cauldron root configuration (`config/default.json`) as follow :
+
+```json
+{
+  "bundleStore": {
+    "url": "localhost:3000" 
+  }
+}
+```
+
+Once done, any user connected to the Cauldron will have access to the binary store server.
+
 ### Creating a store
 
 Creating a new store can be achieved through the [bundlestore create] command.   

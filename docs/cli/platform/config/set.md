@@ -20,10 +20,6 @@
 
 **Configurable properties**
 
-- `bundlestore-host` [string]  
-[Electrode Native bundle store server] host (including port).
-For example `localhost:3000`
-
 - `codePushAccessKey` [string]   
 Code push access key associated with your account 
 
