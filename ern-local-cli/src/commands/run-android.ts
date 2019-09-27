@@ -1,5 +1,10 @@
 import { epilog, tryCatchWrap } from '../lib'
-import { deviceConfig, AppVersionDescriptor, PackagePath } from 'ern-core'
+import {
+  deviceConfig,
+  readPackageJson,
+  AppVersionDescriptor,
+  PackagePath,
+} from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
@@ -83,7 +88,12 @@ export const commandHandler = async ({
 }) => {
   deviceConfig.updateDeviceConfig('android', usePreviousDevice)
 
-  const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {}
+  const miniAppPackageJson = await readPackageJson(process.cwd())
+  const extraObj =
+    (extra && (await parseJsonFromStringOrFile(extra))) ||
+    miniAppPackageJson.ern
+      ? miniAppPackageJson.ern
+      : {}
 
   await runMiniApp('android', {
     baseComposite,
