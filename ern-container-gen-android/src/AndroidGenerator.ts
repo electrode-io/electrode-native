@@ -36,12 +36,18 @@ const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
 
 const DEFAULT_JSC_VARIANT = 'android-jsc'
 const DEFAULT_JSC_VERSION = '245459'
+const DEFAULT_HERMES_VERSION = '0.2.1'
 
 export interface AndroidDependencies {
   files: string[]
   transitive: string[]
   regular: string[]
   annotationProcessor: string[]
+}
+
+export enum JavaScriptEngine {
+  HERMES,
+  JSC,
 }
 
 export default class AndroidGenerator implements ContainerGenerator {
@@ -340,8 +346,26 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     if (semver.gte(reactNativePlugin.version, '0.60.0')) {
-      await this.injectJavaScriptCoreEngine(config)
+      this.getJavaScriptEngine(config) === JavaScriptEngine.JSC
+        ? await kax
+            .task('Injecting JavaScript engine [JavaScriptCore]')
+            .run(this.injectJavaScriptCoreEngine(config))
+        : await kax
+            .task('Injecting JavaScript engine [Hermes]')
+            .run(this.injectHermesEngine(config))
     }
+  }
+
+  public getJavaScriptEngine(
+    config: ContainerGeneratorConfig
+  ): JavaScriptEngine {
+    return config.androidConfig
+      ? config.androidConfig.jsEngine === 'jsc'
+        ? JavaScriptEngine.JSC
+        : config.androidConfig.jsEngine === 'hermes'
+        ? JavaScriptEngine.HERMES
+        : JavaScriptEngine.JSC
+      : JavaScriptEngine.JSC
   }
 
   /**
@@ -383,6 +407,42 @@ export default class AndroidGenerator implements ContainerGenerator {
       )
       return new Promise((resolve, reject) => {
         const unzipper = new DecompressZip(jscAARPath)
+        const unzipOutDir = createTmpDir()
+        const containerJniLibsPath = path.join(
+          config.outDir,
+          'lib/src/main/jniLibs'
+        )
+        const unzippedJniPath = path.join(unzipOutDir, 'jni')
+        unzipper.on('error', err => reject(err))
+        unzipper.on('extract', () => {
+          shell.cp('-Rf', unzippedJniPath, containerJniLibsPath)
+          resolve()
+        })
+        unzipper.extract({ path: unzipOutDir })
+      })
+    } finally {
+      shell.popd()
+    }
+  }
+
+  /**
+   * Inject hermes engine into the Container
+   * Done in a similar way as injectJavaScriptCoreEngine method
+   */
+  public async injectHermesEngine(config: ContainerGeneratorConfig) {
+    const hermesVersion =
+      (config.androidConfig && config.androidConfig.hermesVersion) ||
+      DEFAULT_HERMES_VERSION
+    const workingDir = createTmpDir()
+    try {
+      shell.pushd(workingDir)
+      await yarn.init()
+      await yarn.add(PackagePath.fromString(`hermes-engine@${hermesVersion}`))
+      const hermesAarPath = path.resolve(
+        `./node_modules/hermes-engine/android/hermes-release.aar`
+      )
+      return new Promise((resolve, reject) => {
+        const unzipper = new DecompressZip(hermesAarPath)
         const unzipOutDir = createTmpDir()
         const containerJniLibsPath = path.join(
           config.outDir,

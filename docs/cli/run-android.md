@@ -49,6 +49,16 @@
   In that case, the configuration will be read from the file stored in Cauldron.   
   For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
 
+#### JavaScript engine
+
+By default Electrode Native will run the MiniApp with a Container that uses JavaScriptCore engine. If you'd rather like to run the MiniApp with [Hermes](https://hermesengine.dev) engine, you should add the following inside the `ern` object of the MiniApp package.json :
+
+```json
+ "androidConfig": {
+  "jsEngine": "hermes"
+}
+```
+
 #### Remarks
 
 * You can launch the MiniApp located in the current working directory or on a connected Android device or running emulator if available. If a connected Android device is not available, the command prompts you to select an emulator to launch from the list of installed emulator images.  

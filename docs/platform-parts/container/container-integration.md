@@ -150,11 +150,16 @@ You can configure `androidConfig` in the cauldron as show below.
 ##### JavaScript Engine (RN 0.60 and above)
 
 Starting with React Native 0.60, the JavaScript engine is distributed separately from the React Native AAR.
-Also, prior to this version, JavaScriptCore was the only JavaScript engine that could be used on Android for React Native applications. Starting with this new version, it is now possible to use alternative JavaScript engines such as Hermes.
+Also, prior to this version, JavaScriptCore was the only JavaScript engine that could be used on Android for React Native applications. Starting with this new version, it is now possible to use alternative JavaScript engines such as Hermes or V8.
+
+Electrode Native currently support both JavaScriptCore and Hermes engines. 
+By default, without explicit configuration, Electrode Native will use the non international variant of JavaScriptCore engine.
+
+_JavaScriptCore_
 
 With React Native 0.60.0, JavaScriptCore engine now comes in two variants : `android-jsc` and `android-jsc-intl`. The later is the international variant. It includes ICU i18n library and necessary data allowing to use e.g. Date.toLocaleString and String.localeCompare that give correct results when using with locales other than en-US. This variant is about 6MiB larger per architecture.
 
-Electrode Native does not yet support Hermes JavaScript engine, but it supports the two variants of  JavaScriptCore. By default, the version of JavaScriptCore used by Electrode Native will be set to the latest version available at the time of Electrode Native version release and will be communicated in the release notes. The default JavaScriptCore variant will always be the non international one.
+By default, the version of JavaScriptCore used by Electrode Native will be set to the latest version available at the time of Electrode Native version release and will be communicated in the release notes. The default JavaScriptCore variant will always be the non international one.
 
 It is possible to change these defaults, using the `androidConfig` object of `containerGenerator` as shown below.  
 
@@ -162,6 +167,7 @@ It is possible to change these defaults, using the `androidConfig` object of `co
 {
   "containerGenerator": {
     "androidConfig": {
+      "jsEngine": "jsc",
       "jscVersion": "245459",
       "jscVariant": "android-jsc"
     }
@@ -170,6 +176,21 @@ It is possible to change these defaults, using the `androidConfig` object of `co
 ```
 
 `jscVersion` is the version of the JavaScriptCore engine while `jscVariant` is the variant (`android-jsc` or `android-jsc-intl`).
+
+_Hermes_
+
+To use [Hermes](https://hermesengine.dev/) engine rather than JavaScriptCore, you should set the `jsEngine` in `androidConfig` to `hermes`.
+
+```json
+{
+  "containerGenerator": {
+    "androidConfig": {
+      "jsEngine": "hermes",
+      "hermesVersion": "0.2.1"
+    }
+  }
+}
+```
 
 #### iOS
 
