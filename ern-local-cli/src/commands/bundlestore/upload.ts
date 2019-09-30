@@ -101,14 +101,16 @@ export const commandHandler = async ({
 'ern bundlestore use <accessKey>' to use an existing store OR 
 'ern bundlestore create <storeName>' to create a new store`,
     },
-    bundleStoreHostIsSet: {
-      extraErrorMessage: `You can use 'ern platform config set bundlestore-host <host>' to set the bundle store server host`,
+    bundleStoreUrlSetInCauldron: {
+      extraErrorMessage: `You should add bundleStore config in your Cauldron`,
     },
   })
 
   const platforms: NativePlatform[] = platform ? [platform] : ['android', 'ios']
 
-  const engine = new BundleStoreEngine()
+  const cauldron = await getActiveCauldron()
+  const bundleStoreUrl = (await cauldron.getBundleStoreConfig()).url
+  const engine = new BundleStoreEngine(bundleStoreUrl)
   if (fromPackager) {
     for (const curPlatform of platforms) {
       const bundleId = await kax
@@ -117,13 +119,6 @@ export const commandHandler = async ({
       log.info(`Successfully uploaded ${curPlatform} bundle [id: ${bundleId}]`)
     }
   } else {
-    const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
-    if (!cauldron && !miniapps) {
-      throw new Error(
-        "A Cauldron must be active if you don't explicitly provide miniapps"
-      )
-    }
-
     // Full native application descriptor was not provided.
     // Ask the user to select a completeNapDescriptor from a list
     // containing all the native applications versions in the cauldron

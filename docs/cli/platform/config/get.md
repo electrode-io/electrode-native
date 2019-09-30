@@ -16,7 +16,6 @@
 
 **Whitelisted properties**
 
-- `bundlestore-host`
 - `codePushAccessKey`
 - `codePushCustomHeaders`
 - `codePushCustomServerUrl`

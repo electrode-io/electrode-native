@@ -61,9 +61,4 @@ export const availableUserConfigKeys = [
     name: 'ignore-required-ern-version',
     values: [true, false],
   },
-  {
-    desc: 'Bundle Store server host',
-    name: 'bundlestore-host',
-    values: ['string'],
-  },
 ]

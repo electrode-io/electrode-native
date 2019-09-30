@@ -2,7 +2,7 @@
 
 **This command can only be used with access to an [Electrode Native bundle store server]**
 
-**To use this command, the `bundlestore-host` must be set in platform configuration (see [platform config set] command)**
+**To use this command, the `bundleStore` config must be set in cauldron**
 
 ### Description
 

@@ -1045,6 +1045,12 @@ export class CauldronHelper {
     return this.getConfigForKey('binaryStore', descriptor)
   }
 
+  public async getBundleStoreConfig(
+    descriptor?: AnyAppDescriptor
+  ): Promise<any | void> {
+    return this.getConfigForKey('bundleStore', descriptor)
+  }
+
   public async getCodePushConfig(
     descriptor?: AnyAppDescriptor
   ): Promise<any | void> {

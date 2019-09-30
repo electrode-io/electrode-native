@@ -557,10 +557,14 @@ export default class Ensure {
     }
   }
 
-  public static bundleStoreHostIsSet(extraErrorMessage: string = '') {
-    if (!config.getValue('bundlestore-host')) {
+  public static async bundleStoreUrlSetInCauldron(
+    extraErrorMessage: string = ''
+  ) {
+    const cauldron = await getActiveCauldron()
+    const bundleStoreConfig = await cauldron.getBundleStoreConfig()
+    if (!bundleStoreConfig || !bundleStoreConfig.url) {
       throw new Error(
-        `bundlestore-host is not set in configuration\n${extraErrorMessage}`
+        `bundleStore url not set in Cauldron\n${extraErrorMessage}`
       )
     }
   }

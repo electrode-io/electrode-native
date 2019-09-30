@@ -37,7 +37,7 @@ export async function logErrorAndExitIfNotSatisfied({
   isContainerPath,
   isEnvVariableDefined,
   manifestIdExists,
-  bundleStoreHostIsSet,
+  bundleStoreUrlSetInCauldron,
   bundleStoreAccessKeyIsSet,
 }: {
   noGitOrFilesystemPath?: {
@@ -160,7 +160,7 @@ export async function logErrorAndExitIfNotSatisfied({
     id: string
     extraErrorMessage?: string
   }
-  bundleStoreHostIsSet?: {
+  bundleStoreUrlSetInCauldron?: {
     extraErrorMessage?: string
   }
   bundleStoreAccessKeyIsSet?: {
@@ -427,11 +427,11 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       kaxTask.succeed()
     }
-    if (bundleStoreHostIsSet) {
-      kaxTask = kax.task(
-        `Ensuring that bundlestore-host is set in configuration`
+    if (bundleStoreUrlSetInCauldron) {
+      kaxTask = kax.task(`Ensuring that bundleStore url is set in Cauldron`)
+      await Ensure.bundleStoreUrlSetInCauldron(
+        bundleStoreUrlSetInCauldron.extraErrorMessage
       )
-      await Ensure.bundleStoreHostIsSet(bundleStoreHostIsSet.extraErrorMessage)
       kaxTask.succeed()
     }
     if (bundleStoreAccessKeyIsSet) {
