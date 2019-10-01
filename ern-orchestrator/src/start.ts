@@ -21,6 +21,7 @@ import fs from 'fs'
 
 export default async function start({
   baseComposite,
+  compositeDir,
   jsApiImpls,
   miniapps,
   descriptor,
@@ -35,6 +36,7 @@ export default async function start({
   port,
 }: {
   baseComposite?: PackagePath
+  compositeDir?: string
   jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   descriptor?: AppVersionDescriptor
@@ -80,7 +82,7 @@ export default async function start({
   // is not removed after `CTRL+C` is done
   process.on('SIGINT', () => process.exit())
 
-  const compositeDir = createTmpDir()
+  compositeDir = compositeDir || createTmpDir()
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
   await kax.task('Generating MiniApps composite').run(

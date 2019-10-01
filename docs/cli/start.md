@@ -18,6 +18,12 @@ If you do not pass an argument to this command, you are prompted to select a nat
 
 * Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
 
+`--compositeDir <compositeDir>`
+
+* Directory in which to generate the composite
+* The directory should either not exist (will be created) or be empty
+* By default the composite will be generated in a temorary directory
+
 `--descriptor/-d <descriptor>`
 
 * Target a specific native application version, associated to the provided *complete native application descriptor*.  
