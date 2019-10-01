@@ -7,6 +7,7 @@ import {
   getCodePushSdk,
   log,
   kax,
+  SourceMapStoreSdk,
 } from 'ern-core'
 import { generateComposite } from 'ern-composite-gen'
 import {
@@ -217,6 +218,32 @@ export async function performCodePushPromote(
           jsApiImpls || []
         )
 
+        // Copy source map if a source map store server is configured
+        const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig()
+        if (sourcemapStoreConfig) {
+          try {
+            const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
+            await kax
+              .task(
+                `Copying source map in source map store [${
+                  sourcemapStoreConfig.url
+                }]`
+              )
+              .run(
+                sdk.copyCodePushSourceMap({
+                  deploymentName: sourceDeploymentName,
+                  descriptor: sourceNapDescriptor,
+                  label: codePushEntrySource.metadata.label!,
+                  toDeploymentName: targetDeploymentName,
+                  toLabel: codePushResponse.label!,
+                  toVersion: targetNapDescriptor.version,
+                })
+              )
+          } catch (e) {
+            log.error(`Source map copy failed : ${e}`)
+          }
+        }
+
         cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
       }
       await kax
@@ -378,6 +405,7 @@ export async function performCodePushOtaUpdate(
         ? path.join(bundleOutputDirectory, 'index.android.bundle')
         : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
+    sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map')
     await kax.task('Generating composite bundle for miniapps').run(
       reactnative.bundle({
         assetsDest: bundleOutputDirectory,
@@ -443,6 +471,30 @@ export async function performCodePushOtaUpdate(
               pathToNewYarnLock
             )
           )
+      }
+
+      // Upload source map if a source map store server is configured
+      const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig()
+      if (sourcemapStoreConfig) {
+        try {
+          const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
+          await kax
+            .task(
+              `Uploading source map to source map store [${
+                sourcemapStoreConfig.url
+              }]`
+            )
+            .run(
+              sdk.uploadCodePushSourceMap({
+                deploymentName,
+                descriptor: napDescriptor,
+                label: codePushResponse.label!,
+                sourceMapPath: sourceMapOutput,
+              })
+            )
+        } catch (e) {
+          log.error(`Source map upload failed : ${e}`)
+        }
       }
 
       await cauldron.commitTransaction(

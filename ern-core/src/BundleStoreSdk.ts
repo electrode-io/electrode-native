@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import superagent from 'superagent'
-import { Readable } from 'stream'
 
 export class BundleStoreSdk {
   constructor(public readonly host: string) {}

@@ -1057,6 +1057,12 @@ export class CauldronHelper {
     return this.getConfigForKey('codePush', descriptor)
   }
 
+  public async getSourceMapStoreConfig(
+    descriptor?: AnyAppDescriptor
+  ): Promise<any | void> {
+    return this.getConfigForKey('sourcemapStore', descriptor)
+  }
+
   public async getStartCommandConfig(
     descriptor?: AnyAppDescriptor
   ): Promise<CauldronStartCommandConfig | void> {
