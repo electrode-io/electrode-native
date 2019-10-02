@@ -17,8 +17,6 @@ $ npm install -g electrode-native && ern
 
 - Check out our [Announcement Blog Post]
 
-- [Getting Started with Electrode Native]
-
 - Visit our site at <http://www.electrode.io>.
 
 - See [What is Electrode Native] for more details on Electrode Native.
@@ -47,8 +45,6 @@ Licensed under the [Apache License, Version 2.0].
 [CONTRIBUTING guide]: ./overview/contributing.md
 
 [requirements]: ./overview/requirements.md
-
-[Getting Started with Electrode Native]: ./getting-started/getting-started.md
 
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
 

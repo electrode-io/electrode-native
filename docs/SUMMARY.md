@@ -13,10 +13,6 @@
   - [Upgrading Electrode Native](overview/upgrading-platform.md)
   - [Contributing](overview/contributing.md)
 
-### QUICK START
-
-- [Building a Movie application](getting-started/getting-started.md)
-
 ### REFERENCE
 
 - [Bundle Store](cli/bundlestore.md)
