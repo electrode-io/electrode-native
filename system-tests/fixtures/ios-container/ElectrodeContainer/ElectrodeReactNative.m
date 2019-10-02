@@ -32,8 +32,10 @@
 #import "React/RCTRootView.h"   // Required when used as a Pod in a Swift project
 #endif
 
-
-
+#import <React/RCTDevMenu.h>
+#import <React/RCTUtils.h>
+#import "ERNDevSettingsViewController.h"
+#import <React/RCTBridge+Private.h>
 #import "ElectrodeBridgeDelegate.h"
 #import "NSBundle+frameworkBundle.h"
 #import <CoreText/CTFontManager.h>
@@ -44,6 +46,11 @@ NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey"
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.ElectrodeContainer";
 static dispatch_semaphore_t semaphore;
+static NSString *packagerIPPort = @"bundleStoreHostPort";
+static NSString *bundleStore = @"bundleStore";
+static NSString *storeBundleId = @"storeBundleId";
+static NSString *autoReloadBundle = @"autoReloadBundle";
+static NSString *enableBundleStore = @"enableBundleStore";
 
 @implementation ElectrodeContainerConfig
 
@@ -57,21 +64,36 @@ static dispatch_semaphore_t semaphore;
     return self;
 }
 
+//10.74.57.21:8080/bundles/benoit/ios/latest complete JS location
 - (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
+    NSString *urlString = nil;
     if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
         NSURL *url;
+        if (self.bundleStoreHostPort == nil) {
+            self.bundleStoreHostPort = @"localhost:8080";
+        }
+        [[NSUserDefaults standardUserDefaults]  setObject:self.bundleStoreHostPort forKey:packagerIPPort];
         if (self.debugEnabled) {
-          // iOS device and Macbook must be on the same Wi-fi & metro packager (bundler) by default runs on 8081 port.
-            NSString *urlString = [NSString stringWithFormat:@"http://%@:%@/index.bundle?platform=ios&dev=true",self.packagerHost,self.packagerPort];
+            BOOL isBundleStoreEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:enableBundleStore];
+            if (isBundleStoreEnabled) {
+                urlString = [NSString stringWithFormat:@"http://%@/bundles/%@/ios/%@/index.bundle",
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:packagerIPPort],
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:bundleStore],
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:storeBundleId]];
+            } else {
+             // iOS device and Macbook must be on the same Wi-fi & metro packager (bundler) by default runs on 8081 port.
+              urlString = [NSString stringWithFormat:@"http://%@:%@/index.bundle?platform=ios&dev=true",self.packagerHost,self.packagerPort];
+              self.bundleStoreHostPort = [NSString stringWithFormat:@"%@:%@",self.packagerHost,self.packagerPort];
+             //disable Bundle Store functionality to load it from the default bundle
+              [[ElectrodeReactNative sharedInstance] setDefaultHostAndPort:self.bundleStoreHostPort];
+            }
             url = [NSURL URLWithString:urlString];
         } else {
             url = [self allJSBundleFiles][0];
         }
-
         ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
         [bridgeDelegate setJsBundleURL:url];
     }
-
 }
 
 - (NSArray *)allJSBundleFiles
@@ -214,10 +236,6 @@ static dispatch_semaphore_t semaphore;
 }
 
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void) notifyElectrodeReactNativeOnInitialized: (NSNotification *) notification {
     if (notification) {
         if ([notification.object isKindOfClass:[RCTBridge class]] ) {
@@ -238,8 +256,53 @@ static dispatch_semaphore_t semaphore;
     }
 }
 
+- (void)addExtraDevMenu {
+    RCTDevMenuItem *dev = [RCTDevMenuItem buttonItemWithTitleBlock:^NSString *{
+        return @"Electrode Native Settings";
+    } handler:^{
+        ERNDevSettingsViewController* vc = [[ERNDevSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+        vc.delegate = self;
+        UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:vc];
+        [RCTPresentedViewController() presentViewController:navController animated:YES completion:NULL];
+    }];
+    [[self.bridge devMenu] addItem:dev];
+}
+
 - (void) signalElectrodeOnReactNativeInitializedSemaphore: (NSNotification *) notification {
+    // add the ExtraDevMenu after React Native is initiliazed.
+    [self addExtraDevMenu];
     dispatch_semaphore_signal(semaphore);
+}
+
+- (void)reloadBundleStoreBundle {
+    [self reloadBundle];
+}
+
+- (void)reloadBundle {
+    NSLog(@"Reload bundle");
+    BOOL isBundleStoreEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:enableBundleStore];
+    BOOL autoReload = [[NSUserDefaults standardUserDefaults] boolForKey:autoReloadBundle];
+    __strong RCTBridge *strongBridge = self.bridge;
+    NSString *urlString = nil;
+    if (isBundleStoreEnabled) {
+            urlString = [NSString stringWithFormat:@"http://%@/bundles/%@/ios/%@/index.bundle",
+                         [[NSUserDefaults standardUserDefaults] objectForKey:packagerIPPort],
+                         [[NSUserDefaults standardUserDefaults] objectForKey:bundleStore],
+                         [[NSUserDefaults standardUserDefaults] objectForKey:storeBundleId]];
+    } else if (!isBundleStoreEnabled) {
+        NSString *s = [[ElectrodeReactNative sharedInstance] defaultHostAndPort];
+        urlString = [NSString stringWithFormat:@"http://%@/index.bundle?platform=ios&dev=true",s];
+    }
+    if (strongBridge) {
+        strongBridge.bundleURL = [NSURL URLWithString:urlString];
+        if (autoReload) {
+            [strongBridge reload];
+        }
+    }
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

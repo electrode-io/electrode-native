@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL debugEnabled;
 @property (nonatomic, copy) NSString *packagerHost;
 @property (nonatomic, copy) NSString *packagerPort;
+@property (nonatomic, copy) NSString *bundleStoreHostPort;
 @end
 
 @protocol MiniAppViewDelegate <NSObject>
@@ -40,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
  logic, files and set up from Native engineers.
  */
 @interface ElectrodeReactNative : NSObject
+
+/**
+ To load default bundle. Always `localhost:8080`
+ */
+@property (nonatomic, copy) NSString *defaultHostAndPort;
 
 /**
  Create a singleton instance of ElectrodeReactNative with the ability to set
@@ -105,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param name The name of the mini app, that is registered with the AppComponent.
  @param properties initialprops for a React Native miniapp.
- @param sizeFlexibilty defines size flexibility type of the root view.
+ @param sizeFlexibilty defines size flexibility type of the root view
  @param delegate
  @return a UIView of the miniapp.
  */
