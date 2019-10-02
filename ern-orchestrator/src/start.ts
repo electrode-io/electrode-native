@@ -18,6 +18,7 @@ import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
 import fs from 'fs'
+import { ncp } from 'ncp'
 
 export default async function start({
   baseComposite,
@@ -110,13 +111,13 @@ export default async function start({
       miniAppsLinksObj[packageJson.name] = m.basePath
     })
 
-  linkedMiniAppsPackageNames.forEach(pkgName => {
-    replacePackageInCompositeWithLinkedPackage(
+  for (const linkedMiniAppPackageName of linkedMiniAppsPackageNames) {
+    await replacePackageInCompositeWithLinkedPackage(
       compositeDir,
-      pkgName,
-      miniAppsLinksObj[pkgName]
+      linkedMiniAppPackageName,
+      miniAppsLinksObj[linkedMiniAppPackageName]
     )
-  })
+  }
 
   reactnative.startPackagerInNewWindow({
     cwd: compositeDir,
@@ -200,22 +201,79 @@ export default async function start({
   }
 }
 
-function replacePackageInCompositeWithLinkedPackage(
+async function copyPackageToComposite(
+  source,
+  dest,
+  { nodeModulesToCopy }: { nodeModulesToCopy?: string[] } = {}
+) {
+  return new Promise((resolve, reject) => {
+    ncp(
+      source,
+      dest,
+      {
+        //
+        // Copy every files and directories recursively but
+        // only copy node modules directories that are
+        // listed in nodeModulesToCopy array
+        filter: (filename: string) => {
+          const moduleMatch = filename.match(/^.+\/node_modules\/([^\/]+)/)
+          return moduleMatch !== null &&
+            nodeModulesToCopy &&
+            nodeModulesToCopy.includes(moduleMatch[1])
+            ? true
+            : moduleMatch !== null
+            ? false
+            : true
+        },
+      },
+      err => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve()
+        }
+      }
+    )
+  })
+}
+
+async function replacePackageInCompositeWithLinkedPackage(
   compositeDir,
   linkedPackageName,
   sourceLinkDir
 ) {
+  // Get path to package in composite node_modules
+  // For example if the package name is @company/miniapp and the composite
+  // directory is /path/to/composite, the path to the package in the composite
+  // would end up being /path/to/composite/node_modules/@company/miniapp
   const pathToPackageInComposite = getPathToPackageInComposite(
     compositeDir,
     linkedPackageName
   )
+  // Build a list of all of the non hoisted node modules of this package
+  // (modules not hoisted at the top level of composite, but rather kept in the
+  // node_modules of the package itself)
+  const p = path.join(pathToPackageInComposite, 'node_modules')
+  let nonHoistedNodeModules
+  try {
+    nonHoistedNodeModules = fs.readdirSync(p)
+  } catch (e) {
+    // swallow (dir does not exist)
+  }
+
+  // Trash the package in the composite directory, and recreate it with current
+  // local content, by recursively copying the whole local package directory,
+  // and only non hoisted node_modules of the package (for performance reason,
+  // it is too costly -and useless- to copy all of the node modules)
   shell.rm('-Rf', pathToPackageInComposite)
   shell.mkdir('-p', pathToPackageInComposite)
-  shell.cp('-Rf', path.join(sourceLinkDir, '{.*,*}'), pathToPackageInComposite)
-  // We remove react-native and react to avoid haste collisions, as they are
+  await copyPackageToComposite(sourceLinkDir, pathToPackageInComposite, {
+    //  nodeModulesToCopy: nonHoistedNodeModules,
+  })
+  // Remove react-native and react to avoid haste collisions, as they are
   // already part of the top level composite node_modules
-  // We also remove react-native-electrode-bridge because having multiple instances
-  // of it will create issues. We want to use top level instance.
+  // Also remove react-native-electrode-bridge because having multiple instances
+  // of it will create issues. We want to use hoisted instance only.
   const pathToPackageNodeModules = path.join(
     pathToPackageInComposite,
     'node_modules'
@@ -239,7 +297,7 @@ function startLinkSynchronization(
   const watcher = chokidar.watch(sourceLinkDir, {
     cwd: sourceLinkDir,
     ignoreInitial: true,
-    ignored: ['android/**', 'ios/**'],
+    ignored: ['android/**', 'ios/**', 'node_modules/**', '.git/**'],
     persistent: true,
   })
 
