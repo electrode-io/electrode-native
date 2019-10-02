@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import { PackagePath } from '../src/PackagePath'
+import os from 'os'
 
 describe('PackagePath', () => {
   const gitSshPath =
@@ -11,6 +12,8 @@ describe('PackagePath', () => {
     'https://github.com/electrode-io/electrode-native.git#0.11.0'
   const fileSystemPath = 'file:/Users/blemair/Code/electrode-native'
   const fileSystemPathWithoutPrefix = '/Users/blemair/Code/electrode-native'
+  const fileSystemPathTidle = '~/Code/electrode-native'
+  const fileSystemPathTidleExpanded = `${os.homedir()}/Code/electrode-native`
   const registryPath = 'ern-local-cli'
   const registryVersionPath = 'ern-local-cli@0.11.0'
 
@@ -37,6 +40,10 @@ describe('PackagePath', () => {
 
     it('should work for a file system path without prefix', () => {
       expect(() => new PackagePath(fileSystemPathWithoutPrefix)).to.not.throw()
+    })
+
+    it('should work for a file system path with tidle', () => {
+      expect(() => new PackagePath(fileSystemPathTidle)).to.not.throw()
     })
 
     it('should work for a registry path', () => {
@@ -75,6 +82,10 @@ describe('PackagePath', () => {
       ).to.not.throw()
     })
 
+    it('should work for a file system path with tidle', () => {
+      expect(() => PackagePath.fromString(fileSystemPathTidle)).to.not.throw()
+    })
+
     it('should work for a registry path', () => {
       expect(() => PackagePath.fromString(registryPath)).to.not.throw()
     })
@@ -92,6 +103,10 @@ describe('PackagePath', () => {
     it('should return undefined for a file system package path without prefix', () => {
       expect(PackagePath.fromString(fileSystemPathWithoutPrefix).version)
         .undefined
+    })
+
+    it('should return undefined for a file system package path with tidle', () => {
+      expect(PackagePath.fromString(fileSystemPathTidle).version).undefined
     })
 
     it('should return undefined for a git ssh path without version', () => {
@@ -129,6 +144,10 @@ describe('PackagePath', () => {
         .false
     })
 
+    it('should return false for a file system path with tidle', () => {
+      expect(PackagePath.fromString(fileSystemPathTidle).isGitPath).false
+    })
+
     it('should return false for a registry path', () => {
       expect(PackagePath.fromString(registryPath).isGitPath).false
     })
@@ -158,6 +177,10 @@ describe('PackagePath', () => {
     it('should return true for a file system package path without prefix', () => {
       expect(PackagePath.fromString(fileSystemPathWithoutPrefix).isFilePath)
         .true
+    })
+
+    it('should return true for a file system package path with tidle', () => {
+      expect(PackagePath.fromString(fileSystemPathTidle).isFilePath).true
     })
 
     it('should return false for a registry path', () => {
@@ -199,6 +222,10 @@ describe('PackagePath', () => {
         .false
     })
 
+    it('should return false for a file system package path with tidle', () => {
+      expect(PackagePath.fromString(fileSystemPathTidle).isRegistryPath).false
+    })
+
     it('should return false for a git ssh path', () => {
       expect(PackagePath.fromString(gitSshPath).isRegistryPath).false
     })
@@ -213,6 +240,13 @@ describe('PackagePath', () => {
 
     it('should return false for a git https path with version', () => {
       expect(PackagePath.fromString(gitHttpsVersionPath).isRegistryPath).false
+    })
+  })
+
+  describe('basePath', () => {
+    it('should perform tidle expansion for a tidled file path', () => {
+      const p = PackagePath.fromString(fileSystemPathTidle)
+      expect(p.basePath).equal(fileSystemPathTidleExpanded)
     })
   })
 })
