@@ -9,6 +9,7 @@ import {
 } from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'regen-container'
 export const desc = 'Triggers the regeneration of a Container from the Cauldron'
@@ -35,6 +36,7 @@ export const builder = (argv: Argv) => {
       describe: 'Path to source map file to generate for this container bundle',
       type: 'string',
     })
+    .coerce('sourceMapOutput', p => untildify(p))
     .epilog(epilog(exports))
 }
 

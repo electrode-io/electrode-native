@@ -18,6 +18,7 @@ import _ from 'lodash'
 import { Argv } from 'yargs'
 import fs from 'fs'
 import path from 'path'
+import untildify from 'untildify'
 
 export const command = 'create-composite'
 export const desc = 'Create a JS composite project locally'
@@ -61,6 +62,7 @@ export const builder = (argv: Argv) => {
       describe: 'Output directory',
       type: 'string',
     })
+    .coerce('outDir', p => untildify(p))
     .epilog(epilog(exports))
 }
 

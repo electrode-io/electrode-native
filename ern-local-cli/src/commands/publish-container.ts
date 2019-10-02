@@ -3,6 +3,7 @@ import { publishContainer } from 'ern-container-publisher'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'publish-container'
 export const desc = 'Publish a local Container'
@@ -13,6 +14,7 @@ export const builder = (argv: Argv) => {
       describe: 'Local path to the Container to publish',
       type: 'string',
     })
+    .coerce('containerPath', p => untildify(p))
     .option('extra', {
       alias: 'e',
       describe:

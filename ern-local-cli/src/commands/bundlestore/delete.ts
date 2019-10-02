@@ -2,6 +2,7 @@ import { getActiveCauldron } from 'ern-cauldron-api'
 import { AppVersionDescriptor, BundleStoreSdk, log, config } from 'ern-core'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'delete <accessKey>'
 export const desc = 'Delete a store given its access key'
@@ -9,7 +10,7 @@ export const desc = 'Delete a store given its access key'
 export const builder = (argv: Argv) => {
   return argv
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .normalize('pathToBinary')
+    .coerce('pathToBinary', p => untildify(p))
     .epilog(epilog(exports))
 }
 

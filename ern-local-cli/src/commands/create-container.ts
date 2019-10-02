@@ -25,6 +25,7 @@ import _ from 'lodash'
 import { Argv } from 'yargs'
 import fs from 'fs'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
+import untildify from 'untildify'
 
 export const command = 'create-container'
 export const desc = 'Create a Container locally'
@@ -40,6 +41,7 @@ export const builder = (argv: Argv) => {
       describe: 'Directory in which to generate the Composite',
       type: 'string',
     })
+    .coerce('compositeDir', p => untildify(p))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -83,10 +85,12 @@ export const builder = (argv: Argv) => {
       describe: 'Directory to output the generated container to',
       type: 'string',
     })
+    .coerce('outDir', p => untildify(p))
     .option('sourceMapOutput', {
       describe: 'Path to source map file to generate for this container bundle',
       type: 'string',
     })
+    .coerce('sourceMapOutput', p => untildify(p))
     .epilog(epilog(exports))
 }
 

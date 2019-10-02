@@ -78,6 +78,7 @@
     "node-ipc":"^9.1.1",
     "semver": "^5.5.0",
     "superagent":"^5.1.0",
+    "untildify": "^4.0.0",
     "treeify":"^1.1.0",
     "validate-npm-package-name": "^3.0.0",
     "yargs": "^7.1.0",
