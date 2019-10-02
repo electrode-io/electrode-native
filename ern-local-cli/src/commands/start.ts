@@ -28,6 +28,10 @@ export const builder = (argv: Argv) => {
       describe: 'iOS Bundle Identifier',
       type: 'string',
     })
+    .option('compositeDir', {
+      describe: 'Directory in which to generate the composite',
+      type: 'string',
+    })
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application selector',
@@ -90,6 +94,7 @@ export const commandHandler = async ({
   activityName,
   baseComposite,
   bundleId,
+  compositeDir,
   descriptor,
   extraJsDependencies = [],
   flavor,
@@ -104,6 +109,7 @@ export const commandHandler = async ({
   activityName?: string
   baseComposite?: PackagePath
   bundleId?: string
+  compositeDir?: string
   descriptor?: AppVersionDescriptor
   extraJsDependencies?: PackagePath[]
   flavor?: string
@@ -123,6 +129,7 @@ export const commandHandler = async ({
     activityName,
     baseComposite,
     bundleId,
+    compositeDir,
     descriptor,
     disableBinaryStore,
     extraJsDependencies,
