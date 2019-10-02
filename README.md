@@ -31,10 +31,6 @@
 $ npm install -g electrode-native && ern
 ```
 
-### Trying it
-
-We have created a [step by step guide], for iOS and Android, to present some of the concepts and features of Electrode Native, through the development of a simple mobile application listing some movies.
-
 ## Documentation
 
 The [documentation of Electrode Native] is maintained as [GitBook] pages in the [docs](/docs) directory. It is divided into multiple sections:
@@ -88,15 +84,11 @@ Thank you.
 
 [documentation of electrode native]: https://native.electrode.io/
 
-[Getting Started with Electrode Native]: https://native.electrode.io/quick-start/getting-started
-
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
 
 [gitbook]: https://www.gitbook.com/
 
 [what is electrode native]: https://native.electrode.io/introduction/what-is-ern/what-is-ern
-
-[step by step guide]: https://native.electrode.io/quick-start/getting-started
 
 [overview]: https://native.electrode.io/introduction/what-is-ern
 
