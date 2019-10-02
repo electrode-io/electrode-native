@@ -89,7 +89,10 @@ export default class AndroidGenerator implements ContainerGenerator {
       throw new Error('react-native plugin does not have a version !')
     }
 
-    let mustacheView: any = {}
+    let mustacheView: any = {
+      customRepos: [],
+      permissions: [],
+    }
     injectReactNativeVersionKeysInObject(
       mustacheView,
       reactNativePlugin.version
@@ -257,11 +260,25 @@ export default class AndroidGenerator implements ContainerGenerator {
               }
             }
           }
+
+          if (pluginConfig.android.repositories) {
+            mustacheView.customRepos.push(...pluginConfig.android.repositories)
+          }
+
+          if (pluginConfig.android.permissions) {
+            mustacheView.customPermissions.push(
+              ...pluginConfig.android.permissions
+            )
+          }
         }
       } finally {
         shell.popd()
       }
     }
+
+    // Dedupe repositories and permissions
+    mustacheView.customRepos = _.uniq(mustacheView.customRepos)
+    mustacheView.customPermissions = _.uniq(mustacheView.customPermissions)
 
     dependencies.regular.push(
       `com.walmartlabs.ern:react-native:${reactNativePlugin.version}`
