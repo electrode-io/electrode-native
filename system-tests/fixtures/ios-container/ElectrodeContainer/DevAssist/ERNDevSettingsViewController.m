@@ -83,9 +83,6 @@ __block BOOL clearBundleId;
         self->packagerIPandPort = @"localhost:8081";
         [[NSUserDefaults standardUserDefaults] setObject:self->packagerIPandPort forKey:packagerIPPort];
     }
-    // Store it in NSUserDefaults. default it to YES
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:autoReloadBundle];
-    
     // Store titleHeaders in an Array
     titleForHeaders = @[@"Bundle Store", @"Server host and Port", @"Store", @"Bundle ID", @"Auto reload"];
     // create a semaphore
@@ -113,7 +110,6 @@ __block BOOL clearBundleId;
 
 - (void)bundleStoreSwitchAction:(UISwitch *)sender {
     NSIndexPath *indexPath = [_tableView indexPathForRowAtPoint:[sender convertPoint:CGPointZero toView:_tableView]];
-    NSLog(@"Section %ld Row %ld", indexPath.row, indexPath.section);
     UITableViewCell *cell = [_tableView cellForRowAtIndexPath:indexPath];
     cell.textLabel.text = sender.on ? @"Disable" : @"Enable";
     [[NSUserDefaults standardUserDefaults] setBool:sender.on forKey:enableBundleStore];
@@ -135,12 +131,10 @@ __block BOOL clearBundleId;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"selected %ld row, %@", section, tableView);
     return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"selected %ld row, %@", (long)indexPath.row, _tableView);
     static NSString *cellIdentifier = @"Cell";
     UITableViewCell *cell = (UITableViewCell *)[theTableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
@@ -152,7 +146,6 @@ __block BOOL clearBundleId;
             [_bundleStoreSwitch addTarget:self action:@selector(bundleStoreSwitchAction:) forControlEvents:UIControlEventValueChanged];
             cell.accessoryView = _bundleStoreSwitch;
             cell.textLabel.text = isAvailable ? @"Disable" : @"Enable";
-//            [_bundleStoreSwitch setOn:[[NSUserDefaults standardUserDefaults] boolForKey:enableBundleStore] animated:NO];
             [_bundleStoreSwitch setOn:isAvailable animated:NO];
             break;
         case 1:
@@ -226,7 +219,6 @@ __block BOOL clearBundleId;
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"selected %ld row, %@", (long)indexPath.row, tableView);
     if (indexPath.section == 1) {
         UIAlertController *alertController = [self createAlertControllerWithTitle:@"Input packager IP & port" message:nil];
         [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -267,12 +259,10 @@ __block BOOL clearBundleId;
         NSURLSession *session = [NSURLSession sharedSession];
         NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             [self stopAnimation];
-            NSLog(@"%@", response);
             if (!error) {
                 NSArray *lArray = [NSJSONSerialization JSONObjectWithData: data options:NSJSONReadingMutableContainers error:nil];
                 self.bundleStoresRepo = lArray;
                 UIAlertController * alertController = [self createAlertControllerWithTitle:@"Bundle Stores" message:@"Select a bundle store"];
-                NSLog(@"%@", self.bundleStoresRepo[0]);
                 for (NSString *str in self.bundleStoresRepo) {
                  [alertController addAction:[UIAlertAction actionWithTitle:str style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
                     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -286,7 +276,6 @@ __block BOOL clearBundleId;
                     double delayInSeconds = 0.25;
                     dispatch_time_t waitTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
                     dispatch_semaphore_wait(semaphore, waitTime);
-                    NSLog(@"bundle ids %@", self->ernBundleObjects);
                     ElectrodeBundle *bundle;
                     NSString *dateStr;
                     NSMutableArray *arr = [NSMutableArray array];
@@ -305,9 +294,6 @@ __block BOOL clearBundleId;
                         }
                     self->bundleArray = arr;
                     self->dateAndTime = str;
-                    NSLog(@"bundle array %@", arr);
-                    NSLog(@"bundle array %@", self->bundleArray);
-                    NSLog(@"DateTime array %@", self->dateAndTime);
                     if (self->bundleArray.count == 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:storeBundleId];
                         self->bundleId = nil;
@@ -330,7 +316,6 @@ __block BOOL clearBundleId;
                 [self createCancelActionAndPresentAlertController:alertController];
             }
             else {
-                NSLog(@"Error: %@", [error localizedDescription]);
                 UIAlertController *alertController = [self createAlertControllerWithTitle:@"Error" message:[error localizedDescription]];
                 [self createCancelActionAndPresentAlertController:alertController];
             }
