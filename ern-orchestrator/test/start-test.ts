@@ -14,6 +14,7 @@ import * as cauldronApi from 'ern-cauldron-api'
 import * as compositeGen from 'ern-composite-gen'
 import fs from 'fs'
 import path from 'path'
+import ncp from 'ncp'
 const sandbox = sinon.createSandbox()
 
 function cloneFixture(fixture) {
@@ -68,6 +69,7 @@ describe('start', () => {
     sandbox.stub(core, 'createTmpDir').returns('/tmp/dir')
     sandbox.stub(process.stdin, 'resume')
     sandbox.stub(fs, 'existsSync').returns(true)
+    sandbox.stub(ncp, 'ncp').callsFake((source, dest, options, cb) => cb())
   })
 
   function createStubs({
@@ -176,7 +178,7 @@ describe('start', () => {
     sandbox.assert.calledWith(chokidarWatchStub, '/path/to/myMiniApp', {
       cwd: '/path/to/myMiniApp',
       ignoreInitial: true,
-      ignored: ['android/**', 'ios/**'],
+      ignored: ['android/**', 'ios/**', 'node_modules/**', '.git/**'],
       persistent: true,
     })
   })

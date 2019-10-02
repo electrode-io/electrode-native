@@ -71,6 +71,7 @@
     "fs-readdir-recursive": "^1.1.0",
     "kax":"^2.0.1",
     "lodash": "^4.17.14",
+    "ncp": "^2.0.0",
     "semver": "^5.5.0",
     "treeify": "^1.1.0",
     "validate-npm-package-name": "^3.0.0",
