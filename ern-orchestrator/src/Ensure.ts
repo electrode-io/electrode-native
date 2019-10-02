@@ -17,6 +17,8 @@ import fs from 'fs'
 import levenshtein from 'fast-levenshtein'
 import * as constants from './constants'
 import treeify from 'treeify'
+import superagent from 'superagent'
+
 export default class Ensure {
   public static isValidElectrodeNativeModuleName(
     name: string,
@@ -575,5 +577,22 @@ export default class Ensure {
         `bundlestore-accesskey is not set in configuration\n${extraErrorMessage}`
       )
     }
+  }
+
+  public static async metroServerIsNotRunning(
+    host: string,
+    port: string,
+    extraErrorMessage?: string
+  ) {
+    const metroServerUrl = `http://${host}:${port}`
+
+    try {
+      await superagent.get(metroServerUrl)
+    } catch (err) {
+      return
+    }
+    throw new Error(
+      `Metro server is running on ${metroServerUrl}\n${extraErrorMessage}`
+    )
   }
 }
