@@ -6,11 +6,13 @@ import {
   tryCatchWrap,
 } from '../../../lib'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'file <localFilePath> <cauldronFilePath>'
 export const desc = 'Add a file in the Cauldron'
 
-export const builder = (argv: Argv) => argv.epilog(epilog(exports))
+export const builder = (argv: Argv) =>
+  argv.coerce('localFilePath', p => untildify(p)).epilog(epilog(exports))
 
 export const commandHandler = async ({
   cauldronFilePath,

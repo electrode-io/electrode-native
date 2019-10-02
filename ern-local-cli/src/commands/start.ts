@@ -7,6 +7,7 @@ import { start } from 'ern-orchestrator'
 import _ from 'lodash'
 import { PackagePath, AppVersionDescriptor } from 'ern-core'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'start'
 export const desc = 'Start a composite MiniApp'
@@ -32,6 +33,7 @@ export const builder = (argv: Argv) => {
       describe: 'Directory in which to generate the composite',
       type: 'string',
     })
+    .coerce('compositeDir', p => untildify(p))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application selector',

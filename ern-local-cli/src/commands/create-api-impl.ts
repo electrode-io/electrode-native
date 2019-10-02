@@ -18,6 +18,7 @@ import {
 } from '../lib'
 import path from 'path'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'create-api-impl <apiName> [apiImplName]'
 export const desc = 'Commands to generate API implementation skeleton.'
@@ -68,6 +69,7 @@ export const builder = (argv: Argv) => {
       alias: 'o',
       describe: 'Path to output directory',
     })
+    .coerce('outputDirectory', p => untildify(p))
     .epilog(epilog(exports))
 }
 

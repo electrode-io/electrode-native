@@ -18,6 +18,7 @@ import {
 } from '../../lib'
 import { Argv } from 'yargs'
 import path from 'path'
+import untildify from 'untildify'
 
 export const command = 'upload'
 export const desc = 'Upload a bundle to a store'

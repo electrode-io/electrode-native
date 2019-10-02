@@ -3,6 +3,7 @@ import { transformContainer } from 'ern-container-transformer'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'transform-container'
 export const desc = 'Transform a local Container'
@@ -13,6 +14,7 @@ export const builder = (argv: Argv) => {
       describe: 'Local path to the Container to transform',
       type: 'string',
     })
+    .coerce('untildify', p => untildify(p))
     .option('extra', {
       alias: 'e',
       describe:

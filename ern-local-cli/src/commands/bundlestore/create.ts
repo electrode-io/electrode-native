@@ -2,6 +2,7 @@ import { getActiveCauldron } from 'ern-cauldron-api'
 import { AppVersionDescriptor, BundleStoreSdk, log, config } from 'ern-core'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'create <store>'
 export const desc = 'Create a new store'
@@ -9,7 +10,7 @@ export const desc = 'Create a new store'
 export const builder = (argv: Argv) => {
   return argv
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .normalize('pathToBinary')
+    .coerce('pathToBinary', p => untildify(p))
     .epilog(epilog(exports))
 }
 

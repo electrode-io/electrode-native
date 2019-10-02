@@ -2,6 +2,7 @@ import { AppVersionDescriptor, kax, log } from 'ern-core'
 import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
+import untildify from 'untildify'
 
 export const command = 'get <descriptor> <outDir>'
 export const desc = 'Get a mobile application binary from the binary store'
@@ -13,7 +14,7 @@ export const builder = (argv: Argv) => {
       describe: 'Custom flavor of this binary',
       type: 'string',
     })
-    .normalize('outDir')
+    .coerce('outDir', p => untildify(p))
     .epilog(epilog(exports))
 }
 
