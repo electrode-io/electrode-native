@@ -47,6 +47,10 @@
   - [Local CLI](platform-parts/cli/local-cli.md)
 - [GLOSSARY](GLOSSARY.md)
 
+### GUIDES
+
+- [Debugging multiple MiniApps](guides/multi-miniapps-debug.md)
+
 ### CLI COMMANDS
 
 - [add](cli/add.md)
