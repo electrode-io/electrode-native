@@ -33,6 +33,11 @@ ern-workspace
 └── MiniAppC
 ```
 
+- `ern link` each of the MiniApps
+
+This is needed for proper mapping of source location between the composite and the MiniApp directory, but also to ensure that any changes to the MiniApp directory are properly propagated to the Composite.
+We will just `cd` into our `MiniAppA` and `MiniAppC` directories and run `ern link` command from each of them.
+
 - Create a node project in this directory, and add `react-native` dependency to it
 
 This is necessary for the [React Native Tools] extension to properly work.
@@ -105,7 +110,7 @@ ern-workspace
 └── yarn.lock
 ```
 
-The basic setup is now complete. If you need to add more MiniApps over time, just clone any additional MiniApps in the `ern-workspace` directory and make sure to add a corresponding mapping entry to `sourceMapPathOverrides` configuration.  
+The basic setup is now complete. If you need to add more MiniApps over time, just clone any additional MiniApps in the `ern-workspace` directory and make sure to `ern link` the new MiniApp and add a corresponding mapping entry to `sourceMapPathOverrides` configuration.
 
 We can now start debugging with the help of the [ern start] command.
 
@@ -139,9 +144,6 @@ You can now open the `ern-workspace` directory in Visual Studio Code (if not don
 To attach Visual Studio Code to the React Native debugger (first make sure that `ern start` command has completed and is still running in the background -i.e not killed-), you should run the `Attach to packager` debug configuration from Visual Studio Code. You will notice an indicator that will keep spinning until Visual Studio Code gets attached to the React Native debugger.
 
 In the native application, bring up the React Native Developer Menu, and turn on JS Debugging by tapping the `Debug JS Remotely` button. This will result in attaching to the Visual Studio Code debugger (if debugging was already turned on in the native app, just retrigger the debugger by tapping `Stop Remote JS Debugging` and then `Debug JS Remotely`). In Visual Studio Code you should now see that the debugger was attached, and you should see the visual studio icons part of a debbugging session. We are now able to put breakpoints in `MiniAppA` and `MiniAppC` sources, and debug the MiniApps from Visual Studio Code.
-
-You will notice that if you are doing code changes in `MiniAppA` and `MiniAppC` directories, the changes won't be picked up by React Native even if you reload the app. If you need to perform modifications on the MiniApps, you will have to use the [ern link] command. For example if you need to perform code changes for `MiniAppA`, you can just run `ern link` from `MiniAppA` directory (this is a one time operation only -once per MiniApp being linked- and you'll need to relaunch [ern start] any time you link a new MiniApp).
-
 
 [Visual Studio Code]: https://code.visualstudio.com/
 [React Native Tools]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.vscode-react-native
