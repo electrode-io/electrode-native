@@ -39,6 +39,7 @@ export async function logErrorAndExitIfNotSatisfied({
   manifestIdExists,
   bundleStoreUrlSetInCauldron,
   bundleStoreAccessKeyIsSet,
+  metroServerIsNotRunning,
 }: {
   noGitOrFilesystemPath?: {
     obj: string | PackagePath | Array<string | PackagePath> | void
@@ -164,6 +165,11 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
   bundleStoreAccessKeyIsSet?: {
+    extraErrorMessage?: string
+  }
+  metroServerIsNotRunning?: {
+    host: string
+    port: string
     extraErrorMessage?: string
   }
 } = {}) {
@@ -440,6 +446,15 @@ export async function logErrorAndExitIfNotSatisfied({
       )
       await Ensure.bundleStoreAccessKeyIsSet(
         bundleStoreAccessKeyIsSet.extraErrorMessage
+      )
+      kaxTask.succeed()
+    }
+    if (metroServerIsNotRunning) {
+      kaxTask = kax.task(`Ensuring that metro server is not running`)
+      await Ensure.metroServerIsNotRunning(
+        metroServerIsNotRunning.host,
+        metroServerIsNotRunning.port,
+        metroServerIsNotRunning.extraErrorMessage
       )
       kaxTask.succeed()
     }

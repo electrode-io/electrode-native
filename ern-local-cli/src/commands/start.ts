@@ -8,6 +8,7 @@ import _ from 'lodash'
 import { PackagePath, AppVersionDescriptor } from 'ern-core'
 import { Argv } from 'yargs'
 import untildify from 'untildify'
+import { logErrorAndExitIfNotSatisfied } from '../lib'
 
 export const command = 'start'
 export const desc = 'Start a composite MiniApp'
@@ -123,6 +124,14 @@ export const commandHandler = async ({
   watchNodeModules?: string[]
   disableBinaryStore?: boolean
 } = {}) => {
+  await logErrorAndExitIfNotSatisfied({
+    metroServerIsNotRunning: {
+      extraErrorMessage: `You should kill the current server before running this command.`,
+      host: host || 'localhost',
+      port: port || '8081',
+    },
+  })
+
   if (!miniapps && !descriptor) {
     descriptor = await askUserToChooseANapDescriptorFromCauldron()
   }
