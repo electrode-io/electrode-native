@@ -161,14 +161,28 @@ export async function runMiniApp(
     outDir,
   })
 
+  const pathToRunner = path.join(cwd, platform)
+  const oldAndroidRunner = isOldAndroidRunner()
+
   if (platform === 'android') {
+    if (oldAndroidRunner) {
+      log.warn(
+        'Looks like you are running on an older version of the android runner project generated using ern version < 0.38.0. \n We recommend that you delete your current Android directory and regenerate the new runner by executing `ern run-android` command again.'
+      )
+    }
     extra = extra || {}
     extra.androidConfig = {
       ...(extra && extra.androidConfig),
-      artifactId: `runner-ern-container-${entryMiniAppName.toLowerCase()}`,
+      artifactId: oldAndroidRunner
+        ? `runner-ern-container`
+        : `runner-ern-container-${entryMiniAppName.toLowerCase()}`,
       groupId: 'com.walmartlabs.ern',
-      packageFilePath: `com/walmartlabs/ern/${entryMiniAppName.toLowerCase()}`,
-      packageName: `com.walmartlabs.ern.${entryMiniAppName.toLowerCase()}`,
+      packageFilePath: oldAndroidRunner
+        ? 'com/walmartlabs/ern'
+        : `com/walmartlabs/ern/${entryMiniAppName.toLowerCase()}`,
+      packageName: oldAndroidRunner
+        ? `com.walmartlabs.ern`
+        : `com.walmartlabs.ern.${entryMiniAppName.toLowerCase()}`,
     }
     await publishContainer({
       containerPath: outDir,
@@ -179,8 +193,6 @@ export async function runMiniApp(
       url: getDefaultMavenLocalDirectory(),
     })
   }
-
-  const pathToRunner = path.join(cwd, platform)
 
   const compositeNativeDeps = await containerGenResult.config.composite.getNativeDependencies()
   const reactNativeDep = _.find(
@@ -215,17 +227,6 @@ export async function runMiniApp(
         getRunnerGeneratorForPlatform(platform).generate(runnerGeneratorConfig)
       )
   } else {
-    if (platform === 'android' && isOldAndroidRunner()) {
-      log.warn(
-        'Looks like you are running on an older version of the adroid runner project generated using ern version < 0.38.0. \n We recommend that you delete your current Android directory and regenerate the new runner by executing `ern run-android` command again.'
-      )
-      // Change back to old runner package.
-      runnerGeneratorConfig.extra.androidConfig.packageFilePath =
-        'com/walmartlabs/ern'
-      runnerGeneratorConfig.extra.androidConfig.packageName =
-        'com.walmartlabs.ern'
-      runnerGeneratorConfig.extra.androidConfig.isOldRunner = true
-    }
     await kax
       .task(`Regenerating ${platform} Runner Configuration`)
       .run(
@@ -238,10 +239,9 @@ export async function runMiniApp(
   function isOldAndroidRunner(): boolean {
     const paths = path.join(
       pathToRunner,
-      'app/src/main/java',
-      extra.androidConfig.packageFilePath
+      'app/src/main/java/com/walmartlabs/ern/RunnerConfig.java'
     )
-    return !fs.existsSync(paths)
+    return fs.existsSync(paths)
   }
 
   const launchRunnerConfig: LaunchRunnerConfig = {

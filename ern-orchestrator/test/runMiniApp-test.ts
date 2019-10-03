@@ -100,7 +100,11 @@ describe('runMiniApp', () => {
     existsSyncReturn?: boolean
     miniAppExistInPath?: boolean
   } = {}) {
-    sandbox.stub(fs, 'existsSync').returns(existsSyncReturn)
+    sandbox
+      .stub(fs, 'existsSync')
+      .callsFake(p =>
+        p.toString().endsWith('RunnerConfig.java') ? false : existsSyncReturn
+      )
     sandbox.stub(core.MiniApp, 'existInPath').returns(miniAppExistInPath)
   }
 
