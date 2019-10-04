@@ -113,7 +113,9 @@ async function generateFullComposite(
   } = {}
 ) {
   if (fs.existsSync(outDir)) {
-    cleanupCompositeDir(outDir)
+    await kax
+      .task('Cleaning up existing composite directory')
+      .run(cleanupCompositeDir(outDir))
   } else {
     shell.mkdir('-p', outDir)
   }
