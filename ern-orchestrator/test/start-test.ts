@@ -12,7 +12,7 @@ import {
 } from 'ern-cauldron-api'
 import * as cauldronApi from 'ern-cauldron-api'
 import * as compositeGen from 'ern-composite-gen'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import ncp from 'ncp'
 const sandbox = sinon.createSandbox()
