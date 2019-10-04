@@ -17,7 +17,7 @@ import { generateComposite } from 'ern-composite-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { ncp } from 'ncp'
 
 export default async function start({
@@ -111,13 +111,25 @@ export default async function start({
       miniAppsLinksObj[packageJson.name] = m.basePath
     })
 
+  const packageCopyKaxTask = kax.task(
+    'Copying all linked MiniApps to Composite'
+  )
+  const totalLinkedMiniApps = linkedMiniAppsPackageNames.length
+  let currentMiniAppIdx = 1
   for (const linkedMiniAppPackageName of linkedMiniAppsPackageNames) {
-    await replacePackageInCompositeWithLinkedPackage(
-      compositeDir,
-      linkedMiniAppPackageName,
-      miniAppsLinksObj[linkedMiniAppPackageName]
-    )
+    await kax
+      .task(
+        `[${currentMiniAppIdx++}/${totalLinkedMiniApps}] Copying ${linkedMiniAppPackageName}`
+      )
+      .run(
+        replacePackageInCompositeWithLinkedPackage(
+          compositeDir,
+          linkedMiniAppPackageName,
+          miniAppsLinksObj[linkedMiniAppPackageName]
+        )
+      )
   }
+  packageCopyKaxTask.succeed()
 
   reactnative.startPackagerInNewWindow({
     cwd: compositeDir,
@@ -201,42 +213,6 @@ export default async function start({
   }
 }
 
-async function copyPackageToComposite(
-  source,
-  dest,
-  { nodeModulesToCopy }: { nodeModulesToCopy?: string[] } = {}
-) {
-  return new Promise((resolve, reject) => {
-    ncp(
-      source,
-      dest,
-      {
-        //
-        // Copy every files and directories recursively but
-        // only copy node modules directories that are
-        // listed in nodeModulesToCopy array
-        filter: (filename: string) => {
-          const moduleMatch = filename.match(/^.+\/node_modules\/([^\/]+)/)
-          return moduleMatch !== null &&
-            nodeModulesToCopy &&
-            nodeModulesToCopy.includes(moduleMatch[1])
-            ? true
-            : moduleMatch !== null
-            ? false
-            : true
-        },
-      },
-      err => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      }
-    )
-  })
-}
-
 async function replacePackageInCompositeWithLinkedPackage(
   compositeDir,
   linkedPackageName,
@@ -250,39 +226,46 @@ async function replacePackageInCompositeWithLinkedPackage(
     compositeDir,
     linkedPackageName
   )
-  // Build a list of all of the non hoisted node modules of this package
-  // (modules not hoisted at the top level of composite, but rather kept in the
-  // node_modules of the package itself)
-  const p = path.join(pathToPackageInComposite, 'node_modules')
-  let nonHoistedNodeModules
-  try {
-    nonHoistedNodeModules = fs.readdirSync(p)
-  } catch (e) {
-    // swallow (dir does not exist)
-  }
+
+  // Don't need android and ios directories to be copied over to the Composite
+  // Also exclude react-native and react to avoid haste collisions, as they are
+  // already part of the top level composite node_modules
+  // react-native-electrode-bridge is also excluded because having multiple
+  // instances of it might create issues
+  const excludedDirectories = [
+    'android',
+    'ios',
+    'node_modules/react-native',
+    'node_modules/react',
+    'node_modules/react-native-electrode-bridge',
+  ].map(f => path.join(sourceLinkDir, f))
+
+  const excludedDirectoriesRE = new RegExp(
+    `^((?!${excludedDirectories.join('|')}).*)`
+  )
 
   // Trash the package in the composite directory, and recreate it with current
-  // local content, by recursively copying the whole local package directory,
-  // and only non hoisted node_modules of the package (for performance reason,
-  // it is too costly -and useless- to copy all of the node modules)
-  shell.rm('-Rf', pathToPackageInComposite)
-  shell.mkdir('-p', pathToPackageInComposite)
-  await copyPackageToComposite(sourceLinkDir, pathToPackageInComposite, {
-    //  nodeModulesToCopy: nonHoistedNodeModules,
+  // local content, by recursively copying the whole local package directory.
+  await fs.emptyDir(pathToPackageInComposite)
+
+  // Use ncp for copy rather than fs-extra as it is more performant
+  await new Promise((resolve, reject) => {
+    ncp(
+      sourceLinkDir,
+      pathToPackageInComposite,
+      {
+        filter: excludedDirectoriesRE,
+        limit: 512,
+      } as any /* while waiting for https://github.com/DefinitelyTyped/DefinitelyTyped/pull/38883 to get merged */,
+      err => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve()
+        }
+      }
+    )
   })
-  // Remove react-native and react to avoid haste collisions, as they are
-  // already part of the top level composite node_modules
-  // Also remove react-native-electrode-bridge because having multiple instances
-  // of it will create issues. We want to use hoisted instance only.
-  const pathToPackageNodeModules = path.join(
-    pathToPackageInComposite,
-    'node_modules'
-  )
-  shell.rm('-Rf', [
-    path.join(pathToPackageNodeModules, 'react-native'),
-    path.join(pathToPackageNodeModules, 'react'),
-    path.join(pathToPackageNodeModules, 'react-native-electrode-bridge'),
-  ])
 }
 
 function startLinkSynchronization(
