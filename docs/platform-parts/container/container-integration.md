@@ -93,7 +93,7 @@ The following android build parameters can be configured with application specif
     ```groovy
       dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-    }
+      }
     ```
 
 - `buildToolsVersion` - Android SDK build tools is a component of the Android SDK required for building Android apps. The version specified will update the app level `build.gradle`
@@ -103,49 +103,56 @@ The following android build parameters can be configured with application specif
     }
     ```
 - `gradleDistributionVersion` - The url downloads the gradle wrapper. This allows executing Gradle builds without having to set up Gradle. The version specified here updates the `gradle/wrapper/gradle-wrapper.properties`
-```
+  ```
   distributionUrl=https\://services.gradle.org/distributions/gradle-4.6-all.zip
-```
+  ```
 *NOTE: Check the compatibility chart of Gradle version required for each version of the Android Gradle plugin* [here](https://developer.android.com/studio/releases/gradle-plugin)
 
 - `compileSdkVersion` - The API level designated to compile the application.
 
 - `minSdkVersion` - The minimum API level that the application targets.
 
-- `targetSdkVersion` - The designated API Level that the application targets
+- `kotlinVersion` - To build a Kotlin project with Gradle, you should set up the kotlin-gradle plugin. The version specified will update the top level `build.gradle` file.
+  ```groovy
+        dependencies {
+          classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50'
+      }
+  ```
 
-```groovy
-  android {
-    compileSdkVersion 28
-    defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
+- `targetSdkVersion` - The designated API Level that the application targets.
+
+  ```groovy
+    android {
+      compileSdkVersion 28
+      defaultConfig {
+          minSdkVersion 19
+          targetSdkVersion 28
+      }
     }
-  }
-```
+  ```
 - `supportLibraryVersion` - You may want a standard way to provide newer features on earlier versions of Android or gracefully fall back to equivalent functionality. You can leverage these libraries to provide that compatibility layer.
 
-```grovy
+  ```grovy
   compile 'com.android.support:appcompat-v7:28.0.0'
-```
+  ```
 
 You can configure `androidConfig` in the cauldron as show below. 
 
-```json
-{
-  "containerGenerator": {
-    "androidConfig": {
-      "androidGradlePlugin": "3.2.1",
-      "buildToolsVersion": "28.0.3",
-      "compileSdkVersion": "28",
-      "gradleDistributionVersion": "4.6",
-      "minSdkVersion": "19",
-      "supportLibraryVersion": "28.0.0",
-      "targetSdkVersion": "28"
+  ```json
+  {
+    "containerGenerator": {
+      "androidConfig": {
+        "androidGradlePlugin": "3.2.1",
+        "buildToolsVersion": "28.0.3",
+        "compileSdkVersion": "28",
+        "gradleDistributionVersion": "4.6",
+        "minSdkVersion": "19",
+        "supportLibraryVersion": "28.0.0",
+        "targetSdkVersion": "28"
+      }
     }
   }
-}
-```
+  ```
 
 ##### JavaScript Engine (RN 0.60 and above)
 

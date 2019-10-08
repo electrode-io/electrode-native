@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 gradle.projectsEvaluated {
     def buildTypes = android.buildTypes.collect { type -> type.name }
@@ -31,6 +33,10 @@ android {
     sourceSets.main {
         res.srcDirs = [ "src/main/res", "src/main/res/devassist" ]
     }
+    compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 }
 
 dependencies {

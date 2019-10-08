@@ -239,6 +239,7 @@ describe('android.js', () => {
         buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
         compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
         gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        kotlinVersion: android.DEFAULT_KOTLIN_GRADLE_PLUGIN_VERSION,
         minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,
         supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
         targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
@@ -248,6 +249,7 @@ describe('android.js', () => {
     it('should return default versions along with user provided versions', () => {
       const versions = android.resolveAndroidVersions({
         androidGradlePlugin: '3.0.0',
+        kotlinVersion: '1.3.16',
         minSdkVersion: '15',
       })
       expect(versions).deep.equal({
@@ -258,6 +260,7 @@ describe('android.js', () => {
         buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
         compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
         gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        kotlinVersion: '1.3.16',
         minSdkVersion: '15',
         supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
         targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
@@ -272,6 +275,7 @@ describe('android.js', () => {
         buildToolsVersion: '27.0.0',
         compileSdkVersion: '27',
         gradleDistributionVersion: '4.5',
+        kotlinVersion: '1.3.16',
         minSdkVersion: '15',
         supportLibraryVersion: '27.0.0',
         targetSdkVersion: '27',
@@ -283,6 +287,7 @@ describe('android.js', () => {
         buildToolsVersion: '27.0.0',
         compileSdkVersion: '27',
         gradleDistributionVersion: '4.5',
+        kotlinVersion: '1.3.16',
         minSdkVersion: '15',
         supportLibraryVersion: '27.0.0',
         targetSdkVersion: '27',

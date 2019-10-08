@@ -14,6 +14,7 @@ getRunnerGeneratorForPlatform('android')
   .regenerateRunnerConfig({
     mainMiniAppName: 'dummy',
     outDir: pathToGeneratedFixtures,
+    reactNativeVersion: '0.60.5',
     targetPlatform: 'android',
   })
   .then(() => {

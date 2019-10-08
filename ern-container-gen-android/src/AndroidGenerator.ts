@@ -286,6 +286,10 @@ export default class AndroidGenerator implements ContainerGenerator {
     dependencies.regular.push(
       `com.android.support:appcompat-v7:${versions.supportLibraryVersion}`
     )
+    dependencies.regular.push(
+      `org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlinVersion}`
+    )
+
     mustacheView.implementations = this.buildImplementationStatements(
       dependencies,
       versions

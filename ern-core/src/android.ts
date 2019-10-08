@@ -6,6 +6,7 @@ import log from './log'
 import { execp, spawnp } from './childProcess'
 import os from 'os'
 import kax from './kax'
+import semver from 'semver'
 
 // ==============================================================================
 // Default value for android build config
@@ -17,6 +18,7 @@ export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.0.0'
 export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
 export const DEFAULT_COMPILE_SDK_VERSION = '28'
 export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1'
+export const DEFAULT_KOTLIN_GRADLE_PLUGIN_VERSION = '1.3.50'
 export const DEFAULT_MIN_SDK_VERSION = '19'
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0'
 export const DEFAULT_TARGET_SDK_VERSION = '28'
@@ -28,6 +30,7 @@ export interface AndroidResolvedVersions {
   buildToolsVersion: string
   compileSdkVersion: string
   gradleDistributionVersion: string
+  kotlinVersion: string
   minSdkVersion: string
   supportLibraryVersion: string
   targetSdkVersion: string
@@ -40,6 +43,7 @@ export function resolveAndroidVersions({
   buildToolsVersion = DEFAULT_BUILD_TOOLS_VERSION,
   compileSdkVersion = DEFAULT_COMPILE_SDK_VERSION,
   gradleDistributionVersion = DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+  kotlinVersion = DEFAULT_KOTLIN_GRADLE_PLUGIN_VERSION,
   minSdkVersion = DEFAULT_MIN_SDK_VERSION,
   supportLibraryVersion = DEFAULT_SUPPORT_LIBRARY_VERSION,
   targetSdkVersion = DEFAULT_TARGET_SDK_VERSION,
@@ -51,6 +55,7 @@ export function resolveAndroidVersions({
     buildToolsVersion,
     compileSdkVersion,
     gradleDistributionVersion,
+    kotlinVersion,
     minSdkVersion,
     supportLibraryVersion,
     targetSdkVersion,
