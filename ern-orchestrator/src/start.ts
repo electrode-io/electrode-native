@@ -238,10 +238,11 @@ async function replacePackageInCompositeWithLinkedPackage(
     'node_modules/react-native',
     'node_modules/react',
     'node_modules/react-native-electrode-bridge',
+    '.git',
   ].map(f => path.join(sourceLinkDir, f))
 
   const excludedDirectoriesRE = new RegExp(
-    `^((?!${excludedDirectories.join('|')}).*)`
+    `^((?!${excludedDirectories.map(f => `${f}$`).join('|')}).*)`
   )
 
   // Trash the package in the composite directory, and recreate it with current
