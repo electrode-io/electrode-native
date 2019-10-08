@@ -80,7 +80,7 @@ __block BOOL clearBundleId;
     clearBundleId = NO;
     //default value
     if ([[NSUserDefaults standardUserDefaults] objectForKey:packagerIPPort] == nil) {
-        self->packagerIPandPort = @"localhost:8081";
+        self->packagerIPandPort = @"localhost:8080";
         [[NSUserDefaults standardUserDefaults] setObject:self->packagerIPandPort forKey:packagerIPPort];
     }
     // Store titleHeaders in an Array
@@ -225,7 +225,7 @@ __block BOOL clearBundleId;
             textField.placeholder = @"0.0.0.0";
         }];
         [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder = @"8081";
+            textField.placeholder = @"8080";
         }];
         [alertController addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
             NSArray * textfields = alertController.textFields;
@@ -238,7 +238,7 @@ __block BOOL clearBundleId;
             formatter.numberStyle = NSNumberFormatterDecimalStyle;
             NSNumber *portNumber = [formatter numberFromString:portTextField.text];
             if (portNumber == nil) {
-                portNumber = [NSNumber numberWithInt:8081];
+                portNumber = [NSNumber numberWithInt:8080];
             }
             NSString *port = [NSString stringWithFormat:@"%@:%d",ipTextField.text, portNumber.intValue];
             [[NSUserDefaults standardUserDefaults] setObject:port forKey:packagerIPPort];
@@ -253,7 +253,7 @@ __block BOOL clearBundleId;
         NSLog(@"Stores");
         [_activityView startAnimating];
         // Construct a URL similar to this Ex: http://10.74.57.21:8080/stores
-        // get the packagerIP and port. default: localhost:8081
+        // get the packagerIP and port. default: localhost:8080
         NSString *hostandPort = [[NSUserDefaults standardUserDefaults] objectForKey:packagerIPPort];
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@/stores", hostandPort]]];
         NSURLSession *session = [NSURLSession sharedSession];
@@ -354,7 +354,7 @@ __block BOOL clearBundleId;
 // sets list of bundle ids for a specific store.
 - (void)networkCallRequestForABundleStore:(NSString *)bundleStore {
     NSString *hostandPort = [[NSUserDefaults standardUserDefaults] objectForKey:packagerIPPort];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@/bundles/%@/android",hostandPort,bundleStore]]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@/bundles/%@/ios",hostandPort,bundleStore]]];
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (!error && data != nil) {
