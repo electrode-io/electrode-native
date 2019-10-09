@@ -70,11 +70,11 @@
     "fast-levenshtein": "^2.0.6",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
+    "got": "^9.6.0",
     "kax":"^2.0.1",
     "lodash": "^4.17.14",
     "ncp": "^2.0.0",
     "semver": "^5.5.0",
-    "superagent":"^5.1.0",
     "treeify": "^1.1.0",
     "validate-npm-package-name": "^3.0.0",
     "yargs": "^7.1.0"

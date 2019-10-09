@@ -4,7 +4,7 @@ import createTmpDir from './createTmpDir'
 import log from './log'
 import fs from 'fs'
 import path from 'path'
-import superagent from 'superagent'
+import got from 'got'
 import ipc from 'node-ipc'
 import yazl from 'yazl'
 import { NativePlatform } from './NativePlatform'
@@ -92,10 +92,10 @@ export class BundleStoreEngine {
     const sourceMapPath = path.join(tmpDir, 'index.map')
     const streamBundle = fs.createWriteStream(bundlePath)
     const streamSourceMap = fs.createWriteStream(sourceMapPath)
-    const reqBundle = superagent.get(
+    const reqBundle = got.stream(
       `http://localhost:8081/index.bundle?platform=${platform}&dev=${!!dev}&minify=true`
     )
-    const reqSourceMap = superagent.get(
+    const reqSourceMap = got.stream(
       `http://localhost:8081/index.map?platform=${platform}&dev=${!!dev}&minify=true`
     )
     const sBundle = reqBundle.pipe(streamBundle)
