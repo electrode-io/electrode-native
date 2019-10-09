@@ -83,6 +83,7 @@
     "simple-git": "^1.106.0",
     "tmp": "^0.0.33",
     "treeify": "^1.1.0",
+    "tunnel": "^0.0.6",
     "uuid": "^3.3.2",
     "untildify": "^4.0.0",
     "xcode-ern": "^1.0.12",

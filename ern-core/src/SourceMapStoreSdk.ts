@@ -2,8 +2,13 @@ import * as fs from 'fs'
 import got from 'got'
 import FormData from 'form-data'
 import { AppVersionDescriptor } from './descriptors'
+import { createProxyAgentFromErnConfig } from './createProxyAgent'
 
 export class SourceMapStoreSdk {
+  public readonly gotCommonOpts = {
+    agent: createProxyAgentFromErnConfig('sourceMapStoreProxy'),
+  }
+
   constructor(public readonly host: string) {}
 
   public createSourceMapForm(sourceMapPath: string): FormData {
@@ -30,7 +35,7 @@ export class SourceMapStoreSdk {
         `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${
           descriptor.platform
         }/${descriptor.version}/${deploymentName}/${label}`,
-        { body: form }
+        { ...this.gotCommonOpts, body: form }
       )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
@@ -58,7 +63,8 @@ export class SourceMapStoreSdk {
           descriptor.platform
         }/${
           descriptor.version
-        }/${deploymentName}/${label}/${toVersion}/${toDeploymentName}/${toLabel}`
+        }/${deploymentName}/${label}/${toVersion}/${toDeploymentName}/${toLabel}`,
+        this.gotCommonOpts
       )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
@@ -76,12 +82,11 @@ export class SourceMapStoreSdk {
   }) {
     try {
       const form = this.createSourceMapForm(sourceMapPath)
-      const sourceMapRs = fs.createReadStream(sourceMapPath)
       await got.post(
         `http://${this.host}/sourcemaps/container/${descriptor.name}/${
           descriptor.platform
         }/${descriptor.version}/${containerVersion}`,
-        { body: form }
+        { ...this.gotCommonOpts, body: form }
       )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)

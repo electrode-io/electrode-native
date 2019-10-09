@@ -59,9 +59,19 @@ If set to `true`, the temporary directories created during some commands executi
 Show the Electrode Native ASCII banner for all commands.  
 **default** : true
 
-- `tmp-dir`  
+- `tmp-dir` [string]
 Temporary directory to use during commands execution.  
 **default** : system default
+
+- `bundleStoreProxy` [string]  
+HTTP/HTTPS proxy to use to connect to the bundle store server.  
+Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
+**default** : no proxy
+
+- `sourceMapStoreProxy` [string]  
+HTTP/HTTPS proxy to use to connect to the source map store server.  
+Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
+**default** : no proxy
 
 #### Remarks
  

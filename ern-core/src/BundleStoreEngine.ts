@@ -8,6 +8,7 @@ import got from 'got'
 import ipc from 'node-ipc'
 import yazl from 'yazl'
 import { NativePlatform } from './NativePlatform'
+import { createProxyAgentFromErnConfig } from './createProxyAgent'
 
 export class BundleStoreEngine {
   private readonly sdk: BundleStoreSdk
@@ -92,11 +93,18 @@ export class BundleStoreEngine {
     const sourceMapPath = path.join(tmpDir, 'index.map')
     const streamBundle = fs.createWriteStream(bundlePath)
     const streamSourceMap = fs.createWriteStream(sourceMapPath)
+
     const reqBundle = got.stream(
-      `http://localhost:8081/index.bundle?platform=${platform}&dev=${!!dev}&minify=true`
+      `http://localhost:8081/index.bundle?platform=${platform}&dev=${!!dev}&minify=true`,
+      {
+        agent: createProxyAgentFromErnConfig('bundleStoreProxy'),
+      }
     )
     const reqSourceMap = got.stream(
-      `http://localhost:8081/index.map?platform=${platform}&dev=${!!dev}&minify=true`
+      `http://localhost:8081/index.map?platform=${platform}&dev=${!!dev}&minify=true`,
+      {
+        agent: createProxyAgentFromErnConfig('bundleStoreProxy'),
+      }
     )
     const sBundle = reqBundle.pipe(streamBundle)
     const sSourceMap = reqSourceMap.pipe(streamSourceMap)
