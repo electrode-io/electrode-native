@@ -29,26 +29,32 @@ export async function runMiniApp(
   platform: NativePlatform,
   {
     baseComposite,
-    mainMiniAppName,
-    miniapps,
-    jsApiImpls,
+    cwd,
     descriptor,
     dev,
-    host,
-    port,
     extra,
-    cwd,
+    host,
+    jsApiImpls,
+    launchArgs,
+    launchEnvVars,
+    launchFlags,
+    mainMiniAppName,
+    miniapps,
+    port,
   }: {
     baseComposite?: PackagePath
-    mainMiniAppName?: string
-    miniapps?: PackagePath[]
-    jsApiImpls?: PackagePath[]
+    cwd?: string
     descriptor?: string | AppVersionDescriptor
     dev?: boolean
-    host?: string
-    port?: string
     extra?: any
-    cwd?: string
+    host?: string
+    jsApiImpls?: PackagePath[]
+    launchArgs?: string
+    launchEnvVars?: string
+    launchFlags?: string
+    mainMiniAppName?: string
+    miniapps?: PackagePath[]
+    port?: string
   } = {}
 ) {
   cwd = cwd || process.cwd()
@@ -245,7 +251,11 @@ export async function runMiniApp(
   }
 
   const launchRunnerConfig: LaunchRunnerConfig = {
-    extra: {},
+    extra: {
+      launchArgs,
+      launchEnvVars,
+      launchFlags,
+    },
     pathToRunner,
     platform,
   }

@@ -1,7 +1,13 @@
 import { ios, kax, shell } from 'ern-core'
 import { buildIosRunner } from './buildIosRunner'
 
-export async function launchOnSimulator(pathToIosRunner: string) {
+export async function launchOnSimulator(
+  pathToIosRunner: string,
+  {
+    launchArgs,
+    launchEnvVars,
+  }: { launchArgs?: string; launchEnvVars?: string } = {}
+) {
   const iPhoneSim = await ios.askUserToSelectAniPhoneSimulator()
   kax.info('Killing all running Simulators')
   ios.killAllRunningSimulators()
@@ -21,9 +27,12 @@ export async function launchOnSimulator(pathToIosRunner: string) {
           `${pathToIosRunner}/build/Debug-iphonesimulator/ErnRunner.app`
         )
       )
-    await kax
-      .task('Launching Runner')
-      .run(ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner'))
+    await kax.task('Launching Runner').run(
+      ios.launchApplication(iPhoneSim.udid, 'com.yourcompany.ernrunner', {
+        launchArgs,
+        launchEnvVars,
+      })
+    )
   } finally {
     shell.popd()
   }
