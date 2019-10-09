@@ -1,9 +1,17 @@
 import * as fs from 'fs'
-import superagent from 'superagent'
+import got from 'got'
+import FormData from 'form-data'
 import { AppVersionDescriptor } from './descriptors'
 
 export class SourceMapStoreSdk {
   constructor(public readonly host: string) {}
+
+  public createSourceMapForm(sourceMapPath: string): FormData {
+    const sourceMapRs = fs.createReadStream(sourceMapPath)
+    const form = new FormData()
+    form.append('sourcemap', sourceMapRs)
+    return form
+  }
 
   public async uploadCodePushSourceMap({
     descriptor,
@@ -17,14 +25,13 @@ export class SourceMapStoreSdk {
     sourceMapPath: string
   }) {
     try {
-      const sourceMapRs = fs.createReadStream(sourceMapPath)
-      return superagent
-        .post(
-          `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${
-            descriptor.platform
-          }/${descriptor.version}/${deploymentName}/${label}`
-        )
-        .attach('sourcemap', sourceMapRs)
+      const form = this.createSourceMapForm(sourceMapPath)
+      await got.post(
+        `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${
+          descriptor.platform
+        }/${descriptor.version}/${deploymentName}/${label}`,
+        { body: form }
+      )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
     }
@@ -46,7 +53,7 @@ export class SourceMapStoreSdk {
     toLabel: string
   }) {
     try {
-      return superagent.post(
+      await got.post(
         `http://${this.host}/sourcemaps/codepush/copy/${descriptor.name}/${
           descriptor.platform
         }/${
@@ -68,14 +75,14 @@ export class SourceMapStoreSdk {
     sourceMapPath: string
   }) {
     try {
+      const form = this.createSourceMapForm(sourceMapPath)
       const sourceMapRs = fs.createReadStream(sourceMapPath)
-      return superagent
-        .post(
-          `http://${this.host}/sourcemaps/container/${descriptor.name}/${
-            descriptor.platform
-          }/${descriptor.version}/${containerVersion}`
-        )
-        .attach('sourcemap', sourceMapRs)
+      await got.post(
+        `http://${this.host}/sourcemaps/container/${descriptor.name}/${
+          descriptor.platform
+        }/${descriptor.version}/${containerVersion}`,
+        { body: form }
+      )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
     }

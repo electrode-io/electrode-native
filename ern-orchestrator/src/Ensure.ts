@@ -17,7 +17,7 @@ import fs from 'fs'
 import levenshtein from 'fast-levenshtein'
 import * as constants from './constants'
 import treeify from 'treeify'
-import superagent from 'superagent'
+import got from 'got'
 
 export default class Ensure {
   public static isValidElectrodeNativeModuleName(
@@ -587,7 +587,7 @@ export default class Ensure {
     const metroServerUrl = `http://${host}:${port}`
 
     try {
-      await superagent.get(metroServerUrl)
+      await got.get(metroServerUrl)
     } catch (err) {
       return
     }
