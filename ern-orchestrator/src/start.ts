@@ -27,6 +27,9 @@ export default async function start({
   miniapps,
   descriptor,
   flavor,
+  launchArgs,
+  launchEnvVars,
+  launchFlags,
   watchNodeModules = [],
   packageName,
   activityName,
@@ -42,6 +45,9 @@ export default async function start({
   miniapps?: PackagePath[]
   descriptor?: AppVersionDescriptor
   flavor?: string
+  launchArgs?: string
+  launchEnvVars?: string
+  launchFlags?: string
   watchNodeModules?: string[]
   packageName?: string
   activityName?: string
@@ -169,7 +175,12 @@ export default async function start({
           const apkPath = await kax
             .task('Downloading binary from store')
             .run(binaryStore.getBinary(descriptor, { flavor }))
-          await android.runAndroidApk({ apkPath, packageName, activityName })
+          await android.runAndroidApk({
+            activityName,
+            apkPath,
+            launchFlags,
+            packageName,
+          })
         } else if (descriptor.platform === 'ios') {
           if (cauldronStartCommandConfig && cauldronStartCommandConfig.ios) {
             bundleId = bundleId || cauldronStartCommandConfig.ios.bundleId
@@ -182,7 +193,7 @@ export default async function start({
           const appPath = await kax
             .task('Downloading binary from store')
             .run(binaryStore.getBinary(descriptor, { flavor }))
-          await ios.runIosApp({ appPath, bundleId })
+          await ios.runIosApp({ appPath, bundleId, launchArgs, launchEnvVars })
         }
       }
     }

@@ -56,6 +56,18 @@ export const builder = (argv: Argv) => {
     .option('flavor', {
       describe: 'Custom binary flavor',
     })
+    .option('launchArgs', {
+      describe: '[iOS] Arguments to pass to the application when launching it',
+      type: 'string',
+    })
+    .option('launchEnvVars', {
+      describe:
+        '[iOS] Environment variables to pass to the application when launching it (space separated key=value pairs)',
+    })
+    .option('launchFlags', {
+      describe: '[Android] Flags to pass to the application when launching it',
+      type: 'string',
+    })
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more MiniApp(s)',
@@ -87,8 +99,14 @@ export const builder = (argv: Argv) => {
       describe: 'Port to use for the local package',
       type: 'string',
     })
-    .group(['packageName', 'activityName'], 'Android binary specific options:')
-    .group(['bundleId'], 'iOS binary specific options:')
+    .group(
+      ['activityName', 'launchFlags', 'packageName'],
+      'Android binary launch options:'
+    )
+    .group(
+      ['bundleId', 'launchEnvVars', 'launchArgs'],
+      'iOS binary launch options:'
+    )
     .group(['disableBinaryStore', 'flavor'], 'Binary store specific options:')
     .epilog(epilog(exports))
 }
@@ -103,6 +121,9 @@ export const commandHandler = async ({
   flavor,
   host,
   jsApiImpls,
+  launchArgs,
+  launchEnvVars,
+  launchFlags,
   miniapps,
   packageName,
   port,
@@ -118,6 +139,9 @@ export const commandHandler = async ({
   flavor?: string
   host?: string
   jsApiImpls?: PackagePath[]
+  launchArgs?: string
+  launchEnvVars?: string
+  launchFlags?: string
   miniapps?: PackagePath[]
   packageName?: string
   port?: string
@@ -147,6 +171,9 @@ export const commandHandler = async ({
     flavor,
     host,
     jsApiImpls,
+    launchArgs,
+    launchEnvVars,
+    launchFlags,
     miniapps,
     packageName,
     port,

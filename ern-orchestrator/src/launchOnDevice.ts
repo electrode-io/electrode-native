@@ -2,7 +2,14 @@ import { ios, kax, shell } from 'ern-core'
 import { buildIosRunner } from './buildIosRunner'
 import { spawnSync } from 'child_process'
 
-export async function launchOnDevice(pathToIosRunner: string, devices) {
+export async function launchOnDevice(
+  pathToIosRunner: string,
+  devices,
+  {
+    launchArgs,
+    launchEnvVars,
+  }: { launchArgs?: string; launchEnvVars?: string } = {}
+) {
   const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
   shell.pushd(pathToIosRunner)
 
@@ -22,6 +29,14 @@ export async function launchOnDevice(pathToIosRunner: string, devices) {
         iPhoneDevice.udid,
         '--justlaunch',
       ]
+      if (launchArgs) {
+        iosDeployInstallArgs.push('--args')
+        iosDeployInstallArgs.push(launchArgs.split(' '))
+      }
+      if (launchEnvVars) {
+        iosDeployInstallArgs.push('--envs')
+        iosDeployInstallArgs.push(launchEnvVars.split(' '))
+      }
       const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
         encoding: 'utf8',
       })

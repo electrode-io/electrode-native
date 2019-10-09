@@ -28,6 +28,7 @@ describe('launchRunner', () => {
       platform: 'android',
     })
     sandbox.assert.calledWith(runAndroidProjectStub, {
+      launchFlags: undefined,
       packageName: 'com.walmartlabs.ern',
       projectPath: '/Users/foo/test',
     })
