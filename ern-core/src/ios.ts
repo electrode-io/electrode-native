@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import inquirer from 'inquirer'
 import { execSync, spawn } from 'child_process'
+import { spawnp } from './childProcess'
 import ernConfig from './config'
 import * as deviceConfigUtil from './deviceConfig'
 import log from './log'
@@ -151,9 +152,13 @@ export async function launchSimulator(deviceUdid: string) {
 export async function runIosApp({
   appPath,
   bundleId,
+  launchArgs,
+  launchEnvVars,
 }: {
   appPath: string
   bundleId: string
+  launchArgs?: string
+  launchEnvVars?: string
 }) {
   const iPhoneDevice = await askUserToSelectAniPhoneSimulator()
   killAllRunningSimulators()
@@ -163,9 +168,12 @@ export async function runIosApp({
   await kax
     .task('Installing application on simulator')
     .run(installApplicationOnSimulator(iPhoneDevice.udid, appPath))
-  await kax
-    .task('Launching application')
-    .run(launchApplication(iPhoneDevice.udid, bundleId))
+  await kax.task('Launching application').run(
+    launchApplication(iPhoneDevice.udid, bundleId, {
+      launchArgs,
+      launchEnvVars,
+    })
+  )
 }
 
 export async function installApplicationOnSimulator(
@@ -175,6 +183,30 @@ export async function installApplicationOnSimulator(
   return simctl.installApp(deviceUdid, pathToAppFile)
 }
 
-export async function launchApplication(deviceUdid: string, bundleId: string) {
-  return simctl.launch(deviceUdid, bundleId)
+export async function launchApplication(
+  deviceUdid: string,
+  bundleId: string,
+  {
+    launchArgs = '',
+    launchEnvVars = '',
+  }: { launchArgs?: string; launchEnvVars?: string } = {}
+) {
+  // Prefix all provided env variables with 'SIMCTL_CHILD_
+  // As described by running `xcrun simctl launch --help` :
+  //    "If you want to set environment variables in the resulting environment,
+  //     set them in the calling environment with a SIMCTL_CHILD_ prefix."
+  launchEnvVars
+    .split(' ')
+    .map(x => x.split('='))
+    .forEach(([k, v]) => {
+      process.env[`SIMCTL_CHILD_${k}`] = v
+    })
+
+  return spawnp('xcrun', [
+    'simctl',
+    'launch',
+    deviceUdid,
+    bundleId,
+    ...launchArgs.split(' '),
+  ])
 }

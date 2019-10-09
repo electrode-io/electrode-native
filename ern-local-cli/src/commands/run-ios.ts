@@ -38,6 +38,14 @@ export const builder = (argv: Argv) => {
       describe: 'Host/IP to use for the local packager',
       type: 'string',
     })
+    .option('launchArgs', {
+      describe: 'Arguments to pass to the application when launching it',
+      type: 'string',
+    })
+    .option('launchEnvVars', {
+      describe:
+        'Environment variables to pass to the application when launching it (space separated key=value pairs)',
+    })
     .option('mainMiniAppName', {
       describe:
         'Name of the MiniApp to launch when starting the Runner application',
@@ -67,6 +75,8 @@ export const commandHandler = async ({
   descriptor,
   dev,
   host,
+  launchArgs,
+  launchEnvVars,
   mainMiniAppName,
   miniapps,
   port,
@@ -76,6 +86,8 @@ export const commandHandler = async ({
   descriptor?: NativeApplicationDescriptor
   dev?: boolean
   host?: string
+  launchArgs?: string
+  launchEnvVars?: string
   mainMiniAppName?: string
   miniapps?: PackagePath[]
   port?: string
@@ -90,7 +102,9 @@ export const commandHandler = async ({
     dependencies,
     descriptor,
     dev,
-    host,
+    host: host || 'localhost',
+    launchArgs,
+    launchEnvVars,
     mainMiniAppName,
     miniapps,
     port,

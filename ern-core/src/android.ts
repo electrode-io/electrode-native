@@ -45,21 +45,26 @@ async function delay(ms: number) {
 // Assumptions :
 // - devDebug variant exists in the project
 // Params :
-// - projectPath : Absolute or relative path to the root of the Android projectPath
+// - activityName : The name of the Activity to start (default "MainActivity")
+// - launchFlags: Flags to pass to the application when launching it
 // - packageName : Name of the package containing the application
 // Options :
-// - activityName : The name of the Activity to start (default "MainActivity")
+// - projectPath : Absolute or relative path to the root of the Android projectPath
+
 export async function runAndroidProject({
-  projectPath,
-  packageName,
   activityName = 'MainActivity',
+  launchFlags,
+  packageName,
+  projectPath,
 }: {
-  projectPath: string
-  packageName: string
   activityName?: string
+  launchFlags?: string
+  packageName: string
+  projectPath: string
 }) {
   return runAndroid({
     activityName,
+    launchFlags,
     packageName,
     projectPath,
   })
@@ -74,30 +79,36 @@ export async function runAndroidProject({
 // Options :
 // - activityName : The name of the Activity to start (default "MainActivity")
 export async function runAndroidApk({
-  apkPath,
-  packageName,
   activityName = 'MainActivity',
+  apkPath,
+  launchFlags,
+  packageName,
 }: {
-  apkPath: string
-  packageName: string
   activityName?: string
+  apkPath: string
+  launchFlags?: string
+  packageName: string
 }) {
   return runAndroid({
     activityName,
     apkPath,
+    launchFlags,
     packageName,
   })
 }
 
 export async function runAndroid({
-  packageName,
   activityName,
   apkPath,
+  launchFlags,
+  packageName,
   projectPath,
 }: {
-  packageName: string
   activityName: string
   apkPath?: string
+  launchFlags?: string
+  packageName: string
+
   projectPath?: string
 }) {
   const devices = await getDevices()
@@ -107,6 +118,7 @@ export async function runAndroid({
     await installAndLaunchApp({
       activityName,
       apkPath,
+      launchFlags,
       packageName,
       projectPath,
     })
@@ -118,6 +130,7 @@ export async function runAndroid({
       activityName,
       apkPath,
       avdImageName,
+      launchFlags,
       packageName,
       projectPath,
     })
@@ -167,23 +180,31 @@ export async function askUserToSelectAvdEmulator(): Promise<string> {
 // - packageName : name of the package containing the application
 // - avdImageName : name of the avd image to use (device image)
 export async function runAndroidUsingAvdImage({
-  apkPath,
-  projectPath,
-  packageName,
-  avdImageName,
   activityName,
+  apkPath,
+  launchFlags,
+  avdImageName,
+  packageName,
+  projectPath,
 }: {
-  apkPath?: string
-  projectPath?: string
-  packageName: string
-  avdImageName: string
   activityName: string
+  apkPath?: string
+  avdImageName: string
+  launchFlags?: string
+  packageName: string
+  projectPath?: string
 }) {
   // https://issuetracker.google.com/issues/37137213
   spawnp(androidEmulatorPath(), ['-avd', avdImageName], { detached: true })
 
   await kax.task('Waiting for device to start').run(waitForAndroidDevice())
-  await installAndLaunchApp({ apkPath, projectPath, packageName, activityName })
+  await installAndLaunchApp({
+    activityName,
+    apkPath,
+    launchFlags,
+    packageName,
+    projectPath,
+  })
 }
 
 // Does the job of installing and running the app
@@ -192,15 +213,17 @@ export async function runAndroidUsingAvdImage({
 // - projectPath : Absolute or relative path to the root of the Android projectPath
 // - packageName : name of the package containing the application
 export async function installAndLaunchApp({
-  projectPath,
-  apkPath,
-  packageName,
   activityName,
+  apkPath,
+  launchFlags,
+  packageName,
+  projectPath,
 }: {
-  projectPath?: string
-  apkPath?: string
-  packageName: string
   activityName: string
+  apkPath?: string
+  launchFlags?: string
+  packageName: string
+  projectPath?: string
 }) {
   if (projectPath) {
     await kax
@@ -210,7 +233,7 @@ export async function installAndLaunchApp({
     await kax.task('Installing APK').run(installApk(apkPath))
   }
   await kax.task('Launching Android Application').run(Promise.resolve())
-  launchAndroidActivityDetached(packageName, activityName)
+  launchAndroidActivityDetached(packageName, activityName, { launchFlags })
 }
 
 // Utility method that basically completes whenever the android device is ready
@@ -266,11 +289,19 @@ export async function launchAndroidActivity(
 // Will spawn the command (detached mode)
 export function launchAndroidActivityDetached(
   packageName: string,
-  activityName: string
+  activityName: string,
+  { launchFlags = '' }: { launchFlags?: string } = {}
 ) {
   spawnp(
     androidAdbPath(),
-    ['shell', 'am', 'start', '-n', `${packageName}/.${activityName}`],
+    [
+      'shell',
+      'am',
+      'start',
+      '-n',
+      `${packageName}/.${activityName}`,
+      launchFlags,
+    ],
     { detached: true }
   )
 }

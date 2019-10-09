@@ -31,8 +31,27 @@
 `--host`
 * Host or ip to launch the local packager on *(default: localhost)*
 
+ `--launchArgs` 
+* Arguments to pass to the application when launching it (correspond to the `Arguments Passed On Launch` in application scheme run config in XCode as can be seen on screenshot below).
+* Make sure to use `=` on the command line to provide this option, and keep the string in quotes. For example `--launchArgs="-ArgA -ArgB"`
+
+`--launchEnvVars`
+* Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in XCode as can be seen on screenshot below).
+* Make sure to use `=` on the command line to provide this option, and keep the string in quotes. The string should contain `key=value` pairs delimited by spaces. For example `--launchEnvVars="aKey=aValue anotherKey=anotherValue"`
+
+![xcode scheme run](../images/xcode-scheme-run.png)
+ 
+`--mainMiniAppName`
+* Name of the MiniApp to launch when starting the Runner application
+
+`--miniapps/m`
+* One or more MiniApps to combine in the Runner Container
+
 `--port`
 * Port on which the local packager should listen on *(default: 8081)*
+
+`--usePreviousDevice/-u`
+* Use the previously selected device to avoid prompt
 
 #### Remarks
 

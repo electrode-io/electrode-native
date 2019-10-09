@@ -20,6 +20,7 @@ import { launchRunner } from './launchRunner'
 import fs from 'fs'
 import path from 'path'
 import _ from 'lodash'
+import { LaunchRunnerConfig } from 'ern-runner-gen/src/types/LaunchRunnerConfig'
 
 export async function runMiniApp(
   platform: NativePlatform,
@@ -30,19 +31,25 @@ export async function runMiniApp(
     dependencies,
     descriptor,
     dev,
-    host,
-    port,
     extra,
+    host,
+    launchArgs,
+    launchEnvVars,
+    launchFlags,
+    port,
   }: {
-    mainMiniAppName?: string
-    miniapps?: PackagePath[]
-    jsApiImpls?: PackagePath[]
     dependencies?: PackagePath[]
     descriptor?: string | NativeApplicationDescriptor
     dev?: boolean
-    host?: string
-    port?: string
     extra?: any
+    host?: string
+    jsApiImpls?: PackagePath[]
+    launchArgs?: string
+    launchEnvVars?: string
+    launchFlags?: string
+    mainMiniAppName?: string
+    miniapps?: PackagePath[]
+    port?: string
   } = {}
 ) {
   const cwd = process.cwd()
@@ -197,8 +204,15 @@ export async function runMiniApp(
       )
   }
 
-  await launchRunner({
+  const launchRunnerConfig: LaunchRunnerConfig = {
+    extra: {
+      launchArgs,
+      launchEnvVars,
+      launchFlags,
+    },
     pathToRunner,
     platform,
-  })
+  }
+
+  await launchRunner(launchRunnerConfig)
 }

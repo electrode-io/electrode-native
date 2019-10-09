@@ -46,6 +46,18 @@ export const builder = (argv: Argv) => {
     .option('flavor', {
       describe: 'Custom binary flavor',
     })
+    .option('launchArgs', {
+      describe: '[iOS] Arguments to pass to the application when launching it',
+      type: 'string',
+    })
+    .option('launchEnvVars', {
+      describe:
+        '[iOS] Environment variables to pass to the application when launching it (space separated key=value pairs)',
+    })
+    .option('launchFlags', {
+      describe: '[Android] Flags to pass to the application when launching it',
+      type: 'string',
+    })
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more MiniApp(s)',
@@ -68,8 +80,14 @@ export const builder = (argv: Argv) => {
         'Disable automatic retrieval of the binary from the Binary Store',
       type: 'boolean',
     })
-    .group(['packageName', 'activityName'], 'Android binary specific options:')
-    .group(['bundleId'], 'iOS binary specific options:')
+    .group(
+      ['activityName', 'launchFlags', 'packageName'],
+      'Android binary launch options:'
+    )
+    .group(
+      ['bundleId', 'launchEnvVars', 'launchArgs'],
+      'iOS binary launch options:'
+    )
     .group(['disableBinaryStore', 'flavor'], 'Binary store specific options:')
     .epilog(epilog(exports))
 }
@@ -81,6 +99,9 @@ export const commandHandler = async ({
   extraJsDependencies = [],
   flavor,
   jsApiImpls,
+  launchArgs,
+  launchEnvVars,
+  launchFlags,
   miniapps,
   packageName,
   watchNodeModules,
@@ -92,6 +113,9 @@ export const commandHandler = async ({
   extraJsDependencies?: PackagePath[]
   flavor?: string
   jsApiImpls?: PackagePath[]
+  launchArgs?: string
+  launchEnvVars?: string
+  launchFlags?: string
   miniapps?: PackagePath[]
   packageName?: string
   watchNodeModules?: string[]
@@ -109,6 +133,9 @@ export const commandHandler = async ({
     extraJsDependencies,
     flavor,
     jsApiImpls,
+    launchArgs,
+    launchEnvVars,
+    launchFlags,
     miniapps,
     packageName,
     watchNodeModules,
