@@ -16,6 +16,7 @@
 
 **Whitelisted properties**
 
+- `bundleStoreProxy`
 - `codePushAccessKey`
 - `codePushCustomHeaders`
 - `codePushCustomServerUrl`
@@ -25,4 +26,5 @@
 - `package-cache-enabled`
 - `retain-tmp-dir` 
 - `showBanner`  
-- `tmp-dir`  
+- `sourceMapStoreProxy`
+- `tmp-dir` 
