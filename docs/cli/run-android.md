@@ -11,30 +11,13 @@
 **Options**  
 
 `--baseComposite <compositePath>`
-
 * Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
-
-`--dev [true|false]`
-* Enable or disable React Native dev support
-
-`--miniapps/m`
-* One or more MiniApps to combine in the Runner Container
 
 `--descriptor, -d`
 * complete native application descriptor
 
-`--mainMiniAppName`
-* Name of the MiniApp to launch when starting the Runner application
-* If you are running the command from the `MainApp` directory, only specify name of the `MiniApp` (Not the path).
-
-`--usePreviousDevice/-u`
-* Use the previously selected device to avoid prompt
-
-`--host`
-* Host or ip to launch the local packager on *(default: localhost)*
-
-`--port`
-* Port on which the local packager should listen on *(default: 8081)*
+`--dev [true|false]`
+* Enable or disable React Native dev support
 
 `--extra/-e`
 * Optional extra configuration specific to local container and runner
@@ -48,6 +31,29 @@
   For example `--extra cauldron://config/container/my-container-config.json`  
   In that case, the configuration will be read from the file stored in Cauldron.   
   For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+
+`--host`
+* Host or ip to launch the local packager on *(default: localhost)*
+
+`--launchFlags <string>`
+* Extra options passed to `am start` command when launching the application (correspond to the `Launch Flags` in Run/Debug Configurations of application in Android Studio, as can be seen on screenshot below)
+* Make sure to use `=` on the command line to provide this option, and keep the string in quotes. For example `--launchFlags="--es aKey aStringValue --ei anotherKey 1"`
+
+![Android Studio Run Config](../images/android-studio-run-config.png)
+
+`--mainMiniAppName`
+* Name of the MiniApp to launch when starting the Runner application
+* If you are running the command from the `MainApp` directory, only specify name of the `MiniApp` (Not the path).
+
+`--miniapps/m`
+* One or more MiniApps to combine in the Runner Container
+
+`--port`
+* Port on which the local packager should listen on *(default: 8081)*
+
+`--usePreviousDevice/-u`
+* Use the previously selected device to avoid prompt
+
 
 #### JavaScript engine
 

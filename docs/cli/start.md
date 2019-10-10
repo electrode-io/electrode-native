@@ -55,15 +55,32 @@ If you do not pass an argument to this command, you are prompted to select a nat
 
 `Android`
 
+`--activityName/-a <activity name>`
+* Specify Android Activity to launch.
+
+`--launchFlags <string>`
+* Extra options passed to `am start` command when launching the application (correspond to the `Launch Flags` in Run/Debug Configurations of application in Android Studio, as can be seen on screenshot below)
+* Make sure to use `=` on the command line to provide this option, and keep the string in quotes. For example `--launchFlags="--es aKey aStringValue --ei anotherKey 1"`
+
+![Android Studio Run Config](../images/android-studio-run-config.png)
+
 `--packageName/-p <packagename>`
 * Android application package name to avoid conflict with the names of classes or interfaces.
 
-`--activityName/-a <activity name>`
-*  Specify Android Activity to launch.
-
 `iOS`
+
 `--bundleId/-b`
-*   iOS Bundle Identifier unique to your app.
+* iOS Bundle Identifier unique to your app.
+
+`--launchArgs` 
+* Arguments to pass to the application when launching it (correspond to the `Arguments Passed On Launch` in application scheme run config in XCode as can be seen on screenshot below).
+* Make sure to use `=` on the command line to provide this option, and keep the string in quotes. For example `--launchArgs="-ArgA -ArgB"`
+
+`--launchEnvVars`
+* Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in XCode as can be seen on screenshot below).
+* Make sure to use `=` on the command line to provide this option, and keep the string in quotes. The string should contain `key=value` pairs delimited by spaces. For example `--launchEnvVars="aKey=aValue anotherKey=anotherValue"`
+
+![xcode scheme run](../images/xcode-scheme-run.png)
 
 **Binary Store Specific Options**
 
