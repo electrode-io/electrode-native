@@ -22,7 +22,10 @@ async function launchAndroidRunner(config: LaunchRunnerConfig) {
 async function launchIosRunner(config: LaunchRunnerConfig) {
   const iosDevices = ios.getiPhoneRealDevices()
   return iosDevices && iosDevices.length > 0
-    ? launchOnDevice(config.pathToRunner, iosDevices)
+    ? launchOnDevice(config.pathToRunner, iosDevices, {
+        launchArgs: config.extra && config.extra.launchArgs,
+        launchEnvVars: config.extra && config.extra.launchEnvVars,
+      })
     : launchOnSimulator(config.pathToRunner, {
         launchArgs: config.extra && config.extra.launchArgs,
         launchEnvVars: config.extra && config.extra.launchEnvVars,
