@@ -1,6 +1,6 @@
 {
   "name": "ern-orchestrator",
-  "version": "0.30.0",
+  "version": "0.30.2",
   "description": "Electrode Native Orchestrator",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -50,18 +50,18 @@
     "chokidar": "^1.7.0",
     "cli-table": "^0.3.1",
     "dir-compare": "^1.4.0",
-    "ern-api-gen": "0.30.0",
-    "ern-api-impl-gen": "0.30.0",
-    "ern-cauldron-api": "0.30.0",
-    "ern-container-gen": "0.30.0",
-    "ern-container-gen-android": "0.30.0",
-    "ern-container-gen-ios": "0.30.0",
-    "ern-container-publisher": "0.30.0",
-    "ern-container-transformer": "0.30.0",
-    "ern-core": "0.30.0",
-    "ern-runner-gen": "0.30.0",
-    "ern-runner-gen-android": "0.30.0",
-    "ern-runner-gen-ios": "0.30.0",
+    "ern-api-gen": "0.30.2",
+    "ern-api-impl-gen": "0.30.2",
+    "ern-cauldron-api": "0.30.2",
+    "ern-container-gen": "0.30.2",
+    "ern-container-gen-android": "0.30.2",
+    "ern-container-gen-ios": "0.30.2",
+    "ern-container-publisher": "0.30.2",
+    "ern-container-transformer": "0.30.2",
+    "ern-core": "0.30.2",
+    "ern-runner-gen": "0.30.2",
+    "ern-runner-gen-android": "0.30.2",
+    "ern-runner-gen-ios": "0.30.2",
     "fast-levenshtein": "^2.0.6",
     "fs-readdir-recursive": "^1.1.0",
     "kax": "^1.2.7",
@@ -71,10 +71,11 @@
     "yargs": "^7.1.0"
   },
   "devDependencies": {
-    "ern-util-dev": "0.30.0"
+    "ern-util-dev": "0.30.2"
   },
   "engines": {
     "node": ">=6",
     "npm": ">=3"
-  }
+  },
+  "gitHead": "6d701968ea1a845caadc925499f52c512e9323f9"
 }

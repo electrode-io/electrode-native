@@ -1,6 +1,6 @@
 {
   "name": "ern-util-dev",
-  "version": "0.30.0",
+  "version": "0.30.2",
   "description": "Electrode Native Platform Development Utilities",
   "main": "index.js",
   "homepage": "http://www.electrode.io",
@@ -62,5 +62,6 @@
     "node": ">=4.5"
   },
   "author": "",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "gitHead": "6d701968ea1a845caadc925499f52c512e9323f9"
 }

@@ -1,6 +1,6 @@
 {
   "name": "ern-local-cli",
-  "version": "0.30.0",
+  "version": "0.30.2",
   "description": "Electrode Native Local CLI",
   "main": "./dist/index.js",
   "homepage": "http://www.electrode.io",
@@ -54,19 +54,19 @@
     "chalk": "^2.4.1",
     "cli-table": "^0.3.1",
     "dir-compare": "^1.4.0",
-    "ern-api-gen": "0.30.0",
-    "ern-api-impl-gen": "0.30.0",
-    "ern-cauldron-api": "0.30.0",
-    "ern-container-gen": "0.30.0",
-    "ern-container-gen-android": "0.30.0",
-    "ern-container-gen-ios": "0.30.0",
-    "ern-container-publisher": "0.30.0",
-    "ern-container-transformer": "0.30.0",
-    "ern-core": "0.30.0",
-    "ern-orchestrator": "0.30.0",
-    "ern-runner-gen": "0.30.0",
-    "ern-runner-gen-android": "0.30.0",
-    "ern-runner-gen-ios": "0.30.0",
+    "ern-api-gen": "0.30.2",
+    "ern-api-impl-gen": "0.30.2",
+    "ern-cauldron-api": "0.30.2",
+    "ern-container-gen": "0.30.2",
+    "ern-container-gen-android": "0.30.2",
+    "ern-container-gen-ios": "0.30.2",
+    "ern-container-publisher": "0.30.2",
+    "ern-container-transformer": "0.30.2",
+    "ern-core": "0.30.2",
+    "ern-orchestrator": "0.30.2",
+    "ern-runner-gen": "0.30.2",
+    "ern-runner-gen-android": "0.30.2",
+    "ern-runner-gen-ios": "0.30.2",
     "fast-levenshtein": "^2.0.6",
     "fs-readdir-recursive": "^1.1.0",
     "inquirer": "^3.0.6",
@@ -79,10 +79,11 @@
     "yazl": "^2.4.3"
   },
   "devDependencies": {
-    "ern-util-dev": "0.30.0"
+    "ern-util-dev": "0.30.2"
   },
   "engines": {
     "node": ">=6",
     "npm": ">=3"
-  }
+  },
+  "gitHead": "6d701968ea1a845caadc925499f52c512e9323f9"
 }
