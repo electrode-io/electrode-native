@@ -1,9 +1,22 @@
 import * as fs from 'fs'
-import superagent from 'superagent'
+import got from 'got'
+import FormData from 'form-data'
 import { AppVersionDescriptor } from './descriptors'
+import { createProxyAgentFromErnConfig } from './createProxyAgent'
 
 export class SourceMapStoreSdk {
+  public readonly gotCommonOpts = {
+    agent: createProxyAgentFromErnConfig('sourceMapStoreProxy'),
+  }
+
   constructor(public readonly host: string) {}
+
+  public createSourceMapForm(sourceMapPath: string): FormData {
+    const sourceMapRs = fs.createReadStream(sourceMapPath)
+    const form = new FormData()
+    form.append('sourcemap', sourceMapRs)
+    return form
+  }
 
   public async uploadCodePushSourceMap({
     descriptor,
@@ -17,14 +30,13 @@ export class SourceMapStoreSdk {
     sourceMapPath: string
   }) {
     try {
-      const sourceMapRs = fs.createReadStream(sourceMapPath)
-      return superagent
-        .post(
-          `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${
-            descriptor.platform
-          }/${descriptor.version}/${deploymentName}/${label}`
-        )
-        .attach('sourcemap', sourceMapRs)
+      const form = this.createSourceMapForm(sourceMapPath)
+      await got.post(
+        `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${
+          descriptor.platform
+        }/${descriptor.version}/${deploymentName}/${label}`,
+        { ...this.gotCommonOpts, body: form }
+      )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
     }
@@ -46,12 +58,13 @@ export class SourceMapStoreSdk {
     toLabel: string
   }) {
     try {
-      return superagent.post(
+      await got.post(
         `http://${this.host}/sourcemaps/codepush/copy/${descriptor.name}/${
           descriptor.platform
         }/${
           descriptor.version
-        }/${deploymentName}/${label}/${toVersion}/${toDeploymentName}/${toLabel}`
+        }/${deploymentName}/${label}/${toVersion}/${toDeploymentName}/${toLabel}`,
+        this.gotCommonOpts
       )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
@@ -68,14 +81,13 @@ export class SourceMapStoreSdk {
     sourceMapPath: string
   }) {
     try {
-      const sourceMapRs = fs.createReadStream(sourceMapPath)
-      return superagent
-        .post(
-          `http://${this.host}/sourcemaps/container/${descriptor.name}/${
-            descriptor.platform
-          }/${descriptor.version}/${containerVersion}`
-        )
-        .attach('sourcemap', sourceMapRs)
+      const form = this.createSourceMapForm(sourceMapPath)
+      await got.post(
+        `http://${this.host}/sourcemaps/container/${descriptor.name}/${
+          descriptor.platform
+        }/${descriptor.version}/${containerVersion}`,
+        { ...this.gotCommonOpts, body: form }
+      )
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
     }

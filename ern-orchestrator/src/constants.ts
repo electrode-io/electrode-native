@@ -61,4 +61,14 @@ export const availableUserConfigKeys = [
     name: 'ignore-required-ern-version',
     values: [true, false],
   },
+  {
+    desc: 'HTTP/HTTPS proxy to use to connect to the bundle store server',
+    name: 'bundleStoreProxy',
+    values: ['string'],
+  },
+  {
+    desc: 'HTTP/HTTPS proxy to use to connect to the source map store server',
+    name: 'sourceMapStoreProxy',
+    values: ['string'],
+  },
 ]
