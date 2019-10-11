@@ -103,9 +103,9 @@ The following android build parameters can be configured with application specif
     }
     ```
 - `gradleDistributionVersion` - The url downloads the gradle wrapper. This allows executing Gradle builds without having to set up Gradle. The version specified here updates the `gradle/wrapper/gradle-wrapper.properties`
-```
+  ```
   distributionUrl=https\://services.gradle.org/distributions/gradle-4.6-all.zip
-```
+  ```
 *NOTE: Check the compatibility chart of Gradle version required for each version of the Android Gradle plugin* [here](https://developer.android.com/studio/releases/gradle-plugin)
 
 - `compileSdkVersion` - The API level designated to compile the application.
@@ -114,38 +114,38 @@ The following android build parameters can be configured with application specif
 
 - `targetSdkVersion` - The designated API Level that the application targets
 
-```groovy
-  android {
-    compileSdkVersion 28
-    defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
+  ```groovy
+    android {
+      compileSdkVersion 28
+      defaultConfig {
+          minSdkVersion 19
+          targetSdkVersion 28
+      }
     }
-  }
-```
+  ```
 - `supportLibraryVersion` - You may want a standard way to provide newer features on earlier versions of Android or gracefully fall back to equivalent functionality. You can leverage these libraries to provide that compatibility layer.
 
-```grovy
+  ```grovy
   compile 'com.android.support:appcompat-v7:28.0.0'
-```
+  ```
 
 You can configure `androidConfig` in the cauldron as show below. 
 
-```json
-{
-  "containerGenerator": {
-    "androidConfig": {
-      "androidGradlePlugin": "3.2.1",
-      "buildToolsVersion": "28.0.3",
-      "compileSdkVersion": "28",
-      "gradleDistributionVersion": "4.6",
-      "minSdkVersion": "19",
-      "supportLibraryVersion": "28.0.0",
-      "targetSdkVersion": "28"
+  ```json
+  {
+    "containerGenerator": {
+      "androidConfig": {
+        "androidGradlePlugin": "3.2.1",
+        "buildToolsVersion": "28.0.3",
+        "compileSdkVersion": "28",
+        "gradleDistributionVersion": "4.6",
+        "minSdkVersion": "19",
+        "supportLibraryVersion": "28.0.0",
+        "targetSdkVersion": "28"
+      }
     }
   }
-}
-```
+  ```
 
 ##### JavaScript Engine (RN 0.60 and above)
 
@@ -157,7 +157,7 @@ By default, without explicit configuration, Electrode Native will use the non in
 
 _JavaScriptCore_
 
-With React Native 0.60.0, JavaScriptCore engine now comes in two variants : `android-jsc` and `android-jsc-intl`. The later is the international variant. It includes ICU i18n library and necessary data allowing to use e.g. Date.toLocaleString and String.localeCompare that give correct results when using with locales other than en-US. This variant is about 6MiB larger per architecture.
+With React Native 0.60.0, JavaScriptCore engine now comes in two variants : `android-jsc` and `android-jsc-intl`. The later is the international variant. It includes ICU i18n library and necessary data allowing to use e.g. Date.toLocaleString and String.localeCompare that give correct results when using with locales other than en-US. This variant is about 6MB larger per architecture.
 
 By default, the version of JavaScriptCore used by Electrode Native will be set to the latest version available at the time of Electrode Native version release and will be communicated in the release notes. The default JavaScriptCore variant will always be the non international one.
 
@@ -204,22 +204,22 @@ To add a container using Carthage:
 1) Create a Cartfile if you don't already have one, or open an existing Cartfile.  
 2) Add the following line to your Cartfile.
 
-```bash
-$ git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
-```
+    ```bash
+    git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
+    ```
 
 3) Create a `Cartfile.resolved` file if you don't have one or open your existing `Cartfile.resolved` file.  
 4) Add the following line to your `Cartfile.resolved` file:
 
-```bash
-$ git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
-```
+    ```bash
+    git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
+    ```
 
 5) Install your dependencies using the following command:
 
-```bash
-$ carthage bootstrap --no-build --platform ios
-```
+    ```bash
+    carthage bootstrap --no-build --platform ios
+    ```
 
 ##### Manually adding a container
 
@@ -228,7 +228,7 @@ To manually add a container:
 1. Clone the container to `<Your-WorkSpace>`.
 
     ```bash
-    $ git@github.com:user/myweatherapp-ios-container.git
+    git@github.com:user/myweatherapp-ios-container.git
     ```
 2. Open your project in Xcode and right click on Libraries.
 3. Select **Add Files** to `<your project name>`. Look for `ElectrodeContainer.xcodeproj` in the file directory where you cloned the repo above.
