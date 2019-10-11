@@ -2,7 +2,6 @@ import {
   handleCopyDirective,
   NativePlatform,
   findDirectoriesHavingRnConfig,
-  shell,
 } from 'ern-core'
 import { getAssetsPath } from './getAssetsPath'
 import readDir from 'fs-readdir-recursive'
@@ -14,6 +13,11 @@ export const supportedAssetsExts = ['.ttf', '.otf']
  * Copy in Container, the assets of all packages found in Composite,
  * that are exporting assets through react-native.config.js.
  * Similar to React Native, only fonts (.ttf/.otf) are supported for now.
+ * This will copy the font assets of all packages that are either
+ * dependencies:
+ * https://github.com/react-native-community/cli/blob/master/docs/dependencies.md
+ * or projects:
+ * https://github.com/react-native-community/cli/blob/master/docs/projects.md
  */
 export async function copyRnConfigAssets({
   compositePath,
@@ -28,8 +32,10 @@ export async function copyRnConfigAssets({
 
   for (const dir of dirs) {
     const rnConfig: any = require(path.join(dir, 'react-native.config.js'))
-    if (rnConfig.dependency && rnConfig.dependency.assets) {
-      for (const assetDir of rnConfig.dependency.assets) {
+    const assets =
+      rnConfig.assets || (rnConfig.dependency && rnConfig.dependency.assets)
+    if (assets) {
+      for (const assetDir of assets) {
         const absDir = path.join(dir, assetDir)
         readDir(absDir)
           .filter(p => {
