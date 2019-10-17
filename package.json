@@ -18,15 +18,15 @@
     "ern-debug": "node --nolazy --inspect-brk=5858 ern-local-cli/src/index.dev.js",
     "istanbul": "istanbul",
     "prettier": "pretty-quick --staged",
-    "rebuild": "lerna clean --yes && lerna bootstrap && lerna run build",
+    "rebuild": "lerna clean --yes && yarn && yarn build",
     "regen-fixtures": "node system-tests/regen-fixtures",
     "setup-dev": "node setup-dev.js",
     "test": "yarn test:unit && yarn test:system",
-    "test:system": "lerna run build && lerna run instrument-dist && node system-tests/system-tests",
+    "test:system": "yarn build && lerna run instrument-dist && node system-tests/system-tests",
     "test:unit": "lerna run test --no-bail"
   },
   "workspaces": [
-    "./ern-*"
+    "ern-*"
   ],
   "dependencies": {
     "@types/node": "^11.13.8",
