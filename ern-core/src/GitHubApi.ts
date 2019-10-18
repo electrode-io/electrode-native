@@ -236,10 +236,8 @@ export class GitHubApi {
     }
 
     const res = await this.octokit.repos.getCommit({
-      commit_sha: ofBranch
-        ? this.fullBranchRef(ofBranch!)
-        : this.fullTagRef(ofTag!),
       owner: this.owner,
+      ref: ofBranch ? this.fullBranchRef(ofBranch!) : this.fullTagRef(ofTag!),
       repo: this.repo,
     })
 
