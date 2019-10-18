@@ -1,5 +1,8 @@
 ## `ern link`
 
+**This command has been deprecated and will be removed in 0.41.0 release**  
+**Please consider using [ern link add] command instead**
+
 #### Description
 
 * Link to a specified MiniApp directory  
@@ -36,3 +39,4 @@ The `ern link` or the `ern unlink` plus the `ern start` commands are used togeth
  
  [ern start]: ./start.md
  [ern unlink]: ./unlink.md
+ [ern link add]: ./link/add.md
