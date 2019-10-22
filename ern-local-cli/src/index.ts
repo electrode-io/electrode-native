@@ -17,7 +17,7 @@ import {
   KaxRenderer,
   KaxTask,
 } from 'kax'
-import * as yargs from 'yargs'
+import yargs from 'yargs'
 
 // ==============================================================================
 // Geeky eye candy
@@ -150,7 +150,7 @@ const logLevelStringToEnum = level => {
   // Entry point
   // =============================================================================
 ;(function run() {
-  const hasJsonOpt = yargs.argv.json
+  const hasJsonOpt = process.argv.slice(1).includes('--json')
   const logLevel: LogLevel = hasJsonOpt
     ? LogLevel.Off
     : process.env.ERN_LOG_LEVEL
@@ -178,7 +178,7 @@ const logLevelStringToEnum = level => {
     showInfo()
   }
 
-  if (yargs.argv._.length === 0 && yargs.argv.version) {
+  if (process.argv.slice(1).includes('--version')) {
     return showVersion()
   }
 
@@ -186,8 +186,9 @@ const logLevelStringToEnum = level => {
     .commandDir('commands', {
       extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
-    .demandCommand(1, 'Need a command')
-    .help('help')
-    .wrap(yargs.terminalWidth())
-    .strict().argv
+    .demandCommand()
+    .help()
+    .strict()
+    .version(false)
+    .wrap(yargs.terminalWidth()).argv
 })()
