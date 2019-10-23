@@ -52,7 +52,7 @@
 * Optional extra configuration specific to creating container
 * Override the android build config during container generation by passing `androidConfig` attributes
   - **As a json string**  
-  For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","supportLibraryVersion": "28.0.0","targetSdkVersion": "28"}}'`    
+  For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`    
   - **As a file path**  
   For example `--extra /Users/username/my-container-config.json`  
   In that case, the configuration will be read from the file.  
