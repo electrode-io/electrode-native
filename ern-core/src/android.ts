@@ -20,6 +20,8 @@ export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1'
 export const DEFAULT_MIN_SDK_VERSION = '19'
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0'
 export const DEFAULT_TARGET_SDK_VERSION = '28'
+export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_1_8'
+export const DEFAULT_TARGET_COMPATIBILITY = 'VERSION_1_8'
 
 export interface AndroidResolvedVersions {
   androidGradlePlugin: string
@@ -29,7 +31,9 @@ export interface AndroidResolvedVersions {
   compileSdkVersion: string
   gradleDistributionVersion: string
   minSdkVersion: string
+  sourceCompatibility: string
   supportLibraryVersion: string
+  targetCompatibility: string
   targetSdkVersion: string
 }
 
@@ -41,7 +45,9 @@ export function resolveAndroidVersions({
   compileSdkVersion = DEFAULT_COMPILE_SDK_VERSION,
   gradleDistributionVersion = DEFAULT_GRADLE_DISTRIBUTION_VERSION,
   minSdkVersion = DEFAULT_MIN_SDK_VERSION,
+  sourceCompatibility = DEFAULT_SOURCE_COMPATIBILITY,
   supportLibraryVersion = DEFAULT_SUPPORT_LIBRARY_VERSION,
+  targetCompatibility = DEFAULT_TARGET_COMPATIBILITY,
   targetSdkVersion = DEFAULT_TARGET_SDK_VERSION,
 } = {}): AndroidResolvedVersions {
   return {
@@ -52,7 +58,9 @@ export function resolveAndroidVersions({
     compileSdkVersion,
     gradleDistributionVersion,
     minSdkVersion,
+    sourceCompatibility,
     supportLibraryVersion,
+    targetCompatibility,
     targetSdkVersion,
   }
 }

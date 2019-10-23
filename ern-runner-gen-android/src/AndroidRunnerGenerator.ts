@@ -25,11 +25,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
     shell.mv(
       path.join(config.outDir, 'app/src/main/java/com/walmartlabs/ern/miniapp'),
-      path.join(
-        config.outDir,
-        'app/src/main/java',
-        config.extra.androidConfig.packageFilePath
-      )
+      path.join(config.outDir, 'app/src/main/java', getPackageFilePath(config))
     )
     const files = readDir(
       config.outDir,
@@ -60,7 +56,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
     const pathToRunnerConfig = path.join(
       config.outDir,
       'app/src/main/java',
-      config.extra.androidConfig.packageFilePath,
+      getPackageFilePath(config),
       'RunnerConfig.java'
     )
     shell.cp(pathToRunnerConfigHull, pathToRunnerConfig)
@@ -70,6 +66,22 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
       pathToRunnerConfig
     )
   }
+}
+
+function getPackageFilePath(config: RunnerGeneratorConfig): string {
+  return isOldRunner(config)
+    ? 'com/walmartlabs/ern'
+    : `com/walmartlabs/ern/${config.mainMiniAppName.toLowerCase()}`
+}
+
+function isOldRunner(config: RunnerGeneratorConfig): boolean {
+  const oldRunner =
+    config.extra &&
+    config.extra.androidConfig &&
+    config.extra.androidConfig.isOldRunner
+      ? true
+      : false
+  return oldRunner
 }
 
 // Given a string returns the same string with its first letter capitalized
@@ -95,10 +107,19 @@ function configureMustacheView(
     config.reactNativePackagerPort || defaultReactNativePackagerPort
   mustacheView.pascalCaseMiniAppName = pascalCase(config.mainMiniAppName)
   mustacheView.lowerCaseMiniAppName = config.mainMiniAppName.toLowerCase()
-  mustacheView.artifactId = config.extra.androidConfig.artifactId
-  mustacheView.groupId = config.extra.androidConfig.groupId
-  mustacheView.isOldRunner = config.extra.androidConfig.isOldRunner
+  mustacheView.artifactId =
+    config.extra &&
+    config.extra.androidConfig &&
+    config.extra.androidConfig.artifactId
+      ? config.extra.androidConfig.artifactId
+      : `runner-ern-container-${config.mainMiniAppName.toLowerCase()}`
+  mustacheView.groupId =
+    config.extra &&
+    config.extra.androidConfig &&
+    config.extra.androidConfig.groupId
+      ? config.extra.androidConfig.groupId
+      : 'com.walmartlabs.ern'
+  mustacheView.isOldRunner = isOldRunner(config)
   injectReactNativeVersionKeysInObject(mustacheView, config.reactNativeVersion)
-
   return mustacheView
 }
