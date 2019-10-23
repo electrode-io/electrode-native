@@ -92,6 +92,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     let mustacheView: any = {
       customRepos: [],
       permissions: [],
+      customPermissions: []
     }
     injectReactNativeVersionKeysInObject(
       mustacheView,
