@@ -112,6 +112,10 @@ The following android build parameters can be configured with application specif
 
 - `minSdkVersion` - The minimum API level that the application targets.
 
+- `sourceCompatibility` - Defines which language version of Java your source files should be treated as. It can take a valid [Java Version](https://docs.gradle.org/current/javadoc/org/gradle/api/JavaVersion.html) 
+
+- `targetCompatibility` - Defines the minimum JVM version your code should run on, i.e. it determines the version of byte code the compiler generates. It can take a valid [Java Version](https://docs.gradle.org/current/javadoc/org/gradle/api/JavaVersion.html)
+
 - `targetSdkVersion` - The designated API Level that the application targets
 
 ```groovy

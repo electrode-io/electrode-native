@@ -240,7 +240,9 @@ describe('android.js', () => {
         compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
         gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
         minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,
+        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
         supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
         targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
       })
     })
@@ -249,6 +251,8 @@ describe('android.js', () => {
       const versions = android.resolveAndroidVersions({
         androidGradlePlugin: '3.0.0',
         minSdkVersion: '15',
+        sourceCompatibility: 'VERSION_1_9',
+        targetCompatibility: 'VERSION_1_9',
       })
       expect(versions).deep.equal({
         androidGradlePlugin: '3.0.0',
@@ -259,7 +263,9 @@ describe('android.js', () => {
         compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
         gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
         minSdkVersion: '15',
+        sourceCompatibility: 'VERSION_1_9',
         supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetCompatibility: 'VERSION_1_9',
         targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
       })
     })
@@ -273,7 +279,9 @@ describe('android.js', () => {
         compileSdkVersion: '27',
         gradleDistributionVersion: '4.5',
         minSdkVersion: '15',
+        sourceCompatibility: 'VERSION_1_9',
         supportLibraryVersion: '27.0.0',
+        targetCompatibility: 'VERSION_1_9',
         targetSdkVersion: '27',
       })
       expect(versions).deep.equal({
@@ -284,7 +292,9 @@ describe('android.js', () => {
         compileSdkVersion: '27',
         gradleDistributionVersion: '4.5',
         minSdkVersion: '15',
+        sourceCompatibility: 'VERSION_1_9',
         supportLibraryVersion: '27.0.0',
+        targetCompatibility: 'VERSION_1_9',
         targetSdkVersion: '27',
       })
     })
