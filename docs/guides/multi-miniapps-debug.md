@@ -33,10 +33,10 @@ ern-workspace
 └── MiniAppC
 ```
 
-- `ern link` each of the MiniApps
+- `ern link add` each of the MiniApps
 
 This is needed for proper mapping of source location between the composite and the MiniApp directory, but also to ensure that any changes to the MiniApp directory are properly propagated to the Composite.
-We will just `cd` into our `MiniAppA` and `MiniAppC` directories and run `ern link` command from each of them.
+We will just `cd` into our `MiniAppA` and `MiniAppC` directories and run `ern link add` command from each of them.
 
 - Create a node project in this directory, and add `react-native` dependency to it
 
@@ -110,7 +110,7 @@ ern-workspace
 └── yarn.lock
 ```
 
-The basic setup is now complete. If you need to add more MiniApps over time, just clone any additional MiniApps in the `ern-workspace` directory and make sure to `ern link` the new MiniApp and add a corresponding mapping entry to `sourceMapPathOverrides` configuration.
+The basic setup is now complete. If you need to add more MiniApps over time, just clone any additional MiniApps in the `ern-workspace` directory and make sure to `ern link add` the new MiniApp and add a corresponding mapping entry to `sourceMapPathOverrides` configuration.
 
 We can now start debugging with the help of the [ern start] command.
 

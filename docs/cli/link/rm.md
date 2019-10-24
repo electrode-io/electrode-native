@@ -1,7 +1,4 @@
-## `ern unlink`
-
-**This command has been deprecated and will be removed in 0.41.0 release**  
-**Please consider using [ern link rm] command instead**
+## `ern link rm`
 
 #### Description
 
@@ -9,7 +6,7 @@
 
 #### Syntax
 
-`ern unlink`
+`ern link rm`
 
 #### Remarks
 
@@ -18,7 +15,6 @@
 
 #### Related commands
 
-[ern link] | Link to a MiniApp directory
+[ern link add] | Add a link to a MiniApp directory
 
-[ern link]: ./link.md
-[ern link rm]: ./link/rm.md
+[ern link add]: ./add.md
