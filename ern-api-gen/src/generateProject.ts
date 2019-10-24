@@ -7,6 +7,7 @@ import {
   MODEL_FILE,
   FLOW_CONFIG_FILE,
   FLOW_BIN_VERSION,
+  INITIAL_SCHEMA_FILE,
 } from './Constants'
 
 export const GENERATE = [
@@ -103,114 +104,11 @@ export async function generateInitialSchema({
   namespace?: string
   apiSchemaPath: string
 }) {
-  return apiSchemaPath && fs.existsSync(apiSchemaPath)
-    ? fileUtils.readFile(apiSchemaPath)
-    : `{
-  "swagger": "2.0",
-  "info": {
-    "description": "Walmart Item Module",
-    "title": "WalmartItem",
-    "contact": {
-      "name": "ERN Mobile Platform Team"
-    }
-  },
-  "paths": {
-    "/items": {
-      "get": {
-        "tags": [
-          "WalmartItem"
-        ],
-        "description": "Returns all items from the system that the user has access to",
-        "operationId": "findItems",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "maximum number of results to return",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Item response",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Item"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "WalmartItem"
-        ],
-        "description": "Creates a Item in the store.",
-        "operationId": "addItem",
-        "parameters": [
-          {
-            "name": "item",
-            "in": "body",
-            "description": "Item to add",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Item"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        }
-      }
-    },
-    "event/itemAdded": {
-      "event": {
-        "tags": [
-          "WalmartItem"
-        ],
-        "operationId": "itemAdded",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "path",
-            "description": "Event to notify new item added",
-            "required": true,
-            "type": "string"
-          }
-        ]
-      }
-    }
-  },
-  "definitions": {
-    "Item": {
-      "type": "object",
-      "required": [
-        "name",
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        },
-        "desc": {
-          "type": "string"
-        }
-      }
-    }
-  }
-}
-`
+  const pathToSchemaFile =
+    apiSchemaPath && fs.existsSync(apiSchemaPath)
+      ? apiSchemaPath
+      : path.join(__dirname, '..', INITIAL_SCHEMA_FILE)
+  return fileUtils.readFile(pathToSchemaFile)
 }
 
 export function generateFlowConfig(): string {
