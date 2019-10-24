@@ -35,6 +35,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     // Need this to avoid build conflict with jsr version which comes with react-native
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'

@@ -25,6 +25,10 @@ android {
             minifyEnabled false
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.{{{sourceCompatibility}}}
+        targetCompatibility JavaVersion.{{{targetCompatibility}}}
+    }
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
     }

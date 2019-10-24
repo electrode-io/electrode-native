@@ -36,7 +36,7 @@ If you are a MiniApp developer who just wants to open source a MiniApp to be use
 
 **Note** If you are creating MiniApps for a single target mobile application or a very limited set of mobile applications (for example, if you are not creating an open source MiniApp such as only to be used for your company or private mobile applications), your workflow might involve the following:  
 
-- Launch, Debug, Test your MiniApp within the target mobile applications and not on its own in the platform runner. Since your MiniApp may co-exist with other MiniApps in the same mobile application, you will use the Electrode Native `ern link` and/or `ern unlink` and the `ern start` commands to help you in this use case. We don't have built-in support yet to easily launch MiniApps in a target mobile application, but we're looking into it and might be released soon.
+- Launch, Debug, Test your MiniApp within the target mobile applications and not on its own in the platform runner. Since your MiniApp may co-exist with other MiniApps in the same mobile application, you will use the Electrode Native `ern link add` and/or `ern link rm` and the `ern start` commands to help you in this use case. We don't have built-in support yet to easily launch MiniApps in a target mobile application, but we're looking into it and might be released soon.
 
 ### Stage 2: Add or Update MiniApps
 
