@@ -56,7 +56,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@octokit/rest": "^16.28.6",
+    "@octokit/rest": "16.33.1",
     "@yarnpkg/lockfile": "^1.1.0",
     "archiver": "^2.1.1",
     "bluebird": "^3.5.1",
