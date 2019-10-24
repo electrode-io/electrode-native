@@ -48,7 +48,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@octokit/rest": "^16.28.6",
+    "@octokit/rest": "16.33.1",
     "@yarnpkg/lockfile": "^1.1.0",
     "chalk": "^2.4.1",
     "chokidar": "^3.0.0",

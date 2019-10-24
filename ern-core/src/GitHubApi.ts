@@ -172,7 +172,7 @@ export class GitHubApi {
 
     log.debug(`repos.getContents(${JSON.stringify(opts, null, 2)})`)
     const res = await this.octokit.repos.getContents(opts)
-    const buff = new Buffer(res.data.content, 'base64')
+    const buff = new Buffer(res.data[0].content, 'base64')
     return buff.toString('utf8')
   }
 
@@ -200,7 +200,7 @@ export class GitHubApi {
       path,
       ref: onBranch || undefined,
       repo: this.repo,
-    })).data.sha
+    })).data[0].sha
 
     const buff = new Buffer(newContent)
     const content = buff.toString('base64')
