@@ -51,6 +51,7 @@ export * from './getLocalIp'
 export * from './BundleStoreSdk'
 export * from './BundleStoreEngine'
 export * from './SourceMapStoreSdk'
+export * from './config'
 
 export const config = _config
 export const Platform = _Platform
