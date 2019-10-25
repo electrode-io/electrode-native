@@ -62,10 +62,7 @@ export async function askUserToSelectAniPhoneSimulator() {
   }))
 
   // Check if user has set the usePreviousEmulator flag to true
-  const deviceConfig = ernConfig.getValue(
-    deviceConfigUtil.IOS_DEVICE_CONFIG,
-    {}
-  )
+  const deviceConfig = ernConfig.get(deviceConfigUtil.IOS_DEVICE_CONFIG, {})
   if (choices && deviceConfig) {
     if (deviceConfig.usePreviousDevice) {
       // Get the name of previously used simulator
@@ -95,7 +92,7 @@ export async function askUserToSelectAniPhoneSimulator() {
 
   // Update the emulatorConfig
   deviceConfig.deviceId = selectedDevice.udid
-  ernConfig.setValue(deviceConfigUtil.IOS_DEVICE_CONFIG, deviceConfig)
+  ernConfig.set(deviceConfigUtil.IOS_DEVICE_CONFIG, deviceConfig)
 
   return selectedDevice
 }

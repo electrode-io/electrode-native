@@ -9,9 +9,9 @@ export function updateDeviceConfig(
 ) {
   const key = platform === 'ios' ? IOS_DEVICE_CONFIG : ANDROID_DEVICE_CONFIG
 
-  const deviceConfig = config.getValue(key, {
+  const deviceConfig = config.get(key, {
     deviceId: '',
   })
   deviceConfig.usePreviousDevice = usePreviousDevice
-  config.setValue(key, deviceConfig)
+  config.set(key, deviceConfig)
 }

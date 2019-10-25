@@ -68,7 +68,7 @@ export default class Platform {
   }
 
   static get currentVersion(): string {
-    return config.getValue('platformVersion', '1000.0.0')
+    return config.get('platformVersion', '1000.0.0')
   }
 
   public static isPlatformVersionAvailable(version: string) {
@@ -169,7 +169,7 @@ export default class Platform {
       this.installPlatform(version)
     }
 
-    config.setValue('platformVersion', version)
+    config.set('platformVersion', version)
     log.info(`ern v${version} is now activated.`)
   }
 

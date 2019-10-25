@@ -20,7 +20,7 @@ export const commandHandler = async ({ key }: { key: string }) => {
     },
   })
 
-  if (ernConfig.deleteConfig(key)) {
+  if (ernConfig.del(key)) {
     log.info(`Successfully deleted ${key} from config`)
   } else {
     log.warn(`${key} was not found in config`)

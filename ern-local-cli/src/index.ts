@@ -43,8 +43,8 @@ function showBanner() {
 }
 
 function showInfo() {
-  const currentCauldronRepo = config.getValue('cauldronRepoInUse') || '-NONE-'
-  const bundleStoreId = config.getValue('bundlestore-id')
+  const currentCauldronRepo = config.get('cauldronRepoInUse') || '-NONE-'
+  const bundleStoreId = config.get('bundlestore-id')
   const l = bundleStoreId ? chalk.cyan(` [BundleStore: ${bundleStoreId}]`) : ''
   console.log(
     chalk.cyan(`[v${Platform.currentVersion}]`) +
@@ -56,8 +56,8 @@ function showInfo() {
 
 function showVersion() {
   // get electrode-native local-cli version
-  if (config.getValue('platformVersion')) {
-    log.info(`ern-local-cli : ${config.getValue('platformVersion')}`)
+  if (config.get('platformVersion')) {
+    log.info(`ern-local-cli : ${config.get('platformVersion')}`)
   }
   // get electrode-native global-cli version
   const packageInfo = JSON.parse(
@@ -155,7 +155,7 @@ const logLevelStringToEnum = level => {
     ? LogLevel.Off
     : process.env.ERN_LOG_LEVEL
     ? logLevelStringToEnum(process.env.ERN_LOG_LEVEL)
-    : logLevelStringToEnum(config.getValue('logLevel', 'info'))
+    : logLevelStringToEnum(config.get('logLevel', 'info'))
 
   log.setLogLevel(logLevel)
   shell.config.fatal = true
@@ -172,7 +172,7 @@ const logLevelStringToEnum = level => {
       : new KaxAdvancedRenderer(kaxRendererConfig)
 
   if (!hasJsonOpt) {
-    if (config.getValue('showBanner', true)) {
+    if (config.get('showBanner', true)) {
       showBanner()
     }
     showInfo()

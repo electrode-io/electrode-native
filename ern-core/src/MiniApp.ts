@@ -52,7 +52,7 @@ export class MiniApp extends BaseMiniApp {
   public static async fromPackagePath(packagePath: PackagePath) {
     let fsPackagePath
     if (
-      config.getValue('package-cache-enabled', true) &&
+      config.get('package-cache-enabled', true) &&
       !packagePath.isFilePath &&
       !(await utils.isGitBranch(packagePath))
     ) {
@@ -518,7 +518,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
   }
 
   public async link() {
-    const miniAppsLinks = config.getValue('miniAppsLinks', {})
+    const miniAppsLinks = config.get('miniAppsLinks', {})
     const previousLinkPath = miniAppsLinks[this.packageJson.name]
     if (previousLinkPath && previousLinkPath !== this.path) {
       log.warn(
@@ -532,7 +532,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
       )
     }
     miniAppsLinks[this.packageJson.name] = this.path
-    config.setValue('miniAppsLinks', miniAppsLinks)
+    config.set('miniAppsLinks', miniAppsLinks)
     log.info(
       `${this.packageJson.name} link created [${this.packageJson.name} => ${
         this.path
@@ -541,10 +541,10 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
   }
 
   public async unlink() {
-    const miniAppsLinks = config.getValue('miniAppsLinks', {})
+    const miniAppsLinks = config.get('miniAppsLinks', {})
     if (miniAppsLinks[this.packageJson.name]) {
       delete miniAppsLinks[this.packageJson.name]
-      config.setValue('miniAppsLinks', miniAppsLinks)
+      config.set('miniAppsLinks', miniAppsLinks)
       log.info(`${this.packageJson.name} link was removed`)
     } else {
       return log.warn(`No link exists for ${this.packageJson.name}`)

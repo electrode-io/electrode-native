@@ -153,7 +153,7 @@ describe('Platform', () => {
 
   describe('currentPlatformVersionPath', () => {
     it('should return the correct platform version path', () => {
-      sandbox.stub(config, 'getValue').callsFake(key => {
+      sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
           return '3.0.0'
         }
@@ -166,7 +166,7 @@ describe('Platform', () => {
 
   describe('currentVersion', () => {
     it('should return the current version', () => {
-      sandbox.stub(config, 'getValue').callsFake(key => {
+      sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
           return '3.0.0'
         }
@@ -268,7 +268,7 @@ describe('Platform', () => {
 
   describe('uninstallPlatform', () => {
     it('should not do anything if the platform version is not installed', () => {
-      sandbox.stub(config, 'getValue').callsFake(key => {
+      sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
           return '3.0.0'
         }
@@ -281,7 +281,7 @@ describe('Platform', () => {
         '-p',
         path.join(path.join(ernHomePath, 'versions', '3.0.0', 'node_modules'))
       )
-      sandbox.stub(config, 'getValue').callsFake(key => {
+      sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
           return '3.0.0'
         }
@@ -294,7 +294,7 @@ describe('Platform', () => {
         '-p',
         path.join(path.join(ernHomePath, 'versions', '3.0.0', 'node_modules'))
       )
-      sandbox.stub(config, 'getValue').callsFake(key => {
+      sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
           return '2.0.0'
         }

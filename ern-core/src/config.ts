@@ -19,32 +19,28 @@ export class ErnConfig {
       : ERN_RC_GLOBAL_FILE_PATH
   }
 
-  public getValue(key: string, defaultValue?: any): any {
+  public get(key: string, defaultValue?: any): any {
     return this.obj[key] !== undefined ? this.obj[key] : defaultValue
   }
 
-  public setValue(key: string, value: any) {
+  public set(key: string, value: any) {
     const c = this.obj
     c[key] = value
-    this.writeConfig(c)
+    this.persist(c)
   }
 
-  public writeConfig(obj: any) {
-    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(obj, null, 2))
-  }
-
-  public deleteConfig(key: string): boolean {
+  public del(key: string): boolean {
     const c = this.obj
     if (key && c.hasOwnProperty(key)) {
       delete c[key]
-      this.writeConfig(c)
+      this.persist(c)
       return true
     }
     return false
   }
 
-  public getAllConfig(): any {
-    return this.obj
+  public persist(obj: any) {
+    fs.writeFileSync(this.ernRcFilePath, JSON.stringify(obj, null, 2))
   }
 }
 

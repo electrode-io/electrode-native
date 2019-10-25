@@ -12,14 +12,14 @@ import * as fixtures from './fixtures/common'
 const readFile = Prom.promisify(fs.readFile)
 const sandbox = sinon.createSandbox()
 
-let ernConfigGetValueStub
+let ernConfigGetStub
 let execpStub
 
 describe('android.js', () => {
   beforeEach(() => {
     beforeTest()
 
-    ernConfigGetValueStub = sandbox.stub(ernConfig, 'getValue')
+    ernConfigGetStub = sandbox.stub(ernConfig, 'get')
 
     // class in test stubs
     execpStub = sandbox.stub(childProcess, 'execp')
@@ -87,7 +87,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd,
       })
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -102,7 +102,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd,
       })
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -114,7 +114,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd,
       })
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -126,7 +126,7 @@ describe('android.js', () => {
       const inquirerStub = sinon.stub(inquirer, 'prompt').resolves({
         avdImageName: fixtures.oneAvd,
       })
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const result = await android.askUserToSelectAvdEmulator()
       inquirerStub.restore()
       expect(result).to.be.equal(fixtures.oneAvd)
@@ -138,7 +138,7 @@ describe('android.js', () => {
         deviceId: fixtures.oneAvd,
         usePreviousDevice: true,
       }
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       expect(await android.askUserToSelectAvdEmulator()).to.be.equal(
         fixtures.oneAvd
       )

@@ -25,7 +25,7 @@ export const packageCache = new FsCache<PackagePath>({
       shell.popd()
     }
   },
-  maxCacheSize: config.getValue('max-package-cache-size'),
+  maxCacheSize: config.get('max-package-cache-size'),
   objectToId: (obj: PackagePath) => obj.fullPath,
   rootCachePath: Platform.packagesCacheDirectory,
 })

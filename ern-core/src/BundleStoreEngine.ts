@@ -39,11 +39,11 @@ export class BundleStoreEngine {
     sourceMapPath: string
   }): Promise<string> {
     const res = await this.sdk.uploadBundle({
-      accessKey: config.getValue('bundlestore-accesskey'),
+      accessKey: config.get('bundlestore-accesskey'),
       bundlePath,
       platform,
       sourceMapPath,
-      store: config.getValue('bundlestore-id'),
+      store: config.get('bundlestore-id'),
     })
     await this.uploadAssets()
     ipc.server.stop()
@@ -119,11 +119,11 @@ export class BundleStoreEngine {
     await Promise.all([pBundle, pSourceMap])
 
     const res = await this.sdk.uploadBundle({
-      accessKey: config.getValue('bundlestore-accesskey'),
+      accessKey: config.get('bundlestore-accesskey'),
       bundlePath,
       platform: 'android',
       sourceMapPath,
-      store: config.getValue('bundlestore-id'),
+      store: config.get('bundlestore-id'),
     })
     streamBundle.close()
     streamSourceMap.close()
