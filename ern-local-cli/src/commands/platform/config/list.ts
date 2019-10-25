@@ -11,7 +11,7 @@ export const builder = (argv: Argv) => {
 
 export const commandHandler = async () => {
   // TODO: Add tabular view
-  log.info(JSON.stringify(ernConfig.obj, null, 2))
+  log.info(JSON.stringify(ernConfig.get(), null, 2))
 }
 
 export const handler = tryCatchWrap(commandHandler)
