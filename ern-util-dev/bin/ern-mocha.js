@@ -32,5 +32,5 @@ if (process.env.ENV_AZURE_PIPELINE) {
   )
   process.argv.push('--reporter', 'mocha-junit-reporter')
 }
-process.argv.push('test/*-test.{ts,js}')
+process.argv.push('test/**/*-test.{ts,js}')
 require('mocha/bin/_mocha')
