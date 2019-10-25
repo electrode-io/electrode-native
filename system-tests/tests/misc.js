@@ -92,8 +92,8 @@ run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName
 run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p ios`)
 
 // transform-container / publish-coontainer should be successful
-run (`ern transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
-run (`ern publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
+run (`transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
+run (`publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
 
 // Del miniapp
 run(`cauldron del miniapps ${f.movieListMiniAppPgkName} -d ${androidNativeApplicationDescriptor}`)
