@@ -103,7 +103,7 @@ export default async function start({
     })
   )
 
-  const miniAppsLinksObj = ernConfig.getValue('miniAppsLinks', {})
+  const miniAppsLinksObj = ernConfig.get('miniAppsLinks', {})
   const linkedMiniAppsPackageNames = Object.keys(miniAppsLinksObj).filter(p =>
     fs.existsSync(miniAppsLinksObj[p])
   )

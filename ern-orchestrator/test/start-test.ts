@@ -87,7 +87,7 @@ describe('start', () => {
     sandbox
       .stub(core.ErnBinaryStore.prototype, 'hasBinary')
       .resolves(hasBinaryReturn)
-    const configStub = sandbox.stub(core.config, 'getValue')
+    const configStub = sandbox.stub(core.config, 'get')
     configStub.withArgs('tmp-dir').returns(undefined)
     configStub.withArgs('miniAppsLinks').returns(configMiniAppsLinks)
   }

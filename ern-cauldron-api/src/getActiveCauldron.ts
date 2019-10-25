@@ -23,10 +23,10 @@ export default async function getActiveCauldron({
   localRepoPath?: string
   throwIfNoActiveCauldron?: boolean
 } = {}): Promise<CauldronHelper> {
-  const repoInUse = config.getValue('cauldronRepoInUse')
+  const repoInUse = config.get('cauldronRepoInUse')
   ignoreRequiredErnVersionMismatch =
     ignoreRequiredErnVersionMismatch ||
-    config.getValue('ignore-required-ern-version') ||
+    config.get('ignore-required-ern-version') ||
     process.env.ERN_IGNORE_REQUIRED_ERN_VERSION
   if (!repoInUse && throwIfNoActiveCauldron) {
     throw new Error('No active Cauldron')
@@ -35,7 +35,7 @@ export default async function getActiveCauldron({
   try {
     if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
       kaxTask = kax.task(`Connecting to the Cauldron`)
-      const cauldronRepositories = config.getValue('cauldronRepositories')
+      const cauldronRepositories = config.get('cauldronRepositories')
       const cauldronRepoUrl = cauldronRepositories[repoInUse]
       const cauldronRepoBranchReResult = /#(.+)$/.exec(cauldronRepoUrl)
       const cauldronRepoUrlWithoutBranch = cauldronRepoUrl.replace(/#(.+)$/, '')

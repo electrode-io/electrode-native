@@ -27,9 +27,9 @@ export const commandHandler = async ({ accessKey }: { accessKey: string }) => {
 
   const storeId = await sdk.deleteStoreByAccessKey({ accessKey })
 
-  if (storeId === config.getValue('bundlestore-id')) {
-    config.setValue('bundlestore-id', undefined)
-    config.setValue('bundlestore-accesskey', undefined)
+  if (storeId === config.get('bundlestore-id')) {
+    config.set('bundlestore-id', undefined)
+    config.set('bundlestore-accesskey', undefined)
   }
 
   log.info(`Deleted store ${storeId}`)

@@ -411,7 +411,7 @@ export class Manifest {
     //   "searchValue": "github.com",
     //   "replaceValue": "new.github.com"
     // }
-    const overrideManifestUrlModifier = config.getValue(
+    const overrideManifestUrlModifier = config.get(
       'overrideManifestUrlModifier'
     )
     if (overrideManifestUrlModifier) {

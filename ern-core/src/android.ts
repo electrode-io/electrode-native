@@ -185,9 +185,7 @@ export async function runAndroid({
 
 export async function askUserToSelectAvdEmulator(): Promise<string> {
   const avdImageNames = await getAndroidAvds()
-  const deviceConfig = ernConfig.getValue(
-    deviceConfigUtil.ANDROID_DEVICE_CONFIG
-  )
+  const deviceConfig = ernConfig.get(deviceConfigUtil.ANDROID_DEVICE_CONFIG)
   // Check if user has set the usePreviousEmulator flag to true
   if (avdImageNames && deviceConfig) {
     if (deviceConfig.usePreviousDevice) {
@@ -214,7 +212,7 @@ export async function askUserToSelectAvdEmulator(): Promise<string> {
   // Update the device Config
   if (deviceConfig) {
     deviceConfig.deviceId = avdImageName
-    ernConfig.setValue(deviceConfigUtil.ANDROID_DEVICE_CONFIG, deviceConfig)
+    ernConfig.set(deviceConfigUtil.ANDROID_DEVICE_CONFIG, deviceConfig)
   }
   return `${avdImageName}`
 }

@@ -23,7 +23,7 @@ const sandbox = sinon.createSandbox()
 let getDevicesStub
 let getKnownDevicesStub
 let getComputerNameStub
-let ernConfigGetValueStub
+let ernConfigGetStub
 
 function resolveGetDevices(fixtures) {
   getDevicesStub.resolves(fixtures)
@@ -35,7 +35,7 @@ describe('ios utils', () => {
     getDevicesStub = sandbox.stub(simctl, 'getDevices')
     getKnownDevicesStub = sandbox.stub(ios, 'getKnownDevices')
     getComputerNameStub = sandbox.stub(ios, 'getComputerName')
-    ernConfigGetValueStub = sandbox.stub(ernConfig, 'getValue')
+    ernConfigGetStub = sandbox.stub(ernConfig, 'get')
     let ernConfigStub
   })
 
@@ -119,7 +119,7 @@ describe('ios utils', () => {
         usePreviousDevice: false,
         deviceId: fixtures.oneUdid,
       }
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
         selectedDevice: {
           name: 'iPhone 5s',
@@ -142,7 +142,7 @@ describe('ios utils', () => {
         usePreviousDevice: true,
         deviceId: 'SimulatorNotPresent',
       }
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
         selectedDevice: {
           name: 'iPhone 5s',
@@ -165,7 +165,7 @@ describe('ios utils', () => {
         usePreviousDevice: true,
         deviceId: fixtures.oneUdid,
       }
-      ernConfigGetValueStub.returns(config)
+      ernConfigGetStub.returns(config)
       const result = await ios.askUserToSelectAniPhoneSimulator()
       expect(result.udid).to.eql(fixtures.oneUdid)
     })

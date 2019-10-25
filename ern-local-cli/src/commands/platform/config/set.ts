@@ -33,8 +33,8 @@ export const commandHandler = async ({
   } else {
     valueToset = value === 'true' ? true : value === 'false' ? false : value
   }
-  ernConfig.setValue(key, valueToset)
-  log.info(`Successfully set ${key} value to ${ernConfig.getValue(key)}`)
+  ernConfig.set(key, valueToset)
+  log.info(`Successfully set ${key} value to ${ernConfig.get(key)}`)
 }
 
 export const handler = tryCatchWrap(commandHandler)

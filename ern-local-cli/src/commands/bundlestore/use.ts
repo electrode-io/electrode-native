@@ -26,8 +26,8 @@ export const commandHandler = async ({ accessKey }: { accessKey: string }) => {
   const sdk = new BundleStoreSdk(bundleStoreUrl)
 
   const store = await sdk.getStoreByAccessKey({ accessKey })
-  config.setValue('bundlestore-id', store)
-  config.setValue('bundlestore-accesskey', accessKey)
+  config.set('bundlestore-id', store)
+  config.set('bundlestore-accesskey', accessKey)
 
   log.info(`Now using store ${store}`)
 }

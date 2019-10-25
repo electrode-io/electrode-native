@@ -19,8 +19,8 @@ export const commandHandler = async ({ key }: { key: string }) => {
       key,
     },
   })
-  if (ernConfig.getValue(key)) {
-    log.info(`Configuration value for ${key} is ${ernConfig.getValue(key)}`)
+  if (ernConfig.get(key)) {
+    log.info(`Configuration value for ${key} is ${ernConfig.get(key)}`)
   } else {
     log.warn(`${key} was not found in config`)
   }

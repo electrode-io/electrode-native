@@ -23,9 +23,9 @@ https://[token]@[repourl]`)
       }
     }
 
-    const cauldronRepositories = config.getValue('cauldronRepositories', {})
+    const cauldronRepositories = config.get('cauldronRepositories', {})
     cauldronRepositories[alias] = url
-    config.setValue('cauldronRepositories', cauldronRepositories)
+    config.set('cauldronRepositories', cauldronRepositories)
     if (activate) {
       this.activate({ alias })
     }
@@ -33,25 +33,25 @@ https://[token]@[repourl]`)
   }
 
   public doesExist({ alias }: { alias: string }) {
-    const cauldronRepositories = config.getValue('cauldronRepositories', {})
+    const cauldronRepositories = config.get('cauldronRepositories', {})
     return cauldronRepositories[alias] !== undefined
   }
 
   public remove({ alias }: { alias: string }): CauldronRepository {
     this.throwIfAliasDoesNotExist({ alias })
-    const cauldronRepositories = config.getValue('cauldronRepositories')
+    const cauldronRepositories = config.get('cauldronRepositories')
     const result = { alias, url: cauldronRepositories[alias] }
     delete cauldronRepositories[alias]
-    config.setValue('cauldronRepositories', cauldronRepositories)
-    const cauldronRepoInUse = config.getValue('cauldronRepoInUse')
+    config.set('cauldronRepositories', cauldronRepositories)
+    const cauldronRepoInUse = config.get('cauldronRepoInUse')
     if (cauldronRepoInUse === alias) {
-      config.setValue('cauldronRepoInUse', null)
+      config.set('cauldronRepoInUse', null)
     }
     return result
   }
 
   public list(): CauldronRepository[] {
-    const repositories = config.getValue('cauldronRepositories', {})
+    const repositories = config.get('cauldronRepositories', {})
     return repositories
       ? Object.keys(repositories).map(alias => ({
           alias,
@@ -61,9 +61,9 @@ https://[token]@[repourl]`)
   }
 
   public get current(): CauldronRepository | void {
-    const alias = config.getValue('cauldronRepoInUse')
+    const alias = config.get('cauldronRepoInUse')
     if (alias) {
-      const repositories = config.getValue('cauldronRepositories', {})
+      const repositories = config.get('cauldronRepositories', {})
       const url = repositories[alias]
       if (url) {
         return {
@@ -83,7 +83,7 @@ https://[token]@[repourl]`)
   }
 
   private updateCauldronRepoInUse({ alias }: { alias?: string } = {}) {
-    config.setValue('cauldronRepoInUse', alias)
+    config.set('cauldronRepoInUse', alias)
     shell.rm('-rf', Platform.cauldronDirectory)
   }
 

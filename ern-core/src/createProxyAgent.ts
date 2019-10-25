@@ -27,7 +27,7 @@ export function createProxyAgentFromUrl(proxyUrl: url.URL): http.Agent {
 export function createProxyAgentFromErnConfig(
   configKey: string
 ): http.Agent | undefined {
-  const proxyUrl = config.getValue(configKey)
+  const proxyUrl = config.get(configKey)
   if (proxyUrl) {
     return createProxyAgentFromUrl(new url.URL(proxyUrl))
   }

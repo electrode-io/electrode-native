@@ -572,7 +572,7 @@ export default class Ensure {
   }
 
   public static bundleStoreAccessKeyIsSet(extraErrorMessage: string = '') {
-    if (!config.getValue('bundlestore-accesskey')) {
+    if (!config.get('bundlestore-accesskey')) {
       throw new Error(
         `bundlestore-accesskey is not set in configuration\n${extraErrorMessage}`
       )

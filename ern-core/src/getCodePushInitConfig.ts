@@ -15,10 +15,10 @@ export function getCodePushInitConfig(): CodePushInitConfig {
     )
   } else {
     codePushInitConfig = {
-      accessKey: config.getValue('codePushAccessKey'),
-      customHeaders: config.getValue('codePushCustomHeaders'),
-      customServerUrl: config.getValue('codePushCustomServerUrl'),
-      proxy: config.getValue('codePushProxy'),
+      accessKey: config.get('codePushAccessKey'),
+      customHeaders: config.get('codePushCustomHeaders'),
+      customServerUrl: config.get('codePushCustomServerUrl'),
+      proxy: config.get('codePushProxy'),
     }
   }
   return codePushInitConfig
