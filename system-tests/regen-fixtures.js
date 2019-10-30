@@ -9,8 +9,8 @@ const regenFunctionByFixtureName = {
   'ios-container': regenIosContainerFixture,
   'api-impl-js': regenApiImplJsFixture,
   'api-impl-native': regenApiImplNativeFixture,
-  ComplexApi: regenComplexApiFixture,
-  TestApi: regenTestApiFixture,
+  'complex-api': regenComplexApiFixture,
+  'test-api': regenTestApiFixture,
 }
 
 const rootFixturesPath = path.join(__dirname, 'fixtures')
@@ -20,8 +20,8 @@ const pathsToFixtures = {
   'ios-container': path.join(rootFixturesPath, 'ios-container'),
   'api-impl-js': path.join(rootFixturesPath, 'api-impl-js'),
   'api-impl-native': path.join(rootFixturesPath, 'api-impl-native'),
-  ComplexApi: path.join(rootApiFixturesPath, 'ComplexApi'),
-  TestApi: path.join(rootApiFixturesPath, 'TestApi'),
+  'complex-api': path.join(rootApiFixturesPath, 'complex-api'),
+  'test-api': path.join(rootApiFixturesPath, 'test-api'),
 }
 
 inquirer
@@ -99,10 +99,10 @@ function regenApiImplNativeFixture() {
 
 function regenComplexApiFixture() {
   logHeader('Regenerating Complex API Fixture')
-  shell.rm('-rf', pathsToFixtures['ComplexApi'])
+  shell.rm('-rf', pathsToFixtures['complex-api'])
   shell.cd(rootApiFixturesPath)
   shell.exec(
-    `ern create-api ${f.complexApiName} -p ${f.testApiPkgName}  --schemaPath ${
+    `ern create-api ${f.complexApiName} -p ${f.complexApiPkgName}  --schemaPath ${
       f.pathToComplexApiSchema
     } --skipNpmCheck`
   )
@@ -110,7 +110,7 @@ function regenComplexApiFixture() {
 
 function regenTestApiFixture() {
   logHeader('Regenerating Test API Fixture')
-  shell.rm('-rf', pathsToFixtures['TestApi'])
+  shell.rm('-rf', pathsToFixtures['test-api'])
   shell.cd(rootApiFixturesPath)
   shell.exec(
     `ern create-api ${f.testApiName} -p ${f.testApiPkgName} --schemaPath ${

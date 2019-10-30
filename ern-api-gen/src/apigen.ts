@@ -29,7 +29,7 @@ const { execp } = childProcess
 export async function generateApi(options: any) {
   const config: any = normalizeConfig(options)
 
-  const outFolder = path.join(process.cwd(), config.moduleName)
+  const outFolder = path.join(process.cwd(), config.packageName)
   if (fs.existsSync(outFolder)) {
     log.error(`${outFolder} directory already exists`)
     process.exit(1)
