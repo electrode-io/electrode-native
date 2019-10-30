@@ -111,7 +111,7 @@ export class MiniApp extends BaseMiniApp {
       template?: string
     } = {}
   ) {
-    if (fs.existsSync(path.join('node_modules', 'react-native'))) {
+    if (fs.existsSync(path.join('node_modules/react-native'))) {
       throw new Error(
         'It seems like there is already a react native app in this directory. Use another directory.'
       )

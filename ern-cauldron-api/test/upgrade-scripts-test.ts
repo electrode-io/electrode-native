@@ -30,14 +30,14 @@ describe('cauldron upgrade scripts', () => {
     const script = scripts.find(s => s.from === '0.0.0' && s.to === '1.0.0')
     const fixture = JSON.parse(
       fs
-        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-0.0.0.json'))
+        .readFileSync(path.join(__dirname, 'fixtures/cauldron-0.0.0.json'))
         .toString()
     )
     const cauldronApi = createCauldronApi(fixture)
     await script!.upgrade(cauldronApi)
     const expectedCauldronDoc = JSON.parse(
       fs
-        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-1.0.0.json'))
+        .readFileSync(path.join(__dirname, 'fixtures/cauldron-1.0.0.json'))
         .toString()
     )
     const cauldronDoc = await cauldronApi.getCauldron()
@@ -48,14 +48,14 @@ describe('cauldron upgrade scripts', () => {
     const script = scripts.find(s => s.from === '1.0.0' && s.to === '2.0.0')
     const fixture = JSON.parse(
       fs
-        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-1.0.0.json'))
+        .readFileSync(path.join(__dirname, 'fixtures/cauldron-1.0.0.json'))
         .toString()
     )
     const cauldronApi = createCauldronApi(fixture)
     await script!.upgrade(cauldronApi)
     const expectedCauldronDoc = JSON.parse(
       fs
-        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-2.0.0.json'))
+        .readFileSync(path.join(__dirname, 'fixtures/cauldron-2.0.0.json'))
         .toString()
     )
     const cauldronDoc = await cauldronApi.getCauldron()
@@ -66,14 +66,14 @@ describe('cauldron upgrade scripts', () => {
     const script = scripts.find(s => s.from === '2.0.0' && s.to === '3.0.0')
     const fixture = JSON.parse(
       fs
-        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-2.0.0.json'))
+        .readFileSync(path.join(__dirname, 'fixtures/cauldron-2.0.0.json'))
         .toString()
     )
     const cauldronApi = createCauldronApi(fixture)
     await script!.upgrade(cauldronApi)
     const expectedCauldronDoc = JSON.parse(
       fs
-        .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-3.0.0.json'))
+        .readFileSync(path.join(__dirname, 'fixtures/cauldron-3.0.0.json'))
         .toString()
     )
     const cauldronDoc = await cauldronApi.getCauldron()

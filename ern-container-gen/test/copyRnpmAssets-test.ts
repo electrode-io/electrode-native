@@ -8,8 +8,7 @@ describe('copyRnpmAssets', () => {
   it('should not copy anything to output directory if the MiniApp package.json does not declare any rnpm assets [android]', () => {
     const miniAppPath = path.join(
       __dirname,
-      'fixtures',
-      'MiniAppWithoutRnpmAssets'
+      'fixtures/MiniAppWithoutRnpmAssets'
     )
     const outDir = createTmpDir()
     copyRnpmAssets(
@@ -32,8 +31,7 @@ describe('copyRnpmAssets', () => {
   it('should not copy anything to output directory if the MiniApp package.json does not declare any rnpm assets [ios]', () => {
     const miniAppPath = path.join(
       __dirname,
-      'fixtures',
-      'MiniAppWithoutRnpmAssets'
+      'fixtures/MiniAppWithoutRnpmAssets'
     )
     const outDir = createTmpDir()
     copyRnpmAssets(
@@ -54,11 +52,7 @@ describe('copyRnpmAssets', () => {
   })
 
   it('should copy assets to output directory if the MiniApp package.json declares rnpm assets [android]', () => {
-    const miniAppPath = path.join(
-      __dirname,
-      'fixtures',
-      'MiniAppWithRnpmAssets'
-    )
+    const miniAppPath = path.join(__dirname, 'fixtures/MiniAppWithRnpmAssets')
     const outDir = createTmpDir()
     copyRnpmAssets(
       [
@@ -84,11 +78,7 @@ describe('copyRnpmAssets', () => {
   })
 
   it('should copy assets to output directory if the MiniApp package.json declares rnpm assets [ios]', () => {
-    const miniAppPath = path.join(
-      __dirname,
-      'fixtures',
-      'MiniAppWithRnpmAssets'
-    )
+    const miniAppPath = path.join(__dirname, 'fixtures/MiniAppWithRnpmAssets')
     const outDir = createTmpDir()
     copyRnpmAssets(
       [

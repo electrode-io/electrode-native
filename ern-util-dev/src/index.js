@@ -10,14 +10,7 @@ const sandbox = sinon.createSandbox()
 const jsdiff = require('diff')
 require('colors')
 
-const CLI = path.resolve(
-  __dirname,
-  '..',
-  '..',
-  'ern-local-cli',
-  'src',
-  'index.dev.js'
-)
+const CLI = path.resolve(__dirname, '../../ern-local-cli/src/index.dev.js')
 
 /**
  * Sets up an environment for tests.

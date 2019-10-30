@@ -10,14 +10,14 @@ describe('inferContainerPlatform', () => {
 
   it('should return android if the container is an android one', () => {
     const result = inferContainerPlatform(
-      path.resolve('..', 'system-tests', 'fixtures', 'android-container')
+      path.resolve('../system-tests/fixtures/android-container')
     )
     expect(result).eql('android')
   })
 
   it('should return android if the container is an ios one', () => {
     const result = inferContainerPlatform(
-      path.resolve('..', 'system-tests', 'fixtures', 'ios-container')
+      path.resolve('../system-tests/fixtures/ios-container')
     )
     expect(result).eql('ios')
   })

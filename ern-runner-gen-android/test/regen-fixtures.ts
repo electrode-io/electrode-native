@@ -6,8 +6,7 @@ import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
 const pathToTestFixtures = path.join(__dirname, 'fixtures')
 const pathToGeneratedFixtures = path.join(
   __dirname,
-  'generated',
-  'simple-android-runner'
+  'generated/simple-android-runner'
 )
 logHeader('Regenerating Android Runner Fixture')
 getRunnerGeneratorForPlatform('android')

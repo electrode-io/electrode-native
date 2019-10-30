@@ -334,30 +334,21 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
       // https://github.com/facebook/metro/blob/v0.50.0/packages/metro/src/reactNativeTransformer.js#L120
       pathToFileToPatch = path.join(
         compositeNodeModulesPath,
-        'metro',
-        'src',
-        'reactNativeTransformer.js'
+        'metro/src/reactNativeTransformer.js'
       )
     } else {
       // For versions of metro >= 0.51.0, we are patching the index.js file
       // https://github.com/facebook/metro/blob/v0.51.0/packages/metro-react-native-babel-transformer/src/index.js#L120
       const pathInCommunityCli = path.join(
         compositeNodeModulesPath,
-        '@react-native-community',
-        'cli',
-        'node_modules',
-        'metro-react-native-babel-transformer',
-        'src',
-        'index.js'
+        '@react-native-community/cli/node_modules/metro-react-native-babel-transformer/src/index.js'
       )
       if (fs.existsSync(pathInCommunityCli)) {
         pathToFileToPatch = pathInCommunityCli
       } else {
         pathToFileToPatch = path.join(
           compositeNodeModulesPath,
-          'metro-react-native-babel-transformer',
-          'src',
-          'index.js'
+          'metro-react-native-babel-transformer/src/index.js'
         )
       }
     }
@@ -446,9 +437,7 @@ async function patchMetro51({ outDir }: { outDir: string }) {
   if (metroVersion === '0.51.1') {
     const pathToFileToPatch = path.join(
       compositeNodeModulesPath,
-      'metro-resolver',
-      'src',
-      'resolve.js'
+      'metro-resolver/src/resolve.js'
     )
     const stringToReplace = `const assetNames = resolveAsset(dirPath, fileNameHint, platform);`
     const replacementString = `let assetNames;

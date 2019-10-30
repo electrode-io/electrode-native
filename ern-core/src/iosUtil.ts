@@ -119,7 +119,7 @@ export async function fillProjectHull(
               log.debug(
                 `Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`
               )
-              copy.source = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs')
+              copy.source = path.normalize('IOS/IOS/Classes/SwaggersAPIs')
             }
           }
           handleCopyDirective(
@@ -181,12 +181,8 @@ export async function fillProjectHull(
                   log.debug(
                     `Source Copy: Falling back to old directory structure for API(Backward compatibility)`
                   )
-                  source.from = path.join(
-                    'IOS',
-                    'IOS',
-                    'Classes',
-                    'SwaggersAPIs',
-                    '*.swift'
+                  source.from = path.normalize(
+                    'IOS/IOS/Classes/SwaggersAPIs/*.swift'
                   )
                 }
                 const relativeSourcePath = path.dirname(source.from)
@@ -227,12 +223,8 @@ export async function fillProjectHull(
                   log.debug(
                     `Header Copy: Falling back to old directory structure for API(Backward compatibility)`
                   )
-                  header.from = path.join(
-                    'IOS',
-                    'IOS',
-                    'Classes',
-                    'SwaggersAPIs',
-                    '*.swift'
+                  header.from = path.normalize(
+                    'IOS/IOS/Classes/SwaggersAPIs/*.swift'
                   )
                 }
                 const relativeHeaderPath = path.dirname(header.from)
@@ -363,7 +355,7 @@ function switchToOldDirectoryStructure(
   tail: string
 ): boolean {
   // This is to check if the api referenced during container generation is created using the old or new directory structure to help keep the backward compatibility.
-  const pathToSwaggersAPIs = path.join('IOS', 'IOS', 'Classes', 'SwaggersAPIs')
+  const pathToSwaggersAPIs = path.normalize('IOS/IOS/Classes/SwaggersAPIs')
   if (
     path.dirname(tail) === `IOS` &&
     fs.existsSync(path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs)))

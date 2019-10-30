@@ -32,7 +32,7 @@ export async function reactNativeBundleIos({
     // which will lead to issues when building the iOS Container
     // if the assets directory is missing
     fs.writeFileSync(
-      path.join(assetsDest, 'assets', 'README.md'),
+      path.join(assetsDest, 'assets/README.md'),
       'React Native bundled assets will be stored in this directory'
     )
   }

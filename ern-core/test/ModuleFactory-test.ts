@@ -11,7 +11,7 @@ import { YarnCli } from '../src/YarnCli'
 describe('ModuleFactory', () => {
   const PACKAGE_PREFIX = 'package-prefix-'
   const PACKAGE_CACHE_PATH = path.join(__dirname, 'ModuleFactoryCache')
-  const FIXTURES_PATH = path.join(__dirname, 'fixtures', 'ModuleFactory')
+  const FIXTURES_PATH = path.join(__dirname, 'fixtures/ModuleFactory')
 
   const sandbox = sinon.createSandbox()
 
@@ -176,8 +176,7 @@ describe('ModuleFactory', () => {
       )
       const localPathToModuleInCache = path.join(
         PACKAGE_CACHE_PATH,
-        'node_modules',
-        'package-prefix-foo-package'
+        'node_modules/package-prefix-foo-package'
       )
       sandbox.assert.calledWith(instantiateModuleStub, localPathToModuleInCache)
     })

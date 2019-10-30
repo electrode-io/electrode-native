@@ -5,9 +5,7 @@ import { expect } from 'chai'
 describe('AndroidPluginConfigGenerator', () => {
   const fixutresPath = path.join(
     __dirname,
-    'fixtures',
-    'PluginConfigGenerator',
-    'android'
+    'fixtures/PluginConfigGenerator/android'
   )
 
   const dependenciesFixturePath = path.join(fixutresPath, 'dependencies')
