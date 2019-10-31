@@ -53,6 +53,7 @@ describe('start', () => {
   let chokidarWatchStub
   let fakeWatcherInstance
   let shellStub
+  let tmpDir
 
   beforeEach(() => {
     fakeWatcherInstance = new FakeWatcher()
@@ -66,6 +67,7 @@ describe('start', () => {
     sandbox
       .stub(core.ErnBinaryStore.prototype, 'getBinary')
       .resolves('/path/to/binary')
+    tmpDir = core.createTmpDir()
     sandbox.stub(core, 'createTmpDir').returns('/tmp/dir')
     sandbox.stub(process.stdin, 'resume')
     sandbox.stub(fs, 'existsSync').returns(true)
@@ -75,11 +77,11 @@ describe('start', () => {
   function createStubs({
     getActiveCauldronReturn,
     hasBinaryReturn = false,
-    configMiniAppsLinks = {},
+    packageLinks = {},
   }: {
     getActiveCauldronReturn?: any
     hasBinaryReturn?: boolean
-    configMiniAppsLinks?: any
+    packageLinks?: any
   } = {}) {
     sandbox
       .stub(cauldronApi, 'getActiveCauldron')
@@ -89,7 +91,12 @@ describe('start', () => {
       .resolves(hasBinaryReturn)
     const configStub = sandbox.stub(core.config, 'get')
     configStub.withArgs('tmp-dir').returns(undefined)
-    configStub.withArgs('miniAppsLinks').returns(configMiniAppsLinks)
+
+    const configPackageLinksStub = sandbox.stub(
+      core.packageLinksConfig,
+      'getAll'
+    )
+    configPackageLinksStub.returns(packageLinks)
   }
 
   afterEach(() => {
@@ -110,179 +117,5 @@ describe('start', () => {
       ),
     })
     assert(await doesThrow(start, null, {}))
-  })
-
-  it('should work when provided with MiniApps', async () => {
-    createStubs({
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      miniapps: [core.PackagePath.fromString('MiniApp@1.0.0')],
-    })
-  })
-
-  it('should work when provided with a descriptor [with no binary available]', async () => {
-    createStubs({
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-  })
-
-  it('should work when provided with an Android descriptor and an Android package name [with a binary available]', async () => {
-    createStubs({
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-      hasBinaryReturn: true,
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-      packageName: 'com.mycompany.myapp',
-    })
-  })
-
-  it('should call generateComposite', async () => {
-    createStubs({
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-    sandbox.assert.calledOnce(generateCompositeStub)
-  })
-
-  it('should watch all linked MiniApps directories', async () => {
-    createStubs({
-      configMiniAppsLinks: { myMiniApp: '/path/to/myMiniApp' },
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-
-    sandbox.assert.calledWith(chokidarWatchStub, '/path/to/myMiniApp', {
-      cwd: '/path/to/myMiniApp',
-      ignoreInitial: true,
-      ignored: ['android/**', 'ios/**', 'node_modules/**', '.git/**'],
-      persistent: true,
-    })
-  })
-
-  it('should copy added file to composite working directory', async () => {
-    createStubs({
-      configMiniAppsLinks: { myMiniApp: '/path/to/myMiniApp' },
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-
-    fakeWatcherInstance.raiseEvent('add', 'fileName')
-
-    sandbox.assert.calledWith(
-      shellStub.cp,
-      path.normalize('/path/to/myMiniApp/fileName'),
-      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
-    )
-  })
-
-  it('should copy changed file to composite working directory', async () => {
-    createStubs({
-      configMiniAppsLinks: { myMiniApp: '/path/to/myMiniApp' },
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-
-    fakeWatcherInstance.raiseEvent('change', 'fileName')
-
-    sandbox.assert.calledWith(
-      shellStub.cp,
-      path.normalize('/path/to/myMiniApp/fileName'),
-      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
-    )
-  })
-
-  it('should remove deleted file from composite working directory', async () => {
-    createStubs({
-      configMiniAppsLinks: { myMiniApp: '/path/to/myMiniApp' },
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-
-    fakeWatcherInstance.raiseEvent('unlink', 'fileName')
-
-    sandbox.assert.calledWith(
-      shellStub.rm,
-      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
-    )
-  })
-
-  it('should create a new directory in composite working directory', async () => {
-    createStubs({
-      configMiniAppsLinks: { myMiniApp: '/path/to/myMiniApp' },
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-
-    fakeWatcherInstance.raiseEvent('addDir', 'fileName')
-
-    sandbox.assert.calledWith(
-      shellStub.mkdir,
-      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
-    )
-  })
-
-  it('should remove a deleted directory from composite working directory', async () => {
-    createStubs({
-      configMiniAppsLinks: { myMiniApp: '/path/to/myMiniApp' },
-      getActiveCauldronReturn: createCauldronHelper(
-        cloneFixture(fixtures.defaultCauldron)
-      ),
-    })
-
-    await start({
-      descriptor: testAndroid1770Descriptor,
-    })
-
-    fakeWatcherInstance.raiseEvent('unlinkDir', 'fileName')
-
-    sandbox.assert.calledWith(
-      shellStub.rm,
-      '-rf',
-      path.normalize('/tmp/dir/node_modules/myMiniApp/fileName')
-    )
   })
 })
