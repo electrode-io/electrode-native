@@ -17,8 +17,8 @@ import { ApiImplGeneratable } from '../../ApiImplGeneratable'
 export const ROOT_DIR = shell.pwd()
 const READ_EXECUTE = '555'
 const READ_WRITE_EXECUTE = '777'
-const SRC_MAIN_JAVA_DIR = path.join('src', 'main', 'java')
-const API_IMPL_PACKAGE = path.join('com', 'ern', 'api', 'impl')
+const SRC_MAIN_JAVA_DIR = path.normalize('src/main/java')
+const API_IMPL_PACKAGE = path.normalize('com/ern/api/impl')
 
 export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   public static getMustacheFileNamesMap(resourceDir, apiName) {
@@ -34,8 +34,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   public static createImplDirectoryAndCopyCommonClasses(paths) {
     const outputDir = path.join(
       paths.outDirectory,
-      'android',
-      'lib',
+      'android/lib',
       SRC_MAIN_JAVA_DIR,
       API_IMPL_PACKAGE
     )
@@ -45,9 +44,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
 
     const resourceDir = path.join(
       Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen',
-      'resources',
-      'android'
+      'ern-api-impl-gen/resources/android'
     )
     shell.cp(path.join(resourceDir, 'RequestHandlerConfig.java'), outputDir)
     shell.cp(path.join(resourceDir, 'RequestHandlerProvider.java'), outputDir)
@@ -102,7 +99,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
       shell.cp(
         '-Rf',
-        path.join(paths.apiImplHull, 'android', '{.*,*}'),
+        path.join(paths.apiImplHull, 'android/{.*,*}'),
         outputDirectory
       )
 
@@ -194,14 +191,14 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     mustacheView.reactNativeVersion = reactNativeVersion
     mustacheView = Object.assign(mustacheView, versions)
     mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      path.join(paths.apiImplHull, 'android', 'build.gradle'),
+      path.join(paths.apiImplHull, 'android/build.gradle'),
       mustacheView,
       path.join(outputDirectory, 'build.gradle')
     )
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      path.join(paths.apiImplHull, 'android', 'lib', 'build.gradle'),
+      path.join(paths.apiImplHull, 'android/lib/build.gradle'),
       mustacheView,
-      path.join(outputDirectory, 'lib', 'build.gradle')
+      path.join(outputDirectory, 'lib/build.gradle')
     )
   }
 
@@ -215,18 +212,10 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(
         paths.apiImplHull,
-        'android',
-        'gradle',
-        'wrapper',
-        'gradle-wrapper.properties'
+        'android/gradle/wrapper/gradle-wrapper.properties'
       ),
       mustacheView,
-      path.join(
-        outputDirectory,
-        'gradle',
-        'wrapper',
-        'gradle-wrapper.properties'
-      )
+      path.join(outputDirectory, 'gradle/wrapper/gradle-wrapper.properties')
     )
   }
 

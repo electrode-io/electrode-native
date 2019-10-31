@@ -125,9 +125,7 @@ async function createNodePackage(
     shell.cp(
       path.join(
         Platform.currentPlatformVersionPath,
-        'ern-api-impl-gen',
-        'resources',
-        'gitignore'
+        'ern-api-impl-gen/resources/gitignore'
       ),
       path.join(outputDirectoryPath, '.gitignore')
     )

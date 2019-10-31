@@ -34,12 +34,7 @@ let cauldronDoc
 
 const cauldronApiFixtureFileStorePath = path.join(
   __dirname,
-  '..',
-  '..',
-  'ern-cauldron-api',
-  'test',
-  'fixtures',
-  'filestore'
+  '../../ern-cauldron-api/test/fixtures/filestore'
 )
 
 function createCauldronApi(cauldronDocument) {

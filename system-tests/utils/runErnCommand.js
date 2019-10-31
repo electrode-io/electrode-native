@@ -3,11 +3,7 @@ const path = require('path')
 
 const pathToIndexProd = path.resolve(
   __dirname,
-  '..',
-  '..',
-  'ern-local-cli',
-  'dist',
-  'index'
+  '../../ern-local-cli/dist/index'
 )
 
 const ern = `node ${pathToIndexProd}`

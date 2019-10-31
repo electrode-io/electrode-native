@@ -92,7 +92,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     let mustacheView: any = {
       customPermissions: [],
       customRepos: [],
-      permissions: []
+      permissions: [],
     }
     injectReactNativeVersionKeysInObject(
       mustacheView,
@@ -184,32 +184,21 @@ export default class AndroidGenerator implements ContainerGenerator {
         if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
           // Special handling for native api implementation as we don't
           // want to copy the API and bridge code (part of native api implementations projects)
-          const relPathToApiImplSource = path.join(
-            'lib',
-            'src',
-            'main',
-            'java',
-            'com',
-            'ern'
+          const relPathToApiImplSource = path.normalize(
+            'lib/src/main/java/com/ern'
           )
           const absPathToCopyPluginSourceTo = path.join(
             config.outDir,
-            'lib',
-            'src',
-            'main',
-            'java',
-            'com'
+            'lib/src/main/java/com'
           )
           shell.cp('-R', relPathToApiImplSource, absPathToCopyPluginSourceTo)
         } else {
           const relPathToPluginSource = pluginConfig.android.moduleName
-            ? path.join(pluginConfig.android.moduleName, 'src', 'main', 'java')
-            : path.join('src', 'main', 'java')
+            ? path.join(pluginConfig.android.moduleName, 'src/main/java')
+            : path.join('src/main/java')
           const absPathToCopyPluginSourceTo = path.join(
             config.outDir,
-            'lib',
-            'src',
-            'main'
+            'lib/src/main'
           )
           shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
         }
@@ -305,15 +294,13 @@ export default class AndroidGenerator implements ContainerGenerator {
       config.outDir,
       f => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git')
     )
-    const pathLibSrcMain = path.join('lib', 'src', 'main')
-    const pathLibSrcMainJniLibs = path.join('lib', 'src', 'main', 'jniLibs')
-    const pathLibSrcMainAssets = path.join('lib', 'src', 'main', 'assets')
-    const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java', 'com')
+    const pathLibSrcMain = path.normalize('lib/src/main')
+    const pathLibSrcMainJniLibs = path.normalize('lib/src/main/jniLibs')
+    const pathLibSrcMainAssets = path.normalize('lib/src/main/assets')
+    const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java/com')
     const pathLibSrcMainJavaComWalmartlabsErnContainer = path.join(
       pathLibSrcMainJavaCom,
-      'walmartlabs',
-      'ern',
-      'container'
+      'walmartlabs/ern/container'
     )
     for (const file of files) {
       if (
@@ -570,15 +557,7 @@ export default class AndroidGenerator implements ContainerGenerator {
         )
         const pathToCopyPluginConfigHookTo = path.join(
           outDir,
-          'lib',
-          'src',
-          'main',
-          'java',
-          'com',
-          'walmartlabs',
-          'ern',
-          'container',
-          'plugins'
+          'lib/src/main/java/com/walmartlabs/ern/container/plugins'
         )
         shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo)
       }

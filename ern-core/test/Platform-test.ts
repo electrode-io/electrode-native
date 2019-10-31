@@ -134,13 +134,13 @@ describe('Platform', () => {
   describe('getContainerGenOutDirectory', () => {
     it('should return the correct path for android', () => {
       expect(Platform.getContainerGenOutDirectory('android')).eql(
-        path.join(ernHomePath, 'containergen', 'out', 'android')
+        path.join(ernHomePath, 'containergen/out/android')
       )
     })
 
     it('should return the correct path for ios', () => {
       expect(Platform.getContainerGenOutDirectory('ios')).eql(
-        path.join(ernHomePath, 'containergen', 'out', 'ios')
+        path.join(ernHomePath, 'containergen/out/ios')
       )
     })
   })
@@ -159,7 +159,7 @@ describe('Platform', () => {
         }
       })
       expect(Platform.currentPlatformVersionPath).eql(
-        path.join(ernHomePath, 'versions', '3.0.0', 'node_modules')
+        path.join(ernHomePath, 'versions/3.0.0/node_modules')
       )
     })
   })
@@ -188,7 +188,7 @@ describe('Platform', () => {
   describe('getRootPlatformVersionPath', () => {
     it('should return the correct root platform version path', () => {
       expect(Platform.getRootPlatformVersionPath('3.0.0')).eql(
-        path.join(ernHomePath, 'versions', '3.0.0')
+        path.join(ernHomePath, 'versions/3.0.0')
       )
     })
   })
@@ -196,13 +196,13 @@ describe('Platform', () => {
   describe('getPlatformVersionPath', () => {
     it('should return the correct platform version path for version 1000.0.0', () => {
       expect(Platform.getPlatformVersionPath('1000.0.0')).eql(
-        path.join(ernHomePath, 'versions', '1000.0.0')
+        path.join(ernHomePath, 'versions/1000.0.0')
       )
     })
 
     it('should return the correct platform version path for a version different from 1000.0.0', () => {
       expect(Platform.getPlatformVersionPath('3.0.0')).eql(
-        path.join(ernHomePath, 'versions', '3.0.0', 'node_modules')
+        path.join(ernHomePath, 'versions/3.0.0/node_modules')
       )
     })
   })
@@ -221,9 +221,7 @@ describe('Platform', () => {
     it('should create complete directory hierarchy', () => {
       Platform.installPlatform('3.0.0')
       expect(
-        fs.existsSync(
-          path.join(ernHomePath, 'versions', '3.0.0', 'node_modules')
-        )
+        fs.existsSync(path.join(ernHomePath, 'versions/3.0.0/node_modules'))
       ).true
     })
 
@@ -259,9 +257,7 @@ describe('Platform', () => {
         // noop
       }
       expect(
-        fs.existsSync(
-          path.join(ernHomePath, 'versions', '3.0.0', 'node_modules')
-        )
+        fs.existsSync(path.join(ernHomePath, 'versions/3.0.0/node_modules'))
       ).false
     })
   })
@@ -279,7 +275,7 @@ describe('Platform', () => {
     it('should not do anything if the platform version is the current one', () => {
       shell.mkdir(
         '-p',
-        path.join(path.join(ernHomePath, 'versions', '3.0.0', 'node_modules'))
+        path.join(path.join(ernHomePath, 'versions/3.0.0/node_modules'))
       )
       sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
@@ -292,7 +288,7 @@ describe('Platform', () => {
     it('should remove the version directory', () => {
       shell.mkdir(
         '-p',
-        path.join(path.join(ernHomePath, 'versions', '3.0.0', 'node_modules'))
+        path.join(path.join(ernHomePath, 'versions/3.0.0/node_modules'))
       )
       sandbox.stub(config, 'get').callsFake(key => {
         if (key === 'platformVersion') {
@@ -300,7 +296,7 @@ describe('Platform', () => {
         }
       })
       Platform.uninstallPlatform('3.0.0')
-      expect(fs.existsSync(path.join(ernHomePath, 'versions', '3.0.0'))).false
+      expect(fs.existsSync(path.join(ernHomePath, 'versions/3.0.0'))).false
     })
   })
 

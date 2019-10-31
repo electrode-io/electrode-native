@@ -53,7 +53,7 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     try {
       const pathSpec = {
         outputDir: path.join(paths.outDirectory, 'ios'),
-        projectHullDir: path.join(paths.apiImplHull, 'ios', '{.*,*}'),
+        projectHullDir: path.join(paths.apiImplHull, 'ios/{.*,*}'),
         rootDir: ROOT_DIR,
       }
 
@@ -171,9 +171,7 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
   ) {
     const resourceDir = path.join(
       Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen',
-      'resources',
-      'ios'
+      'ern-api-impl-gen/resources/ios'
     )
     const outputDir = path.join(
       pathSpec.outputDir,

@@ -47,8 +47,7 @@ export default class ApiImplGen {
     const reactNativeElectrodeBridge: any = await readPackageJson(
       path.join(
         paths.outDirectory,
-        'node_modules',
-        'react-native-electrode-bridge'
+        'node_modules/react-native-electrode-bridge'
       )
     )
 

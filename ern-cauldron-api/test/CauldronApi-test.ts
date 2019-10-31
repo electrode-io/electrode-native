@@ -32,7 +32,7 @@ const codePushNewEntryFixture: CauldronCodePushEntry = {
 let documentStore
 let fileStore
 
-const fixtureFileStorePath = path.join(__dirname, 'fixtures', 'filestore')
+const fixtureFileStorePath = path.join(__dirname, 'fixtures/filestore')
 
 function cauldronApi({
   cauldronDocument,
@@ -65,14 +65,14 @@ describe('CauldronApi.js', () => {
       sandbox.stub(utils, 'isGitBranch').resolves(true)
       const fixture = JSON.parse(
         fs
-          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-0.0.0.json'))
+          .readFileSync(path.join(__dirname, 'fixtures/cauldron-0.0.0.json'))
           .toString()
       )
       const api = cauldronApi({ cauldronDocument: fixture })
       await api.upgradeCauldronSchema()
       const expectedCauldronDoc = JSON.parse(
         fs
-          .readFileSync(path.join(__dirname, 'fixtures', 'cauldron-3.0.0.json'))
+          .readFileSync(path.join(__dirname, 'fixtures/cauldron-3.0.0.json'))
           .toString()
       )
       const cauldronDoc = await api.getCauldron()
@@ -734,7 +734,7 @@ describe('CauldronApi.js', () => {
         storePath: fixtureFileStorePath,
       }).getConfig(AppVersionDescriptor.fromString('test:android:17.7.0'))
       const config = fs.readFileSync(
-        path.join(fixtureFileStorePath, 'config', 'test-android-17.7.0.json')
+        path.join(fixtureFileStorePath, 'config/test-android-17.7.0.json')
       )
       expect(configObj).eql(JSON.parse(config.toString()))
     })
@@ -755,7 +755,7 @@ describe('CauldronApi.js', () => {
         storePath: fixtureFileStorePath,
       }).getConfig(AppPlatformDescriptor.fromString('test:android'))
       const config = fs.readFileSync(
-        path.join(fixtureFileStorePath, 'config', 'test-android.json')
+        path.join(fixtureFileStorePath, 'config/test-android.json')
       )
       expect(configObj).eql(JSON.parse(config.toString()))
     })
@@ -776,7 +776,7 @@ describe('CauldronApi.js', () => {
         storePath: fixtureFileStorePath,
       }).getConfig(AppNameDescriptor.fromString('test'))
       const config = fs.readFileSync(
-        path.join(fixtureFileStorePath, 'config', 'test.json')
+        path.join(fixtureFileStorePath, 'config/test.json')
       )
       expect(configObj).eql(JSON.parse(config.toString()))
     })

@@ -209,7 +209,7 @@ describe('Ensure.js', () => {
   describe('dependencyIsOrphaned', async () => {
     it('should throw if dependency is not orphaned', async () => {
       cauldronHelperStub.getYarnLock.resolves(
-        fs.readFileSync(path.join(__dirname, 'fixtures', 'sample.yarn.lock'))
+        fs.readFileSync(path.join(__dirname, 'fixtures/sample.yarn.lock'))
       )
       assert(
         await doesThrow(
@@ -223,7 +223,7 @@ describe('Ensure.js', () => {
 
     it('should not throw if dependency is orphaned [not in lock file]', async () => {
       cauldronHelperStub.getYarnLock.resolves(
-        fs.readFileSync(path.join(__dirname, 'fixtures', 'sample.yarn.lock'))
+        fs.readFileSync(path.join(__dirname, 'fixtures/sample.yarn.lock'))
       )
       assert(
         await doesNotThrow(
@@ -237,7 +237,7 @@ describe('Ensure.js', () => {
 
     it('should not throw if dependency is orphaned [in lock file]', async () => {
       cauldronHelperStub.getYarnLock.resolves(
-        fs.readFileSync(path.join(__dirname, 'fixtures', 'sample.yarn.lock'))
+        fs.readFileSync(path.join(__dirname, 'fixtures/sample.yarn.lock'))
       )
       assert(
         await doesNotThrow(

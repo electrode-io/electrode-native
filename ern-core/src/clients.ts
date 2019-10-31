@@ -11,16 +11,12 @@ export const reactnative = new ReactNativeCli(
 function getInternalBinaryPath(binaryName: string): string {
   const pathWhenInstalledWithYarn = path.resolve(
     __dirname,
-    '..',
-    'node_modules',
-    '.bin',
+    '../node_modules/.bin',
     binaryName
   )
   const pathWhenInstalledWithNpm = path.resolve(
     __dirname,
-    '..',
-    '..',
-    '.bin',
+    '../../.bin',
     binaryName
   )
   if (fs.existsSync(pathWhenInstalledWithYarn)) {

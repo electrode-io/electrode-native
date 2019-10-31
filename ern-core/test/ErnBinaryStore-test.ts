@@ -33,9 +33,7 @@ describe('ErnBinaryStore', () => {
   const createBinaryStore = () => new ErnBinaryStore({ url: binaryStoreUrl })
   const fakeBinaryApkPath = path.join(
     __dirname,
-    'fixtures',
-    'ErnBinaryStore',
-    'fakebinary.apk'
+    'fixtures/ErnBinaryStore/fakebinary.apk'
   )
 
   describe('addBinary', () => {

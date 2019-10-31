@@ -40,10 +40,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
       }
       const mustacheFile = path.join(
         Platform.currentPlatformVersionPath,
-        'ern-api-impl-gen',
-        'resources',
-        'js',
-        'apiimpl.mustache'
+        'ern-api-impl-gen/resources/js/apiimpl.mustache'
       )
 
       for (const api of apis) {
@@ -57,10 +54,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
 
       const indexMustacheFile = path.join(
         Platform.currentPlatformVersionPath,
-        'ern-api-impl-gen',
-        'resources',
-        'js',
-        'index.mustache'
+        'ern-api-impl-gen/resources/js/index.mustache'
       )
       const apisMustacheView = {
         apis,

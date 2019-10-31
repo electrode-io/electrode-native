@@ -269,7 +269,7 @@ describe('utils.js', () => {
     it('should return parsed json if value is a json file', async () => {
       expect(
         await parseJsonFromStringOrFile(
-          path.resolve(__dirname, 'fixtures', 'dummy.json')
+          path.resolve(__dirname, 'fixtures/dummy.json')
         )
       ).eql({
         key: 'value',

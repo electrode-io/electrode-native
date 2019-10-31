@@ -22,7 +22,7 @@ const ERN_RC_GLOBAL_FILE_PATH = path.join(ERN_ROOT_PATH, '.ernrc')
 const ernConfigObj = fs.existsSync(ERN_RC_GLOBAL_FILE_PATH)
 ? JSON.parse(fs.readFileSync(ERN_RC_GLOBAL_FILE_PATH, 'utf-8'))
 : {}
-const defaultAndroidContainerGenPath = path.join(ERN_ROOT_PATH, 'containergen', 'out', 'android')
+const defaultAndroidContainerGenPath = path.join(ERN_ROOT_PATH, 'containergen/out/android')
 
 process.env['SYSTEM_TESTS'] = 'true'
 process.on('SIGINT', () => afterAll())

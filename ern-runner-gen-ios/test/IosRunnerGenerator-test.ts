@@ -9,13 +9,11 @@ import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
 describe('IosRunnerGenerator', () => {
   const simpleIosRunnerTestGeneratedPath = path.join(
     __dirname,
-    'generated',
-    'simple-ios-runner'
+    'generated/simple-ios-runner'
   )
   const simpleIosRunnerFixturePath = path.join(
     __dirname,
-    'fixtures',
-    'simple-ios-runner'
+    'fixtures/simple-ios-runner'
   )
 
   before(function() {

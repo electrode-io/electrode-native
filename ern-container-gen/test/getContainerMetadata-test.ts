@@ -14,8 +14,7 @@ describe('getContainerMetadata', () => {
   it('should return the container metadata object if path contains a container metadata file', async () => {
     const containerFixturePath = path.join(
       __dirname,
-      'fixtures',
-      'ContainerWithMetadata'
+      'fixtures/ContainerWithMetadata'
     )
     const result = await getContainerMetadata(containerFixturePath)
     const expectedResult = JSON.parse(
