@@ -16,6 +16,7 @@ getRunnerGeneratorForPlatform('ios')
     },
     mainMiniAppName: 'dummy',
     outDir: pathToGeneratedFixtures,
+    reactNativeVersion: '0.60.5',
     targetPlatform: 'ios',
   })
   .then(() => {
