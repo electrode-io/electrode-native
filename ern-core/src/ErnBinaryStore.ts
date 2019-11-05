@@ -1,13 +1,13 @@
 import { BinaryStore } from './BinaryStore'
 import { AppVersionDescriptor } from './descriptors'
-import { execp } from './childProcess'
 import createTmpDir from './createTmpDir'
-import { spawn } from 'child_process'
 import shell from './shell'
 import fs from 'fs'
 import path from 'path'
 import archiver from 'archiver'
 import DecompressZip = require('decompress-zip')
+import got from 'got'
+import FormData from 'form-data'
 
 export class ErnBinaryStore implements BinaryStore {
   private readonly config: any
@@ -24,11 +24,18 @@ export class ErnBinaryStore implements BinaryStore {
     }: {
       flavor?: string
     } = {}
-  ): Promise<string | Buffer> {
+  ): Promise<void> {
     const pathToBinary = await this.zipBinary(descriptor, binaryPath, {
       flavor,
     })
-    return execp(`curl -XPOST ${this.config.url} -F file=@"${pathToBinary}"`)
+    try {
+      const binaryRs = fs.createReadStream(pathToBinary)
+      const form = new FormData()
+      form.append('file', binaryRs)
+      await got.post(this.config.url, { body: form })
+    } catch (err) {
+      throw new Error(err.response ? err.response.text : err.message)
+    }
   }
 
   public async removeBinary(
@@ -38,9 +45,13 @@ export class ErnBinaryStore implements BinaryStore {
     }: {
       flavor?: string
     } = {}
-  ): Promise<string | Buffer> {
+  ): Promise<void> {
     await this.throwIfNoBinaryExistForDescriptor(descriptor, { flavor })
-    return execp(`curl -XDELETE ${this.urlToBinary(descriptor, { flavor })}`)
+    try {
+      await got.delete(this.urlToBinary(descriptor, { flavor }))
+    } catch (err) {
+      throw new Error(err.response ? err.response.text : err.message)
+    }
   }
 
   public async getBinary(
@@ -70,13 +81,16 @@ export class ErnBinaryStore implements BinaryStore {
     }: {
       flavor?: string
     } = {}
-  ): Promise<string | Buffer> {
-    return execp(
-      `curl -XOPTIONS -s -o /dev/null -w '%{http_code}' ${this.urlToBinary(
-        descriptor,
-        { flavor }
-      )}`
-    )
+  ): Promise<boolean> {
+    try {
+      const res = await got.head(this.urlToBinary(descriptor, { flavor }))
+      return res.statusCode === 200
+    } catch (err) {
+      if (err.response && err.response.statusCode === 404) {
+        return false
+      }
+      throw new Error(err.response ? err.response.text : err.message)
+    }
   }
 
   public async getZippedBinary(
@@ -94,10 +108,13 @@ export class ErnBinaryStore implements BinaryStore {
         this.buildZipBinaryFileName(descriptor, { flavor })
       )
       const outputFile = fs.createWriteStream(outputFilePath)
-      const curl = spawn('curl', [this.urlToBinary(descriptor, { flavor })])
-      curl.stdout.pipe(outputFile)
-      outputFile.on('error', err => reject(err))
-      curl.on('close', err => (err ? reject(err) : resolve(outputFilePath)))
+      const gotStream = got
+        .stream(this.urlToBinary(descriptor, { flavor }))
+        .pipe(outputFile)
+      gotStream.on('close', err =>
+        err ? reject(err) : resolve(outputFilePath)
+      )
+      gotStream.on('error', err => reject(err))
     })
   }
 
@@ -216,7 +233,7 @@ export class ErnBinaryStore implements BinaryStore {
       flavor?: string
     } = {}
   ) {
-    if ((await this.hasBinary(descriptor, { flavor })) === '404') {
+    if (!(await this.hasBinary(descriptor, { flavor }))) {
       throw new Error(
         `No binary associated to ${descriptor} ${
           flavor ? `[flavor: ${flavor}]` : ''
