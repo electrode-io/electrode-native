@@ -1,11 +1,8 @@
 import { AppVersionDescriptor } from './descriptors'
 
 export interface BinaryStore {
-  addBinary(
-    descriptor: AppVersionDescriptor,
-    binary: any
-  ): Promise<string | Buffer>
-  removeBinary(descriptor: AppVersionDescriptor): Promise<string | Buffer>
+  addBinary(descriptor: AppVersionDescriptor, binary: any): Promise<void>
+  removeBinary(descriptor: AppVersionDescriptor): Promise<void>
   getBinary(descriptor: AppVersionDescriptor, options: any): Promise<string>
-  hasBinary(descriptor: AppVersionDescriptor): Promise<string | Buffer>
+  hasBinary(descriptor: AppVersionDescriptor): Promise<boolean>
 }
