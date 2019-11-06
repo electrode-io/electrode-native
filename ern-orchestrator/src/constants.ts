@@ -71,4 +71,9 @@ export const availableUserConfigKeys = [
     name: 'sourceMapStoreProxy',
     values: ['string'],
   },
+  {
+    desc: 'HTTP/HTTPS proxy to use to connect to the binary store server',
+    name: 'binaryStoreProxy',
+    values: ['string'],
+  },
 ]

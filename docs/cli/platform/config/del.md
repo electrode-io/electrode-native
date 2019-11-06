@@ -16,6 +16,7 @@
 
 **Whitelisted properties**
 
+- `binaryStoreProxy`
 - `bundleStoreProxy`
 - `codePushAccessKey`
 - `codePushCustomHeaders`

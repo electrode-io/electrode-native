@@ -8,8 +8,13 @@ import archiver from 'archiver'
 import DecompressZip = require('decompress-zip')
 import got from 'got'
 import FormData from 'form-data'
+import { createProxyAgentFromErnConfig } from './createProxyAgent'
 
 export class ErnBinaryStore implements BinaryStore {
+  public readonly gotCommonOpts = {
+    agent: createProxyAgentFromErnConfig('binaryStoreProxy'),
+  }
+
   private readonly config: any
 
   constructor(config: any) {
@@ -32,7 +37,7 @@ export class ErnBinaryStore implements BinaryStore {
       const binaryRs = fs.createReadStream(pathToBinary)
       const form = new FormData()
       form.append('file', binaryRs)
-      await got.post(this.config.url, { body: form })
+      await got.post(this.config.url, { ...this.gotCommonOpts, body: form })
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
     }
@@ -48,7 +53,9 @@ export class ErnBinaryStore implements BinaryStore {
   ): Promise<void> {
     await this.throwIfNoBinaryExistForDescriptor(descriptor, { flavor })
     try {
-      await got.delete(this.urlToBinary(descriptor, { flavor }))
+      await got.delete(this.urlToBinary(descriptor, { flavor }), {
+        ...this.gotCommonOpts,
+      })
     } catch (err) {
       throw new Error(err.response ? err.response.text : err.message)
     }
@@ -83,7 +90,9 @@ export class ErnBinaryStore implements BinaryStore {
     } = {}
   ): Promise<boolean> {
     try {
-      const res = await got.head(this.urlToBinary(descriptor, { flavor }))
+      const res = await got.head(this.urlToBinary(descriptor, { flavor }), {
+        ...this.gotCommonOpts,
+      })
       return res.statusCode === 200
     } catch (err) {
       if (err.response && err.response.statusCode === 404) {
