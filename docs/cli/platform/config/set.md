@@ -73,6 +73,11 @@ HTTP/HTTPS proxy to use to connect to the source map store server.
 Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
 **default** : no proxy
 
+- `binaryStoreProxy` [string]  
+HTTP/HTTPS proxy to use to connect to the binary store server.  
+Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
+**default** : no proxy
+
 #### Remarks
  
 * In case a value already exists in the configuration for a given key, this command will not fail and will overwrite the existing value.
