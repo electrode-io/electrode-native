@@ -1,5 +1,4 @@
 const path = require('path')
-const randomInt = require('../utils/randomInt')
 
 const baseConstants = {
   notInNpmPkg: 'ewkljrlwjerjlwjrl@0.0.3',
@@ -9,9 +8,10 @@ const baseConstants = {
   cauldronName: 'cauldron-system-tests',
   systemTestMiniAppName: 'MiniAppSystemTest',
   systemTestMiniAppPkgName: 'miniapp-system-test',
-  testApiName: 'TestApi',
-  testApiPkgName: 'test',
-  complexApiName: 'ComplexApi',
+  testApiName: 'testapi',
+  testApiPkgName: 'test-api',
+  complexApiName: 'complexapi',
+  complexApiPkgName: 'complex-api',
   invalidElectrodeNativeModuleName: 'Test-Api',
   systemTestNativeApplicationName: 'system-test-app',
   systemTestNativeApplicationVersion1: '1.0.0',

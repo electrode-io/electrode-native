@@ -1,0 +1,28 @@
+{
+  "author": "f0b00n7",
+  "dependencies": {
+    "react-native-electrode-bridge": "1.5.x"
+  },
+  "description": "ERN Generated API for complexapi",
+  "devDependencies": {
+    "flow-bin": "^0.47.0"
+  },
+  "ern": {
+    "message": {
+      "moduleName": "complexapi",
+      "namespace": "com.complexapi.ern",
+      "apiSchemaPath": "schema.json",
+      "artifactId": "react-native-complexapi-api"
+    },
+    "moduleType": "ern-api"
+  },
+  "keywords": [
+    "ern-api"
+  ],
+  "main": "javascript/src/index.js",
+  "name": "complex-api",
+  "scripts": {
+    "flow": "flow"
+  },
+  "version": "1.0.0"
+}

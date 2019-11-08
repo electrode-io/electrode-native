@@ -44,7 +44,7 @@ export default async function generateApiImpl({
   try {
     // get the directory to output the generated project.
     paths.outDirectory = outputDirectory = formOutputDirectoryName(
-      apiImplName,
+      packageName,
       outputDirectory
     )
     await createOutputDirectory(outputDirectory, forceGenerate)
@@ -144,12 +144,10 @@ async function createNodePackage(
 }
 
 function formOutputDirectoryName(
-  apiImplName: string,
-  outputDirectoryPath: string
+  outputName: string,
+  outputPath: string
 ) {
-  return outputDirectoryPath
-    ? path.join(outputDirectoryPath, apiImplName)
-    : path.join(process.cwd(), apiImplName)
+  return path.join(outputPath ? outputPath : process.cwd(), outputName)
 }
 
 function getPlatforms(nativeOnly: boolean): string[] {
