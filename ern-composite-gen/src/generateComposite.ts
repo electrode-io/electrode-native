@@ -27,6 +27,15 @@ import uuidv4 from 'uuid/v4'
 export async function generateComposite(config: CompositeGeneratorConfig) {
   log.debug(`generateComposite config : ${JSON.stringify(config, null, 2)}`)
 
+  if (
+    config.miniApps.length === 0 &&
+    (config.jsApiImplDependencies || []).length === 0
+  ) {
+    throw new Error(
+      `At least one MiniApp or JS API implementation is needed to generate a composite`
+    )
+  }
+
   return config.baseComposite
     ? generateCompositeFromBase(
         config.miniApps,

@@ -345,6 +345,20 @@ describe('ern-container-gen utils.js', () => {
       )
     })
 
+    it('should throw an exception if called with no miniapp or js api impl', async () => {
+      yarnCliStub.install.callsFake(() =>
+        createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
+      )
+      const miniApps = []
+      assert(
+        await doesThrow(generateComposite, null, {
+          miniApps,
+          outDir: tmpOutDir,
+          pathToYarnLock: pathToSampleYarnLock,
+        })
+      )
+    })
+
     it('should call yarn install prior to calling yarn add or yarn upgrade for each MiniApp', async () => {
       // One new, one same, one upgrade
       yarnCliStub.install.callsFake(() =>
