@@ -153,6 +153,16 @@ export class MiniApp extends BaseMiniApp {
       throw e
     }
 
+    if (
+      process.platform === 'darwin' &&
+      semver.gte(reactNativeVersion, '0.60.0') &&
+      !Platform.isCocoaPodsInstalled()
+    ) {
+      throw new Error(`pod command not found.
+CocoaPods is required starting from React Native 0.60 version.
+You can find instructions to install CocoaPods @ https://cocoapods.org`)
+    }
+
     await kax
       .task(
         `Creating ${miniAppName} project using react-native v${reactNativeVersion}`

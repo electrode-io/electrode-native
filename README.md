@@ -24,6 +24,7 @@
 - NPM >= 3.0
 - Android Studio (for Android apps)
 - Xcode >= 10 (for iOS apps)
+- CocoaPods (for iOS apps using a version of React Native >= 0.60)
 
 ### Install
 
@@ -113,3 +114,5 @@ Thank you.
 [platform use]: https://native.electrode.io/cli-commands/platform/use
 
 [Electrode Native Case Study]: https://www.walmartlabs.com/case-studies/electrode-native
+
+[CocoaPods]: https://cocoapods.org

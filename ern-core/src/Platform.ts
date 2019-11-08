@@ -194,4 +194,13 @@ export default class Platform {
       return false
     }
   }
+
+  public static isCocoaPodsInstalled() {
+    try {
+      execSync('pod --version 1>/dev/null 2>/dev/null')
+      return true
+    } catch (e) {
+      return false
+    }
+  }
 }
