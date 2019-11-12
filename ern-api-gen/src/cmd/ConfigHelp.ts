@@ -1,5 +1,6 @@
 import CodegenConfigLoader from '../CodegenConfigLoader'
 import { Command } from '../java/cli'
+import { log } from 'ern-core'
 
 export default class ConfigHelp {
   public static Usage = new Command(
@@ -23,18 +24,16 @@ export default class ConfigHelp {
 
   public run() {
     const config = CodegenConfigLoader.forName(this.language)
-    console.info('CONFIG OPTIONS')
+    log.info('CONFIG OPTIONS')
 
     for (const langCliOption of config.cliOptions()) {
       {
-        console.info('\t' + langCliOption.getOpt())
-        console.info(
-          '\t    ' +
-            langCliOption
-              .getOptionHelp()
-              .replace(new RegExp('\n', 'g'), '\n\t    ')
+        log.info(`\t ${langCliOption.getOpt()}`)
+        log.info(
+          `\t    ${langCliOption
+            .getOptionHelp()
+            .replace(new RegExp('\n', 'g'), '\n\t    ')}`
         )
-        console.info()
       }
     }
   }

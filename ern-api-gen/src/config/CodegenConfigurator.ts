@@ -4,7 +4,7 @@ import CodegenConfigLoader from '../CodegenConfigLoader'
 import CodegenConstants from '../CodegenConstants'
 import AuthParser from '../auth/AuthParser'
 import File from '../java/File'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import { isNotEmpty, isEmpty } from '../java/StringUtils'
 import { apply, applyStrict } from '../java/beanUtils'
 import System from '../java/System'
@@ -42,7 +42,9 @@ export default class CodegenConfigurator {
         )
         return apply(new CodegenConfigurator(), conf)
       } catch (e) {
-        Log.error('Unable to deserialize config file: ' + configFile, e)
+        log.error(
+          `Unable to deserialize config file ${configFile}. error: ${e}`
+        )
       }
     }
     return null
@@ -474,9 +476,12 @@ export default class CodegenConfigurator {
     if (!this.verbose) {
       return
     }
-    Log.info(
-      '\nVERBOSE MODE: ON. Additional debug options are injected\n - [debugSwagger] prints the swagger specification as interpreted by the codegen\n - [debugModels] prints models passed to the template engine\n - [debugOperations] prints operations passed to the template engine\n - [debugSupportingFiles] prints additional data passed to the template engine'
-    )
+    log.info(`
+VERBOSE MODE: ON. Additional debug options are injected
+ - [debugSwagger] prints the swagger specification as interpreted by the codegen
+ - [debugModels] prints models passed to the template engine
+ - [debugOperations] prints operations passed to the template engine
+ - [debugSupportingFiles] prints additional data passed to the template engine`)
     System.setProperty('debugSwagger', '')
     System.setProperty('debugModels', '')
     System.setProperty('debugOperations', '')
@@ -497,5 +502,3 @@ export default class CodegenConfigurator {
     }
   }
 }
-
-const Log = LoggerFactory.getLogger(CodegenConfigurator)

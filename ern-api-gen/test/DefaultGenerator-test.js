@@ -1,14 +1,11 @@
 import DefaultGenerator from '../src/DefaultGenerator'
 import path from 'path'
-import { shell } from 'ern-core'
+import { log, shell } from 'ern-core'
 import ernUtilDev from 'ern-util-dev'
-import { CONFIG } from '../src/java/Logger'
 import File from '../src/java/File'
 import { execSync } from 'child_process'
 import CodegenConfigurator from '../src/config/CodegenConfigurator'
 import Langs from '../src/cmd/Langs'
-
-CONFIG.LEVEL = 0
 
 describe('DefaultGenerator', function() {
   this.timeout(50000)
@@ -50,7 +47,7 @@ describe('DefaultGenerator', function() {
           await success()
         }
       } catch (e) {
-        console.trace(e)
+        log.trace(e)
         if (!thens || thens.length == 0) throw e
         for (const [s, fail] of thens) {
           if (fail) {

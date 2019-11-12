@@ -10,7 +10,7 @@ import { HeaderParameter } from '../models/parameters'
 import { parseBoolean } from '../java/BooleanHelper'
 import Pattern from '../java/Pattern'
 import StringBuilder from '../java/StringBuilder'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import { newHashMap, newHashSet } from '../java/javaUtil'
 
 const PATH_PARAM_PATTERN = Pattern.compile('\\{[a-zA-Z_\\-]+\\}')
@@ -446,19 +446,15 @@ export default class SwiftCodegen extends DefaultCodegen {
     name = DefaultCodegen.camelize(name)
     if (this.isReservedWord(name)) {
       const modelName = 'Model' + name
-      Log.warn(
-        name +
-          ' (reserved word) cannot be used as model name. Renamed to ' +
-          modelName
+      log.warn(
+        `${name} (reserved word) cannot be used as model name. Renamed to ${modelName}`
       )
       return modelName
     }
     if (name.match('^\\d.*')) {
       const modelName = 'Model' + name
-      Log.warn(
-        name +
-          ' (model name starts with number) cannot be used as model name. Renamed to ' +
-          modelName
+      log.warn(
+        `${name} (model name starts with number) cannot be used as model name. Renamed to ${modelName}`
       )
       return modelName
     }
@@ -548,10 +544,8 @@ export default class SwiftCodegen extends DefaultCodegen {
         'call_' + operationId,
         true
       )
-      Log.warn(
-        operationId +
-          ' (reserved word) cannot be used as method name. Renamed to ' +
-          newOperationId
+      log.warn(
+        `${operationId} (reserved word) cannot be used as method name. Renamed to ${newOperationId}`
       )
       return newOperationId
     }
@@ -671,4 +665,3 @@ export default class SwiftCodegen extends DefaultCodegen {
 }
 
 const isHeader = parameter => !(parameter instanceof HeaderParameter)
-const Log = LoggerFactory.getLogger(SwiftCodegen)

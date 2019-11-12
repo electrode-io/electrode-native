@@ -36,7 +36,7 @@ import {
   QueryParameter,
 } from './models/parameters'
 import System from './java/System'
-import LoggerFactory from './java/LoggerFactory'
+import { log } from 'ern-core'
 import File from './java/File'
 import StringBuilder from './java/StringBuilder'
 import {
@@ -433,7 +433,7 @@ export default class DefaultCodegen {
       const prefix = StringUtils.getCommonPrefix(listStr)
       return prefix.replace(COMMON_PREFIX_RE, '')
     } catch (e) {
-      Log.trace(e)
+      log.trace(e)
       return ''
     }
   }
@@ -530,7 +530,7 @@ export default class DefaultCodegen {
    * @return string with unsafe characters removed or escaped
    */
   public escapeUnsafeCharacters(input) {
-    Log.warn(
+    log.warn(
       'escapeUnsafeCharacters should be overriden in the code generator with proper logic to escape unsafe characters'
     )
     return input
@@ -542,7 +542,7 @@ export default class DefaultCodegen {
    * @return string with quotation mark removed or escaped
    */
   public escapeQuotationMark(input) {
-    Log.warn(
+    log.warn(
       'escapeQuotationMark should be overriden in the code generator with proper logic to escape single/double quote'
     )
     return input.split('"').join('\\"')
@@ -963,7 +963,7 @@ export default class DefaultCodegen {
       const additionalProperties2 = ap.getAdditionalProperties()
       const type = additionalProperties2.getType()
       if (null == type) {
-        Log.error(
+        log.error(
           'No Type defined for Additional Property ' +
             additionalProperties2 +
             '\n\tIn Property: ' +
@@ -1140,12 +1140,10 @@ export default class DefaultCodegen {
           datatype = datatype.substring('#/definitions/'.length)
         }
       } catch (e) {
-        Log.warn(
-          'Error obtaining the datatype from RefProperty:' +
-            p +
-            '. Datatype default to Object'
+        log.warn(
+          `Error obtaining the datatype from RefProperty:${p}. Datatype default to Object`
         )
-        Log.trace(e)
+        log.trace(e)
         datatype = 'Object'
       }
     } else {
@@ -1420,7 +1418,7 @@ export default class DefaultCodegen {
    */
   public fromProperty(name, p) {
     if (p == null) {
-      Log.error('unexpected missing property for name ' + name)
+      log.error('unexpected missing property for name ' + name)
       return null
     }
     const property = CodegenModelFactory.newInstance(CodegenModelType.PROPERTY)
@@ -1559,7 +1557,7 @@ export default class DefaultCodegen {
    */
   public updatePropertyForArray(property, innerProperty) {
     if (innerProperty == null) {
-      Log.warn('skipping invalid array property ' + Json.pretty(property))
+      log.warn(`skipping invalid array property ${Json.pretty(property)}`)
     } else {
       if (!this.__languageSpecificPrimitives.contains(innerProperty.baseType)) {
         property.complexType = innerProperty.baseType
@@ -1583,7 +1581,7 @@ export default class DefaultCodegen {
    */
   public updatePropertyForMap(property, innerProperty) {
     if (innerProperty == null) {
-      Log.warn('skipping invalid map property ' + Json.pretty(property))
+      log.warn(`skipping invalid map property ${Json.pretty(property)}`)
       return
     } else {
       if (!this.__languageSpecificPrimitives.contains(innerProperty.baseType)) {
@@ -1739,11 +1737,9 @@ export default class DefaultCodegen {
       consumes = operation.getConsumes()
     } else if (swagger != null && isNotEmptySet(swagger.getConsumes())) {
       consumes = swagger.getConsumes()
-      Log.debug(
-        'No consumes defined in operation. Using global consumes (' +
-          swagger.getConsumes() +
-          ') for ' +
-          op.operationId
+      log.debug(
+        `No consumes defined in operation. 
+Using global consumes (${swagger.getConsumes()}) for ${op.operationId}`
       )
     }
     if (consumes != null && consumes.length) {
@@ -1776,11 +1772,9 @@ export default class DefaultCodegen {
       swagger.getProduces().length > 0
     ) {
       produces = swagger.getProduces()
-      Log.debug(
-        'No produces defined in operation. Using global produces (' +
-          swagger.getProduces() +
-          ') for ' +
-          op.operationId
+      log.debug(
+        `No produces defined in operation. 
+Using global produces (${swagger.getProduces()}) for ${op.operationId}`
       )
     }
     if (produces != null && produces.length > 0) {
@@ -2051,7 +2045,7 @@ export default class DefaultCodegen {
     }
     p.jsonSchema = Json.pretty(param)
     if (System.getProperty('debugParser') != null) {
-      Log.info('working on Parameter ' + param)
+      log.info(`working on Parameter ${param}`)
     }
     if (param != null && param instanceof QueryParameter) {
       p.defaultValue = param.getDefaultValue()
@@ -2069,15 +2063,13 @@ export default class DefaultCodegen {
       let collectionFormat: any = null
       const type = qp.getType()
       if (null == type) {
-        Log.warn('Type is NULL for Serializable Parameter: ' + param)
+        log.warn(`Type is NULL for Serializable Parameter: ${param}`)
       }
       if ('array' === type) {
         let inner = qp.getItems()
         if (inner == null) {
-          Log.warn(
-            'warning!  No inner type supplied for array parameter "' +
-              qp.getName() +
-              '", using String'
+          log.warn(
+            `warning!  No inner type supplied for array parameter "${qp.getName()}", using String`
           )
           inner = (new StringProperty() as any).description(
             '//TODO automatically added by swagger-codegen'
@@ -2096,10 +2088,8 @@ export default class DefaultCodegen {
       } else if ('object' === type) {
         let inner = qp.getItems()
         if (inner == null) {
-          Log.warn(
-            'warning!  No inner type supplied for map parameter "' +
-              qp.getName() +
-              '", using String'
+          log.warn(
+            `warning!  No inner type supplied for map parameter "${qp.getName()}", using String`
           )
           inner = (new StringProperty() as any).description(
             '//TODO automatically added by swagger-codegen'
@@ -2120,12 +2110,8 @@ export default class DefaultCodegen {
         )
       }
       if (property == null) {
-        Log.warn(
-          'warning!  Property type "' +
-            type +
-            '" not found for parameter "' +
-            (param as any).getName() +
-            '", using String'
+        log.warn(
+          `warning!  Property type "${type}" not found for parameter "${(param as any).getName()}", using String`
         )
         property = (new StringProperty() as any).description(
           '//TODO automatically added by swagger-codegen.  Type was ' +
@@ -2183,7 +2169,7 @@ export default class DefaultCodegen {
       }
     } else {
       if (!(param instanceof BodyParameter)) {
-        Log.error('Cannot use Parameter ' + param + ' as Body Parameter')
+        log.error(`Cannot use Parameter ${param} as Body Parameter`)
       }
       const bp = param
       const model = bp.getSchema()
@@ -2437,13 +2423,9 @@ export default class DefaultCodegen {
         }
       }
       operationId = this.sanitizeName(builder.toString())
-      Log.warn(
-        'Empty operationId found for path: ' +
-          httpMethod +
-          ' ' +
-          p +
-          '. Renamed to auto-generated operationId: ' +
-          operationId
+      log.warn(
+        `Empty operationId found for path: ${httpMethod} ${p}.
+Renamed to auto-generated operationId: ${operationId}`
       )
     }
     return operationId
@@ -2507,7 +2489,7 @@ export default class DefaultCodegen {
       }
     }
     if (!(co.operationId === uniqueName)) {
-      Log.warn('generated unique operationId `' + uniqueName + '`')
+      log.warn(`generated unique operationId ${uniqueName}`)
     }
     co.operationId = uniqueName
     co.operationIdLowerCase = uniqueName.toLowerCase()
@@ -2592,7 +2574,7 @@ export default class DefaultCodegen {
       const key = entry.getKey()
       const prop = entry.getValue()
       if (prop == null) {
-        Log.warn('null property for ' + key)
+        log.warn(`null property for ${key}`)
         continue
       }
 
@@ -2835,7 +2817,7 @@ export default class DefaultCodegen {
    */
   public sanitizeName(name) {
     if (name == null) {
-      Log.error('String to be sanitized is null. Default to ERROR_UNKNOWN')
+      log.error('String to be sanitized is null. Default to ERROR_UNKNOWN')
       return 'ERROR_UNKNOWN'
     }
     if ('$' === name) {
@@ -2891,11 +2873,10 @@ export default class DefaultCodegen {
     if (!new File(folder).exists()) {
       this.__supportingFiles.push(supportingFile)
     } else {
-      Log.info(
-        'Skipped overwriting ' +
-          supportingFile.destinationFilename +
-          ' as the file already exists in ' +
-          folder
+      log.info(
+        `Skipped overwriting ${
+          supportingFile.destinationFilename
+        } as the file already exists in folder`
       )
     }
   }
@@ -2908,11 +2889,11 @@ export default class DefaultCodegen {
    */
   public setParameterBooleanFlagWithCodegenProperty(parameter, property) {
     if (parameter == null) {
-      Log.error('Codegen Parameter cannnot be null.')
+      log.error('Codegen Parameter cannnot be null.')
       return
     }
     if (property == null) {
-      Log.error('Codegen Property cannot be null.')
+      log.error('Codegen Property cannot be null.')
       return
     }
     if (property.isString) {
@@ -2946,7 +2927,7 @@ export default class DefaultCodegen {
       parameter.isDateTime = true
       parameter.isPrimitiveType = true
     } else {
-      Log.debug('Property type is not primitive: ' + property.datatype)
+      log.debug('Property type is not primitive: ' + property.datatype)
     }
 
     if (property.isListContainer && property.items) {
@@ -2971,7 +2952,7 @@ export default class DefaultCodegen {
       } else if (property.items.isDateTime) {
         parameter.isItemDateTime = true
       } else {
-        Log.debug('Property item type is not primitive: ' + property.datatype)
+        log.debug(`Property item type is not primitive: ${property.datatype}`)
       }
     }
   }
@@ -3032,4 +3013,3 @@ export default class DefaultCodegen {
     }
   }
 }
-const Log = LoggerFactory.getLogger(DefaultCodegen)

@@ -1,18 +1,16 @@
 import os from 'os'
 import fs from 'fs'
 import path from 'path'
-import LoggerFactory from './LoggerFactory'
+import { log } from 'ern-core'
 import File from './File'
 import { isEmpty } from './StringUtils'
-
-const Log = LoggerFactory.getLogger('ServiceLoader')
 
 const tryNewRequire = mod => {
   try {
     const Clz = require(mod).default
     return new Clz()
   } catch (e) {
-    Log.warn(`could not require ${mod}`, e)
+    log.warn(`could not require ${mod}. error: ${e}`)
   }
 }
 export const SEARCH_PATH = [path.join(__dirname, '..', '..', 'resources')]
@@ -30,7 +28,7 @@ export default {
       try {
         lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split(os.EOL))
       } catch (e) {
-        Log.warn(`Error loading ${className}`, e)
+        log.warn(`Error loading ${className}. error: ${e}`)
         return ret
       }
     }

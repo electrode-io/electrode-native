@@ -1,4 +1,4 @@
-import LoggerFactory from './java/LoggerFactory'
+import { log } from 'ern-core'
 import _F from './java/File'
 import fs from 'fs'
 import path from 'path'
@@ -10,7 +10,7 @@ export default class AbstractGenerator {
   public static SEARCH_PATHS = ABSTRACT_SEARCH_PATHS
 
   public writeToFile(filename, contents) {
-    Log.info('writing file ' + filename)
+    log.info('writing file ' + filename)
     const f = new File(filename)
     f.getParentFile().mkdirs()
     return fs.writeFileSync(f.getPath(), contents, 'utf8')
@@ -32,7 +32,7 @@ export default class AbstractGenerator {
     try {
       return fs.readFileSync(f, 'utf-8')
     } catch (e) {
-      Log.trace(e)
+      log.trace(e)
     }
   }
 
@@ -77,7 +77,7 @@ export default class AbstractGenerator {
   public readResourceContents(resourceFilePath) {
     const file = this._resolveFilePath(resourceFilePath)
     if (file == null) {
-      Log.warn(`Could not resolve ${resourceFilePath}`)
+      log.warn(`Could not resolve ${resourceFilePath}`)
       return
     }
 
@@ -117,4 +117,3 @@ export default class AbstractGenerator {
     }
   }
 }
-const Log = LoggerFactory.getLogger(AbstractGenerator)

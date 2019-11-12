@@ -1,6 +1,6 @@
 import IgnoreToken from './IgnoreToken'
 import StringBuilder from '../../java/StringBuilder'
-import LoggerFactory from '../../java/LoggerFactory'
+import { log } from 'ern-core'
 
 export abstract class Rule {
   public static Operation = {
@@ -45,7 +45,7 @@ export abstract class Rule {
         case IgnoreToken.COMMENT:
           break
         default:
-          Log.warn('unknown token')
+          log.warn('unknown token')
       }
     }
     return sb.toString()
@@ -85,4 +85,3 @@ export abstract class Rule {
 
   protected abstract matches(relativePath: any): boolean
 }
-const Log = LoggerFactory.getLogger(Rule)

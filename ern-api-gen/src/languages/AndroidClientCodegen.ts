@@ -5,7 +5,7 @@ import CodegenType from '../CodegenType'
 import SupportingFile from '../SupportingFile'
 import { ArrayProperty, MapProperty } from '../models/properties'
 import StringUtils from '../java/StringUtils'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import File from '../java/File'
 import { Arrays, newHashSet, newHashMap } from '../java/javaUtil'
 import DefaultCodegen from '../DefaultCodegen'
@@ -315,19 +315,15 @@ export default class AndroidClientCodegen extends DefaultCodegen {
     name = DefaultCodegen.camelize(this.sanitizeName(name))
     if (this.isReservedWord(name)) {
       const modelName = 'Model' + name
-      Log.warn(
-        name +
-          ' (reserved word) cannot be used as model name. Renamed to ' +
-          modelName
+      log.warn(
+        `${name} (reserved word) cannot be used as model name. Renamed to ${modelName}`
       )
       return modelName
     }
     if (name.match('^\\d.*')) {
       const modelName = 'Model' + name
-      Log.warn(
-        name +
-          ' (model name starts with number) cannot be used as model name. Renamed to ' +
-          modelName
+      log.warn(
+        `${name} (model name starts with number) cannot be used as model name. Renamed to ${modelName}`
       )
       return modelName
     }
@@ -405,10 +401,8 @@ export default class AndroidClientCodegen extends DefaultCodegen {
         'call_' + operationId,
         true
       )
-      Log.warn(
-        operationId +
-          ' (reserved word) cannot be used as method name. Renamed to ' +
-          newOperationId
+      log.warn(
+        `${operationId} (reserved word) cannot be used as method name. Renamed to ${newOperationId}`
       )
       return newOperationId
     }
@@ -795,4 +789,3 @@ export default class AndroidClientCodegen extends DefaultCodegen {
       .join('/_*')
   }
 }
-const Log = LoggerFactory.getLogger(AndroidClientCodegen)
