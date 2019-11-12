@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name */
 import Mustache from 'mustache'
 import Json from './Json'
-import LoggerFactory from './LoggerFactory'
+import { log } from 'ern-core'
 import { MustacheWriter } from './MustacheWriter'
 import { isIterable } from './isIterable'
 
@@ -71,7 +71,6 @@ class MyContext extends Mustache.Context {
   }
 }
 
-const Log = LoggerFactory.getLogger('Mustache')
 export default {
   compiler() {
     let defValue
@@ -105,7 +104,7 @@ export default {
               data = JSON.parse(Json.pretty(data))
               return writer.render(template, new MyContext(data), partialProxy)
             } catch (e) {
-              Log.trace(e)
+              log.trace(e)
               throw new Error(`Error invoking template ${file}`)
             }
           },

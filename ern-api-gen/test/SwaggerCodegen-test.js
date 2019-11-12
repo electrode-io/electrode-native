@@ -2,7 +2,7 @@ import SwaggerCodegen from '../src/SwaggerCodegen'
 import { expect } from 'chai'
 import ernUtilDev from 'ern-util-dev'
 
-function execTest(out, resolve = console.log, reject = console.error) {
+function execTest(out, resolve = () => {}, reject = () => {}) {
   return async function() {
     try {
       const parts = this.test.title.split(' ')

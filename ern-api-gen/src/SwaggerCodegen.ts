@@ -3,6 +3,7 @@ import Generate from './cmd/Generate'
 import Langs from './cmd/Langs'
 import Meta from './cmd/Meta'
 import { Cli, Help } from './java/cli'
+import { log } from 'ern-core'
 /**
  * User: lanwen
  * Date: 24.03.15
@@ -24,8 +25,11 @@ export default class SwaggerCodegen {
   }
 }
 if (require.main === module) {
-  SwaggerCodegen.main(process.argv.slice(2)).then(console.log, err => {
-    console.error(err.message)
-    process.exit(1)
-  })
+  SwaggerCodegen.main(process.argv.slice(2)).then(
+    x => log.info(x),
+    err => {
+      log.error(err.message)
+      process.exit(1)
+    }
+  )
 }

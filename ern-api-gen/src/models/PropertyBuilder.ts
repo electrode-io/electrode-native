@@ -5,8 +5,7 @@ import RefModel from './RefModel'
 import ComposedModel from './ComposedModel'
 import { apply } from '../java/beanUtils'
 import { ArrayProperty, RefProperty } from './properties'
-import LoggerFactory from '../java/LoggerFactory'
-const Log = LoggerFactory.getLogger(`PropertyBuilder`)
+import { log } from 'ern-core'
 
 export function build(type, format, args) {
   const prop = { type, format }
@@ -17,7 +16,7 @@ export function build(type, format, args) {
   }
   const property = factory(prop)
   if (property == null) {
-    Log.error(`could not find property for type ${type} ${format}`)
+    log.error(`could not find property for type ${type} ${format}`)
   }
   return property
 }
@@ -43,8 +42,8 @@ export function toModel(property, parent?: any) {
     model.parent(parent).child(toModel(child.shift(), model))
     model.setInterfaces(interfaces.map(c => toModel(c, model)))
     if (child.length) {
-      Log.warn(
-        `An allOf can only have 1 implementation, it can have multiple $ref types`
+      log.warn(
+        'An allOf can only have 1 implementation, it can have multiple $ref types'
       )
     }
   } else if (property instanceof ArrayProperty) {

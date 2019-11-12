@@ -1,5 +1,5 @@
 import AuthorizationValue from '../models/auth/AuthorizationValue'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import { isNotEmpty } from '../java/StringUtils'
 import StringBuilder from '../java/StringBuilder'
 import { URLDecoder, URLEncoder } from '../java/encoders'
@@ -36,7 +36,7 @@ export default class AuthParser {
             .append(':')
             .append(URLEncoder.encode(v.getValue()))
         } catch (e) {
-          Log.trace(e)
+          log.trace(e)
         }
       }
       return b.toString()
@@ -45,4 +45,3 @@ export default class AuthParser {
     return null
   }
 }
-const Log = LoggerFactory.getLogger(AuthParser)

@@ -1,7 +1,7 @@
 import { DirectoryRule } from './rules/DirectoryRule'
 import ruleCreate from './rules/create'
 import File from '../java/File'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import { Rule } from './rules/Rule'
 import fs from 'fs'
 const { Operation } = Rule
@@ -23,10 +23,10 @@ export default class CodegenIgnoreProcessor {
         try {
           this.loadCodegenRules(codegenIgnore.getAbsolutePath())
         } catch (e) {
-          Log.error('Could not process .swagger-codegen-ignore.', e.message)
+          log.error(`Could not process .swagger-codegen-ignore. ${e.message}`)
         }
       } else {
-        Log.info('No .swagger-codegen-ignore file found.')
+        log.info('No .swagger-codegen-ignore file found.')
       }
     }
   }
@@ -101,4 +101,3 @@ export default class CodegenIgnoreProcessor {
     return this.exclusionRules.concat()
   }
 }
-const Log = LoggerFactory.getLogger(CodegenIgnoreProcessor)

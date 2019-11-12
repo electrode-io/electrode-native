@@ -3,7 +3,7 @@ import File from '../java/File'
 import Mustache from '../java/Mustache'
 import DefaultGenerator from '../DefaultGenerator'
 import SupportingFile from '../SupportingFile'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import camelCase from 'lodash/camelCase'
 import { newHashMap } from '../java/javaUtil'
 import FileUtils from '../java/FileUtils'
@@ -102,7 +102,7 @@ export default class Meta {
 
   public run() {
     const targetDir = new File(this.outputFolder)
-    Log.info('writing to folder [{}]', targetDir.getAbsolutePath())
+    log.info(`writing to folder [${targetDir.getAbsolutePath()}]`)
     const mainClass = camelCase(this.name) + 'Generator'
     const supportingFiles = [
       new SupportingFile('pom.mustache', '', 'pom.xml'),
@@ -169,14 +169,14 @@ export class Writer {
       )
       let formatted = template
       if (support.templateFile.endsWith(Meta.MUSTACHE_EXTENSION)) {
-        Log.info('writing file to {}', outputFile.getAbsolutePath())
+        log.info(`writing file to ${outputFile.getAbsolutePath()}`)
         formatted = Mustache.compiler()
           .withLoader(Meta.loader(this.generator))
           .defaultValue('')
           .compile(template)
           .execute(this.data)
       } else {
-        Log.info('copying file to {}', outputFile.getAbsolutePath())
+        log.info(`copying file to ${outputFile.getAbsolutePath()}`)
       }
       FileUtils.writeStringToFile(outputFile, formatted)
       return outputFile
@@ -201,5 +201,3 @@ export class Reader {
     )
   }
 }
-
-const Log = LoggerFactory.getLogger(Meta)

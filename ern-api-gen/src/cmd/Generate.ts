@@ -1,6 +1,5 @@
 import DefaultGenerator from '../DefaultGenerator'
 import CodegenConfigurator from '../config/CodegenConfigurator'
-import LoggerFactory from '../java/LoggerFactory'
 import { isNotEmpty } from '../java/StringUtils'
 import {
   applyAdditionalPropertiesKvp,
@@ -318,4 +317,3 @@ export default class Generate {
     dg.generate()
   }
 }
-const Log = LoggerFactory.getLogger(Generate)

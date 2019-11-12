@@ -10,7 +10,6 @@ import {
 } from './models/properties'
 import Json from './java/Json'
 import { newHashMap, isNotEmptySet } from './java/javaUtil'
-import LoggerFactory from './java/LoggerFactory'
 
 function hasProperties(obj) {
   if (obj == null) {
@@ -82,8 +81,6 @@ export default class InlineModelResolver {
                     }
                   }
                 }
-              } else if (parameter instanceof RefParameter) {
-                console.log('what the propertye?', parameter, operation)
               }
             }
           }
@@ -396,4 +393,3 @@ export default class InlineModelResolver {
     this.skipMatches = skipMatches
   }
 }
-const Log = LoggerFactory.getLogger(InlineModelResolver)

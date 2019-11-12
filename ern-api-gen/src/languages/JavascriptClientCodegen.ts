@@ -23,7 +23,7 @@ import {
   RefProperty,
   StringProperty,
 } from '../models/properties'
-import LoggerFactory from '../java/LoggerFactory'
+import { log } from 'ern-core'
 import File from '../java/File'
 import { newHashSet, newHashMap, Collections } from '../java/javaUtil'
 import StringBuilder from '../java/StringBuilder'
@@ -696,19 +696,15 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
     name = DefaultCodegen.camelize(name)
     if (this.isReservedWord(name)) {
       const modelName = 'Model' + name
-      Log.warn(
-        name +
-          ' (reserved word) cannot be used as model name. Renamed to ' +
-          modelName
+      log.warn(
+        `${name} (reserved word) cannot be used as model name. Renamed to ${modelName}`
       )
       return modelName
     }
     if (name.match('^\\d.*')) {
       const modelName = 'Model' + name
-      Log.warn(
-        name +
-          ' (model name starts with number) cannot be used as model name. Renamed to ' +
-          modelName
+      log.warn(
+        `${name} (model name starts with number) cannot be used as model name. Renamed to ${modelName}`
       )
       return modelName
     }
@@ -843,7 +839,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
       type = swaggerType
     }
     if (null == type) {
-      Log.error('No Type defined for Property ' + p)
+      log.error(`No Type defined for Property ${p}`)
     }
     return this.toModelName(type)
   }
@@ -858,10 +854,8 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         'call_' + operationId,
         true
       )
-      Log.warn(
-        operationId +
-          ' (reserved word) cannot be used as method name. Renamed to ' +
-          newOperationId
+      log.warn(
+        `${operationId} (reserved word) cannot be used as method name. Renamed to ${newOperationId}`
       )
       return newOperationId
     }
@@ -1189,5 +1183,3 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
     )
   }
 }
-
-const Log = LoggerFactory.getLogger(JavascriptClientCodegen)

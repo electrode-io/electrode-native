@@ -6,7 +6,7 @@ import Json from './java/Json'
 import ObjectUtils from './java/ObjectUtils'
 import StringUtils from './java/StringUtils'
 import StringBuilder from './java/StringBuilder'
-import LoggerFactory from './java/LoggerFactory'
+import { log } from 'ern-core'
 import File from './java/File'
 import {
   Collections,
@@ -49,7 +49,7 @@ const sortModelName = (a, b) => {
 }
 
 const rethrow = (e, ...args) => {
-  Log.trace(e)
+  log.trace(e)
   throw new Error(...args)
 }
 
@@ -302,7 +302,7 @@ export default class DefaultGenerator extends AbstractGenerator {
         for (const name of modelKeys) {
           try {
             if (this.config.importMapping().containsKey(name)) {
-              Log.info('Model ' + name + ' not imported due to import mapping')
+              log.info(`Model ${name} not imported due to import mapping`)
               continue
             }
             const model = definitions.get(name)
@@ -344,7 +344,7 @@ export default class DefaultGenerator extends AbstractGenerator {
                 this.config.toModelFilename(name) +
                 suffix
               if (!this.config.shouldOverwrite(filename)) {
-                Log.info('Skipped overwriting ' + filename)
+                log.info(`Skipped overwriting ${filename}`)
                 continue
               }
               const written = this.processTemplateToFile(
@@ -367,7 +367,7 @@ export default class DefaultGenerator extends AbstractGenerator {
                   this.config.toModelTestFilename(name) +
                   suffix
                 if (new File(filename).exists()) {
-                  Log.info('File exists. Skipped overwriting ' + filename)
+                  log.info(`File exists. Skipped overwriting ${filename}`)
                   continue
                 }
                 const written = this.processTemplateToFile(
@@ -391,7 +391,7 @@ export default class DefaultGenerator extends AbstractGenerator {
                   this.config.toModelDocFilename(name) +
                   suffix
                 if (!this.config.shouldOverwrite(filename)) {
-                  Log.info('Skipped overwriting ' + filename)
+                  log.info(`Skipped overwriting ${filename}`)
                   continue
                 }
                 const written = this.processTemplateToFile(
@@ -411,7 +411,7 @@ export default class DefaultGenerator extends AbstractGenerator {
       }
     }
     if (System.getProperty('debugModels') != null) {
-      Log.info('############ Model info ############')
+      log.info('############ Model info ############')
       Json.prettyPrint(allModels)
     }
     let paths: any = this.processPaths(this.swagger.getPaths())
@@ -479,7 +479,7 @@ export default class DefaultGenerator extends AbstractGenerator {
               !this.config.shouldOverwrite(filename) &&
               new File(filename).exists()
             ) {
-              Log.info('Skipped overwriting ' + filename)
+              log.info('Skipped overwriting ' + filename)
               continue
             }
 
@@ -507,7 +507,7 @@ export default class DefaultGenerator extends AbstractGenerator {
                   !this.config.shouldOverwrite(filename) &&
                   new File(filename).exists()
                 ) {
-                  Log.info('Skipped overwriting ' + filename)
+                  log.info('Skipped overwriting ' + filename)
                   continue
                 }
                 const written = this.processTemplateToFile(
@@ -526,7 +526,7 @@ export default class DefaultGenerator extends AbstractGenerator {
             for (const [templateName] of this.config.apiTestTemplateFiles()) {
               const filename = this.config.apiTestFilename(templateName, tag)
               if (new File(filename).exists()) {
-                Log.info('File exists. Skipped overwriting ' + filename)
+                log.info('File exists. Skipped overwriting ' + filename)
                 continue
               }
               const written = this.processTemplateToFile(
@@ -549,7 +549,7 @@ export default class DefaultGenerator extends AbstractGenerator {
                 !this.config.shouldOverwrite(filename) &&
                 new File(filename).exists()
               ) {
-                Log.info('Skipped overwriting ' + filename)
+                log.info('Skipped overwriting ' + filename)
                 continue
               }
 
@@ -569,7 +569,7 @@ export default class DefaultGenerator extends AbstractGenerator {
       }
     }
     if (System.getProperty('debugOperations') != null) {
-      Log.info('############ Operation info ############')
+      log.info('############ Operation info ############')
       Json.prettyPrint(allOperations)
     }
     const bundle = newHashMap()
@@ -620,7 +620,7 @@ export default class DefaultGenerator extends AbstractGenerator {
     }
     this.config.postProcessSupportingFileData(bundle)
     if (System.getProperty('debugSupportingFiles') != null) {
-      Log.info('############ Supporting file info ############')
+      log.info('############ Supporting file info ############')
       Json.prettyPrint(bundle)
     }
     if (generateSupportingFiles) {
@@ -637,7 +637,7 @@ export default class DefaultGenerator extends AbstractGenerator {
           const outputFilename =
             outputFolder + File.separator + (support.destinationFilename || '')
           if (!this.config.shouldOverwrite(outputFilename)) {
-            Log.info('Skipped overwriting ' + outputFilename)
+            log.info('Skipped overwriting ' + outputFilename)
             continue
           }
           let templateFile
@@ -653,7 +653,7 @@ export default class DefaultGenerator extends AbstractGenerator {
             )
           }
           if (templateFile == null) {
-            Log.warn(`Could not resolve ${support.templateFile}`)
+            log.warn(`Could not resolve ${support.templateFile}`)
             continue
           }
           let shouldGenerate = true
@@ -670,7 +670,7 @@ export default class DefaultGenerator extends AbstractGenerator {
           if (shouldGenerate) {
             if (this.ignoreProcessor.allowsFile(new File(outputFilename))) {
               if (templateFile == null) {
-                Log.warn(
+                log.warn(
                   `Could not resolve template file ${support.templateFile}`
                 )
               } else if (templateFile.endsWith('.mustache')) {
@@ -685,15 +685,13 @@ export default class DefaultGenerator extends AbstractGenerator {
                 const input = new File(templateFile)
                 const outputFile = new File(outputFilename)
                 const out = new File(outputFile)
-                Log.info('writing file ' + outputFile)
+                log.info(`writing file ${outputFile}`)
                 IOUtils.copy(input, out)
                 files.push(outputFile)
               }
             } else {
-              Log.info(
-                'Skipped generation of ' +
-                  outputFilename +
-                  ' due to rule in .swagger-codegen-ignore'
+              log.info(
+                `Skipped generation of ${outputFilename} due to rule in .swagger-codegen-ignore`
               )
             }
           }
@@ -773,10 +771,8 @@ export default class DefaultGenerator extends AbstractGenerator {
       this.writeToFile(outputFilename, tmpl.execute(templateData))
       return new File(outputFilename)
     }
-    Log.info(
-      'Skipped generation of ' +
-        outputFilename +
-        ' due to rule in .swagger-codegen-ignore'
+    log.info(
+      `Skipped generation of ${outputFilename} due to rule in .swagger-codegen-ignore`
     )
     return null
   }
@@ -811,14 +807,8 @@ export default class DefaultGenerator extends AbstractGenerator {
     }
 
     if (System.getProperty('debugOperations') != null) {
-      Log.info(
-        'processOperation: resourcePath= ' +
-          resourcePath +
-          '\t;' +
-          httpMethod +
-          ' ' +
-          operation +
-          '\n'
+      log.info(
+        `processOperation: resourcePath= ${resourcePath}\t;${httpMethod} ${operation}\n`
       )
     }
     let tags = operation.getTags()
@@ -1030,5 +1020,3 @@ export default class DefaultGenerator extends AbstractGenerator {
     return objs
   }
 }
-
-const Log = LoggerFactory.getLogger(DefaultGenerator)

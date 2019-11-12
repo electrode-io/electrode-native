@@ -4,6 +4,7 @@ import { DirectoryRule } from './DirectoryRule'
 import { RootedFileRule } from './RootedFileRule'
 import { FileRule } from './FileRule'
 import { IgnoreLineParser } from './IgnoreLineParser'
+import { log } from 'ern-core'
 
 export default function create(definition) {
   let rule
@@ -40,7 +41,7 @@ export default function create(definition) {
       }
     }
   } catch (e) {
-    console.error(e.message, e)
+    log.error(`${e.message}, ${e}`)
     return new InvalidRule(null, definition, e.message)
   }
 

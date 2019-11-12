@@ -1,5 +1,6 @@
 import pad from 'lodash/padEnd'
 import { Command } from './Command'
+import { log } from 'ern-core'
 
 const SORT_CMDS = (a, b) => a.Usage.name.localeCompare(b.Usage.name)
 
@@ -19,9 +20,9 @@ export class Help {
 
   public run() {
     const { name, description, commands = [] } = this.opts
-    console.log(`${name}\n${description}`)
+    log.info(`${name}\n${description}`)
     for (const cmd of commands.sort(SORT_CMDS)) {
-      console.log(`\t${pad(cmd.Usage.name, 20)} - ${cmd.Usage.description}`)
+      log.info(`\t${pad(cmd.Usage.name, 20)} - ${cmd.Usage.description}`)
     }
   }
 }
