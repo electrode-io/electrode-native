@@ -12,6 +12,7 @@ if (!require('fs').existsSync(require('path').join(process.cwd(), 'test'))) {
 console.log(`running tests in ${testCwd}`)
 process.argv.push('-r', 'ts-node/register')
 process.argv.push('-r', 'tsconfig-paths/register')
+process.argv.push('--file', '../ern-core/test/mocha-root-level-hooks.ts')
 if (process.env.ENV_AZURE_PIPELINE) {
   // Create `node_modules/mocha` in current module directory
   // and copy top level `node_modules/mocha/package.json` to
