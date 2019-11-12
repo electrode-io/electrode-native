@@ -220,7 +220,6 @@ describe('CauldronHelper.js', () => {
         PackagePath.fromString('https://github.com/foo/test-miniapp.git#master')
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      console.log(`MINIAPPS : ${nativeAppVersion.container.miniApps}`)
       expect(
         nativeAppVersion.container.miniApps.includes(
           'https://github.com/foo/test-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a'
@@ -296,7 +295,6 @@ describe('CauldronHelper.js', () => {
         )
       )
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0]
-      console.log(`MINIAPPS : ${nativeAppVersion.container.miniApps}`)
       expect(
         nativeAppVersion.container.miniApps.includes(
           'git+ssh://git@github.com:electrode-io/gitMiniApp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a'
