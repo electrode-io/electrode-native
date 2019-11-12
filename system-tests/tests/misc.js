@@ -41,7 +41,7 @@ run('compat-check', { expectedExitCode: 1 })
 
 // Miniapp commands
 run(`create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --language JavaScript --packageManager yarn --skipNpmCheck`)
-const miniAppPath = path.join(process.cwd(), f.systemTestMiniAppPkgName)
+const miniAppPath = path.join(process.cwd(), f.systemTestMiniAppName)
 console.log(info(`Entering ${miniAppPath}`))
 process.chdir(miniAppPath)
 run('add react-native-electrode-bridge')

@@ -20,4 +20,8 @@ const excludeFilter = [
 ].map(s => `**/${s}`).join(',')
 
 run(`create-api ${f.testApiName} -p ${f.testApiPkgName} --skipNpmCheck`)
-assert(sameDirContent(f.pathToBaseApiFixture, path.join(process.cwd(), f.testApiName), { excludeFilter }), 'Generated API differ from reference fixture !')
+
+const fixtureApiPath = f.pathToBaseApiFixture
+const generatedApiPath = path.join(process.cwd(), f.testApiPkgName)
+
+assert(sameDirContent(fixtureApiPath, generatedApiPath, { excludeFilter }), 'Generated API differ from reference fixture !')
