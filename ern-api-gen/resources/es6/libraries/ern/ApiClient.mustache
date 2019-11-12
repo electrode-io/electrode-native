@@ -1,6 +1,5 @@
 {{>licenseInfo}}
 
-
 {{#emitJSDoc}}  /**
    * @module {{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient
    * @version {{projectVersion}}
@@ -13,7 +12,6 @@
    */
 {{/emitJSDoc}}
 class ApiClient {
-
 {{#emitJSDoc}}  /**
    * Returns a string representation for an actual parameter.
    * @param param The actual parameter.
@@ -28,7 +26,6 @@ class ApiClient {
     }
     return param.toString();
   };
-
 
 {{#emitJSDoc}}  /**
    * Normalizes parameter values:
@@ -56,14 +53,14 @@ class ApiClient {
   };
 {{#emitJSDoc}}
 /**
-   * Deserializes an HTTP response body into a value of the specified type.
-   * @param {Object} response A SuperAgent response object.
-   * @param {(String|Array.<String>|Object.<String, Object>|Function)} returnType The type to return. Pass a string for simple types
-   * or the constructor function for a complex type. Pass an array containing the type name to return an array of that type. To
-   * return an object, pass an object with one property whose name is the key type and whose value is the corresponding value type:
-   * all properties on <code>data<code> will be converted to this type.
-   * @returns A value of the specified type.
-   */
+ * Deserializes an HTTP response body into a value of the specified type.
+ * @param {Object} response A SuperAgent response object.
+ * @param {(String|Array.<String>|Object.<String, Object>|Function)} returnType The type to return. Pass a string for simple types
+ * or the constructor function for a complex type. Pass an array containing the type name to return an array of that type. To
+ * return an object, pass an object with one property whose name is the key type and whose value is the corresponding value type:
+ * all properties on <code>data<code> will be converted to this type.
+ * @returns A value of the specified type.
+ */
 {{/emitJSDoc}}
     static deserialize(response, returnType) {
     if (response == null || returnType == null) {
@@ -161,9 +158,6 @@ class ApiClient {
       }
     }
   };
-
-
-
 }
 
     {{#emitJSDoc}}  /**
@@ -171,5 +165,5 @@ class ApiClient {
         * @type {module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient}
         */
     {{/emitJSDoc}}
-export const instance =  new ApiClient;
+export const instance = new ApiClient;
 export default instance;

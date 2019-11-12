@@ -12,9 +12,6 @@ const excludeFilter = [
   'index.android.bundle.meta',
   'yarn.lock',
   'README.md',
-  'WalmartItemApi.spec.js',
-  'SysteTestEventApi.spec.js',
-  'SystemTestsApi.spec.js',
   '.yarn-integrity',
 ]
   .map(s => `**/${s}`)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.testapi.ern.api;
+package com.complexapi.ern.api;
 
 import android.support.annotation.NonNull;
 
@@ -28,18 +28,17 @@ import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import java.util.UUID;
 
-import com.testapi.ern.model.Item;
 
-public final class WalmartItemApi {
+public final class SystemTestEventApi {
     private static final Requests REQUESTS;
     private static final Events EVENTS;
 
     static {
-        REQUESTS = new WalmartItemRequests();
-        EVENTS = new WalmartItemEvents();
+        REQUESTS = new SystemTestEventRequests();
+        EVENTS = new SystemTestEventEvents();
     }
 
-    private WalmartItemApi() {
+    private SystemTestEventApi() {
     }
 
     @NonNull
@@ -53,33 +52,17 @@ public final class WalmartItemApi {
     }
 
     public interface Events {
-        String EVENT_ITEM_ADDED = "com.testapi.ern.api.event.itemAdded";
+        String EVENT_TEST_EVENT = "com.complexapi.ern.api.event.testEvent";
 
-        UUID addItemAddedEventListener(
+        UUID addTestEventEventListener(
                 @NonNull final ElectrodeBridgeEventListener<String> eventListener);
 
-        ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeItemAddedEventListener(
+        ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeTestEventEventListener(
                 @NonNull final UUID uuid);
 
-        void emitItemAdded(@NonNull String itemId);
+        void emitTestEvent(@NonNull String buttonId);
     }
 
     public interface Requests {
-        String REQUEST_ADD_ITEM = "com.testapi.ern.api.request.addItem";
-        String REQUEST_FIND_ITEMS = "com.testapi.ern.api.request.findItems";
-
-        RequestHandlerHandle registerAddItemRequestHandler(
-                @NonNull final ElectrodeBridgeRequestHandler<Item, Boolean> handler);
-
-        RequestHandlerHandle registerFindItemsRequestHandler(
-                @NonNull final ElectrodeBridgeRequestHandler<Integer, List<Item>> handler);
-
-        void addItem(
-                Item item,
-                @NonNull final ElectrodeBridgeResponseListener<Boolean> responseListener);
-
-        void findItems(
-                Integer limit,
-                @NonNull final ElectrodeBridgeResponseListener<List<Item>> responseListener);
     }
 }

@@ -1,54 +1,57 @@
 // @flow
+
 export default class {{{baseName}}}Events {
-    constructor(bridge) {
-        this._bridge = bridge;
-    }
-
+  constructor(bridge) {
+    this._bridge = bridge;
+  }
 {{#operations}}
-    {{#operation}}
-        {{#isEvent}}
-            add{{{camelizedNickName}}}EventListener( eventListener: Function): string {
-            return   this._bridge.registerEventListener("{{package}}.event.{{operationId}}", eventListener);
-            }
-        {{/isEvent}}
-    {{/operation}}
+{{#operation}}
+{{#isEvent}}
+
+  add{{{camelizedNickName}}}EventListener(eventListener: Function): string {
+    return this._bridge.registerEventListener(
+      '{{package}}.event.{{operationId}}',
+      eventListener,
+    );
+  }
+{{/isEvent}}
+{{/operation}}
 {{/operations}}
-
 {{#operations}}
-    {{#operation}}
-        {{#isEvent}}
-            remove{{{camelizedNickName}}}EventListener( uuid: string): any {
-            return   this._bridge.removeEventListener(uuid);
-            }
-        {{/isEvent}}
-    {{/operation}}
+{{#operation}}
+{{#isEvent}}
+
+  remove{{{camelizedNickName}}}EventListener(uuid: string): any {
+    return this._bridge.removeEventListener(uuid);
+  }
+{{/isEvent}}
+{{/operation}}
 {{/operations}}
-
-//------------------------------------------------------------------------------------------------------------------------------------
-
 {{#operations}}
-    {{#operation}}
-        {{#isEvent}}
-            emit{{camelizedNickName}}({{_argList}}): void {
-            {{^hasParams}}
-                return this._bridge.emitEvent("{{package}}.event.{{operationId}}");
-            {{/hasParams}}
-            {{#hasSingleParam}}
-                {{#allParams}}
-                    return this._bridge.emitEvent("{{package}}.event.{{operationId}}", { data{{#required}}:{{paramName}}{{/required}}{{^required}}:opts{{/required}} });
-                {{/allParams}}
-            {{/hasSingleParam}}
-            {{^hasSingleParam}}
+{{#operation}}
+{{#isEvent}}
 
-                {{#hasParams}}
-                    {{>_methodBody}}
-                    return this._bridge.emitEvent("{{package}}.event.{{operationId}}", { data })
-                {{/hasParams}}
-            {{/hasSingleParam}}
-
-
-            }
-        {{/isEvent}}
-    {{/operation}}
+  emit{{camelizedNickName}}({{_argList}}): void {
+{{^hasParams}}
+    return this._bridge.emitEvent('{{package}}.event.{{operationId}}');
+{{/hasParams}}
+{{#hasSingleParam}}
+{{#allParams}}
+    return this._bridge.emitEvent('{{package}}.event.{{operationId}}', {
+      data{{#required}}: {{paramName}}{{/required}}{{^required}}:opts{{/required}},
+    });
+{{/allParams}}
+{{/hasSingleParam}}
+{{^hasSingleParam}}
+{{#hasParams}}
+{{>_methodBody}}
+    return this._bridge.emitEvent('{{package}}.event.{{operationId}}', {
+      data,
+    });
+{{/hasParams}}
+{{/hasSingleParam}}
+  }
+{{/isEvent}}
+{{/operation}}
 {{/operations}}
 }

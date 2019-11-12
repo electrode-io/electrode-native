@@ -1,97 +1,109 @@
 #if swift(>=4.0)
 @objcMembers public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
 
-    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+{{/first}}
+    public override func register{{{camelizedNickName}}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
-    reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}Array<Any>{{/isList}}{{/requestParam}}.self, {{#requestParam}}{{#isList}}reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
-    respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
-    requestCompletionHandler: handler)
+                                                                       reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}[Any]{{/isList}}{{/requestParam}}.self,{{#requestParam}}{{#isList}} reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
+                                                                       respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
+                                                                       requestCompletionHandler: handler)
         return requestHandlerProcessor.execute()
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
 
+{{/first}}
     public override func unregister{{{camelizedNickName}}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 
-    //------------------------------------------------------------------------------------------------------------------------------------
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
 
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
-
-    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> ()) {
+{{/first}}
+    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> Void) {
         let requestProcessor = ElectrodeRequestProcessor<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}, Any>(
             requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
-            requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil, {{/hasRequestParam}}
+            requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil,{{/hasRequestParam}}
             respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
             responseItemType: {{#responseParam}}{{#isList}}{{{baseType}}}.self{{/isList}}{{^isList}}nil{{/isList}}{{/responseParam}},
-            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? {{#responseParam}}{{{dataType}}}{{/responseParam}}, errorMessage) })
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? {{#responseParam}}{{{dataType}}}{{/responseParam}}, errorMessage) }
+        )
 
         requestProcessor.execute()
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 }
-#else
-public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
 
-    public override func register{{{camelizedNickName}}}RequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+#else
+
+public class {{{requestsImplClassName}}}: {{{classname}}}Requests {
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
+
+{{/first}}
+    public override func register{{{camelizedNickName}}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
-    reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}Array<Any>{{/isList}}{{/requestParam}}.self, {{#requestParam}}{{#isList}}reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
-    respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
-    requestCompletionHandler: handler)
+                                                                       reqClass: {{#requestParam}}{{^isList}}{{{dataType}}}{{/isList}}{{#isList}}[Any]{{/isList}}{{/requestParam}}.self,{{#requestParam}}{{#isList}} reqItemType: {{{baseType}}}.self,{{/isList}}{{/requestParam}}
+                                                                       respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
+                                                                       requestCompletionHandler: handler)
         return requestHandlerProcessor.execute()
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 
-    //------------------------------------------------------------------------------------------------------------------------------------
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
 
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
-
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
-
+{{/first}}
     public override func unregister{{{camelizedNickName}}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
-      return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
+        return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 
-    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> ()) {
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
+
+{{/first}}
+    public override func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> Void) {
         let requestProcessor = ElectrodeRequestProcessor<{{#requestParam}}{{{dataType}}}{{/requestParam}}, {{#responseParam}}{{{dataType}}}{{/responseParam}}, Any>(
             requestName: {{{classname}}}.kRequest{{{camelizedNickName}}},
-            requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil, {{/hasRequestParam}}
+            requestPayload: {{#hasRequestParam}}{{#requestParam}}{{{paramName}}},{{/requestParam}}{{/hasRequestParam}}{{^hasRequestParam}}nil,{{/hasRequestParam}}
             respClass: {{#responseParam}}{{{dataType}}}{{/responseParam}}.self,
             responseItemType: {{#responseParam}}{{#isList}}{{{baseType}}}.self{{/isList}}{{^isList}}nil{{/isList}}{{/responseParam}},
-            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? {{#responseParam}}{{{dataType}}}{{/responseParam}}, errorMessage) })
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? {{#responseParam}}{{{dataType}}}{{/responseParam}}, errorMessage) }
+        )
 
         requestProcessor.execute()
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 }
 #endif

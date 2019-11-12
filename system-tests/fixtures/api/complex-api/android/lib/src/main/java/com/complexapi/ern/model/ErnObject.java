@@ -1,15 +1,18 @@
 /*
-* Copyright 2017 WalmartLabs
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* http://www.apache.org/licenses/LICENSE-2.0
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2020 Walmart Labs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.complexapi.ern.model;
 
@@ -25,6 +28,18 @@ import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.*;
 
 public class ErnObject implements Parcelable, Bridgeable {
+    public static final Creator<ErnObject> CREATOR =
+            new Creator<ErnObject>() {
+                @Override
+                public ErnObject createFromParcel(Parcel in) {
+                    return new ErnObject(in);
+                }
+
+                @Override
+                public ErnObject[] newArray(int size) {
+                    return new ErnObject[size];
+                }
+            };
 
     private String name;
     private String value;
@@ -38,7 +53,8 @@ public class ErnObject implements Parcelable, Bridgeable {
     private Boolean isGuestUser;
     private Integer mergeType;
 
-    private ErnObject() {}
+    private ErnObject() {
+    }
 
     private ErnObject(Builder builder) {
         this.name = builder.name;
@@ -59,11 +75,11 @@ public class ErnObject implements Parcelable, Bridgeable {
     }
 
     public ErnObject(@NonNull Bundle bundle) {
-        if(!bundle.containsKey("name")){
+        if (!bundle.containsKey("name")) {
             throw new IllegalArgumentException("name property is required");
         }
 
-        if(!bundle.containsKey("version")){
+        if (!bundle.containsKey("version")) {
             throw new IllegalArgumentException("version property is required");
         }
 
@@ -79,18 +95,6 @@ public class ErnObject implements Parcelable, Bridgeable {
         this.isGuestUser = bundle.containsKey("isGuestUser") ? bundle.getBoolean("isGuestUser") : null;
         this.mergeType = getNumberValue(bundle, "mergeType") == null ? null : getNumberValue(bundle, "mergeType").intValue();
     }
-
-    public static final Creator<ErnObject> CREATOR = new Creator<ErnObject>() {
-        @Override
-        public ErnObject createFromParcel(Parcel in) {
-            return new ErnObject(in);
-        }
-
-        @Override
-        public ErnObject[] newArray(int size) {
-            return new ErnObject[size];
-        }
-    };
 
     @NonNull
     public String getName() {
@@ -133,35 +137,34 @@ public class ErnObject implements Parcelable, Bridgeable {
     }
 
     /**
-    * Right button properties
-    *
-    * @return List<NavBarButton>
-    */
+     * Right button properties
+     *
+     * @return List<NavBarButton>
+     */
     @Nullable
     public List<NavBarButton> getRightButtons() {
         return rightButtons;
     }
 
     /**
-    * specify if user is a guest
-    *
-    * @return Boolean
-    */
+     * specify if user is a guest
+     *
+     * @return Boolean
+     */
     @Nullable
     public Boolean getIsGuestUser() {
         return isGuestUser;
     }
 
     /**
-    * specify merge type
-    *
-    * @return Integer
-    */
+     * specify merge type
+     *
+     * @return Integer
+     */
     @Nullable
     public Integer getMergeType() {
         return mergeType;
     }
-
 
     @Override
     public int describeContents() {
@@ -179,31 +182,31 @@ public class ErnObject implements Parcelable, Bridgeable {
         Bundle bundle = new Bundle();
         bundle.putString("name", this.name);
         bundle.putDouble("version", this.version);
-        if(value != null) {
-            bundle.putString("value", this.value );
+        if (value != null) {
+            bundle.putString("value", this.value);
         }
-        if(domain != null) {
-            bundle.putString("domain", this.domain );
+        if (domain != null) {
+            bundle.putString("domain", this.domain);
         }
-        if(path != null) {
-            bundle.putString("path", this.path );
+        if (path != null) {
+            bundle.putString("path", this.path);
         }
-        if(uri != null) {
-            bundle.putString("uri", this.uri );
+        if (uri != null) {
+            bundle.putString("uri", this.uri);
         }
-        if(this.expiry != null) {
+        if (this.expiry != null) {
             bundle.putLong("expiry", this.expiry);
         }
-        if(this.leftButton != null) {
+        if (this.leftButton != null) {
             bundle.putBundle("leftButton", this.leftButton.toBundle());
         }
-        if(this.rightButtons != null) {
+        if (this.rightButtons != null) {
             updateBundleWithList(this.rightButtons, bundle, "rightButtons");
         }
-        if(this.isGuestUser != null) {
+        if (this.isGuestUser != null) {
             bundle.putBoolean("isGuestUser", this.isGuestUser);
         }
-        if(this.mergeType != null) {
+        if (this.mergeType != null) {
             bundle.putInt("mergeType", this.mergeType);
         }
         return bundle;
@@ -212,18 +215,18 @@ public class ErnObject implements Parcelable, Bridgeable {
     @Override
     public String toString() {
         return "{"
-        + "name:" + (name != null ? "\"" + name + "\"" : null)+ ","
-        + "value:" + (value != null ? "\"" + value + "\"" : null)+ ","
-        + "domain:" + (domain != null ? "\"" + domain + "\"" : null)+ ","
-        + "path:" + (path != null ? "\"" + path + "\"" : null)+ ","
-        + "uri:" + (uri != null ? "\"" + uri + "\"" : null)+ ","
-        + "version:" + version+ ","
-        + "expiry:" + expiry+ ","
-        + "leftButton:" + (leftButton != null ? leftButton.toString() : null)+ ","
-        + "rightButtons:" + (rightButtons != null ? rightButtons.toString() : null)+ ","
-        + "isGuestUser:" + isGuestUser+ ","
-        + "mergeType:" + mergeType
-        + "}";
+                + "name:" + (name != null ? "\"" + name + "\"" : null) + ","
+                + "value:" + (value != null ? "\"" + value + "\"" : null) + ","
+                + "domain:" + (domain != null ? "\"" + domain + "\"" : null) + ","
+                + "path:" + (path != null ? "\"" + path + "\"" : null) + ","
+                + "uri:" + (uri != null ? "\"" + uri + "\"" : null) + ","
+                + "version:" + version + ","
+                + "expiry:" + expiry + ","
+                + "leftButton:" + (leftButton != null ? leftButton.toString() : null) + ","
+                + "rightButtons:" + (rightButtons != null ? rightButtons.toString() : null) + ","
+                + "isGuestUser:" + isGuestUser + ","
+                + "mergeType:" + mergeType
+                + "}";
     }
 
     public static class Builder {
@@ -249,41 +252,49 @@ public class ErnObject implements Parcelable, Bridgeable {
             this.value = value;
             return this;
         }
+
         @NonNull
         public Builder domain(@Nullable String domain) {
             this.domain = domain;
             return this;
         }
+
         @NonNull
         public Builder path(@Nullable String path) {
             this.path = path;
             return this;
         }
+
         @NonNull
         public Builder uri(@Nullable String uri) {
             this.uri = uri;
             return this;
         }
+
         @NonNull
         public Builder expiry(@Nullable Long expiry) {
             this.expiry = expiry;
             return this;
         }
+
         @NonNull
         public Builder leftButton(@Nullable NavBarButton leftButton) {
             this.leftButton = leftButton;
             return this;
         }
+
         @NonNull
         public Builder rightButtons(@Nullable List<NavBarButton> rightButtons) {
             this.rightButtons = rightButtons;
             return this;
         }
+
         @NonNull
         public Builder isGuestUser(@Nullable Boolean isGuestUser) {
             this.isGuestUser = isGuestUser;
             return this;
         }
+
         @NonNull
         public Builder mergeType(@Nullable Integer mergeType) {
             this.mergeType = mergeType;

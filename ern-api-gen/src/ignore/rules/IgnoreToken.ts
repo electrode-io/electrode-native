@@ -1,6 +1,3 @@
-/**
- * Created by jspear1 on 3/6/17.
- */
 export class IgnoreToken {
   public name
   public pattern

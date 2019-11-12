@@ -1,6 +1,5 @@
 #if swift(>=4.0)
 @objcMembers public class TestMultiArgsData: ElectrodeObject, Bridgeable {
-
     private static let tag = String(describing: type(of: self))
 
     public let key1: String
@@ -13,23 +12,22 @@
     }
 
     public override init() {
-        self.key1 = String()
-        self.key2 = Int()
+        key1 = String()
+        key2 = Int()
         super.init()
     }
 
-    required public init(dictionary:[AnyHashable:Any]) {
+    public required init(dictionary: [AnyHashable: Any]) {
         if
-
-                let key1 = dictionary["key1"] as? String,
-
-                let key2 = dictionary["key2"] as? Int { 
+            let key1 = dictionary["key1"] as? String,
+            let key2 = dictionary["key2"] as? Int
+        {
             self.key1 = key1
             self.key2 = key2
         } else {
             assertionFailure("\(TestMultiArgsData.tag) missing one or more required properties[key1,key2]")
-            self.key1 = dictionary["key1"] as! String
-            self.key2 = dictionary["key2"] as! Int
+            key1 = dictionary["key1"] as! String
+            key2 = dictionary["key2"] as! Int
         }
 
 
@@ -37,18 +35,18 @@
     }
 
     public func toDictionary() -> NSDictionary {
-        var dict =  [
-            "key1": self.key1,
-            "key2": self.key2
-        ] as [AnyHashable : Any]
+        var dict = [
+            "key1": key1,
+            "key2": key2,
+        ] as [AnyHashable: Any]
 
         return dict as NSDictionary
     }
-
 }
+
 #else
-public class TestMultiArgsData: ElectrodeObject, Bridgeable {
 
+public class TestMultiArgsData: ElectrodeObject, Bridgeable {
     private static let tag = String(describing: type(of: self))
 
     public let key1: String
@@ -61,23 +59,22 @@ public class TestMultiArgsData: ElectrodeObject, Bridgeable {
     }
 
     public override init() {
-        self.key1 = String()
-        self.key2 = Int()
+        key1 = String()
+        key2 = Int()
         super.init()
     }
 
-    required public init(dictionary:[AnyHashable:Any]) {
+    public required init(dictionary: [AnyHashable: Any]) {
         if
-
-                let key1 = dictionary["key1"] as? String,
-
-                let key2 = dictionary["key2"] as? Int { 
+            let key1 = dictionary["key1"] as? String,
+            let key2 = dictionary["key2"] as? Int
+        {
             self.key1 = key1
             self.key2 = key2
         } else {
             assertionFailure("\(TestMultiArgsData.tag) missing one or more required properties[key1,key2]")
-            self.key1 = dictionary["key1"] as! String
-            self.key2 = dictionary["key2"] as! Int
+            key1 = dictionary["key1"] as! String
+            key2 = dictionary["key2"] as! Int
         }
 
 
@@ -85,13 +82,13 @@ public class TestMultiArgsData: ElectrodeObject, Bridgeable {
     }
 
     public func toDictionary() -> NSDictionary {
-        var dict =  [
-            "key1": self.key1,
-            "key2": self.key2
-        ] as [AnyHashable : Any]
+        var dict = [
+            "key1": key1,
+            "key2": key2,
+        ] as [AnyHashable: Any]
 
         return dict as NSDictionary
     }
-
 }
+
 #endif

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "Test schema to demonstrate ComplexAPI ",
+    "description": "Test schema to demonstrate ComplexAPI",
     "title": "Complex Api"
   },
   "produces": [
@@ -77,7 +77,7 @@
     "event/testEvent": {
       "event": {
         "tags": [
-          "SysteTestEvent"
+          "SystemTestEvent"
         ],
         "operationId": "testEvent",
         "parameters": [

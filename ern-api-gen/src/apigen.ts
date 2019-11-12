@@ -104,11 +104,11 @@ export async function regenerateCode(options: any = {}) {
   )
 
   await generateSwagger(config, process.cwd())
-  log.info('== API generation complete !')
+  log.info('== API generation complete.')
 
   isNewVersion
     ? await publish(await readPackage())
-    : log.info('O.K, make sure you bump the version and NPM publish if needed.')
+    : log.info('Done. Make sure to update the version and npm publish if needed.')
 }
 
 export async function cleanGenerated(outFolder: string = process.cwd()) {
@@ -156,7 +156,7 @@ const nextVersion = (curVersion: string, userPluginVer: string) => {
           return ret
         }
       } catch (e) {
-        log.info(`not a valid version: ${userPluginVer}`)
+        log.info(`Not a valid version: ${userPluginVer}`)
       }
     }
   }
@@ -173,7 +173,7 @@ async function _promptForPluginVersion(curVersion: string) {
   const ret = nextVersion(curVersion, userPluginVer)
   if (ret == null) {
     log.info(
-      'Enter valid version number. For more details visit https://github.com/npm/node-semver'
+      'Enter a valid version. For more details visit https://github.com/npm/node-semver'
     )
     return _promptForPluginVersion(curVersion)
   }
@@ -225,7 +225,7 @@ function _promptForMissMatchOfSupportedPlugins(
 ): Promise<string> {
   return inquirer.prompt([
     {
-      message: `Type new plugin version for ${pluginName}. Press Enter to use the default '${curVersion}'.`,
+      message: `Type the new plugin version for ${pluginName}. Press Enter to use the default '${curVersion}'.`,
       name: 'userPluginVer',
       type: 'input',
     },
@@ -235,7 +235,7 @@ function _promptForMissMatchOfSupportedPlugins(
 async function publish({ version }: { version: string }) {
   const answers = await inquirer.prompt([
     <inquirer.Question>{
-      message: `Would you like to NPM publish version [${version}] of this API ?`,
+      message: `Would you like to npm publish version [${version}] of this API?`,
       name: 'confirmNpmPublish',
       type: 'confirm',
     },
