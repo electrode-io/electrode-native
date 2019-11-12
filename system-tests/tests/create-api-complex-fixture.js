@@ -19,5 +19,9 @@ const excludeFilter = [
   '.yarn-integrity'
 ].map(s => `**/${s}`).join(',')
 
-run(`create-api ${f.complexApiName} -p ${f.testApiPkgName}  --schemaPath ${f.pathToComplexApiSchema} --skipNpmCheck`)
-assert(sameDirContent(f.pathToComplexApiFixture, path.join(process.cwd(), f.complexApiName), {excludeFilter}), 'Generated API differ from reference fixture !')
+run(`create-api ${f.complexApiName} -p ${f.complexApiPkgName} --schemaPath ${f.pathToComplexApiSchema} --skipNpmCheck`)
+
+const fixtureApiPath = f.pathToComplexApiFixture
+const generatedApiPath = path.join(process.cwd(), f.complexApiPkgName)
+
+assert(sameDirContent(fixtureApiPath, generatedApiPath, {excludeFilter}), 'Generated API differ from reference fixture !')

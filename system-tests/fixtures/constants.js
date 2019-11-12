@@ -31,8 +31,8 @@ const pathConstants = {
   pathToNativeApiImplFixture: path.join(__dirname, 'api-impl-native'),
   pathToAndroidContainerFixture: path.join(__dirname, 'android-container'),
   pathToIosContainerFixture: path.join(__dirname, 'ios-container'),
-  pathToBaseApiFixture: path.join(__dirname, 'api', baseConstants.testApiName),
-  pathToComplexApiFixture: path.join(__dirname, 'api', baseConstants.complexApiName),
+  pathToBaseApiFixture: path.join(__dirname, 'api', baseConstants.testApiPkgName),
+  pathToComplexApiFixture: path.join(__dirname, 'api', baseConstants.complexApiPkgName),
   pathToComplexApiSchema: path.join(__dirname, 'api', 'complexapi-schema.json'),
   pathToTestApiSchema: path.join(__dirname, 'api', 'testapi-schema.json')
 }
