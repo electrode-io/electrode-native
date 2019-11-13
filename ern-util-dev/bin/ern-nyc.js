@@ -23,6 +23,8 @@ process.argv.push(
   'tsconfig-paths/register',
   '-r',
   'ts-node/register',
+  '--file',
+  '../ern-core/test/mocha-root-level-hooks.ts',
   '--full-trace',
   '--bail',
   'test/*-test.{ts,js}'
