@@ -149,13 +149,17 @@ async function generateFullComposite(
         outDir,
       })
     }
+    if (resolutions) {
+      // This function should be be called prior to applying
+      // any file patches in node_modules, as it will run
+      // `yarn install`, thus potentially clearing any previously
+      // applied patches
+      await applyYarnResolutions({ outDir, resolutions })
+    }
     await addBabelrcRoots({ outDir })
     await createCompositeBabelRc({ outDir })
     await createMetroConfigJs({ outDir })
     await createRnCliConfig({ outDir })
-    if (resolutions) {
-      await applyYarnResolutions({ outDir, resolutions })
-    }
     const rnVersion = await getCompositeReactNativeVersion({ outDir })
     await addReactNativeDependencyToPackageJson(outDir, rnVersion)
     if (semver.lt(rnVersion, '0.60.0')) {
