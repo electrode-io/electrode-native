@@ -223,8 +223,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`)
     if (semver.gt(reactNativeVersion, '0.57.0') && !template) {
       fs.writeFileSync(
         path.join(miniAppPath, 'metro.config.js'),
-        `
-const blacklist = require('metro-config/src/defaults/blacklist');
+        `const blacklist = require('metro-config/src/defaults/blacklist');
 module.exports = {
   resolver: {
     blacklistRE: blacklist([
@@ -233,8 +232,8 @@ module.exports = {
       // ignore git directories
       /.*\\.git\\/.*/,
       // Ignore android directories
-      /.*\\/app\\/build\\/.*/
-    ])
+      /.*\\/app\\/build\\/.*/,
+    ]),
   },
   transformer: {
     getTransformOptions: async () => ({
