@@ -4,13 +4,12 @@ import generateProject, {
   generatePackageJson,
 } from './generateProject'
 import normalizeConfig from './normalizeConfig'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
 import { PKG_FILE, FLOW_CONFIG_FILE } from './Constants'
 import {
   PackagePath,
-  fileUtils,
   shell,
   childProcess,
   utils as coreUtils,
@@ -30,7 +29,7 @@ export async function generateApi(options: any) {
   const config: any = normalizeConfig(options)
 
   const outFolder = path.join(process.cwd(), config.packageName)
-  if (fs.existsSync(outFolder)) {
+  if (fs.pathExistsSync(outFolder)) {
     log.error(`${outFolder} directory already exists`)
     process.exit(1)
   }
@@ -94,12 +93,12 @@ export async function regenerateCode(options: any = {}) {
   await cleanGenerated()
 
   // Regenerate package.json
-  fileUtils.writeFile(
+  await fs.writeFile(
     path.join(process.cwd(), PKG_FILE),
     generatePackageJson(config)
   )
   // Regenerate .flowconfig file
-  fileUtils.writeFile(
+  await fs.writeFile(
     path.join(process.cwd(), FLOW_CONFIG_FILE),
     generateFlowConfig()
   )
@@ -135,7 +134,7 @@ async function validateApiNameAndGetPackageJson(message: string) {
 }
 
 async function readPackage() {
-  return fileUtils.readJSON(path.join(process.cwd(), PKG_FILE))
+  return fs.readJson(path.join(process.cwd(), PKG_FILE))
 }
 
 const nextVersion = (curVersion: string, userPluginVer: string) => {

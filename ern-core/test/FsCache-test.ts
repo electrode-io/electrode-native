@@ -1,6 +1,5 @@
 import { assert, expect } from 'chai'
 import { FsCache, maxDefaultCacheSize } from '../src/FsCache'
-import { writeFile } from '../src/fileUtil'
 import { doesThrow, doesNotThrow } from 'ern-util-dev'
 import shell from '../src/shell'
 import path from 'path'

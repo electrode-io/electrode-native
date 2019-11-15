@@ -1,7 +1,7 @@
 import { NativePlatform } from 'ern-core'
 import { getContainerMetadataPath } from './getContainerMetadataPath'
 import { inferContainerPlatform } from './inferContainerPlatform'
-import fs from 'fs'
+import fs from 'fs-extra'
 
 /**
  * Get the native platform of a Container given its path.
@@ -12,11 +12,11 @@ import fs from 'fs'
  * @param containerPath Local file system path to the Container
  */
 export function getContainerPlatform(containerPath: string): NativePlatform {
-  if (!fs.existsSync(containerPath)) {
+  if (!fs.pathExistsSync(containerPath)) {
     throw new Error(`${containerPath} does not exist`)
   }
   const containerMetadataPath = getContainerMetadataPath(containerPath)
-  if (!fs.existsSync(containerMetadataPath)) {
+  if (!fs.pathExistsSync(containerMetadataPath)) {
     return inferContainerPlatform(containerPath)
   }
 

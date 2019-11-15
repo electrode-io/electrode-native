@@ -20,6 +20,7 @@ import {
 } from './types'
 import CauldronApi from './CauldronApi'
 import semver from 'semver'
+import fs from 'fs-extra'
 
 //
 // Helper class to access the cauldron
@@ -363,7 +364,7 @@ export class CauldronHelper {
     localFilePath: string
     cauldronFilePath: string
   }) {
-    const fileContent = await fileUtils.readFile(localFilePath)
+    const fileContent = await fs.readFile(localFilePath)
     const isExecutable = await fileUtils.isExecutable(localFilePath)
     return this.cauldron.addFile({
       cauldronFilePath,
@@ -379,7 +380,7 @@ export class CauldronHelper {
     localFilePath: string
     cauldronFilePath: string
   }) {
-    const fileContent = await fileUtils.readFile(localFilePath)
+    const fileContent = await fs.readFile(localFilePath)
     const isExecutable = await fileUtils.isExecutable(localFilePath)
     return this.cauldron.updateFile({
       cauldronFilePath,
@@ -416,7 +417,7 @@ export class CauldronHelper {
     key: string,
     yarnlockPath: string
   ): Promise<string> {
-    const yarnLockFile = await fileUtils.readFile(yarnlockPath)
+    const yarnLockFile = await fs.readFile(yarnlockPath)
     return this.cauldron.addYarnLock(descriptor, key, yarnLockFile)
   }
 
@@ -446,7 +447,7 @@ export class CauldronHelper {
     key: string,
     yarnlockPath: string
   ): Promise<boolean> {
-    const yarnLockFile = await fileUtils.readFile(yarnlockPath)
+    const yarnLockFile = await fs.readFile(yarnlockPath)
     return this.cauldron.updateYarnLock(descriptor, key, yarnLockFile)
   }
 

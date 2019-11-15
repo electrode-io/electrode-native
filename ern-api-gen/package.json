@@ -53,6 +53,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "ern-core": "1000.0.0",
+    "fs-extra": "^8.1.0",
     "inquirer": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "lodash": "^4.17.14",

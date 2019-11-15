@@ -1,7 +1,7 @@
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import g2js from 'gradle-to-js/lib/parser'
-import { readFile } from './fileUtil'
+import fs from 'fs-extra'
 import Mustache from 'mustache'
 import log from './log'
 
@@ -160,8 +160,8 @@ It might be needed to manually update the plugin config to make it a configurabl
       candidates = this.files.filter(x => x.endsWith('.java'))
     }
     for (const candidate of candidates) {
-      const content = await readFile(path.join(this.root, candidate))
-      if (/implements ReactPackage/.test(content)) {
+      const content = await fs.readFile(path.join(this.root, candidate))
+      if (/implements ReactPackage/.test(content.toString())) {
         // Found it ! Unless there are multiple ReactPackage impls
         // Should check if that's the case and fail
         result = candidate
@@ -174,8 +174,8 @@ It might be needed to manually update the plugin config to make it a configurabl
   }
 
   public async getJavaPackageDeclarationFromSource(p: string): Promise<string> {
-    const content = await readFile(p)
-    const match = content.match(/package (.+);/)
+    const content = await fs.readFile(p)
+    const match = content.toString().match(/package (.+);/)
     if (!match) {
       throw new Error(`No package declaration found in ${p}`)
     }
@@ -183,8 +183,8 @@ It might be needed to manually update the plugin config to make it a configurabl
   }
 
   public async getClassNameFromSource(p: string): Promise<string> {
-    const content = await readFile(p)
-    const match = content.match(/class (.+) implements ReactPackage/)
+    const content = await fs.readFile(p)
+    const match = content.toString().match(/class (.+) implements ReactPackage/)
     if (!match) {
       throw new Error(`No class implementing ReactPackage found in ${p}`)
     }
@@ -195,18 +195,18 @@ It might be needed to manually update the plugin config to make it a configurabl
     p: string,
     className: string
   ): Promise<boolean> {
-    const content = await readFile(p)
+    const content = await fs.readFile(p)
     const re = new RegExp(`public ${className}\\((\\t*|\\s*)\\)`, 'g')
-    return re.test(content)
+    return re.test(content.toString())
   }
 
   public async hasNonDefaultConstructor(
     p: string,
     className: string
   ): Promise<any | null> {
-    const content = await readFile(p)
+    const content = await fs.readFile(p)
     const re = new RegExp(`public ${className}\\(\\S+`, 'g')
-    const match = content.match(re)
+    const match = content.toString().match(re)
     return match && match.length > 0
   }
 

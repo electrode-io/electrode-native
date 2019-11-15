@@ -1,7 +1,7 @@
 import BaseGit from './BaseGit'
 import fs from 'fs-extra'
 import path from 'path'
-import { log, shell, fileUtils } from 'ern-core'
+import { shell } from 'ern-core'
 import { ICauldronFileStore } from './types'
 
 export default class GitFileStore extends BaseGit
@@ -33,7 +33,7 @@ export default class GitFileStore extends BaseGit
     const storeDirectoryPath = path.resolve(this.fsPath, path.dirname(filePath))
     await fs.ensureDir(storeDirectoryPath)
     const pathToFile = path.resolve(storeDirectoryPath, path.basename(filePath))
-    await fileUtils.writeFile(pathToFile, content, { flag: 'w' })
+    await fs.writeFile(pathToFile, content, { flag: 'w' })
     if (fileMode) {
       shell.chmod(fileMode, pathToFile)
     }
@@ -56,21 +56,21 @@ export default class GitFileStore extends BaseGit
 
   public async getPathToFile(filePath: string): Promise<string | void> {
     await this.sync()
-    if (fs.existsSync(this.pathToFile(filePath))) {
+    if (await fs.pathExists(this.pathToFile(filePath))) {
       return this.pathToFile(filePath)
     }
   }
 
   public async getFile(filePath: string): Promise<Buffer | void> {
     await this.sync()
-    if (fs.existsSync(this.pathToFile(filePath))) {
-      return fs.readFileSync(this.pathToFile(filePath))
+    if (await fs.pathExists(this.pathToFile(filePath))) {
+      return fs.readFile(this.pathToFile(filePath))
     }
   }
 
   public async removeFile(filePath: string): Promise<boolean> {
     await this.sync()
-    if (fs.existsSync(this.pathToFile(filePath))) {
+    if (await fs.pathExists(this.pathToFile(filePath))) {
       await this.git.rm(this.pathToFile(filePath))
       if (!this.pendingTransaction) {
         await this.git.commit(`Remove file ${filePath}`)

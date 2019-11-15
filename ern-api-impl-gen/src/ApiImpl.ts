@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import path from 'path'
 import {
@@ -77,7 +77,7 @@ async function createOutputDirectory(
   outputDirectoryPath: string,
   forceGenerate: boolean
 ) {
-  if (!forceGenerate && fs.existsSync(outputDirectoryPath)) {
+  if (!forceGenerate && (await fs.pathExists(outputDirectoryPath))) {
     const { shouldRegenerate } = await inquirer.prompt(<inquirer.Question>{
       default: false,
       message: `An implementation directory already exists in ${outputDirectoryPath}. Do you want to delete this and regenerate this project?`,
@@ -92,7 +92,7 @@ async function createOutputDirectory(
     }
   }
 
-  if (forceGenerate && fs.existsSync(outputDirectoryPath)) {
+  if (forceGenerate && (await fs.pathExists(outputDirectoryPath))) {
     log.info(
       `Deleting the existing directory and recreating a new one in ${outputDirectoryPath}`
     )
@@ -143,10 +143,7 @@ async function createNodePackage(
   }
 }
 
-function formOutputDirectoryName(
-  outputName: string,
-  outputPath: string
-) {
+function formOutputDirectoryName(outputName: string, outputPath: string) {
   return path.join(outputPath ? outputPath : process.cwd(), outputName)
 }
 

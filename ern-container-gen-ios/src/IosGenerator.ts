@@ -18,7 +18,7 @@ import {
   generateContainer,
 } from 'ern-container-gen'
 
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import xcode from 'xcode-ern'
 import _ from 'lodash'
@@ -149,7 +149,7 @@ export default class IosGenerator implements ContainerGenerator {
     )
     if (
       path.dirname(tail) === 'IOS' &&
-      fs.existsSync(
+      fs.pathExistsSync(
         path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs))
       )
     ) {

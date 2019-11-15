@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import { ApiGen } from 'ern-api-gen'
 import {
   PackagePath,
@@ -88,7 +88,7 @@ export const commandHandler = async ({
     })
   }
 
-  if (schemaPath && !fs.existsSync(schemaPath)) {
+  if (schemaPath && !(await fs.pathExists(schemaPath))) {
     throw new Error(`Cannot resolve path to ${schemaPath}`)
   }
 

@@ -1,6 +1,6 @@
 import path from 'path'
-import fs from 'fs'
-import { fileUtils, ModuleTypes, log } from 'ern-core'
+import fs from 'fs-extra'
+import { ModuleTypes } from 'ern-core'
 import { CodegenConfigurator, DefaultGenerator } from './index'
 import {
   PKG_FILE,
@@ -108,7 +108,7 @@ export async function generateInitialSchema({
     apiSchemaPath && fs.existsSync(apiSchemaPath)
       ? apiSchemaPath
       : path.join(__dirname, '..', INITIAL_SCHEMA_FILE)
-  return fileUtils.readFile(pathToSchemaFile)
+  return fs.readFile(pathToSchemaFile)
 }
 
 export function generateFlowConfig(): string {
@@ -128,15 +128,15 @@ export default async function generateProject(
   config: any = {},
   outFolder: string
 ) {
-  await fileUtils.writeFile(
+  await fs.writeFile(
     path.join(outFolder, PKG_FILE),
     generatePackageJson(config)
   )
-  await fileUtils.writeFile(
+  await fs.writeFile(
     path.join(outFolder, MODEL_FILE),
     await generateInitialSchema(config)
   )
-  await fileUtils.writeFile(
+  await fs.writeFile(
     path.join(outFolder, FLOW_CONFIG_FILE),
     generateFlowConfig()
   )
