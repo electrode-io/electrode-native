@@ -19,7 +19,7 @@ import * as compatibility from './compatibility'
 import _ from 'lodash'
 import path from 'path'
 import shell from 'shelljs'
-import fs from 'fs'
+import fs from 'fs-extra'
 import semver from 'semver'
 
 export async function performCodePushPatch(
@@ -461,7 +461,7 @@ export async function performCodePushOtaUpdate(
       )
 
       const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
-      if (fs.existsSync(pathToNewYarnLock)) {
+      if (await fs.pathExists(pathToNewYarnLock)) {
         await kax
           .task('Adding yarn.lock to Cauldron')
           .run(

@@ -1,5 +1,4 @@
-import * as fileUtils from './fileUtil'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import shell from './shell'
 import createTmpDir from './createTmpDir'
@@ -38,7 +37,7 @@ export default class ReactNativeCli {
   ) {
     const dir = path.join(process.cwd(), appName)
 
-    if (fs.existsSync(dir)) {
+    if (await fs.pathExists(dir)) {
       throw new Error(`Path already exists will not override ${dir}`)
     }
 
@@ -205,7 +204,7 @@ ${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
   }): Promise<string> {
     const tmpDir = createTmpDir()
     const tmpScriptPath = path.join(tmpDir, scriptFileName)
-    await fileUtils.writeFile(
+    await fs.writeFile(
       tmpScriptPath,
       `
 cd ${cwd}

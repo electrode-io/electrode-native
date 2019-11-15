@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
-import { log, gitCli, fileUtils } from 'ern-core'
+import { log, gitCli } from 'ern-core'
 import { ITransactional } from './types'
 
 const GIT_REMOTE_NAME = 'upstream'
@@ -44,7 +44,7 @@ export default class BaseGit implements ITransactional {
 
   public async sync(): Promise<boolean> {
     if (!this.repository) {
-      if (!fs.existsSync(path.resolve(this.fsPath, '.git'))) {
+      if (!(await fs.pathExists(path.resolve(this.fsPath, '.git')))) {
         await this.git.init()
         await this.doInitialCommit()
       }
@@ -62,7 +62,7 @@ export default class BaseGit implements ITransactional {
 
     log.debug(`[BaseGit] Syncing ${this.fsPath}`)
 
-    if (!fs.existsSync(path.resolve(this.fsPath, '.git'))) {
+    if (!(await fs.pathExists(path.resolve(this.fsPath, '.git')))) {
       log.debug(`[BaseGit] New local git repository creation`)
       await this.git.init()
       await this.git.addRemote(GIT_REMOTE_NAME, this.repository)
@@ -120,10 +120,10 @@ export default class BaseGit implements ITransactional {
 
   private async doInitialCommit() {
     const fpath = path.resolve(this.fsPath, 'README.md')
-    if (!fs.existsSync(fpath)) {
+    if (!(await fs.pathExists(fpath))) {
       log.debug(`[BaseGit] Performing initial commit`)
       await this.git.raw(['checkout', '-b', this.branch])
-      await fileUtils.writeFile(fpath, README)
+      await fs.writeFile(fpath, README)
       await this.git.add('README.md')
       await this.git.commit('First Commit!')
     }

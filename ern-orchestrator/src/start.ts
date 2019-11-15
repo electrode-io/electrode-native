@@ -107,7 +107,9 @@ export default async function start({
 
   const packagesLinks = packageLinksConfig.getAll()
   const linkedPackages = Object.keys(packagesLinks).filter(
-    p => fs.existsSync(packagesLinks[p].localPath) && packagesLinks[p].isEnabled
+    p =>
+      fs.pathExistsSync(packagesLinks[p].localPath) &&
+      packagesLinks[p].isEnabled
   )
 
   // Auto link file based miniapps

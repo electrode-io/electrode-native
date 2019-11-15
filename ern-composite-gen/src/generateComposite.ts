@@ -6,7 +6,6 @@ import {
   yarn,
   readPackageJson,
   writePackageJson,
-  fileUtils,
   kax,
   YarnLockParser,
 } from 'ern-core'
@@ -17,7 +16,7 @@ import {
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas,
 } from './miniAppsDeltasUtils'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
 import _ from 'lodash'
@@ -72,7 +71,7 @@ async function generateCompositeFromBase(
     )
   }
 
-  if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
+  if ((await fs.pathExists(outDir)) && (await fs.readdir(outDir)).length > 0) {
     throw new Error(
       `${outDir} directory exists and is not empty.
 Composite output directory should either not exist (it will be created) or should be empty.`
@@ -121,7 +120,7 @@ async function generateFullComposite(
     resolutions?: { [pkg: string]: string }
   } = {}
 ) {
-  if (fs.existsSync(outDir)) {
+  if (await fs.pathExists(outDir)) {
     await kax
       .task('Cleaning up existing composite directory')
       .run(cleanupCompositeDir(outDir))
@@ -197,7 +196,7 @@ async function installJsPackagesUsingYarnLock({
     )
   }
 
-  if (!fs.existsSync(pathToYarnLock)) {
+  if (!(await fs.pathExists(pathToYarnLock))) {
     throw new Error(
       `[generateComposite] Path to yarn.lock does not exist (${pathToYarnLock})`
     )
@@ -206,7 +205,7 @@ async function installJsPackagesUsingYarnLock({
   log.debug(`Copying yarn.lock to ${outDir}`)
   shell.cp(pathToYarnLock, path.join(outDir, 'yarn.lock'))
 
-  const yarnLock = fs.readFileSync(pathToYarnLock, 'utf8')
+  const yarnLock = await fs.readFile(pathToYarnLock, 'utf8')
   const miniAppsDeltas: MiniAppsDeltas = getMiniAppsDeltas(jsPackages, yarnLock)
 
   log.debug(
@@ -255,19 +254,13 @@ async function createIndexJsBasedOnPackageJson({ outDir }) {
     dependencies.push(dependency)
   }
 
-  await fileUtils.writeFile(path.join(outDir, 'index.js'), entryIndexJsContent)
+  await fs.writeFile(path.join(outDir, 'index.js'), entryIndexJsContent)
   // Still also generate index.android.js and index.ios.js for backward compatibility with
   // Container generated with Electrode Native < 0.33.0, as these Containers are still
   // looking for these files.
   // TO BE REMOVED IN 0.40.0
-  await fileUtils.writeFile(
-    path.join(outDir, 'index.ios.js'),
-    entryIndexJsContent
-  )
-  await fileUtils.writeFile(
-    path.join(outDir, 'index.android.js'),
-    entryIndexJsContent
-  )
+  await fs.writeFile(path.join(outDir, 'index.ios.js'), entryIndexJsContent)
+  await fs.writeFile(path.join(outDir, 'index.android.js'), entryIndexJsContent)
 }
 
 async function createCompositeImportsJsBasedOnPackageJson({ outDir }) {
@@ -280,7 +273,7 @@ async function createCompositeImportsJsBasedOnPackageJson({ outDir }) {
     dependencies.push(dependency)
   }
 
-  await fileUtils.writeFile(path.join(outDir, 'composite-imports.js'), content)
+  await fs.writeFile(path.join(outDir, 'composite-imports.js'), content)
 }
 
 async function addStartScriptToPackageJson({ outDir }: { outDir: string }) {
@@ -312,7 +305,7 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
   const babelRcRootsRe: RegExp[] = []
   const babelRcRootsPaths: string[] = []
   for (const dependency of dependencies) {
-    if (fs.existsSync(path.join(compositeNodeModulesPath, dependency))) {
+    if (await fs.pathExists(path.join(compositeNodeModulesPath, dependency))) {
       const depPackageJson = await readPackageJson(
         path.join(compositeNodeModulesPath, dependency)
       )
@@ -356,7 +349,7 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
         compositeNodeModulesPath,
         '@react-native-community/cli/node_modules/metro-react-native-babel-transformer/src/index.js'
       )
-      if (fs.existsSync(pathInCommunityCli)) {
+      if (await fs.pathExists(pathInCommunityCli)) {
         pathToFileToPatch = pathInCommunityCli
       } else {
         pathToFileToPatch = path.join(
@@ -366,15 +359,15 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
       }
     }
 
-    const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
+    const fileToPatch = await fs.readFile(pathToFileToPatch)
     const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`
     // Just add extra code line to inject babelrcRoots option
 
     const patch = `extraConfig.babelrcRoots = [
 ${babelRcRootsRe.map(b => b.toString()).join(',')} ]
 ${lineToPatch}`
-    const patchedFile = fileToPatch.replace(lineToPatch, patch)
-    await fileUtils.writeFile(pathToFileToPatch, patchedFile)
+    const patchedFile = fileToPatch.toString().replace(lineToPatch, patch)
+    await fs.writeFile(pathToFileToPatch, patchedFile)
   }
 
   // If React Native version is less than 0.56 it is still using Babel 6.
@@ -437,7 +430,7 @@ async function getCompositeMetroVersion({
   const compositeNodeModulesPath = path.join(outDir, 'node_modules')
   const pathToMetroNodeModuleDir = path.join(compositeNodeModulesPath, 'metro')
   let metroPackageJson
-  if (fs.existsSync(pathToMetroNodeModuleDir)) {
+  if (await fs.pathExists(pathToMetroNodeModuleDir)) {
     metroPackageJson = await readPackageJson(pathToMetroNodeModuleDir)
   }
   return metroPackageJson ? metroPackageJson.version : '0.0.0'
@@ -455,9 +448,11 @@ async function patchMetro51({ outDir }: { outDir: string }) {
     const stringToReplace = `const assetNames = resolveAsset(dirPath, fileNameHint, platform);`
     const replacementString = `let assetNames;
     try { assetNames = resolveAsset(dirPath, fileNameHint, platform); } catch (e) {}`
-    const fileToPatch = await fileUtils.readFile(pathToFileToPatch)
-    const patchedFile = fileToPatch.replace(stringToReplace, replacementString)
-    return fileUtils.writeFile(pathToFileToPatch, patchedFile)
+    const fileToPatch = await fs.readFile(pathToFileToPatch)
+    const patchedFile = fileToPatch
+      .toString()
+      .replace(stringToReplace, replacementString)
+    return fs.writeFile(pathToFileToPatch, patchedFile)
   }
 }
 
@@ -482,10 +477,12 @@ async function patchMetroBabelEnv({ outDir }: { outDir: string }) {
   const replacementString =
     'if (OLD_BABEL_ENV) { process.env.BABEL_ENV = OLD_BABEL_ENV; }'
   for (const fileToPatch of filesToPach) {
-    if (fs.existsSync(fileToPatch)) {
-      const file = await fileUtils.readFile(fileToPatch)
-      const patchedFile = file.replace(stringToReplace, replacementString)
-      await fileUtils.writeFile(fileToPatch, patchedFile)
+    if (await fs.pathExists(fileToPatch)) {
+      const file = await fs.readFile(fileToPatch)
+      const patchedFile = file
+        .toString()
+        .replace(stringToReplace, replacementString)
+      await fs.writeFile(fileToPatch, patchedFile)
     }
   }
 }
@@ -608,14 +605,14 @@ async function createCompositeBabelRc({ outDir }: { outDir: string }) {
     compositeBabelRc.presets = ['react-native']
   }
 
-  return fileUtils.writeFile(
+  return fs.writeFile(
     path.join(outDir, '.babelrc'),
     JSON.stringify(compositeBabelRc, null, 2)
   )
 }
 
 async function createMetroConfigJs({ outDir }: { outDir: string }) {
-  return fileUtils.writeFile(
+  return fs.writeFile(
     path.join(outDir, 'metro.config.js'),
     `const blacklist = require('metro-config/src/defaults/blacklist');
 module.exports = {
@@ -655,7 +652,7 @@ async function createRnCliConfig({ outDir }: { outDir: string }) {
     sourceExts =
       "module.exports = { getSourceExts: () => ['jsx', 'js', 'ts', 'tsx', 'mjs'] }"
   }
-  await fileUtils.writeFile(path.join(outDir, 'rn-cli.config.js'), sourceExts)
+  await fs.writeFile(path.join(outDir, 'rn-cli.config.js'), sourceExts)
 }
 
 async function installJsPackages({

@@ -4,13 +4,12 @@ import {
   ModuleTypes,
   utils as coreUtils,
   yarn,
-  fileUtils,
   PackagePath,
   log,
 } from 'ern-core'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import semver from 'semver'
 import { Argv } from 'yargs'
 
@@ -105,12 +104,12 @@ export const handler = async ({
   async function readPackageJson(): Promise<any> {
     const packageJsonPath = path.join(process.cwd(), 'package.json')
     log.debug(`Reading package json: ${packageJsonPath}`)
-    if (!fs.existsSync(packageJsonPath)) {
+    if (!(await fs.pathExists(packageJsonPath))) {
       log.error(`${packageJsonPath} not found`)
       throw new Error(ERROR_MSG_NOT_IN_IMPL)
     }
 
-    const apiImplPackage = await fileUtils.readJSON(packageJsonPath)
+    const apiImplPackage = await fs.readJson(packageJsonPath)
     if (
       !apiImplPackage.ern ||
       (apiImplPackage.ern.moduleType !== ModuleTypes.NATIVE_API_IMPL &&
@@ -168,11 +167,6 @@ export const handler = async ({
 
   function getPlatforms(): string[] {
     const nativeDirectory = path.join(process.cwd(), 'android')
-
-    if (fs.existsSync(nativeDirectory)) {
-      return ['android', 'ios']
-    } else {
-      return ['js']
-    }
+    return fs.pathExistsSync(nativeDirectory) ? ['android', 'ios'] : ['js']
   }
 }

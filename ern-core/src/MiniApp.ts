@@ -1,5 +1,5 @@
 import { execSync, execFile } from 'child_process'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
 import { manifest } from './Manifest'
@@ -46,7 +46,7 @@ export class MiniApp extends BaseMiniApp {
   public static existInPath(p) {
     // Need to improve this one to check in the package.json if it contains the
     // ern object with miniapp type
-    return fs.existsSync(path.join(p, 'package.json'))
+    return fs.pathExistsSync(path.join(p, 'package.json'))
   }
 
   public static async fromPackagePath(packagePath: PackagePath) {
@@ -111,7 +111,7 @@ export class MiniApp extends BaseMiniApp {
       template?: string
     } = {}
   ) {
-    if (fs.existsSync(path.join('node_modules/react-native'))) {
+    if (await fs.pathExists(path.join('node_modules/react-native'))) {
       throw new Error(
         'It seems like there is already a react native app in this directory. Use another directory.'
       )
@@ -181,7 +181,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`)
     // Create .npmignore if it does not exist
     const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore')
     if (!npmIgnorePath) {
-      fs.writeFileSync(npmIgnorePath, npmIgnoreContent)
+      await fs.writeFile(npmIgnorePath, npmIgnoreContent)
     }
 
     // Inject ern specific data in MiniApp package.json
@@ -221,7 +221,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`)
     // resolver blacklisted paths.
     // See https://github.com/facebook/react-native/issues/9136#issuecomment-348773574
     if (semver.gt(reactNativeVersion, '0.57.0') && !template) {
-      fs.writeFileSync(
+      await fs.writeFile(
         path.join(miniAppPath, 'metro.config.js'),
         `const blacklist = require('metro-config/src/defaults/blacklist');
 module.exports = {
@@ -513,7 +513,7 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
 
     // Write back package.json
     const appPackageJsonPath = path.join(this.path, 'package.json')
-    fs.writeFileSync(
+    await fs.writeFile(
       appPackageJsonPath,
       JSON.stringify(this.packageJson, null, 2)
     )

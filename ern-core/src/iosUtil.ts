@@ -8,7 +8,7 @@ import log from './log'
 import { isDependencyJsApiImpl } from './utils'
 import path from 'path'
 import xcode from 'xcode-ern'
-import fs from 'fs'
+import fs from 'fs-extra'
 import _ from 'lodash'
 import readDir = require('fs-readdir-recursive')
 import kax from './kax'
@@ -33,9 +33,7 @@ export async function fillProjectHull(
   shell.pushd(pathSpec.rootDir)
 
   try {
-    if (!fs.existsSync(pathSpec.outputDir)) {
-      shell.mkdir(pathSpec.outputDir)
-    }
+    await fs.ensureDir(pathSpec.outputDir)
 
     shell.cp('-R', pathSpec.projectHullDir, pathSpec.outputDir)
 
@@ -132,12 +130,12 @@ export async function fillProjectHull(
         if (pluginConfig.ios.replaceInFile) {
           for (const r of pluginConfig.ios.replaceInFile) {
             const pathToFile = path.join(pathSpec.outputDir, r.path)
-            const fileContent = fs.readFileSync(pathToFile, 'utf8')
+            const fileContent = await fs.readFile(pathToFile, 'utf8')
             const patchedFileContent = fileContent.replace(
               RegExp(r.string, 'g'),
               r.replaceWith
             )
-            fs.writeFileSync(pathToFile, patchedFileContent, {
+            await fs.writeFile(pathToFile, patchedFileContent, {
               encoding: 'utf8',
             })
           }
@@ -191,7 +189,7 @@ export async function fillProjectHull(
                   relativeSourcePath
                 )
                 const fileNames = _.filter(
-                  fs.readdirSync(pathToSourceFiles),
+                  await fs.readdir(pathToSourceFiles),
                   f => f.endsWith(path.extname(source.from!))
                 )
                 for (const fileName of fileNames) {
@@ -233,7 +231,7 @@ export async function fillProjectHull(
                   relativeHeaderPath
                 )
                 const fileNames = _.filter(
-                  fs.readdirSync(pathToHeaderFiles),
+                  await fs.readdir(pathToHeaderFiles),
                   f => f.endsWith(path.extname(header.from!))
                 )
                 for (const fileName of fileNames) {
@@ -358,7 +356,9 @@ function switchToOldDirectoryStructure(
   const pathToSwaggersAPIs = path.normalize('IOS/IOS/Classes/SwaggersAPIs')
   if (
     path.dirname(tail) === `IOS` &&
-    fs.existsSync(path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs)))
+    fs.pathExistsSync(
+      path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs))
+    )
   ) {
     return true
   }

@@ -3,8 +3,7 @@ import shell from './shell'
 import log from './log'
 import { NativePlatform } from './NativePlatform'
 import { execSync } from 'child_process'
-
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
 import semver from 'semver'
@@ -80,7 +79,7 @@ export default class Platform {
   }
 
   public static isPlatformVersionInstalled(version: string) {
-    return fs.existsSync(this.getRootPlatformVersionPath(version))
+    return fs.pathExistsSync(this.getRootPlatformVersionPath(version))
   }
 
   public static getPlatformVersionPath(version: string) {

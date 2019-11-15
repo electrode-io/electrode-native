@@ -10,7 +10,7 @@ import {
 
 import { epilog, tryCatchWrap, askUserInput } from '../lib'
 import { Argv } from 'yargs'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 
 export const command = 'create-plugin-config <plugin>'
@@ -24,7 +24,7 @@ export const builder = (argv: Argv) => {
 const manifestBaseErnVersion = '0.14.0'
 
 export const commandHandler = async ({ plugin }: { plugin: PackagePath }) => {
-  if (!fs.existsSync('manifest.json')) {
+  if (!(await fs.pathExists('manifest.json'))) {
     throw new Error(`No manifest.json file found in current directory.
 Make sure this command is run from a Manifest directory.`)
   }
@@ -64,17 +64,17 @@ Make sure this command is run from a Manifest directory.`)
     `ern_v${manifestBaseErnVersion}+`,
     `${plugin.basePath}_v${pluginVersion}+`
   )
-  if (!fs.existsSync(pathToPluginConfig)) {
+  if (!(await fs.pathExists(pathToPluginConfig))) {
     await shell.mkdir('-p', pathToPluginConfig)
   } else {
     throw new Error(`path ${pathToPluginConfig} already exist`)
   }
-  fs.writeFileSync(
+  await fs.writeFile(
     path.join(pathToPluginConfig, 'config.json'),
     JSON.stringify(conf.pluginConfig, null, 2).concat('\n')
   )
   if (conf.androidPluginSource) {
-    fs.writeFileSync(
+    await fs.writeFile(
       path.join(pathToPluginConfig, conf.androidPluginSource.filename),
       conf.androidPluginSource.content
     )

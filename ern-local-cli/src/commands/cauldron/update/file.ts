@@ -2,7 +2,7 @@ import { log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { epilog, tryCatchWrap } from '../../../lib'
 import { Argv } from 'yargs'
-import fs from 'fs'
+import fs from 'fs-extra'
 import untildify from 'untildify'
 
 export const command = 'file <localFilePath> <cauldronFilePath>'
@@ -18,7 +18,7 @@ export const commandHandler = async ({
   cauldronFilePath: string
   localFilePath: string
 }) => {
-  if (!fs.existsSync(localFilePath)) {
+  if (await fs.pathExists(localFilePath)) {
     throw new Error(`File ${localFilePath} does not exist`)
   }
 

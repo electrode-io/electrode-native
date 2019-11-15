@@ -1,6 +1,5 @@
 import { cauldronFileUriScheme, getActiveCauldron } from 'ern-cauldron-api'
-import { fileUtils } from 'ern-core'
-import fs from 'fs'
+import fs from 'fs-extra'
 
 /**
  *
@@ -19,8 +18,8 @@ export async function parseJsonFromStringOrFile(s: string): Promise<any> {
         cauldronFilePath: s,
       })
       result = JSON.parse(file.toString())
-    } else if (fs.existsSync(s)) {
-      result = await fileUtils.readJSON(s)
+    } else if (await fs.pathExists(s)) {
+      result = await fs.readJson(s)
     } else {
       result = JSON.parse(s)
     }

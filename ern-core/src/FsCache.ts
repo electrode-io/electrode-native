@@ -1,6 +1,5 @@
 import fs from 'fs-extra'
 import path from 'path'
-import { readJSON, writeJSON, writeJSONSync } from './fileUtil'
 import shell from './shell'
 import uuidv4 from 'uuid/v4'
 import getSize from 'get-folder-size'
@@ -110,7 +109,7 @@ export class FsCache<T> {
     this.objectToId = objectToId
     fs.ensureDirSync(rootCachePath)
     if (!fs.existsSync(this.cacheManifestPath)) {
-      writeJSONSync(this.cacheManifestPath, { entries: [], size: 0 })
+      fs.writeJsonSync(this.cacheManifestPath, { entries: [], size: 0 })
     }
   }
 
@@ -164,7 +163,7 @@ export class FsCache<T> {
     }
     manifestObj.entries = entriesSortedByLat
     // Save updated manifest
-    await writeJSON(this.cacheManifestPath, manifestObj)
+    await fs.writeJson(this.cacheManifestPath, manifestObj)
     return pathToObjectCacheDir
   }
 
@@ -179,7 +178,7 @@ export class FsCache<T> {
     )
     if (cacheEntry) {
       cacheEntry.lastAccessed = Date.now()
-      await writeJSON(this.cacheManifestPath, manifestObj)
+      await fs.writeJson(this.cacheManifestPath, manifestObj)
       return cacheEntry.path
     }
   }
@@ -188,7 +187,7 @@ export class FsCache<T> {
    * Gets the cache manifest object
    */
   private async getManifestObj(): Promise<CacheManifest> {
-    return readJSON(this.cacheManifestPath)
+    return fs.readJson(this.cacheManifestPath)
   }
 
   /**

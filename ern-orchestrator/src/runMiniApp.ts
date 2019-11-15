@@ -20,7 +20,7 @@ import { RunnerGeneratorConfig } from 'ern-runner-gen'
 import { getRunnerGeneratorForPlatform } from './getRunnerGeneratorForPlatform'
 import { generateContainerForRunner } from './generateContainerForRunner'
 import { launchRunner } from './launchRunner'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import _ from 'lodash'
 import { LaunchRunnerConfig } from 'ern-runner-gen/src/types/LaunchRunnerConfig'
@@ -69,7 +69,9 @@ export async function runMiniApp(
 
   let jsMainModuleName
   if (MiniApp.existInPath(cwd)) {
-    jsMainModuleName = fs.existsSync(path.join(cwd, `index.${platform}.js`))
+    jsMainModuleName = (await fs.pathExists(
+      path.join(cwd, `index.${platform}.js`)
+    ))
       ? `index.${platform}`
       : 'index'
   }
@@ -225,7 +227,7 @@ export async function runMiniApp(
     targetPlatform: platform,
   }
 
-  if (!fs.existsSync(pathToRunner)) {
+  if (!(await fs.pathExists(pathToRunner))) {
     shell.mkdir('-p', pathToRunner)
     await kax
       .task(`Generating ${platform} Runner project`)
@@ -247,7 +249,7 @@ export async function runMiniApp(
       pathToRunner,
       'app/src/main/java/com/walmartlabs/ern/RunnerConfig.java'
     )
-    return fs.existsSync(paths)
+    return fs.pathExistsSync(paths)
   }
 
   const launchRunnerConfig: LaunchRunnerConfig = {

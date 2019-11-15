@@ -23,7 +23,7 @@ import {
 } from '../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import untildify from 'untildify'
 
@@ -119,8 +119,8 @@ export const commandHandler = async ({
   platform?: NativePlatform
   sourceMapOutput?: string
 } = {}) => {
-  if (outDir && fs.existsSync(outDir)) {
-    if (fs.readdirSync(outDir).length > 0) {
+  if (outDir && (await fs.pathExists(outDir))) {
+    if ((await fs.readdir(outDir)).length > 0) {
       throw new Error(
         `${outDir} directory exists and is not empty.
 Output directory should either not exist (it will be created) or should be empty.`

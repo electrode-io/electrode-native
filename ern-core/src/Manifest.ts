@@ -5,7 +5,7 @@ import Platform from './Platform'
 import GitManifest from './GitManifest'
 import Mustache from 'mustache'
 import _ from 'lodash'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { isDependencyApi, isDependencyApiImpl } from './utils'
 import config from './config'
 import log from './log'
@@ -393,7 +393,7 @@ export class Manifest {
           overrideManifestConfig.url
         )
         this.manifestOverrideType = overrideManifestConfig.type
-        if (fs.existsSync(manifestOverrideUrl)) {
+        if (await fs.pathExists(manifestOverrideUrl)) {
           this.overrideManifest = new GitManifest(manifestOverrideUrl)
         } else {
           this.overrideManifest = new GitManifest(
@@ -616,7 +616,7 @@ export class Manifest {
     }
 
     let result: PluginConfig
-    let configFile = fs.readFileSync(
+    let configFile = await fs.readFile(
       path.join(pluginConfigPath, pluginConfigFileName),
       'utf-8'
     )

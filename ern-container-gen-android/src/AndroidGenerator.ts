@@ -26,7 +26,7 @@ import {
 
 import _ from 'lodash'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import readDir from 'fs-readdir-recursive'
 import DecompressZip from 'decompress-zip'
 import semver from 'semver'

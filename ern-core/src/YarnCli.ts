@@ -1,7 +1,7 @@
 import createTmpDir from './createTmpDir'
 import shell from './shell'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { PackagePath } from './PackagePath'
 import { execp } from './childProcess'
 import log from './log'
@@ -76,7 +76,7 @@ export class YarnCli {
     if (dependencyPath.isFilePath) {
       const packageJsonPath = path.join(dependencyPath.basePath, `package.json`)
       log.debug(`[runYarnCommand] Running info: returning ${packageJsonPath} `)
-      return JSON.parse(fs.readFileSync(packageJsonPath, `utf-8`))
+      return fs.readJson(packageJsonPath)
     } else {
       const cmd = `info ${dependencyPath.toString()} ${field || ''} ${
         json ? '--json' : ''
