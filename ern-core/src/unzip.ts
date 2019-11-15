@@ -1,12 +1,10 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import shell from 'shelljs'
 import yauzl from 'yauzl'
 
 export async function unzip(zippedData: Buffer, destPath: string) {
-  if (!fs.existsSync(destPath)) {
-    shell.mkdir('-p', destPath)
-  }
+  await fs.ensureDir(destPath)
   return new Promise((resolve, reject) => {
     yauzl.fromBuffer(zippedData, { lazyEntries: true }, (err, zipfile) => {
       if (err) {

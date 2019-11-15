@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import { ICauldronFileStore } from './types'
 import { createTmpDir } from 'ern-core'
@@ -29,10 +29,8 @@ export default class EphemeralFileStore implements ICauldronFileStore {
   ) {
     const pathToFile = path.join(this.storePath, identifier)
     const pathToDir = path.dirname(pathToFile)
-    if (!fs.existsSync(pathToDir)) {
-      shell.mkdir('-p', pathToDir)
-    }
-    fs.writeFileSync(pathToFile, content, 'utf8')
+    await fs.ensureDir(pathToDir)
+    await fs.writeFile(pathToFile, content, 'utf8')
     if (fileMode) {
       shell.chmod(fileMode, pathToFile)
     }

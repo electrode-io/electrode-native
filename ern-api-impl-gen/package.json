@@ -55,6 +55,7 @@
     "chalk": "^2.4.1",
     "ern-api-gen": "1000.0.0",
     "ern-core": "1000.0.0",
+    "fs-extra": "^8.1.0",
     "lodash": "^4.17.14",
     "mustache": "^2.3.1",
     "semver": "5.5.0",

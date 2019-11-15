@@ -1,6 +1,6 @@
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
 import { PackagePath, shell, mustacheUtils, Platform, log } from 'ern-core'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 
 export default class ApiImplJsGenerator implements ApiImplGeneratable {
@@ -35,9 +35,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
     try {
       const outputDirectory = path.join(paths.outDirectory, 'js')
       log.debug(`Creating out directory(${outputDirectory}) for JS.`)
-      if (!fs.existsSync(outputDirectory)) {
-        shell.mkdir(outputDirectory)
-      }
+      await fs.ensureDir(outputDirectory)
       const mustacheFile = path.join(
         Platform.currentPlatformVersionPath,
         'ern-api-impl-gen/resources/js/apiimpl.mustache'

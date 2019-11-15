@@ -2,7 +2,7 @@ import { BinaryStore } from './BinaryStore'
 import { AppVersionDescriptor } from './descriptors'
 import createTmpDir from './createTmpDir'
 import shell from './shell'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import archiver from 'archiver'
 import DecompressZip = require('decompress-zip')
@@ -75,8 +75,8 @@ export class ErnBinaryStore implements BinaryStore {
     const pathToZippedBinary = await this.getZippedBinary(descriptor, {
       flavor,
     })
-    if (outDir && !fs.existsSync(outDir)) {
-      shell.mkdir('-p', outDir)
+    if (outDir) {
+      await fs.ensureDir(outDir)
     }
     return this.unzipBinary(descriptor, pathToZippedBinary, { flavor, outDir })
   }

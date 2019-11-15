@@ -7,7 +7,7 @@ import {
   log,
 } from 'ern-core'
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import xcode from 'xcode-ern'
 import readDir from 'fs-readdir-recursive'
@@ -182,9 +182,8 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     const requestHandlerConfigFile = 'RequestHandlerConfig.swift'
     const requestHandlerProviderFile = 'RequestHandlerProvider.swift'
 
-    if (!shell.test('-e', outputDir)) {
-      shell.mkdir(outputDir)
-    }
+    fs.ensureDirSync(outputDir)
+
     shell.cp(path.join(resourceDir, requestHandlerConfigFile), outputDir)
     shell.cp(path.join(resourceDir, requestHandlerProviderFile), outputDir)
 

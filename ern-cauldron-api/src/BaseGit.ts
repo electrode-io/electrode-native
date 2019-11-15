@@ -1,6 +1,6 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
-import { log, shell, gitCli, fileUtils } from 'ern-core'
+import { log, gitCli, fileUtils } from 'ern-core'
 import { ITransactional } from './types'
 
 const GIT_REMOTE_NAME = 'upstream'
@@ -24,9 +24,7 @@ export default class BaseGit implements ITransactional {
     branch?: string
   }) {
     this.fsPath = cauldronPath
-    if (!fs.existsSync(this.fsPath)) {
-      shell.mkdir('-p', this.fsPath)
-    }
+    fs.ensureDirSync(this.fsPath)
     this.repository = repository
     this.branch = branch
     this.git = gitCli(this.fsPath)

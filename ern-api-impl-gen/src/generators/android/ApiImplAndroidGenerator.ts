@@ -9,7 +9,7 @@ import {
   PluginConfig,
   android,
 } from 'ern-core'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import readDir from 'fs-readdir-recursive'
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
@@ -38,9 +38,8 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       SRC_MAIN_JAVA_DIR,
       API_IMPL_PACKAGE
     )
-    if (!fs.existsSync(outputDir)) {
-      shell.mkdir('-p', outputDir)
-    }
+
+    fs.ensureDirSync(outputDir)
 
     const resourceDir = path.join(
       Platform.currentPlatformVersionPath,
@@ -92,9 +91,8 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       log.debug(
         `Creating out directory(${outputDirectory}) for android and copying container hull to it.`
       )
-      if (!fs.existsSync(outputDirectory)) {
-        shell.mkdir(outputDirectory)
-      }
+
+      fs.ensureDirSync(outputDirectory)
 
       fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
       shell.cp(
@@ -155,9 +153,9 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       SRC_MAIN_JAVA_DIR,
       '*'
     )
-    if (!fs.existsSync(pluginOutputDirectory)) {
-      shell.mkdir('-p', pluginOutputDirectory)
-    }
+
+    fs.ensureDirSync(pluginOutputDirectory)
+
     log.debug(
       `Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`
     )
