@@ -5,7 +5,7 @@ import { copyRnConfigAssets } from './copyRnConfigAssets'
 import { addContainerMetadata } from './addContainerMetadata'
 import { ContainerGeneratorConfig, ContainerGenResult } from './types'
 import { kax, shell, BundlingResult } from 'ern-core'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import _ from 'lodash'
 
@@ -23,11 +23,8 @@ export async function generateContainer(
     postCopyRnpmAssets?: ContainerGeneratorAction
   } = {}
 ): Promise<ContainerGenResult> {
-  if (!fs.existsSync(config.outDir)) {
-    shell.mkdir('-p', config.outDir)
-  } else {
-    shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
-  }
+  fs.ensureDirSync(config.outDir)
+  shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
 
   config.plugins = sortDependenciesByName(config.plugins)
 

@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import { readJSON, writeJSON, writeJSONSync } from './fileUtil'
 import shell from './shell'
@@ -108,9 +108,7 @@ export class FsCache<T> {
     this.maxCacheSize = maxCacheSize
     this.addObjectToCacheDirectory = addObjectToCacheDirectory
     this.objectToId = objectToId
-    if (!fs.existsSync(rootCachePath)) {
-      shell.mkdir(rootCachePath)
-    }
+    fs.ensureDirSync(rootCachePath)
     if (!fs.existsSync(this.cacheManifestPath)) {
       writeJSONSync(this.cacheManifestPath, { entries: [], size: 0 })
     }

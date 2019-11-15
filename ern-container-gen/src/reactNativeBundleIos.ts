@@ -1,5 +1,5 @@
 import { BundlingResult, reactnative, shell } from 'ern-core'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 
 export async function reactNativeBundleIos({
@@ -37,9 +37,7 @@ export async function reactNativeBundleIos({
     )
   }
 
-  if (!fs.existsSync(miniAppOutPath)) {
-    shell.mkdir('-p', miniAppOutPath)
-  }
+  await fs.ensureDir(miniAppOutPath)
 
   shell.pushd(cwd)
 

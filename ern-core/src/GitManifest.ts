@@ -2,7 +2,7 @@ import { PackagePath } from './PackagePath'
 import shell from './shell'
 import { gitCli } from './gitCli'
 import _ from 'lodash'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
 import Platform from './Platform'
@@ -28,9 +28,7 @@ export default class GitManifest {
       remote: 'origin',
     }
   ) {
-    if (!fs.existsSync(repoLocalPath)) {
-      shell.mkdir('-p', repoLocalPath)
-    }
+    fs.ensureDirSync(repoLocalPath)
     this.git = gitCli(repoLocalPath)
     this.remote = remote
     this.branch = branch

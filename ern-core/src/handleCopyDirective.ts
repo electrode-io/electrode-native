@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import shell from './shell'
 import path from 'path'
 
@@ -10,9 +10,7 @@ export default function handleCopyDirective(
   for (const cp of arr) {
     const sourcePath = path.join(sourceRoot, cp.source)
     const destPath = path.join(destRoot, cp.dest)
-    if (!fs.existsSync(destPath)) {
-      shell.mkdir('-p', destPath)
-    }
+    fs.ensureDirSync(destPath)
     shell.cp('-R', sourcePath, destPath)
   }
 }

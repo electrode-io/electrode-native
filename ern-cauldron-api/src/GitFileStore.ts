@@ -1,5 +1,5 @@
 import BaseGit from './BaseGit'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import { log, shell, fileUtils } from 'ern-core'
 import { ICauldronFileStore } from './types'
@@ -31,10 +31,7 @@ export default class GitFileStore extends BaseGit
   ) {
     await this.sync()
     const storeDirectoryPath = path.resolve(this.fsPath, path.dirname(filePath))
-    if (!fs.existsSync(storeDirectoryPath)) {
-      log.debug(`Creating directory ${storeDirectoryPath}`)
-      shell.mkdir('-p', storeDirectoryPath)
-    }
+    await fs.ensureDir(storeDirectoryPath)
     const pathToFile = path.resolve(storeDirectoryPath, path.basename(filePath))
     await fileUtils.writeFile(pathToFile, content, { flag: 'w' })
     if (fileMode) {
