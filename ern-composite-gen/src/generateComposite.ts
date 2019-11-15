@@ -626,8 +626,8 @@ module.exports = {
       // ignore git directories
       /.*\\.git\\/.*/,
       // Ignore android directories
-      /.*\\/app\\/build\\/.*/
-    ])
+      /.*\\/app\\/build\\/.*/,
+    ]),
   },
   transformer: {
     getTransformOptions: async () => ({
