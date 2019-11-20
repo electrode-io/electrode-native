@@ -13,7 +13,7 @@ import {
   AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { generateComposite } from 'ern-composite-gen'
+import { Composite } from 'ern-composite-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
@@ -92,8 +92,8 @@ export default async function start({
   compositeDir = compositeDir || createTmpDir()
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
-  await kax.task('Generating MiniApps composite').run(
-    generateComposite({
+  const composite = await kax.task('Generating MiniApps composite').run(
+    Composite.generate({
       baseComposite,
       extraJsDependencies: extraJsDependencies || undefined,
       jsApiImplDependencies: jsApiImpls,
@@ -117,6 +117,13 @@ export default async function start({
       miniAppsLinksObj[packageJson.name] = m.basePath
     })
 
+  // Third party native modules
+  const nativeDependencies = await composite.getNativeDependencies()
+  const nativeModules: PackagePath[] = [
+    ...nativeDependencies.thirdPartyInManifest,
+    ...nativeDependencies.thirdPartyNotInManifest,
+  ].map(d => d.packagePath)
+
   const packageCopyKaxTask = kax.task(
     'Copying all linked MiniApps to Composite'
   )
@@ -131,7 +138,8 @@ export default async function start({
         replacePackageInCompositeWithLinkedPackage(
           compositeDir,
           linkedMiniAppPackageName,
-          miniAppsLinksObj[linkedMiniAppPackageName]
+          miniAppsLinksObj[linkedMiniAppPackageName],
+          nativeModules
         )
       )
   }
@@ -227,7 +235,8 @@ export default async function start({
 async function replacePackageInCompositeWithLinkedPackage(
   compositeDir,
   linkedPackageName,
-  sourceLinkDir
+  sourceLinkDir,
+  excludedPackages: PackagePath[] = []
 ) {
   // Get path to package in composite node_modules
   // For example if the package name is @company/miniapp and the composite
@@ -238,21 +247,20 @@ async function replacePackageInCompositeWithLinkedPackage(
     linkedPackageName
   )
 
-  // Don't need android and ios directories to be copied over to the Composite
-  // Also exclude react-native and react to avoid haste collisions, as they are
-  // already part of the top level composite node_modules
-  // react-native-electrode-bridge is also excluded because having multiple
-  // instances of it might create issues
+  // Exclude android and ios directories as they are not needed for JS bundle
+  // Also exclude react to avoid any haste conflict (anyway it will
+  // be hoisted to top level node modules)
+  // Also exclude .git directory
+  // In addition, exclude any additional package provided to the function.
   const excludedDirectories = [
     'android',
     'ios',
-    'node_modules/react-native',
     'node_modules/react',
-    'node_modules/react-native-electrode-bridge',
     '.git',
+    ...excludedPackages.map(d => path.normalize(`node_modules/${d.basePath}`)),
   ].map(f => path.join(sourceLinkDir, f))
 
-  const excludedDirectoriesRE = new RegExp(
+  const excludedDirectoriesRe = new RegExp(
     `^((?!${excludedDirectories.map(f => `${f}$`).join('|')}).*)`
   )
 
@@ -266,7 +274,7 @@ async function replacePackageInCompositeWithLinkedPackage(
       sourceLinkDir,
       pathToPackageInComposite,
       {
-        filter: excludedDirectoriesRE,
+        filter: excludedDirectoriesRe,
         limit: 512,
       } as any /* while waiting for https://github.com/DefinitelyTyped/DefinitelyTyped/pull/38883 to get merged */,
       err => {
