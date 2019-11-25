@@ -88,9 +88,6 @@ run(`cauldron add miniapps ${f.notInNpmPkg} -d ${androidNativeApplicationDescrip
 run(`create-container --miniapps file:${miniAppPath} -p android`)
 run(`create-container --miniapps file:${miniAppPath} -p ios`)
 
-run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p android`)
-run(`create-container --miniapps file:${miniAppPath} ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -p ios`)
-
 // transform-container / publish-coontainer should be successful
 run (`transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`)
 run (`publish-container --containerPath ${defaultAndroidContainerGenPath} --platform android --publisher dummy`)
