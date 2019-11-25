@@ -77,6 +77,7 @@ export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolutio
 export { getPackagePathsDiffs } from './getPackagePathsDiffs'
 export * from './findDirectoriesHavingRnConfig'
 export * from './BundleStoreSdk'
+export * from './HermesCli'
 
 export {
   CodePushPackageInfo,
