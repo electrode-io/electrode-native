@@ -8,6 +8,8 @@ import {
   log,
   kax,
   SourceMapStoreSdk,
+  HermesCli,
+  android,
 } from 'ern-core'
 import { generateComposite } from 'ern-composite-gen'
 import {
@@ -417,6 +419,28 @@ export async function performCodePushOtaUpdate(
         workingDir: tmpWorkingDir,
       })
     )
+
+    if (platform === 'android') {
+      const conf = await cauldron.getContainerGeneratorConfig(napDescriptor)
+      const isHermesEnabled =
+        conf &&
+        conf.androidConfig &&
+        conf.androidConfig.jsEngine &&
+        conf.androidConfig.jsEngine === 'hermes'
+      if (isHermesEnabled) {
+        const hermesVersion =
+          conf.androidConfig.hermesVersion || android.DEFAULT_HERMES_VERSION
+        const hermesCli = await kax
+          .task(`Installing hermes-engine@${hermesVersion}`)
+          .run(HermesCli.fromVersion(hermesVersion))
+        const res = await kax
+          .task('Compiling JS bundle to Hermes bytecode')
+          .run(
+            hermesCli.compileReleaseBundle({ jsBundlePath: bundleOutputPath })
+          )
+        sourceMapOutput = res.hermesSourceMapPath
+      }
+    }
 
     const appName = await getCodePushAppName(napDescriptor)
 
