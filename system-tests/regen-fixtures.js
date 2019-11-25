@@ -102,9 +102,9 @@ function regenComplexApiFixture() {
   shell.rm('-rf', pathsToFixtures['complex-api'])
   shell.cd(rootApiFixturesPath)
   shell.exec(
-    `ern create-api ${f.complexApiName} -p ${f.complexApiPkgName}  --schemaPath ${
+    `ern create-api ${f.complexApiName} -p ${f.complexApiPkgName} --schemaPath ${
       f.pathToComplexApiSchema
-    } --skipNpmCheck`
+    } -u "generated" --skipNpmCheck`
   )
 }
 
@@ -115,7 +115,7 @@ function regenTestApiFixture() {
   shell.exec(
     `ern create-api ${f.testApiName} -p ${f.testApiPkgName} --schemaPath ${
       f.pathToTestApiSchema
-    } --skipNpmCheck`
+    } -u "generated" --skipNpmCheck`
   )
 }
 

@@ -7,7 +7,6 @@ const f = require('../fixtures/constants')
 const excludeFilter = [
   'ElectrodeApiImpl.xcodeproj',
   'project.pbxproj',
-  'package.json',
   '.DS_Store',
   'index.android.bundle',
   'index.android.bundle.meta',
@@ -19,7 +18,7 @@ const excludeFilter = [
   '.yarn-integrity'
 ].map(s => `**/${s}`).join(',')
 
-run(`create-api ${f.complexApiName} -p ${f.complexApiPkgName} --schemaPath ${f.pathToComplexApiSchema} --skipNpmCheck`)
+run(`create-api ${f.complexApiName} -p ${f.complexApiPkgName} --schemaPath ${f.pathToComplexApiSchema} -u "generated" --skipNpmCheck`)
 
 const fixtureApiPath = f.pathToComplexApiFixture
 const generatedApiPath = path.join(process.cwd(), f.complexApiPkgName)
