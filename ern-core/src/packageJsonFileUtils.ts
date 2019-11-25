@@ -27,7 +27,7 @@ export const readPackageJsonSync = (p: string): any =>
  * @param content Content of package.json as an object
  */
 export const writePackageJson = (p: string, content: any): Promise<void> =>
-  fs.writeJson(getPathToPackageJson(p), content)
+  fs.writeJson(getPathToPackageJson(p), content, { spaces: 2 })
 
 /**
  * Synchronously writes a package.json file to a given directory and
@@ -36,7 +36,7 @@ export const writePackageJson = (p: string, content: any): Promise<void> =>
  * @param content Content of package.json as an object
  */
 export const writePackageJsonSync = (p: string, content: any): void =>
-  fs.writeJsonSync(getPathToPackageJson(p), content)
+  fs.writeJsonSync(getPathToPackageJson(p), content, { spaces: 2 })
 
 /**
  * Given a directory holding a package.json file, return the full path
