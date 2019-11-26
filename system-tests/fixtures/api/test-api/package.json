@@ -1,5 +1,5 @@
 {
-  "author": "blemair",
+  "author": "generated",
   "dependencies": {
     "react-native-electrode-bridge": "1.5.x"
   },
