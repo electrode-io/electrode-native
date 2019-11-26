@@ -446,7 +446,7 @@ export async function getCommitShaOfGitBranchOrTag(
   }
   const result = await gitCli().listRemote([p.basePath, p.version])
   if (!result || result === '') {
-    throw new Error(`${p.version} branch or tag not found`)
+    throw new Error(`${p.version} branch or tag not found in ${p.basePath}`)
   }
   return result.substring(0, gitShaLength)
 }
