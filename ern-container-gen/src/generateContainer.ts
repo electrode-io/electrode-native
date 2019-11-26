@@ -13,14 +13,21 @@ type ContainerGeneratorAction = (
   config: ContainerGeneratorConfig
 ) => Promise<any>
 
+type PostBundleAction = (
+  config: ContainerGeneratorConfig,
+  bundle: BundlingResult
+) => Promise<any>
+
 export async function generateContainer(
   config: ContainerGeneratorConfig,
   {
     fillContainerHull,
     postCopyRnpmAssets,
+    postBundle,
   }: {
     fillContainerHull?: ContainerGeneratorAction
     postCopyRnpmAssets?: ContainerGeneratorAction
+    postBundle?: PostBundleAction
   } = {}
 ): Promise<ContainerGenResult> {
   fs.ensureDirSync(config.outDir)
@@ -59,6 +66,10 @@ export async function generateContainer(
         sourceMapOutput: config.sourceMapOutput,
       })
     )
+
+  if (postBundle) {
+    await postBundle(config, bundlingResult)
+  }
 
   if (!config.ignoreRnpmAssets) {
     copyRnpmAssets(

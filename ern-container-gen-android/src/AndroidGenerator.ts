@@ -14,6 +14,8 @@ import {
   readPackageJson,
   createTmpDir,
   yarn,
+  BundlingResult,
+  HermesCli,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -33,10 +35,6 @@ import semver from 'semver'
 
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates')
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
-
-const DEFAULT_JSC_VARIANT = 'android-jsc'
-const DEFAULT_JSC_VERSION = '245459'
-const DEFAULT_HERMES_VERSION = '0.2.1'
 
 export interface AndroidDependencies {
   files: string[]
@@ -64,6 +62,7 @@ export default class AndroidGenerator implements ContainerGenerator {
   ): Promise<ContainerGenResult> {
     return generateContainer(config, {
       fillContainerHull: this.fillContainerHull.bind(this),
+      postBundle: this.postBundle.bind(this),
     })
   }
 
@@ -361,6 +360,38 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
   }
 
+  public async postBundle(
+    config: ContainerGeneratorConfig,
+    bundle: BundlingResult
+  ) {
+    if (this.getJavaScriptEngine(config) === JavaScriptEngine.HERMES) {
+      const hermesVersion =
+        config.androidConfig.hermesVersion || android.DEFAULT_HERMES_VERSION
+      const hermesCli = await kax
+        .task(`Installing hermes-engine@${hermesVersion}`)
+        .run(HermesCli.fromVersion(hermesVersion))
+      const hermesBundle = await kax
+        .task('Compiling JS bundle to Hermes bytecode')
+        .run(
+          hermesCli.compileReleaseBundle({ jsBundlePath: bundle.bundlePath })
+        )
+
+      if (bundle.sourceMapPath) {
+        // Unfortunately Hermes binary does not give control over the
+        // location of generated source map. It just generates it in
+        // the same directory as the hermes bundle, with the same name
+        // as the bundle, with a new .map extension.
+        // We don't want to keep the generated source map in the container,
+        // So if the JS bundle had an associated source map generated,
+        // just overwrite it with the Hermes one ...
+        shell.mv(hermesBundle.hermesSourceMapPath, bundle.sourceMapPath)
+      } else {
+        // ... otherwise just remove it from the container
+        shell.rm(hermesBundle.hermesSourceMapPath)
+      }
+    }
+  }
+
   public getJavaScriptEngine(
     config: ContainerGeneratorConfig
   ): JavaScriptEngine {
@@ -394,10 +425,10 @@ export default class AndroidGenerator implements ContainerGenerator {
   public async injectJavaScriptCoreEngine(config: ContainerGeneratorConfig) {
     const jscVersion =
       (config.androidConfig && config.androidConfig.jscVersion) ||
-      DEFAULT_JSC_VERSION
+      android.DEFAULT_JSC_VERSION
     const jscVariant =
       (config.androidConfig && config.androidConfig.jscVariant) ||
-      DEFAULT_JSC_VARIANT
+      android.DEFAULT_JSC_VARIANT
     const workingDir = createTmpDir()
     try {
       shell.pushd(workingDir)
@@ -437,7 +468,7 @@ export default class AndroidGenerator implements ContainerGenerator {
   public async injectHermesEngine(config: ContainerGeneratorConfig) {
     const hermesVersion =
       (config.androidConfig && config.androidConfig.hermesVersion) ||
-      DEFAULT_HERMES_VERSION
+      android.DEFAULT_HERMES_VERSION
     const workingDir = createTmpDir()
     try {
       shell.pushd(workingDir)
