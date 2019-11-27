@@ -43,7 +43,8 @@ dist/
 generated/
 tmp/
 
-# Test fixture libraries
+# Test fixtures
 #
 system-tests/fixtures/**/Libraries/
 system-tests/fixtures/**/jniLibs/
+system-tests/fixtures/**/yarn.lock
