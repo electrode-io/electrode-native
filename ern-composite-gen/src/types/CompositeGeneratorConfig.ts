@@ -9,10 +9,6 @@ export interface CompositeGeneratorConfig {
    */
   extraJsDependencies?: PackagePath[]
   /**
-   * JS API implementations that should be included in the generated Composite
-   */
-  jsApiImplDependencies?: PackagePath[]
-  /**
    *  MiniApps that should be included in the generated Composite
    */
   miniApps: PackagePath[]

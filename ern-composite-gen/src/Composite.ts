@@ -44,10 +44,6 @@ export class Composite {
     this.packageJson = readPackageJsonSync(config.outDir)
   }
 
-  public getJsApiImpls(): PackagePath[] {
-    return this.config.jsApiImplDependencies || []
-  }
-
   public getMiniApps(): BaseMiniApp[] {
     const result: BaseMiniApp[] = []
     return this.getMiniAppsPackages().map(

@@ -316,7 +316,7 @@ describe('codepush', () => {
       )
     })
 
-    it('should not throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is true', async () => {
+    it('should not throw if some MiniApps include incompatible native dependencies with target native application version and force flag is true', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
       })
@@ -409,7 +409,6 @@ describe('codepush', () => {
         c => c.metadata.label === 'v20'
       )
       expect(codePushEntry).to.deep.equal({
-        jsApiImpls: ['react-native-my-api-impl@1.1.0'],
         metadata: {
           appVersion: '17.7',
           deploymentName: 'Production',
@@ -628,7 +627,7 @@ describe('codepush', () => {
       )
     })
 
-    it('should not throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is true', async () => {
+    it('should not throw if some MiniApps include incompatible native dependencies with target native application version and force flag is true', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
       })
@@ -640,7 +639,6 @@ describe('codepush', () => {
           testAndroid1770Descriptor,
           'Production',
           [PackagePath.fromString('react-native-bar@2.0.3')],
-          [],
           {
             codePushRolloutPercentage: 100,
             force: true,
@@ -656,7 +654,6 @@ describe('codepush', () => {
         testAndroid1770Descriptor,
         'Production',
         [PackagePath.fromString('react-native-bar@2.0.3')],
-        [],
         {
           codePushRolloutPercentage: 100,
         }
@@ -684,7 +681,6 @@ describe('codepush', () => {
         testAndroid1770Descriptor,
         'Production',
         [PackagePath.fromString('react-native-bar@2.0.3')],
-        [],
         {
           codePushRolloutPercentage: 100,
         }
@@ -711,7 +707,6 @@ describe('codepush', () => {
           testAndroid1770Descriptor,
           'Production',
           [PackagePath.fromString('react-native-bar@2.0.3')],
-          [],
           {
             codePushRolloutPercentage: 100,
           }

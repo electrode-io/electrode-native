@@ -20,33 +20,21 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .option('jsApiImplsOnly', {
-      describe: 'Only update package.json of JS API Implementations',
-      type: 'boolean',
-    })
     .option('manifestId', {
       default: 'default',
       describe:
         'Id of the manifest entry to use to retrieve versions to upgrade to',
       type: 'string',
     })
-    .option('miniAppsOnly', {
-      describe: 'Only update package.json of MiniApps',
-      type: 'boolean',
-    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   descriptor,
-  jsApiImplsOnly,
   manifestId = 'default',
-  miniAppsOnly,
 }: {
   descriptor?: AppVersionDescriptor
-  jsApiImplsOnly?: boolean
   manifestId?: string
-  miniAppsOnly?: boolean
 } = {}) => {
   descriptor =
     descriptor ||
@@ -72,12 +60,9 @@ export const commandHandler = async ({
 
   const cauldron = await getActiveCauldron()
 
-  const packages: PackagePath[] = await cauldron.getContainerJsPackages({
-    descriptor,
-    jsApiImplsOnly,
-    miniAppsOnly,
-    type: 'branches',
-  })
+  const packages: PackagePath[] = await cauldron.getContainerMiniAppsBranches(
+    descriptor
+  )
 
   await alignPackageJsonOnManifest({ manifestId, packages })
 }

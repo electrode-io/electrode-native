@@ -48,11 +48,6 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
-    .option('jsApiImpls', {
-      describe: 'A list of one or more JS API Implementation(s)',
-      type: 'array',
-    })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('flavor', {
       describe: 'Custom binary flavor',
     })
@@ -120,7 +115,6 @@ export const commandHandler = async ({
   extraJsDependencies = [],
   flavor,
   host,
-  jsApiImpls,
   launchArgs,
   launchEnvVars,
   launchFlags,
@@ -138,7 +132,6 @@ export const commandHandler = async ({
   extraJsDependencies?: PackagePath[]
   flavor?: string
   host?: string
-  jsApiImpls?: PackagePath[]
   launchArgs?: string
   launchEnvVars?: string
   launchFlags?: string
@@ -170,7 +163,6 @@ export const commandHandler = async ({
     extraJsDependencies,
     flavor,
     host,
-    jsApiImpls,
     launchArgs,
     launchEnvVars,
     launchFlags,

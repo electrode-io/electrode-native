@@ -23,13 +23,6 @@
 * If you are CodePushing a MiniApp that is using a git path in Container, please CodePush using a git path. If you are CodePushing a MiniApp that is using a npm published version in the Container, please CodePush using an npm published version. Do not mix.
 * You can't use the `file` scheme for the MiniApp(s).
 
-`--jsApiImpls`
-
-* One or more JS API implementations (separated by spaces) version(s) to CodePush.
-* You can use npm published versions or git based path (SHA or tag only).
-* If you are CodePushing a JS API implementation that is using a git path in Container, please CodePush using a git path. If you are CodePushing a JS API implementation that is using a npm published version in the Container, please CodePush using an npm published version. Do not mix.
-* You can't use the `file` scheme for the MiniApp(s).
-
 `--descriptors/-d <descriptors..>`
 
 * Specify one or more target native application version to release the MiniApp(s) to, following the *complete native application descriptor* format.

@@ -17,12 +17,10 @@ export async function runLocalCompositeGen(
   miniappPackagesPaths: PackagePath[],
   {
     baseComposite,
-    jsApiImpls,
     outDir,
     resolutions,
   }: {
     baseComposite?: PackagePath
-    jsApiImpls?: PackagePath[]
     outDir?: string
     resolutions?: { [pkg: string]: string }
   }
@@ -31,7 +29,6 @@ export async function runLocalCompositeGen(
     const composite = await kax.task('Generating Composite').run(
       Composite.generate({
         baseComposite,
-        jsApiImplDependencies: jsApiImpls,
         miniApps: miniappPackagesPaths,
         outDir: outDir || createTmpDir(),
         resolutions,
@@ -70,7 +67,6 @@ export async function runCauldronCompositeGen(
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor, {
       favorGitBranches,
     })
-    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
 
     // bypassYarnLock to move into compositeGen config
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
@@ -92,7 +88,6 @@ export async function runCauldronCompositeGen(
     const composite = await kax.task('Generating Composite').run(
       Composite.generate({
         baseComposite,
-        jsApiImplDependencies: jsApiImpls,
         miniApps: miniapps,
         outDir: outDir || createTmpDir(),
         pathToYarnLock,

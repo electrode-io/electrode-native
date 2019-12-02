@@ -25,7 +25,6 @@ import { ncp } from 'ncp'
 export default async function start({
   baseComposite,
   compositeDir,
-  jsApiImpls,
   miniapps,
   descriptor,
   flavor,
@@ -43,7 +42,6 @@ export default async function start({
 }: {
   baseComposite?: PackagePath
   compositeDir?: string
-  jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   descriptor?: AppVersionDescriptor
   flavor?: string
@@ -66,10 +64,8 @@ export default async function start({
     )
   }
 
-  if (!miniapps && !jsApiImpls && !descriptor) {
-    throw new Error(
-      'Either miniapps, jsApiImpls or descriptor needs to be provided'
-    )
+  if (!miniapps && !descriptor) {
+    throw new Error('Either miniapps or descriptor needs to be provided')
   }
 
   let resolutions
@@ -100,7 +96,6 @@ export default async function start({
       Composite.generate({
         baseComposite,
         extraJsDependencies: extraJsDependencies || undefined,
-        jsApiImplDependencies: jsApiImpls,
         miniApps: miniapps!,
         outDir: compositeDir,
         resolutions,

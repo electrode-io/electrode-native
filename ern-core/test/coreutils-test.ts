@@ -22,8 +22,6 @@ const yarnInfoErnApi = require('./fixtures/yarn_info_ern_api.json')
 // tslint:disable-next-line:no-var-requires
 const yarnInfoErnApiImpl = require('./fixtures/yarn_info_ern_api_impl.json')
 // tslint:disable-next-line:no-var-requires
-const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json')
-// tslint:disable-next-line:no-var-requires
 const yarnInfoError = require('./fixtures/yarn_info_error.json')
 
 // stub
@@ -499,13 +497,6 @@ describe('utils.js', () => {
       yarnStub.restore()
     })
 
-    it('return true if ern object resolves for js api impl', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoErnJsApiImpl)
-      expect(await utils.isDependencyApiImpl('react-header')).to.eql(true)
-      yarnStub.restore()
-    })
-
     it('throw if yarn info errors', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoError)
@@ -575,13 +566,6 @@ describe('utils.js', () => {
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoErnApiImpl)
-      expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
-      yarnStub.restore()
-    })
-
-    it('return true if ern object resolves for js api impl', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoErnJsApiImpl)
       expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
       yarnStub.restore()
     })

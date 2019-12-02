@@ -5,7 +5,6 @@ import shell from './shell'
 import { manifest } from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
 import log from './log'
-import { isDependencyJsApiImpl } from './utils'
 import path from 'path'
 import xcode from 'xcode-ern'
 import fs from 'fs-extra'
@@ -67,11 +66,6 @@ export async function fillProjectHull(
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
     for (const plugin of plugins) {
-      if (await isDependencyJsApiImpl(plugin)) {
-        log.debug('JS api implementation identified, skipping fill hull.')
-        continue
-      }
-
       let pluginConfig: any = await manifest.getPluginConfig(
         plugin,
         projectSpec.projectName

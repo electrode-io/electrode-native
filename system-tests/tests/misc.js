@@ -75,8 +75,6 @@ run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(`cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c 1000.1000.1`, { expectedExitCode: 1 })
 run(`cauldron add nativeapp ${iosNativeApplicationDescriptorNewVersion} -c latest`)
 run(`cauldron get dependency ${iosNativeApplicationDescriptorNewVersion}`)
-run(`cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
-run(`cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`)
 run(`cauldron get nativeapp`)
 
 // Already existing miniapp
@@ -96,9 +94,6 @@ run (`publish-container --containerPath ${defaultAndroidContainerGenPath} --plat
 run(`cauldron del miniapps ${f.movieListMiniAppPgkName} -d ${androidNativeApplicationDescriptor}`)
 
 run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
-
-// Del jsapiimpls
-run(`cauldron del jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`)
 
 // Del nativeapp
 run(`cauldron del nativeapp ${androidNativeApplicationDescriptor}`)

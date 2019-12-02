@@ -16,7 +16,6 @@ export async function bundleMiniApps(
     dev,
     sourceMapOutput,
     baseComposite,
-    jsApiImplDependencies,
     resolutions,
     extraJsDependencies,
   }: {
@@ -25,7 +24,6 @@ export async function bundleMiniApps(
     dev?: boolean
     sourceMapOutput?: string
     baseComposite?: PackagePath
-    jsApiImplDependencies?: PackagePath[]
     resolutions?: { [pkg: string]: string }
     extraJsDependencies?: PackagePath[]
   } = {}
@@ -34,7 +32,6 @@ export async function bundleMiniApps(
     generateComposite({
       baseComposite,
       extraJsDependencies,
-      jsApiImplDependencies,
       miniApps,
       outDir: compositeDir,
       pathToYarnLock,

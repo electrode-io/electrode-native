@@ -25,14 +25,4 @@
 
 * Id of the manifest entry that contains the dependencies and versions to align to.
 
-`--jsApiImplsOnly`
-
-* Only align dependencies in JS API Implementations repositories.
-* **Default** Align dependencies of MiniApps and JS API Implementations repositories.
-
-`--miniAppsOnly`
-
-* Only align dependencies in MiniApps repositories.
-* **Default** Align dependencies of MiniApps and JS API Implementations repositories.
-
 [github commands prerequisites]: ../github.md

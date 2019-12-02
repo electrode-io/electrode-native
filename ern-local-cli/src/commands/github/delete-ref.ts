@@ -26,14 +26,6 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .option('jsApiImplsOnly', {
-      describe: 'Delete the ref for JS API Implementations only',
-      type: 'boolean',
-    })
-    .option('miniAppsOnly', {
-      describe: 'Delete the ref for MiniApps only',
-      type: 'boolean',
-    })
     .option('tag', {
       describe: 'Name of the tag to delete',
       type: 'string',
@@ -44,14 +36,10 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   branch,
   descriptor,
-  jsApiImplsOnly,
-  miniAppsOnly,
   tag,
 }: {
   branch?: string
   descriptor?: AppVersionDescriptor
-  jsApiImplsOnly?: boolean
-  miniAppsOnly?: boolean
   tag?: string
 } = {}) => {
   if (!branch && !tag) {
@@ -96,12 +84,9 @@ export const commandHandler = async ({
 
   const cauldron = await getActiveCauldron()
 
-  const packages: PackagePath[] = await cauldron.getContainerJsPackages({
-    descriptor,
-    jsApiImplsOnly,
-    miniAppsOnly,
-    type: 'versions',
-  })
+  const packages: PackagePath[] = await cauldron.getContainerMiniApps(
+    descriptor
+  )
 
   if (branch) {
     await deleteBranch({ name: branch, packages })

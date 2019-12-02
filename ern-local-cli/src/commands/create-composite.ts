@@ -46,11 +46,6 @@ export const builder = (argv: Argv) => {
       describe: 'Favor MiniApp(s) branches',
       type: 'boolean',
     })
-    .option('jsApiImpls', {
-      describe: 'One or more JS API implementation(s)',
-      type: 'array',
-    })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'One or more MiniApp(s)',
@@ -71,7 +66,6 @@ export const commandHandler = async ({
   descriptor,
   extraJsDependencies,
   fromGitBranches,
-  jsApiImpls,
   miniapps,
   outDir,
 }: {
@@ -79,7 +73,6 @@ export const commandHandler = async ({
   descriptor?: AppVersionDescriptor
   extraJsDependencies?: PackagePath[]
   fromGitBranches?: boolean
-  jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   outDir?: string
   platform?: NativePlatform
@@ -122,7 +115,6 @@ Output directory should either not exist (it will be created) or should be empty
     miniapps = await cauldron.getContainerMiniApps(descriptor, {
       favorGitBranches: !!fromGitBranches,
     })
-    jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       descriptor
     )
@@ -145,7 +137,6 @@ Output directory should either not exist (it will be created) or should be empty
     generateComposite({
       baseComposite,
       extraJsDependencies,
-      jsApiImplDependencies: jsApiImpls,
       miniApps: miniapps!,
       outDir,
       pathToYarnLock,

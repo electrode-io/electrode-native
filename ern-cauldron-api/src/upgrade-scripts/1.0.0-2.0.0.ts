@@ -11,18 +11,19 @@ export default async function upgrade(cauldronApi: CauldronApi) {
     for (const nativeApp of cauldron.nativeApps) {
       for (const platform of nativeApp.platforms) {
         for (const version of platform.versions) {
-          version.container.miniAppsBranches = []
-          version.container.jsApiImplsBranches = []
+          const container = version.container as any
+          container.miniAppsBranches = []
+          container.jsApiImplsBranches = []
           for (const miniApp of version.container.miniApps) {
             const p = PackagePath.fromString(miniApp)
             if (p.isGitPath && (await utils.isGitBranch(p))) {
-              version.container.miniAppsBranches.push(miniApp)
+              container.miniAppsBranches.push(miniApp)
             }
           }
-          for (const jsApiImpl of version.container.jsApiImpls) {
+          for (const jsApiImpl of container.jsApiImpls) {
             const p = PackagePath.fromString(jsApiImpl)
             if (p.isGitPath && (await utils.isGitBranch(p))) {
-              version.container.jsApiImplsBranches.push(jsApiImpl)
+              container.jsApiImplsBranches.push(jsApiImpl)
             }
           }
         }

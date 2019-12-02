@@ -41,10 +41,8 @@ describe('generateContainerForRunner', () => {
   it('should call runLocalContainerGen with proper arguments if no descriptor is provided', async () => {
     const outDir = '/Users/foo/test'
     const miniApps = [PackagePath.fromString('a@1.0.0')]
-    const jsApiImpls = [PackagePath.fromString('b@1.0.0')]
     const dependencies = [PackagePath.fromString('c@1.0.0')]
     await generateContainerForRunner('android', {
-      jsApiImpls,
       miniApps,
       outDir,
     })
@@ -63,12 +61,10 @@ describe('generateContainerForRunner', () => {
   it('should call runLocalContainerGen with extra arguments if no descriptor is provided', async () => {
     const outDir = '/Users/foo/test'
     const miniApps = [PackagePath.fromString('a@1.0.0')]
-    const jsApiImpls = [PackagePath.fromString('b@1.0.0')]
     const dependencies = [PackagePath.fromString('c@1.0.0')]
     const extra = { androidConfig: { compileSdkVersion: '28' } }
     await generateContainerForRunner('android', {
       extra,
-      jsApiImpls,
       miniApps,
       outDir,
     })

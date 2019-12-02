@@ -35,14 +35,6 @@ export const builder = (argv: Argv) => {
       describe: 'Create the ref from the current tag/sha of the packages',
       type: 'boolean',
     })
-    .option('jsApiImplsOnly', {
-      describe: 'Create the ref for JS API Implementations only',
-      type: 'boolean',
-    })
-    .option('miniAppsOnly', {
-      describe: 'Create the ref for MiniApps only',
-      type: 'boolean',
-    })
     .option('tag', {
       describe: 'Name of the new tag to create',
       type: 'string',
@@ -55,16 +47,12 @@ export const commandHandler = async ({
   descriptor,
   fromBranch,
   fromTagOrSha,
-  jsApiImplsOnly,
-  miniAppsOnly,
   tag,
 }: {
   branch?: string
   descriptor?: AppVersionDescriptor
   fromBranch?: boolean
   fromTagOrSha?: boolean
-  jsApiImplsOnly?: boolean
-  miniAppsOnly?: boolean
   tag?: string
 } = {}) => {
   if (!branch && !tag) {
@@ -125,12 +113,12 @@ export const commandHandler = async ({
 
   const cauldron = await getActiveCauldron()
 
-  const packages: PackagePath[] = await cauldron.getContainerJsPackages({
+  const packages: PackagePath[] = await cauldron.getContainerMiniApps(
     descriptor,
-    jsApiImplsOnly,
-    miniAppsOnly,
-    type: fromBranch ? 'branches' : 'versions',
-  })
+    {
+      favorGitBranches: fromBranch,
+    }
+  )
 
   if (branch) {
     await createBranch({ name: branch, packages })

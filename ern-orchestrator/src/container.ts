@@ -146,7 +146,6 @@ export async function runCaudronBundleGen(
     baseComposite =
       baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
-    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
       napDescriptor
     )
@@ -173,7 +172,6 @@ export async function runCaudronBundleGen(
         napDescriptor.platform,
         {
           baseComposite,
-          jsApiImplDependencies: jsApiImpls,
           pathToYarnLock: pathToYarnLock || undefined,
           resolutions,
         }

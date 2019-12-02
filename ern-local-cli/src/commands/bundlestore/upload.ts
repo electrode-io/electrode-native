@@ -50,11 +50,6 @@ export const builder = (argv: Argv) => {
       describe: 'Upload bundle served by current local packager',
       type: 'boolean',
     })
-    .option('jsApiImpls', {
-      describe: 'One or more JS API implementation(s)',
-      type: 'array',
-    })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'One or more MiniApp(s)',
@@ -81,7 +76,6 @@ export const commandHandler = async ({
   extraJsDependencies,
   fromGitBranches,
   fromPackager,
-  jsApiImpls,
   miniapps,
   platform,
   prod,
@@ -91,7 +85,6 @@ export const commandHandler = async ({
   extraJsDependencies?: PackagePath[]
   fromGitBranches?: boolean
   fromPackager?: boolean
-  jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   platform?: NativePlatform
   prod?: boolean
@@ -141,7 +134,6 @@ export const commandHandler = async ({
       miniapps = await cauldron.getContainerMiniApps(descriptor, {
         favorGitBranches: !!fromGitBranches,
       })
-      jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
       const containerGenConfig = await cauldron.getContainerGeneratorConfig(
         descriptor
       )
@@ -169,7 +161,6 @@ export const commandHandler = async ({
       generateComposite({
         baseComposite,
         extraJsDependencies,
-        jsApiImplDependencies: jsApiImpls,
         miniApps: miniapps!,
         outDir: compositeDir,
         pathToYarnLock,

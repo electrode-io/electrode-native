@@ -127,16 +127,6 @@ describe('runMiniApp', () => {
     )
   })
 
-  it('should throw if js api implementations are provided along with a descriptor', async () => {
-    prepareStubs()
-    assert(
-      await doesThrow(runMiniApp, null, 'android', {
-        descriptor: testAndroid1770Descriptor,
-        jsApiImpls: [PackagePath.fromString('jsapiimpl@1.0.0')],
-      })
-    )
-  })
-
   it('should throw if miniapps are provided along with a descriptor', async () => {
     prepareStubs()
     assert(
@@ -189,7 +179,6 @@ describe('runMiniApp', () => {
     sandbox.assert.calledWith(generateContainerForRunnerStub, 'android', {
       baseComposite: undefined,
       extra: undefined,
-      jsApiImpls: undefined,
       jsMainModuleName: 'index.android',
       miniApps: sinon.match.array,
       napDescriptor: undefined,

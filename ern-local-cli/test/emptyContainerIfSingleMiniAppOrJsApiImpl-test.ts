@@ -1,4 +1,4 @@
-import { emptyContainerIfSingleMiniAppOrJsApiImpl } from '../src/lib'
+import { emptyContainerIfSingleMiniApp } from '../src/lib'
 import {
   CauldronApi,
   CauldronHelper,
@@ -24,41 +24,6 @@ const singleMiniAppCauldron = {
           versions: [
             {
               container: {
-                jsApiImpls: [],
-                miniApps: ['react-native-bar@2.0.0'],
-                nativeDeps: [
-                  'react-native@0.42.0',
-                  'react-native-code-push@1.17.1-beta',
-                ],
-              },
-              containerVersion: '1.0.0',
-              ernPlatformVersion: '1000.0.0',
-              isReleased: false,
-              name: '1.0.0',
-
-              yarnLocks: {
-                container: '2110ae042d2bf337973c7b60615ba19fe7fb120c',
-              },
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  schemaVersion: '1.0.0',
-}
-
-const singleJsApiImplCauldron = {
-  nativeApps: [
-    {
-      name: 'test',
-      platforms: [
-        {
-          name: 'android',
-          versions: [
-            {
-              container: {
-                jsApiImpls: [],
                 miniApps: ['react-native-bar@2.0.0'],
                 nativeDeps: [
                   'react-native@0.42.0',
@@ -100,7 +65,7 @@ function createCauldronHelper(cauldronDocument) {
   return new CauldronHelper(createCauldronApi(cauldronDocument))
 }
 
-describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
+describe('emptyContainerIfSingleMiniApp', () => {
   afterEach(() => {
     sandbox.restore()
   })
@@ -110,7 +75,7 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
     sandbox
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
-    const result = await emptyContainerIfSingleMiniAppOrJsApiImpl(
+    const result = await emptyContainerIfSingleMiniApp(
       AppVersionDescriptor.fromString('test:android:1.0.0')
     )
     expect(result).true
@@ -121,7 +86,7 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
     sandbox
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
-    const result = await emptyContainerIfSingleMiniAppOrJsApiImpl(
+    const result = await emptyContainerIfSingleMiniApp(
       AppVersionDescriptor.fromString('test:android:17.7.0')
     )
     expect(result).false
@@ -132,25 +97,11 @@ describe('emptyContainerIfSingleMiniAppOrJsApiImpl', () => {
     sandbox
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixture))
-    await emptyContainerIfSingleMiniAppOrJsApiImpl(
+    await emptyContainerIfSingleMiniApp(
       AppVersionDescriptor.fromString('test:android:1.0.0')
     )
     const version = jp.query(fixture, testAndroid100Path)[0]
     expect(version.container.miniApps).empty
-    expect(version.container.nativeDeps).empty
-    expect(version.yarnLocks.container).undefined
-  })
-
-  it('should empty the Container if there is a single JS API Impl', async () => {
-    const fixture = cloneFixture(singleJsApiImplCauldron)
-    sandbox
-      .stub(cauldronApi, 'getActiveCauldron')
-      .resolves(createCauldronHelper(fixture))
-    await emptyContainerIfSingleMiniAppOrJsApiImpl(
-      AppVersionDescriptor.fromString('test:android:1.0.0')
-    )
-    const version = jp.query(fixture, testAndroid100Path)[0]
-    expect(version.container.jsApiImpls).empty
     expect(version.container.nativeDeps).empty
     expect(version.yarnLocks.container).undefined
   })

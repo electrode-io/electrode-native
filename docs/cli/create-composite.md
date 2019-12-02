@@ -29,12 +29,6 @@
 * This flag will be ignored if the target descriptor does not contain any MiniApps tracking git branches
 **Default** false
 
-`--jsApiImpls`
-
-* One or more JS API implementation(s) to add to the JS Composite project.
-* The  JS API implementation(s) passed to this command can be a valid Yarn package format or a Git format or file scheme.  
-* This option can only be used if the `--descriptor` option is not used.
-
 `--miniapps/-m <miniapps>`
 
 * One or more MiniApps to add to the JS Composite project.

@@ -6,7 +6,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
-  emptyContainerIfSingleMiniAppOrJsApiImpl,
+  emptyContainerIfSingleMiniApp,
 } from '../../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -83,7 +83,7 @@ export const commandHandler = async ({
     }`,
   ]
 
-  if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor))) {
+  if (!(await emptyContainerIfSingleMiniApp(descriptor))) {
     const cauldron = await getActiveCauldron()
     await syncCauldronContainer(
       async () => {

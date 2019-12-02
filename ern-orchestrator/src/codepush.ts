@@ -136,9 +136,6 @@ export async function performCodePushPromote(
       const miniApps = _.map(codePushEntrySource.miniapps, miniapp =>
         PackagePath.fromString(miniapp)
       )
-      const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, jsapiimpl =>
-        PackagePath.fromString(jsapiimpl)
-      )
 
       const nativeDependenciesVersionAligned = await compatibility.areCompatible(
         miniApps,
@@ -216,8 +213,7 @@ export async function performCodePushPromote(
             rollout: codePushResponse.rollout,
             size: codePushResponse.size,
           },
-          miniApps,
-          jsApiImpls || []
+          miniApps
         )
 
         // Copy source map if a source map store server is configured
@@ -265,7 +261,6 @@ export async function performCodePushOtaUpdate(
   napDescriptor: AppVersionDescriptor,
   deploymentName: string,
   miniApps: PackagePath[],
-  jsApiImpls: PackagePath[],
   {
     baseComposite,
     codePushIsMandatoryRelease = false,
@@ -328,13 +323,9 @@ export async function performCodePushOtaUpdate(
       napDescriptor,
       deploymentName
     )
-    const latestCodePushedJsApiImpls = await cauldron.getCodePushJsApiImpls(
-      napDescriptor,
-      deploymentName
-    )
 
-    // We need to include, in this CodePush bundle, all the MiniApps and JS API implementations that were part
-    // of the previous CodePush. We will override versions of the MiniApps and JS API implementations with
+    // We need to include, in this CodePush bundle, all the MiniApps that were part
+    // of the previous CodePush. We will override versions of the MiniApps with
     // the one provided to this function, and keep other ones intact.
     // For example, if previous CodePush bundle was containing MiniAppOne@1.0.0 and
     // MiniAppTwo@1.0.0 and this method is called to CodePush MiniAppOne@2.0.0, then
@@ -351,33 +342,14 @@ export async function performCodePushOtaUpdate(
       )
     }
 
-    let referenceJsApiImplsToCodePush = latestCodePushedJsApiImpls
-    if (
-      !referenceJsApiImplsToCodePush ||
-      referenceJsApiImplsToCodePush.length === 0
-    ) {
-      referenceJsApiImplsToCodePush = await cauldron.getContainerJsApiImpls(
-        napDescriptor
-      )
-    }
-
     const miniAppsToBeCodePushed = _.unionBy(
       miniApps,
       referenceMiniAppsToCodePush,
       x => x.basePath
     )
 
-    const jsApiImplsToBeCodePushed = _.unionBy(
-      jsApiImpls,
-      referenceJsApiImplsToCodePush,
-      x => x.basePath
-    )
-
     const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m =>
       PackagePath.fromString(m.toString())
-    )
-    const pathToJsApiImplsToBeCodePushed = _.map(jsApiImplsToBeCodePushed, j =>
-      PackagePath.fromString(j.toString())
     )
 
     const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
@@ -391,7 +363,6 @@ export async function performCodePushOtaUpdate(
     await kax.task('Generating composite module').run(
       generateComposite({
         baseComposite,
-        jsApiImplDependencies: pathToJsApiImplsToBeCodePushed,
         miniApps: pathsToMiniAppsToBeCodePushed,
         outDir: tmpWorkingDir,
         pathToYarnLock,
@@ -480,8 +451,7 @@ export async function performCodePushOtaUpdate(
           rollout: codePushResponse.rollout,
           size: codePushResponse.size,
         },
-        miniAppsToBeCodePushed,
-        jsApiImplsToBeCodePushed
+        miniAppsToBeCodePushed
       )
 
       const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')

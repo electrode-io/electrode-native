@@ -26,7 +26,5 @@ export { askUserToInputPackageName } from './askUserToInputPackageName'
 export { askUserToSelectAnEnvironment } from './askUserToSelectAnEnvironment'
 export { askUserConfirmation } from './askUserConfirmation'
 export { askUserForCodePushLabel } from './askUserForCodePushLabel'
-export {
-  emptyContainerIfSingleMiniAppOrJsApiImpl,
-} from './emptyContainerIfSingleMiniAppOrJsApiImpl'
+export { emptyContainerIfSingleMiniApp } from './emptyContainerIfSingleMiniApp'
 export { askUserInput } from './askUserInput'

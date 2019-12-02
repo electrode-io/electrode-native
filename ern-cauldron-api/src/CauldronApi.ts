@@ -27,18 +27,9 @@ import semver from 'semver'
 const yarnLocksStoreDirectory = 'yarnlocks'
 const bundlesStoreDirectory = 'bundles'
 
-export type ContainerJsPackagesBranchesArrayKey =
-  | 'jsApiImplsBranches'
-  | 'miniAppsBranches'
-
-export type ContainerJsPackagesVersionsArrayKey = 'jsApiImpls' | 'miniApps'
-
-export type ContainerJsPackagesArrayKey =
-  | ContainerJsPackagesBranchesArrayKey
-  | ContainerJsPackagesVersionsArrayKey
-
 export type ContainerPackagesArrayKey =
-  | ContainerJsPackagesArrayKey
+  | 'miniAppsBranches'
+  | 'miniApps'
   | 'nativeDeps'
 
 export default class CauldronApi {
@@ -239,37 +230,6 @@ export default class CauldronApi {
   ): Promise<string[]> {
     const version = await this.getVersion(descriptor)
     return version.container.miniAppsBranches || []
-  }
-
-  public async getContainerJsApiImplsBranches(
-    descriptor: AppVersionDescriptor
-  ): Promise<string[]> {
-    const version = await this.getVersion(descriptor)
-    return version.container.jsApiImplsBranches || []
-  }
-
-  public async getContainerJsApiImpls(
-    descriptor: AppVersionDescriptor
-  ): Promise<string[]> {
-    const version = await this.getVersion(descriptor)
-    return version.container.jsApiImpls
-  }
-
-  public async getContainerJsApiImpl(
-    descriptor: AppVersionDescriptor,
-    jsApiImplName: string
-  ): Promise<string> {
-    const jsApiImpls = await this.getContainerJsApiImpls(descriptor)
-    const result = _.find(
-      jsApiImpls,
-      x => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`)
-    )
-    if (!result) {
-      throw new Error(
-        `Cannot find ${jsApiImplName} JS API implementation in ${descriptor.toString()} Container`
-      )
-    }
-    return result
   }
 
   public async isMiniAppInContainer(
@@ -1023,13 +983,12 @@ export default class CauldronApi {
 
   /**
    * Empty the Container of a given native application version
-   * Removes all MiniApps/JsApiImpls and native dependencies from
+   * Removes all miniapps and native dependencies from
    * the target Container and Container yarn lock
    * @param descriptor Target native application version descriptor
    */
   public async emptyContainer(descriptor: AppVersionDescriptor) {
     const version = await this.getVersion(descriptor)
-    version.container.jsApiImpls = []
     version.container.miniApps = []
     version.container.nativeDeps = []
     delete version.yarnLocks.container
@@ -1042,15 +1001,14 @@ export default class CauldronApi {
     }
   }
 
-  public async hasJsPackageBranchInContainer(
+  public async hasMiniAppBranchInContainer(
     descriptor: AppVersionDescriptor,
-    jsPackage: PackagePath,
-    key: ContainerJsPackagesBranchesArrayKey
+    miniApp: PackagePath
   ) {
     const container = (await this.getVersion(descriptor)).container
     return (
-      _.find(container[key] || [], p =>
-        jsPackage.same(PackagePath.fromString(p), { ignoreVersion: true })
+      _.find(container.miniAppsBranches || [], p =>
+        miniApp.same(PackagePath.fromString(p), { ignoreVersion: true })
       ) !== undefined
     )
   }

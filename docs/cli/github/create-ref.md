@@ -37,14 +37,4 @@
 * Creates the new branch/tag from the current tags or SHAs of the MiniApps/JS API Implementations listed in the target descriptor.
 * **Default** Interactive prompt to select `--fromBranch/--fromTagOrSha` option to be used.
 
-`--jsApiImplsOnly`
-
-* Only create new branch/tag for JS API Implementations.
-* **Default** Creates branch/tag for MiniApps and JS API Implementations.
-
-`--miniAppsOnly`
-
-* Only create new branch/tag for MiniApps.
-* **Default** Creates branch/tag for MiniApps and JS API Implementations.
-
 [github commands prerequisites]: ../github.md

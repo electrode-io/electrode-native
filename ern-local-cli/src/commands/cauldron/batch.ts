@@ -6,7 +6,7 @@ import {
   logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
-  emptyContainerIfSingleMiniAppOrJsApiImpl,
+  emptyContainerIfSingleMiniApp,
 } from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'
@@ -81,7 +81,7 @@ export const commandHandler = async ({
             'To avoid conflicts with previous versions, you can only use container version newer than the current one',
         }
       : undefined,
-    isSupportedMiniAppOrJsApiImplVersion: {
+    isSupportedMiniAppVersion: {
       obj: [...updateMiniapps, ...addMiniapps],
     },
     isValidContainerVersion: containerVersion
@@ -121,7 +121,7 @@ export const commandHandler = async ({
     async () => {
       // Del MiniApps
       for (const delMiniApp of delMiniapps) {
-        if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor!))) {
+        if (!(await emptyContainerIfSingleMiniApp(descriptor!))) {
           await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp)
         }
         cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`)

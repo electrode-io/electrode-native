@@ -6,7 +6,6 @@ import fs from 'fs-extra'
 export async function addContainerMetadata(conf: ContainerGeneratorConfig) {
   const metadata: ContainerMetadata = {
     ernVersion: Platform.currentVersion,
-    jsApiImpls: conf.composite.getJsApiImpls().map(j => j.toString()),
     miniApps: conf.composite.getMiniApps().map(m => m.packagePath.toString()),
     nativeDeps: conf.plugins.map(p => p.toString()),
     platform: conf.targetPlatform,

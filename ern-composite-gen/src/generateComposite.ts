@@ -26,13 +26,8 @@ import uuidv4 from 'uuid/v4'
 export async function generateComposite(config: CompositeGeneratorConfig) {
   log.debug(`generateComposite config : ${JSON.stringify(config, null, 2)}`)
 
-  if (
-    config.miniApps.length === 0 &&
-    (config.jsApiImplDependencies || []).length === 0
-  ) {
-    throw new Error(
-      `At least one MiniApp or JS API implementation is needed to generate a composite`
-    )
+  if (config.miniApps.length === 0) {
+    throw new Error(`At least one MiniApp is needed to generate a composite`)
   }
 
   return config.baseComposite
@@ -42,12 +37,10 @@ export async function generateComposite(config: CompositeGeneratorConfig) {
         config.baseComposite,
         {
           extraJsDependencies: config.extraJsDependencies,
-          jsApiImplDependencies: config.jsApiImplDependencies,
         }
       )
     : generateFullComposite(config.miniApps, config.outDir, {
         extraJsDependencies: config.extraJsDependencies,
-        jsApiImplDependencies: config.jsApiImplDependencies,
         pathToYarnLock: config.pathToYarnLock,
         resolutions: config.resolutions,
       })
@@ -59,10 +52,8 @@ async function generateCompositeFromBase(
   baseComposite: PackagePath,
   {
     extraJsDependencies = [],
-    jsApiImplDependencies,
   }: {
     extraJsDependencies?: PackagePath[]
-    jsApiImplDependencies?: PackagePath[]
   } = {}
 ) {
   if (baseComposite.isRegistryPath) {
@@ -89,13 +80,9 @@ Composite output directory should either not exist (it will be created) or shoul
     shell.cp('-Rf', path.join(baseComposite.basePath, '{.*,*}'), outDir)
   }
 
-  const jsPackages = jsApiImplDependencies
-    ? [...miniApps, ...jsApiImplDependencies]
-    : miniApps
-
   shell.pushd(outDir)
   try {
-    await installJsPackagesWithoutYarnLock({ jsPackages, outDir })
+    await installJsPackagesWithoutYarnLock({ jsPackages: miniApps, outDir })
     await createCompositeImportsJsBasedOnPackageJson({ outDir })
     if (extraJsDependencies) {
       await installExtraJsDependencies({ outDir, extraJsDependencies })
@@ -110,12 +97,10 @@ async function generateFullComposite(
   outDir: string,
   {
     extraJsDependencies = [],
-    jsApiImplDependencies,
     pathToYarnLock,
     resolutions,
   }: {
     extraJsDependencies?: PackagePath[]
-    jsApiImplDependencies?: PackagePath[]
     pathToYarnLock?: string
     resolutions?: { [pkg: string]: string }
   } = {}
@@ -132,7 +117,6 @@ async function generateFullComposite(
 
   try {
     await installJsPackages({
-      jsApiImplDependencies,
       miniApps,
       outDir,
       pathToYarnLock,
@@ -656,21 +640,15 @@ async function createRnCliConfig({ outDir }: { outDir: string }) {
 }
 
 async function installJsPackages({
-  jsApiImplDependencies,
   miniApps,
   outDir,
   pathToYarnLock,
 }: {
-  jsApiImplDependencies?: PackagePath[]
   miniApps: PackagePath[]
   outDir: string
   pathToYarnLock?: string
 }) {
-  const jsPackages = jsApiImplDependencies
-    ? [...miniApps, ...jsApiImplDependencies]
-    : miniApps
-
-  if (pathToYarnLock && _.some(jsPackages, p => p.isFilePath)) {
+  if (pathToYarnLock && _.some(miniApps, p => p.isFilePath)) {
     log.warn(
       'Yarn lock will not be used as some of the MiniApp paths are file based'
     )
@@ -679,12 +657,12 @@ async function installJsPackages({
 
   if (pathToYarnLock) {
     await installJsPackagesUsingYarnLock({
-      jsPackages,
+      jsPackages: miniApps,
       outDir,
       pathToYarnLock,
     })
   } else {
-    await installJsPackagesWithoutYarnLock({ jsPackages, outDir })
+    await installJsPackagesWithoutYarnLock({ jsPackages: miniApps, outDir })
   }
 }
 

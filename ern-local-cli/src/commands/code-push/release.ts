@@ -19,7 +19,7 @@ import { Argv } from 'yargs'
 
 export const command = 'release'
 export const desc =
-  'CodePush MiniApp(s) or JS API implementation(s) version(s) to a target native application version'
+  'CodePush MiniApp(s) version(s) to a target native application version'
 
 export const builder = (argv: Argv) => {
   return argv
@@ -50,10 +50,6 @@ export const builder = (argv: Argv) => {
       describe:
         'When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error',
       type: 'boolean',
-    })
-    .option('jsApiImpls', {
-      describe: 'One or more JS API implementation to CodePush',
-      type: 'array',
     })
     .option('mandatory', {
       alias: 'm',
@@ -100,7 +96,6 @@ export const commandHandler = async ({
   descriptors = [],
   disableDuplicateReleaseError,
   force,
-  jsApiImpls = [],
   mandatory,
   miniapps = [],
   rollout,
@@ -114,7 +109,6 @@ export const commandHandler = async ({
   descriptors?: AppVersionDescriptor[]
   disableDuplicateReleaseError: boolean
   force: boolean
-  jsApiImpls: string[]
   mandatory?: boolean
   miniapps: string[]
   rollout?: number
@@ -123,9 +117,9 @@ export const commandHandler = async ({
   sourceMapOutput?: string
   targetBinaryVersion?: string
 }) => {
-  if (miniapps.length === 0 && jsApiImpls.length === 0) {
+  if (miniapps.length === 0) {
     throw new Error(
-      'You need to provide at least one MiniApp or one JS API implementation version to CodePush'
+      'You need to provide at least one MiniApp version to CodePush'
     )
   }
 
@@ -189,14 +183,13 @@ export const commandHandler = async ({
     noFileSystemPath: {
       extraErrorMessage:
         'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
-      obj: [...miniapps, ...jsApiImpls],
+      obj: [...miniapps],
     },
   })
 
   const miniAppsPackages = _.map(miniapps, PackagePath.fromString)
-  const jsApiImplsPackages = _.map(jsApiImpls, PackagePath.fromString)
-  const packages = [...miniAppsPackages, ...jsApiImplsPackages]
-  for (const pkg of packages) {
+
+  for (const pkg of miniAppsPackages) {
     if (pkg.isGitPath && (await coreUtils.isGitBranch(pkg))) {
       throw new Error(
         'You cannot code push packages from a git branch. Only SHA or TAGs are supported.'
@@ -214,7 +207,6 @@ export const commandHandler = async ({
       descriptor,
       deploymentName,
       miniAppsPackages,
-      jsApiImplsPackages,
       {
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,

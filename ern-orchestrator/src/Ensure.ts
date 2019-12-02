@@ -499,12 +499,12 @@ export default class Ensure {
   }
 
   // Electrode Native currently supports the following versions types
-  // to be added to a Container for MiniApps or JS API Implementations
+  // to be added to a Container for MiniApps
   // dependending of the path type :
   // - File Path      : No intrisic version. Not allowed.
   // - Git Path       : Branch/Tag/Commit SHA
   // - Registry Path  : Fixed (and valid) semantic version. No Ranges.
-  public static isSupportedMiniAppOrJsApiImplVersion(
+  public static isSupportedMiniAppVersion(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     extraErrorMessage?: string
   ) {

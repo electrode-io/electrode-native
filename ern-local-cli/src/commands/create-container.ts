@@ -63,11 +63,6 @@ export const builder = (argv: Argv) => {
       describe: 'Ignore rnpm assets from the MiniApps',
       type: 'boolean',
     })
-    .option('jsApiImpls', {
-      describe: 'A list of one or more JS API implementation',
-      type: 'array',
-    })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more miniapps',
@@ -101,7 +96,6 @@ export const commandHandler = async ({
   extra,
   fromGitBranches,
   ignoreRnpmAssets,
-  jsApiImpls,
   miniapps,
   outDir,
   platform,
@@ -113,7 +107,6 @@ export const commandHandler = async ({
   extra?: string
   fromGitBranches?: boolean
   ignoreRnpmAssets?: boolean
-  jsApiImpls?: PackagePath[]
   miniapps?: PackagePath[]
   outDir?: string
   platform?: NativePlatform
@@ -170,7 +163,6 @@ Output directory should either not exist (it will be created) or should be empty
     const composite = await kax.task('Generating Composite locally').run(
       runLocalCompositeGen(miniapps, {
         baseComposite,
-        jsApiImpls,
         outDir: compositeDir,
       })
     )

@@ -26,9 +26,6 @@
             "miniApps": [
               "@test/react-native-foo@4.0.0",
               "react-native-bar@2.0.0"
-            ],
-            "jsApiImpls": [
-              "react-native-my-api-impl@1.0.0"
             ]
           },
           "codePush": {
@@ -47,8 +44,7 @@
                   "@test/react-native-foo@4.0.2",
                   "react-native-bar@2.0.1",
                   "react-native-abc@1.0.0"
-                ],
-                "jsApiImpls": []
+                ]
               },
               {
                 "metadata": {
@@ -64,9 +60,6 @@
                 "miniapps": [
                   "@test/react-native-foo@4.0.2",
                   "react-native-bar@2.0.2"
-                ],
-                "jsApiImpls": [
-                  "react-native-my-api-impl@1.0.0"
                 ]
               }
             ],
@@ -84,9 +77,6 @@
               "miniapps": [
                 "@test/react-native-foo@4.0.3",
                 "react-native-bar@2.0.2"
-              ],
-              "jsApiImpls": [
-                "react-native-my-api-impl@1.1.0"
               ]
             }]
           }
@@ -111,9 +101,6 @@
               "react-native-bar@3.0.0",
               "git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9",
               "https://github.com/foo/foo.git#6319d9ef0c237907c784a8c472b000d5ff83b49a"
-            ],
-            "jsApiImpls": [
-              "react-native-my-api-impl@1.0.0"
             ],
             "ernVersion": "1000.0.0"
           },

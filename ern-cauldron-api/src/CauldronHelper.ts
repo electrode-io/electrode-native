@@ -170,23 +170,6 @@ export class CauldronHelper {
         'miniApps'
       )
     }
-    // Copy container JS API implementations branches
-    for (const containerJsApiImplBranch of sourceVersion.container
-      .jsApiImplsBranches || []) {
-      await this.cauldron.addPackageToContainer(
-        target,
-        PackagePath.fromString(containerJsApiImplBranch),
-        'jsApiImplsBranches'
-      )
-    }
-    // Copy container JS API implementations
-    for (const containerJsApiImpl of sourceVersion.container.jsApiImpls) {
-      await this.cauldron.addPackageToContainer(
-        target,
-        PackagePath.fromString(containerJsApiImpl),
-        'jsApiImpls'
-      )
-    }
     // Copy yarn locks if any
     if (sourceVersion.yarnLocks) {
       for (const k of Object.keys(sourceVersion.yarnLocks)) {
@@ -266,34 +249,7 @@ export class CauldronHelper {
   public async removeMiniAppFromContainer(
     descriptor: AppVersionDescriptor,
     miniApp: PackagePath
-  ): Promise<void> {
-    return this.removeJsPackageFromContainer({
-      descriptor,
-      jsPackage: miniApp,
-      type: 'miniapp',
-    })
-  }
-
-  public async removeJsApiImplFromContainer(
-    descriptor: AppVersionDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<void> {
-    return this.removeJsPackageFromContainer({
-      descriptor,
-      jsPackage: jsApiImpl,
-      type: 'jsapiimpl',
-    })
-  }
-
-  public async removeJsPackageFromContainer({
-    descriptor,
-    jsPackage,
-    type,
-  }: {
-    descriptor: AppVersionDescriptor
-    jsPackage: PackagePath
-    type: 'miniapp' | 'jsapiimpl'
-  }) {
+  ) {
     await this.throwIfNativeAppVersionIsReleased(
       descriptor,
       'Cannot remove a js package from a released native application version Container'
@@ -303,8 +259,8 @@ export class CauldronHelper {
       // was tracking a branch
       await this.cauldron.removePackageFromContainer(
         descriptor,
-        jsPackage,
-        type === 'miniapp' ? 'miniAppsBranches' : 'jsApiImplsBranches'
+        miniApp,
+        'miniAppsBranches'
       )
     } catch (e) {
       // swallow
@@ -313,8 +269,8 @@ export class CauldronHelper {
     }
     return this.cauldron.removePackageFromContainer(
       descriptor,
-      jsPackage,
-      type === 'miniapp' ? 'miniApps' : 'jsApiImpls'
+      miniApp,
+      'miniApps'
     )
   }
 
@@ -587,83 +543,6 @@ export class CauldronHelper {
     })
   }
 
-  public async syncContainerJsApiImpls(
-    descriptor: AppVersionDescriptor,
-    localPackages: PackagePath[]
-  ): Promise<void> {
-    return this.syncContainerPackages({
-      descriptor,
-      funcAddPackageToContainer: this.addJsApiImplToContainer.bind(this),
-      funcGetPackagesFromContainer: this.getContainerJsApiImpls.bind(this),
-      funcUpdatePackageInContainer: this.updateJsApiImplVersionInContainer.bind(
-        this
-      ),
-      localPackages,
-    })
-  }
-
-  public async updateJsPackageVersionInContainer({
-    descriptor,
-    jsPackage,
-    keepBranch,
-    type,
-  }: {
-    descriptor: AppVersionDescriptor
-    jsPackage: PackagePath
-    keepBranch?: boolean
-    type: 'miniapp' | 'jsapiimpl'
-  }): Promise<void> {
-    if (jsPackage.isGitPath && (await coreUtils.isGitBranch(jsPackage))) {
-      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(jsPackage)
-      if (
-        await this.cauldron.hasJsPackageBranchInContainer(
-          descriptor,
-          jsPackage,
-          type === 'miniapp' ? 'miniAppsBranches' : 'jsApiImplsBranches'
-        )
-      ) {
-        await this.cauldron.updatePackageInContainer(
-          descriptor,
-          jsPackage,
-          type === 'miniapp' ? 'miniAppsBranches' : 'jsApiImplsBranches'
-        )
-      } else {
-        await this.cauldron.addPackageToContainer(
-          descriptor,
-          jsPackage,
-          type === 'miniapp' ? 'miniAppsBranches' : 'jsApiImplsBranches'
-        )
-      }
-
-      return this.cauldron.updatePackageInContainer(
-        descriptor,
-        PackagePath.fromString(`${jsPackage.basePath}#${commitSha}`),
-        type === 'miniapp' ? 'miniApps' : 'jsApiImpls'
-      )
-    } else {
-      try {
-        if (!keepBranch) {
-          // Remove any potential branch in case previous package version
-          // was tracking a branch
-          await this.cauldron.removePackageFromContainer(
-            descriptor,
-            PackagePath.fromString(jsPackage.basePath),
-            type === 'miniapp' ? 'miniAppsBranches' : 'jsApiImplsBranches'
-          )
-        }
-      } catch (e) {
-        // swallow
-        // We don't really care if there was not branch associated to
-        // this MiniApp, as long as cleaning is done if there was one
-      }
-      return this.cauldron.updatePackageInContainer(
-        descriptor,
-        jsPackage,
-        type === 'miniapp' ? 'miniApps' : 'jsApiImpls'
-      )
-    }
-  }
-
   public async updateMiniAppVersionInContainer(
     descriptor: AppVersionDescriptor,
     miniApp: PackagePath,
@@ -673,66 +552,55 @@ export class CauldronHelper {
       keepBranch?: boolean
     } = {}
   ): Promise<void> {
-    return this.updateJsPackageVersionInContainer({
-      descriptor,
-      jsPackage: miniApp,
-      keepBranch,
-      type: 'miniapp',
-    })
-  }
+    if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
+      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(miniApp)
+      if (
+        await this.cauldron.hasMiniAppBranchInContainer(descriptor, miniApp)
+      ) {
+        await this.cauldron.updatePackageInContainer(
+          descriptor,
+          miniApp,
+          'miniAppsBranches'
+        )
+      } else {
+        await this.cauldron.addPackageToContainer(
+          descriptor,
+          miniApp,
+          'miniAppsBranches'
+        )
+      }
 
-  public async updateJsApiImplVersionInContainer(
-    descriptor: AppVersionDescriptor,
-    jsApiImpl: PackagePath,
-    {
-      keepBranch,
-    }: {
-      keepBranch?: boolean
-    } = {}
-  ): Promise<void> {
-    return this.updateJsPackageVersionInContainer({
-      descriptor,
-      jsPackage: jsApiImpl,
-      keepBranch,
-      type: 'jsapiimpl',
-    })
+      return this.cauldron.updatePackageInContainer(
+        descriptor,
+        PackagePath.fromString(`${miniApp.basePath}#${commitSha}`),
+        'miniApps'
+      )
+    } else {
+      try {
+        if (!keepBranch) {
+          // Remove any potential branch in case previous package version
+          // was tracking a branch
+          await this.cauldron.removePackageFromContainer(
+            descriptor,
+            PackagePath.fromString(miniApp.basePath),
+            'miniAppsBranches'
+          )
+        }
+      } catch (e) {
+        // swallow
+        // We don't really care if there was not branch associated to
+        // this MiniApp, as long as cleaning is done if there was one
+      }
+      return this.cauldron.updatePackageInContainer(
+        descriptor,
+        miniApp,
+        'miniApps'
+      )
+    }
   }
 
   public async getAllNativeApps(): Promise<any> {
     return this.cauldron.getNativeApplications()
-  }
-
-  public async getContainerJsApiImpls(
-    descriptor: AppVersionDescriptor
-  ): Promise<PackagePath[]> {
-    const jsApiImpls = await this.cauldron.getContainerJsApiImpls(descriptor)
-    return _.map(jsApiImpls, j => PackagePath.fromString(j))
-  }
-
-  public async getContainerJsApiImpl(
-    descriptor: AppVersionDescriptor,
-    jsApiImpl: PackagePath
-  ): Promise<string> {
-    return this.cauldron.getContainerJsApiImpl(descriptor, jsApiImpl.toString())
-  }
-
-  public async getCodePushJsApiImpls(
-    descriptor: AppVersionDescriptor,
-    deploymentName: string,
-    {
-      label,
-    }: {
-      label?: string
-    } = {}
-  ): Promise<PackagePath[] | void> {
-    const codePushEntry = await this.getCodePushEntry(
-      descriptor,
-      deploymentName,
-      { label }
-    )
-    if (codePushEntry) {
-      return _.map(codePushEntry.jsApiImpls, e => PackagePath.fromString(e))
-    }
   }
 
   public async isMiniAppInContainer(
@@ -804,42 +672,6 @@ export class CauldronHelper {
     return _.map(miniAppsBranches, PackagePath.fromString)
   }
 
-  public async getContainerJsApiImplsBranches(descriptor) {
-    const branches = await this.cauldron.getContainerJsApiImplsBranches(
-      descriptor
-    )
-    return _.map(branches, PackagePath.fromString)
-  }
-
-  public async getContainerJsPackages({
-    descriptor,
-    jsApiImplsOnly = false,
-    miniAppsOnly = false,
-    type,
-  }: {
-    descriptor: AppVersionDescriptor
-    jsApiImplsOnly?: boolean
-    miniAppsOnly?: boolean
-    type: 'branches' | 'versions'
-  }): Promise<PackagePath[]> {
-    const result: PackagePath[] = []
-    if (!jsApiImplsOnly) {
-      const miniAppsPackages =
-        type === 'branches'
-          ? await this.getContainerMiniAppsBranches(descriptor)
-          : await this.getContainerMiniApps(descriptor)
-      result.push(...miniAppsPackages)
-    }
-    if (!miniAppsOnly) {
-      const jsApiImplsPackages =
-        type === 'branches'
-          ? await this.getContainerJsApiImplsBranches(descriptor)
-          : await this.getContainerJsApiImpls(descriptor)
-      result.push(...jsApiImplsPackages)
-    }
-    return result
-  }
-
   public async getContainerMiniApps(
     descriptor: AppVersionDescriptor,
     {
@@ -896,11 +728,9 @@ export class CauldronHelper {
   public async addCodePushEntry(
     descriptor: AppVersionDescriptor,
     metadata: CauldronCodePushMetadata,
-    miniApps: PackagePath[],
-    jsApiImplementations: PackagePath[]
+    miniApps: PackagePath[]
   ): Promise<void> {
     const miniapps = _.map(miniApps, x => x.toString())
-    const jsApiImpls = _.map(jsApiImplementations, x => x.toString())
     const codePushConfig = await this.getCodePushConfig()
     let codePushEntries
     if (
@@ -927,9 +757,9 @@ export class CauldronHelper {
           codePushEntries.length - codePushConfig.entriesLimit + 1
       }
       updatedEntriesArr = _.drop(codePushEntries, nbEntriesToDrop)
-      updatedEntriesArr.push({ metadata, miniapps, jsApiImpls })
+      updatedEntriesArr.push({ metadata, miniapps })
     } else {
-      updatedEntriesArr = [{ metadata, miniapps, jsApiImpls }]
+      updatedEntriesArr = [{ metadata, miniapps }]
     }
 
     return this.cauldron.setCodePushEntries(
@@ -974,52 +804,25 @@ export class CauldronHelper {
 
   public async addMiniAppToContainer(
     descriptor: AppVersionDescriptor,
-    miniapp: PackagePath
+    miniApp: PackagePath
   ) {
-    return this.addJsPackageToContainer({
-      descriptor,
-      jsPackage: miniapp,
-      type: 'miniapp',
-    })
-  }
-
-  public async addJsApiImplToContainer(
-    descriptor: AppVersionDescriptor,
-    jsapiimpl: PackagePath
-  ) {
-    return this.addJsPackageToContainer({
-      descriptor,
-      jsPackage: jsapiimpl,
-      type: 'jsapiimpl',
-    })
-  }
-
-  public async addJsPackageToContainer({
-    descriptor,
-    jsPackage,
-    type,
-  }: {
-    descriptor: AppVersionDescriptor
-    jsPackage: PackagePath
-    type: 'miniapp' | 'jsapiimpl'
-  }) {
-    if (jsPackage.isGitPath && (await coreUtils.isGitBranch(jsPackage))) {
-      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(jsPackage)
+    if (miniApp.isGitPath && (await coreUtils.isGitBranch(miniApp))) {
+      const commitSha = await coreUtils.getCommitShaOfGitBranchOrTag(miniApp)
       await this.cauldron.addPackageToContainer(
         descriptor,
-        jsPackage,
-        type === 'miniapp' ? 'miniAppsBranches' : 'jsApiImplsBranches'
+        miniApp,
+        'miniAppsBranches'
       )
       return this.cauldron.addPackageToContainer(
         descriptor,
-        PackagePath.fromString(`${jsPackage.basePath}#${commitSha}`),
-        type === 'miniapp' ? 'miniApps' : 'jsApiImpls'
+        PackagePath.fromString(`${miniApp.basePath}#${commitSha}`),
+        'miniApps'
       )
     } else {
       return this.cauldron.addPackageToContainer(
         descriptor,
-        jsPackage,
-        type === 'miniapp' ? 'miniApps' : 'jsApiImpls'
+        miniApp,
+        'miniApps'
       )
     }
   }
@@ -1248,33 +1051,6 @@ export class CauldronHelper {
       if (matchingMiniApp!.version !== latestCommitSha) {
         const newPackagePath = PackagePath.fromString(
           `${miniAppBranch.basePath}#${latestCommitSha}`
-        )
-        result.push(newPackagePath)
-      }
-    }
-    return result
-  }
-
-  public async getLatestShasForJsApiImplsBranches(
-    descriptor: AppVersionDescriptor
-  ) {
-    const result: PackagePath[] = []
-    const jsApiImplsBranches = (await this.cauldron.getContainerJsApiImplsBranches(
-      descriptor
-    )).map(p => PackagePath.fromString(p))
-    const jsApiImpls = (await this.cauldron.getContainerJsApiImpls(
-      descriptor
-    )).map(p => PackagePath.fromString(p))
-    for (const jsApiImplBranch of jsApiImplsBranches) {
-      const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
-        jsApiImplBranch
-      )
-      const matchingJsApiImpl = jsApiImpls.find(
-        m => m.basePath === jsApiImplBranch.basePath
-      )
-      if (matchingJsApiImpl!.version !== latestCommitSha) {
-        const newPackagePath = PackagePath.fromString(
-          `${jsApiImplBranch.basePath}#${latestCommitSha}`
         )
         result.push(newPackagePath)
       }

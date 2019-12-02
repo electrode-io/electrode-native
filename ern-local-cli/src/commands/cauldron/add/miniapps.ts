@@ -56,7 +56,7 @@ export const commandHandler = async ({
             'To avoid conflicts with previous versions, you can only use container version newer than the current one',
         }
       : undefined,
-    isSupportedMiniAppOrJsApiImplVersion: {
+    isSupportedMiniAppVersion: {
       obj: miniapps,
     },
     isValidContainerVersion: containerVersion

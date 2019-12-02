@@ -34,7 +34,6 @@ export async function runMiniApp(
     dev,
     extra,
     host,
-    jsApiImpls,
     launchArgs,
     launchEnvVars,
     launchFlags,
@@ -48,7 +47,6 @@ export async function runMiniApp(
     dev?: boolean
     extra?: any
     host?: string
-    jsApiImpls?: PackagePath[]
     launchArgs?: string
     launchEnvVars?: string
     launchFlags?: string
@@ -80,12 +78,6 @@ export async function runMiniApp(
     dev = false
     log.warn(
       'Turning off dev mode since you are running multiple MiniApps. \nIf you want to start a packager, execute `ern start` command with all the miniapps in a separate terminal.\nCheck this link for more details: https://native.electrode.io/cli-commands/start'
-    )
-  }
-
-  if (jsApiImpls && jsApiImpls.length > 0 && descriptor) {
-    throw new Error(
-      'You cannot pass JavaScript API implementations when using a Native Application Descriptor'
     )
   }
 
@@ -150,19 +142,10 @@ export async function runMiniApp(
       []
   }
 
-  if (descriptor) {
-    jsApiImpls =
-      (cauldron &&
-        napDescriptor &&
-        (await cauldron.getContainerJsApiImpls(napDescriptor))) ||
-      []
-  }
-
   const outDir = Platform.getContainerGenOutDirectory(platform)
   const containerGenResult = await generateContainerForRunner(platform, {
     baseComposite,
     extra, // JavaScript object to pass extras e.x. androidConfig
-    jsApiImpls,
     jsMainModuleName,
     miniApps: miniapps,
     napDescriptor: napDescriptor || undefined,

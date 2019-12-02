@@ -1,6 +1,5 @@
 {
   "ernVersion": "1000.0.0",
-  "jsApiImpls": [],
   "miniApps": [
     "moviedetailsminiapp@0.0.30",
     "movielistminiapp@0.0.34"

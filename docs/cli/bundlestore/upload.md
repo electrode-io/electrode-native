@@ -16,7 +16,7 @@ Upload a JS bundle to the current store.
 
 - There are three different ways to generate and upload a bundle :
   - Using a Cauldron, by providing a descriptor and eventually some extra JS dependencies (`--descriptor`/`--extraJsDependencies` option)
-  - By manually specifying all the MiniApps/JS API Implementations and extra JS dependencies to put in the bundle (`--miniapps`/`--jsApiImpls`/`--extraJsDependencies` options)
+  - By manually specifying all the MiniApps/JS API Implementations and extra JS dependencies to put in the bundle (`--miniapps`/`--extraJsDependencies` options)
   - From a metro server (packager) running locally (`--fromPackager` flag)
 
 ### Syntax
@@ -32,18 +32,18 @@ Upload a JS bundle to the current store.
 `--descriptor/-d <descriptor>`
 
 * Generate and upload a JS bundle out of all the MiniApps/JS API implementations associated to this *complete native application descriptor*.
-* Mutually exclusive with `--miniapps`/`--jsApiImpls` options.
+* Mutually exclusive with `--miniapps` option.
 
 `--extraJsDependencies/-e <dependencies>`
 
 * Add extra JavaScript dependencies to the JS bundle to upload.
-* Can be used in combination with `--descriptor` or `--miniapps`/`--jsApiImpls` options.
+* Can be used in combination with `--descriptor` or `--miniapps` options.
 
 `--fromPackager`
 
 * Get and upload the bundle served by the current local metro server (packager).
 * A metro server must be running on `localhost:8081` in order to use this flag.
-* Mutually exclusive with `--descriptor`/`-miniapps`/`jsApiImpls`/`extraJsDependencies` options.
+* Mutually exclusive with `--descriptor`/`-miniapps`/`extraJsDependencies` options.
 
 `--fromGitBranches`
 
@@ -51,12 +51,6 @@ Upload a JS bundle to the current store.
 * Can only be used in combination with the `--descriptor` option.
 * This flag will be ignored if the target descriptor does not contain any MiniApps tracking git branches
 **Default** false
-
-`--jsApiImpls`
-
-* One or more JS API implementation(s) to add to the JS Composite project.
-* The  JS API implementation(s) passed to this command can be a valid Yarn package format or a Git format or file scheme.  
-* Mutually exclusive with `--descriptor` option.
 
 `--miniapps/-m <miniapps>`
 

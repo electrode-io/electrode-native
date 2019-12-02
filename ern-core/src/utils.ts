@@ -209,12 +209,6 @@ export async function isDependencyApiImpl(
   return depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
 }
 
-export async function isDependencyJsApiImpl(
-  dependency: string | PackagePath
-): Promise<boolean> {
-  return isDependencyApiImpl(dependency, true, ModuleType.JS_API_IMPL)
-}
-
 export async function isDependencyNativeApiImpl(
   dependency: string | PackagePath
 ): Promise<boolean> {
@@ -233,12 +227,6 @@ export async function isDependencyPathApiImpl(
   return (
     packageJson.ern && modulesTypes.indexOf(packageJson.ern.moduleType) > -1
   )
-}
-
-export async function isDependencyPathJsApiImpl(
-  dependencyPath: string
-): Promise<boolean> {
-  return isDependencyPathApiImpl(dependencyPath, ModuleType.JS_API_IMPL)
 }
 
 export async function isDependencyPathNativeApiImpl(
@@ -308,21 +296,6 @@ export function getDownloadedPluginPath(pluginOrigin: any) {
     throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`)
   }
   return downloadPath
-}
-
-/**
- * Extracts all the js api implementation dependencies from the plugin array.
- * @param plugins
- * @returns {Promise.<Array.<Dependency>>}
- */
-export async function extractJsApiImplementations(plugins: PackagePath[]) {
-  const jsApiImplDependencies: PackagePath[] = []
-  for (const dependency of plugins) {
-    if (await isDependencyJsApiImpl(dependency)) {
-      jsApiImplDependencies.push(dependency)
-    }
-  }
-  return jsApiImplDependencies
 }
 
 export function logErrorAndExitProcess(e: any, code: number = 1) {

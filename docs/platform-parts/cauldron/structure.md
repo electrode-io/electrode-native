@@ -51,8 +51,7 @@ The following is an example of a `cauldron.json` document.
                     "miniapps": [
                       "movielistminiapp@0.0.11",
                       "https://github.com/electrode-io/MovieDetailsMiniApp#0.0.9"
-                    ],
-                    "jsApiImpls": []
+                    ]
                   }
                 ]
               },
@@ -68,8 +67,7 @@ The following is an example of a `cauldron.json` document.
                 "miniApps": [
                   "movielistminiapp@0.0.10",
                   "https://github.com/electrode-io/MovieDetailsMiniApp#0.0.9"
-                ],
-                "jsApiImpls": [],
+                ]
                 "ernPlatformVersion": "0.24.0"
               }
             }

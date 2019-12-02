@@ -35,10 +35,6 @@ If you do not pass an argument to this command, you are prompted to select a nat
 * The command packages all the provided MiniApps in a composite bundle and starts the react-native packager.  
 * You can use any valid Yarn package descriptor for the MiniApps provided to this command, including Git and other file system path schemes.  
 
-`--jsApiImpls`
-
-* Specify one or more JS API Implementations to include
-
 `--watchNodeModules/-w <nodemodules>`
 * A list of one or more directory name(s) from node_modules that should be watched for changes.
 

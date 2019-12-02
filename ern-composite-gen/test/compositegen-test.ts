@@ -345,7 +345,7 @@ describe('ern-container-gen utils.js', () => {
       )
     })
 
-    it('should throw an exception if called with no miniapp or js api impl', async () => {
+    it('should throw an exception if called with no miniapps', async () => {
       yarnCliStub.install.callsFake(() =>
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
       )
