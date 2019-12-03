@@ -7,17 +7,18 @@ export function containsVersionMismatch(
   versions: string[],
   mismatchLevel: 'major' | 'minor' | 'patch'
 ): boolean {
-  const minVersion = semver.minSatisfying(versions, '*')
-  const maxVersion = semver.maxSatisfying(versions, '*')
-  const majorMismatch = semver.major(maxVersion) !== semver.major(minVersion)
-  const minorMismatch = semver.minor(maxVersion) !== semver.minor(minVersion)
-  const patchMismatch = semver.patch(maxVersion) !== semver.patch(minVersion)
-  return (
-    majorMismatch ||
-    (minorMismatch &&
-      (mismatchLevel === 'minor' || mismatchLevel === 'patch')) ||
-    (patchMismatch && mismatchLevel === 'patch')
-  )
+  const semverVersions = versions.map(v => semver.parse(v)!)
+  const hasMajorDiff = _.uniqBy(semverVersions, 'major').length > 1
+  const hasMinorDiff = _.uniqBy(semverVersions, 'minor').length > 1
+  const hasPatchDiff = _.uniqBy(semverVersions, 'patch').length > 1
+  const hasPreReleaseDiff =
+    _.uniqWith(semverVersions.map(v => v.prerelease), _.isEqual).length > 1
+
+  return mismatchLevel === 'patch'
+    ? hasMajorDiff || hasMinorDiff || hasPatchDiff || hasPreReleaseDiff
+    : mismatchLevel === 'minor'
+    ? hasMajorDiff || hasMinorDiff || hasPreReleaseDiff
+    : hasMajorDiff || hasPreReleaseDiff
 }
 
 export function retainHighestVersions(
