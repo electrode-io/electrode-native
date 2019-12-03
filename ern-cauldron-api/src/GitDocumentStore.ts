@@ -35,7 +35,7 @@ export default class GitDocumentStore extends BaseGit
   // ===========================================================
 
   public async commit(message: string = 'Commit') {
-    await fs.writeJson(this.jsonPath, this.cauldron)
+    await fs.writeJson(this.jsonPath, this.cauldron, { spaces: 2 })
     await this.git.add(CAULDRON_FILENAME)
     if (!this.pendingTransaction) {
       await this.git.commit(message)

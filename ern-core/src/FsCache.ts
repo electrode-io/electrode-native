@@ -109,7 +109,11 @@ export class FsCache<T> {
     this.objectToId = objectToId
     fs.ensureDirSync(rootCachePath)
     if (!fs.existsSync(this.cacheManifestPath)) {
-      fs.writeJsonSync(this.cacheManifestPath, { entries: [], size: 0 })
+      fs.writeJsonSync(
+        this.cacheManifestPath,
+        { entries: [], size: 0 },
+        { spaces: 2 }
+      )
     }
   }
 
@@ -163,7 +167,7 @@ export class FsCache<T> {
     }
     manifestObj.entries = entriesSortedByLat
     // Save updated manifest
-    await fs.writeJson(this.cacheManifestPath, manifestObj)
+    await fs.writeJson(this.cacheManifestPath, manifestObj, { spaces: 2 })
     return pathToObjectCacheDir
   }
 
@@ -178,7 +182,7 @@ export class FsCache<T> {
     )
     if (cacheEntry) {
       cacheEntry.lastAccessed = Date.now()
-      await fs.writeJson(this.cacheManifestPath, manifestObj)
+      await fs.writeJson(this.cacheManifestPath, manifestObj, { spaces: 2 })
       return cacheEntry.path
     }
   }
