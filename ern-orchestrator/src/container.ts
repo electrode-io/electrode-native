@@ -58,6 +58,7 @@ export async function runLocalContainerGen(
         jsMainModuleName,
         outDir,
         plugins: nativeDependencies,
+        sourceMapOutput,
         targetPlatform: platform,
       })
     )
