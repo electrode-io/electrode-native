@@ -186,23 +186,6 @@ export async function runCaudronBundleGen(
   }
 }
 
-export function containsVersionMismatch(
-  versions: string[],
-  mismatchLevel: 'major' | 'minor' | 'patch'
-): boolean {
-  const minVersion = semver.minSatisfying(versions, '*')
-  const maxVersion = semver.maxSatisfying(versions, '*')
-  const majorMismatch = semver.major(maxVersion) !== semver.major(minVersion)
-  const minorMismatch = semver.minor(maxVersion) !== semver.minor(minVersion)
-  const patchMismatch = semver.patch(maxVersion) !== semver.patch(minVersion)
-  return (
-    majorMismatch ||
-    (minorMismatch &&
-      (mismatchLevel === 'minor' || mismatchLevel === 'patch')) ||
-    (patchMismatch && mismatchLevel === 'patch')
-  )
-}
-
 function getGeneratorForPlatform(platform: string): ContainerGenerator {
   switch (platform) {
     case 'android':

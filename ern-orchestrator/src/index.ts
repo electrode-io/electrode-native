@@ -1,8 +1,4 @@
-export {
-  runLocalContainerGen,
-  runCauldronContainerGen,
-  containsVersionMismatch,
-} from './container'
+export { runLocalContainerGen, runCauldronContainerGen } from './container'
 
 export { runLocalCompositeGen, runCauldronCompositeGen } from './composite'
 
