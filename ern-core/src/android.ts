@@ -12,8 +12,8 @@ import kax from './kax'
 // ==============================================================================
 
 export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.4.0'
-export const DEFAULT_ANDROIDX_APPCOMPACT_VERSION = '1.0.2'
-export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.0.0'
+export const DEFAULT_ANDROIDX_APPCOMPACT_VERSION = '1.1.0'
+export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.1.0'
 export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
 export const DEFAULT_COMPILE_SDK_VERSION = '28'
 export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1'
