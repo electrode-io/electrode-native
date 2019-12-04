@@ -10,59 +10,39 @@ import {
 // ==========================================================
 // containsVersionMismatch
 // ==========================================================
-const versionsWithAMajorMismatch = ['1.0.0', '2.0.0', '1.0.0']
-const versionsWithAMinorMismatch = ['1.0.0', '1.1.0', '1.0.0']
-const versionsWithAPatchMismatch = ['1.0.0', '1.0.1', '1.0.0']
-const versionsWithoutMismatch = ['1.0.0', '1.0.0', '1.0.0']
-
 describe('containsVersionMismatch', () => {
-  it('should return true if mismatch level is set to major and there is at least one major version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithAMajorMismatch, 'major')).true
-  })
-
-  it('should return false if mismatch level is set to major and there is no major version mismatch [1]', () => {
-    expect(containsVersionMismatch(versionsWithAMinorMismatch, 'major')).false
-  })
-
-  it('should return false if mismatch level is set to major and there is no major version mismatch [2]', () => {
-    expect(containsVersionMismatch(versionsWithAPatchMismatch, 'major')).false
-  })
-
-  it('should return false if mismatch level is set to major and there is no major version mismatch [3]', () => {
-    expect(containsVersionMismatch(versionsWithoutMismatch, 'major')).false
-  })
-
-  it('should return true if mismatch level is set to minor and there is at least one major version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithAMajorMismatch, 'minor')).true
-  })
-
-  it('should return true if mismatch level is set to minor and there is at least one minor version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithAMinorMismatch, 'minor')).true
-  })
-
-  it('should return false if mismatch level is set to minor and there no minor version mismatch [1]', () => {
-    expect(containsVersionMismatch(versionsWithAPatchMismatch, 'minor')).false
-  })
-
-  it('should return false if mismatch level is set to minor and there no minor version mismatch [1]', () => {
-    expect(containsVersionMismatch(versionsWithoutMismatch, 'minor')).false
-  })
-
-  it('should return true if mismatch level is set to patch and there is at least one major version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithAMajorMismatch, 'patch')).true
-  })
-
-  it('should return true if mismatch level is set to patch and there is at least one minor version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithAMinorMismatch, 'patch')).true
-  })
-
-  it('should return true if mismatch level is set to patch and there is at least one patch version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithAPatchMismatch, 'patch')).true
-  })
-
-  it('should return false if mismatch level is set to patch and there is no patch version mismatch', () => {
-    expect(containsVersionMismatch(versionsWithoutMismatch, 'patch')).false
-  })
+  ;[
+    [['1.0.0', '2.0.0', '1.0.0'], 'major', true],
+    [['1.0.0', '2.0.0', '1.0.0'], 'minor', true],
+    [['1.0.0', '2.0.0', '1.0.0'], 'patch', true],
+    [['1.0.0', '1.1.0', '1.0.0'], 'major', false],
+    [['1.0.0', '1.1.0', '1.0.0'], 'minor', true],
+    [['1.0.0', '1.1.0', '1.0.0'], 'patch', true],
+    [['1.0.0', '1.0.1', '1.0.0'], 'major', false],
+    [['1.0.0', '1.0.1', '1.0.0'], 'minor', false],
+    [['1.0.0', '1.0.1', '1.0.0'], 'patch', true],
+    [['1.0.0-beta.1', '1.0.0-beta.2', '1.0.0-beta.1'], 'major', true],
+    [['1.0.0-beta.1', '1.0.0-beta.2', '1.0.0-beta.1'], 'minor', true],
+    [['1.0.0-beta.1', '1.0.0-beta.2', '1.0.0-beta.1'], 'patch', true],
+    [['1.0.0-beta.1', '1.0.0-beta.1', '1.0.0-beta.1'], 'major', false],
+    [['1.0.0-beta.1', '1.0.0-beta.1', '1.0.0-beta.1'], 'minor', false],
+    [['1.0.0-beta.1', '1.0.0-beta.1', '1.0.0-beta.1'], 'patch', false],
+    [['1.0.0', '1.0.0-beta.1'], 'major', true],
+    [['1.0.0', '1.0.0-beta.1'], 'minor', true],
+    [['1.0.0', '1.0.0-beta.1'], 'patch', true],
+  ].forEach(
+    ([versions, mismatchLevel, expected]: [
+      string[],
+      'major' | 'minor' | 'patch',
+      boolean
+    ]) => {
+      it(`should return ${expected} for versions ${JSON.stringify(
+        versions
+      )} using '${mismatchLevel}' mismatchLevel `, () => {
+        expect(containsVersionMismatch(versions, mismatchLevel)).equal(expected)
+      })
+    }
+  )
 })
 
 // ==========================================================
