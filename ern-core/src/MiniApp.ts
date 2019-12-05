@@ -43,7 +43,7 @@ export class MiniApp extends BaseMiniApp {
     return new MiniApp(fsPath, PackagePath.fromString(fsPath))
   }
 
-  public static existInPath(p) {
+  public static existInPath(p: string) {
     // Need to improve this one to check in the package.json if it contains the
     // ern object with miniapp type
     return fs.pathExistsSync(path.join(p, 'package.json'))
@@ -87,6 +87,9 @@ export class MiniApp extends BaseMiniApp {
           shell.popd()
         }
       }
+    }
+    if (!fsPackagePath) {
+      throw new Error(`Could not resolve local path to ${packagePath}`)
     }
     this.miniAppFsPathByPackagePath.set(packagePath.fullPath, fsPackagePath)
     return new MiniApp(fsPackagePath, packagePath)

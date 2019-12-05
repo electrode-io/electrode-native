@@ -363,7 +363,7 @@ export async function fillProjectHull(
 async function getIosProject(projectPath: string): Promise<any> {
   const project = xcode.project(projectPath)
   return new Promise((resolve, reject) => {
-    project.parse(err => {
+    project.parse((err: any) => {
       if (err) {
         log.error(`failed to get ios project : ${JSON.stringify(err)}`)
         reject(err)

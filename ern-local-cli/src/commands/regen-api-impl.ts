@@ -134,7 +134,7 @@ export const handler = async ({
     throw new Error('Unable to identify the api for this implementation')
   }
 
-  async function validatePackage(api) {
+  async function validatePackage(api: PackagePath) {
     if (!(await coreUtils.isPublishedToNpm(api.toString()))) {
       throw new Error(
         `${api.toString()}: Package not found in npm, please make sure this version of the api is published to npm.`

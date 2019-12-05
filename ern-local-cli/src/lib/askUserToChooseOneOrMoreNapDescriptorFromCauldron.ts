@@ -39,7 +39,7 @@ export async function askUserToChooseOneOrMoreNapDescriptorFromCauldron({
     },
   ])
 
-  return userSelectedCompleteNapDescriptors.map(s =>
+  return userSelectedCompleteNapDescriptors.map((s: string) =>
     AppVersionDescriptor.fromString(s)
   )
 }

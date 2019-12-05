@@ -5,7 +5,7 @@ export interface ICauldronFileAccess {
     fileMode?: string
   ): Promise<void>
   hasFile(filename: string): Promise<boolean>
-  getPathToFile(filename: string): Promise<string | void>
-  getFile(filename: string): Promise<Buffer | void>
+  getPathToFile(filename: string): Promise<string | undefined>
+  getFile(filename: string): Promise<Buffer | undefined>
   removeFile(filename: string): Promise<boolean>
 }

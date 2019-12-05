@@ -54,16 +54,14 @@ export class Composite {
     )
   }
 
-  public async getResolvedNativeDependencies(): Promise<any> {
+  public async getResolvedNativeDependencies() {
     const nativeDependencies = await this.getNativeDependencies()
     return nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
       nativeDependencies
     )
   }
 
-  public async getInjectableNativeDependencies(
-    platform: NativePlatform
-  ): Promise<any> {
+  public async getInjectableNativeDependencies(platform: NativePlatform) {
     const dependencies = await this.getResolvedNativeDependencies()
     const result: PackagePath[] = []
     for (const dependency of dependencies.resolved) {

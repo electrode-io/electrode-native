@@ -116,7 +116,7 @@ Please set the new container version through command options.`)
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(
       descriptor,
-      cauldronContainerNewVersion
+      cauldronContainerNewVersion!
     )
 
     // Update version of ern used to generate this Container
@@ -137,7 +137,7 @@ Please set the new container version through command options.`)
     await kax.task('Running Container Pipeline').run(
       runContainerPipelineForDescriptor({
         containerPath: outDir,
-        containerVersion: cauldronContainerNewVersion,
+        containerVersion: cauldronContainerNewVersion!,
         descriptor,
       })
     )
@@ -153,7 +153,7 @@ Please set the new container version through command options.`)
           )
           .run(
             sdk.uploadContainerSourceMap({
-              containerVersion: cauldronContainerNewVersion,
+              containerVersion: cauldronContainerNewVersion!,
               descriptor,
               sourceMapPath: sourceMapOutput,
             })

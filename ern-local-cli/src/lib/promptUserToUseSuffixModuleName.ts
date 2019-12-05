@@ -30,12 +30,14 @@ export async function promptUserToUseSuffixModuleName(
     }
   }
 
-  const { useSuffixedModuleName } = await inquirer.prompt(<inquirer.Question>{
-    default: true,
-    message,
-    name: 'useSuffixedModuleName',
-    type: 'confirm',
-  })
+  const { useSuffixedModuleName } = await inquirer.prompt([
+    <inquirer.Question>{
+      default: true,
+      message,
+      name: 'useSuffixedModuleName',
+      type: 'confirm',
+    },
+  ])
 
   return useSuffixedModuleName ? suffixedModuleName : moduleName
 }

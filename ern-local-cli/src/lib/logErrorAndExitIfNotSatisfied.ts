@@ -7,6 +7,7 @@ import {
 } from 'ern-core'
 import { Ensure } from 'ern-orchestrator'
 import fs from 'fs'
+import { KaxTask } from 'kax'
 
 export async function logErrorAndExitIfNotSatisfied({
   noGitOrFilesystemPath,
@@ -168,7 +169,7 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string
   }
 } = {}) {
-  let kaxTask
+  let kaxTask: KaxTask<void>
   try {
     if (cauldronIsActive) {
       kaxTask = kax.task('Ensuring that a Cauldron is active')
@@ -442,7 +443,7 @@ export async function logErrorAndExitIfNotSatisfied({
       kaxTask.succeed()
     }
   } catch (e) {
-    kaxTask.fail()
+    kaxTask!.fail()
     utils.logErrorAndExitProcess(e, 1)
   }
 }

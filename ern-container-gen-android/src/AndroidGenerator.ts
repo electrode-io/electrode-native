@@ -451,7 +451,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           'lib/src/main/jniLibs'
         )
         const unzippedJniPath = path.join(unzipOutDir, 'jni')
-        unzipper.on('error', err => reject(err))
+        unzipper.on('error', (err: any) => reject(err))
         unzipper.on('extract', () => {
           shell.cp('-Rf', unzippedJniPath, containerJniLibsPath)
           resolve()
@@ -487,7 +487,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           'lib/src/main/jniLibs'
         )
         const unzippedJniPath = path.join(unzipOutDir, 'jni')
-        unzipper.on('error', err => reject(err))
+        unzipper.on('error', (err: any) => reject(err))
         unzipper.on('extract', () => {
           shell.cp('-Rf', unzippedJniPath, containerJniLibsPath)
           resolve()

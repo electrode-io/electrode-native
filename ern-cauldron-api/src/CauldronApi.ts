@@ -113,7 +113,11 @@ export default class CauldronApi {
     return cauldron.schemaVersion || '0.0.0'
   }
 
-  public async getDescriptor(descriptor: AnyAppDescriptor): Promise<any> {
+  public async getDescriptor(
+    descriptor: AnyAppDescriptor
+  ): Promise<
+    CauldronNativeApp | CauldronNativeAppPlatform | CauldronNativeAppVersion
+  > {
     return descriptor instanceof AppVersionDescriptor
       ? this.getVersion(descriptor)
       : descriptor instanceof AppPlatformDescriptor
@@ -901,7 +905,7 @@ export default class CauldronApi {
   public async getPathToYarnLock(
     descriptor: AppVersionDescriptor,
     key: string
-  ): Promise<string | void> {
+  ): Promise<string | undefined> {
     const version = await this.getVersion(descriptor)
     const fileName = version.yarnLocks[key]
     if (fileName) {

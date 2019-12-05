@@ -9,7 +9,7 @@ import {
 const transformerPrefix = 'ern-container-transformer-'
 const publisherPrefix = 'ern-container-publisher-'
 
-function patchContainerGenConfig(obj) {
+function patchContainerGenConfig(obj: any) {
   if (obj.config && obj.config.containerGenerator) {
     const containerGenConf = obj.config.containerGenerator
     if (containerGenConf.transformers || containerGenConf.publishers) {

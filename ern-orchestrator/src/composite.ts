@@ -128,7 +128,10 @@ export async function validateCompositeNativeDependencies(
 
 export function logResolvedAndMismatchingDependenciesTree(
   composite: Composite,
-  resolution: any
+  resolution: {
+    pluginsWithMismatchingVersions: string[]
+    resolved: PackagePath[]
+  }
 ) {
   logResolvedDependenciesTree(composite, resolution)
   if (resolution.pluginsWithMismatchingVersions.length > 0) {
@@ -138,20 +141,26 @@ export function logResolvedAndMismatchingDependenciesTree(
 
 export function logResolvedDependenciesTree(
   composite: Composite,
-  resolution: any
+  resolution: {
+    pluginsWithMismatchingVersions: string[]
+    resolved: PackagePath[]
+  }
 ) {
   const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
   log.debug('[ == RESOLVED NATIVE DEPENDENCIES ==]')
   logDependenciesTree(
     parser,
-    resolution.resolved.map(x => PackagePath.fromString(x.name)),
+    resolution.resolved.map(x => PackagePath.fromString(x.name!)),
     'debug'
   )
 }
 
 export function logMismatchingDependenciesTree(
   composite: Composite,
-  resolution: any
+  resolution: {
+    pluginsWithMismatchingVersions: string[]
+    resolved: PackagePath[]
+  }
 ) {
   const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
   log.error('[ == MISMATCHING NATIVE DEPENDENCIES ==]')

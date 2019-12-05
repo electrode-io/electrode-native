@@ -229,9 +229,9 @@ export default class GitManifest {
     )
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
-      let pluginScope
-      let pluginName
-      let basePluginPath
+      let pluginScope: string | undefined
+      let pluginName: string
+      let basePluginPath: string
       if (scopeNameRe.test(plugin.name!)) {
         pluginScope = scopeNameRe.exec(plugin.name!)![1]
         pluginName = scopeNameRe.exec(plugin.name!)![2]

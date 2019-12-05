@@ -24,7 +24,7 @@ export function copyRnpmAssets(
 
   for (const miniAppPath of miniAppPaths) {
     const packageJson = readPackageJsonSync(miniAppPath)
-    if (packageJson.rnpm?.assets) {
+    if (packageJson?.rnpm?.assets) {
       for (const assetDirectoryName of packageJson.rnpm.assets) {
         const source = path.join(assetDirectoryName, '*')
         const dest = getAssetsPath(platform, assetDirectoryName)

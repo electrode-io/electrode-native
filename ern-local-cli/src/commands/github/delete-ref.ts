@@ -63,11 +63,13 @@ export const commandHandler = async ({
         type: 'list',
       },
     ])
-    const { branchOrTagName } = await inquirer.prompt(<inquirer.Question>{
-      message: `Please input the name of the ${branchOrTag} to delete`,
-      name: 'branchOrTagName',
-      type: 'input',
-    })
+    const { branchOrTagName } = await inquirer.prompt([
+      <inquirer.Question>{
+        message: `Please input the name of the ${branchOrTag} to delete`,
+        name: 'branchOrTagName',
+        type: 'input',
+      },
+    ])
     if (branchOrTag === 'branch') {
       branch = branchOrTagName
     } else {

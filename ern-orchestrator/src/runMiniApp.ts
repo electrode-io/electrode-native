@@ -59,7 +59,7 @@ export async function runMiniApp(
 ) {
   cwd = cwd ?? process.cwd()
 
-  let napDescriptor: AppVersionDescriptor | void
+  let napDescriptor: AppVersionDescriptor | undefined
 
   if (miniapps && !MiniApp.existInPath(cwd) && !mainMiniAppName) {
     throw new Error(

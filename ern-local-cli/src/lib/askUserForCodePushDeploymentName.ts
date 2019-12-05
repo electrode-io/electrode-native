@@ -13,14 +13,14 @@ export async function askUserForCodePushDeploymentName(
     ? conf && conf.deployments
     : undefined
 
-  const { userSelectedDeploymentName } = await inquirer.prompt(<
-    inquirer.Question
-  >{
-    choices,
-    message: message || 'Deployment name',
-    name: 'userSelectedDeploymentName',
-    type: choices ? 'list' : 'input',
-  })
+  const { userSelectedDeploymentName } = await inquirer.prompt([
+    <inquirer.Question>{
+      choices,
+      message: message || 'Deployment name',
+      name: 'userSelectedDeploymentName',
+      type: choices ? 'list' : 'input',
+    },
+  ])
 
   return userSelectedDeploymentName
 }

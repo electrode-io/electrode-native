@@ -59,15 +59,15 @@ export function getMiniAppsDeltas(
 export function getPackageJsonDependenciesUsingMiniAppDeltas(
   miniAppsDeltas: MiniAppsDeltas,
   yarnlock: string
-) {
-  const result = {}
+): { [name: string]: string } {
+  const result: { [name: string]: string } = {}
 
   if (miniAppsDeltas.same) {
     for (const m of miniAppsDeltas.same) {
       if (m.isRegistryPath) {
         // Sample package.json entry :
         // "my-miniapp": "0.8.3"
-        result[m.basePath] = m.version
+        result[m.basePath] = m.version!
       } else if (m.isGitPath) {
         // For a git based dependency, the name of the dependency as
         // seen in package.json is not know by the PackagePath object

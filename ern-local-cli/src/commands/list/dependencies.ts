@@ -77,7 +77,7 @@ export const commandHandler = async ({
   }
 }
 
-function logDependencies(dependencies, type: string) {
+function logDependencies(dependencies: PackagePath[], type: string) {
   if (!_.isEmpty(dependencies)) {
     console.log(chalk.blue.bold(`=== ${type} ===`))
     for (const d of dependencies) {

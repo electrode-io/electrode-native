@@ -7,8 +7,11 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
+    "typeRoots": ["node_modules/@types", "./typings"],
     "preserveSymlinks": true,
     "strictNullChecks": true,
-    "declaration": true
+    "declaration": true,
+    "outDir": "dist",
+    "noImplicitAny": true
   }
 }

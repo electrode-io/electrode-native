@@ -51,7 +51,7 @@ export class AndroidPluginConfigGenerator {
       throw new Error('No Android project found')
     }
     const config: any = {}
-    let buildGradlePath
+    let buildGradlePath = this.gradlePaths[0]
     if (this.gradlePaths.length > 1) {
       if (this.androidManifestPaths.length > 1) {
         buildGradlePath = await revolveBuildGradlePath(this.gradlePaths)
@@ -67,8 +67,6 @@ export class AndroidPluginConfigGenerator {
           p = path.dirname(p)
         }
       }
-    } else {
-      buildGradlePath = this.gradlePaths[0]
     }
 
     config.root = path.dirname(buildGradlePath)

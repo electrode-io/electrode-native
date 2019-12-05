@@ -76,11 +76,13 @@ export const commandHandler = async ({
         type: 'list',
       },
     ])
-    const { branchOrTagName } = await inquirer.prompt(<inquirer.Question>{
-      message: `Please input the new ${branchOrTag} name`,
-      name: 'branchOrTagName',
-      type: 'input',
-    })
+    const { branchOrTagName } = await inquirer.prompt([
+      <inquirer.Question>{
+        message: `Please input the new ${branchOrTag} name`,
+        name: 'branchOrTagName',
+        type: 'input',
+      },
+    ])
     if (branchOrTag === 'branch') {
       branch = branchOrTagName
     } else {

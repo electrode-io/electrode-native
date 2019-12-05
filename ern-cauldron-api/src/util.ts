@@ -30,7 +30,7 @@ export function getNativeBinaryFileExt(platformName: string) {
 
 export function joiValidate(payload: any, schema: any): Promise<any> {
   return new Promise((resolve, reject) => {
-    Joi.validate(payload, schema, (err, value) => {
+    Joi.validate(payload, schema, (err: Joi.ValidationError, value: any) => {
       if (err) {
         return reject(err)
       }
