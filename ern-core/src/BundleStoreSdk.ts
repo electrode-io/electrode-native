@@ -18,7 +18,7 @@ export class BundleStoreSdk {
       })
       return res.body.accessKey
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -35,7 +35,7 @@ export class BundleStoreSdk {
       })
       return res.body.id
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -50,7 +50,7 @@ export class BundleStoreSdk {
       })
       return storeId
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -85,7 +85,7 @@ export class BundleStoreSdk {
       )
       return JSON.parse(res.body).id
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -99,7 +99,7 @@ export class BundleStoreSdk {
         body: form,
       })
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -112,7 +112,7 @@ export class BundleStoreSdk {
       })
       return res.body
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 }

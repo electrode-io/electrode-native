@@ -227,9 +227,7 @@ export async function performCodePushPromote(
             const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
             await kax
               .task(
-                `Copying source map in source map store [${
-                  sourcemapStoreConfig.url
-                }]`
+                `Copying source map in source map store [${sourcemapStoreConfig.url}]`
               )
               .run(
                 sdk.copyCodePushSourceMap({
@@ -296,8 +294,7 @@ export async function performCodePushOtaUpdate(
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
       napDescriptor
     )
-    baseComposite =
-      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+    baseComposite = baseComposite ?? compositeGenConfig?.baseComposite
     await cauldron.beginTransaction()
     const codePushPlugin = _.find(
       plugins,
@@ -422,14 +419,10 @@ export async function performCodePushOtaUpdate(
 
     if (platform === 'android') {
       const conf = await cauldron.getContainerGeneratorConfig(napDescriptor)
-      const isHermesEnabled =
-        conf &&
-        conf.androidConfig &&
-        conf.androidConfig.jsEngine &&
-        conf.androidConfig.jsEngine === 'hermes'
+      const isHermesEnabled = conf?.androidConfig?.jsEngine === 'hermes'
       if (isHermesEnabled) {
         const hermesVersion =
-          conf.androidConfig.hermesVersion || android.DEFAULT_HERMES_VERSION
+          conf.androidConfig.hermesVersion ?? android.DEFAULT_HERMES_VERSION
         const hermesCli = await kax
           .task(`Installing hermes-engine@${hermesVersion}`)
           .run(HermesCli.fromVersion(hermesVersion))
@@ -504,9 +497,7 @@ export async function performCodePushOtaUpdate(
           const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
           await kax
             .task(
-              `Uploading source map to source map store [${
-                sourcemapStoreConfig.url
-              }]`
+              `Uploading source map to source map store [${sourcemapStoreConfig.url}]`
             )
             .run(
               sdk.uploadCodePushSourceMap({
@@ -604,15 +595,12 @@ export function removeZeroPatchDigit({
 export async function getCodePushAppName(
   napDescriptor: AppVersionDescriptor
 ): Promise<string> {
-  let result = napDescriptor.name
   const cauldron = await getActiveCauldron()
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
-  if (codePushConfig && codePushConfig.appName) {
-    result = codePushConfig.appName
-  } else {
-    result = `${napDescriptor.name}${
+  return (
+    codePushConfig?.appName ??
+    `${napDescriptor.name}${
       napDescriptor.platform === 'ios' ? 'Ios' : 'Android'
     }`
-  }
-  return result
+  )
 }

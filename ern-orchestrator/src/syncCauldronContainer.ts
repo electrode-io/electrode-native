@@ -75,7 +75,7 @@ export async function syncCauldronContainer(
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
       descriptor
     )
-    const baseComposite = compositeGenConfig && compositeGenConfig.baseComposite
+    const baseComposite = compositeGenConfig?.baseComposite
 
     const compositeDir = createTmpDir()
 
@@ -96,7 +96,7 @@ export async function syncCauldronContainer(
     )
 
     // Generate Container from Cauldron
-    sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map')
+    sourceMapOutput = sourceMapOutput ?? path.join(createTmpDir(), 'index.map')
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
         outDir,
@@ -140,9 +140,7 @@ export async function syncCauldronContainer(
         const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
         await kax
           .task(
-            `Uploading source map to source map store [${
-              sourcemapStoreConfig.url
-            }]`
+            `Uploading source map to source map store [${sourcemapStoreConfig.url}]`
           )
           .run(
             sdk.uploadContainerSourceMap({

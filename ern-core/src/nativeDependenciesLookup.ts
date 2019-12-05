@@ -21,7 +21,7 @@ export function filterDirectories(directories: string[]): string[] {
 }
 
 export function getUnprefixedVersion(version: string): string {
-  return version && version.startsWith('v') ? version.slice(1) : version
+  return version?.startsWith('v') ? version.slice(1) : version
 }
 
 export interface NativeDependency {
@@ -159,10 +159,8 @@ function packagePathFrom(
 
 export async function getNativeDependencyPath(dir: string, d: PackagePath) {
   const dependencies = await findNativeDependencies(dir)
-  const dependency: NativeDependency | void = dependencies.all.find(x =>
+  const dependency: NativeDependency | undefined = dependencies.all.find(x =>
     x.packagePath.same(d, { ignoreVersion: true })
   )
-  if (dependency) {
-    return dependency.path
-  }
+  return dependency?.path
 }

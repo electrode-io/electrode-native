@@ -64,9 +64,9 @@ export default class IosRunerGenerator implements RunnerGenerator {
         config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
       miniAppName: config.mainMiniAppName,
       packagerHost:
-        config.reactNativePackagerHost || defaultReactNativePackagerHost,
+        config.reactNativePackagerHost ?? defaultReactNativePackagerHost,
       packagerPort:
-        config.reactNativePackagerPort || defaultReactNativePackagerPort,
+        config.reactNativePackagerPort ?? defaultReactNativePackagerPort,
       pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
       pathToElectrodeContainerXcodeProj,
     }

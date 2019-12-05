@@ -39,7 +39,7 @@ export class ErnBinaryStore implements BinaryStore {
       form.append('file', binaryRs)
       await got.post(this.config.url, { ...this.gotCommonOpts, body: form })
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -57,7 +57,7 @@ export class ErnBinaryStore implements BinaryStore {
         ...this.gotCommonOpts,
       })
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -98,7 +98,7 @@ export class ErnBinaryStore implements BinaryStore {
       if (err.response && err.response.statusCode === 404) {
         return false
       }
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 

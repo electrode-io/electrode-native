@@ -9,7 +9,7 @@ export async function isPackagePublished(
       field: 'versions 2> /dev/null',
       json: true,
     })
-    if (result && result.type === `inspect`) {
+    if (result?.type === `inspect`) {
       return true
     }
   } catch (e) {

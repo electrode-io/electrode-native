@@ -25,7 +25,7 @@ export async function runContainerPipelineForDescriptor({
     .task('Getting pipeline configuration from Cauldron')
     .run(cauldron.getContainerGeneratorConfig(descriptor))
 
-  const pipeline = containerGenConfig && containerGenConfig.pipeline
+  const pipeline = containerGenConfig?.pipeline
   if (!pipeline) {
     log.warn(`No pipeline configuration found for ${descriptor}`)
   } else {

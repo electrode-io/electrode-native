@@ -80,9 +80,8 @@ export default async function start({
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
       descriptor
     )
-    baseComposite =
-      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
-    resolutions = compositeGenConfig && compositeGenConfig.resolutions
+    baseComposite = baseComposite || compositeGenConfig?.baseComposite
+    resolutions = compositeGenConfig?.resolutions
   }
 
   // Because this command can only be stoped through `CTRL+C` (or killing the process)
@@ -170,14 +169,11 @@ export default async function start({
       const binaryStore = new ErnBinaryStore(binaryStoreConfig)
       if (await binaryStore.hasBinary(descriptor, { flavor })) {
         if (descriptor.platform === 'android') {
-          if (
-            cauldronStartCommandConfig &&
-            cauldronStartCommandConfig.android
-          ) {
+          if (cauldronStartCommandConfig?.android) {
             packageName =
-              packageName || cauldronStartCommandConfig.android.packageName
+              packageName ?? cauldronStartCommandConfig.android.packageName
             activityName =
-              activityName || cauldronStartCommandConfig.android.activityName
+              activityName ?? cauldronStartCommandConfig.android.activityName
           }
           if (!packageName) {
             throw new Error(
@@ -196,8 +192,8 @@ export default async function start({
             packageName,
           })
         } else if (descriptor.platform === 'ios') {
-          if (cauldronStartCommandConfig && cauldronStartCommandConfig.ios) {
-            bundleId = bundleId || cauldronStartCommandConfig.ios.bundleId
+          if (cauldronStartCommandConfig?.ios) {
+            bundleId = bundleId ?? cauldronStartCommandConfig.ios.bundleId
           }
           if (!bundleId) {
             throw new Error(

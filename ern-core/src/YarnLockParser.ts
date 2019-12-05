@@ -57,13 +57,13 @@ export class YarnLockParser {
           .filter(k => k === pkg.fullPath)
           .map(k => ({
             pkgPath: PackagePath.fromString(k),
-            version: this.parsed.object[k] && this.parsed.object[k].version,
+            version: this.parsed.object[k]?.version,
           }))
       : Object.keys(this.parsed.object)
           .filter(k => k.startsWith(`${pkg.basePath}@`))
           .map(k => ({
             pkgPath: PackagePath.fromString(k),
-            version: this.parsed.object[k] && this.parsed.object[k].version,
+            version: this.parsed.object[k]?.version,
           }))
   }
 
@@ -86,7 +86,7 @@ export class YarnLockParser {
       )
       .map(([k, v]: [string, any]) => ({
         pkgPath: PackagePath.fromString(k),
-        version: this.parsed.object[k] && this.parsed.object[k].version,
+        version: this.parsed.object[k]?.version,
       }))
   }
 

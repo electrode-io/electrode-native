@@ -42,9 +42,7 @@ in the package.json of ${packageJson.name} MiniApp
 =================================================================`)
     } else if (!packageJson.ern) {
       throw new Error(
-        tagOneLine`No ern section found in ${
-          packageJson.name
-        } package.json. Are you sure this is a MiniApp ?`
+        tagOneLine`No ern section found in ${packageJson.name} package.json. Are you sure this is a MiniApp ?`
       )
     }
 
@@ -53,14 +51,11 @@ in the package.json of ${packageJson.name} MiniApp
   }
 
   get name(): string {
-    if (this.packageJson.ern) {
-      if (this.packageJson.ern.miniAppName) {
-        return this.packageJson.ern.miniAppName
-      } else if (this.packageJson.ern.moduleName) {
-        return this.packageJson.ern.moduleName
-      }
-    }
-    return this.getUnscopedModuleName(this.packageJson.name)
+    return (
+      this.packageJson.ern?.miniAppName ??
+      this.packageJson.ern?.moduleName ??
+      this.getUnscopedModuleName(this.packageJson.name)
+    )
   }
 
   public getUnscopedModuleName(moduleName: string): string {
@@ -92,9 +87,7 @@ in the package.json of ${packageJson.name} MiniApp
   }
 
   get platformVersion(): string {
-    return this.packageJson.ern
-      ? this.packageJson.ern.version
-      : this.packageJson.ernPlatformVersion
+    return this.packageJson.ern?.version ?? this.packageJson.ernPlatformVersion
   }
 
   get packageDescriptor(): string {

@@ -15,10 +15,10 @@ export async function reactNativeBundleAndroid({
   sourceMapOutput?: string
   cwd?: string
 }): Promise<BundlingResult> {
-  cwd = cwd || process.cwd()
+  cwd = cwd ?? process.cwd()
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   bundleOutput =
-    bundleOutput || path.join(libSrcMainPath, 'assets', 'index.android.bundle')
+    bundleOutput ?? path.join(libSrcMainPath, 'assets', 'index.android.bundle')
   const assetsDest = path.join(libSrcMainPath, 'res')
   // Cleanup everything from 'res' directory but 'devassist'
   if (fs.existsSync(assetsDest)) {
