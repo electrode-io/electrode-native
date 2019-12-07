@@ -45,7 +45,7 @@ export class Composite {
   }
 
   public getJsApiImpls(): PackagePath[] {
-    return this.config.jsApiImplDependencies || []
+    return this.config.jsApiImplDependencies ?? []
   }
 
   public getMiniApps(): BaseMiniApp[] {
@@ -74,12 +74,11 @@ export class Composite {
         continue
       }
       const pluginConfig = await manifest.getPluginConfig(dependency)
-      if (pluginConfig) {
-        if (platform === 'android' && pluginConfig.android) {
-          result.push(dependency)
-        } else if (platform === 'ios' && pluginConfig.ios) {
-          result.push(dependency)
-        }
+
+      if (platform === 'android' && pluginConfig?.android) {
+        result.push(dependency)
+      } else if (platform === 'ios' && pluginConfig?.ios) {
+        result.push(dependency)
       }
     }
     return result

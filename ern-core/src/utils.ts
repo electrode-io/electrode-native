@@ -38,18 +38,16 @@ export async function isPublishedToNpm(
     log.debug(e)
     return false
   }
-  if (publishedVersionsInfo) {
-    const publishedVersions: string[] = publishedVersionsInfo.data
-    const type: string = publishedVersionsInfo.type
-    if (type && type === 'inspect') {
-      const pkgVersion = PackagePath.fromString(pkg.toString()).version
-      if (publishedVersions && pkgVersion) {
-        return publishedVersions.includes(pkgVersion)
-      } else {
-        return true
-      }
-    }
+
+  const publishedVersions: string[] = publishedVersionsInfo?.data
+  const type: string = publishedVersionsInfo?.type
+  if (type === 'inspect') {
+    const pkgVersion = PackagePath.fromString(pkg.toString()).version
+    return publishedVersions && pkgVersion
+      ? publishedVersions.includes(pkgVersion)
+      : true
   }
+
   return false
 }
 
@@ -163,11 +161,11 @@ export async function isDependencyApi(
     field: 'ern 2> /dev/null',
     json: true,
   })
-  if (depInfo && depInfo.type === 'error') {
+  if (depInfo?.type === 'error') {
     throw new Error(`Cannot find ${dependencyName} in npm registry`)
   }
 
-  return depInfo.data && ModuleType.API === depInfo.data.moduleType
+  return ModuleType.API === depInfo.data?.moduleType
 }
 
 /**
@@ -202,11 +200,11 @@ export async function isDependencyApiImpl(
     field: 'ern 2> /dev/null',
     json: true,
   })
-  if (depInfo && depInfo.type === 'error') {
+  if (depInfo?.type === 'error') {
     throw new Error(`Cannot find ${dependencyName} in npm registry`)
   }
 
-  return depInfo.data && modulesTypes.indexOf(depInfo.data.moduleType) > -1
+  return modulesTypes.indexOf(depInfo.data?.moduleType) > -1
 }
 
 export async function isDependencyJsApiImpl(
@@ -230,9 +228,7 @@ export async function isDependencyPathApiImpl(
     : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL]
 
   const packageJson = await readPackageJson(dependencyPath)
-  return (
-    packageJson.ern && modulesTypes.indexOf(packageJson.ern.moduleType) > -1
-  )
+  return modulesTypes.indexOf(packageJson.ern?.moduleType) > -1
 }
 
 export async function isDependencyPathJsApiImpl(

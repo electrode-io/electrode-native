@@ -17,7 +17,7 @@ export function populateApiImplMustacheView(
 ) {
   const packageJson = readPackageJsonSync(apiImplPluginPath)
   const containerGenConfig = packageJson.ern.containerGen
-  if (containerGenConfig && containerGenConfig.apiNames) {
+  if (containerGenConfig?.apiNames) {
     mustacheView.apiImplementations = mustacheView.apiImplementations
       ? mustacheView.apiImplementations
       : []
@@ -43,9 +43,7 @@ export function populateApiImplMustacheView(
     }
   } else {
     log.warn(
-      `!!!!! containerGen entry not valid for api implementation, skipping api-impl code gen in container for ${
-        packageJson.name
-      } !!!!`
+      `!!!!! containerGen entry not valid for api implementation, skipping api-impl code gen in container for ${packageJson.name} !!!!`
     )
   }
 }

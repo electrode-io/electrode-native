@@ -180,14 +180,12 @@ export default class IosGenerator implements ContainerGenerator {
       }
       if (!pluginConfig.ios) {
         log.warn(
-          `${
-            plugin.basePath
-          } does not have any injection configuration for ios platform`
+          `${plugin.basePath} does not have any injection configuration for ios platform`
         )
         continue
       }
       const iOSPluginHook = pluginConfig.ios.pluginHook
-      if (iOSPluginHook && iOSPluginHook.name) {
+      if (iOSPluginHook?.name) {
         if (!pluginConfig.path) {
           throw new Error('No plugin config path was set. Cannot proceed.')
         }

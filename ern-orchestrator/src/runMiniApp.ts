@@ -57,7 +57,7 @@ export async function runMiniApp(
     port?: string
   } = {}
 ) {
-  cwd = cwd || process.cwd()
+  cwd = cwd ?? process.cwd()
 
   let napDescriptor: AppVersionDescriptor | void
 
@@ -113,9 +113,7 @@ export async function runMiniApp(
         `This command is being run from the ${miniapp.name} MiniApp directory.`
       )
       log.info(
-        `All extra MiniApps will be included in the Runner container along with ${
-          miniapp.name
-        }`
+        `All extra MiniApps will be included in the Runner container along with ${miniapp.name}`
       )
       if (!mainMiniAppName) {
         log.info(`${miniapp.name} will be set as the main MiniApp`)
@@ -215,7 +213,7 @@ export async function runMiniApp(
 
   const runnerGeneratorConfig: RunnerGeneratorConfig = {
     extra: {
-      androidConfig: (extra && extra.androidConfig) || {},
+      androidConfig: extra?.androidConfig ?? {},
       containerGenWorkingDir: Platform.containerGenDirectory,
     },
     mainMiniAppName: entryMiniAppName,

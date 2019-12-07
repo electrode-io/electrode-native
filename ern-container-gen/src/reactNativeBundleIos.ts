@@ -22,7 +22,7 @@ export async function reactNativeBundleIos({
     'Libraries',
     'MiniApp'
   )
-  bundleOutput = bundleOutput || path.join(miniAppOutPath, 'MiniApp.jsbundle')
+  bundleOutput = bundleOutput ?? path.join(miniAppOutPath, 'MiniApp.jsbundle')
   const assetsDest = miniAppOutPath
   if (fs.existsSync(assetsDest)) {
     shell.rm('-rf', path.join(assetsDest, '{.*,*}'))

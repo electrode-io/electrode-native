@@ -918,11 +918,7 @@ export class CauldronHelper {
     let updatedEntriesArr
 
     if (codePushEntries) {
-      if (
-        codePushConfig &&
-        codePushConfig.entriesLimit &&
-        codePushEntries.length >= codePushConfig.entriesLimit
-      ) {
+      if (codePushEntries.length >= codePushConfig?.entriesLimit) {
         nbEntriesToDrop =
           codePushEntries.length - codePushConfig.entriesLimit + 1
       }
@@ -1066,7 +1062,7 @@ export class CauldronHelper {
 
   public async getStartCommandConfig(
     descriptor?: AnyAppDescriptor
-  ): Promise<CauldronStartCommandConfig | void> {
+  ): Promise<CauldronStartCommandConfig | undefined> {
     return this.getConfigForKey('start', descriptor)
   }
 
@@ -1232,12 +1228,12 @@ export class CauldronHelper {
     descriptor: AppVersionDescriptor
   ): Promise<PackagePath[]> {
     const result: PackagePath[] = []
-    const miniAppsBranches = (await this.cauldron.getContainerMiniAppsBranches(
-      descriptor
-    )).map(p => PackagePath.fromString(p))
-    const miniApps = (await this.cauldron.getContainerMiniApps(descriptor)).map(
-      p => PackagePath.fromString(p)
-    )
+    const miniAppsBranches = (
+      await this.cauldron.getContainerMiniAppsBranches(descriptor)
+    ).map(p => PackagePath.fromString(p))
+    const miniApps = (
+      await this.cauldron.getContainerMiniApps(descriptor)
+    ).map(p => PackagePath.fromString(p))
     for (const miniAppBranch of miniAppsBranches) {
       const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         miniAppBranch
@@ -1259,12 +1255,12 @@ export class CauldronHelper {
     descriptor: AppVersionDescriptor
   ) {
     const result: PackagePath[] = []
-    const jsApiImplsBranches = (await this.cauldron.getContainerJsApiImplsBranches(
-      descriptor
-    )).map(p => PackagePath.fromString(p))
-    const jsApiImpls = (await this.cauldron.getContainerJsApiImpls(
-      descriptor
-    )).map(p => PackagePath.fromString(p))
+    const jsApiImplsBranches = (
+      await this.cauldron.getContainerJsApiImplsBranches(descriptor)
+    ).map(p => PackagePath.fromString(p))
+    const jsApiImpls = (
+      await this.cauldron.getContainerJsApiImpls(descriptor)
+    ).map(p => PackagePath.fromString(p))
     for (const jsApiImplBranch of jsApiImplsBranches) {
       const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         jsApiImplBranch

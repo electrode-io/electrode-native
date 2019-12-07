@@ -31,20 +31,14 @@ export async function runContainerPipeline({
       pipelineEltType = 'transformer'
     } else {
       log.error(
-        `[${curIdx}/${
-          pipeline.length
-        }] Skipping non transformer/publisher pipeline element ${
-          pipelineElt.name
-        }`
+        `[${curIdx}/${pipeline.length}] Skipping non transformer/publisher pipeline element ${pipelineElt.name}`
       )
       continue
     }
 
     if (pipelineElt.disabled) {
       log.info(
-        `[${curIdx}/${pipeline.length}] Skipping ${
-          pipelineElt.name
-        } ${pipelineEltType} [disabled]`
+        `[${curIdx}/${pipeline.length}] Skipping ${pipelineElt.name} ${pipelineEltType} [disabled]`
       )
       continue
     }
@@ -63,9 +57,7 @@ export async function runContainerPipeline({
     }
     await kax
       .task(
-        `[${curIdx}/${pipeline.length}] Running Container ${pipelineEltType} ${
-          pipelineEltPackage.basePath
-        }`
+        `[${curIdx}/${pipeline.length}] Running Container ${pipelineEltType} ${pipelineEltPackage.basePath}`
       )
       .run(
         isPublisher(pipelineEltPackage)

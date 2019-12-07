@@ -609,9 +609,7 @@ export class Manifest {
     )
     if (!pluginConfigPath) {
       throw new Error(
-        `There is no configuration for ${
-          plugin.basePath
-        } plugin in Manifest matching platform version ${platformVersion}`
+        `There is no configuration for ${plugin.basePath} plugin in Manifest matching platform version ${platformVersion}`
       )
     }
 
@@ -625,9 +623,7 @@ export class Manifest {
 
     // Add default value (convention) for Android subsection for missing fields
     if (result.android) {
-      if (result.android.root === undefined) {
-        result.android.root = 'android'
-      }
+      result.android.root = result.android.root ?? 'android'
 
       const matchedFiles = shell.find(pluginConfigPath).filter(file => {
         return file.match(/\.java$/)
@@ -649,9 +645,7 @@ export class Manifest {
     }
 
     if (result.ios) {
-      if (result.ios.root === undefined) {
-        result.ios.root = 'ios'
-      }
+      result.ios.root = result.ios.root ?? 'ios'
 
       const matchedHeaderFiles = shell.find(pluginConfigPath).filter(file => {
         return file.match(/\.h$/)
@@ -698,7 +692,7 @@ export class Manifest {
     plugin: PackagePath,
     projectName: string = 'ElectrodeContainer',
     platformVersion: string = Platform.currentVersion
-  ): Promise<PluginConfig | void> {
+  ): Promise<PluginConfig | undefined> {
     await this.initOverrideManifest()
     let result
     if (await isDependencyApi(plugin.basePath)) {
@@ -722,9 +716,7 @@ export class Manifest {
       )
     } else {
       log.warn(
-        `Unsupported plugin. No configuration found in manifest for ${
-          plugin.basePath
-        }.`
+        `Unsupported plugin. No configuration found in manifest for ${plugin.basePath}.`
       )
       return
       /*throw new Error(

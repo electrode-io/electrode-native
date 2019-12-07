@@ -309,7 +309,7 @@ async function addBabelrcRoots({ outDir }: { outDir: string }) {
       const depPackageJson = await readPackageJson(
         path.join(compositeNodeModulesPath, dependency)
       )
-      if (depPackageJson.ern && depPackageJson.ern.useBabelRc === true) {
+      if (depPackageJson.ern?.useBabelRc === true) {
         babelRcRootsRe.push(new RegExp(`node_modules\/${dependency}(?!.+\/)`))
         babelRcRootsPaths.push(`./node_modules/${dependency}`)
       }
@@ -433,7 +433,7 @@ async function getCompositeMetroVersion({
   if (await fs.pathExists(pathToMetroNodeModuleDir)) {
     metroPackageJson = await readPackageJson(pathToMetroNodeModuleDir)
   }
-  return metroPackageJson ? metroPackageJson.version : '0.0.0'
+  return metroPackageJson?.version ?? '0.0.0'
 }
 
 async function patchMetro51({ outDir }: { outDir: string }) {

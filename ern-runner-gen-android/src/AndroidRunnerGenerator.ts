@@ -75,13 +75,7 @@ function getPackageFilePath(config: RunnerGeneratorConfig): string {
 }
 
 function isOldRunner(config: RunnerGeneratorConfig): boolean {
-  const oldRunner =
-    config.extra &&
-    config.extra.androidConfig &&
-    config.extra.androidConfig.isOldRunner
-      ? true
-      : false
-  return oldRunner
+  return !!config.extra?.androidConfig?.isOldRunner
 }
 
 // Given a string returns the same string with its first letter capitalized
@@ -93,9 +87,7 @@ function configureMustacheView(
   config: RunnerGeneratorConfig,
   mustacheView: any
 ) {
-  const versions = android.resolveAndroidVersions(
-    config.extra && config.extra.androidConfig
-  )
+  const versions = android.resolveAndroidVersions(config.extra?.androidConfig)
   mustacheView = Object.assign(mustacheView, versions)
 
   mustacheView.isReactNativeDevSupportEnabled =
@@ -108,17 +100,10 @@ function configureMustacheView(
   mustacheView.pascalCaseMiniAppName = pascalCase(config.mainMiniAppName)
   mustacheView.lowerCaseMiniAppName = config.mainMiniAppName.toLowerCase()
   mustacheView.artifactId =
-    config.extra &&
-    config.extra.androidConfig &&
-    config.extra.androidConfig.artifactId
-      ? config.extra.androidConfig.artifactId
-      : `runner-ern-container-${config.mainMiniAppName.toLowerCase()}`
+    config.extra?.androidConfig?.artifactId ??
+    `runner-ern-container-${config.mainMiniAppName.toLowerCase()}`
   mustacheView.groupId =
-    config.extra &&
-    config.extra.androidConfig &&
-    config.extra.androidConfig.groupId
-      ? config.extra.androidConfig.groupId
-      : 'com.walmartlabs.ern'
+    config.extra?.androidConfig?.groupId ?? 'com.walmartlabs.ern'
   mustacheView.isOldRunner = isOldRunner(config)
   injectReactNativeVersionKeysInObject(mustacheView, config.reactNativeVersion)
   return mustacheView

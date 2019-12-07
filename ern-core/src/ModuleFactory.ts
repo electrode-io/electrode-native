@@ -76,7 +76,7 @@ export class ModuleFactory<T> {
 
   private async refreshCacheFor(p: PackagePath) {
     const packageJson = await readPackageJson(this.packageCachePath)
-    return packageJson.dependencies && packageJson.dependencies[p.basePath]
+    return packageJson.dependencies?.[p.basePath]
       ? this.upgradeCachedPackage(p)
       : this.addPackageToCache(p)
   }

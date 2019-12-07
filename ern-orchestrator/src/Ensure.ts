@@ -251,9 +251,7 @@ export default class Ensure {
         ))
       ) {
         throw new Error(
-          `${
-            dependency.basePath
-          } does not exists in ${napDescriptor}.\n${extraErrorMessage}`
+          `${dependency.basePath} does not exists in ${napDescriptor}.\n${extraErrorMessage}`
         )
       }
     }
@@ -343,7 +341,7 @@ export default class Ensure {
         miniApps,
         dependency
       )
-      if (miniAppsUsingDependency && miniAppsUsingDependency.length > 0) {
+      if (miniAppsUsingDependency?.length > 0) {
         let errorMessage = ''
         errorMessage += 'The following MiniApp(s) are using this dependency\n'
         for (const miniApp of miniAppsUsingDependency) {
@@ -518,9 +516,7 @@ export default class Ensure {
             throw new Error(`Missing version for ${dependency}`)
           } else if (!semver.valid(dependency.version)) {
             throw new Error(
-              `Unsupported version ${dependency.version} for ${
-                dependency.basePath
-              }`
+              `Unsupported version ${dependency.version} for ${dependency.basePath}`
             )
           }
         } else if (!dependency.version) {

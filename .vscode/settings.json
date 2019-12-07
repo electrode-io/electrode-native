@@ -4,5 +4,6 @@
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "npm.enableScriptExplorer": true,
-  "typescript.implementationsCodeLens.enabled": true
+  "typescript.implementationsCodeLens.enabled": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

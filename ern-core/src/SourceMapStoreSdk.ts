@@ -32,13 +32,11 @@ export class SourceMapStoreSdk {
     try {
       const form = this.createSourceMapForm(sourceMapPath)
       await got.post(
-        `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${
-          descriptor.platform
-        }/${descriptor.version}/${deploymentName}/${label}`,
+        `http://${this.host}/sourcemaps/codepush/${descriptor.name}/${descriptor.platform}/${descriptor.version}/${deploymentName}/${label}`,
         { ...this.gotCommonOpts, body: form }
       )
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -59,15 +57,11 @@ export class SourceMapStoreSdk {
   }) {
     try {
       await got.post(
-        `http://${this.host}/sourcemaps/codepush/copy/${descriptor.name}/${
-          descriptor.platform
-        }/${
-          descriptor.version
-        }/${deploymentName}/${label}/${toVersion}/${toDeploymentName}/${toLabel}`,
+        `http://${this.host}/sourcemaps/codepush/copy/${descriptor.name}/${descriptor.platform}/${descriptor.version}/${deploymentName}/${label}/${toVersion}/${toDeploymentName}/${toLabel}`,
         this.gotCommonOpts
       )
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 
@@ -83,13 +77,11 @@ export class SourceMapStoreSdk {
     try {
       const form = this.createSourceMapForm(sourceMapPath)
       await got.post(
-        `http://${this.host}/sourcemaps/container/${descriptor.name}/${
-          descriptor.platform
-        }/${descriptor.version}/${containerVersion}`,
+        `http://${this.host}/sourcemaps/container/${descriptor.name}/${descriptor.platform}/${descriptor.version}/${containerVersion}`,
         { ...this.gotCommonOpts, body: form }
       )
     } catch (err) {
-      throw new Error(err.response ? err.response.text : err.message)
+      throw new Error(err.response?.text ?? err.message)
     }
   }
 }
