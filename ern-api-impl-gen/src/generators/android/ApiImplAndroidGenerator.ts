@@ -15,8 +15,6 @@ import readDir from 'fs-readdir-recursive'
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
 
 export const ROOT_DIR = shell.pwd()
-const READ_EXECUTE = '555'
-const READ_WRITE_EXECUTE = '777'
 const SRC_MAIN_JAVA_DIR = path.normalize('src/main/java')
 const API_IMPL_PACKAGE = path.normalize('com/ern/api/impl')
 
@@ -94,7 +92,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
 
       fs.ensureDirSync(outputDirectory)
 
-      fileUtils.chmodr(READ_WRITE_EXECUTE, outputDirectory)
+      fileUtils.chmodr('755', outputDirectory)
       shell.cp(
         '-Rf',
         path.join(paths.apiImplHull, 'android/{.*,*}'),
@@ -160,21 +158,6 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       `Copying code from ${pluginSrcDirectory} to ${pluginOutputDirectory}`
     )
     shell.cp('-Rf', pluginSrcDirectory, pluginOutputDirectory)
-  }
-
-  public async updateFilePermissions(
-    srcOutputDirectory: string,
-    editableFiles: string[]
-  ) {
-    log.debug('Updating file permissions')
-    const files = shell
-      .find(srcOutputDirectory)
-      .filter(file => file.endsWith('.java'))
-    for (const file of files) {
-      editableFiles.includes(file)
-        ? fileUtils.chmodr(READ_WRITE_EXECUTE, file)
-        : fileUtils.chmodr(READ_EXECUTE, file)
-    }
   }
 
   public updateBuildGradle(

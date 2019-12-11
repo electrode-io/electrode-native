@@ -96,7 +96,7 @@ async function createOutputDirectory(
     log.info(
       `Deleting the existing directory and recreating a new one in ${outputDirectoryPath}`
     )
-    fileUtils.chmodr('777', outputDirectoryPath)
+    fileUtils.chmodr('755', outputDirectoryPath)
     shell.rm('-Rf', outputDirectoryPath)
   } else {
     log.debug(`creating output dir: ${outputDirectoryPath}`)
