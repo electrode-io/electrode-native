@@ -6,7 +6,7 @@ import { has } from '../../java/beanUtils'
 
 function objectToPropertyMap(obj) {
   return newHashMap(
-    ...Object.keys(obj).map(key => [key, factory(obj[key], this)])
+    ...Object.keys(obj).map(key => [key, factory(obj[key], obj)])
   )
 }
 
