@@ -1,0 +1,40 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "TestApiDescription",
+    "version": "0.16.1",
+    "title": "TestApi"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/testCall": {
+      "post": {
+        "tags": [
+          "TestApiCall"
+        ],
+        "operationId": "testCall",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "'#/definitions/TestResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TestResponse": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    }
+  }
+}

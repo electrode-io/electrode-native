@@ -105,6 +105,22 @@ export function factory(prop, parent?: any) {
       return prop
     }
   }
+  if (!prop || !Object.keys(prop).length) {
+    let debugAssistText = ''
+    if (parent && parent.getParent && parent.getParent()) {
+      debugAssistText = `{ ${Object.keys(parent.getParent()).join(', ')} } `
+    }
+    throw new Error(
+      [
+        'Empty property or key-less object detected.',
+        debugAssistText
+          ? `Try inspecting schema with shape: ${debugAssistText}`
+          : '',
+      ]
+        .filter(Boolean)
+        .join('\n')
+    )
+  }
   const PropertyClz = resolve(prop)
   if (!PropertyClz) {
     throw new Error(`Can not resolve property for ${prop}`)
