@@ -1280,7 +1280,8 @@ export default class DefaultCodegen {
           }
           if (
             parent == null &&
-            (interfaceModel != null && interfaceModel instanceof ModelImpl) &&
+            interfaceModel != null &&
+            interfaceModel instanceof ModelImpl &&
             interfaceModel.getDiscriminator() != null
           ) {
             parent = _interface
@@ -1335,13 +1336,14 @@ export default class DefaultCodegen {
       let child = composed.getChild()
       if (
         child != null &&
-        (child != null && child instanceof RefModel) &&
+        child != null &&
+        child instanceof RefModel &&
         allDefinitions != null
       ) {
         const childRef = child.getSimpleRef()
         child = (allDefinitions as any).get(childRef)
       }
-      if (child != null && (child != null && child instanceof ModelImpl)) {
+      if (child != null && child != null && child instanceof ModelImpl) {
         this.addProperties(properties, required, child, allDefinitions)
         if (this.supportsInheritance) {
           this.addProperties(allProperties, allRequired, child, allDefinitions)
@@ -1374,7 +1376,9 @@ export default class DefaultCodegen {
   }
 
   public addAdditionPropertiesToCodeGenModel(codegenModel, swaggerModel) {
-    const mapProperty = new MapProperty(swaggerModel.getAdditionalProperties())
+    const swaggerAdditionalProperties = swaggerModel.getAdditionalProperties()
+    const mapProperty = new MapProperty()
+    mapProperty.setAdditionalProperties(swaggerAdditionalProperties)
     this.addParentContainer(codegenModel, codegenModel.name, mapProperty)
   }
 
@@ -1740,10 +1744,8 @@ export default class DefaultCodegen {
     } else if (swagger != null && isNotEmptySet(swagger.getConsumes())) {
       consumes = swagger.getConsumes()
       Log.debug(
-        'No consumes defined in operation. Using global consumes (' +
-          swagger.getConsumes() +
-          ') for ' +
-          op.operationId
+        `No consumes defined in operation.
+Using global consumes (${swagger.getConsumes()}) for ${op.operationId}`
       )
     }
     if (consumes != null && consumes.length) {
@@ -1777,10 +1779,8 @@ export default class DefaultCodegen {
     ) {
       produces = swagger.getProduces()
       Log.debug(
-        'No produces defined in operation. Using global produces (' +
-          swagger.getProduces() +
-          ') for ' +
-          op.operationId
+        `No produces defined in operation.
+Using global produces (${swagger.getProduces()}) for ${op.operationId}`
       )
     }
     if (produces != null && produces.length > 0) {
@@ -2892,10 +2892,7 @@ export default class DefaultCodegen {
       this.__supportingFiles.push(supportingFile)
     } else {
       Log.info(
-        'Skipped overwriting ' +
-          supportingFile.destinationFilename +
-          ' as the file already exists in ' +
-          folder
+        `Skipped overwriting ${supportingFile.destinationFilename} as the file already exists in folder`
       )
     }
   }
