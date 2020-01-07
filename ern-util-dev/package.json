@@ -42,7 +42,6 @@
     "diff": "^3.5.0",
     "dir-compare": "^1.4.0",
     "fs-readdir-recursive": "^1.1.0",
-    "istanbul": "^0.4.5",
     "shelljs": "^0.8.4",
     "tmp": "^0.0.33"
   },
