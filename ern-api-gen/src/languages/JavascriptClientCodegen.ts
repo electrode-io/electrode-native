@@ -49,7 +49,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
       let removedChildEnum = false
       for (const parentModelCodegenPropery of parentModelCodegenProperties) {
         if (parentModelCodegenPropery.isEnum) {
-          for (let i = codegenProperties.length; i--; ) {
+          for (let i = codegenProperties.length; i--;) {
             const codegenProperty = codegenProperties[i]
             if (
               codegenProperty.isEnum &&
@@ -350,7 +350,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.PROJECT_NAME
       )
     ) {
-      ;(this as any).setProjectName(
+      ; (this as any).setProjectName(
         this.__additionalProperties.get(JavascriptClientCodegen.PROJECT_NAME)
       )
     }
@@ -359,7 +359,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.MODULE_NAME
       )
     ) {
-      ;(this as any).setModuleName(
+      ; (this as any).setModuleName(
         this.__additionalProperties.get(JavascriptClientCodegen.MODULE_NAME)
       )
     }
@@ -368,7 +368,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.PROJECT_DESCRIPTION
       )
     ) {
-      ;(this as any).setProjectDescription(
+      ; (this as any).setProjectDescription(
         this.__additionalProperties.get(
           JavascriptClientCodegen.PROJECT_DESCRIPTION
         )
@@ -379,7 +379,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.PROJECT_VERSION
       )
     ) {
-      ;(this as any).setProjectVersion(
+      ; (this as any).setProjectVersion(
         this.__additionalProperties.get(JavascriptClientCodegen.PROJECT_VERSION)
       )
     }
@@ -388,7 +388,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.PROJECT_LICENSE_NAME
       )
     ) {
-      ;(this as any).setProjectLicenseName(
+      ; (this as any).setProjectLicenseName(
         this.__additionalProperties.get(
           JavascriptClientCodegen.PROJECT_LICENSE_NAME
         )
@@ -399,21 +399,21 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         CodegenConstants.LOCAL_VARIABLE_PREFIX
       )
     ) {
-      ;(this as any).setLocalVariablePrefix(
+      ; (this as any).setLocalVariablePrefix(
         this.__additionalProperties.get(CodegenConstants.LOCAL_VARIABLE_PREFIX)
       )
     }
     if (
       this.__additionalProperties.containsKey(CodegenConstants.SOURCE_FOLDER)
     ) {
-      ;(this as any).setSourceFolder(
+      ; (this as any).setSourceFolder(
         this.__additionalProperties.get(CodegenConstants.SOURCE_FOLDER)
       )
     }
     if (
       this.__additionalProperties.containsKey(CodegenConstants.INVOKER_PACKAGE)
     ) {
-      ;(this as any).setInvokerPackage(
+      ; (this as any).setInvokerPackage(
         this.__additionalProperties.get(CodegenConstants.INVOKER_PACKAGE)
       )
     }
@@ -442,7 +442,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.EMIT_MODEL_METHODS
       )
     ) {
-      ;(this as any).setEmitModelMethods(
+      ; (this as any).setEmitModelMethods(
         parseBoolean(
           this.__additionalProperties.get(
             JavascriptClientCodegen.EMIT_MODEL_METHODS
@@ -455,7 +455,7 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
         JavascriptClientCodegen.EMIT_JS_DOC
       )
     ) {
-      ;(this as any).setEmitJSDoc(
+      ; (this as any).setEmitJSDoc(
         parseBoolean(
           this.__additionalProperties.get(JavascriptClientCodegen.EMIT_JS_DOC)
         )
@@ -483,8 +483,8 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
           JavascriptClientCodegen.PROJECT_LICENSE_NAME
         ) == null
       ) {
-        if (info.getLicense() != null) {
-          const license = info.getLicense()
+        const license = info.getLicense()
+        if (license && license.getName()) {
           this.__additionalProperties.put(
             JavascriptClientCodegen.PROJECT_LICENSE_NAME,
             this.sanitizeName(license.getName())
