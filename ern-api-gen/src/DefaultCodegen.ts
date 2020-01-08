@@ -1278,7 +1278,7 @@ export default class DefaultCodegen {
           }
           if (
             parent == null &&
-            (interfaceModel != null && interfaceModel instanceof ModelImpl) &&
+            interfaceModel != null && interfaceModel instanceof ModelImpl &&
             interfaceModel.getDiscriminator() != null
           ) {
             parent = _interface
@@ -1333,13 +1333,13 @@ export default class DefaultCodegen {
       let child = composed.getChild()
       if (
         child != null &&
-        (child != null && child instanceof RefModel) &&
+        child != null && child instanceof RefModel &&
         allDefinitions != null
       ) {
         const childRef = child.getSimpleRef()
         child = (allDefinitions as any).get(childRef)
       }
-      if (child != null && (child != null && child instanceof ModelImpl)) {
+      if (child != null && child != null && child instanceof ModelImpl) {
         this.addProperties(properties, required, child, allDefinitions)
         if (this.supportsInheritance) {
           this.addProperties(allProperties, allRequired, child, allDefinitions)
@@ -1372,7 +1372,9 @@ export default class DefaultCodegen {
   }
 
   public addAdditionPropertiesToCodeGenModel(codegenModel, swaggerModel) {
-    const mapProperty = new MapProperty(swaggerModel.getAdditionalProperties())
+    const swaggerAdditionalProperties = swaggerModel.getAdditionalProperties()
+    const mapProperty = new MapProperty()
+    mapProperty.setAdditionalProperties(swaggerAdditionalProperties)
     this.addParentContainer(codegenModel, codegenModel.name, mapProperty)
   }
 
@@ -1738,7 +1740,7 @@ export default class DefaultCodegen {
     } else if (swagger != null && isNotEmptySet(swagger.getConsumes())) {
       consumes = swagger.getConsumes()
       log.debug(
-        `No consumes defined in operation. 
+        `No consumes defined in operation.
 Using global consumes (${swagger.getConsumes()}) for ${op.operationId}`
       )
     }
@@ -1773,7 +1775,7 @@ Using global consumes (${swagger.getConsumes()}) for ${op.operationId}`
     ) {
       produces = swagger.getProduces()
       log.debug(
-        `No produces defined in operation. 
+        `No produces defined in operation.
 Using global produces (${swagger.getProduces()}) for ${op.operationId}`
       )
     }
@@ -2874,9 +2876,7 @@ Renamed to auto-generated operationId: ${operationId}`
       this.__supportingFiles.push(supportingFile)
     } else {
       log.info(
-        `Skipped overwriting ${
-          supportingFile.destinationFilename
-        } as the file already exists in folder`
+        `Skipped overwriting ${supportingFile.destinationFilename} as the file already exists in folder`
       )
     }
   }

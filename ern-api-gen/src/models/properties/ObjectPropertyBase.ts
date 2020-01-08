@@ -6,7 +6,7 @@ import { has } from '../../java/beanUtils'
 
 function objectToPropertyMap(obj) {
   return newHashMap(
-    ...Object.keys(obj).map(key => [key, factory(obj[key], this)])
+    ...Object.keys(obj).map(key => [key, factory(obj[key], obj)])
   )
 }
 
@@ -39,7 +39,9 @@ export class ObjectPropertyBase extends Property {
     if (!properties) {
       this._additionalProperties = null
     }
-    if (properties.type) {
+    // @todo the ref support here is only dangerously supported
+    // { $ref: '#/definition/ModelName }
+    if (properties.type || properties.$ref || properties.genericRef) {
       this._additionalProperties = factory(properties)
     } else {
       this._additionalProperties = objectToPropertyMap(properties)
