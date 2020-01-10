@@ -1,22 +1,24 @@
 import chalk from 'chalk'
 import { execSync } from 'child_process'
+import fs from 'fs'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   config,
+  kax,
   log,
+  LogLevel,
   Manifest,
   ManifestOverrideConfig,
-  shell,
   Platform,
-  kax,
-  LogLevel,
+  shell,
 } from 'ern-core'
 import {
   KaxAdvancedRenderer,
-  KaxSimpleRenderer,
   KaxRenderer,
+  KaxSimpleRenderer,
   KaxTask,
 } from 'kax'
+import path from 'path'
 import yargs from 'yargs'
 
 // ==============================================================================
@@ -55,21 +57,36 @@ function showInfo() {
 }
 
 function showVersion() {
-  // get electrode-native local-cli version
-  if (config.get('platformVersion')) {
-    log.info(`ern-local-cli : ${config.get('platformVersion')}`)
-  }
-  // get electrode-native global-cli version
-  const packageInfo = JSON.parse(
-    execSync('npm ls -g electrode-native --json').toString()
-  )
-  if (packageInfo && packageInfo.dependencies) {
-    log.info(
-      `electrode-native : ${
-        packageInfo.dependencies['electrode-native'].version
-      }`
+  let packageInfo
+  try {
+    const pkg = path.join(
+      execSync('yarn global dir')
+        .toString()
+        .trim(),
+      'node_modules',
+      'electrode-native',
+      'package.json'
     )
+    packageInfo = fs.existsSync(pkg) ? require(pkg) : ''
+  } catch (err) {
+    log.trace(err)
   }
+
+  if (!packageInfo) {
+    try {
+      packageInfo = JSON.parse(
+        execSync('npm ls -g electrode-native --json').toString()
+      ).dependencies['electrode-native']
+    } catch (err) {
+      log.trace(err)
+    }
+  }
+
+  const globalVersion = packageInfo ? packageInfo.version : ''
+  log.info(`electrode-native: ${globalVersion ? globalVersion : '-UNKNOWN-'}`)
+
+  const localVersion = config.get('platformVersion')
+  log.info(`ern platform: ${localVersion ? localVersion : '-UNKNOWN-'}`)
 }
 
 Manifest.getOverrideManifestConfig = async (): Promise<ManifestOverrideConfig | void> => {
