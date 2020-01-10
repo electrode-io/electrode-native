@@ -36,7 +36,7 @@
     if (PackagerPort != nil) {
     containerConfig.packagerPort = PackagerPort;
     }
-    [ElectrodeReactNative startWithConfigurations:containerConfig];
+    [ElectrodeReactNative startWithConfigurations:containerConfig ernDelegate:nil];
     return YES;
 }
 

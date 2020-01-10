@@ -120,6 +120,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
 @interface ElectrodeReactNative ()
 @property (nonatomic, strong) RCTBridge *bridge;
 @property (nonatomic, strong) ElectrodeBridgeDelegate *bridgeDelegate;
+@property (nonatomic, weak) id<ERNDelegate> ernDelegate;
 @end
 
 @implementation ElectrodeReactNative
@@ -129,9 +130,35 @@ static NSString *enableBundleStore = @"enableBundleStore";
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
                 {{#plugins}}
-                    {{#configurable}}
+                {{#configurable}}
                 {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
-                    {{/configurable}}
+                {{/configurable}}
+                {{/plugins}}
+                {{#hasAtleastOneApiImplConfig}}
+                apiImplementationsConfig: (NSObject <APIImplsConfigWrapperDelegate> *) apiImplConfig
+                {{/hasAtleastOneApiImplConfig}}
+{
+    id sharedInstance = [ElectrodeReactNative sharedInstance];
+    static dispatch_once_t startOnceToken;
+    semaphore = dispatch_semaphore_create(0);
+    dispatch_once(&startOnceToken, ^{
+        [sharedInstance startContainerWithConfiguration:reactContainerConfig ernDelegate:nil
+         {{#plugins}}
+         {{#configurable}}
+         {{{lcname}}}:{{{lcname}}}
+         {{/configurable}}
+         {{/plugins}}
+         {{#hasAtleastOneApiImplConfig}}
+         apiImplementationsConfig: apiImplConfig
+         {{/hasAtleastOneApiImplConfig}}];
+    });
+}
+
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
+                {{#plugins}}
+                {{#configurable}}
+                {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
+                {{/configurable}}
                 {{/plugins}}
                 {{#hasAtleastOneApiImplConfig}}
                 apiImplementationsConfig: (NSObject <APIImplsConfigWrapperDelegate> *) apiImplConfig
@@ -142,7 +169,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
     static dispatch_once_t startOnceToken;
     semaphore = dispatch_semaphore_create(0);
     dispatch_once(&startOnceToken, ^{
-        [sharedInstance startContainerWithConfiguration:reactContainerConfig
+        [sharedInstance startContainerWithConfiguration:reactContainerConfig ernDelegate:ernDelegate
          {{#plugins}}
          {{#configurable}}
          {{{lcname}}}:{{{lcname}}}
@@ -210,7 +237,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Convenience Methods
 
-- (void)startContainerWithConfiguration:(id<ElectrodePluginConfig>)reactContainerConfig
+- (void)startContainerWithConfiguration:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
          {{#plugins}}
             {{#configurable}}
                 {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
@@ -231,6 +258,8 @@ static NSString *enableBundleStore = @"enableBundleStore";
 
     RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
     self.bridge = bridge;
+
+    self.ernDelegate = ernDelegate;
 
      [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(notifyElectrodeReactNativeOnInitialized:)
@@ -285,7 +314,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
             if ([localModuleInstance  respondsToSelector:selector]) {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                      dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-                     NSLog(@"RCTJavaScriptDidLoadNotification received");
+                     NSLog(@"RCTDidInitializeModuleNotification received");
                      ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
                 });
             }
@@ -311,6 +340,12 @@ static NSString *enableBundleStore = @"enableBundleStore";
 - (void) signalElectrodeOnReactNativeInitializedSemaphore: (NSNotification *) notification {
     // add the ExtraDevMenu after React Native is initiliazed.
     [self addExtraDevMenu];
+
+    // notify delegate that React Native is initalized.
+    if (self.ernDelegate && [self.ernDelegate respondsToSelector:@selector(reactNativeDidInitialize)]) {
+        [self.ernDelegate reactNativeDidInitialize];
+    }
+
     dispatch_semaphore_signal(semaphore);
 }
 
