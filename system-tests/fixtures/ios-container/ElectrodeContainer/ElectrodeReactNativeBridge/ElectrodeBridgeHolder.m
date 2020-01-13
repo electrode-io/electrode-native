@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
- 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
         _uuid = uuid;
         _listener = listener;
     }
-    
+
     return self;
 }
 @end
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
         _uuid = uuid;
         _handler = handler;
     }
-    
+
     return self;
 }
 @end
@@ -83,10 +83,10 @@ static NSMutableArray<id<ConstantsProvider>> *queuedConstantsProvider;
   [ElectrodeBridgeTransceiver
       registerReactNativeReadyListener:^(
           ElectrodeBridgeTransceiver *_Nonnull transceiver) {
-        isReactNativeReady = YES;
         electrodeNativeBridge = transceiver;
         [ElectrodeBridgeHolder registerQueuedEventListeners];
         [ElectrodeBridgeHolder registerQueuedRequestHandlers];
+        isReactNativeReady = YES;
         [ElectrodeBridgeHolder sendQueuedEvents];
         [ElectrodeBridgeHolder sendQueuedRequests];
         [ElectrodeBridgeHolder addQueuedConstantsProvider];
@@ -171,7 +171,7 @@ static NSMutableArray<id<ConstantsProvider>> *queuedConstantsProvider;
   } else {
       [electrodeNativeBridge registerEventListenerWithName:name uuid:eventListenerUUID listener:eventListner];
   }
-    
+
     return eventListenerUUID;
 }
 
@@ -204,7 +204,7 @@ static NSMutableArray<id<ConstantsProvider>> *queuedConstantsProvider;
         NSUUID *uuid = [handleObj uuid];
         [electrodeNativeBridge registerEventListenerWithName:eventListnerName uuid:uuid listener:[handleObj listener]];
     }
-    
+
     [queuedEventListenerRegistration removeAllObjects];
 }
 

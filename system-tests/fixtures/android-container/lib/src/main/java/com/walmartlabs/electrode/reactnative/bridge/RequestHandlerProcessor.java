@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
-
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,15 +91,10 @@ public class RequestHandlerProcessor<TReq, TResp> implements RequestHandlerHandl
 
     @Override
     public boolean unregister() {
-        Logger.d(TAG, "Removing registered request handler %s with id %s", handler, id);
-        ElectrodeBridgeRequestHandler removedHandler = ElectrodeBridgeHolder.unregisterRequestHandler(id);
-        if (handler != null && intermediateRequestHandler == removedHandler) {
-            intermediateRequestHandler = null;
-            handler = null;
-            return true;
-        } else {
-            Logger.w(TAG, "Not able to unregister a request handler. This is not normal as the request handle should have proper reference of the registered handler. ");
-        }
-        return false;
+        Logger.w(TAG, "Removing registered request handler %s with id %s", handler, id);
+        ElectrodeBridgeHolder.unregisterRequestHandler(id);
+        intermediateRequestHandler = null;
+        handler = null;
+        return true;
     }
 }
