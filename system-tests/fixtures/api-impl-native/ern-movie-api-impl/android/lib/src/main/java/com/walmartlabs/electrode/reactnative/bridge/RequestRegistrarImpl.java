@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
-
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,11 +20,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
+import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestRegistrarImpl<T> implements RequestRegistrar<T> {
+    private static final String TAG = RequestRegistrarImpl.class.getSimpleName();
 
     private final ConcurrentHashMap<UUID, String> mRequestNameByUUID = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, T> mRequestHandlerByRequestName = new ConcurrentHashMap<>();
@@ -40,9 +43,14 @@ public class RequestRegistrarImpl<T> implements RequestRegistrar<T> {
     @NonNull
     public boolean registerRequestHandler(@NonNull String name, @NonNull T requestHandler, @NonNull UUID requestHandlerUuid) {
         boolean isRegistered;
+        if (mRequestHandlerByRequestName.get(name) != null) {
+            Logger.d(TAG, "A request handler for request(name: %s) already exist. Replacing with a new request handler", name);
+            removeOldUuidMapping(name);
+        }
         mRequestHandlerByRequestName.put(name, requestHandler);
         mRequestNameByUUID.put(requestHandlerUuid, name);
         isRegistered = true;
+        Logger.d(TAG, "New request handler(id: %s) registered for request: %s", requestHandlerUuid, name);
         return isRegistered;
     }
 
@@ -55,7 +63,10 @@ public class RequestRegistrarImpl<T> implements RequestRegistrar<T> {
     public T unregisterRequestHandler(@NonNull UUID requestHandlerUuid) {
         String requestName = mRequestNameByUUID.remove(requestHandlerUuid);
         if (requestName != null) {
+            Logger.d(TAG, "Request handler(id: %s) removed for request: %s", requestHandlerUuid, requestName);
             return mRequestHandlerByRequestName.remove(requestName);
+        } else {
+            Logger.d(TAG, "Request handler(id: %s) already removed", requestHandlerUuid);
         }
         return null;
     }
@@ -72,15 +83,23 @@ public class RequestRegistrarImpl<T> implements RequestRegistrar<T> {
         return mRequestHandlerByRequestName.get(name);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public UUID getRequestHandlerId(@NonNull String name) {
         for (Map.Entry entry : mRequestNameByUUID.entrySet()) {
-            if (name != null && name.equals(entry.getValue())) {
+            if (name.equals(entry.getValue())) {
                 return (UUID) entry.getKey();
             }
         }
         return null;
+    }
+
+    private void removeOldUuidMapping(@NonNull String name) {
+        UUID oldUuid = getRequestHandlerId(name);
+        if (oldUuid != null) {
+            Logger.d(TAG, "Removing old request handler(id: %s)", oldUuid);
+            mRequestNameByUUID.remove(oldUuid);
+        }
     }
 
     /**
