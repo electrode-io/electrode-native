@@ -61,12 +61,12 @@
     "rimraf": "^2.6.3",
     "sinon": "7.3.2",
     "source-map-support": "^0.5.16",
-    "ts-node": "^8.5.4",
+    "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-no-unused-expression-chai": "^0.1.4",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.5"
   },
   "engines": {
     "node": ">=6"
