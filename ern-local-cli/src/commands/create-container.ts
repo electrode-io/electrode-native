@@ -54,6 +54,11 @@ export const builder = (argv: Argv) => {
         'Optional extra run configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
+    .option('devJsBundle', {
+      describe:
+        'Generate a development JavaScript bundle rather than a production one',
+      type: 'boolean',
+    })
     .option('fromGitBranches', {
       describe:
         'Create Container based on MiniApps branches rather than current MiniApps SHAs',
@@ -98,6 +103,7 @@ export const commandHandler = async ({
   baseComposite,
   compositeDir,
   descriptor,
+  devJsBundle,
   extra,
   fromGitBranches,
   ignoreRnpmAssets,
@@ -110,6 +116,7 @@ export const commandHandler = async ({
   baseComposite?: PackagePath
   compositeDir?: string
   descriptor?: AppVersionDescriptor
+  devJsBundle?: boolean
   extra?: string
   fromGitBranches?: boolean
   ignoreRnpmAssets?: boolean
@@ -178,6 +185,7 @@ Output directory should either not exist (it will be created) or should be empty
     outDir = outDir || Platform.getContainerGenOutDirectory(platform)
     await kax.task('Generating Container locally').run(
       runLocalContainerGen(platform, composite, {
+        devJsBundle,
         extra: extraObj,
         ignoreRnpmAssets,
         outDir,
@@ -197,6 +205,7 @@ Output directory should either not exist (it will be created) or should be empty
       outDir || Platform.getContainerGenOutDirectory(descriptor.platform!)
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
+        devJsBundle,
         outDir,
         sourceMapOutput,
       })

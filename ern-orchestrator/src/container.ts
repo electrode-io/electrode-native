@@ -36,12 +36,14 @@ export async function runLocalContainerGen(
     jsMainModuleName,
     extra,
     sourceMapOutput,
+    devJsBundle,
   }: {
     outDir?: string
     ignoreRnpmAssets?: boolean
     jsMainModuleName?: string
     extra?: any
     sourceMapOutput?: string
+    devJsBundle?: boolean
   }
 ): Promise<ContainerGenResult> {
   try {
@@ -54,6 +56,7 @@ export async function runLocalContainerGen(
       generator.generate({
         androidConfig: (extra && extra.androidConfig) || {},
         composite,
+        devJsBundle,
         ignoreRnpmAssets,
         jsMainModuleName,
         outDir,
@@ -73,10 +76,12 @@ export async function runCauldronContainerGen(
   napDescriptor: AppVersionDescriptor,
   composite: Composite,
   {
+    devJsBundle,
     jsMainModuleName,
     outDir,
     sourceMapOutput,
   }: {
+    devJsBundle?: boolean
     jsMainModuleName?: string
     outDir?: string
     sourceMapOutput?: string
@@ -107,6 +112,10 @@ export async function runCauldronContainerGen(
           androidConfig:
             containerGeneratorConfig && containerGeneratorConfig.androidConfig,
           composite,
+          devJsBundle:
+            devJsBundle === undefined
+              ? containerGeneratorConfig.devJsBundle
+              : devJsBundle,
           ignoreRnpmAssets:
             containerGeneratorConfig &&
             containerGeneratorConfig.ignoreRnpmAssets,
