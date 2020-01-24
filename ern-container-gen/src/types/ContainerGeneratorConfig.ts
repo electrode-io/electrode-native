@@ -35,4 +35,8 @@ export interface ContainerGeneratorConfig {
    * Path to source map file
    */
   sourceMapOutput?: string
+  /**
+   * Indicates whether to generate a dev or release JS bundle
+   */
+  devJsBundle?: boolean
 }

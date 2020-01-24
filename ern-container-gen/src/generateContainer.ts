@@ -64,6 +64,7 @@ export async function generateContainer(
     .run(
       bundleMiniAppsFromComposite({
         compositeDir: config.composite.path,
+        dev: !!config.devJsBundle,
         outDir: config.outDir,
         platform: config.targetPlatform,
         sourceMapOutput: config.sourceMapOutput,
