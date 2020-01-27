@@ -2,20 +2,19 @@
 
 Depending on whether you are building Android or iOS apps, the following tools are required:
 
-* Node 6+
-* NPM 3+ or Yarn
-* Android Studio for Android apps
-* Xcode 9.2+ for iOS apps
+- Node.js >= 8
+- NPM >= 3.0
+- Android Studio (for Android apps)
+- Xcode >= 10 (for iOS apps)
+- CocoaPods (if using a version of React Native >= 0.60)
 
-If you have React Native already installed, then you probably have the required tools installed.
+### [Node](https://nodejs.org/en/)
 
-### [Node 6+](https://nodejs.org/en/)
-
-Electrode Native is primarily a Node.js application therefore, Node 6+ must be installed on your workstation.  
+Electrode Native is primarily a Node.js application therefore, Node 8+ must be installed on your workstation.  
 
 **Note** You also need to install NPM or Yarn in order to install the Electrode Native platform. When you install Node.js, NPM is automatically installed.
 
-### NPM 3+ or Yarn
+### [NPM](https://npmsjs.com) or [Yarn](https://yarnpkg.com)
 
 ### [Git](https://git-scm.com/downloads)
 
@@ -33,11 +32,15 @@ After you install Android Studio, set the `ANDROID_SDK env` variable to point to
 $ export ANDROID_SDK=/Users/[YOUR_USER_NAME]/Library/Android/sdk
 ```
 
-### [Xcode 9.2+](https://developer.apple.com/xcode/)
+### [Xcode](https://developer.apple.com/xcode/)
 
 You need to install [Xcode](https://developer.apple.com/xcode/) if you want your MiniApp to target the iOS platform  or if you need to generate containers targeting iOS mobile applications.
 
-**Xcode 9.2** or later version is required.
+**Xcode 10** or later version is required.
+
+### [CocoaPods](https://cocoapods.org/)
+
+If running Electrode Native on a Mac, and using a version of React Native >= 0.60, CocoaPods install is required even if only targeting Android platform.
 
 ### Additional optional requirements
 
@@ -50,5 +53,3 @@ You need to install [Xcode](https://developer.apple.com/xcode/) if you want your
 You don't need to have React Native installed on your machine. If you have it already installed, that's great--it's not really a problem. The same applies for yarn and CodePush.
 
 Electrode Native ships with its own local version of React Native as well as Yarn and CodePush. Including these tools shorten our list of requirements--which ultimately simplifies setup for you and also makes the platform safer and stable as it does not require multiple versions of these tools--even though, every user could have a different version of these tools already installed.
-
-Are you Ready?    OK, then let's get started!
