@@ -45,7 +45,6 @@ NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
 NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey";
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.ElectrodeContainer";
-static dispatch_semaphore_t semaphore;
 static NSString *packagerIPPort = @"bundleStoreHostPort";
 static NSString *bundleStore = @"bundleStore";
 static NSString *storeBundleId = @"storeBundleId";
@@ -140,7 +139,6 @@ static NSString *enableBundleStore = @"enableBundleStore";
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
     static dispatch_once_t startOnceToken;
-    semaphore = dispatch_semaphore_create(0);
     dispatch_once(&startOnceToken, ^{
         [sharedInstance startContainerWithConfiguration:reactContainerConfig ernDelegate:nil
          {{#plugins}}
@@ -167,7 +165,6 @@ static NSString *enableBundleStore = @"enableBundleStore";
 {
     id sharedInstance = [ElectrodeReactNative sharedInstance];
     static dispatch_once_t startOnceToken;
-    semaphore = dispatch_semaphore_create(0);
     dispatch_once(&startOnceToken, ^{
         [sharedInstance startContainerWithConfiguration:reactContainerConfig ernDelegate:ernDelegate
          {{#plugins}}
@@ -266,7 +263,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
                                                      name:RCTDidInitializeModuleNotification object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(signalElectrodeOnReactNativeInitializedSemaphore:)
+                                                 selector:@selector(signalElectrodeOnReactNativeInitialized:)
                                                      name:RCTJavaScriptDidLoadNotification object:nil];
     [self loadCustomFonts];
 
@@ -312,11 +309,8 @@ static NSString *enableBundleStore = @"enableBundleStore";
             SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
             SEL transceiverReadySelector = NSSelectorFromString(@"onTransceiverModuleInitialized");
             if ([localModuleInstance  respondsToSelector:selector]) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-                     NSLog(@"RCTDidInitializeModuleNotification received");
-                     ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
-                });
+                NSLog(@"RCTDidInitializeModuleNotification received");
+                ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
             }
             if ([localModuleInstance  respondsToSelector:transceiverReadySelector]) {
                 ((void (*)(id, SEL))[localModuleInstance methodForSelector:transceiverReadySelector])(localModuleInstance, transceiverReadySelector);
@@ -337,7 +331,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
     [[self.bridge devMenu] addItem:dev];
 }
 
-- (void) signalElectrodeOnReactNativeInitializedSemaphore: (NSNotification *) notification {
+- (void) signalElectrodeOnReactNativeInitialized: (NSNotification *) notification {
     // add the ExtraDevMenu after React Native is initiliazed.
     [self addExtraDevMenu];
 
@@ -345,8 +339,6 @@ static NSString *enableBundleStore = @"enableBundleStore";
     if (self.ernDelegate && [self.ernDelegate respondsToSelector:@selector(reactNativeDidInitialize)]) {
         [self.ernDelegate reactNativeDidInitialize];
     }
-
-    dispatch_semaphore_signal(semaphore);
 }
 
 - (void)reloadBundleStoreBundle {
