@@ -329,6 +329,24 @@ static NSString *enableBundleStore = @"enableBundleStore";
         [RCTPresentedViewController() presentViewController:navController animated:YES completion:NULL];
     }];
     [[self.bridge devMenu] addItem:dev];
+    BOOL enableDev = [[RCTBundleURLProvider sharedSettings] enableDev];
+    NSString *enableDevTitle = enableDev ? @"Disable Dev": @"Enable Dev";
+    RCTDevMenuItem *enableDevMenu = [RCTDevMenuItem buttonItemWithTitle:enableDevTitle handler:^{
+        [[RCTBundleURLProvider sharedSettings] setEnableDev:!enableDev];
+        __strong RCTBridge *strongBridge = self.bridge;
+        strongBridge.bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+        [strongBridge reload];
+    }];
+    [[self.bridge devMenu] addItem:enableDevMenu];
+    BOOL enableMinify = [[RCTBundleURLProvider sharedSettings] enableMinification];
+    NSString *minifyTitle = enableMinify ? @"Disable Minification" : @"Enable Minification";
+    RCTDevMenuItem *enableMinifyMenu = [RCTDevMenuItem buttonItemWithTitle:minifyTitle handler:^{
+        [[RCTBundleURLProvider sharedSettings] setEnableMinification:!enableMinify];
+        __strong RCTBridge *strongBridge = self.bridge;
+        strongBridge.bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+        [strongBridge reload];
+    }];
+    [[self.bridge devMenu] addItem:enableMinifyMenu];
 }
 
 - (void) signalElectrodeOnReactNativeInitialized: (NSNotification *) notification {
