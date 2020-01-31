@@ -113,7 +113,7 @@ export async function runCauldronContainerGen(
           composite,
           devJsBundle:
             devJsBundle === undefined
-              ? containerGeneratorConfig.devJsBundle
+              ? containerGeneratorConfig && containerGeneratorConfig.devJsBundle
               : devJsBundle,
           ignoreRnpmAssets:
             containerGeneratorConfig &&
