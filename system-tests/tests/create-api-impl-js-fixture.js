@@ -15,7 +15,8 @@ const excludeFilter = [
   'WalmartItemApi.spec.js',
   'SysteTestEventApi.spec.js',
   'SystemTestsApi.spec.js',
-  '.yarn-integrity'
+  '.yarn-integrity',
+  'node_modules'
 ].map(s => `**/${s}`).join(',')
 
 run(`create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --jsOnly --outputDirectory ${process.cwd()} --force`)
