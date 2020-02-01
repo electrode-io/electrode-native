@@ -84,16 +84,7 @@ describe('utils.js', () => {
 
     it('pkgName not published in npm return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoError)
-      expect(await utils.isPublishedToNpm(fixtures.pkgNameUnpublished)).to.eql(
-        false
-      )
-      yarnStub.restore()
-    })
-
-    it('yarn info returns error return false', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(new Error('fake error'))
+      yarnStub.rejects(new Error('Received invalid response from npm.'))
       expect(await utils.isPublishedToNpm(fixtures.pkgNameUnpublished)).to.eql(
         false
       )
@@ -505,13 +496,6 @@ describe('utils.js', () => {
       expect(await utils.isDependencyApiImpl('react-header')).to.eql(true)
       yarnStub.restore()
     })
-
-    it('throw if yarn info errors', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoError)
-      assert(await doesThrow(isDependencyApiImpl, null, 'react-header'))
-      yarnStub.restore()
-    })
   })
 
   // ==========================================================
@@ -530,13 +514,6 @@ describe('utils.js', () => {
       expect(await utils.isDependencyApi('react-header')).to.eql(true)
       yarnStub.restore()
     })
-
-    it('throw if yarn info errors', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoError)
-      assert(await doesThrow(isDependencyApi, null, 'react-header'))
-      yarnStub.restore()
-    })
   })
 
   // ==========================================================
@@ -553,13 +530,6 @@ describe('utils.js', () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoErnApi)
       expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
-      yarnStub.restore()
-    })
-
-    it('throw if yarn info errors', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoError)
-      assert(await doesThrow(isDependencyApiOrApiImpl, null, 'react-header'))
       yarnStub.restore()
     })
 
@@ -583,13 +553,6 @@ describe('utils.js', () => {
       const yarnStub = sinon.stub(yarn, 'info')
       yarnStub.resolves(yarnInfoErnJsApiImpl)
       expect(await utils.isDependencyApiOrApiImpl('react-header')).to.eql(true)
-      yarnStub.restore()
-    })
-
-    it('throw if yarn info errors', async () => {
-      const yarnStub = sinon.stub(yarn, 'info')
-      yarnStub.resolves(yarnInfoError)
-      assert(await doesThrow(isDependencyApiOrApiImpl, null, 'react-header'))
       yarnStub.restore()
     })
   })

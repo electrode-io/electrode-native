@@ -5,12 +5,10 @@ export async function isPackagePublished(
   packageName: string
 ): Promise<boolean> {
   try {
-    const result = await yarn.info(PackagePath.fromString(packageName), {
-      field: 'versions 2> /dev/null',
+    await yarn.info(PackagePath.fromString(packageName), {
+      field: 'versions',
     })
-    if (result && result.type === `inspect`) {
-      return true
-    }
+    return true
   } catch (e) {
     // If the package name doesn't exist in the NPM registry, Do nothing
     // {"type":"error","data":"Received invalid response from npm."}

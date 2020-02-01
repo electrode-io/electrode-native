@@ -47,13 +47,12 @@ export const commandHandler = async ({
     'react-native-electrode-bridge'
   )
   if (bridgeVersion) {
-    const electrodeBridgePkgInfo = await yarn.info(electrodeBridgePkg, {
+    const electrodeBridgePkgVersions = await yarn.info(electrodeBridgePkg, {
       field: 'versions',
     })
     if (
-      electrodeBridgePkgInfo &&
-      electrodeBridgePkgInfo.data &&
-      !electrodeBridgePkgInfo.data.includes(bridgeVersion)
+      electrodeBridgePkgVersions &&
+      !electrodeBridgePkgVersions.includes(bridgeVersion)
     ) {
       throw new Error(
         `bridgeVersion ${bridgeVersion} is not valid. ${errorMessage}`
