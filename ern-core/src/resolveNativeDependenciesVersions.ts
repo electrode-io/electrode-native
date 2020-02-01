@@ -12,7 +12,10 @@ export function containsVersionMismatch(
   const hasMinorDiff = _.uniqBy(semverVersions, 'minor').length > 1
   const hasPatchDiff = _.uniqBy(semverVersions, 'patch').length > 1
   const hasPreReleaseDiff =
-    _.uniqWith(semverVersions.map(v => v.prerelease), _.isEqual).length > 1
+    _.uniqWith(
+      semverVersions.map(v => v.prerelease),
+      _.isEqual
+    ).length > 1
 
   return mismatchLevel === 'patch'
     ? hasMajorDiff || hasMinorDiff || hasPatchDiff || hasPreReleaseDiff

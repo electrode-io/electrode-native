@@ -71,9 +71,7 @@ export const commandHandler = async ({
   const cauldronCommitMessage = [
     `${
       jsapiimpls.length === 1
-        ? `Update ${
-            jsapiimpls[0]
-          } JS API implementation version in ${descriptor}`
+        ? `Update ${jsapiimpls[0]} JS API implementation version in ${descriptor}`
         : `Update multiple JS API implementations in ${descriptor}`
     }`,
   ]

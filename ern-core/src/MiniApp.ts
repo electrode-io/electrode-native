@@ -461,9 +461,7 @@ module.exports = {
       log.warn(`Manifest version: ${manifestDependency.version || 'undefined'}`)
       log.warn(`Wanted version: ${dependency.version || 'undefined'}`)
       log.warn(
-        `You might want to update the version in your Manifest to add this dependency to ${
-          this.name
-        }`
+        `You might want to update the version in your Manifest to add this dependency to ${this.name}`
       )
       return dependency
     }
@@ -490,9 +488,7 @@ module.exports = {
         ]
         if (dependencyManifestVersion !== localDependencyVersion) {
           log.info(
-            `${
-              manifestDependency.basePath
-            } : ${localDependencyVersion} => ${dependencyManifestVersion}`
+            `${manifestDependency.basePath} : ${localDependencyVersion} => ${dependencyManifestVersion}`
           )
           this.packageJson.dependencies[
             manifestDependency.basePath
@@ -503,9 +499,7 @@ module.exports = {
 
     // Update ernPlatformVersion in package.json
     if (!this.packageJson.ern) {
-      throw new Error(`In order to upgrade, please first replace "ernPlatformVersion" : "${
-        this.packageJson.ernPlatformVersion
-      }" in your package.json
+      throw new Error(`In order to upgrade, please first replace "ernPlatformVersion" : "${this.packageJson.ernPlatformVersion}" in your package.json
 with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     }
 

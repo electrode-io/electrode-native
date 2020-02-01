@@ -245,9 +245,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
           )
         }
         log.debug(
-          `Api implementation files successfully generated for ${
-            api.apiName
-          }Api`
+          `Api implementation files successfully generated for ${api.apiName}Api`
         )
       }
       return editableFiles

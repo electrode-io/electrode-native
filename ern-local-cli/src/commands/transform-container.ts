@@ -66,9 +66,7 @@ export const commandHandler = async ({
   ) {
     transformer = transformer.version
       ? PackagePath.fromString(
-          `${transformerPackagePrefix}${transformer.basePath}@${
-            transformer.version
-          }`
+          `${transformerPackagePrefix}${transformer.basePath}@${transformer.version}`
         )
       : PackagePath.fromString(
           `${transformerPackagePrefix}${transformer.basePath}`

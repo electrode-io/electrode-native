@@ -1,6 +1,6 @@
 {
   "hooks": {
-    "pre-commit": "yarn check:yarnlock && yarn check:lint && yarn prettier && yarn check:regen-fixtures",
+    "pre-commit": "yarn check:yarnlock && yarn check:lint && yarn prettier:staged && yarn check:regen-fixtures",
     "post-merge": "node auto-rebuild.js",
     "pre-push": "yarn build && yarn test:unit"
   }

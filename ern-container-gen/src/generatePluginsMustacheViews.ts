@@ -16,9 +16,7 @@ export async function generatePluginsMustacheViews(
     }
     if (!pluginConfig[platform]) {
       log.warn(
-        `${
-          plugin.basePath
-        } does not have any injection configuration for ${platform} platform`
+        `${plugin.basePath} does not have any injection configuration for ${platform} platform`
       )
       continue
     }

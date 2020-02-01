@@ -211,9 +211,7 @@ async function updatePackageJson({
         packageJson.dependencies[manifestDependency.basePath]
       if (dependencyManifestVersion !== localDependencyVersion) {
         log.info(
-          `${
-            manifestDependency.basePath
-          } : ${localDependencyVersion} => ${dependencyManifestVersion}`
+          `${manifestDependency.basePath} : ${localDependencyVersion} => ${dependencyManifestVersion}`
         )
         packageJson.dependencies[
           manifestDependency.basePath

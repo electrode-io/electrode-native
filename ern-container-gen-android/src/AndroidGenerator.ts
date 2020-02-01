@@ -145,9 +145,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
       if (!pluginConfig.android) {
         log.warn(
-          `Skipping ${
-            plugin.basePath
-          } as it does not have an Android configuration`
+          `Skipping ${plugin.basePath} as it does not have an Android configuration`
         )
         continue
       }
@@ -570,9 +568,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       }
       if (!pluginConfig.android) {
         log.warn(
-          `Skipping ${
-            plugin.basePath
-          } as it does not have an Android configuration`
+          `Skipping ${plugin.basePath} as it does not have an Android configuration`
         )
         continue
       }

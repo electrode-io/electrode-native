@@ -65,9 +65,7 @@ export default class GitManifest {
       } catch (e) {
         if (e.message.includes(`Couldn't find remote ref master`)) {
           throw new Error(
-            `It looks like no remote Manifest repository exist at ${
-              this.repoRemotePath
-            }`
+            `It looks like no remote Manifest repository exist at ${this.repoRemotePath}`
           )
         } else {
           throw e
