@@ -151,7 +151,7 @@ export const handler = async ({
 
     if (!version) {
       const latestReleasedPackageJson = await yarn.info(api)
-      version = latestReleasedPackageJson.data.version
+      version = latestReleasedPackageJson.version
     }
 
     if (version && semver.lte(version, currentApiVersion)) {

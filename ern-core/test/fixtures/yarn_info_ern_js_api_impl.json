@@ -1,12 +1,9 @@
 {
-  "type": "inspect",
-  "data": {
-    "moduleType": "ern-js-api-impl",
-    "containerGen": {
-      "moduleName": "ReactNativeErnmovieApiImpl",
-      "apiNames": [
-        "Movies"
-      ]
-    }
+  "moduleType": "ern-js-api-impl",
+  "containerGen": {
+    "moduleName": "ReactNativeErnmovieApiImpl",
+    "apiNames": [
+      "Movies"
+    ]
   }
 }
