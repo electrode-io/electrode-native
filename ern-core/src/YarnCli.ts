@@ -98,7 +98,11 @@ export class YarnCli {
         cp.stderr.on('data', data => {
           log.trace(data)
           const jsonLine = JSON.parse(data.toString())
-          reject(jsonLine.data)
+          // 'warning' and 'error' packet types are sent to stderr
+          // we want to fail only on 'error'
+          if (jsonLine.type === 'error') {
+            reject(jsonLine.data)
+          }
         })
       })
     }
