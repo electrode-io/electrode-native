@@ -49,7 +49,6 @@ export const commandHandler = async ({
   if (bridgeVersion) {
     const electrodeBridgePkgInfo = await yarn.info(electrodeBridgePkg, {
       field: 'versions',
-      json: true,
     })
     if (
       electrodeBridgePkgInfo &&

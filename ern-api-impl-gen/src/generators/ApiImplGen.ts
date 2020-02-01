@@ -64,9 +64,7 @@ export default class ApiImplGen {
               apiPackagePath,
               PackagePath.fromString(`react-native@${reactNativeVersion}`),
               PackagePath.fromString(
-                `react-native-electrode-bridge@${
-                  reactNativeElectrodeBridge.version
-                }`
+                `react-native-electrode-bridge@${reactNativeElectrodeBridge.version}`
               ),
             ],
             apis,
@@ -80,9 +78,7 @@ export default class ApiImplGen {
 
     log.info(
       chalk.green(
-        `API implementation project was successfully generated in ${
-          paths.outDirectory
-        }`
+        `API implementation project was successfully generated in ${paths.outDirectory}`
       )
     )
   }
@@ -92,7 +88,7 @@ export default class ApiImplGen {
   ): Promise<PackagePath[]> {
     try {
       log.info('Looking for peerDependencies')
-      const apiPackageInfo = await yarn.info(apiPackagePath, { json: true })
+      const apiPackageInfo = await yarn.info(apiPackagePath)
 
       const pluginsNames = []
 
