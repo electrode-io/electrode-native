@@ -11,7 +11,7 @@ const npmPackageExists = JSON.parse(
     .readFileSync(path.join(__dirname, 'fixtures', 'npmPkgExistsResponse.json'))
     .toString()
 )
-const npmPackageDoesNotExists = '' // 2> /dev/null suppresses stderr in yarn.info
+const npmPackageDoesNotExists = ''
 
 let yarnInfoStub
 const sandbox = sinon.createSandbox()
@@ -32,7 +32,7 @@ describe('isPackagePublished', () => {
   })
 
   it('should return false if npm package does not exists', async () => {
-    yarnInfoStub.resolves(npmPackageDoesNotExists)
+    yarnInfoStub.rejects(new Error('Received invalid response from npm.'))
     const result = await isPackagePublished(fixtures.pkgNameUnpublished)
     expect(result).to.be.false
   })

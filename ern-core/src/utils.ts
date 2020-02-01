@@ -28,20 +28,17 @@ export async function isPublishedToNpm(
     pkg = PackagePath.fromString(pkg)
   }
 
-  let publishedVersionsInfo
+  let publishedVersions: string[] | undefined
   try {
-    publishedVersionsInfo = await yarn.info(pkg, {
+    publishedVersions = await yarn.info(pkg, {
       field: 'versions',
-      json: true,
     })
   } catch (e) {
     log.debug(e)
     return false
   }
 
-  const publishedVersions: string[] = publishedVersionsInfo?.data
-  const type: string = publishedVersionsInfo?.type
-  if (type === 'inspect') {
+  if (publishedVersions) {
     const pkgVersion = PackagePath.fromString(pkg.toString()).version
     return publishedVersions && pkgVersion
       ? publishedVersions.includes(pkgVersion)
@@ -158,14 +155,10 @@ export async function isDependencyApi(
   }
 
   const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
-    field: 'ern 2> /dev/null',
-    json: true,
+    field: 'ern',
   })
-  if (depInfo?.type === 'error') {
-    throw new Error(`Cannot find ${dependencyName} in npm registry`)
-  }
 
-  return ModuleType.API === depInfo.data?.moduleType
+  return ModuleType.API === depInfo?.moduleType
 }
 
 /**
@@ -197,14 +190,10 @@ export async function isDependencyApiImpl(
     : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL]
 
   const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
-    field: 'ern 2> /dev/null',
-    json: true,
+    field: 'ern',
   })
-  if (depInfo?.type === 'error') {
-    throw new Error(`Cannot find ${dependencyName} in npm registry`)
-  }
 
-  return modulesTypes.indexOf(depInfo.data?.moduleType) > -1
+  return modulesTypes.indexOf(depInfo?.moduleType) > -1
 }
 
 export async function isDependencyJsApiImpl(

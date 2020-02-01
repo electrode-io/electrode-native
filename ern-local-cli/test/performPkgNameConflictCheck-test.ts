@@ -8,7 +8,7 @@ import * as fixtures from './fixtures/common'
 describe('performPkgNameConflictCheck', () => {
   const sandbox = sinon.createSandbox()
   const npmPackageExists = require('./fixtures/npmPkgExistsResponse.json')
-  const npmPackageDoesNotExists = '' // 2> /dev/null suppresses stderr in yarn.info
+  const npmPackageDoesNotExists = ''
 
   let yarnInfoStub
   let inquirerPromptStub
@@ -23,7 +23,7 @@ describe('performPkgNameConflictCheck', () => {
   })
 
   it('if package does not exists in npm return true', async () => {
-    yarnInfoStub.resolves(npmPackageDoesNotExists)
+    yarnInfoStub.rejects(new Error('Received invalid response from npm.'))
     const result = await performPkgNameConflictCheck(
       fixtures.npmPkgNameDoesNotExists
     )

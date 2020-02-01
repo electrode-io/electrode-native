@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import { PackagePath } from './PackagePath'
 import { execp } from './childProcess'
 import log from './log'
+import { spawn } from 'child_process'
 
 export class YarnCli {
   public readonly binaryPath: string
@@ -67,28 +68,39 @@ export class YarnCli {
     dependencyPath: PackagePath,
     {
       field,
-      json,
     }: {
       field?: string
-      json?: boolean
     } = {}
   ) {
+    log.trace(`[YarnCli] info(${dependencyPath}, {field: ${field}})`)
+
     if (dependencyPath.isFilePath) {
       const packageJsonPath = path.join(dependencyPath.basePath, `package.json`)
-      log.debug(`[runYarnCommand] Running info: returning ${packageJsonPath} `)
-      return fs.readJson(packageJsonPath)
+      const res = fs.readJson(packageJsonPath)
+      return field ? res[field] : res
     } else {
-      const cmd = `info ${dependencyPath.toString()} ${field || ''} ${
-        json ? '--json' : ''
-      }`
-      const output = await this.runYarnCommand(cmd)
+      const args = [
+        'info',
+        dependencyPath.toString(),
+        ...(field ? [field] : []),
+        '--json',
+      ]
 
-      // Assume single line of yarn JSON output in stdout for yarn info
-      const outputStr = output.toString()
-      if (outputStr === '') {
-        throw new Error(`Could not find ${dependencyPath.toString()} package`)
-      }
-      return JSON.parse(output.toString())
+      return new Promise((resolve, reject) => {
+        const cp = spawn(this.binaryPath, args)
+        cp.stdout.on('data', data => {
+          log.trace(data)
+          const jsonLine = JSON.parse(data.toString())
+          if (jsonLine.type === 'inspect') {
+            resolve(jsonLine.data)
+          }
+        })
+        cp.stderr.on('data', data => {
+          log.trace(data)
+          const jsonLine = JSON.parse(data.toString())
+          reject(jsonLine.data)
+        })
+      })
     }
   }
 
