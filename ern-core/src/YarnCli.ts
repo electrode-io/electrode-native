@@ -76,7 +76,8 @@ export class YarnCli {
 
     if (dependencyPath.isFilePath) {
       const packageJsonPath = path.join(dependencyPath.basePath, `package.json`)
-      return fs.readJson(packageJsonPath)
+      const res = fs.readJson(packageJsonPath)
+      return field ? res[field] : res
     } else {
       const args = [
         'info',
