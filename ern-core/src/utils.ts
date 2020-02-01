@@ -32,7 +32,6 @@ export async function isPublishedToNpm(
   try {
     publishedVersionsInfo = await yarn.info(pkg, {
       field: 'versions',
-      json: true,
     })
   } catch (e) {
     log.debug(e)
@@ -159,7 +158,6 @@ export async function isDependencyApi(
 
   const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
     field: 'ern 2> /dev/null',
-    json: true,
   })
   if (depInfo?.type === 'error') {
     throw new Error(`Cannot find ${dependencyName} in npm registry`)
@@ -198,7 +196,6 @@ export async function isDependencyApiImpl(
 
   const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
     field: 'ern 2> /dev/null',
-    json: true,
   })
   if (depInfo?.type === 'error') {
     throw new Error(`Cannot find ${dependencyName} in npm registry`)

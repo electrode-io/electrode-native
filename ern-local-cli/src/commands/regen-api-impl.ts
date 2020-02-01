@@ -150,7 +150,7 @@ export const handler = async ({
     log.debug('Performing version check before regenerating the code.')
 
     if (!version) {
-      const latestReleasedPackageJson = await yarn.info(api, { json: true })
+      const latestReleasedPackageJson = await yarn.info(api)
       version = latestReleasedPackageJson.data.version
     }
 

@@ -67,10 +67,8 @@ export class YarnCli {
     dependencyPath: PackagePath,
     {
       field,
-      json,
     }: {
       field?: string
-      json?: boolean
     } = {}
   ) {
     if (dependencyPath.isFilePath) {
@@ -78,9 +76,7 @@ export class YarnCli {
       log.debug(`[runYarnCommand] Running info: returning ${packageJsonPath} `)
       return fs.readJson(packageJsonPath)
     } else {
-      const cmd = `info ${dependencyPath.toString()} ${field || ''} ${
-        json ? '--json' : ''
-      }`
+      const cmd = `info ${dependencyPath.toString()} ${field || ''} --json`
       const output = await this.runYarnCommand(cmd)
 
       // Assume single line of yarn JSON output in stdout for yarn info

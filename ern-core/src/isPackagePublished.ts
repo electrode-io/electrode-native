@@ -7,7 +7,6 @@ export async function isPackagePublished(
   try {
     const result = await yarn.info(PackagePath.fromString(packageName), {
       field: 'versions 2> /dev/null',
-      json: true,
     })
     if (result?.type === `inspect`) {
       return true
