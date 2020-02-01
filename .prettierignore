@@ -6,3 +6,4 @@
 **/.nyc_output
 system-tests/fixtures
 system-tests/tests
+ern-api-gen/test/fixtures
