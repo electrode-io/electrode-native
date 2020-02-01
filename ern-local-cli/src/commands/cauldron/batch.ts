@@ -129,9 +129,7 @@ export const commandHandler = async ({
       // Update MiniApps
       for (const updatedMiniApp of updateMiniapps) {
         cauldronCommitMessage.push(
-          `- Update ${updatedMiniApp.basePath} MiniApp version to v${
-            updatedMiniApp.version
-          }`
+          `- Update ${updatedMiniApp.basePath} MiniApp version to v${updatedMiniApp.version}`
         )
       }
       // Add MiniApps

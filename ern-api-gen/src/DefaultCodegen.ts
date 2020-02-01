@@ -1278,7 +1278,8 @@ export default class DefaultCodegen {
           }
           if (
             parent == null &&
-            interfaceModel != null && interfaceModel instanceof ModelImpl &&
+            interfaceModel != null &&
+            interfaceModel instanceof ModelImpl &&
             interfaceModel.getDiscriminator() != null
           ) {
             parent = _interface
@@ -1333,7 +1334,8 @@ export default class DefaultCodegen {
       let child = composed.getChild()
       if (
         child != null &&
-        child != null && child instanceof RefModel &&
+        child != null &&
+        child instanceof RefModel &&
         allDefinitions != null
       ) {
         const childRef = child.getSimpleRef()

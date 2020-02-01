@@ -7,3 +7,4 @@
 system-tests/fixtures
 system-tests/tests
 ern-api-gen/test/fixtures
+ern-api-gen/test/tmp

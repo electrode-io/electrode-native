@@ -11,9 +11,7 @@ export default async function transformContainer(
 
   if (!transformer.platforms.includes(conf.platform)) {
     throw new Error(
-      `The ${transformer.name} transformer does not support transformation of ${
-        conf.platform
-      } Containers`
+      `The ${transformer.name} transformer does not support transformation of ${conf.platform} Containers`
     )
   }
   return transformer.transform(conf)

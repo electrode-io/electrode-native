@@ -5,9 +5,7 @@ const FILE_PATH_WITHOUT_PREFIX_RE = /^(\/.+)/
 const FILE_PATH_TIDLE_RE = /^(~\/.+)/
 const FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE = /^[a-zA-Z]:\\[\\\S|*\S]?.*$/
 const FILE_PATH_RE = new RegExp(
-  `${FILE_PATH_WITH_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_RE.source}|${
-    FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.source
-  }|${FILE_PATH_TIDLE_RE.source}`
+  `${FILE_PATH_WITH_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.source}|${FILE_PATH_TIDLE_RE.source}`
 )
 const GIT_SSH_PATH_RE = new RegExp(/^git\+ssh:\/\/.+$/)
 const GIT_SSH_PATH_VERSION_RE = new RegExp(/^(git\+ssh:\/\/.+)#(.+)$/)
@@ -16,11 +14,7 @@ const GIT_HTTPS_PATH_VERSION_RE = new RegExp(/^(https:\/\/.+)#(.+)$/)
 const GITHUB_SSH_PATH_RE = new RegExp(/^git@[^:]+:[^\/]+\/.+\.git$/)
 const GITHUB_SSH_PATH_VERSION_RE = new RegExp(/^git@[^:]+:[^\/]+\/.+\.git#.+$/)
 const GIT_PATH_RE = new RegExp(
-  `${GIT_SSH_PATH_RE.source}|${GIT_SSH_PATH_VERSION_RE.source}|${
-    GIT_HTTPS_PATH_RE.source
-  }|${GIT_HTTPS_PATH_VERSION_RE.source}|${GITHUB_SSH_PATH_VERSION_RE.source}|${
-    GITHUB_SSH_PATH_RE.source
-  }`
+  `${GIT_SSH_PATH_RE.source}|${GIT_SSH_PATH_VERSION_RE.source}|${GIT_HTTPS_PATH_RE.source}|${GIT_HTTPS_PATH_VERSION_RE.source}|${GITHUB_SSH_PATH_VERSION_RE.source}|${GITHUB_SSH_PATH_RE.source}`
 )
 const REGISTRY_PATH_VERSION_RE = new RegExp(/^(.+)@(.+)$/)
 

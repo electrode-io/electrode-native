@@ -107,9 +107,7 @@ export async function fillProjectHull(
           }
         }
 
-        injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${
-          plugin.basePath
-        }]`
+        injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
 
         if (pluginConfig.ios.copy) {
           for (const copy of pluginConfig.ios.copy) {

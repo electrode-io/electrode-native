@@ -27,9 +27,7 @@ export default async function publishContainer(conf: ContainerPublisherConfig) {
 
   if (!publisher.platforms.includes(conf.platform)) {
     throw new Error(
-      `The ${publisher.name} publisher does not support publication of ${
-        conf.platform
-      } Containers`
+      `The ${publisher.name} publisher does not support publication of ${conf.platform} Containers`
     )
   }
   return publisher.publish(conf)

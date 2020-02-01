@@ -182,9 +182,7 @@ export async function logErrorAndExitIfNotSatisfied({
     }
     if (isValidContainerVersion) {
       kaxTask = kax.task(
-        `Ensuring that ${
-          isValidContainerVersion.containerVersion
-        } is a valid Container version`
+        `Ensuring that ${isValidContainerVersion.containerVersion} is a valid Container version`
       )
       Ensure.isValidContainerVersion(
         isValidContainerVersion.containerVersion,
