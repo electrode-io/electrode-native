@@ -16,7 +16,8 @@ const excludeFilter = [
   'SysteTestEventApi.spec.js',
   'SystemTestsApi.spec.js',
   '.yarn-integrity',
-  'ElectrodeApiImpl/Libraries'
+  'ElectrodeApiImpl/Libraries',
+  'node_modules'
 ].map(s => `**/${s}`).join(',')
 
 run(`create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --nativeOnly --outputDirectory ${process.cwd()} --force`)
