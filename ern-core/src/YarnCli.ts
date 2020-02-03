@@ -6,6 +6,7 @@ import { PackagePath } from './PackagePath'
 import { execp } from './childProcess'
 import log from './log'
 import { spawn } from 'child_process'
+import { readJSON } from './fileUtil'
 
 export class YarnCli {
   public readonly binaryPath: string
@@ -45,7 +46,7 @@ export class YarnCli {
 
     const cmd = `add ${dependencyPath.toString()} --ignore-engines --non-interactive --exact ${
       dev ? '--dev' : ''
-    } ${peer ? '--peer' : ''}`
+      } ${peer ? '--peer' : ''}`
     return this.runYarnCommand(cmd)
   }
 
@@ -75,8 +76,7 @@ export class YarnCli {
     log.trace(`[YarnCli] info(${dependencyPath}, {field: ${field}})`)
 
     if (dependencyPath.isFilePath) {
-      const packageJsonPath = path.join(dependencyPath.basePath, `package.json`)
-      const res = fs.readJson(packageJsonPath)
+      const res = await readJSON(dependencyPath.basePath)
       return field ? res[field] : res
     } else {
       const args = [
