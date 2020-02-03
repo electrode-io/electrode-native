@@ -23,10 +23,18 @@
 #else
 #import "React/RCTBridgeDelegate.h"   // Required when used as a Pod in a Swift project
 #endif
+#import "ElectrodePluginConfig.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface ElectrodeBridgeDelegate : NSObject <RCTBridgeDelegate>
+@property (nonatomic, strong) NSURL *jsBundleURL;
 
 - (instancetype)initWithModuleURL:(NSURL *)url extraModules:(NSArray *)modules;
-- (instancetype)initWithURL: (NSURL *)url;
 
+- (instancetype)initWithContainerConfig: (id<ElectrodePluginConfig>) containerConfig
+                         codePushConfig: (id<ElectrodePluginConfig>) codePushConfig;
+
+- (void) setUp;
+NS_ASSUME_NONNULL_END
 @end
