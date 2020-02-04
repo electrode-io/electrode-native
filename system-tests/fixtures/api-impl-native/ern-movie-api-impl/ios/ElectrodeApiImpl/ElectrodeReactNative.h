@@ -16,48 +16,29 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-extern NSString * const ERNCodePushConfig;
-extern NSString * const ERNCodePushConfigServerUrl;
-extern NSString * const ERNCodePushConfigDeploymentKey;
-extern NSString * const ERNDebugEnabledConfig;
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - ElectrodePluginConfigurator
-/**
- Used as configuration for the start up of the ElectrodeReactNative system. Build
- a class that adheres to this
- */
-@protocol ElectrodePluginConfigurator <NSObject>
-
-// Required Properties
-
-/**
- Sets wether to set up the bridge in a debug fashion or not.
- */
-@property (nonatomic, assign, readonly) BOOL isDebugEnabled;
+#import "ElectrodePluginConfig.h"
 
 
-@optional
-// Optional Instance Methods
-
-/**
- Builds an instance of the configurator based off of a plist of configuration.
-
- @param plist A string of the name of the plist with configuration in it.
- @return instancetype of the class that adheres to the protocol.
- */
-- (instancetype)initWithIsDebugEnabled: (BOOL) enabled;
-- (instancetype)initWithPlist:(NSString *)plist;
-- (instancetype)initWithDeploymentKey: (NSString *)deploymentKey;
-
-// Optional Properties
-@property (nonatomic, copy, readonly) NSString *codePushWithServerURLString;
-
-@property (nonatomic, copy, readonly) NSString *codePushWithIDString;
-
+@protocol APIImplsConfigWrapperDelegate <NSObject>
 @end
 
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
+@property (nonatomic, assign) BOOL debugEnabled;
+@property (nonatomic, copy) NSString *packagerHost;
+@property (nonatomic, copy) NSString *packagerPort;
+@property (nonatomic, copy) NSString *bundleStoreHostPort;
+@end
+
+@protocol MiniAppViewDelegate <NSObject>
+- (void)rootViewDidChangeIntrinsicSize:(UIView *)rootView;
+@end
+
+@protocol ERNDelegate <NSObject>
+- (void)reactNativeDidInitialize;
+@end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - ElectrodeReactNative
@@ -66,6 +47,11 @@ extern NSString * const ERNDebugEnabledConfig;
  logic, files and set up from Native engineers.
  */
 @interface ElectrodeReactNative : NSObject
+
+/**
+ To load default bundle. Always `localhost:8080`
+ */
+@property (nonatomic, copy) NSString *defaultHostAndPort;
 
 /**
  Create a singleton instance of ElectrodeReactNative with the ability to set
@@ -80,14 +66,18 @@ extern NSString * const ERNDebugEnabledConfig;
  configurations for the plugins associated with the container. Only needed to be
  called once.
 
- @param configuration NSDictionary that uses ERN keys such as ERNCodePushConfig
+ @param reactContainerConfig NSDictionary that uses ERN keys such as ERNCodePushConfig
  to store NSDictionary of configurations. The main key signifies which plugin
  the configuration is for, the subsequent NSDictionary is the actual
  configuration. This allows the ability to pass in multiple configurations for
  multiple plugins.
  */
 
-+ (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration;
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
+                        __attribute((deprecated("use -startWithConfigurations:ernDelegate instead")));
+
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
+;
 
 
 /**
@@ -99,5 +89,51 @@ extern NSString * const ERNDebugEnabledConfig;
  @return A UIViewController containing the view of the miniapp.
  */
 - (UIViewController *)miniAppWithName:(NSString *)name
-                           properties:(NSDictionary *)properties;
+                           properties:(NSDictionary * _Nullable)properties;
+
+/**
+ Returns a react native miniapp (from a JSBundle).
+
+ @param name The name of the mini app, preferably the same name as the jsbundle
+ without the extension.
+ @param properties Any configuration to set up the mini app with.
+ @return a UIView of the miniapp.
+ */
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties;
+
+/**
+ Returns a react native miniapp (from a JSBundle).
+
+ @param name The name of the mini app, that is registered with the AppComponent.
+ @param properties initialprops for a React Native miniapp.
+ @param sizeFlexibilty defines size flexibility type of the root view
+ @return a UIView of the miniapp.
+ */
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                sizeFlexibility:(NSInteger)sizeFlexibilty
+        __attribute((deprecated("use -miniAppViewWithName:properties:sizeFlexibility:delegate instead")));
+
+/**
+ Returns a react native miniapp (from a JSBundle).
+
+ @param name The name of the mini app, that is registered with the AppComponent.
+ @param properties initialprops for a React Native miniapp.
+ @param sizeFlexibilty defines size flexibility type of the root view
+ @param delegate
+ @return a UIView of the miniapp.
+ */
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                sizeFlexibility:(NSInteger)sizeFlexibilty
+                       delegate:(id<MiniAppViewDelegate> _Nullable)delegate;
+
+/**
+ Call this to update an RCTRootView with new props. Calling this with new props will cause the view to be rerendered.
+ Request will be ignored if the returned view is not an RCTRootView instance.
+ */
+- (void)updateView:(UIView *)view withProps:(NSDictionary *)newProps;
+
 @end
+NS_ASSUME_NONNULL_END

@@ -32,115 +32,63 @@
 #import "React/RCTRootView.h"   // Required when used as a Pod in a Swift project
 #endif
 
-
-#import "ElectrodeBridgeDelegate.h"
-#import "ElectrodeBridgeTransceiver.h"
+#import <React/RCTDevMenu.h>
+#import <React/RCTUtils.h>
+#import <React/RCTBridge+Private.h>
+#import <CoreText/CTFontManager.h>
 
 NSString * const ERNCodePushConfig = @"CodePush";
 NSString * const ERNCodePushConfigServerUrl = @"CodePushConfigServerUrl";
 NSString * const ERNCodePushConfigDeploymentKey = @"CodePushConfigDeploymentKey";
 NSString * const ERNDebugEnabledConfig = @"DebugEnabledConfig";
 NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.ElectrodeContainer";
+static NSString *packagerIPPort = @"bundleStoreHostPort";
+static NSString *bundleStore = @"bundleStore";
+static NSString *storeBundleId = @"storeBundleId";
+static NSString *autoReloadBundle = @"autoReloadBundle";
+static NSString *enableBundleStore = @"enableBundleStore";
 
-@interface ElectrodeReactNative ()
-@property (nonatomic, strong) RCTBridge *bridge;
-@property (nonatomic, strong) ElectrodeBridgeDelegate *bridgeDelegate;
-@end
+@implementation ElectrodeContainerConfig
 
-@implementation ElectrodeReactNative
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Public Methods
-
-+ (void)startWithConfigurations:(id<ElectrodePluginConfigurator>)configuration
-{
-    id sharedInstance = [ElectrodeReactNative sharedInstance];
-
-    static dispatch_once_t startOnceToken;
-    dispatch_once(&startOnceToken, ^{
-        [sharedInstance startContainerWithConfiguration:configuration];
-    });
-}
-
-+ (instancetype)sharedInstance
-{
-    static dispatch_once_t onceToken;
-    static id sharedInstance;
-    dispatch_once(&onceToken, ^{
-        sharedInstance = [[self alloc] init];
-    });
-
-    return sharedInstance;
-}
-
-- (UIViewController *)miniAppWithName:(NSString *)name
-                           properties:(NSDictionary *)properties
-{
-
-    UIViewController *miniAppViewController = nil;
-
-    // Build out the view controller
-        // Use the bridge to generate the view
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-
-    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
-    miniAppViewController = [UIViewController new];
-    miniAppViewController.view = rootView;
-
-    return miniAppViewController;}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Convenience Methods
-
-- (void)startContainerWithConfiguration:(id<ElectrodePluginConfigurator>)configuration
-{
-    // Look for CodePush
-    /*
-    [CodePush initialize];
-    [self configureCodePush:configuration];
-
-    NSURL *url;
-    if([configuration isDebugEnabled]) {
-        url = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
-        NSLog(@"using local port to debug");
-    } else {
-        url = [CodePush bundleURLForResource:@"MiniApp"
-                               withExtension:@"jsbundle"
-                                subdirectory:nil
-                                      bundle:[NSBundle bundleForClass:[self class]]];
-
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        //default values
+        self.packagerHost= @"localhost";
+        self.packagerPort = @"8081";
     }
-    */
-    NSURL *url;
-
-    //NSArray* bundleFiles = [self allJSBundleFiles];
-    //ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:bundleFiles[0]];
-
-    ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] initWithURL:url];
-
-    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
-    self.bridge = bridge;
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(notifyElectrodeOnReactInitialized:)
-                                                 name:RCTDidInitializeModuleNotification object:nil];
+    return self;
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void) notifyElectrodeOnReactInitialized: (NSNotification *) notification {
-    if (notification) {
-        if ([notification.object isKindOfClass:[RCTBridge class]] ) {
-            RCTBridge *initializedBridge = (RCTBridge *) notification.object;
-            id moduleInstance = notification.userInfo[@"module"];
-            if ([moduleInstance isKindOfClass:[ElectrodeBridgeTransceiver class]]) {
-                ElectrodeBridgeTransceiver *electrodeBridge = [self.bridge moduleForClass:[ElectrodeBridgeTransceiver class]];
-                [electrodeBridge onReactNativeInitialized];
-            }
+//10.74.57.21:8080/bundles/benoit/ios/latest complete JS location
+- (void) setupConfigWithDelegate:(id<RCTBridgeDelegate>)delegate {
+    NSString *urlString = nil;
+    if ([delegate respondsToSelector:@selector(setJsBundleURL:)]) {
+        NSURL *url;
+        if (self.bundleStoreHostPort == nil) {
+            self.bundleStoreHostPort = @"localhost:8080";
         }
+        [[NSUserDefaults standardUserDefaults]  setObject:self.bundleStoreHostPort forKey:packagerIPPort];
+        if (self.debugEnabled) {
+            BOOL isBundleStoreEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:enableBundleStore];
+            if (isBundleStoreEnabled) {
+                urlString = [NSString stringWithFormat:@"http://%@/bundles/%@/ios/%@/index.bundle",
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:packagerIPPort],
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:bundleStore],
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:storeBundleId]];
+            } else {
+             // iOS device and Macbook must be on the same Wi-fi & metro packager (bundler) by default runs on 8081 port.
+              urlString = [NSString stringWithFormat:@"http://%@:%@/index.bundle?platform=ios&dev=true",self.packagerHost,self.packagerPort];
+              self.bundleStoreHostPort = [NSString stringWithFormat:@"%@:%@",self.packagerHost,self.packagerPort];
+             //disable Bundle Store functionality to load it from the default bundle
+              [[ElectrodeReactNative sharedInstance] setDefaultHostAndPort:self.bundleStoreHostPort];
+            }
+            url = [NSURL URLWithString:urlString];
+        } else {
+            url = [self allJSBundleFiles][0];
+        }
+        ElectrodeBridgeDelegate *bridgeDelegate = (ElectrodeBridgeDelegate *)delegate;
+        [bridgeDelegate setJsBundleURL:url];
     }
 }
 
@@ -163,105 +111,140 @@ NSString * const kElectrodeContainerFrameworkIdentifier = @"com.walmartlabs.ern.
     return returnFiles;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark - CodePush Methods
-- (void)configureCodePush:(id<ElectrodePluginConfigurator>)configuration
-{
-    if (configuration && [configuration respondsToSelector:@selector(codePushWithIDString)])
-    {
-        // [self setUpCodePushWithID:[configuration codePushWithIDString]];
-    }
-
-    if (configuration && [configuration respondsToSelector:@selector(codePushWithServerURLString)])
-    {
-       // [self setUpCodePushWithServer:[configuration codePushWithServerURLString]];
-    }
-}
-
-- (void)setUpCodePushWithID:(NSString *)codePushID
-{
-    // [CodePush setDeploymentKey:codePushID];
-}
-
-- (void)setUpCodePushWithServer:(NSString *)serverURL
-{
-    // [CodePushConfig current].serverURL = serverURL;
-}
-
 @end
 
+@interface ElectrodeReactNative ()
+@property (nonatomic, strong) RCTBridge *bridge;
+@property (nonatomic, strong) ElectrodeBridgeDelegate *bridgeDelegate;
+@property (nonatomic, weak) id<ERNDelegate> ernDelegate;
+@end
+
+@implementation ElectrodeReactNative
+
 ////////////////////////////////////////////////////////////////////////////////
-#pragma mark - ElectrodeCofnigure
+#pragma mark - Public Methods
 
-@implementation ElectrodeConfigure
-
-- (instancetype)initWithPlist:(NSString *)plist
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
 {
-    self = [super init];
-    if (self)
-    {
+    id sharedInstance = [ElectrodeReactNative sharedInstance];
+    static dispatch_once_t startOnceToken;
+    dispatch_once(&startOnceToken, ^{
+        [sharedInstance startContainerWithConfiguration:reactContainerConfig ernDelegate:nil
+];
+    });
+}
 
-        if (plist)
-        {
-            [self configure:plist];
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
+
+{
+    id sharedInstance = [ElectrodeReactNative sharedInstance];
+    static dispatch_once_t startOnceToken;
+    dispatch_once(&startOnceToken, ^{
+        [sharedInstance startContainerWithConfiguration:reactContainerConfig ernDelegate:ernDelegate
+];
+    });
+}
+
++ (instancetype)sharedInstance
+{
+    static dispatch_once_t onceToken;
+    static id sharedInstance;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+
+    return sharedInstance;
+}
+
+- (UIViewController *)miniAppWithName:(NSString *)name
+                           properties:(NSDictionary *)properties
+{
+    UIViewController *miniAppViewController = [UIViewController new];
+    miniAppViewController.view = [self miniAppViewWithName:name properties:properties];;
+
+    return miniAppViewController;
+}
+
+- (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *)properties {
+    // Use the bridge to generate the view
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
+    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+    return rootView;
+}
+
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                sizeFlexibility:(NSInteger)sizeFlexibilty {
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
+    rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibilty;
+    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+    return rootView;
+}
+
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                sizeFlexibility:(NSInteger)sizeFlexibilty
+                       delegate:(id<MiniAppViewDelegate> _Nullable)delegate {
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
+    rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibilty;
+    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+    rootView.delegate = delegate;
+    return rootView;
+}
+
+- (void)updateView:(UIView *)view withProps:(NSDictionary *)newProps {
+    if([view isKindOfClass:[RCTRootView class]]) {
+        [((RCTRootView *) view) setAppProperties:newProps];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Convenience Methods
+
+- (void)startContainerWithConfiguration:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate {
+    ElectrodeBridgeDelegate *delegate = [[ElectrodeBridgeDelegate alloc] init];
+
+    [reactContainerConfig setupConfigWithDelegate:delegate];
+
+    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:delegate launchOptions:nil];
+    self.bridge = bridge;
+
+    self.ernDelegate = ernDelegate;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notifyElectrodeReactNativeOnInitialized:)
+                                                 name:RCTDidInitializeModuleNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(signalElectrodeOnReactNativeInitialized:)
+                                                 name:RCTJavaScriptDidLoadNotification object:nil];
+}
+
+- (void)notifyElectrodeReactNativeOnInitialized:(NSNotification *)notification {
+    if (notification) {
+        if ([notification.object isKindOfClass:[RCTBridge class]] ) {
+            id localModuleInstance = notification.userInfo[@"module"];
+            SEL selector = NSSelectorFromString(@"onReactNativeInitialized");
+            SEL transceiverReadySelector = NSSelectorFromString(@"onTransceiverModuleInitialized");
+            if ([localModuleInstance  respondsToSelector:selector]) {
+                NSLog(@"RCTDidInitializeModuleNotification received");
+                ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
+            }
+            if ([localModuleInstance  respondsToSelector:transceiverReadySelector]) {
+                ((void (*)(id, SEL))[localModuleInstance methodForSelector:transceiverReadySelector])(localModuleInstance, transceiverReadySelector);
+            }
         }
     }
-
-    return self;
 }
 
-- (instancetype)initWithData: (NSDictionary *)data {
-    if (self = [super init]) {
-        [self configureWithData:data];
-    }
-
-    return self;
-}
-
-- (void)configureWithData: (NSDictionary *)data {
-    if (data)
-    { // Configure
-        if ([data objectForKey:ERNDebugEnabledConfig])
-        {
-            NSNumber *debugEnabled = [data objectForKey:ERNDebugEnabledConfig];
-            if (debugEnabled && [debugEnabled isKindOfClass:[NSNumber class]])
-            {
-                _isDebugEnabled = debugEnabled.boolValue;
-            }
-
-            NSString *codePushID = [data objectForKey:ERNCodePushConfigDeploymentKey];
-            if (codePushID && [codePushID isKindOfClass:[NSString class]])
-            {
-                _codePushWithIDString = codePushID;
-            }
-
-            NSString *codePushURL = [data objectForKey:ERNCodePushConfigServerUrl];
-            if (codePushURL && [codePushURL isKindOfClass:[NSString class]])
-            {
-                _codePushWithServerURLString = codePushURL;
-            }
-        }
+- (void)signalElectrodeOnReactNativeInitialized:(NSNotification *)notification {
+    // notify delegate that React Native is initalized.
+    if (self.ernDelegate && [self.ernDelegate respondsToSelector:@selector(reactNativeDidInitialize)]) {
+        [self.ernDelegate reactNativeDidInitialize];
     }
 }
 
-- (void)configure:(NSString *)plist
-{
-    NSDictionary *data = [self dataForPlist:plist];
-    [self configureWithData:data];
-}
-
-- (NSDictionary *)dataForPlist:(NSString *)plist
-{
-    // Remove the extension if necessary
-    if ([[plist pathExtension] isEqualToString:@"plist"])
-    {
-        plist = [plist stringByReplacingOccurrencesOfString:@".plist" withString:@""];
-    }
-    NSDictionary *data =
-    [NSDictionary dictionaryWithContentsOfFile:
-     [[NSBundle bundleForClass:self.class] pathForResource:plist ofType:@"plist"]];
-
-    return data;
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
