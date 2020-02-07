@@ -315,6 +315,16 @@ export async function fillProjectHull(
             }
           }
 
+          if (pluginConfig.ios.pbxproj.addEmbeddedFramework) {
+            for (const framework of pluginConfig.ios.pbxproj
+              .addEmbeddedFramework) {
+              iosProject.addFramework(framework, {
+                customFramework: true,
+                embed: true,
+              })
+            }
+          }
+
           if (pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
             for (const p of pluginConfig.ios.pbxproj.addFrameworkSearchPath) {
               iosProject.addToFrameworkSearchPaths(p)
