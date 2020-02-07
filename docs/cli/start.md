@@ -98,12 +98,12 @@ If you do not pass an argument to this command, you are prompted to select a nat
 
 * This command can be used to package multiple MiniApps inside a single composite bundle and automatically start the react-native local packager to serve this bundle.  
 * Use this command when you need to launch and develop or debug your MiniApps from within a native host application which contains other MiniApps along with your MiniApp.  
-* This command works with the `ern link add` command. For additional information, see the documentation for the `ern link add` command.  
+* This command works with the `ern link` command. For additional information, see the documentation for the `ern link` command.  
 * When using a binary store, file watcher will be started after the binary is retrieved and installed on the simulator/device. If you are using a binary store and don't want to launch binary from the store, please make sure to use the `--disableBinaryStore` option. Otherwise, file watcher will not be started.
 
 #### Related commands
 
-[ern link add] | Add a Link to a MiniApp directory
+ [ern link] | Link to a MiniApp directory
 
-[ern link add]: ./link/add.md
+[ern link]: ./link.md
 [custom Composite]: ./platform-parts/composite/index.md
