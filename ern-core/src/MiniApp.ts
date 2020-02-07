@@ -520,6 +520,36 @@ with "ern" : { "version" : "${this.packageJson.ernPlatformVersion}" } instead`)
     execSync(`npm publish --prefix ${this.path}`)
   }
 
+  public async link() {
+    const miniAppsLinks = config.get('miniAppsLinks', {})
+    const previousLinkPath = miniAppsLinks[this.packageJson.name]
+    if (previousLinkPath && previousLinkPath !== this.path) {
+      log.warn(
+        `Replacing previous link [${this.packageJson.name} => ${previousLinkPath}]`
+      )
+    } else if (previousLinkPath && previousLinkPath === this.path) {
+      return log.warn(
+        `Link is already created for ${this.packageJson.name} with same path`
+      )
+    }
+    miniAppsLinks[this.packageJson.name] = this.path
+    config.set('miniAppsLinks', miniAppsLinks)
+    log.info(
+      `${this.packageJson.name} link created [${this.packageJson.name} => ${this.path}]`
+    )
+  }
+
+  public async unlink() {
+    const miniAppsLinks = config.get('miniAppsLinks', {})
+    if (miniAppsLinks[this.packageJson.name]) {
+      delete miniAppsLinks[this.packageJson.name]
+      config.set('miniAppsLinks', miniAppsLinks)
+      log.info(`${this.packageJson.name} link was removed`)
+    } else {
+      return log.warn(`No link exists for ${this.packageJson.name}`)
+    }
+  }
+
   private async addDevOrPeerDependency(
     dependency: PackagePath,
     dev: boolean | undefined

@@ -2,28 +2,19 @@
 
 #### Description
 
-* Remove a package link
+* Remove the link associated to a MiniApp directory  
 
 #### Syntax
 
-`ern link rm [packageName]`
+`ern link rm`
 
-#### Examples
+#### Remarks
 
-- `ern link rm`
-
-Remove the link associated to the package present in current directory
-
-- `ern link rm foo`
-
-Remove the link associated to the `foo` package
-
-#### Caveate
-
-The [ern start] command needs to be relaunched for any link(s) changes to take effect
+* You must run this command from within a MiniApp working directory that was linked using the `ern link` command.  
+* When you remove the link associated to a MiniApp directory, the package launched using the `ern start` command, won't use this MiniApp directory any longer to load the code of the MiniApp.  
 
 #### Related commands
 
-[ern link add] | Add a package link
+[ern link add] | Add a link to a MiniApp directory
 
 [ern link add]: ./add.md
