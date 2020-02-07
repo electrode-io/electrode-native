@@ -2,6 +2,7 @@ import {
   createTmpDir,
   android,
   ios,
+  config as ernConfig,
   PackagePath,
   shell,
   reactnative,
@@ -10,9 +11,6 @@ import {
   kax,
   readPackageJsonSync,
   AppVersionDescriptor,
-  packageLinksConfig,
-  listDirsRecursive,
-  PackagesLinks,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { Composite } from 'ern-composite-gen'
@@ -93,18 +91,30 @@ export default async function start({
   compositeDir = compositeDir || createTmpDir()
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
-  const composite = await kax
-    .task(`Generating composite in ${compositeDir}`)
-    .run(
-      Composite.generate({
-        baseComposite,
-        extraJsDependencies: extraJsDependencies || undefined,
-        jsApiImplDependencies: jsApiImpls,
-        miniApps: miniapps!,
-        outDir: compositeDir,
-        resolutions,
-      })
-    )
+  const composite = await kax.task('Generating MiniApps composite').run(
+    Composite.generate({
+      baseComposite,
+      extraJsDependencies: extraJsDependencies || undefined,
+      jsApiImplDependencies: jsApiImpls,
+      miniApps: miniapps!,
+      outDir: compositeDir,
+      resolutions,
+    })
+  )
+
+  const miniAppsLinksObj = ernConfig.get('miniAppsLinks', {})
+  const linkedMiniAppsPackageNames = Object.keys(miniAppsLinksObj).filter(p =>
+    fs.existsSync(miniAppsLinksObj[p])
+  )
+
+  // Auto link file based miniapps
+  miniapps!
+    .filter(m => m.isFilePath)
+    .forEach(m => {
+      const packageJson = readPackageJsonSync(m.basePath)
+      linkedMiniAppsPackageNames.push(packageJson.name)
+      miniAppsLinksObj[packageJson.name] = m.basePath
+    })
 
   // Third party native modules
   const nativeDependencies = await composite.getNativeDependencies()
@@ -113,40 +123,26 @@ export default async function start({
     ...nativeDependencies.thirdPartyNotInManifest,
   ].map(d => d.packagePath)
 
-  const packagesLinks = packageLinksConfig.getAll()
-  const linkedPackages = Object.keys(packagesLinks).filter(
-    p =>
-      fs.pathExistsSync(packagesLinks[p].localPath) &&
-      packagesLinks[p].isEnabled
+  const packageCopyKaxTask = kax.task(
+    'Copying all linked MiniApps to Composite'
   )
-
-  // Auto link file based miniapps
-  miniapps!
-    .filter(m => m.isFilePath)
-    .forEach(m => {
-      const packageJson = readPackageJsonSync(m.basePath)
-      linkedPackages.push(packageJson.name)
-      packagesLinks[packageJson.name] = {
-        isEnabled: true,
-        localPath: m.basePath,
-      }
-    })
-
-  const linkedDirsByPackageName = await kax
-    .task('Linking packages')
-    .run(
-      linkPackages(compositeDir, linkedPackages, packagesLinks, nativeModules)
-    )
-
-  if (linkedPackages.length > 0) {
-    log.info(`Linked packages`)
-    for (const [k, v] of linkedDirsByPackageName.entries()) {
-      log.info(`${k} package [${packagesLinks[k].localPath}] linked to:`)
-      v.forEach(x => {
-        log.info(`  ${x}`)
-      })
-    }
+  const totalLinkedMiniApps = linkedMiniAppsPackageNames.length
+  let currentMiniAppIdx = 1
+  for (const linkedMiniAppPackageName of linkedMiniAppsPackageNames) {
+    await kax
+      .task(
+        `[${currentMiniAppIdx++}/${totalLinkedMiniApps}] Copying ${linkedMiniAppPackageName}`
+      )
+      .run(
+        replacePackageInCompositeWithLinkedPackage(
+          compositeDir,
+          linkedMiniAppPackageName,
+          miniAppsLinksObj[linkedMiniAppPackageName],
+          nativeModules
+        )
+      )
   }
+  packageCopyKaxTask.succeed()
 
   reactnative.startPackagerInNewWindow({
     cwd: compositeDir,
@@ -154,7 +150,7 @@ export default async function start({
     port,
     provideModuleNodeModules: [
       'react-native',
-      ...linkedPackages,
+      ...linkedMiniAppsPackageNames,
       ...watchNodeModules,
     ],
     resetCache: true,
@@ -181,9 +177,7 @@ export default async function start({
             )
           }
           const apkPath = await kax
-            .task(
-              'Downloading Android binary from Electrode Native binary store'
-            )
+            .task('Downloading binary from store')
             .run(binaryStore.getBinary(descriptor, { flavor }))
           await android.runAndroidApk({
             activityName,
@@ -201,7 +195,7 @@ export default async function start({
             )
           }
           const appPath = await kax
-            .task('Downloading iOS binary from Electrode Native binary store')
+            .task('Downloading binary from store')
             .run(binaryStore.getBinary(descriptor, { flavor }))
           await ios.runIosApp({ appPath, bundleId, launchArgs, launchEnvVars })
         }
@@ -209,17 +203,15 @@ export default async function start({
     }
   }
 
-  if (linkedPackages.length > 0) {
-    linkedPackages.forEach(pkgName => {
-      startLinkSynchronization(
-        linkedDirsByPackageName.get(pkgName) || [],
-        packagesLinks[pkgName].localPath
-      )
-    })
-  }
+  linkedMiniAppsPackageNames.forEach(pkgName => {
+    log.info(
+      `Watching for changes in linked MiniApp directory ${miniAppsLinksObj[pkgName]}`
+    )
+    startLinkSynchronization(compositeDir, pkgName, miniAppsLinksObj[pkgName])
+  })
 
   log.warn('=========================================================')
-  log.warn('Ending this process will stop monitoring linked packages.')
+  log.warn('Ending this process will stop monitoring linked MiniApps.')
   log.warn('You can end this process once you are done, using CTRL+C.')
   log.warn('=========================================================')
 
@@ -229,104 +221,26 @@ export default async function start({
   // project in a temporary directory which gets destroyed upon process exit.
   // If the process exits too soon, then the packager (running in a separate process)
   // fails as the directory containing the files to package, does not exist anymore.
-  if (linkedPackages.length === 0) {
+  if (linkedMiniAppsPackageNames.length === 0) {
     process.stdin.resume()
   }
 }
 
-async function linkPackages(
-  rootDir: string,
-  linkedPackages: string[],
-  packagesLinks: PackagesLinks,
-  excludedPackages: PackagePath[] = [],
-  maxDepth = 2
-) {
-  let linkedDirsByPackageName = new Map<string, string[]>()
-  if (maxDepth === 0) {
-    return linkedDirsByPackageName
-  }
-
-  log.debug(`Crawling ${rootDir} directory to find packages to link`)
-  const linkedDirs = await findLinkedDirs(
-    rootDir,
-    linkedPackages.filter(p => !rootDir.endsWith(`${path.sep}${p}`))
-  )
-
-  if (linkedDirs.length === 0) {
-    log.debug(`Found no package to link in ${rootDir}`)
-    return linkedDirsByPackageName
-  }
-
-  linkedPackages.forEach(pkgName => {
-    linkedDirsByPackageName.set(
-      pkgName,
-      linkedDirs.filter(d => d.endsWith(pkgName))
-    )
-  })
-
-  // Copy all the linked packages
-  log.debug('Linking packages')
-  for (const linkedPackageName of linkedPackages) {
-    const lDirs = linkedDirsByPackageName.get(linkedPackageName) || []
-    if (lDirs.length > 0) {
-      for (const linkedDir of lDirs) {
-        await replacePackageWithLinkedPackage(
-          linkedDir,
-          packagesLinks[linkedPackageName].localPath,
-          excludedPackages
-        )
-      }
-    }
-  }
-
-  // Recurse
-  for (const linkedDir of _.flatten(
-    Array.from(linkedDirsByPackageName.values())
-  )) {
-    const res = await linkPackages(
-      linkedDir,
-      linkedPackages,
-      packagesLinks,
-      excludedPackages,
-      maxDepth - 1
-    )
-    linkedDirsByPackageName = mergeMaps(linkedDirsByPackageName, res)
-  }
-
-  return linkedDirsByPackageName
-}
-
-function mergeMaps(
-  a: Map<string, string[]>,
-  b: Map<string, string[]>
-): Map<string, string[]> {
-  const res = new Map<string, string[]>()
-  // get all keys from boths maps
-  const keys = _.union(Array.from(a.keys()), Array.from(b.keys()))
-  // go through all keys
-  for (const key of keys) {
-    if (a.has(key) && b.has(key)) {
-      // both maps share this key, create a union of the values
-      res.set(key, _.union(a.get(key), b.get(key)))
-    } else if (a.has(key)) {
-      // only map a has this key, copy over
-      res.set(key, a.get(key)!)
-    } else {
-      // only map b has this key, copy over
-      res.set(key, b.get(key)!)
-    }
-  }
-  return res
-}
-
-async function replacePackageWithLinkedPackage(
-  pathToPackageInComposite,
+async function replacePackageInCompositeWithLinkedPackage(
+  compositeDir,
+  linkedPackageName,
   sourceLinkDir,
   excludedPackages: PackagePath[] = []
 ) {
-  log.trace(
-    `replacePackageWithLinkedPackage(${pathToPackageInComposite}, ${sourceLinkDir})`
+  // Get path to package in composite node_modules
+  // For example if the package name is @company/miniapp and the composite
+  // directory is /path/to/composite, the path to the package in the composite
+  // would end up being /path/to/composite/node_modules/@company/miniapp
+  const pathToPackageInComposite = getPathToPackageInComposite(
+    compositeDir,
+    linkedPackageName
   )
+
   // Exclude android and ios directories as they are not needed for JS bundle
   // Also exclude react to avoid any haste conflict (anyway it will
   // be hoisted to top level node modules)
@@ -335,12 +249,14 @@ async function replacePackageWithLinkedPackage(
   const excludedDirectories = [
     'android',
     'ios',
+    'node_modules/react-native',
     'node_modules/react',
+    'node_modules/react-native-electrode-bridge',
     '.git',
     ...excludedPackages.map(d => path.normalize(`node_modules/${d.basePath}`)),
   ].map(f => path.join(sourceLinkDir, f))
 
-  const excludedDirectoriesRE = new RegExp(
+  const excludedDirectoriesRe = new RegExp(
     `^((?!${excludedDirectories.map(f => `${f}$`).join('|')}).*)`
   )
 
@@ -354,7 +270,7 @@ async function replacePackageWithLinkedPackage(
       sourceLinkDir,
       pathToPackageInComposite,
       {
-        filter: excludedDirectoriesRE,
+        filter: excludedDirectoriesRe,
         limit: 512,
       } as any /* while waiting for https://github.com/DefinitelyTyped/DefinitelyTyped/pull/38883 to get merged */,
       err => {
@@ -368,22 +284,14 @@ async function replacePackageWithLinkedPackage(
   })
 }
 
-async function findLinkedDirs(
-  rootDir: string,
-  linkedPackageNames: string[]
-): Promise<string[]> {
-  const allDirsInComposite = await listDirsRecursive(rootDir)
-  const linkedDirRe = new RegExp(
-    linkedPackageNames.map(p => `/${p}$`).join('|')
-  )
-  return allDirsInComposite.filter(dir => linkedDirRe.test(dir))
-}
-
 function startLinkSynchronization(
-  targetLinkDirs: string[],
-  sourceLinkDir: string
+  compositeDir,
+  linkedPackageName,
+  sourceLinkDir
 ) {
-  log.trace(`startLinkSynchronization [${targetLinkDirs}] [${sourceLinkDir}]`)
+  log.trace(
+    `startLinkSynchronization [${compositeDir}] [${linkedPackageName}] [${sourceLinkDir}]`
+  )
 
   const watcher = chokidar.watch(sourceLinkDir, {
     cwd: sourceLinkDir,
@@ -392,44 +300,46 @@ function startLinkSynchronization(
     persistent: true,
   })
 
+  const rootTargetLinkDir = getPathToPackageInComposite(
+    compositeDir,
+    linkedPackageName
+  )
+
   watcher
     .on('add', p => {
       const sourcePath = path.join(sourceLinkDir, p)
-      targetLinkDirs.forEach(d => {
-        const targetPath = path.join(d, p)
-        log.debug(`Copying ${sourcePath} to ${targetPath}`)
-        shell.cp(sourcePath, targetPath)
-      })
+      const targetPath = path.join(rootTargetLinkDir, p)
+      log.debug(`Copying ${sourcePath} to ${targetPath}`)
+      shell.cp(sourcePath, targetPath)
     })
     .on('change', p => {
       const sourcePath = path.join(sourceLinkDir, p)
-      targetLinkDirs.forEach(d => {
-        const targetPath = path.join(d, p)
-        log.debug(`Copying ${sourcePath} to ${targetPath}`)
-        shell.cp(sourcePath, targetPath)
-      })
+      const targetPath = path.join(rootTargetLinkDir, p)
+      log.debug(`Copying ${sourcePath} to ${targetPath}`)
+      shell.cp(sourcePath, targetPath)
     })
     .on('unlink', p => {
-      targetLinkDirs.forEach(d => {
-        const targetPath = path.join(d, p)
-        log.debug(`Removing ${targetPath}`)
-        shell.rm(targetPath)
-      })
+      const targetPath = path.join(rootTargetLinkDir, p)
+      log.debug(`Removing ${targetPath}`)
+      shell.rm(targetPath)
     })
     .on('addDir', p => {
-      targetLinkDirs.forEach(d => {
-        const targetPath = path.join(d, p)
-        log.debug(`Creating directory ${targetPath}`)
-        shell.mkdir(targetPath)
-      })
+      const targetPath = path.join(rootTargetLinkDir, p)
+      log.debug(`Creating directory ${targetPath}`)
+      shell.mkdir(targetPath)
     })
     .on('unlinkDir', p => {
-      targetLinkDirs.forEach(d => {
-        const targetPath = path.join(d, p)
-        log.debug(`Removing directory ${targetPath}`)
-        shell.rm('-rf', targetPath)
-      })
+      const targetPath = path.join(rootTargetLinkDir, p)
+      log.debug(`Removing directory ${targetPath}`)
+      shell.rm('-rf', targetPath)
     })
     .on('error', error => log.error(`Watcher error: ${error}`))
     .on('ready', () => log.debug('Initial scan complete. Watching for changes'))
+}
+
+function getPathToPackageInComposite(
+  compositeDir: string,
+  packageName: string
+) {
+  return path.join(compositeDir, 'node_modules', packageName)
 }

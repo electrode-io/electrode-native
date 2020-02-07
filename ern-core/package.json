@@ -65,7 +65,6 @@
     "code-push": "^2.0.6",
     "decompress-zip": "^0.3.1",
     "form-data": "^2.5.0",
-    "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
     "get-folder-size": "^2.0.0",
     "glob": "^7.1.4",
