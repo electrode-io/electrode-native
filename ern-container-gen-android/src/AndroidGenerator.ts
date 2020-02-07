@@ -375,14 +375,32 @@ export default class AndroidGenerator implements ContainerGenerator {
         )
 
       if (bundle.sourceMapPath) {
-        // Unfortunately Hermes binary does not give control over the
+        // Hermes CLI does not give control over the
         // location of generated source map. It just generates it in
         // the same directory as the hermes bundle, with the same name
-        // as the bundle, with a new .map extension.
-        // We don't want to keep the generated source map in the container,
-        // So if the JS bundle had an associated source map generated,
-        // just overwrite it with the Hermes one ...
-        shell.mv(hermesBundle.hermesSourceMapPath, bundle.sourceMapPath)
+        // as the bundle, with a new .map extension (index.android.map)
+        // Move it to same location as the JS bundle one, but rename it
+        // to index.android.compiler.map
+        const sourceMapDir = path.dirname(bundle.sourceMapPath)
+        const compilerSourceMapPath = path.join(
+          sourceMapDir,
+          'index.android.compiler.map'
+        )
+        shell.mv(hermesBundle.hermesSourceMapPath, compilerSourceMapPath)
+        // Rename the existing JS bundle one as index.android.packager.map
+        const packagerSourceMapPath = path.join(
+          sourceMapDir,
+          'index.android.packager.map'
+        )
+        shell.mv(bundle.sourceMapPath, packagerSourceMapPath)
+        // Compose both source maps to get final one, and write it to sourcemap path
+        const pathToComposeScript = path.join(
+          config.composite.path,
+          'node_modules/react-native/scripts/compose-source-maps.js'
+        )
+        shell.exec(
+          `node ${pathToComposeScript} ${packagerSourceMapPath} ${compilerSourceMapPath} -o ${bundle.sourceMapPath}`
+        )
       } else {
         // ... otherwise just remove it from the container
         shell.rm(hermesBundle.hermesSourceMapPath)
