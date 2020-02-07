@@ -109,9 +109,7 @@ export async function fillProjectHull(
           }
         }
 
-        injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${
-          plugin.basePath
-        }]`
+        injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
 
         if (pluginConfig.ios.copy) {
           for (const copy of pluginConfig.ios.copy) {
@@ -323,6 +321,16 @@ export async function fillProjectHull(
               .addFrameworkReference) {
               iosProject.addFramework(frameworkReference, {
                 customFramework: true,
+              })
+            }
+          }
+
+          if (pluginConfig.ios.pbxproj.addEmbeddedFramework) {
+            for (const framework of pluginConfig.ios.pbxproj
+              .addEmbeddedFramework) {
+              iosProject.addFramework(framework, {
+                customFramework: true,
+                embed: true,
               })
             }
           }

@@ -35,6 +35,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		9C2FE58C23EBF1750014DB26 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		223A89451E89CDC70092741E /* MiniApp.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MiniApp.jsbundle; sourceTree = "<group>"; };
 		2265A4A11EB26943007D6C3D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -255,6 +268,7 @@
 				485009DF1E2FF23B009B6610 /* Frameworks */,
 				485009E01E2FF23B009B6610 /* Headers */,
 				485009E11E2FF23B009B6610 /* Resources */,
+				9C2FE58C23EBF1750014DB26 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
