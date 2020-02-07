@@ -17,6 +17,7 @@
 package com.walmartlabs.electrode.reactnative.bridge;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 
@@ -48,10 +49,10 @@ public final class ElectrodeBridgeHolder {
     // This solution does not really scale in the sense that if the user sends a 1000 requests
     // upon native app start, it can become problematic. But I don't see why a user would do that
     // unless it's a bug in its app
-    private static final HashMap<String, RequestHandlerPlaceholder> mQueuedRequestHandlersRegistration = new HashMap<>();
-    private static final HashMap<String, EventListenerPlaceholder> mQueuedEventListenersRegistration = new HashMap<>();
-    private static final HashMap<ElectrodeBridgeRequest, ElectrodeBridgeResponseListener<ElectrodeBridgeResponse>> mQueuedRequests = new HashMap<>();
-    private static final List<ElectrodeBridgeEvent> mQueuedEvents = new ArrayList<>();
+    static final HashMap<String, RequestHandlerPlaceholder> mQueuedRequestHandlersRegistration = new HashMap<>();
+    static final HashMap<String, List<EventListenerPlaceholder>> mQueuedEventListenersRegistration = new HashMap<>();
+    static final HashMap<ElectrodeBridgeRequest, ElectrodeBridgeResponseListener<ElectrodeBridgeResponse>> mQueuedRequests = new HashMap<>();
+    static final List<ElectrodeBridgeEvent> mQueuedEvents = new ArrayList<>();
 
     static {
         ElectrodeBridgeTransceiver.registerReactNativeReadyListener(new ElectrodeBridgeTransceiver.ReactNativeReadyListener() {
@@ -135,7 +136,12 @@ public final class ElectrodeBridgeHolder {
         UUID eventUUID = UUID.randomUUID();
         if (!isReactNativeReady) {
             Logger.d(TAG, "Queuing event handler registration for event(name=%s). Will register once react native initialization is complete.", name);
-            mQueuedEventListenersRegistration.put(name, new EventListenerPlaceholder(eventUUID, eventListener));
+            List<EventListenerPlaceholder> placeholderList = mQueuedEventListenersRegistration.get(name);
+            if (placeholderList == null) {
+                placeholderList = new ArrayList<>();
+                mQueuedEventListenersRegistration.put(name, placeholderList);
+            }
+            placeholderList.add(new EventListenerPlaceholder(eventUUID, eventListener));
             return eventUUID;
         }
 
@@ -153,8 +159,40 @@ public final class ElectrodeBridgeHolder {
      * @param eventListenerUuid {@link UUID}
      * @return
      */
+    @Nullable
     public static ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeEventListener(@NonNull UUID eventListenerUuid) {
-        return electrodeNativeBridge.removeEventListener(eventListenerUuid);
+        if (!isReactNativeReady) {
+            ElectrodeBridgeEventListener<ElectrodeBridgeEvent> eventListener = null;
+            synchronized (mQueuedEventListenersRegistration) {
+                String key = null;
+                boolean shouldRemove = false;
+                for (Map.Entry<String, List<EventListenerPlaceholder>> entry : mQueuedEventListenersRegistration.entrySet()) {
+                    List<EventListenerPlaceholder> placeholderList = entry.getValue();
+                    EventListenerPlaceholder matchingPlaceHolder = null;
+                    for (EventListenerPlaceholder placeholder : placeholderList) {
+                        if (eventListenerUuid == placeholder.getUUID()) {
+                            key = entry.getKey();
+                            eventListener = placeholder.getEventListener();
+                            matchingPlaceHolder = placeholder;
+                            break;
+                        }
+                    }
+                    if (matchingPlaceHolder != null) {
+                        placeholderList.remove(matchingPlaceHolder);
+                        if (placeholderList.size() == 0) {
+                            shouldRemove = true;
+                        }
+                        break;
+                    }
+                }
+                if (shouldRemove) {
+                    mQueuedEventListenersRegistration.remove(key);
+                }
+            }
+            return eventListener;
+        } else {
+            return electrodeNativeBridge.removeEventListener(eventListenerUuid);
+        }
     }
 
     /**
@@ -164,7 +202,25 @@ public final class ElectrodeBridgeHolder {
      * @return registerRequestHandler unregistered
      */
     public static ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> unregisterRequestHandler(@NonNull UUID requestHandlerUuid) {
-        return electrodeNativeBridge.unregisterRequestHandler(requestHandlerUuid);
+        if (!isReactNativeReady) {
+            ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> requestHandler = null;
+            synchronized (mQueuedRequestHandlersRegistration) {
+                String eventName = null;
+                for (Map.Entry<String, RequestHandlerPlaceholder> entry : mQueuedRequestHandlersRegistration.entrySet()) {
+                    if (entry.getValue().getUUID() == requestHandlerUuid) {
+                        eventName = entry.getKey();
+                        requestHandler = entry.getValue().getRequestHandler();
+                        break;
+                    }
+                }
+                if (eventName != null) {
+                    mQueuedRequestHandlersRegistration.remove(eventName);
+                }
+            }
+            return requestHandler;
+        } else {
+            return electrodeNativeBridge.unregisterRequestHandler(requestHandlerUuid);
+        }
     }
 
     private static void registerQueuedRequestHandlers() {
@@ -178,11 +234,15 @@ public final class ElectrodeBridgeHolder {
     }
 
     private static void registerQueuedEventListeners() {
-        for (Map.Entry<String, EventListenerPlaceholder> entry : mQueuedEventListenersRegistration.entrySet()) {
-            electrodeNativeBridge.addEventListener(
-                    entry.getKey(),
-                    entry.getValue().getEventListener(),
-                    entry.getValue().getUUID());
+        for (Map.Entry<String, List<EventListenerPlaceholder>> entry : mQueuedEventListenersRegistration.entrySet()) {
+            List<EventListenerPlaceholder> placeholderList = entry.getValue();
+            for (EventListenerPlaceholder placeholder : placeholderList) {
+                electrodeNativeBridge.addEventListener(
+                        entry.getKey(),
+                        placeholder.getEventListener(),
+                        placeholder.getUUID());
+            }
+
         }
         mQueuedEventListenersRegistration.clear();
     }
