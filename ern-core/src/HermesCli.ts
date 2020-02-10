@@ -51,17 +51,33 @@ export class HermesCli {
       hermesBundlePath,
     }
   }
+
   public async compileReleaseBundle({
+    bundleSourceMapPath,
+    compositePath,
     jsBundlePath,
     outputBundlePath,
   }: {
+    bundleSourceMapPath?: string
+    compositePath: string
     jsBundlePath: string
     outputBundlePath?: string
   }): Promise<{
+    compilerSourceMapPath?: string
     hermesBundlePath: string
-    hermesSourceMapPath: string
+    packagerSourceMapPath?: string
   }> {
     const hermesBundlePath = outputBundlePath || jsBundlePath
+    const hermesSourceMapPath = `${hermesBundlePath}.map`
+    const packagerSourceMapPath =
+      bundleSourceMapPath &&
+      path.join(path.dirname(bundleSourceMapPath), 'index.android.packager.map')
+
+    if (bundleSourceMapPath) {
+      // Rename the existing JS bundle sourcemap as index.android.packager.map
+      shell.mv(bundleSourceMapPath, packagerSourceMapPath!)
+    }
+
     await this.run({
       args: [
         '-emit-binary',
@@ -72,9 +88,45 @@ export class HermesCli {
         '-output-source-map',
       ],
     })
+
+    // Hermes CLI does not give control over the
+    // location of generated source map. It just generates it in
+    // the same directory as the hermes bundle, with the same name
+    // as the bundle, with a new .map extension (index.android.map)
+    // Move it to same location as the JS bundle one, but rename it
+    // to index.android.compiler.map
+    const compilerSourceMapPath = path.join(
+      path.dirname(bundleSourceMapPath || hermesBundlePath),
+      'index.android.compiler.map'
+    )
+    shell.mv(hermesSourceMapPath, compilerSourceMapPath)
+
+    // Delete the compiler source map if its not needed
+    // Note that it's not possible to not generate it in the first place
+    // (i.e remove the --output-source-map option from command above)
+    // as it would still generate the source map but inlined in the
+    // hermes bundle making its size much bigger
+    if (!bundleSourceMapPath) {
+      shell.rm(compilerSourceMapPath)
+    }
+
+    if (bundleSourceMapPath) {
+      // Compose both source maps to get final one, and write it to sourcemap path
+      const pathToComposeScript = path.join(
+        compositePath,
+        'node_modules/react-native/scripts/compose-source-maps.js'
+      )
+      shell.exec(
+        `node ${pathToComposeScript} ${packagerSourceMapPath} ${compilerSourceMapPath} -o ${bundleSourceMapPath}`
+      )
+    }
+
     return {
+      compilerSourceMapPath: bundleSourceMapPath
+        ? compilerSourceMapPath
+        : undefined,
       hermesBundlePath,
-      hermesSourceMapPath: `${hermesBundlePath}.map`,
+      packagerSourceMapPath,
     }
   }
 

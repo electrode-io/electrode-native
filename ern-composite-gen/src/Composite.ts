@@ -87,10 +87,15 @@ export class Composite {
    * Get the package name of the MiniApps present in this Composite
    */
   public getMiniAppsPackages(): Array<{
+    name: string
     path: string
     packagePath: PackagePath
   }> {
-    const result: Array<{ path: string; packagePath: PackagePath }> = []
+    const result: Array<{
+      name: string
+      path: string
+      packagePath: PackagePath
+    }> = []
 
     for (const key of Object.keys(this.packageJson.dependencies)) {
       const ppValue = PackagePath.fromString(this.packageJson.dependencies[key])
@@ -101,6 +106,7 @@ export class Composite {
         this.config.miniApps.some(p => p.basePath === ppValue.basePath)
       ) {
         result.push({
+          name: key,
           packagePath: ppValue,
           path: path.join(this.path, 'node_modules', key),
         })
@@ -108,6 +114,7 @@ export class Composite {
         this.config.miniApps.some(p => p.basePath === ppKey.basePath)
       ) {
         result.push({
+          name: key,
           packagePath: PackagePath.fromString(
             `${key}@${this.packageJson.dependencies[key]}`
           ),

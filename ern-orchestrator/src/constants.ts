@@ -76,4 +76,9 @@ export const availableUserConfigKeys = [
     name: 'binaryStoreProxy',
     values: ['string'],
   },
+  {
+    desc: 'HTTP/HTTPS proxy to use to connect to Bugsnag',
+    name: 'bugsnagProxy',
+    values: ['string'],
+  },
 ]

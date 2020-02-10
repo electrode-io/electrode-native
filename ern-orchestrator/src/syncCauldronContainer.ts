@@ -5,6 +5,8 @@ import {
   log,
   AppVersionDescriptor,
   SourceMapStoreSdk,
+  createProxyAgentFromErnConfig,
+  bugsnagUpload,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runCauldronContainerGen } from './container'
@@ -14,6 +16,7 @@ import path from 'path'
 import semver from 'semver'
 import _ from 'lodash'
 import { runCauldronCompositeGen } from './composite'
+import fs from 'fs-extra'
 
 export async function syncCauldronContainer(
   stateUpdateFunc: () => Promise<any>,
@@ -97,12 +100,14 @@ export async function syncCauldronContainer(
 
     // Generate Container from Cauldron
     sourceMapOutput = sourceMapOutput ?? path.join(createTmpDir(), 'index.map')
-    await kax.task('Generating Container from Cauldron').run(
-      runCauldronContainerGen(descriptor, composite, {
-        outDir,
-        sourceMapOutput,
-      })
-    )
+    const containerGenRes = await kax
+      .task('Generating Container from Cauldron')
+      .run(
+        runCauldronContainerGen(descriptor, composite, {
+          outDir,
+          sourceMapOutput,
+        })
+      )
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(
@@ -151,6 +156,32 @@ export async function syncCauldronContainer(
           )
       } catch (e) {
         log.error(`Source map upload failed : ${e}`)
+      }
+    }
+
+    // Upload source map to bugsnag if configured
+    const bugsnagConfig = await cauldron.getBugsnagConfig(descriptor)
+    if (bugsnagConfig) {
+      try {
+        const { apiKey } = bugsnagConfig
+        const [minifiedFile, minifiedUrl, projectRoot, sourceMap] = [
+          await fs.realpath(containerGenRes.bundlingResult.bundlePath),
+          path.basename(containerGenRes.bundlingResult.bundlePath),
+          await fs.realpath(path.join(composite.path, 'node_modules')),
+          await fs.realpath(containerGenRes.bundlingResult.sourceMapPath!),
+        ]
+        await bugsnagUpload({
+          apiKey,
+          minifiedFile,
+          minifiedUrl,
+          projectRoot,
+          sourceMap,
+          uploadSourcesGlob: composite
+            .getMiniAppsPackages()
+            .map(p => `**/${p.name}/**/@(*.js|*.ts)`),
+        })
+      } catch (e) {
+        log.error(`Bugsnag upload failed : ${e}`)
       }
     }
 

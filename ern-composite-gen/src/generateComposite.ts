@@ -26,6 +26,10 @@ import uuidv4 from 'uuid/v4'
 export async function generateComposite(config: CompositeGeneratorConfig) {
   log.debug(`generateComposite config : ${JSON.stringify(config, null, 2)}`)
 
+  // Set env var ERN_BUGSNAG_CODE_BUNDLE_ID as a unique code bundle id for bugsnag
+  process.env.ERN_BUGSNAG_CODE_BUNDLE_ID =
+    process.env.ERN_BUGSNAG_CODE_BUNDLE_ID ?? uuidv4()
+
   if (
     config.miniApps.length === 0 &&
     (config.jsApiImplDependencies || []).length === 0

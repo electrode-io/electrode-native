@@ -389,4 +389,13 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     })
     assertNoErrorLoggedAndNoProcessExit()
   })
+
+  it('[isValidPlatformConfig] Should not log error and nor exit if key is whitelisted', async () => {
+    await logErrorAndExitIfNotSatisfied({
+      isValidPlatformConfig: {
+        key: 'bugsnagProxy',
+      },
+    })
+    assertNoErrorLoggedAndNoProcessExit()
+  })
 })

@@ -1045,6 +1045,12 @@ export class CauldronHelper {
     return this.getConfigForKey('binaryStore', descriptor)
   }
 
+  public async getBugsnagConfig(
+    descriptor?: AnyAppDescriptor
+  ): Promise<any | void> {
+    return this.getConfigForKey('bugsnag', descriptor)
+  }
+
   public async getBundleStoreConfig(
     descriptor?: AnyAppDescriptor
   ): Promise<any | void> {

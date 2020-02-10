@@ -3,7 +3,10 @@ import http from 'http'
 import tunnel from 'tunnel'
 import url from 'url'
 
-export function createProxyAgentFromUrl(proxyUrl: url.URL): http.Agent {
+export function createProxyAgentFromUrl(
+  proxyUrl: url.URL,
+  { https }: { https?: boolean } = {}
+): http.Agent {
   const supportedProtocols = ['http:', 'https:']
   const protocol = proxyUrl.protocol
   if (!supportedProtocols.includes(protocol)) {
@@ -19,16 +22,23 @@ export function createProxyAgentFromUrl(proxyUrl: url.URL): http.Agent {
     port: parseInt(proxyUrl.port, 10),
   }
 
-  return protocol === 'http:'
-    ? tunnel.httpOverHttp({ proxy })
-    : tunnel.httpOverHttps({ proxy })
+  if (https) {
+    return protocol === 'http:'
+      ? tunnel.httpsOverHttp({ proxy })
+      : tunnel.httpsOverHttps({ proxy })
+  } else {
+    return protocol === 'http:'
+      ? tunnel.httpOverHttp({ proxy })
+      : tunnel.httpOverHttps({ proxy })
+  }
 }
 
 export function createProxyAgentFromErnConfig(
-  configKey: string
+  configKey: string,
+  { https }: { https?: boolean } = {}
 ): http.Agent | undefined {
   const proxyUrl = config.get(configKey)
   if (proxyUrl) {
-    return createProxyAgentFromUrl(new url.URL(proxyUrl))
+    return createProxyAgentFromUrl(new url.URL(proxyUrl), { https })
   }
 }
