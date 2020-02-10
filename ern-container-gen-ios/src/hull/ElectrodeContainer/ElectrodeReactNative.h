@@ -57,6 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ERNDelegate <NSObject>
 - (void)reactNativeDidInitialize;
+@optional
+- (void)rctModuleDidInitialize;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
