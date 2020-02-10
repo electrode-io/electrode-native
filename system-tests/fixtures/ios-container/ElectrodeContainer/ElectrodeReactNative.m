@@ -256,6 +256,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
             if ([localModuleInstance  respondsToSelector:selector]) {
                 NSLog(@"RCTDidInitializeModuleNotification received");
                 ((void (*)(id, SEL))[localModuleInstance methodForSelector:selector])(localModuleInstance, selector);
+                [self.ernDelegate rctModuleDidInitialize];
             }
             if ([localModuleInstance  respondsToSelector:transceiverReadySelector]) {
                 ((void (*)(id, SEL))[localModuleInstance methodForSelector:transceiverReadySelector])(localModuleInstance, transceiverReadySelector);
