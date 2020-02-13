@@ -89,6 +89,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     let mustacheView: any = {
+      customFeatures: [],
       customPermissions: [],
       customRepos: [],
       permissions: [],
@@ -256,6 +257,10 @@ export default class AndroidGenerator implements ContainerGenerator {
             mustacheView.customPermissions.push(
               ...pluginConfig.android.permissions
             )
+          }
+
+          if (pluginConfig.android.features) {
+            mustacheView.customFeatures.push(...pluginConfig.android.features)
           }
         }
       } finally {
