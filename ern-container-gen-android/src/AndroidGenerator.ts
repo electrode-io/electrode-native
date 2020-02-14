@@ -16,6 +16,7 @@ import {
   yarn,
   BundlingResult,
   HermesCli,
+  gitApply,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -226,6 +227,21 @@ export default class AndroidGenerator implements ContainerGenerator {
                 })
               })
             }
+          }
+
+          if (pluginConfig.android.applyPatch) {
+            const { patch, root } = pluginConfig.android.applyPatch
+            if (!patch) {
+              throw new Error('Missing "patch" property in "applyPatch" object')
+            }
+            if (!root) {
+              throw new Error('Missing "root" property in "applyPatch" object')
+            }
+            const [patchFile, rootDir] = [
+              path.join(pluginConfig.path, patch),
+              path.join(config.outDir, root),
+            ]
+            await gitApply({ patchFile, rootDir })
           }
 
           if (pluginConfig.android.dependencies) {
