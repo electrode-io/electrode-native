@@ -52,7 +52,7 @@ export const commandHandler = async ({
   }
 
   log.info(
-    `${chalk.yellow(plugin.basePath)}@${chalk.magenta(plugin.version || '?')}`
+    `${chalk.yellow(plugin.name!)}@${chalk.magenta(plugin.version || '?')}`
   )
 }
 

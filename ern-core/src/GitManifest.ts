@@ -232,12 +232,12 @@ export default class GitManifest {
       let pluginScope
       let pluginName
       let basePluginPath
-      if (scopeNameRe.test(plugin.basePath)) {
-        pluginScope = scopeNameRe.exec(plugin.basePath)![1]
-        pluginName = scopeNameRe.exec(plugin.basePath)![2]
+      if (scopeNameRe.test(plugin.name!)) {
+        pluginScope = scopeNameRe.exec(plugin.name!)![1]
+        pluginName = scopeNameRe.exec(plugin.name!)![2]
         basePluginPath = path.join(pluginsConfigurationDirectory, pluginScope)
       } else {
-        pluginName = plugin.basePath
+        pluginName = plugin.name!
         basePluginPath = pluginsConfigurationDirectory
       }
 
@@ -301,7 +301,7 @@ export default class GitManifest {
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       // Directory names cannot contain '/', so, replaced by ':'
-      const pluginScopeAndName = plugin.basePath.replace(/\//g, ':')
+      const pluginScopeAndName = plugin.name!.replace(/\//g, ':')
 
       const pluginVersions = _.map(
         fs

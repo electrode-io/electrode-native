@@ -24,17 +24,12 @@ export function getUnprefixedVersion(version: string): string {
   return version?.startsWith('v') ? version.slice(1) : version
 }
 
-export interface NativeDependency {
-  path: string
-  packagePath: PackagePath
-}
-
 export interface NativeDependencies {
-  apis: NativeDependency[]
-  nativeApisImpl: NativeDependency[]
-  thirdPartyInManifest: NativeDependency[]
-  thirdPartyNotInManifest: NativeDependency[]
-  all: NativeDependency[]
+  apis: PackagePath[]
+  nativeApisImpl: PackagePath[]
+  thirdPartyInManifest: PackagePath[]
+  thirdPartyNotInManifest: PackagePath[]
+  all: PackagePath[]
 }
 
 export function resolvePackagePaths(paths: string[]): Set<string> {
@@ -95,7 +90,6 @@ export async function findNativeDependencies(
     thirdPartyNotInManifest: [],
   }
 
-  const NPM_SCOPED_MODULE_RE = /@(.*)\/(.*)/
   for (const packagePath of packagePaths) {
     const pathToPackage = path.join(dir, packagePath)
     const pathToNativeDependencyPackageJson = path.join(
@@ -103,64 +97,35 @@ export async function findNativeDependencies(
       'package.json'
     )
     const nativeDepPackageJson = require(pathToNativeDependencyPackageJson)
-    const name = NPM_SCOPED_MODULE_RE.test(nativeDepPackageJson.name)
-      ? NPM_SCOPED_MODULE_RE.exec(nativeDepPackageJson.name)![2]
-      : nativeDepPackageJson.name
-    const scope =
-      (NPM_SCOPED_MODULE_RE.test(nativeDepPackageJson.name) &&
-        NPM_SCOPED_MODULE_RE.exec(nativeDepPackageJson.name)![1]) ||
-      undefined
-    const version = getUnprefixedVersion(nativeDepPackageJson.version)
-    const dep = packagePathFrom(name, { scope, version })
+    const dep = PackagePath.fromString(pathToPackage)
     if (nativeDepPackageJson.ern) {
       if (
         nativeDepPackageJson.ern.moduleType === ModuleTypes.API ||
-        /react-native-.+-api$/.test(dep.basePath)
+        /react-native-.+-api$/.test(dep.name!)
       ) {
-        result.apis.push({ path: pathToPackage, packagePath: dep })
+        result.apis.push(dep)
       } else if (
         nativeDepPackageJson.ern.moduleType === ModuleTypes.NATIVE_API_IMPL
       ) {
-        result.nativeApisImpl.push({ path: pathToPackage, packagePath: dep })
+        result.nativeApisImpl.push(dep)
       }
     } else {
       if (await manifest.getNativeDependency(dep, { manifestId })) {
-        result.thirdPartyInManifest.push({
-          packagePath: dep,
-          path: pathToPackage,
-        })
+        result.thirdPartyInManifest.push(dep)
       } else {
-        result.thirdPartyNotInManifest.push({
-          packagePath: dep,
-          path: pathToPackage,
-        })
+        result.thirdPartyNotInManifest.push(dep)
       }
     }
-    result.all.push({ path: pathToPackage, packagePath: dep })
+    result.all.push(dep)
   }
 
   return result
 }
 
-function packagePathFrom(
-  name,
-  {
-    scope,
-    version,
-  }: {
-    scope?: string
-    version?: string
-  } = {}
-): PackagePath {
-  return PackagePath.fromString(
-    `${scope ? `@${scope}/` : ''}${name}${version ? `@${version}` : ''}`
-  )
-}
-
 export async function getNativeDependencyPath(dir: string, d: PackagePath) {
   const dependencies = await findNativeDependencies(dir)
-  const dependency: NativeDependency | undefined = dependencies.all.find(x =>
-    x.packagePath.same(d, { ignoreVersion: true })
+  const dependency: PackagePath | undefined = dependencies.all.find(
+    x => x.name === d.name
   )
-  return dependency?.path
+  return dependency?.basePath
 }

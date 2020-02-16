@@ -248,7 +248,9 @@ describe('ern-container-gen utils.js', () => {
   // ==========================================================
   describe('generateComposite [with yarn lock]', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [1]', async () => {
-      const miniApps = [PackagePath.fromString('file:/Code/MiniApp')]
+      const miniApps = [
+        PackagePath.fromString(path.join(__dirname, 'fixtures', 'miniapp')),
+      ]
       assert(
         await doesThrow(generateComposite, null, {
           miniApps,
@@ -262,7 +264,7 @@ describe('ern-container-gen utils.js', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [2]', async () => {
       const miniApps = [
         PackagePath.fromString('MiniAppOne@1.0.0'),
-        PackagePath.fromString('file:/Code/MiniApp'),
+        PackagePath.fromString(path.join(__dirname, 'fixtures', 'miniapp')),
       ]
       assert(
         await doesThrow(generateComposite, null, {

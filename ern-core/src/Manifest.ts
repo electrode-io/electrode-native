@@ -461,13 +461,13 @@ export class Manifest {
           ? overrideManifestData.targetNativeDependencies
           : [],
         masterManifestData ? masterManifestData.targetNativeDependencies : [],
-        d => PackagePath.fromString(<string>d).basePath
+        d => PackagePath.fromString(<string>d).name
       )
 
       manifestData.targetJsDependencies = _.unionBy(
         overrideManifestData ? overrideManifestData.targetJsDependencies : [],
         masterManifestData ? masterManifestData.targetJsDependencies : [],
-        d => PackagePath.fromString(<string>d).basePath
+        d => PackagePath.fromString(<string>d).name
       )
     } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
       manifestData = await this.overrideManifest.getManifestData({
@@ -523,7 +523,7 @@ export class Manifest {
       manifestId,
       platformVersion,
     })
-    return _.find(nativeDependencies, d => d.basePath === dependency.basePath)
+    return _.find(nativeDependencies, d => d.name === dependency.name)
   }
 
   public async getJsDependency(
@@ -540,7 +540,7 @@ export class Manifest {
       manifestId,
       platformVersion,
     })
-    return _.find(jsDependencies, d => d.basePath === dependency.basePath)
+    return _.find(jsDependencies, d => d.name === dependency.name)
   }
 
   public async getJsAndNativeDependencies({
@@ -609,7 +609,7 @@ export class Manifest {
     )
     if (!pluginConfigPath) {
       throw new Error(
-        `There is no configuration for ${plugin.basePath} plugin in Manifest matching platform version ${platformVersion}`
+        `There is no configuration for ${plugin.name} plugin in Manifest matching platform version ${platformVersion}`
       )
     }
 
@@ -672,16 +672,16 @@ export class Manifest {
   }
 
   public getDefaultNpmPluginOrigin(plugin: PackagePath): NpmPluginOrigin {
-    if (npmScopeModuleRe.test(plugin.basePath)) {
+    if (npmScopeModuleRe.test(plugin.name!)) {
       return {
-        name: `${npmScopeModuleRe.exec(plugin.basePath)![2]}`,
-        scope: `${npmScopeModuleRe.exec(plugin.basePath)![1]}`,
+        name: `${npmScopeModuleRe.exec(plugin.name!)![2]}`,
+        scope: `${npmScopeModuleRe.exec(plugin.name!)![1]}`,
         type: 'npm',
         version: plugin.version,
       }
     } else {
       return {
-        name: plugin.basePath,
+        name: plugin.name!,
         type: 'npm',
         version: plugin.version,
       }
@@ -695,12 +695,12 @@ export class Manifest {
   ): Promise<PluginConfig | undefined> {
     await this.initOverrideManifest()
     let result
-    if (await isDependencyApi(plugin.basePath)) {
+    if (await isDependencyApi(plugin)) {
       log.debug(
         'API plugin detected. Retrieving API plugin default configuration'
       )
       result = this.getApiPluginDefaultConfig(plugin, projectName)
-    } else if (await isDependencyApiImpl(plugin.basePath)) {
+    } else if (await isDependencyApiImpl(plugin)) {
       log.debug(
         'APIImpl plugin detected. Retrieving APIImpl plugin default configuration'
       )
@@ -716,7 +716,7 @@ export class Manifest {
       )
     } else {
       log.warn(
-        `Unsupported plugin. No configuration found in manifest for ${plugin.basePath}.`
+        `Unsupported plugin. No configuration found in manifest for ${plugin.name}.`
       )
       return
       /*throw new Error(

@@ -2,7 +2,6 @@ import {
   NativeDependencies,
   findNativeDependencies,
   PackagePath,
-  NativeDependency,
   readPackageJsonSync,
   BaseMiniApp,
   nativeDepenciesVersionResolution,
@@ -69,7 +68,7 @@ export class Composite {
     const result: PackagePath[] = []
     for (const dependency of dependencies.resolved) {
       // Always include react-native
-      if (dependency.basePath === 'react-native') {
+      if (dependency.name === 'react-native') {
         result.push(dependency)
         continue
       }
@@ -136,27 +135,12 @@ export class Composite {
     // if developer(s) forgot to npm ignore the android/ios directory
     const miniAppsPaths = this.getMiniAppsPackages().map(p => p.path)
     nativeDependencies.all = nativeDependencies.all.filter(
-      x => !miniAppsPaths.includes(x.path)
+      x => !miniAppsPaths.includes(x.basePath)
     )
     nativeDependencies.thirdPartyNotInManifest = nativeDependencies.thirdPartyNotInManifest.filter(
-      x => !miniAppsPaths.includes(x.path)
+      x => !miniAppsPaths.includes(x.basePath)
     )
     this.cachedNativeDependencies = nativeDependencies
     return this.cachedNativeDependencies
-  }
-
-  /**
-   * Get the local absolute path of a given native dependency in this Composite
-   * Returns undefined if no matching dependency was found in this Composite
-   * @param d Native dependency to find in the composite
-   */
-  public async getNativeDependencyPath(d: PackagePath): Promise<string | void> {
-    const dependencies = await this.getNativeDependencies()
-    const dependency: NativeDependency | void = dependencies.all.find(x =>
-      x.packagePath.same(d)
-    )
-    if (dependency) {
-      return dependency.path
-    }
   }
 }

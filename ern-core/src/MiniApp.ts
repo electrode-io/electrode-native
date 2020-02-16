@@ -296,13 +296,13 @@ module.exports = {
     const nativeDependencies: NativeDependencies = await this.getNativeDependencies()
     const nativeDependenciesNames: string[] = _.map(
       nativeDependencies.all,
-      d => d.packagePath.basePath
+      d => d.name!
     )
     const nativeAndJsDependencies = this.getPackageJsonDependencies()
 
     return _.filter(
       nativeAndJsDependencies,
-      d => !nativeDependenciesNames.includes(d.basePath)
+      d => !nativeDependenciesNames.includes(`${d.name!}@${d.version}`)
     )
   }
 
@@ -363,38 +363,30 @@ module.exports = {
           )
           let dep
           for (dep of nativeDependencies.all) {
-            if (
-              dependency.same(new PackagePath(dep.packagePath.basePath), {
-                ignoreVersion: true,
-              })
-            ) {
-              if (
-                await utils.isDependencyApiOrApiImpl(dep.packagePath.basePath)
-              ) {
-                log.debug(`${dep.packagePath.toString()} is an api or api-impl`)
+            if (dependency.name === dep.name) {
+              if (await utils.isDependencyApiOrApiImpl(dep)) {
+                log.debug(`${dep.name} is an api or api-impl`)
                 log.warn(
-                  `${dep.packagePath.toString()} is not declared in the Manifest. You might consider adding it.`
+                  `${dep.name} is not declared in the Manifest. You might consider adding it.`
                 )
               } else {
                 // This is a third party native dependency. If it's not in the master manifest,
                 // then it means that it is not supported by the platform yet. Fail.
                 return log.error(
-                  `${dep.packagePath.toString()} plugin is not yet supported. Consider adding support for it to the master manifest`
+                  `${dep.name} plugin is not yet supported. Consider adding support for it to the master manifest`
                 )
               }
             } else {
               // This is a dependency which is not native itself but contains a native dependency as  transitive one (example 'native-base')
               // If ern platform contains entry in the manifest but dependency versions do not align, report error
               const manifestDep = await manifest.getNativeDependency(
-                new PackagePath(dep.packagePath.basePath),
+                new PackagePath(dep.basePath),
                 { manifestId }
               )
               if (manifestDep) {
-                if (
-                  !dep.packagePath.same(manifestDep, { ignoreVersion: false })
-                ) {
+                if (dep.version !== manifestDep.version) {
                   throw new Error(
-                    `[Transitive Dependency] ${dep.packagePath.toString()} was not added to the MiniApp`
+                    `[Transitive Dependency] ${dep.name} was not added to the MiniApp`
                   )
                 }
               }
@@ -404,13 +396,11 @@ module.exports = {
       } else {
         if (dependency.version) {
           log.debug(
-            `Dependency:${dependency.toString()} defined in manifest, performing version match`
+            `Dependency:${dependency.name} defined in manifest, performing version match`
           )
           // If the dependency & manifest version differ, log error and exit
-          if (!dependency.same(manifestDependency, { ignoreVersion: false })) {
-            throw new Error(
-              `${dependency.toString()} was not added to the MiniApp`
-            )
+          if (dependency.version !== manifestDependency.version) {
+            throw new Error(`${dependency.name} was not added to the MiniApp`)
           }
         }
       }

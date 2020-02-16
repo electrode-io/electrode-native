@@ -68,11 +68,7 @@ describe('runMiniApp', () => {
           composite: {
             getNativeDependencies: () =>
               Promise.resolve({
-                all: [
-                  {
-                    packagePath: PackagePath.fromString('react-native@0.59.8'),
-                  },
-                ],
+                all: [PackagePath.fromString('react-native@0.59.8')],
                 apis: [],
                 nativeApisImpl: [],
                 thirdPartyInManifest: [],

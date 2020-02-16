@@ -35,7 +35,6 @@ export const unSupportedCauldronMiniAppsVersions = [
   'https://github.com/MiniApp.git',
   'MiniApp@^1.0.0',
   'MiniApp@~1.0.0',
-  'file://Users/foo/MiniApp',
 ]
 
 export const withFileSystemPath = ['file:/Users/username']

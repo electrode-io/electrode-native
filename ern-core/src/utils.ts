@@ -6,11 +6,8 @@ import _ from 'lodash'
 import { manifest } from './Manifest'
 import * as ModuleType from './ModuleTypes'
 import path from 'path'
-import fs from 'fs'
 import log from './log'
-import config from './config'
 import camelCase = require('lodash/camelCase')
-import { packageCache } from './packageCache'
 import { readPackageJson } from './packageJsonFileUtils'
 import {
   AppNameDescriptor,
@@ -138,23 +135,24 @@ export function getDefaultPackageNameForModule(
 }
 
 export async function isDependencyApiOrApiImpl(
-  dependencyName: string
+  dependency: PackagePath
 ): Promise<boolean> {
-  const isApi = await isDependencyApi(dependencyName)
-  const isApiImpl = !isApi ? await isDependencyApiImpl(dependencyName) : false
+  const isApi = await isDependencyApi(dependency)
+  const isApiImpl = !isApi ? await isDependencyApiImpl(dependency) : false
   // Note: using constants as using await in return statement was not satisfying standard checks
   return isApi || isApiImpl
 }
 
 export async function isDependencyApi(
-  dependencyName: string
+  dependency: PackagePath
 ): Promise<boolean> {
-  // for api generated using default name minimize the await time
-  if (/^.*react-native-.+-api$/.test(dependencyName)) {
+  const pkgName = await getPackageName(dependency)
+
+  if (/^.*react-native-.+-api$/.test(pkgName)) {
     return true
   }
 
-  const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
+  const depInfo = await yarn.info(dependency, {
     field: 'ern',
   })
 
@@ -169,19 +167,13 @@ export async function isDependencyApi(
  * @returns {Promise.<boolean>}
  */
 export async function isDependencyApiImpl(
-  dependencyName: string | PackagePath,
+  dependency: PackagePath,
   forceYanInfo?: boolean,
   type?: string
 ): Promise<boolean> {
-  if (dependencyName instanceof PackagePath) {
-    dependencyName = dependencyName.toString()
-  }
-  // for api-impl generated using default name minimize the await time
-  if (
-    !type &&
-    !forceYanInfo &&
-    /^.*react-native-.+-api-impl$/.test(dependencyName)
-  ) {
+  const pkgName = await getPackageName(dependency)
+
+  if (!type && !forceYanInfo && /^.*react-native-.+-api-impl$/.test(pkgName)) {
     return true
   }
 
@@ -189,21 +181,30 @@ export async function isDependencyApiImpl(
     ? [type]
     : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL]
 
-  const depInfo = await yarn.info(PackagePath.fromString(dependencyName), {
+  const depInfo = await yarn.info(dependency, {
     field: 'ern',
   })
 
   return modulesTypes.indexOf(depInfo?.moduleType) > -1
 }
 
+export async function getPackageName(pkg: PackagePath) {
+  if (pkg.isGitPath) {
+    throw new Error(
+      'getPackageName does not support git based package path yet'
+    )
+  }
+  return pkg.name!
+}
+
 export async function isDependencyJsApiImpl(
-  dependency: string | PackagePath
+  dependency: PackagePath
 ): Promise<boolean> {
   return isDependencyApiImpl(dependency, true, ModuleType.JS_API_IMPL)
 }
 
 export async function isDependencyNativeApiImpl(
-  dependency: string | PackagePath
+  dependency: PackagePath
 ): Promise<boolean> {
   return isDependencyApiImpl(dependency, true, ModuleType.NATIVE_API_IMPL)
 }

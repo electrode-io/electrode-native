@@ -62,7 +62,7 @@ export const handler = async ({
       throw new Error('no API version. This should not happen.')
     }
     api = PackagePath.fromString(
-      `${api.basePath}${apiVersion ? `@${apiVersion}` : ''}`
+      `${api.name}${apiVersion ? `@${apiVersion}` : ''}`
     )
 
     log.info(`regenerating api implementation for ${api.toString()}`)
@@ -123,7 +123,7 @@ export const handler = async ({
 
   async function getApi(apiImplPackage: any): Promise<PackagePath> {
     for (const depKey of Object.keys(apiImplPackage.dependencies)) {
-      if (await coreUtils.isDependencyApi(depKey)) {
+      if (await coreUtils.isDependencyApi(PackagePath.fromString(depKey))) {
         // TODO: THis is by assuming that this is the only api dependency inside this implemenation.
         // TODO: This may not be right all the time as an api implementor can add more other apis as dependencies. Logic needs to be revisited.
         return PackagePath.fromString(

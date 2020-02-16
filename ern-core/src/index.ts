@@ -28,7 +28,6 @@ export { yarn, reactnative } from './clients'
 export {
   NativeDependencies,
   findNativeDependencies,
-  NativeDependency,
   getNativeDependencyPath,
 } from './nativeDependenciesLookup'
 export { tagOneLine } from './tagoneline'

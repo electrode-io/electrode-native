@@ -144,7 +144,7 @@ export function logResolvedDependenciesTree(
   log.debug('[ == RESOLVED NATIVE DEPENDENCIES ==]')
   logDependenciesTree(
     parser,
-    resolution.resolved.map(x => PackagePath.fromString(x.basePath)),
+    resolution.resolved.map(x => PackagePath.fromString(x.name)),
     'debug'
   )
 }

@@ -4,7 +4,6 @@ import {
   MiniApp,
   log,
   kax,
-  NativeDependency,
   AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -160,7 +159,7 @@ export async function getNativeAppCompatibilityReport(
                 napDescriptor
               )
               const compatibility = getCompatibility(
-                miniappDependencies.map(m => m.packagePath),
+                miniappDependencies,
                 nativeAppDependencies,
                 {
                   uncompatibleIfARemoteDepIsMissing:
@@ -256,7 +255,7 @@ export function getCompatibility(
     const localDepVersion = localDep ? localDep.version : undefined
 
     const entry = {
-      dependencyName: remoteDep.basePath,
+      dependencyName: remoteDep.name,
       localVersion: localDepVersion,
       remoteVersion: remoteDep.version,
     }
@@ -278,9 +277,9 @@ export function getCompatibility(
       // Todo : do not infer api or api-impl by looking solely at the suffix as its not mandatory anymore, so
       // we might get false negatives
       if (
-        localDep.basePath.endsWith('-api') ||
-        localDep.basePath.endsWith('-api-impl') ||
-        localDep.basePath === 'react-native-electrode-bridge'
+        localDep.name!.endsWith('-api') ||
+        localDep.name!.endsWith('-api-impl') ||
+        localDep.name! === 'react-native-electrode-bridge'
       ) {
         if (
           semver.major(localDepVersion) ===
@@ -304,14 +303,11 @@ export function getCompatibility(
 
   if (uncompatibleIfARemoteDepIsMissing) {
     for (const localDep of localDeps) {
-      const remoteDep = _.find(
-        remoteDeps,
-        d => d.basePath === localDep.basePath
-      )
+      const remoteDep = _.find(remoteDeps, d => d.name! === localDep.name!)
       const remoteDepVersion = remoteDep ? remoteDep.version : undefined
 
       const entry = {
-        dependencyName: localDep.basePath,
+        dependencyName: localDep.name!,
         localVersion: localDep.version,
         remoteVersion: remoteDepVersion || 'MISSING',
       }
