@@ -15,6 +15,7 @@ import kax from './kax'
 import { isDependencyPathNativeApiImpl } from './utils'
 import { readPackageJson } from './packageJsonFileUtils'
 import { getNativeDependencyPath } from './nativeDependenciesLookup'
+import { gitApply } from './gitApply'
 
 export async function fillProjectHull(
   pathSpec: {
@@ -164,6 +165,21 @@ export async function fillProjectHull(
             }
             fs.writeFileSync(pathToPbxProj, iosProj.writeSync())
           }
+        }
+
+        if (pluginConfig.ios.applyPatch) {
+          const { patch, root } = pluginConfig.ios.applyPatch
+          if (!patch) {
+            throw new Error('Missing "patch" property in "applyPatch" object')
+          }
+          if (!root) {
+            throw new Error('Missing "root" property in "applyPatch" object')
+          }
+          const [patchFile, rootDir] = [
+            path.join(pluginConfig.path, patch),
+            path.join(pathSpec.outputDir, root),
+          ]
+          await gitApply({ patchFile, rootDir })
         }
 
         if (pluginConfig.ios.pbxproj) {

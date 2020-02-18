@@ -113,6 +113,25 @@ The objects contain a `path` property, a `string` property and a `replaceWith` p
 
 This example shows how to replace the string `"RCTBridgeModule.h"` with `<React/RCTBridgeModule.h>` in the `/Libraries/RNLocation/RNLocation.h` file in the container.
 
+- `applyPatch`
+
+Apply a given patch file, by running `git apply` command, from a specific directory.  
+The value of this property should be a single object containing the following two properties :
+  - `patch` : Path to the patch file to apply, relative to the directory containing the pluging configuration file (`config.json`).
+  - `root` : Path to the directory from which to run the `git apply` command, relative to the container generator output directory.
+
+**Example**
+
+```json
+{
+  "patch": "foo.patch",
+  "root": "{{{projectName}}}/Libraries/BarNativeModule"
+}
+
+```
+
+This example applies the `foo.patch` patch file, by running `git apply` command from the `{{{projectName}}}/Libraries/BarNativeModule` directory.  
+
 #### Platform-specific directives
 
 The platform-specific directives for Android and iOS are described in this section.
