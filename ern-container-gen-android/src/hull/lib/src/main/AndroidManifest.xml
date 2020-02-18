@@ -5,6 +5,9 @@
    {{#customPermissions}}
    <uses-permission android:name="{{{.}}}" />
    {{/customPermissions}}
+   {{#customFeatures}}
+   <uses-feature android:name="{{{.}}}" />
+   {{/customFeatures}}
     <application>
       {{#miniApps}}
        <activity android:name="com.walmartlabs.ern.container.miniapps.{{{pascalCaseName}}}Activity"

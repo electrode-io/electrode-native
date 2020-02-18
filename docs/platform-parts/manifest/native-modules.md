@@ -153,6 +153,24 @@ compile 'com.google.android.gms:play-services-maps:10.0.1'
 compile('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') { transitive = true }
 ```
 
+- `features`
+
+An array of one or more [Android hardware or software features](https://developer.android.com/guide/topics/manifest/uses-feature-element) used by the native module, to add to the container manifest when injecting this plugin.
+
+**For example**
+
+```json
+"features" : [
+  "android.hardware.bluetooth"
+]
+```
+
+**Will result in the following injection in Container manifest**
+
+```xml
+<uses-feature android:name="android.hardware.bluetooth" />
+```
+
 #### iOS
 
 The following directives can only be used inside an `ios` configuration object.
