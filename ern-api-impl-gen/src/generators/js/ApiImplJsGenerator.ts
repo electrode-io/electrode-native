@@ -42,7 +42,7 @@ export default class ApiImplJsGenerator implements ApiImplGeneratable {
       )
 
       for (const api of apis) {
-        api.packageName = apiDependency.basePath
+        api.packageName = apiDependency.name
         await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
           mustacheFile,
           api,

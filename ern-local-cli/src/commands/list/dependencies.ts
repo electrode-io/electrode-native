@@ -81,7 +81,7 @@ function logDependencies(dependencies, type: string) {
   if (!_.isEmpty(dependencies)) {
     console.log(chalk.blue.bold(`=== ${type} ===`))
     for (const d of dependencies) {
-      console.log(d.packagePath.toString())
+      console.log(`${d.name}@${d.version}`)
     }
   }
 }

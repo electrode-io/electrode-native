@@ -256,11 +256,14 @@ export class CauldronHelper {
       descriptor,
       'Cannot add a native dependency to a released native app version'
     )
-    return this.cauldron.setPackagesInContainer(
-      descriptor,
-      dependencies,
-      'nativeDeps'
+
+    // Make sure we transform local fs package path to registry paths
+    // for native dependencies
+    const deps = dependencies.map(d =>
+      PackagePath.fromString(`${d.name}@${d.version}`)
     )
+
+    return this.cauldron.setPackagesInContainer(descriptor, deps, 'nativeDeps')
   }
 
   public async removeMiniAppFromContainer(

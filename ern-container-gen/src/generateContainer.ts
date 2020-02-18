@@ -37,7 +37,7 @@ export async function generateContainer(
 
   const reactNativePlugin = _.find(
     config.plugins,
-    p => p.basePath === 'react-native'
+    p => p.name === 'react-native'
   )
 
   // React-native plugin should be first in the dependencies

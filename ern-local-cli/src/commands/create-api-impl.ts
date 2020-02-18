@@ -167,7 +167,7 @@ export const commandHandler = async ({
   // Must conform to definition of ElectrodeNativeModuleName
   if (!apiImplName) {
     // camel case api name
-    const cameCaseName = coreUtils.camelize(apiDep.basePath)
+    const cameCaseName = coreUtils.camelize(apiDep.name!)
     // remove number if present
     const nameWithNoNumber = cameCaseName.replace(/\d+/g, '')
     apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`

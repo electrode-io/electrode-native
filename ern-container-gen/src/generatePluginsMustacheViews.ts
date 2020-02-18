@@ -7,7 +7,7 @@ export async function generatePluginsMustacheViews(
   const pluginsViews: any[] = []
   log.debug('Generating plugins mustache views')
   for (const plugin of plugins) {
-    if (plugin.basePath === 'react-native') {
+    if (plugin.name === 'react-native') {
       continue
     }
     const pluginConfig = await manifest.getPluginConfig(plugin)
@@ -16,7 +16,7 @@ export async function generatePluginsMustacheViews(
     }
     if (!pluginConfig[platform]) {
       log.warn(
-        `${plugin.basePath} does not have any injection configuration for ${platform} platform`
+        `${plugin.name} does not have any injection configuration for ${platform} platform`
       )
       continue
     }

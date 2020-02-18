@@ -79,7 +79,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     const reactNativePlugin = _.find(
       config.plugins,
-      p => p.basePath === 'react-native'
+      p => p.name === 'react-native'
     )
 
     if (!reactNativePlugin) {
@@ -102,7 +102,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     const electrodeBridgePlugin = _.find(
       config.plugins,
-      p => p.basePath === 'react-native-electrode-bridge'
+      p => p.name === 'react-native-electrode-bridge'
     )
 
     if (electrodeBridgePlugin) {
@@ -141,28 +141,22 @@ export default class AndroidGenerator implements ContainerGenerator {
         continue
       }
 
-      if (plugin.basePath === 'react-native') {
+      if (plugin.name === 'react-native') {
         continue
       }
 
       if (!pluginConfig.android) {
         log.warn(
-          `Skipping ${plugin.basePath} as it does not have an Android configuration`
+          `Skipping ${plugin.name} as it does not have an Android configuration`
         )
         continue
       }
 
-      injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
+      injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.name}]`
 
       let pathToPluginProject
 
-      const pluginSourcePath = await config.composite.getNativeDependencyPath(
-        plugin
-      )
-      if (!pluginSourcePath) {
-        throw new Error(`path to ${plugin.basePath} not found in composite`)
-      }
-
+      const pluginSourcePath = plugin.basePath
       if (await coreUtils.isDependencyPathNativeApiImpl(pluginSourcePath)) {
         // For native api implementations, if a 'ern.pluginConfig' object
         // exists in its package.json, replace pluginConfig with this one.
@@ -598,7 +592,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     outDir: string
   ): Promise<any> {
     for (const plugin of plugins) {
-      if (plugin.basePath === 'react-native') {
+      if (plugin.name === 'react-native') {
         continue
       }
       const pluginConfig = await manifest.getPluginConfig(plugin)
@@ -607,7 +601,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       }
       if (!pluginConfig.android) {
         log.warn(
-          `Skipping ${plugin.basePath} as it does not have an Android configuration`
+          `Skipping ${plugin.name} as it does not have an Android configuration`
         )
         continue
       }
@@ -640,7 +634,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     )
     const reactNativeCodePushPlugin = _.find(
       plugins,
-      p => p.basePath === 'react-native-code-push'
+      p => p.name === 'react-native-code-push'
     )
     if (reactNativeCodePushPlugin) {
       mustacheView.isCodePushPluginIncluded = true

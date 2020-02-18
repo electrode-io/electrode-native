@@ -34,7 +34,7 @@ export default class ApiImplGen {
     const schemaJson = path.join(
       paths.outDirectory,
       'node_modules',
-      apiPackagePath.basePath,
+      apiPackagePath.name!,
       'schema.json'
     )
 
@@ -100,7 +100,7 @@ export default class ApiImplGen {
       }
 
       if (pluginsNames.length === 0) {
-        log.info(`no other dependencies found for ${apiPackagePath.basePath}`)
+        log.info(`no other dependencies found for ${apiPackagePath.name}`)
       }
 
       return _.map(pluginsNames, PackagePath.fromString)

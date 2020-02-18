@@ -203,7 +203,7 @@ export async function runMiniApp(
   const compositeNativeDeps = await containerGenResult.config.composite.getNativeDependencies()
   const reactNativeDep = _.find(
     compositeNativeDeps.all,
-    p => p.packagePath.basePath === 'react-native'
+    p => p.name === 'react-native'
   )
 
   const hasErnNavigation =
@@ -221,7 +221,7 @@ export async function runMiniApp(
     reactNativeDevSupportEnabled: dev,
     reactNativePackagerHost: host,
     reactNativePackagerPort: port,
-    reactNativeVersion: reactNativeDep!.packagePath.version!,
+    reactNativeVersion: reactNativeDep!.version!,
     targetPlatform: platform,
   }
 

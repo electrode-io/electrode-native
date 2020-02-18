@@ -39,7 +39,7 @@ Make sure this command is run from a Manifest directory.`)
     shell.popd()
   }
 
-  const pluginPath = path.join(tmpDir, 'node_modules', plugin.basePath)
+  const pluginPath = path.join(tmpDir, 'node_modules', plugin.name!)
   const conf = await PluginConfigGenerator.generateFromPath({
     pluginPath,
     resolveDependencyVersion: x =>
@@ -62,7 +62,7 @@ Make sure this command is run from a Manifest directory.`)
   const pathToPluginConfig = path.join(
     'plugins',
     `ern_v${manifestBaseErnVersion}+`,
-    `${plugin.basePath}_v${pluginVersion}+`
+    `${plugin.name}_v${pluginVersion}+`
   )
   if (!(await fs.pathExists(pathToPluginConfig))) {
     await shell.mkdir('-p', pathToPluginConfig)

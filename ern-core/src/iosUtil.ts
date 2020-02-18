@@ -68,7 +68,19 @@ export async function fillProjectHull(
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
     for (const plugin of plugins) {
-      if (await isDependencyJsApiImpl(plugin)) {
+      const pluginSourcePath = composite
+        ? plugin.basePath
+        : await getNativeDependencyPath(
+            path.resolve(pathSpec.outputDir, '..', 'node_modules'),
+            plugin
+          )
+      if (!pluginSourcePath) {
+        throw new Error(`path to ${plugin.name} not found.`)
+      }
+
+      const localPluginPackage = PackagePath.fromString(pluginSourcePath)
+
+      if (await isDependencyJsApiImpl(localPluginPackage)) {
         log.debug('JS api implementation identified, skipping fill hull.')
         continue
       }
@@ -82,17 +94,7 @@ export async function fillProjectHull(
       }
 
       if (pluginConfig.ios) {
-        const pluginSourcePath = composite
-          ? await composite.getNativeDependencyPath(plugin)
-          : await getNativeDependencyPath(
-              path.resolve(pathSpec.outputDir, '..', 'node_modules'),
-              plugin
-            )
-        if (!pluginSourcePath) {
-          throw new Error(`path to ${plugin.basePath} not found.`)
-        }
-
-        log.debug(`Path to ${plugin.basePath} plugin : ${pluginSourcePath}`)
+        log.debug(`Path to ${plugin.name} plugin : ${pluginSourcePath}`)
 
         if (await isDependencyPathNativeApiImpl(pluginSourcePath)) {
           // For native api implementations, if a 'ern.pluginConfig' object
@@ -108,7 +110,7 @@ export async function fillProjectHull(
           }
         }
 
-        injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.basePath}]`
+        injectPluginsKaxTask.text = `${injectPluginsTaskMsg} [${plugin.name}]`
 
         if (pluginConfig.ios.copy) {
           for (const copy of pluginConfig.ios.copy) {

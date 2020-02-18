@@ -121,7 +121,7 @@ export default async function start({
   const nativeModules: PackagePath[] = [
     ...nativeDependencies.thirdPartyInManifest,
     ...nativeDependencies.thirdPartyNotInManifest,
-  ].map(d => d.packagePath)
+  ]
 
   const packageCopyKaxTask = kax.task(
     'Copying all linked MiniApps to Composite'

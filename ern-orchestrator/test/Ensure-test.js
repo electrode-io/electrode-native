@@ -685,7 +685,7 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('isSupportedMiniAppOrJsApiImplVersion', () => {
     fixtures.supportedCauldronMiniAppsVersions.forEach(pkg => {
-      it('shoud not throw if suported version', () => {
+      it(`shoud not throw if suported version (pkg: ${pkg})`, () => {
         expect(
           () => Ensure.isSupportedMiniAppOrJsApiImplVersion(pkg),
           `throw for ${pkg}`
@@ -694,7 +694,7 @@ describe('Ensure.js', () => {
     })
 
     fixtures.unSupportedCauldronMiniAppsVersions.forEach(pkg => {
-      it('should throw if version is not supported', () => {
+      it(`should throw if version is not supported (pkg: ${pkg})`, () => {
         expect(
           () => Ensure.isSupportedMiniAppOrJsApiImplVersion(pkg),
           `does not throw for ${pkg}`

@@ -51,7 +51,7 @@ export const commandHandler = async ({
     head: [chalk.cyan('Name'), chalk.cyan('Version')],
   })
   for (const plugin of plugins) {
-    table.push([plugin.basePath, plugin.version])
+    table.push([plugin.name, plugin.version])
   }
   log.info(table.toString())
 }
