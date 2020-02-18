@@ -75,7 +75,7 @@
     "fs-readdir-recursive": "^1.1.0",
     "got": "^9.6.0",
     "inquirer": "^3.0.6",
-    "kax": "^2.0.1",
+    "kax": "^2.0.3",
     "lodash": "^4.17.14",
     "node-ipc":"^9.1.1",
     "semver": "^5.5.0",
