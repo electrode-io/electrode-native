@@ -166,9 +166,8 @@ When detecting a custom Composite project, Electrode Native will do the followin
 
 This completes the Composite project generation. Optionally, based on the command used, `react-native bundle` or `react-native start` will be invoked with `index.js` as `entry-file` based on the platform being targeted.
 
-
+[ern create-composite]: ../../cli/create-composite.md
 [ern start]: ../../cli/start.md
 [ern create-container]: ../../cli/create-container.md
 [ern run-android]: ../../cli/run-android.md
 [ern run-ios]: ../../cli/run-ios.md
-[ern create-composite]: ../../cli/create-composite.md

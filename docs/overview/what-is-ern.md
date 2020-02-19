@@ -74,4 +74,4 @@ An Electrode Native runner application is automatically generated the first time
 
 [Learn More about the Runner](../platform-parts/runner/index.md)
 
-[Electrode Native Bridge]:https://github.com/electrode-io/react-native-electrode-bridge
+[Electrode Native Bridge]: https://github.com/electrode-io/react-native-electrode-bridge

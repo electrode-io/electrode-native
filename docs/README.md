@@ -50,7 +50,6 @@ Licensed under the [Apache License, Version 2.0].
 
 [gitbook]: https://www.gitbook.com/
 
-[what is electrode native]: ./overview/what-is-ern.md
+[What is Electrode Native]: ./overview/what-is-ern.md
 
 [Electrode Native Case Study]: https://www.walmartlabs.com/case-studies/electrode-native
-
