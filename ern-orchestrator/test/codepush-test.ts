@@ -9,6 +9,7 @@ import {
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
 import * as compositeGen from 'ern-composite-gen'
+import { Composite } from 'ern-composite-gen'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import * as core from 'ern-core'
 import * as cauldronApi from 'ern-cauldron-api'
@@ -593,6 +594,7 @@ describe('codepush', () => {
         .stub(compatibility, 'areCompatible')
         .resolves(compatibility_areCompatible)
 
+      sandbox.stub(Composite, 'generate').callsFake(() => Promise.resolve({}))
       codePushSdkStub = sinon.createStubInstance(CodePushSdk)
       sandbox.stub(core, 'getCodePushSdk').returns(codePushSdkStub)
       sandbox.stub(compositeGen, 'generateComposite').resolves()

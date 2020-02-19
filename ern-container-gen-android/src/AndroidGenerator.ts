@@ -383,43 +383,13 @@ export default class AndroidGenerator implements ContainerGenerator {
       const hermesCli = await kax
         .task(`Installing hermes-engine@${hermesVersion}`)
         .run(HermesCli.fromVersion(hermesVersion))
-      const hermesBundle = await kax
-        .task('Compiling JS bundle to Hermes bytecode')
-        .run(
-          hermesCli.compileReleaseBundle({ jsBundlePath: bundle.bundlePath })
-        )
-
-      if (bundle.sourceMapPath) {
-        // Hermes CLI does not give control over the
-        // location of generated source map. It just generates it in
-        // the same directory as the hermes bundle, with the same name
-        // as the bundle, with a new .map extension (index.android.map)
-        // Move it to same location as the JS bundle one, but rename it
-        // to index.android.compiler.map
-        const sourceMapDir = path.dirname(bundle.sourceMapPath)
-        const compilerSourceMapPath = path.join(
-          sourceMapDir,
-          'index.android.compiler.map'
-        )
-        shell.mv(hermesBundle.hermesSourceMapPath, compilerSourceMapPath)
-        // Rename the existing JS bundle one as index.android.packager.map
-        const packagerSourceMapPath = path.join(
-          sourceMapDir,
-          'index.android.packager.map'
-        )
-        shell.mv(bundle.sourceMapPath, packagerSourceMapPath)
-        // Compose both source maps to get final one, and write it to sourcemap path
-        const pathToComposeScript = path.join(
-          config.composite.path,
-          'node_modules/react-native/scripts/compose-source-maps.js'
-        )
-        shell.exec(
-          `node ${pathToComposeScript} ${packagerSourceMapPath} ${compilerSourceMapPath} -o ${bundle.sourceMapPath}`
-        )
-      } else {
-        // ... otherwise just remove it from the container
-        shell.rm(hermesBundle.hermesSourceMapPath)
-      }
+      await kax.task('Compiling JS bundle to Hermes bytecode').run(
+        hermesCli.compileReleaseBundle({
+          bundleSourceMapPath: bundle.sourceMapPath,
+          compositePath: config.composite.path,
+          jsBundlePath: bundle.bundlePath,
+        })
+      )
     }
   }
 

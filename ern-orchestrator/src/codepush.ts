@@ -10,8 +10,10 @@ import {
   SourceMapStoreSdk,
   HermesCli,
   android,
+  createProxyAgentFromErnConfig,
+  bugsnagUpload,
 } from 'ern-core'
-import { generateComposite } from 'ern-composite-gen'
+import { Composite } from 'ern-composite-gen'
 import {
   CauldronCodePushMetadata,
   CauldronCodePushEntry,
@@ -385,8 +387,8 @@ export async function performCodePushOtaUpdate(
       )
     }
 
-    await kax.task('Generating composite module').run(
-      generateComposite({
+    const composite = await kax.task('Generating composite module').run(
+      Composite.generate({
         baseComposite,
         jsApiImplDependencies: pathToJsApiImplsToBeCodePushed,
         miniApps: pathsToMiniAppsToBeCodePushed,
@@ -429,9 +431,12 @@ export async function performCodePushOtaUpdate(
         const res = await kax
           .task('Compiling JS bundle to Hermes bytecode')
           .run(
-            hermesCli.compileReleaseBundle({ jsBundlePath: bundleOutputPath })
+            hermesCli.compileReleaseBundle({
+              bundleSourceMapPath: sourceMapOutput,
+              compositePath: tmpWorkingDir,
+              jsBundlePath: bundleOutputPath,
+            })
           )
-        sourceMapOutput = res.hermesSourceMapPath
       }
     }
 
@@ -509,6 +514,32 @@ export async function performCodePushOtaUpdate(
             )
         } catch (e) {
           log.error(`Source map upload failed : ${e}`)
+        }
+      }
+
+      // Upload source map to bugsnag if configured
+      const bugsnagConfig = await cauldron.getBugsnagConfig(napDescriptor)
+      if (bugsnagConfig) {
+        try {
+          const { apiKey } = bugsnagConfig
+          const [minifiedFile, minifiedUrl, projectRoot, sourceMap] = [
+            await fs.realpath(bundleOutputPath),
+            path.basename(bundleOutputPath),
+            await fs.realpath(path.join(composite.path, 'node_modules')),
+            await fs.realpath(sourceMapOutput),
+          ]
+          await bugsnagUpload({
+            apiKey,
+            minifiedFile,
+            minifiedUrl,
+            projectRoot,
+            sourceMap,
+            uploadSourcesGlob: composite
+              .getMiniAppsPackages()
+              .map(p => `**/${p.name}/**/@(*.js|*.ts)`),
+          })
+        } catch (e) {
+          log.error(`Bugsnag upload failed : ${e}`)
         }
       }
 
