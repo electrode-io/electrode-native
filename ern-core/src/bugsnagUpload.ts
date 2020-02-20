@@ -9,6 +9,7 @@ export async function bugsnagUpload({
   minifiedUrl,
   projectRoot,
   sourceMap,
+  uploadSources,
   uploadSourcesGlob,
 }: {
   apiKey: string
@@ -16,6 +17,7 @@ export async function bugsnagUpload({
   minifiedUrl: string
   projectRoot: string
   sourceMap: string
+  uploadSources: boolean
   uploadSourcesGlob: string[]
 }) {
   const agent = createProxyAgentFromErnConfig('bugsnagProxy', { https: true })
@@ -29,7 +31,7 @@ export async function bugsnagUpload({
     minifiedUrl,
     projectRoot,
     sourceMap,
-    uploadSources: true,
+    uploadSources,
     uploadSourcesGlob,
   }
   log.trace(

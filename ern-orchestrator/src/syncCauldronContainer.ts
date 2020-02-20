@@ -176,6 +176,7 @@ export async function syncCauldronContainer(
           minifiedUrl,
           projectRoot,
           sourceMap,
+          uploadSources: !!containerGenRes.bundlingResult.isHermesBundle,
           uploadSourcesGlob: composite
             .getMiniAppsPackages()
             .map(p => `**/${p.name}/**/@(*.js|*.ts)`),

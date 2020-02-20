@@ -390,6 +390,7 @@ export default class AndroidGenerator implements ContainerGenerator {
           jsBundlePath: bundle.bundlePath,
         })
       )
+      bundle.isHermesBundle = true
     }
   }
 
