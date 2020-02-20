@@ -407,17 +407,19 @@ export async function performCodePushOtaUpdate(
         : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
     sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map')
-    await kax.task('Generating composite bundle for miniapps').run(
-      reactnative.bundle({
-        assetsDest: bundleOutputDirectory,
-        bundleOutput: bundleOutputPath,
-        dev: false,
-        entryFile: `index.${platform}.js`,
-        platform,
-        sourceMapOutput,
-        workingDir: tmpWorkingDir,
-      })
-    )
+    const bundlingResult = await kax
+      .task('Generating composite bundle for miniapps')
+      .run(
+        reactnative.bundle({
+          assetsDest: bundleOutputDirectory,
+          bundleOutput: bundleOutputPath,
+          dev: false,
+          entryFile: `index.${platform}.js`,
+          platform,
+          sourceMapOutput,
+          workingDir: tmpWorkingDir,
+        })
+      )
 
     if (platform === 'android') {
       const conf = await cauldron.getContainerGeneratorConfig(napDescriptor)
@@ -437,6 +439,7 @@ export async function performCodePushOtaUpdate(
               jsBundlePath: bundleOutputPath,
             })
           )
+        bundlingResult.isHermesBundle = true
       }
     }
 
@@ -534,6 +537,7 @@ export async function performCodePushOtaUpdate(
             minifiedUrl,
             projectRoot,
             sourceMap,
+            uploadSources: !!bundlingResult.isHermesBundle,
             uploadSourcesGlob: composite
               .getMiniAppsPackages()
               .map(p => `**/${p.name}/**/@(*.js|*.ts)`),

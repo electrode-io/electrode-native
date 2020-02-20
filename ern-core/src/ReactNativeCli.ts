@@ -21,6 +21,8 @@ export interface BundlingResult {
   bundlePath: string
   // Full path to the source map (if any)
   sourceMapPath?: string
+  // Is this an hermes bundle ?
+  isHermesBundle?: boolean
 }
 
 export default class ReactNativeCli {
