@@ -56,6 +56,10 @@ export async function syncCauldronContainer(
         ? await cauldron.getContainerVersion(descriptor)
         : await cauldron.getTopLevelContainerVersion(descriptor)
       if (cauldronContainerNewVersion) {
+        if (!semver.valid(cauldronContainerNewVersion)) {
+          throw new Error(`${cauldronContainerNewVersion} is not a semver compliant version and therefore cannot be auto patch incremented.
+Please set the new container version through command options.`)
+        }
         cauldronContainerNewVersion = semver.inc(
           cauldronContainerNewVersion,
           'patch'
