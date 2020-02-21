@@ -11,7 +11,6 @@ import fs from 'fs'
 export async function logErrorAndExitIfNotSatisfied({
   noGitOrFilesystemPath,
   noFileSystemPath,
-  isValidContainerVersion,
   isNewerContainerVersion,
   napDescriptorExistInCauldron,
   sameNativeApplicationAndPlatform,
@@ -47,10 +46,6 @@ export async function logErrorAndExitIfNotSatisfied({
   }
   noFileSystemPath?: {
     obj: string | string[]
-    extraErrorMessage?: string
-  }
-  isValidContainerVersion?: {
-    containerVersion: string
     extraErrorMessage?: string
   }
   isNewerContainerVersion?: {
@@ -178,16 +173,6 @@ export async function logErrorAndExitIfNotSatisfied({
     if (cauldronIsActive) {
       kaxTask = kax.task('Ensuring that a Cauldron is active')
       await Ensure.cauldronIsActive(cauldronIsActive.extraErrorMessage)
-      kaxTask.succeed()
-    }
-    if (isValidContainerVersion) {
-      kaxTask = kax.task(
-        `Ensuring that ${isValidContainerVersion.containerVersion} is a valid Container version`
-      )
-      Ensure.isValidContainerVersion(
-        isValidContainerVersion.containerVersion,
-        isValidContainerVersion.extraErrorMessage
-      )
       kaxTask.succeed()
     }
     if (isNewerContainerVersion) {

@@ -58,9 +58,6 @@ export const commandHandler = async ({
     isSupportedMiniAppOrJsApiImplVersion: {
       obj: jsapiimpls,
     },
-    isValidContainerVersion: containerVersion
-      ? { containerVersion }
-      : undefined,
     napDescriptorExistInCauldron: {
       descriptor,
       extraErrorMessage:

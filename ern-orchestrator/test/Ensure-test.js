@@ -23,29 +23,6 @@ describe('Ensure.js', () => {
   })
 
   // ==========================================================
-  // isValidContainerVersion
-  // ==========================================================
-  describe('isValidContainerVersion', () => {
-    fixtures.validContainerVersions.forEach(version => {
-      it('shoud not throw if version is valid', () => {
-        expect(
-          () => Ensure.isValidContainerVersion(version),
-          `throw for ${version}`
-        ).to.not.throw()
-      })
-    })
-
-    fixtures.invalidContainerVersions.forEach(version => {
-      it('should throw if version is invalid', () => {
-        expect(
-          () => Ensure.isValidContainerVersion(version),
-          `does not throw for ${version}`
-        ).to.throw()
-      })
-    })
-  })
-
-  // ==========================================================
   // noGitOrFilesystemPath
   // ==========================================================
   describe('noGitOrFilesystemPath', () => {

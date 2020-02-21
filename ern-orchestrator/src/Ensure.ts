@@ -43,17 +43,6 @@ export default class Ensure {
     }
   }
 
-  public static isValidContainerVersion(
-    version: string,
-    extraErrorMessage: string = ''
-  ) {
-    if (/^\d+.\d+.\d+$/.test(version) === false) {
-      throw new Error(
-        `${version} is not a valid container version.\n${extraErrorMessage}`
-      )
-    }
-  }
-
   public static async isNewerContainerVersion(
     descriptor: string | AppVersionDescriptor,
     containerVersion: string,
@@ -63,13 +52,19 @@ export default class Ensure {
     const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(
       coreUtils.coerceToAppVersionDescriptor(descriptor)
     )
-    if (
-      cauldronContainerVersion &&
-      !semver.gt(containerVersion, cauldronContainerVersion)
-    ) {
-      throw new Error(
-        `Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`
-      )
+
+    if (cauldronContainerVersion) {
+      // If both versions are valid semver versions, use semver comparison
+      // otherwise just use string lexographical comparison
+      const gt =
+        semver.valid(containerVersion) && semver.valid(cauldronContainerVersion)
+          ? semver.gt(containerVersion, cauldronContainerVersion)
+          : containerVersion > cauldronContainerVersion
+      if (!gt) {
+        throw new Error(
+          `Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`
+        )
+      }
     }
   }
 

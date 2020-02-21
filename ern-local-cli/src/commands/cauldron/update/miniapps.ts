@@ -89,9 +89,6 @@ export const commandHandler = async ({
     isSupportedMiniAppOrJsApiImplVersion: {
       obj: miniapps,
     },
-    isValidContainerVersion: containerVersion
-      ? { containerVersion }
-      : undefined,
     miniAppIsInNativeApplicationVersionContainer: {
       descriptor,
       extraErrorMessage:
