@@ -21,12 +21,12 @@ stages:
     jobs:
       - job: Windows
         pool:
-          vmImage: 'win1803'
+          vmImage: 'windows-latest'
         steps:
           - template: azure/templates/unit-tests.yml
       - job: macOS
         pool:
-          vmImage: 'macOS-10.13'
+          vmImage: 'macOS-10.15'
         steps:
           - template: azure/templates/unit-tests.yml
       - job: Linux
