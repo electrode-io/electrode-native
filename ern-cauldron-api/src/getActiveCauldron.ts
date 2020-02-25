@@ -8,8 +8,8 @@ import path from 'path'
 // Singleton CauldronHelper
 // Returns undefined if no Cauldron is active
 // Throw error if Cauldron is not using the correct schema version
-let currentCauldronHelperInstance
-let currentCauldronRepoInUse
+let currentCauldronHelperInstance: CauldronHelper
+let currentCauldronRepoInUse: string
 const ernPlatformUseCmdMsg = 'ern platform use <version> command'
 
 export default async function getActiveCauldron({
@@ -31,10 +31,9 @@ export default async function getActiveCauldron({
   if (!repoInUse && throwIfNoActiveCauldron) {
     throw new Error('No active Cauldron')
   }
-  let kaxTask
+  const kaxTask = kax.task(`Connecting to the Cauldron`)
   try {
     if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
-      kaxTask = kax.task(`Connecting to the Cauldron`)
       const cauldronRepositories = config.get('cauldronRepositories')
       const cauldronRepoUrl = cauldronRepositories[repoInUse]
       const cauldronRepoBranchReResult = /#(.+)$/.exec(cauldronRepoUrl)
@@ -95,12 +94,13 @@ export default async function getActiveCauldron({
         }
       }
       currentCauldronRepoInUse = repoInUse
-      kaxTask.succeed()
     }
   } catch (e) {
     kaxTask.fail()
     utils.logErrorAndExitProcess(e, 1)
   }
+
+  kaxTask.succeed()
 
   return Promise.resolve(currentCauldronHelperInstance)
 }

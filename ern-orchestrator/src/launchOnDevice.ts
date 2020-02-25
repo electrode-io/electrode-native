@@ -1,10 +1,10 @@
-import { ios, kax, shell } from 'ern-core'
+import { ios, kax, shell, IosDevice } from 'ern-core'
 import { buildIosRunner } from './buildIosRunner'
 import { spawnSync } from 'child_process'
 
 export async function launchOnDevice(
   pathToIosRunner: string,
-  devices,
+  devices: IosDevice[],
   {
     launchArgs,
     launchEnvVars,

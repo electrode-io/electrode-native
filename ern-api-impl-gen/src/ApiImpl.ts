@@ -78,12 +78,14 @@ async function createOutputDirectory(
   forceGenerate: boolean
 ) {
   if (!forceGenerate && (await fs.pathExists(outputDirectoryPath))) {
-    const { shouldRegenerate } = await inquirer.prompt(<inquirer.Question>{
-      default: false,
-      message: `An implementation directory already exists in ${outputDirectoryPath}. Do you want to delete this and regenerate this project?`,
-      name: 'shouldRegenerate',
-      type: 'confirm',
-    })
+    const { shouldRegenerate } = await inquirer.prompt([
+      <inquirer.Question>{
+        default: false,
+        message: `An implementation directory already exists in ${outputDirectoryPath}. Do you want to delete this and regenerate this project?`,
+        name: 'shouldRegenerate',
+        type: 'confirm',
+      },
+    ])
 
     if (!shouldRegenerate) {
       throw Error('An implementation directory already exists')

@@ -225,7 +225,7 @@ export default class IosGenerator implements ContainerGenerator {
   ): Promise<any> {
     const containerProject = xcode.project(containerProjectPath)
     return new Promise((resolve, reject) => {
-      containerProject.parse(err => {
+      containerProject.parse((err: any) => {
         if (err) {
           reject(err)
         }

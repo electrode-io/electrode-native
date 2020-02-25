@@ -121,7 +121,10 @@ export function resolveNativeDependenciesVersions(
 
 export function resolveNativeDependenciesVersionsEx(
   dependencies: NativeDependencies
-) {
+): {
+  pluginsWithMismatchingVersions: string[]
+  resolved: PackagePath[]
+} {
   // Resolve native dependencies versions of APIs / APIs impls
   let apisAndApiImplsNativeDeps: PackagePath[] = []
   if (dependencies.apis.length > 0) {

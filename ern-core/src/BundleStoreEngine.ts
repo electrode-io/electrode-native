@@ -21,7 +21,7 @@ export class BundleStoreEngine {
     ipc.config.silent = true
     ipc.config.id = 'ern-bundle-store'
     ipc.serve(() => {
-      ipc.server.on('assets', (data, socket) => {
+      ipc.server.on('assets', (data: any, socket: any) => {
         log.debug(`received asset : ${JSON.stringify(data)}`)
         this.assets.push(JSON.parse(data))
       })

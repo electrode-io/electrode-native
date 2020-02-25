@@ -93,7 +93,7 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
     .coerce('targetDescriptors', d =>
-      d.map(t => AppVersionDescriptor.fromString(t))
+      d.map((t: string) => AppVersionDescriptor.fromString(t))
     )
     .option('targetSemVerDescriptor', {
       describe:

@@ -166,6 +166,10 @@ export interface IosPluginConfig extends CommonPluginConfig {
    * Set specific build settings in the plugin pbxproj
    */
   setBuildSettings?: IosPluginSetBuildSettingsDirective[]
+  /**
+   * Array of public headers to add to the container
+   */
+  containerPublicHeader?: string[]
 }
 
 /**
@@ -625,9 +629,11 @@ export class Manifest {
     if (result.android) {
       result.android.root = result.android.root ?? 'android'
 
-      const matchedFiles = shell.find(pluginConfigPath).filter(file => {
-        return file.match(/\.java$/)
-      })
+      const matchedFiles = shell
+        .find(pluginConfigPath)
+        .filter((file: string) => {
+          return file.match(/\.java$/)
+        })
       if (matchedFiles && matchedFiles.length === 1) {
         const pluginHookClass = path.basename(matchedFiles[0], '.java')
         result.android.pluginHook = {
@@ -647,12 +653,16 @@ export class Manifest {
     if (result.ios) {
       result.ios.root = result.ios.root ?? 'ios'
 
-      const matchedHeaderFiles = shell.find(pluginConfigPath).filter(file => {
-        return file.match(/\.h$/)
-      })
-      const matchedSourceFiles = shell.find(pluginConfigPath).filter(file => {
-        return file.match(/\.m$/)
-      })
+      const matchedHeaderFiles = shell
+        .find(pluginConfigPath)
+        .filter((file: string) => {
+          return file.match(/\.h$/)
+        })
+      const matchedSourceFiles = shell
+        .find(pluginConfigPath)
+        .filter((file: string) => {
+          return file.match(/\.m$/)
+        })
 
       if (
         matchedHeaderFiles &&

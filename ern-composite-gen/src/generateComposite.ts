@@ -248,7 +248,7 @@ async function installJsPackagesWithoutYarnLock({
   }
 }
 
-async function createIndexJsBasedOnPackageJson({ outDir }) {
+async function createIndexJsBasedOnPackageJson({ outDir }: { outDir: string }) {
   let entryIndexJsContent = ''
 
   const dependencies: string[] = []
@@ -267,7 +267,11 @@ async function createIndexJsBasedOnPackageJson({ outDir }) {
   await fs.writeFile(path.join(outDir, 'index.android.js'), entryIndexJsContent)
 }
 
-async function createCompositeImportsJsBasedOnPackageJson({ outDir }) {
+async function createCompositeImportsJsBasedOnPackageJson({
+  outDir,
+}: {
+  outDir: string
+}) {
   let content = ''
 
   const dependencies: string[] = []
@@ -529,7 +533,7 @@ async function createCompositeBabelRc({ outDir }: { outDir: string }) {
   log.debug(
     'Taking care of potential Babel module-resolver plugins used by MiniApps'
   )
-  let moduleResolverAliases = {}
+  let moduleResolverAliases: { [k: string]: any } = {}
   for (const dependency of Object.keys(compositePackageJson.dependencies)) {
     const miniAppPackagePath = path.join(compositeNodeModulesPath, dependency)
     let miniAppPackageJson

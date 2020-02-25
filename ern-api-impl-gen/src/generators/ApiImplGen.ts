@@ -89,7 +89,7 @@ export default class ApiImplGen {
       log.info('Looking for peerDependencies')
       const { dependencies, peerDependencies } = await yarn.info(apiPackagePath)
 
-      const pluginsNames = []
+      const pluginsNames: string[] = []
 
       if (peerDependencies) {
         this.pushDependencyNames(peerDependencies, pluginsNames)

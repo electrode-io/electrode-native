@@ -207,7 +207,7 @@ export default async function start({
     log.info(
       `Watching for changes in linked MiniApp directory ${miniAppsLinksObj[pkgName]}`
     )
-    startLinkSynchronization(compositeDir, pkgName, miniAppsLinksObj[pkgName])
+    startLinkSynchronization(compositeDir!, pkgName, miniAppsLinksObj[pkgName])
   })
 
   log.warn('=========================================================')
@@ -227,9 +227,9 @@ export default async function start({
 }
 
 async function replacePackageInCompositeWithLinkedPackage(
-  compositeDir,
-  linkedPackageName,
-  sourceLinkDir,
+  compositeDir: string,
+  linkedPackageName: string,
+  sourceLinkDir: string,
   excludedPackages: PackagePath[] = []
 ) {
   // Get path to package in composite node_modules
@@ -285,9 +285,9 @@ async function replacePackageInCompositeWithLinkedPackage(
 }
 
 function startLinkSynchronization(
-  compositeDir,
-  linkedPackageName,
-  sourceLinkDir
+  compositeDir: string,
+  linkedPackageName: string,
+  sourceLinkDir: string
 ) {
   log.trace(
     `startLinkSynchronization [${compositeDir}] [${linkedPackageName}] [${sourceLinkDir}]`

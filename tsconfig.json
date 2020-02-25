@@ -6,15 +6,14 @@
     "paths": {
       "ern-*": ["ern-*/src"]
     },
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "./typings"],
     "module": "commonjs",
     "moduleResolution": "node",
     "inlineSourceMap": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "strictNullChecks": true
-  },
-  "typeAcquisition": {
-    "enable": true
-  }
+    "strictNullChecks": true,
+    "outDir": "dist",
+    "noImplicitAny": true
+  }  
 }

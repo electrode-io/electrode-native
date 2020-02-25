@@ -479,7 +479,7 @@ export default class Ensure {
     const availablePlatformKeys = () =>
       constants.availableUserConfigKeys.map(e => e.name)
     if (!availablePlatformKeys().includes(key)) {
-      const closestKeyName = k =>
+      const closestKeyName = (k: string) =>
         availablePlatformKeys().reduce((acc, cur) =>
           levenshtein.get(acc, k) > levenshtein.get(cur, k) ? cur : acc
         )

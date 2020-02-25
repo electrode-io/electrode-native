@@ -54,14 +54,14 @@ export default class GitFileStore extends BaseGit
     }
   }
 
-  public async getPathToFile(filePath: string): Promise<string | void> {
+  public async getPathToFile(filePath: string): Promise<string | undefined> {
     await this.sync()
     if (await fs.pathExists(this.pathToFile(filePath))) {
       return this.pathToFile(filePath)
     }
   }
 
-  public async getFile(filePath: string): Promise<Buffer | void> {
+  public async getFile(filePath: string): Promise<Buffer | undefined> {
     await this.sync()
     if (await fs.pathExists(this.pathToFile(filePath))) {
       return fs.readFile(this.pathToFile(filePath))

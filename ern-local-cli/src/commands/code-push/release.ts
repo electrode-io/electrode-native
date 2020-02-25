@@ -38,7 +38,9 @@ export const builder = (argv: Argv) => {
         'Full native application descriptors (target native application versions for the push)',
       type: 'array',
     })
-    .coerce('descriptors', d => d.map(t => AppVersionDescriptor.fromString(t)))
+    .coerce('descriptors', d =>
+      d.map((t: string) => AppVersionDescriptor.fromString(t))
+    )
     .option('force', {
       alias: 'f',
       describe:

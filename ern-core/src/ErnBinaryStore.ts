@@ -120,9 +120,7 @@ export class ErnBinaryStore implements BinaryStore {
       const gotStream = got
         .stream(this.urlToBinary(descriptor, { flavor }))
         .pipe(outputFile)
-      gotStream.on('close', err =>
-        err ? reject(err) : resolve(outputFilePath)
-      )
+      gotStream.on('close', () => resolve(outputFilePath))
       gotStream.on('error', err => reject(err))
     })
   }
@@ -189,7 +187,7 @@ export class ErnBinaryStore implements BinaryStore {
         this.buildNativeBinaryFileName(descriptor, { flavor })
       )
       const unzipper = new DecompressZip(zippedBinaryPath)
-      unzipper.on('error', err => reject(err))
+      unzipper.on('error', (err: any) => reject(err))
       unzipper.on('extract', () => {
         if (descriptor.platform === 'android') {
           shell.mv(path.join(outputDirectory, '*.apk'), pathToOutputBinary)

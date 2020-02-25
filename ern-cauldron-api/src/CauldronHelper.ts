@@ -9,8 +9,11 @@ import {
   AppPlatformDescriptor,
   AppVersionDescriptor,
   AnyAppDescriptor,
+  AppNameDescriptor,
 } from 'ern-core'
 import {
+  CauldronNativeApp,
+  CauldronNativeAppPlatform,
   CauldronCodePushMetadata,
   CauldronCodePushEntry,
   CauldronConfigLevel,
@@ -338,7 +341,19 @@ export class CauldronHelper {
     return result
   }
 
-  public async getDescriptor(descriptor: AnyAppDescriptor): Promise<any> {
+  public async getDescriptor(
+    descriptor: AppPlatformDescriptor
+  ): Promise<CauldronNativeAppPlatform>
+
+  public async getDescriptor(
+    descriptor: AppVersionDescriptor
+  ): Promise<CauldronNativeAppVersion>
+
+  public async getDescriptor(
+    descriptor: AppNameDescriptor
+  ): Promise<CauldronNativeApp>
+
+  public async getDescriptor(descriptor: AnyAppDescriptor) {
     return this.cauldron.getDescriptor(descriptor)
   }
 
@@ -434,7 +449,7 @@ export class CauldronHelper {
   public async getPathToYarnLock(
     descriptor: AppVersionDescriptor,
     key: string
-  ): Promise<string | void> {
+  ): Promise<string | undefined> {
     return this.cauldron.getPathToYarnLock(descriptor, key)
   }
 
@@ -779,35 +794,46 @@ export class CauldronHelper {
     }: {
       label?: string
     } = {}
-  ): Promise<CauldronCodePushEntry | void> {
+  ): Promise<CauldronCodePushEntry | never> {
     const codePushEntries = await this.cauldron.getCodePushEntries(
       descriptor,
       deploymentName
     )
-    let result
+    let result: CauldronCodePushEntry | undefined
     if (codePushEntries) {
       if (label) {
         result = _.find(codePushEntries, e => e.metadata.label === label)
-        if (!result || result.length === 0) {
+        if (!result) {
           throw new Error(
             `No CodePush entry matching label ${label} was found in ${descriptor.toString()}`
           )
         }
       } else {
         result = _.last(codePushEntries)
+        if (!result) {
+          throw new Error(
+            `No CodePush entry matching label found for ${descriptor} ${deploymentName} deployment}`
+          )
+        }
       }
+      return result
+    } else {
+      throw new Error(
+        `No code push entries found for ${descriptor} ${deploymentName} deployment`
+      )
     }
-    return result
   }
 
-  public async getContainerMiniAppsBranches(descriptor) {
+  public async getContainerMiniAppsBranches(descriptor: AppVersionDescriptor) {
     const miniAppsBranches = await this.cauldron.getContainerMiniAppsBranches(
       descriptor
     )
     return _.map(miniAppsBranches, PackagePath.fromString)
   }
 
-  public async getContainerJsApiImplsBranches(descriptor) {
+  public async getContainerJsApiImplsBranches(
+    descriptor: AppVersionDescriptor
+  ) {
     const branches = await this.cauldron.getContainerJsApiImplsBranches(
       descriptor
     )

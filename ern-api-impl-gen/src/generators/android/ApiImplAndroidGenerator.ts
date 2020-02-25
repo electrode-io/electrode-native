@@ -19,9 +19,9 @@ const SRC_MAIN_JAVA_DIR = path.normalize('src/main/java')
 const API_IMPL_PACKAGE = path.normalize('com/ern/api/impl')
 
 export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
-  public static getMustacheFileNamesMap(resourceDir, apiName) {
+  public static getMustacheFileNamesMap(resourceDir: string, apiName: string) {
     const files = readDir(resourceDir, f => f.endsWith('.mustache'))
-    const classNames = {
+    const classNames: { [k: string]: string } = {
       'apiController.mustache': `${apiName}ApiController.java`,
       'requestHandlerProvider.mustache': `${apiName}ApiRequestHandlerProvider.java`,
       'requestHandlers.mustache': `${apiName}ApiRequestHandler.java`,
@@ -29,7 +29,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     return { files, classNames }
   }
 
-  public static createImplDirectoryAndCopyCommonClasses(paths) {
+  public static createImplDirectoryAndCopyCommonClasses(paths: any) {
     const outputDir = path.join(
       paths.outDirectory,
       'android/lib',

@@ -144,7 +144,7 @@ class KaxNullRenderer implements KaxRenderer {
   }
 }
 
-const logLevelStringToEnum = level => {
+const logLevelStringToEnum = (level: string) => {
     switch (level) {
       case 'trace':
         return LogLevel.Trace
