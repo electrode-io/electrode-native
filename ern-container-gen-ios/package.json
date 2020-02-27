@@ -20,7 +20,8 @@
     "container",
     "ios"
   ],
-  "contributors": [{
+  "contributors": [
+    {
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
@@ -48,10 +49,12 @@
     "prepublish": "yarn run build",
     "instrument-dist": "ern-instrument-dist && ern-copyfiles"
   },
-  "copyFiles": [{
-    "source": "src/hull",
-    "dest": "dist"
-  }],
+  "copyFiles": [
+    {
+      "source": "src/hull",
+      "dest": "dist"
+    }
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "ern-container-gen": "1000.0.0",

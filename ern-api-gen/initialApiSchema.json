@@ -10,9 +10,7 @@
   "paths": {
     "/items": {
       "get": {
-        "tags": [
-          "WalmartItem"
-        ],
+        "tags": ["WalmartItem"],
         "description": "Returns all items from the system that the user has access to",
         "operationId": "findItems",
         "parameters": [
@@ -38,9 +36,7 @@
         }
       },
       "post": {
-        "tags": [
-          "WalmartItem"
-        ],
+        "tags": ["WalmartItem"],
         "description": "Creates a Item in the store.",
         "operationId": "addItem",
         "parameters": [
@@ -65,9 +61,7 @@
     },
     "event/itemAdded": {
       "event": {
-        "tags": [
-          "WalmartItem"
-        ],
+        "tags": ["WalmartItem"],
         "operationId": "itemAdded",
         "parameters": [
           {
@@ -84,10 +78,7 @@
   "definitions": {
     "Item": {
       "type": "object",
-      "required": [
-        "name",
-        "id"
-      ],
+      "required": ["name", "id"],
       "properties": {
         "id": {
           "type": "integer",

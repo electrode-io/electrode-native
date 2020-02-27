@@ -22,7 +22,8 @@
     "android",
     "ios"
   ],
-  "contributors": [{
+  "contributors": [
+    {
       "name": "Benoit Lemaire",
       "email": "blemaire@walmartlabs.com"
     },
