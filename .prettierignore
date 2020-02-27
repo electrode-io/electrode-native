@@ -1,5 +1,4 @@
 **/*.md
-*.json
 **/coverage
 **/docs
 **/.coverage
@@ -8,3 +7,4 @@ system-tests/fixtures
 system-tests/tests
 ern-api-gen/test/fixtures
 ern-api-gen/test/tmp
+**/dist

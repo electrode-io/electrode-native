@@ -11,7 +11,13 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": ["electrode", "ern", "react-native", "utilities", "node"],
+  "keywords": [
+    "electrode",
+    "ern",
+    "react-native",
+    "utilities",
+    "node"
+  ],
   "contributors": [
     {
       "name": "Benoit Lemaire",
