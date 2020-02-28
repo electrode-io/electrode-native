@@ -24,9 +24,7 @@ module.exports = function(command, { expectedExitCode = 0 } = {}) {
       )}`
     )
     console.log(
-      `Expected exit code ${expectedExitCode} but command exited with code ${
-        cmdProcess.code
-      }`
+      `Expected exit code ${expectedExitCode} but command exited with code ${cmdProcess.code}`
     )
     afterAll()
     shell.exit(1)
