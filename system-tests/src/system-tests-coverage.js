@@ -11,7 +11,7 @@ process.argv.push(
   '--include',
   'ern-*/dist/**/*.{ts,js}',
   'node',
-  'system-tests/system-tests',
+  'system-tests/src/system-tests',
   '--all'
 )
 

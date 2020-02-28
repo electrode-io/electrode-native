@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const shell = require('shelljs')
-const f = require('../fixtures/constants')
+const f = require('../../fixtures/constants')
 const runErnCommand = require('./runErnCommand')
 const info = chalk.bold.blue
 

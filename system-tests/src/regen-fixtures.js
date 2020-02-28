@@ -1,7 +1,7 @@
 const inquirer = require('inquirer')
 const shell = require('shelljs')
 const path = require('path')
-const f = require('./fixtures/constants')
+const f = require('../fixtures/constants')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
 
 const regenFunctionByFixtureName = {
@@ -13,7 +13,7 @@ const regenFunctionByFixtureName = {
   'test-api': regenTestApiFixture,
 }
 
-const rootFixturesPath = path.join(__dirname, 'fixtures')
+const rootFixturesPath = path.join(__dirname, '../fixtures')
 const rootApiFixturesPath = path.join(rootFixturesPath, 'api')
 const pathsToFixtures = {
   'android-container': path.join(rootFixturesPath, 'android-container'),
@@ -77,11 +77,7 @@ function regenApiImplJsFixture() {
   logHeader('Regenerating JS API Implementation Fixture')
   shell.rm('-rf', pathsToFixtures['api-impl-js'])
   shell.exec(
-    `ern create-api-impl ${f.movieApiPkgName} -p ${
-      f.movieApiImplPkgName
-    } --skipNpmCheck --jsOnly --outputDirectory ${
-      pathsToFixtures['api-impl-js']
-    } --force`
+    `ern create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --jsOnly --outputDirectory ${pathsToFixtures['api-impl-js']} --force`
   )
 }
 
@@ -89,11 +85,7 @@ function regenApiImplNativeFixture() {
   logHeader('Regenerating Native API Implementation Fixture')
   shell.rm('-rf', pathsToFixtures['api-impl-native'])
   shell.exec(
-    `ern create-api-impl ${f.movieApiPkgName} -p ${
-      f.movieApiImplPkgName
-    } --skipNpmCheck --nativeOnly --outputDirectory ${
-      pathsToFixtures['api-impl-native']
-    } --force`
+    `ern create-api-impl ${f.movieApiPkgName} -p ${f.movieApiImplPkgName} --skipNpmCheck --nativeOnly --outputDirectory ${pathsToFixtures['api-impl-native']} --force`
   )
 }
 
@@ -102,9 +94,7 @@ function regenComplexApiFixture() {
   shell.rm('-rf', pathsToFixtures['complex-api'])
   shell.cd(rootApiFixturesPath)
   shell.exec(
-    `ern create-api ${f.complexApiName} -p ${f.complexApiPkgName} --schemaPath ${
-      f.pathToComplexApiSchema
-    } -u "generated" --skipNpmCheck`
+    `ern create-api ${f.complexApiName} -p ${f.complexApiPkgName} --schemaPath ${f.pathToComplexApiSchema} -u "generated" --skipNpmCheck`
   )
 }
 
@@ -113,9 +103,7 @@ function regenTestApiFixture() {
   shell.rm('-rf', pathsToFixtures['test-api'])
   shell.cd(rootApiFixturesPath)
   shell.exec(
-    `ern create-api ${f.testApiName} -p ${f.testApiPkgName} --schemaPath ${
-      f.pathToTestApiSchema
-    } -u "generated" --skipNpmCheck`
+    `ern create-api ${f.testApiName} -p ${f.testApiPkgName} --schemaPath ${f.pathToTestApiSchema} -u "generated" --skipNpmCheck`
   )
 }
 
