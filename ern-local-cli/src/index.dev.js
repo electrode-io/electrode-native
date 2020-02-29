@@ -3,13 +3,10 @@ const path = require('path')
 const Module = require('module')
 const oload = Module._load
 
+const workspacePath = path.resolve(__dirname, '../..')
+
 process.env.ERN_ENV = 'development'
-process.env.TS_NODE_PROJECT = path.resolve(
-  __dirname,
-  '..',
-  '..',
-  'tsconfig.json'
-)
+process.env.TS_NODE_PROJECT = path.resolve(workspacePath, 'tsconfig.json')
 
 let tsNodeSourceMapSupportModule
 Module._load = function(file, parent) {
@@ -23,6 +20,9 @@ Module._load = function(file, parent) {
   }
 }
 
-require('tsconfig-paths/register')
-require('ts-node').register({ transpileOnly: true })
+require(path.normalize(`${workspacePath}/node_modules/tsconfig-paths/register`))
+require(path.normalize(`${workspacePath}/node_modules/ts-node`)).register({
+  dir: workspacePath,
+  transpileOnly: true,
+})
 require('./index.ts')
