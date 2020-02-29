@@ -52,6 +52,7 @@
     "@types/ncp": "^2.0.3",
     "@types/node-fetch": "^2.5.4",
     "@types/semver": "^6.2.0",
+    "@types/sinon": "^7.5.2",
     "@types/shelljs": "^0.8.6",
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.1",

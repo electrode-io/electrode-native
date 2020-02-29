@@ -2,24 +2,23 @@ import { assert, expect } from 'chai'
 import { doesThrow } from 'ern-util-dev'
 import sinon from 'sinon'
 import path from 'path'
-import fs from 'fs'
-import {
-  applyYarnResolutions,
-  generateComposite,
-} from '../src/generateComposite'
+import fs from 'fs-extra'
+import { applyYarnResolutions } from '../src/applyYarnResolutions'
+import { generateComposite } from '../src/generateComposite'
 import {
   getMiniAppsDeltas,
   getPackageJsonDependenciesUsingMiniAppDeltas,
   runYarnUsingMiniAppDeltas,
 } from '../src/miniAppsDeltasUtils'
 import * as ernUtil from 'ern-core'
-const { PackagePath, YarnCli, shell } = ernUtil
+const { YarnCli, shell } = ernUtil
+import { PackagePath } from 'ern-core'
 const sandbox = sinon.createSandbox()
 
 // Spies
-let yarnCliStub
+let yarnCliStub: any
 
-let tmpOutDir
+let tmpOutDir: string
 const currentDir = __dirname
 const pathToFixtures = path.join(currentDir, 'fixtures')
 const pathToSampleYarnLock = path.join(pathToFixtures, 'sample.yarn.lock')
@@ -228,18 +227,28 @@ describe('ern-container-gen utils.js', () => {
   })
 
   const createCompositeNodeModulesReactNativePackageJson = (
-    rootDir,
-    rnVersion
+    rootDir: string,
+    rnVersion: string
   ) => {
     const pathToCompositeNodeModulesReactNative = path.join(
       rootDir,
       'node_modules',
       'react-native'
     )
+    const pathToCompositeNodeModulesMetro = path.join(
+      rootDir,
+      'node_modules',
+      'metro'
+    )
     ernUtil.shell.mkdir('-p', pathToCompositeNodeModulesReactNative)
     fs.writeFileSync(
       path.join(pathToCompositeNodeModulesReactNative, 'package.json'),
       JSON.stringify({ version: rnVersion })
+    )
+    ernUtil.shell.mkdir('-p', pathToCompositeNodeModulesMetro)
+    fs.writeFileSync(
+      path.join(pathToCompositeNodeModulesMetro, 'package.json'),
+      JSON.stringify({ version: '0.51.0' })
     )
   }
 
@@ -351,7 +360,7 @@ describe('ern-container-gen utils.js', () => {
       yarnCliStub.install.callsFake(() =>
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
       )
-      const miniApps = []
+      const miniApps: PackagePath[] = []
       assert(
         await doesThrow(generateComposite, null, {
           miniApps,
@@ -401,7 +410,7 @@ describe('ern-container-gen utils.js', () => {
   // ==========================================================
   // generateComposite [without yarn lock]
   // ==========================================================
-  const fakeYarnInit = (rootDir, rnVersion) => {
+  const fakeYarnInit = (rootDir: string, rnVersion: string) => {
     fs.writeFileSync(
       path.join(tmpOutDir, 'package.json'),
       JSON.stringify({ dependencies: {} })
@@ -469,7 +478,7 @@ describe('ern-container-gen utils.js', () => {
         'c/**/left-pad': '1.1.2',
         'd2/left-pad': '1.1.1',
       }
-      await applyYarnResolutions({ outDir: tmpOutDir, resolutions })
+      await applyYarnResolutions({ cwd: tmpOutDir, resolutions })
       const packageJson: any = JSON.parse(
         fs.readFileSync(packageJsonPath).toString()
       )
@@ -483,7 +492,7 @@ describe('ern-container-gen utils.js', () => {
         'c/**/left-pad': '1.1.2',
         'd2/left-pad': '1.1.1',
       }
-      await applyYarnResolutions({ outDir: tmpOutDir, resolutions })
+      await applyYarnResolutions({ cwd: tmpOutDir, resolutions })
       const packageJson: any = JSON.parse(
         fs.readFileSync(packageJsonPath).toString()
       )
@@ -497,7 +506,7 @@ describe('ern-container-gen utils.js', () => {
         'c/**/left-pad': '1.1.2',
         'd2/left-pad': '1.1.1',
       }
-      await applyYarnResolutions({ outDir: tmpOutDir, resolutions })
+      await applyYarnResolutions({ cwd: tmpOutDir, resolutions })
       assert(yarnCliStub.install.calledOnce)
     })
   })
