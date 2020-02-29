@@ -3,65 +3,50 @@
   "version": "1000.0.0",
   "description": "Electrode Native Platform Development Utilities",
   "main": "index.js",
-  "homepage": "http://www.electrode.io",
+  "bin": {
+    "ern-copyfiles": "bin/ern-copyfiles.js",
+    "ern-instrument-dist": "bin/ern-instrument-dist.js",
+    "ern-mocha": "bin/ern-mocha.js",
+    "ern-nyc": "bin/ern-nyc.js",
+    "ern-typescript": "bin/ern-typescript.js"
+  },
+  "scripts": {
+    "test": "node bin/ern-mocha.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-native.git"
   },
-  "bugs": {
-    "url": "https://github.com/electrode-io/electrode-native/issues"
-  },
   "keywords": [
     "electrode",
     "ern",
+    "node",
     "react-native",
-    "utilities",
-    "node"
+    "utilities"
   ],
+  "author": "",
   "contributors": [
-    {
-      "name": "Benoit Lemaire",
-      "email": "blemaire@walmartlabs.com"
-    },
-    {
-      "name": "Bharath Marulasiddappa",
-      "email": "BMarulasiddappa@walmartlabs.com"
-    },
-    {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
-      "name": "Krunal Shah",
-      "email": "KShah1@walmartlabs.com"
-    },
-    {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
-    }
+    "Benoit Lemaire <blemaire@walmartlabs.com>",
+    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
+    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
+    "Krunal Shah <KShah1@walmartlabs.com>",
+    "Weijie Li <WLi@walmartlabs.com>"
   ],
-  "scripts": {
-    "test": "node bin/ern-mocha.js"
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-native/issues"
   },
+  "homepage": "http://www.electrode.io",
   "dependencies": {
-    "shelljs": "^0.8.2",
-    "tmp": "^0.0.33",
+    "colors": "^1.3.1",
+    "diff": "^3.5.0",
+    "dir-compare": "^1.4.0",
     "fs-readdir-recursive": "^1.1.0",
     "istanbul": "^0.4.5",
-    "dir-compare": "^1.4.0",
-    "diff": "^3.5.0",
-    "colors": "^1.3.1"
-  },
-  "bin": {
-    "ern-mocha": "bin/ern-mocha.js",
-    "ern-nyc": "bin/ern-nyc.js",
-    "ern-typescript": "bin/ern-typescript.js",
-    "ern-copyfiles": "bin/ern-copyfiles.js",
-    "ern-instrument-dist": "bin/ern-instrument-dist.js"
+    "shelljs": "^0.8.2",
+    "tmp": "^0.0.33"
   },
   "engines": {
     "node": ">=4.5"
-  },
-  "author": "",
-  "license": "Apache-2.0"
+  }
 }

@@ -4,57 +4,39 @@
   "description": "Electrode Native Core",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "homepage": "http://www.electrode.io",
+  "scripts": {
+    "build": "ern-typescript",
+    "coverage": "ern-nyc",
+    "instrument-dist": "ern-instrument-dist",
+    "prepublish": "yarn run build",
+    "test": "ern-mocha"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-native.git"
   },
-  "bugs": {
-    "url": "https://github.com/electrode-io/electrode-native/issues"
-  },
   "keywords": [
+    "android",
     "electrode",
     "electrode-native",
     "ern",
-    "react-native",
+    "ios",
     "node",
-    "android",
-    "ios"
+    "react-native"
   ],
   "contributors": [
-    {
-      "name": "Benoit Lemaire",
-      "email": "blemaire@walmartlabs.com"
-    },
-    {
-      "name": "Bharath Marulasiddappa",
-      "email": "BMarulasiddappa@walmartlabs.com"
-    },
-    {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
-      "name": "Frieder Bluemle",
-      "email": "frieder.bluemle@walmartlabs.com"
-    },
-    {
-      "name": "Krunal Shah",
-      "email": "KShah1@walmartlabs.com"
-    },
-    {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
-    }
+    "Benoit Lemaire <blemaire@walmartlabs.com>",
+    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
+    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
+    "Frieder Bluemle <frieder.bluemle@walmartlabs.com>",
+    "Krunal Shah <KShah1@walmartlabs.com>",
+    "Weijie Li <WLi@walmartlabs.com>"
   ],
-  "scripts": {
-    "build": "ern-typescript",
-    "test": "ern-mocha",
-    "coverage": "ern-nyc",
-    "prepublish": "yarn run build",
-    "instrument-dist": "ern-instrument-dist"
-  },
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-native/issues"
+  },
+  "homepage": "http://www.electrode.io",
   "dependencies": {
     "@octokit/rest": "16.33.1",
     "@yarnpkg/lockfile": "^1.1.0",

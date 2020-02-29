@@ -4,55 +4,43 @@
   "description": "Electrode Native Composite Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "homepage": "http://www.electrode.io",
+  "scripts": {
+    "build": "ern-typescript",
+    "coverage": "ern-nyc",
+    "instrument-dist": "ern-instrument-dist",
+    "prepublish": "yarn run build",
+    "test": "ern-mocha"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-native.git"
   },
+  "keywords": [
+    "composite",
+    "electrode",
+    "ern",
+    "generator",
+    "node",
+    "react-native"
+  ],
+  "contributors": [
+    "Benoit Lemaire <blemaire@walmartlabs.com>",
+    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
+    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
+    "Krunal Shah <KShah1@walmartlabs.com>"
+  ],
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": [
-    "electrode",
-    "ern",
-    "react-native",
-    "generator",
-    "composite",
-    "node"
-  ],
-  "contributors": [
-    {
-      "name": "Benoit Lemaire",
-      "email": "blemaire@walmartlabs.com"
-    },
-    {
-      "name": "Bharath Marulasiddappa",
-      "email": "BMarulasiddappa@walmartlabs.com"
-    },
-    {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
-      "name": "Krunal Shah",
-      "email": "KShah1@walmartlabs.com"
-    }
-  ],
-  "scripts": {
-    "build": "ern-typescript",
-    "test": "ern-mocha",
-    "coverage": "ern-nyc",
-    "prepublish": "yarn run build",
-    "instrument-dist": "ern-instrument-dist"
-  },
-  "license": "Apache-2.0",
+  "homepage": "http://www.electrode.io",
   "dependencies": {
     "ern-core": "1000.0.0",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^2.3.1",
-    "uuid": "^3.3.2",
-    "semver": "^5.5.0"
+    "semver": "^5.5.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0"
