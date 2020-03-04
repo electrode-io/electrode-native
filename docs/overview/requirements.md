@@ -2,7 +2,7 @@
 
 Depending on whether you are building Android or iOS apps, the following tools are required:
 
-- Node.js >= 8
+- Node.js >= 8.3
 - NPM >= 3.0
 - Android Studio (for Android apps)
 - Xcode >= 10 (for iOS apps)
