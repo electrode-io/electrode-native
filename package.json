@@ -3,14 +3,12 @@
   "version": "1000.0.0",
   "private": true,
   "description": "",
-  "keywords": [],
-  "license": "Apache-2.0",
   "scripts": {
     "build": "lerna run build",
     "check": "yarn check:lint && yarn check:yarnlock",
     "check:lint": "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e '**/node_modules/**'",
-    "check:yarnlock": "node yarn-lock-check",
     "check:regen-fixtures": "node regen-fixtures-check",
+    "check:yarnlock": "node yarn-lock-check",
     "coverage:ci": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json text-lcov | yarn coveralls",
     "coverage:local": "yarn coverage:unit && yarn coverage:system && yarn istanbul report --include=**/.coverage/coverage-final.json html",
     "coverage:system": "rimraf .nyc_output && lerna run build && lerna run instrument-dist && node system-tests/src/system-tests-coverage",
@@ -27,9 +25,16 @@
     "test:system": "yarn build && lerna run instrument-dist && node system-tests/src/system-tests",
     "test:unit": "lerna run test --no-bail"
   },
-  "workspaces": [
-    "ern-*"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electrode-io/electrode-native.git"
+  },
+  "keywords": [],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-native/issues"
+  },
+  "homepage": "http://www.electrode.io",
   "dependencies": {
     "@types/node": "^11.13.8",
     "chalk": "^2.4.2",
@@ -39,31 +44,31 @@
     "@types/archiver": "^3.0.0",
     "@types/chai": "^4.2.9",
     "@types/cli-table": "^0.3.0",
-    "@types/inquirer": "^6.5.0",
     "@types/fast-levenshtein": "^0.0.1",
-    "@types/fs-readdir-recursive": "^1.0.0",
     "@types/fs-extra": "^8.1.0",
+    "@types/fs-readdir-recursive": "^1.0.0",
     "@types/get-folder-size": "^2.0.0",
-    "@types/got": "^9.6.9",
     "@types/glob": "^7.1.1",
+    "@types/got": "^9.6.9",
+    "@types/hapi__joi": "^15.0.4",
+    "@types/inquirer": "^6.5.0",
     "@types/lodash": "^4.14.149",
     "@types/mocha": "^5.2.7",
     "@types/mustache": "^0.8.32",
     "@types/ncp": "^2.0.3",
     "@types/node-fetch": "^2.5.4",
     "@types/semver": "^6.2.0",
-    "@types/sinon": "^7.5.2",
     "@types/shelljs": "^0.8.6",
+    "@types/sinon": "^7.5.2",
+    "@types/tmp": "^0.1.0",
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.1",
-    "@types/tmp": "^0.1.0",
     "@types/uuid": "^3.4.6",
+    "@types/validate-npm-package-name": "^3.0.0",
     "@types/yargs": "^13.0.3",
+    "@types/yarnpkg__lockfile": "^1.1.3",
     "@types/yauzl": "^2.9.1",
     "@types/yazl": "^2.4.2",
-    "@types/yarnpkg__lockfile": "^1.1.3",
-    "@types/hapi__joi": "^15.0.4",
-    "@types/validate-npm-package-name": "^3.0.0",
     "@yarnpkg/lockfile": "^1.1.0",
     "chai": "^4.2.0",
     "colors": "^1.4.0",
@@ -99,12 +104,7 @@
   "engines": {
     "node": ">=6"
   },
-  "bugs": {
-    "url": "https://github.com/electrode-io/electrode-native/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/electrode-io/electrode-native.git"
-  },
-  "homepage": "http://www.electrode.io"
+  "workspaces": [
+    "ern-*"
+  ]
 }

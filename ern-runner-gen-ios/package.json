@@ -4,59 +4,38 @@
   "description": "Electrode Native Offical iOS Runner Project Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "homepage": "http://www.electrode.io",
+  "scripts": {
+    "build": "ern-typescript && ern-copyfiles",
+    "coverage": "ern-nyc",
+    "instrument-dist": "ern-instrument-dist && ern-copyfiles",
+    "prepublish": "yarn run build",
+    "regen-fixtures": "../node_modules/.bin/ts-node test/regen-fixtures",
+    "test": "ern-mocha"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-native.git"
   },
-  "bugs": {
-    "url": "https://github.com/electrode-io/electrode-native/issues"
-  },
   "keywords": [
     "electrode",
     "ern",
-    "react-native",
-    "runner",
+    "ios",
     "node",
-    "ios"
+    "react-native",
+    "runner"
   ],
   "contributors": [
-    {
-      "name": "Benoit Lemaire",
-      "email": "blemaire@walmartlabs.com"
-    },
-    {
-      "name": "Bharath Marulasiddappa",
-      "email": "BMarulasiddappa@walmartlabs.com"
-    },
-    {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
-      "name": "Krunal Shah",
-      "email": "KShah1@walmartlabs.com"
-    },
-    {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
-    }
-  ],
-  "scripts": {
-    "build": "ern-typescript && ern-copyfiles",
-    "test": "ern-mocha",
-    "coverage": "ern-nyc",
-    "prepublish": "yarn run build",
-    "regen-fixtures": "../node_modules/.bin/ts-node test/regen-fixtures",
-    "instrument-dist": "ern-instrument-dist && ern-copyfiles"
-  },
-  "copyFiles": [
-    {
-      "source": "src/hull",
-      "dest": "dist"
-    }
+    "Benoit Lemaire <blemaire@walmartlabs.com>",
+    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
+    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
+    "Krunal Shah <KShah1@walmartlabs.com>",
+    "Weijie Li <WLi@walmartlabs.com>"
   ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/electrode-io/electrode-native/issues"
+  },
+  "homepage": "http://www.electrode.io",
   "dependencies": {
     "ern-core": "1000.0.0",
     "ern-runner-gen": "1000.0.0",
@@ -64,10 +43,16 @@
     "mustache": "^2.3.1"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0",
-    "copyfiles": "^2.0.0"
+    "copyfiles": "^2.0.0",
+    "ern-util-dev": "1000.0.0"
   },
   "engines": {
     "node": ">=6"
-  }
+  },
+  "copyFiles": [
+    {
+      "source": "src/hull",
+      "dest": "dist"
+    }
+  ]
 }

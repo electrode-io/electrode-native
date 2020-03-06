@@ -6,44 +6,29 @@
   "bin": {
     "ern": "bin/ern.js"
   },
-  "homepage": "http://www.electrode.io",
   "repository": {
     "type": "git",
     "url": "https://github.com/electrode-io/electrode-native.git"
   },
+  "keywords": [
+    "client",
+    "electrode",
+    "ern",
+    "node",
+    "react-native"
+  ],
+  "contributors": [
+    "Benoit Lemaire <blemaire@walmartlabs.com>",
+    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
+    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
+    "Krunal Shah <KShah1@walmartlabs.com>",
+    "Weijie Li <WLi@walmartlabs.com>"
+  ],
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "keywords": [
-    "electrode",
-    "ern",
-    "react-native",
-    "client",
-    "node"
-  ],
-  "contributors": [
-    {
-      "name": "Benoit Lemaire",
-      "email": "blemaire@walmartlabs.com"
-    },
-    {
-      "name": "Bharath Marulasiddappa",
-      "email": "BMarulasiddappa@walmartlabs.com"
-    },
-    {
-      "name": "Deepu Ganapathiyadan",
-      "email": "DGanapathiyadan@walmartlabs.com"
-    },
-    {
-      "name": "Krunal Shah",
-      "email": "KShah1@walmartlabs.com"
-    },
-    {
-      "name": "Weijie Li",
-      "email": "WLi@walmartlabs.com"
-    }
-  ],
-  "license": "Apache-2.0",
+  "homepage": "http://www.electrode.io",
   "dependencies": {
     "chalk": "^2.3.0",
     "ora": "^1.3.0",
