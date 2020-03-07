@@ -47,7 +47,7 @@
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8.3"
   },
   "copyFiles": [
     {
