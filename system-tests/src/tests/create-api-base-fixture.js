@@ -21,7 +21,7 @@ const excludeFilter = [
   .join(',')
 
 run(
-  `create-api ${f.testApiName} -p ${f.testApiPkgName} -u "generated" --skipNpmCheck`
+  `create-api ${f.testApiName} -p ${f.testApiPkgName} --schemaPath ${f.pathToTestApiSchema} -u "generated" --skipNpmCheck`
 )
 
 const fixtureApiPath = f.pathToBaseApiFixture
