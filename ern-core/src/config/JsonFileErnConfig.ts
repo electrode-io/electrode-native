@@ -1,6 +1,7 @@
 import { ErnConfig } from './ErnConfig'
 import { InMemErnConfig } from './InMemErnConfig'
 import fs from 'fs'
+import path from 'path'
 
 export class JsonFileErnConfig implements ErnConfig {
   private readonly inMemConfig: InMemErnConfig
@@ -9,7 +10,7 @@ export class JsonFileErnConfig implements ErnConfig {
     const conf = fs.existsSync(this.jsonFilePath)
       ? JSON.parse(fs.readFileSync(this.jsonFilePath, 'utf-8'))
       : {}
-    this.inMemConfig = new InMemErnConfig(conf)
+    this.inMemConfig = new InMemErnConfig(conf, path.dirname(jsonFilePath))
   }
 
   public get(key?: string, defaultValue?: any): any {
