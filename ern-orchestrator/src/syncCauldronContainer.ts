@@ -24,9 +24,11 @@ export async function syncCauldronContainer(
   commitMessage: string | string[],
   {
     containerVersion,
+    resetCache,
     sourceMapOutput,
   }: {
     containerVersion?: string
+    resetCache?: boolean
     sourceMapOutput?: string
   } = {}
 ) {
@@ -109,6 +111,7 @@ Please set the new container version through command options.`)
       .run(
         runCauldronContainerGen(descriptor, composite, {
           outDir,
+          resetCache,
           sourceMapOutput,
         })
       )

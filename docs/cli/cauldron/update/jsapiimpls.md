@@ -32,3 +32,8 @@ Example: If the current container version is 1.2.3 and a version is not included
 
 * You can only pass a complete native application descriptor as the JS API implementations updated using this command targets only a specific single native application version.  
 **Default**  Lists all non-released native application versions from the Cauldron and prompts you to choose a descriptor.   
+
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false

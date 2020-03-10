@@ -39,4 +39,8 @@ export interface ContainerGeneratorConfig {
    * Indicates whether to generate a dev or release JS bundle
    */
   devJsBundle?: boolean
+  /**
+   * Indicates whether to reset the React Native cache prior to bundling
+   */
+  resetCache?: boolean
 }

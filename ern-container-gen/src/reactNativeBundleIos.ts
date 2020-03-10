@@ -8,12 +8,14 @@ export async function reactNativeBundleIos({
   outDir,
   sourceMapOutput,
   cwd,
+  resetCache,
 }: {
   bundleOutput?: string
   dev?: boolean
   outDir: string
   sourceMapOutput?: string
   cwd?: string
+  resetCache?: boolean
 }): Promise<BundlingResult> {
   cwd = cwd || process.cwd()
   const miniAppOutPath = path.join(
@@ -52,6 +54,7 @@ export async function reactNativeBundleIos({
       dev: !!dev,
       entryFile,
       platform: 'ios',
+      resetCache,
       sourceMapOutput,
     })
     return result

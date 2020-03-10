@@ -30,6 +30,11 @@ Example: If the current container version is 1.2.3 and a version is not included
 * You can only pass a complete native application descriptor as the native dependencies removed using this command target only a specific single native application version.  
 **Default**  Lists all non-released native application versions from the Cauldron and prompts you to choose one.  
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false
+
 #### Remarks
 
 * You don't need to provide a version for the JS API implementation(s) when using the `ern cauldron del jsapiimpls <jsapiimpls..>` command. The version is ignored because only one version of a given JS API implementation can be present in a container at any given time.  

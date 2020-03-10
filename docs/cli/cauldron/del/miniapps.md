@@ -30,6 +30,11 @@ Example: If the current container version is 1.2.3 and a version is not included
 * You can only pass a complete native application descriptor as the native dependencies removed using this command target only a specific single native application version.  
 **Default**  Lists all non-released native application versions from the Cauldron and prompts you to choose one to remove from the MiniApps  
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false
+
 #### Remarks
 
 * You don't need to run the `ern cauldron del miniapps <miniapps..>` command from within a MiniApp working directory.    

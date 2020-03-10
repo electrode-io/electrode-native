@@ -64,6 +64,7 @@ export async function generateContainer(
         dev: !!config.devJsBundle,
         outDir: config.outDir,
         platform: config.targetPlatform,
+        resetCache: config.resetCache,
         sourceMapOutput: config.sourceMapOutput,
       })
     )

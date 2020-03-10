@@ -71,6 +71,12 @@ export const builder = (argv: Argv) => {
         'Set to upload a production bundle rather than a development one',
       type: 'boolean',
     })
+    .option('resetCache', {
+      default: false,
+      describe:
+        'Indicates whether to reset the React Native cache prior to bundling',
+      type: 'boolean',
+    })
     .coerce('miniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
@@ -85,6 +91,7 @@ export const commandHandler = async ({
   miniapps,
   platform,
   prod,
+  resetCache,
 }: {
   baseComposite?: PackagePath
   descriptor?: AppVersionDescriptor
@@ -95,6 +102,7 @@ export const commandHandler = async ({
   miniapps?: PackagePath[]
   platform?: NativePlatform
   prod?: boolean
+  resetCache?: boolean
 } = {}) => {
   await logErrorAndExitIfNotSatisfied({
     bundleStoreAccessKeyIsSet: {
@@ -188,6 +196,7 @@ export const commandHandler = async ({
           dev: !prod,
           outDir,
           platform: curPlatform,
+          resetCache,
           sourceMapOutput: path.join(outDir, 'index.map'),
         })
       )

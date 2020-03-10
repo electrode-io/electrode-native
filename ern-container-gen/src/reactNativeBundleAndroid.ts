@@ -8,12 +8,14 @@ export async function reactNativeBundleAndroid({
   outDir,
   sourceMapOutput,
   cwd,
+  resetCache,
 }: {
   bundleOutput?: string
   dev?: boolean
   outDir: string
   sourceMapOutput?: string
   cwd?: string
+  resetCache?: boolean
 }): Promise<BundlingResult> {
   cwd = cwd ?? process.cwd()
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
@@ -41,6 +43,7 @@ export async function reactNativeBundleAndroid({
       dev: !!dev,
       entryFile,
       platform: 'android',
+      resetCache,
       sourceMapOutput,
     })
     return result

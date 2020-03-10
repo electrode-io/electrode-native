@@ -45,6 +45,12 @@ export const builder = (argv: Argv) => {
         'Update one or more MiniApps versions in a native appplication version',
       type: 'array',
     })
+    .option('resetCache', {
+      default: false,
+      describe:
+        'Indicates whether to reset the React Native cache prior to bundling',
+      type: 'boolean',
+    })
     .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
     .epilog(epilog(exports))
 }
@@ -52,18 +58,16 @@ export const builder = (argv: Argv) => {
 export const commandHandler = async ({
   addMiniapps = [],
   containerVersion,
-
   delMiniapps = [],
   descriptor,
-
+  resetCache,
   updateMiniapps = [],
 }: {
   addMiniapps: PackagePath[]
   containerVersion?: string
-
   delMiniapps: PackagePath[]
   descriptor?: AppVersionDescriptor
-
+  resetCache?: boolean
   updateMiniapps: PackagePath[]
 }) => {
   descriptor =
@@ -141,7 +145,7 @@ export const commandHandler = async ({
     },
     descriptor,
     cauldronCommitMessage,
-    { containerVersion }
+    { containerVersion, resetCache }
   )
   log.info(`Batch operations were succesfully performed for ${descriptor}`)
 }
