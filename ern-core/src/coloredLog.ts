@@ -32,6 +32,10 @@ export default class ColoredLog {
         level <= LogLevel.Info
           ? (msg: string) => kax.info(msg)
           : () => this.noop(),
+      raw:
+        level < LogLevel.Off
+          ? (msg: string) => kax.raw(msg)
+          : () => this.noop(),
       trace:
         level <= LogLevel.Trace
           ? (msg: string) => kax.raw(msg)
@@ -45,6 +49,10 @@ export default class ColoredLog {
 
   get level(): LogLevel {
     return this.pLevel
+  }
+
+  public raw(msg: string) {
+    this.loggers.raw(msg)
   }
 
   public trace(msg: string) {
