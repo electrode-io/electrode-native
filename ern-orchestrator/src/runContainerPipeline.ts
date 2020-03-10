@@ -65,6 +65,7 @@ export async function runContainerPipeline({
               containerPath,
               containerVersion,
               extra,
+              inPlace: pipelineElt.inPlace,
               platform,
               publisher: PackagePath.fromString(pipelineElt.name),
               url: pipelineElt.url,

@@ -38,4 +38,10 @@ export interface ContainerPublisherConfig {
    * Specific to the publisher
    */
   extra?: any
+  /**
+   * Publish the container in place rather
+   * than copying it to a temporary directory
+   * to run publisher from
+   */
+  inPlace?: boolean
 }
