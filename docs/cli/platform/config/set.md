@@ -78,6 +78,24 @@ HTTP/HTTPS proxy to use to connect to the binary store server.
 Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
 **default** : no proxy
 
+- `manifest` [object]\
+Master and/or overide manifest paths to be used locally.\
+**If this object in defined in local configuration, it will take precedence over any cauldron manifest configuration**\
+For example :
+```json
+{
+  "manifest": {
+    "master": {
+      "url": "/local/path/to/master/manifest"
+    },
+    "override": {
+      "type": "partial",
+      "url": "/local/path/to/override/manifest"
+    }
+  }
+}
+```
+
 #### Remarks
  
 * In case a value already exists in the configuration for a given key, this command will not fail and will overwrite the existing value.
