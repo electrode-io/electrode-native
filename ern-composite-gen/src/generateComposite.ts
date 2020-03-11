@@ -11,7 +11,7 @@ import { getNodeModuleVersion } from './getNodeModuleVersion'
 import { addRNStartScriptToPjson } from './addRNStartScriptToPjson'
 import { createIndexJs } from './createIndexJs'
 import { createBaseCompositeImports } from './createBaseCompositeImports'
-import { patchMetroBabelRcRoots } from './patchMetroBabelRcRoots'
+import { patchCompositeBabelRcRoots } from './patchCompositeBabelRcRoots'
 import { patchMetro51AssetsBug } from './patchMetro51AssetsBug'
 import { patchMetroBabelEnv } from './patchMetroBabelEnv'
 import { createBabelRc } from './createBabelRc'
@@ -158,7 +158,7 @@ async function generateFullComposite(
       // applied patches
       await applyYarnResolutions({ cwd: outDir, resolutions })
     }
-    await patchMetroBabelRcRoots({ cwd: outDir })
+    await patchCompositeBabelRcRoots({ cwd: outDir })
     await createBabelRc({ cwd: outDir })
     await createMetroConfig({ cwd: outDir })
     const rnVersion = await getNodeModuleVersion({

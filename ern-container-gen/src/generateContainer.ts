@@ -33,6 +33,14 @@ export async function generateContainer(
   fs.ensureDirSync(config.outDir)
   shell.rm('-rf', path.join(config.outDir, '{.*,*}'))
 
+  if (!config.plugins || config.plugins.length === 0) {
+    config.plugins = await kax
+      .task('Resolving native dependencies')
+      .run(
+        config.composite.getInjectableNativeDependencies(config.targetPlatform)
+      )
+  }
+
   config.plugins = sortDependenciesByName(config.plugins)
 
   const reactNativePlugin = _.find(
@@ -73,9 +81,10 @@ export async function generateContainer(
     await postBundle(config, bundlingResult)
   }
 
+  const compositeMiniApps = await config.composite.getMiniApps()
   if (!config.ignoreRnpmAssets) {
     copyRnpmAssets(
-      config.composite.getMiniApps(),
+      compositeMiniApps,
       config.composite.path,
       config.outDir,
       config.targetPlatform

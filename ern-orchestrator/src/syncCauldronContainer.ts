@@ -177,6 +177,7 @@ Please set the new container version through command options.`)
           await fs.realpath(path.join(composite.path, 'node_modules')),
           await fs.realpath(containerGenRes.bundlingResult.sourceMapPath!),
         ]
+        const compositeMiniApps = await composite.getMiniAppsPackages()
         await bugsnagUpload({
           apiKey,
           minifiedFile,

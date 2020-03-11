@@ -200,7 +200,9 @@ export async function runMiniApp(
     })
   }
 
-  const compositeNativeDeps = await containerGenResult.config.composite.getNativeDependencies()
+  const compositeNativeDeps = await containerGenResult.config.composite.getNativeDependencies(
+    {}
+  )
   const reactNativeDep = _.find(
     compositeNativeDeps.all,
     p => p.name === 'react-native'

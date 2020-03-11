@@ -9,7 +9,7 @@ import {
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
 import * as compositeGen from 'ern-composite-gen'
-import { Composite } from 'ern-composite-gen'
+import { GeneratedComposite } from 'ern-composite-gen'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
 import * as core from 'ern-core'
 import * as cauldronApi from 'ern-cauldron-api'
@@ -31,14 +31,14 @@ const testAndroid1780Descriptor = AppVersionDescriptor.fromString(
 
 let documentStore
 let fileStore
-let cauldronDoc
+let cauldronDoc: any
 
 const cauldronApiFixtureFileStorePath = path.join(
   __dirname,
   '../../ern-cauldron-api/test/fixtures/filestore'
 )
 
-function createCauldronApi(cauldronDocument) {
+function createCauldronApi(cauldronDocument: any) {
   const fileStoreTmpDir = core.createTmpDir()
   core.shell.cp(
     '-rf',
@@ -50,11 +50,11 @@ function createCauldronApi(cauldronDocument) {
   return new CauldronApi(documentStore, fileStore)
 }
 
-function createCauldronHelper(cauldronDocument) {
+function createCauldronHelper(cauldronDocument: any) {
   return new CauldronHelper(createCauldronApi(cauldronDocument))
 }
 
-function cloneFixture(fixture) {
+function cloneFixture(fixture: any) {
   return JSON.parse(JSON.stringify(fixture))
 }
 
@@ -256,7 +256,7 @@ describe('codepush', () => {
   })
 
   describe('performCodePushPromote', () => {
-    let codePushSdkStub
+    let codePushSdkStub: any
 
     function prepareStubs({
       compatibility_areCompatible = true,
@@ -385,7 +385,7 @@ describe('codepush', () => {
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0]
       expect(
         nativeAppVersion.codePush.Production.find(
-          c => c.metadata.label === 'v20'
+          (c: any) => c.metadata.label === 'v20'
         )
       ).not.undefined
     })
@@ -407,7 +407,7 @@ describe('codepush', () => {
 
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0]
       const codePushEntry = nativeAppVersion.codePush.Production.find(
-        c => c.metadata.label === 'v20'
+        (c: any) => c.metadata.label === 'v20'
       )
       expect(codePushEntry).to.deep.equal({
         jsApiImpls: ['react-native-my-api-impl@1.1.0'],
@@ -583,7 +583,7 @@ describe('codepush', () => {
   })
 
   describe('performCodePushOtaUpdate', () => {
-    let codePushSdkStub
+    let codePushSdkStub: any
 
     function prepareStubs({
       compatibility_areCompatible = true,
@@ -594,7 +594,9 @@ describe('codepush', () => {
         .stub(compatibility, 'areCompatible')
         .resolves(compatibility_areCompatible)
 
-      sandbox.stub(Composite, 'generate').callsFake(() => Promise.resolve({}))
+      sandbox
+        .stub(GeneratedComposite, 'generate')
+        .callsFake(() => Promise.resolve({}))
       codePushSdkStub = sinon.createStubInstance(CodePushSdk)
       sandbox.stub(core, 'getCodePushSdk').returns(codePushSdkStub)
       sandbox.stub(compositeGen, 'generateComposite').resolves()
@@ -695,7 +697,7 @@ describe('codepush', () => {
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0]
       expect(
         nativeAppVersion.codePush.Production.find(
-          c => c.metadata.label === 'v20'
+          (c: any) => c.metadata.label === 'v20'
         )
       ).not.undefined
     })

@@ -13,7 +13,7 @@ import {
   createProxyAgentFromErnConfig,
   bugsnagUpload,
 } from 'ern-core'
-import { Composite } from 'ern-composite-gen'
+import { GeneratedComposite } from 'ern-composite-gen'
 import {
   CauldronCodePushMetadata,
   CauldronCodePushEntry,
@@ -388,7 +388,7 @@ export async function performCodePushOtaUpdate(
     }
 
     const composite = await kax.task('Generating composite module').run(
-      Composite.generate({
+      GeneratedComposite.generate({
         baseComposite,
         jsApiImplDependencies: pathToJsApiImplsToBeCodePushed,
         miniApps: pathsToMiniAppsToBeCodePushed,
@@ -532,6 +532,7 @@ export async function performCodePushOtaUpdate(
             await fs.realpath(path.join(composite.path, 'node_modules')),
             await fs.realpath(sourceMapOutput),
           ]
+          const compositeMiniAppsPackages = await composite.getMiniAppsPackages()
           await bugsnagUpload({
             apiKey,
             minifiedFile,

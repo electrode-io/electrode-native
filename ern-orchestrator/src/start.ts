@@ -13,7 +13,7 @@ import {
   AppVersionDescriptor,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { Composite } from 'ern-composite-gen'
+import { GeneratedComposite } from 'ern-composite-gen'
 import _ from 'lodash'
 import chokidar from 'chokidar'
 import path from 'path'
@@ -92,7 +92,7 @@ export default async function start({
   log.trace(`Temporary composite directory is ${compositeDir}`)
 
   const composite = await kax.task('Generating MiniApps composite').run(
-    Composite.generate({
+    GeneratedComposite.generate({
       baseComposite,
       extraJsDependencies: extraJsDependencies || undefined,
       jsApiImplDependencies: jsApiImpls,
