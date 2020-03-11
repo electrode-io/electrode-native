@@ -28,7 +28,11 @@ export function promisifyChildProcess(child: ChildProcess): Promise<void> {
 
 export async function execp(
   command: string,
-  options?: ExecOpts
+  options?: ExecOpts,
+  loggers: { stdout: (s: string) => void; stderr: (s: string) => void } = {
+    stderr: log.debug.bind(log),
+    stdout: log.trace.bind(log),
+  }
 ): Promise<string> {
   log.trace(`execp => command: ${command} options: ${JSON.stringify(options)}`)
   return new Promise<string>((resolve, reject) => {
@@ -40,10 +44,10 @@ export async function execp(
       }
     })
     if (cp.stdout) {
-      cp.stdout.on('data', data => log.trace(data.toString()))
+      cp.stdout.on('data', data => loggers.stdout(data.toString()))
     }
     if (cp.stderr) {
-      cp.stderr.on('data', data => log.debug(data.toString()))
+      cp.stderr.on('data', data => loggers.stderr(data.toString()))
     }
   })
 }
@@ -51,7 +55,11 @@ export async function execp(
 export async function spawnp(
   command: string,
   args: string[] = [],
-  options: any = {}
+  options: any = {},
+  loggers: { stdout: (s: string) => void; stderr: (s: string) => void } = {
+    stderr: log.debug.bind(log),
+    stdout: log.trace.bind(log),
+  }
 ) {
   log.trace(
     `spawnp => command: ${command} args: ${JSON.stringify(
@@ -59,7 +67,7 @@ export async function spawnp(
     )} options: ${JSON.stringify(options)}`
   )
   const cp = spawn(command, args, options)
-  cp.stdout.on('data', data => log.trace(data.toString()))
-  cp.stderr.on('data', data => log.debug(data.toString()))
+  cp.stdout.on('data', data => loggers.stdout(data.toString()))
+  cp.stderr.on('data', data => loggers.stderr(data.toString()))
   return promisifyChildProcess(cp)
 }
