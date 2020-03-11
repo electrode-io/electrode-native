@@ -68,7 +68,7 @@ HTTP/HTTPS proxy to use to connect to the bundle store server.
 Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
 **default** : no proxy
 
-- `sourceMapStoreProxy` [string]  
+- `sourceMapStoreProxy` [string]
 HTTP/HTTPS proxy to use to connect to the source map store server.  
 Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
 **default** : no proxy
@@ -81,5 +81,18 @@ Should be the full url to the proxy, including the port. For example `http://10.
 #### Remarks
  
 * In case a value already exists in the configuration for a given key, this command will not fail and will overwrite the existing value.
+
+### Placeholders
+
+Electrode Native supports the following placeholders and will replace them accordingly when loading the configuration :
+
+- `${env.ENV_VAR_KEY}`\
+Will be replaced with the value of `ENV_VAR_KEY` environment variable.
+
+- `${ERNRC}`\
+Will be replaced with the path to the directory containing the resolved `.ernrc` configuration.
+
+- `${PWD}`\
+Will be replaced with current process working directory.
 
 [Electrode Native bundle store server]: https://github.com/electrode-io/ern-bundle-store
