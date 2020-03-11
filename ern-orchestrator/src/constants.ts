@@ -81,4 +81,10 @@ export const availableUserConfigKeys = [
     name: 'bugsnagProxy',
     values: ['string'],
   },
+  {
+    desc:
+      'Local manifest configuration (takes precedence on manifest configuration from cauldron)',
+    name: 'manifest',
+    values: ['object'],
+  },
 ]

@@ -23,6 +23,7 @@
 - `codePushCustomServerUrl`
 - `codePushProxy`
 - `logLevel` 
+- `manifest`
 - `max-package-cache-size`
 - `package-cache-enabled`
 - `retain-tmp-dir` 

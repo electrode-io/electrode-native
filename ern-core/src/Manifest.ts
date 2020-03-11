@@ -3,6 +3,7 @@ import shell from './shell'
 import path from 'path'
 import Platform from './Platform'
 import GitManifest from './GitManifest'
+import { LocalManifest } from './LocalManifest'
 import Mustache from 'mustache'
 import _ from 'lodash'
 import fs from 'fs-extra'
@@ -381,11 +382,11 @@ const ERN_MANIFEST_MASTER_GIT_REPO = `https://github.com/electrode-io/electrode-
 export class Manifest {
   public static getOverrideManifestConfig: () => Promise<ManifestOverrideConfig | void>
 
-  public readonly masterManifest: GitManifest
+  public readonly masterManifest: LocalManifest | GitManifest
   private manifestOverrideType: 'partial' | 'full'
-  private overrideManifest: GitManifest
+  private overrideManifest: LocalManifest | GitManifest
 
-  constructor(masterManifest: GitManifest) {
+  constructor(masterManifest: LocalManifest | GitManifest) {
     this.masterManifest = masterManifest
   }
 
@@ -398,7 +399,7 @@ export class Manifest {
         )
         this.manifestOverrideType = overrideManifestConfig.type
         if (await fs.pathExists(manifestOverrideUrl)) {
-          this.overrideManifest = new GitManifest(manifestOverrideUrl)
+          this.overrideManifest = new LocalManifest(manifestOverrideUrl)
         } else {
           this.overrideManifest = new GitManifest(
             Platform.overrideManifestDirectory,
@@ -816,9 +817,13 @@ export class Manifest {
   }
 }
 
-export const manifest = new Manifest(
-  new GitManifest(
-    Platform.masterManifestDirectory,
-    ERN_MANIFEST_MASTER_GIT_REPO
-  )
-)
+const manifestLocalConfig = config.get('manifest', {})
+const manifestLocalMasterUrl = manifestLocalConfig?.master?.url
+export const manifest = manifestLocalMasterUrl
+  ? new Manifest(new LocalManifest(manifestLocalMasterUrl))
+  : new Manifest(
+      new GitManifest(
+        Platform.masterManifestDirectory,
+        ERN_MANIFEST_MASTER_GIT_REPO
+      )
+    )
