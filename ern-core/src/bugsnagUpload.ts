@@ -9,6 +9,7 @@ export async function bugsnagUpload({
   minifiedUrl,
   projectRoot,
   sourceMap,
+  uploadNodeModules,
   uploadSources,
   uploadSourcesGlob,
 }: {
@@ -17,8 +18,9 @@ export async function bugsnagUpload({
   minifiedUrl: string
   projectRoot: string
   sourceMap: string
+  uploadNodeModules?: boolean
   uploadSources: boolean
-  uploadSourcesGlob: string[]
+  uploadSourcesGlob?: string[]
 }) {
   const agent = createProxyAgentFromErnConfig('bugsnagProxy', { https: true })
   const codeBundleId = process.env.ERN_BUGSNAG_CODE_BUNDLE_ID
@@ -31,6 +33,7 @@ export async function bugsnagUpload({
     minifiedUrl,
     projectRoot,
     sourceMap,
+    uploadNodeModules,
     uploadSources,
     uploadSourcesGlob,
   }
