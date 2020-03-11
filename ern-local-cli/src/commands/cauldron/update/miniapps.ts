@@ -33,6 +33,12 @@ export const builder = (argv: Argv) => {
       type: 'boolean',
     })
     .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .option('resetCache', {
+      default: false,
+      describe:
+        'Indicates whether to reset the React Native cache prior to bundling',
+      type: 'boolean',
+    })
     .option('targetVersion', {
       describe:
         'Target version to update all MiniApps to. Can only be used if `all` is used for MiniApps.',
@@ -46,12 +52,14 @@ export const commandHandler = async ({
   descriptor,
   fullRegen,
   miniapps,
+  resetCache,
   targetVersion,
 }: {
   containerVersion?: string
   descriptor?: AppVersionDescriptor
   fullRegen?: boolean
   miniapps: PackagePath[]
+  resetCache?: boolean
   targetVersion?: string
 }) => {
   descriptor =
@@ -170,6 +178,7 @@ To regenerate anyway use the --fullRegen option.`
     cauldronCommitMessage,
     {
       containerVersion,
+      resetCache,
     }
   )
   log.info(`MiniApp(s) version(s) successfully updated in ${descriptor}`)

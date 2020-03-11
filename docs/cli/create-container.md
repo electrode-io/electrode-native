@@ -70,6 +70,11 @@
 
 * Path to source map file to generate for this container bundle
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false
+
 #### Remarks
 
 * The `ern create-container` command can be used to create a container locally, for development, debugging and experimentation purposes.  

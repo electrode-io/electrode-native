@@ -39,6 +39,11 @@ Example: If the current container version is 1.2.3 and a version is not included
 **Default**  Lists all non-released native application versions from the Cauldron and  prompts you to choose one to add to the JS API implementation.  
 **Example** `ern cauldron add jsapiimpls <jsapiimpls..> -d MyNativeApp:android:1.0.0`  
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false
+
 #### Related commands
 
 [ern cauldron update jsappiimpls] | Updates the version of an existing JS API implementation

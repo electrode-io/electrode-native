@@ -45,6 +45,11 @@
 * Bypass compatibility checks and force-add the MiniApp to the Cauldron.  
 **Caution**  Before using the `--force/-f` option, be sure that you can bypass compatibility checks.
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false
+
 #### Remarks
  
 * If one MiniApp does not pass compatibility checks, the MiniApp is not added to the Cauldron and a new container version is not generated.

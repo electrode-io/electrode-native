@@ -69,6 +69,7 @@ export default class ReactNativeCli {
     platform,
     workingDir,
     sourceMapOutput,
+    resetCache,
   }: {
     entryFile: string
     dev: boolean
@@ -77,6 +78,7 @@ export default class ReactNativeCli {
     platform: string
     workingDir?: string
     sourceMapOutput?: string
+    resetCache?: boolean
   }): Promise<BundlingResult> {
     const bundleCommand = `${this.binaryPath} bundle \
 ${entryFile ? `--entry-file=${entryFile}` : ''} \
@@ -85,7 +87,7 @@ ${platform ? `--platform=${platform}` : ''} \
 ${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
 ${assetsDest ? `--assets-dest=${assetsDest}` : ''} \
 ${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
---reset-cache`
+${resetCache ? '--reset-cache' : ''}`
 
     await execp(bundleCommand, { cwd: workingDir })
     return {

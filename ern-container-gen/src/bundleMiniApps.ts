@@ -2,7 +2,6 @@ import { generateComposite } from 'ern-composite-gen'
 import { BundlingResult, kax, NativePlatform, PackagePath, log } from 'ern-core'
 import { reactNativeBundleAndroid } from './reactNativeBundleAndroid'
 import { reactNativeBundleIos } from './reactNativeBundleIos'
-import { clearReactPackagerCache } from './clearReactPackagerCache'
 
 export async function bundleMiniApps(
   // The miniapps to be bundled
@@ -19,6 +18,7 @@ export async function bundleMiniApps(
     jsApiImplDependencies,
     resolutions,
     extraJsDependencies,
+    resetCache,
   }: {
     bundleOutput?: string
     pathToYarnLock?: string
@@ -28,6 +28,7 @@ export async function bundleMiniApps(
     jsApiImplDependencies?: PackagePath[]
     resolutions?: { [pkg: string]: string }
     extraJsDependencies?: PackagePath[]
+    resetCache?: boolean
   } = {}
 ): Promise<BundlingResult> {
   await kax.task('Generating MiniApps Composite').run(
@@ -48,6 +49,7 @@ export async function bundleMiniApps(
     dev,
     outDir,
     platform,
+    resetCache,
     sourceMapOutput,
   })
 }
@@ -58,6 +60,7 @@ export async function bundleMiniAppsFromComposite({
   dev,
   outDir,
   platform,
+  resetCache,
   sourceMapOutput,
 }: {
   bundleOutput?: string
@@ -65,10 +68,9 @@ export async function bundleMiniAppsFromComposite({
   dev?: boolean
   outDir: string
   platform: NativePlatform
+  resetCache?: boolean
   sourceMapOutput?: string
 }): Promise<BundlingResult> {
-  clearReactPackagerCache()
-
   return kax.task('Running Metro Bundler').run(
     platform === 'android'
       ? reactNativeBundleAndroid({
@@ -76,6 +78,7 @@ export async function bundleMiniAppsFromComposite({
           cwd: compositeDir,
           dev,
           outDir,
+          resetCache,
           sourceMapOutput,
         })
       : reactNativeBundleIos({
@@ -83,6 +86,7 @@ export async function bundleMiniAppsFromComposite({
           cwd: compositeDir,
           dev,
           outDir,
+          resetCache,
           sourceMapOutput,
         })
   )

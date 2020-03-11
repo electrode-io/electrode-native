@@ -85,6 +85,12 @@ export const builder = (argv: Argv) => {
       describe: 'The platform for which to generate the container',
       type: 'string',
     })
+    .option('resetCache', {
+      default: false,
+      describe:
+        'Indicates whether to reset the React Native cache prior to bundling',
+      type: 'boolean',
+    })
     .option('outDir', {
       alias: 'out',
       describe: 'Directory to output the generated container to',
@@ -111,6 +117,7 @@ export const commandHandler = async ({
   miniapps,
   outDir,
   platform,
+  resetCache,
   sourceMapOutput,
 }: {
   baseComposite?: PackagePath
@@ -124,6 +131,7 @@ export const commandHandler = async ({
   miniapps?: PackagePath[]
   outDir?: string
   platform?: NativePlatform
+  resetCache?: boolean
   sourceMapOutput?: string
 } = {}) => {
   if (outDir && (await fs.pathExists(outDir))) {
@@ -189,6 +197,7 @@ Output directory should either not exist (it will be created) or should be empty
         extra: extraObj,
         ignoreRnpmAssets,
         outDir,
+        resetCache,
         sourceMapOutput,
       })
     )
@@ -207,6 +216,7 @@ Output directory should either not exist (it will be created) or should be empty
       runCauldronContainerGen(descriptor, composite, {
         devJsBundle,
         outDir,
+        resetCache,
         sourceMapOutput,
       })
     )

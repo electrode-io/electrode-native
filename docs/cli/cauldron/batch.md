@@ -24,6 +24,11 @@
 
 * Remove one or more MiniApps from a target native application version Container  
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+* **Default** false
+
 #### Remarks
 
 * The `ern cauldron batch [--option <value..>]` command performs operations in the following order:  

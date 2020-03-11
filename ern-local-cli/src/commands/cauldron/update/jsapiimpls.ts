@@ -28,6 +28,12 @@ export const builder = (argv: Argv) => {
     })
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .coerce('jsapiimpls', d => d.map(PackagePath.fromString))
+    .option('resetCache', {
+      default: false,
+      describe:
+        'Indicates whether to reset the React Native cache prior to bundling',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
@@ -35,10 +41,12 @@ export const commandHandler = async ({
   containerVersion,
   descriptor,
   jsapiimpls,
+  resetCache,
 }: {
   containerVersion?: string
   descriptor?: AppVersionDescriptor
   jsapiimpls: PackagePath[]
+  resetCache?: boolean
 }) => {
   descriptor =
     descriptor ||
@@ -85,7 +93,7 @@ export const commandHandler = async ({
     },
     descriptor,
     cauldronCommitMessage,
-    { containerVersion }
+    { containerVersion, resetCache }
   )
   log.info(`JS API implementation(s) successfully updated in ${descriptor}`)
 }

@@ -37,6 +37,7 @@ export async function runLocalContainerGen(
     extra,
     sourceMapOutput,
     devJsBundle,
+    resetCache,
   }: {
     outDir?: string
     ignoreRnpmAssets?: boolean
@@ -44,6 +45,7 @@ export async function runLocalContainerGen(
     extra?: any
     sourceMapOutput?: string
     devJsBundle?: boolean
+    resetCache?: boolean
   }
 ): Promise<ContainerGenResult> {
   try {
@@ -61,6 +63,7 @@ export async function runLocalContainerGen(
         jsMainModuleName,
         outDir,
         plugins: nativeDependencies,
+        resetCache,
         sourceMapOutput,
         targetPlatform: platform,
       })
@@ -79,11 +82,13 @@ export async function runCauldronContainerGen(
     devJsBundle,
     jsMainModuleName,
     outDir,
+    resetCache,
     sourceMapOutput,
   }: {
     devJsBundle?: boolean
     jsMainModuleName?: string
     outDir?: string
+    resetCache?: boolean
     sourceMapOutput?: string
   } = {}
 ): Promise<ContainerGenResult> {
@@ -122,6 +127,7 @@ export async function runCauldronContainerGen(
           jsMainModuleName,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           plugins,
+          resetCache,
           sourceMapOutput,
           targetPlatform: platform,
         })
@@ -140,11 +146,13 @@ export async function runCaudronBundleGen(
     baseComposite,
     compositeDir,
     outDir,
+    resetCache,
     resolutions,
   }: {
     baseComposite?: PackagePath
     compositeDir?: string
     outDir: string
+    resetCache?: boolean
     resolutions?: { [pkg: string]: string }
   }
 ): Promise<BundlingResult> {
@@ -185,6 +193,7 @@ export async function runCaudronBundleGen(
           baseComposite,
           jsApiImplDependencies: jsApiImpls,
           pathToYarnLock: pathToYarnLock || undefined,
+          resetCache,
           resolutions,
         }
       )
