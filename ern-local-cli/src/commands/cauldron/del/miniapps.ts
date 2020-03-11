@@ -30,7 +30,6 @@ export const builder = (argv: Argv) => {
     .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
     .coerce('miniapps', d => d.map(PackagePath.fromString))
     .option('resetCache', {
-      default: false,
       describe:
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
