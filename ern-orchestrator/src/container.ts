@@ -127,7 +127,7 @@ export async function runCauldronContainerGen(
           jsMainModuleName,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           plugins,
-          resetCache,
+          resetCache: resetCache ?? containerGeneratorConfig?.resetCache,
           sourceMapOutput,
           targetPlatform: platform,
         })

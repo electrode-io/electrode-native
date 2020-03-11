@@ -33,7 +33,6 @@ export const builder = (argv: Argv) => {
       type: 'boolean',
     })
     .option('resetCache', {
-      default: false,
       describe:
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
