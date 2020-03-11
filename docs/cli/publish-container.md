@@ -66,6 +66,10 @@ This publisher is mostly used for testing and as starter simple publisher refere
   In that case, the configuration will be read from the file stored in Cauldron.   
   For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command). 
 
+`--inPlace`
+
+* Run the publisher directly from the container directory instead of a temporary directory
+* Defaults to `false`
 
 #### Related commands
 

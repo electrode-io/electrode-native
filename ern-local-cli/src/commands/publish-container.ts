@@ -21,6 +21,12 @@ export const builder = (argv: Argv) => {
         'Optional extra publisher configuration (json string or local/cauldron path to config file)',
       type: 'string',
     })
+    .option('inPlace', {
+      default: false,
+      describe:
+        'Run the publisher directly from the container directory instead of a temporary directory',
+      type: 'boolean',
+    })
     .option('platform', {
       choices: ['android', 'ios'],
       demandOption: true,
