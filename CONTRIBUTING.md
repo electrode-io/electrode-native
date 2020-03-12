@@ -67,11 +67,15 @@ Electrode Native has a pre-commit hook setup, that will run [tslint] for every c
 
 ### Tests
 
-Tests can be run by running the `yarn test` command from the root of the `electrode-native` directory. Tests from all modules will be executed.
+Electrode Native contains two different test suites :
+- Unit tests
+- System tests
+
+The unit test suite is not taking long to run, and will be run on any `git push`. You can also run them manually, by running `yarn test:unit` from the root of the `electrode-native` directory. Tests from all modules will be executed.
+
+System tests are running `ern` commands as a user would do. This test suite is taking way longer to run than the unit tests one, and should mostly only be run following heavy modifications to the code base. They can be launched by running `yarn test:system` from the root of the `electrode-native` directory.
 
 Our tests are written using [mocha], [chai] and [sinon].
-
-The tests are not executed on every commit. Ideally, you should run the test suite before opening a PR.
 
 ## Guidelines for documentation contributions
 
@@ -111,14 +115,15 @@ You can keep the server running. Any time you'll do a change in the documentatio
 
 ## Continuous Integration
 
-We are using [Travis] for our Continuous Integration (CI).
+We are using [Azure DevOps] for our Continuous Integration (CI).
 
-The CI job is run on every opened Pull Request (PR). It runs [TSLint][4] checks along with running the whole platform test suite.
+The CI job is run on every opened Pull Request (PR). It runs [TSLint][4] checks along with running all of the unit tests, in parallel, on Windows, Linux and OSX, as well as running all of the unit tests on a Linux node for different Node versions (8/10 and 12).
 
-We will only merge PRs that pass the CI (green status). TSLint checks are automatically run for you on every commit, so you should not have any surprise for these checks when it comes to the CI.
-However the tests are not automatically run on every commit, so before opening a PR please ensure that all tests are passing on your workstation by running the `yarn test` command.
+We will only merge PRs that pass the CI (green status). TSLint checks are automatically run for you on every commit, and unit tests will be executed on git push, so you should not have any surprise for these checks when it comes to the CI.
 
-[travis]: https://travis-ci.org/
+Another CI job is taking care of running the complete system test suite daily.
+
+[Azure DevOps]: https://dev.azure.com/ElectrodeNative/Electrode%20Native/_build?definitionId=1&_a=summary
 
 [new issue]: https://github.com/electrode-io/electrode-native/issues/new
 
