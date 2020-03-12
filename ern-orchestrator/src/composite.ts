@@ -1,4 +1,4 @@
-import { Composite } from 'ern-composite-gen'
+import { Composite, GeneratedComposite } from 'ern-composite-gen'
 import {
   createTmpDir,
   PackagePath,
@@ -26,10 +26,10 @@ export async function runLocalCompositeGen(
     outDir?: string
     resolutions?: { [pkg: string]: string }
   }
-): Promise<Composite> {
+): Promise<GeneratedComposite> {
   try {
     const composite = await kax.task('Generating Composite').run(
-      Composite.generate({
+      GeneratedComposite.generate({
         baseComposite,
         jsApiImplDependencies: jsApiImpls,
         miniApps: miniappPackagesPaths,
@@ -59,7 +59,7 @@ export async function runCauldronCompositeGen(
     outDir?: string
     favorGitBranches?: boolean
   } = {}
-): Promise<Composite> {
+): Promise<GeneratedComposite> {
   try {
     const cauldron = await getActiveCauldron()
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
@@ -90,7 +90,7 @@ export async function runCauldronCompositeGen(
     }
 
     const composite = await kax.task('Generating Composite').run(
-      Composite.generate({
+      GeneratedComposite.generate({
         baseComposite,
         jsApiImplDependencies: jsApiImpls,
         miniApps: miniapps,

@@ -109,7 +109,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       mustacheView.hasElectrodeBridgePlugin = true
     }
 
-    mustacheView.miniApps = config.composite.getMiniApps()
+    mustacheView.miniApps = await config.composite.getMiniApps()
     mustacheView.jsMainModuleName = config.jsMainModuleName || 'index'
 
     await kax
@@ -120,7 +120,7 @@ export default class AndroidGenerator implements ContainerGenerator {
       .task('Adding Native Dependencies Hooks')
       .run(this.addAndroidPluginHookClasses(config.plugins, config.outDir))
 
-    kax.info('Setting Android tools and libraries versions')
+    kax.task('Setting Android tools and libraries versions').succeed()
     const versions = android.resolveAndroidVersions(config.androidConfig)
     mustacheView = Object.assign(mustacheView, versions)
 
@@ -337,7 +337,8 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     log.debug('Creating miniapp activities')
-    for (const miniApp of config.composite.getMiniApps()) {
+    const compositeMiniApps = await config.composite.getMiniApps()
+    for (const miniApp of compositeMiniApps) {
       const activityFileName = `${miniApp.pascalCaseName}Activity.java`
 
       log.debug(`Creating ${activityFileName}`)

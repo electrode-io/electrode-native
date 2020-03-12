@@ -18,7 +18,7 @@ import {
 import * as container from '../src/container'
 import * as composite from '../src/composite'
 import * as pipeline from '../src/runContainerPipelineForDescriptor'
-import { Composite } from 'ern-composite-gen'
+import { GeneratedComposite } from 'ern-composite-gen'
 import sinon from 'sinon'
 import utils from '../src/utils'
 import * as fixtures from './fixtures/common'
@@ -62,7 +62,7 @@ describe('utils.js', () => {
     yarnInfoStub = sandbox.stub(yarn, 'info')
 
     // Other stubs
-    const compositeStub = sandbox.createStubInstance(Composite)
+    const compositeStub = sandbox.createStubInstance(GeneratedComposite)
     compositeStub.getResolvedNativeDependencies.resolves({ resolved: [] })
     sandbox.stub(composite, 'runCauldronCompositeGen').resolves(compositeStub)
     sandbox.stub(container, 'runCauldronContainerGen')
