@@ -51,6 +51,10 @@ If you do not pass an argument to this command, you are prompted to select a nat
 `--port`
 * Port on which the local packager should listen on *(default: 8081)*
 
+`--resetCache`\
+
+* Indicates whether to reset the React Native cache prior to bundling
+
 **Platform Specific Options**
 
 `Android`
@@ -79,6 +83,8 @@ If you do not pass an argument to this command, you are prompted to select a nat
 `--launchEnvVars`
 * Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in XCode as can be seen on screenshot below).
 * Make sure to use `=` on the command line to provide this option, and keep the string in quotes. The string should contain `key=value` pairs delimited by spaces. For example `--launchEnvVars="aKey=aValue anotherKey=anotherValue"`
+
+* **Default** false
 
 ![xcode scheme run](../images/xcode-scheme-run.png)
 
