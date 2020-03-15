@@ -99,6 +99,11 @@ export const builder = (argv: Argv) => {
       describe: 'Port to use for the local package',
       type: 'string',
     })
+    .option('resetCache', {
+      describe:
+        'Indicates whether to reset the React Native cache prior to bundling',
+      type: 'boolean',
+    })
     .group(
       ['activityName', 'launchFlags', 'packageName'],
       'Android binary launch options:'
@@ -129,6 +134,7 @@ export const commandHandler = async ({
   port,
   watchNodeModules,
   disableBinaryStore,
+  resetCache,
 }: {
   activityName?: string
   baseComposite?: PackagePath
@@ -147,6 +153,7 @@ export const commandHandler = async ({
   port?: string
   watchNodeModules?: string[]
   disableBinaryStore?: boolean
+  resetCache?: boolean
 } = {}) => {
   await logErrorAndExitIfNotSatisfied({
     metroServerIsNotRunning: {
@@ -177,6 +184,7 @@ export const commandHandler = async ({
     miniapps,
     packageName,
     port,
+    resetCache,
     watchNodeModules,
   })
 }

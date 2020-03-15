@@ -38,6 +38,7 @@ export default async function start({
   disableBinaryStore,
   host,
   port,
+  resetCache,
 }: {
   baseComposite?: PackagePath
   compositeDir?: string
@@ -56,6 +57,7 @@ export default async function start({
   disableBinaryStore?: boolean
   host?: string
   port?: string
+  resetCache?: boolean
 } = {}) {
   const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
   if (!cauldron && descriptor) {
@@ -153,7 +155,7 @@ export default async function start({
       ...linkedMiniAppsPackageNames,
       ...watchNodeModules,
     ],
-    resetCache: true,
+    resetCache,
   })
 
   if (descriptor && !disableBinaryStore) {
