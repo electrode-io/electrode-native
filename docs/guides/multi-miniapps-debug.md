@@ -1,72 +1,78 @@
-# Debugging Multiple MiniApps
+# Debugging MiniApps
 
-This guide present a [Visual Studio Code] setup to debug multiple MiniApps with the help of [ern start] command.  
+Debugging individual MiniApps (running _standalone_) works similar to debugging
+regular React Native apps. See [Debugging][10] for more information.
+
+The rest of this guide focuses on a setup to debug _multiple_ MiniApps with the
+help of the [ern start][1] command and a local [Composite][6].
 
 ## Prerequisites
 
-[Visual Studio Code] should be installed, as well as the [React Native Tools] extension.
+- All prerequisites of [React Native][8] and [Electrode Native][9]
+- [Visual Studio Code][2]
+- The VS Code [React Native Tools][3] extension
 
 ## Setup
 
-To make the setup easier to understand, let's illustrate it with an example.
+### Step 1: Prepare working directory
 
-Let's assume that we are working on an application that contains three different MiniApps (`MiniAppA` / `MiniAppB` and `MiniAppC`).  
-We'd like to be able to run the native application and [debug](https://code.visualstudio.com/docs/editor/debugging) `MiniAppA` and `MiniAppC` in Visual Studio Code.  
-We don't really care about being able to debug `MiniAppB` as we are not actively involved in its development.  
-Also, let's assume that the package names of these MiniApps (as seen in `name` field of their `package.json`) are `miniapp-a`, `miniapp-b`, `miniapp-c`.
+Inside a new directory (e.g. `workspace`), clone all MiniApps that you want to
+debug.
 
-Given this, here is what we will do :
+In this example, for two MiniApps `details-miniapp` and `list-miniapp`, the
+directory structure should look like this:
 
-- Create a directory that will contain all the MiniApps that we need to debug in VSCode. Let's name this directory `ern-workspace` for example
-
-```shell
-$ mkdir ern-workspace
+```text
+workspace/
+├── details-miniapp/
+└── list-miniapp/
 ```
 
-- Git clone (in this directory) all the MiniApps that we'd like to be able to debug, in our case `MiniAppA` and `MiniAppB`. 
+### Step 2: Link MiniApps
 
-At this point we now have the following directory structure
+Run `ern link` in each MiniApp directory.
 
-```
-ern-workspace
-├── MiniAppA
-└── MiniAppC
-```
+The [ern link][5] command is needed to map the source location between the
+composite and the MiniApp directory, but also to ensure that any changes to the
+MiniApp directory are propagated to the Composite.
 
-- `ern link` each of the MiniApps
+### Step 3: Initialize parent project
 
-This is needed for proper mapping of source location between the composite and the MiniApp directory, but also to ensure that any changes to the MiniApp directory are properly propagated to the Composite.
-We will just `cd` into our `MiniAppA` and `MiniAppC` directories and run `ern link` command from each of them.
+This is necessary for the [React Native Tools][3] extension to work properly.
 
-- Create a node project in this directory, and add `react-native` dependency to it
+Run `yarn init --yes` (or `npm init --yes`) in the parent directory
+(`workspace`) to create a `package.json` file. Then add the React Native
+dependencies:
 
-This is necessary for the [React Native Tools] extension to properly work.
-
-We will use `yarn` for this, but feel free to use `npm`, it does not really matter.
-
-```shell
-$ yarn init . --yes
-$ yarn add react-native@0.60.5
+```sh
+yarn add react@16.8.6 react-native@0.60.6
 ```
 
-Make sure to install the `react-native` version that is being used by the MiniApps (in this current scenario our MiniApps are using React Native 0.60.5).
+Use the **same versions** of `react` and `react-native` that are used by the
+MiniApps (in this example React Native 0.60.6).
 
-Our directory structure should now look like this 
+The structure should now look like this:
 
-```
-ern-workspace
-├── MiniAppA
-├── MiniAppC
-├── node_modules
+```text
+workspace/
+├── details-miniapp/
+├── list-miniapp/
+├── node_modules/
 ├── package.json
 └── yarn.lock
 ```
 
-- Create a Visual Studio Code debug configuration
+### Step 4: Create a debug configuration
 
-This configuration will be used to attach the Visual Studio Code debugger (actually the [React Native Tools] debug adapter) to the native application.
+#### Visual Studio Code
 
-We will create a new file `ern-workspace/.vscode/launch.json` with the following content:
+This configuration will be used to attach the [VS Code debugger][4] (actually
+the [React Native Tools][3] debug adapter) to the native application.
+
+Follow the instructions in [Launch configurations][11] to create a new launch
+configuration and open the resulting `launch.json` file.
+
+Manually add a `sourceMapPathOverrides` section to configure [sourcemaps][12]:
 
 ```json
 {
@@ -78,74 +84,105 @@ We will create a new file `ern-workspace/.vscode/launch.json` with the following
             "type": "reactnative",
             "request": "attach",
             "sourceMapPathOverrides": {
-                "../../composite/node_modules/miniapp-a/*": "${workspaceFolder}/MiniAppA/*",
-                "../../composite/node_modules/miniapp-c/*": "${workspaceFolder}/MiniAppC/*"
+                "../../composite/node_modules/details-miniapp/*": "${workspaceFolder}/details-miniapp/*",
+                "../../composite/node_modules/list-miniapp/*": "${workspaceFolder}/list-miniapp/*"
             }
         }
     ]
 }
 ```
 
-Note that in the `sourceMapPathOverrides`, the MiniApp package names are used, and could differ from the name of the directory (name of the repo) that contains the source code of the MiniApp (in our case it is different indeed. For example `MiniAppA` package name is `miniapp-a`). If a MiniApp is using a scoped package name, make sure to include the scope as well in the path.
+Note that the package name of the MiniApp could be different from the directory
+name in the workspace folder.
 
-There should be one line per MiniApp in `sourceMapPathOverrides` configuration and it should always be formatted as follow :
-
-```
+```text
 "../../composite/node_modules/[MINIAPP_PACKAGE_NAME]/*": "${workspaceFolder}/[MINIAPP_DIRECTORY_NAME]/*"
 ```
 
-`[MINIAPP_PACKAGE_NAME]` should be the package name of the MiniApp (for ex `miniapp-a` or `@company/cool-miniapp` for example)  
-`[MINIAPP_DIRECTORY_NAME]` should be the associated directory name where the MiniApp has be cloned to in `ern-workspace` (for ex `MiniAppA`)
+At this point our directory structure should look like:
 
-At this point our directory structure should be 
-
-```
-ern-workspace
-├── .vscode
+```text
+workspace/
+├── .vscode/
 │   └── launch.json
-├── MiniAppA
-├── MiniAppC
-├── node_modules
+├── details-miniapp/
+├── list-miniapp/
+├── node_modules/
 ├── package.json
 └── yarn.lock
 ```
 
-The basic setup is now complete. If you need to add more MiniApps over time, just clone any additional MiniApps in the `ern-workspace` directory and make sure to `ern link` the new MiniApp and add a corresponding mapping entry to `sourceMapPathOverrides` configuration.
+The basic setup is now complete. If you need to add more MiniApps, clone them
+into the `workspace` directory, run `ern link`, and add a corresponding mapping
+entry to `sourceMapPathOverrides` configuration.
 
-We can now start debugging with the help of the [ern start] command.
+We can now start debugging with the help of the [ern start][1] command.
 
-## Debbuging
+## Debugging
 
-You can now use [ern start] command as you are used to.  
-The only thing that is required for this setup to work is for the Electrode Native Composite (generated as part of `ern start` command execution) to be generated in the `composite` directory in our `ern-workspace` directory. Assuming that the absolute path to `ern-workspace` directory is `/path/to/ern-workspace`, we can just use the `--compositeDir` option of `ern start` to achieve this, as follow :
+### Step 1: Create a composite
 
-```shell
-$ ern start [options] --compositeDir /path/to/ern-workspace/composite
+In order to debug and step through the code, we require a locally generated
+[Electrode Native Composite][6] inside of the `workspace` directory.
+
+Pass an absolute path as the `--compositeDir` parameter to `ern start`:
+
+```sh
+ern start [options] --compositeDir /path/to/workspace/composite
 ```
 
-`[options]` are any other options that you might be using for `ern start` command, for example the MiniApps to include in the composite, or a cauldron descriptor to retrieve MiniApps from.
+The MiniApps to include in the composite can be passed using the `--miniapp`
+(or `-m`) flag. If no other options are defined, the `ern start` command
+requires an active [Cauldron][7]. See `ern start --help` for more information.
 
-Once commnand execution is done, our final directory structure should look like :
+Once composite generation is done, we should have the following structure:
 
-```
-ern-workspace
-├── .vscode
+```text
+workspace/
+├── .vscode/
 │   └── launch.json
-├── composite
-├── MiniAppA
-├── MiniAppC
-├── node_modules
+├── composite/
+├── details-miniapp/
+├── list-miniapp/
+├── node_modules/
 ├── package.json
 └── yarn.lock
 ```
 
-You can now open the `ern-workspace` directory in Visual Studio Code (if not done already) and launch the native application (if it is not already launched or is not being launched automatically by `ern start` if you have a binary store configured). 
+### Step 2: Open the project and set breakpoints
 
-To attach Visual Studio Code to the React Native debugger (first make sure that `ern start` command has completed and is still running in the background -i.e not killed-), you should run the `Attach to packager` debug configuration from Visual Studio Code. You will notice an indicator that will keep spinning until Visual Studio Code gets attached to the React Native debugger.
+Open the `workspace` directory in VS Code (if you have not done so already) and
+launch the native application (if it is not already running). It may have been
+launched automatically by `ern start`.
 
-In the native application, bring up the React Native Developer Menu, and turn on JS Debugging by tapping the `Debug JS Remotely` button. This will result in attaching to the Visual Studio Code debugger (if debugging was already turned on in the native app, just retrigger the debugger by tapping `Stop Remote JS Debugging` and then `Debug JS Remotely`). In Visual Studio Code you should now see that the debugger was attached, and you should see the visual studio icons part of a debbugging session. We are now able to put breakpoints in `MiniAppA` and `MiniAppC` sources, and debug the MiniApps from Visual Studio Code.
+Now you may set breakpoints in the JavaScript code of the MiniApps.
 
-[Visual Studio Code]: https://code.visualstudio.com/
-[React Native Tools]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.vscode-react-native
-[ern start]: ../cli/start.md
-[ern link]: ../cli/link.md
+### Step 3: Attach the debugger
+
+To attach VS Code to the React Native debugger, run the *Attach to packager*
+debug configuration. Make sure the `ern start` command has completed and is
+still running in the background. You will notice an indicator that will keep
+spinning until the next step is completed.
+
+### Step 4: Enable JS Debugging in the app
+
+In the native application, bring up the [React Native developer menu][10], and
+turn on JS Debugging by tapping *Debug* (Android) or *Debug JS Remotely* (iOS).
+This will result in attaching to the Visual Studio Code debugger. If debugging
+was already turned on in the native app, disable it first, then re-enable it.
+In VS Code you should now see that the debugger was attached. Check if the
+breakpoints are triggered in the sources of `details-miniapp` and
+`list-miniapp`, and debug the MiniApps in VS Code.
+
+[1]: ../cli/start.md
+[2]: https://code.visualstudio.com/
+[3]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.vscode-react-native
+[4]: https://code.visualstudio.com/docs/editor/debugging
+[5]: ../cli/link.md
+[6]: ../platform-parts/composite/index.md
+[7]: ../platform-parts/cauldron/index.md
+[8]: https://reactnative.dev/
+[9]: https://native.electrode.io/introduction/what-is-ern/requirements
+[10]: https://reactnative.dev/docs/debugging
+[11]: https://code.visualstudio.com/docs/editor/debugging#_launch-configurations
+[12]: https://github.com/microsoft/vscode-chrome-debug/blob/master/README.md#sourcemaps
