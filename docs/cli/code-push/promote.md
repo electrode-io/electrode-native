@@ -1,16 +1,18 @@
 ## `ern code-push promote`
 
-[code-push commands prerequisites] needs to be met in order to execute this command
+code-push [prerequisites][1] need to be met in order to run this command
 
-#### Description
+### Description
 
 * Promote a CodePush release to a different deployment name and/or native application versions.
 
 #### Syntax
 
-`ern code-push promote`  
+```sh
+ern code-push promote
+```
 
-**Options**  
+#### Options
 
 `--reuseReleaseBinaryVersion`
 
@@ -27,7 +29,7 @@
 `--targetDescriptors <descriptors..>`
 
 * Specify one or more target native application version to promote the release to, in the form of a *complete native application descriptor* list (separated by spaces).
-* The target descriptor can be the same as the source descriptor if the promotion is just changing the deployment name (for example promoting a release from Staging to Production for the same native application version).
+* The target descriptor can be the same as the source descriptor if the promotion is only changing the deployment name (for example promoting a release from Staging to Production for the same native application version).
 
 `--targetSemVerDescriptor <descriptor>`
 
@@ -76,13 +78,13 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 
 `--label/-l`
 
-* Promote the release matching this specific label. 
+* Promote the release matching this specific label.
 * **Default** The latest release matching sourceDescriptor/sourceDeploymentName pair will be promoted.
 
 `--description/--des`
 
 * Description of the changes made to the app with this release. If omitted, the description from the release being promoted will be used.
- 
+
 * **Default** Empty string
 
 `--disableDuplicateReleaseError`
@@ -93,8 +95,9 @@ If no `targetDescriptors` nor a `targetSemVerDescriptor` is specified, the comma
 
 #### Related commands
 
-[code-push release] | Issue a CodePush release 
-[code-push patch] | Patch a release
- 
-[code-push release]: ./release.md
-[code-push patch]: ./patch.md
+* [code-push release][2] | Issue a CodePush release
+* [code-push patch][3] | Patch a release
+
+[1]: ../code-push.md
+[2]: ./release.md
+[3]: ./patch.md
