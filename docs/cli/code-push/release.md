@@ -1,8 +1,8 @@
 ## `ern code-push release`
 
-[code-push commands prerequisites] needs to be met in order to execute this command
+code-push [prerequisites][1] need to be met in order to run this command
 
-#### Description
+### Description
 
 * Release one or more MiniApp(s) version(s) to one or more released native application version(s).
 * Perform compatibility checks to ensure that the new MiniApp(s) version(s) are compatible with the target native application version(s).
@@ -10,11 +10,13 @@
 
 **Note:** The `ern code-push <miniapps..>` command can release JavaScript code only, not native. Therefore compatibility checks will ensure that the MiniApp(s) native dependencies are compatible with the versions running in the target native application version.
 
-#### Syntax
+### Syntax
 
-`ern code-push release`  
+```sh
+ern code-push release
+```
 
-**Options**  
+### Options
 
 `--miniapps`
 
@@ -55,6 +57,7 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 * **Default**  The command will display a prompt asking to input the deployment name. If deployment names for your native applications are stored in the Cauldron, the prompt will display the deployment names and ask to select one.
 
 `--targetBinaryVersion/-t <targetBinaryVersion>`
+
 * Semver expression that specifies the binary app version this release is targeting
 * If omitted, the release will target the exact version of the descriptor
 * If versionModifier is specified in the codePush config , exact version of the descriptor is appended to versionModifier
@@ -88,14 +91,15 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 
 * **Default** false
 
-#### Remarks
+### Remarks
 
 * MiniApps are packaged in a single JavaScript bundle. If the native application version contains 5 MiniApps and only one MiniApp is updated, then the remaining 4 MiniApp versions will remain untouched in the bundle.
 
-#### Related commands
+### Related commands
 
-[code-push promote] | Promote a release to a different deployment name  
-[code-push patch] | Patch a release
- 
-[code-push promote]: ./promote.md
-[code-push patch]: ./patch.md
+* [code-push promote] | Promote a release to a different deployment name
+* [code-push patch] | Patch a release
+
+[1]: ../code-push.md
+[2]: ./promote.md
+[3]: ./patch.md

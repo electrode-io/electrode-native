@@ -1,18 +1,20 @@
 ## `ern code-push patch`
 
-[code-push commands prerequisites] needs to be met in order to execute this command
+code-push [prerequisites][1] need to be met in order to run this command
 
-#### Description
+### Description
 
 * Patch a CodePush release.
 * This command only works for entries that have been released through `ern code-push release` or promoted through `ern code-push promote`.
 * Update the corresponding CodePush entry in Cauldron with the changes.
 
-#### Syntax
+### Syntax
 
-`ern code-push patch`  
+```sh
+ern code-push patch
+```
 
-**Options**  
+#### Options
 
 `--descriptor/-d <descriptor>`
 
@@ -45,14 +47,15 @@
 * **Default**  No change to the rollout percentage.
 
 `--description/--des`
+
 * Description of the changes made to the app with this release
 * **Default**  Empty String
 
-#### Related commands
+### Related commands
 
-[code-push promote] | Promote a release to a different deployment name  
-[code-push release] | Issue a CodePush release
- 
-[code-push promote]: ./promote.md
-[code-push release]: ./release.md
-[code-push commands prerequisites]: ../code-push.md
+* [code-push promote][2] | Promote a release to a different deployment name
+* [code-push release][3] | Issue a CodePush release
+
+[1]: ../code-push.md
+[2]: ./promote.md
+[3]: ./release.md
