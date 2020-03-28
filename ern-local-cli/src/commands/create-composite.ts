@@ -137,7 +137,9 @@ Output directory should either not exist (it will be created) or should be empty
       descriptor
     )
     baseComposite =
-      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+      baseComposite ||
+      (compositeGenConfig?.baseComposite &&
+        PackagePath.fromString(compositeGenConfig.baseComposite))
     resolutions = compositeGenConfig && compositeGenConfig.resolutions
   }
 

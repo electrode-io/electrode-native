@@ -66,7 +66,9 @@ export async function runCauldronCompositeGen(
       napDescriptor
     )
     baseComposite =
-      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+      baseComposite ||
+      (compositeGenConfig?.baseComposite &&
+        PackagePath.fromString(compositeGenConfig.baseComposite))
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor, {
       favorGitBranches,
     })

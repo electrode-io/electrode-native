@@ -102,7 +102,9 @@ export async function runMiniApp(
   const compositeGenConfig =
     cauldron && (await cauldron.getCompositeGeneratorConfig(napDescriptor))
   baseComposite =
-    baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+    baseComposite ||
+    (compositeGenConfig?.baseComposite &&
+      PackagePath.fromString(compositeGenConfig.baseComposite))
 
   let entryMiniAppName = mainMiniAppName || ''
   if (miniapps) {
