@@ -159,7 +159,9 @@ export async function runCaudronBundleGen(
       napDescriptor
     )
     baseComposite =
-      baseComposite || (compositeGenConfig && compositeGenConfig.baseComposite)
+      baseComposite ||
+      (compositeGenConfig?.baseComposite &&
+        PackagePath.fromString(compositeGenConfig.baseComposite))
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
     const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(

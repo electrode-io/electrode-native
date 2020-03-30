@@ -7,6 +7,7 @@ import {
   SourceMapStoreSdk,
   createProxyAgentFromErnConfig,
   bugsnagUpload,
+  PackagePath,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runCauldronContainerGen } from './container'
@@ -84,7 +85,9 @@ Please set the new container version through command options.`)
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
       descriptor
     )
-    const baseComposite = compositeGenConfig?.baseComposite
+    const baseComposite =
+      compositeGenConfig?.baseComposite &&
+      PackagePath.fromString(compositeGenConfig.baseComposite)
 
     const compositeDir = createTmpDir()
 

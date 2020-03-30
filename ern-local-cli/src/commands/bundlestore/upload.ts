@@ -167,7 +167,8 @@ export const commandHandler = async ({
       )
       baseComposite =
         baseComposite ||
-        (compositeGenConfig && compositeGenConfig.baseComposite)
+        (compositeGenConfig?.baseComposite &&
+          PackagePath.fromString(compositeGenConfig.baseComposite))
       resolutions = compositeGenConfig && compositeGenConfig.resolutions
     }
 
