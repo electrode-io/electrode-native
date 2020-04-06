@@ -5,7 +5,7 @@ You can contribute to the Electrode Native open source project in several ways:
 - As an Electrode Native user, if you face any issue with the platform, you can open a [new issue].
 - While reading the documentation, if you notice any typo (even a minor typpo ;), any misleading or wrong information or missing content, you can edit the documentation directly and issue a Pull Request. Using GitHub, this can be done online without having to fork the repository on your workstation.
 - If you want to suggest a new feature or an improvement for an existing one, you can create a [new issue]. Over time, we will create labels to easily classify issues.
-- In case you would like to use a native module that is not currently supported by Electrode Native, you can contribute a plugin configuration in the master manifest to add support for this native module. Check the documentation on [Reusing existing native modules](https://electrode.gitbooks.io/electrode-native/content/platform-parts/manifest.html#reusing-exiting-native-modules) for more information.
+- In case you would like to use a native module that is not currently supported by Electrode Native, you can contribute a plugin configuration in the master manifest to add support for this native module. Check the documentation on [Reusing existing native modules](https://native.electrode.io/reference/index-3#reusing-existing-native-modules) for more information.
 - By resolving an [open issue]. For this you'll have to setup your workstation accordingly to be able to work on the platform code, as explained below.
 - You can also contribute to the [Electrode Native Bridge] library.
 
