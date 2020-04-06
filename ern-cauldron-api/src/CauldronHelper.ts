@@ -794,7 +794,7 @@ export class CauldronHelper {
     }: {
       label?: string
     } = {}
-  ): Promise<CauldronCodePushEntry | never> {
+  ): Promise<CauldronCodePushEntry | undefined> {
     const codePushEntries = await this.cauldron.getCodePushEntries(
       descriptor,
       deploymentName
@@ -810,17 +810,8 @@ export class CauldronHelper {
         }
       } else {
         result = _.last(codePushEntries)
-        if (!result) {
-          throw new Error(
-            `No CodePush entry matching label found for ${descriptor} ${deploymentName} deployment}`
-          )
-        }
       }
       return result
-    } else {
-      throw new Error(
-        `No code push entries found for ${descriptor} ${deploymentName} deployment`
-      )
     }
   }
 
