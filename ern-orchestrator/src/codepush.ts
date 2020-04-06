@@ -121,14 +121,12 @@ export async function performCodePushPromote(
         throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
       }
 
-      let codePushEntrySource: CauldronCodePushEntry
-      try {
-        codePushEntrySource = await cauldron.getCodePushEntry(
-          sourceNapDescriptor,
-          sourceDeploymentName,
-          { label }
-        )
-      } catch (e) {
+      const codePushEntrySource = await cauldron.getCodePushEntry(
+        sourceNapDescriptor,
+        sourceDeploymentName,
+        { label }
+      )
+      if (!codePushEntrySource) {
         throw new Error(
           `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor} dep: ${sourceDeploymentName} label: ${label ||
             'latest'}`

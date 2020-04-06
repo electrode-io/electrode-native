@@ -2106,6 +2106,16 @@ describe('CauldronHelper.js', () => {
       )
     })
 
+    it('should return undefined if there is not mathing code push entry', async () => {
+      const fixture = cloneFixture(fixtures.defaultCauldron)
+      const cauldronHelper = createCauldronHelper({ cauldronDocument: fixture })
+      const res = await cauldronHelper.getCodePushEntry(
+        AppVersionDescriptor.fromString('test:android:17.8.0'),
+        'Production'
+      )
+      expect(res).undefined
+    })
+
     it('should return the latest CodePushed entry if label is ommited', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
       const cauldronHelper = createCauldronHelper({ cauldronDocument: fixture })
