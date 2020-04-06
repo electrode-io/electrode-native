@@ -55,13 +55,14 @@ export default class CodePushSdk {
       delete updateMetadata.rollout
     }
     try {
-      return this.codePush.release(
+      const res = await this.codePush.release(
         appName,
         deploymentName,
         filePath,
         targetBinaryVersion,
         updateMetadata
       )
+      return res
     } catch (error) {
       if (
         disableDuplicateReleaseError &&
@@ -86,12 +87,13 @@ export default class CodePushSdk {
       delete updateMetadata.rollout
     }
     try {
-      return this.codePush.promote(
+      const res = await this.codePush.promote(
         appName,
         sourceDeploymentName,
         destinationDeploymentName,
         updateMetadata
       )
+      return res
     } catch (error) {
       if (
         disableDuplicateReleaseError &&
