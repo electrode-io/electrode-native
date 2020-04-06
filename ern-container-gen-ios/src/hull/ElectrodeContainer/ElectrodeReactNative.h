@@ -157,7 +157,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param name The name of the mini app, that is registered with the AppComponent.
  @param properties initialprops for a React Native miniapp.
  @param sizeFlexibilty defines size flexibility type of the root view
- @param delegate
+ @param delegate the object to register as the miniapp's delegate.
  @return a UIView of the miniapp.
  */
 - (UIView *)miniAppViewWithName:(NSString *)name
