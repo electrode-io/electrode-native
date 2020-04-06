@@ -1,3 +1,4 @@
+import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import shell from './shell'
 import ernConfig from './config'
@@ -384,14 +385,24 @@ export async function installApk(pathToApk: string) {
   return execp(`${androidAdbPath()} install -r ${pathToApk}`)
 }
 
+export function androidSdkRoot(): string | undefined {
+  return process.env.ANDROID_SDK_ROOT ?? process.env.ANDROID_HOME
+}
+
 export function androidAdbPath(): string {
-  return process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb'
+  const sdkRoot = androidSdkRoot()
+  return sdkRoot ? `${sdkRoot}/platform-tools/adb` : 'adb'
 }
 
 export function androidEmulatorPath(): string {
-  return process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/tools/emulator`
-    : 'emulator'
+  const sdkRoot = androidSdkRoot()
+  if (sdkRoot) {
+    if (fs.existsSync(`${sdkRoot}/emulator/emulator`)) {
+      return `${sdkRoot}/emulator/emulator`
+    }
+    if (fs.existsSync(`${sdkRoot}/tools/emulator`)) {
+      return `${sdkRoot}/tools/emulator`
+    }
+  }
+  return 'emulator'
 }
