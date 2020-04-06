@@ -13,15 +13,12 @@
 
 import Foundation
 
-/**
- * GENERATED CODE: DO NOT MODIFY
- * Do not modify the content of this class as it will be regenerated every time an api-impl-regen command is executed.
- * @see <a href:"https://native.electrode.io/cli-commands/regen-api-impl"></a>
- * <p>
- * <p>
- * Marker interface that is used for request handler implementations inside an api.
- */
-
+/// Marker interface that is used for request handler implementations inside an api.
+///
+/// GENERATED CODE: DO NOT MODIFY
+///
+/// Do not modify the content of this class as it will be regenerated every time a `regen-api-impl` command is executed.
+/// See the [regen-api-impl docs](https://native.electrode.io/cli-commands/regen-api-impl) for more information.
 @objc public protocol MoviesApiRequestHandlerDelegate
 {
     func registerGetTopRatedMoviesRequestHandler()

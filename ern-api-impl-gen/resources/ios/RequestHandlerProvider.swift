@@ -13,12 +13,10 @@
 
 import Foundation
 
-/**
- * GENERATED CODE: DO NOT MODIFY
- * Do not modify the content of this class as it will be regenerated every time an api-impl-regen command is executed.
- * @see <a href:"https://native.electrode.io/cli-commands/regen-api-impl"></a>
- */
-
+/// GENERATED CODE: DO NOT MODIFY
+///
+/// Do not modify the content of this class as it will be regenerated every time a `regen-api-impl` command is executed.
+/// See the [regen-api-impl docs](https://native.electrode.io/cli-commands/regen-api-impl) for more information.
 @objc public class RequestHandlerProvider: NSObject
 {
     internal var requestHandlerConfig: RequestHandlerConfig?
