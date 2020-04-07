@@ -67,15 +67,24 @@ export function generatePackageJson({
   // Reset the apiSchemaPath to schema.json
   // if --schemaPath option is used to create the Api
   const options = { ...conf, apiSchemaPath: MODEL_FILE }
+  // tslint:disable:object-literal-sort-keys
   return JSON.stringify(
     {
+      name: npmScope ? `@${npmScope}/${packageName}` : packageName,
+      version: apiVersion,
+      description: apiDescription,
+      main: 'javascript/src/index.js',
+      scripts: {
+        flow: 'flow',
+      },
+      keywords: [`${ModuleTypes.API}`],
       author: apiAuthor,
+      license: apiLicense,
       dependencies: {
         'react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.${
           bridgeVersion.split('.')[1]
         }.x`,
       },
-      description: apiDescription,
       devDependencies: {
         'flow-bin': FLOW_BIN_VERSION,
       },
@@ -83,18 +92,10 @@ export function generatePackageJson({
         message: options,
         moduleType: `${ModuleTypes.API}`,
       },
-      keywords: [`${ModuleTypes.API}`],
-      license: apiLicense,
-      main: 'javascript/src/index.js',
-      name: npmScope ? `@${npmScope}/${packageName}` : packageName,
-      scripts: {
-        flow: 'flow',
-      },
-      version: apiVersion,
     },
     null,
     2
-  )
+  ).concat('\n')
 }
 
 export async function generateInitialSchema({

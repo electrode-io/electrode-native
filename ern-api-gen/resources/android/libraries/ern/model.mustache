@@ -1,15 +1,4 @@
-/*
-* Copyright 2017 WalmartLabs
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* http://www.apache.org/licenses/LICENSE-2.0
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+{{>licenseInfo}}
 
 package {{package}};
 
@@ -25,22 +14,39 @@ import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.*;
 {{#models}}
 {{#model}}
+
 {{#description}}
 /**
-* {{description}}
-**/{{/description}}
+ * {{description}}
+ */
+{{/description}}
 public class {{classname}} implements Parcelable, Bridgeable {
+{{#classname}}
+    public static final Creator<{{classname}}> CREATOR =
+            new Creator<{{classname}}>() {
+                @Override
+                public {{classname}} createFromParcel(Parcel in) {
+                    return new {{classname}}(in);
+                }
 
-    {{#vars}}
+                @Override
+                public {{classname}}[] newArray(int size) {
+                    return new {{classname}}[size];
+                }
+            };
+
+{{/classname}}
+{{#vars}}
     private {{{datatype}}} {{name}};
-    {{/vars}}
+{{/vars}}
 
-    private {{classname}}() {}
+    private {{classname}}() {
+    }
 
     private {{classname}}(Builder builder) {
-    {{#vars}}
+{{#vars}}
         this.{{name}} = builder.{{name}};
-    {{/vars}}
+{{/vars}}
     }
 
     private {{classname}}(Parcel in) {
@@ -48,97 +54,82 @@ public class {{classname}} implements Parcelable, Bridgeable {
     }
 
     public {{classname}}(@NonNull Bundle bundle) {
-    {{#requiredVars}}
-        if(!bundle.containsKey("{{name}}")){
+{{#requiredVars}}
+        if (!bundle.containsKey("{{name}}")) {
             throw new IllegalArgumentException("{{name}} property is required");
         }
 
-    {{/requiredVars}}
-    {{#allVars}}
-        {{#isListContainer}}
-        {{#items}}
-        {{#isString}}
+{{/requiredVars}}
+{{#allVars}}
+{{#isListContainer}}
+{{#items}}
+{{#isString}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getStringArray("{{baseName}}"), String.class) : null;
-        {{/isString}}
-        {{#isInteger}}
+{{/isString}}
+{{#isInteger}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getIntArray("{{baseName}}"), Integer.class) : null;
-        {{/isInteger}}
-        {{#isBoolean}}
+{{/isInteger}}
+{{#isBoolean}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getBooleanArray("{{baseName}}"), Boolean.class) : null;
-        {{/isBoolean}}
-        {{#isLong}}
+{{/isBoolean}}
+{{#isLong}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getLongArray("{{baseName}}"), Long.class) : null;
-        {{/isLong}}
-        {{#isDouble}}
+{{/isLong}}
+{{#isDouble}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getDoubleArray("{{baseName}}"), Double.class) : null;
-        {{/isDouble}}
-        {{#isFloat}}
+{{/isDouble}}
+{{#isFloat}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getFloatArray("{{baseName}}"), Float.class) : null;
-        {{/isFloat}}
-        {{^isPrimitiveType}}
+{{/isFloat}}
+{{^isPrimitiveType}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? getList(bundle.getParcelableArray("{{baseName}}"), {{{datatype}}}.class) : null;
-        {{/isPrimitiveType}}
-        {{/items}}
-        {{/isListContainer}}
-        {{^isListContainer}}
-        {{#isString}}
+{{/isPrimitiveType}}
+{{/items}}
+{{/isListContainer}}
+{{^isListContainer}}
+{{#isString}}
         this.{{name}} = bundle.getString("{{name}}");
-        {{/isString}}
-        {{#isInteger}}
+{{/isString}}
+{{#isInteger}}
         this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").intValue();
-        {{/isInteger}}
-        {{#isBoolean}}
+{{/isInteger}}
+{{#isBoolean}}
         this.{{name}} = bundle.containsKey("{{name}}") ? bundle.getBoolean("{{name}}") : null;
-        {{/isBoolean}}
-        {{#isLong}}
+{{/isBoolean}}
+{{#isLong}}
         this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").longValue();
-        {{/isLong}}
-        {{#isDouble}}
+{{/isLong}}
+{{#isDouble}}
         this.{{name}} = bundle.getDouble("{{name}}");
-        {{/isDouble}}
-        {{#isFloat}}
+{{/isDouble}}
+{{#isFloat}}
         this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").floatValue();
-        {{/isFloat}}
-        {{^isPrimitiveType}}
+{{/isFloat}}
+{{^isPrimitiveType}}
         this.{{name}} = bundle.containsKey("{{name}}") ? new {{{datatype}}}(bundle.getBundle("{{name}}")) : null;
-        {{/isPrimitiveType}}
-        {{/isListContainer}}
-    {{/allVars}}
+{{/isPrimitiveType}}
+{{/isListContainer}}
+{{/allVars}}
     }
+{{#vars}}
 
-{{#classname}}
-    public static final Creator<{{classname}}> CREATOR = new Creator<{{classname}}>() {
-        @Override
-        public {{classname}} createFromParcel(Parcel in) {
-            return new {{classname}}(in);
-        }
-
-        @Override
-        public {{classname}}[] newArray(int size) {
-            return new {{classname}}[size];
-        }
-    };
-{{/classname}}
-
-    {{#vars}}
-    {{#description}}
+{{#description}}
     /**
-    * {{description}}
-    *
-    * @return {{{datatype}}}
-    */
-    {{/description}}
-    {{#required}}
+     * {{description}}
+     *
+     * @return {{{datatype}}}
+     */
+{{/description}}
+{{#required}}
     @NonNull
-    {{/required}}
-    {{^required}}
+{{/required}}
+{{^required}}
     @Nullable
-    {{/required}}
+{{/required}}
     public {{{datatype}}} {{getter}}() {
         return {{name}};
     }
-
-    {{/vars}}
+{{/vars}}
 
     @Override
     public int describeContents() {
@@ -154,126 +145,126 @@ public class {{classname}} implements Parcelable, Bridgeable {
     @Override
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-        {{#requiredVars}}
-        {{#isListContainer}}
+{{#requiredVars}}
+{{#isListContainer}}
         updateBundleWithList(this.{{name}}, bundle, "{{name}}");
-        {{/isListContainer}}
-        {{^isListContainer}}
-        {{#isString}}
+{{/isListContainer}}
+{{^isListContainer}}
+{{#isString}}
         bundle.putString("{{name}}", this.{{name}});
-        {{/isString}}
-        {{#isInteger}}
+{{/isString}}
+{{#isInteger}}
         bundle.putInt("{{name}}", this.{{name}});
-        {{/isInteger}}
-        {{#isLong}}
+{{/isInteger}}
+{{#isLong}}
         bundle.putLong("{{name}}", this.{{name}});
-        {{/isLong}}
-        {{#isDouble}}
+{{/isLong}}
+{{#isDouble}}
         bundle.putDouble("{{name}}", this.{{name}});
-        {{/isDouble}}
-        {{#isFloat}}
+{{/isDouble}}
+{{#isFloat}}
         bundle.putFloat("{{name}}", this.{{name}});
-        {{/isFloat}}
-        {{#isBoolean}}
+{{/isFloat}}
+{{#isBoolean}}
         bundle.putBoolean("{{name}}", this.{{name}});
-        {{/isBoolean}}
-        {{^isPrimitiveType}}
+{{/isBoolean}}
+{{^isPrimitiveType}}
         bundle.putBundle("{{name}}", this.{{name}}.toBundle());
-        {{/isPrimitiveType}}
-        {{/isListContainer}}
-        {{/requiredVars}}
-        {{#optionalVars}}
-        {{#isListContainer}}
-        if(this.{{name}} != null) {
+{{/isPrimitiveType}}
+{{/isListContainer}}
+{{/requiredVars}}
+{{#optionalVars}}
+{{#isListContainer}}
+        if (this.{{name}} != null) {
             updateBundleWithList(this.{{name}}, bundle, "{{name}}");
         }
-        {{/isListContainer}}
-        {{^isListContainer}}
-        {{#isString}}
-        if({{name}} != null) {
-            bundle.putString("{{name}}", this.{{name}} );
+{{/isListContainer}}
+{{^isListContainer}}
+{{#isString}}
+        if ({{name}} != null) {
+            bundle.putString("{{name}}", this.{{name}});
         }
-        {{/isString}}
-        {{#isInteger}}
-        if(this.{{name}} != null) {
+{{/isString}}
+{{#isInteger}}
+        if (this.{{name}} != null) {
             bundle.putInt("{{name}}", this.{{name}});
         }
-        {{/isInteger}}
-        {{#isLong}}
-        if(this.{{name}} != null) {
+{{/isInteger}}
+{{#isLong}}
+        if (this.{{name}} != null) {
             bundle.putLong("{{name}}", this.{{name}});
         }
-        {{/isLong}}
-        {{#isDouble}}
-        if(this.{{name}} != null) {
+{{/isLong}}
+{{#isDouble}}
+        if (this.{{name}} != null) {
             bundle.putDouble("{{name}}", this.{{name}});
          }
-        {{/isDouble}}
-        {{#isFloat}}
-        if(this.{{name}} != null) {
+{{/isDouble}}
+{{#isFloat}}
+        if (this.{{name}} != null) {
            bundle.putFloat("{{name}}", this.{{name}});
         }
-        {{/isFloat}}
-        {{#isBoolean}}
-        if(this.{{name}} != null) {
+{{/isFloat}}
+{{#isBoolean}}
+        if (this.{{name}} != null) {
             bundle.putBoolean("{{name}}", this.{{name}});
         }
-        {{/isBoolean}}
-        {{^isPrimitiveType}}
-        if(this.{{name}} != null) {
+{{/isBoolean}}
+{{^isPrimitiveType}}
+        if (this.{{name}} != null) {
             bundle.putBundle("{{name}}", this.{{name}}.toBundle());
         }
-        {{/isPrimitiveType}}
-        {{/isListContainer}}
-        {{/optionalVars}}
+{{/isPrimitiveType}}
+{{/isListContainer}}
+{{/optionalVars}}
         return bundle;
     }
 
     @Override
     public String toString() {
         return "{"
-        {{#allVars}}
-        {{#isListContainer}}
-        + "{{name}}:" + ({{name}} != null ? {{name}}.toString() : null){{^-last}}+ ","{{/-last}}
-        {{/isListContainer}}
-        {{#isString}}
-        + "{{name}}:" + ({{name}} != null ? "\"" + {{name}} + "\"" : null){{^-last}}+ ","{{/-last}}
-        {{/isString}}
-        {{^isListContainer}}
-        {{^isString}}
-        {{#isPrimitiveType}}
-        + "{{name}}:" + {{name}}{{^-last}}+ ","{{/-last}}
-        {{/isPrimitiveType}}
-        {{/isString}}
-        {{^isPrimitiveType}}
-        + "{{name}}:" + ({{name}} != null ? {{name}}.toString() : null){{^-last}}+ ","{{/-last}}
-        {{/isPrimitiveType}}
-        {{/isListContainer}}
-        {{/allVars}}
-        + "}";
+{{#allVars}}
+{{#isListContainer}}
+                + "{{name}}:" + ({{name}} != null ? {{name}}.toString() : null){{^-last}} + ","{{/-last}}
+{{/isListContainer}}
+{{#isString}}
+                + "{{name}}:" + ({{name}} != null ? "\"" + {{name}} + "\"" : null){{^-last}} + ","{{/-last}}
+{{/isString}}
+{{^isListContainer}}
+{{^isString}}
+{{#isPrimitiveType}}
+                + "{{name}}:" + {{name}}{{^-last}} + ","{{/-last}}
+{{/isPrimitiveType}}
+{{/isString}}
+{{^isPrimitiveType}}
+                + "{{name}}:" + ({{name}} != null ? {{name}}.toString() : null){{^-last}} + ","{{/-last}}
+{{/isPrimitiveType}}
+{{/isListContainer}}
+{{/allVars}}
+                + "}";
     }
 
     public static class Builder {
-        {{#requiredVars}}
+{{#requiredVars}}
         private final {{{datatype}}} {{name}};
-        {{/requiredVars}}
-        {{#optionalVars}}
+{{/requiredVars}}
+{{#optionalVars}}
         private {{{datatype}}} {{name}};
-        {{/optionalVars}}
+{{/optionalVars}}
 
         public Builder({{#requiredVars}}@NonNull {{{datatype}}} {{name}}{{^-last}}, {{/-last}}{{/requiredVars}}) {
-        {{#requiredVars}}
+{{#requiredVars}}
             this.{{name}} = {{name}};
-        {{/requiredVars}}
+{{/requiredVars}}
         }
+{{#optionalVars}}
 
-        {{#optionalVars}}
         @NonNull
         public Builder {{name}}(@Nullable {{{datatype}}} {{name}}) {
             this.{{name}} = {{name}};
             return this;
         }
-        {{/optionalVars}}
+{{/optionalVars}}
 
         @NonNull
         public {{classname}} build() {

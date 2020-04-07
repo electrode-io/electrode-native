@@ -1,22 +1,20 @@
 #if swift(>=4.0)
 @objcMembers public class WalmartItemRequests: WalmartItemAPIRequests {
-
-    public override func registerAddItemRequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public override func registerAddItemRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: WalmartItemAPI.kRequestAddItem,
-    reqClass: Item.self, 
-    respClass: Bool.self,
-    requestCompletionHandler: handler)
+                                                                       reqClass: Item.self,
+                                                                       respClass: Bool.self,
+                                                                       requestCompletionHandler: handler)
         return requestHandlerProcessor.execute()
     }
 
-    public override func registerFindItemsRequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public override func registerFindItemsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: WalmartItemAPI.kRequestFindItems,
-    reqClass: Int.self, 
-    respClass: [Item].self,
-    requestCompletionHandler: handler)
+                                                                       reqClass: Int.self,
+                                                                       respClass: [Item].self,
+                                                                       requestCompletionHandler: handler)
         return requestHandlerProcessor.execute()
     }
-
 
     public override func unregisterAddItemRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
@@ -26,89 +24,78 @@
         return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
-    //------------------------------------------------------------------------------------------------------------------------------------
-
-
-    public override func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> ()) {
+    public override func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> Void) {
         let requestProcessor = ElectrodeRequestProcessor<Item, Bool, Any>(
             requestName: WalmartItemAPI.kRequestAddItem,
             requestPayload: item,
             respClass: Bool.self,
             responseItemType: nil,
-            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? Bool, errorMessage) })
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? Bool, errorMessage) }
+        )
 
         requestProcessor.execute()
     }
 
-    public override func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> ()) {
+    public override func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> Void) {
         let requestProcessor = ElectrodeRequestProcessor<Int, [Item], Any>(
             requestName: WalmartItemAPI.kRequestFindItems,
             requestPayload: limit,
             respClass: [Item].self,
             responseItemType: Item.self,
-            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [Item], errorMessage) })
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [Item], errorMessage) }
+        )
 
         requestProcessor.execute()
     }
 }
+
 #else
+
 public class WalmartItemRequests: WalmartItemAPIRequests {
-
-    public override func registerAddItemRequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public override func registerAddItemRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: WalmartItemAPI.kRequestAddItem,
-    reqClass: Item.self, 
-    respClass: Bool.self,
-    requestCompletionHandler: handler)
+                                                                       reqClass: Item.self,
+                                                                       respClass: Bool.self,
+                                                                       requestCompletionHandler: handler)
         return requestHandlerProcessor.execute()
     }
 
-    public override func registerFindItemsRequestHandler(handler:  @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public override func registerFindItemsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         let requestHandlerProcessor = ElectrodeRequestHandlerProcessor(requestName: WalmartItemAPI.kRequestFindItems,
-    reqClass: Int.self, 
-    respClass: [Item].self,
-    requestCompletionHandler: handler)
+                                                                       reqClass: Int.self,
+                                                                       respClass: [Item].self,
+                                                                       requestCompletionHandler: handler)
         return requestHandlerProcessor.execute()
     }
-
-    //------------------------------------------------------------------------------------------------------------------------------------
-
-
 
     public override func unregisterAddItemRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
-      return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
+        return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
     public override func unregisterFindItemsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
-      return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
+        return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
     }
 
-    public override func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> ()) {
+    public override func addItem(item: Item, responseCompletionHandler: @escaping (Bool?, ElectrodeFailureMessage?) -> Void) {
         let requestProcessor = ElectrodeRequestProcessor<Item, Bool, Any>(
             requestName: WalmartItemAPI.kRequestAddItem,
             requestPayload: item,
             respClass: Bool.self,
             responseItemType: nil,
-            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? Bool, errorMessage) })
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? Bool, errorMessage) }
+        )
 
         requestProcessor.execute()
     }
 
-
-    public override func unregisterAddItemRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
-      return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
-    }
-
-    public override func unregisterFindItemsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
-      return ElectrodeBridgeHolder.unregisterRequestHandler(with: uuid)
-    }
-
-    public override func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> ()) {
+    public override func findItems(limit: Int, responseCompletionHandler: @escaping ([Item]?, ElectrodeFailureMessage?) -> Void) {
         let requestProcessor = ElectrodeRequestProcessor<Int, [Item], Any>(
             requestName: WalmartItemAPI.kRequestFindItems,
             requestPayload: limit,
             respClass: [Item].self,
             responseItemType: Item.self,
-            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [Item], errorMessage) })
+            responseCompletionHandler: { data, errorMessage in responseCompletionHandler(data as? [Item], errorMessage) }
+        )
 
         requestProcessor.execute()
     }

@@ -17,8 +17,6 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
-        maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
         jcenter()
     }
 }
@@ -71,7 +69,6 @@ ext {
 }
 
 dependencies {
-    compile 'com.walmartlabs.ern:react-native-electrode-bridge:{{platformVersion}}'
     compile "io.swagger:swagger-annotations:$swagger_annotations_version"
     compile "com.google.code.gson:gson:$gson_version"
     compile "org.apache.httpcomponents:httpcore:$httpcore_version"

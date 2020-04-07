@@ -1,184 +1,163 @@
 #if swift(>=4.0)
-@objcMembers public class {{classname}}: NSObject  {
-    {{#operations}}
-    {{#operation}}
-    {{#isEvent}}
-    static let kEvent{{{camelizedNickName}}} = "{{package}}.event.{{operationId}}";
-    {{/isEvent}}
+@objcMembers public class {{classname}}: NSObject {
+{{#operations}}
+{{#operation}}
+{{#isEvent}}
+    static let kEvent{{{camelizedNickName}}} = "{{package}}.event.{{operationId}}"
+{{/isEvent}}
+{{^isEvent}}
+    static let kRequest{{{camelizedNickName}}} = "{{package}}.request.{{operationId}}"
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
+{{#hasEvent}}
 
-    {{^isEvent}}
-    static let kRequest{{{camelizedNickName}}} = "{{package}}.request.{{operationId}}";
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
-
-    {{#hasEvent}}
     public lazy var events: {{classname}}Events = {
-        return {{baseName}}Events()
+        {{baseName}}Events()
     }()
-
-    {{/hasEvent}}
+{{/hasEvent}}
 
     public lazy var requests: {{classname}}Requests = {
-        return {{baseName}}Requests()
+        {{baseName}}Requests()
     }()
 }
 
 {{#hasEvent}}
 @objcMembers public class {{classname}}Events: NSObject {
-    {{#operations}}
-    {{#operation}}
-    {{#isEvent}}
-    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
+{{#operations}}
+{{#operation}}
+{{#isEvent}}
+    public func add{{camelizedNickName}}EventListener(eventListener _: @escaping ElectrodeBridgeEventListener) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
-    {{/isEvent}}
-    {{/operation}}
 
-    {{#operation}}
-    {{#isEvent}}
-    public func remove{{camelizedNickName}}EventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+    public func remove{{camelizedNickName}}EventListener(uuid _: UUID) -> ElectrodeBridgeEventListener? {
         assertionFailure("should override")
         return nil
     }
-    {{/isEvent}}
-    {{/operation}}
 
-    {{#operation}}
-    {{#isEvent}}
-    public func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
+    public func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}} _: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
         assertionFailure("should override")
-
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 }
 {{/hasEvent}}
 
 @objcMembers public class {{classname}}Requests: NSObject {
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
-    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
+
+{{/first}}
+    public func register{{camelizedNickName}}RequestHandler(handler _: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
+{{/isEvent}}
+{{/operation}}
+{{#operation}}
+{{^isEvent}}
 
-    {{/isEvent}}
-    {{/operation}}
-
-    {{#operation}}
-    {{^isEvent}}
-    public func unregister{{camelizedNickName}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+    public func unregister{{camelizedNickName}}RequestHandler(uuid _: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         assertionFailure("should override")
         return nil
     }
+{{/isEvent}}
+{{/operation}}
+{{#operation}}
+{{^isEvent}}
 
-    {{/isEvent}}
-    {{/operation}}
-
-    {{#operation}}
-    {{^isEvent}}
-    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> ()) {
+    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}} _: {{dataType}},{{/requestParam}}{{/hasRequestParam}} responseCompletionHandler _: @escaping ({{#responseParam}}{{{dataType}}}{{/responseParam}}?, ElectrodeFailureMessage?) -> Void) {
         assertionFailure("should override")
     }
-
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 }
+
 #else
-public class {{classname}}: NSObject  {
-    {{#operations}}
-    {{#operation}}
-    {{#isEvent}}
-    static let kEvent{{{camelizedNickName}}} = "{{package}}.event.{{operationId}}";
-    {{/isEvent}}
 
-    {{^isEvent}}
-    static let kRequest{{{camelizedNickName}}} = "{{package}}.request.{{operationId}}";
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+public class {{classname}}: NSObject {
+{{#operations}}
+{{#operation}}
+{{#isEvent}}
+    static let kEvent{{{camelizedNickName}}} = "{{package}}.event.{{operationId}}"
+{{/isEvent}}
+{{^isEvent}}
+    static let kRequest{{{camelizedNickName}}} = "{{package}}.request.{{operationId}}"
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
+{{#hasEvent}}
 
-    {{#hasEvent}}
     public lazy var events: {{classname}}Events = {
-        return {{baseName}}Events()
+        {{baseName}}Events()
     }()
-
-    {{/hasEvent}}
+{{/hasEvent}}
 
     public lazy var requests: {{classname}}Requests = {
-        return {{baseName}}Requests()
+        {{baseName}}Requests()
     }()
 }
 
 {{#hasEvent}}
 public class {{classname}}Events: NSObject {
-    {{#operations}}
-    {{#operation}}
-    {{#isEvent}}
-    public func add{{camelizedNickName}}EventListener(eventListener: @escaping ElectrodeBridgeEventListener) -> UUID?{
+{{#operations}}
+{{#operation}}
+{{#isEvent}}
+    public func add{{camelizedNickName}}EventListener(eventListener _: @escaping ElectrodeBridgeEventListener) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
-    {{/isEvent}}
-    {{/operation}}
 
-    {{#operation}}
-    {{#isEvent}}
-    public func remove{{camelizedNickName}}EventListener(uuid: UUID) -> ElectrodeBridgeEventListener? {
+    public func remove{{camelizedNickName}}EventListener(uuid _: UUID) -> ElectrodeBridgeEventListener? {
         assertionFailure("should override")
         return nil
     }
-    {{/isEvent}}
-    {{/operation}}
 
-    {{#operation}}
-    {{#isEvent}}
-    public func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}}: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
+    public func emitEvent{{camelizedNickName}}({{#hasRequestParam}}{{#requestParam}}{{paramName}} _: {{{dataType}}}{{/requestParam}}{{/hasRequestParam}}) {
         assertionFailure("should override")
-
     }
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 }
 {{/hasEvent}}
 
 public class {{classname}}Requests: NSObject {
-    {{#operations}}
-    {{#operation}}
-    {{^isEvent}}
-    public func register{{camelizedNickName}}RequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+{{#operations}}
+{{#operation}}
+{{^isEvent}}
+{{^first}}
+
+{{/first}}
+    public func register{{camelizedNickName}}RequestHandler(handler _: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
+{{/isEvent}}
+{{/operation}}
+{{#operation}}
+{{^isEvent}}
 
-    {{/isEvent}}
-    {{/operation}}
-
-    {{#operation}}
-    {{^isEvent}}
-    public func unregister{{camelizedNickName}}RequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+    public func unregister{{camelizedNickName}}RequestHandler(uuid _: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         assertionFailure("should override")
         return nil
     }
+{{/isEvent}}
+{{/operation}}
+{{#operation}}
+{{^isEvent}}
 
-    {{/isEvent}}
-    {{/operation}}
-
-    {{#operation}}
-    {{^isEvent}}
-    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}}: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public func {{nickname}}({{#hasRequestParam}}{{#requestParam}}{{{paramName}}} _: {{dataType}}, {{/requestParam}}{{/hasRequestParam}}responseCompletionHandler _: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")
     }
-
-    {{/isEvent}}
-    {{/operation}}
-    {{/operations}}
+{{/isEvent}}
+{{/operation}}
+{{/operations}}
 }
-
 #endif

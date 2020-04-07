@@ -1,15 +1,18 @@
 /*
-* Copyright 2017 WalmartLabs
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* http://www.apache.org/licenses/LICENSE-2.0
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2020 Walmart Labs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.complexapi.ern.model;
 
@@ -25,12 +28,25 @@ import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.*;
 
 public class NavBarButton implements Parcelable, Bridgeable {
+    public static final Creator<NavBarButton> CREATOR =
+            new Creator<NavBarButton>() {
+                @Override
+                public NavBarButton createFromParcel(Parcel in) {
+                    return new NavBarButton(in);
+                }
+
+                @Override
+                public NavBarButton[] newArray(int size) {
+                    return new NavBarButton[size];
+                }
+            };
 
     private String name;
     private String identifier;
     private Boolean showIcon;
 
-    private NavBarButton() {}
+    private NavBarButton() {
+    }
 
     private NavBarButton(Builder builder) {
         this.name = builder.name;
@@ -43,11 +59,11 @@ public class NavBarButton implements Parcelable, Bridgeable {
     }
 
     public NavBarButton(@NonNull Bundle bundle) {
-        if(!bundle.containsKey("name")){
+        if (!bundle.containsKey("name")) {
             throw new IllegalArgumentException("name property is required");
         }
 
-        if(!bundle.containsKey("identifier")){
+        if (!bundle.containsKey("identifier")) {
             throw new IllegalArgumentException("identifier property is required");
         }
 
@@ -56,48 +72,35 @@ public class NavBarButton implements Parcelable, Bridgeable {
         this.showIcon = bundle.containsKey("showIcon") ? bundle.getBoolean("showIcon") : null;
     }
 
-    public static final Creator<NavBarButton> CREATOR = new Creator<NavBarButton>() {
-        @Override
-        public NavBarButton createFromParcel(Parcel in) {
-            return new NavBarButton(in);
-        }
-
-        @Override
-        public NavBarButton[] newArray(int size) {
-            return new NavBarButton[size];
-        }
-    };
-
     /**
-    * Name of button
-    *
-    * @return String
-    */
+     * Name of button
+     *
+     * @return String
+     */
     @NonNull
     public String getName() {
         return name;
     }
 
     /**
-    * Id of the button
-    *
-    * @return String
-    */
+     * Id of the button
+     *
+     * @return String
+     */
     @NonNull
     public String getIdentifier() {
         return identifier;
     }
 
     /**
-    * Set to true for showing icon
-    *
-    * @return Boolean
-    */
+     * Set to true for showing icon
+     *
+     * @return Boolean
+     */
     @Nullable
     public Boolean getShowIcon() {
         return showIcon;
     }
-
 
     @Override
     public int describeContents() {
@@ -115,7 +118,7 @@ public class NavBarButton implements Parcelable, Bridgeable {
         Bundle bundle = new Bundle();
         bundle.putString("name", this.name);
         bundle.putString("identifier", this.identifier);
-        if(this.showIcon != null) {
+        if (this.showIcon != null) {
             bundle.putBoolean("showIcon", this.showIcon);
         }
         return bundle;
@@ -124,10 +127,10 @@ public class NavBarButton implements Parcelable, Bridgeable {
     @Override
     public String toString() {
         return "{"
-        + "name:" + (name != null ? "\"" + name + "\"" : null)+ ","
-        + "identifier:" + (identifier != null ? "\"" + identifier + "\"" : null)+ ","
-        + "showIcon:" + showIcon
-        + "}";
+                + "name:" + (name != null ? "\"" + name + "\"" : null) + ","
+                + "identifier:" + (identifier != null ? "\"" + identifier + "\"" : null) + ","
+                + "showIcon:" + showIcon
+                + "}";
     }
 
     public static class Builder {

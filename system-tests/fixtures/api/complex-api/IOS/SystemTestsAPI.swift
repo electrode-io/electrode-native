@@ -1,94 +1,83 @@
 #if swift(>=4.0)
-@objcMembers public class SystemTestsAPI: NSObject  {
-
-    static let kRequestTestArrayOfStrings = "com.complexapi.ern.api.request.testArrayOfStrings";
-
-    static let kRequestTestMultiArgs = "com.complexapi.ern.api.request.testMultiArgs";
-
+@objcMembers public class SystemTestsAPI: NSObject {
+    static let kRequestTestArrayOfStrings = "com.complexapi.ern.api.request.testArrayOfStrings"
+    static let kRequestTestMultiArgs = "com.complexapi.ern.api.request.testMultiArgs"
 
     public lazy var requests: SystemTestsAPIRequests = {
-        return SystemTestsRequests()
+        SystemTestsRequests()
     }()
 }
 
 
 @objcMembers public class SystemTestsAPIRequests: NSObject {
-    public func registerTestArrayOfStringsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public func registerTestArrayOfStringsRequestHandler(handler _: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
 
-    public func registerTestMultiArgsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public func registerTestMultiArgsRequestHandler(handler _: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
 
-
-    public func unregisterTestArrayOfStringsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+    public func unregisterTestArrayOfStringsRequestHandler(uuid _: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         assertionFailure("should override")
         return nil
     }
 
-    public func unregisterTestMultiArgsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+    public func unregisterTestMultiArgsRequestHandler(uuid _: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         assertionFailure("should override")
         return nil
     }
 
-
-    public func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ([ErnObject]?, ElectrodeFailureMessage?) -> ()) {
+    public func testArrayOfStrings(key _: [String], responseCompletionHandler _: @escaping ([ErnObject]?, ElectrodeFailureMessage?) -> Void) {
         assertionFailure("should override")
     }
 
-    public func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping (String?, ElectrodeFailureMessage?) -> ()) {
+    public func testMultiArgs(testMultiArgsData _: TestMultiArgsData, responseCompletionHandler _: @escaping (String?, ElectrodeFailureMessage?) -> Void) {
         assertionFailure("should override")
     }
-
 }
+
 #else
-public class SystemTestsAPI: NSObject  {
 
-    static let kRequestTestArrayOfStrings = "com.complexapi.ern.api.request.testArrayOfStrings";
-
-    static let kRequestTestMultiArgs = "com.complexapi.ern.api.request.testMultiArgs";
-
+public class SystemTestsAPI: NSObject {
+    static let kRequestTestArrayOfStrings = "com.complexapi.ern.api.request.testArrayOfStrings"
+    static let kRequestTestMultiArgs = "com.complexapi.ern.api.request.testMultiArgs"
 
     public lazy var requests: SystemTestsAPIRequests = {
-        return SystemTestsRequests()
+        SystemTestsRequests()
     }()
 }
 
 
 public class SystemTestsAPIRequests: NSObject {
-    public func registerTestArrayOfStringsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public func registerTestArrayOfStringsRequestHandler(handler _: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
 
-    public func registerTestMultiArgsRequestHandler(handler: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID?{
+    public func registerTestMultiArgsRequestHandler(handler _: @escaping ElectrodeBridgeRequestCompletionHandler) -> UUID? {
         assertionFailure("should override")
         return UUID()
     }
 
-
-    public func unregisterTestArrayOfStringsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+    public func unregisterTestArrayOfStringsRequestHandler(uuid _: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         assertionFailure("should override")
         return nil
     }
 
-    public func unregisterTestMultiArgsRequestHandler(uuid: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
+    public func unregisterTestMultiArgsRequestHandler(uuid _: UUID) -> ElectrodeBridgeRequestCompletionHandler? {
         assertionFailure("should override")
         return nil
     }
 
-
-    public func testArrayOfStrings(key: [String], responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public func testArrayOfStrings(key _: [String], responseCompletionHandler _: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")
     }
 
-    public func testMultiArgs(testMultiArgsData: TestMultiArgsData, responseCompletionHandler: @escaping ElectrodeBridgeResponseCompletionHandler) {
+    public func testMultiArgs(testMultiArgsData _: TestMultiArgsData, responseCompletionHandler _: @escaping ElectrodeBridgeResponseCompletionHandler) {
         assertionFailure("should override")
     }
-
 }
-
 #endif

@@ -1,44 +1,45 @@
-import { electrodeBridge } from 'react-native-electrode-bridge';
+import {electrodeBridge} from 'react-native-electrode-bridge';
+
 {{#hasRequest}}
 import {{baseName}}Requests from './{{baseName}}Requests';
 {{/hasRequest}}
 {{#hasEvent}}
 import {{baseName}}Events from './{{baseName}}Events';
 {{/hasEvent}}
-
 {{#hasRequest}}
+
 const REQUESTS = new {{baseName}}Requests(electrodeBridge);
 
 export function requests() {
-    return REQUESTS;
+  return REQUESTS;
 }
 {{/hasRequest}}
-
 {{#hasEvent}}
+
 const EVENTS = new {{baseName}}Events(electrodeBridge);
 
 export function events() {
   return EVENTS;
 }
 {{/hasEvent}}
-
 {{!no event has request}}
 {{^hasEvent}}
-    {{#hasRequest}}
-export default ({requests});
-    {{/hasRequest}}
-{{/hasEvent}}
+{{#hasRequest}}
 
+export default {requests};
+{{/hasRequest}}
+{{/hasEvent}}
 {{!has event no request}}
 {{^hasRequest}}
-    {{#hasEvent}}
-export default ({events});
-    {{/hasEvent}}
-{{/hasRequest}}
+{{#hasEvent}}
 
+export default {events};
+{{/hasEvent}}
+{{/hasRequest}}
 {{!has both event and request}}
 {{#hasEvent}}
-    {{#hasRequest}}
-export default ({requests, events});
-    {{/hasRequest}}
+{{#hasRequest}}
+
+export default {requests, events};
+{{/hasRequest}}
 {{/hasEvent}}

@@ -1,20 +1,17 @@
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1''
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
-        maven { url 'http://mobilebuild.homeoffice.wal-mart.com:8081/nexus/content/repositories/hosted' }
-        jcenter()
         google()
+        jcenter()
     }
 }
 
