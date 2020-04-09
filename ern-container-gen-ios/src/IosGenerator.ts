@@ -8,6 +8,7 @@ import {
   log,
   NativePlatform,
   kax,
+  PluginConfig,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -174,18 +175,19 @@ export default class IosGenerator implements ContainerGenerator {
       if (plugin.name === 'react-native') {
         continue
       }
-      const pluginConfig = await manifest.getPluginConfig(plugin)
+      const pluginConfig:
+        | PluginConfig<'ios'>
+        | undefined = await manifest.getPluginConfig(plugin, 'ios')
       if (!pluginConfig) {
-        continue
-      }
-      if (!pluginConfig.ios) {
         log.warn(
           `${plugin.name} does not have any injection configuration for ios platform`
         )
         continue
       }
-      const iOSPluginHook = pluginConfig.ios.pluginHook
-      if (iOSPluginHook?.name) {
+
+      const { pluginHook } = pluginConfig!
+
+      if (pluginHook?.name) {
         if (!pluginConfig.path) {
           throw new Error('No plugin config path was set. Cannot proceed.')
         }
@@ -193,26 +195,26 @@ export default class IosGenerator implements ContainerGenerator {
         const pluginConfigPath = pluginConfig.path
         const pathToCopyPluginHooksTo = path.join(outDir, 'ElectrodeContainer')
 
-        log.debug(`Adding ${iOSPluginHook.name}.h`)
+        log.debug(`Adding ${pluginHook.name}.h`)
         const pathToPluginHookHeader = path.join(
           pluginConfigPath,
-          `${iOSPluginHook.name}.h`
+          `${pluginHook.name}.h`
         )
         shell.cp(pathToPluginHookHeader, pathToCopyPluginHooksTo)
         containerIosProject.addHeaderFile(
-          `${iOSPluginHook.name}.h`,
+          `${pluginHook.name}.h`,
           { public: true },
           containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
         )
 
-        log.debug(`Adding ${iOSPluginHook.name}.m`)
+        log.debug(`Adding ${pluginHook.name}.m`)
         const pathToPluginHookSource = path.join(
           pluginConfigPath,
-          `${iOSPluginHook.name}.m`
+          `${pluginHook.name}.m`
         )
         shell.cp(pathToPluginHookSource, pathToCopyPluginHooksTo)
         containerIosProject.addSourceFile(
-          `${iOSPluginHook.name}.m`,
+          `${pluginHook.name}.m`,
           null,
           containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
         )
@@ -243,6 +245,7 @@ export default class IosGenerator implements ContainerGenerator {
     for (const plugin of plugins) {
       const pluginConfig = await manifest.getPluginConfig(
         plugin,
+        'ios',
         projectSpec.projectName
       )
       if (!pluginConfig) {

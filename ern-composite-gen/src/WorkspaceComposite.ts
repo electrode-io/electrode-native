@@ -77,11 +77,12 @@ export class WorkspaceComposite implements Composite {
         result.push(dependency)
         continue
       }
-      const pluginConfig = await manifest.getPluginConfig(dependency)
 
-      if (platform === 'android' && pluginConfig?.android) {
-        result.push(dependency)
-      } else if (platform === 'ios' && pluginConfig?.ios) {
+      if (platform === 'android') {
+        if (await manifest.getPluginConfig(dependency, 'android')) {
+          result.push(dependency)
+        }
+      } else if (await manifest.getPluginConfig(dependency, 'ios')) {
         result.push(dependency)
       }
     }

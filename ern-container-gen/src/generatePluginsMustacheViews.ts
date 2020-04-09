@@ -1,4 +1,4 @@
-import { log, manifest, PackagePath } from 'ern-core'
+import { log, manifest, PackagePath, PluginConfig } from 'ern-core'
 
 export async function generatePluginsMustacheViews(
   plugins: PackagePath[],
@@ -10,20 +10,25 @@ export async function generatePluginsMustacheViews(
     if (plugin.name === 'react-native') {
       continue
     }
-    const pluginConfig = await manifest.getPluginConfig(plugin)
-    if (!pluginConfig) {
-      continue
+
+    let pluginConfig: PluginConfig<'android' | 'ios'> | undefined
+    if (platform === 'android') {
+      pluginConfig = await manifest.getPluginConfig(plugin, 'android')
+    } else {
+      pluginConfig = await manifest.getPluginConfig(plugin, 'ios')
     }
-    if (!pluginConfig[platform]) {
+    if (!pluginConfig) {
       log.warn(
         `${plugin.name} does not have any injection configuration for ${platform} platform`
       )
       continue
     }
-    const pluginHook = pluginConfig[platform]!.pluginHook
+
+    const pluginHook = pluginConfig.pluginHook
     let containerHeader
     if (platform === 'ios') {
-      containerHeader = pluginConfig[platform]!.containerPublicHeader
+      containerHeader = (pluginConfig as PluginConfig<'ios'>)
+        .containerPublicHeader
     }
 
     if (!pluginHook && !containerHeader) {

@@ -10,29 +10,17 @@ import fs from 'fs-extra'
 import { isDependencyApi, isDependencyApiImpl } from './utils'
 import config from './config'
 import log from './log'
+import { NativePlatform } from './NativePlatform'
 
-/**
- * Plugin (React Native Native Module) configuration.
- * Used by Container generator to properly add a plugin to
- * the Container during generation
- */
-export interface PluginConfig {
-  /**
-   * Android plugin configuration.
-   */
+export type PluginConfig<T extends NativePlatform> = T extends 'android'
+  ? AndroidPluginConfig
+  : IosPluginConfig
+
+export interface ManifestPluginConfig {
   android?: AndroidPluginConfig
-  /**
-   * iOS plugin configuration
-   */
   ios?: IosPluginConfig
-  /**
-   * Location of the source code of this plugin
-   */
-  origin: PluginOrigin
-  /**
-   * Local path to the directory containing the plugin configuration
-   */
-  path?: string
+  origin?: PluginOrigin
+  path: string
 }
 
 /**
@@ -91,12 +79,24 @@ export interface CommonPluginConfig extends CommonPluginDirectives {
    * Optional plugin hook
    */
   pluginHook?: PluginHook
+  /**
+   * Location of the source code of this plugin
+   */
+  origin: PluginOrigin
+  /**
+   * Local path to the directory containing the plugin configuration
+   */
+  path?: string
 }
 
 /**
  * Platform independent plugin directives
  */
 export interface CommonPluginDirectives {
+  /**
+   * Apply a git patch
+   */
+  applyPatch?: PluginApplyPatchDirective
   /**
    * Array of copy directives.
    * Represents the file(s) to be copied from the plugin source code
@@ -153,6 +153,11 @@ export interface AndroidPluginConfig extends CommonPluginConfig {
    * Will be added to the Container Android Manifest file.
    */
   permissions?: string[]
+  /**
+   * An array of one or more Android hardware or software features.
+   * Will be added to the Container Android Manifest file.
+   */
+  features?: string[]
 }
 
 /**
@@ -213,6 +218,10 @@ export interface PbxProjDirectives {
    * Add project(s) to the pbxproj
    */
   addProject?: IosPluginAddProjectDirective[]
+  /**
+   * Add embedded framework(s) to the pbxproj
+   */
+  addEmbeddedFramework?: string[]
 }
 
 /**
@@ -289,6 +298,21 @@ export interface PluginCopyDirective {
    * Destination path to copy the file to
    */
   dest: string
+}
+
+/**
+ * Apply a git patch
+ */
+export interface PluginApplyPatchDirective {
+  /**
+   * Relative path (from plugin root) to the patch file to apply
+   */
+
+  patch: string
+  /**
+   * Relative path (from container out directory) from which to run git apply
+   */
+  root: string
 }
 
 /**
@@ -606,8 +630,9 @@ export class Manifest {
   public async getPluginConfigFromManifest(
     plugin: PackagePath,
     platformVersion: string,
-    projectName: string
-  ): Promise<PluginConfig> {
+    projectName: string,
+    platform: NativePlatform
+  ): Promise<PluginConfig<'android' | 'ios'> | undefined> {
     const pluginConfigPath = await this.getPluginConfigPath(
       plugin,
       platformVersion
@@ -618,7 +643,7 @@ export class Manifest {
       )
     }
 
-    let result: PluginConfig
+    let result: ManifestPluginConfig
     let configFile = await fs.readFile(
       path.join(pluginConfigPath, pluginConfigFileName),
       'utf-8'
@@ -627,7 +652,7 @@ export class Manifest {
     result = JSON.parse(configFile)
 
     // Add default value (convention) for Android subsection for missing fields
-    if (result.android) {
+    if (platform === 'android' && result.android) {
       result.android.root = result.android.root ?? 'android'
 
       const matchedFiles = shell
@@ -649,9 +674,9 @@ export class Manifest {
           result.android.pluginHook.configurable = true
         }
       }
-    }
-
-    if (result.ios) {
+      result.android.path = pluginConfigPath
+      return result.android
+    } else if (platform === 'ios' && result.ios) {
       result.ios.root = result.ios.root ?? 'ios'
 
       const matchedHeaderFiles = shell
@@ -677,9 +702,9 @@ export class Manifest {
           name: pluginHookClass,
         }
       }
+      result.ios.path = pluginConfigPath
+      return result.ios
     }
-    result.path = pluginConfigPath
-    return result
   }
 
   public getDefaultNpmPluginOrigin(plugin: PackagePath): NpmPluginOrigin {
@@ -701,21 +726,36 @@ export class Manifest {
 
   public async getPluginConfig(
     plugin: PackagePath,
+    platform: 'android',
+    projectName?: string,
+    platformVersion?: string
+  ): Promise<PluginConfig<'android'> | undefined>
+
+  public async getPluginConfig(
+    plugin: PackagePath,
+    platform: 'ios',
+    projectName?: string,
+    platformVersion?: string
+  ): Promise<PluginConfig<'ios'> | undefined>
+
+  public async getPluginConfig(
+    plugin: PackagePath,
+    platform: NativePlatform,
     projectName: string = 'ElectrodeContainer',
     platformVersion: string = Platform.currentVersion
-  ): Promise<PluginConfig | undefined> {
+  ): Promise<PluginConfig<'android' | 'ios'> | undefined> {
     await this.initOverrideManifest()
     let result
     if (await isDependencyApi(plugin)) {
       log.debug(
         'API plugin detected. Retrieving API plugin default configuration'
       )
-      result = this.getApiPluginDefaultConfig(plugin, projectName)
+      result = this.getApiPluginDefaultConfig(plugin, projectName, platform)
     } else if (await isDependencyApiImpl(plugin)) {
       log.debug(
         'APIImpl plugin detected. Retrieving APIImpl plugin default configuration'
       )
-      result = this.getApiImplPluginDefaultConfig(plugin, projectName)
+      result = this.getApiImplPluginDefaultConfig(plugin, projectName, platform)
     } else if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
       log.debug(
         'Third party plugin detected. Retrieving plugin configuration from manifest'
@@ -723,23 +763,19 @@ export class Manifest {
       result = await this.getPluginConfigFromManifest(
         plugin,
         platformVersion,
-        projectName
+        projectName,
+        platform
       )
     } else {
       log.warn(
         `Unsupported plugin. No configuration found in manifest for ${plugin.name}.`
       )
       return
-      /*throw new Error(
-        `Unsupported plugin. No configuration found in manifest for ${
-          plugin.basePath
-        }`
-      )*/
     }
 
-    if (!result.origin) {
+    if (result && !result.origin) {
       result.origin = this.getDefaultNpmPluginOrigin(plugin)
-    } else if (!result.origin.version) {
+    } else if (result && !result.origin.version) {
       result.origin.version = plugin.version
     }
 
@@ -748,72 +784,74 @@ export class Manifest {
 
   public getApiPluginDefaultConfig(
     plugin: PackagePath,
-    projectName: string = 'UNKNOWN'
-  ): PluginConfig {
-    return {
-      android: {
-        moduleName: 'lib',
-        root: 'android',
-      },
-      ios: {
-        copy: [
-          {
-            dest: `${projectName}/APIs`,
-            source: 'IOS/*',
+    projectName: string = 'UNKNOWN',
+    platform: NativePlatform
+  ): PluginConfig<'android' | 'ios'> {
+    return platform === 'android'
+      ? {
+          moduleName: 'lib',
+          origin: this.getDefaultNpmPluginOrigin(plugin),
+          root: 'android',
+        }
+      : {
+          copy: [
+            {
+              dest: `${projectName}/APIs`,
+              source: 'IOS/*',
+            },
+          ],
+          origin: this.getDefaultNpmPluginOrigin(plugin),
+          pbxproj: {
+            addHeader: [
+              {
+                from: 'IOS/*.swift',
+                group: 'APIs',
+                path: 'APIs',
+                public: true,
+              },
+            ],
+            addSource: [
+              {
+                from: 'IOS/*.swift',
+                group: 'APIs',
+                path: 'APIs',
+              },
+            ],
           },
-        ],
-        pbxproj: {
-          addHeader: [
-            {
-              from: 'IOS/*.swift',
-              group: 'APIs',
-              path: 'APIs',
-              public: true,
-            },
-          ],
-          addSource: [
-            {
-              from: 'IOS/*.swift',
-              group: 'APIs',
-              path: 'APIs',
-            },
-          ],
-        },
-        root: 'ios',
-      },
-      origin: this.getDefaultNpmPluginOrigin(plugin),
-    }
+          root: 'ios',
+        }
   }
 
   public getApiImplPluginDefaultConfig(
     plugin: PackagePath,
-    projectName: string = 'UNKNOWN'
-  ): PluginConfig {
-    return {
-      android: {
-        moduleName: 'lib',
-        root: 'android',
-      },
-      ios: {
-        copy: [
-          {
-            dest: `${projectName}/APIImpls`,
-            source: 'ios/ElectrodeApiImpl/APIImpls/*',
-          },
-        ],
-        pbxproj: {
-          addSource: [
+    projectName: string = 'UNKNOWN',
+    platform: NativePlatform
+  ): PluginConfig<'android' | 'ios'> {
+    return platform === 'android'
+      ? {
+          moduleName: 'lib',
+          origin: this.getDefaultNpmPluginOrigin(plugin),
+          root: 'android',
+        }
+      : {
+          copy: [
             {
-              from: 'ios/ElectrodeApiImpl/APIImpls/*.swift',
-              group: 'APIImpls',
-              path: 'APIImpls',
+              dest: `${projectName}/APIImpls`,
+              source: 'ios/ElectrodeApiImpl/APIImpls/*',
             },
           ],
-        },
-        root: 'ios',
-      },
-      origin: this.getDefaultNpmPluginOrigin(plugin),
-    }
+          origin: this.getDefaultNpmPluginOrigin(plugin),
+          pbxproj: {
+            addSource: [
+              {
+                from: 'ios/ElectrodeApiImpl/APIImpls/*.swift',
+                group: 'APIImpls',
+                path: 'APIImpls',
+              },
+            ],
+          },
+          root: 'ios',
+        }
   }
 }
 
