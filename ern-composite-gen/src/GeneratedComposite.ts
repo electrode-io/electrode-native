@@ -76,12 +76,15 @@ export class GeneratedComposite implements Composite {
         result.push(dependency)
         continue
       }
-      const pluginConfig = await manifest.getPluginConfig(dependency)
 
-      if (platform === 'android' && pluginConfig?.android) {
-        result.push(dependency)
-      } else if (platform === 'ios' && pluginConfig?.ios) {
-        result.push(dependency)
+      if (platform === 'android') {
+        if (await manifest.getPluginConfig(dependency, 'android')) {
+          result.push(dependency)
+        }
+      } else {
+        if (await manifest.getPluginConfig(dependency, 'ios')) {
+          result.push(dependency)
+        }
       }
     }
     return result

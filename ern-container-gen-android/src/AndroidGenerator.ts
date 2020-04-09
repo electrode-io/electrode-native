@@ -17,6 +17,7 @@ import {
   BundlingResult,
   HermesCli,
   gitApply,
+  PluginConfig,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -128,7 +129,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
 
     const replacements: Array<() => void> = []
-    const dependencies: AndroidDependencies = {
+    const androidDependencies: AndroidDependencies = {
       annotationProcessor: [],
       files: [],
       regular: [],
@@ -136,19 +137,17 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     for (const plugin of config.plugins) {
-      let pluginConfig: any = await manifest.getPluginConfig(plugin)
+      let pluginConfig:
+        | PluginConfig<'android'>
+        | undefined = await manifest.getPluginConfig(plugin, 'android')
       if (!pluginConfig) {
+        log.warn(
+          `Skipping ${plugin.name} as it does not have an Android configuration`
+        )
         continue
       }
 
       if (plugin.name === 'react-native') {
-        continue
-      }
-
-      if (!pluginConfig.android) {
-        log.warn(
-          `Skipping ${plugin.name} as it does not have an Android configuration`
-        )
         continue
       }
 
@@ -162,15 +161,11 @@ export default class AndroidGenerator implements ContainerGenerator {
         // exists in its package.json, replace pluginConfig with this one.
         const pluginPackageJson = await readPackageJson(pluginSourcePath)
         if (pluginPackageJson.ern.pluginConfig) {
-          pluginConfig = pluginPackageJson.ern.pluginConfig
+          pluginConfig = pluginPackageJson.ern.pluginConfig.android
         }
         populateApiImplMustacheView(pluginSourcePath, mustacheView, true)
       }
-
-      pathToPluginProject = path.join(
-        pluginSourcePath,
-        pluginConfig.android.root
-      )
+      pathToPluginProject = path.join(pluginSourcePath, pluginConfig!.root)
 
       shell.pushd(pathToPluginProject)
       try {
@@ -186,8 +181,8 @@ export default class AndroidGenerator implements ContainerGenerator {
           )
           shell.cp('-R', relPathToApiImplSource, absPathToCopyPluginSourceTo)
         } else {
-          const relPathToPluginSource = pluginConfig.android.moduleName
-            ? path.join(pluginConfig.android.moduleName, 'src/main/java')
+          const relPathToPluginSource = pluginConfig!.moduleName
+            ? path.join(pluginConfig!.moduleName, 'src/main/java')
             : path.join('src/main/java')
           const absPathToCopyPluginSourceTo = path.join(
             config.outDir,
@@ -196,82 +191,83 @@ export default class AndroidGenerator implements ContainerGenerator {
           shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo)
         }
 
-        if (pluginConfig.android) {
-          if (pluginConfig.android.copy) {
-            handleCopyDirective(
-              pluginSourcePath,
-              config.outDir,
-              pluginConfig.android.copy
-            )
-          }
+        const {
+          applyPatch,
+          copy,
+          dependencies,
+          features,
+          permissions,
+          replaceInFile,
+          repositories,
+        } = pluginConfig!
 
-          const { replaceInFile } = pluginConfig.android
-          if (replaceInFile && Array.isArray(replaceInFile)) {
-            for (const r of replaceInFile) {
-              replacements.push(() => {
-                log.debug(`Performing string replacement on ${r.path}`)
-                const pathToFile = path.join(config.outDir, r.path)
-                const fileContent = fs.readFileSync(pathToFile, 'utf8')
-                const patchedFileContent = fileContent.replace(
-                  RegExp(r.string, 'g'),
-                  r.replaceWith
-                )
-                fs.writeFileSync(pathToFile, patchedFileContent, {
-                  encoding: 'utf8',
-                })
+        if (copy) {
+          handleCopyDirective(pluginSourcePath, config.outDir, copy)
+        }
+
+        if (replaceInFile && Array.isArray(replaceInFile)) {
+          for (const r of replaceInFile) {
+            replacements.push(() => {
+              log.debug(`Performing string replacement on ${r.path}`)
+              const pathToFile = path.join(config.outDir, r.path)
+              const fileContent = fs.readFileSync(pathToFile, 'utf8')
+              const patchedFileContent = fileContent.replace(
+                RegExp(r.string, 'g'),
+                r.replaceWith
+              )
+              fs.writeFileSync(pathToFile, patchedFileContent, {
+                encoding: 'utf8',
               })
+            })
+          }
+        }
+
+        if (applyPatch) {
+          const { patch, root } = applyPatch
+          if (!patch) {
+            throw new Error('Missing "patch" property in "applyPatch" object')
+          }
+          if (!root) {
+            throw new Error('Missing "root" property in "applyPatch" object')
+          }
+          const [patchFile, rootDir] = [
+            path.join(pluginConfig!.path!, patch),
+            path.join(config.outDir, root),
+          ]
+          await gitApply({ patchFile, rootDir })
+        }
+
+        if (dependencies) {
+          const transitivePrefix = 'transitive:'
+          const filesPrefix = 'files'
+          const annotationProcessorPrefix = 'annotationProcessor:'
+          for (const dependency of dependencies) {
+            if (dependency.startsWith(transitivePrefix)) {
+              androidDependencies.transitive.push(
+                dependency.replace(transitivePrefix, '')
+              )
+            } else if (dependency.startsWith(filesPrefix)) {
+              androidDependencies.files.push(dependency)
+            } else if (dependency.startsWith(annotationProcessorPrefix)) {
+              androidDependencies.annotationProcessor.push(
+                dependency.replace(annotationProcessorPrefix, '')
+              )
+            } else {
+              androidDependencies.regular.push(dependency)
             }
           }
+        }
 
-          if (pluginConfig.android.applyPatch) {
-            const { patch, root } = pluginConfig.android.applyPatch
-            if (!patch) {
-              throw new Error('Missing "patch" property in "applyPatch" object')
-            }
-            if (!root) {
-              throw new Error('Missing "root" property in "applyPatch" object')
-            }
-            const [patchFile, rootDir] = [
-              path.join(pluginConfig.path, patch),
-              path.join(config.outDir, root),
-            ]
-            await gitApply({ patchFile, rootDir })
-          }
+        if (repositories) {
+          mustacheView.customRepos.push(...repositories)
+        }
 
-          if (pluginConfig.android.dependencies) {
-            const transitivePrefix = 'transitive:'
-            const filesPrefix = 'files'
-            const annotationProcessorPrefix = 'annotationProcessor:'
-            for (const dependency of pluginConfig.android.dependencies) {
-              if (dependency.startsWith(transitivePrefix)) {
-                dependencies.transitive.push(
-                  dependency.replace(transitivePrefix, '')
-                )
-              } else if (dependency.startsWith(filesPrefix)) {
-                dependencies.files.push(dependency)
-              } else if (dependency.startsWith(annotationProcessorPrefix)) {
-                dependencies.annotationProcessor.push(
-                  dependency.replace(annotationProcessorPrefix, '')
-                )
-              } else {
-                dependencies.regular.push(dependency)
-              }
-            }
-          }
+        if (permissions) {
+          mustacheView.customPermissions.push(...permissions)
+        }
 
-          if (pluginConfig.android.repositories) {
-            mustacheView.customRepos.push(...pluginConfig.android.repositories)
-          }
-
-          if (pluginConfig.android.permissions) {
-            mustacheView.customPermissions.push(
-              ...pluginConfig.android.permissions
-            )
-          }
-
-          if (pluginConfig.android.features) {
-            mustacheView.customFeatures.push(...pluginConfig.android.features)
-          }
+        if (features) {
+          mustacheView.customFeatures.push(...features)
         }
       } finally {
         shell.popd()
@@ -282,14 +278,14 @@ export default class AndroidGenerator implements ContainerGenerator {
     mustacheView.customRepos = _.uniq(mustacheView.customRepos)
     mustacheView.customPermissions = _.uniq(mustacheView.customPermissions)
 
-    dependencies.regular.push(
+    androidDependencies.regular.push(
       `com.walmartlabs.ern:react-native:${reactNativePlugin.version}`
     )
-    dependencies.regular.push(
+    androidDependencies.regular.push(
       `com.android.support:appcompat-v7:${versions.supportLibraryVersion}`
     )
     mustacheView.implementations = this.buildImplementationStatements(
-      dependencies,
+      androidDependencies,
       versions
     )
 
@@ -567,17 +563,14 @@ export default class AndroidGenerator implements ContainerGenerator {
       if (plugin.name === 'react-native') {
         continue
       }
-      const pluginConfig = await manifest.getPluginConfig(plugin)
+      const pluginConfig = await manifest.getPluginConfig(plugin, 'android')
       if (!pluginConfig) {
-        continue
-      }
-      if (!pluginConfig.android) {
         log.warn(
           `Skipping ${plugin.name} as it does not have an Android configuration`
         )
         continue
       }
-      const androidPluginHook = pluginConfig.android.pluginHook
+      const androidPluginHook = pluginConfig.pluginHook
       if (androidPluginHook) {
         log.debug(`Adding ${androidPluginHook.name}.java`)
         if (!pluginConfig.path) {

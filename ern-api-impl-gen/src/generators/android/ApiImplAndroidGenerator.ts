@@ -106,7 +106,10 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       )
       let pluginPath: PackagePath
       for (pluginPath of pluginsPaths) {
-        const pluginConfig = await manifest.getPluginConfig(pluginPath)
+        const pluginConfig = await manifest.getPluginConfig(
+          pluginPath,
+          'android'
+        )
         if (pluginConfig) {
           log.debug(`Copying ${pluginPath.name} to ${outputDirectory}`)
           this.copyPluginToOutput(
@@ -133,13 +136,10 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     paths: any,
     pluginOutputDirectory: string,
     pluginPath: PackagePath,
-    pluginConfig: PluginConfig
+    pluginConfig: PluginConfig<'android'>
   ) {
     if (pluginPath.name === 'react-native') {
       return
-    }
-    if (!pluginConfig.android) {
-      throw new Error('Missing android plugin configuration')
     }
     log.debug(`injecting ${pluginPath.name} code.`)
     const pluginSrcDirectory = path.join(
@@ -147,7 +147,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       'node_modules',
       pluginPath.name!,
       'android',
-      pluginConfig.android.moduleName,
+      pluginConfig.moduleName,
       SRC_MAIN_JAVA_DIR,
       '*'
     )
