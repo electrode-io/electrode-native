@@ -1,4 +1,5 @@
 import {
+  childProcess,
   manifest,
   iosUtil,
   injectReactNativeVersionKeysInObject,
@@ -9,6 +10,9 @@ import {
   NativePlatform,
   kax,
   PluginConfig,
+  readPackageJson,
+  writePackageJson,
+  yarn,
 } from 'ern-core'
 import {
   ContainerGenerator,
@@ -25,6 +29,7 @@ import xcode from 'xcode-ern'
 import _ from 'lodash'
 import readDir from 'fs-readdir-recursive'
 import { Composite } from 'ern-composite-gen'
+import semver from 'semver'
 
 const ROOT_DIR = process.cwd()
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
@@ -134,6 +139,130 @@ export default class IosGenerator implements ContainerGenerator {
       )
 
     fs.writeFileSync(projectPath, iosProject.writeSync())
+
+    if (semver.gte(reactNativePlugin.version!, '0.61.0')) {
+      //
+      // Add all native dependencies to package.json dependencies so that
+      // !use_native_modules can detect them to add their pod to the Podfile
+      const dependencies = await config.composite.getNativeDependencies({})
+      const resDependencies = [
+        ...dependencies.thirdPartyInManifest,
+        ...dependencies.thirdPartyNotInManifest,
+      ]
+      const addDependencies: any = {}
+      resDependencies.forEach(p => {
+        addDependencies[p.name!] = p.version
+      })
+
+      //
+      // Create package.json in container directory root
+      // so that native modules pods can be resolved
+      // by use_native_modules! RN ruby script
+      const pjsonObj = {
+        dependencies: addDependencies,
+        name: 'container',
+      }
+      await writePackageJson(config.outDir, pjsonObj)
+
+      //
+      // Copy all native dependencies from composite node_modules
+      // to container node_modules so that pods can be found local
+      // to the container directory
+      const containerNodeModulesPath = path.join(config.outDir, 'node_modules')
+      shell.mkdir('-p', containerNodeModulesPath)
+      resDependencies.forEach(p => {
+        shell.cp('-rf', p.basePath!, containerNodeModulesPath)
+      })
+      // Add @react-native-community/cli-platform-ios because
+      // it contains the scripts needed for native modules pods linking
+      // look in composite to match proper version
+      const compositeNodeModulesPath = path.join(
+        config.composite.path,
+        'node_modules'
+      )
+      const cliPlatformIosPkg = '@react-native-community/cli-platform-ios'
+      const cliPlatformIosPkgVersion = (
+        await readPackageJson(
+          path.join(compositeNodeModulesPath, cliPlatformIosPkg)
+        )
+      ).version
+      shell.pushd(config.outDir)
+      try {
+        await yarn.add(
+          PackagePath.fromString(
+            `${cliPlatformIosPkg}@${cliPlatformIosPkgVersion}`
+          )
+        )
+      } finally {
+        shell.popd()
+      }
+
+      //
+      // Run pod install
+      shell.pushd(config.outDir)
+      try {
+        await kax
+          .task('Running pod install')
+          .run(childProcess.spawnp('pod', ['install']))
+      } finally {
+        shell.popd()
+      }
+
+      //
+      // Clean node_modules by only keeping the directories that are
+      // needed for proper container build.
+      shell.pushd(config.outDir)
+      try {
+        //
+        // Look in the Pods pbxproj for any references to some files
+        // kepts in some node_module subdirectory (basically react-native
+        // as well as all native modules)
+        const f = fs.readFileSync('Pods/Pods.xcodeproj/project.pbxproj', {
+          encoding: 'utf8',
+        })
+
+        //
+        // Build an array of these directories
+        const re = RegExp('"../node_modules/([^"]+)"', 'g')
+        const matches = []
+        let match = re.exec(f)
+        while (match !== null) {
+          matches.push(match[1])
+          match = re.exec(f)
+        }
+        const res = matches
+          .map(r => r.split('/'))
+          .filter(x => x[0] !== 'react-native')
+          .map(x => x.join('/'))
+          .concat('react-native')
+
+        //
+        // Copy all retained directories from 'node_modules'
+        // to a new directory 'node_modules_light'
+        const nodeModulesLightDir = 'node_modules_light'
+        const nodeModulesDir = 'node_modules'
+        shell.mkdir('-p', nodeModulesLightDir)
+        for (const b of res) {
+          shell.mkdir('-p', path.join(nodeModulesLightDir, b))
+          shell.cp(
+            '-Rf',
+            path.join(nodeModulesDir, b, '{.*,*}'),
+            path.join(nodeModulesLightDir, b)
+          )
+        }
+        //
+        // Replace the huge 'node_modules' directory with the skimmed one
+        shell.rm('-rf', nodeModulesDir)
+        shell.mv(nodeModulesLightDir, nodeModulesDir)
+        //
+        // Finally get rid of all android directories to further reduce
+        // overall 'node_modules' directory size, as they are not needed
+        // for iOS container builds.
+        shell.rm('-rf', path.join(nodeModulesDir, '**/android'))
+      } finally {
+        shell.popd()
+      }
+    }
   }
 
   // Code to keep backward compatibility

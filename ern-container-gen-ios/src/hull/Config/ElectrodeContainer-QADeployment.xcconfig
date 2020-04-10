@@ -5,6 +5,15 @@
 // https://github.com/dempseyatgithub/BuildSettingExtractor
 //
 
+{{#RN_VERSION_GTE_61}}
+#include "Pods/Target Support Files/Pods-ElectrodeContainer/Pods-ElectrodeContainer.qadeployment.xcconfig"
+{{/RN_VERSION_GTE_61}}
+
+{{#RN_VERSION_LT_61}}
+HEADER_SEARCH_PATHS =
+OTHER_LDFLAGS = -ObjC -lc++ -lz
+{{/RN_VERSION_LT_61}}
+
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
 CLANG_ENABLE_MODULES = YES
@@ -17,12 +26,10 @@ DYLIB_INSTALL_NAME_BASE = @rpath
 ENABLE_ON_DEMAND_RESOURCES = NO
 ENABLE_TESTABILITY = YES
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(SRCROOT)/ElectrodeContainer/Frameworks
-HEADER_SEARCH_PATHS =
 INFOPLIST_FILE = ElectrodeContainer/Info.plist
 INSTALL_PATH = $(LOCAL_LIBRARY_DIR)/Frameworks
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
 ONLY_ACTIVE_ARCH = NO
-OTHER_LDFLAGS = -ObjC -lc++ -lz
 PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer
 PRODUCT_NAME = $(TARGET_NAME)
 SKIP_INSTALL = YES

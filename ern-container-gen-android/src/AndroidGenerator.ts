@@ -363,20 +363,24 @@ export default class AndroidGenerator implements ContainerGenerator {
       this.getJavaScriptEngine(config) === JavaScriptEngine.JSC
         ? await kax
             .task('Injecting JavaScript engine [JavaScriptCore]')
-            .run(this.injectJavaScriptCoreEngine(config))
+            .run(
+              this.injectJavaScriptCoreEngine(config, reactNativePlugin.version)
+            )
         : await kax
             .task('Injecting JavaScript engine [Hermes]')
-            .run(this.injectHermesEngine(config))
+            .run(this.injectHermesEngine(config, reactNativePlugin.version))
     }
   }
 
   public async postBundle(
     config: ContainerGeneratorConfig,
-    bundle: BundlingResult
+    bundle: BundlingResult,
+    reactNativeVersion: string
   ) {
     if (this.getJavaScriptEngine(config) === JavaScriptEngine.HERMES) {
       const hermesVersion =
-        config.androidConfig.hermesVersion || android.DEFAULT_HERMES_VERSION
+        config.androidConfig.hermesVersion ||
+        android.getDefaultHermesVersion(reactNativeVersion)
       const hermesCli = await kax
         .task(`Installing hermes-engine@${hermesVersion}`)
         .run(HermesCli.fromVersion(hermesVersion))
@@ -421,10 +425,19 @@ export default class AndroidGenerator implements ContainerGenerator {
    * Container. This way, the JSC engine is shipped within the Container and
    * applications won't crash at runtime when trying to load this library.
    */
-  public async injectJavaScriptCoreEngine(config: ContainerGeneratorConfig) {
-    const jscVersion =
+  public async injectJavaScriptCoreEngine(
+    config: ContainerGeneratorConfig,
+    reactNativeVersion: string
+  ) {
+    let jscVersion =
       (config.androidConfig && config.androidConfig.jscVersion) ||
-      android.DEFAULT_JSC_VERSION
+      android.getDefaultJSCVersion(reactNativeVersion)
+    if (/^\d+$/.test(jscVersion)) {
+      // For backward compatibility, to avoid breaking clients
+      // that are already providing a version through config that
+      // only specifies major excluding minor/patch
+      jscVersion = `${jscVersion}.0.0`
+    }
     const jscVariant =
       (config.androidConfig && config.androidConfig.jscVariant) ||
       android.DEFAULT_JSC_VARIANT
@@ -432,13 +445,14 @@ export default class AndroidGenerator implements ContainerGenerator {
     try {
       shell.pushd(workingDir)
       await yarn.init()
-      await yarn.add(PackagePath.fromString(`jsc-android@${jscVersion}.0.0`))
+      await yarn.add(PackagePath.fromString(`jsc-android@${jscVersion}`))
+      const versionMajor = semver.major(semver.coerce(jscVersion)!.version)
       const jscVersionPath = path.resolve(
-        `./node_modules/jsc-android/dist/org/webkit/${jscVariant}/r${jscVersion}`
+        `./node_modules/jsc-android/dist/org/webkit/${jscVariant}/r${versionMajor}`
       )
       const jscAARPath = path.join(
         jscVersionPath,
-        `${jscVariant}-r${jscVersion}.aar`
+        `${jscVariant}-r${versionMajor}.aar`
       )
       return new Promise((resolve, reject) => {
         const unzipper = new DecompressZip(jscAARPath)
@@ -464,10 +478,13 @@ export default class AndroidGenerator implements ContainerGenerator {
    * Inject hermes engine into the Container
    * Done in a similar way as injectJavaScriptCoreEngine method
    */
-  public async injectHermesEngine(config: ContainerGeneratorConfig) {
+  public async injectHermesEngine(
+    config: ContainerGeneratorConfig,
+    reactNativeVersion: string
+  ) {
     const hermesVersion =
       (config.androidConfig && config.androidConfig.hermesVersion) ||
-      android.DEFAULT_HERMES_VERSION
+      android.getDefaultHermesVersion(reactNativeVersion)
     const workingDir = createTmpDir()
     try {
       shell.pushd(workingDir)
@@ -559,6 +576,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     outDir: string
   ): Promise<any> {
+    const rnVersion = plugins.find(p => p.name === 'react-native')?.version!
     for (const plugin of plugins) {
       if (plugin.name === 'react-native') {
         continue

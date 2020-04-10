@@ -6,6 +6,7 @@ import {
   injectReactNativeVersionKeysInObject,
 } from 'ern-core'
 import path from 'path'
+import fs from 'fs-extra'
 
 const defaultReactNativePackagerHost = 'localhost'
 const defaultReactNativePackagerPort = '8081'
@@ -21,16 +22,26 @@ export default class IosRunerGenerator implements RunnerGenerator {
     const mustacheView = this.createMustacheView({ config })
 
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
+
     const filesToMustache = [
-      path.join(config.outDir, 'ErnRunner/RunnerConfig.m'),
-      path.join(config.outDir, 'ErnRunner.xcodeproj/project.pbxproj'),
+      'ErnRunner/RunnerConfig.m',
+      'ErnRunner.xcodeproj/project.pbxproj',
     ]
+
+    if ((mustacheView as any).RN_VERSION_LT_61) {
+      // Delete ErnRunner.xcworkspace directory as it is only needed for RN61+
+      shell.rm('-rf', path.join(config.outDir, 'ErnRunner.xcworkspace'))
+    } else {
+      // Otherwise keep it and include the xcworkspacedata file for mustache
+      // processing as it contains some mustache template placeholders
+      filesToMustache.push('ErnRunner.xcworkspace/contents.xcworkspacedata')
+    }
 
     for (const file of filesToMustache) {
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-        file,
+        path.join(config.outDir, file),
         mustacheView,
-        file
+        path.join(config.outDir, file)
       )
     }
   }
@@ -53,6 +64,18 @@ export default class IosRunerGenerator implements RunnerGenerator {
       mustacheView,
       pathToRunnerConfig
     )
+    if ((mustacheView as any).RN_VERSION_GTE_61) {
+      // If using a version of react native >= 0.61.0 and if the xcworkspace
+      // is not present in runner, let's copy it
+      const xcworkspacePath = path.join(config.outDir, 'ErnRunner.xcworkspace')
+      if (!fs.pathExistsSync(xcworkspacePath)) {
+        shell.cp(
+          '-rf',
+          path.join(runnerHullPath, 'ErnRunner.xcworkspace'),
+          config.outDir
+        )
+      }
+    }
   }
 
   public createMustacheView({ config }: { config: RunnerGeneratorConfig }) {

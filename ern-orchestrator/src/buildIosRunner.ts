@@ -1,11 +1,20 @@
 import { log } from 'ern-core'
 import { spawn } from 'child_process'
+import fs from 'fs-extra'
+import path from 'path'
 
 export async function buildIosRunner(pathToIosRunner: string, udid: string) {
   return new Promise((resolve, reject) => {
+    const extraBuildOptions = fs.existsSync(
+      path.join(pathToIosRunner, 'ErnRunner.xcworkspace')
+    )
+      ? [`-workspace`, `ErnRunner.xcworkspace`]
+      : []
+
     const xcodebuildProc = spawn(
       'xcodebuild',
       [
+        ...extraBuildOptions,
         `-scheme`,
         'ErnRunner',
         'build',

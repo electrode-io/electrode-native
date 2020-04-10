@@ -118,7 +118,8 @@ This example shows how to replace the string `"RCTBridgeModule.h"` with `<React/
 Apply a given patch file, by running `git apply` command, from a specific directory.  
 The value of this property should be a single object containing the following two properties :
   - `patch` : Path to the patch file to apply, relative to the directory containing the pluging configuration file (`config.json`).
-  - `root` : Path to the directory from which to run the `git apply` command, relative to the container generator output directory.
+  - `root` : Path to the directory from which to run the `git apply` command, relative to the container generator output directory. Mutually exclusive with `inNodeModules`.
+  - `inNodeModules` : If true, root will be set to root location of the plugin in node nodules. Mutually exclusive with `root`.
 
 **Example**
 
@@ -287,3 +288,27 @@ For example setting `ENABLE_BITCODE` to `NO` for `Debug` and `Release` configura
   }
 ]
 ```
+
+**The following directives are only available when using React Native >= 0.61.0**
+
+- `podFile`
+
+Path to a Podfile to use for the Container, relative to the directory containing the plugin config.json file.\
+Can only be set in 'react-native' plugin configuration.
+
+
+- `podspec`
+
+Path to a podspec file to use for the plugin, relative to the directory containing the plugin config.json file.\
+Can be used in case a native module doesn't have yet an available podspec file or if the podspec file of the native module needs to be different than the one shipped with it.
+
+- `extraPods`
+
+Array of extra pod statements that will be injected in the Container Podfile.
+
+- `requiresManualLinking`
+
+Boolean flag that indicates whether this plugin requires manual linking.\
+If defined and set to `true`, all plugin directives will be processed.
+If not defined (default) or set to false, only `podFile`, `podspec` and `extraPods` directives will be processed.\n
+This should only be set to `true` in very rare cases, for plugins that do not support auto linking.

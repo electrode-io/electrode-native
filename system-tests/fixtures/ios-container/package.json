@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@react-native-community/cli-platform-ios": "4.8.0",
+    "react-native": "0.62.2",
+    "react-native-electrode-bridge": "1.5.24"
+  },
+  "name": "container"
+}

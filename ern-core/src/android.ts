@@ -7,6 +7,7 @@ import log from './log'
 import { execp, spawnp } from './childProcess'
 import os from 'os'
 import kax from './kax'
+import semver from 'semver'
 
 // ==============================================================================
 // Default value for android build config
@@ -18,9 +19,7 @@ export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.1.0'
 export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
 export const DEFAULT_COMPILE_SDK_VERSION = '28'
 export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1'
-export const DEFAULT_HERMES_VERSION = '0.2.1'
 export const DEFAULT_JSC_VARIANT = 'android-jsc'
-export const DEFAULT_JSC_VERSION = '245459'
 export const DEFAULT_MIN_SDK_VERSION = '19'
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0'
 export const DEFAULT_TARGET_SDK_VERSION = '28'
@@ -405,4 +404,42 @@ export function androidEmulatorPath(): string {
     }
   }
   return 'emulator'
+}
+
+/**
+ * Returns the default Hermes engine (hermes-engine) package version used by a given React Native version.
+ * Only works for versions of RN >= 0.60.0 as hermes-engine package was introduced in this version.
+ */
+export function getDefaultHermesVersion(
+  reactNativeVersion: string
+): string | never {
+  if (semver.gte(reactNativeVersion, '0.62.0')) {
+    return '~0.4.0'
+  } else if (semver.gte(reactNativeVersion, '0.60.0')) {
+    return '^0.2.1'
+  } else {
+    throw new Error(
+      'This function can only be called for versions of React Native >= 0.60.0'
+    )
+  }
+}
+
+/**
+ * Returns the default JavaScriptCore engine version used
+ * by a given React Native version.
+ * Only works for versions of RN >= 0.60.0 as dynamic jsc-android
+ * package was introduced in this version.
+ */
+export function getDefaultJSCVersion(
+  reactNativeVersion: string
+): string | never {
+  if (semver.gte(reactNativeVersion, '0.61.0')) {
+    return '^245459.0.0'
+  } else if (semver.gte(reactNativeVersion, '0.60.0')) {
+    return '245459.0.0'
+  } else {
+    throw new Error(
+      'This function can only be called for versions of React Native >= 0.60.0'
+    )
+  }
 }

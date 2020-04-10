@@ -11,16 +11,21 @@ import { isDependencyApi, isDependencyApiImpl } from './utils'
 import config from './config'
 import log from './log'
 import { NativePlatform } from './NativePlatform'
+import semver from 'semver'
 
 export type PluginConfig<T extends NativePlatform> = T extends 'android'
   ? AndroidPluginConfig
   : IosPluginConfig
 
+/**
+ * Represent the plugin structure as seen in the manifest
+ * i.e the config.json structure
+ */
 export interface ManifestPluginConfig {
-  android?: AndroidPluginConfig
-  ios?: IosPluginConfig
+  android?: PluginConfig<'android'>
+  ios?: PluginConfig<'ios'>
   origin?: PluginOrigin
-  path: string
+  path?: string
 }
 
 /**
@@ -176,6 +181,36 @@ export interface IosPluginConfig extends CommonPluginConfig {
    * Array of public headers to add to the container
    */
   containerPublicHeader?: string[]
+  /**
+   * Path to a Podfile to use for the Container, relative to
+   * the directory containing the plugin config.json file
+   * Used for RN >= 0.61.0 only
+   * Can only be set for 'react-native' plugin configuration
+   */
+  podfile?: string
+  /**
+   * Path to a podspec file to use for the plugin, relative to
+   * the directory containing the plugin config.json file
+   * Used for RN >= 0.61.0 only
+   * Can be used in case a native module doesn't have yet an
+   * available podspec file or if the podspec file of the native
+   * module needs to be different than the one shipped within
+   * the native module
+   */
+  podspec?: string
+  /**
+   * Array of extra pod statements that will be injected in
+   * Container Podfile
+   */
+  extraPods?: string[]
+  /**
+   * Indicates whether this plugin requires manual linking
+   * If that's the case, all plugin directives will be processed
+   * independently of the react native version used
+   * Otherwise, only `podfile`, `podspec` and `extraPods` directives
+   * will be processed
+   */
+  requiresManualLinking?: boolean
 }
 
 /**
@@ -311,8 +346,14 @@ export interface PluginApplyPatchDirective {
   patch: string
   /**
    * Relative path (from container out directory) from which to run git apply
+   * Mutually exclusive with inNodeModules
    */
   root: string
+  /**
+   * If true, root will be set to root location of the plugin in node nodules
+   * Mutually exclusive with root
+   */
+  inNodeModules?: boolean
 }
 
 /**
@@ -653,7 +694,9 @@ export class Manifest {
 
     // Add default value (convention) for Android subsection for missing fields
     if (platform === 'android' && result.android) {
-      result.android.root = result.android.root ?? 'android'
+      const res = result.android
+
+      res.root = res.root ?? 'android'
 
       const matchedFiles = shell
         .find(pluginConfigPath)
@@ -662,7 +705,7 @@ export class Manifest {
         })
       if (matchedFiles && matchedFiles.length === 1) {
         const pluginHookClass = path.basename(matchedFiles[0], '.java')
-        result.android.pluginHook = {
+        res.pluginHook = {
           configurable: false,
           name: pluginHookClass,
         }
@@ -671,13 +714,15 @@ export class Manifest {
             .readFileSync(matchedFiles[0], 'utf-8')
             .includes('public static class Config')
         ) {
-          result.android.pluginHook.configurable = true
+          res.pluginHook.configurable = true
         }
       }
-      result.android.path = pluginConfigPath
-      return result.android
+      res.path = pluginConfigPath
+      return res
     } else if (platform === 'ios' && result.ios) {
-      result.ios.root = result.ios.root ?? 'ios'
+      const res = result.ios
+
+      res.root = res.root ?? 'ios'
 
       const matchedHeaderFiles = shell
         .find(pluginConfigPath)
@@ -697,13 +742,13 @@ export class Manifest {
         matchedSourceFiles.length === 1
       ) {
         const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
-        result.ios.pluginHook = {
+        res.pluginHook = {
           configurable: true,
           name: pluginHookClass,
         }
       }
-      result.ios.path = pluginConfigPath
-      return result.ios
+      res.path = pluginConfigPath
+      return res
     }
   }
 
@@ -818,6 +863,7 @@ export class Manifest {
               },
             ],
           },
+          requiresManualLinking: true,
           root: 'ios',
         }
   }
@@ -850,6 +896,7 @@ export class Manifest {
               },
             ],
           },
+          requiresManualLinking: true,
           root: 'ios',
         }
   }

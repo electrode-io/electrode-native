@@ -307,6 +307,11 @@ export async function performCodePushOtaUpdate(
       throw new Error('react-native-code-push plugin is not in native app !')
     }
 
+    const reactNative = _.find(plugins, p => p.name === 'react-native')
+    if (!codePushPlugin) {
+      throw new Error('react-native is not in native app !')
+    }
+
     const tmpWorkingDir = createTmpDir()
 
     const miniAppsNativeDependenciesVersionAligned = await compatibility.areCompatible(
@@ -433,7 +438,8 @@ export async function performCodePushOtaUpdate(
       const isHermesEnabled = conf?.androidConfig?.jsEngine === 'hermes'
       if (isHermesEnabled) {
         const hermesVersion =
-          conf.androidConfig.hermesVersion ?? android.DEFAULT_HERMES_VERSION
+          conf.androidConfig.hermesVersion ??
+          android.getDefaultHermesVersion(reactNative?.version!)
         const hermesCli = await kax
           .task(`Installing hermes-engine@${hermesVersion}`)
           .run(HermesCli.fromVersion(hermesVersion))

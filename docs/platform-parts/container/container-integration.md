@@ -172,14 +172,14 @@ It is possible to change these defaults, using the `androidConfig` object of `co
   "containerGenerator": {
     "androidConfig": {
       "jsEngine": "jsc",
-      "jscVersion": "245459",
+      "jscVersion": "^245459.0.0",
       "jscVariant": "android-jsc"
     }
   }
 }
 ```
 
-`jscVersion` is the version of the JavaScriptCore engine while `jscVariant` is the variant (`android-jsc` or `android-jsc-intl`).
+`jscVersion` is the version (fixed or range) of the JavaScriptCore engine while `jscVariant` is the variant (`android-jsc` or `android-jsc-intl`).
 
 _Hermes_
 
