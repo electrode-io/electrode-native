@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 import { PackagePath } from './PackagePath'
 import { execp } from './childProcess'
 import log from './log'
-import { spawn } from 'child_process'
+import { spawn } from 'cross-spawn'
 import { readPackageJson } from './packageJsonFileUtils'
 
 export class YarnCli {

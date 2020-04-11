@@ -1,4 +1,5 @@
-import { exec, spawn, ChildProcess } from 'child_process'
+import { exec, ChildProcess } from 'child_process'
+import { spawn } from 'cross-spawn'
 import log from './log'
 
 interface ExecOpts {
