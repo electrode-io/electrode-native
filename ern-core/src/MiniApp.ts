@@ -99,7 +99,7 @@ export class MiniApp extends BaseMiniApp {
     miniAppName: string,
     packageName: string,
     {
-      language = 'JavaScript',
+      language,
       manifestId,
       packageManager,
       platformVersion = Platform.currentVersion,
@@ -122,6 +122,10 @@ export class MiniApp extends BaseMiniApp {
 
     if (Platform.currentVersion !== platformVersion) {
       Platform.switchToVersion(platformVersion)
+    }
+
+    if (language && template) {
+      log.warn('Both language and template are set. Ignoring language.')
     }
 
     let reactNativeVersion
@@ -166,18 +170,20 @@ CocoaPods is required starting from React Native 0.60 version.
 You can find instructions to install CocoaPods @ https://cocoapods.org`)
     }
 
+    const typescriptTemplate = semver.gte(reactNativeVersion, '0.60.0')
+      ? 'react-native-template-typescript'
+      : 'typescript'
     await kax
       .task(
-        `Creating ${miniAppName} project using react-native v${reactNativeVersion}`
+        `Creating ${miniAppName} project using react-native@${reactNativeVersion}`
       )
       .run(
         reactnative.init(miniAppName, reactNativeVersion, {
-          template:
-            language === 'TypeScript'
-              ? 'typescript'
-              : template
-              ? template
-              : undefined,
+          template: template
+            ? template
+            : language === 'TypeScript'
+            ? typescriptTemplate
+            : undefined,
         })
       )
 
@@ -390,7 +396,8 @@ module.exports = {
                 if (dep.version !== manifestDep.version) {
                   throw new Error(
                     `Version of transitive dependency ${dep.name}@${dep.version}
-does not match version declared in manifest: ${manifestDep.version}`)
+does not match version declared in manifest: ${manifestDep.version}`
+                  )
                 }
               }
             }

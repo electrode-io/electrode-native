@@ -8,8 +8,11 @@ import fetch from 'node-fetch'
 import log from './log'
 import kax from './kax'
 import util from 'util'
+import semver from 'semver'
+
 const ex = util.promisify(exec)
 const sp = util.promisify(spawn)
+
 export interface BundlingResult {
   // The root path to the assets
   assetsPath: string
@@ -26,7 +29,7 @@ export interface BundlingResult {
 }
 
 export default class ReactNativeCli {
-  public readonly binaryPath: string
+  private readonly binaryPath: string
 
   constructor(binaryPath: string = 'react-native') {
     this.binaryPath = binaryPath
@@ -43,11 +46,14 @@ export default class ReactNativeCli {
       throw new Error(`Path already exists will not override ${dir}`)
     }
 
-    const initCmd = `init ${appName} --version react-native@${rnVersion}${
-      template ? ` --template ${template}` : ''
-    }`
+    const templateArg = template !== undefined ? ` --template ${template}` : ''
+    const initCmd = `init ${appName} --version ${rnVersion}${templateArg}`
 
-    return execp(`${this.binaryPath} ${initCmd}`)
+    if (semver.gte(rnVersion, '0.60.0')) {
+      return execp(`npx --ignore-existing react-native@${rnVersion} ${initCmd}`)
+    } else {
+      return execp(`${this.binaryPath} ${initCmd}`)
+    }
   }
 
   public async bundle({
