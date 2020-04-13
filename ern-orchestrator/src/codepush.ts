@@ -294,7 +294,10 @@ export async function performCodePushOtaUpdate(
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
       napDescriptor
     )
-    baseComposite = baseComposite ?? compositeGenConfig?.baseComposite
+    baseComposite =
+      baseComposite ??
+      (compositeGenConfig?.baseComposite &&
+        PackagePath.fromString(compositeGenConfig.baseComposite))
     await cauldron.beginTransaction()
     const codePushPlugin = _.find(
       plugins,

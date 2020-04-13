@@ -23,6 +23,11 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
+    .option('baseComposite', {
+      describe: 'Base Composite',
+      type: 'string',
+    })
+    .coerce('baseComposite', d => PackagePath.fromString(d))
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
       type: 'string',
@@ -97,6 +102,7 @@ export const builder = (argv: Argv) => {
 }
 
 export const commandHandler = async ({
+  baseComposite,
   deploymentName,
   description,
   descriptors = [],
@@ -111,6 +117,7 @@ export const commandHandler = async ({
   sourceMapOutput,
   targetBinaryVersion,
 }: {
+  baseComposite?: PackagePath
   deploymentName: string
   description: string
   descriptors?: AppVersionDescriptor[]
@@ -218,6 +225,7 @@ export const commandHandler = async ({
       miniAppsPackages,
       jsApiImplsPackages,
       {
+        baseComposite,
         codePushIsMandatoryRelease: mandatory,
         codePushRolloutPercentage: rollout,
         description,

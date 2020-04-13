@@ -18,6 +18,10 @@ ern code-push release
 
 ### Options
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite documentation][4] for more information).
+
 `--miniapps`
 
 * One or more MiniApps (separated by spaces) version(s) to CodePush.
@@ -103,3 +107,4 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
 [1]: ../code-push.md
 [2]: ./promote.md
 [3]: ./patch.md
+[4]: ../../platform-parts/composite/index.md
