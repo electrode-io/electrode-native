@@ -16,6 +16,10 @@
 
 **Options**  
 
+`--baseComposite <compositePath>`
+
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite documentation][1] for more information).
+
 `--miniapps`
 
 * One or more MiniApps (separated by spaces) version(s) to CodePush.
@@ -99,3 +103,5 @@ If no `descriptors` nor a `semVerDescriptor` is specified, the command will list
  
 [code-push promote]: ./promote.md
 [code-push patch]: ./patch.md
+
+[1]: ../../platform-parts/composite/index.md
