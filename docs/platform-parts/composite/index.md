@@ -144,6 +144,7 @@ depending on the level of granularity you desire. For exmaple, when looking for 
 
 Electrode Native contains a few commands that are generating a Composite as part of their execution, and that can be used without relying on a Cauldron.
 
+- [ern code-push release]
 - [ern create-composite]
 - [ern create-container]
 - [ern run-ios]
@@ -166,6 +167,7 @@ When detecting a custom Composite project, Electrode Native will do the followin
 
 This completes the Composite project generation. Optionally, based on the command used, `react-native bundle` or `react-native start` will be invoked with `index.js` as `entry-file` based on the platform being targeted.
 
+[ern code-push release]: ../../cli/code-push/release.md
 [ern create-composite]: ../../cli/create-composite.md
 [ern start]: ../../cli/start.md
 [ern create-container]: ../../cli/create-container.md
