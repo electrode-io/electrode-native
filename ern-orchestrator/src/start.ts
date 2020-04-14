@@ -255,7 +255,7 @@ async function replacePackageInCompositeWithLinkedPackage(
     'node_modules/react',
     'node_modules/react-native-electrode-bridge',
     '.git',
-    ...excludedPackages.map(d => path.normalize(`node_modules/${d.basePath}`)),
+    ...excludedPackages.map(d => path.normalize(`node_modules/${d.name}`)),
   ].map(f => path.join(sourceLinkDir, f))
 
   const excludedDirectoriesRe = new RegExp(
