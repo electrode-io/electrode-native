@@ -121,7 +121,7 @@ describe('ios utils', () => {
       }
       ernConfigGetStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
-        selectedDevice: {
+        selectedSimulator: {
           name: 'iPhone 5s',
           udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
           version: '11.1',
@@ -144,7 +144,7 @@ describe('ios utils', () => {
       }
       ernConfigGetStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
-        selectedDevice: {
+        selectedSimulator: {
           name: 'iPhone 5s',
           udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
           version: '11.1',
