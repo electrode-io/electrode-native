@@ -5,7 +5,13 @@ import semver from 'semver'
 import { log, readPackageJson, writePackageJson } from 'ern-core'
 import { getNodeModuleVersion } from './getNodeModuleVersion'
 
-export async function createBabelRc({ cwd }: { cwd: string }) {
+export async function createBabelRc({
+  cwd,
+  extraPaths = [],
+}: {
+  cwd: string
+  extraPaths?: string[]
+}) {
   log.debug('Creating top level composite .babelrc')
   const compositePackageJson = await readPackageJson(cwd)
   const compositeNodeModulesPath = path.join(cwd, 'node_modules')
@@ -18,6 +24,13 @@ export async function createBabelRc({ cwd }: { cwd: string }) {
     plugins: [],
   }
 
+  const paths = [
+    ...Object.keys(compositePackageJson.dependencies).map(d =>
+      path.join(compositeNodeModulesPath, d)
+    ),
+    ...extraPaths,
+  ]
+
   // Ugly hacky way of handling module-resolver babel plugin
   // At least it has some guarantees to make it safer but its just a temporary
   // solution until we figure out a more proper way of handling this plugin
@@ -25,11 +38,10 @@ export async function createBabelRc({ cwd }: { cwd: string }) {
     'Taking care of potential Babel module-resolver plugins used by MiniApps'
   )
   let moduleResolverAliases: { [k: string]: any } = {}
-  for (const dependency of Object.keys(compositePackageJson.dependencies)) {
-    const miniAppPackagePath = path.join(compositeNodeModulesPath, dependency)
+  for (const p of paths) {
     let miniAppPackageJson
     try {
-      miniAppPackageJson = await readPackageJson(miniAppPackagePath)
+      miniAppPackageJson = await readPackageJson(p)
     } catch (e) {
       // swallow (for test. to be fixed)
       continue
@@ -94,7 +106,7 @@ export async function createBabelRc({ cwd }: { cwd: string }) {
         `Removing babel object from ${miniAppName} MiniApp package.json`
       )
       delete miniAppPackageJson.babel
-      await writePackageJson(miniAppPackagePath, miniAppPackageJson)
+      await writePackageJson(p, miniAppPackageJson)
     }
   }
 

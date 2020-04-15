@@ -5,7 +5,13 @@ import { log, readPackageJson, shell } from 'ern-core'
 import { getNodeModuleVersion } from './getNodeModuleVersion'
 import { patchMetroBabelRcRoots } from './patchMetroBabelRcRoots'
 
-export async function patchCompositeBabelRcRoots({ cwd }: { cwd: string }) {
+export async function patchCompositeBabelRcRoots({
+  cwd,
+  extraPaths = [],
+}: {
+  cwd: string
+  extraPaths?: string[]
+}) {
   const compositePackageJson = await readPackageJson(cwd)
   const compositeNodeModulesPath = path.join(cwd, 'node_modules')
   const compositeReactNativeVersion = await getNodeModuleVersion({
@@ -16,7 +22,13 @@ export async function patchCompositeBabelRcRoots({ cwd }: { cwd: string }) {
     cwd,
     name: 'metro',
   })
-  const dependencies: string[] = Object.keys(compositePackageJson.dependencies)
+
+  const dependenciesPaths: string[] = [
+    ...extraPaths,
+    ...Object.keys(compositePackageJson.dependencies).map(p =>
+      path.join(compositeNodeModulesPath, p)
+    ),
+  ]
 
   // Any dependency that has the useBabelRc set in their package.json
   // as follow ...
@@ -29,14 +41,12 @@ export async function patchCompositeBabelRcRoots({ cwd }: { cwd: string }) {
   // configure Babel to process the .babelrc of these dependencies.
   const babelRcRootsRe: RegExp[] = []
   const babelRcRootsPaths: string[] = []
-  for (const dependency of dependencies) {
-    if (await fs.pathExists(path.join(compositeNodeModulesPath, dependency))) {
-      const depPackageJson = await readPackageJson(
-        path.join(compositeNodeModulesPath, dependency)
-      )
+  for (const dependencyPath of dependenciesPaths) {
+    if (await fs.pathExists(dependencyPath)) {
+      const depPackageJson = await readPackageJson(dependencyPath)
       if (depPackageJson.ern?.useBabelRc === true) {
-        babelRcRootsRe.push(new RegExp(`node_modules\/${dependency}(?!.+\/)`))
-        babelRcRootsPaths.push(`./node_modules/${dependency}`)
+        babelRcRootsRe.push(new RegExp(`${dependencyPath}(?!.+\/)`))
+        babelRcRootsPaths.push(dependencyPath)
       }
     }
   }

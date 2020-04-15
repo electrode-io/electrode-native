@@ -75,12 +75,10 @@ export function resolvePackagePaths(paths: string[]): Set<string> {
 }
 
 export async function findNativeDependencies(
-  dir: string,
+  dir: string | string[],
   { manifestId }: { manifestId?: string } = {}
 ): Promise<NativeDependencies> {
-  const directoriesWithNativeCode = findDirectoriesContainingNativeCode(dir)
-  const filteredDirectories = filterDirectories(directoriesWithNativeCode)
-  const packagePaths = resolvePackagePaths(filteredDirectories)
+  const dirs: string[] = Array.isArray(dir) ? dir : [dir]
 
   const result: NativeDependencies = {
     all: [],
@@ -90,33 +88,39 @@ export async function findNativeDependencies(
     thirdPartyNotInManifest: [],
   }
 
-  for (const packagePath of packagePaths) {
-    const pathToPackage = path.join(dir, packagePath)
-    const pathToNativeDependencyPackageJson = path.join(
-      pathToPackage,
-      'package.json'
-    )
-    const nativeDepPackageJson = require(pathToNativeDependencyPackageJson)
-    const dep = PackagePath.fromString(pathToPackage)
-    if (nativeDepPackageJson.ern) {
-      if (
-        nativeDepPackageJson.ern.moduleType === ModuleTypes.API ||
-        /react-native-.+-api$/.test(dep.name!)
-      ) {
-        result.apis.push(dep)
-      } else if (
-        nativeDepPackageJson.ern.moduleType === ModuleTypes.NATIVE_API_IMPL
-      ) {
-        result.nativeApisImpl.push(dep)
-      }
-    } else {
-      if (await manifest.getNativeDependency(dep, { manifestId })) {
-        result.thirdPartyInManifest.push(dep)
+  for (const d of dirs) {
+    const directoriesWithNativeCode = findDirectoriesContainingNativeCode(d)
+    const filteredDirectories = filterDirectories(directoriesWithNativeCode)
+    const packagePaths = resolvePackagePaths(filteredDirectories)
+
+    for (const packagePath of packagePaths) {
+      const pathToPackage = path.join(d, packagePath)
+      const pathToNativeDependencyPackageJson = path.join(
+        pathToPackage,
+        'package.json'
+      )
+      const nativeDepPackageJson = require(pathToNativeDependencyPackageJson)
+      const dep = PackagePath.fromString(pathToPackage)
+      if (nativeDepPackageJson.ern) {
+        if (
+          nativeDepPackageJson.ern.moduleType === ModuleTypes.API ||
+          /react-native-.+-api$/.test(dep.name!)
+        ) {
+          result.apis.push(dep)
+        } else if (
+          nativeDepPackageJson.ern.moduleType === ModuleTypes.NATIVE_API_IMPL
+        ) {
+          result.nativeApisImpl.push(dep)
+        }
       } else {
-        result.thirdPartyNotInManifest.push(dep)
+        if (await manifest.getNativeDependency(dep, { manifestId })) {
+          result.thirdPartyInManifest.push(dep)
+        } else {
+          result.thirdPartyNotInManifest.push(dep)
+        }
       }
+      result.all.push(dep)
     }
-    result.all.push(dep)
   }
 
   return result

@@ -1,13 +1,34 @@
 import fs from 'fs-extra'
 import path from 'path'
+import beautify from 'js-beautify'
+import os from 'os'
 
-export async function createMetroConfig({ cwd }: { cwd: string }) {
+export async function createMetroConfig({
+  cwd,
+  projectRoot,
+  blacklistRe,
+  extraNodeModules,
+  watchFolders,
+}: {
+  cwd?: string
+  projectRoot?: string
+  blacklistRe?: RegExp[]
+  extraNodeModules?: { [pkg: string]: string }
+  watchFolders?: string[]
+}) {
   return fs.writeFile(
-    path.join(cwd, 'metro.config.js'),
-    `const blacklist = require('metro-config/src/defaults/blacklist');
+    path.join(cwd ?? path.resolve(), 'metro.config.js'),
+    beautify.js(`const blacklist = require('metro-config/src/defaults/blacklist');
 module.exports = {
+  ${projectRoot ? `projectRoot: "${projectRoot}",` : ''}
+  ${
+    watchFolders
+      ? `watchFolders: [ 
+        ${watchFolders.map(x => `"${x}"`).join(`,${os.EOL}`)} 
+      ],`
+      : ''
+  }
   resolver: {
-    sourceExts: ['jsx', 'js', 'ts', 'tsx', 'mjs'],
     blacklistRE: blacklist([
       // Ignore IntelliJ directories
       /.*\\.idea\\/.*/,
@@ -15,7 +36,13 @@ module.exports = {
       /.*\\.git\\/.*/,
       // Ignore android directories
       /.*\\/app\\/build\\/.*/,
+      ${blacklistRe ? blacklistRe.join(`,${os.EOL}`) : ''}
     ]),
+    ${
+      extraNodeModules
+        ? `extraNodeModules: ${JSON.stringify(extraNodeModules, null, 2)},`
+        : ''
+    }
     assetExts: [
       // Image formats
       "bmp",
@@ -60,6 +87,6 @@ module.exports = {
     assetPlugins: ['ern-bundle-store-metro-asset-plugin'],
   },
 };
-`
+`)
   )
 }
