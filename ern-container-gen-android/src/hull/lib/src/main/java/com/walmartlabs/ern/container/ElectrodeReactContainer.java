@@ -179,7 +179,6 @@ public class ElectrodeReactContainer {
             {{#isCodePushPluginIncluded}}
             CodePush.setReactInstanceHolder(sElectrodeReactNativeHost);
             {{/isCodePushPluginIncluded}}
-            askForOverlayPermissionIfDebug(application);
 
             sReactPackages.add(new MainReactPackage());
             {{#plugins}}
@@ -212,19 +211,6 @@ public class ElectrodeReactContainer {
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         } else {
             Log.i(TAG, "Ignoring duplicate initialize call, electrode container is already initialized or is being initialized");
-        }
-    }
-
-    private static void askForOverlayPermissionIfDebug(Application application) {
-        // Ask for overlay permission for the application if
-        // developer mode is enabled and Android version is Marshmallow
-        // or above
-        if (isReactNativeDeveloperSupport &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                !Settings.canDrawOverlays(application)) {
-            Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            application.startActivity(serviceIntent);
         }
     }
 

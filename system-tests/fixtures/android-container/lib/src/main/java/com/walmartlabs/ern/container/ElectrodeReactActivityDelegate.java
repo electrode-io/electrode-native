@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactNativeHost;
@@ -134,28 +133,15 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
     }
 
     private ReactRootView createReactRootView(@NonNull String componentName, @Nullable Bundle props, boolean newInstance) {
-        // Ask for overlay permission. This is required only during development and is needed for
-        // ReactNative to display the Debug menu as an overlay
-        if (ElectrodeReactContainer.isReactNativeDeveloperSupport()
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && !Settings.canDrawOverlays(getContext())) {
-            Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mCurrentActivity.startActivity(serviceIntent);
-            mCurrentActivity.finish();
-            Toast.makeText(mCurrentActivity, "You must allow overlays first", Toast.LENGTH_SHORT).show();
-            return null;
-        } else {
-            Bundle finalProps = getLaunchOptions();
-            if (props != null) {
-                if (finalProps != null) {
-                    finalProps.putAll(props);
-                } else {
-                    finalProps = props;
-                }
+        Bundle finalProps = getLaunchOptions();
+        if (props != null) {
+            if (finalProps != null) {
+                finalProps.putAll(props);
+            } else {
+                finalProps = props;
             }
-            return getReactAppView(componentName, finalProps, newInstance);
         }
+        return getReactAppView(componentName, finalProps, newInstance);
     }
 
     /**
