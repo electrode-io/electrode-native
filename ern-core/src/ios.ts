@@ -18,7 +18,7 @@ export interface IosDevice {
 export async function getiPhoneSimulators(): Promise<any> {
   const iosSims = await simctl.getDevices()
   return _.filter(_.flattenDeep(_.map(iosSims, (val, key) => val)), device =>
-    device.name.match(/^iPhone/)
+    device.name.match(/^iPhone|iPad/)
   )
 }
 
@@ -81,20 +81,20 @@ export async function askUserToSelectAniPhoneSimulator() {
   }
 
   // if simulator is still not resolved
-  const { selectedDevice } = await inquirer.prompt([
+  const { selectedSimulator } = await inquirer.prompt([
     <inquirer.Question>{
       choices,
-      message: 'Choose an iOS device',
-      name: 'selectedDevice',
+      message: 'Choose an iOS simulator',
+      name: 'selectedSimulator',
       type: 'list',
     },
   ])
 
   // Update the emulatorConfig
-  deviceConfig.deviceId = selectedDevice.udid
+  deviceConfig.deviceId = selectedSimulator.udid
   ernConfig.set(deviceConfigUtil.IOS_DEVICE_CONFIG, deviceConfig)
 
-  return selectedDevice
+  return selectedSimulator
 }
 
 export function parseIOSDevicesList(
