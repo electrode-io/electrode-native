@@ -408,6 +408,11 @@ export async function performCodePushOtaUpdate(
         : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
 
     sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map')
+    const entryFile = fs.existsSync(
+      path.join(tmpWorkingDir, `index.${platform}.js`)
+    )
+      ? `index.${platform}.js`
+      : 'index.js'
     const bundlingResult = await kax
       .task('Generating composite bundle for miniapps')
       .run(
@@ -415,7 +420,7 @@ export async function performCodePushOtaUpdate(
           assetsDest: bundleOutputDirectory,
           bundleOutput: bundleOutputPath,
           dev: false,
-          entryFile: `index.${platform}.js`,
+          entryFile,
           platform,
           resetCache: true,
           sourceMapOutput,
