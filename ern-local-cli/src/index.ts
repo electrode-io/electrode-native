@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { execSync } from 'child_process'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   config,
@@ -20,6 +20,7 @@ import {
 } from 'kax'
 import path from 'path'
 import yargs from 'yargs'
+import semver from 'semver'
 
 // ==============================================================================
 // Geeky eye candy
@@ -87,6 +88,17 @@ function showVersion() {
 
   const localVersion = config.get('platformVersion')
   log.info(`ern platform: ${localVersion ? localVersion : '-UNKNOWN-'}`)
+}
+
+function getNodeEngineVersionRequirement() {
+  const pjsonPath = path.resolve(__dirname, '..', 'package.json')
+  const pjson = fs.readJSONSync(pjsonPath)
+  return pjson.engines.node
+}
+
+function isNodeVersionCompatible(version: string) {
+  const requiredVersion = getNodeEngineVersionRequirement()
+  return semver.satisfies(version, requiredVersion)
 }
 
 Manifest.getOverrideManifestConfig = async (): Promise<ManifestOverrideConfig | void> => {
@@ -188,6 +200,15 @@ const logLevelStringToEnum = (level: string) => {
       : logLevel === LogLevel.Off
       ? new KaxNullRenderer()
       : new KaxAdvancedRenderer(kaxRendererConfig)
+
+  const nodeVersion = process.version
+  if (!isNodeVersionCompatible(nodeVersion)) {
+    const requiredVersion = getNodeEngineVersionRequirement()
+    log.error(`This version of ern requires Node.js ${requiredVersion}
+Node.js version currently in use is ${nodeVersion}
+Please switch to a version of Node satisfying the version requirement`)
+    process.exit(1)
+  }
 
   if (!hasJsonOpt) {
     if (config.get('showBanner', true)) {
