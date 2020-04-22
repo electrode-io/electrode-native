@@ -237,7 +237,7 @@ export async function logErrorAndExitIfNotSatisfied({
     }
     if (publishedToNpm) {
       kaxTask = kax.task(
-        'Ensuring that package(s) version(s) have been published to NPM',
+        'Ensuring that package(s) version(s) have been published to npm',
       );
       await Ensure.publishedToNpm(
         publishedToNpm.obj,
@@ -334,7 +334,7 @@ export async function logErrorAndExitIfNotSatisfied({
       kaxTask.succeed();
     }
     if (isValidNpmPackageName) {
-      kaxTask = kax.task('Ensuring that NPM package name is valid');
+      kaxTask = kax.task('Ensuring that npm package name is valid');
       await Ensure.isValidNpmPackageName(
         isValidNpmPackageName.name,
         isValidNpmPackageName.extraErrorMessage,

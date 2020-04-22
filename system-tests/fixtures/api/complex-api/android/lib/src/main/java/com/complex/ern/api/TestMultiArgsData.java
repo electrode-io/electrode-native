@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.complexapi.ern.api;
+package com.complex.ern.api;
 
 import android.os.Bundle;
 import android.os.Parcel;

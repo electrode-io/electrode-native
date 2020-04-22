@@ -329,6 +329,32 @@ describe('utils.js', () => {
   });
 
   // ==========================================================
+  // getModuleSuffix
+  // ==========================================================
+  describe('getModuleSuffix', () => {
+    it('returns the correct suffixes', () => {
+      expect(utils.getModuleSuffix(ModuleTypes.MINIAPP)).to.eql('miniapp');
+      expect(utils.getModuleSuffix(ModuleTypes.API)).to.eql('api');
+      expect(utils.getModuleSuffix(ModuleTypes.JS_API_IMPL)).to.eql(
+        'api-impl-js',
+      );
+      expect(utils.getModuleSuffix(ModuleTypes.NATIVE_API_IMPL)).to.eql(
+        'api-impl-native',
+      );
+    });
+
+    it('throws exception for unsupported module type', () => {
+      try {
+        utils.getModuleSuffix(fixtures.moduleTypeNotSupported);
+      } catch (e) {
+        expect(e.message).to.eql(
+          `Unsupported module type : ${fixtures.moduleTypeNotSupported}`,
+        );
+      }
+    });
+  });
+
+  // ==========================================================
   // getDefaultPackageNameForModule
   // ==========================================================
   describe('getDefaultPackageNameForModule', () => {

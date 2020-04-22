@@ -11,7 +11,7 @@ export default class WalmartItemRequests {
    */
   registerAddItemRequestHandler(handler: Function): Promise<any> {
     this._bridge.registerRequestHandler(
-      'com.testapi.ern.api.request.addItem',
+      'com.test.ern.api.request.addItem',
       handler,
     );
   }
@@ -22,7 +22,7 @@ export default class WalmartItemRequests {
    */
   registerFindItemsRequestHandler(handler: Function): Promise<any> {
     this._bridge.registerRequestHandler(
-      'com.testapi.ern.api.request.findItems',
+      'com.test.ern.api.request.findItems',
       handler,
     );
   }
@@ -34,7 +34,7 @@ export default class WalmartItemRequests {
    * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Boolean }
    */
   addItem(item: any, timeout: number): Promise<any> {
-    return this._bridge.sendRequest('com.testapi.ern.api.request.addItem', {
+    return this._bridge.sendRequest('com.test.ern.api.request.addItem', {
       data: item,
       timeout,
     });
@@ -45,10 +45,10 @@ export default class WalmartItemRequests {
    * @param {Object} opts Optional parameters
    * @param opts.limit maximum number of results to return
    * @param timeout timeout in milliseconds
-   * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:com.testapi.ern.model/Item> }
+   * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:com.test.ern.model/Item> }
    */
   findItems(opts: any, timeout: number): Promise<any> {
-    return this._bridge.sendRequest('com.testapi.ern.api.request.findItems', {
+    return this._bridge.sendRequest('com.test.ern.api.request.findItems', {
       data: opts,
       timeout,
     });

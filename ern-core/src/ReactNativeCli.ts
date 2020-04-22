@@ -37,7 +37,7 @@ export default class ReactNativeCli {
   }
 
   public async init(
-    appName: string,
+    projectName: string,
     rnVersion: string,
     {
       skipInstall,
@@ -47,15 +47,21 @@ export default class ReactNativeCli {
       template?: string;
     } = {},
   ) {
-    const dir = path.join(process.cwd(), appName);
+    const dir = path.join(process.cwd(), projectName);
 
     if (await fs.pathExists(dir)) {
       throw new Error(`Path already exists will not override ${dir}`);
     }
 
-    const skipInstallArg = skipInstall ? ` --skip-install` : '';
-    const templateArg = template !== undefined ? ` --template ${template}` : '';
-    const initCmd = `init ${appName} --version ${rnVersion}${templateArg}${skipInstallArg}`;
+    const options = [];
+    options.push(`--version ${rnVersion}`);
+    if (skipInstall) {
+      options.push('--skip-install');
+    }
+    if (template) {
+      options.push(`--template ${template}`);
+    }
+    const initCmd = `init ${projectName} ${options.join(' ')}`;
 
     if (semver.gte(rnVersion, '0.60.0')) {
       return execp(

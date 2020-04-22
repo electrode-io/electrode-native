@@ -1,19 +1,19 @@
 import fs from 'fs-extra';
 import { ApiGen } from 'ern-api-gen';
 import {
-  checkIfModuleNameContainsSuffix,
   log,
   manifest,
   ModuleTypes,
   PackagePath,
   utils as coreUtils,
+  validateModuleName,
 } from 'ern-core';
 import {
   askUserToInputPackageName,
   epilog,
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
-  promptUserToUseSuffixModuleName,
+  promptUserToUseSuggestedModuleName,
   tryCatchWrap,
 } from '../lib';
 import { Argv } from 'yargs';
@@ -37,7 +37,7 @@ export const builder = (argv: Argv) => {
     })
     .option('packageName', {
       alias: 'p',
-      describe: 'Name to use for the api NPM package',
+      describe: 'Name to use for the api npm package',
     })
     .option('schemaPath', {
       alias: 'm',
@@ -45,11 +45,11 @@ export const builder = (argv: Argv) => {
     })
     .option('scope', {
       alias: 's',
-      describe: 'Scope to use for the api NPM package',
+      describe: 'Scope to use for the api npm package',
     })
     .option('skipNpmCheck', {
       describe:
-        'Skip the check ensuring package does not already exists in NPM registry',
+        'Skip the check ensuring package does not already exists in npm registry',
       type: 'boolean',
     })
     .epilog(epilog(exports));
@@ -92,8 +92,11 @@ export const commandHandler = async ({
     throw new Error(`Cannot resolve path to ${schemaPath}`);
   }
 
-  if (!checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
-    apiName = await promptUserToUseSuffixModuleName(apiName, ModuleTypes.API);
+  if (!validateModuleName(apiName, ModuleTypes.API)) {
+    apiName = await promptUserToUseSuggestedModuleName(
+      apiName,
+      ModuleTypes.API,
+    );
   }
 
   // Construct the package name
@@ -124,11 +127,6 @@ export const commandHandler = async ({
       'react-native-electrode-bridge not found in manifest. cannot infer version to use',
     );
   }
-  if (!bridgeDep.version) {
-    throw new Error(
-      'react-native-electrode-bridge version needs to be defined',
-    );
-  }
 
   const reactNative = await manifest.getNativeDependency(
     PackagePath.fromString('react-native'),
@@ -136,11 +134,11 @@ export const commandHandler = async ({
   );
   if (!reactNative) {
     throw new Error(
-      'react-native-electrode-bridge not found in manifest. cannot infer version to use',
+      'react-native not found in manifest. cannot infer version to use',
     );
   }
 
-  log.info(`Generating ${apiName} API`);
+  log.info(`Generating ${apiName}`);
 
   await ApiGen.generateApi({
     apiAuthor,

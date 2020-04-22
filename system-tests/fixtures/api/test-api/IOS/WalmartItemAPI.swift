@@ -1,8 +1,8 @@
 #if swift(>=4.0)
 @objcMembers public class WalmartItemAPI: NSObject {
-    static let kRequestAddItem = "com.testapi.ern.api.request.addItem"
-    static let kRequestFindItems = "com.testapi.ern.api.request.findItems"
-    static let kEventItemAdded = "com.testapi.ern.api.event.itemAdded"
+    static let kRequestAddItem = "com.test.ern.api.request.addItem"
+    static let kRequestFindItems = "com.test.ern.api.request.findItems"
+    static let kEventItemAdded = "com.test.ern.api.event.itemAdded"
 
     public lazy var events: WalmartItemAPIEvents = {
         WalmartItemEvents()
@@ -62,9 +62,9 @@
 #else
 
 public class WalmartItemAPI: NSObject {
-    static let kRequestAddItem = "com.testapi.ern.api.request.addItem"
-    static let kRequestFindItems = "com.testapi.ern.api.request.findItems"
-    static let kEventItemAdded = "com.testapi.ern.api.event.itemAdded"
+    static let kRequestAddItem = "com.test.ern.api.request.addItem"
+    static let kRequestFindItems = "com.test.ern.api.request.findItems"
+    static let kEventItemAdded = "com.test.ern.api.event.itemAdded"
 
     public lazy var events: WalmartItemAPIEvents = {
         WalmartItemEvents()

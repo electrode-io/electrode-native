@@ -19,7 +19,7 @@ The `android` and `ios` directories are not created by this command. They will b
 `<appName>`
 
 - The name to use for the MiniApp. The MiniApp name must follow Electrode Native module name rules.
-- We recommend suffixing the name of MiniApp with suffix `App`
+- We recommend suffixing the name of MiniApp with suffix `-miniapp`
 
 ##### Options
 

@@ -7,7 +7,7 @@ export default class WalmartItemEvents {
 
   addItemAddedEventListener(eventListener: Function): string {
     return this._bridge.registerEventListener(
-      'com.testapi.ern.api.event.itemAdded',
+      'com.test.ern.api.event.itemAdded',
       eventListener,
     );
   }
@@ -17,7 +17,7 @@ export default class WalmartItemEvents {
   }
 
   emitItemAdded(itemId: string): void {
-    return this._bridge.emitEvent('com.testapi.ern.api.event.itemAdded', {
+    return this._bridge.emitEvent('com.test.ern.api.event.itemAdded', {
       data: itemId,
     });
   }

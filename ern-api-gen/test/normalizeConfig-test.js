@@ -27,7 +27,6 @@ describe('normalizeConfig', function () {
       artifactId: 'react-native-hello-api',
       targetDependencies: [],
     });
-    console.log(result);
   });
 
   it('generates a minimal config', () => {
@@ -36,7 +35,36 @@ describe('normalizeConfig', function () {
       bridgeVersion: '1.0.0',
       reactNativeVersion: '14.0.5',
     });
-    console.log(result);
+    expect(result).to.include.any.keys('apiVersion');
+  });
+
+  it('normalizes a scoped name', () => {
+    const result = normalizeConfig({
+      name: '@walmart/sample-test-api',
+      bridgeVersion: '1.0.0',
+      reactNativeVersion: '1.0.0',
+    });
+    expect(result).to.include({
+      npmScope: 'walmart',
+      namespace: 'com.walmart.sampletest.ern',
+      moduleName: 'sampletest',
+      artifactId: 'react-native-sampletest-api',
+    });
+    expect(result).to.include.any.keys('apiVersion');
+  });
+
+  it('normalizes a scoped name with react-native- prefix', () => {
+    const result = normalizeConfig({
+      name: '@walmart/react-native-sample-api',
+      bridgeVersion: '1.0.0',
+      reactNativeVersion: '1.0.0',
+    });
+    expect(result).to.include({
+      npmScope: 'walmart',
+      namespace: 'com.walmart.sample.ern',
+      moduleName: 'sample',
+      artifactId: 'react-native-sample-api',
+    });
     expect(result).to.include.any.keys('apiVersion');
   });
 });

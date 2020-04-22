@@ -6,6 +6,7 @@ import { doesNotThrow, doesThrow } from 'ern-util-dev';
 import sinon from 'sinon';
 import Ensure from '../src/Ensure';
 import * as fixtures from './fixtures/common';
+import * as coreFixtures from '../../ern-core/test/fixtures/common';
 import fs from 'fs';
 import path from 'path';
 
@@ -28,7 +29,7 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('noGitOrFilesystemPath', () => {
     fixtures.withoutGitOrFileSystemPath.forEach((obj) => {
-      it('shoud not throw if no git or file system path', () => {
+      it('should not throw if no git or file system path', () => {
         expect(
           () => Ensure.noGitOrFilesystemPath(obj),
           `throw for ${obj}`,
@@ -51,7 +52,7 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('noFileSystemPath', () => {
     fixtures.withoutFileSystemPath.forEach((obj) => {
-      it('shoud not throw if no file system path', () => {
+      it('should not throw if no file system path', () => {
         expect(
           () => Ensure.noFileSystemPath(obj),
           `throw for ${obj}`,
@@ -494,7 +495,7 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('isValidNpmPackageName', () => {
     fixtures.validNpmPackageNames.forEach((name) => {
-      it('shoud not throw if name is valid', () => {
+      it('should not throw if name is valid', () => {
         expect(
           () => Ensure.isValidNpmPackageName(name),
           `throw for ${name}`,
@@ -516,7 +517,7 @@ describe('Ensure.js', () => {
   // isValidElectrodeNativeModuleName
   // ==========================================================
   describe('isValidElectrodeNativeModuleName', () => {
-    fixtures.validElectrodeNativeModuleNames.forEach((name) => {
+    coreFixtures.validElectrodeNativeModuleNames.forEach((name) => {
       it('should not throw if name is valid', () => {
         expect(
           () => Ensure.isValidElectrodeNativeModuleName(name),
@@ -525,7 +526,7 @@ describe('Ensure.js', () => {
       });
     });
 
-    fixtures.invalidElectrodeNativeModuleNames.forEach((name) => {
+    coreFixtures.invalidElectrodeNativeModuleNames.forEach((name) => {
       it('should throw if name is invalid', () => {
         expect(
           () => Ensure.isValidElectrodeNativeModuleName(name),
@@ -536,9 +537,9 @@ describe('Ensure.js', () => {
   });
 
   // ==========================================================
-  // sameNativeAplicationAndPlatform
+  // sameNativeApplicationAndPlatform
   // ==========================================================
-  describe('sameNativeAplicationAndPlatform', () => {
+  describe('sameNativeApplicationAndPlatform', () => {
     it('should not throw if descriptors are matching the same native application and platform', () => {
       expect(() =>
         Ensure.sameNativeApplicationAndPlatform(
@@ -665,7 +666,7 @@ describe('Ensure.js', () => {
   // ==========================================================
   describe('isSupportedMiniAppOrJsApiImplVersion', () => {
     fixtures.supportedCauldronMiniAppsVersions.forEach((pkg) => {
-      it(`shoud not throw if suported version (pkg: ${pkg})`, () => {
+      it(`should not throw if suported version (pkg: ${pkg})`, () => {
         expect(
           () => Ensure.isSupportedMiniAppOrJsApiImplVersion(pkg),
           `throw for ${pkg}`,

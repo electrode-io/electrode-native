@@ -103,7 +103,7 @@ export { packageCache } from './packageCache';
 export { normalizeVersionsToSemver } from './normalizeVersionsToSemver';
 export { unzip } from './unzip';
 export { createZippedBundle } from './createZippedBundle';
-export { checkIfModuleNameContainsSuffix } from './checkIfModuleNameContainsSuffix';
+export { validateModuleName } from './validateModuleName';
 export { getCodePushSdk } from './getCodePushSdk';
 export { getCodePushInitConfig } from './getCodePushInitConfig';
 export { PackageManager } from './PackageManager';

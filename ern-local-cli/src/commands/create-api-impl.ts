@@ -1,10 +1,10 @@
 import {
-  checkIfModuleNameContainsSuffix,
   log,
   ModuleTypes,
   PackagePath,
   Platform,
   utils as coreUtils,
+  validateModuleName,
 } from 'ern-core';
 import { generateApiImpl } from 'ern-api-impl-gen';
 import {
@@ -13,7 +13,7 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
-  promptUserToUseSuffixModuleName,
+  promptUserToUseSuggestedModuleName,
   tryCatchWrap,
 } from '../lib';
 import path from 'path';
@@ -33,13 +33,13 @@ export const builder = (argv: Argv) => {
     })
     .option('hasConfig', {
       describe:
-        'Indicates if this api implementation requires some config during initialization. \nThis option will be stored and reused during container generation to enforce config initialization',
+        'Indicates if this api implementation requires some config during initialization.\nThis option will be stored and reused during container generation to enforce config initialization',
       type: 'boolean',
     })
     .option('jsOnly', {
       alias: 'j',
       describe:
-        'Generate js project with proper dependencies (Implementation of the API has to be written in js',
+        'Generate js project with proper dependencies (Implementation of the API has to be written in js)',
       type: 'boolean',
     })
     .option('manifestId', {
@@ -49,20 +49,20 @@ export const builder = (argv: Argv) => {
     .option('nativeOnly', {
       alias: 'n',
       describe:
-        'Generate native projects with proper dependencies (Implementation of the API has to be written in native',
+        'Generate native projects with proper dependencies (Implementation of the API has to be written in native)',
       type: 'boolean',
     })
     .option('packageName', {
       alias: 'p',
-      describe: 'Name to use for the apiImpl NPM package',
+      describe: 'Name to use for the apiImpl npm package',
     })
     .option('scope', {
       alias: 's',
-      describe: 'Scope to use for the apiImpl NPM package',
+      describe: 'Scope to use for the apiImpl npm package',
     })
     .option('skipNpmCheck', {
       describe:
-        'Skip the check ensuring package does not already exists in NPM registry',
+        'Skip the check ensuring package does not already exists in npm registry',
       type: 'boolean',
     })
     .option('outputDirectory', {
@@ -129,18 +129,14 @@ export const commandHandler = async ({
     });
   }
 
-  log.info(`Generating API implementation for ${apiName}`);
   const reactNativeVersion = await coreUtils.reactNativeManifestVersion({
     manifestId,
   });
   if (!reactNativeVersion) {
     throw new Error(
-      'React Native version is not defined in Manifest. This sould not happen !',
+      'React Native version is not defined in Manifest. This should not happen!',
     );
   }
-  log.debug(
-    `Will generate api implementation using react native version: ${reactNativeVersion}`,
-  );
 
   if (jsOnly && nativeOnly) {
     log.warn('Looks like both js and native are selected, should be only one');
@@ -157,11 +153,8 @@ export const commandHandler = async ({
     ? ModuleTypes.NATIVE_API_IMPL
     : ModuleTypes.JS_API_IMPL;
 
-  if (
-    apiImplName &&
-    !checkIfModuleNameContainsSuffix(apiImplName, moduleType)
-  ) {
-    apiImplName = await promptUserToUseSuffixModuleName(
+  if (apiImplName && !validateModuleName(apiImplName, moduleType)) {
+    apiImplName = await promptUserToUseSuggestedModuleName(
       apiImplName,
       moduleType,
     );
@@ -169,11 +162,8 @@ export const commandHandler = async ({
 
   // Must conform to definition of ElectrodeNativeModuleName
   if (!apiImplName) {
-    // camel case api name
-    const cameCaseName = coreUtils.camelize(apiDep.name!);
-    // remove number if present
-    const nameWithNoNumber = cameCaseName.replace(/\d+/g, '');
-    apiImplName = `${nameWithNoNumber}Impl${jsOnly ? 'Js' : 'Native'}`;
+    const simpleName = apiName.replace(/^@(.+)\/|-api$/g, '');
+    apiImplName = `${simpleName}-${coreUtils.getModuleSuffix(moduleType)}`;
   }
 
   // If no package name is specified get default name from apiImplName
@@ -196,6 +186,8 @@ export const commandHandler = async ({
   if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
     throw new Error(`Aborting command `);
   }
+
+  log.info(`Generating API implementation for ${apiName}`);
 
   await generateApiImpl({
     apiDependency: apiDep,

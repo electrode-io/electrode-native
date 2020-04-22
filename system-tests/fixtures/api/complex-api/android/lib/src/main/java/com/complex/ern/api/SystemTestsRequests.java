@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.complexapi.ern.api;
+package com.complex.ern.api;
 
 import android.support.annotation.NonNull;
 
@@ -28,7 +28,7 @@ import com.walmartlabs.electrode.reactnative.bridge.RequestProcessor;
 
 import java.util.*;
 
-import com.complexapi.ern.model.ErnObject;
+import com.complex.ern.model.ErnObject;
 
 final class SystemTestsRequests implements SystemTestsApi.Requests {
     SystemTestsRequests() {

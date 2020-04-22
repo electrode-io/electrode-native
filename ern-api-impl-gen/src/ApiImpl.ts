@@ -9,6 +9,7 @@ import {
   Platform,
   readPackageJsonSync,
   shell,
+  utils,
   writePackageJsonSync,
   yarn,
 } from 'ern-core';
@@ -168,7 +169,7 @@ function ernifyPackageJson(
     : ModuleTypes.JS_API_IMPL;
   const containerGen = {
     hasConfig,
-    moduleName: apiImplName,
+    moduleName: utils.camelize(apiImplName),
   };
   packageJson.name = scope ? `@${scope}/${packageName}` : packageName;
   packageJson.ern = {

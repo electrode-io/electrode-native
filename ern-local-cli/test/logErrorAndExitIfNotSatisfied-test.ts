@@ -2,6 +2,7 @@ import { AppVersionDescriptor, createTmpDir, yarn } from 'ern-core';
 import * as cauldron from 'ern-cauldron-api';
 import sinon from 'sinon';
 import * as fixtures from './fixtures/common';
+import * as orchestratorFixtures from '../../ern-orchestrator/test/fixtures/common';
 import { logErrorAndExitIfNotSatisfied } from '../src/lib/logErrorAndExitIfNotSatisfied';
 import path from 'path';
 import fs from 'fs';
@@ -111,7 +112,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  /*it('[cauldronIsActive] Shoud log error and exit process if cauldron is not active', async () => {
+  /*it('[cauldronIsActive] Should log error and exit process if cauldron is not active', async () => {
       isActiveStub.returns(false)
       await logErrorAndExitIfNotSatisfied({
         cauldronIsActive: {}
@@ -119,7 +120,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
       assertLoggedErrorAndExitedProcess()
     })
 
-    it('[cauldronIsActive] Shoud not log error not exit process if cauldron is active', async () => {
+    it('[cauldronIsActive] Should not log error not exit process if cauldron is active', async () => {
       isActiveStub.returns(true)
       await logErrorAndExitIfNotSatisfied({
         cauldronIsActive: {}
@@ -127,7 +128,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
       assertNoErrorLoggedAndNoProcessExit()
     })*/
 
-  fixtures.validNpmPackageNames.forEach((name) => {
+  orchestratorFixtures.validNpmPackageNames.forEach((name) => {
     it('[isValidPackageName] Should not log error nor exit process if package name is valid', async () => {
       await logErrorAndExitIfNotSatisfied({
         isValidNpmPackageName: { name },
@@ -136,28 +137,10 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.invalidNpmPackageNames.forEach((name) => {
+  orchestratorFixtures.invalidNpmPackageNames.forEach((name) => {
     it('[isValidPackageName] Should log error and exit process if package name is invalid', async () => {
       await logErrorAndExitIfNotSatisfied({
         isValidNpmPackageName: { name },
-      });
-      assertLoggedErrorAndExitedProcess();
-    });
-  });
-
-  fixtures.validElectrodeNativeModuleNames.forEach((name) => {
-    it('[isValidElectrodeNativeModuleName] Should not log error nor exit process if module name is valid', async () => {
-      await logErrorAndExitIfNotSatisfied({
-        isValidElectrodeNativeModuleName: { name },
-      });
-      assertNoErrorLoggedAndNoProcessExit();
-    });
-  });
-
-  fixtures.invalidElectrodeNativeModuleNames.forEach((name) => {
-    it('[isValidElectrodeNativeModuleName] Should log error and exit process if module name is invalid', async () => {
-      await logErrorAndExitIfNotSatisfied({
-        isValidElectrodeNativeModuleName: { name },
       });
       assertLoggedErrorAndExitedProcess();
     });
