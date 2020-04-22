@@ -8,7 +8,7 @@ The core of the Electrode Native is written in TypeScript and ES6. Some parts al
 
 When it comes to the platform code percentage of JavaScript code versus Native code, a good approximation would be 70% JavaScript and 30% native code.
 
-Electrode Native is composed of several modules that can be accessed using the Electrode Native CLI. Electrode Native runs on Node 6 runtime or newer versions. Electrode Native runs on Mac OS X only. Windows support is scheduled to follow. Electrode Native also runs on Linux; however only minimal testing has verified this support.
+Electrode Native is composed of several modules that can be accessed using the Electrode Native CLI. Electrode Native runs on Node.js 10 or newer. Windows support should be considered experimental.
 
 Electrode Native modules and features are briefly described below. You can find more information about each module in the specific module documentation.
 

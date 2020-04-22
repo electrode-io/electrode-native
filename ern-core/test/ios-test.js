@@ -1,20 +1,17 @@
 import { assert, expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
-import Promise from 'bluebird'
-//import * as ios from '../src/ios'
-import * as childProcess from 'child_process'
 import sinon from 'sinon'
 import inquirer from 'inquirer'
 import * as fixtures from './fixtures/common'
 import ernConfig from '../src/config'
+import util from 'util'
 
 const simctl = require('node-simctl')
 const ios = require('../src/ios')
 
 const computerName = 'Funny MacBook Pro (47)\n'
-// util.promisify function added to the core only after node 8
-const readFile = Promise.promisify(fs.readFile)
+const readFile = util.promisify(fs.readFile)
 const iPhoneSimulatorsWithNoIphone = require('./fixtures/ios_no_iphone_simulators.json')
 const iPhoneSimulators = require('./fixtures/ios_iphone_simulators.json')
 

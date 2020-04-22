@@ -47,18 +47,7 @@ export default class ReactNativeCli {
       template ? ` --template ${template}` : ''
     }`
 
-    return template
-      ? // For some reason, when using 'react-native init' with
-        // the template option, stdin redirection matters.
-        // By default using 'pipe' for stdin, but this cause
-        // 'react-native init' command to stall with Node 8.
-        // The problem is not present with Node 10 and above
-        // But because Electrode Native min requirement is Node 8
-        // we need to handle this specific case.
-        spawnp(this.binaryPath, initCmd.split(' '), {
-          stdio: ['ignore', 'pipe', 'pipe'],
-        })
-      : execp(`${this.binaryPath} ${initCmd}`)
+    return execp(`${this.binaryPath} ${initCmd}`)
   }
 
   public async bundle({

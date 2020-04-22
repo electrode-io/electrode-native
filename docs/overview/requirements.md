@@ -2,19 +2,19 @@
 
 Depending on whether you are building Android or iOS apps, the following tools are required:
 
-- Node.js >= 8.3
-- NPM >= 3.0
+- Node.js >= 10
+- npm >= 5.6.0
 - Android Studio (for Android apps)
 - Xcode >= 10 (for iOS apps)
 - CocoaPods (if using a version of React Native >= 0.60)
 
 ### [Node](https://nodejs.org/en/)
 
-Electrode Native is primarily a Node.js application therefore, Node 8+ must be installed on your workstation.  
+Electrode Native is primarily a Node.js application therefore, Node 10+ must be installed on your workstation.  
 
-**Note** You also need to install NPM or Yarn in order to install the Electrode Native platform. When you install Node.js, NPM is automatically installed.
+**Note** You also need to install npm or Yarn in order to install the Electrode Native platform. When you install Node.js, npm is automatically installed.
 
-### [NPM](https://npmsjs.com) or [Yarn](https://yarnpkg.com)
+### [npm](https://npmsjs.com) or [Yarn](https://yarnpkg.com)
 
 ### [Git](https://git-scm.com/downloads)
 
@@ -50,6 +50,6 @@ If running Electrode Native on a Mac, and using a version of React Native >= 0.6
 
 ### What about React Native ?
 
-You don't need to have React Native installed on your machine. If you have it already installed, that's great--it's not really a problem. The same applies for yarn and CodePush.
+You don't need to have React Native installed on your machine. If you have it already installed, that's great--it's not really a problem. The same applies for Yarn and CodePush.
 
 Electrode Native ships with its own local version of React Native as well as Yarn and CodePush. Including these tools shorten our list of requirements--which ultimately simplifies setup for you and also makes the platform safer and stable as it does not require multiple versions of these tools--even though, every user could have a different version of these tools already installed.
