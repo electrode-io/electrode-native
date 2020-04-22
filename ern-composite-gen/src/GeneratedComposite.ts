@@ -2,6 +2,7 @@ import {
   NativeDependencies,
   findNativeDependencies,
   PackagePath,
+  readPackageJson,
   readPackageJsonSync,
   BaseMiniApp,
   nativeDepenciesVersionResolution,
@@ -131,6 +132,18 @@ export class GeneratedComposite implements Composite {
         })
       }
     }
+
+    // Also add all local miniapps
+    const localMiniApps = this.config.miniApps.filter(m => m.isFilePath)
+    for (const m of localMiniApps) {
+      const pJson = await readPackageJson(m.basePath)
+      result.push({
+        name: pJson.name,
+        packagePath: m,
+        path: m.basePath,
+      })
+    }
+
     return Promise.resolve(result)
   }
 
@@ -143,9 +156,18 @@ export class GeneratedComposite implements Composite {
     if (this.cachedNativeDependencies) {
       return Promise.resolve(this.cachedNativeDependencies)
     }
-    const nativeDependencies = await findNativeDependencies(this.path, {
-      manifestId,
-    })
+
+    const localMiniApps = this.config.miniApps.filter(m => m.isFilePath)
+
+    const nativeDependencies = await findNativeDependencies(
+      [
+        this.path,
+        ...localMiniApps.map(m => path.join(m.basePath, 'node_modules')),
+      ],
+      {
+        manifestId,
+      }
+    )
 
     // Filter out MiniApps that can be falsy considered as native dependencies
     // if developer(s) forgot to npm ignore the android/ios directory

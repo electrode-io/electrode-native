@@ -99,8 +99,35 @@ ${resetCache ? '--reset-cache' : ''}`
     }
   }
 
-  public startPackager(cwd: string) {
-    spawnp(this.binaryPath, ['start'], { cwd })
+  public startPackager({
+    cwd = process.cwd(),
+    host = 'localhost',
+    port = '8081',
+    resetCache = true,
+  }: {
+    cwd?: string
+    host?: string
+    port?: string
+    resetCache?: boolean
+  } = {}) {
+    const args: string[] = []
+    if (host) {
+      args.push('--host', host)
+    }
+    if (port) {
+      args.push('--port', port)
+    }
+    if (resetCache!!) {
+      args.push(`--reset-cache`)
+    }
+    spawn(
+      path.join(cwd, 'node_modules/.bin/react-native'),
+      ['start', ...args],
+      {
+        cwd,
+        stdio: 'inherit',
+      }
+    )
   }
 
   public async startPackagerInNewWindow({

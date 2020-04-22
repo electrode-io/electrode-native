@@ -8,8 +8,10 @@ export default function(): string {
     fs.ensureDirSync(tmpDir)
   }
   const retainTmpDir = config.get('retain-tmp-dir', false)
-  return tmp.dirSync({
-    dir: tmpDir,
-    unsafeCleanup: !retainTmpDir,
-  }).name
+  return fs.realpathSync(
+    tmp.dirSync({
+      dir: tmpDir,
+      unsafeCleanup: !retainTmpDir,
+    }).name
+  )
 }

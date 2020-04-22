@@ -2,15 +2,25 @@ import path from 'path'
 import fs from 'fs-extra'
 import { readPackageJson } from 'ern-core'
 
-export async function createIndexJs({ cwd }: { cwd: string }) {
+export async function createIndexJs({
+  cwd,
+  extraImports = [],
+}: {
+  cwd: string
+  extraImports?: string[]
+}) {
   let entryIndexJsContent = ''
 
-  const dependencies: string[] = []
+  const dependencies: string[] = [...extraImports]
   const compositePackageJson = await readPackageJson(cwd)
-  for (const dependency of Object.keys(compositePackageJson.dependencies)) {
-    entryIndexJsContent += `import '${dependency}'\n`
+  for (const dependency of Object.keys(
+    compositePackageJson.dependencies || []
+  )) {
     dependencies.push(dependency)
   }
+  dependencies.forEach(d => {
+    entryIndexJsContent += `import '${d}'\n`
+  })
 
   await fs.writeFile(path.join(cwd, 'index.js'), entryIndexJsContent)
   // Still also generate index.android.js and index.ios.js for backward compatibility with

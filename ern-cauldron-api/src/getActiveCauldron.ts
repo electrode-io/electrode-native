@@ -31,9 +31,10 @@ export default async function getActiveCauldron({
   if (!repoInUse && throwIfNoActiveCauldron) {
     throw new Error('No active Cauldron')
   }
-  const kaxTask = kax.task(`Connecting to the Cauldron`)
-  try {
-    if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
+
+  if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
+    const kaxTask = kax.task(`Connecting to the Cauldron`)
+    try {
       const cauldronRepositories = config.get('cauldronRepositories')
       const cauldronRepoUrl = cauldronRepositories[repoInUse]
       const cauldronRepoBranchReResult = /#(.+)$/.exec(cauldronRepoUrl)
@@ -94,13 +95,12 @@ export default async function getActiveCauldron({
         }
       }
       currentCauldronRepoInUse = repoInUse
+    } catch (e) {
+      kaxTask.fail()
+      utils.logErrorAndExitProcess(e, 1)
     }
-  } catch (e) {
-    kaxTask.fail()
-    utils.logErrorAndExitProcess(e, 1)
+    kaxTask.succeed()
   }
-
-  kaxTask.succeed()
 
   return Promise.resolve(currentCauldronHelperInstance)
 }
