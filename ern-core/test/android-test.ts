@@ -1,7 +1,6 @@
 import { assert, expect } from 'chai'
 import { beforeTest, afterTest } from 'ern-util-dev'
 import fs from 'fs'
-import Prom from 'bluebird'
 import path from 'path'
 import * as childProcess from '../src/childProcess'
 import sinon from 'sinon'
@@ -9,7 +8,9 @@ import * as android from '../src/android'
 import ernConfig from '../src/config'
 import inquirer from 'inquirer'
 import * as fixtures from './fixtures/common'
-const readFile = Prom.promisify(fs.readFile)
+import util from 'util'
+
+const readFile = util.promisify(fs.readFile)
 const sandbox = sinon.createSandbox()
 
 let ernConfigGetStub

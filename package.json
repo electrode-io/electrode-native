@@ -104,7 +104,7 @@
     "typescript": "^3.7.5"
   },
   "engines": {
-    "node": ">=8.3"
+    "node": ">=10"
   },
   "workspaces": [
     "ern-*"

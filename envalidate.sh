@@ -63,7 +63,7 @@ normal=$(tput sgr0)
 bright=$(tput bold)
 
 # command line programs
-printf "${bright} --- Node.js 8.3 or later ---${normal}\n"
+printf "${bright} --- Node.js 10 or later ---${normal}\n"
 
 echo "node    $(echo_if $(program_is_installed node))"
 $(print_version node)
@@ -79,7 +79,7 @@ echo "yarn    $(echo_if $(program_is_installed yarn))"
 $(print_version yarn)
 printf "\n"
 
-printf "${bright} --- Xcode 8.3.2 or later for iOS apps ---${normal}\n"
+printf "${bright} --- Xcode 10 or later for iOS apps ---${normal}\n"
 
 echo "Xcode  $(echo_if $(program_is_installed xcodebuild))"
 $(print_version xcodebuild -version)
