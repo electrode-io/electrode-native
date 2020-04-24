@@ -38,7 +38,7 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "@octokit/rest": "16.33.1",
+    "@octokit/rest": "16.43.1",
     "@yarnpkg/lockfile": "^1.1.0",
     "archiver": "^2.1.1",
     "chalk": "^2.4.1",
