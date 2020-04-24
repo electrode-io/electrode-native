@@ -375,7 +375,7 @@ module.exports = {
               } else {
                 // This is a third party native dependency. If it's not in the master manifest,
                 // then it means that it is not supported by the platform yet. Fail.
-                return log.error(
+                throw new Error(
                   `${dep.name} plugin is not yet supported. Consider adding support for it to the master manifest`
                 )
               }
