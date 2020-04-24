@@ -45,7 +45,7 @@
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.14",
     "mustache": "^2.3.1",
-    "semver": "5.5.0",
+    "semver": "5.7.1",
     "xcode": "^1.0.0",
     "xcode-ern": "^1.0.12"
   },
