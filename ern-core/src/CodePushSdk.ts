@@ -70,7 +70,7 @@ export default class CodePushSdk {
       ) {
         log.warn(error.message)
       } else {
-        throw new Error(error)
+        throw new Error(JSON.stringify(error))
       }
     }
   }
@@ -101,7 +101,7 @@ export default class CodePushSdk {
       ) {
         log.warn(error.message)
       } else {
-        throw new Error(error)
+        throw new Error(JSON.stringify(error))
       }
     }
   }
