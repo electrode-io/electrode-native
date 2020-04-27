@@ -8,9 +8,11 @@ import {
   log,
   LogLevel,
   Manifest,
-  ManifestOverrideConfig,
+  OverrideManifestConfig,
   Platform,
   shell,
+  ernRcFilePath,
+  ERN_RC_GLOBAL_FILE_PATH,
 } from 'ern-core'
 import {
   KaxAdvancedRenderer,
@@ -45,7 +47,7 @@ function showBanner() {
   )
 }
 
-function showInfo() {
+async function showInfo() {
   const currentCauldronRepo = config.get('cauldronRepoInUse') || '-NONE-'
   const bundleStoreId = config.get('bundlestore-id')
   const l = bundleStoreId ? chalk.cyan(` [BundleStore: ${bundleStoreId}]`) : ''
@@ -54,6 +56,28 @@ function showInfo() {
       chalk.cyan(` [Cauldron: ${currentCauldronRepo}]`) +
       l
   )
+  if (ERN_RC_GLOBAL_FILE_PATH !== ernRcFilePath) {
+    // Log .ernrc configuration file path only if it differs from default
+    console.log(chalk.cyan(`Config: ${ernRcFilePath}`))
+  }
+  const overrideManifest = await Manifest.getOverrideManifestConfig()
+  if (overrideManifest) {
+    // Log override manifest only if set
+    console.log(
+      chalk.cyan(
+        `Override manifest: ${overrideManifest.url} (set in ${overrideManifest.source})`
+      )
+    )
+  }
+  const manifestErnRcConf = config.get('manifest', undefined)
+  if (manifestErnRcConf && manifestErnRcConf.master) {
+    //  Log master manifest only if set
+    console.log(
+      chalk.cyan(
+        `Master manifest: ${manifestErnRcConf.master.url} (set in .ernrc)`
+      )
+    )
+  }
   console.log('')
 }
 
@@ -101,19 +125,26 @@ function isNodeVersionCompatible(version: string) {
   return semver.satisfies(version, requiredVersion)
 }
 
-Manifest.getOverrideManifestConfig = async (): Promise<ManifestOverrideConfig | void> => {
-  const cauldronInstance = await getActiveCauldron({
-    throwIfNoActiveCauldron: false,
-  })
-  const manifestConfig =
-    config.get('manifest', undefined) ??
-    (cauldronInstance && (await cauldronInstance.getManifestConfig()))
+Manifest.getOverrideManifestConfig = async (): Promise<OverrideManifestConfig | void> => {
+  let manifestConfig = config.get('manifest', undefined)
+  let source: '.ernrc' | 'cauldron' = '.ernrc' as const
+  if (!manifestConfig) {
+    const cauldronInstance = await getActiveCauldron({
+      throwIfNoActiveCauldron: false,
+    })
+    manifestConfig =
+      cauldronInstance && (await cauldronInstance.getManifestConfig())
+    if (manifestConfig) {
+      source = 'cauldron' as const
+    }
+  }
   if (
     manifestConfig &&
     manifestConfig.override &&
     manifestConfig.override.url
   ) {
     return {
+      source,
       type: manifestConfig.override.type || 'partial',
       url: manifestConfig.override.url,
     }
@@ -179,7 +210,7 @@ const logLevelStringToEnum = (level: string) => {
   // ==============================================================================
   // Entry point
   // =============================================================================
-;(function run() {
+;(async function run() {
   const hasJsonOpt = process.argv.slice(1).includes('--json')
   const logLevel: LogLevel = hasJsonOpt
     ? LogLevel.Off
@@ -214,7 +245,7 @@ Please switch to a version of Node satisfying the version requirement`)
     if (config.get('showBanner', true)) {
       showBanner()
     }
-    showInfo()
+    await showInfo()
   }
 
   if (process.argv.slice(1).includes('--version')) {

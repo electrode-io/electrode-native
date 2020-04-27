@@ -92,7 +92,7 @@ export { BundlingResult } from './ReactNativeCli'
 
 export { AndroidPluginConfigGenerator } from './AndroidPluginConfigGenerator'
 export { IosPluginConfigGenerator } from './IosPluginConfigGenerator'
-export { ManifestOverrideConfig } from './Manifest'
+export { OverrideManifestConfig } from './Manifest'
 export { PluginConfigGenerator } from './PluginConfigGenerator'
 
 export * from './NativePlatform'
@@ -107,3 +107,4 @@ export { getCodePushInitConfig } from './getCodePushInitConfig'
 export { PackageManager } from './PackageManager'
 export { LogLevel } from './coloredLog'
 export { IosDevice } from './ios'
+export { ernRcFilePath, ERN_RC_GLOBAL_FILE_PATH } from './config'
